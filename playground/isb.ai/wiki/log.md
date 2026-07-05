@@ -9110,3 +9110,13 @@
 | UCxDFRhF3Y1A_Gd0-cF8gbqQ | al9OLcuV-wI | 2026-06-09T18:22:48+00:00 | Trump confirma que Apache foi derrubado pelo Irã e avisa: “Responderemos esse ataque!” #shorts |
 | UCxDFRhF3Y1A_Gd0-cF8gbqQ | zG1rbRHljZI | 2026-06-09T16:37:41+00:00 | Tripulação de Apache acidentado resgatada por drone naval perto do Estreito de Ormuz #shorts |
 | UCxDFRhF3Y1A_Gd0-cF8gbqQ | hBfcq9bcbI8 | 2026-06-09T15:30:23+00:00 | “A Inteligência Artificial pode fugir do controle humano!” |
+| UCM3vJxmuJJkk1r0yzFI9eZg | tea4txbslNA | 2026-07-05T11:30:13+00:00 | 🚨 Rombo de R$ 100 BILHÕES ameaça o Brasil, pressiona Lula e acende alerta no mercado |
+| UCM3vJxmuJJkk1r0yzFI9eZg | FxD2iQZ_dtQ | 2026-07-05T01:38:49+00:00 | Faça uma dívida urgente |
+| UC9ycYMBQqlnE0h4dSyrdv0A | BekMK3CIeF0 | 2026-07-05T14:21:51+00:00 | #Ucrânia 2026-07-05: PUTIN deslocado da REALIDADE insiste na MENTIRA de KONSTANTYNIVKA |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | OqAj8DC4n9M | 2026-07-05T10:45:10+00:00 | Regime de Teerã usa funeral de Khamenei como palanque (Briefing de Segurança 05-Jul) #shorts #iran |
+| UCIQne9yW4TvCCNYQLszfXCQ | rVuvls7Fq_U | 2026-07-05T01:43:56+00:00 | Chega de Slides POBRES. Faça um UPGRADE com IA |
+| UCIQne9yW4TvCCNYQLszfXCQ | -1Ls-8XVS-M | 2026-07-04T13:27:01+00:00 | Harness vs. Guardrail: A Diferença Que Você Precisa |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | NpW2zMow2IM | 2026-07-05T15:03:15+00:00 | 🚨 Bolsonaro Autorizou o Vídeo de Michelle Contra Flávio? |
+| UC84asuWqcrFqEtWqSCtS85Q | P0PMjntyXhA | 2026-07-05T14:54:00+00:00 | O que vale mais? Assista! |
+| UC84asuWqcrFqEtWqSCtS85Q | gZKynp7V6aE | 2026-07-05T14:19:09+00:00 | Lula Entra em Desespero e Copia Flávio: Veja! |
+| UCQy7CQvtuGSKp-2VGtmTAuQ | AXNi7SNyd7Y | 2026-07-05T10:43:09+00:00 | FABLE fez o Melhor GTA da História no Claude Code e Humilhou Geral - Não Tem Comparação |

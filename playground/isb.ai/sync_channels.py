@@ -13,12 +13,9 @@ from pathlib import Path
 
 import yt_dlp
 
-# Ensure we can import downloader and transcriber modules from the current directory
-sys.path.append(str(Path(__file__).parent))
-
 from downloader import extract_video_metadata, get_youtube_audio_or_transcript
 from helper import get_full_upload_date, is_within_range, read_playlist_urls, sanitize_for_path, format_date_for_path, parse_yaml_header, clean_filename, parse_merged_transcriptions, extract_youtube_video_id
-from llm_processor import process_transcript_to_obsidian
+from ollama_processor import process_transcript_to_obsidian
 from transcriber import transcribe_audio_to_text
 
 # --- Configs ---

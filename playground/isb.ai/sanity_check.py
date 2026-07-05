@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 # Add parent directory to path to resolve local imports
-sys.path.append(str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent))
 
 from downloader import find_subtitle_url, reconstruct_json3_paragraphs, reconstruct_srv1_paragraphs
 from helper import clean_filename, get_full_upload_date, is_within_range, sanitize_for_path, format_date_for_path, parse_yaml_header, parse_merged_transcriptions
