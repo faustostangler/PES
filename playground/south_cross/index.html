@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universe Projection: Dimensionality Reduction of 22 Constellations</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Three.js & Libraries (Local for file:// and offline compatibility) -->
+  <script src="three.min.js"></script>
+  <script src="OrbitControls.js"></script>
+  <script src="gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #05050a;
+      --panel-bg: rgba(10, 11, 20, 0.85);
+      --accent: #00f3ff;
+      --accent-glow: rgba(0, 243, 255, 0.4);
+      --accent-danger: #ff3b30;
+      --accent-danger-glow: rgba(255, 59, 48, 0.4);
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-color: rgba(0, 243, 255, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-dark);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+    }
+
+    #webgl-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Floating UI Panels */
+    .panel {
+      position: absolute;
+      z-index: 10;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Sidebar (Controls) */
+    .sidebar {
+      top: 20px;
+      left: 20px;
+      bottom: 20px;
+      width: 380px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar.collapsed {
+      transform: translateX(-400px);
+    }
+
+    /* Toggle button for sidebar */
+    .sidebar-toggle {
+      position: absolute;
+      top: 20px;
+      right: -42px;
+      width: 42px;
+      height: 42px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 18px;
+      backdrop-filter: blur(16px);
+      box-shadow: 10px 0 20px rgba(0,0,0,0.3);
+      transition: color 0.3s;
+    }
+
+    .sidebar-toggle:hover {
+      color: #fff;
+      text-shadow: 0 0 8px var(--accent);
+    }
+
+    /* Typography & Headers */
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #fff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-top: 10px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    /* Controls Elements */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(255,255,255,0.02);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .control-value {
+      font-family: 'Orbitron', monospace;
+      color: var(--accent);
+      font-size: 11px;
+    }
+
+    /* Select Dropdown */
+    .control-select {
+      width: 100%;
+      padding: 10px;
+      background: rgba(10, 11, 20, 0.95);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      box-shadow: inset 0 0 10px rgba(0,243,255,0.05);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .control-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .control-select optgroup {
+      background: var(--bg-dark);
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-style: normal;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--accent-glow);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #fff;
+    }
+
+    /* Switch Custom Checkbox */
+    .switch-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-switch {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .4s;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .slider-switch:before {
+      position: absolute;
+      content: "";
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--text-muted);
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider-switch {
+      background-color: rgba(0, 243, 255, 0.2);
+      border-color: var(--accent);
+    }
+
+    input:checked + .slider-switch:before {
+      transform: translateX(16px);
+      background-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0, 243, 255, 0.08);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s;
+      box-shadow: inset 0 0 0 rgba(0, 243, 255, 0);
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 15px var(--accent-glow), inset 0 0 10px rgba(255,255,255,0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: #fff;
+      box-shadow: none;
+    }
+
+    /* Star Info Card */
+    .star-card {
+      bottom: 20px;
+      right: 20px;
+      width: 360px;
+      padding: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .star-card.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .star-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .star-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .star-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+
+    .star-close:hover {
+      color: #fff;
+    }
+
+    .star-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      background: rgba(255,255,255,0.02);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.04);
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .meta-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-value {
+      font-family: 'Orbitron', monospace;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Alignment Telemetry HUD */
+    .hud-telemetry {
+      top: 20px;
+      right: 20px;
+      padding: 12px 18px;
+      font-family: 'Orbitron', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 8px;
+    }
+
+    .telemetry-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-danger);
+      box-shadow: 0 0 8px var(--accent-danger-glow);
+      animation: pulse 1.5s infinite;
+    }
+
+    .hud-telemetry.aligned .telemetry-dot {
+      background-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .hud-telemetry.aligned {
+      border-color: var(--accent);
+    }
+
+    /* Central Targeting Reticle */
+    .reticle {
+      position: absolute;
+      top: 50%;
+      left: calc(50% + 190px); /* Center relative to space width (accounting for sidebar) */
+      width: 100px;
+      height: 100px;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.25;
+      color: var(--accent-danger);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Reset reticle center when sidebar is collapsed */
+    .sidebar-collapsed-mode .reticle {
+      left: 50%;
+    }
+
+    .reticle.aligned {
+      opacity: 0.95;
+      color: var(--accent);
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+
+    .reticle-circle-outer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 1.5px dashed currentColor;
+      border-radius: 50%;
+      animation: spin-clockwise 25s linear infinite;
+    }
+
+    .reticle-circle-inner {
+      position: absolute;
+      top: 15%;
+      left: 15%;
+      width: 70%;
+      height: 70%;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: spin-counter 15s linear infinite;
+    }
+
+    .reticle-cross-h {
+      position: absolute;
+      top: 50%;
+      left: -15px;
+      right: -15px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, currentColor, transparent);
+    }
+
+    .reticle-cross-v {
+      position: absolute;
+      left: 50%;
+      top: -15px;
+      bottom: -15px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, currentColor, transparent);
+    }
+
+    .reticle-center-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    .reticle-indicator {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Orbitron', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      white-space: nowrap;
+      text-shadow: 0 0 8px rgba(0,0,0,0.8);
+      font-weight: 900;
+    }
+
+    /* Star List (Mini-navigation) */
+    .star-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .star-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .star-item:hover {
+      background: rgba(0, 243, 255, 0.05);
+      border-color: rgba(0, 243, 255, 0.3);
+      transform: translateX(4px);
+    }
+
+    .star-item.active {
+      background: rgba(0, 243, 255, 0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+    }
+
+    .star-item-label {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .star-item-dist {
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    /* Keyframes */
+    @keyframes spin-clockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-counter {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+
+    /* Scrollbar */
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+    }
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: calc(100% - 40px);
+        bottom: auto;
+        max-height: 40vh;
+      }
+      .star-card {
+        width: calc(100% - 40px);
+        left: 20px;
+        bottom: 20px;
+        right: auto;
+      }
+      .reticle {
+        left: 50%;
+      }
+      .hud-telemetry {
+        top: auto;
+        bottom: 45vh;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL Container -->
+  <div id="webgl-container"></div>
+
+  <!-- Sidebar (Controls) -->
+  <div class="panel sidebar" id="mainSidebar">
+    
+    <!-- Sidebar Toggle -->
+    <button class="sidebar-toggle" id="toggleSidebarBtn" title="Toggle Controls">
+      &lsaquo;
+    </button>
+
+    <div>
+      <h1>UNIVERSE VIEW</h1>
+      <div class="subtitle">22-Constellation Projection</div>
+      <p>
+        Constellations are <strong>2D projections</strong> of 3D cosmic coordinates.
+        Stars in the same shape appear grouped, but exist at completely different depths. 
+        Select a target below, rotate space to dissolve the illusion, or align to lock Earth's view.
+      </p>
+    </div>
+
+    <!-- Active Constellation Selection -->
+    <div class="section-title">Select Target</div>
+    <div class="control-group">
+      <select id="constellationSelect" class="control-select">
+        <optgroup label="Southern Reference">
+          <option value="crux" selected>Crux (Southern Cross)</option>
+        </optgroup>
+        <optgroup label="The Zodiac Belt">
+          <option value="aries">Aries (Ram)</option>
+          <option value="taurus">Taurus (Bull)</option>
+          <option value="gemini">Gemini (Twins)</option>
+          <option value="cancer">Cancer (Crab)</option>
+          <option value="leo">Leo (Lion)</option>
+          <option value="virgo">Virgo (Virgin)</option>
+          <option value="libra">Libra (Scales)</option>
+          <option value="scorpio">Scorpius (Scorpion)</option>
+          <option value="sagittarius">Sagittarius (Teapot/Archer)</option>
+          <option value="capricorn">Capricornus (Sea Goat)</option>
+          <option value="aquarius">Aquarius (Water Bearer)</option>
+          <option value="pisces">Pisces (Fish)</option>
+        </optgroup>
+        <optgroup label="Classical / Northern / Southern Giants">
+          <option value="ursa_major">Ursa Major (Great Bear)</option>
+          <option value="ursa_minor">Ursa Minor (Little Bear/Polaris)</option>
+          <option value="cassiopeia">Cassiopeia (Queen)</option>
+          <option value="cepheus">Cepheus (King)</option>
+          <option value="draco">Draco (Dragon)</option>
+          <option value="centaurus">Centaurus (Centaur/Alpha Cen)</option>
+          <option value="canis_major">Canis Major (Great Dog/Sirius)</option>
+          <option value="carina">Carina (Keel/Canopus)</option>
+          <option value="orion">Orion (Hunter/Betelgeuse)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <!-- Interactive Morphing -->
+    <div class="section-title">Projection Controls</div>
+
+    <div class="control-group">
+      <div class="control-header">
+        <span>Dimension Morph</span>
+        <span class="control-value" id="morphValue">3D Space (0.00)</span>
+      </div>
+      <input type="range" id="morphSlider" min="0" max="1" step="0.01" value="0">
+      <p style="font-size: 11px; margin-top: 4px;">
+        Slide to morph stars of the active constellation into a flat 2D plane perpendicular to your line of sight.
+      </p>
+    </div>
+
+    <div class="control-group">
+      <div class="control-header">
+        <span>Depth Exaggeration</span>
+        <span class="control-value" id="depthValue">1.0x</span>
+      </div>
+      <input type="range" id="depthSlider" min="1" max="3" step="0.05" value="1">
+    </div>
+
+    <div class="control-group">
+      <div class="control-header">
+        <span>Background Opacity</span>
+        <span class="control-value" id="bgOpacityValue">0.15</span>
+      </div>
+      <input type="range" id="bgOpacitySlider" min="0" max="1" step="0.01" value="0.15">
+      <p style="font-size: 11px; margin-top: 4px;">
+        Control the fade-out opacity of all inactive background constellations.
+      </p>
+    </div>
+
+    <!-- Navigation Presets -->
+    <div class="section-title">Camera Views</div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <button class="btn" id="alignEarthBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M12 2v20"/><circle cx="12" cy="12" r="10"/></svg>
+        ALIGN WITH EARTH
+      </button>
+      <button class="btn btn-secondary" id="reset3dBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        FREE 3D PERSPECTIVE
+      </button>
+    </div>
+
+    <div class="control-group switch-container">
+      <span>Auto-Orbit Active</span>
+      <label class="switch">
+        <input type="checkbox" id="autoOrbitCheckbox">
+        <span class="slider-switch"></span>
+      </label>
+    </div>
+
+    <div class="control-group switch-container">
+      <span>Show Projection Rays</span>
+      <label class="switch">
+        <input type="checkbox" id="showRaysCheckbox" checked>
+        <span class="slider-switch"></span>
+      </label>
+    </div>
+
+    <div class="control-group switch-container">
+      <span>Show Ruler & Labels</span>
+      <label class="switch">
+        <input type="checkbox" id="showGridCheckbox" checked>
+        <span class="slider-switch"></span>
+      </label>
+    </div>
+
+    <!-- Star Selector List -->
+    <div class="section-title" id="starListTitle">Stars of Crux</div>
+    <div class="star-list" id="starSelectorList">
+      <!-- Generated dynamically -->
+    </div>
+
+  </div>
+
+  <!-- Telemetry HUD -->
+  <div class="panel hud-telemetry" id="hudTelemetry">
+    <div class="telemetry-dot"></div>
+    <span id="alignmentStatus">ALIGNMENT: 0%</span>
+  </div>
+
+  <!-- Central Targeting Reticle -->
+  <div class="reticle" id="hudReticle">
+    <div class="reticle-circle-outer"></div>
+    <div class="reticle-circle-inner"></div>
+    <div class="reticle-cross-h"></div>
+    <div class="reticle-cross-v"></div>
+    <div class="reticle-center-dot"></div>
+    <div class="reticle-indicator" id="reticleIndicator">LOCKING TARGET...</div>
+  </div>
+
+  <!-- Star Details Card -->
+  <div class="panel star-card" id="starCard">
+    <div class="star-card-header">
+      <div>
+        <div class="star-name" id="cardStarName">Acrux</div>
+        <div style="font-size: 11px; color: var(--accent);" id="cardStarBayer">Alpha Crucis</div>
+      </div>
+      <button class="star-close" id="cardCloseBtn">&times;</button>
+    </div>
+    
+    <div class="star-meta">
+      <div class="meta-item">
+        <span class="meta-label">Distance</span>
+        <span class="meta-value" id="cardStarDistance">321.8 LY</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">App. Magnitude</span>
+        <span class="meta-value" id="cardStarMag">0.77</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Spectral Class</span>
+        <span class="meta-value" id="cardStarClass">B0.5 IV</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Designation</span>
+        <span class="meta-value" id="cardStarRank">Primary Star</span>
+      </div>
+    </div>
+
+    <p id="cardStarDesc">
+      Description goes here.
+    </p>
+  </div>
+
+  <!-- Script Logic -->
+  <script>
+    // --- Complete Constellation Dataset (Crux + 12 Zodiac + 9 Giants) ---
+    const constellationsData = {
+      crux: {
+        name: "Crux (Southern Cross)",
+        stars: [
+          { id: "crux_gacrux", name: "Gacrux", bayer: "Gamma Crucis (γ)", ra: 12.52, dec: -57.11, distance: 88.6, color: "#ff8c42", size: 2.2, magnitude: 1.59, class: "M3.5 III", rank: "3rd Brightest (Nearest)", desc: "A red giant, nearest M-class giant to the Sun, representing the top of the Southern Cross. Located only 88.6 light-years from Earth, it is physically much closer than the other stars in the cross." },
+          { id: "crux_mimosa", name: "Mimosa", bayer: "Beta Crucis (β)", ra: 12.80, dec: -59.69, distance: 279.8, color: "#aaccff", size: 2.5, magnitude: 1.25, class: "B0.5 III", rank: "2nd Brightest", desc: "A massive blue giant binary, forming the left arm of the cross. Located 279.8 light-years away, it is a member of the Scorpius-Centaurus association." },
+          { id: "crux_acrux", name: "Acrux", bayer: "Alpha Crucis (α)", ra: 12.44, dec: -63.10, distance: 321.8, color: "#c6e2ff", size: 2.8, magnitude: 0.77, class: "B0.5 IV + B1 V", rank: "Brightest in Crux", desc: "A multiple star system, brightest star in Crux and the southernmost first-magnitude star in the sky, forming the foot base of the cross." },
+          { id: "crux_imai", name: "Imai", bayer: "Delta Crucis (δ)", ra: 12.25, dec: -58.75, distance: 364.0, color: "#b0e0e6", size: 1.8, magnitude: 2.78, class: "B2 IV", rank: "4th Brightest (Furthest)", desc: "A blue-white subgiant, furthest of the five main stars at 364 light-years, forming the right arm of the cross." },
+          { id: "crux_intrometida", name: "Intrometida", bayer: "Epsilon Crucis (ε)", ra: 12.36, dec: -60.40, distance: 228.0, color: "#ffe4b5", size: 1.3, magnitude: 3.59, class: "K3 III", rank: "Faintest of the Five", desc: "An orange giant. Commonly named 'Intrometida' (the Intrusive One) because its off-axis position breaks the perfect cross symmetry." }
+        ],
+        connections: [
+          ["crux_gacrux", "crux_acrux"],
+          ["crux_mimosa", "crux_imai"]
+        ]
+      },
+      aries: {
+        name: "Aries",
+        stars: [
+          { id: "aries_hamal", name: "Hamal", bayer: "Alpha Arietis (α)", ra: 2.12, dec: 23.46, distance: 66.0, color: "#ffb380", size: 2.2, magnitude: 2.01, class: "K2 III", rank: "Brightest in Aries", desc: "An orange giant star, brightest star in Aries. It is slightly larger than the Sun but much older and evolved." },
+          { id: "aries_sheratan", name: "Sheratan", bayer: "Beta Arietis (β)", ra: 1.91, dec: 20.80, distance: 59.6, color: "#aaccff", size: 1.8, magnitude: 2.64, class: "A5 V", desc: "A white main-sequence star. It is a spectroscopic binary star system representing the horn of the Ram." },
+          { id: "aries_mesarthim", name: "Mesarthim", bayer: "Gamma Arietis (γ)", ra: 1.88, dec: 19.30, distance: 164.0, color: "#b0e0e6", size: 1.6, magnitude: 3.88, class: "B9 V", desc: "A beautiful binary star system, one of the first double stars discovered by telescope." }
+        ],
+        connections: [
+          ["aries_hamal", "aries_sheratan"],
+          ["aries_sheratan", "aries_mesarthim"]
+        ]
+      },
+      taurus: {
+        name: "Taurus",
+        stars: [
+          { id: "taurus_aldebaran", name: "Aldebaran", bayer: "Alpha Tauri (α)", ra: 4.60, dec: 16.50, distance: 65.0, color: "#ff8c42", size: 2.7, magnitude: 0.85, class: "K5 III", rank: "Brightest in Taurus", desc: "A red giant star. Known as the 'Eye of Taurus'. It is the fourteenth-brightest star in the night sky and lies relatively close to us." },
+          { id: "taurus_elnath", name: "Elnath", bayer: "Beta Tauri (β)", ra: 5.43, dec: 28.60, distance: 134.0, color: "#c6e2ff", size: 2.0, magnitude: 1.65, class: "B7 III", desc: "A blue-white giant star, representing the northern horn of the Bull." },
+          { id: "taurus_alcyone", name: "Alcyone", bayer: "Eta Tauri (η)", ra: 3.78, dec: 24.10, distance: 440.0, color: "#aaccff", size: 1.7, magnitude: 2.85, class: "B7 IIIe", desc: "A blue giant star and the brightest member of the Pleiades (Seven Sisters) cluster." }
+        ],
+        connections: [
+          ["taurus_aldebaran", "taurus_elnath"],
+          ["taurus_aldebaran", "taurus_alcyone"]
+        ]
+      },
+      gemini: {
+        name: "Gemini",
+        stars: [
+          { id: "gemini_pollux", name: "Pollux", bayer: "Beta Geminorum (β)", ra: 7.75, dec: 28.03, distance: 34.0, color: "#ffe4b5", size: 2.3, magnitude: 1.14, class: "K0 III", rank: "Brightest Twin", desc: "An orange giant star. It is the closest giant star to our Sun. Represents the head of the southern Twin." },
+          { id: "gemini_castor", name: "Castor", bayer: "Alpha Geminorum (α)", ra: 7.57, dec: 31.88, distance: 51.0, color: "#ffffff", size: 2.0, magnitude: 1.58, class: "A1 V", desc: "A multiple star system containing six stars. Represents the head of the northern Twin." },
+          { id: "gemini_alhena", name: "Alhena", bayer: "Gamma Geminorum (γ)", ra: 6.63, dec: 16.39, distance: 109.0, color: "#b0e0e6", size: 1.8, magnitude: 1.93, class: "A0 IV", desc: "A subgiant star. Represents the foot of the Twin Pollux." }
+        ],
+        connections: [
+          ["gemini_pollux", "gemini_castor"],
+          ["gemini_castor", "gemini_alhena"]
+        ]
+      },
+      cancer: {
+        name: "Cancer",
+        stars: [
+          { id: "cancer_tarf", name: "Tarf", bayer: "Beta Cancri (β)", ra: 8.27, dec: 9.18, distance: 290.0, color: "#ffe4b5", size: 2.0, magnitude: 3.53, class: "K4 III", rank: "Brightest in Cancer", desc: "An orange giant, the brightest star in the faint constellation of Cancer." },
+          { id: "cancer_acubens", name: "Acubens", bayer: "Alpha Cancri (α)", ra: 8.98, dec: 11.85, distance: 174.0, color: "#ffffff", size: 1.6, magnitude: 4.26, class: "A5m", desc: "A metallic-line star system, representing the southern claw of the Crab." },
+          { id: "cancer_tegmine", name: "Tegmine", bayer: "Zeta Cancri (ζ)", ra: 8.20, dec: 17.65, distance: 83.0, color: "#aaccff", size: 1.5, magnitude: 4.67, class: "F8V + G0V", desc: "A multiple star system consisting of at least four stars, located 83 light-years away." }
+        ],
+        connections: [
+          ["cancer_tarf", "cancer_acubens"],
+          ["cancer_tarf", "cancer_tegmine"]
+        ]
+      },
+      leo: {
+        name: "Leo",
+        stars: [
+          { id: "leo_regulus", name: "Regulus", bayer: "Alpha Leonis (α)", ra: 10.14, dec: 11.97, distance: 79.0, color: "#c6e2ff", size: 2.6, magnitude: 1.36, class: "B7 V", rank: "Brightest in Leo", desc: "A blue-white main sequence star, the brightest star in Leo. Located 79 light years away on the Lion's heart." },
+          { id: "leo_denebola", name: "Denebola", bayer: "Beta Leonis (β)", ra: 11.82, dec: 14.57, distance: 36.0, color: "#ffffff", size: 2.1, magnitude: 2.14, class: "A3 V", rank: "2nd Brightest", desc: "A white main-sequence star. Represents the tail of the Lion." },
+          { id: "leo_algieba", name: "Algieba", bayer: "Gamma Leonis (γ)", ra: 10.33, dec: 19.84, distance: 130.0, color: "#ffe4b5", size: 2.2, magnitude: 2.01, class: "K1 III", rank: "3rd Brightest", desc: "A beautiful double star system in the Lion's mane, containing two orange-yellow giants." },
+          { id: "leo_zosma", name: "Zosma", bayer: "Delta Leonis (δ)", ra: 11.23, dec: 20.52, distance: 58.0, color: "#ffffff", size: 1.8, magnitude: 2.56, class: "A4 V", rank: "4th Brightest", desc: "A white main sequence star on the hip of the Lion." }
+        ],
+        connections: [
+          ["leo_regulus", "leo_algieba"],
+          ["leo_algieba", "leo_zosma"],
+          ["leo_zosma", "leo_denebola"],
+          ["leo_regulus", "leo_denebola"]
+        ]
+      },
+      virgo: {
+        name: "Virgo",
+        stars: [
+          { id: "virgo_spica", name: "Spica", bayer: "Alpha Virginis (α)", ra: 13.42, dec: -11.16, distance: 250.0, color: "#aaccff", size: 2.7, magnitude: 0.98, class: "B1 III-IV", rank: "Brightest in Virgo", desc: "A binary star and rotating ellipsoidal variable, the brightest star in Virgo. Sits 250 light-years away." },
+          { id: "virgo_porrima", name: "Porrima", bayer: "Gamma Virginis (γ)", ra: 12.69, dec: -1.45, distance: 38.0, color: "#ffffff", size: 1.9, magnitude: 2.74, class: "F0 V", rank: "2nd Brightest", desc: "A famous binary star system containing two nearly identical white stars." },
+          { id: "virgo_vindemiatrix", name: "Vindemiatrix", bayer: "Epsilon Virginis (ε)", ra: 13.04, dec: 10.95, distance: 102.0, color: "#ffe4b5", size: 2.0, magnitude: 2.85, class: "G8 III", rank: "3rd Brightest", desc: "A yellow giant star, historically known as the Grape-Gatherer." }
+        ],
+        connections: [
+          ["virgo_spica", "virgo_porrima"],
+          ["virgo_porrima", "virgo_vindemiatrix"]
+        ]
+      },
+      libra: {
+        name: "Libra",
+        stars: [
+          { id: "libra_zubeneschamali", name: "Zubeneschamali", bayer: "Beta Librae (β)", ra: 15.28, dec: -9.38, distance: 185.0, color: "#aaccff", size: 2.1, magnitude: 2.61, class: "B8 V", rank: "Brightest in Libra", desc: "A blue-white main sequence star, the brightest star in Libra. Some astronomers have historically described it as slightly greenish." },
+          { id: "libra_zubenelgenubi", name: "Zubenelgenubi", bayer: "Alpha Librae (α)", ra: 14.85, dec: -16.03, distance: 77.0, color: "#ffffff", size: 1.9, magnitude: 2.75, class: "A3 V", rank: "2nd Brightest", desc: "A double star system located near the ecliptic. Bright secondary star of Libra." },
+          { id: "libra_brachium", name: "Brachium", bayer: "Sigma Librae (σ)", ra: 15.07, dec: -25.28, distance: 292.0, color: "#ff8c42", size: 1.8, magnitude: 3.25, class: "M3 III", rank: "3rd Brightest", desc: "A red giant star. Its traditional name means 'arm' in Latin." }
+        ],
+        connections: [
+          ["libra_zubeneschamali", "libra_zubenelgenubi"],
+          ["libra_zubenelgenubi", "libra_brachium"],
+          ["libra_zubeneschamali", "libra_brachium"]
+        ]
+      },
+      scorpio: {
+        name: "Scorpius",
+        stars: [
+          { id: "scorpio_antares", name: "Antares", bayer: "Alpha Scorpii (α)", ra: 16.49, dec: -26.43, distance: 550.0, color: "#ff5533", size: 2.9, magnitude: 1.06, class: "M1.5 Iab", rank: "Brightest (Heart)", desc: "A red supergiant star. The 'Heart of the Scorpion'. It is one of the largest stars visible to the naked eye, located 550 light-years away." },
+          { id: "scorpio_shaula", name: "Shaula", bayer: "Lambda Scorpii (λ)", ra: 17.56, dec: -37.10, distance: 700.0, color: "#aaccff", size: 2.4, magnitude: 1.62, class: "B2 IV+", rank: "2nd Brightest", desc: "A blue-white subgiant star, the second brightest star in Scorpius. Marks the sting." },
+          { id: "scorpio_sargas", name: "Sargas", bayer: "Theta Scorpii (θ)", ra: 17.62, dec: -43.00, distance: 270.0, color: "#ffe4b5", size: 2.1, magnitude: 1.86, class: "F0 II", rank: "3rd Brightest", desc: "A yellow-white bright giant star, representing the tail of the Scorpion." },
+          { id: "scorpio_dschubba", name: "Dschubba", bayer: "Delta Scorpii (δ)", ra: 15.99, dec: -22.62, distance: 400.0, color: "#c6e2ff", size: 1.9, magnitude: 2.29, class: "B0.3 IV", rank: "4th Brightest", desc: "A blue-white subgiant star in the forehead of the Scorpion." }
+        ],
+        connections: [
+          ["scorpio_antares", "scorpio_dschubba"],
+          ["scorpio_antares", "scorpio_sargas"],
+          ["scorpio_sargas", "scorpio_shaula"]
+        ]
+      },
+      sagittarius: {
+        name: "Sagittarius",
+        stars: [
+          { id: "sagittarius_kaus_australis", name: "Kaus Australis", bayer: "Epsilon Sagittarii (ε)", ra: 18.40, dec: -34.38, distance: 143.0, color: "#c6e2ff", size: 2.3, magnitude: 1.79, class: "B9.5 III", rank: "Brightest in Sagittarius", desc: "A blue-white giant star, the brightest member of Sagittarius. Represents the teapot base." },
+          { id: "sagittarius_nunki", name: "Nunki", bayer: "Sigma Sagittarii (σ)", ra: 18.92, dec: -26.30, distance: 228.0, color: "#b0e0e6", size: 2.1, magnitude: 2.05, class: "B2.5 V", rank: "2nd Brightest", desc: "A blue-white main-sequence star. It is the second brightest star in the constellation." },
+          { id: "sagittarius_ascella", name: "Ascella", bayer: "Zeta Sagittarii (ζ)", ra: 19.04, dec: -29.90, distance: 89.0, color: "#ffffff", size: 1.9, magnitude: 2.60, class: "A2.5 Va", rank: "3rd Brightest", desc: "A binary star system on the arm of the teapot handle." },
+          { id: "sagittarius_kaus_media", name: "Kaus Media", bayer: "Delta Sagittarii (δ)", ra: 18.35, dec: -29.83, distance: 348.0, color: "#ffe4b5", size: 1.8, magnitude: 2.72, class: "K2 III", rank: "4th Brightest", desc: "A double star system containing an orange giant. Represents the middle of the archer's bow." }
+        ],
+        connections: [
+          ["sagittarius_kaus_australis", "sagittarius_kaus_media"],
+          ["sagittarius_kaus_media", "sagittarius_nunki"],
+          ["sagittarius_nunki", "sagittarius_ascella"]
+        ]
+      },
+      capricorn: {
+        name: "Capricornus",
+        stars: [
+          { id: "capricorn_deneb_algedi", name: "Deneb Algedi", bayer: "Delta Capricorni (δ)", ra: 21.78, dec: -16.13, distance: 39.0, color: "#ffffff", size: 2.1, magnitude: 2.85, class: "A7 III", rank: "Brightest in Capricorn", desc: "A giant star system and eclipsing binary, the brightest star in Capricornus." },
+          { id: "capricorn_dabih", name: "Dabih", bayer: "Beta Capricorni (β)", ra: 20.35, dec: -14.78, distance: 328.0, color: "#ffe4b5", size: 1.9, magnitude: 3.05, class: "G8 III", rank: "2nd Brightest", desc: "A multiple star system consisting of a yellow giant and a blue companion." },
+          { id: "capricorn_algedi", name: "Algedi", bayer: "Alpha Capricorni (α)", ra: 20.30, dec: -12.50, distance: 109.0, color: "#ffcc80", size: 1.7, magnitude: 3.60, class: "G3 Ib", rank: "3rd Brightest", desc: "An optical double star system containing yellow giants." }
+        ],
+        connections: [
+          ["capricorn_deneb_algedi", "capricorn_dabih"],
+          ["capricorn_dabih", "capricorn_algedi"]
+        ]
+      },
+      aquarius: {
+        name: "Aquarius",
+        stars: [
+          { id: "aquarius_sadalsuud", name: "Sadalsuud", bayer: "Beta Aquarii (β)", ra: 21.52, dec: -5.57, distance: 540.0, color: "#ffe4b5", size: 2.2, magnitude: 2.90, class: "G0 Ib", rank: "Brightest in Aquarius", desc: "A yellow supergiant star, the brightest star in Aquarius. Sitting 540 light-years away." },
+          { id: "aquarius_sadalmelik", name: "Sadalmelik", bayer: "Alpha Aquarii (α)", ra: 22.09, dec: -0.32, distance: 520.0, color: "#ffe4b5", size: 2.0, magnitude: 2.94, class: "G2 Ib", rank: "2nd Brightest", desc: "A yellow supergiant star, representing the shoulder of the Water Bearer." },
+          { id: "aquarius_skat", name: "Skat", bayer: "Delta Aquarii (δ)", ra: 22.90, dec: -15.82, distance: 160.0, color: "#aaccff", size: 1.8, magnitude: 3.27, class: "A3 V", rank: "3rd Brightest", desc: "A white main-sequence star, located 160 light-years away." }
+        ],
+        connections: [
+          ["aquarius_sadalsuud", "aquarius_sadalmelik"],
+          ["aquarius_sadalmelik", "aquarius_skat"]
+        ]
+      },
+      pisces: {
+        name: "Pisces",
+        stars: [
+          { id: "pisces_alpherg", name: "Alpherg", bayer: "Eta Piscium (η)", ra: 1.52, dec: 15.33, distance: 294.0, color: "#ffe4b5", size: 2.1, magnitude: 3.62, class: "G8 III", rank: "Brightest in Pisces", desc: "A yellow giant star, the brightest star in Pisces." },
+          { id: "pisces_torcular", name: "Torcular", bayer: "Omicron Piscium (o)", ra: 1.75, dec: 9.15, distance: 258.0, color: "#ffcc80", size: 1.7, magnitude: 4.26, class: "K0 III", rank: "2nd Brightest", desc: "An orange giant star, on the cord connecting the two fish." },
+          { id: "pisces_alrescha", name: "Alrescha", bayer: "Alpha Piscium (α)", ra: 2.03, dec: 2.76, distance: 139.0, color: "#ffffff", size: 1.8, magnitude: 3.82, class: "A0p", rank: "3rd Brightest", desc: "A close binary star system, its name means 'the cord' in Arabic." }
+        ],
+        connections: [
+          ["pisces_alpherg", "pisces_torcular"],
+          ["pisces_torcular", "pisces_alrescha"]
+        ]
+      },
+      ursa_major: {
+        name: "Ursa Major (Great Bear)",
+        stars: [
+          { id: "ursa_major_alioth", name: "Alioth", bayer: "Epsilon Ursae Majoris (ε)", ra: 12.90, dec: 55.96, distance: 81.0, color: "#ffffff", size: 2.1, magnitude: 1.76, class: "A1 III-IVp", rank: "Brightest in UMa", desc: "A white star, brightest in Ursa Major. It is a member of the Ursa Major Moving Group and is on the bear's tail." },
+          { id: "ursa_major_dubhe", name: "Dubhe", bayer: "Alpha Ursae Majoris (α)", ra: 11.06, dec: 61.75, distance: 123.0, color: "#ffe4b5", size: 2.3, magnitude: 1.79, class: "K0 III", rank: "2nd Brightest", desc: "An orange giant, second brightest star in Ursa Major. One of the two pointer stars to Polaris." },
+          { id: "ursa_major_merak", name: "Merak", bayer: "Beta Ursae Majoris (β)", ra: 11.03, dec: 56.38, distance: 79.0, color: "#ffffff", size: 2.0, magnitude: 2.34, class: "A1 V", rank: "5th Brightest", desc: "A white main-sequence star. Along with Dubhe, it forms the outer edge of the Big Dipper's bowl pointing to Polaris." },
+          { id: "ursa_major_phecda", name: "Phecda", bayer: "Gamma Ursae Majoris (γ)", ra: 11.89, dec: 53.69, distance: 83.0, color: "#ffffff", size: 1.9, magnitude: 2.41, class: "A0 V", rank: "6th Brightest", desc: "A white main-sequence star forming the bottom-left corner of the Big Dipper's bowl." },
+          { id: "ursa_major_megrez", name: "Megrez", bayer: "Delta Ursae Majoris (δ)", ra: 12.25, dec: 57.03, distance: 81.0, color: "#ffffff", size: 1.6, magnitude: 3.32, class: "A3 V", rank: "7th Brightest", desc: "A white main-sequence star. The dimmest of the seven stars in the Big Dipper, joining bowl and handle." },
+          { id: "ursa_major_mizar", name: "Mizar", bayer: "Zeta Ursae Majoris (ζ)", ra: 13.40, dec: 54.92, distance: 83.0, color: "#ffffff", size: 2.0, magnitude: 2.23, class: "A2 V", rank: "4th Brightest", desc: "A famous quadruple star system, forming the bend in the Big Dipper's handle. Famous for its naked-eye companion Alcor." },
+          { id: "ursa_major_alkaid", name: "Alkaid", bayer: "Eta Ursae Majoris (η)", ra: 13.79, dec: 49.31, distance: 101.0, color: "#c6e2ff", size: 2.2, magnitude: 1.85, class: "B3 V", rank: "3rd Brightest", desc: "A young blue-white main sequence star, marking the tip of the Big Dipper's handle." }
+        ],
+        connections: [
+          ["ursa_major_dubhe", "ursa_major_merak"],
+          ["ursa_major_merak", "ursa_major_phecda"],
+          ["ursa_major_phecda", "ursa_major_megrez"],
+          ["ursa_major_megrez", "ursa_major_dubhe"],
+          ["ursa_major_megrez", "ursa_major_alioth"],
+          ["ursa_major_alioth", "ursa_major_mizar"],
+          ["ursa_major_mizar", "ursa_major_alkaid"]
+        ]
+      },
+      ursa_minor: {
+        name: "Ursa Minor (Little Bear)",
+        stars: [
+          { id: "ursa_minor_polaris", name: "Polaris", bayer: "Alpha Ursae Minoris (α)", ra: 2.53, dec: 89.26, distance: 433.0, color: "#ffe4b5", size: 2.4, magnitude: 1.97, class: "F7 Ib", rank: "North Star (Brightest)", desc: "A yellow supergiant and the current Northern Pole Star. Since it lies almost directly in line with Earth's rotational axis, it remains virtually stationary in our sky." },
+          { id: "ursa_minor_yildun", name: "Yildun", bayer: "Delta Ursae Minoris (δ)", ra: 17.54, dec: 86.59, distance: 183.0, color: "#ffffff", size: 1.5, magnitude: 4.35, class: "A1 V", rank: "Dimmest Handle Star", desc: "A white main-sequence star in the middle of the Little Dipper's handle." },
+          { id: "ursa_minor_kochab", name: "Kochab", bayer: "Beta Ursae Minoris (β)", ra: 14.85, dec: 74.16, distance: 126.0, color: "#ffb380", size: 2.2, magnitude: 2.07, class: "K4 III", rank: "2nd Brightest", desc: "An orange giant star, one of the two bright stars forming the outer bowl of the Little Dipper." },
+          { id: "ursa_minor_pherkad", name: "Pherkad", bayer: "Gamma Ursae Minoris (γ)", ra: 15.35, dec: 71.83, distance: 487.0, color: "#ffffff", size: 1.9, magnitude: 3.00, class: "A3 II-III", rank: "3rd Brightest", desc: "A bright white giant star. Together with Kochab, they form the 'Guardians of the Pole'." }
+        ],
+        connections: [
+          ["ursa_minor_polaris", "ursa_minor_yildun"],
+          ["ursa_minor_yildun", "ursa_minor_kochab"],
+          ["ursa_minor_kochab", "ursa_minor_pherkad"]
+        ]
+      },
+      cassiopeia: {
+        name: "Cassiopeia",
+        stars: [
+          { id: "cassiopeia_caph", name: "Caph", bayer: "Beta Cassiopeiae (β)", ra: 0.15, dec: 59.15, distance: 54.0, color: "#ffffff", size: 2.1, magnitude: 2.28, class: "F2 III", rank: "Beta Cas", desc: "A giant star on the right edge of Cassiopeia's iconic W-shape." },
+          { id: "cassiopeia_schedar", name: "Schedar", bayer: "Alpha Cassiopeiae (α)", ra: 0.68, dec: 56.54, distance: 228.0, color: "#ffb380", size: 2.3, magnitude: 2.24, class: "K0 III", rank: "Brightest in Cas", desc: "An orange giant, brightest star in Cassiopeia, forming the second vertex of the W." },
+          { id: "cassiopeia_tsih", name: "Tsih", bayer: "Gamma Cassiopeiae (γ)", ra: 0.95, dec: 60.72, distance: 610.0, color: "#c6e2ff", size: 2.5, magnitude: 2.15, class: "B0.5 IVe", rank: "Gamma Cas", desc: "A blue-white subgiant and eruptive variable star. Known as the middle vertex of the W. Sits at a deep distance of 610 LY." },
+          { id: "cassiopeia_ruchbah", name: "Ruchbah", bayer: "Delta Cassiopeiae (δ)", ra: 1.43, dec: 60.23, distance: 99.0, color: "#ffffff", size: 1.9, magnitude: 2.68, class: "A5 V", rank: "Delta Cas", desc: "An eclipsing binary star system, the fourth vertex of the W." },
+          { id: "cassiopeia_segin", name: "Segin", bayer: "Epsilon Cassiopeiae (ε)", ra: 1.90, dec: 63.67, distance: 440.0, color: "#b0e0e6", size: 1.7, magnitude: 3.35, class: "B9 III", rank: "Epsilon Cas", desc: "A blue-white giant star, forming the left-most vertex of the W-shape." }
+        ],
+        connections: [
+          ["cassiopeia_caph", "cassiopeia_schedar"],
+          ["cassiopeia_schedar", "cassiopeia_tsih"],
+          ["cassiopeia_tsih", "cassiopeia_ruchbah"],
+          ["cassiopeia_ruchbah", "cassiopeia_segin"]
+        ]
+      },
+      cepheus: {
+        name: "Cepheus (King)",
+        stars: [
+          { id: "cepheus_alderamin", name: "Alderamin", bayer: "Alpha Cephei (α)", ra: 21.31, dec: 62.59, distance: 49.0, color: "#ffffff", size: 2.2, magnitude: 2.45, class: "A7 IV", rank: "Brightest in Cepheus", desc: "A white subgiant star. Due to axial precession, Alderamin will become the northern pole star around 7500 AD." },
+          { id: "cepheus_alfirk", name: "Alfirk", bayer: "Beta Cephei (β)", ra: 21.48, dec: 70.57, distance: 685.0, color: "#c6e2ff", size: 1.9, magnitude: 3.23, class: "B2 III", rank: "Beta Cephei", desc: "A blue giant star and prototype of the Beta Cephei variable stars, located 685 light years away." },
+          { id: "cepheus_errai", name: "Errai", bayer: "Gamma Cephei (γ)", ra: 23.66, dec: 77.63, distance: 45.0, color: "#ffe4b5", size: 1.8, magnitude: 3.21, class: "K1 IV", rank: "Gamma Cephei", desc: "An orange subgiant binary system. It will become the pole star around 3000 AD." }
+        ],
+        connections: [
+          ["cepheus_alderamin", "cepheus_alfirk"],
+          ["cepheus_alfirk", "cepheus_errai"],
+          ["cepheus_errai", "cepheus_alderamin"]
+        ]
+      },
+      draco: {
+        name: "Draco (Dragon)",
+        stars: [
+          { id: "draco_eltanin", name: "Eltanin", bayer: "Gamma Draconis (γ)", ra: 17.94, dec: 51.49, distance: 148.0, color: "#ffb380", size: 2.2, magnitude: 2.24, class: "K5 III", rank: "Brightest in Draco", desc: "An orange giant, brightest star in Draco. Historically used in the discovery of the aberration of light." },
+          { id: "draco_rastaban", name: "Rastaban", bayer: "Beta Draconis (β)", ra: 17.50, dec: 52.30, distance: 360.0, color: "#ffe4b5", size: 2.0, magnitude: 2.79, class: "G2 II", rank: "Beta Dra", desc: "A yellow bright giant star. Marks the eye of the Dragon." },
+          { id: "draco_thuban", name: "Thuban", bayer: "Alpha Draconis (α)", ra: 14.07, dec: 64.37, distance: 309.0, color: "#ffffff", size: 1.8, magnitude: 3.67, class: "A0 III", rank: "Alpha Dra", desc: "A white giant star. Famous for being the northern pole star during the time of the Egyptian pyramids." }
+        ],
+        connections: [
+          ["draco_eltanin", "draco_rastaban"],
+          ["draco_rastaban", "draco_thuban"]
+        ]
+      },
+      centaurus: {
+        name: "Centaurus",
+        stars: [
+          { id: "centaurus_rigil", name: "Rigil Kentaurus", bayer: "Alpha Centauri (α)", ra: 14.66, dec: -60.83, distance: 4.37, color: "#ffe4b5", size: 2.8, magnitude: -0.27, class: "G2 V + K1 V", rank: "Nearest System", desc: "The closest stellar system to Earth, consisting of three stars (including Proxima Centauri). At just 4.37 light years away, it dominates the southern sky." },
+          { id: "centaurus_hadar", name: "Hadar", bayer: "Beta Centauri (β)", ra: 14.06, dec: -60.37, distance: 390.0, color: "#c6e2ff", size: 2.6, magnitude: 0.61, class: "B1 III", rank: "2nd Brightest (Far)", desc: "A blue giant binary star system. Even though it appears right next to Alpha Centauri in the sky, it is 390 light years away—almost 90 times further!" },
+          { id: "centaurus_menkent", name: "Menkent", bayer: "Theta Centauri (θ)", ra: 14.11, dec: -36.37, distance: 59.0, color: "#ffb380", size: 2.1, magnitude: 2.06, class: "K0 III", rank: "3rd Brightest", desc: "An orange giant star, forming the head of the Centaur. Located 59 light-years from Earth." }
+        ],
+        connections: [
+          ["centaurus_rigil", "centaurus_hadar"],
+          ["centaurus_hadar", "centaurus_menkent"]
+        ]
+      },
+      canis_major: {
+        name: "Canis Major (Great Dog)",
+        stars: [
+          { id: "canis_major_sirius", name: "Sirius", bayer: "Alpha Canis Majoris (α)", ra: 6.75, dec: -16.72, distance: 8.6, color: "#ffffff", size: 2.9, magnitude: -1.46, class: "A1 V", rank: "Brightest in Sky", desc: "The 'Dog Star', brightest star in the entire night sky. Sits only 8.6 light-years away, making it our immediate neighbor." },
+          { id: "canis_major_mirzam", name: "Mirzam", bayer: "Beta Canis Majoris (β)", ra: 6.38, dec: -17.96, distance: 500.0, color: "#c6e2ff", size: 2.0, magnitude: 1.98, class: "B1 II-III", rank: "Canis Major Hip", desc: "A blue-white giant star. Its name means 'The Herald', as it rises just before Sirius." },
+          { id: "canis_major_wezen", name: "Wezen", bayer: "Delta Canis Majoris (δ)", ra: 7.14, dec: -26.32, distance: 1800.0, color: "#ffe4b5", size: 2.3, magnitude: 1.83, class: "F8 Ia", rank: "Yellow Supergiant", desc: "An enormous yellow supergiant star. Though it looks dimmer than Sirius, it is actually 1,800 light-years away. It is physically thousands of times larger and brighter than Sirius." },
+          { id: "canis_major_adhara", name: "Adhara", bayer: "Epsilon Canis Majoris (ε)", ra: 6.98, dec: -28.97, distance: 405.0, color: "#c6e2ff", size: 2.2, magnitude: 1.50, class: "B2 II", rank: "2nd Brightest", desc: "A bright blue giant star. It is a powerful source of extreme ultraviolet radiation." }
+        ],
+        connections: [
+          ["canis_major_sirius", "canis_major_mirzam"],
+          ["canis_major_sirius", "canis_major_wezen"],
+          ["canis_major_wezen", "canis_major_adhara"]
+        ]
+      },
+      carina: {
+        name: "Carina (Keel)",
+        stars: [
+          { id: "carina_canopus", name: "Canopus", bayer: "Alpha Carinae (α)", ra: 6.40, dec: -52.70, distance: 310.0, color: "#ffffff", size: 2.8, magnitude: -0.74, class: "A9 II", rank: "2nd Brightest in Sky", desc: "A white giant star, second brightest star in the night sky. Used as a key navigational guide for spacecraft." },
+          { id: "carina_miaplacidus", name: "Miaplacidus", bayer: "Beta Carinae (β)", ra: 9.22, dec: -69.72, distance: 113.0, color: "#aaccff", size: 2.2, magnitude: 1.67, class: "A1 III", rank: "2nd Brightest in Carina", desc: "A bright white giant star, forming the 'Placid Waters' of the Keel." },
+          { id: "carina_avior", name: "Avior", bayer: "Epsilon Carinae (ε)", ra: 8.37, dec: -59.51, distance: 630.0, color: "#ff8c42", size: 2.1, magnitude: 1.86, class: "K3 III + B2 V", rank: "Binary Giant", desc: "A spectroscopic binary system containing an orange giant and a blue companion." },
+          { id: "carina_aspidiske", name: "Aspidiske", bayer: "Iota Carinae (ι)", ra: 9.28, dec: -59.27, distance: 690.0, color: "#ffffff", size: 1.9, magnitude: 2.21, class: "A9 Ib", desc: "A white supergiant star, located 690 light-years away." }
+        ],
+        connections: [
+          ["carina_canopus", "carina_avior"],
+          ["carina_avior", "carina_aspidiske"],
+          ["carina_aspidiske", "carina_miaplacidus"],
+          ["carina_miaplacidus", "carina_canopus"]
+        ]
+      },
+      orion: {
+        name: "Orion",
+        stars: [
+          { id: "orion_betelgeuse", name: "Betelgeuse", bayer: "Alpha Orionis (α)", ra: 5.92, dec: 7.41, distance: 640.0, color: "#ff5533", size: 2.8, magnitude: 0.50, class: "M1-M2 Ia-ab", rank: "Red Supergiant (Right Shoulder)", desc: "A massive semiregular variable red supergiant star. If placed at the center of our solar system, its surface would extend past the orbit of Jupiter." },
+          { id: "orion_rigel", name: "Rigel", bayer: "Beta Orionis (β)", ra: 5.25, dec: -8.20, distance: 860.0, color: "#c6e2ff", size: 2.8, magnitude: 0.13, class: "B8 Ia", rank: "Brightest in Orion (Left Foot)", desc: "A luminous blue supergiant system. It is the seventh-brightest star in the sky and is physically extremely hot and energetic." },
+          { id: "orion_bellatrix", name: "Bellatrix", bayer: "Gamma Orionis (γ)", ra: 5.42, dec: 6.35, distance: 240.0, color: "#aaccff", size: 2.1, magnitude: 1.64, class: "B2 III", rank: "Left Shoulder", desc: "A blue giant star, the third-brightest member of Orion. Represents the Amazon star." },
+          { id: "orion_alnilam", name: "Alnilam", bayer: "Epsilon Orionis (ε)", ra: 5.60, dec: -1.20, distance: 1300.0, color: "#c6e2ff", size: 2.2, magnitude: 1.69, class: "B0 Ia", rank: "Center Belt Star", desc: "A highly luminous blue supergiant. It is the central star of Orion's Belt, located 1,300 light-years away." },
+          { id: "orion_alnitak", name: "Alnitak", bayer: "Zeta Orionis (ζ)", ra: 5.68, dec: -1.94, distance: 700.0, color: "#c6e2ff", size: 2.1, magnitude: 1.74, class: "O9.7 Ib", rank: "East Belt Star", desc: "A triple star system at the east edge of Orion's Belt. The primary star is a hot blue supergiant." },
+          { id: "orion_mintaka", name: "Mintaka", bayer: "Delta Orionis (δ)", ra: 5.53, dec: -0.30, distance: 900.0, color: "#c6e2ff", size: 2.0, magnitude: 2.23, class: "O9.5 II", rank: "West Belt Star", desc: "A multiple star system at the west edge of Orion's Belt, lying very close to the celestial equator." },
+          { id: "orion_saiph", name: "Saiph", bayer: "Kappa Orionis (κ)", ra: 5.79, dec: -9.67, distance: 720.0, color: "#c6e2ff", size: 1.9, magnitude: 2.07, class: "B0.5 Ia", rank: "Right Foot", desc: "A blue supergiant star on the southeastern corner of Orion." }
+        ],
+        connections: [
+          ["orion_betelgeuse", "orion_bellatrix"],
+          ["orion_bellatrix", "orion_mintaka"],
+          ["orion_mintaka", "orion_alnilam"],
+          ["orion_alnilam", "orion_alnitak"],
+          ["orion_alnitak", "orion_saiph"],
+          ["orion_saiph", "orion_rigel"],
+          ["orion_rigel", "orion_mintaka"],
+          ["orion_betelgeuse", "orion_alnitak"]
+        ]
+      }
+    };
+
+    // --- Global Application Variables ---
+    let scene, camera, renderer, controls;
+    let starGroupsMap = {}; // starId -> starGroup
+    let backgroundStars;
+    let constellationLinesMap = {}; // constId -> lineSegmentsArray
+    let projectionRays = [];
+    let earthMesh;
+    let depthRulerGroup;
+    let selectedStarId = null;
+    let selectedStarGroup = null;
+    let selectionRing;
+    let autoOrbitActive = false;
+    let audioCtx = null;
+    let playSoundOnLock = true;
+    let isAligned = false;
+    let isTransitioning = false;
+
+    let activeConstellationId = "crux";
+    const D_ref = 15; // Calibration reference distance for 2D angle scaling
+    const D_flat = 250; // The target plane where stars are flattened
+
+    // Initialize the WebGL Application
+    function init() {
+      const container = document.getElementById('webgl-container');
+      
+      // Scene
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(varColor('--bg-dark'), 0.0012);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2500);
+      
+      // Set initial camera view offset towards active constellation (Crux)
+      const centerDir = getConstellationCenterDir(activeConstellationId);
+      const initialCamPos = centerDir.clone().multiplyScalar(150).add(new THREE.Vector3(120, 80, 100));
+      camera.position.copy(initialCamPos);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setClearColor(scene.fog.color);
+      container.appendChild(renderer.domElement);
+
+      // Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxDistance = 1200;
+      controls.minDistance = 2;
+      controls.target.copy(centerDir.clone().multiplyScalar(D_flat)); // Center orbit around constellation depths
+      
+      // Disable orbit controls when user drags over the floating UI panel
+      document.querySelectorAll('.panel').forEach(p => {
+        p.addEventListener('pointerdown', (e) => e.stopPropagation());
+      });
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+      scene.add(ambientLight);
+      
+      const dirLight = new THREE.DirectionalLight(0x00f3ff, 0.4);
+      dirLight.position.set(0, 50, 100);
+      scene.add(dirLight);
+
+      // Build objects
+      createBackgroundStars();
+      createEarthMesh();
+      
+      depthRulerGroup = new THREE.Group();
+      scene.add(depthRulerGroup);
+      
+      createSelectionRing();
+      
+      // Create all stars & connection lines across all 22 constellations
+      createAllConstellationStars();
+      createAllConstellationLines();
+      
+      // Setup initial projection rays
+      rebuildProjectionRays();
+
+      // Trigger UI and geometry calculations
+      buildStarSelectorUI();
+      updateStarPositions();
+      updateDepthRuler();
+      setupEventListeners();
+      
+      // Initialize focus opacity states across constellations
+      animateFocusOpacity();
+      
+      // Kickstart render loop
+      animate();
+    }
+
+    // Retrieve computed CSS variables
+    function varColor(varName) {
+      const col = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return new THREE.Color(col);
+    }
+
+    // Helper: Convert Right Ascension & Declination to 3D Cartesian Coordinate
+    function convertCelestialToCartesian(raHours, decDegrees, distanceLy) {
+      // RA maps to angle theta around Y axis (RA 0-24h -> 0-360 degrees)
+      const theta = (raHours * 15) * Math.PI / 180;
+      // Declination maps to angle phi relative to XZ plane
+      const phi = decDegrees * Math.PI / 180;
+      
+      const x = distanceLy * Math.cos(phi) * Math.cos(theta);
+      const z = distanceLy * Math.cos(phi) * Math.sin(theta);
+      const y = distanceLy * Math.sin(phi);
+      
+      return new THREE.Vector3(x, y, z);
+    }
+
+    // Helper: Compute average direction vector of a constellation
+    function getConstellationCenterDir(constId) {
+      const constData = constellationsData[constId];
+      const sumVec = new THREE.Vector3();
+      
+      constData.stars.forEach(star => {
+        const pos = convertCelestialToCartesian(star.ra, star.dec, star.distance);
+        sumVec.add(pos);
+      });
+      
+      return sumVec.normalize();
+    }
+
+    // Helper: Create radial gradient textures programmatically
+    function createStarTexture(colorHex) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      
+      const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.12, '#ffffff');
+      grad.addColorStop(0.3, colorHex);
+      grad.addColorStop(0.65, colorHex + '22'); // Translucent halo
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 128);
+      
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    // Helper: Create Text Sprites for labels and distance ticks
+    function createTextSprite(text, colorStr = "#ffffff", isLarge = false) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+      ctx.fillRect(0, 0, 256, 64);
+      
+      ctx.font = isLarge ? 'bold 24px "Orbitron", monospace' : '20px "Orbitron", "Inter", sans-serif';
+      ctx.fillStyle = colorStr;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      // Support multi-line texts split by newline
+      const lines = text.split('\n');
+      if (lines.length === 1) {
+        ctx.fillText(text, 128, 32);
+      } else {
+        ctx.fillText(lines[0], 128, 20);
+        ctx.font = '14px "Inter", sans-serif';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(lines[1], 128, 44);
+      }
+      
+      const texture = new THREE.CanvasTexture(canvas);
+      const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.set(isLarge ? 12 : 8, isLarge ? 3 : 2, 1);
+      return sprite;
+    }
+
+    // Create Earth representation at (0, 0, 0)
+    function createEarthMesh() {
+      const earthGroup = new THREE.Group();
+      
+      // Wireframe core
+      const innerGeo = new THREE.SphereGeometry(3.5, 16, 16);
+      const innerMat = new THREE.MeshBasicMaterial({
+        color: 0x00f3ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.5
+      });
+      const inner = new THREE.Mesh(innerGeo, innerMat);
+      earthGroup.add(inner);
+
+      // Outer rings representation
+      const ringGeo = new THREE.RingGeometry(5, 5.2, 32);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x00f3ff,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.3
+      });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      earthGroup.add(ring);
+      
+      // Label floating directly over earth
+      const label = createTextSprite("EARTH", "#00f3ff", true);
+      label.position.set(0, 7.5, 0);
+      earthGroup.add(label);
+
+      earthMesh = earthGroup;
+      scene.add(earthMesh);
+    }
+
+    // Create selection visual ring
+    function createSelectionRing() {
+      const ringGeo = new THREE.RingGeometry(3.5, 3.8, 32);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x00f3ff,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.8
+      });
+      selectionRing = new THREE.Mesh(ringGeo, ringMat);
+      selectionRing.visible = false;
+      scene.add(selectionRing);
+    }
+
+    // Create deep-space background particles
+    function createBackgroundStars() {
+      const starsGeom = new THREE.BufferGeometry();
+      const starsCount = 5000;
+      const positions = new Float32Array(starsCount * 3);
+      const colors = new Float32Array(starsCount * 3);
+      
+      for (let i = 0; i < starsCount; i++) {
+        // Spherical distribution
+        const u = Math.random();
+        const v = Math.random();
+        const theta = u * 2.0 * Math.PI;
+        const phi = Math.acos(2.0 * v - 1.0);
+        const r = 400 + Math.random() * 1000; // Keep the core zone uncluttered
+        
+        positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
+        positions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+        positions[i*3+2] = r * Math.cos(phi);
+        
+        // Colors ranging from cold blue-white to warm orange
+        const rand = Math.random();
+        if (rand < 0.6) {
+          colors[i*3] = 0.85; colors[i*3+1] = 0.9; colors[i*3+2] = 1.0;
+        } else if (rand < 0.85) {
+          colors[i*3] = 0.5; colors[i*3+1] = 0.8; colors[i*3+2] = 1.0;
+        } else {
+          colors[i*3] = 1.0; colors[i*3+1] = 0.75; colors[i*3+2] = 0.5;
+        }
+      }
+      
+      starsGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      starsGeom.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+      // Circular soft star particle texture
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 16;
+      pCanvas.height = 16;
+      const pCtx = pCanvas.getContext('2d');
+      const pGrad = pCtx.createRadialGradient(8, 8, 0, 8, 8, 8);
+      pGrad.addColorStop(0, 'rgba(255,255,255,1)');
+      pGrad.addColorStop(0.3, 'rgba(255,255,255,0.8)');
+      pGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      pCtx.fillStyle = pGrad;
+      pCtx.fillRect(0,0,16,16);
+      const starTex = new THREE.CanvasTexture(pCanvas);
+      
+      const starsMat = new THREE.PointsMaterial({
+        size: 1.5,
+        map: starTex,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.5,
+        depthWrite: false
+      });
+      
+      backgroundStars = new THREE.Points(starsGeom, starsMat);
+      scene.add(backgroundStars);
+    }
+
+    // Create 3D target distance ruler snaps to active constellation center
+    function updateDepthRuler() {
+      // Clear old elements
+      while (depthRulerGroup.children.length > 0) {
+        depthRulerGroup.remove(depthRulerGroup.children[0]);
+      }
+
+      const showRuler = document.getElementById('showGridCheckbox').checked;
+      if (!showRuler) return;
+
+      const centerDir = getConstellationCenterDir(activeConstellationId);
+      const constData = constellationsData[activeConstellationId];
+      const maxDistance = Math.max(...constData.stars.map(s => s.distance));
+      const rulerLength = maxDistance + 50;
+
+      // Draw Main axis line from Earth outwards
+      const points = [
+        new THREE.Vector3(0, 0, 0),
+        centerDir.clone().multiplyScalar(rulerLength)
+      ];
+      const axisGeo = new THREE.BufferGeometry().setFromPoints(points);
+      const axisMat = new THREE.LineBasicMaterial({
+        color: 0x00f3ff,
+        transparent: true,
+        opacity: 0.25
+      });
+      const axisLine = new THREE.Line(axisGeo, axisMat);
+      depthRulerGroup.add(axisLine);
+
+      // Add circular tick marks and distance text along line
+      for (let d = 50; d <= rulerLength; d += 50) {
+        const tickPos = centerDir.clone().multiplyScalar(d);
+        
+        // Circular crosshair tick
+        const tickGeo = new THREE.RingGeometry(1.6, 1.8, 16);
+        const tickMat = new THREE.MeshBasicMaterial({
+          color: 0x00f3ff,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.15
+        });
+        const tickMesh = new THREE.Mesh(tickGeo, tickMat);
+        tickMesh.position.copy(tickPos);
+        tickMesh.lookAt(0, 0, 0); // Always face earth coordinates
+        depthRulerGroup.add(tickMesh);
+
+        // Distance text label offset slightly
+        const label = createTextSprite(`${d} LY`, "rgba(0, 243, 255, 0.4)");
+        // Get perpendicular vector to offset text
+        const perp = new THREE.Vector3(0, 1, 0).cross(centerDir).normalize();
+        if (perp.length() === 0) perp.copy(new THREE.Vector3(1, 0, 0).cross(centerDir).normalize());
+        
+        label.position.copy(tickPos).add(perp.multiplyScalar(7.0));
+        depthRulerGroup.add(label);
+      }
+    }
+
+    // Build the primary stars of all constellations
+    function createAllConstellationStars() {
+      for (const constId in constellationsData) {
+        const constData = constellationsData[constId];
+        
+        constData.stars.forEach(star => {
+          const starGroup = new THREE.Group();
+          starGroup.name = star.id;
+
+          // Core star geometry (solid bright white sphere)
+          const coreGeo = new THREE.SphereGeometry(star.size * 0.35, 16, 16);
+          const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+          const core = new THREE.Mesh(coreGeo, coreMat);
+          starGroup.add(core);
+
+          // Corona / Flare Sprite
+          const glowTex = createStarTexture(star.color);
+          const spriteMat = new THREE.SpriteMaterial({
+            map: glowTex,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+          });
+          const sprite = new THREE.Sprite(spriteMat);
+          sprite.scale.set(star.size * 5.0, star.size * 5.0, 1.0);
+          starGroup.add(sprite);
+
+          // Text tag floating over star
+          const starTag = createTextSprite(`${star.name}\n${star.distance} LY`, star.color);
+          starTag.position.set(0, star.size * 2.0 + 3.0, 0);
+          starTag.name = "tag";
+          starGroup.add(starTag);
+
+          // Interactive Click Target (Invisible but raycastable)
+          const hitGeo = new THREE.SphereGeometry(star.size * 2.8, 8, 8);
+          const hitMat = new THREE.MeshBasicMaterial({
+            visible: false // Transparent
+          });
+          const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+          hitMesh.userData = { starId: star.id };
+          starGroup.add(hitMesh);
+
+          scene.add(starGroup);
+          starGroupsMap[star.id] = starGroup;
+        });
+      }
+    }
+
+    // Draw connection lines for all constellations
+    function createAllConstellationLines() {
+      const lineMat = new THREE.LineBasicMaterial({
+        color: 0x555566,
+        transparent: true,
+        opacity: 0.15,
+        linewidth: 1.5
+      });
+
+      for (const constId in constellationsData) {
+        const constData = constellationsData[constId];
+        const linesArray = [];
+
+        constData.connections.forEach(() => {
+          const lineGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+          const lineCopy = lineMat.clone();
+          const line = new THREE.Line(lineGeo, lineCopy);
+          scene.add(line);
+          linesArray.push(line);
+        });
+
+        constellationLinesMap[constId] = linesArray;
+      }
+    }
+
+    // Setup or rebuild the projection rays for the active constellation
+    function rebuildProjectionRays() {
+      // Clear old rays
+      projectionRays.forEach(ray => scene.remove(ray));
+      projectionRays = [];
+
+      const showRays = document.getElementById('showRaysCheckbox').checked;
+      if (!showRays) return;
+
+      const constData = constellationsData[activeConstellationId];
+      const rayMat = new THREE.LineDashedMaterial({
+        color: 0x00f3ff,
+        dashSize: 3.5,
+        gapSize: 2.0,
+        transparent: true,
+        opacity: 0.3
+      });
+
+      constData.stars.forEach(() => {
+        const rayGeo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3()
+        ]);
+        const ray = new THREE.Line(rayGeo, rayMat);
+        scene.add(ray);
+        projectionRays.push(ray);
+      });
+
+      updateActiveProjectionRays();
+    }
+
+    // Dynamic updates of positions based on morph sliders
+    function updateStarPositions() {
+      const t = parseFloat(document.getElementById('morphSlider').value);
+      const s = parseFloat(document.getElementById('depthSlider').value);
+      
+      // Update UI values
+      document.getElementById('morphValue').innerText = 
+        t === 0 ? `3D Space (0.00)` : t === 1 ? `Flat 2D Plane (1.00)` : `Morphing (${t.toFixed(2)})`;
+      document.getElementById('depthValue').innerText = `${s.toFixed(2)}x`;
+
+      const activeConstDir = getConstellationCenterDir(activeConstellationId);
+
+      for (const constId in constellationsData) {
+        const constData = constellationsData[constId];
+        const isActive = constId === activeConstellationId;
+
+        constData.stars.forEach(star => {
+          const group = starGroupsMap[star.id];
+          const posTrue = convertCelestialToCartesian(star.ra, star.dec, star.distance);
+          
+          // Toggle labels: All constellations show labels if enabled, but non-active ones are faded
+          const tag = group.getObjectByName("tag");
+          if (tag) {
+            tag.visible = document.getElementById('showGridCheckbox').checked;
+          }
+
+          if (isActive) {
+            // Morph the active constellation stars to slide along their projection line to the plane
+            const dir = posTrue.clone().normalize();
+            
+            // Intersection factor of star direction ray with plane perpendicular to activeConstDir at distance D_flat
+            const dotVal = dir.dot(activeConstDir);
+            const D_flat_i = D_flat / Math.max(0.1, dotVal);
+            
+            const currentDist = (1 - t) * star.distance * s + t * D_flat_i;
+            const morphedPos = dir.multiplyScalar(currentDist);
+            group.position.copy(morphedPos);
+          } else {
+            // Other stars stay in their true 3D directions, scaled by the depth slider
+            const morphedPos = posTrue.clone().normalize().multiplyScalar(star.distance * s);
+            group.position.copy(morphedPos);
+          }
+        });
+      }
+
+      // Reconnect lines and projection rays
+      updateAllConstellationLines();
+      updateActiveProjectionRays();
+    }
+
+    // Update lines for all constellations
+    function updateAllConstellationLines() {
+      for (const constId in constellationsData) {
+        const constData = constellationsData[constId];
+        const lines = constellationLinesMap[constId];
+        const isActive = constId === activeConstellationId;
+
+        constData.connections.forEach((conn, idx) => {
+          const line = lines[idx];
+          if (!line) return;
+
+          const posA = starGroupsMap[conn[0]].position;
+          const posB = starGroupsMap[conn[1]].position;
+          
+          const arr = line.geometry.attributes.position.array;
+          arr[0] = posA.x; arr[1] = posA.y; arr[2] = posA.z;
+          arr[3] = posB.x; arr[4] = posB.y; arr[5] = posB.z;
+          line.geometry.attributes.position.needsUpdate = true;
+
+          // Style active constellation lines brightly, dim down background ones on position updates
+          if (isActive) {
+            line.material.color.setHex(isAligned ? 0x00f3ff : 0x00aacc);
+          } else {
+            line.material.color.setHex(0x555566);
+          }
+        });
+      }
+    }
+
+    // Update the active projection rays
+    function updateActiveProjectionRays() {
+      if (projectionRays.length === 0) return;
+      const constData = constellationsData[activeConstellationId];
+
+      constData.stars.forEach((star, idx) => {
+        const group = starGroupsMap[star.id];
+        const ray = projectionRays[idx];
+        if (!ray) return;
+
+        const arr = ray.geometry.attributes.position.array;
+        arr[3] = group.position.x;
+        arr[4] = group.position.y;
+        arr[5] = group.position.z;
+        ray.geometry.attributes.position.needsUpdate = true;
+        ray.computeLineDistances();
+      });
+    }
+
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Rotate background stars slowly for cosmic motion
+      if (backgroundStars) {
+        backgroundStars.rotation.y += 0.00006;
+        backgroundStars.rotation.x += 0.00002;
+      }
+
+      // Spin the wireframe Earth structure slightly
+      if (earthMesh) {
+        earthMesh.children[0].rotation.y += 0.003;
+        earthMesh.children[1].rotation.y -= 0.001;
+        
+        // Dynamic Earth Opacity & Visibility: Hide Earth entirely when camera is inside its radius
+        const camDistance = camera.position.length();
+        if (camDistance < 12.0) {
+          earthMesh.visible = false;
+        } else {
+          earthMesh.visible = true;
+          const opacityTarget = Math.max(0, Math.min(0.7, (camDistance - 12.0) / 45.0));
+          earthMesh.children[0].material.opacity = opacityTarget;
+          earthMesh.children[1].material.opacity = opacityTarget * 0.6;
+        }
+      }
+
+      // Handle Auto-Orbit animation
+      if (autoOrbitActive) {
+        const time = performance.now() * 0.00015;
+        const centerDir = getConstellationCenterDir(activeConstellationId);
+        const constCenter = centerDir.clone().multiplyScalar(D_flat);
+        const orbitRadius = 260;
+
+        // Perform circular orbit along orthonormal plane perpendicular to active center vector
+        let u = new THREE.Vector3(0, 1, 0).cross(centerDir).normalize();
+        if (u.length() === 0) u.copy(new THREE.Vector3(1, 0, 0).cross(centerDir).normalize());
+        const v = centerDir.clone().cross(u).normalize();
+
+        const xOffset = u.multiplyScalar(Math.sin(time) * orbitRadius);
+        const yOffset = v.multiplyScalar(Math.cos(time) * orbitRadius);
+        const zOffset = centerDir.clone().multiplyScalar(Math.sin(time * 0.5) * 80);
+
+        camera.position.copy(constCenter).add(xOffset).add(yOffset).add(zOffset);
+        controls.target.copy(constCenter);
+        camera.lookAt(constCenter);
+      }
+
+      // Orbit controls damping update
+      if (!isTransitioning) {
+        controls.update();
+      }
+
+      // Dynamic star sprite scaling and active halo pulsation in render loop
+      const activeConstData = constellationsData[activeConstellationId];
+      const activeStarIds = new Set(activeConstData ? activeConstData.stars.map(s => s.id) : []);
+      const activeHaloPulse = 1.0 + Math.sin(performance.now() * 0.005) * 0.15;
+
+      for (const starId in starGroupsMap) {
+        const group = starGroupsMap[starId];
+        const star = getStarDataById(starId);
+        if (star) {
+          const distToCam = camera.position.distanceTo(group.position);
+          // Scale entire group to prevent large core spheres or sprites from blinding the camera.
+          // By making the scale proportional to distance, the star maintains a constant screen size when close.
+          const scaleFactor = Math.min(1.0, distToCam * 0.0008);
+          group.scale.setScalar(scaleFactor);
+
+          const halo = group.children[1]; // Glow sprite/halo
+          if (halo) {
+            if (activeStarIds.has(starId)) {
+              // Pulsate active constellation stars' halo scale
+              const baseGlowSize = star.size * 5.0;
+              halo.scale.set(baseGlowSize * activeHaloPulse, baseGlowSize * activeHaloPulse, 1.0);
+            } else {
+              // Keep background stars' halo scale static
+              halo.scale.set(star.size * 5.0, star.size * 5.0, 1.0);
+            }
+          }
+        }
+      }
+
+      // Perform real-time perspective alignment calculation
+      checkAlignment();
+
+      // Smoothly billboard selection ring towards camera and scale pulse
+      if (selectionRing && selectionRing.visible && selectedStarGroup) {
+        selectionRing.position.copy(selectedStarGroup.position);
+        selectionRing.lookAt(camera.position);
+        
+        const pulse = 1.0 + Math.sin(performance.now() * 0.006) * 0.08;
+        selectionRing.scale.setScalar(pulse);
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // Calculate how aligned the camera is with target's line of sight
+    function checkAlignment() {
+      const centerDir = getConstellationCenterDir(activeConstellationId);
+      
+      const camPos = camera.position;
+      const dist = camPos.length();
+      
+      const lookDir = new THREE.Vector3();
+      camera.getWorldDirection(lookDir);
+      
+      // Align check: Camera must look along the centerDir vector
+      const alignmentDot = lookDir.dot(centerDir);
+      
+      const nearOrigin = dist < 4.0;
+      const facingCorrect = alignmentDot > 0.999;
+      
+      const hud = document.getElementById('hudTelemetry');
+      const text = document.getElementById('alignmentStatus');
+      const reticle = document.getElementById('hudReticle');
+      const label = document.getElementById('reticleIndicator');
+
+      if (nearOrigin && facingCorrect) {
+        hud.classList.add('aligned');
+        text.innerText = "ALIGNMENT: LOCKED (EARTH PERSPECTIVE)";
+        reticle.classList.add('aligned');
+        label.innerText = "ALIGNMENT MATCH: 100%";
+        
+        // Highlight active constellation lines
+        constellationLinesMap[activeConstellationId].forEach(line => line.material.color.setHex(0x00f3ff));
+        
+        // Play lock chime once on alignment trigger
+        if (!isAligned) {
+          isAligned = true;
+          if (playSoundOnLock) playAlignmentChime();
+        }
+      } else {
+        isAligned = false;
+        hud.classList.remove('aligned');
+
+        // Alignment approximation metric
+        let directionScore = Math.max(0, (alignmentDot - 0.85) / 0.15) * 100;
+        if (alignmentDot < 0.85) directionScore = 0;
+        
+        let distanceScore = Math.max(0, (140 - dist) / 140) * 100;
+        
+        const alignmentScore = Math.round((directionScore * 0.65) + (distanceScore * 0.35));
+        
+        text.innerText = `ALIGNMENT: ${alignmentScore}%`;
+        reticle.classList.remove('aligned');
+        label.innerText = alignmentScore > 80 ? "ALIGNING VECTORS..." : "TARGETING LOCKING...";
+
+        // Reset active constellation lines to default active blue color when not aligned
+        if (constellationLinesMap[activeConstellationId]) {
+          constellationLinesMap[activeConstellationId].forEach(line => line.material.color.setHex(0x00aacc));
+        }
+      }
+    }
+
+    // Synth retro chime using Web Audio API
+    function playAlignmentChime() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const osc1 = audioCtx.createOscillator();
+        const osc2 = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc1.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.18); // Slide to C6
+
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+        osc2.frequency.exponentialRampToValueAtTime(1318.51, audioCtx.currentTime + 0.18); // Slide to E6
+
+        gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        osc1.start();
+        osc2.start();
+        osc1.stop(audioCtx.currentTime + 0.4);
+        osc2.stop(audioCtx.currentTime + 0.4);
+      } catch (err) {
+        console.warn("Audio chime failed to initialize", err);
+      }
+    }
+
+    // Build the interactive sidebar list elements
+    function buildStarSelectorUI() {
+      const listContainer = document.getElementById('starSelectorList');
+      listContainer.innerHTML = '';
+
+      const constData = constellationsData[activeConstellationId];
+      
+      // Update sidebar star list title
+      document.getElementById('starListTitle').innerText = `Stars of ${constData.name}`;
+
+      constData.stars.forEach(star => {
+        const item = document.createElement('div');
+        item.className = 'star-item';
+        item.dataset.starId = star.id;
+        
+        item.innerHTML = `
+          <div class="star-item-label" style="color: ${star.color}">${star.name}</div>
+          <div class="star-item-dist">${star.distance} LY</div>
+        `;
+        
+        item.addEventListener('click', () => selectStar(star.id));
+        listContainer.appendChild(item);
+      });
+    }
+
+    // Perform smooth camera interpolation to target viewpoint using GSAP
+    function transitionCamera(targetPos, targetLookAt, duration = 2.2) {
+      controls.enabled = false;
+      isTransitioning = true;
+      autoOrbitActive = false;
+      document.getElementById('autoOrbitCheckbox').checked = false;
+
+      // Animate Camera Position
+      gsap.to(camera.position, {
+        x: targetPos.x,
+        y: targetPos.y,
+        z: targetPos.z,
+        duration: duration,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          camera.lookAt(targetLookAt);
+        }
+      });
+
+      // Animate Orbit Target
+      gsap.to(controls.target, {
+        x: targetLookAt.x,
+        y: targetLookAt.y,
+        z: targetLookAt.z,
+        duration: duration,
+        ease: "power2.inOut",
+        onComplete: () => {
+          isTransitioning = false;
+          controls.update();
+          controls.enabled = true;
+        }
+      });
+    }
+
+    // Select star and display metadata panel
+    function selectStar(starId) {
+      selectedStarId = starId;
+      
+      // Look up star in dataset
+      let star = null;
+      for (const constId in constellationsData) {
+        const s = constellationsData[constId].stars.find(st => st.id === starId);
+        if (s) {
+          star = s;
+          break;
+        }
+      }
+
+      selectedStarGroup = starGroupsMap[starId];
+
+      // Highlight active sidebar item
+      document.querySelectorAll('.star-item').forEach(item => {
+        if (item.dataset.starId === starId) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // Populate info card
+      document.getElementById('cardStarName').innerText = star.name;
+      document.getElementById('cardStarBayer').innerText = star.bayer;
+      document.getElementById('cardStarBayer').style.color = star.color;
+      document.getElementById('cardStarDistance').innerText = `${star.distance} LY`;
+      document.getElementById('cardStarMag').innerText = star.magnitude.toFixed(2);
+      document.getElementById('cardStarClass').innerText = star.class;
+      document.getElementById('cardStarRank').innerText = star.rank;
+      document.getElementById('cardStarDesc').innerText = star.desc;
+      
+      document.getElementById('starCard').classList.add('active');
+
+      // Show selection ring on 3D element
+      selectionRing.visible = true;
+
+      // Smoothly look at the selected star
+      const targetFocus = selectedStarGroup.position.clone();
+      
+      // Position camera slightly offset from the target for look angle
+      const centerDir = getConstellationCenterDir(activeConstellationId);
+      const offset = new THREE.Vector3(25, 15, 30);
+      const targetCamPos = targetFocus.clone().add(offset);
+      
+      transitionCamera(targetCamPos, targetFocus, 1.8);
+    }
+
+    function deselectStar() {
+      selectedStarId = null;
+      selectedStarGroup = null;
+      selectionRing.visible = false;
+      document.getElementById('starCard').classList.remove('active');
+      document.querySelectorAll('.star-item').forEach(item => item.classList.remove('active'));
+    }
+
+    // Trigger when active constellation selection dropdown is modified
+    function handleConstellationChange(performZoomFocus = true) {
+      activeConstellationId = document.getElementById('constellationSelect').value;
+
+      // Rebuild components based on new target
+      rebuildProjectionRays();
+      buildStarSelectorUI();
+      updateStarPositions();
+      updateDepthRuler();
+      deselectStar();
+      
+      // Animate transition of opacities
+      animateFocusOpacity();
+
+      if (performZoomFocus) {
+        // Transition camera smoothly to target new constellation
+        const centerDir = getConstellationCenterDir(activeConstellationId);
+        const offset = new THREE.Vector3(120, 80, 100);
+        const targetCamPos = centerDir.clone().multiplyScalar(150).add(offset);
+        const lookTarget = centerDir.clone().multiplyScalar(D_flat);
+
+        transitionCamera(targetCamPos, lookTarget, 2.0);
+      }
+    }
+
+    // Set up standard interaction event bindings
+    function setupEventListeners() {
+      // Constellation Select dropdown
+      document.getElementById('constellationSelect').addEventListener('change', () => handleConstellationChange(true));
+
+      // Sliders
+      document.getElementById('morphSlider').addEventListener('input', updateStarPositions);
+      document.getElementById('depthSlider').addEventListener('input', updateStarPositions);
+      document.getElementById('bgOpacitySlider').addEventListener('input', animateFocusOpacity);
+
+      // Buttons
+      document.getElementById('alignEarthBtn').addEventListener('click', alignCamera);
+
+      function alignCamera() {
+        const centerDir = getConstellationCenterDir(activeConstellationId);
+        
+        // Morph to 3D automatically to demonstrate the correct angle
+        const morphSlider = document.getElementById('morphSlider');
+        if (parseFloat(morphSlider.value) > 0) {
+          gsap.to(morphSlider, {
+            value: 0,
+            duration: 1.5,
+            onUpdate: () => updateStarPositions()
+          });
+        }
+        
+        // Depth scale reset to standard
+        const depthSlider = document.getElementById('depthSlider');
+        if (parseFloat(depthSlider.value) !== 1) {
+          gsap.to(depthSlider, {
+            value: 1,
+            duration: 1.5,
+            onUpdate: () => updateStarPositions()
+          });
+        }
+
+        // Align camera vector directly through Earth to constellation center
+        // Camera is placed right at Earth coordinates (0.1 * centerDir) pointing along centerDir
+        const targetCamPos = centerDir.clone().multiplyScalar(0.1);
+        const lookTarget = centerDir.clone().multiplyScalar(D_flat);
+
+        transitionCamera(targetCamPos, lookTarget, 2.2);
+        deselectStar();
+      }
+
+      document.getElementById('reset3dBtn').addEventListener('click', () => {
+        const centerDir = getConstellationCenterDir(activeConstellationId);
+        const offset = new THREE.Vector3(120, 80, 100);
+        const targetCamPos = centerDir.clone().multiplyScalar(150).add(offset);
+        const lookTarget = centerDir.clone().multiplyScalar(D_flat);
+        
+        transitionCamera(targetCamPos, lookTarget, 2.0);
+        deselectStar();
+      });
+
+      // Toggles & Checkbox
+      document.getElementById('autoOrbitCheckbox').addEventListener('change', (e) => {
+        autoOrbitActive = e.target.checked;
+        if (autoOrbitActive) deselectStar();
+      });
+
+      document.getElementById('showRaysCheckbox').addEventListener('change', (e) => {
+        rebuildProjectionRays();
+      });
+
+      document.getElementById('showGridCheckbox').addEventListener('change', (e) => {
+        updateDepthRuler();
+        for (const constId in constellationsData) {
+          constellationLinesMap[constId].forEach(line => line.visible = e.target.checked);
+        }
+        updateStarPositions(); // Updates tag visibilities
+      });
+
+      document.getElementById('cardCloseBtn').addEventListener('click', deselectStar);
+
+      // Sidebar collapse toggle
+      document.getElementById('toggleSidebarBtn').addEventListener('click', () => {
+        const sidebar = document.getElementById('mainSidebar');
+        sidebar.classList.toggle('collapsed');
+        
+        const btn = document.getElementById('toggleSidebarBtn');
+        if (sidebar.classList.contains('collapsed')) {
+          btn.innerHTML = '&rsaquo;';
+          document.body.classList.add('sidebar-collapsed-mode');
+        } else {
+          btn.innerHTML = '&lsaquo;';
+          document.body.classList.remove('sidebar-collapsed-mode');
+        }
+        
+        // Recompute width of reticle center offset
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 400);
+      });
+
+      // Raycaster for star clicking
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      window.addEventListener('click', (e) => {
+        if (isTransitioning) return;
+        // Ignore clicks if clicking on panel overlays
+        if (e.target.closest('.panel') || e.target.closest('.sidebar-toggle')) return;
+
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        
+        // Raycast against all interactive elements
+        const intersects = raycaster.intersectObjects(scene.children, true);
+        const starHit = intersects.find(hit => hit.object.userData && hit.object.userData.starId);
+        
+        if (starHit) {
+          const starId = starHit.object.userData.starId;
+          
+          // Identify star's constellation
+          let starFound = null;
+          let constFoundId = null;
+          for (const constId in constellationsData) {
+            const s = constellationsData[constId].stars.find(st => st.id === starId);
+            if (s) {
+              starFound = s;
+              constFoundId = constId;
+              break;
+            }
+          }
+          
+          if (starFound) {
+            // Auto switch constellation dropdown if user clicked a star from a different constellation
+            if (constFoundId !== activeConstellationId) {
+              activeConstellationId = constFoundId;
+              document.getElementById('constellationSelect').value = constFoundId;
+              handleConstellationChange(false); // Switch constellation, but don't center-focus (we center star next)
+            }
+            selectStar(starId);
+          }
+        }
+      });
+
+      // Disable orbit controls if clicking/dragging sliders
+      controls.addEventListener('start', () => {
+        if (autoOrbitActive) {
+          autoOrbitActive = false;
+          document.getElementById('autoOrbitCheckbox').checked = false;
+        }
+      });
+
+      // Resize
+      window.addEventListener('resize', () => {
+        const container = document.getElementById('webgl-container');
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    }
+
+    // Helper: Find star configuration data by ID
+    function getStarDataById(starId) {
+      for (const constId in constellationsData) {
+        const star = constellationsData[constId].stars.find(s => s.id === starId);
+        if (star) return star;
+      }
+      return null;
+    }
+
+    // Smooth transition of focus-based opacities for active vs inactive constellations
+    function animateFocusOpacity() {
+      const bgOpacity = parseFloat(document.getElementById('bgOpacitySlider').value);
+      document.getElementById('bgOpacityValue').innerText = bgOpacity.toFixed(2);
+
+      for (const constId in constellationsData) {
+        const isActive = constId === activeConstellationId;
+        
+        // Define focus-based target opacities using the background opacity slider
+        const targetLineOpacity = isActive ? 1.0 : bgOpacity;
+        const targetTextOpacity = isActive ? 1.0 : bgOpacity;
+        const targetHaloOpacity = isActive ? 1.0 : Math.min(1.0, bgOpacity * 1.6);
+
+        // 1. Animate connection lines
+        const lines = constellationLinesMap[constId];
+        if (lines) {
+          lines.forEach(line => {
+            gsap.to(line.material, {
+              opacity: targetLineOpacity,
+              duration: 1.2,
+              ease: "power2.out",
+              overwrite: "auto"
+            });
+            
+            // Transition color smoothly
+            const targetColor = isActive ? (isAligned ? 0x00f3ff : 0x00aacc) : 0x555566;
+            gsap.to(line.material.color, {
+              r: ((targetColor >> 16) & 255) / 255,
+              g: ((targetColor >> 8) & 255) / 255,
+              b: (targetColor & 255) / 255,
+              duration: 1.2,
+              ease: "power2.out",
+              overwrite: "auto"
+            });
+          });
+        }
+
+        // 2. Animate star halos and text labels
+        const constData = constellationsData[constId];
+        constData.stars.forEach(star => {
+          const group = starGroupsMap[star.id];
+          if (group) {
+            const halo = group.children[1]; // Glow sprite
+            const tag = group.children[2];  // Text tag sprite
+
+            if (halo) {
+              gsap.to(halo.material, {
+                opacity: targetHaloOpacity,
+                duration: 1.2,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+            }
+            if (tag) {
+              gsap.to(tag.material, {
+                opacity: targetTextOpacity,
+                duration: 1.2,
+                ease: "power2.out",
+                overwrite: "auto"
+              });
+            }
+          }
+        });
+      }
+    }
+
+    // Launch Application
+    window.onload = init;
+  </script>
+</body>
+</html>
