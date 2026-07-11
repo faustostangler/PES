@@ -208,9 +208,31 @@ def get_ollama_generate(prompt: str, system: str, model: str, ollama_url: str, r
         response = client.post(api_url, json=payload, headers=headers)
         response.raise_for_status()
         duration = time.time() - start_time
-        print(f"      [Ollama API] Generated response in {duration:.2f} seconds using model '{model}'")
-
         res = response.json()
+
+        # Token and performance stats extraction
+        eval_count = res.get("eval_count", 0)
+        eval_duration_ns = res.get("eval_duration", 0)
+        prompt_eval_count = res.get("prompt_eval_count", 0)
+        prompt_eval_duration_ns = res.get("prompt_eval_duration", 0)
+        total_duration_ns = res.get("total_duration", 0)
+        load_duration_ns = res.get("load_duration", 0)
+
+        # Convert ns to seconds
+        eval_dur = eval_duration_ns / 1e9 if eval_duration_ns else 0
+        prompt_dur = prompt_eval_duration_ns / 1e9 if prompt_eval_duration_ns else 0
+        total_dur = total_duration_ns / 1e9 if total_duration_ns else 0
+        load_dur = load_duration_ns / 1e9 if load_duration_ns else 0
+
+        eval_tps = eval_count / eval_dur if eval_dur > 0 else 0
+        prompt_tps = prompt_eval_count / prompt_dur if prompt_dur > 0 else 0
+
+        print(f"      [Ollama API Stats]")
+        print(f"        - Model: {model}")
+        print(f"        - Total Duration: {total_dur:.2f}s (Load: {load_dur:.2f}s, Process Wall Time: {duration:.2f}s)")
+        print(f"        - Prompt: {prompt_eval_count} tokens | Duration: {prompt_dur:.2f}s | Speed: {prompt_tps:.2f} t/s")
+        print(f"        - Generation: {eval_count} tokens | Duration: {eval_dur:.2f}s | Speed: {eval_tps:.2f} t/s")
+
         return res.get("response", "").strip()
 
 
