@@ -301,6 +301,12 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
 # ==================== CLI PARSER ====================
 
 def main() -> None:
+    # Default subcommand to 'sync' if not specified
+    if len(sys.argv) < 2:
+        sys.argv.insert(1, "sync")
+    elif sys.argv[1] not in ("sync", "process", "-h", "--help"):
+        sys.argv.insert(1, "sync")
+
     parser = argparse.ArgumentParser(
         description="ISB.AI GOD Monolith - Ingestion and AI Curadoria Tool"
     )

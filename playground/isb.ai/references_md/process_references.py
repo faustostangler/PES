@@ -2,26 +2,64 @@
 """Script to process, rename, and move reference markdown files grouped by set name."""
 
 import re
+import shutil
 from collections import defaultdict
 from pathlib import Path
 
 # --- Config ---
-REFERENCES_DIR = Path("/home/stangler/gamer_d/Fausto Stangler/Documentos/Python/ISB.AI/docs/references")
+REFERENCES_DIR = Path("/home/stangler/gamer_d/Fausto Stangler/Documentos/Python/PES/.agents/skills/stangler-doctor/references")
 SEPARATOR = "--------------------------------------------------------------------------------"
 
 def main():
-    print(f"Scanning directory: {REFERENCES_DIR}")
+    print(f"Scanning directory: {REFERENCES_DIR / 'original'}")
 
-    # 1. Find all matching files at the top level of the references folder
+    original_dir = REFERENCES_DIR / "original"
+    if not original_dir.exists():
+        print(f"Error: Original directory {original_dir} does not exist!")
+        return
+
+    # Find all files in the original folder
+    all_files = list(original_dir.glob("*"))
+
+    # We have two categories of files:
+    # 1. Grouped domain files that need merging/shifting: match `^\d+-\d{2} .+\s+\d+\.md$`
+    # 2. Single files (like 37-DevOps... or adr_template.md) that just need to be copied to the root of references/
+    domain_files = []
+    single_files = []
+
+    for p in all_files:
+        if p.is_dir():
+            continue
+        # Check if it matches the pattern of a domain file with parts
+        # e.g., "1-01 Computing Fundamentals and Servers 1.md"
+        if re.match(r"^\d+-\d{2}\s+.+\s+\d+\.md$", p.name):
+            domain_files.append(p)
+        else:
+            single_files.append(p)
+
+    # 1. Process single files (copy to root of references/ and delete original)
+    print(f"\nMoving {len(single_files)} single reference files to the root...")
+    for p in single_files:
+        dest_path = REFERENCES_DIR / p.name
+        shutil.copy2(p, dest_path)
+        p.unlink()
+        print(f"  Moved single file: {p.name} -> {dest_path.name}")
+
+    if not domain_files:
+        print("\nNo domain files found to process!")
+        return
+
+    # 2. Group domain files
     groups = defaultdict(list)
-    for p in REFERENCES_DIR.glob("*.md"):
+    for p in domain_files:
+        # Match leading number
         match = re.match(r"^(\d+)-", p.name)
         if match:
             num = int(match.group(1))
             # Get renamed name without the leading 'x-'
             renamed_filename = re.sub(r"^\d+-", "", p.name)
-            # Set name without the ' xx.md' ending
-            set_name = re.sub(r"\s+\d{2}\.md$", "", renamed_filename)
+            # Set name without the ' x.md' or ' xx.md' ending
+            set_name = re.sub(r"\s+\d+\.md$", "", renamed_filename)
 
             groups[set_name].append({
                 "num": num,
@@ -30,15 +68,11 @@ def main():
                 "set_name": set_name
             })
 
-    if not groups:
-        print("No files found to process at the top level of references directory!")
-        return
-
-    print(f"Found {len(groups)} distinct sets to process:")
+    print(f"\nFound {len(groups)} distinct domain sets to process:")
     for set_name, files in groups.items():
         print(f"  Set: '{set_name}' ({len(files)} files)")
 
-    # 2. Process each set independently
+    # 3. Process each set independently
     for set_name, files_in_group in groups.items():
         print(f"\n--- Processing Set: {set_name} ---")
 

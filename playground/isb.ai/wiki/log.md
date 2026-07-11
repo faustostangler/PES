@@ -9120,3 +9120,228 @@
 | UC84asuWqcrFqEtWqSCtS85Q | P0PMjntyXhA | 2026-07-05T14:54:00+00:00 | O que vale mais? Assista! |
 | UC84asuWqcrFqEtWqSCtS85Q | gZKynp7V6aE | 2026-07-05T14:19:09+00:00 | Lula Entra em Desespero e Copia Flávio: Veja! |
 | UCQy7CQvtuGSKp-2VGtmTAuQ | AXNi7SNyd7Y | 2026-07-05T10:43:09+00:00 | FABLE fez o Melhor GTA da História no Claude Code e Humilhou Geral - Não Tem Comparação |
+| UCDoFiMhpOnLFq1uG4RL4xag | eyXrMCMb4zA | 2026-07-10T14:00:25+00:00 | Dei Um Segundo Cérebro Pro Meu Claude Code (OpenKnowledge) |
+| UCDoFiMhpOnLFq1uG4RL4xag | QQsulV8r1yE | 2026-07-09T22:01:14+00:00 | COMO ECONOMIZAR ATÉ 70% USANDO O FABLE 5 |
+| UCDoFiMhpOnLFq1uG4RL4xag | GTAny-BHYTo | 2026-07-09T21:09:13+00:00 | O GPT-5.6 CHEGOU e é ABSURDO (testei criando vários sistemas) |
+| UCDoFiMhpOnLFq1uG4RL4xag | StZRj3YWhp8 | 2026-07-09T14:00:01+00:00 | Todo sistema feito por IA é IGUAL? Essa skill resolve! (taste skill) |
+| UCDoFiMhpOnLFq1uG4RL4xag | P5oXpuaito0 | 2026-07-08T22:01:26+00:00 | FABLE 5 ESTÁ DE VOLTA! O MODELO MAIS PODEROSO DA ANTHROPIC RETORNA |
+| UCDoFiMhpOnLFq1uG4RL4xag | FczFKnmY_xU | 2026-07-08T13:00:35+00:00 | Como Usar O Fable 5 E O Sonnet 5 De GRAÇA! Funciona no OpenCode também (ZenMux) |
+| UCDoFiMhpOnLFq1uG4RL4xag | sEVO4gamwL4 | 2026-07-07T14:00:11+00:00 | Cortei 70% Da Conta Do Fable 5 Com Essa Ferramenta Grátis (pxpipe) |
+| UCDoFiMhpOnLFq1uG4RL4xag | KoE5wtiQyeE | 2026-07-06T22:01:17+00:00 | CLAUDE SONNET 5 CHEGOU! VALE O UPGRADE? |
+| UCDoFiMhpOnLFq1uG4RL4xag | q2ewCSkd3SY | 2026-07-06T14:15:12+00:00 | Como eu crio meus sistemas com IA! Do planejamento ao deploy (abri tudo, só copiar) |
+| UCDoFiMhpOnLFq1uG4RL4xag | NWoJdKNGJ3Y | 2026-07-03T14:00:17+00:00 | Isso dá SUPERPODERES para o OpenCode! Um Exército de Agentes e Skills (oh-my-openagent) |
+| UCDoFiMhpOnLFq1uG4RL4xag | 2ThyLF5hi5A | 2026-07-02T22:01:19+00:00 | OH MY OPENAGENT: O AGENTE DE IA QUE TRABALHA SOZINHO |
+| UCDoFiMhpOnLFq1uG4RL4xag | o5yNxDb1qsc | 2026-07-02T14:00:37+00:00 | Chega de pagar por IA! Com Freebuff tu programa de graça (veja como) |
+| UCDoFiMhpOnLFq1uG4RL4xag | gFqs3fmLpig | 2026-07-01T22:02:08+00:00 | GLM 5.2: A IA QUE QUER DOMINAR A PROGRAMAÇÃO |
+| UCDoFiMhpOnLFq1uG4RL4xag | CSsct6K0gg4 | 2026-07-01T22:00:19+00:00 | O Claude Mais Poderoso Voltou: Fable 5 Liberado (Mas Tem Pegadinha) |
+| UCDoFiMhpOnLFq1uG4RL4xag | GHc6edoG0RQ | 2026-07-01T14:00:28+00:00 | 46% Dos Tokens Do Seu Agente Vão Pro Lixo (FastContext Resolve) |
+| UCDoFiMhpOnLFq1uG4RL4xag | 7Tss9H5Zo3E | 2026-06-30T21:00:13+00:00 | Lançou o Sonnet 5! Nova versão do modelo da Anthropic supreende? |
+| UCDoFiMhpOnLFq1uG4RL4xag | NC8cXD6wYa8 | 2026-06-30T14:00:19+00:00 | Dei Superpoderes Pro Meu Hermes Agent Com Esse Repo Open Source (De Graça) |
+| UCDoFiMhpOnLFq1uG4RL4xag | O6r5S5RO6E4 | 2026-06-29T22:01:21+00:00 | FREEBUFF: A IA GRATUITA QUE PODE SUBSTITUIR O CURSOR? |
+| UCDoFiMhpOnLFq1uG4RL4xag | Xbq2KaB30y4 | 2026-06-29T22:00:06+00:00 | A Evolução Do Vibe Coding Que Faz A IA Não Quebrar Nada (Loop Engineering) |
+| UCDoFiMhpOnLFq1uG4RL4xag | eCn4xWpjbaU | 2026-06-28T14:00:21+00:00 | Meta-Harness: A Camada Que Coordena Claude Code E Codex Juntos (Omnigent) |
+| UCDoFiMhpOnLFq1uG4RL4xag | YQOStUXhy0s | 2026-06-27T14:00:17+00:00 | Pare De Pagar Pelo Claude Code: zCode Te Dá GLM 5.2 De Graça |
+| UCDoFiMhpOnLFq1uG4RL4xag | eS9Ev794_58 | 2026-06-26T14:00:34+00:00 | A Skill Que Faz A IA Programar Como O Dev Mais Preguiçoso Da Sala (Ponytail) |
+| UCDoFiMhpOnLFq1uG4RL4xag | X7tQCr-kdWI | 2026-06-25T14:00:13+00:00 | OpenCode sem pagar IA! Aprenda a configurar e crie apps de forma gratuita |
+| UCDoFiMhpOnLFq1uG4RL4xag | eFd5bq_GlX4 | 2026-06-24T22:01:21+00:00 | SAKANA FUGU: A IA QUE USA VÁRIOS MODELOS AO MESMO TEMPO |
+| UCDoFiMhpOnLFq1uG4RL4xag | obSg0qAVWkY | 2026-06-24T14:00:24+00:00 | O Sakana Fugu Bate o Opus? Veja tudo que essa IA é capaz de fazer |
+| UCDoFiMhpOnLFq1uG4RL4xag | U4WiAX2dKno | 2026-06-23T14:00:21+00:00 | Verdent: A IA Que Planeja, Constrói E Audita Seu App (Testei Na Prática) |
+| UCDoFiMhpOnLFq1uG4RL4xag | FnevzGZI_RA | 2026-06-22T14:00:12+00:00 | O PewDiePie Lançou Uma IA Grátis Que Roda No Teu PC (Odysseus AI) |
+| UCDoFiMhpOnLFq1uG4RL4xag | _9_jNxSfm4U | 2026-06-20T14:00:17+00:00 | O Modelo Open Source Que Bate O Opus 4.8? SERÁ? (Kimi K2.7 Code) |
+| UCDoFiMhpOnLFq1uG4RL4xag | yhmeF_AFZpM | 2026-06-19T14:00:22+00:00 | Saiu O GLM 5.2: O Modelo De Código Que Lê Teu Projeto Inteiro (1M Tokens) |
+| UCDoFiMhpOnLFq1uG4RL4xag | bhi4XTSDTtY | 2026-06-18T22:01:16+00:00 | A NOVA IA OPEN SOURCE QUE ESTÁ DESAFIANDO GPT-5.5 E CLAUDE! |
+| UCDoFiMhpOnLFq1uG4RL4xag | o6Qi-BFSr0c | 2026-06-18T14:00:04+00:00 | Lançou O Nex-N2: O Modelo Chinês Grátis Que Tá Assustando A Anthropic |
+| UCDoFiMhpOnLFq1uG4RL4xag | xf1iXa9vLbY | 2026-06-17T22:01:21+00:00 | Essa IA Mostra Tudo Que Você Fez Nos Últimos 30 Dias |
+| UCDoFiMhpOnLFq1uG4RL4xag | PEcwer02UE0 | 2026-06-17T14:00:23+00:00 | Criei Um App Completo Com DeepSeek No Claude Code (DeepClaude do Zero Ao Deploy) |
+| UCDoFiMhpOnLFq1uG4RL4xag | vxSUGkCCQzE | 2026-06-16T14:00:03+00:00 | A Skill #1 Do GitHub Que Pesquisa A Internet Inteira Por Você (/last30days) |
+| UCDoFiMhpOnLFq1uG4RL4xag | MVpnSl3wrhw | 2026-06-15T22:01:26+00:00 | A IA que faz Claude e Cursor gastarem até 90% menos tokens |
+| UCDoFiMhpOnLFq1uG4RL4xag | oTYS23dggRY | 2026-06-15T14:00:29+00:00 | Headroom: 1 Comando E O Claude Code Gasta 95% Menos Token |
+| UCDoFiMhpOnLFq1uG4RL4xag | lX0fW7fGFhI | 2026-06-11T22:01:13+00:00 | DeepClaude: A IA que combina DeepSeek com a inteligência do Claude |
+| UCDoFiMhpOnLFq1uG4RL4xag | UDTdsLLwGWw | 2026-06-11T14:00:19+00:00 | Printing Press: A Fábrica que Deixa o Claude Code 10x Melhor (ABSURDO!) |
+| UCDoFiMhpOnLFq1uG4RL4xag | 0yB2IA31H5k | 2026-06-10T14:00:38+00:00 | MiniMax M3 Lançado: Testei tudo e me surpreendeu (Análise Completa) |
+| UCDoFiMhpOnLFq1uG4RL4xag | mY8GeStjdOE | 2026-06-09T22:01:11+00:00 | Nemotron 3 Ultra de graça? Agora você pode usar no Hermes Agent |
+| UCDoFiMhpOnLFq1uG4RL4xag | 9CB0_QzJ7Zc | 2026-06-09T21:00:34+00:00 | LANÇOU CLAUDE FABLE 5! O melhor modelo da Anthropic (Teste completo) |
+| UCIQne9yW4TvCCNYQLszfXCQ | 3lDCjq7QQt0 | 2026-07-10T15:33:50+00:00 | O Poder da visão na palma da sua mão. Teste o MIRA hoje. MIRA.SANDECO.COM.BR |
+| UCIQne9yW4TvCCNYQLszfXCQ | nNF3_FzhZq4 | 2026-07-09T22:56:11+00:00 | Apresentações Animadas com IA: o MIRA Faz Sozinho (Grátis e Open Source) |
+| UCIQne9yW4TvCCNYQLszfXCQ | DNh_k1jV2aI | 2026-07-07T00:59:33+00:00 | O problema oculto das IAs modernas #IA #Transformer #Shorts |
+| UCIQne9yW4TvCCNYQLszfXCQ | c1gaEjV8ZqA | 2026-07-06T23:58:41+00:00 | Eu fiz com IA a MESA TÁTICA que Falta na CazéTV. Meu Framework Mira Animator + Claude Code |
+| UCIQne9yW4TvCCNYQLszfXCQ | Ui7Yp_MEXrM | 2026-07-02T19:28:56+00:00 | Pare de ser BABÁ do Claude Code (Essa LOOP SKILL faz ele trabalhar SOZINHO) |
+| UCIQne9yW4TvCCNYQLszfXCQ | j_P-w_f93qE | 2026-07-01T08:14:53+00:00 | O Pivot Mais Louco da História da IA: Midjourney quer escanear seu corpo inteirinho? |
+| UCIQne9yW4TvCCNYQLszfXCQ | jSXx_wi0HEk | 2026-06-26T21:20:44+00:00 | Harness ACABOU com os Prompts? Verdade ou Mito? |
+| UCIQne9yW4TvCCNYQLszfXCQ | 4WlUOy_Bn-s | 2026-06-18T21:03:38+00:00 | Agora ficou FÁCIL ter Objetos 3D nos SLIDES com Antigravity + MIRA (de graça) |
+| UCIQne9yW4TvCCNYQLszfXCQ | 9-tOHcaCMtw | 2026-06-15T20:16:03+00:00 | Claude Code + MIRA: transforme qualquer conteúdo em SLIDES ANIMADOS  de graça |
+| UCIQne9yW4TvCCNYQLszfXCQ | vl9a0CJ3hpY | 2026-06-13T14:31:30+00:00 | EUA proíbem o Fable 5 da Anthropic no mundo: o que isso significa pra você |
+| UCIQne9yW4TvCCNYQLszfXCQ | lK0qX_De9fk | 2026-06-10T08:13:08+00:00 | 🚀 ELAS NO COMANDO DA IA: O FUTURO É DELAS! |
+| UCIQne9yW4TvCCNYQLszfXCQ | ZMJNb5yumZk | 2026-06-09T20:30:24+00:00 | AGENT HARNNES: VOCÊ PRECISA ENTENDER ESTE CONCEITO URGENTE! |
+| UC9ycYMBQqlnE0h4dSyrdv0A | tSArdw__ikg | 2026-07-10T13:33:31+00:00 | #Ucrânia 2026-07-10: RÚSSIA PROÍBE EXPORTAÇÃO de DIESEL e ATINGE BRASIL em CHEIO |
+| UC9ycYMBQqlnE0h4dSyrdv0A | sYQeUoZ0QhQ | 2026-07-09T15:19:26+00:00 | #Ucrânia 2026-07-09: TRUMP dá LICENÇA para UCRÂNIA FABRICAR MÍSSEIS do PATRIOT |
+| UC9ycYMBQqlnE0h4dSyrdv0A | yY5nnY4FvVk | 2026-07-08T17:14:08+00:00 | #Irã 2026-07-08: TRUMP diz que MEMORANDO de ENTENDIMENTO MORREU e VAI ATACAR o IRÃ |
+| UC9ycYMBQqlnE0h4dSyrdv0A | idaHGDYuwgU | 2026-07-08T13:52:32+00:00 | #Ucrânia 2026-07-08: UCRÂNIA atinge REFINARIA de SARATOV e várias ESTAÇÕES de BOMBEAMENTO RUSSAS |
+| UC9ycYMBQqlnE0h4dSyrdv0A | odcWBWbXkOM | 2026-07-07T14:31:43+00:00 | #Ucrânia 2026-07-07: UCRÂNIA atinge OITO PETROLEIROS RUSSOS no MAR de AZOV |
+| UC9ycYMBQqlnE0h4dSyrdv0A | rihfDqjpK9w | 2026-07-06T13:41:00+00:00 | #Ucrânia 2026-07-06: UCRÂNIA atinge REFINARIA de OMSK, a maior da RÚSSIA, pela 1ª VEZ |
+| UC9ycYMBQqlnE0h4dSyrdv0A | 8imB2BCPQSY | 2026-07-05T15:38:20+00:00 | #Irã 2026-07-05: FUNERAL de KHAMENEI tem AUSÊNCIA do FILHO MOJTABA e do ALCKMIN |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | LxDrnh6vm_k | 2026-07-10T21:00:21+00:00 | Moraes é Encurralado por Nova Prova de Perseguição Contra Bolsonaro |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | YqLZZE-CkdQ | 2026-07-10T20:34:04+00:00 | 🚨Dino Dá Decisão e Usa Valdemar Para Atacar Flávio! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | UUTjfartPAc | 2026-07-10T18:00:05+00:00 | 🚨 O DISCURSO SOBRE A FÉ DEVE SEMPRE SER PÚBLICO |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | VeMYxyPBVro | 2026-07-10T16:47:29+00:00 | 🚨 Obsessão de Vorcaro o Levou a Fazer Algo Absurdo! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | qMoTLWfnXxQ | 2026-07-10T13:00:19+00:00 | 🚨 Moraes Assustado Com Pedidos de Bolsonaro a Michelle! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | VoEzZHeR9eE | 2026-07-09T21:36:48+00:00 | 🚨 PF Faz Operação Contra Homem Que Ameaçou Malu Gaspar! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | tuyxS5oxkcE | 2026-07-09T21:00:35+00:00 | 🚨 URGENTE: Moraes Brutaliza Bolsonaro em Casa! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | tCvtAWklmAk | 2026-07-09T16:27:51+00:00 | 🚨Moraes é Encurralado por Nova Prova de Perseguição Contra Bolsonaro |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | KKr4Dmrx7fU | 2026-07-09T13:00:33+00:00 | 🚨 Reviravolta no STF: Bolsonaro Será Solto em 20 Dias?! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | vLY0qoSZMfo | 2026-07-09T11:56:23+00:00 | 🚨  Saiba Como Foi o Discurso de Flávio nos EUA Contra o Tarifaço! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | tYzQEIppbYc | 2026-07-08T21:12:58+00:00 | 🚨 Brasil Contraria Trump Com Decisão Surreal! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | ad3Lk_YwoVk | 2026-07-08T16:29:10+00:00 | 🚨 URGENTE: Moraes Brutaliza Bolsonaro em Casa! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | n9-N6O6tMiw | 2026-07-08T13:55:39+00:00 | 🚨 Lula Entra em Desespero Com Flávio e Faz Ataques Brutais! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | e_fhskyVlX4 | 2026-07-08T11:00:30+00:00 | 🚨 Elon Musk Humilha Lula Em Audiência nos EUA |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | DkcD6UKOxZk | 2026-07-07T20:52:31+00:00 | 🚨 Saiba Como Foi o Discurso de Flávio nos EUA Contra o Tarifaço! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | AddF6iGOXi8 | 2026-07-07T16:03:06+00:00 | 🚨 Moraes Vai Fazer Flávio Pedir Desculpas a Lula?! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | -zzn10b2NsI | 2026-07-07T13:00:27+00:00 | 🚨 Elon Musk Humilha Lula Em Audiência nos EUA |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | hhTrBG6hPj8 | 2026-07-06T20:35:20+00:00 | 🚨 Moraes Humilha Judiciário Inteiro e Compra Briga Gigantesca |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | 6peN4H-5vIE | 2026-07-06T18:00:25+00:00 | 🚨 Veja Qual Ministro o STF Sacrificará no Impeachment! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | Gae2n6Pe4Kc | 2026-07-06T16:26:08+00:00 | 🚨 Mendonça Se Antecipa, Dá Xeque-Mate nos Alvos do Master e Cala o Gilmar! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | 7mkTmQMRjNU | 2026-07-06T13:39:34+00:00 | 🚨 Mendonça Reage a Lula e Faz Dura Ameaça! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | 4p9yQilN2Os | 2026-07-05T19:00:40+00:00 | 🚨 Veja Qual Ministro o STF Sacrificará no Impeachment! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | Ikd2t0VDx5s | 2026-07-05T16:59:18+00:00 | 🚨 Flávio Esteve na "Noite das Astronautas" do Vorcaro? |
+| UCLW51-XEzuOm5RwPMChHBMw | op7CsjFFZ6s | 2026-07-10T13:00:31+00:00 | E se o Trump nacionalizar a OpenAI? |
+| UCLW51-XEzuOm5RwPMChHBMw | bWZndc9ycII | 2026-07-09T13:00:29+00:00 | Horário do Servidor vs Horário do Usuário |
+| UCLW51-XEzuOm5RwPMChHBMw | ycaLfuBsfd4 | 2026-07-08T13:00:35+00:00 | System Design começa por esses Building Blocks |
+| UCLW51-XEzuOm5RwPMChHBMw | QaeOP4lsZho | 2026-07-07T13:00:01+00:00 | Fundamentos de git em 8 minutos |
+| UCLW51-XEzuOm5RwPMChHBMw | Bs9UqjJesl0 | 2026-07-06T13:00:09+00:00 | Upload de arquivos NÃO é só POST |
+| UCLW51-XEzuOm5RwPMChHBMw | VUULdfBhlaQ | 2026-07-03T13:00:05+00:00 | System Design não é desenhar caixinhas |
+| UCLW51-XEzuOm5RwPMChHBMw | qY2BcT0BBUg | 2026-07-02T13:00:32+00:00 | O que que faz diferença na hora de aplicar pra gringa? |
+| UCLW51-XEzuOm5RwPMChHBMw | 7lH36O1Pudg | 2026-07-01T13:00:00+00:00 | 20 Conceitos que Separam Devs Júnior de Sênior |
+| UCLW51-XEzuOm5RwPMChHBMw | xfq9yfRAvsc | 2026-06-29T13:00:19+00:00 | Pare de Aprender Ferramentas de IA |
+| UCLW51-XEzuOm5RwPMChHBMw | eteEw6Es9UU | 2026-06-26T10:52:11+00:00 | Questões sobre SQL que todo dev deveria conhecer |
+| UCLW51-XEzuOm5RwPMChHBMw | WOJsiqf6E-M | 2026-06-25T13:35:37+00:00 | Introdução a SQL |
+| UCLW51-XEzuOm5RwPMChHBMw | Y83iPq1_MrU | 2026-06-24T13:00:16+00:00 | O Status Quo do Desenvolvimento com IA |
+| UCLW51-XEzuOm5RwPMChHBMw | PADhI0fZnTI | 2026-06-19T13:17:50+00:00 | Como Eu Começo Um Projeto do Zero |
+| UCLW51-XEzuOm5RwPMChHBMw | x2uQcLNuwfY | 2026-06-18T13:00:39+00:00 | MCP não é mágica |
+| UCLW51-XEzuOm5RwPMChHBMw | -Cku2VK7sQ4 | 2026-06-17T13:00:29+00:00 | Criando um MVP com IA |
+| UCLW51-XEzuOm5RwPMChHBMw | l1VbUBG1hYg | 2026-06-16T13:00:11+00:00 | Quando linguagens funcionais são mais LENTAS |
+| UCLW51-XEzuOm5RwPMChHBMw | XR7FxGhCHsA | 2026-06-15T13:00:31+00:00 | Como regras de negócio influenciam arquitetura |
+| UCLW51-XEzuOm5RwPMChHBMw | v89sUi79Dy0 | 2026-06-12T13:00:35+00:00 | Pare de começar pelo código |
+| UCLW51-XEzuOm5RwPMChHBMw | M1ip5tUCC3g | 2026-06-11T13:00:19+00:00 | Markdown virou linguagem de programação? |
+| UCLW51-XEzuOm5RwPMChHBMw | EWzVZA_qTEw | 2026-06-10T13:00:02+00:00 | Quanto de System Design você precisa saber? |
+| UCOOCeqi5txwviDZ4M5W9QSg | LkqoBjJleYM | 2026-07-10T17:00:22+00:00 | Tormenta 20?!? |
+| UCOOCeqi5txwviDZ4M5W9QSg | OVLsZqdV9X8 | 2026-07-10T15:00:35+00:00 | CARIANI - CABO ELEITORAL DO MBL |
+| UCOOCeqi5txwviDZ4M5W9QSg | Bxpf1hJtXHI | 2026-07-09T15:00:29+00:00 | SESTARO LOCÃO |
+| UCOOCeqi5txwviDZ4M5W9QSg | EBXBpy2A-rw | 2026-07-08T15:00:17+00:00 | PABLO MARÇAL MONTOU A FARSA |
+| UCOOCeqi5txwviDZ4M5W9QSg | TWJdfMMQ80o | 2026-07-07T15:00:20+00:00 | RENAN SANTOS NÃO É ESTUPRADOR |
+| UCOOCeqi5txwviDZ4M5W9QSg | 6lMZwc9H1eQ | 2026-07-06T15:00:29+00:00 | PERDEMOS - Mas temos um PLANO! |
+| UCQy7CQvtuGSKp-2VGtmTAuQ | 2_MIeUgalPE | 2026-07-10T01:10:32+00:00 | NOVO ChatGPT 5.6 SOL, TERRA e LUNA Liberados Superam Fable e Aceleram Corrida da iA |
+| UCQy7CQvtuGSKp-2VGtmTAuQ | xIbe7lntZ_A | 2026-07-09T01:08:11+00:00 | NOVO Grok 4.5 Superou MUITO as Expectativas e Fable Parece Ter Concorrência |
+| UCM3vJxmuJJkk1r0yzFI9eZg | HLLae1Jx8Ss | 2026-07-10T21:15:35+00:00 | Parcelou uma pizza em 3 vezes |
+| UCM3vJxmuJJkk1r0yzFI9eZg | yCoHTnhkGRo | 2026-07-09T22:47:37+00:00 | A Receita Federal abriu a caixa preta do Brasil |
+| UCM3vJxmuJJkk1r0yzFI9eZg | aSnqh8ItC5M | 2026-07-08T23:56:39+00:00 | Fique rico com a CRISE de 2026 |
+| UCM3vJxmuJJkk1r0yzFI9eZg | hwQgDhq74kg | 2026-07-07T23:47:11+00:00 | Faça como os ricos, faça a Receita de besta |
+| UCM3vJxmuJJkk1r0yzFI9eZg | G5rlXn917cg | 2026-07-06T23:06:03+00:00 | A CLASSE MÉDIA ALTA ESTÁ QUEBRADA |
+| UCyHOBY6IDZF9zOKJPou2Rgg | mO6H2dtLejU | 2026-07-09T15:30:10+00:00 | a ANTHROPIC achou os pensamentos secretos do CLAUDE |
+| UCyHOBY6IDZF9zOKJPou2Rgg | OCGeRJlJae0 | 2026-07-08T15:30:54+00:00 | o CEO da Palantir surtou ao vivo na CNBC |
+| UCyHOBY6IDZF9zOKJPou2Rgg | ps9z_63bVgQ | 2026-07-07T16:16:47+00:00 | Ganhar dinheiro com AI ou ficar na CLT? |
+| UCyHOBY6IDZF9zOKJPou2Rgg | F6zEEUhDlgk | 2026-07-06T15:00:00+00:00 | to impressionado com o Fable 5 |
+| UCc-Nvq1SYmXVTO5_UwQbg6w | 9yUryPgnR2s | 2026-07-08T22:00:13+00:00 | O GLM 5.2 era lento. Agora ficou difícil ignorar |
+| UCc-Nvq1SYmXVTO5_UwQbg6w | IbL2qHVllkI | 2026-07-06T22:00:07+00:00 | A melhor forma de usar Fable 5 sem gastar todo seu limite |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | DJOjPInT3_Q | 2026-07-10T22:19:07+00:00 | DINO BLOQUEIA EMENDAS e DINHEIRO do PL por MOTIVOS PURAMENTE ELEITORAIS |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 9oBhMeK8Wo0 | 2026-07-10T21:54:32+00:00 | DECISÃO do TARIFAÇO está PRÓXIMA e NEGOCIAÇÃO com LULA está em IMPASSE: SÓ FLÁVIO SALVA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 1ztq-VdWXbk | 2026-07-10T20:31:17+00:00 | LULA quer ENTREGAR TERRAS RARAS do BRASIL para TRUMP, se não, AMEAÇA fazer POTINHO de GADOLÍNIO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 1iqONeyGigE | 2026-07-10T18:15:14+00:00 | COPA do MUNDO FEMININA do BRASIL 2027: VIVA a LICITAÇÃO! F*DA-SE os ALUNOS! |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | nl7Ftn7KO3g | 2026-07-10T16:17:18+00:00 | PRESIDÊNCIA do INSS faz GRUPO de APOIO a LULA e INDÍGENAS FALSOS são usados em OUTRO GOLPE |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | wTvC19Pl3GY | 2026-07-10T13:15:16+00:00 | POR QUE a IMPRENSA e o LULA NÃO FALAM do TARIFAÇO da CHINA? |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | Bh9M7wewEDQ | 2026-07-10T09:15:35+00:00 | CARROS na EUROPA VÃO VIGIAR e DISTRAIR o MOTORISTA para EVITAR DISTRAÇÃO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | rgsRGgbDcYQ | 2026-07-10T02:38:05+00:00 | POR QUE o BRASILEIRO IGNOROU o DELAY: DIRETORES da GLOBO CHORAM |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | ISRVj-WfBVw | 2026-07-10T01:06:36+00:00 | O DONO da CBF é o FILHO do GILMAR MENDES: NÃO tem COMO DAR CERTO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | HSDUHF2NK9c | 2026-07-09T23:38:00+00:00 | THIAGO MIRANDA, jornalista que PERSEGUIU MALU GASPAR, sofre OPERAÇÃO da PF |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | oIMIfjKEOlU | 2026-07-09T22:15:15+00:00 | MICHELLE BOLSONARO é a MULHER mais PODEROSA do BRASIL e já SE ACERTOU com BOLSONARO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | bmU22zOpPEQ | 2026-07-09T20:15:07+00:00 | DECISÃO do TARIFAÇO está PRÓXIMA e NEGOCIAÇÃO com LULA está em IMPASSE: SÓ FLÁVIO SALVA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 8Ogk13IaElA | 2026-07-09T18:15:11+00:00 | JUSTIÇA SOLTA STELLA "LARA CROFT" mostrando INCOMPETÊNCIA da PF de ANDREI RODRIGUEZ |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | -TxQpPhaIaM | 2026-07-09T16:15:02+00:00 | LULA ameaça DEVOLVER ESPIÃO RUSSO para RÚSSIA, contra TARIFAS do TRUMP |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | X-tpT9QD1IA | 2026-07-09T13:15:10+00:00 | FLÁVIO PROPÕE a volta da ALCA: UMA EXCELENTE IDEIA que LULA NOS ROUBOU |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | TXKGJlOVGEw | 2026-07-09T09:15:10+00:00 | POR QUE o BRASILEIRO IGNOROU o DELAY? DIRETORES da GLOBO CHORAM |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 60fUrg1YiM4 | 2026-07-09T00:30:02+00:00 | ANATEL APROVA OPERAÇÃO da STARLINK direto para CELULAR |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | ZWztrus6_Wg | 2026-07-09T00:15:34+00:00 | SENADO aprova o "PIX PENSÃO do ENZO": DINHEIRO sai da SUA CONTA AUTOMATICAMENTE |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | vhxdAO4zyAE | 2026-07-08T23:15:29+00:00 | PESQUISA GERP testa um MONTE de GENTE e FLÁVIO continua o MELHOR |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | Cze-QKlwqg4 | 2026-07-08T22:30:36+00:00 | TARCÍSIO vai ESMAGAR HADDAD em SÃO PAULO e isso é PÉSSIMO para LULA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | wS_IHuyT4Fc | 2026-07-08T22:15:37+00:00 | BOLSONARO SOLTO AMANHÃ |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | -J2aMUqHC1g | 2026-07-08T20:32:15+00:00 | SISTEMA ELÉTRICO CUBANO COLAPSA e TODA a ILHA está SEM ENERGIA, pela 3ª VEZ no ANO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 163j7yEqd10 | 2026-07-08T20:16:33+00:00 | XANDÃO e BESSIAS sofrem DERROTA na AÇÃO do RUMBLE na FLÓRIDA: BRASIL VENCEU |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | PkiMKaGdt5I | 2026-07-08T18:36:23+00:00 | FILME "DARK HORSE" só vai ESTREAR no BRASIL após as ELEIÇÕES por decisão da EQUIPE |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | JQ4zt5fNl_A | 2026-07-08T16:39:04+00:00 | MORAES determina BUSCA e APREENSÃO de ARMAS na CASA de BOLSONARO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | Qh72JdsVxYw | 2026-07-08T13:15:37+00:00 | DEMOCRACIA RESPIRA na FRANÇA: TRIBUNAL libera LE PEN para CONCORRER |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 89pLvamef0I | 2026-07-08T09:15:20+00:00 | PRÉDIO AMEAÇA CAIR no CENTRO de NOVA YORK |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | Scm1b8DonPE | 2026-07-08T01:56:48+00:00 | XANDÃO quer que FLÁVIO vá na PF e PEÇA DESCULPAS para LULA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 6_UmYo-izj8 | 2026-07-07T23:15:43+00:00 | ESQUERDA tenta PLANTAR SEMENTINHA da DISCÓRDIA agora com o NIKOLAS |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | kgTLqQJ7h4U | 2026-07-07T22:15:19+00:00 | FLÁVIO defende o PIX e critica TARIFAS: LULA nem MANDOU REPRESENTANTE |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | K7uTa2YyU6E | 2026-07-07T20:15:18+00:00 | ESPRIELLA interrompe TRANSIÇÃO após TENTATIVA de GOLPE de PETRO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | pvdHSzUDefU | 2026-07-07T19:15:14+00:00 | ADIVINHA quem SÃO os PRIVILEGIADOS no BRASIL? ISSO, os FUNÇA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | WGpJ3MB2Ecc | 2026-07-07T18:15:02+00:00 | ANATEL APROVA OPERAÇÃO da STARLINK direto para CELULAR |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 8koCtujwc9Q | 2026-07-07T16:22:21+00:00 | TARCÍSIO vai ESMAGAR HADDAD em SÃO PAULO e isso é PÉSSIMO para LULA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 5h8ArsqOLrI | 2026-07-07T13:15:05+00:00 | SISTEMA ELÉTRICO CUBANO COLAPSA e TODA a ILHA está SEM ENERGIA, pela 3ª VEZ no ANO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | Oq-HvOPS5ls | 2026-07-07T09:15:32+00:00 | ADIVINHA quem SÃO os PRIVILEGIADOS no BRASIL? ISSO, os FUNÇA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | tHry8H56Yy0 | 2026-07-07T01:50:06+00:00 | PRÉDIOS do "MINHA CASA, MINHA VIDA" da VENEZUELA DESABARAM TODOS com TERREMOTO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 1e6pSBxQeLw | 2026-07-07T00:45:27+00:00 | MAURO VIEIRA alerta para INVASÃO AMERICANA do BRASIL por conta do PCC e CV |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | GttaoxwFPhQ | 2026-07-06T23:40:37+00:00 | OBRA "INAUGURADA" por LULA tem 14 CONTAINERS IMPROVISADOS e JÁ ROMPEU |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | HplF_2yuiLM | 2026-07-06T23:25:00+00:00 | PAULO GONET quer ABRIR INVESTIGAÇÃO sobre DELAÇÃO de MAURO CID |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | kink8fxdelY | 2026-07-06T22:15:15+00:00 | FLÁVIO PREPARA defesa do BRASIL contra TARIFAS enquanto LULA se OMITE |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | eieClVbuFGQ | 2026-07-06T20:15:25+00:00 | BRIGAS na DIREITA ANIMAM a ESQUERDA que PLANTA SEMENTES da DISCÓRDIA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 56jo8zEKjOo | 2026-07-06T18:15:09+00:00 | ANDRÉ MENDONÇA ameaça INVESTIGAR GOVERNO LULA por OBSTRUÇÃO de JUSTIÇA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 6WNFk5KolbQ | 2026-07-06T16:15:00+00:00 | ECONOMISTA não entende POR QUE pessoas NÃO CONFIAM no POCHMANN |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | HIZ4NSQ01tw | 2026-07-06T13:15:14+00:00 | PRÉDIOS do "MINHA CASA, MINHA VIDA" da VENEZUELA DESABARAM TODOS com TERREMOTO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | HpNEpv0g-1k | 2026-07-06T09:15:05+00:00 | BRASIL está FORA, mas CAZETV já GANHOU ESSA COPA e agora a EUROCOPA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | oOIDMFx-GBg | 2026-07-06T00:30:10+00:00 | "IMPOSTO do PECADO" vai enfiar o DEDO do LULA no C# do BRASILEIRO, mas QUEREM ADIAR |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 3yC0CbRO8Fo | 2026-07-06T00:15:04+00:00 | PAULO GONET quer ABRIR INVESTIGAÇÃO sobre DELAÇÃO de MAURO CID |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | i0m-E8cv_xk | 2026-07-05T23:46:25+00:00 | LUCIANO HANG negocia com PARAGUAI para LEVAR a HAVAN para LÁ: VAMOS TAMBÉM? |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 5xut8F4Cvas | 2026-07-05T23:15:39+00:00 | INGLATERRA quer DIMINUIR a RELEVÂNCIA de TODOS os CRIADORES do YOUTUBE para FAVORECER BBC |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | vYiVKLoRXcc | 2026-07-05T22:15:04+00:00 | "POR QUE não DIZER que o MASTER é da DIREITA?"... JÁ PERGUNTOU pro JAQUES WAGNER? |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | xgYpAnK43f8 | 2026-07-05T20:15:01+00:00 | GOVERNO do PT cria COTA para PRESIDIÁRIOS em EMPRESAS PRIVADAS |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | V6t_D3eUgK0 | 2026-07-05T18:15:09+00:00 | "IMPOSTO do PECADO" vai enfiar o DEDO do LULA no C# do BRASILEIRO, mas QUEREM ADIAR |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | GsHxpQ1332U | 2026-07-05T16:15:05+00:00 | STJ libera SIGILO do PROCESSO da CARTA ROGATÓRIA do XANDÃO: MÉRITO em CITAÇÃO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | d_4rgAvMzhU | 2026-07-05T13:15:25+00:00 | LUCIANO HANG negocia com PARAGUAI para LEVAR a HAVAN para LÁ: VAMOS TAMBÉM? |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | A0kimLBeNKs | 2026-07-05T09:15:34+00:00 | FALTA de DESTREZA TECNOLÓGICA é o novo ANALFABETISMO, mas a IA vai ACABAR com ISSO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | sBbr_CR9xhI | 2026-07-05T02:28:17+00:00 | ATÉ no DATAFOLHA a DIREITA FICOU MAIOR que a ESQUERDA no BRASIL e a DIREITA CERTA! |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | nKjOjBKag6A | 2026-07-05T02:12:08+00:00 | LEI FELCA chegou para o POKEMON GO e BRASILEIROS não podem MAIS COMPRAR INCUBADORAS |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 9wUJGTba488 | 2026-07-05T00:15:24+00:00 | DATAFOLHA dá RAZÃO ao PAULO FIGUEIREDO: MULHERES votam DIFERENTE de HOMENS |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | H9mjb3P98Jk | 2026-07-04T23:15:06+00:00 | LULA mostra o DEDO do MEIO para seus ELEITORES: QUER COISA BOA? TOMA! |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | QZaApAWwFgU | 2026-07-04T22:15:02+00:00 | PF diz ter ENCONTRADO LIGAÇÃO de RAMAGEM com CV: ANDREI quer MUITO a EXTRADIÇÃO |
+| UC84asuWqcrFqEtWqSCtS85Q | KDcgMk-GzAc | 2026-07-10T21:30:06+00:00 | Vorcaro Espionou o Maior Inimigo de Moraes, e Não é Bolsonaro! |
+| UC84asuWqcrFqEtWqSCtS85Q | ho2tLrqmLNI | 2026-07-10T19:32:45+00:00 | A Razão Para Vorcaro Espionar CEO Do Itaú é de Arrepiar! |
+| UC84asuWqcrFqEtWqSCtS85Q | RCzuNegqqBg | 2026-07-10T18:59:54+00:00 | Doe agora através do link: https://queroapoiar.com.br/deltan?utm_source=youtube |
+| UC84asuWqcrFqEtWqSCtS85Q | TxSIZ6x_Pwo | 2026-07-10T16:36:38+00:00 | A História Sombria de como Gilmar Assumiu a CBF |
+| UC84asuWqcrFqEtWqSCtS85Q | GsbBqZ5zzwY | 2026-07-10T13:08:33+00:00 | Flavio Dino foi DENUNCIADO por antigo aliado! |
+| UC84asuWqcrFqEtWqSCtS85Q | zH9119Sc804 | 2026-07-09T21:55:23+00:00 | Política não pode ser projeto de poder. |
+| UC84asuWqcrFqEtWqSCtS85Q | Oyde_qO2mvc | 2026-07-09T20:29:36+00:00 | Flávio Dino É Acusado de Crime de Responsabilidade! |
+| UC84asuWqcrFqEtWqSCtS85Q | 1SMOZLdhMLI | 2026-07-09T17:01:07+00:00 | Moraes Perde uma Batalha no Processo nos EUA! |
+| UC84asuWqcrFqEtWqSCtS85Q | Gi3TPJoG3aI | 2026-07-09T14:24:02+00:00 | Lula Enlouquece e Manda Ministro Dizer Algo Absurdo Para Trump! |
+| UC84asuWqcrFqEtWqSCtS85Q | I9dfxRCKfUE | 2026-07-09T14:02:37+00:00 | Flávio Dino contou metade da história. |
+| UC84asuWqcrFqEtWqSCtS85Q | OCsNwmiuvIg | 2026-07-08T21:06:48+00:00 | Moraes Estoura Flagrante Contra Bolsonaro! |
+| UC84asuWqcrFqEtWqSCtS85Q | EO7P6WoHVBg | 2026-07-08T20:33:33+00:00 | 🚀 Doe agora através do link: https://queroapoiar.com.br/deltan |
+| UC84asuWqcrFqEtWqSCtS85Q | 4f2CMqaw5Ic | 2026-07-08T17:53:08+00:00 | Lula Diz que Trump Vai Invadir o Brasil e Vira Chacota! |
+| UC84asuWqcrFqEtWqSCtS85Q | OTRNzg8N5aY | 2026-07-08T15:06:34+00:00 | 🚀 Doe agora pelo link: https://queroapoiar.com.br/deltan |
+| UC84asuWqcrFqEtWqSCtS85Q | pCvlKSXtzds | 2026-07-08T14:34:23+00:00 | Não Doe Para a Minha Campanha |
+| UC84asuWqcrFqEtWqSCtS85Q | JgPOTtYKvlA | 2026-07-07T22:20:34+00:00 | Lula bate recorde de emendas em ano eleitoral. Entenda! |
+| UC84asuWqcrFqEtWqSCtS85Q | 8IDz1_qGMek | 2026-07-07T20:36:41+00:00 | Flagra: o Novo Esquema de Bilhões de Lula e do PT! |
+| UC84asuWqcrFqEtWqSCtS85Q | HCdpuHe6yL4 | 2026-07-07T19:57:35+00:00 | Assista até o final e compartilhe com alguém que precisa lembrar quem é Ricardo Lewandowski. |
+| UC84asuWqcrFqEtWqSCtS85Q | -8vqrs6CX3U | 2026-07-07T15:24:52+00:00 | O Que Esconderam de Você Sobre o PL da Misoginia |
+| UC84asuWqcrFqEtWqSCtS85Q | FB55ueEBgLI | 2026-07-07T13:44:19+00:00 | Lula É Humilhado nos EUA em Audiência do Tarifaço! |
+| UC84asuWqcrFqEtWqSCtS85Q | pvYgdmu71hw | 2026-07-06T21:42:33+00:00 | A Manobra da Defesa de Lulinha contra Mendonça! |
+| UC84asuWqcrFqEtWqSCtS85Q | asqd9kux8I8 | 2026-07-06T21:31:09+00:00 | Lula perder HOMEM mais influente do governo |
+| UC84asuWqcrFqEtWqSCtS85Q | 8jqq-tFm69w | 2026-07-06T18:36:08+00:00 | Moraes Ameaça Afastar Presidentes de Tribunais! |
+| UC84asuWqcrFqEtWqSCtS85Q | Lal0NfxjaOs | 2026-07-06T13:03:59+00:00 | Mendonça Flagra Jogada de Lula na PF e Dá Alerta Grave! |
+| UC84asuWqcrFqEtWqSCtS85Q | dg6v-5zJUsQ | 2026-07-05T22:55:15+00:00 | Brasil Perde e PT Fez Jogada Perigosa Para Dominar O Senado! |
+| UCVAt-Pw_AhAfaaTtZuohTQg | DNswPFkOmsw | 2026-07-07T16:00:23+00:00 | O que ninguém quer admitir sobre o caso Master |
+| UCVAt-Pw_AhAfaaTtZuohTQg | IvS6IhAK5Ro | 2026-07-06T16:00:30+00:00 | A farsa eleitoral que bloqueia uma direita verdadeira no Brasil |
+| UC9iusg9ZUmiSqXmppE9J1IQ | uiT4oK19hu4 | 2026-07-01T12:30:20+00:00 | SERVER-SENT EVENTS: Aprenda a Construir Sistemas que se Comunicam em Tempo Real |
+| UC9iusg9ZUmiSqXmppE9J1IQ | GwK9hxNS7l4 | 2026-06-18T22:45:33+00:00 | ARQUITETANDO O PLACAR AO VIVO DA COPA DO MUNDO \| System Design |
+| UCnUYZLuoy1rq1aVMwx4aTzw | 0heeppCYrmM | 2026-07-10T19:09:26+00:00 | Lighthouse Audit: Make your website agent-ready |
+| UCnUYZLuoy1rq1aVMwx4aTzw | luOzh9Q1zY8 | 2026-07-10T16:10:08+00:00 | The Butterfly Effect: Dev Edition |
+| UCnUYZLuoy1rq1aVMwx4aTzw | mRsbIHuSMhg | 2026-07-09T21:07:32+00:00 | Explain like I’m 5: WebMCP edition |
+| UCnUYZLuoy1rq1aVMwx4aTzw | RmA5BIzxLYs | 2026-07-09T16:01:36+00:00 | What is Modern Web Guidance? |
+| UCnUYZLuoy1rq1aVMwx4aTzw | rXT0bscwllk | 2026-07-09T00:23:17+00:00 | New workflows for improved web app quality: Modern Web Guidance and DevTools (I/O Connect '26) |
+| UCnUYZLuoy1rq1aVMwx4aTzw | OPHGK5tn1Y0 | 2026-07-08T21:05:05+00:00 | Authentication in 2026: A guide to passkeys, digital credentials and more (I/O Connect ‘26) |
+| UCnUYZLuoy1rq1aVMwx4aTzw | YImum6f4Z2w | 2026-07-07T19:43:34+00:00 | Create a closed feedback loop: Chrome Devtools for agents (I/O Connect ‘26) |
+| UCnUYZLuoy1rq1aVMwx4aTzw | SAYyWDKdCJA | 2026-07-07T17:31:21+00:00 | Life After I/O: Where is the Chrome DevRel team now? |
+| UCnUYZLuoy1rq1aVMwx4aTzw | _KBZ241HS9c | 2026-07-06T22:01:02+00:00 | Google I/O Connect Berlin with Chrome for Developers |
+| UCnUYZLuoy1rq1aVMwx4aTzw | 66josBG04qA | 2026-07-06T19:03:41+00:00 | New quest: Discover DevTools for agents |
+| UCRVzEriB1B2JKGpsLpL-uNg | ofz4AHamK40 | 2026-07-10T09:41:24+00:00 | 🚨Novo ChatGPT Work, GPT-5.6, GPT-Live testados AO VIVO! |
+| UCRVzEriB1B2JKGpsLpL-uNg | 9PW4q38nQ7I | 2026-07-09T15:00:01+00:00 | 🤖 ChatGPT, Gemini ou GLM 5.2: Qual IA Grátis Vale Mais a Pena? |
+| UCRVzEriB1B2JKGpsLpL-uNg | rzP9b-DxAwY | 2026-07-07T15:00:07+00:00 | 🔥 A IA Grátis que Transforma Qualquer Ideia em um Design Profissional! |
