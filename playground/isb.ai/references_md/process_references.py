@@ -103,6 +103,10 @@ def main():
         for item in grouped_files:
             p = item["path"]
             content = p.read_text(encoding="utf-8")
+            
+            # Normalize alternative separators (e.g., "---" followed by "## Source:") to SEPARATOR + "Source:"
+            content = re.sub(r"(?m)^---\s*\n+(\s*)#*\s*Source:", rf"{SEPARATOR}\n\1Source:", content)
+            
             articles = content.split(SEPARATOR)
             original_total_articles += len(articles)
             print(f"  File {p.name}: {len(articles)} articles found.")
