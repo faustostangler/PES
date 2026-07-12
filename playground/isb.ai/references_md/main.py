@@ -42,6 +42,15 @@ def normalize_keyword(kw: str) -> str:
     return ascii_kw.lower().strip()
 
 
+def normalize_title_for_cache(title: str) -> str:
+    """Normalizes a title to an alphanumeric-only lowercase ASCII string to ensure robust cache hits."""
+    if not title:
+        return ""
+    nfkd = unicodedata.normalize("NFKD", title)
+    ascii_title = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return "".join(c for c in ascii_title if c.isalnum()).lower()
+
+
 def process_backups():
     print(f"Scanning references directory for backups: {REFERENCES_DIR}")
     
@@ -496,7 +505,7 @@ def load_index_data_from_index_md(index_path: Path) -> dict:
         current_set = None
         
         set_pattern = re.compile(r"^###\s+\[([^\]]+)\]\(([^)]+)\)")
-        source_pattern = re.compile(r"^-\s+\[([^\]]+)\]\([^#]+#L(\d+)-L(\d+)\)\s+-\s+\*(.*?)\*(?:\s*|$)")
+        source_pattern = re.compile(r"^-\s+\[(.*)\]\((?:[^#]+#L(\d+)-L(\d+))\)\s+-\s+\*(.*?)\*(?:\s*|$)")
         keywords_pattern = re.compile(r"^\s+-\s+\*\*Keywords:\*\*\s+(.*)")
 
         for line in content.splitlines():
@@ -609,6 +618,40 @@ def plot_time_log():
     df['estimated_remaining_seconds'] = df['estimated_remaining_seconds'].fillna(0)
     df['estimated_total_seconds'] = df['estimated_total_seconds'].fillna(df['elapsed_seconds'])
 
+    # Clean and sanitize data per set to prevent overlapping blocks and time regression bugs in subplots
+    cleaned_dfs = []
+    for s_name in df['set_name'].unique():
+        df_set = df[df['set_name'] == s_name].copy()
+        
+        # Discard any "future" orphan blocks from previous aborted runs that went further
+        if not df_set.empty:
+            last_recorded_block = df_set['block_idx'].iloc[-1]
+            df_set = df_set[df_set['block_idx'] <= last_recorded_block]
+            
+        # Drop duplicates of block_idx keeping the last (most recent) run record
+        df_set = df_set.drop_duplicates(subset=['block_idx'], keep='last')
+        # Sort by block index to ensure monotonic progress on the X-axis
+        df_set = df_set.sort_values(by='block_idx').reset_index(drop=True)
+        # Prevent elapsed time regressions (due to session restarts or clock drifts)
+        df_set['elapsed_seconds'] = df_set['elapsed_seconds'].cummax()
+        # Re-align estimated remaining seconds based on the raw estimated total
+        df_set['estimated_remaining_seconds'] = (df_set['estimated_total_seconds'] - df_set['elapsed_seconds']).clip(lower=0)
+        
+        # Ensure the plot starts at 0% progress to avoid whitespace cuts at the beginning of the chart
+        if not df_set.empty and df_set['percent'].iloc[0] > 0:
+            first_row = df_set.iloc[0].copy()
+            first_row['percent'] = 0.0
+            first_row['block_idx'] = 0
+            first_row['elapsed_seconds'] = 0.0
+            first_row['estimated_total_seconds'] = df_set['estimated_total_seconds'].iloc[0]
+            first_row['estimated_remaining_seconds'] = first_row['estimated_total_seconds']
+            df_set = pd.concat([pd.DataFrame([first_row]), df_set], ignore_index=True)
+            
+        cleaned_dfs.append(df_set)
+        
+    if cleaned_dfs:
+        df = pd.concat(cleaned_dfs, ignore_index=True)
+
     # Get unique sets in reverse chronological order (most recent on top, oldest on bottom)
     unique_sets = list(df['set_name'].unique())[::-1]
     num_sets = len(unique_sets)
@@ -654,17 +697,7 @@ def plot_time_log():
         if idx == 0:
             ax.legend(loc='upper left', frameon=True, facecolor='#ffffff', edgecolor='#e2e8f0', framealpha=0.9, fontsize=8)
             
-        if not df_set.empty:
-            last_row = df_set.iloc[-1]
-            last_percent = last_row['percent']
-            last_total_min = last_row['estimated_total_seconds'] / 60
-            ann_x = last_percent - 18 if last_percent > 20 else last_percent
-            ann_y = last_total_min * 0.95
-            ax.annotate(f"Final Est: {last_total_min:.1f}m", 
-                        xy=(last_percent, last_total_min), 
-                        xytext=(ann_x, ann_y),
-                        arrowprops=dict(facecolor='#0f172a', arrowstyle="->", connectionstyle="arc3,rad=-0.2"),
-                        fontweight='bold', color='#0f172a', fontsize=8)
+        pass
 
     # Set common X label on the bottom-most subplot
     axes[-1].set_xlabel("Progress (%)", fontsize=10, labelpad=10, color='#475569')
@@ -745,7 +778,7 @@ def compile_and_summarize():
     cache = {}
     for s_name, sources in index_data.items():
         for src in sources:
-            cache_key = f"{s_name}:::{src['title'].lower().strip()}"
+            cache_key = f"{s_name}:::{normalize_title_for_cache(src['title'])}"
             norm_kws = [normalize_keyword(k) for k in src.get("keywords", []) if normalize_keyword(k)]
             cache[cache_key] = {
                 "summary": src["summary"],
@@ -759,15 +792,20 @@ def compile_and_summarize():
             legacy_cache = json.loads(cache_path.read_text(encoding="utf-8"))
             migrated_count = 0
             for k, v in legacy_cache.items():
-                if k not in cache:
+                parts = k.split(":::", 1)
+                if len(parts) == 2:
+                    cache_key = f"{parts[0]}:::{normalize_title_for_cache(parts[1])}"
+                else:
+                    cache_key = k
+                if cache_key not in cache:
                     if isinstance(v, dict):
                         norm_kws = [normalize_keyword(kw) for kw in v.get("keywords", []) if normalize_keyword(kw)]
-                        cache[k] = {
+                        cache[cache_key] = {
                             "summary": v.get("summary", "").strip(),
                             "keywords": norm_kws
                         }
                     else:
-                        cache[k] = {
+                        cache[cache_key] = {
                             "summary": str(v).strip(),
                             "keywords": []
                         }
@@ -913,18 +951,36 @@ def compile_and_summarize():
                     title_key = first_lines[0][len("Source:"):].strip()
                     actual_line_map[title_key] = (block_start_line, len(file_lines))
 
-            # 3. Rebuild index_data for this set with correct line refs
-            index_data[set_name] = []
-            for entry in set_entries:
-                title = entry["title"]
-                line_range = actual_line_map.get(title, (0, 0))
-                index_data[set_name].append({
-                    "title": title,
-                    "start": line_range[0],
-                    "end": line_range[1],
-                    "summary": entry["summary"],
-                    "keywords": entry["keywords"],
-                })
+            # 3. Update index_data for this set keeping other historical entries intact
+            processed_map = {normalize_title_for_cache(entry["title"]): entry for entry in set_entries}
+            new_set_entries = []
+            processed_titles_norm = set()
+            
+            for idx_b in range(total_processed):
+                block_b = blocks_with_metadata[idx_b]
+                t_title = block_b["title"]
+                t_norm = normalize_title_for_cache(t_title)
+                entry = processed_map.get(t_norm)
+                if entry:
+                    line_range = actual_line_map.get(t_title, (0, 0))
+                    new_set_entries.append({
+                        "title": t_title,
+                        "start": line_range[0],
+                        "end": line_range[1],
+                        "summary": entry["summary"],
+                        "keywords": entry["keywords"],
+                    })
+                    processed_titles_norm.add(t_norm)
+            
+            # Append historical entries for sources that we haven't reached/processed yet in this run
+            historical_list = index_data.get(set_name, [])
+            for hist in historical_list:
+                hist_norm = normalize_title_for_cache(hist["title"])
+                if hist_norm not in processed_titles_norm:
+                    new_set_entries.append(hist)
+                    processed_titles_norm.add(hist_norm)
+            
+            index_data[set_name] = new_set_entries
 
             # 4. Write index.md — now references a file that exists on disk
             generate_index_md(index_data)
@@ -937,7 +993,7 @@ def compile_and_summarize():
             keywords = []
 
             if source_title and source_title != "Untitled Source":
-                cache_key = f"{set_name}:::{source_title.lower().strip()}"
+                cache_key = f"{set_name}:::{normalize_title_for_cache(source_title)}"
                 if cache_key in cache:
                     cached_val = cache[cache_key]
                     summary = cached_val.get("summary", "").strip()
@@ -962,7 +1018,10 @@ def compile_and_summarize():
                         elapsed_str = format_duration(elapsed_to_log)
                         time_block = f"{elapsed_str}+--h--m--s = --h--m--s"
                         
-                    print(f"  [{idx}+{remaining} = {total}] [{percent:.2f}%] [{time_block}] {source_title[:40]}...")
+                    if len(source_title) > 40:
+                        print(f"  [{idx}+{remaining} = {total}] [{percent:.2f}%] [{time_block}] {source_title[:40]}...")
+                    else:
+                        print(f"  [{idx}+{remaining} = {total}] [{percent:.2f}%] [{time_block}] {source_title}")
                 else:
                     # ETA: derive rate from global metrics (history + current session)
                     remaining = len(blocks_to_merge) - idx
@@ -1034,8 +1093,6 @@ def compile_and_summarize():
         for path in paths:
             path.unlink(missing_ok=True)
             print(f"    Deleted segmented file: {path.name}")
-
-
 
 
 def main():
