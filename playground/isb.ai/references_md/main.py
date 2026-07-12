@@ -32,7 +32,6 @@ OLLAMA_MODEL = "qwen2.5:7b" #"gemma3:270m"
 OLLAMA_URL = "http://localhost:11434"
 
 
-
 def normalize_keyword(kw: str) -> str:
     """Normalizes keyword to lowercase ASCII, stripping diacritics."""
     if not kw or not kw.strip():
@@ -41,7 +40,6 @@ def normalize_keyword(kw: str) -> str:
     nfkd = unicodedata.normalize("NFKD", kw.strip())
     ascii_kw = "".join(c for c in nfkd if not unicodedata.combining(c))
     return ascii_kw.lower().strip()
-
 
 
 def process_backups():
@@ -484,7 +482,7 @@ def generate_index_md(index_data):
         index_lines.append("")
 
     index_file_path.write_text("\n".join(index_lines), encoding="utf-8")
-    print(f"Generated/updated master index: {index_file_path.name}")
+    # print(f"Generated/updated master index: {index_file_path.name}")
 
 
 def load_index_data_from_index_md(index_path: Path) -> dict:
@@ -571,6 +569,15 @@ def log_time_data(set_name: str, block_idx: int, total_blocks: int, percent: flo
             writer.writerow(row)
     except Exception as e:
         print(f"Warning: Failed to write time log: {e}", file=sys.stderr)
+
+
+def format_duration(seconds: float) -> str:
+    """Format duration in seconds to xxhxxmxxs (e.g. 02h14m45s)."""
+    secs = int(seconds)
+    hours = secs // 3600
+    minutes = (secs % 3600) // 60
+    remaining_secs = secs % 60
+    return f"{hours:02d}h{minutes:02d}m{remaining_secs:02d}s"
 
 
 def plot_time_log():
@@ -853,18 +860,20 @@ def compile_and_summarize():
         # both files stay in sync as an incremental SSOT cache.
         merged_content_parts = []
         
-        # Get accumulated time offset from previous run of the same set to make it cumulative
+        # Get accumulated time offset and historical runs from previous run of the same set to make it cumulative
         accumulated_time_offset = 0.0
+        historical_active_runs = 0
         if TIME_LOG_PATH.exists():
             try:
                 df_temp = pd.read_csv(TIME_LOG_PATH)
                 df_set = df_temp[df_temp['set_name'] == set_name]
                 if not df_set.empty:
                     accumulated_time_offset = float(df_set['elapsed_seconds'].iloc[-1])
+                    historical_active_runs = int(df_set.shape[0])
             except Exception:
                 pass
                 
-        total_active_runs = 0
+        total_active_runs_session = 0
         set_start_time = time.time()
         block_durations: list[float] = []  # wall time per LLM call (non-cached)
         total_processed = 0  # cached + LLM blocks done so far
@@ -919,7 +928,6 @@ def compile_and_summarize():
 
             # 4. Write index.md — now references a file that exists on disk
             generate_index_md(index_data)
-            print(f"  [cache] Flushed {len(set_entries)}/{len(blocks_to_merge)} blocks → {merged_file_path.name} + index.md")
 
         for idx, block in enumerate(blocks_with_metadata, start=1):
             block_content = block["content"]
@@ -934,25 +942,48 @@ def compile_and_summarize():
                     cached_val = cache[cache_key]
                     summary = cached_val.get("summary", "").strip()
                     keywords = cached_val.get("keywords", [])
-                else:
-                    # ETA: derive rate from wall time over active runs in the current session
+                    
+                    # Log print for cache hits (identical formatting and global ETA)
                     remaining = len(blocks_to_merge) - idx
                     elapsed_active = time.time() - set_start_time
                     elapsed_to_log = accumulated_time_offset + elapsed_active
                     percent = (idx / len(blocks_to_merge)) * 100
+                    total = len(blocks_to_merge)
                     
-                    if total_active_runs > 0 and elapsed_active > 0:
-                        rate = total_active_runs / elapsed_active          # active blocks per second
-                        eta_sec = (remaining + 1) / rate                  # include current block in estimate
-                        elapsed_str = str(timedelta(seconds=int(elapsed_to_log)))
-                        eta_str = str(timedelta(seconds=int(eta_sec)))
-                        total_time_str = str(timedelta(seconds=int(elapsed_to_log + eta_sec)))
-                        eta_label = f" | [{idx}+{remaining}] [{percent:.2f}%] {elapsed_str}+{eta_str}={total_time_str}"
+                    total_runs_so_far = historical_active_runs + total_active_runs_session
+                    if total_runs_so_far > 0 and elapsed_to_log > 0:
+                        rate = total_runs_so_far / elapsed_to_log
+                        eta_sec = remaining / rate
+                        elapsed_str = format_duration(elapsed_to_log)
+                        eta_str = format_duration(eta_sec)
+                        total_time_str = format_duration(elapsed_to_log + eta_sec)
+                        time_block = f"{elapsed_str}+{eta_str} = {total_time_str}"
                     else:
-                        elapsed_str = str(timedelta(seconds=int(elapsed_to_log)))
-                        eta_label = f" | [{idx}+{remaining}] [{percent:.2f}%] {elapsed_str}+--:--:--=--:--:--"
+                        elapsed_str = format_duration(elapsed_to_log)
+                        time_block = f"{elapsed_str}+--h--m--s = --h--m--s"
+                        
+                    print(f"  [{idx}+{remaining} = {total}] [{percent:.2f}%] [{time_block}] {source_title[:40]}...")
+                else:
+                    # ETA: derive rate from global metrics (history + current session)
+                    remaining = len(blocks_to_merge) - idx
+                    elapsed_active = time.time() - set_start_time
+                    elapsed_to_log = accumulated_time_offset + elapsed_active
+                    percent = (idx / len(blocks_to_merge)) * 100
+                    total = len(blocks_to_merge)
+                    
+                    total_runs_so_far = historical_active_runs + total_active_runs_session
+                    if total_runs_so_far > 0 and elapsed_to_log > 0:
+                        rate = total_runs_so_far / elapsed_to_log
+                        eta_sec = (remaining + 1) / rate
+                        elapsed_str = format_duration(elapsed_to_log)
+                        eta_str = format_duration(eta_sec)
+                        total_time_str = format_duration(elapsed_to_log + eta_sec)
+                        time_block = f"{elapsed_str}+{eta_str} = {total_time_str}"
+                    else:
+                        elapsed_str = format_duration(elapsed_to_log)
+                        time_block = f"{elapsed_str}+--h--m--s = --h--m--s"
 
-                    print(f"  [{idx}/{len(blocks_to_merge)}{eta_label}] Summarizing & Extracting Keywords: '{source_title[:60]}...'")
+                    print(f"  [{idx}+{remaining} = {total}] [{percent:.2f}%] [{time_block}] {source_title[:40]}...")
                     block_t0 = time.time()
                     result = get_ollama_summary(block_content, set_name)
                     block_durations.append(time.time() - block_t0)
@@ -963,12 +994,13 @@ def compile_and_summarize():
                         cache[cache_key] = {"summary": summary, "keywords": keywords}
 
                     # Log progress metrics to CSV ONLY for active runs (cumulatively)
-                    total_active_runs += 1
+                    total_active_runs_session += 1
                     elapsed_active = time.time() - set_start_time
                     elapsed_to_log = accumulated_time_offset + elapsed_active
+                    total_runs_so_far = historical_active_runs + total_active_runs_session
                     
-                    if total_active_runs > 1 and elapsed_active > 0:
-                        rate = (total_active_runs - 1) / elapsed_active
+                    if total_runs_so_far > 1 and elapsed_to_log > 0:
+                        rate = (total_runs_so_far - 1) / elapsed_to_log
                         eta_val = remaining / rate
                     else:
                         eta_val = None
