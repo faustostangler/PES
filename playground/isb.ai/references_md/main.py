@@ -574,7 +574,7 @@ def log_time_data(set_name: str, block_idx: int, total_blocks: int, percent: flo
 
 
 def plot_time_log():
-    """Generates a beautiful stacked area chart of Elapsed + Estimated Remaining time."""
+    """Generates a beautiful multi-panel stacked area chart (one panel per set)."""
     if not TIME_LOG_PATH.exists():
         return
         
@@ -588,58 +588,81 @@ def plot_time_log():
 
     # Convert fields to numeric
     df['block_idx'] = pd.to_numeric(df['block_idx'], errors='coerce')
+    df['percent'] = pd.to_numeric(df['percent'], errors='coerce')
     df['elapsed_seconds'] = pd.to_numeric(df['elapsed_seconds'], errors='coerce')
     df['estimated_remaining_seconds'] = pd.to_numeric(df['estimated_remaining_seconds'], errors='coerce')
     df['estimated_total_seconds'] = pd.to_numeric(df['estimated_total_seconds'], errors='coerce')
     
     # Drop rows without block_idx or elapsed_seconds
-    df = df.dropna(subset=['block_idx', 'elapsed_seconds']).reset_index(drop=True)
+    df = df.dropna(subset=['block_idx', 'elapsed_seconds', 'set_name']).reset_index(drop=True)
     
+    if df.empty:
+        return
+        
     df['estimated_remaining_seconds'] = df['estimated_remaining_seconds'].fillna(0)
     df['estimated_total_seconds'] = df['estimated_total_seconds'].fillna(df['elapsed_seconds'])
 
+    # Get unique sets in reverse chronological order (most recent on top, oldest on bottom)
+    unique_sets = list(df['set_name'].unique())[::-1]
+    num_sets = len(unique_sets)
+    
     # Style configuration for Premium Look
     plt.style.use('seaborn-v0_8-whitegrid' if 'seaborn-v0_8-whitegrid' in plt.style.available else 'default')
     
-    fig, ax = plt.subplots(figsize=(10, 6), dpi=150)
+    # Adjust figure height dynamically depending on the number of sets
+    fig, axes = plt.subplots(nrows=num_sets, ncols=1, figsize=(10, 3.5 * num_sets), dpi=150, sharex=True)
     
+    # Handle single subplot case where axes is not a list
+    if num_sets == 1:
+        axes = [axes]
+        
     color_elapsed = '#4f46e5'  # indigo
     color_remaining = '#06b6d4'  # cyan
     
-    x = df['block_idx']
-    y_elapsed = df['elapsed_seconds']
-    y_remaining = df['estimated_remaining_seconds']
-    
-    ax.stackplot(x, y_elapsed, y_remaining, 
-                 labels=['Elapsed Time (s)', 'Estimated Remaining (s)'],
-                 colors=[color_elapsed, color_remaining], 
-                 alpha=0.85,
-                 edgecolor='none')
-    
-    ax.plot(x, df['estimated_total_seconds'], color='#0f172a', linestyle='--', linewidth=1.5, label='Estimated Total (s)')
-    
-    ax.set_title("Processing Timing Vibe: Dynamic ETA Convergence", fontsize=14, fontweight='bold', pad=15, color='#1e293b')
-    ax.set_xlabel("Processed Block Index", fontsize=11, labelpad=10, color='#475569')
-    ax.set_ylabel("Seconds", fontsize=11, labelpad=10, color='#475569')
-    
-    ax.grid(True, linestyle=':', alpha=0.6, color='#cbd5e1')
-    for spine in ax.spines.values():
-        spine.set_edgecolor('#e2e8f0')
+    for idx, (set_name, ax) in enumerate(zip(unique_sets, axes)):
+        df_set = df[df['set_name'] == set_name].reset_index(drop=True)
         
-    ax.legend(loc='upper left', frameon=True, facecolor='#ffffff', edgecolor='#e2e8f0', framealpha=0.9)
-    
-    if not df.empty:
-        last_row = df.iloc[-1]
-        last_idx = int(last_row['block_idx'])
-        last_total = last_row['estimated_total_seconds']
-        ann_x = last_idx * 0.75 if last_idx > 1 else last_idx
-        ann_y = last_total * 0.95
-        ax.annotate(f"Final Total Est: {last_total:.1f}s", 
-                    xy=(last_idx, last_total), 
-                    xytext=(ann_x, ann_y),
-                    arrowprops=dict(facecolor='#0f172a', arrowstyle="->", connectionstyle="arc3,rad=-0.2"),
-                    fontweight='bold', color='#0f172a')
+        x = df_set['percent']
+        y_elapsed = df_set['elapsed_seconds'] / 60
+        y_remaining = df_set['estimated_remaining_seconds'] / 60
+        y_total = df_set['estimated_total_seconds'] / 60
+        
+        ax.stackplot(x, y_elapsed, y_remaining, 
+                     labels=['Elapsed (m)', 'Est. Remaining (m)'],
+                     colors=[color_elapsed, color_remaining], 
+                     alpha=0.85,
+                     edgecolor='none')
+        
+        ax.plot(x, y_total, color='#0f172a', linestyle='--', linewidth=1.5, label='Est. Total (m)')
+        
+        ax.set_title(f"Timing Convergence: {set_name}", fontsize=11, fontweight='bold', pad=8, color='#1e293b')
+        ax.set_ylabel("Minutes", fontsize=9, labelpad=8, color='#475569')
+        ax.set_xlim(0, 100)
+        
+        ax.grid(True, linestyle=':', alpha=0.6, color='#cbd5e1')
+        for spine in ax.spines.values():
+            spine.set_edgecolor('#e2e8f0')
+            
+        # Place legend only on the first subplot to save space
+        if idx == 0:
+            ax.legend(loc='upper left', frameon=True, facecolor='#ffffff', edgecolor='#e2e8f0', framealpha=0.9, fontsize=8)
+            
+        if not df_set.empty:
+            last_row = df_set.iloc[-1]
+            last_percent = last_row['percent']
+            last_total_min = last_row['estimated_total_seconds'] / 60
+            ann_x = last_percent - 18 if last_percent > 20 else last_percent
+            ann_y = last_total_min * 0.95
+            ax.annotate(f"Final Est: {last_total_min:.1f}m", 
+                        xy=(last_percent, last_total_min), 
+                        xytext=(ann_x, ann_y),
+                        arrowprops=dict(facecolor='#0f172a', arrowstyle="->", connectionstyle="arc3,rad=-0.2"),
+                        fontweight='bold', color='#0f172a', fontsize=8)
 
+    # Set common X label on the bottom-most subplot
+    axes[-1].set_xlabel("Progress (%)", fontsize=10, labelpad=10, color='#475569')
+    
+    plt.suptitle("Processing Timing Vibe: Dynamic ETA Convergence", fontsize=13, fontweight='bold', y=0.98, color='#1e293b')
     plt.tight_layout()
     plt.savefig(TIME_LOG_CHART_PATH, dpi=300)
     plt.close(fig)  # prevent memory leaks in loop
@@ -703,13 +726,6 @@ def compile_and_summarize():
     if not REFERENCES_DIR.exists():
         print(f"Error: References directory {REFERENCES_DIR} does not exist!", file=sys.stderr)
         return
-
-    # Clean the progress time log CSV at the beginning of the run
-    if TIME_LOG_PATH.exists():
-        try:
-            TIME_LOG_PATH.unlink()
-        except Exception:
-            pass
 
     # Load cache and index data directly from index.md (SSOT)
     index_file_path = REFERENCES_DIR / "index.md"
@@ -836,6 +852,19 @@ def compile_and_summarize():
         # Process blocks — flush merged file + index.md after every block so
         # both files stay in sync as an incremental SSOT cache.
         merged_content_parts = []
+        
+        # Get accumulated time offset from previous run of the same set to make it cumulative
+        accumulated_time_offset = 0.0
+        if TIME_LOG_PATH.exists():
+            try:
+                df_temp = pd.read_csv(TIME_LOG_PATH)
+                df_set = df_temp[df_temp['set_name'] == set_name]
+                if not df_set.empty:
+                    accumulated_time_offset = float(df_set['elapsed_seconds'].iloc[-1])
+            except Exception:
+                pass
+                
+        total_active_runs = 0
         set_start_time = time.time()
         block_durations: list[float] = []  # wall time per LLM call (non-cached)
         total_processed = 0  # cached + LLM blocks done so far
@@ -906,21 +935,22 @@ def compile_and_summarize():
                     summary = cached_val.get("summary", "").strip()
                     keywords = cached_val.get("keywords", [])
                 else:
-                    # ETA: derive rate from wall time over ALL blocks processed so far
+                    # ETA: derive rate from wall time over active runs in the current session
                     remaining = len(blocks_to_merge) - idx
-                    elapsed = time.time() - set_start_time
+                    elapsed_active = time.time() - set_start_time
+                    elapsed_to_log = accumulated_time_offset + elapsed_active
                     percent = (idx / len(blocks_to_merge)) * 100
                     
-                    if total_processed > 0 and elapsed > 0:
-                        rate = total_processed / elapsed          # blocks per second
-                        eta_sec = (remaining + 1) / rate          # include current block in estimate
-                        elapsed_str = str(timedelta(seconds=int(elapsed)))
+                    if total_active_runs > 0 and elapsed_active > 0:
+                        rate = total_active_runs / elapsed_active          # active blocks per second
+                        eta_sec = (remaining + 1) / rate                  # include current block in estimate
+                        elapsed_str = str(timedelta(seconds=int(elapsed_to_log)))
                         eta_str = str(timedelta(seconds=int(eta_sec)))
-                        total_time_str = str(timedelta(seconds=int(elapsed + eta_sec)))
+                        total_time_str = str(timedelta(seconds=int(elapsed_to_log + eta_sec)))
                         eta_label = f" | [{idx}+{remaining}] [{percent:.2f}%] {elapsed_str}+{eta_str}={total_time_str}"
                     else:
-                        # First real cycle — do not display ETA info yet
-                        eta_label = f" | [{idx}+{remaining}] [{percent:.2f}%]"
+                        elapsed_str = str(timedelta(seconds=int(elapsed_to_log)))
+                        eta_label = f" | [{idx}+{remaining}] [{percent:.2f}%] {elapsed_str}+--:--:--=--:--:--"
 
                     print(f"  [{idx}/{len(blocks_to_merge)}{eta_label}] Summarizing & Extracting Keywords: '{source_title[:60]}...'")
                     block_t0 = time.time()
@@ -931,6 +961,25 @@ def compile_and_summarize():
 
                     if "Failed to generate" not in summary and summary.strip():
                         cache[cache_key] = {"summary": summary, "keywords": keywords}
+
+                    # Log progress metrics to CSV ONLY for active runs (cumulatively)
+                    total_active_runs += 1
+                    elapsed_active = time.time() - set_start_time
+                    elapsed_to_log = accumulated_time_offset + elapsed_active
+                    
+                    if total_active_runs > 1 and elapsed_active > 0:
+                        rate = (total_active_runs - 1) / elapsed_active
+                        eta_val = remaining / rate
+                    else:
+                        eta_val = None
+
+                    log_time_data(set_name, idx, len(blocks_to_merge), percent, elapsed_to_log, eta_val)
+
+                    # Automatically update the stacked area chart in real-time
+                    try:
+                        plot_time_log()
+                    except Exception as e:
+                        print(f"Warning: Failed to update time chart: {e}", file=sys.stderr)
             else:
                 summary = "No summary available (untitled source)."
                 keywords = []
@@ -942,24 +991,6 @@ def compile_and_summarize():
                 "summary": summary,
                 "keywords": keywords,
             })
-
-            # Record time data to CSV log
-            elapsed = time.time() - set_start_time
-            percent = (idx / len(blocks_to_merge)) * 100
-            remaining = len(blocks_to_merge) - idx
-            if total_processed > 1 and elapsed > 0:
-                rate = (total_processed - 1) / elapsed
-                eta_val = remaining / rate
-            else:
-                eta_val = None
-
-            log_time_data(set_name, idx, len(blocks_to_merge), percent, elapsed, eta_val)
-
-            # Automatically update the stacked area chart in real-time
-            try:
-                plot_time_log()
-            except Exception as e:
-                print(f"Warning: Failed to update time chart: {e}", file=sys.stderr)
 
             # Flush merged file + index.md after every block (SSOT cache write)
             _flush_to_disk()
