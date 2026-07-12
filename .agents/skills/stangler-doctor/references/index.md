@@ -1859,6 +1859,7 @@ Use the links to jump directly to specific source locations.
   - **Keywords:** `differential privacy`, `k-anonymity`, `t-closeness`, `microaggregation`, `privacy-preserving techniques`, `data publishing`, `utility preservation`, `individual differential privacy`, `data utility enhancement`
 - [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) - *This document discusses strategies for managing patent risks in open-source collaborations, including the role of a cross-functional stakeholder board, fostering a culture of patent awareness, leveraging open source contribution strategies, monitoring legal developments, and utilizing defensive patenting. It also provides information on fixed-fee services offered by PatentPC for various patent-related activities.*
   - **Keywords:** `patent risks`, `open-source collaborations`, `cross-functional stakeholder board`, `culture of patent awareness`, `training`, `policy implementation`, `open-source contribution strategies`, `defensive patenting`, `collaborative defense mechanisms`, `fixed-fee services`, `patent applications`, `patent enforcement`
+- [How to Conduct a Healthcare Cybersecurity Gap Analysis: Step-by ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L908-L911) - *Failed to generate summary.*
 
 ---
 

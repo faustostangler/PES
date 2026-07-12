@@ -688,6 +688,8 @@ def plot_time_log():
         ax.set_title(f"Timing Convergence: {set_name}", fontsize=11, fontweight='bold', pad=8, color='#1e293b')
         ax.set_ylabel("Minutes", fontsize=9, labelpad=8, color='#475569')
         ax.set_xlim(0, 100)
+        ax.set_xticks([0, 20, 40, 60, 80, 100])
+        ax.tick_params(labelbottom=True)
         
         ax.grid(True, linestyle=':', alpha=0.6, color='#cbd5e1')
         for spine in ax.spines.values():
