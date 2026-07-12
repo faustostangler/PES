@@ -1853,6 +1853,12 @@ Use the links to jump directly to specific source locations.
   - **Keywords:** `ci/cd security`, `vulnerability scanning`, `secrets management`, `iac security`, `software supply chain security`, `zero-trust architecture`, `compliance`, `wiz code`
 - [How to perform cybersecurity gap assessment? - Sprinto](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L888-L891) - *A cybersecurity gap assessment is a structured process used to evaluate an organization's current security posture against established frameworks, industry standards, or specific compliance requirements. It identifies gaps between existing measures and desired levels of protection, providing actionable recommendations for improvement. Key benefits include streamlined processes, proactive risk management, and enhanced overall security. Challenges include the complexity of multiple frameworks and the need for continuous updates. Sprinto offers tools to automate compliance and manage vendor risks.*
   - **Keywords:** `cybersecurity gap assessment`, `nist cybersecurity framework`, `control gaps in cybersecurity`, `compliance automation`, `governance, risk, and compliance (grc)`, `vulnerabilities`, `risk management`, `audit readiness`, `ai-powered insights`, `vendor risk management`, `continuous monitoring`, `policy management`, `soc 2`, `iso 27001`, `pci dss`, `hipaa`, `gdpr`
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) - *This legal guide explores methods for protecting software intellectual property through copyright, patents, and trade secrets, providing insights into when each mechanism applies and how to navigate open source licensing.*
+  - **Keywords:** `copyright`, `patents`, `trade secrets`, `software protection`, `intellectual property`, `open source`, `licensing obligations`, `code ownership`, `algorithm protection`
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) - *The document discusses various privacy-preserving techniques in data publishing, including differential privacy, k-anonymity, t-closeness, and microaggregation. It references multiple academic papers on these topics, spanning from foundational works to recent advancements. The content highlights the challenges of balancing privacy with utility in data releases and explores methods such as individual differential privacy and t-closeness through microaggregation.*
+  - **Keywords:** `differential privacy`, `k-anonymity`, `t-closeness`, `microaggregation`, `privacy-preserving techniques`, `data publishing`, `utility preservation`, `individual differential privacy`, `data utility enhancement`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) - *This document discusses strategies for managing patent risks in open-source collaborations, including the role of a cross-functional stakeholder board, fostering a culture of patent awareness, leveraging open source contribution strategies, monitoring legal developments, and utilizing defensive patenting. It also provides information on fixed-fee services offered by PatentPC for various patent-related activities.*
+  - **Keywords:** `patent risks`, `open-source collaborations`, `cross-functional stakeholder board`, `culture of patent awareness`, `training`, `policy implementation`, `open-source contribution strategies`, `defensive patenting`, `collaborative defense mechanisms`, `fixed-fee services`, `patent applications`, `patent enforcement`
 
 ---
 
@@ -2725,6 +2731,9 @@ Use the links to jump directly to specific source locations.
 
 ### `algebraic data types`
 - [The C4 Model for Software Architecture - InfoQ](01-03%20knowledge%20management%20&%20documentation.md#L235-L238) (from *01-03 knowledge management & documentation*)
+
+### `algorithm protection`
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `algorithm-system co-design`
 - [KV Cache Optimization Strategies for Scalable and Efficient LLM Inference - arXiv](01-02%20finops%20&%20cloud%20economics.md#L243-L246) (from *01-02 finops & cloud economics*)
@@ -5748,6 +5757,9 @@ Use the links to jump directly to specific source locations.
 - [Coupling vs Cohesion: Understanding the Key Differences | Graph AI](01-01%20product%20engineering.md#L261-L264) (from *01-01 product engineering*)
 - [Product metrics that connect quality to developer productivity - DX](01-01%20product%20engineering.md#L2188-L2190) (from *01-01 product engineering*)
 
+### `code ownership`
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `code quality`
 - [My LLM coding workflow going into 2026 - Addy Osmani](01-03%20knowledge%20management%20&%20documentation.md#L383-L386) (from *01-03 knowledge management & documentation*)
 - [Navigating Technical Debt: How to Identify, Measure, and Manage it - AppDirect](01-03%20knowledge%20management%20&%20documentation.md#L388-L391) (from *01-03 knowledge management & documentation*)
@@ -5970,6 +5982,9 @@ Use the links to jump directly to specific source locations.
 
 ### `collaborative conversations`
 - [Mapping User Stories in Agile - NN/G](01-01%20product%20engineering.md#L1889-L1891) (from *01-01 product engineering*)
+
+### `collaborative defense mechanisms`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `collaborative diagramming`
 - [Top 7 Architecture Diagram Tools for Developers (2026 Ranked) | InfraSketch Blog](01-03%20knowledge%20management%20&%20documentation.md#L167-L170) (from *01-03 knowledge management & documentation*)
@@ -7040,6 +7055,7 @@ Use the links to jump directly to specific source locations.
 
 ### `copyright`
 - [CLAs And DCOs - FINOS](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L197-L200) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `copyright compliance`
 - [Open Source, Closed Door: Managing Patent Risk in Open Source (OSS)-Driven Products](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L657-L660) (from *01-04 grc (governance, risk & compliance)*)
@@ -7493,6 +7509,9 @@ Use the links to jump directly to specific source locations.
 ### `cross-functional sharing`
 - [Rootly Postmortems: Share Learnings Across Teams Fast](01-03%20knowledge%20management%20&%20documentation.md#L348-L351) (from *01-03 knowledge management & documentation*)
 
+### `cross-functional stakeholder board`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `cross-functional teams`
 - [DevOps Team Structures - Octopus Deploy](01-01%20product%20engineering.md#L1153-L1155) (from *01-01 product engineering*)
 - [Establishing a FinOps Decision & Accountability Structure](01-02%20finops%20&%20cloud%20economics.md#L2345-L2347) (from *01-02 finops & cloud economics*)
@@ -7543,6 +7562,9 @@ Use the links to jump directly to specific source locations.
 ### `culture`
 - [DevOps Team Structures - Octopus Deploy](01-01%20product%20engineering.md#L1153-L1155) (from *01-01 product engineering*)
 - [Governance: Frameworks Ensuring Policy & Regulation Adherence Explained | Kusari®](01-01%20product%20engineering.md#L1274-L1277) (from *01-01 product engineering*)
+
+### `culture of patent awareness`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `custom built`
 - [Evolution Stages - Strategic Terms | Wardley Maps](01-01%20product%20engineering.md#L1850-L1860) (from *01-01 product engineering*)
@@ -7914,6 +7936,9 @@ Use the links to jump directly to specific source locations.
 ### `data protection regulations`
 - [Privacy Laws Compared: CCPA, GDPR, and LGPD Compliance Requirements (2025 Update) | ComplianceHub.Wiki](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L612-L615) (from *01-04 grc (governance, risk & compliance)*)
 
+### `data publishing`
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `data quality`
 - [Scaling Generative AI: 13 elements for sustainable growth and value - Deloitte](01-02%20finops%20&%20cloud%20economics.md#L3247-L3250) (from *01-02 finops & cloud economics*)
 
@@ -7967,6 +7992,9 @@ Use the links to jump directly to specific source locations.
 
 ### `data utility`
 - [What are the Differences Between Anonymisation and Pseudonymisation | Privacy Company Blog](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L313-L316) (from *01-04 grc (governance, risk & compliance)*)
+
+### `data utility enhancement`
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `data value density`
 - [Capability: Unit Economics - The FinOps Foundation](01-02%20finops%20&%20cloud%20economics.md#L710-L712) (from *01-02 finops & cloud economics*)
@@ -8217,6 +8245,9 @@ Use the links to jump directly to specific source locations.
 
 ### `defensive patent pools`
 - [Open Source, Closed Door: Managing Patent Risk in Open Source (OSS)-Driven Products](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L657-L660) (from *01-04 grc (governance, risk & compliance)*)
+
+### `defensive patenting`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `defensive termination`
 - [Open Patent Non-Assertion Pledge - Anapaya Learning Center](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L127-L130) (from *01-04 grc (governance, risk & compliance)*)
@@ -8738,6 +8769,7 @@ Use the links to jump directly to specific source locations.
 - [The Convergence of Global Regulatory Standards and Engineering Safeguards: A Comprehensive Analysis of Data Privacy Engineering](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L449-L451) (from *01-04 grc (governance, risk & compliance)*)
 - [Setting 𝜀 is not the Issue in Differential Privacy - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L527-L530) (from *01-04 grc (governance, risk & compliance)*)
 - [K-Anonymity: Is It Still Enough for Enterprise Data Privacy? - Duality Tech](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L798-L801) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `differentiation`
 - [Evolution Stages - Strategic Terms | Wardley Maps](01-01%20product%20engineering.md#L1850-L1860) (from *01-01 product engineering*)
@@ -10417,6 +10449,9 @@ Use the links to jump directly to specific source locations.
 - [Marginal cost formula: How to calculate and apply it - Xero](01-02%20finops%20&%20cloud%20economics.md#L974-L976) (from *01-02 finops & cloud economics*)
 - [Unit Cost Structure: Key Metrics Explained - Phoenix Strategy Group](01-02%20finops%20&%20cloud%20economics.md#L1122-L1131) (from *01-02 finops & cloud economics*)
 
+### `fixed-fee services`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `fixed-price options`
 - [Architecture Documentation (HLD/LLD) - LW IT Solutions](01-03%20knowledge%20management%20&%20documentation.md#L941-L944) (from *01-03 knowledge management & documentation*)
 
@@ -11877,6 +11912,9 @@ Use the links to jump directly to specific source locations.
 - [How to Calculate Cost Variance for a Project (Formula Included)](01-02%20finops%20&%20cloud%20economics.md#L918-L924) (from *01-02 finops & cloud economics*)
 - [What Is Total Cost of Ownership (TCO)? - IBM](01-02%20finops%20&%20cloud%20economics.md#L1263-L1266) (from *01-02 finops & cloud economics*)
 
+### `individual differential privacy`
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `industrial designs`
 - [Plan your IP strategy (HTML version)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L627-L630) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -12182,6 +12220,7 @@ Use the links to jump directly to specific source locations.
 - [Plan your IP strategy (HTML version)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L627-L630) (from *01-04 grc (governance, risk & compliance)*)
 - [Open Source Compliance Lawyers & Consultants - Brooks Kushman](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L677-L680) (from *01-04 grc (governance, risk & compliance)*)
 - [Intellectual property model management plan - DGS (ca.gov)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L833-L836) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `intellectual property rights`
 - [Open Source License Compliance: Guide for Businesses - daily.dev](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L122-L125) (from *01-04 grc (governance, risk & compliance)*)
@@ -12673,6 +12712,7 @@ Use the links to jump directly to specific source locations.
 - [What is Differential Privacy?](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L308-L311) (from *01-04 grc (governance, risk & compliance)*)
 - [K-anonymity - Wikipedia](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L783-L786) (from *01-04 grc (governance, risk & compliance)*)
 - [K-Anonymity: Is It Still Enough for Enterprise Data Privacy? - Duality Tech](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L798-L801) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `kafka manager`
 - [Kafka Topic Naming Conventions: Best Practices, Patterns, and Guidelines - Confluent](01-03%20knowledge%20management%20&%20documentation.md#L463-L466) (from *01-03 knowledge management & documentation*)
@@ -13176,6 +13216,9 @@ Use the links to jump directly to specific source locations.
 
 ### `licensing issues`
 - [SCA vs. SBOM: How They Compare and What to Do with Each One - Checkmarx](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L97-L100) (from *01-04 grc (governance, risk & compliance)*)
+
+### `licensing obligations`
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `licensing terms`
 - [Mitigating the legal risks of licencing in open-source software and database elements](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L137-L140) (from *01-04 grc (governance, risk & compliance)*)
@@ -13922,6 +13965,9 @@ Use the links to jump directly to specific source locations.
 
 ### `michael nygaard`
 - [2026-05-12 https://www.youtube.com/watch?v=LMBqGPLvonU](01-03%20knowledge%20management%20&%20documentation.md#L1086-L1089) (from *01-03 knowledge management & documentation*)
+
+### `microaggregation`
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `microarchitecture complexity`
 - [2026-05-12 SPIRE: Inferring Hardware Bottlenecks from Performance Counter Data | IEEE Conference Publication | IEEE Xplore](01-03%20knowledge%20management%20&%20documentation.md#L1116-L1118) (from *01-03 knowledge management & documentation*)
@@ -15014,6 +15060,7 @@ Use the links to jump directly to specific source locations.
 - [Open Source Licenses: Which One Should You Pick? MIT, GPL, Apache, AGPL and More (2026 Guide) - DEV Community](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L652-L655) (from *01-04 grc (governance, risk & compliance)*)
 - [Open Source, Closed Door: Managing Patent Risk in Open Source (OSS)-Driven Products](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L657-L660) (from *01-04 grc (governance, risk & compliance)*)
 - [Open Source License Compliance and Test Automation - Blog - OpenTAP](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L672-L675) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `open source components`
 - [What Is Software Composition Analysis (SCA)? - SentinelOne](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L26-L30) (from *01-04 grc (governance, risk & compliance)*)
@@ -15066,6 +15113,9 @@ Use the links to jump directly to specific source locations.
 - [[License-review] [license review] Mulan PSL V1](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L232-L235) (from *01-04 grc (governance, risk & compliance)*)
 - [MulanPSL - /dev/lawyer](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L728-L731) (from *01-04 grc (governance, risk & compliance)*)
 
+### `open-source collaborations`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `open-source components`
 - [Software Composition Analysis (SCA) | Open Source Security - Veracode](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L82-L85) (from *01-04 grc (governance, risk & compliance)*)
 - [Software Composition Analysis (SCA) | Mobile Security Glossary - Zimperium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L92-L95) (from *01-04 grc (governance, risk & compliance)*)
@@ -15074,6 +15124,9 @@ Use the links to jump directly to specific source locations.
 
 ### `open-source configuration management tools`
 - [The Best Configuration Management Software: Top 15 Tools Review](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L458-L461) (from *01-04 grc (governance, risk & compliance)*)
+
+### `open-source contribution strategies`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `open-source license`
 - [Open-source license - Wikipedia](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L102-L105) (from *01-04 grc (governance, risk & compliance)*)
@@ -15562,6 +15615,12 @@ Use the links to jump directly to specific source locations.
 ### `patent`
 - [MulanPSL - /dev/lawyer](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L728-L731) (from *01-04 grc (governance, risk & compliance)*)
 
+### `patent applications`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
+
+### `patent enforcement`
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `patent grant`
 - [OSS licenses part 4: strong copyleft licenses | OpenText Core SCA Documentation](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L132-L135) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -15591,6 +15650,7 @@ Use the links to jump directly to specific source locations.
 
 ### `patent risks`
 - [Strategic Governance of Software Supply Chains: Licensing, Intellectual Property, and Automated Compliance Frameworks](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L488-L490) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `patent search software`
 - [Top 7 IP Portfolio Management Tools for Law Firms (2025) - PatSnap](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L414-L417) (from *01-04 grc (governance, risk & compliance)*)
@@ -15600,6 +15660,7 @@ Use the links to jump directly to specific source locations.
 
 ### `patents`
 - [Plan your IP strategy (HTML version)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L627-L630) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `pathways software stack`
 - [Ironwood: The first Google TPU for the age of inference](01-02%20finops%20&%20cloud%20economics.md#L237-L241) (from *01-02 finops & cloud economics*)
@@ -16082,6 +16143,7 @@ Use the links to jump directly to specific source locations.
 
 ### `policy implementation`
 - [Cloud Policy & Governance - The FinOps Foundation](01-02%20finops%20&%20cloud%20economics.md#L2336-L2338) (from *01-02 finops & cloud economics*)
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `policy management`
 - [How to perform cybersecurity gap assessment? - Sprinto](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L888-L891) (from *01-04 grc (governance, risk & compliance)*)
@@ -16403,6 +16465,9 @@ Use the links to jump directly to specific source locations.
 
 ### `privacy-by-design`
 - [WHY USE LINDDUN](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L374-L377) (from *01-04 grc (governance, risk & compliance)*)
+
+### `privacy-preserving techniques`
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `private cloud`
 - [A Practical Guide to a Successful Public Cloud Exit Strategy](01-02%20finops%20&%20cloud%20economics.md#L1321-L1324) (from *01-02 finops & cloud economics*)
@@ -19265,6 +19330,9 @@ Use the links to jump directly to specific source locations.
 ### `software project architecture`
 - [How to Write an Architecture Decision Record (ADR) - ReflectRally](01-03%20knowledge%20management%20&%20documentation.md#L553-L556) (from *01-03 knowledge management & documentation*)
 
+### `software protection`
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `software quality assurance`
 - [Software Quality Assurance - SVU LMS](01-03%20knowledge%20management%20&%20documentation.md#L303-L306) (from *01-03 knowledge management & documentation*)
 - [(PDF) Software Quality Assurance - ResearchGate](01-03%20knowledge%20management%20&%20documentation.md#L1165-L1168) (from *01-03 knowledge management & documentation*)
@@ -20169,6 +20237,7 @@ Use the links to jump directly to specific source locations.
 
 ### `t-closeness`
 - [K-Anonymity: Is It Still Enough for Enterprise Data Privacy? - Duality Tech](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L798-L801) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `t-shaped skills model`
 - [Susanne Kaiser on Wardley Mapping - Semaphore](01-01%20product%20engineering.md#L1948-L1954) (from *01-01 product engineering*)
@@ -21051,6 +21120,7 @@ Use the links to jump directly to specific source locations.
 
 ### `trade secrets`
 - [Plan your IP strategy (HTML version)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L627-L630) (from *01-04 grc (governance, risk & compliance)*)
+- [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `trade-off`
 - [2026-05-10 The Fallacy of the Speed / Cost / Quality Trade-off | by Jeff Kolesky | Medium](01-01%20product%20engineering.md#L130-L132) (from *01-01 product engineering*)
@@ -21114,6 +21184,7 @@ Use the links to jump directly to specific source locations.
 - [FinOps for Data Center - FinOps Framework Technology Category](01-02%20finops%20&%20cloud%20economics.md#L2491-L2493) (from *01-02 finops & cloud economics*)
 - [Multi-Cloud Governance & Policy Frameworks for DevOps Teams - NareshIT](01-02%20finops%20&%20cloud%20economics.md#L2594-L2608) (from *01-02 finops & cloud economics*)
 - [The FinOps Foundation](01-02%20finops%20&%20cloud%20economics.md#L3276-L3279) (from *01-02 finops & cloud economics*)
+- [How to Manage Patent Risks in Open Source Collaborations - PatentPC](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L903-L906) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `training chips`
 - [Global AI Hardware Landscape 2025: Comparing Leading GPU, FPGA, and ASIC AI Accelerators - Geniatech](01-02%20finops%20&%20cloud%20economics.md#L215-L223) (from *01-02 finops & cloud economics*)
@@ -21605,6 +21676,9 @@ Use the links to jump directly to specific source locations.
 
 ### `utah state university`
 - [Technical Writing Standards - USU College of Engineering - Utah State University](01-03%20knowledge%20management%20&%20documentation.md#L274-L277) (from *01-03 knowledge management & documentation*)
+
+### `utility preservation`
+- [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `utility tree`
 - [AD1086770.pdf](01-01%20product%20engineering.md#L69-L128) (from *01-01 product engineering*)
