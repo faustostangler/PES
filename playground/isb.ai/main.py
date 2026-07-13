@@ -296,7 +296,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 elapsed_str = format_duration(elapsed)
                 time_block = f"{elapsed_str}+--h--m--s = --h--m--s"
 
-            print(f"[{i}+{remaining} = {total}] [{percent:.2f}%] [{time_block}] | {classification.upper()} | {channel_id} {video_id} | {meta.get('video_title')[:40]}...")
+            print(f"[{i}+{remaining}={total}] [{percent:.2f}%] [{time_block}] {classification.upper()} {channel_id} {video_id} | {meta.get('video_title')[:20]}...")
 
             if not transcription.strip():
                 print("  ⚠️ Empty transcript. Skipping.")

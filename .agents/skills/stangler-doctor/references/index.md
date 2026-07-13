@@ -2012,6 +2012,22 @@ Use the links to jump directly to specific source locations.
   - **Keywords:** `ohio university`, `fixed-price guarantee`, `tuition model`, `predictability`, `affordability`, `accessibility`, `legislation`, `revenues`, `economic volatility`, `political environment`, `business environment`
 - [BILL 64 MAPPING OF THE CONTROLS OF ISO/IEC 27701:2019 - PECB](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1367-L1370) - *This document compares ISO/IEC 27701 controls with the requirements of Quebec's Act Respecting the Protection of Personal Information in the Private Sector (Bill 64) to assess compliance. It covers various aspects such as PII processing, records management, obligations to principals, data transmission, and subcontractor engagement. The document highlights that while ISO/IEC 27701 provides a comprehensive framework, some controls are not directly applicable or require additional interpretation under Quebec's legislation.*
   - **Keywords:** `iso/iec 27701`, `bill 64`, `quebec privacy law`, `personal information processing`, `records management`, `obligations to principals`, `data transmission`, `subcontractor engagement`, `compliance`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) - *The Brazilian Data Protection Agency (ANPD) published a map of priority issues for oversight and regulatory action for the 2026-2027 biennium, along with an updated regulatory agenda for the 2025-2026 biennium, focusing on data protection and digital child and adolescent statutes.*
+  - **Keywords:** `anpd`, `data protection agency`, `lgpd`, `digital eca`, `regulatory agenda`, `priority issues`, `oversight`, `enforcement`, `age verification`, `ai oversight`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) - *The Architecture Review Board (ARB) is a governance body that evaluates and approves architecture-related initiatives to ensure alignment with strategic goals and technical standards. Best practices for an effective ARB include clear role definitions, collaborative environments, rigorous documentation, regular training, and continuous process improvement. A standardized submission template and decision-making templates are recommended to maintain uniformity in information presentation. The ARB's roles typically involve the Chief Architect, senior technical architects, business stakeholders, and compliance officers. Establishing an ARB is crucial when dealing with complex IT systems and significant strategic impacts.*
+  - **Keywords:** `architecture review board`, `arb`, `enterprise architecture governance`, `standardized submission template`, `decision-making templates`, `collaborative environment`, `rigorous documentation`, `regular training`, `continuous process improvement`, `chief architect`, `senior technical architects`, `business stakeholders`, `compliance officers`, `complex it systems`, `strategic impacts`
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) - *The article discusses the importance of audit and logging in cybersecurity, examining how leading frameworks such as NIST, CIS, ISO, and CSA define and recommend these practices for compliance, visibility, and risk management.*
+  - **Keywords:** `audit`, `logging`, `cybersecurity frameworks`, `nist csf`, `cis controls`, `iso/iec 27001`, `cloud security alliance`, `compliance`, `risk management`
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) - *This guide explains the differences between SOC 2 Type I and Type II audits, Trust Services Criteria, required evidence, timelines, and costs.*
+  - **Keywords:** `soc 2`, `type i audit`, `type ii audit`, `trust services criteria`, `evidence`, `timeline`, `costs`, `security`, `availability`, `confidentiality`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) - *This document discusses the U.S. antitrust laws, specifically focusing on the Hart-Scott-Rodino (HSR) Act, which regulates premerger notifications for transactions involving certain thresholds of value. It outlines the process, including the threshold amounts, exemptions, and key considerations such as size of party (SOP) requirements. The document also touches on intellectual property licensing guidelines, exclusive dealing contracts, and other antitrust-related topics.*
+  - **Keywords:** `hart-scott-rodino act`, `hsr act`, `premerger notifications`, `antitrust laws`, `transaction thresholds`, `size of party (sop) requirements`, `intellectual property licensing`, `exclusive dealing contracts`, `competition law`
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) - *The article discusses the complexities and challenges in anonymizing and pseudonymizing data for privacy protection, emphasizing that these techniques are not foolproof and require rigorous implementation to ensure compliance with regulations like HIPAA and CCPA. It highlights the importance of understanding indirect identifiers, the need for layered security measures, and the ongoing risks associated with data re-identification. The article also provides practical tips for organizations looking to implement effective anonymization and pseudonymization strategies.*
+  - **Keywords:** `anonymization`, `pseudonymization`, `hipaa`, `ccpa`, `de-identification`, `indirect identifiers`, `data re-identification`, `privacy protection`, `risk management`, `data stewardship`, `trustarc nymity ai`, `privacycentral`
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) - *This text discusses the application of CIS Benchmarks for enhancing security and compliance, focusing on their integration with major frameworks like PCI DSS and NIST CSF, and how tools like CimTrak can automate this process.*
+  - **Keywords:** `cis benchmarks`, `security`, `compliance`, `pci dss`, `nist csf`, `cimtrak`, `file integrity monitoring`, `automated system hardening`, `secure configuration`
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) - *The document discusses the proper anonymization, pseudonymization, and encryption of visual data under GDPR regulations. It emphasizes that true anonymization must resist singling out, linkability, and inference. The risks of improper de-identification include regulatory fines, reputational damage, and loss of customer trust. Effective techniques for visual content include pixelation, complete removal, replacement, and perturbation. GDPR distinguishes between anonymization and pseudonymization, with the former offering freedom from GDPR obligations while the latter still requires compliance. Best practices involve conducting assessments, implementing privacy by design, documenting approaches, testing methods, limiting access, applying data minimization, and staying current with re-identification risks.*
+  - **Keywords:** `gdpr`, `anonymization`, `pseudonymization`, `encryption`, `visual data`, `data protection`, `reputational damage`, `regulatory compliance`, `privacy by design`, `data minimization`, `re-identification`, `face blurring`, `license plate blur`
 
 ---
 
@@ -2390,6 +2406,9 @@ Use the links to jump directly to specific source locations.
 ### `age of inference`
 - [Ironwood: The first Google TPU for the age of inference](01-02%20finops%20&%20cloud%20economics.md#L237-L241) (from *01-02 finops & cloud economics*)
 
+### `age verification`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `agent autonomy`
 - [Shift-Up: A Framework for Software Engineering Guardrails in AI-native Software Development - Initial Findings - arXiv](01-03%20knowledge%20management%20&%20documentation.md#L323-L326) (from *01-03 knowledge management & documentation*)
 
@@ -2744,6 +2763,9 @@ Use the links to jump directly to specific source locations.
 
 ### `ai orchestration`
 - [Top 10 Hybrid Cloud Providers in 2026 | AI-Ready Enterprise Guide - Clarifai](01-02%20finops%20&%20cloud%20economics.md#L1647-L1653) (from *01-02 finops & cloud economics*)
+
+### `ai oversight`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `ai policy generator`
 - [How to Build an Effective GRC Framework A Practical Guide - V-Comply](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L913-L916) (from *01-04 grc (governance, risk & compliance)*)
@@ -3105,6 +3127,8 @@ Use the links to jump directly to specific source locations.
 
 ### `anonymization`
 - [GDPR Anonymization vs Pseudonymization: Key Differences | Censinet, Inc.](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1018-L1021) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `anonymization vs pseudonymization`
 - [The Convergence of Global Regulatory Standards and Engineering Safeguards: A Comprehensive Analysis of Data Privacy Engineering](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L449-L451) (from *01-04 grc (governance, risk & compliance)*)
@@ -3117,6 +3141,7 @@ Use the links to jump directly to specific source locations.
 - [International Data Protection Day: How the ANPD's enforcement - Lefosse](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L813-L816) (from *01-04 grc (governance, risk & compliance)*)
 - [International Affairs - Portal Gov.br](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L823-L826) (from *01-04 grc (governance, risk & compliance)*)
 - [Data protection laws in Brazil](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1073-L1076) (from *01-04 grc (governance, risk & compliance)*)
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `ansible`
 - [10 Cloud Orchestration Platforms Compared for 2026 - Domo](01-02%20finops%20&%20cloud%20economics.md#L1282-L1291) (from *01-02 finops & cloud economics*)
@@ -3140,6 +3165,9 @@ Use the links to jump directly to specific source locations.
 - [2026-05-10 DDD (Domain Driven Design). DDD is a strategic approach to software… | by Rasul Rzayev | Medium](01-01%20product%20engineering.md#L1745-L1754) (from *01-01 product engineering*)
 - [2026-05-10 Design MATTERS!!. “DDD DISTILLED” by Vaughn Vernon | by Federico Mete | Medium](01-01%20product%20engineering.md#L1760-L1762) (from *01-01 product engineering*)
 - [Strategic Domain-Driven Design: The Missing Link in Modern Java Projects](01-01%20product%20engineering.md#L1927-L1946) (from *01-01 product engineering*)
+
+### `antitrust laws`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `ap memory`
 - [Corporate Governance - Investor Relations - AP Memory](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1133-L1136) (from *01-04 grc (governance, risk & compliance)*)
@@ -3300,6 +3328,9 @@ Use the links to jump directly to specific source locations.
 
 ### `arab youth`
 - [Leveraging AI for Analysis of Digital Health Information on Cancer Prevention Among Arab Youth and Adults - PMC](01-03%20knowledge%20management%20&%20documentation.md#L433-L436) (from *01-03 knowledge management & documentation*)
+
+### `arb`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `arc42`
 - [arc42-documentation | Skills Marketp... - LobeHub](01-03%20knowledge%20management%20&%20documentation.md#L21-L24) (from *01-03 knowledge management & documentation*)
@@ -3514,6 +3545,7 @@ Use the links to jump directly to specific source locations.
 
 ### `architecture review board`
 - [Build and operate an effective architecture review board - AWS](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1301-L1304) (from *01-04 grc (governance, risk & compliance)*)
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `architecture review board (arb)`
 - [Comprehensive Strategic Framework for Enterprise Implementation Lifecycles: From Discovery to Optimization](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1163-L1165) (from *01-04 grc (governance, risk & compliance)*)
@@ -3685,6 +3717,7 @@ Use the links to jump directly to specific source locations.
 - [6 Effective Strategies for MSP Documentation - NinjaOne](01-03%20knowledge%20management%20&%20documentation.md#L1076-L1079) (from *01-03 knowledge management & documentation*)
 - [Open Source License Compliance: Guide for Businesses - daily.dev](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L122-L125) (from *01-04 grc (governance, risk & compliance)*)
 - [Structuring and Implementing a Management Plan for Intellectual Property](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L478-L481) (from *01-04 grc (governance, risk & compliance)*)
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `audit assurance`
 - [What is Validation Audit? Definition, Process & Key Metrics - Hyperbots](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L252-L255) (from *01-04 grc (governance, risk & compliance)*)
@@ -3871,6 +3904,9 @@ Use the links to jump directly to specific source locations.
 ### `automated system`
 - [Autonomous Execution of Highly Reactive Chemical Transformations in the Schlenkputer](01-03%20knowledge%20management%20&%20documentation.md#L901-L904) (from *01-03 knowledge management & documentation*)
 
+### `automated system hardening`
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `automated systems`
 - [2026-05-10 The Fallacy of the Speed / Cost / Quality Trade-off | by Jeff Kolesky | Medium](01-01%20product%20engineering.md#L130-L132) (from *01-01 product engineering*)
 
@@ -3999,6 +4035,7 @@ Use the links to jump directly to specific source locations.
 - [The Hidden Price Tag: Uncovering Hidden Costs in Cloud Architectures with the AWS Well-Architected Framework](01-02%20finops%20&%20cloud%20economics.md#L2121-L2124) (from *01-02 finops & cloud economics*)
 - [Types of Service Level Agreement (SLA) Metrics - IBM](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L404-L407) (from *01-04 grc (governance, risk & compliance)*)
 - [SOC 2 compliance requirements: A comprehensive guide | Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L542-L545) (from *01-04 grc (governance, risk & compliance)*)
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `availability and performance`
 - [Compare Azure DocumentDB to MongoDB Atlas](01-02%20finops%20&%20cloud%20economics.md#L1880-L1882) (from *01-02 finops & cloud economics*)
@@ -4835,6 +4872,9 @@ Use the links to jump directly to specific source locations.
 ### `business rules`
 - [ddd-crew/bounded-context-canvas: A structured approach ... - GitHub](01-01%20product%20engineering.md#L2008-L2012) (from *01-01 product engineering*)
 
+### `business stakeholders`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `business strategies`
 - [Architecture Debt vs Technical Debt: Why Companies Confuse Them and What It Costs Business](01-01%20product%20engineering.md#L184-L186) (from *01-01 product engineering*)
 
@@ -5199,6 +5239,7 @@ Use the links to jump directly to specific source locations.
 - [Global Data Privacy Laws: Your 2025 Guide (GDPR, CCPA, More)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L998-L1001) (from *01-04 grc (governance, risk & compliance)*)
 - [GDPR vs CPRA vs LGPD: What are the Differences? - Captain Compliance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1013-L1016) (from *01-04 grc (governance, risk & compliance)*)
 - [CCPA vs GDPR Compliance: What's the Difference? - Entrust](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1306-L1309) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `ccpa regulations`
 - [Law & Regulations - California Privacy Protection Agency (CPPA) - CA.gov](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L788-L791) (from *01-04 grc (governance, risk & compliance)*)
@@ -5391,6 +5432,9 @@ Use the links to jump directly to specific source locations.
 ### `chemical transformations`
 - [Autonomous Execution of Highly Reactive Chemical Transformations in the Schlenkputer](01-03%20knowledge%20management%20&%20documentation.md#L901-L904) (from *01-03 knowledge management & documentation*)
 
+### `chief architect`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `chief privacy officer (cpo)`
 - [Global Data Privacy Laws: Your 2025 Guide (GDPR, CCPA, More)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L998-L1001) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -5461,6 +5505,9 @@ Use the links to jump directly to specific source locations.
 ### `ci/cd workflows`
 - [Understanding Internal Developer Platforms in Software Development - CloudBees](01-01%20product%20engineering.md#L1678-L1682) (from *01-01 product engineering*)
 
+### `cimtrak`
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `cios`
 - [Dealing with Technical Debt in 2026: Strategies For CIOs - Oteemo](01-03%20knowledge%20management%20&%20documentation.md#L737-L740) (from *01-03 knowledge management & documentation*)
 
@@ -5473,11 +5520,13 @@ Use the links to jump directly to specific source locations.
 - [CIS benchmark tool: what it is, how it works, and why continuous ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1235-L1238) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Benchmarks® - CIS Center for Internet Security](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1271-L1274) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Benchmarking Tool | Automated CIS Controls Assessment & Configuration Hardening](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1286-L1289) (from *01-04 grc (governance, risk & compliance)*)
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `cis controls`
 - [CIS Controls v8: all 18 controls, 153 safeguards, and ... - VerifyWise](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1255-L1258) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Controls v8.1: Everything You Need to Know - CalCom Software](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1260-L1264) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Controls v8 Guide | Complyance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1276-L1279) (from *01-04 grc (governance, risk & compliance)*)
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `cis controls v8`
 - [Comprehensive Analysis of System Integrity and Operational Stability: Strategic Benchmarks, Audit Governance, and High-Quality Engineering Frameworks](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1171-L1173) (from *01-04 grc (governance, risk & compliance)*)
@@ -5902,6 +5951,9 @@ Use the links to jump directly to specific source locations.
 - [What is dependency scanning in cloud security? - Wiz](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1-L4) (from *01-04 grc (governance, risk & compliance)*)
 - [What is NIST Cybersecurity Framework (CSF) 2.0? - Safe Security](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L273-L276) (from *01-04 grc (governance, risk & compliance)*)
 - [What CIS Benchmarks Are (and How to Implement Them) - Wiz](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L359-L362) (from *01-04 grc (governance, risk & compliance)*)
+
+### `cloud security alliance`
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `cloud security compliance`
 - [Cloud Security Compliance Automation: From Audits to ... - Firefly](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1175-L1178) (from *01-04 grc (governance, risk & compliance)*)
@@ -6468,6 +6520,9 @@ Use the links to jump directly to specific source locations.
 ### `collaborative documentation`
 - [Architecture Decision Records - Lachlan White](01-03%20knowledge%20management%20&%20documentation.md#L961-L964) (from *01-03 knowledge management & documentation*)
 
+### `collaborative environment`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `collaborative exercise`
 - [User Story Mapping 101: Agile Techniques for Better Backlogs, Releases, and Product Success](01-01%20product%20engineering.md#L1968-L1970) (from *01-01 product engineering*)
 
@@ -6702,6 +6757,9 @@ Use the links to jump directly to specific source locations.
 ### `compensation`
 - [Cloud Data Egress Fee Tussle Plays Out with $250k AWS Comp](01-02%20finops%20&%20cloud%20economics.md#L1500-L1502) (from *01-02 finops & cloud economics*)
 
+### `competition law`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `competitive advantage`
 - [Susanne Kaiser on Wardley Mapping - Semaphore](01-01%20product%20engineering.md#L1948-L1954) (from *01-01 product engineering*)
 - [Understanding Domain Types in Domain-Driven Design: Leveraging Business Complexity for Competitive Advantage | by RoshanGavandi](01-01%20product%20engineering.md#L1964-L1966) (from *01-01 product engineering*)
@@ -6731,6 +6789,9 @@ Use the links to jump directly to specific source locations.
 
 ### `complex infrastructure`
 - [What is Root Cause Analysis? - ServiceNow](01-02%20finops%20&%20cloud%20economics.md#L1268-L1273) (from *01-02 finops & cloud economics*)
+
+### `complex it systems`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `complex outages`
 - [AWS Storage Service Cost Optimization Guide 2026](01-02%20finops%20&%20cloud%20economics.md#L1732-L1745) (from *01-02 finops & cloud economics*)
@@ -6810,6 +6871,8 @@ Use the links to jump directly to specific source locations.
 - [CIS Controls v8.1: Everything You Need to Know - CalCom Software](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1260-L1264) (from *01-04 grc (governance, risk & compliance)*)
 - [CCPA vs GDPR: What are the differences and similarities? - Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1281-L1284) (from *01-04 grc (governance, risk & compliance)*)
 - [BILL 64 MAPPING OF THE CONTROLS OF ISO/IEC 27701:2019 - PECB](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1367-L1370) (from *01-04 grc (governance, risk & compliance)*)
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `compliance (grc)`
 - [Governance Risk and Compliance Management Success 2025 - Concertium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L958-L961) (from *01-04 grc (governance, risk & compliance)*)
@@ -6857,6 +6920,9 @@ Use the links to jump directly to specific source locations.
 
 ### `compliance issues`
 - [What Is Copyleft? Definition And Risks For Enterprises - Wiz](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L37-L40) (from *01-04 grc (governance, risk & compliance)*)
+
+### `compliance officers`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `compliance program`
 - [Open Source License Compliance: Guide for Businesses - daily.dev](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L122-L125) (from *01-04 grc (governance, risk & compliance)*)
@@ -7012,6 +7078,7 @@ Use the links to jump directly to specific source locations.
 ### `confidentiality`
 - [SOC 2 compliance requirements: A comprehensive guide | Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L542-L545) (from *01-04 grc (governance, risk & compliance)*)
 - [PUBLIC HEALTH BOARD MEETING AGENDA](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L642-L645) (from *01-04 grc (governance, risk & compliance)*)
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `confidentiality agreements`
 - [Plan your IP strategy (HTML version)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L627-L630) (from *01-04 grc (governance, risk & compliance)*)
@@ -7478,6 +7545,9 @@ Use the links to jump directly to specific source locations.
 
 ### `continuous optimization`
 - [Cloud Cost Optimization: How to reduce spend in 2026 - CloudZone](01-02%20finops%20&%20cloud%20economics.md#L2309-L2334) (from *01-02 finops & cloud economics*)
+
+### `continuous process improvement`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `continuous refinement`
 - [An Overview on Domain Driven Design (DDD) - C# Corner](01-01%20product%20engineering.md#L883-L888) (from *01-01 product engineering*)
@@ -7994,6 +8064,7 @@ Use the links to jump directly to specific source locations.
 
 ### `costs`
 - [Costs of a Data Center](01-02%20finops%20&%20cloud%20economics.md#L881-L883) (from *01-02 finops & cloud economics*)
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `county health board bylaws`
 - [PUBLIC HEALTH BOARD MEETING AGENDA](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L642-L645) (from *01-04 grc (governance, risk & compliance)*)
@@ -8329,6 +8400,9 @@ Use the links to jump directly to specific source locations.
 ### `cybersecurity compliance`
 - [NIST Cybersecurity Framework Best Practices - Zero Networks](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L698-L701) (from *01-04 grc (governance, risk & compliance)*)
 
+### `cybersecurity frameworks`
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `cybersecurity gap assessment`
 - [How to perform cybersecurity gap assessment? - Sprinto](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L888-L891) (from *01-04 grc (governance, risk & compliance)*)
 - [Comprehensive Strategic Framework for Enterprise Implementation Lifecycles: From Discovery to Optimization](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1163-L1165) (from *01-04 grc (governance, risk & compliance)*)
@@ -8539,6 +8613,7 @@ Use the links to jump directly to specific source locations.
 - [Privacy by Design: How to Successfully Integrate Privacy into Development Lifecycle?](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L622-L625) (from *01-04 grc (governance, risk & compliance)*)
 - [Global Data Protection Laws: Your Complete Guide for 2025 - PDTN](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L963-L991) (from *01-04 grc (governance, risk & compliance)*)
 - [California Privacy Rights Act (CPRA): 2025 Compliance Guide - Kiteworks](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1205-L1208) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `data model`
 - [Auto-generate GitHub workflow documentation | Port](01-03%20knowledge%20management%20&%20documentation.md#L916-L919) (from *01-03 knowledge management & documentation*)
@@ -8601,6 +8676,10 @@ Use the links to jump directly to specific source locations.
 - [CCPA vs GDPR: What are the differences and similarities? - Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1281-L1284) (from *01-04 grc (governance, risk & compliance)*)
 - [Bucket Lock | Cloud Storage - Google Cloud Documentation](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1296-L1299) (from *01-04 grc (governance, risk & compliance)*)
 - [CCPA vs GDPR Compliance: What's the Difference? - Entrust](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1306-L1309) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
+
+### `data protection agency`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `data protection officer (dpo)`
 - [Global Data Privacy Laws: Your 2025 Guide (GDPR, CCPA, More)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L998-L1001) (from *01-04 grc (governance, risk & compliance)*)
@@ -8613,6 +8692,9 @@ Use the links to jump directly to specific source locations.
 
 ### `data quality`
 - [Scaling Generative AI: 13 elements for sustainable growth and value - Deloitte](01-02%20finops%20&%20cloud%20economics.md#L3247-L3250) (from *01-02 finops & cloud economics*)
+
+### `data re-identification`
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `data readiness`
 - [The 12 Months AI Implementation Roadmap Enterprise for Growth - Samta.ai](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L468-L471) (from *01-04 grc (governance, risk & compliance)*)
@@ -8658,6 +8740,9 @@ Use the links to jump directly to specific source locations.
 
 ### `data sovereignty`
 - [Best GPU for Fine-Tuning 70B Models: H100 vs A100... - Lyceum Technology](01-02%20finops%20&%20cloud%20economics.md#L91-L94) (from *01-02 finops & cloud economics*)
+
+### `data stewardship`
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `data storage`
 - [What Is TCO in Data Storage? A Practical Guide - Solved Magazine](01-02%20finops%20&%20cloud%20economics.md#L1244-L1261) (from *01-02 finops & cloud economics*)
@@ -8775,6 +8860,9 @@ Use the links to jump directly to specific source locations.
 - [What is OWASP | What are OWASP Top 10 Vulnerabilities - Imperva](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L268-L271) (from *01-04 grc (governance, risk & compliance)*)
 - [The New 2025 OWASP Top 10 List: What Changed, and What You Need to Know | Fastly](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L434-L437) (from *01-04 grc (governance, risk & compliance)*)
 
+### `de-identification`
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `debates`
 - [Benchmarking strategic alignment of business and IT strategies: opportunities, risks, challenges and solutions - PMC](01-01%20product%20engineering.md#L1794-L1799) (from *01-01 product engineering*)
 
@@ -8882,6 +8970,9 @@ Use the links to jump directly to specific source locations.
 
 ### `decision-making process`
 - [Architecture Decision Records - Lachlan White](01-03%20knowledge%20management%20&%20documentation.md#L961-L964) (from *01-03 knowledge management & documentation*)
+
+### `decision-making templates`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `decision-making tools`
 - [C4 Model Diagram Tool — AI-Powered | Cloudairy](01-03%20knowledge%20management%20&%20documentation.md#L836-L839) (from *01-03 knowledge management & documentation*)
@@ -9518,6 +9609,9 @@ Use the links to jump directly to specific source locations.
 
 ### `digital commerce`
 - [Glossary of Usage-Based Billing Terms - BillingPlatform](01-02%20finops%20&%20cloud%20economics.md#L1554-L1558) (from *01-02 finops & cloud economics*)
+
+### `digital eca`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `digital evidence`
 - [Log Management and Forensic Readiness control procedure | Manchester Metropolitan University](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L758-L761) (from *01-04 grc (governance, risk & compliance)*)
@@ -10283,6 +10377,7 @@ Use the links to jump directly to specific source locations.
 - [What 2025 HIPAA Changes Mean to You - Thales CPL](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L364-L367) (from *01-04 grc (governance, risk & compliance)*)
 - [Just-in-time access: A key component of modern security - ExpressVPN](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L803-L806) (from *01-04 grc (governance, risk & compliance)*)
 - [CCPA vs GDPR Compliance: What's the Difference? - Entrust](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1306-L1309) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `encryption standards`
 - [Global Data Protection Laws: Your Complete Guide for 2025 - PDTN](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L963-L991) (from *01-04 grc (governance, risk & compliance)*)
@@ -10354,6 +10449,7 @@ Use the links to jump directly to specific source locations.
 - [kschlt/adr-kit: A comprehensive toolkit for managing ... - GitHub](01-03%20knowledge%20management%20&%20documentation.md#L11-L14) (from *01-03 knowledge management & documentation*)
 - [AI + MCP - Structurizr](01-03%20knowledge%20management%20&%20documentation.md#L1011-L1014) (from *01-03 knowledge management & documentation*)
 - [The California Privacy Rights Act (CPRA) — Legal glossary](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L463-L466) (from *01-04 grc (governance, risk & compliance)*)
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `enforcement activity`
 - [International Data Protection Day: How the ANPD's enforcement - Lefosse](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L813-L816) (from *01-04 grc (governance, risk & compliance)*)
@@ -10493,6 +10589,9 @@ Use the links to jump directly to specific source locations.
 - [AMS (ArchiMate, Mermaid and Structurizr) - Tools and Techniques to manage your Architecture knowledge - John Nolan](01-03%20knowledge%20management%20&%20documentation.md#L991-L994) (from *01-03 knowledge management & documentation*)
 - [2026-05-12 Scaling C4 with Structurizr Part 1: Workspaces | by Viorel Contu | Medium](01-03%20knowledge%20management%20&%20documentation.md#L1112-L1114) (from *01-03 knowledge management & documentation*)
 - [2026-05-12 Architecture Principles, Revisited. | by Mohammed Brückner | Analyst’s corner | Apr, 2026 | Medium](01-03%20knowledge%20management%20&%20documentation.md#L1156-L1158) (from *01-03 knowledge management & documentation*)
+
+### `enterprise architecture governance`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `enterprise assets`
 - [CIS Controls v8.1: Everything You Need to Know - CalCom Software](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1260-L1264) (from *01-04 grc (governance, risk & compliance)*)
@@ -10784,6 +10883,9 @@ Use the links to jump directly to specific source locations.
 ### `eviction signals`
 - [Build workloads on spot virtual machines - Azure - Microsoft Learn](01-02%20finops%20&%20cloud%20economics.md#L1473-L1477) (from *01-02 finops & cloud economics*)
 
+### `evidence`
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `evidence collection and documentation`
 - [What is Compliance Automation? Definition & Explanation of Automated Compliance Tools](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L16-L19) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -10826,6 +10928,9 @@ Use the links to jump directly to specific source locations.
 
 ### `exception analysis`
 - [Comprehensive Strategic Framework for Enterprise Implementation Lifecycles: From Discovery to Optimization](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1163-L1165) (from *01-04 grc (governance, risk & compliance)*)
+
+### `exclusive dealing contracts`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `executive leadership support`
 - [Mastering the ERP Implementation Life Cycle: A Practical Guide - Cudio](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L733-L736) (from *01-04 grc (governance, risk & compliance)*)
@@ -10943,6 +11048,9 @@ Use the links to jump directly to specific source locations.
 ### `faasnet`
 - [Enabling Fast Scaling for Serverless Large Language Model Inference - arXiv](01-02%20finops%20&%20cloud%20economics.md#L168-L174) (from *01-02 finops & cloud economics*)
 
+### `face blurring`
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `facilitating`
 - [Team Topologies - Product Management Book Summaries](01-01%20product%20engineering.md#L1522-L1539) (from *01-01 product engineering*)
 - [Team Topologies Book review - Agile Communication](01-01%20product%20engineering.md#L1554-L1558) (from *01-01 product engineering*)
@@ -11029,6 +11137,9 @@ Use the links to jump directly to specific source locations.
 
 ### `ffcv`
 - [2026-05-10 GPU Memory Hierarchy — How AI Training Actually Works | by AIQuest | Medium](01-02%20finops%20&%20cloud%20economics.md#L45-L47) (from *01-02 finops & cloud economics*)
+
+### `file integrity monitoring`
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `finance`
 - [Horizontal vs. Vertical Scaling: When Do You Stop Scaling Up and Start Scaling Out? : r/FinOps - Reddit](01-01%20product%20engineering.md#L323-L325) (from *01-01 product engineering*)
@@ -11665,6 +11776,7 @@ Use the links to jump directly to specific source locations.
 - [GDPR vs CPRA vs LGPD: What are the Differences? - Captain Compliance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1013-L1016) (from *01-04 grc (governance, risk & compliance)*)
 - [CCPA vs GDPR: What are the differences and similarities? - Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1281-L1284) (from *01-04 grc (governance, risk & compliance)*)
 - [CCPA vs GDPR Compliance: What's the Difference? - Entrust](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1306-L1309) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `gdpr compliance`
 - [Best GPU for Fine-Tuning 70B Models: H100 vs A100... - Lyceum Technology](01-02%20finops%20&%20cloud%20economics.md#L91-L94) (from *01-02 finops & cloud economics*)
@@ -12274,6 +12386,9 @@ Use the links to jump directly to specific source locations.
 - [2026-05-10 DevOps, Cloud, & Platform tools by category for 2026 | by Hristo Stoychev | Medium](01-01%20product%20engineering.md#L13-L28) (from *01-01 product engineering*)
 - [CI/CD Tools: Basics, Features & How to Choose | Harness Blog](01-03%20knowledge%20management%20&%20documentation.md#L801-L804) (from *01-03 knowledge management & documentation*)
 
+### `hart-scott-rodino act`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `hashicorp terraform cloud/enterprise`
 - [Best Multi-Cloud Management Tools in 2025? Comparison - BM Infotrade](01-02%20finops%20&%20cloud%20economics.md#L1448-L1471) (from *01-02 finops & cloud economics*)
 
@@ -12449,6 +12564,7 @@ Use the links to jump directly to specific source locations.
 - [SOC 2 Type 1 vs Type 2: A comprehensive guide to selecting the right compliance framework - Thoropass](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L547-L550) (from *01-04 grc (governance, risk & compliance)*)
 - [How to perform cybersecurity gap assessment? - Sprinto](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L888-L891) (from *01-04 grc (governance, risk & compliance)*)
 - [GDPR Anonymization vs Pseudonymization: Key Differences | Censinet, Inc.](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1018-L1021) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `hipaa compliance`
 - [What 2025 HIPAA Changes Mean to You - Thales CPL](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L364-L367) (from *01-04 grc (governance, risk & compliance)*)
@@ -12501,6 +12617,9 @@ Use the links to jump directly to specific source locations.
 
 ### `hpe greenlake`
 - [Top 10 Hybrid Cloud Providers in 2026 | AI-Ready Enterprise Guide - Clarifai](01-02%20finops%20&%20cloud%20economics.md#L1647-L1653) (from *01-02 finops & cloud economics*)
+
+### `hsr act`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `hub-and-spoke architecture`
 - [AWS Transit Gateway now supports Intra-Region Peering | Networking & Content Delivery](01-02%20finops%20&%20cloud%20economics.md#L1747-L1750) (from *01-02 finops & cloud economics*)
@@ -12886,6 +13005,9 @@ Use the links to jump directly to specific source locations.
 - [How to Calculate Cost Variance for a Project (Formula Included)](01-02%20finops%20&%20cloud%20economics.md#L918-L924) (from *01-02 finops & cloud economics*)
 - [What Is Total Cost of Ownership (TCO)? - IBM](01-02%20finops%20&%20cloud%20economics.md#L1263-L1266) (from *01-02 finops & cloud economics*)
 
+### `indirect identifiers`
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `individual contributions`
 - [Differential privacy - Wikipedia](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1058-L1061) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -13220,6 +13342,9 @@ Use the links to jump directly to specific source locations.
 - [How to Protect Software IP: Copyright, Patent, or Trade Secret? - Aurum Law Firm](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L893-L896) (from *01-04 grc (governance, risk & compliance)*)
 - [Goals - CeCILL](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L993-L996) (from *01-04 grc (governance, risk & compliance)*)
 
+### `intellectual property licensing`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `intellectual property rights`
 - [Open Source License Compliance: Guide for Businesses - daily.dev](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L122-L125) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -13532,6 +13657,7 @@ Use the links to jump directly to specific source locations.
 
 ### `iso/iec 27001`
 - [ISO/IEC 27001:2022 vs ISO/IEC 27701:2019 - AARC-360](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L842-L845) (from *01-04 grc (governance, risk & compliance)*)
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `iso/iec 27001:2022`
 - [Step-by-step internal audit checklist - Optro](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L492-L495) (from *01-04 grc (governance, risk & compliance)*)
@@ -14184,6 +14310,7 @@ Use the links to jump directly to specific source locations.
 - [ISO 27701 | Relationship with ISO 27001, ISO 27002, & GDPR](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L857-L860) (from *01-04 grc (governance, risk & compliance)*)
 - [Global Data Privacy Laws: Your 2025 Guide (GDPR, CCPA, More)](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L998-L1001) (from *01-04 grc (governance, risk & compliance)*)
 - [GDPR vs CPRA vs LGPD: What are the Differences? - Captain Compliance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1013-L1016) (from *01-04 grc (governance, risk & compliance)*)
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `lgpl`
 - [Matrix of EUPL compatible open source licences | Interoperable Europe Portal](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L147-L150) (from *01-04 grc (governance, risk & compliance)*)
@@ -14251,6 +14378,9 @@ Use the links to jump directly to specific source locations.
 
 ### `license optimization`
 - [Understanding FinOps: Cloud & SaaS cost control - BetterCloud](01-02%20finops%20&%20cloud%20economics.md#L2668-L2689) (from *01-02 finops & cloud economics*)
+
+### `license plate blur`
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `license review`
 - [checkov](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L227-L230) (from *01-04 grc (governance, risk & compliance)*)
@@ -14458,6 +14588,7 @@ Use the links to jump directly to specific source locations.
 
 ### `logging`
 - [Amazon CloudFront Pricing: 3 Models, 1 Breakeven Point - CloudBurn](01-02%20finops%20&%20cloud%20economics.md#L1752-L1792) (from *01-02 finops & cloud economics*)
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `logging and alerting`
 - [The New 2025 OWASP Top 10 List: What Changed, and What You Need to Know | Fastly](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L434-L437) (from *01-04 grc (governance, risk & compliance)*)
@@ -15909,6 +16040,8 @@ Use the links to jump directly to specific source locations.
 - [CIS Controls v8: all 18 controls, 153 safeguards, and ... - VerifyWise](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1255-L1258) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Controls v8.1: Everything You Need to Know - CalCom Software](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1260-L1264) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Controls v8 Guide | Complyance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1276-L1279) (from *01-04 grc (governance, risk & compliance)*)
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `nist csf 2.0`
 - [What is NIST Cybersecurity Framework (CSF) 2.0? - Safe Security](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L273-L276) (from *01-04 grc (governance, risk & compliance)*)
@@ -16752,6 +16885,9 @@ Use the links to jump directly to specific source locations.
 - [Cost Per Unit: Formula, Calculation & How to Reduce - Flowspace](01-02%20finops%20&%20cloud%20economics.md#L801-L850) (from *01-02 finops & cloud economics*)
 - [Variance analysis - A clear guide - BFI Insights](01-02%20finops%20&%20cloud%20economics.md#L1143-L1154) (from *01-02 finops & cloud economics*)
 
+### `oversight`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `ovhcloud`
 - [Object Storage - Managing object immutability with Object Lock (WORM) - OVHcloud](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L687-L690) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -16967,6 +17103,7 @@ Use the links to jump directly to specific source locations.
 ### `pci dss`
 - [Common Vulnerabilities & Exposures, Types and Best Practices - Sonar](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L191-L195) (from *01-04 grc (governance, risk & compliance)*)
 - [How to perform cybersecurity gap assessment? - Sprinto](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L888-L891) (from *01-04 grc (governance, risk & compliance)*)
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `pcie generation`
 - [2026-05-10 GPU Memory Hierarchy — How AI Training Actually Works | by AIQuest | Medium](01-02%20finops%20&%20cloud%20economics.md#L45-L47) (from *01-02 finops & cloud economics*)
@@ -17606,6 +17743,9 @@ Use the links to jump directly to specific source locations.
 ### `prefill-decode disaggregation`
 - [Prefill-Decode Disaggregation Architecture - Emergent Mind](01-02%20finops%20&%20cloud%20economics.md#L296-L306) (from *01-02 finops & cloud economics*)
 
+### `premerger notifications`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `premium operating systems`
 - [Spot VMs | Compute Engine - Google Cloud Documentation](01-02%20finops%20&%20cloud%20economics.md#L1608-L1610) (from *01-02 finops & cloud economics*)
 
@@ -17703,6 +17843,9 @@ Use the links to jump directly to specific source locations.
 ### `prioritizing prs`
 - [A smarter code review checklist: What to track, fix, and improve - Appfire](01-03%20knowledge%20management%20&%20documentation.md#L1041-L1044) (from *01-03 knowledge management & documentation*)
 
+### `priority issues`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `priority topics`
 - [International Data Protection Day: How the ANPD's enforcement - Lefosse](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L813-L816) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -17723,6 +17866,7 @@ Use the links to jump directly to specific source locations.
 - [Privacy by Design: How to Successfully Integrate Privacy into Development Lifecycle?](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L622-L625) (from *01-04 grc (governance, risk & compliance)*)
 - [Integrating Privacy by Design Principles into the Software Development Life Cycle - TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L828-L831) (from *01-04 grc (governance, risk & compliance)*)
 - [Global Data Protection Laws: Your Complete Guide for 2025 - PDTN](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L963-L991) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `privacy concerns`
 - [Best of 2023: Documentation as Code: A Game Changer for DevOps Teams?](01-03%20knowledge%20management%20&%20documentation.md#L866-L869) (from *01-03 knowledge management & documentation*)
@@ -17763,6 +17907,7 @@ Use the links to jump directly to specific source locations.
 - [What is Differential Privacy?](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L308-L311) (from *01-04 grc (governance, risk & compliance)*)
 - [K-anonymity - Wikipedia](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L783-L786) (from *01-04 grc (governance, risk & compliance)*)
 - [Data Anonymization Techniques: Balancing Privacy and Usability - Akitra](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1113-L1116) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `privacy regulations`
 - [ISO 27701 | Relationship with ISO 27001, ISO 27002, & GDPR](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L857-L860) (from *01-04 grc (governance, risk & compliance)*)
@@ -17782,6 +17927,9 @@ Use the links to jump directly to specific source locations.
 
 ### `privacy-preserving techniques`
 - [How to Get Actual Privacy and Utility from Privacy Models: the k-Anonymity and Differential Privacy Families - arXiv](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L898-L901) (from *01-04 grc (governance, risk & compliance)*)
+
+### `privacycentral`
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `private cloud`
 - [A Practical Guide to a Successful Public Cloud Exit Strategy](01-02%20finops%20&%20cloud%20economics.md#L1321-L1324) (from *01-02 finops & cloud economics*)
@@ -18186,6 +18334,8 @@ Use the links to jump directly to specific source locations.
 ### `pseudonymization`
 - [GDPR Anonymization vs Pseudonymization: Key Differences | Censinet, Inc.](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1018-L1021) (from *01-04 grc (governance, risk & compliance)*)
 - [Data Anonymization Best Practices for Privacy, Security, and Cloud Innovation - Talan](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1123-L1126) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `psychological safety`
 - [Team Topologies: How to structure your teams using nine principles and six core patterns for better value](01-01%20product%20engineering.md#L1579-L1582) (from *01-01 product engineering*)
@@ -18456,6 +18606,7 @@ Use the links to jump directly to specific source locations.
 
 ### `re-identification`
 - [GDPR Anonymization vs Pseudonymization: Key Differences | Censinet, Inc.](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1018-L1021) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `re-identification attacks`
 - [K-Anonymity: Is It Still Enough for Enterprise Data Privacy? - Duality Tech](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L798-L801) (from *01-04 grc (governance, risk & compliance)*)
@@ -18662,6 +18813,9 @@ Use the links to jump directly to specific source locations.
 ### `regular review meetings`
 - [Best practices - AWS Prescriptive Guidance](01-03%20knowledge%20management%20&%20documentation.md#L861-L864) (from *01-03 knowledge management & documentation*)
 
+### `regular training`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `regular updates`
 - [Open-Source Security: Best Practices and Tools - Wiz](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L112-L115) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -18679,6 +18833,9 @@ Use the links to jump directly to specific source locations.
 
 ### `regulatory agency`
 - [International Data Protection Day: How the ANPD's enforcement - Lefosse](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L813-L816) (from *01-04 grc (governance, risk & compliance)*)
+
+### `regulatory agenda`
+- [Brazil: ANPD publishes Map of Priority Issues for Oversight and Regulatory Action (2026-2027 Biennium) and update of the Regulatory Agenda for the 2025-2026 biennium](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1372-L1375) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `regulatory compliance`
 - [The Convergence of Earth Economics and Digital Sustainability: A Comprehensive Framework for Carbon Accounting, Green Software Engineering, and Renewable Energy Integration](01-02%20finops%20&%20cloud%20economics.md#L15-L18) (from *01-02 finops & cloud economics*)
@@ -18704,6 +18861,7 @@ Use the links to jump directly to specific source locations.
 - [Comprehensive GRC Frameworks in the Modern Enterprise: Integrating Data Privacy, Systems Integrity, and Licensing Compliance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1167-L1169) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Benchmarks® - CIS Center for Internet Security](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1271-L1274) (from *01-04 grc (governance, risk & compliance)*)
 - [Bucket Lock | Cloud Storage - Google Cloud Documentation](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1296-L1299) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `regulatory developments`
 - [Global Data Protection Laws: Your Complete Guide for 2025 - PDTN](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L963-L991) (from *01-04 grc (governance, risk & compliance)*)
@@ -18858,6 +19016,7 @@ Use the links to jump directly to specific source locations.
 
 ### `reputational damage`
 - [China Data Residency: A Guide to Compliance with PIPL & CSL - Skyflow](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1180-L1183) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `request forms`
 - [ServiceNow Service Catalog Best Practices: Drive ITSM Adoption with Advanced Catalog Management | GB Advisors](01-03%20knowledge%20management%20&%20documentation.md#L333-L336) (from *01-03 knowledge management & documentation*)
@@ -19154,6 +19313,9 @@ Use the links to jump directly to specific source locations.
 ### `rightsizing workloads`
 - [Cloud Cost Optimization: How to reduce spend in 2026 - CloudZone](01-02%20finops%20&%20cloud%20economics.md#L2309-L2334) (from *01-02 finops & cloud economics*)
 
+### `rigorous documentation`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `risk`
 - [Total Economic Impact Methodology - Forrester](01-01%20product%20engineering.md#L783-L786) (from *01-01 product engineering*)
 - [What is OWASP? What Are The OWASP Top 10? - Cloudflare](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L263-L266) (from *01-04 grc (governance, risk & compliance)*)
@@ -19222,6 +19384,8 @@ Use the links to jump directly to specific source locations.
 - [Corporate Governance - Investor Relations - AP Memory](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1133-L1136) (from *01-04 grc (governance, risk & compliance)*)
 - [Comprehensive GRC Frameworks in the Modern Enterprise: Integrating Data Privacy, Systems Integrity, and Licensing Compliance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1167-L1169) (from *01-04 grc (governance, risk & compliance)*)
 - [CIS Controls v8 Guide | Complyance](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1276-L1279) (from *01-04 grc (governance, risk & compliance)*)
+- [Audit and Logging: What Cybersecurity Frameworks Say ...](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1382-L1385) (from *01-04 grc (governance, risk & compliance)*)
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `risk management measures`
 - [Corporate Governance - Investor Relations - AP Memory](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1133-L1136) (from *01-04 grc (governance, risk & compliance)*)
@@ -19793,6 +19957,9 @@ Use the links to jump directly to specific source locations.
 - [three team interaction modes - ️ l-lin](01-01%20product%20engineering.md#L1741-L1743) (from *01-01 product engineering*)
 - [CIS Controls Navigator v8.1 - CIS Center for Internet Security](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1266-L1269) (from *01-04 grc (governance, risk & compliance)*)
 
+### `secure configuration`
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `secure design principles`
 - [CIS Controls Navigator v8.1 - CIS Center for Internet Security](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1266-L1269) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -19861,6 +20028,8 @@ Use the links to jump directly to specific source locations.
 - [Integrating Privacy by Design Principles into the Software Development Life Cycle - TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L828-L831) (from *01-04 grc (governance, risk & compliance)*)
 - [Data Anonymization Best Practices for Privacy, Security, and Cloud Innovation - Talan](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1123-L1126) (from *01-04 grc (governance, risk & compliance)*)
 - [Build and operate an effective architecture review board - AWS](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1301-L1304) (from *01-04 grc (governance, risk & compliance)*)
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
+- [Applying CIS Benchmarks for Security and Compliance - Cimcor](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1402-L1405) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `security & control`
 - [Glossary of Usage-Based Billing Terms - BillingPlatform](01-02%20finops%20&%20cloud%20economics.md#L1554-L1558) (from *01-02 finops & cloud economics*)
@@ -20085,6 +20254,9 @@ Use the links to jump directly to specific source locations.
 
 ### `senior leadership`
 - [Introducing Wardley Mapping to Your Business Strategy - Erlang Solutions](01-01%20product%20engineering.md#L1882-L1887) (from *01-01 product engineering*)
+
+### `senior technical architects`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `sensing and responding`
 - [Book Summary: Team Topologies - jonas.rs](01-01%20product%20engineering.md#L1131-L1138) (from *01-01 product engineering*)
@@ -20431,6 +20603,9 @@ Use the links to jump directly to specific source locations.
 ### `six core patterns`
 - [Architecting for Fast Flow: A Comprehensive Analysis of Team Topologies and Socio-Technical Organizational Design](01-01%20product%20engineering.md#L1126-L1129) (from *01-01 product engineering*)
 
+### `size of party (sop) requirements`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `skill gaps`
 - [The Role of Policy-as-Code in DevSecOps: Automating Compliance, Governance, and Risk Management in Cloud-Native and Hybrid IT En](01-01%20product%20engineering.md#L1584-L1659) (from *01-01 product engineering*)
 
@@ -20528,6 +20703,7 @@ Use the links to jump directly to specific source locations.
 ### `soc 2`
 - [SOC 2 compliance requirements: A comprehensive guide | Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L542-L545) (from *01-04 grc (governance, risk & compliance)*)
 - [How to perform cybersecurity gap assessment? - Sprinto](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L888-L891) (from *01-04 grc (governance, risk & compliance)*)
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `soc 2 type 1`
 - [SOC 2 Type 1 vs Type 2: A comprehensive guide to selecting the right compliance framework - Thoropass](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L547-L550) (from *01-04 grc (governance, risk & compliance)*)
@@ -21207,6 +21383,9 @@ Use the links to jump directly to specific source locations.
 ### `standardized logging`
 - [Centralize access to security logs (Secure Future Initiative) - Microsoft Learn](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1190-L1193) (from *01-04 grc (governance, risk & compliance)*)
 
+### `standardized submission template`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `standardized symbols`
 - [System architecture diagram basics & best practices - vFunction](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L473-L476) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -21403,6 +21582,9 @@ Use the links to jump directly to specific source locations.
 ### `strategic domain-driven design`
 - [Strategic Domain-Driven Design - DZone](01-01%20product%20engineering.md#L1923-L1925) (from *01-01 product engineering*)
 - [Strategic Domain-Driven Design: The Missing Link in Modern Java Projects](01-01%20product%20engineering.md#L1927-L1946) (from *01-01 product engineering*)
+
+### `strategic impacts`
+- [Architecture Review Board: Structure & Process - SAP LeanIX](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1377-L1380) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `strategic insights`
 - [How GRC data models and common controls drive compliance - Wolters Kluwer](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L928-L931) (from *01-04 grc (governance, risk & compliance)*)
@@ -22602,6 +22784,7 @@ Use the links to jump directly to specific source locations.
 
 ### `timeline`
 - [curated-resources-for-domain-driven-design/ddd-kata.md at main - GitHub](01-01%20product%20engineering.md#L2004-L2006) (from *01-01 product engineering*)
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `timeline exposure`
 - [6 things developer tools must have in 2026 to earn trust and adoption - Evil Martians](01-03%20knowledge%20management%20&%20documentation.md#L1071-L1074) (from *01-03 knowledge management & documentation*)
@@ -22880,6 +23063,9 @@ Use the links to jump directly to specific source locations.
 ### `transaction fees`
 - [2026-05-10 The Unit Economics of the Payments Business | by Milan Radics | Fintech | Payment Solutions | POS Systems | Digital Payments | Medium](01-01%20product%20engineering.md#L9-L11) (from *01-01 product engineering*)
 
+### `transaction thresholds`
+- [Antitrust Risks and Compliance Strategies in Intellectual Property Portfolio Management](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1392-L1395) (from *01-04 grc (governance, risk & compliance)*)
+
 ### `transaction-level validation`
 - [What is Validation Audit? Definition, Process & Key Metrics - Hyperbots](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L252-L255) (from *01-04 grc (governance, risk & compliance)*)
 
@@ -22985,9 +23171,13 @@ Use the links to jump directly to specific source locations.
 ### `trust services criteria`
 - [SOC 2 compliance requirements: A comprehensive guide | Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L542-L545) (from *01-04 grc (governance, risk & compliance)*)
 - [SOC 2 Type 1 vs Type 2: A comprehensive guide to selecting the right compliance framework - Thoropass](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L547-L550) (from *01-04 grc (governance, risk & compliance)*)
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `trustable ai interactions`
 - [Architecture Decisions | Trustable AI Interactions Engineering](01-03%20knowledge%20management%20&%20documentation.md#L946-L949) (from *01-03 knowledge management & documentation*)
+
+### `trustarc nymity ai`
+- [Anonymization vs. Pseudonymization: How to Protect Data Without Losing Sleep (or Compliance) | TrustArc](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1397-L1400) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `trusted sources`
 - [Open-Source Security: Best Practices and Tools - Wiz](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L112-L115) (from *01-04 grc (governance, risk & compliance)*)
@@ -23039,6 +23229,12 @@ Use the links to jump directly to specific source locations.
 
 ### `type 2 report`
 - [SOC 2 compliance requirements: A comprehensive guide | Vanta](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L542-L545) (from *01-04 grc (governance, risk & compliance)*)
+
+### `type i audit`
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
+
+### `type ii audit`
+- [Audora | SOC 2 Audit Guide: Type 1 vs Type 2, Trust Services Criteria, Evidence & Timeline](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1387-L1390) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `types of cohesion`
 - [Differences between Coupling and Cohesion - Software Engineering - GeeksforGeeks](01-01%20product%20engineering.md#L279-L287) (from *01-01 product engineering*)
@@ -23730,6 +23926,7 @@ Use the links to jump directly to specific source locations.
 
 ### `visual data`
 - [The Content Analysis Guidebook | Request PDF - ResearchGate](01-03%20knowledge%20management%20&%20documentation.md#L216-L219) (from *01-03 knowledge management & documentation*)
+- [Anonymization vs. Pseudonymization vs. Encryption Understanding the Key Differences for Visual Data Protection - Gallio PRO](01-04%20grc%20(governance,%20risk%20&%20compliance).md#L1407-L1410) (from *01-04 grc (governance, risk & compliance)*)
 
 ### `visual diagrams`
 - [LikeC4](01-03%20knowledge%20management%20&%20documentation.md#L438-L441) (from *01-03 knowledge management & documentation*)

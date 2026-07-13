@@ -7,7 +7,10 @@ Obsidian MOC list context injection, and structured file boundary parsing.
 import json
 import time
 from pathlib import Path
-from typing import Self
+from typing import Self, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from playwright.sync_api import Playwright, BrowserContext, Page
 
 # ==================== SYSTEM PROMPTS ====================
 
@@ -142,6 +145,8 @@ class GeminiWebProcessor:
     DIALOG_SELECTORS = "[role='dialog'], mat-dialog-container, [class*='dialog']"
 
     GEMINI_URL = "https://gemini.google.com/"
+    # GEMINI_URL = "https://gemini.google.com/gem/bae17c2375e7"
+
     USER_AGENT = (
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
@@ -149,9 +154,9 @@ class GeminiWebProcessor:
 
     def __init__(self, user_data_dir: Path) -> None:
         self.user_data_dir = user_data_dir.expanduser()
-        self.playwright = None
-        self.context = None
-        self.page = None
+        self.playwright: "Playwright | None" = None
+        self.context: "BrowserContext | None" = None
+        self.page: "Page | None" = None
 
     def __enter__(self) -> Self:
         from playwright.sync_api import sync_playwright
@@ -181,6 +186,8 @@ class GeminiWebProcessor:
                 ignore_default_args=["--enable-automation"],
             )
 
+        if not self.context:
+            raise RuntimeError("Browser context failed to initialize.")
         self.page = self.context.pages[0] if self.context.pages else self.context.new_page()
 
         # print("[GeminiWeb] Navigating to Gemini...")
@@ -221,6 +228,8 @@ class GeminiWebProcessor:
 
     def send_prompt(self, prompt_text: str) -> str:
         """Send prompt, wait for stabilization, extract response, delete thread."""
+        if not self.page:
+            raise RuntimeError("GeminiWebProcessor is not initialized. Use as a context manager.")
         self.page.goto(self.GEMINI_URL, timeout=60000)
 
         prompt_element = self.page.locator(self.PROMPT_SELECTORS).first
@@ -276,6 +285,8 @@ class GeminiWebProcessor:
     def _delete_current_thread(self) -> None:
         """Clean up by deleting the active chat session."""
         # print("[GeminiWeb] Cleaning thread...")
+        if not self.page:
+            return
         try:
             menu_btn = self.page.locator(self.MENU_SELECTORS).first
             if menu_btn.is_visible():
@@ -301,7 +312,7 @@ class GeminiWebProcessor:
                 
                 # Wait until the delete confirmation dialog is hidden before proceeding
                 confirm_btn.wait_for(state="hidden", timeout=5000)
-                print("[GeminiWeb] Thread deleted successfully.")
+                # print("[GeminiWeb] Thread deleted successfully.")
         except Exception as e:
             print(f"[GeminiWeb] Warning: failed to delete thread ({e})")
 
