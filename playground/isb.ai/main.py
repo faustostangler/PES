@@ -45,7 +45,7 @@ def run_sync_subcommand(args: argparse.Namespace) -> None:
         playlist_urls = read_playlist_urls(playlist_path)
 
     if playlist_urls:
-        print(f"Starting channel sync for {len(playlist_urls)} seed URL(s)...")
+        print(f"Sync {len(playlist_urls)} channels...")
         sync_channels.sync_channels_and_seeds(
             days=args.days,
             output_dir=output_dir,
@@ -185,8 +185,11 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
     pending_blocks = []
     for b in all_blocks:
         video_id = b.get("metadata", {}).get("video_id")
-        if video_id and video_id not in processed_log:
-            pending_blocks.append(b)
+        if not video_id:
+            continue
+        if video_id in processed_log:
+            continue
+        pending_blocks.append(b)
 
     print(f"Already processed: {len(all_blocks) - len(pending_blocks)}")
     print(f"Pending processing: {len(pending_blocks)}")
@@ -399,3 +402,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\nFatal error: {e}")
         sys.exit(1)
+
+print("Done!")

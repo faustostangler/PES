@@ -114,16 +114,19 @@ def parse_merged_transcriptions(file_path: Path) -> list[dict]:
                     else:
                         in_desc = False
 
-                if not in_desc and ":" in line:
-                    key, val = line.split(":", 1)
-                    key = key.strip()
-                    val = val.strip()
-                    if key == "video_description":
-                        in_desc = True
-                        continue
-                    if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
-                        val = val[1:-1]
-                    meta[key] = val
+                if in_desc:
+                    continue
+                if ":" not in line:
+                    continue
+                key, val = line.split(":", 1)
+                key = key.strip()
+                val = val.strip()
+                if key == "video_description":
+                    in_desc = True
+                    continue
+                if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
+                    val = val[1:-1]
+                meta[key] = val
 
             if desc_lines:
                 meta["video_description"] = "\n".join(desc_lines)

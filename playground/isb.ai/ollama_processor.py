@@ -393,63 +393,90 @@ def run_pass2_chunked_extraction(title: str, text_to_process: str, model: str, o
 
         for t in res.get("takeaways", []):
             t_clean = t.strip()
-            if t_clean and t_clean not in seen_takeaways:
-                seen_takeaways.add(t_clean)
-                merged_results["takeaways"].append(t_clean)
+            if not t_clean:
+                continue
+            if t_clean in seen_takeaways:
+                continue
+            seen_takeaways.add(t_clean)
+            merged_results["takeaways"].append(t_clean)
 
         for item in res.get("concepts", []):
             name = item.get("name", "").strip()
             explanation = item.get("explanation", "").strip()
-            if name and explanation:
-                name_lower = name.lower()
-                if name_lower not in seen_concepts:
-                    seen_concepts[name_lower] = item
-                    merged_results["concepts"].append(item)
+            if not name:
+                continue
+            if not explanation:
+                continue
+            name_lower = name.lower()
+            if name_lower in seen_concepts:
+                continue
+            seen_concepts[name_lower] = item
+            merged_results["concepts"].append(item)
 
         for item in res.get("people", []):
             name = item.get("name", "").strip()
             context = item.get("context", "").strip()
-            if name and context:
-                name_lower = name.lower()
-                if name_lower not in seen_people:
-                    seen_people[name_lower] = item
-                    merged_results["people"].append(item)
+            if not name:
+                continue
+            if not context:
+                continue
+            name_lower = name.lower()
+            if name_lower in seen_people:
+                continue
+            seen_people[name_lower] = item
+            merged_results["people"].append(item)
 
         for item in res.get("organizations", []):
             name = item.get("name", "").strip()
             context = item.get("context", "").strip()
-            if name and context:
-                name_lower = name.lower()
-                if name_lower not in seen_organizations:
-                    seen_organizations[name_lower] = item
-                    merged_results["organizations"].append(item)
+            if not name:
+                continue
+            if not context:
+                continue
+            name_lower = name.lower()
+            if name_lower in seen_organizations:
+                continue
+            seen_organizations[name_lower] = item
+            merged_results["organizations"].append(item)
 
         for item in res.get("examples", []):
             name = item.get("name", "").strip()
             description = item.get("description", "").strip()
-            if name and description:
-                name_lower = name.lower()
-                if name_lower not in seen_examples:
-                    seen_examples[name_lower] = item
-                    merged_results["examples"].append(item)
+            if not name:
+                continue
+            if not description:
+                continue
+            name_lower = name.lower()
+            if name_lower in seen_examples:
+                continue
+            seen_examples[name_lower] = item
+            merged_results["examples"].append(item)
 
         for item in res.get("skills", []):
             name = item.get("name", "").strip()
             description = item.get("description", "").strip()
-            if name and description:
-                name_lower = name.lower()
-                if name_lower not in seen_skills:
-                    seen_skills[name_lower] = item
-                    merged_results["skills"].append(item)
+            if not name:
+                continue
+            if not description:
+                continue
+            name_lower = name.lower()
+            if name_lower in seen_skills:
+                continue
+            seen_skills[name_lower] = item
+            merged_results["skills"].append(item)
 
         for item in res.get("references", []):
             name = item.get("name", "").strip()
             context = item.get("context", "").strip()
-            if name and context:
-                name_lower = name.lower()
-                if name_lower not in seen_references:
-                    seen_references[name_lower] = item
-                    merged_results["references"].append(item)
+            if not name:
+                continue
+            if not context:
+                continue
+            name_lower = name.lower()
+            if name_lower in seen_references:
+                continue
+            seen_references[name_lower] = item
+            merged_results["references"].append(item)
 
     merged_results["summary"] = " ".join(summaries)
     merged_results["synthesis"] = "\n\n".join(syntheses)
@@ -511,16 +538,22 @@ def run_pass3_standardization(raw_entities: dict, existing_notes: list, model: s
             ctx_key = "explanation" if category == "concepts" else ("description" if category == "examples" else "context")
             ctx_val = item.get(ctx_key)
 
-            if isinstance(san, str) and san.strip() and isinstance(ctx_val, str) and ctx_val.strip():
-                san_clean = clean_filename(san.strip())
-                norm = san_clean.lower()
-                if norm not in seen and san_clean.lower() not in ["index", "log"]:
-                    seen.add(norm)
-                    sanitized[category].append({
-                        "original_name": orig.strip() if isinstance(orig, str) else san_clean,
-                        "sanitized_name": san_clean,
-                        ctx_key: ctx_val.strip()
-                    })
+            if not isinstance(san, str) or not san.strip():
+                continue
+            if not isinstance(ctx_val, str) or not ctx_val.strip():
+                continue
+            san_clean = clean_filename(san.strip())
+            norm = san_clean.lower()
+            if norm in seen:
+                continue
+            if san_clean.lower() in ["index", "log"]:
+                continue
+            seen.add(norm)
+            sanitized[category].append({
+                "original_name": orig.strip() if isinstance(orig, str) else san_clean,
+                "sanitized_name": san_clean,
+                ctx_key: ctx_val.strip()
+            })
 
     return sanitized
 

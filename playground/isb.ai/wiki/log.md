@@ -9345,3 +9345,94 @@
 | UCRVzEriB1B2JKGpsLpL-uNg | ofz4AHamK40 | 2026-07-10T09:41:24+00:00 | 🚨Novo ChatGPT Work, GPT-5.6, GPT-Live testados AO VIVO! |
 | UCRVzEriB1B2JKGpsLpL-uNg | 9PW4q38nQ7I | 2026-07-09T15:00:01+00:00 | 🤖 ChatGPT, Gemini ou GLM 5.2: Qual IA Grátis Vale Mais a Pena? |
 | UCRVzEriB1B2JKGpsLpL-uNg | rzP9b-DxAwY | 2026-07-07T15:00:07+00:00 | 🔥 A IA Grátis que Transforma Qualquer Ideia em um Design Profissional! |
+| UCDoFiMhpOnLFq1uG4RL4xag | cyF4OyoYtHU | 2026-07-11T14:00:28+00:00 | GPT-5.6 Sol vs Fable 5: qual é melhor pra programar? (testei os dois) |
+| UCg7QT3pB4EVZA9QJYUC8OWA | wRUNHGUxi7E | 2026-07-11T23:12:16+00:00 | O Presidente Bolsonaro escreveu nova carta hoje e deu ordens e recados bem claros pra direita |
+| UCg7QT3pB4EVZA9QJYUC8OWA | aN3aGXYFMaM | 2026-07-11T16:47:40+00:00 | Famosa feirinha do Juvevê em Curitiba |
+| UCg7QT3pB4EVZA9QJYUC8OWA | LIH97aaGcb8 | 2026-07-11T12:56:06+00:00 | Mais desvios da esquerda no INSS. Agora, o PT roubou os índios |
+| UCg7QT3pB4EVZA9QJYUC8OWA | EF1Z6CkjHfA | 2026-07-10T13:20:27+00:00 | Ainda há uma luz no fim do túnel para o Presidente Bolsonaro? |
+| UCg7QT3pB4EVZA9QJYUC8OWA | wXxAQtMc2hc | 2026-07-09T15:54:25+00:00 | Promotora esquerdista atacou os cristãos e se ferrou! Criticou e atacou o próprio Ministério Público |
+| UCg7QT3pB4EVZA9QJYUC8OWA | Db4nDbYfbfY | 2026-07-09T14:41:40+00:00 | Promotora militante SE FERROU! |
+| UCg7QT3pB4EVZA9QJYUC8OWA | x0C-8neMj-o | 2026-07-08T20:07:47+00:00 | Presidente Jair Bolsonaro foi vítima de nova tortvr4 por meio de busca desnecessária e ilegal da PF |
+| UCg7QT3pB4EVZA9QJYUC8OWA | mu-qP64uFnQ | 2026-07-08T14:20:42+00:00 | Enquanto Flávio tenta defender o Brasil, Lula vai aos EUA fazer lobby para o PCC e o CV |
+| UCg7QT3pB4EVZA9QJYUC8OWA | YQuV0jgQky0 | 2026-07-07T19:37:59+00:00 | Padres e Pastores serão presos pela nova lei da esquerda |
+| UCg7QT3pB4EVZA9QJYUC8OWA | c9Ylf192-Tc | 2026-07-07T16:08:21+00:00 | Por que a “direita” está atacando aliados do Bolsonaro? |
+| UCg7QT3pB4EVZA9QJYUC8OWA | iSHLnsyU8jM | 2026-07-06T21:35:47+00:00 | PGR e STF podem estar tramando anular a delação do Mauro Cid. Entenda como isso é bom! |
+| UCg7QT3pB4EVZA9QJYUC8OWA | 6d-sGj0aiKg | 2026-07-06T13:58:38+00:00 | Lula pode ser preso pelo Trump? |
+| UCg7QT3pB4EVZA9QJYUC8OWA | wI8ofNP-VYg | 2026-07-05T23:11:05+00:00 | Não perdemos em definitivo ainda a Copa do Mundo |
+| UC1VZDEtGNxfQzh7EYcD2frg | KFwoOkNFojs | 2024-11-13T19:30:03+00:00 | Hackeou a máquina usando RUBY |
+| UCib793mnUOhWymCh2VJKplQ | -yGHG3pnHLg | 2023-12-16T13:41:38+00:00 | Configurando Docker Compose, Postgres, com Testes de Carga - Parte Final da Rinha de Backend |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 4jYMkvfOFVA | 2026-07-12T23:40:58+00:00 | TABATA diz que PIADA NÃO é CRIME, mas... JÁ PROCESSOU COMEDIANTE por PIADA |
+| UCOOCeqi5txwviDZ4M5W9QSg | 2H0HNYfxBiI | 2026-07-12T11:00:17+00:00 | Está acontecendo agora… |
+| UCOOCeqi5txwviDZ4M5W9QSg | RXlo-LjBD1s | 2026-07-11T11:00:31+00:00 | Mestres vem aí!!! |
+| UCVAt-Pw_AhAfaaTtZuohTQg | ERia5pfJ8tg | 2026-07-11T20:17:22+00:00 | A divisão da direita não veio de fora (e esse é o problema mais GRAVE) |
+| UCg7QT3pB4EVZA9QJYUC8OWA | fbjUJRwgLEk | 2026-06-24T19:11:22+00:00 | Lula está com medo de dividir cela com Maduro |
+| UCQy7CQvtuGSKp-2VGtmTAuQ | _sp4ggzfLII | 2026-07-11T17:30:04+00:00 | Prompts Avançados com ChatGPT Sol e Claude Fable \| Usando o Melhor dos dois Mundos |
+| UCQy7CQvtuGSKp-2VGtmTAuQ | XVBkewqGNYk | 2026-07-11T00:47:17+00:00 | NOVO ChatGPT 5.6 Sol Testado é a Novidade do Momento Mais Inteligente e Mais Barato |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | dVPiLm8E2YM | 2026-07-12T15:45:14+00:00 | Irã fecha o Estreito de Ormuz... de novo! De volta à estaca zero nas negociações de paz? |
+| UC6goPLJfPWENPXAPeiTtJCQ | cORR49A2aDA | 2026-07-07T22:08:09+00:00 | As caneladas de Flávio Bolsonaro e o oportunismo de Lula \| FMB #86 |
+| UC6goPLJfPWENPXAPeiTtJCQ | 6T7jPOAUVTY | 2026-07-06T00:48:25+00:00 | Noruega 2 x 1 Brasil (eliminado) - Análise de Felipe Moura Brasil |
+| UCc-Nvq1SYmXVTO5_UwQbg6w | LRlU0VtVn3M | 2026-07-11T00:19:27+00:00 | CODE NIGHT #019 – GPT 5.6 Sol, Terra e Luna: primeiras impressões |
+| UCM3vJxmuJJkk1r0yzFI9eZg | VKzESppfR74 | 2026-07-12T14:58:25+00:00 | Trump pode mudar os rumos da eleição brasileira? |
+| UCM3vJxmuJJkk1r0yzFI9eZg | UrjqwiMLUSU | 2026-07-11T00:47:12+00:00 | Quanto R$ 1 milhão paga por mês? |
+| UC1VZDEtGNxfQzh7EYcD2frg | numn3snxZ8E | 2026-07-10T17:00:37+00:00 | Vi 41% do faturamento sumir. Em tempo real. |
+| UC1VZDEtGNxfQzh7EYcD2frg | FF03rtIy3-Y | 2026-07-09T21:00:07+00:00 | o golpe do $4.200 |
+| UC1VZDEtGNxfQzh7EYcD2frg | aESQ8CXAczw | 2026-07-08T19:00:19+00:00 | 🚨 A CHINA VAI TRANCAR A PRÓPRIA IA |
+| UC1VZDEtGNxfQzh7EYcD2frg | YFPLjCp1oKo | 2026-07-08T15:21:43+00:00 | 🚨🚨 Tierlist dos GURUS \| Mano Rage Show #257 |
+| UC1VZDEtGNxfQzh7EYcD2frg | rHZGqpiEA1Q | 2026-07-06T20:45:13+00:00 | ele saiu e você ficou |
+| UCLW51-XEzuOm5RwPMChHBMw | YYv6vbi6F28 | 2026-07-11T12:15:06+00:00 | Janela de Contexto explicada em 2 minutos |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | 3TFpvGq7ObM | 2026-07-12T21:45:17+00:00 | 🚨 Mendonça Causa Reviravolta no Caso Master Com Nova Estratégia! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | 3oBIHnI3_PM | 2026-07-12T19:45:10+00:00 | 🚨 Flávio se Aliou a Moraes, Diz Jornalista |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | n1B4Rp7I8cs | 2026-07-12T17:45:11+00:00 | 🚨 O Plano Secreto de Michelle e o Duro Recado de Bolsonaro! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | VJxYdg8H4Ro | 2026-07-12T15:45:20+00:00 | 🚨 O Segredo de Quem Delatou Vorcaro Foi Revelado |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | cGFqPdFfUAo | 2026-07-11T21:02:06+00:00 | 🚨 A Manobra Secreta de Lula no Tarifaço |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | RU4xZYRlDRo | 2026-07-11T21:00:05+00:00 | 🚨 Os dois pedidos que Bolsonaro fez a Michelle depois do vídeo contra Flávio! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | 3pxu962N5x0 | 2026-07-11T18:30:14+00:00 | 🚨Dino Dá Decisão e Usa Valdemar Para Atacar Flávio! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | Z0IgjUeuCco | 2026-07-11T18:07:49+00:00 | 🚨 Veja a Carta de Bolsonaro Para Flávio que Pode Mudar Tudo! |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | KizNkHnzc04 | 2026-07-11T14:53:42+00:00 | 🚨 Milei Quer Visitar Bolsonaro: Se Moraes Negar, Será um Escândalo! |
+| UC9ycYMBQqlnE0h4dSyrdv0A | RGvqhfbnMbA | 2026-07-12T19:05:21+00:00 | #Irã 2026-07-12: IRÃ FECHA o ESTREITO de ORMUZ e TRUMP MANDA REABRIR de NOVO |
+| UC9ycYMBQqlnE0h4dSyrdv0A | 9WOra5ZZctY | 2026-07-12T14:42:02+00:00 | #Ucrânia 2026-07-12: MORRE o SENADOR LINDSEY GRAHAM, grande APOIADOR da UCRÂNIA |
+| UC9ycYMBQqlnE0h4dSyrdv0A | Hf8DacqwO3Y | 2026-07-11T17:15:39+00:00 | #Irã 2026-07-11: ISRAEL alerta para ATENTADO do IRÃ contra a VIDA de TRUMP |
+| UC9ycYMBQqlnE0h4dSyrdv0A | q4usVmLpIhI | 2026-07-11T14:49:35+00:00 | #Ucrânia 2026-07-11: UCRÂNIA faz "BANHO de SANGUE" com 76 NAVIOS RUSSOS DESTRUÍDOS no MAR de AZOV |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | j6rUCtlbkOM | 2026-07-12T10:00:06+00:00 | Estreito de Ormuz novamente fechado pelo Irã (Briefing de Segurança 12-Jul) #shorts #iran #ukraine |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | OvN6B2ik9Is | 2026-07-11T15:00:11+00:00 | O testamento de Trump caso seja assassinado por Teerã: “1000 mísseis serão lançados contra o Irã!” |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | yTWA2iwrTVE | 2026-07-11T10:00:00+00:00 | Ucrânia reforça ataques contra petroleiros russos (Briefing de Segurança 11-Jul) #shorts #ukraine |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | kQKhU3ukzaA | 2026-07-10T18:15:33+00:00 | 48 petroleiros russos perdidos em apenas 5 dias – Como a Ucrânia está dizimando a frota de Putin? |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | 2ZheXnJZgOo | 2026-07-10T16:15:22+00:00 | Berlim anuncia pacote de €800 bilhões para armas: “Desta vez estaremos preparados para a Rússia!” |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | Yww-wDLgjK8 | 2026-07-10T10:00:20+00:00 | EUA e Irã cada vez mais próximos de uma nova guerra total (Briefing de Segurança 10-Jul) #shorts |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | obeQ1EKD3Lg | 2026-07-09T16:30:36+00:00 | Ucrânia produzirá mísseis Patriot sob licença: “O fim da falta de mísseis para a defesa ucraniana!” |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | jPU2d-0d59s | 2026-07-09T10:16:51+00:00 | Mais uma noite de ataques entre EUA e Irã no Golfo (Briefing de Segurança 9-Jul) #shorts #iran |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | p1Hq_sn4NIs | 2026-07-08T18:00:40+00:00 | “A Sibéria está agora ao alcance dos nossos drones!” Zelensky |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | dCeYEIte3L8 | 2026-07-08T15:00:26+00:00 | “O cessar-fogo com o Irã acabou!” Trump |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | xuWUHkZOu_w | 2026-07-08T10:00:37+00:00 | EUA e Irã voltam a trocar tiros (Briefing de Segurança 8-Jul) #shorts #iran #ukraine |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | N6HY1cJ-GFs | 2026-07-07T19:00:04+00:00 | Governo brasileiro teme ataque militar dos EUA: Brasil na mira do Exército Americano? |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | XLbA7q-dGM4 | 2026-07-07T15:00:08+00:00 | Tropas americanas desembarcam na Venezuela – Ficarão lá até quando? |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | LRsuFTkPfVo | 2026-07-07T10:00:06+00:00 | Hamas anuncia fim do seu governo em Gaza (Briefing de Segurança 7-Jul) #shorts #gaza |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | grNL_MSDJ6s | 2026-07-06T16:53:10+00:00 | Tropas Americanas Desembarcam na Venezuela: Ajuda Humanitária ou Ocupação Disfarçada? #shorts |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | ymELd12UhcU | 2026-07-06T15:00:11+00:00 | O fim da Teocracia? Como a Guarda Revolucionária assaltou o poder no Irã |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | aUVrRM_24CU | 2026-07-06T10:00:34+00:00 | Rússia volta a atacar civis na Ucrânia (Briefing de Segurança 6-Jul) #shorts #ukraine #iran |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | yVNGn1ry4f8 | 2026-07-05T16:45:09+00:00 | Putin está lançando jovens universitários para a guerra: “Falta grave de soldados” |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | OStlQdfwIbU | 2026-07-13T00:35:29+00:00 | GOVERNADOR BIÔNICO do RIO está PREPARANDO um GOLPE ESTILO WITZEL-MARIELLE em FLÁVIO BOLSONARO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | SYUgTIo_cac | 2026-07-12T22:54:37+00:00 | FIM MELANCÓLICO do GOVERNO LULA: APOSTANDO TUDO na REELEIÇÃO IMPROVÁVEL |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 8ZiSwCbP6AA | 2026-07-12T20:15:18+00:00 | CRIME de ESCREVER CARTAS: LINDBERG quer PRISÃO FECHADA para BOLSONARO por ESCREVER CARTA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | mIxTkPcpl_4 | 2026-07-12T18:28:38+00:00 | ESTRATÉGIA de MICHELLE e FLÁVIO BOLSONARO é BRILHANTE e a ESQUERDA CAIU igual um PATINHO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | x4u2X4nqIN4 | 2026-07-12T16:15:29+00:00 | ACORDO entre PL e REPUBLICANOS DEVE SAIR, mas NÃO ENVOLVE vaga no STF |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | q-5yrOkczoU | 2026-07-12T13:15:04+00:00 | TRUMP chama LULA para AJUDAR a COMBATER o COMUNISMO: LULA disse que NÃO é de ESQUERDA... |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | gwgmZwB1adc | 2026-07-12T13:13:16+00:00 | MILEI vem ao BRASIL se ENCONTRAR com FLÁVIO e JAIR BOLSONARO, LULA que se F*DA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 5ieN4SK8-Bs | 2026-07-12T09:15:25+00:00 | BATEU o DESESPERO: GLOBO afunda na AUDIÊNCIA enquanto CAZE TV conquista o MUNDO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | DE3LnuEJKB8 | 2026-07-12T02:59:46+00:00 | LULA está 8 PONTOS atrás de FLÁVIO em SÃO PAULO e isso É UMA ÓTIMA NOTÍCIA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 17S175c5qjg | 2026-07-12T00:57:26+00:00 | LULA AMEAÇA sistema 170x MAIOR que PIX para ROUBAR IMPOSTOS dos BRASILEIROS |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | G78sJ1Jxg4U | 2026-07-11T23:28:27+00:00 | ESQUERDOSFERA e ISENTOSFERA com DIFICULDADES de ACEITAÇÃO: VAI ser FLÁVIO MESMO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | Vuee8ZZee4M | 2026-07-11T22:31:17+00:00 | PETISTA CHORA porque NINGUÉM quer JOGAR TENIS com ELE: CULPA do BOLSONARISMO! |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | lsybOpj6rQk | 2026-07-11T20:15:21+00:00 | LULA preocupado que STF está PEGANDO MAL na CAMPANHA DELE |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | U4U6mmxQsYs | 2026-07-11T18:54:40+00:00 | LULA está 8 PONTOS atrás de FLÁVIO em SÃO PAULO e isso É UMA ÓTIMA NOTÍCIA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | J-W-haw2fF0 | 2026-07-11T16:41:11+00:00 | FLÁVIO lê CARTA de JAIR BOLSONARO designando-o como PORTA-VOZ, pedindo UNIÃO e FOCO |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | b-etBrDoeqY | 2026-07-11T13:15:35+00:00 | MILEI vem ao BRASIL se ENCONTRAR com FLÁVIO e JAIR BOLSONARO, LULA que se F*DA |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | pLOBkI3VIxM | 2026-07-11T09:15:33+00:00 | ELITE ARISTOCRÁTICA SOCIALISTA do POKEMON GO faz FESTA EXCLUSIVA com MEWTWO HUNDO de GRÁTIS |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | 3whxRKOcEq8 | 2026-07-11T00:36:37+00:00 | DIVIDA EXPLODE com LULA, mas FLÁVIO tem PACOTÃO para RESOLVER |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | pes6NF7FwVE | 2026-07-10T23:15:35+00:00 | ESQUERDA CHORA COPIOSAMENTE pela POSSIBILIDADE da SOLTURA do BOLSONARO |
+| UC84asuWqcrFqEtWqSCtS85Q | 2QIU3xvUbW0 | 2026-07-12T16:53:01+00:00 | Não existe família segura onde o crime manda! |
+| UC84asuWqcrFqEtWqSCtS85Q | YTmX0-GhSys | 2026-07-12T15:00:01+00:00 | Jurista Renomado Expõe o Conluio Que Protege o STF! |
+| UC84asuWqcrFqEtWqSCtS85Q | P2qk6fCD_KM | 2026-07-11T21:47:00+00:00 | Lula Debocha de Trump Com Piada Perigosa Sobre a China! |
+| UC84asuWqcrFqEtWqSCtS85Q | Kk7RhGvsENg | 2026-07-11T19:59:33+00:00 | LULA BATE CABEÇA |
+| UC84asuWqcrFqEtWqSCtS85Q | io6oT10FMYA | 2026-07-11T18:39:36+00:00 | Tabata Amaral desmente ela mesma! |
+| UC84asuWqcrFqEtWqSCtS85Q | iPWFuQROJLE | 2026-07-11T16:11:07+00:00 | Moraes Vai Negar Visita de Milei a Bolsonaro?! |

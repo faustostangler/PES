@@ -6,8 +6,6 @@ import os
 import sys
 from pathlib import Path
 
-import whisper
-
 
 def transcribe_audio_to_text(audio_path: str, model_name: str = "base") -> dict:
     """Transcribe an audio file to text using Whisper.
@@ -19,6 +17,8 @@ def transcribe_audio_to_text(audio_path: str, model_name: str = "base") -> dict:
     Returns:
         A dictionary containing the transcription text and other metadata segments.
     """
+    import whisper
+
     path = Path(audio_path)
     if not path.exists():
         raise FileNotFoundError(f"Audio file not found: {audio_path}")

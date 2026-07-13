@@ -74,8 +74,7 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50) -> list[dict]:
         uploads_playlist_id = "UU" + channel_id[2:]
         url = f"https://www.youtube.com/playlist?list={uploads_playlist_id}"
 
-    print(f"Querying channel uploads for ID: {channel_id}")
-    print(f"Fetching recent channel videos from uploads list: {url}")
+    # print(f"Querying channel uploads for ID: {url}")
 
     ydl_opts = {
         "quiet": True,
@@ -217,6 +216,8 @@ def process_and_compile_video(
 
     res["channel_id"] = actual_channel_id
 
+    print(f"{res['upload_date']} | {actual_channel_id} {res['video_id']} | {res['video_title'][:40]}...")
+
     # # Compile to Obsidian Note inside wiki/
     # process_transcript_to_obsidian(
     #     res,
@@ -246,7 +247,9 @@ def sync_channels_and_seeds(
     # 2. Process seed URLs and add their channels to our list
     for url in playlist_urls:
         url_id = extract_youtube_video_id(url)
-        if url_id and url_id in synced_ids:
+        if not url_id:
+            continue
+        if url_id in synced_ids:
             continue
 
         try:
@@ -257,59 +260,69 @@ def sync_channels_and_seeds(
 
         channel_id = info.get("channel_id")
         upload_date = get_full_upload_date(info)
-        print(f"{upload_date} | {channel_id} {info.get('webpage_url')} | {info.get('title')}")
+        print(f"{upload_date} | {channel_id} {url_id} | {info.get('title')}")
 
         if channel_id:
             channels_to_scan.add(channel_id)
 
-        # Process the seed video itself if it is within range and not yet synced
+        # Process the seed video itself if it is not yet synced
         video_id = info.get("id")
-        if is_within_range(upload_date, days) and video_id and video_id not in synced_ids:
-            try:
-                process_and_compile_video(
-                    url=url,
-                    output_dir=output_dir,
-                    csv_path=csv_path,
-                    model_name=model_name,
-                    keep_audio=keep_audio,
-                    llm_model=llm_model,
-                    ollama_url=ollama_url,
-                    channel_id=channel_id,
-                    synced_ids=synced_ids,
-                    info=info
-                )
-            except Exception as e:
-                print(f"Error syncing seed video {video_id}: {e}")
+        if not video_id:
+            continue
+        if video_id in synced_ids:
+            continue
+        try:
+            process_and_compile_video(
+                url=url,
+                output_dir=output_dir,
+                csv_path=csv_path,
+                model_name=model_name,
+                keep_audio=keep_audio,
+                llm_model=llm_model,
+                ollama_url=ollama_url,
+                channel_id=channel_id,
+                synced_ids=synced_ids,
+                info=info
+            )
+        except Exception as e:
+            print(f"Error syncing seed video {video_id}: {e}")
 
     # 4. Scan all unique channels (both seed channels and historical ones)
     # print(f"\nScanning total of {len(channels_to_scan)} channels for new uploads...")
     safe_limit = max(50, days * 30)
     for chan_id in channels_to_scan:
         recent_entries = fetch_channel_recent_videos(chan_id, limit=safe_limit)
-        print(f"Found {len(recent_entries)} recent uploads on the channel {chan_id}.")
+        found = False
 
         for entry in recent_entries:
             entry_date = get_full_upload_date(entry)
             entry_id = entry.get("id")
 
-            if is_within_range(entry_date, days) and entry_id and entry_id not in synced_ids:
-            # if entry_id and entry_id not in synced_ids:
-                entry_url = entry.get("url")
-                print(f"  + {entry_date} | {entry_url} ") # | {entry.get('title', 'Unknown Title')}")
-                try:
-                    process_and_compile_video(
-                        url=entry_url,
-                        output_dir=output_dir,
-                        csv_path=csv_path,
-                        model_name=model_name,
-                        keep_audio=keep_audio,
-                        llm_model=llm_model,
-                        ollama_url=ollama_url,
-                        channel_id=chan_id,
-                        synced_ids=synced_ids
-                    )
-                except Exception as e:
-                    print(f"  Error syncing video {entry_id}: {e}")
+            if not entry_id:
+                continue
+            if not is_within_range(entry_date, days):
+                continue
+            if entry_id in synced_ids:
+                continue
+
+            entry_url = entry.get("url")
+            # if not found:
+            #     print(f"Found new videos on the channel {chan_id}.")
+            found = True
+            try:
+                process_and_compile_video(
+                    url=entry_url,
+                    output_dir=output_dir,
+                    csv_path=csv_path,
+                    model_name=model_name,
+                    keep_audio=keep_audio,
+                    llm_model=llm_model,
+                    ollama_url=ollama_url,
+                    channel_id=chan_id,
+                    synced_ids=synced_ids
+                )
+            except Exception as e:
+                print(f"  Error syncing video {entry_id}: {e}")
 
 def bulk_compile_historical_transcripts(
     csv_path: Path,
@@ -334,11 +347,16 @@ def bulk_compile_historical_transcripts(
         with open(csv_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
-                if line.startswith("|") and "---" not in line and "Channel ID" not in line:
-                    parts = [p.strip() for p in line.split("|") if p.strip()]
-                    if len(parts) >= 3:
-                        title = parts[3] if len(parts) >= 4 else "Unknown Title"
-                        rows.append((parts[0], parts[1], parts[2], title))
+                if not line.startswith("|"):
+                    continue
+                if "---" in line:
+                    continue
+                if "Channel ID" in line:
+                    continue
+                parts = [p.strip() for p in line.split("|") if p.strip()]
+                if len(parts) >= 3:
+                    title = parts[3] if len(parts) >= 4 else "Unknown Title"
+                    rows.append((parts[0], parts[1], parts[2], title))
     except Exception as e:
         print(f"Error reading log table: {e}")
         return
