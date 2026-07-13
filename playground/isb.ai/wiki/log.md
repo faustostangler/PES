@@ -9436,3 +9436,89 @@
 | UC84asuWqcrFqEtWqSCtS85Q | Kk7RhGvsENg | 2026-07-11T19:59:33+00:00 | LULA BATE CABEÇA |
 | UC84asuWqcrFqEtWqSCtS85Q | io6oT10FMYA | 2026-07-11T18:39:36+00:00 | Tabata Amaral desmente ela mesma! |
 | UC84asuWqcrFqEtWqSCtS85Q | iPWFuQROJLE | 2026-07-11T16:11:07+00:00 | Moraes Vai Negar Visita de Milei a Bolsonaro?! |
+| UCyHOBY6IDZF9zOKJPou2Rgg | 9a1MH3Ip1ZQ | 2026-06-01T15:15:34+00:00 | Não fique na mão da Anthropic e OpenAI |
+| UCib793mnUOhWymCh2VJKplQ | -yGHG3pnHLg | 2023-12-16T13:41:38+00:00 | Configurando Docker Compose, Postgres, com Testes de Carga - Parte Final da Rinha de Backend |
+| UCLW51-XEzuOm5RwPMChHBMw | ytTJtfg9HCw | 2026-06-01T12:27:10+00:00 | Práticas do Akita com IA. Deu bom? (Boas Práticas de IA) |
+| UCDoFiMhpOnLFq1uG4RL4xag | 85fhyazvI8Y | 2026-06-02T14:00:15+00:00 | DeepClaude: qualidade EXTREMA por um preço RIDÍCULO (Claude Code + DeepSeek) |
+| UCRVzEriB1B2JKGpsLpL-uNg | 9DWfLcfvHno | 2026-06-02T13:58:35+00:00 | 🚨Cursor Composer 2.5 no Grok: A Guerra dos Agentes de IA pega FOGO! |
+| UCc-Nvq1SYmXVTO5_UwQbg6w | DnJfhPj0MvA | 2026-05-17T21:00:24+00:00 | Codex Mobile vs Claude Remote Control: a diferença ficou clara |
+| UCQy7CQvtuGSKp-2VGtmTAuQ | dg6KEMqqt_4 | 2026-05-31T20:15:25+00:00 | NOVO Kimi k2.6 Surpreende Com Sites Excelentes e Gerações MultiModais |
+| UCIQne9yW4TvCCNYQLszfXCQ | ARQBBKnfP_c | 2026-04-29T19:00:30+00:00 | Finalmente um Framework que Faz a Escrita de SPECs de QUALQUER CÓDIGO ANTIGO pra IA |
+| UCPiCs9REsEymr43a0ceL_BQ | uezD0dRdz9Q | 2026-04-16T18:01:05+00:00 | Criei uma Harness para Agentes de Whatsapp ( Arquitetura Completa ) |
+| UC9iusg9ZUmiSqXmppE9J1IQ | i98cIh6x_CI | 2026-05-22T23:15:03+00:00 | O LIVRO QUE TODO PROGRAMADOR PRECISA LER! |
+| UCnUYZLuoy1rq1aVMwx4aTzw | HdCc-KezQPk | 2026-05-22T23:03:58+00:00 | Build your website for the agentic era |
+| UCUUQBgnLa_umQ_TGKlG2Xqw | Y9crCsVN0KA | 2026-05-30T19:41:52+00:00 | 🚨 Esquerda Quer Prender Flávio Por Crime Contra a Soberania! |
+| UCLTWPE7XrHEe8m_xAmNbQ-Q | R8-dCSHLItE | 2026-05-31T01:25:26+00:00 | NOVA MAGNITSKY contra MORAES está PRONTA e só AGUARDA ORDEM de TRUMP |
+| UCM3vJxmuJJkk1r0yzFI9eZg | gs2vecF1te0 | 2026-06-01T22:11:22+00:00 | O QUE ESTÁ ACONTECENDO COM A ECONOMIA BRASILEIRA? |
+| UCg7QT3pB4EVZA9QJYUC8OWA | KFcjE0nRCJw | 2026-06-02T18:29:17+00:00 | Relator da CPI do Crime Organizado receberá apoio do Senado após virar alvo da família de Moraes |
+| UC84asuWqcrFqEtWqSCtS85Q | 3Pn8UyQ0gAs | 2026-06-01T20:30:24+00:00 | Ex-funcionário do Careca do INSS ENTREGA Lulinha à PF: Era a Peça Que Faltava! |
+| UC1VZDEtGNxfQzh7EYcD2frg | KFwoOkNFojs | 2024-11-13T19:30:03+00:00 | Hackeou a máquina usando RUBY |
+| UC9ycYMBQqlnE0h4dSyrdv0A | 5v7jQNchs50 | 2026-06-02T16:23:40+00:00 | #Ucrânia 2026-06-02: UCRÂNIA atinge mais DUAS REFINARIAS RUSSAS e SECA GASOLINA da CRIMEIA |
+| UCxDFRhF3Y1A_Gd0-cF8gbqQ | GAxuHfvSli8 | 2026-06-02T15:00:06+00:00 | “Ucrânia: Missão Impossível” Como Putin se atolou na própria guerra e como pensa sair dela? |
+| UCOOCeqi5txwviDZ4M5W9QSg | IfJSw-BwtjI | 2026-06-02T15:00:21+00:00 | BOLSONARO VAI PERDER PARA O LULA |
+| UC6goPLJfPWENPXAPeiTtJCQ | 1cuZuK-oRlk | 2026-06-01T16:31:52+00:00 | Lula, Flávio e o combate à lavagem de dinheiro \| FMB #065 |
+| UCVAt-Pw_AhAfaaTtZuohTQg | vzblt_9rm24 | 2026-06-02T18:45:23+00:00 | No 'Gilmarpalooza', Moraes acertou o diagnóstico, mas errou o remédio. Assista até o fim |
+| UCM3vJxmuJJkk1r0yzFI9eZg | VKzESppfR74 | 2026-07-12T14:58:25+00:00 | Trump pode mudar os rumos da eleição brasileira? |
+| UCM3vJxmuJJkk1r0yzFI9eZg | UrjqwiMLUSU | 2026-07-11T00:47:12+00:00 | Quanto R$ 1 milhão paga por mês? |
+| UCM3vJxmuJJkk1r0yzFI9eZg | HLLae1Jx8Ss | 2026-07-10T21:15:35+00:00 | Parcelou uma pizza em 3 vezes |
+| UCM3vJxmuJJkk1r0yzFI9eZg | yCoHTnhkGRo | 2026-07-09T22:47:37+00:00 | A Receita Federal abriu a caixa preta do Brasil |
+| UCM3vJxmuJJkk1r0yzFI9eZg | aSnqh8ItC5M | 2026-07-08T23:56:39+00:00 | Fique rico com a CRISE de 2026 |
+| UCM3vJxmuJJkk1r0yzFI9eZg | hwQgDhq74kg | 2026-07-07T23:47:11+00:00 | Faça como os ricos, faça a Receita de besta |
+| UCM3vJxmuJJkk1r0yzFI9eZg | G5rlXn917cg | 2026-07-06T23:06:03+00:00 | A CLASSE MÉDIA ALTA ESTÁ QUEBRADA |
+| UCM3vJxmuJJkk1r0yzFI9eZg | tea4txbslNA | 2026-07-05T11:30:13+00:00 | 🚨 Rombo de R$ 100 BILHÕES ameaça o Brasil, pressiona Lula e acende alerta no mercado |
+| UCM3vJxmuJJkk1r0yzFI9eZg | FxD2iQZ_dtQ | 2026-07-05T01:38:49+00:00 | Faça uma dívida urgente |
+| UCM3vJxmuJJkk1r0yzFI9eZg | XZVnjKhSZhw | 2026-07-04T17:58:38+00:00 | IPCA+8%: Não é todo dia que o governo dá mole assim |
+| UCM3vJxmuJJkk1r0yzFI9eZg | vGHdJcg9zHY | 2026-07-03T22:30:43+00:00 | Brasil x Noruega: R$ 1600 x R$ 16 mil de salário. Por que o Brasil é burro e a Noruega inteligente? |
+| UCM3vJxmuJJkk1r0yzFI9eZg | NQ9vnGTbgLY | 2026-07-02T21:49:07+00:00 | A regra para você ser aprovado em qualquer entrevista de emprego |
+| UCM3vJxmuJJkk1r0yzFI9eZg | OifuwTtr8PM | 2026-07-01T22:08:47+00:00 | O mundo se tornou uma fraude e você nem percebeu |
+| UCIQne9yW4TvCCNYQLszfXCQ | vDrZjq3qU7E | 2026-07-12T01:50:29+00:00 | GPT 5.6 vs Fable5: quem está ganhando de verdade |
+| UCIQne9yW4TvCCNYQLszfXCQ | 3lDCjq7QQt0 | 2026-07-10T15:33:50+00:00 | O Poder da visão na palma da sua mão. Teste o MIRA hoje. MIRA.SANDECO.COM.BR |
+| UCIQne9yW4TvCCNYQLszfXCQ | nNF3_FzhZq4 | 2026-07-09T22:56:11+00:00 | Apresentações Animadas com IA: o MIRA Faz Sozinho (Grátis e Open Source) |
+| UCIQne9yW4TvCCNYQLszfXCQ | DNh_k1jV2aI | 2026-07-07T00:59:33+00:00 | O problema oculto das IAs modernas #IA #Transformer #Shorts |
+| UCIQne9yW4TvCCNYQLszfXCQ | c1gaEjV8ZqA | 2026-07-06T23:58:41+00:00 | Eu fiz com IA a MESA TÁTICA que Falta na CazéTV. Meu Framework Mira Animator + Claude Code |
+| UCIQne9yW4TvCCNYQLszfXCQ | rVuvls7Fq_U | 2026-07-05T01:43:56+00:00 | Chega de Slides POBRES. Faça um UPGRADE com IA |
+| UCIQne9yW4TvCCNYQLszfXCQ | -1Ls-8XVS-M | 2026-07-04T13:27:01+00:00 | Harness vs. Guardrail: A Diferença Que Você Precisa |
+| UCIQne9yW4TvCCNYQLszfXCQ | Ui7Yp_MEXrM | 2026-07-02T19:28:56+00:00 | Pare de ser BABÁ do Claude Code (Essa LOOP SKILL faz ele trabalhar SOZINHO) |
+| UCIQne9yW4TvCCNYQLszfXCQ | j_P-w_f93qE | 2026-07-01T08:14:53+00:00 | O Pivot Mais Louco da História da IA: Midjourney quer escanear seu corpo inteirinho? |
+| UCIQne9yW4TvCCNYQLszfXCQ | jSXx_wi0HEk | 2026-06-26T21:20:44+00:00 | Harness ACABOU com os Prompts? Verdade ou Mito? |
+| UCIQne9yW4TvCCNYQLszfXCQ | 4WlUOy_Bn-s | 2026-06-18T21:03:38+00:00 | Agora ficou FÁCIL ter Objetos 3D nos SLIDES com Antigravity + MIRA (de graça) |
+| UCIQne9yW4TvCCNYQLszfXCQ | 9-tOHcaCMtw | 2026-06-15T20:16:03+00:00 | Claude Code + MIRA: transforme qualquer conteúdo em SLIDES ANIMADOS  de graça |
+| UCIQne9yW4TvCCNYQLszfXCQ | vl9a0CJ3hpY | 2026-06-13T14:31:30+00:00 | EUA proíbem o Fable 5 da Anthropic no mundo: o que isso significa pra você |
+| UCIQne9yW4TvCCNYQLszfXCQ | lK0qX_De9fk | 2026-06-10T08:13:08+00:00 | 🚀 ELAS NO COMANDO DA IA: O FUTURO É DELAS! |
+| UCIQne9yW4TvCCNYQLszfXCQ | ZMJNb5yumZk | 2026-06-09T20:30:24+00:00 | AGENT HARNNES: VOCÊ PRECISA ENTENDER ESTE CONCEITO URGENTE! |
+| UCIQne9yW4TvCCNYQLszfXCQ | D3pzabPYNx0 | 2026-06-03T08:12:07+00:00 | O futuro é delas! As mulheres que estão dominando os ambientes de inovação e empreendedorismo! |
+| UCIQne9yW4TvCCNYQLszfXCQ | hh6N9knL_Ng | 2026-05-14T19:00:06+00:00 | REVERSA + Claude Code Modernizou um Código Antigo de 30 Anos em Apenas 25 Minutos |
+| UCIQne9yW4TvCCNYQLszfXCQ | kCRF51b_kes | 2025-12-03T21:19:43+00:00 | Aprenda a colocar suas aplicações de IA on-line. |
+| UCIQne9yW4TvCCNYQLszfXCQ | go0FFvvT9fM | 2025-12-03T08:12:06+00:00 | IA no Diagnóstico Médico: Da Redução de Erros à Aceleração de Diagnósticos Críticos! |
+| UCIQne9yW4TvCCNYQLszfXCQ | LCUv4n5iJBc | 2025-12-02T20:14:33+00:00 | Compre o Livro e Ganhe o Curso. |
+| UCIQne9yW4TvCCNYQLszfXCQ | YKJOJokpyYA | 2025-11-28T22:54:55+00:00 | Vai Mizeravi... corre! |
+| UCIQne9yW4TvCCNYQLszfXCQ | CaliOuy0AF0 | 2025-11-25T22:32:48+00:00 | Eu Criei um App em Minutos com Gemini 3 e Antigravity e Você Também PODE! |
+| UCIQne9yW4TvCCNYQLszfXCQ | fSELab03Eek | 2025-11-25T12:29:22+00:00 | Responde AI - Ressaca da Campus Party |
+| UCIQne9yW4TvCCNYQLszfXCQ | WTYKsoNzXhU | 2025-11-24T15:11:28+00:00 | Por que 250 mil pessoas foram atrás dessas startups #innovation #startup |
+| UCIQne9yW4TvCCNYQLszfXCQ | O-TQSbDIFeo | 2025-11-19T08:17:46+00:00 | O NOVO BISTURI: OSINT, IA e a CAÇA aos Seus Dados de Saúde |
+| UCIQne9yW4TvCCNYQLszfXCQ | kxVGdgFpSa0 | 2025-11-18T21:36:22+00:00 | Adeus ChatGPT? Gemini 3: A IA que Derrotou TODOS os Modelos Existentes |
+| UCIQne9yW4TvCCNYQLszfXCQ | FUU47CvhrWU | 2025-11-18T12:36:03+00:00 | Responde AI Sandeco! Dúvidas sobre IA acabam hoje! |
+| UCIQne9yW4TvCCNYQLszfXCQ | acX-Trgphl8 | 2025-11-14T18:51:44+00:00 | Agents Brazil chega com tudo na Campus Party Goiás 5 #Evento #Tecnologia #IA |
+| UCIQne9yW4TvCCNYQLszfXCQ | udf2X6AIFH0 | 2025-11-11T12:41:45+00:00 | Responde AI Sandeco - Tira suas dúvidas so IA |
+| UCIQne9yW4TvCCNYQLszfXCQ | H6ulJ1ciZQg | 2025-11-09T21:25:43+00:00 | Por Que Meu Projeto de IA Venceu o Maior Prêmio da Aviação? |
+| UCIQne9yW4TvCCNYQLszfXCQ | HYUi7urI3-g | 2025-11-06T14:07:17+00:00 | PÓS Agentes de IA UFG |
+| UCIQne9yW4TvCCNYQLszfXCQ | wT49GMfMnDo | 2025-11-05T12:22:49+00:00 | Pós-Graduação em Sistemas e Agentes Inteligentes da UFG |
+| UCIQne9yW4TvCCNYQLszfXCQ | fDY1g9HQYOM | 2025-11-05T08:13:38+00:00 | Inovação nas Sombras: Como a "Shadow AI" Está Redefinindo Riscos na Saúde |
+| UCIQne9yW4TvCCNYQLszfXCQ | 5WWVgsZuT2c | 2025-11-04T13:11:40+00:00 | Tire suas dúvidas sobre Inteligência Artificial — AO VIVO! |
+| UCIQne9yW4TvCCNYQLszfXCQ | LINdKHRbRk4 | 2025-11-03T18:02:57+00:00 | Inteligência Artificial COLANDO em EXAMES? |
+| UCIQne9yW4TvCCNYQLszfXCQ | odELYJVuTfU | 2025-10-31T21:19:05+00:00 | A Revolução dos Agentes de IA: O Futuro do RAG |
+| UCIQne9yW4TvCCNYQLszfXCQ | ZMyb-ejV-bk | 2025-10-31T07:45:42+00:00 | Nexus4.ai Voices Studio - Lançamento! |
+| UCIQne9yW4TvCCNYQLszfXCQ | ST3eboH44go | 2025-10-30T23:41:18+00:00 | Como não-programadores dominam RAG agora #tutorial #skills |
+| UCIQne9yW4TvCCNYQLszfXCQ | 0JjWdN4gSYg | 2025-10-30T19:58:52+00:00 | Compre uma vez, ganhe mentoria para a vida toda #RAG #Educação |
+| UCIQne9yW4TvCCNYQLszfXCQ | KNALfiCX81E | 2025-10-30T19:11:30+00:00 | Programa Musical "Canção Renovada" gerada com IA. |
+| UCIQne9yW4TvCCNYQLszfXCQ | 7yue9-4Sib4 | 2025-10-24T07:58:19+00:00 | Programa Musical "Canção Renovada" gerada com IA. |
+| UCIQne9yW4TvCCNYQLszfXCQ | trjwo0EXZ9w | 2025-10-22T07:57:51+00:00 | A Revolução Começou: IA Traduzindo Genética em Palavras |
+| UCIQne9yW4TvCCNYQLszfXCQ | I6eumI0xMDI | 2025-10-21T22:27:27+00:00 | Transformer, BERT, RAG: As 10 Ideias que DEFINEM o Futuro da IA |
+| UCIQne9yW4TvCCNYQLszfXCQ | _7pbBNtm_uM | 2025-10-21T12:19:12+00:00 | Suas Dúvidas Sobre Inteligência Artificial, RESPONDIDAS! |
+| UCIQne9yW4TvCCNYQLszfXCQ | cjWcmnTJFEs | 2025-10-16T21:34:11+00:00 | Saia na Frente de 99% dos Profissionais Dominando RAG Hoje |
+| UCIQne9yW4TvCCNYQLszfXCQ | AzcK-4NcnJ8 | 2025-10-15T11:46:31+00:00 | Automatize sua Empresa com IA: Conheça a Minha Ltda Digital |
+| UCIQne9yW4TvCCNYQLszfXCQ | 6kaTa3sj-gg | 2025-10-11T21:53:56+00:00 | Qual a Melhor Técnica de RAG? A Resposta Inesperada e Estratégica! |
+| UCIQne9yW4TvCCNYQLszfXCQ | qlC71gvZ9uM | 2025-10-10T21:35:13+00:00 | Os 5 Setores MAIS AFETADOS pela Inteligência Artificial e RAG em 2025 |
+| UCIQne9yW4TvCCNYQLszfXCQ | E540gMJF3bM | 2025-10-10T07:45:47+00:00 | Conversa com Lorena Mateus: autonomia inteligente para mulheres empreendedoras. |
+| UCIQne9yW4TvCCNYQLszfXCQ | UYLAepdRRv8 | 2025-10-08T22:10:34+00:00 | RAG: 10 Técnicas para Reduzir Alucinações na IA |
+| UCIQne9yW4TvCCNYQLszfXCQ | 8CAoc-Ye8Xo | 2025-10-08T21:28:47+00:00 | Imagens em Texto: A Chave para RAG Eficiente #RAG #Multimodal |

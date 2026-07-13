@@ -258,10 +258,8 @@ def sync_channels_and_seeds(
             print(f"Error fetching metadata for seed URL {url}: {e}")
             continue
 
-        channel_id = info.get("channel_id")
-        upload_date = get_full_upload_date(info)
-        print(f"{upload_date} | {channel_id} {url_id} | {info.get('title')}")
 
+        channel_id = info.get("channel_id")
         if channel_id:
             channels_to_scan.add(channel_id)
 

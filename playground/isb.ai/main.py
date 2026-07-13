@@ -301,14 +301,27 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
     print(f"Curadoria processing finished. Success: {processed_count}, Errors: {error_count}")
 
 
+# ==================== PIPELINE: sync -> process ====================
+
+def run_pipeline_subcommand(args: argparse.Namespace) -> None:
+    """Runs full pipeline: first-pass sync ingestion, then second-pass Gemini curadoria."""
+    print("\n[PIPELINE] Step 1/2: Sync ingestion...")
+    run_sync_subcommand(args)
+
+    print("\n[PIPELINE] Step 2/2: Gemini curadoria...")
+    run_process_subcommand(args)
+
+    print("\n[PIPELINE] Done.")
+
+
 # ==================== CLI PARSER ====================
 
 def main() -> None:
-    # Default subcommand to 'sync' if not specified
+    # Default subcommand to 'pipeline' (sync + process) if not specified
     if len(sys.argv) < 2:
-        sys.argv.insert(1, "sync")
-    elif sys.argv[1] not in ("sync", "process", "-h", "--help"):
-        sys.argv.insert(1, "sync")
+        sys.argv.insert(1, "pipeline")
+    elif sys.argv[1] not in ("sync", "process", "pipeline", "-h", "--help"):
+        sys.argv.insert(1, "pipeline")
 
     parser = argparse.ArgumentParser(
         description="ISB.AI GOD Monolith - Ingestion and AI Curadoria Tool"
@@ -385,12 +398,27 @@ def main() -> None:
         help="Limit execution to first N blocks."
     )
 
+    # Subcommand: pipeline (sync -> process, full run)
+    pipeline_parser = subparsers.add_parser("pipeline", help="Run full pipeline: sync then Gemini curadoria.")
+    pipeline_parser.add_argument("--days", type=int, default=180)
+    pipeline_parser.add_argument("--model", type=str, default="base")
+    pipeline_parser.add_argument("--keep-audio", action="store_true")
+    pipeline_parser.add_argument("--playlist", type=str, default=str(ISB_ROOT / "playlist.txt"))
+    pipeline_parser.add_argument("--csv", type=str, default=str(DEFAULT_WIKI_DIR / "log.md"))
+    pipeline_parser.add_argument("--raw-dir", type=str, default=str(DEFAULT_RAW_DIR))
+    pipeline_parser.add_argument("--output-dir", type=str, default=str(DEFAULT_WIKI_DIR))
+    pipeline_parser.add_argument("--chrome-profile", type=str, default=str(DEFAULT_CHROME_PROFILE))
+    pipeline_parser.add_argument("--dry-run", action="store_true")
+    pipeline_parser.add_argument("--limit", type=int, default=None)
+
     args = parser.parse_args()
 
     if args.command == "sync":
         run_sync_subcommand(args)
     elif args.command == "process":
         run_process_subcommand(args)
+    elif args.command == "pipeline":
+        run_pipeline_subcommand(args)
 
 
 if __name__ == "__main__":
