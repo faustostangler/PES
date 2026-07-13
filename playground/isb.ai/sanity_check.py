@@ -196,6 +196,72 @@ Transcript text 2
             tmp_path.unlink()
     print("  ✓ parse_merged_transcriptions works!")
 
+def test_update_or_create_moc():
+    print("Testing update_or_create_moc...")
+    import tempfile
+    from main import update_or_create_moc
+    
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_path = Path(tmpdir)
+        
+        # Scenario 1: clean MOC name
+        update_or_create_moc(tmp_path, "note1.md", "MOC_Politica_Nacional")
+        moc_file = tmp_path / "MOCs" / "MOC_Politica_Nacional.md"
+        assert moc_file.exists()
+        with open(moc_file, "r") as f:
+            content = f.read()
+        assert "[[note1]]" in content
+        
+        # Scenario 2: dirty MOC name with [[MOCs/...]]
+        update_or_create_moc(tmp_path, "note2.md", "[[MOCs/MOC_Politica_Nacional]]")
+        # Should resolve to the SAME clean MOC file
+        assert moc_file.exists()
+        with open(moc_file, "r") as f:
+            content = f.read()
+        assert "[[note2]]" in content
+        
+        # Scenario 3: dirty MOC name with brackets and .md
+        update_or_create_moc(tmp_path, "note3.md", "[[MOC_Politica_Nacional.md]]")
+        # Should resolve to the SAME clean MOC file
+        with open(moc_file, "r") as f:
+            content = f.read()
+        assert "[[note3]]" in content
+        
+    print("  ✓ update_or_create_moc works!")
+
+
+def test_time_logger():
+    print("Testing time_logger...")
+    import time_logger
+    
+    # Save original paths
+    orig_csv = time_logger.TIME_LOG_PATH
+    orig_png = time_logger.TIME_LOG_CHART_PATH
+    
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_path = Path(tmpdir)
+        time_logger.TIME_LOG_PATH = tmp_path / "test_time_log.csv"
+        time_logger.TIME_LOG_CHART_PATH = tmp_path / "test_time_log_chart.png"
+        
+        try:
+            # 1. Log some dummy data
+            time_logger.log_time_data("test_run", 1, 5, 20.0, 10.0, 40.0)
+            time_logger.log_time_data("test_run", 2, 5, 40.0, 20.0, 30.0)
+            
+            assert time_logger.TIME_LOG_PATH.exists()
+            
+            # 2. Try plotting
+            time_logger.plot_time_log()
+            assert time_logger.TIME_LOG_CHART_PATH.exists()
+            
+        finally:
+            # Restore original paths
+            time_logger.TIME_LOG_PATH = orig_csv
+            time_logger.TIME_LOG_CHART_PATH = orig_png
+            
+    print("  ✓ time_logger works!")
+
 
 if __name__ == "__main__":
     print("=== RUNNING PLAYGROUND REFACTOR SANITY CHECKS ===")
@@ -209,4 +275,7 @@ if __name__ == "__main__":
     test_find_subtitle_url()
     test_reconstruct_json3_paragraphs()
     test_reconstruct_srv1_paragraphs()
+    test_update_or_create_moc()
+    test_time_logger()
     print("=================== ALL CHECKS PASSED ===================")
+

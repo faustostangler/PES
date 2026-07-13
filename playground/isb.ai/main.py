@@ -23,6 +23,7 @@ from gemini_web import (
     save_processed_log,
 )
 from helper import parse_merged_transcriptions, read_playlist_urls
+from time_logger import log_time_data, plot_time_log
 
 # --- Path Configurations ---
 ISB_ROOT = Path(__file__).parent.resolve()
@@ -132,8 +133,11 @@ def update_or_create_moc(wiki_dir: Path, note_filename: str, moc_name: str) -> N
     mocs_dir = wiki_dir / "MOCs"
     mocs_dir.mkdir(parents=True, exist_ok=True)
 
-    # Clean MOC name format
-    clean_moc = moc_name.replace(".md", "").strip()
+    # Clean MOC name format (handles [[MOCs/MOC_Name]], [[MOC_Name]], etc.)
+    clean_moc = moc_name.replace("[", "").replace("]", "").strip()
+    if "/" in clean_moc:
+        clean_moc = clean_moc.split("/")[-1].strip()
+    clean_moc = clean_moc.replace(".md", "").strip()
     if not clean_moc.startswith("MOC_"):
         clean_moc = f"MOC_{clean_moc}"
 
@@ -263,6 +267,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
     error_count = 0
     total_active_runs_session = 0
     set_start_time = time.time()
+    run_id = f"curadoria_{time.strftime('%Y%m%d_%H%M%S')}"
 
     # Read current MOC names
     active_mocs = scan_mocs(wiki_dir)
@@ -357,6 +362,20 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 print(f"  ✗ Error: {e}")
                 error_count += 1
                 total_active_runs_session += 1
+
+            # Log progress metrics to CSV and update plot
+            elapsed_after = time.time() - set_start_time
+            if total_active_runs_session > 1 and elapsed_after > 0:
+                rate_after = (total_active_runs_session - 1) / elapsed_after
+                eta_val = remaining / rate_after
+            else:
+                eta_val = None
+
+            log_time_data(run_id, i, len(pending_blocks), percent, elapsed_after, eta_val)
+            try:
+                plot_time_log()
+            except Exception as e_plot:
+                print(f"  ⚠️ Warning: Failed to update time chart: {e_plot}", file=sys.stderr)
 
     print(f"\n{'='*60}")
     print(f"Curadoria processing finished. Success: {processed_count}, Errors: {error_count}")
