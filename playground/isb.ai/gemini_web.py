@@ -15,7 +15,10 @@ NEWS_SYSTEM_PROMPT = """Você é o motor de processamento do ecossistema RAE-PKM
 A data atual de referência do mundo é {data_yaml}.
 Qualquer menção temporal deve ser convertida para uma data absoluta no formato AAAA-MM-DD.
 Sua saída deve ser estritamente dividida em arquivos Markdown atômicos independentes, focados em um único fato.
-Use links estruturados no padrão [[Conceito]] ou [[Fato]] para conectar ideias adjacentes.
+
+Hierarquia de Diretórios e Links no Cofre:
+- As notas de fatos e conceitos são salvas diretamente na raiz do cofre. Portanto, links bilaterais entre elas devem usar o formato direto: [[Nome_da_Nota]].
+- Os Mapas de Conteúdo (MOCs) residem na subpasta MOCs/. Se você referenciar algum MOC dentro de uma nota de fato, use o caminho relativo ao cofre: [[MOCs/MOC_Nome]].
 
 IMPORTANTE: Você deve encapsular toda a sua resposta (contendo os arquivos e as associações MOC) dentro de um único bloco de código markdown (usando ```markdown no início e ``` no final). Isso garante que a nossa automação capture perfeitamente os caracteres especiais como # e ---.
 
@@ -55,7 +58,10 @@ TECHNICAL_SYSTEM_PROMPT = """Você é o motor de processamento do ecossistema RA
 A data atual de referência do mundo é {data_yaml}.
 Qualquer menção temporal deve ser convertida para uma data absoluta no formato AAAA-MM-DD.
 Sua saída deve ser estritamente dividida em arquivos Markdown atômicos independentes, focados em um único conceito ou procedimento.
-Use links estruturados no padrão [[Conceito]] para conectar ideias adjacentes.
+
+Hierarquia de Diretórios e Links no Cofre:
+- As notas de referência (R_) e ação (A_) são salvas diretamente na raiz do cofre. Portanto, links bilaterais entre elas devem usar o formato direto: [[R_Conceito]] ou [[A_Procedimento]].
+- Os Mapas de Conteúdo (MOCs) residem na subpasta MOCs/. Se você referenciar algum MOC dentro de uma nota R_ ou A_, use o caminho relativo ao cofre: [[MOCs/MOC_Nome]].
 
 IMPORTANTE: Você deve encapsular toda a sua resposta (contendo os arquivos e as associações MOC) dentro de um único bloco de código markdown (usando ```markdown no início e ``` no final). Isso garante que a nossa automação capture perfeitamente os caracteres especiais como # e ---.
 
@@ -154,7 +160,7 @@ class GeminiWebProcessor:
         args = ["--disable-blink-features=AutomationControlled"]
 
         try:
-            print("[GeminiWeb] Launching Chrome persistent context...")
+            # print("[GeminiWeb] Launching Chrome persistent context...")
             self.context = self.playwright.chromium.launch_persistent_context(
                 user_data_dir=str(self.user_data_dir.resolve()),
                 headless=False,
@@ -177,26 +183,33 @@ class GeminiWebProcessor:
 
         self.page = self.context.pages[0] if self.context.pages else self.context.new_page()
 
-        print("[GeminiWeb] Navigating to Gemini...")
+        # print("[GeminiWeb] Navigating to Gemini...")
         self.page.goto(self.GEMINI_URL, timeout=60000)
         self.page.wait_for_timeout(3000)
 
         prompt_element = self.page.locator(self.PROMPT_SELECTORS).first
 
-        try:
-            prompt_element.wait_for(state="visible", timeout=3000)
-            print("\n" + "=" * 50)
-            print("👤  [GeminiWeb] SESSION DETECTED")
-            print("Please confirm the Google account in the browser.")
-            input("PRESS ENTER to continue...")
-            print("=" * 50 + "\n")
-        except Exception:
-            print("\n" + "=" * 50)
-            print("⚠️  [GeminiWeb] LOGIN REQUIRED")
-            print("Please log in to your Google Account in the browser window.")
-            input("Once logged in and ready, PRESS ENTER to continue...")
-            print("=" * 50 + "\n")
-            prompt_element.wait_for(state="visible", timeout=0)
+        login = False
+        alert = False
+        while login == False:
+            try:
+                prompt_element.wait_for(state="visible", timeout=3000)
+                print("\n" + "=" * 60)
+                # print("👤  [GeminiWeb] SESSION DETECTED")
+                # print("Please confirm the Google account in the browser.")
+                result = input("PRESS << ENTER >> Here AFTER Login in GEMINI page in BROWSER to continue...")
+                if result.lower() == "":
+                    login = True
+                    print("=" * 60 + "\n")
+                else:
+                    raise Exception("Please login to your Google Account in the browser window.")
+            except Exception:
+                if not alert:
+                # print("\n" + "=" * 60)
+                    print("⚠️  LOGIN REQUIRED")
+                    print("Please log in to your Google Account in the browser window.")
+                    print("Once logged in and ready, PRESS ENTER to continue...")
+                    alert = True
 
         return self
 
@@ -213,11 +226,10 @@ class GeminiWebProcessor:
         prompt_element = self.page.locator(self.PROMPT_SELECTORS).first
         prompt_element.wait_for(state="visible", timeout=15000)
 
-        print("[GeminiWeb] Filling prompt...")
+        # print("[GeminiWeb] Filling prompt...")
         prompt_element.focus()
         prompt_element.fill(prompt_text)
 
-        self.page.wait_for_timeout(500)
         send_button = None
         for sel in self.SEND_SELECTORS:
             btn = self.page.locator(sel).first
@@ -230,8 +242,13 @@ class GeminiWebProcessor:
         else:
             self.page.keyboard.press("Enter")
 
-        print("[GeminiWeb] Waiting for generation...")
-        self.page.wait_for_timeout(4000)
+        # print("[GeminiWeb] Waiting for generation...")
+        try:
+            # Wait reactively for the first response container to appear
+            first_response = self.page.locator(self.RESPONSE_SELECTORS).first
+            first_response.wait_for(state="visible", timeout=10000)
+        except Exception:
+            pass
 
         last_text = ""
         stable_count = 0
@@ -251,26 +268,27 @@ class GeminiWebProcessor:
         if not last_text:
             raise RuntimeError("Failed to capture response from Gemini.")
 
-        print(f"[GeminiWeb] Response captured ({len(last_text)} characters).")
+        # print(f"[GeminiWeb] Response captured ({len(last_text)} characters).")
         self._delete_current_thread()
 
         return last_text
 
     def _delete_current_thread(self) -> None:
         """Clean up by deleting the active chat session."""
-        print("[GeminiWeb] Cleaning thread...")
+        # print("[GeminiWeb] Cleaning thread...")
         try:
             menu_btn = self.page.locator(self.MENU_SELECTORS).first
             if menu_btn.is_visible():
                 menu_btn.click()
-                self.page.wait_for_timeout(500)
 
             action_btn = self.page.locator(self.ACTION_SELECTORS).first
+            action_btn.wait_for(state="visible", timeout=3000)
+
             if action_btn.is_visible():
                 action_btn.click()
 
                 delete_opt = self.page.locator(self.DELETE_SELECTORS).first
-                delete_opt.wait_for(state="visible", timeout=5000)
+                delete_opt.wait_for(state="visible", timeout=3000)
                 delete_opt.click()
 
                 confirm_btn = (
@@ -278,10 +296,12 @@ class GeminiWebProcessor:
                     .locator(self.CONFIRM_DELETE_SELECTORS)
                     .first
                 )
-                confirm_btn.wait_for(state="visible", timeout=5000)
+                confirm_btn.wait_for(state="visible", timeout=3000)
                 confirm_btn.click()
+                
+                # Wait until the delete confirmation dialog is hidden before proceeding
+                confirm_btn.wait_for(state="hidden", timeout=5000)
                 print("[GeminiWeb] Thread deleted successfully.")
-                self.page.wait_for_timeout(1000)
         except Exception as e:
             print(f"[GeminiWeb] Warning: failed to delete thread ({e})")
 

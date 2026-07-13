@@ -149,13 +149,22 @@ def update_or_create_moc(wiki_dir: Path, note_filename: str, moc_name: str) -> N
             updated_content = content.rstrip() + f"\n{link_line}\n"
             with open(moc_file, "w", encoding="utf-8") as f:
                 f.write(updated_content)
-            print(f"  ✓ Linked [[{note_stem}]] in existing {moc_file.name}")
+            # print(f"  ✓ Linked [[{note_stem}]] in existing {moc_file.name}")
     else:
         title = clean_moc.replace("MOC_", "")
         content = f"# MOC {title}\n\n{link_line}\n"
         with open(moc_file, "w", encoding="utf-8") as f:
             f.write(content)
-        print(f"  ★ Created new MOC: {moc_file.name} linking [[{note_stem}]]")
+        # print(f"  ★ Created new MOC: {moc_file.name} linking [[{note_stem}]]")
+
+
+def format_duration(seconds: float) -> str:
+    """Format duration in seconds to xxhxxmxxs (e.g. 02h14m45s)."""
+    secs = int(seconds)
+    hours = secs // 3600
+    minutes = (secs % 3600) // 60
+    remaining_secs = secs % 60
+    return f"{hours:02d}h{minutes:02d}m{remaining_secs:02d}s"
 
 
 def run_process_subcommand(args: argparse.Namespace) -> None:
@@ -171,28 +180,59 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
     # 1. Discover all blocks in raw/ files
     all_blocks = []
     txt_files = sorted(raw_dir.rglob("*.txt"))
-    print(f"Scanning raw transcription files...")
+    print(f"Videos to process")
     for txt_file in txt_files:
         blocks = parse_merged_transcriptions(txt_file)
         for b in blocks:
             b["source_file"] = txt_file
             all_blocks.append(b)
 
-    print(f"Discovered {len(all_blocks)} blocks in total.")
+    # print(f"Discovered {len(all_blocks)} videos in total.")
 
     # 2. Filter using idempotency log
     processed_log = load_processed_log(PROCESSED_LOG_FILE)
     pending_blocks = []
+    
+    # Track counts for breakdown
+    channel_total = {}
+    channel_pending = {}
+    category_total = {}
+    category_pending = {}
+
     for b in all_blocks:
-        video_id = b.get("metadata", {}).get("video_id")
+        meta = b.get("metadata", {})
+        video_id = meta.get("video_id")
+        channel = meta.get("channel_name", "Unknown Channel")
+        category = meta.get("channel_category", "uncategorized")
+
+        # Increment totals
+        channel_total[channel] = channel_total.get(channel, 0) + 1
+        category_total[category] = category_total.get(category, 0) + 1
+
         if not video_id:
             continue
         if video_id in processed_log:
             continue
-        pending_blocks.append(b)
 
-    print(f"Already processed: {len(all_blocks) - len(pending_blocks)}")
-    print(f"Pending processing: {len(pending_blocks)}")
+        pending_blocks.append(b)
+        # Increment pendings
+        channel_pending[channel] = channel_pending.get(channel, 0) + 1
+        category_pending[category] = category_pending.get(category, 0) + 1
+
+    # print("\n--- Breakdown by Channel (Pending / Total) ---")
+    # for chan in sorted(channel_total.keys()):
+    #     total = channel_total[chan]
+    #     pending = channel_pending.get(chan, 0)
+    #     print(f"  - {chan}: {pending} pending / {total} total")
+
+    # print("\n--- Breakdown by Category (Pending / Total) ---")
+    for cat in sorted(category_total.keys()):
+        total = category_total[cat]
+        pending = category_pending.get(cat, 0)
+        print(f"{cat}: {pending}/{total}")
+
+    # print(f"Already processed: {len(all_blocks) - len(pending_blocks)}")
+    # print(f"Pending processing: {len(pending_blocks)}")
 
     if args.limit:
         pending_blocks = pending_blocks[:args.limit]
@@ -204,8 +244,9 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
 
     # 3. Dry-run details
     if args.dry_run:
-        print("\n--- DRY RUN: Pending Blocks Details ---")
-        for i, b in enumerate(pending_blocks, 1):
+        print("\n--- DRY RUN: Pending Blocks Details (Sample of up to 10) ---")
+        sample_limit = 10
+        for i, b in enumerate(pending_blocks[:sample_limit], 1):
             meta = b.get("metadata", {})
             channel = meta.get("channel_name", "Unknown Channel")
             classification = classify_channel(channel)
@@ -213,31 +254,49 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 f"  {i:2d}. [{meta.get('video_id')}] Date: {meta.get('video_date')} | "
                 f"Class: {classification.upper()} | {meta.get('video_title')[:50]}"
             )
+        if len(pending_blocks) > sample_limit:
+            print(f"  ... and {len(pending_blocks) - sample_limit} more pending video(s).")
         return
 
     # 4. Process live using Playwright & Gemini Web
     processed_count = 0
     error_count = 0
+    total_active_runs_session = 0
+    set_start_time = time.time()
 
     # Read current MOC names
     active_mocs = scan_mocs(wiki_dir)
     mocs_str = ", ".join(active_mocs) if active_mocs else "Nenhum MOC ativo"
-    print(f"Active MOCs in vault: {mocs_str}")
+    # print(f"Active MOCs in vault: {mocs_str}")
 
     with GeminiWebProcessor(user_data_dir=chrome_profile) as processor:
         for i, b in enumerate(pending_blocks, 1):
             meta = b.get("metadata", {})
             video_id = meta.get("video_id", "unknown")
+            channel_id = meta.get("channel_id", "unknown")
             channel = meta.get("channel_name", "Unknown Channel")
             date_yaml = meta.get("video_date", "Sem data")
             transcription = b.get("text", "")
 
             classification = classify_channel(channel)
 
-            print(f"\n{'='*60}")
-            print(f"[{i}/{len(pending_blocks)}] Processing: {meta.get('video_title')[:60]}")
-            print(f"  Channel: {channel} | Classification: {classification.upper()}")
-            print(f"  YAML Date (Temporal Anchor): {date_yaml}")
+            remaining = len(pending_blocks) - i
+            percent = (i / len(pending_blocks)) * 100
+            total = len(pending_blocks)
+
+            elapsed = time.time() - set_start_time
+            if total_active_runs_session > 0 and elapsed > 0:
+                rate = total_active_runs_session / elapsed
+                eta_sec = remaining / rate
+                elapsed_str = format_duration(elapsed)
+                eta_str = format_duration(eta_sec)
+                total_time_str = format_duration(elapsed + eta_sec)
+                time_block = f"{elapsed_str}+{eta_str} = {total_time_str}"
+            else:
+                elapsed_str = format_duration(elapsed)
+                time_block = f"{elapsed_str}+--h--m--s = --h--m--s"
+
+            print(f"[{i}+{remaining} = {total}] [{percent:.2f}%] [{time_block}] | {classification.upper()} | {channel_id} {video_id} | {meta.get('video_title')[:40]}...")
 
             if not transcription.strip():
                 print("  ⚠️ Empty transcript. Skipping.")
@@ -261,7 +320,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 start_time = time.time()
                 response = processor.send_prompt(system_prompt)
                 duration = time.time() - start_time
-                print(f"  Gemini responded in {duration:.1f}s. Parsing...")
+                # print(f"  Gemini responded in {duration:.1f}s. Parsing...")
 
                 # Parse response files and MOC links
                 generated_files, mocs_mapping = parse_gemini_response(response)
@@ -277,7 +336,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                     target_file.parent.mkdir(parents=True, exist_ok=True)
                     with open(target_file, "w", encoding="utf-8") as f:
                         f.write(content)
-                    print(f"  ✓ Created note: {filename}")
+                    # print(f"  ✓ Created note: {filename}")
 
                 # Update MOC files
                 for file_ref, moc_name in mocs_mapping:
@@ -288,6 +347,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 processed_log[video_id] = datetime.now(UTC).isoformat()
                 save_processed_log(PROCESSED_LOG_FILE, processed_log)
                 processed_count += 1
+                total_active_runs_session += 1
 
                 # Update MOC list for subsequent iterations
                 active_mocs = scan_mocs(wiki_dir)
@@ -296,6 +356,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
             except Exception as e:
                 print(f"  ✗ Error: {e}")
                 error_count += 1
+                total_active_runs_session += 1
 
     print(f"\n{'='*60}")
     print(f"Curadoria processing finished. Success: {processed_count}, Errors: {error_count}")
