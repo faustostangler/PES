@@ -297,11 +297,13 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 eta_str = format_duration(eta_sec)
                 total_time_str = format_duration(elapsed + eta_sec)
                 time_block = f"{elapsed_str}+{eta_str} = {total_time_str}"
+                rate_block = f"{rate:.3f}"
             else:
                 elapsed_str = format_duration(elapsed)
                 time_block = f"{elapsed_str}+--h--m--s = --h--m--s"
+                rate_block = ""
 
-            print(f"[{i}+{remaining}={total}] [{percent:.2f}%] [{time_block}] {classification.upper()} {channel_id} {video_id} | {meta.get('video_title')[:20]}...")
+            print(f"[{i}+{remaining}={total}] [{rate_block} {percent:.2f}%] [{time_block}] {classification.upper()} {channel_id} {video_id} | {meta.get('video_title')[:20]}...")
 
             if not transcription.strip():
                 print("  ⚠️ Empty transcript. Skipping.")
@@ -331,9 +333,9 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 generated_files, mocs_mapping = parse_gemini_response(response)
 
                 if not generated_files:
-                    print("  ⚠️ Warning: No file outputs parsed from Gemini response.")
                     print("--- Raw Response for debugging ---")
                     print(response[:800] + "\n...")
+                    raise RuntimeError("No file outputs parsed from Gemini response.")
 
                 # Save generated notes
                 for filename, content in generated_files.items():

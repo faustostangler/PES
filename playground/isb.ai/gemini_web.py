@@ -239,25 +239,40 @@ class GeminiWebProcessor:
         prompt_element.focus()
         prompt_element.fill(prompt_text)
 
-        send_button = None
-        for sel in self.SEND_SELECTORS:
-            btn = self.page.locator(sel).first
-            if btn.is_visible() and btn.is_enabled():
-                send_button = btn
+        # Submission loop with silent-failure retry fallback
+        success = False
+        current_timeout = 1000
+        while not success:
+            # Check if prompt has already been cleared or response is already visible
+            # to prevent double submission (which clicks the "Stop response" button on Gemini)
+            tag_name = prompt_element.evaluate("el => el.tagName.toLowerCase()")
+            val = prompt_element.input_value().strip() if tag_name in ["input", "textarea"] else prompt_element.inner_text().strip()
+            
+            if not val or self.page.locator(self.RESPONSE_SELECTORS).first.is_visible():
+                success = True
                 break
 
-        if send_button:
-            send_button.click()
-        else:
-            self.page.keyboard.press("Enter")
+            send_button = None
+            for sel in self.SEND_SELECTORS:
+                btn = self.page.locator(sel).first
+                if btn.is_visible() and btn.is_enabled():
+                    send_button = btn
+                    break
 
-        # print("[GeminiWeb] Waiting for generation...")
-        try:
-            # Wait reactively for the first response container to appear
-            first_response = self.page.locator(self.RESPONSE_SELECTORS).first
-            first_response.wait_for(state="visible", timeout=10000)
-        except Exception:
-            pass
+            if send_button:
+                send_button.click()
+            else:
+                prompt_element.focus()
+                self.page.keyboard.press("Enter")
+
+            # Wait deterministically for the response container to appear (indicating successful submission)
+            try:
+                first_response = self.page.locator(self.RESPONSE_SELECTORS).first
+                first_response.wait_for(state="visible", timeout=current_timeout)
+                success = True
+            except Exception:
+                # Double the timeout for the next attempt, capping at 16 seconds
+                current_timeout = min(current_timeout * 2, 300000)
 
         last_text = ""
         stable_count = 0
