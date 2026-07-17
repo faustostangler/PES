@@ -742,7 +742,17 @@ All reference files are co-located in this skill's `references/` directory.
 | `references/project_layout.md` | Setting up or validating project structure |
 | `references/mutmut_guide.md` | Running mutation tests in Phase 4 |
 | `references/domain_index.md` | Need deep technical knowledge on any of 13 domains |
+| `references/sets.md` | Looking up source metadata, summaries, or keywords by Bounded Context |
+| `references/keywords.md` | Finding unique technical and strategic keywords/concepts |
+| `references/sources.md` | Finding which source articles are associated with a specific keyword |
 | `references/37-DevOps, DDD, TDD, ADRs, Code.md` | Full Doctor Stangler Method specification, 5 Pillars, defensive engineering |
+
+### The References Indexing Pipeline
+
+When managing and searching through the reference corpus, the files are structured as a pipeline:
+1. **`sets.md`**: Maps Bounded Contexts (Sets) to their source articles (including line ranges, keywords, and summaries).
+2. **`keywords.md`**: A flat registry of all unique keywords/concepts extracted from the sets.
+3. **`sources.md`**: An inverse index mapping each keyword back to all the source articles referencing it in the format: `[Title] (from filename.md)`.
 
 ### Domain Index (37 files, ~13MB)
 
