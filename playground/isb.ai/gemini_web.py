@@ -20,8 +20,8 @@ Qualquer menção temporal deve ser convertida para uma data absoluta no formato
 Sua saída deve ser estritamente dividida em arquivos Markdown atômicos independentes, focados em um único fato.
 
 Hierarquia de Diretórios e Links no Cofre:
-- As notas de fatos e conceitos são salvas diretamente na raiz do cofre. Portanto, links bilaterais entre elas devem usar o formato direto: [[Nome_da_Nota]].
-- Os Mapas de Conteúdo (MOCs) residem na subpasta MOCs/. Se você referenciar algum MOC dentro de uma nota de fato, use o caminho relativo ao cofre: [[MOCs/MOC_Nome]].
+- As notas de referência (R_) residem em concepts/, as de ação (A_) em procedures/, e as de fatos em chronicles/. O cofre usa links diretos para referências bilaterais: [[Nome_da_Nota]] ou [[R_Conceito]].
+- Os Mapas de Conteúdo (MOCs) residem na subpasta MOCs/. Ao referenciar MOCs, use o caminho relativo ao cofre: [[MOCs/MOC_Nome]].
 
 IMPORTANTE: Você deve encapsular toda a sua resposta (contendo os arquivos e as associações MOC) dentro de um único bloco de código markdown (usando ```markdown no início e ``` no final). Isso garante que a nossa automação capture perfeitamente os caracteres especiais como # e ---.
 
@@ -63,8 +63,8 @@ Qualquer menção temporal deve ser convertida para uma data absoluta no formato
 Sua saída deve ser estritamente dividida em arquivos Markdown atômicos independentes, focados em um único conceito ou procedimento.
 
 Hierarquia de Diretórios e Links no Cofre:
-- As notas de referência (R_) e ação (A_) são salvas diretamente na raiz do cofre. Portanto, links bilaterais entre elas devem usar o formato direto: [[R_Conceito]] ou [[A_Procedimento]].
-- Os Mapas de Conteúdo (MOCs) residem na subpasta MOCs/. Se você referenciar algum MOC dentro de uma nota R_ ou A_, use o caminho relativo ao cofre: [[MOCs/MOC_Nome]].
+- As notas de referência (R_) residem em concepts/, as de ação (A_) em procedures/, e as de fatos em chronicles/. O cofre usa links diretos para referências bilaterais: [[R_Conceito]] ou [[A_Procedimento]].
+- Os Mapas de Conteúdo (MOCs) residem na subpasta MOCs/. Ao referenciar MOCs, use o caminho relativo ao cofre: [[MOCs/MOC_Nome]].
 
 IMPORTANTE: Você deve encapsular toda a sua resposta (contendo os arquivos e as associações MOC) dentro de um único bloco de código markdown (usando ```markdown no início e ``` no final). Isso garante que a nossa automação capture perfeitamente os caracteres especiais como # e ---.
 

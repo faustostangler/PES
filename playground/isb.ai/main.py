@@ -61,20 +61,75 @@ def run_sync_subcommand(args: argparse.Namespace) -> None:
 
 # ==================== SECOND-PASS CURADORIA ====================
 
-def classify_channel(channel_name: str) -> str:
-    """Classifies source channel deterministically.
+def classify_channel(channel_name: str) -> tuple[str, str]:
+    """Classifies source channel deterministically into (domain, category_type).
 
     Required by Section 2.1: Content classification happens by rules in Python code.
     """
-    news_channels = {
-        "andré marsiglia", "andre marsiglia", "deltan dallagnol", "nando moura",
-        "leandro ruschel", "ancapsu", "hoje no mundo militar", "felipe moura brasil",
-        "inteligência mil grau", "inteligencia mil grau"
-    }
     name_clean = channel_name.lower().strip()
-    if name_clean in news_channels:
-        return "news"
-    return "technical"
+
+    # Perennial channels
+    perennial_tech = {
+        "fabio akita", "lucas montano", "mano deyvin",
+        "matheus battisti - hora de codar", "chrome for developers",
+        "augusto galego", "onde eu clico"
+    }
+    perennial_ai = {
+        "sandeco channel - decomplicated ia", "inteligência mil grau",
+        "inteligencia mil grau"
+    }
+
+    # Volatile channels
+    volatile_politics = {
+        "ancapsu", "andré marsiglia", "andre marsiglia", "deltan dallagnol",
+        "nando moura", "felipe moura brasil", "renato augusto",
+        "jeffrey chiquini", "leandro ruschel", "full texts"
+    }
+    volatile_geo = {
+        "hoje no mundo militar", "ronnald hawk"
+    }
+    volatile_finance = {
+        "investidor sardinha l raul sena", "investidor sardinha",
+        "rafael quintanilha – quantbrasil", "rafael quintanilha - quantbrasil",
+        "world revolving"
+    }
+
+    if name_clean in perennial_tech:
+        return "technology", "perennial"
+    elif name_clean in perennial_ai:
+        return "ai_data_science", "perennial"
+    elif name_clean in volatile_politics:
+        return "politics_law", "volatile"
+    elif name_clean in volatile_geo:
+        return "geopolitics_military", "volatile"
+    elif name_clean in volatile_finance:
+        return "finance_economics", "volatile"
+
+    return "uncategorized", "volatile"
+
+
+def resolve_note_path(wiki_dir: Path, filename: str) -> Path:
+    """Resolves target note path based on file prefix or MOC type under wiki/."""
+    clean_fn = filename.replace("[", "").replace("]", "").strip()
+
+    # Handle files with explicit folder prefix like "MOCs/MOC_Name.md"
+    if clean_fn.startswith("MOCs/"):
+        return wiki_dir / "MOCs" / clean_fn.replace("MOCs/", "")
+
+    # Map of Content files
+    if clean_fn.startswith("MOC_"):
+        return wiki_dir / "MOCs" / clean_fn
+
+    # Perennial Reference Notes
+    if clean_fn.startswith("R_"):
+        return wiki_dir / "concepts" / clean_fn
+
+    # Perennial Action Notes
+    if clean_fn.startswith("A_"):
+        return wiki_dir / "procedures" / clean_fn
+
+    # Volatile Chronicles
+    return wiki_dir / "chronicles" / clean_fn
 
 
 def scan_mocs(wiki_dir: Path) -> list[str]:
@@ -253,10 +308,10 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
         for i, b in enumerate(pending_blocks[:sample_limit], 1):
             meta = b.get("metadata", {})
             channel = meta.get("channel_name", "Unknown Channel")
-            classification = classify_channel(channel)
+            domain, category_type = classify_channel(channel)
             print(
                 f"  {i:2d}. [{meta.get('video_id')}] Date: {meta.get('video_date')} | "
-                f"Class: {classification.upper()} | {meta.get('video_title')[:50]}"
+                f"Domain/Class: {domain.upper()}/{category_type.upper()} | {meta.get('video_title')[:50]}"
             )
         if len(pending_blocks) > sample_limit:
             print(f"  ... and {len(pending_blocks) - sample_limit} more pending video(s).")
@@ -283,7 +338,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
             date_yaml = meta.get("video_date", "Sem data")
             transcription = b.get("text", "")
 
-            classification = classify_channel(channel)
+            domain, category_type = classify_channel(channel)
 
             remaining = len(pending_blocks) - i
             percent = (i / len(pending_blocks)) * 100
@@ -303,14 +358,14 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 time_block = f"{elapsed_str}+--h--m--s = --h--m--s"
                 rate_block = ""
 
-            print(f"[{i}+{remaining}={total}] [{rate_block} {percent:.2f}%] [{time_block}] {classification.upper()} {channel_id} {video_id} | {meta.get('video_title')[:20]}...")
+            print(f"[{i}+{remaining}={total}] [{rate_block} {percent:.2f}%] [{time_block}] {domain.upper()}/{category_type.upper()} {channel_id} {video_id} | {meta.get('video_title')[:20]}...")
 
             if not transcription.strip():
                 print("  ⚠️ Empty transcript. Skipping.")
                 continue
 
             # Select prompt template & inject context
-            if classification == "news":
+            if category_type == "volatile":
                 system_prompt = NEWS_SYSTEM_PROMPT.format(
                     data_yaml=date_yaml,
                     mocs_list=mocs_str,
@@ -339,7 +394,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
 
                 # Save generated notes
                 for filename, content in generated_files.items():
-                    target_file = wiki_dir / filename
+                    target_file = resolve_note_path(wiki_dir, filename)
                     target_file.parent.mkdir(parents=True, exist_ok=True)
                     with open(target_file, "w", encoding="utf-8") as f:
                         f.write(content)

@@ -263,6 +263,69 @@ def test_time_logger():
     print("  ✓ time_logger works!")
 
 
+def test_classify_channel():
+    print("Testing classify_channel...")
+    from main import classify_channel
+
+    # Perennial channels
+    domain, cat = classify_channel("Fabio Akita")
+    assert domain == "technology"
+    assert cat == "perennial"
+
+    domain, cat = classify_channel("Sandeco Channel - Decomplicated IA")
+    assert domain == "ai_data_science"
+    assert cat == "perennial"
+
+    # Volatile channels
+    domain, cat = classify_channel("ANCAPSU")
+    assert domain == "politics_law"
+    assert cat == "volatile"
+
+    domain, cat = classify_channel("Hoje no Mundo Militar")
+    assert domain == "geopolitics_military"
+    assert cat == "volatile"
+
+    domain, cat = classify_channel("Investidor Sardinha l Raul Sena")
+    assert domain == "finance_economics"
+    assert cat == "volatile"
+
+    # Fallback
+    domain, cat = classify_channel("Unknown Channel Name")
+    assert domain == "uncategorized"
+    assert cat == "volatile"
+
+    print("  ✓ classify_channel works!")
+
+
+def test_resolve_note_path():
+    print("Testing resolve_note_path...")
+    from main import resolve_note_path
+
+    wiki_dir = Path("/mock/wiki")
+
+    # Reference
+    path = resolve_note_path(wiki_dir, "R_Captura_Regulatoria.md")
+    assert path == wiki_dir / "concepts" / "R_Captura_Regulatoria.md"
+
+    # Action
+    path = resolve_note_path(wiki_dir, "A_Docker_Compose.md")
+    assert path == wiki_dir / "procedures" / "A_Docker_Compose.md"
+
+    # Map of Content
+    path = resolve_note_path(wiki_dir, "MOC_Politica_Nacional.md")
+    assert path == wiki_dir / "MOCs" / "MOC_Politica_Nacional.md"
+
+    # MOC with folder prefix
+    path = resolve_note_path(wiki_dir, "MOCs/MOC_Politica_Nacional.md")
+    assert path == wiki_dir / "MOCs" / "MOC_Politica_Nacional.md"
+
+    # Chronicles / Events (Volatile)
+    path = resolve_note_path(wiki_dir, "Lei_Felca_Pokemon_Go.md")
+    assert path == wiki_dir / "chronicles" / "Lei_Felca_Pokemon_Go.md"
+
+    print("  ✓ resolve_note_path works!")
+
+
 if __name__ == "__main__":
     print("=== RUNNING PLAYGROUND REFACTOR SANITY CHECKS ===")
     test_clean_filename()
@@ -277,5 +340,8 @@ if __name__ == "__main__":
     test_reconstruct_srv1_paragraphs()
     test_update_or_create_moc()
     test_time_logger()
+    test_classify_channel()
+    test_resolve_note_path()
     print("=================== ALL CHECKS PASSED ===================")
+
 
