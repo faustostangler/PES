@@ -128,8 +128,7 @@ def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: b
 
     target_dir = output_dir / channel
     target_dir.mkdir(parents=True, exist_ok=True)
-    year_month = date_str[:7] if len(date_str) >= 7 and date_str[4] == "-" else "unknown_month"
-    txt_path = target_dir / f"{channel} - {year_month}.txt"
+    txt_path = target_dir / f"{date_str}-{video_id}.txt"
 
     # Check 3-tier downloader
     transcript_text, ogg_path, _ = get_youtube_audio_or_transcript(url, output_dir=str(target_dir), info=info)
@@ -172,14 +171,8 @@ video_description: |
 {desc_indented}
 ---"""
 
-    file_exists = txt_path.exists() and txt_path.stat().st_size > 0
-    mode = "a" if file_exists else "w"
-
-    with open(txt_path, mode, encoding="utf-8") as f:
-        if file_exists:
-            f.write("\n\n" + yaml_header + "\n" + text)
-        else:
-            f.write(yaml_header + "\n" + text)
+    with open(txt_path, "w", encoding="utf-8") as f:
+        f.write(yaml_header + "\n" + text)
     # print(f"Saved text to: {txt_path}")
 
     return {
