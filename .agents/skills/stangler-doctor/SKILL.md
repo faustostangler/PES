@@ -752,7 +752,18 @@ All reference files are co-located in this skill's `references/` directory.
 When managing and searching through the reference corpus, the files are structured as a pipeline:
 1. **`sets.md`**: Maps Bounded Contexts (Sets) to their source articles (including line ranges, keywords, and summaries).
 2. **`keywords.md`**: A flat registry of all unique keywords/concepts extracted from the sets.
-3. **`sources.md`**: An inverse index mapping each keyword back to all the source articles referencing it in the format: `[Title] (from filename.md)`.
+3. **`sources.md`**: An inverse index mapping each keyword back to all the source articles referencing it with direct line range anchors in the format: `[Title] (from filename.md#Lstart-Lend)`.
+
+### Token-Economic Corpus Search Protocol (Grep-Only Rule)
+
+To prevent loading large files (`sources.md` is ~5.5MB, `sets.md` is ~2.6MB) and wasting context tokens, agents **must** follow this strict lookup protocol:
+
+1. **Never** load `sources.md` or `sets.md` entirely using `view_file` without line range constraints.
+2. Use **`grep_search`** with the query set to the target keyword/concept to search within `sources.md`.
+3. Extract the target file and line range directly from the match:
+   `[Title] (from <filename>.md#L<start>-L<end>)`
+4. Directly load the matching lines from the target reference file using `view_file` (e.g., specifying `AbsolutePath` and `StartLine` / `EndLine`).
+5. Only query `sets.md` via `grep_search` if you need the contextual metadata summary or related keywords for that article.
 
 ### Domain Index (37 files, ~13MB)
 
