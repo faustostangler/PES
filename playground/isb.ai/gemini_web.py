@@ -194,31 +194,70 @@ class GeminiWebProcessor:
         self.page.goto(self.GEMINI_URL, timeout=60000)
         self.page.wait_for_timeout(3000)
 
-        prompt_element = self.page.locator(self.PROMPT_SELECTORS).first
-
-        login = False
-        alert = False
-        while login == False:
-            try:
-                prompt_element.wait_for(state="visible", timeout=3000)
-                print("\n" + "=" * 60)
-                # print("👤  [GeminiWeb] SESSION DETECTED")
-                # print("Please confirm the Google account in the browser.")
-                result = input("PRESS << ENTER >> Here AFTER Login in GEMINI page in BROWSER to continue...")
-                if result.lower() == "":
-                    login = True
-                    print("=" * 60 + "\n")
+        # Check if Google Account login is active
+        if not self._is_logged_in():
+            print("\n" + "=" * 60)
+            print("⚠️  LOGIN REQUIRED")
+            print("Google Account session not detected in Gemini Web.")
+            print("Please log in to your Google Account in the browser window.")
+            print("=" * 60 + "\n")
+            
+            while True:
+                input("PRESS << ENTER >> here AFTER completing Google Login in the browser window to continue...")
+                self.page.wait_for_timeout(2000)
+                if self._is_logged_in():
+                    print("✓ Google Account login verified! Proceeding...\n")
+                    break
                 else:
-                    raise Exception("Please login to your Google Account in the browser window.")
-            except Exception:
-                if not alert:
-                # print("\n" + "=" * 60)
-                    print("⚠️  LOGIN REQUIRED")
-                    print("Please log in to your Google Account in the browser window.")
-                    print("Once logged in and ready, PRESS ENTER to continue...")
-                    alert = True
+                    print("⚠️ Login not detected yet. Please sign in to Google in the browser and try again.")
 
         return self
+
+    def _is_logged_in(self) -> bool:
+        """Check if the user is logged into a Google Account on Gemini Web."""
+        if not self.page:
+            return False
+        
+        # Check for Sign In / Fazer Login buttons or links
+        sign_in_selectors = [
+            "a[href*='ServiceLogin']",
+            "a:has-text('Sign in')",
+            "a:has-text('Fazer login')",
+            "button:has-text('Sign in')",
+            "button:has-text('Fazer login')",
+            "[aria-label*='Sign in']",
+            "[aria-label*='Fazer login']",
+        ]
+        for sel in sign_in_selectors:
+            try:
+                elem = self.page.locator(sel).first
+                if elem.is_visible(timeout=500):
+                    return False
+            except Exception:
+                pass
+                
+        # Check for logged-in user indicators (avatar, account button)
+        logged_in_selectors = [
+            "a[href*='myaccount.google.com']",
+            "a[aria-label*='Google Account']",
+            "a[aria-label*='Conta do Google']",
+            "img[src*='googleusercontent.com']",
+            "button[aria-label*='Google Account']",
+            "button[aria-label*='Conta do Google']",
+        ]
+        for sel in logged_in_selectors:
+            try:
+                elem = self.page.locator(sel).first
+                if elem.is_visible(timeout=500):
+                    return True
+            except Exception:
+                pass
+
+        if "accounts.google.com" in self.page.url:
+            return False
+
+        # If sign-in buttons were not visible, assume logged in
+        return True
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         if self.context:
@@ -277,10 +316,10 @@ class GeminiWebProcessor:
         last_text = ""
         stable_count = 0
         for _ in range(90):  # Allow up to 90 seconds for large processing
-            responses = self.page.locator(self.RESPONSE_SELECTORS).all()
+            responses = [r for r in self.page.locator(self.RESPONSE_SELECTORS).all() if r.inner_text().strip()]
             if responses:
-                current_text = responses[-1].inner_text()
-                if current_text and current_text == last_text:
+                current_text = responses[-1].inner_text().strip()
+                if current_text == last_text:
                     stable_count += 1
                     if stable_count >= 3:
                         break
@@ -296,6 +335,99 @@ class GeminiWebProcessor:
         self._delete_current_thread()
 
         return last_text
+
+    def delete_current_thread(self) -> None:
+        """Expose thread deletion publicly."""
+        self._delete_current_thread()
+
+    def send_prompt_to_gem(self, gem_id_or_url: str, prompt_text: str, keep_thread: bool = False, is_subsequent_turn: bool = False) -> str:
+        """Send prompt to a custom Gem, wait for stabilization, and return the response."""
+        if not self.page:
+            raise RuntimeError("GeminiWebProcessor is not initialized. Use as a context manager.")
+        
+        # Determine the Gem URL
+        if gem_id_or_url.startswith("http://") or gem_id_or_url.startswith("https://"):
+            url = gem_id_or_url
+        else:
+            url = f"https://gemini.google.com/gem/{gem_id_or_url}"
+
+        # Navigate to the Gem URL if it's the first turn or if we are not reusing the thread
+        if not is_subsequent_turn:
+            # print(f"[GeminiWeb] Navigating to Gem: {url}")
+            self.page.goto(url, timeout=60000)
+            self.page.wait_for_timeout(2000)
+        
+        prompt_element = self.page.locator(self.PROMPT_SELECTORS).first
+        prompt_element.wait_for(state="visible", timeout=15000)
+
+        # Get response count before sending prompt
+        prev_responses = [r for r in self.page.locator(self.RESPONSE_SELECTORS).all() if r.inner_text().strip()]
+        prev_count = len(prev_responses)
+
+        # Fill prompt
+        prompt_element.focus()
+        prompt_element.fill(prompt_text)
+
+        # Send
+        success = False
+        current_timeout = 1000
+        while not success:
+            tag_name = prompt_element.evaluate("el => el.tagName.toLowerCase()")
+            val = prompt_element.input_value().strip() if tag_name in ["input", "textarea"] else prompt_element.inner_text().strip()
+            
+            # Check if prompt was sent
+            responses = [r for r in self.page.locator(self.RESPONSE_SELECTORS).all() if r.inner_text().strip()]
+            if not val or len(responses) > prev_count:
+                success = True
+                break
+
+            send_button = None
+            for sel in self.SEND_SELECTORS:
+                btn = self.page.locator(sel).first
+                if btn.is_visible() and btn.is_enabled():
+                    send_button = btn
+                    break
+
+            if send_button:
+                send_button.click()
+            else:
+                prompt_element.focus()
+                self.page.keyboard.press("Enter")
+
+            # Wait for response count to increase
+            try:
+                self.page.wait_for_function(
+                    f"() => document.querySelectorAll(\"{self.RESPONSE_SELECTORS}\").length > {prev_count}",
+                    timeout=current_timeout
+                )
+                success = True
+            except Exception:
+                current_timeout = min(current_timeout * 2, 30000)
+
+        # Wait for the response to stabilize
+        last_text = ""
+        stable_count = 0
+        for _ in range(1200):  # Allow up to 1200 seconds for large processing
+            responses = [r for r in self.page.locator(self.RESPONSE_SELECTORS).all() if r.inner_text().strip()]
+            if len(responses) > prev_count:
+                current_text = responses[-1].inner_text().strip()
+                if current_text == last_text:
+                    stable_count += 1
+                    if stable_count >= 3:
+                        break
+                else:
+                    stable_count = 0
+                    last_text = current_text
+            self.page.wait_for_timeout(1000)
+
+        if not last_text:
+            raise RuntimeError("Failed to capture response from Gemini.")
+
+        if not keep_thread:
+            self._delete_current_thread()
+
+        return last_text
+
 
     def _delete_current_thread(self) -> None:
         """Clean up by deleting the active chat session."""

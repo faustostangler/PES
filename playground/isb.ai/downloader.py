@@ -160,7 +160,7 @@ def fetch_and_parse_srv1(url: str, punctuation_limit: int = 5) -> str:
     xml_data = fetch_url_content(url)
     return reconstruct_srv1_paragraphs(xml_data, punctuation_limit)
 
-def extract_video_metadata(url: str) -> dict:
+def extract_video_metadata(url: str, use_cookies: bool = False) -> dict:
     """Extract and return video metadata using yt-dlp."""
     ydl_opts_meta = {
         'quiet': True,
@@ -168,10 +168,19 @@ def extract_video_metadata(url: str) -> dict:
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
-    with yt_dlp.YoutubeDL(ydl_opts_meta) as ydl:
-        return ydl.extract_info(url, download=False)
+    if use_cookies:
+        ydl_opts_meta["cookiesfrombrowser"] = ("chrome",)
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
+            return ydl.extract_info(url, download=False)
+    except Exception as e:
+        if not use_cookies:
+            ydl_opts_meta["cookiesfrombrowser"] = ("chrome",)
+            with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
+                return ydl.extract_info(url, download=False)
+        raise e
 
-def download_audio_as_ogg(url: str, output_dir: Path, video_id: str) -> Path:
+def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies: bool = False) -> Path:
     """Download audio stream using yt-dlp and convert to OGG format for Whisper fallback."""
     ydl_opts_download = {
         'format': 'bestaudio/best',
@@ -186,10 +195,20 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str) -> Path:
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
-    with yt_dlp.YoutubeDL(ydl_opts_download) as ydl:
-        ydl.extract_info(url, download=True)
-        ogg_file = output_dir / f"{video_id}.ogg"
-        return ogg_file.resolve()
+    if use_cookies:
+        ydl_opts_download["cookiesfrombrowser"] = ("chrome",)
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts_download.copy()) as ydl:
+            ydl.extract_info(url, download=True)
+    except Exception as e:
+        if not use_cookies:
+            ydl_opts_download["cookiesfrombrowser"] = ("chrome",)
+            with yt_dlp.YoutubeDL(ydl_opts_download.copy()) as ydl:
+                ydl.extract_info(url, download=True)
+        else:
+            raise e
+    ogg_file = output_dir / f"{video_id}.ogg"
+    return ogg_file.resolve()
 
 def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio: bool = False, info: dict | None = None) -> tuple[str | None, str | None, str]:
     """Retrieve the transcript directly from YouTube subtitles if available (json3 paragraphs -> srv1 raw text).
