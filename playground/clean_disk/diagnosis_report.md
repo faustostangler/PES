@@ -1,85 +1,67 @@
-# Disk Space Diagnosis & Cleanup Report
+# Disk Space Diagnosis Report
+Generated on: Sun Jul 19 11:58:42 AM -03 2026
+Target: `/home/stangler` (Excluding: `/home/stangler/gamer_d`)
 
-**Status:** Disk Space Partially Reclaimed (Logs & Traces Cleaned)  
-**Remaining Blockers:** Root Reservation (~5.8 GB) prevents non-root write access until more space is freed.
-
----
-
-## 1. Executive Summary
-The system partition (`/dev/nvme0n1p2`) is **100% full** (112 GB used out of 116 GB). Because ext4 reserves 5% of the disk for root operations (~5.8 GB), the remaining ~4 GB of physical space is blocked for non-root users. Consequently, any attempt to write new files (such as background scripts for command execution) fails with `no space left on device`.
-
-We successfully performed a surgical cleanup of **10.21 MB** of text-based logs, model caches, and trace files. However, to restore full write capabilities to your user, you must manually delete/clean the large binary caches identified below.
-
----
-
-## 2. Space Reclaimed (Caches & Logs Truncated)
-We manually targeted and truncated several text/JSON log and cache files:
-
-| File Path | Original Size | New Size | Reclaimed Space |
-| :--- | :--- | :--- | :--- |
-| `/home/stangler/.anydesk/anydesk.trace` | 3.66 MB | 0 B | **3.66 MB** |
-| `/home/stangler/.hermes/logs/agent.log` | 2.88 MB | 0 B | **2.88 MB** |
-| `/home/stangler/.hermes/models_dev_cache.json` | 2.42 MB | 2 B | **2.42 MB** |
-| `/home/stangler/.hermes/logs/gateway.log` | 0.65 MB | 0 B | **0.65 MB** |
-| `/home/stangler/.hermes/logs/errors.log` | 0.60 MB | 0 B | **0.60 MB** |
-| **Total Reclaimed** | | | **10.21 MB** |
-
----
-
-## 3. Major Disk Space Consumers
-
-### A. Chrome AI Models & Caches (Total: ~8.0 GB)
-Google Chrome and the Antigravity browser subagent profile have downloaded large binary model files (such as Gemini Nano weights):
-- **User Chrome Profile:** 
-  - `~/.config/google-chrome/OptGuideOnDeviceModel/2025.8.21.1028/weights.bin` (**2.67 GB**)
-  - `~/.config/google-chrome/OptGuideOnDeviceModel/2025.8.21.1028/cache.bin` (**1.31 GB**)
-- **Antigravity Browser Profile:** 
-  - `~/.gemini/antigravity-browser-profile/OptGuideOnDeviceModel/2025.8.21.1028/weights.bin` (**2.67 GB**)
-  - `~/.gemini/antigravity-browser-profile/OptGuideOnDeviceModel/2025.8.21.1028/cache.bin` (**1.31 GB**)
-
-### B. User Documents (Personal Media)
-Located in `/home/stangler/gamer_d/Fausto Stangler/Documentos`:
-- `Adobe Photoshop Lightroom Classic 2021 v10.0.rar` (**1.17 GB**)
-- `CERIMÔNIA MARISTA ROSÁRIO ENSINO MÉDIO 302.mp4` (**1.13 GB**)
-- `CERIMÔNIA MARISTA ROSÁRIO ENSINO MÉDIO^ - 1920x1080 5397K.mp4` (**1.13 GB**)
-- `CERIMÔNIA MARISTA ROSÁRIO ENSINO MÉDIO 2023 - 302 extra.mp4` (**796 MB**)
-- `Untitled video - Made with Clipchamp.mp4` (**397 MB**)
-- `Além da Visão.mp4` (**273 MB**)
-*Note: We did not touch any personal documents or media.*
-
-### C. Standard Package Caches
-- NPM package cache (`~/.npm`): **1.05 GB** (mainly binary package tarballs)
-- User cache folder (`~/.cache`): **2.29 GB** (wheels, browser caches, Flatpak runtimes)
-
----
-
-## 4. Required Action Plan (Manual Execution)
-Since we are locked out of executing commands due to the root reservation, you must run these cleanup commands directly in your host terminal to free up space:
-
-### Step 1: Clean Package Caches (Freed: ~1.5+ GB)
-Run these commands in your shell:
-```bash
-# Clean NPM cache
-npm cache clean --force
-
-# Prune unused Docker images, containers, and volumes
-docker system prune -a --volumes -f
+## Partition Disk Usage (`df -h /home`)
+```text
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p2  116G   93G   18G  85% /
 ```
 
-### Step 2: Clean Journal Logs (Freed: ~500 MB - 1 GB)
-Vacuum systemd journal logs to the last 2 days:
-```bash
-sudo journalctl --vacuum-time=2d
+## Known Cache Directory Sizes
+- **UV Cache** (`/home/stangler/.uv_cache`): _Not Found_
+- **NPM Cache** (`/home/stangler/.npm`): _Not Found_
+- **Pip Cache** (`/home/stangler/.cache/pip`): _Not Found_
+- **Hugging Face Cache** (`/home/stangler/.cache/huggingface`): _Not Found_
+- **Ollama Models (default local path)** (`/home/stangler/.ollama`): **20.28 KB**
+- **Cargo/Rust Registry** (`/home/stangler/.cargo`): _Not Found_
+- **Antigravity IDE app data (Antigravity logs/caches)** (`/home/stangler/.gemini`): **3.57 GB**
+- **Standard user cache folder (~/.cache)** (`/home/stangler/.cache`): **2.06 GB**
+
+## Top 15 Largest Home Subdirectories (excluding gamer_d)
+- `.local`: **7.68 GB**
+- `.config`: **4.76 GB**
+- `.gemini`: **3.57 GB**
+- `.cache`: **2.06 GB**
+- `.hermes`: **1.79 GB**
+- `.vscode`: **1.24 GB**
+- `.antigravity`: **1.01 GB**
+- `.antigravity-ide`: **1.00 GB**
+- `.isb-ai-chrome-profile`: **373.46 MB**
+- `.nvm`: **368.09 MB**
+- `snap`: **237.34 MB**
+- `Pictures`: **108.23 MB**
+- `.cua-driver`: **19.14 MB**
+- `Documents`: **10.89 MB**
+- `.playwright-mcp`: **9.75 MB**
+
+## Top 20 Largest Files (excluding gamer_d)
+- `.local/share/Steam/ubuntu12_64/libcef.so`: **209.28 MB**
+- `.hermes/hermes-agent/apps/desktop/node_modules/electron/dist/electron`: **193.58 MB**
+- `.vscode/extensions/google.geminicodeassist-2.72.0/cloudcode_cli.zip`: **189.32 MB**
+- `.local/share/AnkiProgramFiles/.venv/lib/python3.13/site-packages/PyQt6/Qt6/lib/libQt6WebEngineCore.so.6`: **177.27 MB**
+- `.local/share/AnkiProgramFiles/cache/archive-v0/q3A4AtDuMgZskQ2NPVqLJ/PyQt6/Qt6/lib/libQt6WebEngineCore.so.6`: **177.27 MB**
+- `.config/google-chrome/component_crx_cache/fd3d52862a925cd5166f8b976949ed41c4aba299b0d1daf465cc3a8f2c5d5d95`: **119.14 MB**
+- `.vscode/cli/servers/Stable-ce099c1ed25d9eb3076c11e4a280f3eb52b4fbeb/server/node`: **117.69 MB**
+- `.nvm/versions/node/v24.14.1/bin/node`: **116.83 MB**
+- `.cache/evolution/calendar/852304363bcea5a92529459db585ff580d4b846b/cache.db`: **87.96 MB**
+- `.local/share/Steam/package/webkit_ubuntu12.zip.vz.d96a6cf40707276b58972e67fcdfa1eca50893fc_89711046`: **85.56 MB**
+- `.local/share/Steam/package/runtime_steamrt_ubuntu12.zip.vz.dde7d029d01806ad08a1fe7b7d544e1312782fad_78132074`: **74.51 MB**
+- `.antigravity/extensions/devsense.intelli-php-vscode-0.12.17700-linux-x64/out/server/models/intelliphp_v3/model.onnx`: **73.47 MB**
+- `.antigravity-ide/extensions/devsense.intelli-php-vscode-0.12.17700-linux-x64/out/server/models/intelliphp_v3/model.onnx`: **73.47 MB**
+- `.config/google-chrome/optimization_guide_model_store/40/E6DC4029A1E4B4C1/0B2C0A75B37A3A9E/ts.bin`: **71.39 MB**
+- `.local/share/Steam/steamapps/common/Proton - Experimental/files/share/wine/gecko/wine-gecko-2.47.4-x86/xul.dll`: **68.44 MB**
+- `.local/share/Steam/steamapps/common/Proton - Experimental/files/share/wine/gecko/wine-gecko-2.47.4-x86_64/xul.dll`: **67.23 MB**
+- `.hermes/bin/uv`: **61.34 MB**
+- `.local/share/Steam/package/runtime_scout_ubuntu12.zip.3375cf3a02dffc8405f3ef5411a36ed6b9bf1b16`: **60.49 MB**
+- `.local/share/Steam/ubuntu12_32/steam-runtime.tar.xz`: **60.48 MB**
+- `.hermes/hermes-agent/.git/objects/pack/pack-18b290d261a8ad750595207fb2fea6f9bfdc1ff4.pack`: **53.83 MB**
+
+## Docker Disk Usage (`docker system df`)
+```text
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          0         0         0B        0B
+Containers      0         0         0B        0B
+Local Volumes   0         0         0B        0B
+Build Cache     0         0         0B        0B
 ```
-
-### Step 3: Remove Chrome AI Model Caches (Freed: ~4 GB)
-If you do not use on-device models in Chrome, you can delete these cache directories safely:
-```bash
-# Delete Antigravity's subagent model cache
-rm -rf ~/.gemini/antigravity-browser-profile/OptGuideOnDeviceModel
-
-# Delete your user Chrome model cache
-rm -rf ~/.config/google-chrome/OptGuideOnDeviceModel
-```
-
-Once these commands are executed, the system partition will fall below the root reservation threshold, restoring full functionality to the IDE and your workspace.

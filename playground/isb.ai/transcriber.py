@@ -7,12 +7,13 @@ import sys
 from pathlib import Path
 
 
-def transcribe_audio_to_text(audio_path: str, model_name: str = "base") -> dict:
+def transcribe_audio_to_text(audio_path: str, model_name: str = "base", language: str | None = None) -> dict:
     """Transcribe an audio file to text using Whisper.
 
     Args:
         audio_path: Path to the audio file (e.g. .ogg).
         model_name: The Whisper model size/name to use (e.g., 'tiny', 'base', 'small', 'medium', 'large').
+        language: Optional language code to force Whisper to use (e.g., 'pt', 'en').
 
     Returns:
         A dictionary containing the transcription text and other metadata segments.
@@ -23,11 +24,11 @@ def transcribe_audio_to_text(audio_path: str, model_name: str = "base") -> dict:
     if not path.exists():
         raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-    print(f"Loading Whisper model: {model_name}...")
+    # print(f"Loading Whisper model: {model_name}...")
     model = whisper.load_model(model_name)
 
-    print(f"Transcribing audio file: {audio_path}...")
-    result = model.transcribe(str(path), fp16=False)
+    # print(f"Transcribing audio file: {audio_path} (language: {language or 'auto'})...")
+    result = model.transcribe(str(path), fp16=False, language=language)
 
     return result
 

@@ -64,7 +64,7 @@ def record_synced_video(log_path: Path, channel_id: str, video_id: str, upload_d
     except Exception as e:
         print(f"Error saving to Markdown log: {e}")
 
-def fetch_channel_recent_videos(channel_id: str, limit: int = 50) -> list[dict]:
+def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: bool = False) -> list[dict]:
     """Query recent videos from a channel using its uploads playlist ID."""
     if not channel_id.startswith("UC"):
         print(f"Warning: Channel ID '{channel_id}' does not match standard UC prefix. Fetching videos page directly.")
@@ -86,14 +86,26 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50) -> list[dict]:
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        try:
+    if use_cookies:
+        ydl_opts["cookiesfrombrowser"] = ("chrome",)
+
+    def extract_with_opts(opts):
+        with yt_dlp.YoutubeDL(opts.copy()) as ydl:
             playlist_info = ydl.extract_info(url, download=False)
             if playlist_info:
-                # Filter out None values from failed extractions
-                entries = [e for e in playlist_info.get("entries", []) if e]
-                return entries
-        except Exception as e:
+                return [e for e in playlist_info.get("entries", []) if e]
+            return []
+
+    try:
+        return extract_with_opts(ydl_opts)
+    except Exception as e:
+        if not use_cookies:
+            ydl_opts["cookiesfrombrowser"] = ("chrome",)
+            try:
+                return extract_with_opts(ydl_opts)
+            except Exception as err:
+                print(f"Error fetching channel playlist with cookies: {err}")
+        else:
             print(f"Error fetching channel playlist: {e}")
     return []
 
@@ -142,8 +154,24 @@ def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: b
             _, ogg_path, _ = get_youtube_audio_or_transcript(url, output_dir=str(target_dir), force_audio=True, info=info)
 
         assert ogg_path and os.path.exists(ogg_path), f"Audio file not found: {ogg_path}"
-        print(f"Transcribing audio file with Whisper (model: {model_name})...")
-        result = transcribe_audio_to_text(ogg_path, model_name=model_name)
+
+        detected_lang = None
+        if info:
+            lang_code = info.get("language")
+            if lang_code and isinstance(lang_code, str):
+                detected_lang = lang_code.split("-")[0].lower()
+            if not detected_lang:
+                for source in (info.get("subtitles") or {}, info.get("automatic_captions") or {}):
+                    for code in source.keys():
+                        code_short = code.split("-")[0].lower()
+                        if code_short in ("pt", "en"):
+                            detected_lang = code_short
+                            break
+                    if detected_lang:
+                        break
+
+        print(f"Transcribing audio file with Whisper (model: {model_name}, language: {detected_lang or 'auto'})...")
+        result = transcribe_audio_to_text(ogg_path, model_name=model_name, language=detected_lang)
         text = result.get("text", "").strip()
 
         # Clean up
@@ -286,17 +314,27 @@ def sync_channels_and_seeds(
         found = False
 
         for entry in recent_entries:
-            entry_date = get_full_upload_date(entry)
             entry_id = entry.get("id")
-
             if not entry_id:
-                continue
-            if not is_within_range(entry_date, days):
                 continue
             if entry_id in synced_ids:
                 continue
 
             entry_url = entry.get("url")
+            entry_date = get_full_upload_date(entry)
+            
+            info = None
+            if not entry_date:
+                try:
+                    info = extract_video_metadata(entry_url)
+                    entry_date = get_full_upload_date(info)
+                except Exception as e:
+                    print(f"  Warning: Failed to fetch metadata to resolve date for {entry_id}: {e}")
+                    continue
+
+            if not is_within_range(entry_date, days):
+                continue
+
             # if not found:
             #     print(f"Found new videos on the channel {chan_id}.")
             found = True
@@ -310,7 +348,8 @@ def sync_channels_and_seeds(
                     llm_model=llm_model,
                     ollama_url=ollama_url,
                     channel_id=chan_id,
-                    synced_ids=synced_ids
+                    synced_ids=synced_ids,
+                    info=info
                 )
             except Exception as e:
                 print(f"  Error syncing video {entry_id}: {e}")

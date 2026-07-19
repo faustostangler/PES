@@ -28,6 +28,7 @@ from time_logger import log_time_data, plot_time_log
 # --- Path Configurations ---
 ISB_ROOT = Path(__file__).parent.resolve()
 DEFAULT_RAW_DIR = ISB_ROOT / "raw"
+DEFAULT_ENRICHED_DIR = ISB_ROOT / "enriched"
 DEFAULT_WIKI_DIR = ISB_ROOT / "wiki"
 DEFAULT_CHROME_PROFILE = Path.home() / ".isb-ai-chrome-profile"
 PROCESSED_LOG_FILE = ISB_ROOT / "processed_gemini.json"
@@ -39,7 +40,7 @@ def run_sync_subcommand(args: argparse.Namespace) -> None:
     """Invokes sync_channels to crawl/download transcripts."""
     playlist_path = Path(args.playlist)
     csv_path = Path(args.csv)
-    output_dir = Path(args.output_dir)
+    output_dir = Path(args.raw_dir)
 
     playlist_urls = []
     if playlist_path.exists():
@@ -438,15 +439,62 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
     print(f"Curadoria processing finished. Success: {processed_count}, Errors: {error_count}")
 
 
-# ==================== PIPELINE: sync -> process ====================
+# ==================== STAGE 2 AI ENRICHMENT ====================
+
+def run_stage2_subcommand(args: argparse.Namespace) -> None:
+    """Executes Stage 2 AI Enrichment on raw files."""
+    import stage2
+    raw_path = Path(args.raw_dir).resolve()
+    enriched_path = Path(args.enriched_dir).resolve()
+    chrome_profile = Path(args.chrome_profile).resolve()
+
+    unprocessed = stage2.discover_unprocessed_files(raw_path, enriched_path)
+    print(f"Stage 2: Discovered {len(unprocessed)} unprocessed raw files.")
+
+    if args.limit:
+        unprocessed = unprocessed[:args.limit]
+        print(f"Limiting execution to first {args.limit} files.")
+
+    if not unprocessed:
+        print("Nothing to process in Stage 2.")
+        return
+
+    if args.dry_run:
+        print("--- Dry Run: Pending Files in Stage 2 ---")
+        for idx, f in enumerate(unprocessed, 1):
+            print(f"  {idx}. {f.relative_to(raw_path)}")
+        return
+
+    print(f"Initializing Playwright context using profile: {chrome_profile}")
+    with GeminiWebProcessor(user_data_dir=chrome_profile) as processor:
+        for idx, raw_file in enumerate(unprocessed, 1):
+            print(f"[{idx}/{len(unprocessed)}] Stage 2 Processing: {raw_file.relative_to(raw_path)}")
+            try:
+                stage2.process_file(raw_file, enriched_path, processor, raw_dir=raw_path)
+                print(f"  ✓ Successfully enriched and saved.")
+            except Exception as e:
+                print(f"  ✗ Error processing {raw_file.name}: {e}")
+
+
+# ==================== PIPELINE: sync -> stage2 -> process ====================
 
 def run_pipeline_subcommand(args: argparse.Namespace) -> None:
-    """Runs full pipeline: first-pass sync ingestion, then second-pass Gemini curadoria."""
-    print("\n[PIPELINE] Step 1/2: Sync ingestion...")
+    """Runs full pipeline: sync -> stage2 -> process."""
+    print("\n[PIPELINE] Step 1/3: Sync ingestion...")
     run_sync_subcommand(args)
 
-    print("\n[PIPELINE] Step 2/2: Gemini curadoria...")
-    run_process_subcommand(args)
+    print("\n[PIPELINE] Step 2/3: Stage 2 AI Enrichment...")
+    run_stage2_subcommand(args)
+
+    print("\n[PIPELINE] Step 3/3: Gemini curadoria (Stage 3)...")
+    # For Stage 3, we must read from enriched_dir!
+    # To do that, we override args.raw_dir to point to args.enriched_dir
+    original_raw_dir = args.raw_dir
+    args.raw_dir = args.enriched_dir
+    try:
+        run_process_subcommand(args)
+    finally:
+        args.raw_dir = original_raw_dir
 
     print("\n[PIPELINE] Done.")
 
@@ -454,10 +502,10 @@ def run_pipeline_subcommand(args: argparse.Namespace) -> None:
 # ==================== CLI PARSER ====================
 
 def main() -> None:
-    # Default subcommand to 'pipeline' (sync + process) if not specified
+    # Default subcommand to 'pipeline' (sync + stage2 + process) if not specified
     if len(sys.argv) < 2:
         sys.argv.insert(1, "pipeline")
-    elif sys.argv[1] not in ("sync", "process", "pipeline", "-h", "--help"):
+    elif sys.argv[1] not in ("sync", "stage2", "process", "pipeline", "-h", "--help"):
         sys.argv.insert(1, "pipeline")
 
     parser = argparse.ArgumentParser(
@@ -485,10 +533,10 @@ def main() -> None:
         help="Retain downloaded OGG audio file."
     )
     sync_parser.add_argument(
-        "--output-dir",
+        "--raw-dir",
         type=str,
         default=str(DEFAULT_RAW_DIR),
-        help=f"Ingested files output directory (default: {DEFAULT_RAW_DIR})."
+        help=f"Ingested files raw output directory (default: {DEFAULT_RAW_DIR})."
     )
     sync_parser.add_argument(
         "--playlist",
@@ -503,13 +551,45 @@ def main() -> None:
         help="Markdown log file path."
     )
 
-    # Subcommand: process
-    process_parser = subparsers.add_parser("process", help="Process raw transcripts with Gemini Web.")
-    process_parser.add_argument(
+    # Subcommand: stage2
+    stage2_parser = subparsers.add_parser("stage2", help="Pre-process and enrich raw transcripts with Gems.")
+    stage2_parser.add_argument(
         "--raw-dir",
         type=str,
         default=str(DEFAULT_RAW_DIR),
         help=f"Raw transcripts directory (default: {DEFAULT_RAW_DIR})."
+    )
+    stage2_parser.add_argument(
+        "--enriched-dir",
+        type=str,
+        default=str(DEFAULT_ENRICHED_DIR),
+        help=f"Enriched output directory (default: {DEFAULT_ENRICHED_DIR})."
+    )
+    stage2_parser.add_argument(
+        "--chrome-profile",
+        type=str,
+        default=str(DEFAULT_CHROME_PROFILE),
+        help=f"Chrome profile for session cookie (default: {DEFAULT_CHROME_PROFILE})."
+    )
+    stage2_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="List pending files to be processed without executing Gems."
+    )
+    stage2_parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Limit execution to first N files."
+    )
+
+    # Subcommand: process
+    process_parser = subparsers.add_parser("process", help="Process transcripts with Gemini Web.")
+    process_parser.add_argument(
+        "--raw-dir",
+        type=str,
+        default=str(DEFAULT_ENRICHED_DIR),
+        help=f"Enriched transcripts directory (default: {DEFAULT_ENRICHED_DIR})."
     )
     process_parser.add_argument(
         "--output-dir",
@@ -535,14 +615,15 @@ def main() -> None:
         help="Limit execution to first N blocks."
     )
 
-    # Subcommand: pipeline (sync -> process, full run)
-    pipeline_parser = subparsers.add_parser("pipeline", help="Run full pipeline: sync then Gemini curadoria.")
+    # Subcommand: pipeline (sync -> stage2 -> process, full run)
+    pipeline_parser = subparsers.add_parser("pipeline", help="Run full pipeline: sync -> stage2 -> process.")
     pipeline_parser.add_argument("--days", type=int, default=180)
     pipeline_parser.add_argument("--model", type=str, default="base")
     pipeline_parser.add_argument("--keep-audio", action="store_true")
     pipeline_parser.add_argument("--playlist", type=str, default=str(ISB_ROOT / "playlist.txt"))
     pipeline_parser.add_argument("--csv", type=str, default=str(DEFAULT_WIKI_DIR / "log.md"))
     pipeline_parser.add_argument("--raw-dir", type=str, default=str(DEFAULT_RAW_DIR))
+    pipeline_parser.add_argument("--enriched-dir", type=str, default=str(DEFAULT_ENRICHED_DIR))
     pipeline_parser.add_argument("--output-dir", type=str, default=str(DEFAULT_WIKI_DIR))
     pipeline_parser.add_argument("--chrome-profile", type=str, default=str(DEFAULT_CHROME_PROFILE))
     pipeline_parser.add_argument("--dry-run", action="store_true")
@@ -552,6 +633,8 @@ def main() -> None:
 
     if args.command == "sync":
         run_sync_subcommand(args)
+    elif args.command == "stage2":
+        run_stage2_subcommand(args)
     elif args.command == "process":
         run_process_subcommand(args)
     elif args.command == "pipeline":
@@ -569,3 +652,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
 print("Done!")
+
