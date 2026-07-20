@@ -265,8 +265,8 @@ class GeminiWebProcessor:
         if self.playwright:
             self.playwright.stop()
 
-    def send_prompt(self, prompt_text: str) -> str:
-        """Send prompt, wait for stabilization, extract response, delete thread."""
+    def send_prompt(self, prompt_text: str, keep_thread: bool = False) -> str:
+        """Send prompt, wait for stabilization, extract response, delete thread if keep_thread is False."""
         if not self.page:
             raise RuntimeError("GeminiWebProcessor is not initialized. Use as a context manager.")
         self.page.goto(self.GEMINI_URL, timeout=60000)
@@ -331,10 +331,65 @@ class GeminiWebProcessor:
         if not last_text:
             raise RuntimeError("Failed to capture response from Gemini.")
 
-        # print(f"[GeminiWeb] Response captured ({len(last_text)} characters).")
-        self._delete_current_thread()
+        # Extract raw unrendered response text (preserving Markdown markup like #, **, code blocks)
+        responses = [r for r in self.page.locator(self.RESPONSE_SELECTORS).all() if r.inner_text().strip()]
+        if responses:
+            last_text = self._extract_raw_response(responses[-1])
+
+        if not keep_thread:
+            self._delete_current_thread()
 
         return last_text
+
+    def _extract_raw_response(self, response_element) -> str:
+        """Extract raw unrendered Markdown text using code-block locator or clipboard copy button fallback."""
+        if not self.page or not self.context:
+            return response_element.inner_text().strip()
+
+        # 1. Check for code blocks (pre, code, code-block)
+        try:
+            code_elem = response_element.locator("code-block, pre, code").first
+            if code_elem.is_visible(timeout=500):
+                code_text = code_elem.inner_text().strip()
+                if code_text and len(code_text) > 10:
+                    return code_text
+        except Exception:
+            pass
+
+        # 2. Try clicking Gemini's copy button to read raw Markdown from clipboard
+        copy_button_selectors = [
+            "button[aria-label*='Copy']",
+            "button[aria-label*='Copiar']",
+            "button[data-test-id='copy-button']",
+            "mat-icon[fonticon='content_copy']",
+            "button:has(mat-icon[fonticon='content_copy'])",
+        ]
+        try:
+            self.context.grant_permissions(["clipboard-read", "clipboard-write"])
+            copy_btn = None
+            for sel in copy_button_selectors:
+                btn = response_element.locator(sel).first
+                if btn.is_visible(timeout=500):
+                    copy_btn = btn
+                    break
+            if not copy_btn:
+                for sel in copy_button_selectors:
+                    btns = self.page.locator(sel).all()
+                    if btns:
+                        copy_btn = btns[-1]
+                        break
+            
+            if copy_btn:
+                copy_btn.click()
+                self.page.wait_for_timeout(500)
+                clipboard_text = self.page.evaluate("navigator.clipboard.readText()")
+                if clipboard_text and len(clipboard_text.strip()) > 10:
+                    return clipboard_text.strip()
+        except Exception:
+            pass
+
+        # 3. Fallback to standard inner_text()
+        return response_element.inner_text().strip()
 
     def delete_current_thread(self) -> None:
         """Expose thread deletion publicly."""
@@ -422,6 +477,11 @@ class GeminiWebProcessor:
 
         if not last_text:
             raise RuntimeError("Failed to capture response from Gemini.")
+
+        # Extract raw unrendered response text (preserving Markdown markup like #, **, code blocks)
+        responses = [r for r in self.page.locator(self.RESPONSE_SELECTORS).all() if r.inner_text().strip()]
+        if responses:
+            last_text = self._extract_raw_response(responses[-1])
 
         if not keep_thread:
             self._delete_current_thread()

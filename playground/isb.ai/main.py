@@ -381,7 +381,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
 
             try:
                 start_time = time.time()
-                response = processor.send_prompt(system_prompt)
+                response = processor.send_prompt(system_prompt, keep_thread=True)
                 duration = time.time() - start_time
                 # print(f"  Gemini responded in {duration:.1f}s. Parsing...")
 
@@ -406,6 +406,9 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                     if file_ref in generated_files:
                         update_or_create_moc(wiki_dir, file_ref, moc_name)
 
+                # Delete thread ONLY after markdown files have been validated and saved!
+                processor.delete_current_thread()
+
                 # Update idempotency tracking
                 processed_log[video_id] = datetime.now(UTC).isoformat()
                 save_processed_log(PROCESSED_LOG_FILE, processed_log)
@@ -417,6 +420,7 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
                 mocs_str = ", ".join(active_mocs) if active_mocs else "Nenhum MOC ativo"
 
             except Exception as e:
+                processor.delete_current_thread()
                 print(f"  ✗ Error: {e}")
                 error_count += 1
                 total_active_runs_session += 1
