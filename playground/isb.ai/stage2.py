@@ -6,6 +6,7 @@ Uses custom Gemini Gems to clean, expand, and downgrade raw transcripts.
 
 import argparse
 import os
+import re
 import sys
 from pathlib import Path
 from gemini_web import GeminiWebProcessor
@@ -79,15 +80,17 @@ def validate_response(text: str) -> str:
         root = ET.fromstring(cleaned_text)
         extracted_text = "".join(root.itertext()).strip()
     except ET.ParseError:
-        # If it doesn't have a single root but is otherwise valid tags, try wrapping it
+        # Fallback 1: Repair unescaped '&' (e.g., P&D, Q&A, AT&T) which cause XML ParseError
         try:
-            if not cleaned_text.startswith("<?xml"):
-                root = ET.fromstring(f"<root>{cleaned_text}</root>")
-                extracted_text = "".join(root.itertext()).strip()
+            fixed_xml = re.sub(r'&(?!(?:amp|lt|gt|apos|quot);)', '&amp;', cleaned_text)
+            if not fixed_xml.startswith("<?xml"):
+                root = ET.fromstring(f"<root>{fixed_xml}</root>")
             else:
-                return ""
+                root = ET.fromstring(fixed_xml)
+            extracted_text = "".join(root.itertext()).strip()
         except ET.ParseError:
-            return ""
+            # Fallback 2: Extract text by stripping XML tags if strict parser fails
+            extracted_text = re.sub(r'</?[a-zA-Z0-9_-]+(?:\s+[^>]*)?>', '', cleaned_text).strip()
 
     # Check that extracted text is not too short
     if len(extracted_text) < 50:
@@ -160,15 +163,18 @@ def call_detranscriptor(processor: GeminiWebProcessor, text: str) -> str:
         "Por favor, limpe e estruture a seguinte transcrição de áudio. "
         "Corrija erros de sintaxe, gramática e pontuação, remova redundâncias de fala, "
         "mas mantenha todas as ideias, fatos e terminologia técnica intactas. "
-        "Sua resposta deve ser estritamente em formato XML, com a transcrição limpa estruturada dentro de tags apropriadas:\n\n" + text
+        "Sua resposta deve ser estritamente em formato XML. "
+        "IMPORTANTE: Encapsule toda a resposta em um bloco de código markdown (usando ```xml no início e ``` no final):\n\n" + text
     )
     
     for attempt in range(1, 4):
         try:
-            response = processor.send_prompt_to_gem(gem_id, prompt, keep_thread=False)
+            is_subsequent = attempt > 1
+            response = processor.send_prompt_to_gem(gem_id, prompt, keep_thread=True, is_subsequent_turn=is_subsequent)
             response = clean_gemini_response(response)
             validated = validate_response(response)
             if validated:
+                processor.delete_current_thread()
                 return validated
             prompt = (
                 "A resposta anterior foi inválida, curta ou incompleta. Por favor, limpe e estruture "
@@ -176,7 +182,9 @@ def call_detranscriptor(processor: GeminiWebProcessor, text: str) -> str:
             )
         except Exception as e:
             if attempt == 3:
+                processor.delete_current_thread()
                 raise e
+    processor.delete_current_thread()
     raise ValueError("Failed to obtain a valid response from Detranscriptor.")
 
 def call_expander(processor: GeminiWebProcessor, text: str) -> str:
@@ -189,13 +197,15 @@ def call_expander(processor: GeminiWebProcessor, text: str) -> str:
             if i == 1:
                 prompt = (
                     "Aqui está o texto estruturado. Por favor, inicie a expansão de lacunas teóricas "
-                    "e aprofundamento técnico. Retorne a resposta em formato XML:\n\n" + last_response
+                    "e aprofundamento técnico. Retorne a resposta em formato XML. "
+                    "IMPORTANTE: Encapsule toda a resposta em um bloco de código markdown (usando ```xml no início e ``` no final):\n\n" + last_response
                 )
                 is_subsequent = False
             else:
                 prompt = (
                     f"Esta é a iteração {i}/5 de expansão técnica extrema. Aprofunde ainda mais as explicações, "
-                    "adicione mais detalhes sobre os mecanismos e teorias subjacentes, e retorne o compêndio completo em formato XML."
+                    "adicione mais detalhes sobre os mecanismos e teorias subjacentes. "
+                    "IMPORTANTE: Retorne o compêndio completo em formato XML encapsulado em um bloco de código markdown (```xml ... ```)."
                 )
                 is_subsequent = True
                 
@@ -232,15 +242,18 @@ def call_downgrader(processor: GeminiWebProcessor, text: str) -> str:
     gem_id = "86ba1b4ce534"
     prompt = (
         "Aqui está o compêndio expandido. Remova redundâncias, apare explicações tangenciais irrelevantes "
-        "ou fora do contexto do assunto principal, organize em subtópicos lógicos, e forneça o compêndio final em formato XML:\n\n" + text
+        "ou fora do contexto do assunto principal, organize em subtópicos lógicos, e forneça o compêndio final em formato XML. "
+        "IMPORTANTE: Encapsule toda a resposta em um bloco de código markdown (usando ```xml no início e ``` no final):\n\n" + text
     )
     
     for attempt in range(1, 4):
         try:
-            response = processor.send_prompt_to_gem(gem_id, prompt, keep_thread=False)
+            is_subsequent = attempt > 1
+            response = processor.send_prompt_to_gem(gem_id, prompt, keep_thread=True, is_subsequent_turn=is_subsequent)
             response = clean_gemini_response(response)
             validated = validate_response(response)
             if validated:
+                processor.delete_current_thread()
                 return validated
             prompt = (
                 "A resposta anterior foi inválida ou incompleta. Por favor, forneça a compilação "
@@ -248,7 +261,9 @@ def call_downgrader(processor: GeminiWebProcessor, text: str) -> str:
             )
         except Exception as e:
             if attempt == 3:
+                processor.delete_current_thread()
                 raise e
+    processor.delete_current_thread()
     raise ValueError("Failed to obtain a valid response from Downgrader.")
 
 def process_file(raw_file: Path, enriched_dir: Path, processor: GeminiWebProcessor, raw_dir: Path | None = None) -> None:
@@ -265,7 +280,7 @@ def process_file(raw_file: Path, enriched_dir: Path, processor: GeminiWebProcess
     expanded = call_expander(processor, detranscribed)
     
     # print(f"  [3/3] Calling Downgrader Gem...")
-    downgraded = call_downgrader(processor, expanded)
+    # downgraded = call_downgrader(processor, expanded)
     
     # Format original YAML metadata header
     yaml_lines = ["---"]
@@ -284,7 +299,7 @@ def process_file(raw_file: Path, enriched_dir: Path, processor: GeminiWebProcess
     yaml_header_str = "\n".join(yaml_lines)
     
     # Assemble the final enriched file
-    enriched_content = yaml_header_str + "\n" + downgraded
+    enriched_content = yaml_header_str + "\n" + expanded
     
     # Determine the target path
     if raw_dir is None:
