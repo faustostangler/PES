@@ -9,17 +9,19 @@ description: Transforms raw spoken audio transcripts into clean, highly informat
 
 The `ghost-writer-detranscriptor` skill standardizes raw speech transcripts, audio transcriptions, and informal lecture notes into clean, structured, highly readable Markdown articles. It purges speech noise, oral artifacts, hesitations, and colloquial first-person dialogue while rigorously maintaining the didactic core, analogies, and structural facts of the original speaker.
 
+All outputs generated must be saved directly to Markdown (.md) files (such as `02_detranscribed.md`). Outputs must consist strictly of structured hierarchical paragraphs (Markdown headers and narrative prose), never using tables, diagrams, lists, or bullets.
+
 **Style Dependency**: Before generating any output, read and apply the authorial style guide at [`ghost-writer-style/references/style-guide.md`](file:///home/stangler/gamer_d/Fausto%20Stangler/Documentos/Python/PES/.agents/skills/ghost-writer-style/references/style-guide.md). The detranscriptor outputs in the author's baroque-naturalist prose identity — NOT in generic accessible journalism.
 
 ---
 
 ## Operating Protocol & Execution Rules
 
-1. **Vocal & Noise Suppression**: Eliminate all timing marks, hesitations ("hã", "tipo"), filler words ("com certeza", "como eu disse"), false starts, and theatrical audience hooks. Convert 1st-person subjective dialogue into 3rd-person objective narrative.
-2. **Specialist Journalistic Persona**: Adopt an expert journalistic tone with high readability. Avoid both extreme colloquialism and impenetrable academic legalisms.
-3. **Didactic Purification**: Retain core analogies, cultural references, and storytelling elements, but strip jokes and descriptive bloat.
-4. **Mandatory Fact-Checking**: Verify phonetic distortions, proper names, scientific terms, historical dates, and brand names against verifiable reality.
-5. **Payload Formatting**: Output the final processed text inside `<config_file>` XML tags without conversational headers or footers.
+1. Vocal and Noise Suppression: Eliminate all timing marks, hesitations ("hã", "tipo"), filler words ("com certeza", "como eu disse"), false starts, and theatrical audience hooks. Convert first-person subjective dialogue into third-person objective narrative.
+2. Specialist Journalistic Persona: Adopt an expert journalistic tone with high readability. Avoid both extreme colloquialism and impenetrable academic legalisms.
+3. Didactic Purification: Retain core analogies, cultural references, and storytelling elements, but strip jokes and descriptive bloat.
+4. Mandatory Fact-Checking: Verify phonetic distortions, proper names, scientific terms, historical dates, and brand names against verifiable reality.
+5. Payload Formatting: Save the final processed text directly to a Markdown (.md) file (e.g., `02_detranscribed.md`). The output MUST consist exclusively of structured hierarchical paragraphs (Markdown headers and narrative prose). Never use tables, diagrams, lists, or bullets.
 
 ---
 
@@ -65,8 +67,8 @@ Sua tarefa é transformar uma transcrição bruta de fala em um texto padrão, l
 - **Itálico (`_..._`)**: Utilize estritamente para títulos de obras culturais (filmes, livros, peças teatrais), nomes de softwares, hardwares específicos e palavras em idioma estrangeiro que não foram aportuguesadas.
 - **Uso de Recortes de Destaque**: Utilize citações em bloco (`>`) para isolar frases de impacto, definições centrais ou teses fundamentais que exijam atenção imediata do leitor, somente se houver e forem indispensáveis.
 
-#### 3.2 Linguagem Científica e Fórmulas e Diagramas e Blocos de Destaque
-- **Regra**: Não utilize fórmulas ou LaTeX ou diagramas e blocos de destaque. Não use tabelas, não use listas nem bullets. O texto deve ser fluido para leitura.
+#### 3.2 Linguagem Científica e Ausência Absoluta de Tabelas, Diagramas e Listas
+- **Regra**: Não utilize fórmulas, LaTeX, diagramas ou blocos de destaque. É estritamente proibido utilizar tabelas, listas numeradas, listas com marcadores (bullets) ou seleções em tópicos. O texto deve consistir inteiramente em parágrafos narrativos estruturados hierarquicamente com títulos e subtítulos.
 
 #### 3.3 Apêndices e Notas de Encerramento
 - **Regra**: Informações biográficas acessórias extras sobre os personagens citados ou detalhes técnicos secundários sobre relatórios e tratados não devem truncar o texto principal. Se o orador abrir uma explicação paralela longa ("abrir um parênteses"), coloque como notas ao final do texto. Realoque esses dados para uma seção de "Referências", "Glossário" ou "Notas Informativas" ao final do documento.
@@ -75,15 +77,10 @@ Sua tarefa é transformar uma transcrição bruta de fala em um texto padrão, l
 #### 3.4 Lacunas e Expansão do Conhecimento
 - **Regra**: Conceitos e entidades relevantes associados ao contexto mas omitidos por esquecimento ou desconhecimento, quando houverem devem ser incluídas ao final do texto como uma seção de informação complementar para orientação ao usuário. Isso deve incluir pessoas, locais, datas, eventos, entidades, conceitos, sejam a favor ou contra, com 3 a 5 frases para relacionar com o contexto.
 
-### 4. Regra de Resposta e de Saída Automatizada
+### 4. Regra de Resposta e de Registração em Arquivo Markdown
 
-A resposta deve ser em formato markdown, com marcações XML de início e final de arquivo, como no exemplo:
+A saída processada deve ser gravada diretamente em um arquivo Markdown (.md) no local especificado (como `playground/ghost-writer/<article_slug>/02_detranscribed.md`).
 
-```xml
-<config_file>
-# Heading 1
-texto da *resposta*
-</config_file>
-```
+O conteúdo do arquivo deve conter estritamente o texto formatado em parágrafos estruturados hierarquicamente (`#`, `##`, `###`).
 
-Não faça comentários dentro do XML no começo do texto, nem ao final da resposta. Não se ofereça para aprofundar e não ofereça aprofundamentos e não mostre links externos e não apresente vídeos sobre o assunto. Você deve apresentar dentro do XML restrita à resposta em si mesmo, sem apresentar mais nada ou tentar contextualizar ou continuar a conversa.
+Não faça comentários antes ou depois do texto. Não se ofereça para aprofundar e não mostre links externos nem vídeos. Apresente única e exclusivamente a gravação direta do arquivo Markdown.
