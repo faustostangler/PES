@@ -1,4 +1,4 @@
-# Briefing do Ensaio: A Armadilha Moderna, a Meta-Praxiologia e a Tragédia dos Irmãos Gêmeos (A Barata e a Minhoca)
+# Briefing do Ensaio: A Armadilha Moderna: Meta-Praxiologia Laboral, Teoria dos Jogos e a Obsolecência do Leviatã
 
 ## Resumo Executivo da Arquitetura Argumentativa
 
@@ -85,7 +85,6 @@ Este documento estabelece o projeto conceitual, factual, teórico e semântico p
 - **Franz Kafka** (Escritor austro-húngaro, autor de *A Metamorfose*)
 - **Frédéric Bastiat** (Economista e panfletário francês, autor da definição clássica da ficção estatal)
 - **Jean-Jacques Rousseau** (Filósofo franco-suíço, defensor da autarquia e da autossuficiência do homem natural)
-- **Richard Dawkins** (Biólogo evolutivo britânico, criador do conceito de *meme* em *The Selfish Gene*, 1976)
 - **Robert Carneiro** (Antropólogo norte-americano, formulador da teoria da circunscrição)
 - **Karl Wittfogel** (Sociólogo e historiador alemão-americano, teorizador do despotismo hidráulico)
 
@@ -139,7 +138,7 @@ Estabelecer a arqueologia completa que fundamenta a tese central: o Estado não 
 **Capital Simbólico e colonização memética**:
 - **Capital Simbólico (Bourdieu)**: Conversão de desigualdades materiais em "distinções morais consensuais" — impostos em "dever cívico sagrado", produtividade alheia em "dívida social"
 - **Habitus (Bourdieu)**: Disposições incorporadas que naturalizam as relações de dominação
-- **Memeplexos Ontológicos (Dawkins → adaptação autoral)**: Mecanismos meméticos de captura burocrática que colonizam a moralidade pública
+- **Dispositivos de Inversão Simbólica (Bourdieu)**: Mecanismos institucionais de captura burocrática via regulação moral e sinalização de virtude que colonizam a moralidade pública
 - **Dívida Histórica como Apropriação Semântica**: Herança civilizacional gratuita transformada em título de dívida perpétuo emitido pela burocracia
 
 ### Exemplos Históricos (Bloco 0)

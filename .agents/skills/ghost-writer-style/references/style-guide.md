@@ -2,6 +2,8 @@
 
 Este documento é a referência operacional completa para calibrar a voz autoral em todas as etapas do ecossistema ghost-writer. Deve ser lido integralmente antes de gerar ou transformar qualquer texto em prosa.
 
+Todas as saídas do ecossistema ghost-writer devem ser gravadas diretamente em arquivos Markdown (.md) em formato de parágrafos estruturados hierarquicamente (`#`, `##`, `###`), sendo proibido o uso de tabelas, diagramas, listas, bullets ou marcadores em tópicos.
+
 ---
 
 ## Índice
@@ -112,24 +114,22 @@ Usar metáforas como floreios retóricos descartáveis que poderiam ser removida
 
 ### Exemplos Ilustrativos do Padrão (NÃO reutilizar — criar novos)
 
-| Conceito Ilustrativo | Padrão que Exemplifica |
-| :--- | :--- |
-| *Sísifo Regulatório* | Metáfora clássica + adjetivo técnico condensando ciclo de retroalimentação |
-| *Memeplexos Ontológicos* | Neologismo composto fusionando dois campos (memética + ontologia) |
-| *Sumptus* | Substantivo latino simples reapropriado com significado técnico novo |
-| *Esuries Animae* | Substantivo + genitivo latino expressando relação de posse/pertencimento |
-| *Singularitas Pulchra* | Substantivo + adjetivo latino expressando qualidade essencial |
-| *Certamen Animae* | Substantivo + genitivo latino com metáfora competitiva |
-| *Vorago Nullitatis* | Substantivo + genitivo latino com imagética abismal |
-| *Curativos Iatrogênicos* | Português com terminologia médica técnica condensando paradoxo |
+Sísifo Regulatório exemplifica a combinação de uma metáfora clássica com adjetivo técnico para condensar um ciclo continuo de retroalimentação.
+Memeplexos Ontológicos exemplifica um neologismo composto que fusiona dois campos do conhecimento, a memética e a ontologia.
+Sumptus exemplifica um substantivo latino simples reapropriado com um significado técnico inteiramente novo.
+Esuries Animae exemplifica a junção de substantivo e genitivo latino para expressar uma relação profunda de posse ou pertencimento.
+Singularitas Pulchra exemplifica a junção de substantivo e adjetivo latino para expressar uma qualidade essencial.
+Certamen Animae exemplifica a combinação de substantivo e genitivo latino orientada por uma metáfora competitiva.
+Vorago Nullitatis exemplifica a combinação de substantivo e genitivo latino que mobiliza imagética abismal.
+Curativos Iatrogênicos exemplifica a expressão em português com terminologia médica técnica condensando um paradoxo institucional.
 
 ### Protocolo de Criação (ver seção 9 para detalhes completos)
 
-1. Identifique um mecanismo no texto que não possui termo satisfatório na literatura existente.
-2. Formule o conceito em latim com declinação correta (consultar referências gramaticais).
-3. Na primeira ocorrência, apresente o termo latino em negrito seguido da tradução portuguesa entre parênteses.
-4. Use o conceito consistentemente nas ocorrências seguintes sem re-traduzir.
-5. Garanta que o termo genuinamente condensa um mecanismo. Se a remoção do termo não empobrece o argumento, ele é ornamental e deve ser descartado.
+Primeiro, identifique um mecanismo no texto que não possui termo satisfatório na literatura existente.
+Segundo, formule o conceito em latim com declinação correta.
+Terceiro, na primeira ocorrência, apresente o termo latino em negrito seguido da tradução portuguesa entre parênteses.
+Quarto, use o conceito consistentemente nas ocorrências seguintes sem re-traduzir.
+Quinto, garanta que o termo genuinamente condensa um mecanismo. Se a remoção do termo não empobrece o argumento, ele é ornamental e deve ser descartado.
 
 ---
 
@@ -141,13 +141,13 @@ O texto oscila deliberadamente entre quatro vozes narrativas dentro do mesmo ens
 
 ### Os Quatro Registros
 
-**Cientista Natural**: Dados empíricos, mecanismos biológicos, lógica evolutiva, estatísticas verificáveis. Vocabulário técnico preciso. Frases longas com cadeias causais explícitas.
+Cientista Natural: Dados empíricos, mecanismos biológicos, lógica evolutiva, estatísticas verificáveis. Vocabulário técnico preciso. Frases longas com cadeias causais explícitas.
 
-**Filósofo Analítico**: Cadeias lógicas, análise institucional, teoria dos jogos, economia, diagnóstico estrutural. Vocabulário de ciências sociais. Raciocínio sequencial rigoroso.
+Filósofo Analítico: Cadeias lógicas, análise institucional, teoria dos jogos, economia, diagnóstico estrutural. Vocabulário de ciências sociais. Raciocínio sequencial rigoroso.
 
-**Poeta em Prosa**: Densidade existencial, imagética cósmica, proximidade entre beleza e abismo. Frases curtas de alto impacto. Ritmo cadenciado. Economia de palavras.
+Poeta em Prosa: Densidade existencial, imagética cósmica, proximidade entre beleza e abismo. Frases curtas de alto impacto. Ritmo cadenciado. Economia de palavras.
 
-**Pregador Secular**: Cadência profética, exortação moral sem moralismo, chamado à lucidez. Tom homilético sem religiosidade. Afirmações categóricas.
+Pregador Secular: Cadência profética, exortação moral sem moralismo, chamado à lucidez. Tom homilético sem religiosidade. Afirmações categóricas.
 
 ### Exemplo de Alternância (de *Singularitas Pulchra*)
 
@@ -157,15 +157,15 @@ O texto oscila deliberadamente entre quatro vozes narrativas dentro do mesmo ens
 
 > "A consciência também carrega no espelho o fardo insuportável da lucidez. E a lucidez revela a beleza da condenação." [FILÓSOFO / POETA]
 
-> "Direto, intenso e cruel. Belíssimo. Único." [PREGADOR SECULAR — frases de uma palavra]
+> "Direto, intenso e cruel. Belíssimo. Único." [PREGADOR SECULAR]
 
 ### Protocolo de Oscilação (ver seção 10 para detalhes completos)
 
-1. Inicie seções no registro que melhor ancora o argumento (geralmente Cientista Natural ou Filósofo Analítico).
-2. Permita que o registro se desloque naturalmente quando a cadeia causal atinge seus limites explicativos.
-3. Use frases curtas como pontos de transição entre registros.
-4. Nunca permaneça em um único registro por mais de três parágrafos consecutivos.
-5. Reserve o registro de Pregador Secular para conclusões de seção ou frases de impacto isoladas.
+Inicie seções no registro que melhor ancora o argumento (geralmente Cientista Natural ou Filósofo Analítico).
+Permita que o registro se desloque naturally quando a cadeia causal atinge seus limites explicativos.
+Use frases curtas como pontos de transição entre registros.
+Nunca permaneça em um único registro por mais de três parágrafos consecutivos.
+Reserve o registro de Pregador Secular para conclusões de seção ou frases de impacto isoladas.
 
 ---
 
@@ -177,13 +177,13 @@ Os textos não buscam transmissão linear de informação. Procuram provocar reo
 
 ### Técnicas Observáveis
 
-**Frases de abertura agressivas**: "O curativo protege, mas não cura." / "Esse é um texto agressivo demais para o leitor casual."
+Frases de abertura agressivas: "O curativo protege, mas não cura." / "Esse é um texto agressivo demais para o leitor casual."
 
-**Sentenças-gatilho**: Frases curtas isoladas que funcionam como detonadores conceituais. "O diagnóstico é perfeito. Até que se dissequem as entranhas." / "Direto, intenso e cruel. Belíssimo. Único."
+Sentenças-gatilho: Frases curtas isoladas que funcionam como detonadores conceituais. "O diagnóstico é perfeito. Até que se dissequem as entranhas." / "Direto, intenso e cruel. Belíssimo. Único."
 
-**Fechamentos circulares**: O texto retorna à metáfora de abertura no parágrafo final, criando uma estrutura de espelho. "Afinal, cada recomeço eterno do Sísifo regulatório é apenas mais uma camada de curativo iatrogênico que anestesia a sociedade."
+Fechamentos circulares: O texto retorna à metáfora de abertura no parágrafo final, criando uma estrutura de espelho. "Afinal, cada recomeço eterno do Sísifo regulatório é apenas mais uma camada de curativo iatrogênico que anestesia a sociedade."
 
-**Interpelação do leitor**: Momentos em que o autor confronta diretamente o leitor, quebrando a distância narrativa. "Sentiu um pouco de enjôo e de tontura?" / "Se prosseguir, que faça a terceira releitura sentado."
+Interpelação do leitor: Momentos em que o autor confronta diretamente o leitor, quebrando a distância narrativa. "Sentiu um pouco de enjôo e de tontura?" / "Se prosseguir, que faça a terceira releitura sentado."
 
 ---
 
@@ -191,16 +191,11 @@ Os textos não buscam transmissão linear de informação. Procuram provocar reo
 
 ### Diretriz
 
-O texto frequentemente inicia em tom quase científico — apoiando-se em biologia evolutiva, economia institucional, teoria dos jogos ou ciência cognitiva — e, sem sinalização explícita, passa a conclusões filosóficas, ontológicas ou políticas mais amplas. Essa oscilação é uma característica deliberada da voz autoral, mas deve incluir sinalizadores epistêmicos para que o leitor distingua entre:
-
-- **Evidência consolidada**: Dados empíricos, estatísticas verificáveis, resultados experimentais publicados.
-- **Inferência plausível**: Deduções lógicas a partir de premissas bem sustentadas, mas sem confirmação empírica direta.
-- **Hipótese original**: Proposições conceituais do próprio autor, apresentadas como contribuições intelectuais e não como fatos estabelecidos.
+O texto frequentemente inicia em tom quase científico — apoiando-se em biologia evolutiva, economia institucional, teoria dos jogos ou ciência cognitiva — e, sem sinalização explícita, passa a conclusões filosóficas, ontológicas ou políticas mais amplas. Essa oscilação é uma característica deliberada da voz autoral, mas deve incluir sinalizadores epistêmicos para que o leitor distingua entre evidência consolidada, inferência plausível e hipótese original.
 
 ### Sinalizadores Recomendados
 
 Não usar disclaimers explícitos ("esta é apenas uma hipótese"), que quebram o ritmo da prosa. Usar verbos e construções que impliquem o grau epistêmico:
-
 - Evidência: "demonstrou", "documentou", "publicou", "verificou"
 - Inferência: "revela-se", "permite inferir", "indica que", "sugere que"
 - Hipótese: "pode-se entender como", "a interpretação mais fértil", "a dinâmica se assemelha a"
@@ -211,28 +206,16 @@ Não usar disclaimers explícitos ("esta é apenas uma hipótese"), que quebram 
 
 ### Quando Criar
 
-**Sempre.** Cada texto novo exige seus próprios conceitos. A criação de conceitos originais é obrigatória sempre que o texto identificar ou introduzir um mecanismo sem termo existente satisfatório. Nunca transplante termos de outros ensaios do autor.
-
-Condições de ativação:
-1. Um mecanismo no texto não possui termo existente que o condense adequadamente.
-2. O conceito aspira a universalidade (não é específico de um caso particular).
-3. A nomenclatura latina confere gravitas e identidade ao conceito sem redundância.
+Sempre. Cada texto novo exige seus próprios conceitos. A criação de conceitos originais é obrigatória sempre que o texto identificar ou introduzir um mecanismo sem termo existente satisfatório. Nunca transplante termos de outros ensaios do autor.
 
 ### Como Criar
 
-1. **Identificação**: Descreva o mecanismo em uma frase funcional em português.
-2. **Compressão**: Reduza a frase a dois ou três termos latinos que capturem a essência.
-3. **Declinação**: Verifique a declinação latina correta (nominativo para substantivos independentes, genitivo para relações de posse, ablativo para instrumentais).
-4. **Teste de Indispensabilidade**: O conceito sobrevive à remoção? Se a remoção do termo latino não empobrece o argumento, o conceito é ornamental.
-5. **Primeira Ocorrência**: Apresente em negrito com tradução — ex.: **[Novo Conceito Latino]** (Tradução Portuguesa).
-6. **Ocorrências Seguintes**: Use sem tradução, como conceito já estabelecido.
-
-### Padrões Observados no Corpus
-
-- Substantivo + Adjetivo: *Singularitas Pulchra*, *Pulchritudo Fatalis*
-- Substantivo + Genitivo: *Esuries Animae*, *Certamen Animae*, *Vorago Nullitatis*
-- Substantivo simples: *Sumptus*, *Conatus*
-- Verbo/frase: *Conscientia ex nihilo sensum creat*
+Primeiro, descreva o mecanismo em uma frase funcional em português.
+Segundo, reduza a frase a dois ou três termos latinos que capturem a essência.
+Terceiro, verifique a declinação latina correta.
+Quarto, execute o teste de indispensabilidade. Se a remoção do termo latino não empobrece o argumento, o conceito é ornamental.
+Quinto, na primeira ocorrência, apresente em negrito com tradução.
+Sexto, nas ocorrências seguintes, use sem tradução, como conceito já established.
 
 ---
 
@@ -240,76 +223,47 @@ Condições de ativação:
 
 ### Regra de Transição
 
-A mudança de registro deve ocorrer em um ponto natural da cadeia argumentativa. Os momentos mais frequentes de transição são:
-
-1. **Cientista → Filósofo**: Quando os dados empíricos levam a uma conclusão sobre a natureza da realidade.
-2. **Filósofo → Poeta**: Quando a análise lógica atinge um limite existencial que só a imagem pode expressar.
-3. **Poeta → Pregador**: Quando a imagem poética exige uma interpelação direta ao leitor.
-4. **Pregador → Cientista**: Quando a exortação precisa ser re-ancorada em evidência.
-
-### Técnicas de Transição
-
-- **Frase-ponte curta**: Uma sentença isolada de transição, geralmente com ritmo cadenciado e sem verbos auxiliares. ("Direto, intenso e cruel. Belíssimo. Único.")
-- **Retorno à metáfora**: Reintroduzir a metáfora estruturante como âncora de reconexão entre registros.
-- **Pergunta retórica**: Particularmente eficaz na transição Filósofo → Pregador. ("Sentiu um pouco de enjôo e de tontura?")
-- **Conector causal implícito**: O novo registro inicia com uma consequência lógica do anterior, sem conector explícito.
+A mudança de registro deve ocorrer em um ponto natural da cadeia argumentativa. Os momentos mais frequentes de transição são quando cientista passa para filósofo, filósofo para poeta, poeta para pregador ou pregador para cientista.
 
 ### Frequência
 
-- Nunca mais de três parágrafos consecutivos no mesmo registro.
-- Um ensaio de 2.000 palavras deve conter no mínimo 4-5 transições de registro.
+Nunca mais de três parágrafos consecutivos no mesmo registro. Um ensaio de 2.000 palavras deve conter no mínimo 4-5 transições de registro.
 
 ---
 
 ## 11. Checklist de Cautela Metodológica
 
-Antes de finalizar qualquer texto, o redator deve verificar internamente (sem apresentar o resultado ao leitor):
-
-1. Cada afirmação empírica possui fonte verificável ou âncora factual?
-2. As transições de "dado empírico" para "conclusão filosófica" estão sinalizadas por verbos de grau epistêmico adequado?
-3. Conceitos originais do autor são apresentados como contribuições intelectuais, não como fatos estabelecidos?
-4. O texto distingue entre hipóteses interpretativas e proposições ontológicas?
-5. As metáforas estruturantes sustentam o argumento sem substituí-lo?
+Antes de finalizar qualquer texto, o redator deve verificar internamente se cada afirmação empírica possui fonte verificável, se as transições para conclusões filosóficas estão sinalizadas epistemicamente, se conceitos originais são apresentados como contribuições intelectuais e se as metáforas estruturantes sustentam o argumento sem substituí-lo.
 
 ---
 
 ## 12. Anti-Padrões com Exemplos
 
 ### Anti-Padrão 1: Jornalismo Acessível
-
-**EVITAR**: "As cotas raciais são uma política pública que visa corrigir desigualdades históricas no acesso à educação."
-
-**PREFERIR**: "O curativo protege, mas não cura. Quando o Ministério Público Federal pretende determinar que a imunidade tributária de uma instituição de excelência a compele a modular seus programas de residência médica por critérios de cotas raciais, o efeito imediato é de um apaziguamento social sedutor."
+EVITAR: "As cotas raciais são uma política pública que visa corrigir desigualdades históricas no acesso à educação."
+PREFERIR: "O curativo protege, mas não cura. Quando o Ministério Público Federal pretende determinar que a imunidade tributária de uma instituição de excelência a compele a modular seus programas de residência médica por critérios de cotas raciais, o efeito imediato é de um apaziguamento social sedutor."
 
 ### Anti-Padrão 2: Legalismo Acadêmico
-
-**EVITAR**: "Conforme disposto no art. 5º, caput, da Constituição Federal de 1988, em consonância com a interpretação teleológica do Supremo Tribunal Federal na ADPF 186..."
-
-**PREFERIR**: "Esse silêncio eloquente colide com a interpretação ruidosa erguida pelo Supremo Tribunal Federal."
+EVITAR: "Conforme disposto no art. 5º, caput, da Constituição Federal de 1988..."
+PREFERIR: "Esse silêncio eloquente colide com a interpretação ruidosa erguida pelo Supremo Tribunal Federal."
 
 ### Anti-Padrão 3: Denúncia Moral
-
-**EVITAR**: "É absurdo e inaceitável que o governo continue implementando essas políticas injustas e discriminatórias."
-
-**PREFERIR**: "A ação do Parquet Federal exala uma tecnocracia asséptica e sedutora por fora, mas o laudo da necropsia assemelha-se ao diagnóstico de um legista neófito."
+EVITAR: "É absurdo e inaceitável que o governo continue implementando essas políticas injustas e discriminatórias."
+PREFERIR: "A ação do Parquet Federal exala uma tecnocracia asséptica e sedutora por fora, mas o laudo da necropsia assemelha-se ao diagnóstico de um legista neófito."
 
 ### Anti-Padrão 4: Erudição Ornamental
-
-**EVITAR**: Citar filósofos e latinismos para demonstrar conhecimento sem que a citação contribua estruturalmente para o argumento.
-
-**PREFERIR**: Cada referência erudita deve ser um tijolo na construção argumentativa. O latim serve à estrutura, não ao autor.
+EVITAR: Citar filósofos e latinismos para demonstrar conhecimento sem contribuição estrutural.
+PREFERIR: Cada referência erudita deve ser um tijolo na construção argumentativa.
 
 ### Anti-Padrão 5: Neutralidade Enciclopédica
-
-**EVITAR**: "Existem argumentos a favor e contra as políticas de ação afirmativa na residência médica."
-
-**PREFERIR**: O autor tem uma perspectiva. O texto é argumentativo. A "neutralidade" é substituída pela densidade factual e pela arquitetura causal que permite ao leitor avaliar por si próprio.
+EVITAR: "Existem argumentos a favor e contra as políticas de ação afirmativa..."
+PREFERIR: O autor tem uma perspectiva. O texto é argumentativo.
 
 ---
 
 ## 13. Regras de Formatação
 
-1. Prosa fluida exclusivamente. Sem bullets, listas, tabelas, LaTeX, fórmulas, diagramas ou blocos de destaque.
+1. Prosa fluida gravada diretamente em arquivos Markdown (.md) exclusivamente. Sem bullets, sem listas, sem tabelas, sem LaTeX, sem fórmulas, sem diagramas e sem blocos de destaque.
 2. **Negrito** (`**...**`): Apenas na primeira ocorrência de nomes próprios relevantes, conceitos fundamentais e termos técnicos cruciais.
 3. **Itálico** (`_..._`): Estritamente para obras culturais (livros, filmes, peças), softwares, hardwares e termos em idioma estrangeiro não aportuguesados.
 4. **Citação em bloco** (`>`): Apenas para frases de impacto indispensáveis, teses centrais ou definições que exijam atenção imediata. Uso parcimonioso.
