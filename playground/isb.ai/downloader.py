@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """YouTube downloader script using yt-dlp to extract audio as OGG or fetch structured subtitles directly."""
 
+from datetime import UTC, datetime
 import html
 import json
 import re
@@ -162,11 +163,12 @@ def fetch_and_parse_srv1(url: str, punctuation_limit: int = 5) -> str:
     xml_data = fetch_url_content(url)
     return reconstruct_srv1_paragraphs(xml_data, punctuation_limit)
 
-def extract_video_metadata(url: str, use_cookies: bool = False) -> dict:
+def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
     """Extract and return video metadata using yt-dlp."""
     ydl_opts_meta = {
         'quiet': True,
         'no_warnings': True,
+        'noprogress': True,
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
@@ -174,15 +176,23 @@ def extract_video_metadata(url: str, use_cookies: bool = False) -> dict:
         ydl_opts_meta["cookiesfrombrowser"] = ("chrome",)
     try:
         with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
-            return ydl.extract_info(url, download=False)
+            res = ydl.extract_info(url, download=False)
+            return res or {}
     except Exception as e:
         if not use_cookies:
             ydl_opts_meta["cookiesfrombrowser"] = ("chrome",)
-            with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
-                return ydl.extract_info(url, download=False)
-        raise e
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
+                    res = ydl.extract_info(url, download=False)
+                    return res or {}
+            except Exception as inner_e:
+                print(f"  Warning: Failed to fetch metadata for {url}: {inner_e}")
+                return {}
+        else:
+            print(f"  Warning: Failed to fetch metadata for {url}: {e}")
+            return {}
 
-def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies: bool = False) -> Path:
+def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies: bool = True) -> Path:
     """Download audio stream using yt-dlp and convert to OGG format for Whisper fallback."""
     ydl_opts_download = {
         'format': 'bestaudio/best',
@@ -194,6 +204,7 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
         'outtmpl': str(output_dir / '%(id)s.%(ext)s'),
         'quiet': True,
         'no_warnings': True,
+        'noprogress': True,
         'postprocessor_args': {
             'FFmpegExtractAudio': ['-loglevel', 'error'],
         },
@@ -218,6 +229,90 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
     ogg_file = output_dir / f"{video_id}.ogg"
     return ogg_file.resolve()
 
+import yt_dlp
+from helper import fetch_url_content
+
+RATE_LIMIT_LOG_FILE = Path(__file__).parent / "rate_limit_log.json"
+_GLOBAL_429_ATTEMPT = 0
+_ACCUMULATED_BLOCKED_TIME = 0.0
+
+
+def reset_429_state() -> None:
+    """Reset the accumulated 429 rate-limit attempt counter and blocked time to 0."""
+    global _GLOBAL_429_ATTEMPT, _ACCUMULATED_BLOCKED_TIME
+    _GLOBAL_429_ATTEMPT = 0
+    _ACCUMULATED_BLOCKED_TIME = 0.0
+
+
+def get_429_attempt_count() -> int:
+    """Return the current accumulated 429 rate-limit attempt count."""
+    return _GLOBAL_429_ATTEMPT
+
+
+def log_rate_limit_telemetry(
+    video_id: str,
+    streak: int,
+    delay_sec: float,
+    status: str,
+    total_blocked_sec: float,
+    log_file: Path | None = None
+) -> None:
+    """Record rate limit telemetry event to JSON log file for empirical analysis."""
+    if log_file is None:
+        log_file = RATE_LIMIT_LOG_FILE
+
+    entry = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "video_id": video_id,
+        "streak": streak,
+        "delay_seconds": round(delay_sec, 2),
+        "status": status,
+        "total_blocked_seconds": round(total_blocked_sec, 2)
+    }
+
+    data = []
+    if log_file.exists():
+        try:
+            with open(log_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            data = []
+
+    data.append(entry)
+    try:
+        with open(log_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        print(f"Warning: Failed to save rate limit telemetry: {e}")
+
+
+def get_estimated_timeout_seconds(log_file: Path | None = None) -> float | None:
+    """Calculate estimated YouTube 429 timeout duration based on historical successful recovery events."""
+    if log_file is None:
+        log_file = RATE_LIMIT_LOG_FILE
+
+    if not log_file.exists():
+        return None
+
+    try:
+        with open(log_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        recovery_times = [
+            item["total_blocked_seconds"]
+            for item in data
+            if item.get("status") == "SUCCESS" and item.get("total_blocked_seconds", 0) > 0
+        ]
+        if not recovery_times:
+            return None
+
+        recovery_times.sort()
+        mid = len(recovery_times) // 2
+        return float(recovery_times[mid])
+    except Exception:
+        return None
+
+
 def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio: bool = False, info: dict | None = None) -> tuple[str | None, str | None, str]:
     """Retrieve the transcript directly from YouTube subtitles if available (json3 paragraphs -> srv1 raw text).
     Otherwise, download the audio and convert it to OGG format for Whisper.
@@ -232,6 +327,8 @@ def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio
         A tuple of (transcript_text, ogg_file_path, video_id).
         One of transcript_text or ogg_file_path will be None.
     """
+    global _GLOBAL_429_ATTEMPT, _ACCUMULATED_BLOCKED_TIME
+
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
 
@@ -239,6 +336,13 @@ def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio
         info = extract_video_metadata(url)
     video_id = info.get("id", "unknown_video")
     title = info.get("title", "Unknown Title")
+
+    is_live_now = info.get("is_live") is True or info.get("live_status") == "is_live"
+    is_upcoming = info.get("live_status") == "is_upcoming"
+    if is_live_now or is_upcoming:
+        status_str = "ao vivo" if is_live_now else "agendada (upcoming)"
+        print(f"  ⚠️ Pulando '{title[:30]}...': Transmissão {status_str} (não finalizada).")
+        return None, None, video_id
 
     subtitles = info.get("subtitles") or {}
     auto_caps = info.get("automatic_captions") or {}
@@ -254,45 +358,72 @@ def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio
         if sub_srv1:
             candidates.append(("SRV1", sub_srv1[0], sub_srv1[1], fetch_and_parse_srv1))
 
-        max_retries = 5
-        initial_delay = 10
+        # Adaptive initial delay: start at half the estimated timeout if known, or 10s default
+        est_timeout = get_estimated_timeout_seconds()
+        if _GLOBAL_429_ATTEMPT == 0 and est_timeout and est_timeout > 20.0:
+            initial_delay = max(10.0, est_timeout / 2.0)
+        else:
+            initial_delay = 10.0
 
-        for fmt_name, lang, sub_url, parse_fn in candidates:
-            for attempt in range(max_retries):
+        max_accumulated_attempts = 5
+        attempts_for_this_video = (
+            1 if _GLOBAL_429_ATTEMPT >= max_accumulated_attempts else (max_accumulated_attempts - _GLOBAL_429_ATTEMPT)
+        )
+
+        sub_success = False
+        transcript_text = None
+
+        for _ in range(attempts_for_this_video):
+            is_429 = False
+            for fmt_name, lang, sub_url, parse_fn in candidates:
                 try:
                     transcript = parse_fn(sub_url)
                     if transcript and transcript.strip():
-                        return transcript, None, video_id
-                    else:
-                        print(f"Warning: Parsed {fmt_name} text was empty.")
+                        sub_success = True
+                        transcript_text = transcript
                         break
                 except Exception as e:
-                    is_429 = False
-                    if isinstance(e, urllib.error.HTTPError) and e.code == 429:
+                    if (isinstance(e, urllib.error.HTTPError) and e.code == 429) or ("429" in str(e) or "Too Many Requests" in str(e)):
                         is_429 = True
-                    elif "429" in str(e) or "Too Many Requests" in str(e):
-                        is_429 = True
-
-                    if is_429:
-                        delay = initial_delay * (2 ** attempt)
-                        print(
-                            f"  ⚠️ Rate limit (HTTP 429) hit fetching {fmt_name} subtitles for '{title[:30]}...'. "
-                            f"Waiting {delay}s for reset (attempt {attempt + 1}/{max_retries})..."
-                        )
-                        time.sleep(delay)
-                        continue
+                        break
                     else:
                         print(f"Warning: Failed to parse {fmt_name} subtitles ({e}).")
-                        break
 
-        raise urllib.error.HTTPError(
-            url, 429,
-            f"HTTP 429 Rate Limit persisted for video '{title}' which has native subtitles. Skipped Whisper fallback as requested.",
-            {}, None
-        )
+            if sub_success:
+                # ACCESS PERMITTED: Log telemetry and reset global state!
+                log_rate_limit_telemetry(
+                    video_id=video_id,
+                    streak=_GLOBAL_429_ATTEMPT,
+                    delay_sec=0.0,
+                    status="SUCCESS",
+                    total_blocked_sec=_ACCUMULATED_BLOCKED_TIME
+                )
+                reset_429_state()
+                return transcript_text, None, video_id
 
-    # Tier 3: Download audio and convert to OGG for Whisper (ONLY when no subtitles exist in metadata)
-    print(f"No native subtitles exist in metadata for '{title[:30]}...'. Downloading audio stream (Whisper fallback)...")
+            if is_429:
+                delay = initial_delay * (2 ** min(_GLOBAL_429_ATTEMPT, 5))
+                _ACCUMULATED_BLOCKED_TIME += delay
+                log_rate_limit_telemetry(
+                    video_id=video_id,
+                    streak=_GLOBAL_429_ATTEMPT + 1,
+                    delay_sec=delay,
+                    status="RATE_LIMITED_429",
+                    total_blocked_sec=_ACCUMULATED_BLOCKED_TIME
+                )
+                print(
+                    f"  ⚠️ Rate limit (HTTP 429) hit fetching subtitles for '{title[:30]}...'. "
+                    f"Waiting {delay:.1f}s for reset (global 429 streak: {_GLOBAL_429_ATTEMPT + 1}, total blocked time: {_ACCUMULATED_BLOCKED_TIME:.1f}s)..."
+                )
+                time.sleep(delay)
+                _GLOBAL_429_ATTEMPT += 1
+            else:
+                break
+
+        print(f"  ⚠️ Subtitle rate-limit persisted for '{title[:30]}...'. Falling back to Whisper audio processing...")
+
+    # Tier 3: Download audio and convert to OGG for Whisper
+    print(f"Downloading audio stream (Whisper fallback) for '{title[:30]}...'...")
     try:
         ogg_file = download_audio_as_ogg(url, out_path, video_id)
         print(f"Successfully downloaded and processed '{title}' as: {ogg_file}")
