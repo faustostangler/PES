@@ -34,12 +34,36 @@ def format_date_for_path(upload_date_str: str) -> str:
     except Exception:
         return "unknown_date"
 
-def fetch_url_content(url: str, headers: dict | None = None) -> str:
-    """Fetch content of a URL as string with a user-agent header to avoid blocks."""
+_COOKIE_JAR = None
+
+
+def _get_chrome_cookies():
+    global _COOKIE_JAR
+    if _COOKIE_JAR is None:
+        try:
+            from yt_dlp.cookies import extract_cookies_from_browser
+            _COOKIE_JAR = extract_cookies_from_browser("chrome")
+        except Exception:
+            _COOKIE_JAR = False
+    return _COOKIE_JAR if _COOKIE_JAR is not False else None
+
+
+def fetch_url_content(url: str, headers: dict | None = None, use_cookies: bool = True) -> str:
+    """Fetch content of a URL as string with a user-agent header and Chrome cookies to avoid 429 blocks."""
     if headers is None:
-        headers = {'User-Agent': 'Mozilla/5.0'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
     req = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(req, timeout=10) as response:
+
+    handlers = []
+    if use_cookies:
+        cj = _get_chrome_cookies()
+        if cj:
+            handlers.append(urllib.request.HTTPCookieProcessor(cj))
+
+    opener = urllib.request.build_opener(*handlers)
+    with opener.open(req, timeout=10) as response:
         return response.read().decode('utf-8')
 
 def get_full_upload_date(info: dict) -> str:

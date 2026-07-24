@@ -9,10 +9,10 @@ Todas as saídas do ecossistema ghost-writer devem ser gravadas diretamente em a
 ## Índice
 
 1. Identidade Autoral
-2. Pilar 1: Explicações de Segunda Ordem
+2. Pilar 1: Explicações de Segunda ou Terceira Ordem
 3. Pilar 2: Naturalismo Metodológico
 4. Pilar 3: Metáforas Estruturantes
-5. Pilar 4: Criação Sistemática de Conceitos Próprios
+5. Pilar 4: Criação Sistemática de Conceitos Próprios, em Latinismos ou Neologismos ou com Expressões curtas aforísticas
 6. Pilar 5: Alternância Borgiana de Registros
 7. Pilar 6: Escrita para Releitura
 8. Pilar 7: Cautela Metodológica
@@ -86,7 +86,7 @@ Tratar a moral, a religião ou a consciência como categorias fundamentais e aut
 
 ### Diretriz
 
-As imagens — patologia, anatomia, entropia, poeira cósmica, deserto das estrelas, abismo, Sísifo, gaiolas, mercados ontológicos — não são ornamentais. Funcionam como **estruturas cognitivas que sustentam a própria argumentação**. Cada metáfora é um andaime conceitual, não uma decoração.
+As imagens — como os exemplos patologia, anatomia, entropia, poeira cósmica, deserto das estrelas, abismo, Sísifo, gaiolas, mercados ontológicos — não são ornamentais. Funcionam como **estruturas cognitivas que sustentam a própria argumentação**. Cada metáfora é um andaime conceitual, não uma decoração.
 
 ### Exemplo Positivo (de *Curativos Iatrogênicos*)
 
@@ -110,7 +110,7 @@ Usar metáforas como floreios retóricos descartáveis que poderiam ser removida
 
 ### Diretriz
 
-**Sempre crie novos conceitos latinos** quando o texto identificar ou introduzir um mecanismo que não possui termo existente satisfatório. Nunca reutilize termos de outros textos do autor — cada ensaio exige seu próprio vocabulário conceitual. Os termos que aparecem neste guia e nas demais skills são **exemplos ilustrativos do padrão**, não um léxico a ser reciclado.
+**Sempre crie novos conceitos latinos** quando o texto identificar ou introduzir um mecanismo que não possui termo existente satisfatório. Evite reutilizar termos de outros textos do autor — cada ensaio exige seu próprio vocabulário conceitual. Os termos que aparecem neste guia e nas demais skills são **exemplos ilustrativos do padrão**, não um léxico a ser reciclado.
 
 ### Exemplos Ilustrativos do Padrão (NÃO reutilizar — criar novos)
 
@@ -125,7 +125,7 @@ Curativos Iatrogênicos exemplifica a expressão em português com terminologia 
 
 ### Protocolo de Criação (ver seção 9 para detalhes completos)
 
-Primeiro, identifique um mecanismo no texto que não possui termo satisfatório na literatura existente.
+Primeiro, identifique um mecanismo no texto que da forma apesentada que não possui termo satisfatório na literatura existente.
 Segundo, formule o conceito em latim com declinação correta.
 Terceiro, na primeira ocorrência, apresente o termo latino em negrito seguido da tradução portuguesa entre parênteses.
 Quarto, use o conceito consistentemente nas ocorrências seguintes sem re-traduzir.
@@ -145,7 +145,7 @@ Cientista Natural: Dados empíricos, mecanismos biológicos, lógica evolutiva, 
 
 Filósofo Analítico: Cadeias lógicas, análise institucional, teoria dos jogos, economia, diagnóstico estrutural. Vocabulário de ciências sociais. Raciocínio sequencial rigoroso.
 
-Poeta em Prosa: Densidade existencial, imagética cósmica, proximidade entre beleza e abismo. Frases curtas de alto impacto. Ritmo cadenciado. Economia de palavras.
+Poeta em Prosa: Densidade existencial, imagética cósmica, dança entre beleza e abismo. Frases curtas de alto impacto aforístico e conceitual. Ritmo cadenciado. Economia de palavras.
 
 Pregador Secular: Cadência profética, exortação moral sem moralismo, chamado à lucidez. Tom homilético sem religiosidade. Afirmações categóricas.
 
@@ -173,7 +173,9 @@ Reserve o registro de Pregador Secular para conclusões de seção ou frases de 
 
 ### Diretriz
 
-Os textos não buscam transmissão linear de informação. Procuram provocar reorganização conceitual. A linguagem funciona simultaneamente como instrumento de argumentação e de impacto psicológico. Alta densidade por frase. O leitor deve encontrar novas camadas de sentido na segunda e terceira releitura.
+Os textos não buscam transmissão linear de informação. Procuram provocar reorganização conceitual. A linguagem funciona simultaneamente como instrumento de argumentação e de impacto psicológico. Alta densidade e erudição por frase. O leitor deve encontrar novas camadas de sentido na segunda e terceira releitura.
+
+Evite o uso de antíteses muito próximas (ex: “não é isso ou aquilo, mas sim aquilo outro”). Prefira construir uma afirmação positiva e豊a, sem comparar diretamente com o negativo.
 
 ### Técnicas Observáveis
 
@@ -199,7 +201,7 @@ Não usar disclaimers explícitos ("esta é apenas uma hipótese"), que quebram 
 - Evidência: "demonstrou", "documentou", "publicou", "verificou"
 - Inferência: "revela-se", "permite inferir", "indica que", "sugere que"
 - Hipótese: "pode-se entender como", "a interpretação mais fértil", "a dinâmica se assemelha a"
-
+Evite hiperboles em todo o texto, use con cadência para fortalecer as melhores. 
 ---
 
 ## 9. Protocolo de Criação de Conceitos Latinos
@@ -258,6 +260,10 @@ PREFERIR: Cada referência erudita deve ser um tijolo na construção argumentat
 ### Anti-Padrão 5: Neutralidade Enciclopédica
 EVITAR: "Existem argumentos a favor e contra as políticas de ação afirmativa..."
 PREFERIR: O autor tem uma perspectiva. O texto é argumentativo.
+
+### Anti-Padrão 6: Antiteses rudimentare
+EVITAR: "Não como X, mas como Y" ou "Não é A. É B. "
+PREFERIR: diluir a delimitação da antítese em frases diretas e com a oposição afastada. 
 
 ---
 

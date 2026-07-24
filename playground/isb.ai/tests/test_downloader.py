@@ -94,6 +94,13 @@ def test_download_audio_as_ogg_fallback_to_cookies(mock_ytdl_class):
     assert result == Path("/tmp/test_id.ogg").resolve()
     assert mock_ytdl_class.call_count == 2
     
+    # Assert first attempt used quiet=True and loglevel options
+    first_opts = mock_ytdl_class.call_args_list[0][0][0]
+    assert first_opts["quiet"] is True
+    assert first_opts["no_warnings"] is True
+    assert first_opts["postprocessor_args"]["FFmpegExtractAudio"] == ["-loglevel", "error"]
+    assert first_opts["external_downloader_args"]["ffmpeg"] == ["-loglevel", "error"]
+
     # Assert second attempt used cookies
     second_opts = mock_ytdl_class.call_args_list[1][0][0]
     assert second_opts["cookiesfrombrowser"] == ("chrome",)

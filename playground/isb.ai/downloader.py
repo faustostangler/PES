@@ -190,8 +190,14 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
             'preferredquality': '192',
         }],
         'outtmpl': str(output_dir / '%(id)s.%(ext)s'),
-        'quiet': False,
-        'no_warnings': False,
+        'quiet': True,
+        'no_warnings': True,
+        'postprocessor_args': {
+            'FFmpegExtractAudio': ['-loglevel', 'error'],
+        },
+        'external_downloader_args': {
+            'ffmpeg': ['-loglevel', 'error'],
+        },
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
