@@ -5,6 +5,8 @@ import html
 import json
 import re
 import sys
+import time
+import urllib.error
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -234,45 +236,63 @@ def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio
     out_path.mkdir(parents=True, exist_ok=True)
 
     if not info:
-        # print(f"Extracting metadata for: {url}")
         info = extract_video_metadata(url)
     video_id = info.get("id", "unknown_video")
     title = info.get("title", "Unknown Title")
 
-    # Try to get subtitles if not forced to download audio
-    if not force_audio:
-        # Tier 1: Try JSON3 for paragraphs
+    subtitles = info.get("subtitles") or {}
+    auto_caps = info.get("automatic_captions") or {}
+    has_subtitles = bool(subtitles or auto_caps)
+
+    if not force_audio and has_subtitles:
         sub_json3 = find_subtitle_url(info, "json3")
-        if sub_json3:
-            lang, sub_url = sub_json3
-            # print(f"JSON3 subtitles found ({lang}). Reconstructing paragraphs...")
-            try:
-                transcript = parse_json3_to_paragraphs(sub_url)
-                if transcript.strip():
-                    # print(f"Successfully processed JSON3 paragraphs for '{title}'")
-                    return transcript, None, video_id
-                else:
-                    print("Warning: Parsed JSON3 text was empty. Trying Tier 2 fallback.")
-            except Exception as e:
-                print(f"Warning: Failed to parse JSON3 subtitles ({e}). Trying Tier 2 fallback.")
-
-        # Tier 2: Try SRV1 for raw text
         sub_srv1 = find_subtitle_url(info, "srv1")
-        if sub_srv1:
-            lang, sub_url = sub_srv1
-            print(f"SRV1 subtitles found ({lang}). Extracting raw text...")
-            try:
-                transcript = fetch_and_parse_srv1(sub_url)
-                if transcript.strip():
-                    print(f"Successfully processed SRV1 text for '{title}'")
-                    return transcript, None, video_id
-                else:
-                    print("Warning: Parsed SRV1 text was empty. Trying Tier 3 fallback.")
-            except Exception as e:
-                print(f"Warning: Failed to parse SRV1 subtitles ({e}). Trying Tier 3 fallback.")
 
-    # Tier 3: Download audio and convert to OGG for Whisper
-    print("No subtitles or captions could be retrieved. Downloading audio stream (Whisper fallback)...")
+        candidates = []
+        if sub_json3:
+            candidates.append(("JSON3", sub_json3[0], sub_json3[1], parse_json3_to_paragraphs))
+        if sub_srv1:
+            candidates.append(("SRV1", sub_srv1[0], sub_srv1[1], fetch_and_parse_srv1))
+
+        max_retries = 5
+        initial_delay = 10
+
+        for fmt_name, lang, sub_url, parse_fn in candidates:
+            for attempt in range(max_retries):
+                try:
+                    transcript = parse_fn(sub_url)
+                    if transcript and transcript.strip():
+                        return transcript, None, video_id
+                    else:
+                        print(f"Warning: Parsed {fmt_name} text was empty.")
+                        break
+                except Exception as e:
+                    is_429 = False
+                    if isinstance(e, urllib.error.HTTPError) and e.code == 429:
+                        is_429 = True
+                    elif "429" in str(e) or "Too Many Requests" in str(e):
+                        is_429 = True
+
+                    if is_429:
+                        delay = initial_delay * (2 ** attempt)
+                        print(
+                            f"  ⚠️ Rate limit (HTTP 429) hit fetching {fmt_name} subtitles for '{title[:30]}...'. "
+                            f"Waiting {delay}s for reset (attempt {attempt + 1}/{max_retries})..."
+                        )
+                        time.sleep(delay)
+                        continue
+                    else:
+                        print(f"Warning: Failed to parse {fmt_name} subtitles ({e}).")
+                        break
+
+        raise urllib.error.HTTPError(
+            url, 429,
+            f"HTTP 429 Rate Limit persisted for video '{title}' which has native subtitles. Skipped Whisper fallback as requested.",
+            {}, None
+        )
+
+    # Tier 3: Download audio and convert to OGG for Whisper (ONLY when no subtitles exist in metadata)
+    print(f"No native subtitles exist in metadata for '{title[:30]}...'. Downloading audio stream (Whisper fallback)...")
     try:
         ogg_file = download_audio_as_ogg(url, out_path, video_id)
         print(f"Successfully downloaded and processed '{title}' as: {ogg_file}")

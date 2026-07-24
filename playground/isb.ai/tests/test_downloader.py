@@ -130,3 +130,72 @@ def test_fetch_channel_recent_videos_fallback_to_cookies(mock_ytdl_class):
     # Assert second attempt used cookies
     second_opts = mock_ytdl_class.call_args_list[1][0][0]
     assert second_opts["cookiesfrombrowser"] == ("chrome",)
+
+
+@patch("downloader.time.sleep")
+@patch("downloader.parse_json3_to_paragraphs")
+def test_get_youtube_audio_or_transcript_retries_on_429_when_subtitles_exist(mock_parse_json3, mock_sleep):
+    """Should retry fetching subtitles with sleep when HTTP 429 occurs on existing subtitles."""
+    import urllib.error
+    # Simulates 429 on first 2 calls, then success on 3rd call
+    mock_parse_json3.side_effect = [
+        urllib.error.HTTPError("http://test", 429, "Too Many Requests", {}, None),
+        urllib.error.HTTPError("http://test", 429, "Too Many Requests", {}, None),
+        "Subtitles retrieved successfully after waiting"
+    ]
+
+    info = {
+        "id": "test_vid",
+        "title": "Test Title",
+        "subtitles": {"en": [{"ext": "json3", "url": "http://test_url"}]}
+    }
+
+    txt, ogg, vid = downloader.get_youtube_audio_or_transcript("http://youtube.com/watch?v=test_vid", info=info)
+
+    assert txt == "Subtitles retrieved successfully after waiting"
+    assert ogg is None
+    assert vid == "test_vid"
+    assert mock_parse_json3.call_count == 3
+    assert mock_sleep.call_count == 2
+
+
+@patch("downloader.download_audio_as_ogg")
+@patch("downloader.parse_json3_to_paragraphs")
+@patch("downloader.time.sleep")
+def test_get_youtube_audio_or_transcript_raises_and_skips_whisper_if_subtitles_exist_and_429_persists(mock_sleep, mock_parse_json3, mock_download_ogg):
+    """Should raise error and NOT call download_audio_as_ogg if video has subtitles but 429 persists."""
+    import urllib.error
+    mock_parse_json3.side_effect = urllib.error.HTTPError("http://test", 429, "Too Many Requests", {}, None)
+
+    info = {
+        "id": "test_vid",
+        "title": "Test Title",
+        "subtitles": {"en": [{"ext": "json3", "url": "http://test_url"}]}
+    }
+
+    with pytest.raises(Exception, match="429"):
+        downloader.get_youtube_audio_or_transcript("http://youtube.com/watch?v=test_vid", info=info)
+
+    # download_audio_as_ogg (Whisper) must NOT have been called!
+    mock_download_ogg.assert_not_called()
+
+
+@patch("downloader.download_audio_as_ogg")
+def test_get_youtube_audio_or_transcript_uses_whisper_only_when_no_subtitles_exist(mock_download_ogg):
+    """Should fallback to Whisper (download_audio_as_ogg) ONLY when video has no subtitles in metadata."""
+    mock_download_ogg.return_value = Path("/tmp/test_vid.ogg")
+
+    info = {
+        "id": "test_vid",
+        "title": "Test Title",
+        "subtitles": {},
+        "automatic_captions": {}
+    }
+
+    txt, ogg, vid = downloader.get_youtube_audio_or_transcript("http://youtube.com/watch?v=test_vid", info=info)
+
+    assert txt is None
+    assert ogg == "/tmp/test_vid.ogg"
+    assert vid == "test_vid"
+    mock_download_ogg.assert_called_once()
+
