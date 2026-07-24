@@ -64,7 +64,7 @@ def record_synced_video(log_path: Path, channel_id: str, video_id: str, upload_d
     except Exception as e:
         print(f"Error saving to Markdown log: {e}")
 
-def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: bool = False) -> list[dict]:
+def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: bool = True) -> list[dict]:
     """Query recent videos from a channel using its uploads playlist ID."""
     if not channel_id.startswith("UC"):
         print(f"Warning: Channel ID '{channel_id}' does not match standard UC prefix. Fetching videos page directly.")
@@ -79,6 +79,7 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: b
     ydl_opts = {
         "quiet": True,
         "no_warnings": True,
+        "noprogress": True,
         "playlistend": limit,
         "extract_flat": True,
         "extractor_args": {"youtubetab": {"approximate_date": [""]}},
@@ -110,21 +111,15 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: b
     return []
 
 def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: bool, info: dict | None = None) -> dict:
-    """Process a single video using the 3-tier fallback model (JSON3 -> SRV1 -> Whisper OGG).
-
-    Returns a dict containing:
-        - text: the transcript text
-        - title: the video title
-        - video_id: the video ID
-        - upload_date: the upload date (ISO or YYYYMMDD)
-        - channel: the channel name
-        - channel_id: the channel ID
-    """
+    """Process a single video using the 3-tier fallback model (JSON3 -> SRV1 -> Whisper OGG)."""
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Fetch metadata first
     if not info:
         info = extract_video_metadata(url)
+    if not info or not info.get("id"):
+        print(f"  Warning: Skipping video {url} due to unresolvable metadata/bot protection.")
+        return {}
     video_id = info.get("id", "unknown_video")
 
     # 2. Extract and sanitize path components
@@ -229,6 +224,8 @@ def process_and_compile_video(
 ) -> dict:
     """Download, transcribe, log, and compile a YouTube video to Obsidian."""
     res = sync_single_video(url, output_dir, model_name, keep_audio, info=info)
+    if not res or "video_id" not in res:
+        return {}
     actual_channel_id = channel_id or res["channel_id"]
 
     # Record to ingestion log
@@ -290,6 +287,9 @@ def sync_channels_and_seeds(
             continue
         if video_id in synced_ids:
             continue
+        if info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming"):
+            print(f"Skipping seed video {video_id}: live stream in progress or upcoming.")
+            continue
         try:
             process_and_compile_video(
                 url=url,
@@ -320,6 +320,10 @@ def sync_channels_and_seeds(
             if entry_id in synced_ids:
                 continue
 
+            # Skip live streams in progress and upcoming videos early
+            if entry.get("is_live") or entry.get("live_status") in ("is_live", "is_upcoming"):
+                continue
+
             entry_url = entry.get("url")
             entry_date = get_full_upload_date(entry)
             
@@ -331,6 +335,9 @@ def sync_channels_and_seeds(
                 except Exception as e:
                     print(f"  Warning: Failed to fetch metadata to resolve date for {entry_id}: {e}")
                     continue
+
+            if info and (info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming")):
+                continue
 
             if not is_within_range(entry_date, days):
                 continue
