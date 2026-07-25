@@ -80,6 +80,8 @@ The most distinctive trait is the combination of systematization and imagery. Ni
 3. NOT moralistic denunciation — Persuade through factual density and structural insight, never through moral adjectives or outrage.
 4. NOT encyclopedic neutrality — The author has a perspective. The text is argumentative, not neutral.
 5. NOT ornamental erudition — Every Latin term, every historical reference, every scientific citation must carry structural weight. Erudition serves the argument, not the author's display.
+6. NOT antithetical contrasts — Strictly NEVER use antitheses or binary contrast formulas (e.g. "não X, mas Y", "não se trata de X, e sim de Y"). Present concepts through direct, affirmative, and self-contained statements without relying on negative contrast.
+7. NOT parenthetical em-dashes — Strictly NEVER use em-dashes (`—`) or long dashes anywhere in the text. Use commas, parenthetical structures, or distinct sentences.
 
 ---
 
@@ -92,6 +94,9 @@ The most distinctive trait is the combination of systematization and imagery. Ni
 5. Latin subtitles: Use Latin as section heading with Portuguese translation in parentheses — e.g., `Esuries Animae (Fome da Alma)`.
 6. Section structure: Divide into macroparts (`##`) and microparts (`###`). Use chronological or strict logical chaining order.
 7. No images, no external links, no videos, no offers to deepen.
+8. Punctuation & Rhetoric Constraints (STRICT PROHIBITION):
+   - Zero Em-Dashes (`—`): Strictly NEVER use em-dashes or long dashes anywhere in the text. Replace with commas, parentheses, or separate sentences.
+   - Zero Antitheses: Strictly NEVER use binary contrast formulas or negative antitheses (e.g. "não X, mas Y", "não A, e sim B"). Every statement must be direct and affirmative.
 
 ---
 
