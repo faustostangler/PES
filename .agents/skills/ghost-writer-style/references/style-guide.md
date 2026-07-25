@@ -175,7 +175,7 @@ Reserve o registro de Pregador Secular para conclusões de seção ou frases de 
 
 Os textos não buscam transmissão linear de informação. Procuram provocar reorganização conceitual. A linguagem funciona simultaneamente como instrumento de argumentação e de impacto psicológico. Alta densidade e erudição por frase. O leitor deve encontrar novas camadas de sentido na segunda e terceira releitura.
 
-Evite o uso de antíteses muito próximas (ex: “não é isso ou aquilo, mas sim aquilo outro”). Prefira construir uma afirmação positiva e豊a, sem comparar diretamente com o negativo.
+PROIBIÇÃO ABSOLUTA DE ANTÍTESES E TRAVESÕES: É estritamente proibido o uso de antíteses ou fórmulas de contraponto binário (ex.: "não X, mas Y", "não se trata de A, e sim de B"). Construa declarações estritamente afirmativas, autônomas e diretas. Da mesma forma, é estritamente proibido o uso de travesões (`—`) no texto; utilize vírgulas, parênteses ou subdivida o raciocínio em frases independentes.
 
 ### Técnicas Observáveis
 
@@ -201,7 +201,8 @@ Não usar disclaimers explícitos ("esta é apenas uma hipótese"), que quebram 
 - Evidência: "demonstrou", "documentou", "publicou", "verificou"
 - Inferência: "revela-se", "permite inferir", "indica que", "sugere que"
 - Hipótese: "pode-se entender como", "a interpretação mais fértil", "a dinâmica se assemelha a"
-Evite hiperboles em todo o texto, use con cadência para fortalecer as melhores. 
+Evite hipérboles em todo o texto; use com cadência para fortalecer as melhores.
+
 ---
 
 ## 9. Protocolo de Criação de Conceitos Latinos
@@ -217,7 +218,7 @@ Segundo, reduza a frase a dois ou três termos latinos que capturem a essência.
 Terceiro, verifique a declinação latina correta.
 Quarto, execute o teste de indispensabilidade. Se a remoção do termo latino não empobrece o argumento, o conceito é ornamental.
 Quinto, na primeira ocorrência, apresente em negrito com tradução.
-Sexto, nas ocorrências seguintes, use sem tradução, como conceito já established.
+Sexto, nas ocorrências seguintes, use sem tradução, como conceito já estabelecido.
 
 ---
 
@@ -261,9 +262,13 @@ PREFERIR: Cada referência erudita deve ser um tijolo na construção argumentat
 EVITAR: "Existem argumentos a favor e contra as políticas de ação afirmativa..."
 PREFERIR: O autor tem uma perspectiva. O texto é argumentativo.
 
-### Anti-Padrão 6: Antiteses rudimentare
-EVITAR: "Não como X, mas como Y" ou "Não é A. É B. "
-PREFERIR: diluir a delimitação da antítese em frases diretas e com a oposição afastada. 
+### Anti-Padrão 6: Uso de Antíteses (PROIBIDO)
+EVITAR: "Não como X, mas como Y", "Não é A, é B", "Não se trata de X, e sim de Y".
+PREFERIR: Eliminar integralmente a fórmula de oposição negativa. Afirmar a tese de forma direta, afirmativa e autônoma: "A emergência de Y reflete a dinâmica biológica de A."
+
+### Anti-Padrão 7: Uso de Travesões (PROIBIDO)
+EVITAR: "A neotenia prolongada — a preservação de caracteres juvenis — opera como o catalisador..."
+PREFERIR: Substituir o travesão por vírgulas, parênteses ou frases independentes: "A neotenia prolongada, caracterizada pela preservação de traços juvenis, opera como o catalisador..."
 
 ---
 
@@ -276,3 +281,6 @@ PREFERIR: diluir a delimitação da antítese em frases diretas e com a oposiç�
 5. **Subtítulos latinos**: Usar latim como título de seção com tradução portuguesa entre parênteses — ex.: `Esuries Animae (Fome da Alma)`.
 6. **Estrutura**: Macropartes (`##`) e micropartes (`###`). Ordem cronológica linear ou encadeamento lógico estrito.
 7. Sem imagens, links externos, vídeos ou ofertas de aprofundamento.
+8. **Travesões e Antíteses (PROIBIÇÃO RIGOROSA)**:
+   - **Zero Travesões**: É proibido o uso do caractere de travesão (`—`) ou hífen duplo/longo para isolar orações ou incisos. Use vírgulas, parênteses ou frases independentes.
+   - **Zero Antíteses**: É proibido usar a estrutura de antítese ou contraponto binário negativo/positivo ("não X, mas Y", "não por A, mas por B"). Toda ideia deve ser expressa de forma afirmativa e direta.
