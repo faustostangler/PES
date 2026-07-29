@@ -313,7 +313,13 @@ def get_estimated_timeout_seconds(log_file: Path | None = None) -> float | None:
         return None
 
 
-def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio: bool = False, info: dict | None = None) -> tuple[str | None, str | None, str]:
+def get_youtube_audio_or_transcript(
+    url: str,
+    output_dir: str = ".",
+    force_audio: bool = False,
+    info: dict | None = None,
+    download_audio_if_missing: bool = True
+) -> tuple[str | None, str | None, str]:
     """Retrieve the transcript directly from YouTube subtitles if available (json3 paragraphs -> srv1 raw text).
     Otherwise, download the audio and convert it to OGG format for Whisper.
 
@@ -322,6 +328,7 @@ def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio
         output_dir: The directory where output files will be saved.
         force_audio: If True, skips subtitle checks and forces audio downloading.
         info: Optional pre-extracted yt-dlp metadata dictionary.
+        download_audio_if_missing: If False, returns (None, None, video_id) when subtitles are absent.
 
     Returns:
         A tuple of (transcript_text, ogg_file_path, video_id).
@@ -421,6 +428,9 @@ def get_youtube_audio_or_transcript(url: str, output_dir: str = ".", force_audio
                 break
 
         print(f"  ⚠️ Subtitle rate-limit persisted for '{title[:30]}...'. Falling back to Whisper audio processing...")
+
+    if not download_audio_if_missing and not force_audio:
+        return None, None, video_id
 
     # Tier 3: Download audio and convert to OGG for Whisper
     print(f"Downloading audio stream (Whisper fallback) for '{title[:30]}...'...")
