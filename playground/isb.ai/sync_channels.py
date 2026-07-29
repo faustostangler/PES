@@ -7,7 +7,9 @@ Maintains idempotency via a Markdown log file.
 
 import argparse
 import os
+import queue
 import sys
+import threading
 from datetime import datetime
 from pathlib import Path
 
@@ -210,6 +212,97 @@ video_description: |
         "upload_date": upload_date,
     }
 
+def audio_worker(audio_q: queue.Queue) -> None:
+    """Worker thread processing audio downloads and Whisper transcriptions in parallel."""
+    while True:
+        item = audio_q.get()
+        if item is None:
+            audio_q.task_done()
+            break
+
+        (
+            url,
+            output_dir,
+            model_name,
+            keep_audio,
+            info,
+            csv_path,
+            actual_channel_id,
+        ) = item
+
+        video_id = info.get("id", "unknown_video") if info else "unknown_video"
+        title = info.get("title", "Unknown Title") if info else "Unknown Title"
+        categories = info.get("categories") if info else None
+        category = categories[0] if categories else "uncategorized"
+        channel = info.get("channel") or info.get("uploader") or "unknown_channel" if info else "unknown_channel"
+        upload_date = get_full_upload_date(info) if info else ""
+        date_str = format_date_for_path(upload_date)
+
+        target_dir = output_dir / channel
+        target_dir.mkdir(parents=True, exist_ok=True)
+        txt_path = target_dir / f"{date_str}-{video_id}.txt"
+
+        print(f"  [AUDIO WORKER START] Downloading & transcribing '{title[:30]}...' ({video_id})...")
+        try:
+            _, ogg_path, _ = get_youtube_audio_or_transcript(
+                url, output_dir=str(target_dir), force_audio=True, info=info
+            )
+            if not ogg_path or not os.path.exists(ogg_path):
+                print(f"  [AUDIO WORKER ERROR] Audio file not created for {video_id}")
+                continue
+
+            detected_lang = None
+            if info:
+                lang_code = info.get("language")
+                if lang_code and isinstance(lang_code, str):
+                    detected_lang = lang_code.split("-")[0].lower()
+                if not detected_lang:
+                    for source in (info.get("subtitles") or {}, info.get("automatic_captions") or {}):
+                        for code in source.keys():
+                            code_short = code.split("-")[0].lower()
+                            if code_short in ("pt", "en"):
+                                detected_lang = code_short
+                                break
+                        if detected_lang:
+                            break
+
+            result = transcribe_audio_to_text(ogg_path, model_name=model_name, language=detected_lang)
+            text = result.get("text", "").strip()
+
+            if not keep_audio:
+                try:
+                    os.remove(ogg_path)
+                except Exception as e:
+                    print(f"  [AUDIO WORKER WARNING] Failed to delete OGG file: {e}")
+
+            if text:
+                desc = info.get("description") or "" if info else ""
+                desc_indented = "\n".join("  " + l for l in desc.splitlines())
+
+                yaml_header = f"""---
+video_title: "{title.replace('"', '\\"')}"
+video_id: {video_id}
+channel_name: "{channel.replace('"', '\\"')}"
+channel_id: {actual_channel_id}
+channel_category: "{category.replace('"', '\\"')}"
+url: {url}
+video_date: {upload_date}
+video_description: |
+{desc_indented}
+---"""
+                with open(txt_path, "w", encoding="utf-8") as f:
+                    f.write(yaml_header + "\n" + text)
+
+                record_synced_video(csv_path, actual_channel_id, video_id, upload_date, title=title)
+                print(f"  ✓ [AUDIO WORKER SUCCESS] {upload_date} | {actual_channel_id} {video_id} | {title[:40]}...")
+            else:
+                print(f"  [AUDIO WORKER ERROR] Empty transcription for {video_id}")
+        except Exception as e:
+            print(f"  [AUDIO WORKER ERROR] Failed processing {video_id}: {e}")
+        finally:
+            audio_q.task_done()
+
+
 def process_and_compile_video(
     url: str,
     output_dir: Path,
@@ -220,30 +313,79 @@ def process_and_compile_video(
     ollama_url: str,
     channel_id: str | None,
     synced_ids: set[str],
-    info: dict | None = None
+    info: dict | None = None,
+    audio_queue: queue.Queue | None = None
 ) -> dict:
-    """Download, transcribe, log, and compile a YouTube video to Obsidian."""
-    res = sync_single_video(url, output_dir, model_name, keep_audio, info=info)
-    if not res or "video_id" not in res:
+    """Process video: download JSON subtitle immediately; if unavailable, push to audio queue for parallel processing."""
+    if not info:
+        info = extract_video_metadata(url)
+    if not info or not info.get("id"):
+        print(f"  Warning: Skipping video {url} due to unresolvable metadata/bot protection.")
         return {}
-    actual_channel_id = channel_id or res["channel_id"]
+    video_id = info.get("id", "unknown_video")
+    actual_channel_id = channel_id or info.get("channel_id", "unknown_channel")
 
-    # Record to ingestion log
-    record_synced_video(csv_path, actual_channel_id, res["video_id"], res["upload_date"], title=res["video_title"])
-    synced_ids.add(res["video_id"])
+    categories = info.get("categories")
+    category = categories[0] if categories else "uncategorized"
+    channel = info.get("channel") or info.get("uploader") or "unknown_channel"
+    upload_date = get_full_upload_date(info)
+    date_str = format_date_for_path(upload_date)
 
-    res["channel_id"] = actual_channel_id
+    target_dir = output_dir / channel
+    target_dir.mkdir(parents=True, exist_ok=True)
+    txt_path = target_dir / f"{date_str}-{video_id}.txt"
 
-    print(f"{res['upload_date']} | {actual_channel_id} {res['video_id']} | {res['video_title'][:40]}...")
+    # Fast path: Try JSON subtitles without blocking for audio
+    transcript_text, _, _ = get_youtube_audio_or_transcript(
+        url, output_dir=str(target_dir), info=info, download_audio_if_missing=False
+    )
 
-    # # Compile to Obsidian Note inside wiki/
-    # process_transcript_to_obsidian(
-    #     res,
-    #     model=llm_model,
-    #     ollama_url=ollama_url,
-    #     output_dir=output_dir.parent / "wiki"
-    # )
-    return res
+    if transcript_text:
+        text = transcript_text.strip()
+        desc = info.get("description") or ""
+        desc_indented = "\n".join("  " + l for l in desc.splitlines())
+
+        yaml_header = f"""---
+video_title: "{info.get('title', 'Unknown Title').replace('"', '\\"')}"
+video_id: {video_id}
+channel_name: "{channel.replace('"', '\\"')}"
+channel_id: {actual_channel_id}
+channel_category: "{category.replace('"', '\\"')}"
+url: {url}
+video_date: {upload_date}
+video_description: |
+{desc_indented}
+---"""
+        with open(txt_path, "w", encoding="utf-8") as f:
+            f.write(yaml_header + "\n" + text)
+
+        record_synced_video(csv_path, actual_channel_id, video_id, upload_date, title=info.get("title", "Unknown Title"))
+        synced_ids.add(video_id)
+        print(f"  ✓ [JSON FETCHED] {upload_date} | {actual_channel_id} {video_id} | {info.get('title', 'Unknown Title')[:40]}...")
+        return {"video_id": video_id, "status": "json_fetched"}
+
+    # Fallback path: Enqueue to Audio Queue if audio_queue is active
+    synced_ids.add(video_id)
+    if audio_queue is not None:
+        print(f"  ➔ [ENQUEUED FOR AUDIO] {video_id} ('{info.get('title', 'Unknown Title')[:30]}...')")
+        audio_queue.put((
+            url,
+            output_dir,
+            model_name,
+            keep_audio,
+            info,
+            csv_path,
+            actual_channel_id,
+        ))
+        return {"video_id": video_id, "status": "enqueued_for_audio"}
+    else:
+        # Fallback inline processing if audio_queue is None
+        res = sync_single_video(url, output_dir, model_name, keep_audio, info=info)
+        if res and "video_id" in res:
+            record_synced_video(csv_path, actual_channel_id, res["video_id"], res["upload_date"], title=res["video_title"])
+            print(f"{res['upload_date']} | {actual_channel_id} {res['video_id']} | {res['video_title'][:40]}...")
+        return res
+
 
 def sync_channels_and_seeds(
     days: int,
@@ -255,111 +397,110 @@ def sync_channels_and_seeds(
     llm_model: str = "gemma4:e2b",
     ollama_url: str = "http://localhost:11434"
 ) -> None:
-    """Core synchronization execution flow."""
-    # 1. Load synced video IDs and historical channels
+    """Core synchronization execution flow with parallel JSON and Audio queues."""
     synced_ids, synced_channels = load_historical_metadata(output_dir)
-    # print(f"Loaded {len(synced_ids)} synced video IDs and {len(synced_channels)} synced channel IDs.")
 
     channels_to_scan = set(synced_channels)
 
-    # 2. Process seed URLs and add their channels to our list
-    for url in playlist_urls:
-        url_id = extract_youtube_video_id(url)
-        if not url_id:
-            continue
-        if url_id in synced_ids:
-            continue
+    # Start background audio queue worker
+    audio_queue = queue.Queue()
+    worker_thread = threading.Thread(target=audio_worker, args=(audio_queue,), daemon=True)
+    worker_thread.start()
 
-        try:
-            info = extract_video_metadata(url)
-        except Exception as e:
-            print(f"Error fetching metadata for seed URL {url}: {e}")
-            continue
-
-
-        channel_id = info.get("channel_id")
-        if channel_id:
-            channels_to_scan.add(channel_id)
-
-        # Process the seed video itself if it is not yet synced
-        video_id = info.get("id")
-        if not video_id:
-            continue
-        if video_id in synced_ids:
-            continue
-        if info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming"):
-            print(f"Skipping seed video {video_id}: live stream in progress or upcoming.")
-            continue
-        try:
-            process_and_compile_video(
-                url=url,
-                output_dir=output_dir,
-                csv_path=csv_path,
-                model_name=model_name,
-                keep_audio=keep_audio,
-                llm_model=llm_model,
-                ollama_url=ollama_url,
-                channel_id=channel_id,
-                synced_ids=synced_ids,
-                info=info
-            )
-        except Exception as e:
-            print(f"Error syncing seed video {video_id}: {e}")
-
-    # 4. Scan all unique channels (both seed channels and historical ones)
-    # print(f"\nScanning total of {len(channels_to_scan)} channels for new uploads...")
-    safe_limit = max(50, days * 30)
-    for chan_id in channels_to_scan:
-        recent_entries = fetch_channel_recent_videos(chan_id, limit=safe_limit)
-        found = False
-
-        for entry in recent_entries:
-            entry_id = entry.get("id")
-            if not entry_id:
-                continue
-            if entry_id in synced_ids:
+    try:
+        # 1. Process seed URLs
+        for url in playlist_urls:
+            url_id = extract_youtube_video_id(url)
+            if not url_id or url_id in synced_ids:
                 continue
 
-            # Skip live streams in progress and upcoming videos early
-            if entry.get("is_live") or entry.get("live_status") in ("is_live", "is_upcoming"):
+            try:
+                info = extract_video_metadata(url)
+            except Exception as e:
+                print(f"Error fetching metadata for seed URL {url}: {e}")
                 continue
 
-            entry_url = entry.get("url")
-            entry_date = get_full_upload_date(entry)
-            
-            info = None
-            if not entry_date:
-                try:
-                    info = extract_video_metadata(entry_url)
-                    entry_date = get_full_upload_date(info)
-                except Exception as e:
-                    print(f"  Warning: Failed to fetch metadata to resolve date for {entry_id}: {e}")
-                    continue
+            channel_id = info.get("channel_id")
+            if channel_id:
+                channels_to_scan.add(channel_id)
 
-            if info and (info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming")):
+            video_id = info.get("id")
+            if not video_id or video_id in synced_ids:
                 continue
-
-            if not is_within_range(entry_date, days):
+            if info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming"):
+                print(f"Skipping seed video {video_id}: live stream in progress or upcoming.")
                 continue
-
-            # if not found:
-            #     print(f"Found new videos on the channel {chan_id}.")
-            found = True
             try:
                 process_and_compile_video(
-                    url=entry_url,
+                    url=url,
                     output_dir=output_dir,
                     csv_path=csv_path,
                     model_name=model_name,
                     keep_audio=keep_audio,
                     llm_model=llm_model,
                     ollama_url=ollama_url,
-                    channel_id=chan_id,
+                    channel_id=channel_id,
                     synced_ids=synced_ids,
-                    info=info
+                    info=info,
+                    audio_queue=audio_queue,
                 )
             except Exception as e:
-                print(f"  Error syncing video {entry_id}: {e}")
+                print(f"Error syncing seed video {video_id}: {e}")
+
+        # 2. Scan all unique channels
+        safe_limit = max(50, days * 30)
+        for chan_id in channels_to_scan:
+            recent_entries = fetch_channel_recent_videos(chan_id, limit=safe_limit)
+
+            for entry in recent_entries:
+                entry_id = entry.get("id")
+                if not entry_id or entry_id in synced_ids:
+                    continue
+
+                if entry.get("is_live") or entry.get("live_status") in ("is_live", "is_upcoming"):
+                    continue
+
+                entry_url = entry.get("url")
+                entry_date = get_full_upload_date(entry)
+
+                info = None
+                if not entry_date:
+                    try:
+                        info = extract_video_metadata(entry_url)
+                        entry_date = get_full_upload_date(info)
+                    except Exception as e:
+                        print(f"  Warning: Failed to fetch metadata to resolve date for {entry_id}: {e}")
+                        continue
+
+                if info and (info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming")):
+                    continue
+
+                if not is_within_range(entry_date, days):
+                    continue
+
+                try:
+                    process_and_compile_video(
+                        url=entry_url,
+                        output_dir=output_dir,
+                        csv_path=csv_path,
+                        model_name=model_name,
+                        keep_audio=keep_audio,
+                        llm_model=llm_model,
+                        ollama_url=ollama_url,
+                        channel_id=chan_id,
+                        synced_ids=synced_ids,
+                        info=info,
+                        audio_queue=audio_queue,
+                    )
+                except Exception as e:
+                    print(f"  Error syncing video {entry_id}: {e}")
+    finally:
+        if not audio_queue.empty():
+            print(f"\n[QUEUE] Waiting for {audio_queue.qsize()} background audio download/transcription task(s) to finish...")
+        audio_queue.join()
+        audio_queue.put(None)
+        worker_thread.join()
+        print("[QUEUE] Parallel JSON download & Audio transcription queue finished.")
 
 def bulk_compile_historical_transcripts(
     csv_path: Path,
