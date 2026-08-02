@@ -163,12 +163,19 @@ def fetch_and_parse_srv1(url: str, punctuation_limit: int = 5) -> str:
     xml_data = fetch_url_content(url)
     return reconstruct_srv1_paragraphs(xml_data, punctuation_limit)
 
+class QuietLogger:
+    def debug(self, msg): pass
+    def info(self, msg): pass
+    def warning(self, msg): pass
+    def error(self, msg): pass
+
 def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
     """Extract and return video metadata using yt-dlp."""
     ydl_opts_meta = {
         'quiet': True,
         'no_warnings': True,
         'noprogress': True,
+        'logger': QuietLogger(),
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
@@ -178,7 +185,7 @@ def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
             res = ydl.extract_info(url, download=False)
             return res or {}
     except Exception as e:
-        print(f"  Warning: Failed to fetch metadata for {url}: {e}")
+        # print(f"  Warning: Failed to fetch metadata for {url}: {e}")
         return {}
 
 def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies: bool = True) -> Path:
@@ -350,10 +357,11 @@ def get_youtube_audio_or_transcript(
 
         # Adaptive initial delay: start at half the estimated timeout if known, or 10s default
         est_timeout = get_estimated_timeout_seconds()
+        in_del = 2
         if _GLOBAL_429_ATTEMPT == 0 and est_timeout and est_timeout > 20.0:
-            initial_delay = max(10.0, est_timeout / 2.0)
+            initial_delay = max(in_del, est_timeout / 2.0)
         else:
-            initial_delay = 10.0
+            initial_delay = in_del
 
         max_accumulated_attempts = 5
         attempts_for_this_video = (

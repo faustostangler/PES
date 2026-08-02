@@ -5,6 +5,8 @@ import yt_dlp
 PLAYLIST_FILE = "playground/isb.ai/playlist_later.txt"
 PLAYLIST2_FILE = "playground/isb.ai/playlist2.txt"
 
+from helper import apply_cookies_to_ydl_opts
+
 def main():
     print("Extracting Watch Later playlist URLs using Chrome cookies...")
     
@@ -12,10 +14,8 @@ def main():
         "quiet": True,
         "no_warnings": True,
         "extract_flat": True,
-        # The Watch Later playlist ("WL") is private to the user's Google account
-        # and strictly requires authentication cookies.
-        "cookiesfrombrowser": ("chrome",),
     }
+    apply_cookies_to_ydl_opts(ydl_opts)
     
     url = "https://www.youtube.com/playlist?list=WL"
     

@@ -50,36 +50,51 @@ def get_cached_cookiefile() -> str | None:
             return _COOKIE_FILE_PATH if _COOKIE_FILE_PATH != "" else None
 
         cookie_file = Path(__file__).parent / ".yt_dlp_cookies.txt"
+        tmp_cookie_file = cookie_file.with_suffix(".tmp")
         try:
             from yt_dlp.cookies import extract_cookies_from_browser
             cj = extract_cookies_from_browser("chrome")
             if cj:
                 _COOKIE_JAR = cj
-                mcj = http.cookiejar.MozillaCookieJar(str(cookie_file))
+                mcj = http.cookiejar.MozillaCookieJar(str(tmp_cookie_file))
+                count = 0
                 for c in cj:
+                    domain = (c.domain or "").lower()
+                    if not (domain.endswith("youtube.com") or domain.endswith("google.com") or domain.endswith("ytimg.com")):
+                        continue
+                    if any(sub in domain for sub in ("takeout", "docs", "mail", "drive", "cloud", "meet", "chat", "play", "store", "admin", "sites", "groups", "photos")):
+                        continue
+                    if not c.name or not c.value:
+                        continue
+                    if len(c.name) > 200 or len(c.value) > 500:
+                        continue
+                    if not re.match(r"^[!-~]+$", c.name) or not re.match(r"^[ -~]+$", c.value):
+                        continue
                     if c.expires and c.expires > 2147483647:
                         c.expires = 2147483647
                     mcj.set_cookie(c)
+                    count += 1
                 mcj.save(ignore_discard=True, ignore_expires=True)
+                tmp_cookie_file.replace(cookie_file)
                 _COOKIE_FILE_PATH = str(cookie_file)
-                print(f"✓ Chrome cookies extracted once to {cookie_file.name} ({len(cj)} cookies)")
+                print(f"✓ Chrome cookies extracted once to {cookie_file.name} ({count} clean YouTube/Google cookies)")
                 return _COOKIE_FILE_PATH
         except Exception as e:
             print(f"Warning: Failed to extract Chrome cookies: {e}")
+            if tmp_cookie_file.exists():
+                tmp_cookie_file.unlink(missing_ok=True)
 
         _COOKIE_FILE_PATH = ""
         return None
 
 
 def apply_cookies_to_ydl_opts(ydl_opts: dict, use_cookies: bool = True) -> None:
-    """Apply pre-extracted cookiefile to yt_dlp options, with fallback to Chrome browser extraction."""
+    """Apply pre-extracted clean cookiefile to yt_dlp options."""
     if not use_cookies:
         return
     cookie_path = get_cached_cookiefile()
     if cookie_path:
         ydl_opts["cookiefile"] = cookie_path
-    else:
-        ydl_opts["cookiesfrombrowser"] = ("chrome",)
 
 
 def _get_chrome_cookies():
