@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -25,13 +26,14 @@ from gemini_web import (
 from helper import parse_merged_transcriptions, read_playlist_urls
 from time_logger import log_time_data, plot_time_log
 
-# --- Path Configurations ---
+# --- Path & Thread Configurations ---
 ISB_ROOT = Path(__file__).parent.resolve()
 DEFAULT_RAW_DIR = ISB_ROOT / "raw"
 DEFAULT_ENRICHED_DIR = ISB_ROOT / "enriched"
 DEFAULT_WIKI_DIR = ISB_ROOT / "wiki"
 DEFAULT_CHROME_PROFILE = Path.home() / ".isb-ai-chrome-profile"
 PROCESSED_LOG_FILE = ISB_ROOT / "processed_gemini.json"
+MAX_WORKERS = int(os.environ.get("MAX_WORKERS", "32"))
 
 
 # ==================== FIRST-PASS INGESTION ROUTER ====================
@@ -47,7 +49,7 @@ def run_sync_subcommand(args: argparse.Namespace) -> None:
         playlist_urls = read_playlist_urls(playlist_path)
 
     if playlist_urls:
-        print(f"Sync {len(playlist_urls)} channels...")
+        print(f"Sync {len(playlist_urls)} channels (MAX_WORKERS={getattr(args, 'max_workers', MAX_WORKERS)})...")
         sync_channels.sync_channels_and_seeds(
             days=args.days,
             output_dir=output_dir,
@@ -55,6 +57,7 @@ def run_sync_subcommand(args: argparse.Namespace) -> None:
             keep_audio=args.keep_audio,
             playlist_urls=playlist_urls,
             csv_path=csv_path,
+            max_workers=getattr(args, "max_workers", MAX_WORKERS),
         )
     else:
         print("No seed URLs found in playlist.txt.")
@@ -237,20 +240,33 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
         print(f"Error: Raw transcriptions directory not found at {raw_dir}")
         return
 
-    # 1. Discover all blocks in raw/ files
-    all_blocks = []
+    processed_log = load_processed_log(PROCESSED_LOG_FILE)
+
+    # 1. Discover blocks in raw/ files (with fast pre-filtering & parallel parsing)
+    all_blocks: list[dict] = []
     txt_files = sorted(raw_dir.rglob("*.txt"))
-    print(f"Videos to process")
+    yt_id_pattern = re.compile(r"^.*-([a-zA-Z0-9_-]{11})$")
+
+    candidate_files = []
     for txt_file in txt_files:
+        m = yt_id_pattern.match(txt_file.stem)
+        if m and m.group(1) in processed_log:
+            continue
+        candidate_files.append(txt_file)
+
+    def _parse_file(txt_file: Path) -> list[dict]:
         blocks = parse_merged_transcriptions(txt_file)
         for b in blocks:
             b["source_file"] = txt_file
-            all_blocks.append(b)
+        return blocks
 
-    # print(f"Discovered {len(all_blocks)} videos in total.")
+    if candidate_files:
+        max_workers = getattr(args, "max_workers", MAX_WORKERS)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            for blocks in executor.map(_parse_file, candidate_files):
+                all_blocks.extend(blocks)
 
     # 2. Filter using idempotency log
-    processed_log = load_processed_log(PROCESSED_LOG_FILE)
     pending_blocks = []
     
     # Track counts for breakdown
@@ -554,6 +570,12 @@ def main() -> None:
         default=str(DEFAULT_WIKI_DIR / "log.md"),
         help="Markdown log file path."
     )
+    sync_parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=MAX_WORKERS,
+        help=f"Thread pool max workers (default: {MAX_WORKERS})."
+    )
 
     # Subcommand: stage2
     stage2_parser = subparsers.add_parser("stage2", help="Pre-process and enrich raw transcripts with Gems.")
@@ -585,6 +607,12 @@ def main() -> None:
         type=int,
         default=None,
         help="Limit execution to first N files."
+    )
+    stage2_parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=MAX_WORKERS,
+        help=f"Thread pool max workers (default: {MAX_WORKERS})."
     )
 
     # Subcommand: process
@@ -618,6 +646,12 @@ def main() -> None:
         default=None,
         help="Limit execution to first N blocks."
     )
+    process_parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=MAX_WORKERS,
+        help=f"Thread pool max workers (default: {MAX_WORKERS})."
+    )
 
     # Subcommand: pipeline (sync -> stage2 -> process, full run)
     pipeline_parser = subparsers.add_parser("pipeline", help="Run full pipeline: sync -> stage2 -> process.")
@@ -632,6 +666,7 @@ def main() -> None:
     pipeline_parser.add_argument("--chrome-profile", type=str, default=str(DEFAULT_CHROME_PROFILE))
     pipeline_parser.add_argument("--dry-run", action="store_true")
     pipeline_parser.add_argument("--limit", type=int, default=None)
+    pipeline_parser.add_argument("--max-workers", type=int, default=MAX_WORKERS)
 
     args = parser.parse_args()
 

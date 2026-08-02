@@ -5,18 +5,31 @@ Downloads new videos uploaded within the last X days from channels listed in pla
 Maintains idempotency via a Markdown log file.
 """
 
-import argparse
+import json
 import os
 import queue
+import re
 import sys
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
 import yt_dlp
 
 from downloader import extract_video_metadata, get_youtube_audio_or_transcript
-from helper import get_full_upload_date, is_within_range, read_playlist_urls, sanitize_for_path, format_date_for_path, parse_yaml_header, clean_filename, parse_merged_transcriptions, extract_youtube_video_id
+from helper import (
+    apply_cookies_to_ydl_opts,
+    clean_filename,
+    extract_youtube_video_id,
+    format_date_for_path,
+    get_full_upload_date,
+    is_within_range,
+    parse_merged_transcriptions,
+    parse_yaml_header,
+    read_playlist_urls,
+    sanitize_for_path,
+)
 from ollama_processor import process_transcript_to_obsidian
 from transcriber import transcribe_audio_to_text
 
@@ -25,44 +38,130 @@ PLAYLIST_FILE = Path(__file__).parent / "playlist.txt"
 CSV_FILE = Path(__file__).parent / "wiki" / "log.md"
 DEFAULT_OUTPUT_DIR = Path(__file__).parent / "raw"
 
-def load_historical_metadata(output_dir: Path) -> tuple[set[str], set[str]]:
-    """Load previously synced video IDs and channel IDs by recursively scanning all
-    *.txt files in the output directory and reading their YAML headers.
+def load_historical_metadata(output_dir: Path, csv_path: Path | None = None, max_workers: int = 32) -> tuple[set[str], set[str]]:
+    """Load previously synced video IDs and channel IDs.
+    
+    Combines fast parsing of the Markdown ingestion log table with a multi-threaded header-only
+    scan of text files in the output directory, avoiding expensive full-file transcript parsing.
 
     Returns:
         tuple[set[str], set[str]]: A tuple containing (synced_ids, synced_channels)
     """
-    synced_ids = set()
-    synced_channels = set()
+    synced_ids: set[str] = set()
+    synced_channels: set[str] = set()
+
+    # 1. Fast loading from the log file (O(1) pass, ~0.1s for 40k+ entries)
+    if csv_path and csv_path.exists():
+        try:
+            with open(csv_path, encoding="utf-8") as f:
+                for line in f:
+                    if line.startswith("|") and "---" not in line and "Channel ID" not in line:
+                        parts = [p.strip() for p in line.split("|") if p.strip()]
+                        if len(parts) >= 2:
+                            synced_channels.add(parts[0])
+                            synced_ids.add(parts[1])
+        except Exception as e:
+            print(f"Warning: Failed to load metadata from log file {csv_path.name}: {e}")
+
+    # 2. Fast scan of files in output_dir for any unlogged files
     if output_dir.exists():
         try:
+            yt_id_pattern = re.compile(r"^.*-([a-zA-Z0-9_-]{11})$")
+            unparsed_files: list[Path] = []
+
             for txt_file in output_dir.rglob("*.txt"):
-                blocks = parse_merged_transcriptions(txt_file)
-                for block in blocks:
-                    meta = block.get("metadata", {})
-                    v_id = meta.get("video_id")
-                    c_id = meta.get("channel_id")
-                    if v_id:
-                        synced_ids.add(v_id)
-                    if c_id:
-                        synced_channels.add(c_id)
+                m = yt_id_pattern.match(txt_file.stem)
+                if m:
+                    synced_ids.add(m.group(1))
+                else:
+                    unparsed_files.append(txt_file)
+
+            # For files that do not follow standard filename convention, perform parallel header-only parsing
+            if unparsed_files:
+                def _scan_header(p: Path) -> tuple[str | None, str | None]:
+                    v_id, c_id = None, None
+                    try:
+                        with open(p, "r", encoding="utf-8") as f:
+                            for line in f:
+                                if line.startswith("video_id:"):
+                                    v_id = line.split(":", 1)[1].strip(" \"'\t\r\n")
+                                elif line.startswith("channel_id:"):
+                                    c_id = line.split(":", 1)[1].strip(" \"'\t\r\n")
+                                elif line.strip() == "---" and (v_id or c_id):
+                                    break
+                    except Exception:
+                        pass
+                    return v_id, c_id
+
+                with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                    for v_id, c_id in executor.map(_scan_header, unparsed_files):
+                        if v_id:
+                            synced_ids.add(v_id)
+                        if c_id:
+                            synced_channels.add(c_id)
+
         except Exception as e:
             print(f"Warning: Failed to load historical metadata from {output_dir.name}: {e}")
+
     return synced_ids, synced_channels
 
+CACHE_LOCK = threading.Lock()
+RECORD_LOG_LOCK = threading.Lock()
+SYNCED_IDS_LOCK = threading.RLock()
+CHANNELS_TO_SCAN_LOCK = threading.Lock()
+
+
+def load_channel_cache(cache_path: Path) -> dict[str, list[dict]]:
+    """Load previously fetched channel entries from disk cache."""
+    if not cache_path.exists():
+        return {}
+    try:
+        with open(cache_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data.get("channels", {})
+    except Exception as e:
+        print(f"Warning: Failed to load channel cache {cache_path.name}: {e}")
+        return {}
+
+
+def update_channel_cache(cache_path: Path, channel_id: str, entries: list[dict]) -> None:
+    """Save channel playlist entries incrementally to disk cache using atomic file replacement."""
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    with CACHE_LOCK:
+        data = {"channels": {}}
+        if cache_path.exists():
+            try:
+                with open(cache_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                data = {"channels": {}}
+        if "channels" not in data:
+            data["channels"] = {}
+        data["channels"][channel_id] = entries
+
+        tmp_path = cache_path.with_suffix(".tmp")
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+            tmp_path.replace(cache_path)
+        except Exception as e:
+            print(f"Warning: Failed to save channel cache: {e}")
+            if tmp_path.exists():
+                tmp_path.unlink(missing_ok=True)
+
 def record_synced_video(log_path: Path, channel_id: str, video_id: str, upload_date: str, title: str = "Unknown Title") -> None:
-    """Record a successfully synced video in the Markdown log table."""
+    """Record a successfully synced video in the Markdown log table (thread-safe)."""
     file_exists = log_path.exists()
     log_path.parent.mkdir(parents=True, exist_ok=True)
     try:
-        with open(log_path, "a", encoding="utf-8") as f:
-            if not file_exists:
-                f.write("# Ingestion Log\n\n")
-                f.write("| Channel ID | Video ID | Upload Date | Title |\n")
-                f.write("| --- | --- | --- | --- |\n")
-            clean_title = title.replace("|", "\\|")
-            f.write(f"| {channel_id} | {video_id} | {upload_date} | {clean_title} |\n")
-        # print(f"Recorded video {video_id} in {log_path.name}")
+        with RECORD_LOG_LOCK:
+            with open(log_path, "a", encoding="utf-8") as f:
+                if not file_exists:
+                    f.write("# Ingestion Log\n\n")
+                    f.write("| Channel ID | Video ID | Upload Date | Title |\n")
+                    f.write("| --- | --- | --- | --- |\n")
+                clean_title = title.replace("|", "\\|")
+                f.write(f"| {channel_id} | {video_id} | {upload_date} | {clean_title} |\n")
     except Exception as e:
         print(f"Error saving to Markdown log: {e}")
 
@@ -89,8 +188,7 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: b
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
-    if use_cookies:
-        ydl_opts["cookiesfrombrowser"] = ("chrome",)
+    apply_cookies_to_ydl_opts(ydl_opts, use_cookies=use_cookies)
 
     def extract_with_opts(opts):
         with yt_dlp.YoutubeDL(opts.copy()) as ydl:
@@ -102,14 +200,7 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: b
     try:
         return extract_with_opts(ydl_opts)
     except Exception as e:
-        if not use_cookies:
-            ydl_opts["cookiesfrombrowser"] = ("chrome",)
-            try:
-                return extract_with_opts(ydl_opts)
-            except Exception as err:
-                print(f"Error fetching channel playlist with cookies: {err}")
-        else:
-            print(f"Error fetching channel playlist: {e}")
+        print(f"Error fetching channel playlist: {e}")
     return []
 
 def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: bool, info: dict | None = None) -> dict:
@@ -360,12 +451,14 @@ video_description: |
             f.write(yaml_header + "\n" + text)
 
         record_synced_video(csv_path, actual_channel_id, video_id, upload_date, title=info.get("title", "Unknown Title"))
-        synced_ids.add(video_id)
+        with SYNCED_IDS_LOCK:
+            synced_ids.add(video_id)
         print(f"  ✓ [JSON FETCHED] {upload_date} | {actual_channel_id} {video_id} | {info.get('title', 'Unknown Title')[:40]}...")
         return {"video_id": video_id, "status": "json_fetched"}
 
     # Fallback path: Enqueue to Audio Queue if audio_queue is active
-    synced_ids.add(video_id)
+    with SYNCED_IDS_LOCK:
+        synced_ids.add(video_id)
     if audio_queue is not None:
         print(f"  ➔ [ENQUEUED FOR AUDIO] {video_id} ('{info.get('title', 'Unknown Title')[:30]}...')")
         audio_queue.put((
@@ -395,41 +488,110 @@ def sync_channels_and_seeds(
     playlist_urls: list[str],
     csv_path: Path,
     llm_model: str = "gemma4:e2b",
-    ollama_url: str = "http://localhost:11434"
+    ollama_url: str = "http://localhost:11434",
+    max_workers: int = 32
 ) -> None:
-    """Core synchronization execution flow with parallel JSON and Audio queues."""
-    synced_ids, synced_channels = load_historical_metadata(output_dir)
-
+    """Core synchronization execution flow with parallel channel scanning, streaming video processing, and incremental caching."""
+    synced_ids, synced_channels = load_historical_metadata(output_dir, csv_path=csv_path, max_workers=max_workers)
     channels_to_scan = set(synced_channels)
+
+    cache_path = Path(__file__).parent / "channel_cache.json"
+    cached_channels = load_channel_cache(cache_path)
+    if cached_channels:
+        print(f"Loaded {len(cached_channels)} channel(s) from disk cache ({cache_path.name}).")
 
     # Start background audio queue worker
     audio_queue = queue.Queue()
     worker_thread = threading.Thread(target=audio_worker, args=(audio_queue,), daemon=True)
     worker_thread.start()
 
-    try:
-        # 1. Process seed URLs
-        for url in playlist_urls:
-            url_id = extract_youtube_video_id(url)
-            if not url_id or url_id in synced_ids:
-                continue
+    # Shared thread pool for streaming video processing
+    video_executor = ThreadPoolExecutor(max_workers=max_workers)
 
+    def _submit_candidate_video(chan_id: str, entry: dict) -> None:
+        entry_id = entry.get("id")
+        if not entry_id:
+            return
+
+        with SYNCED_IDS_LOCK:
+            if entry_id in synced_ids:
+                return
+
+        if entry.get("is_live") or entry.get("live_status") in ("is_live", "is_upcoming"):
+            return
+
+        entry_date = get_full_upload_date(entry)
+        if entry_date and not is_within_range(entry_date, days):
+            return
+
+        with SYNCED_IDS_LOCK:
+            synced_ids.add(entry_id)
+
+        def _process_task():
+            entry_url = entry.get("url")
+            entry_date = get_full_upload_date(entry)
+
+            info = None
+            if not entry_date:
+                try:
+                    info = extract_video_metadata(entry_url)
+                    entry_date = get_full_upload_date(info)
+                except Exception as e:
+                    print(f"  Warning: Failed to fetch metadata to resolve date for {entry_id}: {e}")
+                    return
+
+            if info and (info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming")):
+                return
+
+            if not is_within_range(entry_date, days):
+                return
+
+            try:
+                process_and_compile_video(
+                    url=entry_url,
+                    output_dir=output_dir,
+                    csv_path=csv_path,
+                    model_name=model_name,
+                    keep_audio=keep_audio,
+                    llm_model=llm_model,
+                    ollama_url=ollama_url,
+                    channel_id=chan_id,
+                    synced_ids=synced_ids,
+                    info=info,
+                    audio_queue=audio_queue,
+                )
+            except Exception as e:
+                print(f"  Error syncing video {entry_id}: {e}")
+
+        video_executor.submit(_process_task)
+
+    try:
+        # 1. Process seed URLs in parallel
+        def _process_seed_url(url: str) -> None:
+            url_id = extract_youtube_video_id(url)
+            with SYNCED_IDS_LOCK:
+                if url_id and url_id in synced_ids:
+                    return
             try:
                 info = extract_video_metadata(url)
             except Exception as e:
                 print(f"Error fetching metadata for seed URL {url}: {e}")
-                continue
+                return
 
             channel_id = info.get("channel_id")
             if channel_id:
-                channels_to_scan.add(channel_id)
+                with CHANNELS_TO_SCAN_LOCK:
+                    channels_to_scan.add(channel_id)
 
             video_id = info.get("id")
-            if not video_id or video_id in synced_ids:
-                continue
+            with SYNCED_IDS_LOCK:
+                if not video_id or video_id in synced_ids:
+                    return
+
             if info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming"):
                 print(f"Skipping seed video {video_id}: live stream in progress or upcoming.")
-                continue
+                return
+
             try:
                 process_and_compile_video(
                     url=url,
@@ -447,53 +609,57 @@ def sync_channels_and_seeds(
             except Exception as e:
                 print(f"Error syncing seed video {video_id}: {e}")
 
-        # 2. Scan all unique channels
-        safe_limit = max(50, days * 30)
-        for chan_id in channels_to_scan:
-            recent_entries = fetch_channel_recent_videos(chan_id, limit=safe_limit)
+        if playlist_urls:
+            max_seed_workers = min(max_workers, max(1, len(playlist_urls)))
+            with ThreadPoolExecutor(max_workers=max_seed_workers) as seed_executor:
+                list(seed_executor.map(_process_seed_url, playlist_urls))
 
-            for entry in recent_entries:
+        # 2. Immediately stream cached candidate videos into video_executor
+        cached_dispatched = 0
+        for cid, entries in cached_channels.items():
+            for entry in entries:
                 entry_id = entry.get("id")
-                if not entry_id or entry_id in synced_ids:
-                    continue
+                if entry_id and entry_id not in synced_ids:
+                    _submit_candidate_video(cid, entry)
+                    cached_dispatched += 1
+        if cached_dispatched > 0:
+            print(f"Dispatched {cached_dispatched} candidate video(s) from disk cache for immediate processing.")
 
-                if entry.get("is_live") or entry.get("live_status") in ("is_live", "is_upcoming"):
-                    continue
+        # 3. Scan all unique channels in parallel, streaming entries & saving cache incrementally
+        safe_limit = max(50, days * 30)
+        chan_list = sorted(channels_to_scan)
+        total_channels = len(chan_list)
+        print(f"Syncing {total_channels} channels concurrently (max_workers={max_workers})...")
 
-                entry_url = entry.get("url")
-                entry_date = get_full_upload_date(entry)
+        completed_channels = 0
+        count_lock = threading.Lock()
 
-                info = None
-                if not entry_date:
-                    try:
-                        info = extract_video_metadata(entry_url)
-                        entry_date = get_full_upload_date(info)
-                    except Exception as e:
-                        print(f"  Warning: Failed to fetch metadata to resolve date for {entry_id}: {e}")
-                        continue
+        def _fetch_channel(chan_id: str) -> tuple[str, list[dict]]:
+            nonlocal completed_channels
+            try:
+                entries = fetch_channel_recent_videos(chan_id, limit=safe_limit)
+                with count_lock:
+                    completed_channels += 1
+                    print(f"  [{completed_channels}/{total_channels}] Channel {chan_id}: {len(entries)} video(s) found")
+                return chan_id, entries
+            except Exception as e:
+                with count_lock:
+                    completed_channels += 1
+                    print(f"  [{completed_channels}/{total_channels}] Error fetching channel {chan_id}: {e}")
+                return chan_id, []
 
-                if info and (info.get("is_live") or info.get("live_status") in ("is_live", "is_upcoming")):
-                    continue
+        with ThreadPoolExecutor(max_workers=max_workers) as chan_executor:
+            future_to_cid = {chan_executor.submit(_fetch_channel, cid): cid for cid in chan_list}
+            for future in as_completed(future_to_cid):
+                cid, entries = future.result()
+                if entries:
+                    update_channel_cache(cache_path, cid, entries)
+                    for entry in entries:
+                        _submit_candidate_video(cid, entry)
 
-                if not is_within_range(entry_date, days):
-                    continue
+        # 4. Wait for all submitted video processing tasks to complete
+        video_executor.shutdown(wait=True)
 
-                try:
-                    process_and_compile_video(
-                        url=entry_url,
-                        output_dir=output_dir,
-                        csv_path=csv_path,
-                        model_name=model_name,
-                        keep_audio=keep_audio,
-                        llm_model=llm_model,
-                        ollama_url=ollama_url,
-                        channel_id=chan_id,
-                        synced_ids=synced_ids,
-                        info=info,
-                        audio_queue=audio_queue,
-                    )
-                except Exception as e:
-                    print(f"  Error syncing video {entry_id}: {e}")
     finally:
         if not audio_queue.empty():
             print(f"\n[QUEUE] Waiting for {audio_queue.qsize()} background audio download/transcription task(s) to finish...")
