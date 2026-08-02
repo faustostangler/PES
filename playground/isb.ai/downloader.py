@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import yt_dlp
-from helper import fetch_url_content
+from helper import apply_cookies_to_ydl_opts, fetch_url_content
 
 
 def find_subtitle_url(info: dict, preferred_ext: str) -> tuple[str, str] | None:
@@ -172,25 +172,14 @@ def extract_video_metadata(url: str, use_cookies: bool = True) -> dict:
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
-    if use_cookies:
-        ydl_opts_meta["cookiesfrombrowser"] = ("chrome",)
+    apply_cookies_to_ydl_opts(ydl_opts_meta, use_cookies=use_cookies)
     try:
         with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
             res = ydl.extract_info(url, download=False)
             return res or {}
     except Exception as e:
-        if not use_cookies:
-            ydl_opts_meta["cookiesfrombrowser"] = ("chrome",)
-            try:
-                with yt_dlp.YoutubeDL(ydl_opts_meta.copy()) as ydl:
-                    res = ydl.extract_info(url, download=False)
-                    return res or {}
-            except Exception as inner_e:
-                print(f"  Warning: Failed to fetch metadata for {url}: {inner_e}")
-                return {}
-        else:
-            print(f"  Warning: Failed to fetch metadata for {url}: {e}")
-            return {}
+        print(f"  Warning: Failed to fetch metadata for {url}: {e}")
+        return {}
 
 def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies: bool = True) -> Path:
     """Download audio stream using yt-dlp and convert to OGG format for Whisper fallback."""
@@ -214,18 +203,12 @@ def download_audio_as_ogg(url: str, output_dir: Path, video_id: str, use_cookies
         "js_runtimes": {"node": {}, "deno": {}, "bun": {}},
         "remote_components": ["ejs:github"],
     }
-    if use_cookies:
-        ydl_opts_download["cookiesfrombrowser"] = ("chrome",)
+    apply_cookies_to_ydl_opts(ydl_opts_download, use_cookies=use_cookies)
     try:
         with yt_dlp.YoutubeDL(ydl_opts_download.copy()) as ydl:
             ydl.extract_info(url, download=True)
     except Exception as e:
-        if not use_cookies:
-            ydl_opts_download["cookiesfrombrowser"] = ("chrome",)
-            with yt_dlp.YoutubeDL(ydl_opts_download.copy()) as ydl:
-                ydl.extract_info(url, download=True)
-        else:
-            raise e
+        raise e
     ogg_file = output_dir / f"{video_id}.ogg"
     return ogg_file.resolve()
 

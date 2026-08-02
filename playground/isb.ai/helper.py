@@ -34,17 +34,58 @@ def format_date_for_path(upload_date_str: str) -> str:
     except Exception:
         return "unknown_date"
 
+import http.cookiejar
+import threading
+
 _COOKIE_JAR = None
+_COOKIE_FILE_PATH = None
+_COOKIE_LOCK = threading.Lock()
+
+
+def get_cached_cookiefile() -> str | None:
+    """Extract Chrome cookies ONCE into a static Netscape cookies file to eliminate SQLite DB locking across thread pools."""
+    global _COOKIE_JAR, _COOKIE_FILE_PATH
+    with _COOKIE_LOCK:
+        if _COOKIE_FILE_PATH is not None:
+            return _COOKIE_FILE_PATH if _COOKIE_FILE_PATH != "" else None
+
+        cookie_file = Path(__file__).parent / ".yt_dlp_cookies.txt"
+        try:
+            from yt_dlp.cookies import extract_cookies_from_browser
+            cj = extract_cookies_from_browser("chrome")
+            if cj:
+                _COOKIE_JAR = cj
+                mcj = http.cookiejar.MozillaCookieJar(str(cookie_file))
+                for c in cj:
+                    if c.expires and c.expires > 2147483647:
+                        c.expires = 2147483647
+                    mcj.set_cookie(c)
+                mcj.save(ignore_discard=True, ignore_expires=True)
+                _COOKIE_FILE_PATH = str(cookie_file)
+                print(f"✓ Chrome cookies extracted once to {cookie_file.name} ({len(cj)} cookies)")
+                return _COOKIE_FILE_PATH
+        except Exception as e:
+            print(f"Warning: Failed to extract Chrome cookies: {e}")
+
+        _COOKIE_FILE_PATH = ""
+        return None
+
+
+def apply_cookies_to_ydl_opts(ydl_opts: dict, use_cookies: bool = True) -> None:
+    """Apply pre-extracted cookiefile to yt_dlp options, with fallback to Chrome browser extraction."""
+    if not use_cookies:
+        return
+    cookie_path = get_cached_cookiefile()
+    if cookie_path:
+        ydl_opts["cookiefile"] = cookie_path
+    else:
+        ydl_opts["cookiesfrombrowser"] = ("chrome",)
 
 
 def _get_chrome_cookies():
     global _COOKIE_JAR
     if _COOKIE_JAR is None:
-        try:
-            from yt_dlp.cookies import extract_cookies_from_browser
-            _COOKIE_JAR = extract_cookies_from_browser("chrome")
-        except Exception:
-            _COOKIE_JAR = False
+        get_cached_cookiefile()
     return _COOKIE_JAR if _COOKIE_JAR is not False else None
 
 

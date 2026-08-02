@@ -133,19 +133,15 @@ def validate_response(text: str) -> str:
     return extracted_text
 
 def discover_unprocessed_files(raw_dir: Path, enriched_dir: Path) -> list[Path]:
-    """Find all .txt files in raw_dir that have not been enriched yet."""
+    """Find all .txt files in raw_dir that have not been enriched yet (fast O(1) set lookup)."""
     if not raw_dir.exists():
         return []
     
-    unprocessed = []
-    for raw_file in sorted(raw_dir.rglob("*.txt")):
-        # Calculate relative path
-        rel_path = raw_file.relative_to(raw_dir)
-        enriched_file = enriched_dir / rel_path
-        if not enriched_file.exists():
-            unprocessed.append(raw_file)
-            
-    return unprocessed
+    enriched_set: set[Path] = set()
+    if enriched_dir.exists():
+        enriched_set = {p.relative_to(enriched_dir) for p in enriched_dir.rglob("*.txt")}
+        
+    return [raw_file for raw_file in sorted(raw_dir.rglob("*.txt")) if raw_file.relative_to(raw_dir) not in enriched_set]
 
 def parse_raw_file(file_path: Path) -> tuple[dict, str]:
     """Parse raw file to separate YAML header block and transcription text."""
