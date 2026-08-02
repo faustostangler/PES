@@ -14,6 +14,9 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
 
+# Ensure script directory is in sys.path for flat local imports regardless of invocation CWD
+sys.path.insert(0, str(Path(__file__).parent.resolve()))
+
 # Local flat imports
 import sync_channels
 from gemini_web import (
@@ -538,7 +541,7 @@ def main() -> None:
     sync_parser.add_argument(
         "--days",
         type=int,
-        default=180,
+        default=365,
         help="Sync uploads in range of last N days (default: 180)."
     )
     sync_parser.add_argument(

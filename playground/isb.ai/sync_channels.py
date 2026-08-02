@@ -109,6 +109,15 @@ CACHE_LOCK = threading.Lock()
 RECORD_LOG_LOCK = threading.Lock()
 SYNCED_IDS_LOCK = threading.RLock()
 CHANNELS_TO_SCAN_LOCK = threading.Lock()
+QUEUED_IDS = set()
+QUEUED_IDS_LOCK = threading.Lock()
+
+
+class QuietLogger:
+    def debug(self, msg): pass
+    def info(self, msg): pass
+    def warning(self, msg): pass
+    def error(self, msg): pass
 
 
 def load_channel_cache(cache_path: Path) -> dict[str, list[dict]]:
@@ -139,13 +148,15 @@ def update_channel_cache(cache_path: Path, channel_id: str, entries: list[dict])
             data["channels"] = {}
         data["channels"][channel_id] = entries
 
-        tmp_path = cache_path.with_suffix(".tmp")
+        tmp_path = cache_path.with_name(f"{cache_path.stem}_{threading.get_ident()}.tmp")
         try:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2)
             tmp_path.replace(cache_path)
         except Exception as e:
             print(f"Warning: Failed to save channel cache: {e}")
+            if tmp_path.exists():
+                tmp_path.unlink(missing_ok=True)
             if tmp_path.exists():
                 tmp_path.unlink(missing_ok=True)
 
@@ -181,6 +192,7 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: b
         "quiet": True,
         "no_warnings": True,
         "noprogress": True,
+        "logger": QuietLogger(),
         "playlistend": limit,
         "extract_flat": True,
         "extractor_args": {"youtubetab": {"approximate_date": [""]}},
@@ -200,7 +212,14 @@ def fetch_channel_recent_videos(channel_id: str, limit: int = 50, use_cookies: b
     try:
         return extract_with_opts(ydl_opts)
     except Exception as e:
-        print(f"Error fetching channel playlist: {e}")
+        if use_cookies:
+            ydl_opts_no_cookies = ydl_opts.copy()
+            ydl_opts_no_cookies.pop("cookiefile", None)
+            try:
+                return extract_with_opts(ydl_opts_no_cookies)
+            except Exception:
+                pass
+        print(f"Error fetching channel playlist {channel_id}: {e}")
     return []
 
 def sync_single_video(url: str, output_dir: Path, model_name: str, keep_audio: bool, info: dict | None = None) -> dict:
@@ -411,7 +430,6 @@ def process_and_compile_video(
     if not info:
         info = extract_video_metadata(url)
     if not info or not info.get("id"):
-        print(f"  Warning: Skipping video {url} due to unresolvable metadata/bot protection.")
         return {}
     video_id = info.get("id", "unknown_video")
     actual_channel_id = channel_id or info.get("channel_id", "unknown_channel")
@@ -493,8 +511,9 @@ def sync_channels_and_seeds(
 ) -> None:
     """Core synchronization execution flow with parallel channel scanning, streaming video processing, and incremental caching."""
     synced_ids, synced_channels = load_historical_metadata(output_dir, csv_path=csv_path, max_workers=max_workers)
+    with QUEUED_IDS_LOCK:
+        QUEUED_IDS.clear()
     channels_to_scan = set(synced_channels)
-
     cache_path = Path(__file__).parent / "channel_cache.json"
     cached_channels = load_channel_cache(cache_path)
     if cached_channels:
@@ -517,18 +536,15 @@ def sync_channels_and_seeds(
             if entry_id in synced_ids:
                 return
 
-        if entry.get("is_live") or entry.get("live_status") in ("is_live", "is_upcoming"):
-            return
-
-        entry_date = get_full_upload_date(entry)
-        if entry_date and not is_within_range(entry_date, days):
-            return
-
-        with SYNCED_IDS_LOCK:
-            synced_ids.add(entry_id)
+        with QUEUED_IDS_LOCK:
+            if entry_id in QUEUED_IDS:
+                return
+            QUEUED_IDS.add(entry_id)
 
         def _process_task():
-            entry_url = entry.get("url")
+            entry_url = entry.get("url") or f"https://www.youtube.com/watch?v={entry_id}"
+            if not entry_url.startswith("http"):
+                entry_url = f"https://www.youtube.com/watch?v={entry_id}"
             entry_date = get_full_upload_date(entry)
 
             info = None
