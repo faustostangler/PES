@@ -141,7 +141,7 @@ def run_detranscriptor(input_file: Path) -> Path:
         f"--- TRANSCRIPT ---\n{transcript_text}"
     )
 
-    if len(prompt) > 100_000:
+    if len(prompt.encode("utf-8")) > 40_000:
         prompt = (
             f"You are Writer Detranscriptor. Transform raw transcript into clean structured Markdown inside <config_file> tags.\n"
             f"Save output directly to: {output_file.resolve()}\n\n"
