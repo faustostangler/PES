@@ -36,7 +36,7 @@ DEFAULT_ENRICHED_DIR = ISB_ROOT / "enriched"
 DEFAULT_WIKI_DIR = ISB_ROOT / "wiki"
 DEFAULT_CHROME_PROFILE = Path.home() / ".isb-ai-chrome-profile"
 PROCESSED_LOG_FILE = ISB_ROOT / "processed_gemini.json"
-MAX_WORKERS = int(os.environ.get("MAX_WORKERS", "32"))
+MAX_WORKERS = 1 # int(os.environ.get("MAX_WORKERS", "32"))
 
 
 # ==================== FIRST-PASS INGESTION ROUTER ====================
