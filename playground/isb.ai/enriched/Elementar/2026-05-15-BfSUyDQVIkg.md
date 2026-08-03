@@ -1,1 +1,0 @@
-O git error foi corrigido com sucesso e os commits locais já estão devidamente registrados na sua branch `main`.
