@@ -234,6 +234,16 @@ def run_detranscriptor(input_file: Path, force: bool = False) -> Path:
         f"--- TRANSCRIPT ---\nFile: {input_file.name}\n{transcript_text}"
     )
 
+    if len(prompt) > 100_000:
+        prompt = (
+            f"You are Writer Detranscriptor. Transform raw audio transcript into clean, structured Markdown inside <config_file> tags.\n"
+            f"Option A (Primary): Save output directly to file: {output_file.resolve()}\n\n"
+            f"Input file path: {input_file.resolve()}\n"
+            f"Skill specification path: {SKILL_PATH.resolve()}\n"
+            f"Note: Raw transcript text omitted from prompt payload to prevent CLI argument length limits.\n"
+            f"Please use view_file to read {input_file.resolve()}, apply writer-detranscriptor skill, and write the result directly to {output_file.resolve()}."
+        )
+
     # Resolve active session ID
     session_id = resolve_active_session()
     dispatch_time = time.time()

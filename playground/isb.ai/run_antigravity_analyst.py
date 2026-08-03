@@ -141,6 +141,16 @@ def run_detranscriptor(input_file: Path) -> Path:
         f"--- TRANSCRIPT ---\n{transcript_text}"
     )
 
+    if len(prompt) > 100_000:
+        prompt = (
+            f"You are Writer Detranscriptor. Transform raw transcript into clean structured Markdown inside <config_file> tags.\n"
+            f"Save output directly to: {output_file.resolve()}\n\n"
+            f"Input file path: {input_file.resolve()}\n"
+            f"Skill specification path: {SKILL_PATH.resolve()}\n"
+            f"Note: Raw transcript text omitted from prompt payload to prevent CLI argument length limits.\n"
+            f"Please use view_file to read {input_file.resolve()}, apply writer-detranscriptor skill, and write the result directly to {output_file.resolve()}."
+        )
+
     conv_id = get_conversation_id()
     cli_response = send_agent_message(prompt, conv_id)
     print(f"[CLI] Command dispatched! Response metadata: {cli_response[:80]}")
