@@ -1,0 +1,1 @@
+As alterações do Git foram efetuadas e sincronizadas no seu repositório local.
