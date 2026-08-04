@@ -13,6 +13,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+import tiktoken
 
 
 def count_tokens(text: str) -> int:
@@ -20,8 +21,6 @@ def count_tokens(text: str) -> int:
     if not text:
         return 0
     try:
-        import tiktoken
-
         encoder = tiktoken.get_encoding("cl100k_base")
         return len(encoder.encode(text))
     except Exception:

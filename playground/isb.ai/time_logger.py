@@ -1,14 +1,22 @@
 import csv
+import json
 import time
 import sys
+
 from pathlib import Path
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')  # Set headless backend
 import matplotlib.pyplot as plt
 
-TIME_LOG_PATH = Path(__file__).parent / "time_log.csv"
-TIME_LOG_CHART_PATH = Path(__file__).parent / "time_log_chart.png"
+# Cache directory isolated from main workspace source watcher
+CACHE_DIR = Path(__file__).parent / ".cache"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+TIME_LOG_PATH = CACHE_DIR / "time_log.csv"
+TIME_LOG_JSONL_PATH = CACHE_DIR / "time_log.jsonl"
+TIME_LOG_CHART_PATH = CACHE_DIR / "time_log_chart.png"
+
 
 
 def log_time_data(set_name: str, block_idx: int, total_blocks: int, percent: float, elapsed: float, remaining: float | None):
@@ -40,14 +48,33 @@ def log_time_data(set_name: str, block_idx: int, total_blocks: int, percent: flo
             if not file_exists:
                 writer.writeheader()
             writer.writerow(row)
+
+        # Simultaneously append to structured JSONL for Loki / log parsers
+        with open(TIME_LOG_JSONL_PATH, "a", encoding="utf-8") as f_jsonl:
+            f_jsonl.write(json.dumps(row, ensure_ascii=False) + "\n")
     except Exception as e:
         print(f"Warning: Failed to write time log: {e}", file=sys.stderr)
 
 
-def plot_time_log():
-    """Generates a beautiful multi-panel stacked area chart (one panel per set)."""
+_last_plot_block = 0
+
+def plot_time_log(force: bool = False, min_interval_blocks: int = 25):
+    """Generates multi-panel stacked area chart with debouncing to prevent file watcher storms."""
+    global _last_plot_block
     if not TIME_LOG_PATH.exists():
         return
+        
+    if not force:
+        # Check line count in TIME_LOG_PATH to debounce
+        try:
+            with open(TIME_LOG_PATH, "r", encoding="utf-8") as f:
+                current_lines = sum(1 for _ in f)
+            if current_lines - _last_plot_block < min_interval_blocks:
+                return
+            _last_plot_block = current_lines
+        except Exception:
+            pass
+
         
     try:
         df = pd.read_csv(TIME_LOG_PATH)
