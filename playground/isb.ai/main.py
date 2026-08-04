@@ -349,6 +349,9 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
     mocs_str = ", ".join(active_mocs) if active_mocs else "Nenhum MOC ativo"
     # print(f"Active MOCs in vault: {mocs_str}")
 
+    # GeminiWeb curadoria loop disabled / commented out (do not remove per user settings)
+    print("ℹ️ GeminiWeb process subcommand is currently deactivated.")
+    """
     with GeminiWebProcessor(user_data_dir=chrome_profile) as processor:
         for i, b in enumerate(pending_blocks, 1):
             meta = b.get("metadata", {})
@@ -460,6 +463,8 @@ def run_process_subcommand(args: argparse.Namespace) -> None:
 
     print(f"\n{'='*60}")
     print(f"Curadoria processing finished. Success: {processed_count}, Errors: {error_count}")
+    """
+
 
 
 # ==================== STAGE 2 AI ENRICHMENT ====================
@@ -488,6 +493,9 @@ def run_stage2_subcommand(args: argparse.Namespace) -> None:
             print(f"  {idx}. {f.relative_to(raw_path)}")
         return
 
+    # GeminiWeb stage2 processor disabled / commented out (do not remove per user settings)
+    print("ℹ️ GeminiWeb stage2 subcommand is currently deactivated.")
+    """
     print(f"Initializing Playwright context using profile: {chrome_profile}")
     with GeminiWebProcessor(user_data_dir=chrome_profile) as processor:
         for idx, raw_file in enumerate(unprocessed, 1):
@@ -497,6 +505,8 @@ def run_stage2_subcommand(args: argparse.Namespace) -> None:
                 print(f"  ✓ Successfully enriched and saved.")
             except Exception as e:
                 print(f"  ✗ Error processing {raw_file.name}: {e}")
+    """
+
 
 
 # ==================== PIPELINE: sync -> stage2 -> process ====================
