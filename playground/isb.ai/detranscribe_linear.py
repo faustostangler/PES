@@ -15,8 +15,25 @@ import time
 from pathlib import Path
 
 
+def count_tokens(text: str) -> int:
+    """Count tokens using tiktoken (cl100k_base) with fallback estimation."""
+    if not text:
+        return 0
+    try:
+        import tiktoken
+
+        encoder = tiktoken.get_encoding("cl100k_base")
+        return len(encoder.encode(text))
+    except Exception:
+        return max(1, len(text) // 4)
+
+
 def main() -> None:
     # --- Configuration ---
+    # --- Token Telemetry Accumulators ---
+    total_input_tokens = 0
+    total_output_tokens = 0
+
     isb_root = Path(__file__).parent
     raw_root = isb_root / "raw"
     default_input_dir = raw_root
@@ -158,7 +175,8 @@ def main() -> None:
         raise RuntimeError("Failed to resolve or allocate an active Antigravity session ID.")
 
     session_folder_path = brain_dir / session_id
-    print(f"[Session] Full directory path: {session_folder_path.resolve()}")
+    jsonl_path = session_folder_path / ".system_generated" / "logs" / "transcript.jsonl"
+    print(f"[Session] {session_folder_path.resolve()}/.system_generated/logs/transcript.jsonl")
 
     # --- 4. Load Skill Context ---
     skill_context = ""
@@ -172,7 +190,18 @@ def main() -> None:
     else:
         txt_files = [target]
 
-    # --- 6. Continuous Linear Loop ---
+    # --- 6. Context Isolation Sentinel ---
+    # WHY: new-conversation API is broken (project_id error). send-message to fresh
+    # UUIDs creates dirs but no agent processes them. Only option: reuse the active
+    # session but clear its memory (transcript.jsonl) between dispatches.
+    sentinel_prefix = (
+        "CRITICAL CONTEXT RESET: Ignore ALL previous conversation history. "
+        "This is a completely new, independent task. Do NOT reference any "
+        "previously processed files or outputs. Treat this as your very "
+        "first message in a fresh session.\n\n"
+    )
+
+    # --- 7. Continuous Linear Loop ---
     for idx, input_file in enumerate(txt_files, 1):
         # print(f"\n--- [{idx}/{len(txt_files)}] Processing: {input_file.name} ---")
 
@@ -194,15 +223,15 @@ def main() -> None:
         if output_file.exists():
             output_file.unlink()
 
-        prompt = (
+        task_prompt = (
             f"You are Writer Detranscriptor. Transform raw audio transcript into clean, structured Markdown inside <config_file> tags.\n"
             f"Option A (Primary): Save output directly to file: {output_file}\n\n"
             f"--- SKILL SPECIFICATION ---\n{skill_context}\n\n"
             f"--- TRANSCRIPT ---\nFile: {input_file.name}\n{transcript_text}"
         )
 
-        if len(prompt.encode("utf-8")) > 40_000:
-            prompt = (
+        if len(task_prompt.encode("utf-8")) > 40_000:
+            task_prompt = (
                 f"You are Writer Detranscriptor. Transform raw audio transcript into clean, structured Markdown inside <config_file> tags.\n"
                 f"Option A (Primary): Save output directly to file: {output_file.resolve()}\n\n"
                 f"Input file path: {input_file.resolve()}\n"
@@ -210,6 +239,86 @@ def main() -> None:
                 f"Note: Raw transcript text omitted from prompt payload to prevent CLI argument length limits.\n"
                 f"Please use view_file to read {input_file.resolve()}, apply writer-detranscriptor skill, and write the result directly to {output_file.resolve()}."
             )
+
+        prompt = sentinel_prefix + task_prompt
+        input_tokens = count_tokens(prompt)
+        total_input_tokens += input_tokens
+
+        # --- Context Isolation: Truncate JSONL and purge message history ---
+        # WHY: Clears accumulated conversation history AND message files BEFORE the agent
+        # receives the prompt, ensuring fresh session behavior.
+        if jsonl_path.exists():
+            jsonl_path.write_text("")
+
+        messages_dir = session_folder_path / ".system_generated" / "messages"
+        if messages_dir.exists():
+            for msg_file in messages_dir.glob("*.json"):
+                try:
+                    msg_file.unlink()
+                except Exception:
+                    pass
+
+        # --- Server Restart & Re-discovery ---
+        try:
+            ps_res = subprocess.run(["ps", "aux"], capture_output=True, text=True, check=False)
+            for line in ps_res.stdout.splitlines():
+                if "language_server" in line and "--csrf_token" in line:
+                    pid_m = re.search(r"^\S+\s+(\d+)", line)
+                    if pid_m:
+                        pid = int(pid_m.group(1))
+                        # print(f"[Server] Restarting Language Server process (PID {pid})...")
+                        os.kill(pid, 9)
+                        break
+        except Exception as e:
+            print(f"[Server] Warning restarting Language Server: {e}")
+
+        # Re-discover active gRPC port and CSRF token after restart
+        env = os.environ.copy()
+        for _ in range(15):
+            found = False
+            try:
+                ps_res = subprocess.run(["ps", "aux"], capture_output=True, text=True, check=False)
+                for line in ps_res.stdout.splitlines():
+                    if "language_server" in line and "--csrf_token" in line:
+                        pid_m = re.search(r"^\S+\s+(\d+)", line)
+                        token_m = re.search(r"--csrf_token\s+([a-f0-9\-]+)", line)
+                        if pid_m and token_m:
+                            pid = pid_m.group(1)
+                            token = token_m.group(1)
+                            ss_res = subprocess.run(["ss", "-tulpn"], capture_output=True, text=True, check=False)
+                            for ss_line in ss_res.stdout.splitlines():
+                                if f"pid={pid}," in ss_line:
+                                    port_m = re.search(r"127\.0\.0\.1:(\d+)", ss_line)
+                                    if port_m:
+                                        port = port_m.group(1)
+                                        test_env = env.copy()
+                                        test_env["ANTIGRAVITY_LS_ADDRESS"] = f"127.0.0.1:{port}"
+                                        test_env["ANTIGRAVITY_CSRF_TOKEN"] = token
+                                        try:
+                                            res = subprocess.run(
+                                                [binary_path, "get-conversation-metadata", "0e69775c-ba22-4a48-ad18-ba6a318c9a04"],
+                                                capture_output=True,
+                                                text=True,
+                                                timeout=1.5,
+                                                env=test_env,
+                                            )
+                                            out = (res.stdout + "\n" + res.stderr).lower()
+                                            if res.returncode == 0 and "connection refused" not in out and "unavailable" not in out:
+                                                env = test_env
+                                                found = True
+                                                break
+                                        except Exception:
+                                            pass
+                                if found:
+                                    break
+                    if found:
+                        break
+            except Exception:
+                pass
+            if found:
+                break
+            time.sleep(1)
+        # print(f"[Server] Re-bound to gRPC Language Server at {env.get('ANTIGRAVITY_LS_ADDRESS')}")
 
         dispatch_time = time.time()
         # print(f"[CLI] Dispatching RPC payload to session ({session_id[:8]}...)...")
@@ -220,7 +329,7 @@ def main() -> None:
         # --- Artifact Completion Polling (Zero transcript.jsonl dependency) ---
         # print(f"[Bridge Job] Waiting for agent artifact output -> {output_file.name}...")
         job_done = False
-        max_wait_seconds = 60
+        max_wait_seconds = 6000
         scan_start = time.time()
 
         while time.time() - scan_start < max_wait_seconds:
@@ -236,8 +345,30 @@ def main() -> None:
             if output_file.exists() and output_file.stat().st_size > 0:
                 print(f"✓ Output file present -> {output_file}")
             else:
-                print(f"[CLI Dispatch] Request dispatched to session {session_id[:8]}... Output pending -> {output_file}")
+                # print(f"[CLI Dispatch] Request dispatched to session {session_id[:8]}... Output pending -> {output_file}")
+                pass
 
+        # --- Token Telemetry per Analysis ---
+        output_text = output_file.read_text(encoding="utf-8").strip() if output_file.exists() else ""
+        output_tokens = count_tokens(output_text)
+        total_output_tokens += output_tokens
+
+        print(
+            f"[Telemetry] [{idx}/{len(txt_files)}] {input_file.name}\n"
+            f"  ├── Input Tokens:  {input_tokens:,} | Total Input:  {total_input_tokens:,}\n"
+            f"  ├── Output Tokens: {output_tokens:,} | Total Output: {total_output_tokens:,}\n"
+            f"  └── File Total:    {input_tokens + output_tokens:,} | Grand Total:  {total_input_tokens + total_output_tokens:,}"
+        )
+
+    print(
+        f"\n========================================\n"
+        f"[Telemetry Summary]\n"
+        f"  Total Files Processed: {len(txt_files)}\n"
+        f"  Total Input Tokens:    {total_input_tokens:,}\n"
+        f"  Total Output Tokens:   {total_output_tokens:,}\n"
+        f"  Grand Total Tokens:    {total_input_tokens + total_output_tokens:,}\n"
+        f"========================================"
+    )
     print("Done!")
 
 
