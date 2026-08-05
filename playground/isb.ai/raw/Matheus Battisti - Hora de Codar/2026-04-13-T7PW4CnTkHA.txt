@@ -1,0 +1,146 @@
+---
+video_title: "Você Tá QUEIMANDO Tokens no Claude Code (10 Dicas pra Parar)"
+video_id: T7PW4CnTkHA
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=T7PW4CnTkHA
+video_date: 2026-04-13T14:00:00+00:00
+video_description: |
+  Se você usa o Claude Code provavelmente já levou aquele susto olhando quanto gastou de token. Eu passava por isso toda semana até investigar onde exatamente meus tokens estavam indo embora. Descobri que mais da metade era puro desperdício: o Claude explorando arquivo que não precisava, MCPs sugando contexto sem você perceber, logs gigantes entrando na conversa sem necessidade. Nesse vídeo mostro 10 dicas que cortaram meu gasto pela metade e a maioria você aplica em menos de 1 minuto.
+  
+  🔥 Comece grátis no Bitrix24: https://www.bitrix24.com.br/~bX7Yy
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_token_cc
+  
+  🟪 Hospedagem que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  A primeira dica é ter um CLAUDE.md bem feito no projeto. Sem ele o Claude precisa explorar dezenas de arquivos pra entender seu projeto antes de começar a codar. Com um CLAUDE.md de 50 a 150 linhas definindo stack, estrutura de pastas, padrões de código e comandos, ele pula toda a exploração e vai direto pro código. Cada arquivo que ele não precisa ler é token economizado.
+   
+  A segunda dica é a que mais choca: desconectar MCPs que não está usando. Cada MCP server conectado adiciona todas as definições de ferramentas no contexto em toda mensagem. Um desenvolvedor documentou 82 mil tokens de contexto sendo consumidos pelos MCPs antes de digitar qualquer coisa. Num contexto de 200k isso é quase metade. Comece com zero MCPs, conecte quando precisar e desconecte quando terminar. Essa mudança sozinha pode liberar 30 a 50% do contexto.
+   
+  A terceira é o .claudeignore. Sem ele o Claude pode ler qualquer arquivo do projeto incluindo node_modules, dist, build, coverage e lock files enormes. Cria um .claudeignore na raiz igual .gitignore e corta entre 40 e 60% dos tokens de exploração em projetos Next.js e React.
+   
+  Controlar o nível de thinking é a quarta dica. Ultrathink consome muito mais tokens e 80% do que você faz no dia a dia é padrão ou think. Ultrathink deveria ser exceção pra decisões de arquitetura e bugs complexos. A quinta é rodar comandos com ! em vez de pedir pro Claude. Digitar !npm run dev roda o comando sem gastar token nenhum. Se roda 20 comandos por sessão são 20 interações que custaram zero.
+   
+  Não colar logs gigantes é a sexta. O instinto é selecionar tudo e colar mas cada linha entra no contexto e fica carregada em toda mensagem seguinte. Cole só a mensagem de erro relevante, não o log inteiro. A sétima é usar /btw pra perguntas rápidas. Cria uma conversa paralela que não polui o contexto da tarefa principal. Perguntas de sintaxe, dúvidas de API, qualquer coisa que não faz parte da tarefa atual.
+   
+  Assista o vídeo e veja tudo que você pode fazer para economizar MUITOS tokens no Claude Code!
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Como fazer as sessões do Claude Code durarem mais
+  01:27 Dica 1: CLAUDE.md bem feito
+  06:05 Dica 2: Desconecte MCPs não utilizados
+  07:25 Dica 3: crie um .claudeignore
+  08:48 Dica 4: Controlando o thinking do Claude Code
+  10:20 Dica 5: rodar comandos do terminal com !
+  11:15 Dica 6: cuidado com os logs gigantes
+  12:35 Dica 7: comece a usar o /btw
+  14:05 Dica 8: Alternar para o Sonnet
+  15:30 Dica 9: Utilizar /clear ao mudar de tarefa
+  16:50 Dica 10: Context Mode
+  18:40 Considerações finais para economia no Claude Code
+---
+Galera, ultimamente as sessões do cloud Code t durado menos. O usage ou o nosso cota tá sendo consumido de uma maneira muito agressiva. Esse é um problema que muita gente tá reclamando ali para Antropic, pra criadora do cloud code e eles comentaram que é um bug e eles estão vendo esse consumo de sessão. Eu acredito que realmente eles estão capando a sessão mesmo. E é isso aí. Os
+
+próximos, os novos limites serão esses que a gente tá utilizando, mas mesmo assim a gente tem algumas formas de mitigar o uso de tokens e isso vai fazer com que as sessões durem mais e a gente enfrente bem esses tempos adversos aí e mesmo se um dia melhorar, tu vai consumir menos tokens ainda. Então, nesse vídeo aqui, eu separei 10 dicas, vamos dizer assim, 10 conceitos que tu vai poder utilizar aí na prática, vendo como eu os utilizo e tá economizando muitos tokens, beleza? Então, se tu curtiu a ideia, fica comigo até o final do vídeo. Tu vai aproveitar bastante todas as estratégias. Para quem não me conhece, eu sou Mateus Batista, programador e hoje venho me aventurando aí no mundo da IA, trazendo as melhores tecnologias aqui no canal. Então já
+
+deixa o like aí e também se inscreve para poder receber as notificações dos próximos vídeos e continuar aí conhecendo outras ferramentas de A ou aprofundando o cloud code. Enfim, tem muita coisa bacana que a gente posta aqui. Agora bora lá pra prática. Bom, galera, eu trouxe aqui o as 10 dicas, beleza? Vou falar uma a. Então, eu
+
+trouxe o infográfico aqui nessa maneira colunar, tá? Eu vou bem direto ao ponto pra gente não perder tempo. Primeira dica que é fundamental em todo o projeto é ter aí um cloud MD bem feito, tá? Esse arquivo ele vai determinar as regras de negócio do nosso projeto, as partes críticas e o cloud mesmo consegue gerar. A gente pode pedir para ele criar esse arquivo e ele vai gerar da melhor maneira possível. Mas é claro, nós
+
+podemos adicionar quando a gente quiser alguma coisa nova para que o cloud fique ciente. Por que que é bom ter esse arquivo? Ele sempre vai estar se referenciando a ele primeiro para entender alguma coisa. Por exemplo, a gente quer que todas as funções sejam comentadas. É um exemplo. Se ele não tem
+
+certeza disso, ele vai entrar nos arquivos de funções, vai ver se elas são comentadas, ele vai trazer esse padrão baseado nos nos arquivos do projeto e isso vai fazer ele gastar tokens nessas idas e voltas. Então, tu tem esse arquivo aqui, ó, que eu vou demonstrar agora, Cloud MD, bem definido, que pode até ser criado por ele, vai conseguir fazer com que o cloud acesse ele primeiro e entenda as partes críticas do projeto. E isso ajuda no consumo de tokens, fazendo com que se ele encontrar informação aqui, ele não precisa ir em outro lugar. Então esse arquivo é recomendado que tenha entre 50 a 150 linhas. Tem que ficar bem enxuto mesmo, tendo só o que interessa para que realmente seja efetivo, porque muitas informações vai resultar no mesmo problema. O cloud vai acessar ele, vai
+
+mandar como input ali, vai consumir um monte de tokens à toa. Então deixa o arquivo pequeno. Beleza? E galera, só uma pausa aqui rapidinho para comentar sobre a Bitrix. Eu sei que muita gente que me acompanha aqui tem empresa ou presta serviços freelance. e tem que
+
+organizar os clientes, projetos e tarefas. Com o CRM da Bitrix, tu consegue fazer exatamente isso. É um CRM ultra completo. Ele não tem só isso que eu vou mostrar aqui hoje para vocês, mas para essa parte de clientes e projetos é muito interessante para não ficar aquela bagunça, né? A gente não tem que ficar anotando ali e num agenda ou sei lá, utilizando vários softwares para poder gerenciar os projetos dos clientes. Aqui
+
+consegue fazer tudo centralizado num lugar só. Beleza? Então o que que tu vai fazer aqui na Bitrix? Tu vai ter a opção de CRM, onde tu vai conseguir cadastrar os teus clientes. Então pode vir aqui, contato, colocar algum cliente que tu tenha, por exemplo, aqui rapidinho, ó, vou colocar João, aliás, aqui é o sobrenome, né? Então, Santos João, tá? E
+
+eu posso colocar todos os dados dele, né, para deixar mais fácil o acesso contato via e-mail, enfim, o que tu precisar. E esse João, ele pode ser o meu contato de uma empresa. Então, vamos dizer aqui que a gente vai ter a empresa eh João Marketing, tá? E aí aqui na João Marketing eu coloco o contato do João para poder atrelar tudo a uma coisa só, né? Então a empresa e o contato, né?
+
+Quem a gente interage lá nessa empresa X. Aí, beleza, eu consigo adastrar meu cliente aqui, colocar todas as informações de negócios, os orçamentos que a gente tá tendo no momento, né, algum trabalho, faturas que a gente vai emitir para essa pessoa, tá? E a cereja do bolo é poder organizar um projeto baseado nesse cliente. Então, eu venho aqui em tarefas e projetos, eu posso estar criando aqui um novo projeto. Vamos dizer que que eu tenho que criar um projeto. Vai ser o sistema de
+
+automações para farmácia. Aí eu vou criar, ele é público. Eu posso botar outras pessoas que trabalham comigo, né? Se for só tu, não tem problema também. Ó, criou o projetinho aqui. E agora eu
+
+vou inserir as tarefas que eu preciso para concluir esse projeto. Vamos dizer aqui que eu tenho que iniciar os fluxos do N8N. Crio, a tarefa aparece aqui. Aí tem estilo camban, tem estilo lista, né? Tu pode trabalhar da maneira que tu preferir e ainda aqui na tarefa eu consigo colocar o próprio João ou a empresa do João atrelado à tarefa. Então
+
+fica tudo interconectado, mais fácil de organizar e gerenciar todo esse projeto que tu precisa fazer. Então essa é uma das soluções que a Bítric proporciona, tá? Vou deixar, como eu falei, o link aqui na descrição para vocês poderem acessar, fazer o teste por vocês mesmo, entenderem quão completo esse software é. Se vocês precisam de um CRM, tá bagunçado as coisas aí, tá precisando utilizar vários softwares para poder gerenciar os teus projetos, dá uma olhada no Bitrix que é a solução para tudo. Beleza? Agora sim, bora continuar.
+
+Bom, galera, segunda dica, desconectar MCP não utilizados. Que que acontece? Quando a gente inicia ali o cloud, ele vai tá conectando a vários MCPs. Se tu usou um para teste, vamos dizer, para alguma coisa aí algum dia e instalou ele de forma global, ele vai tá sendo levado pro próximo projeto também. E o cloud pode estar utilizando ele à toa ali meio que sem querer, porque fez sentido pro promp que tu mandou. Então isso pode
+
+estar consumindo token também. Eu botei até aqui, cada MCP adiciona todas as tours no contexto, em toda a mensagem. Um dev registrou 82.000 tokens consumidos por MCPs antes de digitar. Então, olha só, esse aqui é um outro problema também. Além de ele acessar
+
+tudá, ele pode estar adicionando no contexto e fazendo com que ele fique poluído e tu perca mais tokens nesse processo também. O ideal é começar com zero MCP e só conectar quando precisar. Eu gosto muito da estratégia de instalar MCPs por projeto, né, nesses arquivos de configuração que ficam aqui na parte do cloud. Então, dá uma olhada aí, tu digita barra MCP, tu vai conseguir ver todos os MCPs ativos. Então aqui eu tenho alguns, ó, vejam aqui para esse projeto, né, local, nesse projeto eu tenho aqui do usuário, do cloud, buildam. Então isso tem que ter ciência
+
+sempre. Começa o projeto, dá um barcp que tu não vai utilizar, que tá à toa só poluindo o contexto. Vamos lá. Terceira dica, Cloud Gnor. Cloud Cloud Gor, ele é um arquivo que funciona semelhante ao gitnor, tá? A gente vai tá criando ele
+
+dessa maneira aqui. Dá pedir pro cloud criar, inclusive. É um arquivo que contém arquivos e pastas que o cloud não precisa ler. Não quer dizer que o cloud vai ler esses arquivos aqui, que ele vai entrar no teu node mods ali e ler todas as libes que tu tem instalado. Não quer dizer isso. Mas ele pode, porventura,
+
+por um erro, entrar ali, acessar e desnecessariamente poluir o contexto com arquivos que não precisam estar mapeados no input, no output dele. Então, uma boa prática colocar esse arquivo, porque tu vai ter certeza de que ele nunca vai entrar nessas pastas e arquivos que não precisa, beleza? Então tem aí o costume de criar, então tem aí o costume de criar um cloud ignor. Galera, dica bônus aí, formação vibe coding. Se tu gosta da minha didática, tá curtindo os vídeos aqui do canal, quer se aprofundar em cloud coding, vibe coding, programação assistida por IA, esse é o meu treinamento mais completo para isso, tá?
+
+Acesso vitalício. Tu vai ter um grupo de WhatsApp nos alunos, mais de 35 horas de conteúdo. A gente tá colocando atualizações semanais, enfim, é um treinamento completo para tu sair da tua ideia, conseguir criar teus projetos com essas ferramentas de vibe coding, Cloud Code, Antigraft, Codex e outras. Link no comentário fixado. Beleza? Bom, vamos
+
+lá. Quarta dica, controle o thinking. Isso aqui é muito interessante porque muita gente, até talvez pelo costume da sessão ser maior ali antigamente, né? trabalha ali com fing no máximo, né? O ultra f na verdade é o é o é o máximo que dá para colocar, tá? E isso vai
+
+fazer com que ele use tokens necessariamente, porque não precisa trabalhar, né, nesse padrão mais alto nas tarefas. Tu pode estar utilizando o médio, se tu acredita que tá tendo algum problema utilizando o low, tu pode estar utilizando o nível médio ali, se tu acha que o mais baixo vai prejudicar de alguma maneira, mas eu recomendo fortemente que vocês testem nas menores tarefas, principalmente o nível de raciocínio mais baixo, tá? Isso vai ajudar bastante, porque quando tu vem aqui em model, tu vai ter aqui o effort, tá? Então o effort ele vai ser aqui, ó, low, né, que seria o mínimo, que eu recomendo vocês testarem tarefas menores. Vai mudando com a setinha do lado aqui, né? Medium, que seria o ideal
+
+para qualquer tarefa, galera, depois da criação do projeto. Isso aqui vai resolver o problema. E tem o high, que é um um esforço que eu gosto de utilizar para início de projeto, para adição de novos módulos. Depois a gente tem o Max Efor, que eu vejo mais utilizado, que eu vejo mais sendo utilizado no começo mesmo, tá? Epa de planejamento, na criação ali da base. Depois disso, eu
+
+acho que ele já é desnecessário, ele vai só queimar tokens. Então, dá uma olhada se não tá utilizando sempre o effort no máximo aí, que isso prejudica bastante o consumo, tá? Quinta dica, rodar comandos de terminal com exclamação. Então, o que acontece? Muita gente pede o comando, por exemplo, assim, inicia o projeto para mim. Quando tu pede isso aqui, ele
+
+vai rodar o comando que tu precisa, só que ele vai lá no cloud, ele volta, ele tem que entender o teu contexto, né, do que tu quer fazer. Na verdade, ele só vai digitar um npm run dev, né? A gente pode vir aqui ver os comandos de script. Provavelmente ele vai estar rodando npm rveev na maioria dos projetos. Então, em vez disso, tu pode simplesmente botar exclamação, npm, run. E aí ele não vai
+
+passar pela LLM, não precisa sair do cloud e ele vai rodar o o comando para iniciar o projeto. E isso em background, né? Ele não vai atrapalhar aqui o uso do terminal. Então a gente pode apertar contrtrol B para isso, né? Então pronto, assim tu economiza mais um pouco de token. Em vez de dar aquela preguiça
+
+monstra lá, ficar sempre pedindo pro cloud fazer o que tu tem que fazer, né? Dica número seis, não colar logs gigantes. Então, galera, tem muita gente que tem ali a o costume de ver algum erro. Então, vou usar esse repositório que tá aberto como exemplo. Chega lá, copia o erro todo. Vamos lá, chega no
+
+cloud ali, corrija este erro e coloca. Tem 250 linhas que, sei lá, 200 não são necessárias. Geralmente o erro que aparece ali inicialmente, quando dá um erro do next ali, você já deve ter visto, ele mostra um erro que deu o arquivo. Isso já é o necessário para ele na maioria dos casos. Não precisa colocar toda trace, que seria ali o como ele chegou naquele erro em questão de arquivos, né? [limpando a garganta]
+
+Resumidamente, é isso. Muita gente coloca isso, vai pro input, ele tem que interpretar todos esses dados e tu queima mais token. Então eu gosto bastante de colocar aquela primeira linha que dá no erro ali, que mostra ou vir direto no console mesmo, encontrar o erro e colocar. E no máximo ali, se ele dar mais informações, logo abaixo, tu consegue dar todas as informações necessárias, tá? Então, de forma resumida, tenta colocar máximo cinco a 10 linhas ali, já vai ser suficiente pro entender o problema ou qualquer outro modelo que tu use e resolver o mesmo, tá? Outro comando aí bem legal que é
+
+novo, tá? Inclusive a gente tem até um vídeo aqui no canal explicando o funcionamento dele e mas inclusive ainda a gente tem uma playlist cloud code, então vai deixar tamb aqui, ó, para tu poder acessar o primeiro vídeo no izinho. A, esse vídeo inicial é um miniurso cloud code, galera. Recomendo a todos fazerem e seguirem a playlist. Tem mais de 30 vídeos, deve estar chegando no quadrado, já tem muito conteúdo de graça e qualidade de cloud code para vocês, tá? Vejam nossa playlist. Bom, o
+
+BTW o que que ele faz? Ele vai simplesmente ler a conversa do ponto que tá para trás, tá? Então ele não faz nada para a frente, né, do que seria implementado. Ele tá olhando que já implementou e ele pode responder dúvidas. sem consumo de tokens. Por
+
+exemplo, VTW, que stack estou usando neste projeto? Então aqui ele meio que sai do fluxo da conversa, responde que a gente precisa, tá? Um baixíssimo consumo de token ou nenhum, dependendo da dúvida. E aqui eu posso entender o que eu quero perguntando isso, tá? Então ele responderu que stack e pronto. Aí eu
+
+posso dar um ESC e continuar a minha conversa. Isso vai servir para quando a gente precisa tirar alguma dúvida pontual do projeto para seguir para ele. Isso vai servir para quando a gente precisa tirar alguma dúvida pontual para seguir o projeto. V perguntar diretamente pro cloud acessar o modelo, processar tokens, eu uso o BTW, faço a pergunta, tenho a resposta e eu já consigo seguir de forma mais assertiva. Galera, oitava dica, utilizar o Sonit para tarefas mais simples, tá? Muita
+
+gente usa o para tudo. Novamente, acredito que seja a mesma coisa do effort. Consumo antes era menor, a gente demorava para gastar sessão. O Pro 5X ali ou Max 5X, seu nome, o nome do plano, dava para todo mundo aí criar os seus projetos com folga. Agora não.
+
+Agora a gente tem aqui um problema de consumo de tokens e a gente vai ter que utilizar o Sonic de modo inteligente. Então, novamente, façam os testes, né? Isso aqui não adianta a gente falar só conceitualmente, tem que ver na prática se o Sonic vai te entregar. E para mudar o modelo, né, é bem simples, só vir aqui barra model e altera pro Son. Beleza?
+
+Pronto. Após o próximo prompt, ele já vai estar utilizando o modelo menor, né? E aqui eu coloco um dado, né? Opus para pensar. Então, etapa de planejamento, etapa inicial, muito importante, novos módulos, novas funcionalidades críticas, mas para executar, provavelmente o SIT vai ser uma opção muito viável e vai ter uma economia de 30% de tokens, tá? Antes
+
+de falar a dica número nove, galera, a gente tem um guia gratuito aqui de engenharia de prompt, o link vai est na descrição, beleza? É só acessar e baixar lá tu vai aprender a escrever melhores prompts que prompt bom também ajuda a economizar token, tá? Então, mais uma dica bônus para vocês aí, baixem material. Bom, esse aqui, a dica nove, o próprio própria equipe do Cloud Code recomenda dá um clear ao mudar de tarefa. Por quê? Quando tu usa o
+
+contexto eh sem limpar ele, o que que vai acontecer? Tu vai estar arrastando coisas que não tem nada a ver para uma nova tarefa e isso vai tá ajudando no consumo de token. Então, tu pode vir aqui e utilizar o context. Ele vai mostrar como é que tá o uso do contexto. Então, vamos dizer que tem 10% de contexto. Tudo isso aqui seria arrastado
+
+pra próxima tarefa. E utilizando clear, a gente meio que vai limpar isso aqui tudo e vai ter um contexto muito mais inxuto para a próxima tarefa, tá? Aqui nesse caso, como eu tô com cloud zerado, não mudou nada, né? Mas ele vai reduzir justamente o contexto que a gente tá utilizando para fazer alguma coisa nova, né? Tem algumas coisas que não vai diminuir nunca. Por exemplo, skills. Eu
+
+tô utilizando várias skills, vai continuar culpando, não tem o que fazer, mas o que é da tarefa antiga vai sumir e aí ele vai trazer o contexto limpo, menos consumo pra gente, tá? Última dica, context mode, tá? Esse aqui é um plugin. Eu já cobri ele aqui no canal. Eu expliquei exatamente como vocês podem fazer para utilizar, tá? O editor vai
+
+deixar a TAMB aqui do context mode. Vou deixar o izinho para vocês poderem acessar e verem como utilizar. Não vou fazer aqui que demora bastante, mas basicamente é um plugin que vai ficar rodando o tempo todo e ele vai se autogerenciar ali no contexto. Ele funciona de duas formas. Ele compacta o contexto de maneira mais eficiente, beleza? salvando ali somente o que
+
+interessa. Ele faz um filtro para não salvar besteira no contexto e ainda ele mantém o contexto todo no banco de dados. Então, quando o cloud compactar, que inevitavelmente o cloud vai compactar também, ele vai pegar o que tem no banco de importante e vai injetar no contexto de novo. Então é uma coisa muito interessante a abordagem que esse pessoal utilizou para criar esse plugin, que faz com que não só a gente tenha um contexto inxuto com o que precisa, que quando o cloud for lá e destruir tudo, ele ainda resgata as informações importantes e a gente consegue est mantendo um contexto bom que vai ajudar a gente a seguir o projeto. O plugin em si é esse aqui, tá galera? context mode.
+
+Beleza? Ele tá bem avaliado que ele tá crescendo bastante esse projeto. Então, sugiro dar uma olhada no nosso vídeo para aprender a utilizar esse cara aqui. Se tu seguir isso aqui tudo, claro que é muito teste, muita validação para entender se vai dar bom ou se vai dar ruim, né? Provavelmente tu vai ter de duas a três vezes mais longas a tua sessão, tá? Ah, não é receita de bolo,
+
+não é bala de prata, mas eu te garanto que tu vai economizar muito o token seguindo essas dicas aqui. E tem coisas que tem que se policiar. Por exemplo, comando BTW, comando clear. Não vai pegar de primeira, né? Mas tu vai ter que lembrar, anotar isso em algum lugar para poder estar utilizando aí quando necessário e com o tempo tu vai ver que vai ter muito ganho, muita economia e tu vai utilizar o cloud code por muito mais tempo. Galera, então essas são as minhas
+
+10 dicas para tu poder economizar a tua cota, a tua usage ali no cloud code, utilizar ele por muito mais tempo do que tu tá utilizando agora. comenta aí se tu já usa alguma coisa, se tem mais algumas dicas que tu queira incluir aí para ajudar o pessoal, que é importante. Muita gente tem trazido ideias boas, então estou contando com vocês. Formação Vibe Coding, galera, é a forma mais eficiente de economizar token e aprender vibe coding. Brincadeira, mas o link tá aqui no comentário fixado, tá? para
+
+vocês conhecerem o treinamento e claro, né, se não são inscritos, se inscrevam aqui. Estamos soltando vídeo todos os dias e deixem aquele like para fortalecer o meu trabalho. Vou ficando por aqui, espero vocês no próximo vídeo. Valeu,

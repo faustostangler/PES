@@ -1,0 +1,176 @@
+---
+video_title: "Stitch Desenha, Claude Code Constrói: Pipeline INSANO (Tutorial)"
+video_id: UXG_3fYKETw
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UXG_3fYKETw
+video_date: 2026-03-30T15:00:00+00:00
+video_description: |
+  O Claude Code gera o PRD do projeto, cria os prompts pro Stitch, você desenha as telas, conecta via MCP, e o Claude Code puxa o layout e constrói o app seguindo o design e as funcionalidades do PRD. Um pipeline onde a IA planeja, a IA desenha, e a IA constrói. Você só aprova.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_stitch_cc
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/battisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O problema que esse pipeline resolve é simples: quando você pede pro Claude Code construir um app, o visual sai genérico. Cards básicos, cores padrão, tipografia sem personalidade. É funcional mas é AI slop. E quando você desenha no Stitch, o design fica bonito mas não tem as funcionalidades certas porque o Stitch não sabe o que o app precisa fazer. Esse pipeline conecta os dois: o PRD é a fonte da verdade pra funcionalidades e o Stitch é a fonte da verdade pro visual. O Claude Code junta os dois.
+   
+  O primeiro passo é gerar o PRD no Claude Code. Descreve o produto em linguagem natural e o Claude gera um Product Requirements Document completo com visão do produto, personas, funcionalidades detalhadas por tela, estrutura dos dados, regras de negócio e critérios de aceite. Esse documento vira o contrato de funcionalidades que o Claude Code vai consultar na hora de construir.
+   
+  O segundo passo é pedir pro Claude Code gerar prompts otimizados pro Stitch. Como o Claude já conhece o PRD, os prompts visuais refletem as funcionalidades. O prompt do menu já vai ter os campos certos, o do carrinho vai ter o campo de mesa, o da cozinha vai ter os status corretos. São prompts de design visual rico, não funcional, prontos pra copiar e colar no Stitch.
+   
+  O terceiro passo é abrir o Stitch e colar os prompts. Cada prompt gera uma tela. Ajusta o que precisar com texto ou voice mode que permite iterar falando. O resultado são telas com design profissional que seguem a estrutura do PRD sem você ter pensado em layout.
+   
+  O quarto passo é conectar Stitch ao Claude Code via MCP. Instala as Stitch Skills oficiais e configura o MCP server. Quando reinicia o Claude Code ele tem acesso direto ao projeto do Stitch, consegue puxar telas, design system, cores, fontes e espaçamentos.
+   
+  O quinto passo é o Claude Code construir. Ele lê o PRD pra funcionalidades e regras, puxa o design system e os layouts do Stitch via MCP, e implementa tudo junto. O tailwind.config recebe as cores exatas do Stitch. Os componentes seguem o layout das telas. As funcionalidades seguem o PRD. O resultado é um app com design profissional e funcionalidades completas.
+   
+  No vídeo construo o CaféMenu, um cardápio digital de cafeteria. O cliente acessa pelo celular via QR code na mesa, navega pelos produtos organizados por categoria, monta o pedido, informa o número da mesa e envia. A cozinha recebe os pedidos em tempo real num painel com status que avança de novo pra preparando pra pronto. Stack com React, Vite, TypeScript e Tailwind. Dados no localStorage sem backend.
+   
+  Mostro o pipeline inteiro dos 5 passos e no final faço a demo completa: pedido no celular aparecendo no painel da cozinha em tempo real. Design do Stitch, funcionalidades do PRD, código do Claude Code. Tudo conectado.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Como eu utilize Google Stitch com Claude Code
+  01:27 Criando o PRD com o Claude para ter as bases do projetos
+  04:50 Criando o layout com o Google Stitch
+  07:40 Enviando design criado pelo Stitch para o Claude Code via MCP
+  11:20 Testando projeto de Google Stich + Claude Code
+  12:55 Colocando o projeto no GitHub
+  14:35 Fazendo o deploy do projeto
+  19:00 Considerações finais sobre Stitch e Claude Code
+---
+Hoje eu vou te mostrar o poder do workflow de Stit com o Cloud Code. A ideia é que a gente crie o nosso design todo no Stitch, que é um serviço do Google, pra gente poder criar layouts, designs diferenciados dos que a IA cria. Depois a gente consiga colocar ele lá dentro do Cloud Code como um app funcional. E por que isso? O Cloud Code hoje tá se destacando no quesito programação. Ele tá dando banho no
+
+Antigraft, pelo menos quando eu tô gravando esse vídeo aqui. O Antigraft tá sofrendo aí por maus momentos. A gente tem visto ali o consumo de tokens muito abusivo, não dá para usar direito, os resultados não estão tão satisfatórios e muita gente tá migrando pro cloud code com razão. Só que o Google Stitch, mesmo sendo produto da Google, ele tá fazendo muito bem seu trabalho. Então, por que não unir o útil agradável? É exatamente
+
+o que eu vou te mostrar aqui agora na prática para tu poder replicar aí também e testar na tua própria máquina. Se tu curtiu a ideia, não se esquece, deixa o like, se inscreve aqui no canal também para que eu possa trazer mais vídeos todos os dias e também te avisar quando esse vídeo lança. Para quem não me conhece, sou Mateus Batista, programador há mais 10 anos e hoje tô criando aqui conteúdos de a atrelada programação para adiantar tua vida, para tu poder criar teus projetos com programação assistida por IA, vibe coding, como tu preferir chamar. Beleza? Então bora lá começar a estratégia. Então galera, aqui estou com
+
+o cloud code aberto. Por quê? Já que a gente tem acesso ao cloud code, eu vou utilizar ele para uma coisa que ele é muito bom, criar o PRD. Não precisa ser cloud code, pode ser o cloud web, tá? Que que é o PRD? É um documento de
+
+requisitos que vai editar como o projeto vai ser. E esse documento vai ajudar o Stitch a entender melhor como funciona o meu projeto. E aí ele vai criar um design bom, condizente e que vai ser fácil de migrar pro CL cor de volta. Então o processo começa aqui, beleza? Bom, então vou colocar um prompt e vou mandar ele colocar no arquivo prd.md. Coloque no arquivo prd.md.
+
+O prompt fala: "Crie um PRD product requirements document para o projeto café menu. O produto, né, o projeto que a gente vai criar é aquele cardápio digital que quando a gente vai num café, a gente consegue pedir da mesa e a cozinha recebe pedido, tá? Então, o produto cardápio digital de cafeteria, o cliente acessa pelo celular, que é recode na mesa, navega pelos produtos, monta o pedido, informa o número da mesa e envia. A cozinha recebe pedidos em tempo real. Três telas no total. Eu
+
+gosto de começar com poucas telas no Stitch, senão ele viaja, ele vai criando umas coisas, nada a ver. Então, três telas é o essencial pra gente começar bem, tá? Depois a gente pode aumentando lá, não tem problema. A primeira tela vai ser o menu, categoria, grid de produtos, carrinho flutuante. A segunda tela vai ser o carrinho mais checkout para ele fechar o pedido, tá? E a
+
+terceira é o painel da cozinha, que vai listar os pedidos com status. Aqui eu listei a stack. Tu não precisa fazer isso, tá? É que eu vendo background técnico, então eu entendo um pouco mais de das tecnologias e eu gosto de citar algumas coisas que eu quero trabalhar. Então aqui nesse caso tô fazendo com React, tá? Não precisa ter back end.
+
+Esses projetos geralmente são bem simples, tá? Então dependendo, né? Se tu vai criar, claro, uma rede de cafeterias, tu vai vender para outros clientes, talvez seja interessante ter, né, um backend, ser mais robusto, mas aqui nesse caso não precisa. Aí eu vou pedir salvar com prd. MD na raiz. Eu
+
+coloquei redundante ali, mas pensei que não tinha no prompt. E aqui ele vai me gerar esse arquivo. Então vou liberar a edição nele e o arquivo gerado vai estar aqui. Com esse PRD gerado, eu posso começar o design lá no stitch, tá? Então eu posso ler o PRD antes, ver se faz sentido. Aqui eu vou supor que faz
+
+porque eu detalhei bastante o prompt. Então agora a gente vai pro state. E galera, antes de ir pro state eu vou pedir pro cloud code baseado no PRD criar os prompts, tá? Então olha só como é que vai ser meu prompt aqui. Vou fazer o seguinte. Lê o PRDMD acabou de criar.
+
+Agora gera três prompts otimizados pro Google State. Ferramenta de UI design com IAP. Cada prompt deve escrever uma tela com detalhes visuais: layout, componentes, cores, tipografia. O strec descrição visual rica não funcional. Estilo visual, cafeteria premium, fundo escuro, marrom, detalhes dourado. Então,
+
+tô definindo aqui um pouco do design. Não precisa ser tão específico, mas pode gerar prompt das telas estáticas sem lógica, só o visual. Salva como street prompts MD. Então, esse arquivo aqui vai ter os prompts das telas e depois a gente vai pro sted. Vamos esperar ele terminar aqui e a gente já vai ver o próximo passo, ó, galera. Então, ele
+
+criou aqui, tá? E a gente tem o street prompts aqui estão os prompts detalhados de cada uma das telas. Beleza? Então eu vou copiar todos esses prompts aqui. A gente pode anexar o arquivo lá também se vocês quiserem, tá? Eu vou lá pro
+
+stitch. Stitch. Tu vai acessar com stitchwifgoogle.com, tá? Ou só procurar no Google. Acha
+
+fácil. Aqui que a gente vai fazer, a gente vai colocar o prompt e ele vai conseguir criar as telas. O St ele teve uma grande atualização, tá? Eu fiz um vídeo cobrindo tudo isso. Então o editor vai deixar a tamb e o izinho aqui eu vou deixar também para que tu possa ver esse vídeo depois que ele foca mais nos recursos novos. Eu acho interessante
+
+ver, tá? Aqui eu vou focar mais no fluxo stit cloud code, tá? Aqui tu vai mudar pra app web e aqui tu vai escolher um modelo 3.1 Pro que é o melhor pra gente começar. Paleta de cores. Tu pode deixar
+
+o stit decidir porque a gente já deu muita descrição para ele aqui no prompt. Agora basta colar o prompt aqui, tá? E agora eu vou prosseguir. Ele vai começar a criar o layout baseado no projeto e no propt. Então aqui basta a gente esperar e ver o que que ele vai nos fornecer pra gente, tá? A gente pode alterar também
+
+se a gente não gostar, a gente pode pedir outras variações, dá para fazer bastante coisa aqui no street, não precisa aceitar só o que ele pediu, não precisa aceitar só o que ele passou. Beleza? Enquanto ele cria, quero comentar para vocês que a gente tá aqui com inscrições abertas na formação Web Code, nosso treinamento completo em programação com IA. Aqui tu vai ter antigraft, Cloud Code, Codex, várias ferramentas para tu aprender programação com IA. Estamos quase com 35 horas de conteúdo, atualizações semanais, o acesso é vitalício, tem cursos bônus, tem um grupo de WhatsApp dos alunos, enfim, tá bem completo, vale a pena conhecer, link no comentário fixado.
+
+Beleza? Bora voltar pro Stitch aqui, ó. Estão vindo as três telas pra gente, ó, galera, aqui ele me trouxe então todas as páginas, menu do café, eh, kitchen dashboard, né, que é lá os pidos na cozinha, checkout e a gente ainda vai ter acesso aqui a o system. Clicando aqui, eu vou conseguir baixar esse arquivo design, ó. Vou copiar, eu vou colocar lá no meu projeto também, ó, design.mmd.
+
+Vou colar aqui porque daí agora eu vou ter sempre a referência de design pro cloud code acessar, tá? Voltando aqui, eu posso, se eu quiser, gerar outras variações da tela, eu posso fazer edições pontuais, clicando aqui na tela, pedindo para ele. A gente tem várias ferramentas que a gente pode utilizar no stitch, tá? Então, por exemplo, edição direta, ó, venho aqui e consigo colocar, por exemplo, uma edição de texto preparando o seu pedido ou preparando aqui da cozinha ou pedido. Aí eu, pronto, eu fecho e tá editado. Então, eu
+
+posso fazer edições pontuais, eu posso fazer edições via prompt onde eu posso verificar como vai ficar na página web. Ó, a tela aqui vai ficar no celular assim. Aqui vai ficar no tablet, assim vai ficar no PC. Então tenho toda a visualização do design aqui na mão, né? Eu praticamente não precisei fazer nada e ele já tem aqui as telas iniciais do nosso appto, tá bom? Como eu
+
+falei, eu não vou focar muito em recursos aqui do Stitch, tá? Tá tudo aquele vídeo lá. A gente tem outros vídeos aqui também no canal. Quer dar uma olhada como é que funciona melhor a ferramenta. Como é que eu vou jogar isso aqui no Cloud Code? É bem simples. A
+
+gente vai exportar, né? A gente pode selecionar todas as páginas aqui, exportar. E aqui agora eu vou conectar via MCP. Eu vou configurar MCP e vou selecionar aqui o Cloud Code. A gente vai copiar esse código aqui. Ele já vai
+
+ter a nossa chave de API. Se tu não tem uma chave de API, tu vai precisar criar uma, né? E aqui é totalmente gratuito. É mais para conseguir fazer a conexão entre os dois serviços. Beleza? via
+
+protocolo MCP é muito simples. Eu vou colocar aqui o comando, ó. Então, vou colar o comando. É aqui a gente vai aceitar, né, para ele poder executar o comando MCP. E aqui ele vai instalar pra gente a conexão MCP do Google State. Aí
+
+ele fala aqui que deu tudo certo. A gente precisa reiniciar o cloud para que ele possa fazer com que as alterações tenham efeito. Então a gente vai dar um contrl C duas vezes e vai iniciar o cloud de novo. Bom, aqui eu posso pedir, por exemplo, para listar três projetos meus do Stitch via Connect via MCP. Só para ver se tá funcionando, tá? Então
+
+pode fazer isso aí para ter certeza. E aí depois a gente vai conseguir trazer aquelas telas lá. Ó, aqui, como vocês podem ver, ele listou três telas, então quer dizer que tá conectado com sucesso. Bom, como é que a gente vai trazer as telas agora? No próprio exportar, ele vai ter esse aqui, ó, copiar comando.
+
+Então ele já entende que a gente conectou MCP e agora a gente copiou um prompt que vai fazer com que as telas sejam trazidas para cá, tá? Só que o prompt ele provavelmente não está totalmente bem feito. Vou dar aqui prompt MD, só pra gente ver, ó, o que que ele tá fazendo aqui. Ele tá falando que ele é para pegar as imagens e o código das seguintes telas, tá? Então, beleza. Isso aqui é um bom início. Ele
+
+vai entender qual tela exatamente ele a gente precisa e tal. Só que aqui eu não vou conseguir criar minha aplicação. Ele vai criar um monte de HTML com os screenshots que ele obter da das telas. Beleza? E aí que vai entrar os arquivos que a gente criou. Então aqui a gente
+
+vai colocar isso aqui no começo, ó. Lê o PRD para entender as funcionalidades e regras do negócio. Conecta no projeto Stitch via MCP e traga as seguintes telas. Aí eu deixo aqui o que o Stit me passou, tá? E no final eu vou colocar uma outra observação. Essas telas devem
+
+ser utilizadas para montar nosso projeto web seguindo o PRDMT. Configura o projeto. React convit fontes design system reactal storage crie um arquivo data products com os produtos. Tá vou botar ainda assim o arquivo design tem todas as instruções de design. Aí a gente copia e agora a gente vai colar esse prompt aqui e vamos ver a mágica acontecer. Enquanto a
+
+mágica acontece, galera, muita gente me pergunta como eu crio meus prompts? Eu fiz um material explicando passo a passo como eles são feitos. É esse guia de engenheira de prompt. Ele tá na descrição desse vídeo e tu pode baixar gratuitamente. Beleza? Bom, voltamos
+
+aqui ao Cloudinho e vamos esperar ele criar as coisas. Vai pedir algumas confirmações, provavelmente a gente vai aceitando tudo e aí no fim teremos nosso projeto, ó. Então galera, ele terminou aqui o projeto, tá rodando. Vamos fazer os testes então, né? Fundamental. Vou
+
+abrir aqui. Aqui tá o projeto da cafeteria, né? Ã, vamos adicionar. Bom, aqui tá o carrinho. Ele foi feito para mobile, né? Para informar o número
+
+da mesa. Ó, até deu até um [risadas] barulhinho, não sei se vocês ouviram. Beleza. Pedido enviado. E ali a rota da cozinha. Deixa eu ver aqui. Era cozinha
+
+mesmo. Cozinha, ó. Tá aqui, ó. Pedido número um. Então, dando uma olhada ali, a fonte não está igual, né? Mas os ícones também
+
+não, né? Mas o restante, galera, tá muito próximo, né? Claro. Agora vem ajustes, a gente pode melhorar o prompt, refinar. Agora é hora, né? A gente não
+
+fez nada ainda, só trouxemos aqui de um lado pro outro. Mas percebam que a ideia foi concebida com sucesso. A gente conseguiu fazer algo muito bom, com um layout diferenciado, uma paleta de cores que não é comum para EA aqui em cinco espaços, tá? Gostaria de lembrar também todos vocês que temos uma play call aqui no no canal, tá? Mais de 20 vídeos, bem completa. Edor vai deixar o primeiro
+
+vídeo aqui que é um mini curso CL de Code, recomendo a todos e eu vou deixar o izinho ali, beleza? Bom, galera, e ainda para mostrar para vocês que a gente consegue ter projetos reais muito rapidamente, eu quero fazer o deploy com vocês, tá? Então, colocar esse projeto aqui no ar de uma maneira muito simples também. Bora lá. O primeiro passo, galera, como você já deve imaginar, é colocar o projeto no GitHub, tá? E aí
+
+vocês vão criar uma conta, né? É totalmente gratuito, vão ter uma tela semelhante a essa. Criem um novo repositório aqui, ó. aqui em cima e a gente botar aqui o nome do projeto, botar aqui menu café, só criar. Depois é bem simples também, eu vou pegar o link dele aqui que ele me dá, vou no cloud e a ideia aqui é que eu tenho o MCP instalado, né? Como eu tenho MCP do
+
+GitHub instalado, fica bem simples. Eu já fiz esse processo aqui e alguns outros vídeos de projetos aqui na na playlist, inclusive de Cloud C vocês encontram, tá? Então basta seguir lá ou colocar via comandos aqui. Se tu col, se tu mandar esses comandos aqui pro cloud code, ele também consegue, tá? Um pouquinho mais demorado aqui, vai ter que aceitar mais permissões, mas dá na mesma, tá? Então vou botar assim, ó.
+
+Coloque este projeto no GitHub. O repositório é dois pontos e coloca o link. Agora ele vai fazer o processo de subir para lá. Eu preciso que ele esteja lá para poder colocar num servidor, senão eu não tenho como passar isso aqui da minha máquina até o servidor. Até tem, mas é um método mais arcaico. Eu não consigo fazer
+
+controle de versão assim, a organização do projeto não é boa e não é a maneira profissional de fazer. A maneira profissional é via GitHub. Então, olha só, galera, ele me retorna aqui que deu certo. Projeto tá enviado. Eu vou lá e vou conferir. Só dar um F5. Beleza? É
+
+isso que aqui que eu preciso, tá? E agora o nosso próximo passo é encontrar um servidor para colocar, tá bom? Como muitos de vocês sabem, a gente é parceiro da Hosting aqui no canal. Todos os meus projetos estão hospedados lá, eles têm soluções muito em conta e também extremamente fáceis de mesmo que não entende de infraestrutura, colocar o projeto lá, subir o projeto com um clique. E uma dessas soluções é essa hospedagem de web no JS. que acontece,
+
+como ela fala aqui, basta colocar o projeto no GitHub, selecionar aqui qual branch quer, geralmente a principal mesmo, e pronto, o site tá no ar. É simples assim, tem aqui os framers que aceitam, tá? A gente fez o projeto em React, mas um bem comum é Next também e aceita outros. Então, tá tranquilo. Aqui a gente vai escolher o plano. Eu gosto
+
+mais do plano cloud porque ele permite 10 projetos na mesma máquina. E isso para quem tá criando SASN, criando sistemas, é interessante porque vai conseguir validar mais rápido. Então depois tu escolher o teu plano aqui nesse link que tá na descrição já e no comentário fixado, já tem o nosso cupom aplicado. Então tu vai ganhar a melhor oferta, uma condição especial, mais 10%, tá? Então vai ficar no melhor preço possível. Além disso, que acontece? Às
+
+vezes eles fazem algumas promoções, como vocês podem ver aqui, ó, tem três meses grátis e domínio, então é bem interessante. Então, domínio, sei lá, uns 100, 150, depende de quanto tempo tu compra ele. Então, aqui tu já ganha isso, é mais um descontinho, né? Bom, tu fazendo esse processo de gitub, adquirindo a hospedagem, a gente vai direto lá para dentro da Husk. Bom, lá dentro da Hosker vocês vão ter um uma primeira página muito parecida com essa minha aqui, tá? Para acessar o novo
+
+serviço que vocês adquiriram, basta clicar em sites e aqui ele vai est descrito. Eu tenho vários aqui. Eu vou utilizar esse meu primeiro aqui para fazer o exemplo. A gente vai em adicionar site web app node s. Sempre vai ser esse processo quando vocês forem colocar os 10 projetos de vocês, né? Os
+
+outros demais. Aqui vocês vão escolher o domínio de vocês ou usar um domínio temporário. Fazer mais rápido. A gente pode começar por aqui. Aí não precisa configurar o domínio lá que vocês adquiriram. Continue com GitHub.
+
+Escolher o projeto. Nosso é o menu café, né? Beleza. Esse é o segundo passo. E o terceiro, como eu falei, basta clicar ali no último botão de fazer o deploy, implantar. Ó, ele detecta tudo certinho.
+
+Falei react. Ele detectou vit aqui. Beleza, não tem problema também. E aqui a gente pode clicar em implantar. Quando a gente clica, o processo vai ser todo feito automaticamente. Não preciso fazer
+
+mais nada, só esperar. E aí eu vou ter o link para acessar a minha aplicação. Tudo pronto, tudo no ar. E olha só, galera, aqui aconteceu um negócio legal. Ele deu um erro de build, isso pode acontecer com vocês. Provavelmente o
+
+cloud code ali cometeu alguma falha. Então o que que a gente vai fazer? A gente vai copiar o erro do build e vai lá no cloud code e vai dizer assim: "Ocorreu um erro ao fazer deploy." Corrija e cola o erro aqui. Aí a hospedagem da Hoster, essa aqui que eu mostrei para vocês, ela automaticamente detecta as novas mudanças lá no branch principal e vai retentar o build. ou se
+
+isso não acontecer, mas acontece, né? A gente pode ir lá e clicar em reimplantar que também vai dar tudo certo. Só vou esperar ele corrigir, me confirmar, a gente vai tentar o processo de novo. Ó, ele já fez aqui, só vou garantir, né? Mandou para o GitHub, porque não adianta ele corrigir e não mandar. Então eu
+
+preciso que as coisas estejam no GitHub. Ó, ainda não. Então como meu bola aqui, né? Então ele vai fazer a correção, vai mandar para lá. Beleza. Ó, ele enviou o
+
+commit. Agora como é que eu vou fazer? Eu vou verificar se ele vai precisar que o reimplante. Então, a gente vai voltar para cá, né? Vai cair nessa tela. E aqui
+
+eu posso clicar em reimplantar. Pronto. Aí ele vai tentar fazer o build de novo, salvar, reimplantar. E aí a gente vai ter agora sim o site no ar. Ó, vejam aqui, tá fazendo o build, mas ele já tinha acabado de fazer, então já tinha dado certo. Tá vendo que ele fez
+
+automaticamente? Ele deu falha, eu corrigi e ele fez o build de novo, ó, com a correção. Então, esse serviço é excelente, que a gente não precisa nem se preocupar em refazer o build. Se a gente vier o código, ele vai ajustar e vai colocar tudo no ar pra gente. Bom, agora eu vou acessar aqui e pronto, a gente tem aqui o nosso menu digital online. E agora a gente poderia já
+
+servir essa aplicação. Claro, né? Aqui tem, não tem o domínio, né? Mas como vocês viram ali, ele é gratuito e vocês conseguem adquirir com a hospedagem aqui webs, tá? O link vai tá aqui na descrição e no comentário fixado. De uma
+
+olhada, o serviço é excelente e eu tenho algumas aplicações rodando nele também. Super estável e performático o servidor, galera. Então, espero que vocês tenham gostado aí da abordagem, né, desse workflow Stitch mais cloud code, começando pelo PRD, que é bem bem interessante, né? faz com que nenhuma das duas partes erre e o processo fique bem linear, a gente não tem nenhum problema durante o caminho. Comentem aí o que acharam, não se esqueça de deixar o like, também se inscrever se não são inscritos, isso é importante pra gente continuar o trabalho aqui. E deem uma
+
+olhada, né, tanto na hospedagem da Hoster como também na formação Vibe Code. Por hoje. É isso. Vou ficando por aqui. Espero vocês no próximo vídeo.
+
+Valeu,

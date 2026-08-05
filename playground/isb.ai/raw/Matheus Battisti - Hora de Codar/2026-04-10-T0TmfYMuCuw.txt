@@ -1,0 +1,122 @@
+---
+video_title: "A Anthropic Mandou PARAR de Usar Opus no Claude Code (Advisor Strategy)"
+video_id: T0TmfYMuCuw
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=T0TmfYMuCuw
+video_date: 2026-04-10T15:00:00+00:00
+video_description: |
+  A Anthropic fez um anúncio dia 9 de abril que basicamente significa: pare de usar Claude Opus pra tudo. E eles mesmos estão dizendo isso. Lançaram uma coisa chamada Advisor Strategy. A ideia é simples: em vez de rodar tudo no Opus que é caro e lento, você usa o Opus como conselheiro e o Sonnet faz o trabalho pesado. Inteligência do Opus no planejamento, velocidade do Sonnet na execução. E o melhor: no Claude Code você ativa isso com um comando só, /model opusplan, e pronto.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_advisor
+  
+  🟪 Hospedagem que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  A dor que isso resolve é real pra quem usa Claude Code todo dia. Se você usa Opus pra tudo, bate no limite do plano Pro rapidinho e fica esperando 5 horas. Se usa Sonnet pra tudo, é mais rápido e tem mais limite, mas em tarefas complexas ele erra, perde contexto em arquiteturas grandes ou toma decisões ruins. O ideal sempre foi usar Opus só quando importa de verdade e Sonnet no resto, mas essa divisão era manual. Você tinha que ficar trocando modelo o tempo todo. O opusplan automatiza isso completamente.
+   
+  O conceito por trás se chama Advisor Pattern e é mais interessante do que parece. No fluxo tradicional, o modelo grande orquestra tudo e é responsável por plano e execução. Caro. No fluxo com advisor, o modelo pequeno trabalha sozinho a maior parte do tempo. Quando encontra um ponto complexo, consulta o modelo grande. O grande lê o contexto todo, dá uma orientação em texto, e o pequeno continua executando. A analogia é um estagiário que trabalha sozinho a maior parte do tempo, e quando bate numa decisão arquitetural importante liga pro arquiteto sênior que olha o projeto e fala faz X, evita Y, a parte Z é crítica. O estagiário agradece e continua executando.
+   
+  Os números oficiais que a Anthropic divulgou são impressionantes. Haiku com Opus advisor mais que dobrou o score em benchmarks como SWE-bench e Terminal-Bench comparado com Haiku sozinho. E custou significativamente menos que rodar Sonnet direto. Ganho consistente em coding, browsing e raciocínio longo. Traduzindo: você tem performance próxima ao Opus pagando próximo ao Sonnet.
+   
+  A ativação no Claude Code é uma linha. Dentro da sessão, digita /model opusplan e aparece a confirmação Set model to Opus 4.6 in plan mode, else Sonnet 4.6. E é isso. Pra deixar permanente em todos os projetos, edita o ~/.claude/settings.json e adiciona "model": "opusplan". Assim não precisa rodar o comando toda vez. Fica como default. Pra entrar em plan mode dentro da sessão, aperta Shift+Tab duas vezes e o Claude Code troca automaticamente pra Opus 4.6. Quando sai do plan mode, troca automaticamente pra Sonnet 4.6. Tudo automático.
+   
+  No vídeo testo o opusplan em dois cenários reais pra mostrar o ganho de verdade. Primeiro construo uma API REST completa de gerenciamento de tarefas com Node.js, Express, Prisma, SQLite, autenticação JWT, CRUD completo de tarefas, filtros, paginação e testes unitários. Mostro o Opus em plan mode fazendo perguntas específicas que um sênior faria, montando um plano detalhado com estrutura de pastas, schema do Prisma, rotas, controllers, middleware de auth e estratégia de testes. Depois saio do plan mode e o Sonnet executa tudo seguindo o plano.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMP
+  
+  00:00 Anthropic lançou o Advisor Strategy no Claude Code (/opusplan)
+  00:50 Como funciona o Advisor Strategy, comando /opusplan
+  04:15 Ativando o /opusplan no Claude Code (começando com Opus)
+  08:06 Mudando para Sonnet, criando código
+  10:05 Corrigindo problemas do projeto
+  12:15 Minhas considerações sobre o Advisor Strategy
+---
+Galera, Antropic lançou um novo recurso chamado Strat Advisor, que promete aí economizar mais tokens da gente. Basta utilizar um comando e aí o Cloud Code vai orquestrar qual modelo utilizar. Em situações mais complexas utilizar o Opus. Em situações mais corriqueiras vai utilizar o Sonets. Tem duas maneiras de colocar até o Haiko na jogada. Vou
+
+explicar para vocês tudo nesse vídeo e como ativar esse modo novo também. Fica comigo até o final que vai valer muito a pena e vai conseguir utilizar muito mais o Cloud Code também. Para quem não me conhece, sou Mateus Batista, programador há mais de 10 anos e hoje me aventurando muito no mundo da IA, trazendo só as melhores ferramentas para vocês. Então não se esquece, deixa o like, se inscreva também para ficar acompanhando as novidades todo santo dia que a gente coloca vídeo aqui, beleza? Bom, cheio de enrolação e bora conhecer esse novo recurso, galera. Olha só, o nome do
+
+recurso foi lançado que foi lançado ontem, né, dia 9 de abril. Tô lançando aqui a dia 10 é advisor strateg, tá? Basicamente ele vai fazer com que o Opus faça a etapa de planejamento e o Son a etapa de execução, tá? O que que eu acho? Isso é um achismo meu que daqui um tempo eles vão deixar isso aqui mais inteligente e aí o próprio cloud vai conseguir se virar nos modelos ali e escolher sempre melhor para cada situação, tá? Agora ainda tá meio
+
+manual, mas é o primeiro passo para isso. Então, como é que funciona? O ST vai praticamente trabalhar sozinho em pontos mais críticos. Ele vai chamar o opus. O Opus vai fazer ali o que precisa para deixar o SIT encaminhado e devolve pro SIT, tá? Então hoje tá mais ou menos
+
+assim. Como é que tu vai utilizar? Basta utilizar o comando barra model, né, que a gente usa para trocar modelo e usar esse modelo novo Opus Plan, tá? Tem que atualizar o cloud code para poder acessar isso. Tu também pode colocar via settings JSON, né, já deixar configurado ou antropic model, né, uma outra configuração no INF. Como é que
+
+significa? Como é que funciona a divisão de trabalho? Opus é como se fosse o arquiteto senior, planeja e revisa. Soante é o cara que vai mais entrar na jogada executando. E o Haiko vai fazer as tarefas simples. Mas como eu falei,
+
+não é tão simples colocar o Haiko hoje, tá? Mas eu acredito que futuramente ele vai entrar ali quando essa funcionalidade amadurecer mais. Ganhos comprovados. Quanto tá utilizando haiko mais opos, tu vai ter duas vezes mais pontuação, né? Foi uma medição que eles fizeram lá. Custa menos que o Sonet,
+
+combinando os dois aqui da maneira certa. Tu teve um grande ganho em software development. Isso aqui, galera, olha só, tem uma tem um estudo, eu vou trazendo um vídeo futuro aqui, que ele mostra que modelos menores acabam tendo mais assertividade do que modelos com muitos parâmetros, tá? Bem interessante. Terminar o B, que é um outro benchmark também ficou melhor. Estica o Cloud Pro
+
+ou pode esticar, né, a sessão para até três vezes mais e a qualidade é mantida. resolve as dores, tu não vai bater o limite dous. Então o Son agora ele não erra mais as tarefas simples porque ous vai est guiando ele. Tu teoricamente não vai ter que trocar o modelo à mão. Isso aqui tem umas aspas fortes. Tu não vai
+
+ter custo alto via PI e o planejamento não vai ser ruim porque ele vai estar utilizando tá pareamentos a gente pode configurar de várias maneiras, mas somente via API. É aí que tá a pegadinha. Hoje a melhor maneira de fazer isso ainda é uma configuração manual e ainda via API, tá? Mas como eu falei, eu acho que um dia vai ser automático. Tu pode colocar Rico mais opus, Sante mais opus, opus mais opos, né? Então isso vai vai ser permitido
+
+somente via API. No cloud code a gente vai conseguir utilizar somente Opus e Sonit, tá? Ainda ajuda muito, só que não tá no no ponto ideal. Beleza? Então bora lá colocar em prática, galera. Só antes
+
+não se esqueçam, nós estamos aqui com as inscrições abertas para formação Webcode. Nosso treinamento completo que inclui cloud code, antigravity, Codex e outras ferramentas que ajudam a gente programar com o IA pra gente poder criar projetos do zero ao avançado, tá? Treinamento com mais de 30 horas, estamos atualizando semanalmente. Tem mais de 19 projetos. Acesso vitalício. O
+
+link vai est no comentário fixado para tu conhecer o treinamento. Recomendo que assista esse vídeo. Eu explico detalhe por detalhe tudo que tu precisa saber para poder entender como que é o treinamento de forma completa. Beleza? Bom, vamos lá. Então, eu tô aqui com o
+
+cloud aberto, tá? E aí é bem simples, tu vai iniciar ele, como eu já iniciei aqui, e tu vai digitar barra model, que seria onde a gente troca de modelo para Opus, Sonet, Hikon. E aqui o modelo vai ser Opus Plan, tá? Então olha só, ele declara aqui para planejamento é o Opus, para qualquer outra coisa é o SAT. É dessa maneira simplista que tá funcionando. Como eu falei para vocês,
+
+eu acho que isso aqui é temporário, né? Não é algo que vai ser sempre assim. Eles vão evoluir essa funcionalidade porque é uma dor muito forte ali de quem usa cloud code a sessão ser consumida rápido. Então vou criar um projetinho aqui para vocês verem. Eu vou mudar pro modo de planejamento. Shift tab, tá?
+
+Plan mode. Vou colocar um promp de de planejamento inicial que seria quero construir um app de resenha de livros. As pessoas podem adicionar resenhas e outras pessoas podem dar likes nas resenhas, né? Então como se fosse uma avaliação de livros que todo mundo pode participar, uma rede social de avaliação de livro. A ideia é bem simples. Página
+
+inicial mostra todas as resenhas cards bonitos. Cada card mostra a capa do livro, título, autor, nota. Lá. Tem o botão adicionar resenha que abre o formulário. Formulário pede título, autor URL da capa, nota 1 a 5, texto da resenha e nome do autor da resenha. Ao
+
+clicar em like, contador incrementa e fica salvo. Quero uma stack moderna e bonita com banco de dados real para os dados persistirem. O visual precisa ficar profissional. Não quero algo básico. Comece a planejar para mim. B
+
+aqui, pode usar SK como banco para não complicar muito. A gente tem um banco já pronto para utilizar. Olha só, aqui a gente vê que ele tá utilizando o opus, né? Então o opus nesse modo aqui ele vai fazer com que tudo seja bem orquestrado. Então vou colocar aqui que eu quero eh next Prisma Escalight. Criar novo
+
+projeto agora via MCP. E aqui não vai ter superabas. Contador global anônimo. Sim, português e Brasil. Sim.
+
+Submitwers. Então, beleza. Vai planejar e aí eu vou ter como executar esse cara, tá? E aí entra a gente de novo, a gente vai dar um shift tab, vai sair do modo planejamento e vai usar o Sonet já com o Opus, tendo feito todos os alinhamentos necessários para que o projeto seja perfeito pelo Sonet. Então, a gente vai executar ele também para vocês verem que vai dar certo. Enquanto ele cria o
+
+projeto lá, galera, não esqueça de baixar aqui o nosso guia de engenharia de prompt, link vai tá na descrição para tu aprender a criar melhores prompts. Isso também ajuda a economizar tokens, tá? Para quem não sabe, bons prompts ajudam aí a performar melhor em todos os sentidos, tá? Gratuo, tá na descrição desse vídeo. Bom, além disso, galera, não esqueçam, a gente tem uma playlist de cloud code. Vou deixar o izinho aqui,
+
+o editor vai deixar a tamb. O primeiro vídeo é um curso escola de code para tu dominar ali os principais recursos. Bem legal. E semana que vem tô preparando aqui dois vídeos, tá? Para ensinar a economizar token também. Um, eu reunia
+
+10 dicas que eu uso no meu dia a dia. Então, são coisas que vocês podem aplicar aí também, coisas de configuração que vai deixar automático e outras que a gente tem que pegar a mãe e utilizar nós mesmos, né? E um outro é um plugin que eu descobri que ele também ajuda nisso. É um plugin bem interessante, vocês vão ver. Provavelmente os dois vão sair semana que vem, tá? Então fiquem ligados
+
+aí, já se inscrevam. Então olha só, galera, aqui ele falou, ele perguntou, né, que eu quero fazer e ele perguntou, ah, se tu quer autoaceitar as edições, se tu quer aproveitar manualmente ou até refinar com Ultra Plan. A gente fez aqui um vídeo sobre Ultra Plan, depois dei uma olhada também, tá? Mas assim, eu quero, só tô com um pouco de receio de ele executar esse planejamento aqui no Opos, né? Mas vamos fazer o teste aqui, ó. Não, já mudou, ele saiu do
+
+planejamento, agora ele tá no Sonet. Então, bem legal, ele executou automaticamente porque nos outros testes que eu fiz, ele não fez essa pergunta final, ele me entregou o plano. Então, agora, eh, eles atualizam muito, né, galera? Tá difícil acompanhar. Agora ele fez a pergunta, eu respondi que era para continuar e ele mudou automaticamente pro Sonic porque saiu do plan mode.
+
+Então esse aqui é o uso do Strategy Advisor. Até sair o artigo, galera. Depois deiem uma olhada aqui, eles explicam bem como funciona. Inclusive a parte de API ali que eu não vou trazer para vocês porque é algo mais complexo, tá galera? Mas basicamente ele permite a gente selecionar a combinação que a gente quiser e isso vai fazer com que a gente tenha mais flexibilidade e até economize mais ainda, né? Mas eu acredito que a melhor
+
+forma de todas vai ser quando a gente tiver isso tudo automático, tá? Então vou esperar ele executar o projeto aqui. Vou rodar ele para mostrar para vocês que não vai sacrificar qualidade, né? Todas as funcionalidades que estavam previstas serão realizadas. Bom, galera, aí ele me passou a bola aqui, ó, só que ele não deu don nessas duas tesques aqui e parece que ele já fechou a sessão.
+
+Então, eu vou e ele me deu o projeto aqui para rodar, né? Mas eu vou pedir para ele terminar perguntar, na verdade, tudo parece que tem duas tesques pendentes. Então, ele demorou quase meia hora, né? Isso não é por causa do modelo, é porque é o início do projeto, né? A gente já fez dezenas de projetos aqui e a gente vê que realmente demora o pronto inicial e realmente as tarefas estavam prontas, tá? Só foi um bugzinho ali visual. Bom,
+
+vamos lá então ver. Ó, de cara eu recebi um bugzinho aqui do Next. Vou pedir para ele corrigir. Corrija. colocar o prompt aqui. Então, às vezes acontece copos
+
+também, mas vamos ver se ele continua dando mais erros, né, pra gente sentir se a qualidade realmente é a mesma. Então, galera, ele terminou aqui, tá? Vou pedir para ele reiniciar o servidor que ele pediu para reiniciar. Eu acho que nesses cenários aqui ele devia ter o haiko integrado para que eu não precisasse digitar o comando eu mesmo, né? Porque sei lá, eu sei que esse comando aqui só inicia o projeto, mas pessoas mais legas não. Então seria
+
+legal ele alternar entre modelos menores, né, para poder dar essa facilidade para pessoas mais leigas, né, que vem full aí vibe coding e aí elas se sentirem mais tranquilas em utilizar direto a LLM do que rodarem comando do terminal que elas nem sabem o que fazem. Veja aqui, ele tá matando processo, tal, então não foi só um comando, né? tá falando que deu problema no contexto, ele não tá gerenciando o contexto. Eu vou dar um cria e pedir para ele reiniciar o projeto. Então eu acho que essas coisas a gente não se depararia com opos, tá? Mas vamos ver aí. Bom,
+
+galera, aí ele reiniciou aqui um pouquinho de guerra, né? E ainda, ó, tem problemas. Então, vamos lá de novo. Bom, galera, agora tá funcionando. Foi uma luta, tá? Eu que tive que sugerir o que
+
+ele tinha que fazer para poder resolver o problema, tá? Mas a princípio tá tudo aqui. Então, deixa eu dar um like aqui, ó. Contou. Contou também. Persisti os
+
+dados. Botar aqui. Tocasmurro. Machado de Assis. Vou pegar uma RL de capa aqui rapidinho aqui. Muito legal, Mateus. Publicar.
+
+Tem que ser resenhar mesmo, né? Criar o livro é muito bom. Amei. Deu certo. Então, tá, tá funcional. Ele
+
+tomou a surra ali para iniciar o projeto. Beleza. É aquela diferença dos sonhos de dopos, né? Quem usa no dia a dia manja, né, do que acontece e que realmente os modelos não se comparam, né? Ous é muito, muito melhor. Eu gostei
+
+da ideia, gostei do conceito que eles tentaram trazer, tá? Só que eu acho que o Opus tem que preparar ainda mais o caminho, né? Ou até ter intervenções quando o Sonic tá brigando ali para resolver alguma coisa, porque tu vai ter um contrabalanceamento, né? Vai usar o Sonet brigando ali com o modelo para ele arrumar e ele não arruma, então tu vai gastar tantos tokens quanto se fosse usar o óculos e numa paulada só ele arrumar, né? Eu tenho esses detalhes, mas eu gosto de que eles estão indo atrás de maneiras de melhorar a sessão, que é um dos problemas que a gente tá enfrentando. Eu acredito que eles não
+
+vão dar mais sessão. Acho que era um período X ali que eles estavam testando as coisas. E tende a piorar, galera, tende a piorar porque é muito dinheiro gasto e pouco retorno para eles, né? Mas vão acompanhando, vamos entendendo melhor aí os que eles vão proporcionando pra gente. Deixa teu comentário, se tu já usou, se tu pretende utilizar, o que que tu acha da sessão atual, quero ouvir também. Vamos fazer essa discussão aí. E
+
+não esqueça, deixa um like, se inscreve no canal se não é inscrito. Isso ajuda bastante o meu trabalho. Também dei uma olhada nos links aqui do comentário fixado, principalmente na formação Vibe Code. Vou ficando por aqui, galera, e vejo vocês no próximo vídeo. Valeu,

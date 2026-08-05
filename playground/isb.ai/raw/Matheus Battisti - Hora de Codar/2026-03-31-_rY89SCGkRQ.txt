@@ -1,0 +1,106 @@
+---
+video_title: "Vazou o Código INTEIRO do Claude Code: 512 Mil Linhas Expostas (Entenda tudo)"
+video_id: _rY89SCGkRQ
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_rY89SCGkRQ
+video_date: 2026-03-31T22:00:00+00:00
+video_description: |
+  Cinco dias depois de vazar o Claude Mythos por um erro de CMS, a Anthropic vazou de novo. Dessa vez o código-fonte inteiro do Claude Code. 512 mil linhas. 1.900 arquivos. Tudo exposto por um arquivo de source map de 57MB que esqueceram de tirar do pacote npm. O pesquisador Chaofan Shou descobriu às 4 da manhã e postou no X. O post já passou de 10 milhões de views. A Anthropic confirmou o vazamento. A empresa que se posiciona como a mais focada em segurança de IA vazou informação sensível duas vezes numa semana.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_vazamento_cc
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O que aconteceu tecnicamente: a versão 2.1.88 do pacote @anthropic-ai/claude-code no npm veio com um arquivo cli.js.map que é um source map de debug que mapeia código compilado de volta pro código original. Esse arquivo apontava pra um bucket R2 da Cloudflare da Anthropic com o código-fonte completo em TypeScript comentado e legível. Não vazaram os pesos do modelo. Não é o cérebro do Claude. É o código do CLI, a ferramenta de terminal que a gente instala e usa. Mas é código de produção completo que mostra como a Anthropic construiu o agente de IA mais popular do mundo.
+  
+  Dentro do código tem 44 feature flags, features prontas e compiladas mas escondidas atrás de flags desligados na versão pública. A mais impressionante é o KAIROS, nome de código pra um modo daemon autônomo. O Claude Code sempre-ligado que funciona em background mesmo quando você não tá no terminal. Tem um processo chamado autoDream que faz consolidação de memória enquanto você tá ocioso, mescla observações, remove contradições e transforma insights vagos em fatos concretos. Pode iniciar tarefas proativamente sem você pedir.
+  
+  O Coordinator Mode é um sistema completo de orquestração multi-agente com um agente principal distribuindo tarefas pra múltiplos workers em paralelo, sistema de mailbox pra permissões e memória compartilhada entre agentes. A arquitetura de memória revelada tem 3 camadas: MEMORY.md como índice leve sempre no contexto com ponteiros, arquivos de tópicos buscados sob demanda e transcrições brutas que nunca são relidas inteiras. Self-Healing Memory onde o agente trata a própria memória como dica verificando contra o codebase real.
+  
+  A feature mais bizarra é o BUDDY, um pet digital estilo Tamagotchi no balão de fala do input. 18 espécies incluindo pato, dragão, axolotl, capivara, cogumelo e fantasma. Tiers de raridade de comum até 1% lendário. Cosméticos com chapéus e variantes brilhantes. 5 stats: debugging, patience, chaos, wisdom e snark. Gerado a partir do hash do user ID. Data planejada era teaser na primeira semana de abril com lançamento em maio.
+  
+  O código também revela codinomes de novos modelos. Capybara como variante do Claude 4.6 com 3 tiers. Fennec como codinome do Opus 4.6. Numbat como modelo em testes ainda não lançado. Outras flags incluem ULTRAPLAN pra sessões de planejamento de 30 minutos na nuvem, VOICE_MODE expandido, BRIDGE_MODE pra comunicação bidirecional entre extensões IDE e CLI, Undercover Mode com instruções pra limpar rastros de IA nos commits, e telemetria que rastreia quando você xinga o Claude como métrica de frustração.
+  
+  Sobre riscos: a lógica de permissão e hooks agora é pública e atacantes podem criar repos maliciosos. Horas antes do leak o pacote axios que é dependência do Claude Code sofreu ataque supply-chain com trojan nas versões 1.14.1 e 0.30.4. Se atualizou via npm em 31 de março entre 00:21 e 03:29 UTC confira o lockfile. Anthropic recomenda usar instalador nativo em vez do npm e rotacionar API keys por precaução.
+  
+  O código não volta mais. Pelo menos 3 mirrors já estão no GitHub. O Claude Code é muito mais do que um modelo com terminal e agora qualquer um pode estudar como funciona. A Anthropic tá muito à frente em engenharia com memória de 3 camadas, KAIROS e Coordinator Mode. Mas os concorrentes agora têm o blueprint.
+  
+  🔗 Fontes:
+  ▸ VentureBeat (confirmação Anthropic): https://venturebeat.com/technology/claude-codes-source-code-appears-to-have-leaked-heres-what-we-know
+  ▸ Cybernews: https://cybernews.com/security/anthropic-claude-code-source-leak/
+  ▸ The AI Corner (deep dive flags): https://www.the-ai-corner.com/p/claude-code-source-code-leaked-2026
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  
+  TIMESTAMPS
+  
+  00:00 Vazamento de todo o código do Claude Code
+  01:30 Tudo sobre o vazamento da Anthropic e Claude Code
+  03:30 As principais funcionalidades vazadas do Claude Code
+  07:30 Leak da Anthropic (Claude Code) na mídia
+  09:43 Minhas considerações sobre os vazamentos do Claude
+---
+Galera, para tudo, para tudo, não é possível. A Antropic vazou de novo. Informações aí sigilosas. A gente teve o vazamento semana passada do mitos, né? O novo modelo de A deles. A gente cobriu
+
+aqui no canal, o vídeo lançou hoje inclusive. E se vocês quiserem ver, eu vou deixar o izinho aqui, tá? Lá eu comento tudo sobre esse novo modelo. E aquele l, né? Aquele vazamento parecia sim ser intencional, né? Ah, deixa aí. A
+
+galera descobriu que tá por vir para criar aquele fomo, aquele hype, né? Mas esse não, porque é o código fonte do cloud code. Isso que vazou, né? Não vazou nada dos modelos de a como eles treinam, como eles como são construídos, né? E sim como se fosse a arquitetura do Cloud Code, o software que a gente utiliza para programar. E esse vazamento
+
+foi muito interessante porque ele tem 44 features novas que estão para vir, né? algumas em estágios mais avançados e outras ainda em desenvolvimento, né? Não estão nem na fase de testes. E nesse vídeo eu quero mostrar para vocês tudo sobre esse vazamento e também as features mais importantes que estão para vir no cloud code. Beleza? Para quem não
+
+conhece, sou o Mateus Batista, programador há mais de 10 anos e hoje me aventuro no mundo daá, trazendo aí só o que presta para vocês nesse canal, mostrando como vocês podem acelerar a vida de vocês com IA. Se curtiu a ideia, não esquece, deixa o like também, se inscreve nesse canal para receber vídeos todos os dias. Agora sim, bora lá entender melhor sobre esse vazamento. Chega mais. Bom, galera, fiz aqui um mini mapa mental, né, um infográfico, só pra gente poder se contextualizar.
+
+Trouxe algumas matérias bem interessantes também que detalham bem, vou deixar elas na descrição do vídeo, tá? E olha só, vazou o código fonte do cloud Code. Esse foi o grande vazamento. Foram mais de 500.000 linhas, né? essa
+
+quantidade de linhas que ele tem para funcionar do jeito que ele funciona. Fazamento foi exatamente dia 31 de março, né? Foi essa madrugada. Já é o segundo link deles. Como eu falei, o primeiro pareceu intencional, mas esse acho que não foi porque foi bem sinistro. O que acontece? O código que
+
+vem pra gente, ele é ofuscado, né? a gente não consegue identificar o que tem dentro dele. Porém, ao subirem uma nova versão do Cloud Code no repositório, viu-se um arquivo ali que tinha 57 MB, que foi incluído por erro, tá? Esse arquivo ele apontava ali para esse bucket, né, que é tipo um lugar que ficam arquivos que a gente libera para outras pessoas acessarem, né? Pode ser uma imagem, pode ser um arquivo de texto. E lá tinha o código TypeScript
+
+completo, comentado e legível. Então, a partir desse source map aqui, foi encontrado o link para esse repositório e lá sim tinha o código todo. Esse cara aqui que descobriu Sha Funk Show, deu bastante view o a thread dele, porém, né, galera, a Antropic já excluiu tudo, não tem mais como acessar o código que eles subiram na versão, né? Ficou poucos minutos, o cara divulgou, geral baixou e foi isso que aconteceu, tá? Alguns números, 512.000 linhas de código, 1900
+
+arquivos Type Script, 57 MB, né, é o tamanho, 44 features flags escondidos. Então, tinha 44 features comentadas que vão chegar. Eu trouxe aqui as mais importantes, como eu falei para vocês, a galera já está espalhando o código, vamos dizer assim, em seus repositórios. E a tradhções. Bom, agora comentar aí algumas features.
+
+O Ciros, né, galera, que foi detectado como um agente autônomo, tá? Tinha mais de 150 menções no código. Uso do auto dream, que é uma melhoria da memória do cloud code. A gente já cobriu a funcionalidade de Dream aqui no canal porque ela já existe no cloud, ela não foi divulgada ainda, mas tu já consegue utilizar. Inclusive depois dá uma olhada na nossa playlist de cloud code que tem um curso completo de cloud code aqui no canal mais de 30 vídeos. Vou deixar o
+
+izinho aqui para vocês verem a playlist, tá? E o Dream consequentemente esse modo coordenador, que é uma espécie de de orquestração multiagente. Então um coordenador vai distribuir várias tarefas para vários workers, né? vários trabalhadores, vamos dizer assim, subagentes que vão poder executar um determinado projeto. Memória em três camadas, camada um, memory MD, a gente já tem isso aqui, né?
+
+Uma memória que não deve ter muitas linhas, ela deve ser bem condensada para funcionar melhor. O Dream faz isso justamente, né? Camada dois, arquivo de top buscado sobre demanda e uma camada três, transcrições brutas, nunca relidas, inteiras, só grap por identificadores, né? Então vai ter muita memória aqui nessa camada três, só que ela não vai ser lida completamente, só buscada ali informações precisamente através do grap. É um comando de busca também. Uma outra coisa no mínimo
+
+esquisita, vai ter uma espécie de pet animal de estimação ali no cloud que tá sendo chamado tamagos né? O recurso em si se chama Burry. Vai ter 18 espécies que vão acompanhar ali a gente ao longo da programação. Talvez eles vão ter raridade de comum até lendário, né? Tá virando RPG ali. Cinco status, debug,
+
+paciência, caos, wisdom, snark. E tem um teaser para ser lançado de primeira 7 de abril. O lançamento tá para maio de 2016, não dá para saber se vai lançar de fato, né? Mas é o que tá escrito lá no código. Modelos internos, uma variante do Cloud 4.6, Capibara, que seria o
+
+mitos, esse Fenc Opus 4.6 num bet em testes. Então tem alguns modelos que estão sendo cogitados ali também e outras flags ali que também foram evidenciadas. Ultra Plan, planejamento remoto, 30 minutos na nuvem, modo voice, expansão, né, desse modo, bridge mode para poder trabalhar VS Code at brands com celai de modo bidirecional, undercover, token budgets, notifications, PR watching, né, monitoramento de PRs, setting syns para sincronizar configurações entre dispositivos, presentation, provavelmente alguma forma de criar uma apresentação do projeto. E os spinners são aqueles verbos, né, de quando tu tá utilizando Cláudia aparece assim cozinhando. Então tem 187,
+
+não se sabe se é atualmente ou na próxima versão já vai vir esses todos esses verbos aí, né? Bom, galera, eu tirei esses dados de várias fontes para trazer para vocês, tá? E pelo que eu entendi, não foi vazado nada sobre peso dos modelos, né? Então, como esses modelos novos vão encaixar ali nos modelos já existentes e também dados de usuários, né? A única questão foi o código inteiro do cloud code vazado.
+
+Vou mostrar as fontes para vocês. Tem mais informações bacanas, tá? Mas antes, não esqueçam, galera, nós temos aqui a formação Vibe Coding, nosso treinamento mais completo em programação assistida por IA. mais de 35 horas de duração, treinamento com acesso vitalício, grupo VIP de alunos do WhatsApp e inclusive tem Cloud Code, Antigaraft, Codex e muitas outras para tu aprender e vários projetos para criar. O link vai tá aqui no comentário fixado, beleza? Bom, a
+
+primeira matéria que saiu, pelo menos que eu vi, foi do ventory bit. E aqui ele fala, né, sobre o vazamento. Bom, aí ele fala que a tropic parece ter revelado acidentalmente ao público o funcionamento interno de um dos seus produtos de a mais populares lucrativos, que é o cloud code. Deu que eu falei ali, né, um arquivo de 60 m destinado a depuração interna, foi incluído no repositório, né? E aí eles conseguiram com base nesse arquivo saber de onde é que tava vindo o arquivo original, encontraram o código todo. Foi às 4:23
+
+da manhã, horário do leste dos Estados Unidos, né? O Sha Fun Show, ele foi lá e o estagiário aí, né? Safadão, divulgou a descoberta ali no Twitter. Então aqui tem outras informações ali que compartilhei com vocês falando aí sobre a memória, Kairóz, né? Esse Cairoz é o agente autônomo, né? Que eles estão
+
+desenvolvendo, modelos internos não divulgados. E também tem esse outro artigo aqui que ele é ele fala mais das questões técnicas, né? Dos recursos em si. Então aqui ele descreve tudo certinho. Tem uma imagem bem legal que fala aqui sobre as funcionalidades não colocadas ainda.
+
+Então algumas eu citei ali para vocês e vejam aqui, né? Por exemplo, tem o caros, que ele é uma major, ou seja, uma um grande recurso que vai ser um assistente autônomo, né? Aí, por exemplo, tem aqui de dev tooling, de infraestrutura, tem também essas unnow ou internal, né, que não se sabe a categoria delas, mas uma é o budagos que vai surgir também eventualmente sobre que também os verbos, né, que ficam aparecendo. É bem interessante esses verbos porque a gente, né, vê eles passando, mas tem uma rei lá com todos eles. Agora tu pode conhecer os que já existem, né? Então, galera,
+
+vazamento aí bem tenso, né? Esse aí eu acredito que deve ter gerado a demissão de alguém, né? Porque não é algo que se divulga, né? O código de um produto interno. Imagina o Google divulgar como é que o mecanismo de busca dele é feito, né? Abrir ali o código e todo mundo ter
+
+acesso a isso. É um produto da tua empresa e guardado sempre as sete chaves, né? É como se fosse divulgar também, sei lá, a fórmula da Coca-Cola, né? Então são coisas que não devem ser abertas de um produto premium que rende muito dinheiro a eles. E agora tá aí o quio aberto, né? Lembrando que é só o
+
+mecanismo, né? Muita gente confunde com o modelo que roda dentro. Cloud Code é ali, é como se fosse o carro, né? Mas o motor que tá dentro é o Opus, é o Son ou outros modelos que a gente coloca. Então não confundam as coisas. Galera, esqueci
+
+de alguma coisa? Comenta aí que eu quero saber. Eu quero saber também o que que vocês acham desses desses vazamentos, né? Se eles são propositais, se eles são realmente vazados ali por um descuido. Comentem aí que é um ponto bem polêmico, né? Que muita gente acha que essas
+
+coisas daí vazam justamente porque as empresas querem criar essa situação, né? Essa tensção no mercado. Mas o Mitos, eu até acredito que foi isso, né? que é o novo modelo deles. Agora esse do código interno, >> esse eu acho que não. Galera, vou
+
+ficando por aqui. Não esqueçam, de uma olhada na formação Vibe Coding. Se não é inscrito, se inscreve também deixa aquele like para fortalecer o vídeo. Até mais. Vejo vocês no próximo vídeo.

@@ -1,0 +1,149 @@
+---
+video_title: "Superpowers: O Plugin que Transforma o Claude Code numa MÁQUINA (veja como)"
+video_id: hA_nD-nB3pY
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hA_nD-nB3pY
+video_date: 2026-03-12T15:00:00+00:00
+video_description: |
+  Existe um plugin pro Claude Code com mais de 40 mil stars no GitHub que força o agente a parar, pensar, planejar, testar e revisar antes de escrever uma linha de código. Ele transforma o Claude Code num desenvolvedor sênior de verdade. Chama Superpowers. Tá no marketplace oficial da Anthropic. E é grátis.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_super
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O Superpowers foi criado pelo Jesse Vincent, lenda no open source e fundador da Keyboardio. O que ele fez foi transformar a experiência dele com Claude Code numa série de skills que o Claude é obrigado a seguir. Não são sugestões. São lei.
+  
+  O workflow tem 7 fases. Na primeira o Claude não sai codando. Ele para e te faz perguntas. Refinamento socrático. Só depois de você aprovar o design ele segue. Na segunda ele cria um workspace isolado num branch novo com git worktrees. Na terceira gera um plano de implementação com tarefas de 2 a 5 minutos cada, escritas pra qualquer um conseguir seguir. Na quarta ele despacha cada tarefa pra um subagente separado e faz code review de cada uma. Tech lead gerenciando júniores. Na quinta força TDD: se o Claude tenta escrever código antes do teste, a skill faz ele deletar e recomeçar. Na sexta faz code review entre tarefas e issues críticos bloqueiam o progresso. Na sétima verifica testes, oferece merge ou PR, e limpa o worktree.
+  
+  O que torna isso diferente de colar um mega-prompt é o sistema de enforcement. Quando o plugin carrega a primeira instrução é: você tem Superpowers, se existe uma skill pra algo, você é obrigado a usá-la. O Jesse testou com cenários de pressão psicológica pra garantir que as skills resistiriam. Usou princípios de persuasão do Cialdini: autoridade, comprometimento, escassez. E a cada falha fortalecia as instruções. Engenharia de prompts em outro nível.
+  
+  Instalação com dois comandos no marketplace oficial. Reinicia o Claude Code e o Superpowers se ativa automaticamente.
+  
+  Na demo crio um app estilo Google Keep pra captura rápida de pensamentos. Fullstack com Next.js 15, Tailwind, API routes, SQLite com Prisma. Cards coloridos tipo post-it com título opcional, tags pra organizar, busca full-text instantânea, fixar pensamentos no topo, dark mode. Tudo local sem serviço externo.
+  
+  Mostro o brainstorming ao vivo onde o Claude faz perguntas em vez de codar. Depois o plano sendo gerado com tarefas pequenas e verificáveis. Depois a execução com TDD real: teste primeiro, falha vermelho, código mínimo, passa verde, commit atômico. O subagente implementa e o Claude principal faz code review. No final todos os testes passando e o app funcionando completo no browser.
+  
+  Tem mais dentro do plugin: Systematic Debugging com 4 fases pra causa raiz, Writing Skills que ensina o Claude a criar novas skills com TDD pra skills, Parallel Agents pra múltiplos subagentes simultâneos, e Superpowers Chrome pra controle do navegador via DevTools.
+  
+  O Superpowers resolve o maior problema do vibe coding: a falta de disciplina. Usar IA pra codar sem metodologia é dar Ferrari pra alguém sem carteira. Rápido é. Mas a chance de bater é enorme. O Superpowers é a carteira de motorista.
+  
+  🔗 Links do vídeo:
+  ▸ Superpowers: https://github.com/obra/superpowers
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Claude Code Superpowers plugin ABSURDO!
+  01:00 Como funciona o plugin Superpowers do Claude Code
+  05:18 Instalando o superpowers no Claude Code
+  07:07 Criando um projeto no Claude Code com o Superpowers
+  15:01 Testando o projeto criado pelo Superpowers
+  16:17 Minhas considerações sobre o plugin superpowers do Claude Code
+---
+Hoje a gente vai dar super poderes ao cloud. A gente vai transformar ele numa máquina de guerra de criar projetos web. Até por isso eu tô aqui em pé para que a gente aguente o tranco de toda a potência que o cloud vai ter. Bom, galera, se vocês querem entender melhor como funciona esse plugin que eu vou mostrar para vocês que realmente deixa as aplicações criadas com cloud code mais robustas, fica até o final do vídeo e também se inscreve aqui no canal, deixa o like para poder sempre receber os melhores conteúdos que a gente traz aqui diariamente. Eu sou Mateus Batista, programador há mais de 10 anos. Tô me
+
+aventurando muito no mundo das e como eu falei, trazendo só o que presta aqui para vocês. E agora sim, bora aí ver como funcionam os super poers. Plugin do Cloud bem interessante que tá ganhando muita atração, ele é bastante atualizado e consegue criar projetos de uma maneira única. Bora lá. Bom, antes de mais nada, vamos entender o que que é esse cara, né? Então, como eu falei antes, é um
+
+plugin, é gratuito. Basta a gente instalar no cloud e vou mostrar para vocês o processo de instalação, tá? O que que acontece com ele? Quando a gente coloca ele no cloud, ele começa a ser inicializado automaticamente. Então, a gente não precisa tá chamando ele toda hora. Ele vai sempre trabalhar nessa
+
+ideia aqui de workflow. Que que é workflow? é como uma ferramenta trabalha, né, o fluxo dela. E aqui ele vai fazer um brainstorming, ou seja, ele vai entender o que a gente quer criar, vai fazer um monte de pergunta sem escrever código e vai poder também mostrar pra gente possíveis problemas, possíveis pontos de atenção para que a gente defina tudo e depois ele cria a aplicação completa do jeito que a gente quer. E melhor ainda, porque ele ajudou a gente a entender se ia ter algum problema no meio do caminho, algum problema de segurança e criou ela uma maneira muito interessante. Beleza? Ele
+
+vai trabalhar com git. O que que é isso? Sempre que tiver uma nova funcionalidade, já cria uma nova brand, isola o código da master. Então ele deixa tudo bem organizadinho na questão de questionamento, que é uma ótima prática. Ele trabalha também nesse modo plano, vamos dizer assim, onde ele cria subtarefas, se a gente passa uma tarefa gigante para ele de 2 a 5 minutos, né, que ele vai lá dividindo para poder criar o código e resolver elas. E cada
+
+uma vai trabalhar com arquivos exatos, passos de verificação. Então não é só dividir as tarefas, é também organizar para que elas sejam cumpridas com maestria e não afetem outras coisas no projeto. Tem também a questão do subating dev, que ele vai fazer esse orquestramento de tarefas, tá? dividindo aí tarefas para outros agentes ao longo do projeto. Vai trabalhar com code review de cada techniores. É como se
+
+tivesse um supervisor para vários devs trabalhando juntos. O TDD é obrigatório, então ele trabalha com test driven development para qualquer funcionalidade que a gente adiciona. Olha só, ele escreve primeiro teste, né, que é a filosofia ali do TDD. E se codar antes do teste, ele deleta e recomeça. Tem a parte code review, ele vai revisar contra o plano, né? Então ele vai bater
+
+ali com que a gente pediu ou planejou, com que ele criou e aí ele vai entender se deu certo ou não. E tem a etapa de finalização, quando ele verifica os testes, ele oferece ali um merge, um to request pra gente poder e digamos assim integrar o que a gente desenvolveu com o projeto que tá lá no GitHub. Então o fluxo é esse, é um brainstorm, desenvolvimento do documento, o plano em si e o subatagent desenvolvendo ali o projeto com TDD. No fim tem um review que seria a revisão do código do do produto gerado. E aí merge, um pull request para dizer que acabou aquela tarefa ou a versão inicial do projeto.
+
+Regras. Então ele segue algumas regras que skills são leis. Então se existe uma skill para aquilo, ele vai utilizar. e também eh o que pode fazer com que o cloud, né, trabalhe de forma autônoma por horas, né, claro, vai ter questão dos tokens ali, mas a ideia do superpers é isso, da autonomia. A gente vai instalar com esses dois comandos, é bem simples, só colocar no terminal ali quando tiver com o cloud aberto. E aí tu
+
+pode instalar globalmente ou a nível de projeto, tu que vai escolher, tá? E depois disso basta criar prompts normais que ele já vai estar ativando superpers, beleza? Então essa é a ideia central. Agora a gente vai ver na prática como é que cria uma aplicação com isso e o resultado que ele vai dar pra gente. Galera, antes de mais nada, você já devem estar sabendo, a gente lanç ou não, né? A gente lançou a formação Vibe
+
+Coding. Se tu se interessa por Cloud Code, que é o a questão central aqui do vídeo, tu vai se interessar também pela formação Vibe Code. Então te convido a conhecer ela. O link vai tá na descrição ou no comentário fixado. Tem uma promoção de lançamento rolando essa semana aqui, tá? Treinamento com mais de
+
+30 horas, tá bem completo. Aqui tu vai conseguir entender tudo o que ele vai te proporcionar e baixar grade curricular. Tem aqui alguns depoimentos, tem também o botão de WhatsApp, se ficar outra dúvida para falar com a gente. Enfim, dá uma olhada aí que é um treinamento bacana com acesso vitalício e grupo de networking no WhatsApp. Perfeito aí para tu encontrar parceiros para criar projeto juntos. Beleza? Bom, o
+
+repositório é esse aqui, tá? Então você pode ver que ele tá com muitas stars aqui, como se fosse uma prova social, que o repositório tá indo bem, né? 70.000. Vocês podem comparar com outros projetos que vocês usam, né? Pode ser
+
+que esteja tenha mais, mas cara, para um projeto de uma pessoa, né, que não é um cara, digamos assim, né, mainstream ali de uma empresa gigante, tá assim, é porque realmente é bom, tá? Aí aqui ele explica tudo certinho, como é que funciona e tal, que são aqueles passos que eu falei e a instalação. Aqui tem os dois comandos que vocês vão utilizar para instalar. Vou tentar lembrar de deixar esse link na descrição. Se eu não conseguir também é super fácil, né? Só
+
+procurar Super Powers Cloud que vai cair aqui também. Beleza? Tá. Que que a gente vai fazer? Então, abre o VS Code ou como tu utiliza o cloud e tu vai rodar esses dois comandos, tá? Tu vai rodar primeiro
+
+esse aqui que é o plugin Markplace add obra/s superpowers marketplace. Depois tu vai rodar o plugin Marketplace plugin install superpowers@superpowers trçoarketplace. Aqui eu instalei scoped, né, no projeto pra gente poder testar isoladamente, né, e não trazer outras coisas que eu tenho. Então ele vai só utilizar esse cara aqui para criar o que eu quero, tá? Aqui a gente vai criar um clone do Google Keep, né, que é aquela ferramenta do Google que eu acho bem interessante que salvar notas e fica fácil de recuperar e tal. Bem legal, um
+
+projetinho bem bacana, tá bom? Então vamos lá. Como eu falei, quando tu instala, tu reinicia o cloud. E aí o plugin é automaticamente detectado, então tu consegue já utilizar ele, não precisa chamar de nenhuma forma, mas tu ainda tem acesso aos slash commands que ele traz e tu pode chamar isoladamente também. Pode dar aqui, ó, super powers, brainstorm, superpers, right plant, execute plant. Então tem os
+
+slash comands, tá? Mas não é necessário. Bom, vou mandar o primeiro prompt aqui pra gente poder estabelecer o projeto inicial. Lembrando também galera, a gente tem uma playlist de cloud code aqui no canal, tá? Então, dá uma olhada nos vídeos. O editor vai deixar a TAM
+
+ali de um vídeo que a gente tem um curso de cloud code para tu poder aprender a usar a ferramenta. E esse é o início da playlist. Depois é só a pedrada também para tu aprender mais sobre cloud code. Se liga no izinho aí, tá bom? Vou começar o projeto assim, então, ó. Quero
+
+criar um app estilo Google Keep para captura rápida de pensamentos. A ideia é pensei algo, abri o app, digito algo e salvo em segundos. Depois consigo buscar e organizar. antes de ler o resto, né, só para mostrar para vocês, ó, ele já tá ativando superpers, ele já tá ativando o brainstorming. Que que é o brainstorm?
+
+Ele é a etapa inicial, é o pensamento, né? Discussão de ideias, como se fosse a gente numa empresa trabalhando em time, a gente faria um brainstorming antes de começar o projeto, tá? Então ele falou da tá, vou ler o retinho aqui só pra gente não se perder também. No front end comds 15, tail end, back end compi routes, do próprio next, banco escalite com prisma, cards coloridos, tipo postit com título opcional e conteúdo, tags, labels para organizar, exemplo, ideia, tarefas, lembrete, busca full tex instantânea, conforme digita, fixar pensamentos importantes no topo, dark mode como padrão. Quero que funcione o local sem serviço externo. Beleza? Então
+
+ele vai lá e começa as primeiras perguntas, primeiros questionamentos. Como es SK salva localmente, você quer que o banco fique dentro do próprio projeto ou em algum diretório específico do sistema, tá? Aqui dentro do projeto. Vamos lá. Ele vai fazer várias perguntas paraa gente poder dar o contexto para ele. Sobre as cores dos cards. Quer um
+
+conjunto fixo de cores prédefinidas, tipo seis a oito cores que o usuário escolhe criar ou prefere que as cores sejam atribuídas automaticamente com base na tag label? Tá aqui cores pré-definidas. Aí vamos lá. Sobre layout. Aí ele pergunta: "Ah, estilo mensor, grid uniforme, lista vertical. Eu vou botar
+
+aqui que tem que ser igual Google Keep, que é esse mensor, não sei como é que fala, mas por aí, né? É um especialista em estilos que diga modal dialog, que que eu vou fazer quando clicar num card?" Então, modal, página dedicada. Então, eu vou dar aqui que é um modal, abrir o modalzinho, vai mostrar o card como um todo. Sobre a busca full text.
+
+Você quer que ela pesquise apenas conteúdo e títulos ou também nas tags, conteúdo e títulos? Bom, galera, daí a gente vai respondendo. Vou responder o resto que ele pedir aqui e eu vou ver a próxima etapa. Bom, aí eu respondi todas as perguntas e agora é uma outra etapa. Ele vai propor as abordagens agora e a gente vai seguir por uma delas. Ele
+
+falou: "Ah, abordagem A, next apputter mais server actions mais Prisma". Depois opção B, é Next App HS tradicionais e Prisma. Opção C, next, T, RPC ou Prisma. Então, eu vou entender aqui, né, com base nos argumentos dele, qual que é a melhor opção pro nosso projeto. Eu vou escolher a opção A. Ele botou minha
+
+recomendação é opção A. Então, ele falou que a ser action simplifica muito crude. A IP hout para busca é o padrão, menos código, mas direto. Então é isso que eu quero. E agora vamos pra próxima etapa.
+
+Ele vai apresentar agora um eh o modelo de dados, né, que seriam as tabelas ali e os campos de cada uma delas. Então, vamos dizer aqui que faz sentido, né? Eu tô indo mais rápido aqui, né, galera? A gente tem que ler tudo, né? Tá criando um projeto sério e tudo mais, né? Então,
+
+a leitura é obrigatória. E agora ele fala da estrutura de páginas e componentes. Claro, né, galera? Isso aqui vai depender também se a gente sabe programação ou não, né? Para alguns pode parecer esse grego isso aqui. Aí tu pode
+
+até perguntar para ele, né? Que que seria isso? Uma perspectiva, uma visão de uma pessoa lega também, né? Então ele fala ali que o fluxo principal, o usuário abre o app, vê o grid de pensamentos fixos primeiro, barra de captura rápida, sempre visível no topo, search bar, clique no carro de ab modal. A estrutura está boa? Está. A gente pode
+
+fazer sugestões, né? Aqui a gente vai ter que trabalhar junto com ele, ó. Interações e Uex. Ele vai falar aqui mais a questão do design do aplicativo. Botar aqui sim. É aqui agora ele
+
+perguntou sobre a stack. Mais uma dúvida técnica, né? Algumas pessoas talvez não consigam entender tão bem. Então ele botou aqui o que ele acha de stack. Botar que sim. E provavelmente deve
+
+estar bem perto do fim já da do planejamento. Vai começar a próxima etapa. Então, a gente vai provar a parte inicial que a gente acabou de fazer e ir para o plano de implementação, que é de onde as tarefas serão subdivididas. Ó, galera, então eu dei aqui o início, né, dei os aceites e ele vai começar a escrever o plano de implementação. Então, ele já criou essa pasta doc e aqui ficarão os planos. Então, olha só,
+
+galera, a gente tem aqui o plano salvo, né? Então, ele tá bem detalhado, está aqui nesse Think Drop Implementation, tá? Tá? Então a gente tem acesso aos marcados aos. Então eu tenho primeiro um documento de design aqui, tá? Que faz
+
+fala todo o esquema ali da não é design de cores, né? É o design do aplicativo. Então é stack com modelo de dados, arquitetura, estrutura de arquivos ou design em si, tá? E aqui como ele vai construir o projeto. Então aqui sim é o plano todo, né, de implementação. Bom,
+
+da gente tem que seguir o plano de implementação, então, né? ver o que ele vai falar ali embaixo, ó. Da fala aqui que fez o plano salvo, ele citou todas as etapas e ele pede as duas, ele me dá duas opções de execução, tá? Subagent driven ou sessão paralela, disparo um agente por tesque, reviso entre tesqueação rápida, abrir uma nova sessão com execute plants, execução em bet com checkp points, né? Então vamos utilizar a opção um. E agora ele começa a criar o
+
+projeto. Então ele carrega as skills. Então vejam sempre que tem uma interação que precisa de skill, ele vai usar skill. E agora vai vir, né, aquele aquela série de aceites do início da criação do projeto. A gente vai ter ele estabelecido ali nessa nossa pasta, tá?
+
+Então eu vou mostrar aqui esse processo inicial, vou cortar ali enquanto ele desenvolve o projeto. Ó, vejam as subtestes sendo criadas. Depois eu mostro o resultado final para vocês, pra gente ver o que ele criou, né, com esse passo a passo do superpers. Então é isso mesmo. Agora ele já tá criando o código.
+
+Vejam aqui, ele já pediu ali um aceite de comando npm, tá? Sei que ele tá subindo toda hora aqui. Ele já tá indo na primeira tarefa que seria o perks scafolding, né? Depois vai fazer o banco de dados, saber array actions, né? E assim por diante. A gente vai ficando
+
+dando os aceites que serão em números no começo, né? Depois ele vai dar uma reduzida. Então galera, estrutura de passes ali praticamente criada. Ele tá pedindo alguns aceites ainda. A gente vê que ele deve estar terminando a primeira tarefa de scaffolding ali, que seria essa estruturação base. E veja, ele tá 5
+
+minutos trabalhando sem parar, né, a tarefa que ele pediu. Ó, algumas instalações. Vamos ver como é que segue aí. vão continuando o projeto. Em alguns pontos eu vou mostrando para vocês como é que tá ficando pra gente depois ver o resultado final, como eu falei, ó, galera. Então, como vocês podem ver
+
+aqui, ele terminou a primeira tarefa. Então, agora a gente vai pro banco de dados e assim ele vai seguindo com alguns aceites aqui e tal, né? Leva tempo. É uma abordagem que demanda mais tempo do agente pensando aqui, porque ela é mais planejada do que se a gente só escrevesse promps, mas o final, o resultado final recompensa. Beleza?
+
+Então bom, vamos seguir aqui. Então aqui, galera, ele terminou. Aí eu pedi para ele checar, né, como é que tava ali o status do desenvolvimento pelo plano que a gente fez. Ele mostrou aqui, né, tudo que tava no planejamento, ele terminou, tá? Menos uma última tarefa.
+
+Então, vou pedir para ele eh terminar ela e aí depois rodar o projeto pra gente testar. Então, assim, a gente vai conseguir testar o projeto criado pelo Super Powers. Então, aqui, galera, ele falou que o projeto tá rodando local host3. Beleza? Todas as 16 testes do plano estão completas. Podemos testar o
+
+fluxo. Então vou acessar aqui, ó. Vou vou botar aqui o pensamento, tá? Teste. Hoje eu acordei querendo gravar um vídeo de cloud code, corzinha vermelha, salvar. Tá aqui, né? Aí vamos botar
+
+aqui. Amanhã quero falar sobre antigrapt. Bem legal. A cor padrão. Salvar. Não tem drag and drop, pelo que
+
+eu vi, né, que no keep tem. Eu poderia fixar e aí ele deixa fixo primeiro as tarefas, ele mostra primeiro as tarefas fixas, né? Então ele persiste os dados, né? A gente pode dar F5 aqui que ele persiste. Eu posso excluir se eu quiser, né? Eu posso excluir se eu quiser, eu
+
+posso editar e todo o projeto tá funcionando, né, galera? Bem simples, um goalkeep ali seguindo todo o processo que o Super Powers tem. pra gente, né, que ele consegue fazer tudo indo aos poucos, testando, dividindo subentes, então mantendo uma qualidade excelente de projeto de código, tá? Então galera, esse aqui é o Super Powers, né? Um plugin do Cloud Code que vai ajudar vocês a criarem aplicações ali com guard rails, né? Uma maneira de não inventar
+
+muito pela IA para cumprir o escopo, para tirar várias dúvidas na etapa inicial do planejamento para que a aplicação nasça corretamente e consiga ser evoluída com total segurança e performance. Comenta aí se curtiram Super Powers, se querem que eu traga outros tipos de plugins aí do Cloud Code. E não se esqueçam, deixem o like, também se inscrevam para poder receber os próximos vídeos. Tô esperando vocês também lá na formação Vibe Code, link aqui na descrição, tem muito cloud code para vocês dominarem a ferramenta. Vou ficando por aqui e espero vocês no próximo vídeo. Valeu,

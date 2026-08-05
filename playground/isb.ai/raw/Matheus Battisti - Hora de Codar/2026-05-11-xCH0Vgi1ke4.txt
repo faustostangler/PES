@@ -1,0 +1,108 @@
+---
+video_title: "Sessões 3X MAIORES no Claude Code com UMA Ferramenta GRÁTIS (RTK)"
+video_id: xCH0Vgi1ke4
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xCH0Vgi1ke4
+video_date: 2026-05-11T14:00:24+00:00
+video_description: |
+  RTK (Rust Token Killer) é a ferramenta open source que corta até 90% dos tokens desperdiçados no Claude Code, e neste vídeo eu mostro como instalar em 1 comando, configurar como hook transparente e ver o antes e depois ao vivo.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_rtk
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  Cada vez que o Claude Code roda um npm install, git status, npm test ou git diff, o output inteiro vai pro contexto e fica sendo relido a cada turno seguinte. Um git diff de 2 mil tokens em 10 turnos vira 20 mil tokens consumidos só de output repetido. O RTK resolve isso filtrando o ruído antes do output chegar no Claude.
+   
+  Se você usa Claude Code e vive estourando o context limit no meio da sessão, ou se a conta de tokens explode no fim do mês, esse vídeo é pra você. O RTK foi criado por Patrick Szymkowiak como binário Rust único, zero dependências, MIT, e funciona como hook transparente: você não muda nada no workflow, o Claude nem sabe que tá acontecendo. Funciona com Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Cline, Kilo Code e Antigravity.
+   
+  No vídeo eu começo explicando o problema dos tokens desperdiçados no Claude Code. Quando o Claude roda um comando, o output bruto fica no contexto, e a cada turno seguinte ele relê tudo. É como carregar uma mochila com pedras que você não precisa. Mostro a conta que assusta: 5.500 tokens por turno em 10 turnos vira 55 mil tokens só de output de comando. Com RTK comprimindo 90%, os mesmos 10 turnos consomem 5.500 tokens. Economia de quase 50 mil tokens numa sessão simples.
+   
+  Mostro também o impacto real reportado por devs usando RTK em produção. Um dev .NET Blazor reportou 80 comandos com 152 mil input tokens e 113 mil tokens salvos, 74,6% de eficiência. Outro dev com 2.900 comandos teve 89% de redução de ruído. Na prática isso significa sessões 3 vezes mais longas antes de bater o context limit.
+   
+  Depois explico como o RTK funciona internamente. O hook PreToolUse intercepta o comando que o Claude vai rodar, prefixa com rtk, executa, e aplica 4 etapas de compressão: smart filtering removendo ANSI e barras de progresso, grouping agrupando linhas relacionadas, deduplication removendo padrões repetidos, e truncation mantendo erros mas cortando sucesso verboso.
+   
+  Mostro exemplos de compressão reais: cargo test passa de 155 linhas pra 3, npm install de 4 mil linhas vira 15, npm test de 500 linhas vira 12. Erros e warnings ficam intactos, o RTK só corta sucesso verboso.
+   
+  Mostro a instalação completa. No Windows você baixa o binário da página de releases do GitHub e coloca rtk.exe no PATH. No Mac e Linux instala via Homebrew com brew install rtk-ai/tap/rtk ou via Cargo. Depois ativa no Claude Code com rtk init -g pra todos os projetos, ou com flags específicas pra outros agentes como Gemini CLI, Codex, Cursor, Windsurf, Cline e Kilo Code.
+   
+  Aí entra a parte mais importante: demo ao vivo de antes e depois. Primeiro rodo git status, npm install, npm test e git diff sem RTK e mostro o output bruto verboso enchendo o contexto. Depois ativo o RTK e rodo os mesmos comandos, mostrando como cada um vira output limpo mantendo só o essencial. No final rodo rtk gain pra ver os stats de tokens salvos e rtk gain --graph pra ver o gráfico ASCII de economia.
+   
+  Termino com FAQ rápido respondendo as dúvidas mais comuns: se RTK esconde erros (não, mantém erros e warnings intactos), se funciona no Windows (sim, melhor experiência via WSL), se conflita com Superpowers, GSD ou outras skills (não, opera em camada diferente), se funciona com DeepSeek e GPT via OpenRouter (sim, RTK filtra output de terminal independente do modelo).
+   
+  Se você curtiu deixa like e se inscreve. Comenta aí quantos tokens você acha que desperdiça por sessão.
+   
+   
+  RTK no GitHub: https://github.com/rtk-ai/rtk
+  
+  TIMESTAMPS
+  
+  00:00 rtk vai ajudar você a economizar tokens de IA!
+  01:34 Como funciona o rtk? (Rust Token Killer)
+  03:50 Como instalar o rtk (Rust Token Killer)
+  05:00 Usando o rtk no Claude Code
+  09:05 Checando a economia do rtk no Claude Code
+  10:55 Minhas considerações sobre o rtk (Rust Token Killer)
+---
+A IA que tu usa tá queimando tokens de forma silenciosa. Tu sabia que toda vez que a IA utiliza algum comando, seja ela qual for, cloud code, antigraft, codex, ela vai trazer a saída do comando utilizado para o input e isso vai ser enviado para API, para IA e processado em tokens. Ou seja, qualquer comando que ela utilize, como npm install, npm run build, git dif, git status, vai fazer com que some o input que ela envia e consequentemente consuma muito mais tokens e a tua sessão acabe mais rápido. E aí uma galera inventou um plugin chamado RTK, que ele faz um filtro exatamente nesse problema. Ele não deixa que a saída dos comandos utilizados pela IA contamine o contexto, vamos dizer assim, para falar numa linguagem mais simples. E com isso a gente consegue
+
+economizar muitos tokens, utilizar qualquer tipo de IA por muito mais tempo. Nesse vídeo aqui, eu vou te mostrar como instalar o RTK, como utilizar e quais os ganhos reais que tu vai ter com ele. Então fiquei até o final que tu vai conseguir utilizar qualquer IA por muito mais tempo, né? tu vai conseguir criar teus projetos do início ao fim com os limites que eles estão impondo pra gente que são bem tensos, né? Galera, para quem não me conhece, sou Mateus Batista, programador há mais 10 anos e hoje tô me aventurando muito no mundo da Iá, trazendo só o que há de melhor para vocês. Então já se
+
+inscreve aqui no canal se não é inscrito e também deixa teu like para fortalecer. Agora sim, bora entender melhor como é que funciona o RTK, galera. Então eu fiz aqui um pequeno infográfico só pra gente entender o uso dele, tá? RTK significa Rust token killer, tá? Ele pode economizar 60 a 90% dos tokens do cloud, né? Isso porque ele foi criado mais
+
+voltado pro cloud code, mas ele funciona em outras e então fiquem tranquilos. O que acontece hoje atualmente, né, sem o RTK, Cloud Code vai rodar um comando e isso acontece de maneira involuntária porque se a gente pede alguma coisa, ele pode rodar algum comando para verificar alguma coisa. Então não tem como tu não permitir isso, tá? E aí o output, né, a saída do comando vai pro contexto, inflando ele de uma maneira desnecessária e fazendo com que a ida e vinda dos comandos da IA, né, pra API deles, seja cheia de dados de comandos, o que não é interessante pro uso. Então o comando aí, por exemplo, um gitf, se for grande, né, a diferença entre o commit que tu tá inserindo para o código original, pode consumir até 20.000
+
+tokens sem necessidade, tá? somente enviando, ah, entrou isso, saiu aquilo, né? Que não vai ajudar em nada na IA. Beleza? Então, o RTK vai fazer o seguinte, quando tu instalar ele, ele vai interceptar comandos e vai usar uns comandos do RTK, tá? Que é o comando
+
+igual o que ele utilizar, né? Por exemplo, git status vira RTK git status. Isso vai fazer um filtro que vai remover as coisas desnecessárias. Não vai mudar em nada a saída da EAL que ela retorna pra gente, nem o entendimento dela sobre o comando, mas vai ajudar a não enviar coisas que não interferem no resultado final. Ele também vai fazer uma deduplicação, né, removendo repetições e um trancation que vai, no caso, enxugar o que ele envia, né, enviar somente o que é necessário.
+
+Isso faz com que o cloud COD só receba o essencial e a gente consuma menos tokens. Então aqui eu trouxe umas estimativas de economia por comando que a IA utiliza, beleza? Também uma forma de instalação que eu já vou mostrar para vocês, né? E a compatibilidade, né? Ele não é só ligado ao cloud code, só que se tu vai utilizar em outros, tu vai ter que adicionar essas flags aqui para que ele se adapte a IA que tu vai utilizar.
+
+Beleza? Bom, o repo é esse daqui. Eu vou mostrar, eu vou deixar aqui na descrição também, tá? Para vocês acessarem. E tem o processo de instalação, não é dos mais simples para quem tem Windows, para quem tem Mac, Linux, é um comando só, beleza?
+
+Para quem tem Windows, tu pode instalar via cargo, mas aí precisa ter o cargo no PC, ou baixar o binário, né, aqui em release. Baixar aqui o pacote de Windows, tá? Ó, tá aqui até. E esse binário tu pode colocar ele nessa pasta aqui dentro do teu usuário no Windows, né? Ponto local bin. Quando tu coloca
+
+ele aqui, né, o arquivo que tu baixa ali, né, o binário, ele vai automaticamente para o teu terminal. E aí basta tu executar o comando RTK. Deixa eu mostrar aqui para vocês, só para testar se tá tudo funcionando, ó. RTK menos, men version. E aí, pronto, ele tá OK, ele já vai rodar e dentro da tua IDE. Beleza? Então, acho que é a
+
+maneira mais fácil para quem tem o Windows do que baixar o cargo, tá? Eu preferi essa maneira. Eu instalei via binário, certo? Bom, galera, então quando ele tá instalado, é basta a gente utilizar o comando ali que eu mostrei para vocês e aí ele vai começar a filtrar os inputs. Eu quero fazer o teste dos dois jeitos, só para mostrar para vocês como funciona, né? como ele
+
+vai estar agindo dentro do projeto. Antes disso, galera, não se esqueçam de dar uma olhada no nosso treinamento formação Vibe Code. Se tu quer se aprofundar em programação assistida por IA, aprender a fundo cloud code, Antigraft, Codex, Open Code, recomendo muito que vocês olhem o link, tá no comentário fixado para acessar o nosso treinamento, conhecer, ver como ele é feito, ver a grade curricular. É um treinamento com mais de 36 horas. Estamos atualizando semanalmente e vai ajudar muito a vocês criarem os projetos que vocês tanto querem utilizando essas ferramentas de código com IA, né, o famoso Vib Code. Nesse vídeo aqui eu
+
+também explico tudo para vocês, tá? Mas só ficar claro, é vitalício, acesso vitalício e também vai ter acesso a um grupo VIP de WhatsApp. Galera tá trocando uma ideia maneira lá. Eu também estou no grupo. Fechou? Fechou? Então o
+
+que aconteceu aqui? Eu abri um projeto, tá? para não precisar criar ele. E vou utilizar o mesmo comando com RTK e sem RTK pra gente acompanhar o desenrolar ali do cloud code. Então vou aqui iniciar o cloud code sem RTK ainda, tá?
+
+E vou rodar um comando que vai fazer com que ele rode vários comandos, né? Porque no dia a dia ele não vai pedir isso, né? Mas é o que ele vai fazer entre os nossos prompts. Então, botei aqui, analisa esse projeto e me diz quantos arquivos tem, quais dependências, se tem testes, se roda um npm install seguido de um npm run build para ver se tá tudo funcionando, tá? E veja também que ponto está o git. Só isso para ele rodar
+
+vários comandos aqui e a gente ter uma análise das diferenças. Então, é exatamente isso aqui que eu falo, ó. Git status, Git log. Todos esses comandos aqui estão somando para o nosso contexto. Não o comando em si, mas a saída que ele manda do comando, que não interessa muito para o que a gente precisa fazer, sabe? Então o RTK vai
+
+agir exatamente nesse ponto. Ele vai filtrar essas saídas aqui e vai mandar só o que interessa e sem duplicações, o que é excelente para o não consumo de tokens. Aí eu vou guardar ele aqui, retornar pra gente, tá? Depois eu vou iniciar o RTK da maneira que vocês vão fazer aí e vou rodar o mesmo comando pra gente ver qual que vai ser a diferença. Bom, galera, ele terminou aqui, tá? Como
+
+vocês podem ver, ele rodou vários comandos mesmo, né? Comandos do Git, comandos de NPM Install, NPM build. E aqui a gente teve a utilização sem o RTK. Beleza? Bom, agora como é que a gente faria para utilizar com RTK e verificar se a gente tem economia ou não? É bem simples. A gente vai cancelar
+
+o cloud code aqui, né? Reiniciar a sessão para poder iniciar o RTK. Aí rodamos o comando RTK init. A gente dá um yes aqui, né, para ele poder inicializar. Aí se tu quiser habilitar a telemetria anônima, né, para eles poderem melhorar o pacote, tu pode dar um yes, senão o padrão é no, né? Pronto,
+
+aqui a gente tem o RTK rodando e agora a gente inicia o cloud code novamente e roda o mesmo prompt que foi rodado antes, que é aquela questão de análise dos testes, npm install, build, git. E aí ele já está com o RTK, tá? Então vamos ver a diferença porque a gente tem comandos de análise do RTK posteriormente, tá galera? Enquanto ele vai executando ali, não esqueçam de baixar o nosso guia de gênia de prompt, tá? Material gratuito para tu aprender mais sobre engenharia de prompt, criar prompts melhores, que isso também economiza token. O ebook vai estar aqui
+
+na descrição desse vídeo, basta clicar no link e baixar, fechou? Voltando para RTK aqui, vamos dar uma olhada em como ele performa com a utilização do plugin. Bom, galera, aqui ele terminou, tá? A saída demorou menos, né? Um minuto, aquela foi 2 minutos e alguma coisa. E
+
+agora? Eu vou sair aqui do cloud code e verificar os dados do RTK. Beleza? Então, a gente pode eh finalizar a sessão dando control C e utilizar o comando RTK gain. E isso aqui vai mostrar para vocês o quanto foi economizado apenas naquele único prompt ali. Então,
+
+vejam aqui. Então, olha só que legal. Aqui a gente teve um comando que mais economizou, que foi um LS, que é um comando de listagem de arquivos, vamos dizer assim, tá? Só nesse comando ele economizou 75% de tokens, né, do que ele enviaria para lá. Ele não teve que enviar tantas coisas, ele enviou só o necessário. Isso
+
+tirou essa economia aqui, né? Se não tivéssemos RTK, ele enviaria esse resultado, né? A mais para lá também, tá? Em alguns outros comandos, ele julgou necessário ser enviado tudo, por exemplo, aqui no gitf. Então isso aqui não teve economia. No geral, nesse
+
+prompt, a gente teve, porque foi só um que rodou aqui, a gente teve uma economia de 33% dos tokens, né, que não precisaram ser enviados para lá, né, todos os que foram 33% foram economizados na nossa sessão e com isso a gente teve esse ganho. Claro, aqui foi um comando de teste totalmente rígido e fixo, sem nenhuma funcionalidade real. No dia a dia, quando tu tiver utilizando, tu vai entender melhor quanto que sobe essa eficiência aqui, porque ele vai utilizando outros comandos, comandos mais pesados, o projeto vai estar em andamento e a gente vai ter uma economia muito maior. Então, comecem a utilizar o RTK e vejam aí a quantidade de toks que vocês vão economizar, o quanto mais vai durar a sessão de vocês utilizando cloud code ou outras e que eles suportam. Lembrando, né, galera, é um repositório aqui no GitHub. Vocês podem estar
+
+entrando também para entender melhor como ele funciona, para entender mais do mecanismo do RTK e que comandos ele cobre, tá? Bem interessante aí o repositório. A galera tá fazendo um excelente trabalho, porque essa questão do consumo de tokens, ela tem sido o principal ponto aí hoje em dia, já que os limites são cada vez menores e a gente tem que ficar se adaptando. Eu até por isso eu tô trazendo várias estratégias aqui no canal para que vocês consigam economizar os tokens e tenham mais uso de sessão. Inclusive na playlist de cloud code, então vai deixar em algum lugar aqui, eu vou deixar o izinho, tem outras estratégias lá.
+
+Então, recomendo vocês darem uma olhada nos vídeos para aprender mais sobre cloud code e também economizar tokens e utilizar ele por muito mais tempo. Galera, comenta aí o que acharam, se conhecem outras estratégias, deixem o like, também se inscrevam que é muito importante para mim. Vou ficando por aqui e espero vocês no próximo vídeo.

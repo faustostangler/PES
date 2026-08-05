@@ -1,0 +1,227 @@
+---
+video_title: "ANTIGRAVITY Criou Meu E-commerce INTEIRO em 28 Minutos (Com UM PROMPT)"
+video_id: 29IeTSdrWlY
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=29IeTSdrWlY
+video_date: 2026-03-03T15:00:00+00:00
+video_description: |
+  Neste vídeo eu mostro como criar um e-commerce completo usando o Antigravity Kit 2 em apenas 30 minutos com um único prompt. Pagamentos com Stripe, banco de dados PostgreSQL e deploy em VPS. Tudo funcionando em produção no final do vídeo.
+  
+  ❇️ Garanta seu desconto na Formação Vibe Coding: https://app.horadecodar.com.br/lp/esquenta-vibe-coding
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  A estratégia que eu uso aqui é diferente de simplesmente abrir a ferramenta e sair pedindo coisas. Antes de escrever qualquer prompt, eu crio um PRD, que é um Product Requirements Document. Basicamente um documento estruturado com tudo que o e-commerce precisa ter. Cada funcionalidade, cada integração, cada detalhe técnico descrito de forma clara para que a IA entenda o projeto completo antes de começar a codar.
+  
+  Depois que o PRD está pronto, eu passo ele inteiro como prompt para o Antigravity. E é aí que a mágica acontece. O Antigravity interpreta todos os requisitos, toma decisões de arquitetura, implementa cada feature e entrega a aplicação funcionando. Listagem de produtos, carrinho de compras, checkout integrado com Stripe processando pagamentos reais, banco de dados PostgreSQL armazenando tudo, e no final faço o deploy completo em uma VPS.
+  
+  A grande sacada deste vídeo não é só o resultado final, mas o método. Usar um PRD como prompt muda completamente a qualidade do que a IA entrega. Em vez de dar instruções vagas e receber código genérico, você passa um documento profissional com especificações claras e recebe um projeto que realmente faz sentido. É a diferença entre pedir "faz um ecommerce" e entregar um briefing completo do que precisa ser construído.
+  
+  Eu passo por todo o processo do zero. Desde a criação do PRD, passando pela execução no Antigravity Kit 2, integração com Stripe para pagamentos, configuração do PostgreSQL e finalizando com o deploy na VPS. Tudo em um único fluxo contínuo que você pode acompanhar e replicar nos seus próprios projetos.
+  
+  Se você é desenvolvedor e ainda não usa PRDs combinados com ferramentas de IA para desenvolvimento, esse vídeo vai mudar a forma como você cria projetos. É o tipo de workflow que substitui dias ou semanas de trabalho por minutos sem sacrificar a qualidade. Não importa se você é iniciante ou se já tem experiência, o método funciona para qualquer nível e pode ser adaptado para praticamente qualquer tipo de aplicação.
+  
+  O Antigravity Kit 2 está se consolidando como uma das ferramentas mais poderosas para desenvolvimento assistido por IA. Se você quer acelerar seus projetos e entregar resultados profissionais em uma fração do tempo, esse vídeo é pra você.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Introdução ecommerce com Antigravity
+  01:45 Explicação sobre o projeto de ecommerce com Antigravity e PostgreSQL
+  05:45 Configurando requisitos: Stripe e PostgreqSQL com Docker
+  07:02 Instalando o Antigravity Kit no Antigravity
+  10:30 Iniciando o projeto no Antigravity - criando o ecommerce
+  14:29 Testando o ecommerce criado pelo Antigravity
+  17:00 Iniciando o deploy do ecommerce em VPS
+  27:50 Testando ecommerce no servidor após deploy
+  28:40 Conclusão sobre o ecommerce no Antigravity
+---
+Vou te mostrar aqui passo a passo como criar um e-commerce completo, inclusive colocar ele no ar, fazer o deploy em 30 minutos com o antigraft. É uma estratégia que eu utilizo para qualquer tipo de projeto. Aqui eu tô exemplificando ela no e-commerce porque é um projeto complexo e é justamente para isso que ela serve. Ela cria bons projetos, projetos grandes, robustos, seguros, com autenticação, banco de dados e tudo o que tu precisar. Em apenas um prompt, tu vai criar toda essa estrutura. Só que claro, tem um passo a
+
+passo que precisa ser seguido para ela poder dar certo. É justamente isso que a gente vai ver no vídeo agora. Eu sou Mateus Batista, programador há mais de 10 anos e agora tô compartilhando aqui minhas vivências de ferramentas que eu uso no mundo da inteligência artificial. Se tu gostar desse conteúdo e da didática, se inscreva e deixa um like. Isso ajuda bastante o meu trabalho. E
+
+claro, a campanha Mateus Feliz ou Deixe Mateus Feliz continua ainda, galera. Deixa seu comentário aí, pode ser uma dúvida aqui do vídeo, né? Esse aqui é um vídeo bem interessante, né? Tem várias etapas, então pode surgir uma dúvida, deixa aí que eu vou responder, tá? Ou qualquer outra coisa, um agradecimento, né? Uma mensagem de apoio, [risadas]
+
+tudo tá valendo. Beleza? Então, bora lá, vamos começar que tem muita prática por ver. Bora lá, galera. Para tudo, para tudo, para tudo. Olha só, a formação
+
+Vibe Coding, ela tá para ser lançada agora em março, tá? É dia 9 do lançamento. E muita gente me pergunta aqui como é que vai ser a avisada e tal. Eu vou divulgar aqui no canal, mas eu criei essa página que vai estar aqui na descrição, no link fixado, para tu poder garantir que eu te avise, né, com certeza, e ter acesso a um desconto especial para essa turma fundadora, né, essa turma de lançamento. Então, aproveita e já se inscreve aí ou depois do vídeo para poder garantir esse valor especial, beleza? Agora bora seguir o
+
+vídeo. Bom, galera, primeiro eu quero começar aqui com uma explicação do fluxo completo, tá? Porque eu acredito que mais do que executar prompt, a gente precisa entender o que a gente vai fazer aqui, senão não vai dar certo e tu não vai conseguir replicar em outros projetos que tu vai fazer. Beleza? Bom, como é que a gente vai construir esse e-commerce em 30 minutos, né? Isso aqui é uma estimativa que eu
+
+dei, não sei se vai dar certo, mas tudo bem. Vamos tentar. Ó, primeiro a gente vai precisar do antigraft, né? Óbvio, a ideia que a gente tá utilizando, mas pode ser feitas de outras também, né? ter adaptar um pouco o fluxo aqui porque eu vou utilizar um recurso do antiraft bem interessante que vai eh acelerar em 1000% trabalho, tá? Então eu tô
+
+utilizando a IDE do Google Antigara, que é totalmente gratuito, a gente tem acesso aos melhores modelos, como o Gemini 3 e também o Cloud, tá? Lembrando, a gente tem um curso aqui de antigravity, tá? Tu quer dar os primeiros passos na ferramenta, criar um projeto, fazer deploy. Vou deixar o izinho então vai deixar a tamb aqui também para tu saber qual que é. Beleza?
+
+Então salva para assistir depois, tá? Lá no antigraft que que vai acontecer? A gente tem um pacote chamado antigraft kit que tá na versão dois, tá? Que é esse cara aqui, é um repositório totalmente gratuito, né? Open source. E
+
+a gente vai instalar comando. Ele faz parte da primeira estratégia aqui ou primeiro passo da estratégia. Por que que a gente vai instalar ele? Porque ele vai ter agentes que são especializados em executar código de front end, back end, banco de dados, skills para poder criar vários recursos de forma mais rápida e segura, né? Tem skills para criar banco de dados, skills para verificar segurança do projeto, performance, por aí vai, e workflows que vão servir pra gente fazer alguma ação específica. A gente vai inclusive
+
+utilizar um deles aqui, tá bom? O anraphit kit, só para contextualizar vocês, ele tem mais de 20 agentes, né, que vão ser especialista em algum tipo, alguma área de desenvolvimento, mais de 37 skills e mais de 11 workflows. Então, por isso que é um recurso muito importante que vai ajudar a gente a desenvolver esse projeto de forma mais rápida, né, para não ter tantas idas em vindas. Num prompt só a gente vai ter o MVP pronto. Então isso aqui é fundamental. Já vou mostrar como é que
+
+instala. E a segunda parte da estratégia é ter um documento PRD. Esse PRD aqui é uma documentação do projeto. Nós mesmos vamos escrever. A gente pode utilizar o cloud, que é uma boa ideia para escrever PRD, para eh ajudar a gente a estruturar o documento. Mas quanto melhor tu puder
+
+descrever pro cloud, vai ajudar mais aí ainda para criar esse documento e tu ter sucesso aí na no projeto, né? Que que vai nesse documento? Tu vai colocar stack, né? Quais tecnologias tu vai utilizar? Quais páginas o projeto tem?
+
+Pelo menos as que tu precisa ter, né, nessa versão inicial? Quais os fluxos, né? O que que o usuário vai fazer quando ele entrar, quando ele logar, quando ele comprar alguma coisa. O esquema, que seria o banco de dados, né? Quais as tabelas tu imagina as relações entre elas? Estrutura de pastas. Ah, vou
+
+salvar imagens aqui. Aqui vai ficar os componentes, né? Claro, é mais técnico, né, galera? Mas eu sei que aqui tem um público deve também. Não que necessariamente precisa ser, mas quanto melhor descrever, melhor ficar. design
+
+guidelines, ah, quais cores tu quer usar, como que deve ser o tema, minimalista, moderno, tu vai dando toda a estrutura para ele e claro, como que ele vai usar o kit dois, né? Então, em alguns pontos específicos, a gente precisa referenciar o kit nele, que é o pacote que a gente vai instalar aqui. Isso vai fazer com que ele tenha ciência que tem esses recursos e pode utilizar e deve utilizar, beleza? Bom, isso aqui vai gerar um e-commerce, tá? E claro, eu vou dar esse arquivo para vocês, tal, vou mostrar como é que instala. Tudo vai
+
+ser passo a passo, né? Eu tô só fazendo uma pincelada aqui. Isso vai gerar esse e-commerce e a gente vai precisar de um banco de dados. Nesse projeto eu escolhi posts, tá? Mas você pode escolher qualquer um, pode ser super base e tal.
+
+E esse posts vai est num Docker, que é um ambiente de virtualização. Eu não preciso instalar nada na minha máquina. Eu só instalo as imagens docker e com esse comando aqui tu consegue instalar o Posts e vai ficar igual ao meu. Beleza? Então o Docker é esse cara aqui, ó. E eu
+
+uso o Docker Desktop, que é a versão mais fácil de mexer no Docker. Beleza? Tu vai instalar, vai ter uma interface semelhante a essa. E tu pode vir aqui no terminal, ó, e rodar o comando que eu te mostrei, tá? Bem simples para ter o banco de dados, né? No e-commerce ele
+
+precisa ter pagamento. Então ele vai integrar com Stripe aqui, beleza? E então se já quiser criando tua conta lá no Stripe, fica à vontade, totalmente gratuito para utilizar também. Vai acessar a dashboard deles. E aqui vai ter como pegar a chave de API, que é a chave que a gente vai precisar para configurar o pagamento. Tá bem aqui na
+
+cara do GO, ó. chave secreta, mas quando chegar a hora eu mostro para vocês, tá? Só para ir já referenciando que vai ajudar depois, né? Já ter esse meio caminho andado aqui. Beleza? Bom,
+
+lembrando que tudo isso aqui, tudo que a gente vai ver nesse nesse vídeo foi baseado, né, em estratégias de vibe code. A gente tem um guia super completo aqui com mais de 50 páginas. Eu vou deixar o link na descrição, beleza? E aí vocês podem baixar gratuitamente e entender melhor quais os processos que eu utilizei para criar esse projeto e outros que eu crio. Bom, dito isso, a gente já tem estratégia em mente. Agora
+
+a gente vai pro antiraft. A gente precisa abrir o antigraft numa pasta no nosso PC, que é onde vai ficar o nosso projeto. Bom, então tá aqui, galera, o antigcraft tá aberto no pasta que eu vou criar o projeto, tá? E aqui umas configurações que você tem que ficar ligado. Ativem o modo planejamento, vai ser melhor para criar projetos maiores, tá? E também utilizem modelos bons como
+
+Gemnight 3 Pro ou o Opus, tá? Um desses dois, senão pode ser que o projeto fique bem meia boca. Bom, primeiro passo é instalar um graft kit. Então a gente vai vir aqui, abrir o terminal e coloca o comando de instalação do kit. Aí o comando é bem simples, é esse aqui, ó, esse NIT aqui. Aí eu vou lá no graft,
+
+coloando no terminal, ele vai criar aqui uma pasta com todos os agentes, skills e workflows, tá? Ó, então tem aqui as regras, scripts, skills, workflows, tudo isso aqui o nosso PRD vai poder utilizar, tá bom? Segundo passo é criar o PRD. Então aqui vocês vão poder copiar o meu ou criar o próprio de vocês. Vou mostrar a estrutura aqui. Então a gente
+
+vai criar um arquivo chamado prd.md, né, que é markdown. Esse prd é um arquivo bem comum, né, um documento bem comum quando se cria projetos e empresas, né, os products managers, eles criam esse documento pros devs designers entenderem melhor como é que o projeto vai funcionar. E aqui no caso a gente tá instruindo a IA como se a gente fosse um gerente de projetos, né, como ele deve criar o nosso projeto. Então aqui a gente vai colocar em etapas, né, qual que é a visão geral, para quem projeto é stack, o que que ele vai usar do kit, como eu falei antes, quais skills que ele pode utilizar, funcionalidades por módulo, tá? Deixa eu aumentar aqui.
+
+Então, todo tudo, toda informação tu colocar vai ajudar ao projeto ser melhor desenvolvido, tá? Eu tô passando devagar aqui, tu pode ir copiando, tirando prints ou vocês quiserem deixem nos comentários aqui que eu dou um jeito de entregar esse PRD para vocês. Beleza? Ó, o esquema do banco aí vai ter aqui, né? Esse projeto tem API, pode ser, pode ter os end points, estrutura de pastas e por aí vai, tá bom? Além disso, o projeto
+
+vai precisar de um arquivo que configure as variáveis do ambiente, tá? Que que é isso? É conexão com o banco de dados também. a conexão com o stripe. Beleza?
+
+Então, vou criar aqui um novo arquivo ponto env e aqui eu vou colar e vai ficar dessa maneira aqui, tá? Que acontece? Esse projeto aqui, segundo o meu PRD, ele vai ser criado em Next, tá? Então tem duas chaves aqui do Next, mas o de vocês, se não for criado em Next vai precisar pelo menos ter a database URL, que vai referenciar o banco de dados e o stripe secret que vai conectar com Stripe para poder fazer os pagamentos, processar os pagamentos do sistema. Beleza? Então tá com o PRD
+
+criado, com o dot criado, o agent kit instalado, a gente vai pra próxima etapa. Qual que é? É o prompt inicial. que vai dar o bootstrap nesse projeto, né? Ele vai começar a ligar tudo, o agent kit, o PRD, a Ia do Antigraft e começar a executar ele. Então o prompt
+
+inicial ele vai ser dessa forma, não precisa ser igual, mas eu vou explicar para vocês o que acontece aqui, tá? Então aqui eu vou utilizar a work straight, tá? Se não tiver funcionando é porque o antigraft não entendeu que tá instalado. Então a gente vai fechar o antigraphity e abrir de novo, ó. Daí quando volta aqui, quando eu digito barra, ele tem que aparecer os workflows do agent kit, tá? Isso quer dizer que
+
+ele entendeu que o kit tá aqui. Aí voltando lá, a gente vai ativar o work straight, tá? Tem que ficar assim, ó, cinzinha. Isso quer dizer que ele vai utilizar um modo orquestração. E por que isso? Porque aqui nesse caso, eu tenho
+
+diversas tarefas sendo executadas ao mesmo tempo. Eu tenho diversos ambientes que podem ser trabalhados em paralelo. E o orchestrate vai fazer exatamente isso. Ele vai ler o PRD e vai designar um agente para cada tarefa, tá? Então o prompt também vai entregar mais rápido um pouco o projeto. Esse prompt inicial
+
+é o que mais demora. Quando a gente pede um projeto desse tamanho aqui, vai demorar mais ainda. Então por isso que o worker rate é uma boa estratégia. Aqui a gente referencia o PRD também, né, com ar para ele entender que é esse arquivo aqui, ele ler todo ele, tá? Então pode toda vez que referencial PRD, tu pode clicar para ele poder entender que é e o ENV também, tá? Pode fazer assim, @env
+
+quiser, tá? Para ele referenciar, né? O angravity com @ ele pode ler um arquivo ou pasta específica, né? Então assim entende melhor o que ele precisa fazer. Beleza? Então, dado esse comando aqui,
+
+agora a gente vai executar o grad projeto. Beleza? Que acontece? Essa parte inicial é a mais dolorosa, né? Ele vai pedir várias confirmações pra gente.
+
+Ele vai precisar que a gente aceite diversos comandos ali que ele vai precisar dar, né, para criar banco de dados, para criar a pasta, instalar as dependências. Então é uma hora que a gente tem que ficar monitorando. Chegou uma etapa aqui, né, que como eu falei, vai demorar bastante esse prompt. Ó, ele tá analisando aqui os arquivos, né? Virou como referenciou e deu certo.
+
+Então, chega uma etapa aqui que ele vai tocar sozinho, mas primeiro a precisa aceitar bastante. E isso, claro, né? Se tiver nas configurações corretas aqui no antigraft, opa, mais do editor do antigraft aqui, mas de prosseguir sempre, né, que eu uso, mas tem gente que não gosta porque eu não consegue acompanhar que que a gente tá fazendo, tá bom? A gente também tem uma playlist aqui no canal, galera, com vários vídeos de anticrap, quase um curso, tá? Inclusive tem um vídeo sobre o Agent Kit. Eu vou deixar a playlist
+
+aqui também no izinho para vocês poderem acessar depois, tá? Esses vídeos de referência vão ser excelentes para que vocês possam aprender melhor o editor também, tá? Então aqui ele tá começando, ele tá criando tudo e ainda não pediu para eu aceitar nada, né? Tudo que ele criou não precisou de permissões. Ele já criou um artefato também, a gente pode acompanhar em command e ele vai abrir o agent manager, tá? A
+
+gente pode abrir o projeto aqui, ó. a gente consegue ver os artefatos que ele tá criando. Então, ó, o plano de implementação, depois ele vai criar outro e outro e outro, né? Porque ele vai precisar de vários artefatos pra gente chegar ao fim desse projeto, tá? Então aqui ele já tem planejamento, ele criou esse arquivo aqui também pede no prompt, que todas as tarefas que ele tem que fazer, vejo que é bastante coisa. E
+
+agora ele vai começar a executar que a gente precisa dar os aceites aqui, tá? Ó, apareceu o primeiro e assim vai se seguir. Vai ser muita coisa mesmo, tá? É uma estrutura bem complexa e a gente vai precisar, né, terminar isso aqui para poder ver o projeto rodando. Bom, galera, como eu falei, isso aqui vai demorar bastante, tá? Ele vai levar
+
+alguns minutos, alguns bons minutos para terminar. Aí depois que ele termina, uma das coisas que tem que fazer é acessar o projeto e testar tudo, porque provavelmente vai dar algum bugzinho, já que a gente criou muitas funcionalidades num prompt só, tá? Então, o próximo passo é a gente verificar o projeto, identificar todos os erros e pedir para ele corrigir, tá? Aí, antes de fazer esse vídeo aqui para vocês, eu fiz o processo todo, né, pra gente poder seguir uma linha de raciocínio. Eu já criei um projeto com o mesmo prompt. Eu
+
+vou mostrar para vocês o resultado final desse cara aqui, né? Vai criar algo muito semelhante. Aí varia um pouco, né? Mas é o resultado que vocês vão ter seguindo esse PRD.m que eu mostrei para vocês, tá? Então, olha só. Aqui tá o
+
+projeto tá até logado aqui. Eu vou deslogar para vocês verem. Ele cria esse e-commerce aqui completo, tá claro, né? Eh, tem poucos produtos e tal. Eu pedi para ele preencher com alguns pedidos fakes ali, mas é só pra gente ter o banco rodando, mas ele já entrega com essa estrutura mínima viável. A gente
+
+pode fazer autenticação aqui. Eu vou fazer com o usuário admin, tá? Uma autenticação funciona. Tem uma área aqui do usuário com minha conta. tem que criar mais algumas abas e tal, né? Mas
+
+já tem os meus pedidos. E aqui a gente pode escolher um produto, por exemplo, adicionar o carrinho, ir pro carrinho, finalizar a compra, botar um nome aqui, né? É uma loja de produtos físicos. Isso pode moldar também no nos prompts ali, no PRD, né? E lembrando, né, galera, isso aqui tudo ele criou, tá? Não
+
+modifiquei nada. Exatamente. O PRD criou isso aqui, tá? A única coisa que eu pedi foi para popular a base com alguns pedidos, porque eu quero mostrar daspo para vocês aí. Aqui vou pro pagamento, ele me redireciona pro stripe. Aí aqui
+
+eu preciso preencher os dados. Aí preenchendo, né, tu pode usar esses dados aqui de teste, tá? Para fazer o pagamento no stripe, é só botar 42 42 e uma data válida, clicar em pay e aí ele vai processar o pagamento no stripe, ele volta pro nosso sistema, dá o pagamento e confirmado, né? E aí o usuário encerra o seu ciclo de pedido. Beleza? Aí tem o
+
+outro lado, né, que é o admin, que é o dashboard. Esse usuário aqui tem os dois, porque ele é um usuário e admin. né? E aqui o dashboard que entregou é esse aqui. Claro, né, galera? Tem outras
+
+coisas que a gente pode incluir, né? Um e-commerce, um projeto super complexo, mas ele já entrega o admin com uma dashboard, né? Aí os pedidos feitos ali, quais os produtos que tem cadastrado, tudo bem completinho pra gente ter essa base de e-commerce em praticamente tempo record. Bom, galera, e agora pra gente fechar, eu quero fazer o deploy com vocês, ensinar que também o antigraft pode ajudar a gente nisso, tá? Então vou voltar aqui pro antigraft, ó. Aqui ele
+
+tá terminando o projeto ainda, tá? Então eu vou ter que esperar terminar e tudo mais. Vocês vejam que ele vai marcando no tesqueir que a gente pediu para ele criar quais tarefas ele já fez e quais eles têm que fazer. Vocês viram ali que eu dei explicação para vocês do projeto, né, do outro que eu já tinha feito com a mesma estrutura, que ele nem fez tudo ainda, então demora mesmo, né? Então eu ia ficar aqui, sei lá, meia hora esperando ele terminar, mas eu ainda vou esperar para mostrar para vocês como é que funciona o deploy, tá? Então guardem
+
+aí. Ó, então entregou pra gente aqui, tá? E agora a gente vai fazer o deploy, beleza? O WGF também pode ajudar a gente no deploy, como eu falei antes, ele pode criar um guia pra gente, que eu vou até mudar pro agent manager, pra gente poder ver o artefato, ó. Vou puxar o edit manager aqui. Eu vou pedir exatamente
+
+isso aqui. Agora crie um artefato explicando passo a passo como fazer o deploy com configuração de DNS, clone do repositório pelo GitHub e também SS. Então tu vai especificar isso para ele criar um guia de como tu vai colocar esse projeto no ar, tá? Mas eu vou te ajudar passo a passo, não se preocupa. Bom, aqui ele vai criar um novo artefato explicando tudo que a gente tem que fazer. Então, qualquer projeto que tu
+
+tenha, tu pode pedir dessa maneira que ele vai explicar passo a passo. Isso aqui não depende do agent kit, né? É o próprio antigravit que faz com os modelos que ele tem. Beleza? Bom, enquanto ele cria, galera, eh um outro passo muito importante que a gente tem que fazer é colocar o projeto no GitHub, né? A gente tem que criar um repositório
+
+lá. Vem aqui no mais novo repositório e coloca o código aqui. Tu passando o link do repositório lá prograft, tu manda ele colocar que ele vai colocar também, vai ficar igual ao meu aqui, tá? Então tu tem que inserir o projeto lá para que a gente possa fazer deploy colocar em lá. Isso aqui é tudo gratuito, né? Não tem
+
+mistério nenhum. Tu vai entrar em gitare.com, fazer tua conta, iniciar um novo repositório, tá? E aí mandar o drift colocar ele via URL que ele te passa aqui. Vai ter todos os arquivos na nuvem. E agora a gente tem que escolher
+
+uma hospedagem para poder colocar o projeto lá, tá bom? Muitos de vocês sabem, eu recomendo muito a Hostger, tá? É onde a gente tem todos os nossos projetos, todos os nossos sistemas estão lá, o N8N, blog, a plataforma e eles têm uma oferta especial que ele fornece pra gente com um cupom de desconto que já vem nesse link que vai tá na descrição, tá? Aqui tá a página do N8N, mas não tem problema nenhum. Eu vou te ensinar o que tu precisa fazer. Aqui embaixo tu vai
+
+ter que escolher o teu plano, tá? Recomendo sempre KVM2 para cima. É uma máquina robusta, excelente, vai aguentar muitos projetos, é excelente, ou as maiores, tá? Aí vai depender do teu uso, né? Como é que tu vai usar uma VPS. Vai
+
+escolher o plano. Aqui no carrinho, o cupom já vem aplicado, beleza? E aí ali no sistema operacional, tu vai escolher o bto que é como a gente hospeda projeto, tá? Então aqui, ó, eu vou dar aqui, ó, so simples, seleciona o bto, confirma, tá? Só isso aí tu faz tua compra, né? Aqui não é porque o cupom
+
+que eu já tô autenticado lá na rua, que ele não funciona, mas o teu vai funcionar, tá? Então ele vai vir cupom aqui, vai dar mais desconto ainda. Bom, fazendo a aquisição, vou te mostrar quando é que tu vai cair a próxima tela. Ó, tu vai ter uma tela semelhante a essa daqui, tá? E a primeira coisa vai ser configurar o nosso domínio, né, o DNS para apontar pro servidor, tá? Então,
+
+deixa eu só ver aqui se ele já criou o arquivo lá, ó. Ó, vem aqui no manager do deploy guide, tá? A gente vai ter que seguir isso aqui para fazer o deploy. Mas aqui eu vou fazer contigo, né? Então não vai precisar seguir, basta utilizar, né, as instruções que eu tô te falando que vai dar certo. Bom, o primeiro passo
+
+é confirs. Como eu falei, a gente vai vir aqui em domínios, tá? Tu vai encontrar o teu domínio. Se tu não tem alguns planos já dão domínio, tá? Tu vai aqui em adicionar novo novo domínio, né?
+
+Tu vai comprar um domínio é baratinho, tem opções aqui, ó, por 1 centavo no primeiro ano, tá? Eu vou colocar nesse aqui. E no meu caso, ó, vem aqui em DNS, tá? E no meu caso aqui, a gente vai utilizar o nome, né, de e-commerce. Então ele vai ficar num subdomínio e eu vou precisar colocar o IP da VPS. Então
+
+tu vai abrir aqui, ó, dar um control click para abrir o painel de VPS. Aqui do lado, tu vai achar a tua VPS que tu comprou, tá? Tu copia o IP dela. Eu vou usar essa daqui, essa segunda. Tu vai colocar aqui o IP e vai adicionar o registro, tá? Esse é o primeiro passo e
+
+isso aqui é para ficar como um subdomínio de e-commerce, tá? Pode deixar como @ ali. Aí ele vai pro www. Bom, configurado DNS, a gente vai paraa VPS, gerenciar ela e aqui a gente vai entrar via terminal, fazer alguns comandos bem simples, vai ser fácil e rápido, tá? Aqui no terminal que eu vou fazer, eu vou ter que instalar o Node e o PM2.
+
+Então, olha só, vai usar esses comandos aqui, aptall node AS e npm install 2. O node é porque nossa aplicação é baseada em JavaScript, tá? Então é o que vai fazer rodar ela. O PM2 é um serviço que vai manter a nossa PI em pé, nosso projeto em pé. Então ele precisa desses dois caras aqui, tá? Vai precisar do
+
+post também. Então ele vai utilizar esses comandos aqui, ó. PT install postgies postges cont system CTL start Postgers para iniciar ele postgies nosso banco de dados. Depois da instalação do Post a gente tem que entrar lá e criar um usuário. Então a gente vai utilizar o comando sudo menu posterges psql. E aqui
+
+eu vou criar o banco de dados e-commerce, que é igual do nosso projeto lá que foi criado. E eu vou criar o usuário. Então vou colocar aqui alter user postress password. Aí eu vou colocar aqui teste 1 2 3 só pra gente achar mais fácil a senha, tá? Não façam isso aqui. Tem que colocar uma senha
+
+segura. Bom, coloquei o usuário lá no banco. Agora eu posso dar um barra B, um barra Q para sair dessa interface aqui. A gente já tem o usuário do banco, tá? E eu vou clonar o repositório. A gente vai
+
+colocar dentro dessa pasta, ó, var www, né? Se não tem, a gente vai ter que criar. Então, n - p var www. Então eu entro nela aqui, que é a pasta onde ficam os projetos web, né? E aqui eu vou clonar o meu projeto que tá lá no GitHub aqui dentro dessa pasta e tá? O
+
+comando de clone vocês podem encontrar aqui, ó. Basta utilizar esse code e aqui vai vir a URL de clone, tá bom? Clonamos o projeto, então a gente já pode entrar nele. CD-commerce. Aqui tá todo o código dele, tá? Eu preciso criar a minha ENV,
+
+né? o meu dot igual tava lá no frontgraft. Então a gente pode copiar aquele arquivo, esse arquivo aqui, ó, tá? Então pode dar um conttrl A, contrtrl C, digitar vin doenv, né? Os arquivos doenv não são trafegados no GitHub, né? Isso é uma medida de
+
+segurança. A gente vai criar o arquivo aqui e vai colar todo o seu conteúdo, tá? com a chave secreta ali, o domínio do posts. O domínio do posts ele vai ser um pouco diferente. Aqui se vocês forem ver, tava usando o Docker, né? Então
+
+agora vai ficar o seguinte, ó. Aqui vai ficar post usuário, mas a senha vai ser teste 1 2 3. A gente mudou, tá? Só isso que vai mudar. E isso aqui já vai dar o acesso, né, da aplicação para o nosso banco de dados. dar um ESC 2. Xão.
+
+E aqui agora eu vou rodar os comandos que vão instalar as dependências do nosso projeto. São eles: npm install, NPX Prisma Migrate para criar o banco de dados, DBID para popular o banco e NPA run build para criar os arquivos finais de execução do projeto, né? a gente não roda nesses arquivos que a gente planou, ele gera arquivos HTML, CSS, JavaScript para nós rodarmos, né, projeto. Isso vai gerar essa versão estável, né, de execução. E aí a gente começa a configurar o PM2 para deixar o projeto sempre online. Só vou deixar ele
+
+terminar aqui. Bom, ele gera o deploy. Agora a gente configura o PM2. Os comandos para configurar o PM2 vão ser esses aqui. Isso, claro, né, galera?
+
+Tudo vai estar no doc de vocês, né? Mas vai ser mais ou menos essa lógica aqui. Então se vocês seguirem lá e tiver algum problema, dá seguir por aqui. Então PM2 start npm menos name, né? A gente nomeia o projeto. Esse aqui vou chamar de
+
+e-commerce next, mas o nome se vocês colocam se coloca o que vocês quiserem, tá? E dá um start, save startup. Então save é para salvar esse projeto. C vai ficar salvo lá. Se der algum pau e o serviço cair, depois ele inicia com o projeto de novo. E startup para iniciar
+
+o serviço, tá? Aqui a gente pode dar um PM2 status. E se o projeto continuar aqui, quer dizer que tá online, né? Ele não caiu por algum motivo, que às vezes dá algum erro, o projeto só inicia e já cai, tá? A gente tem que checar isso também. A gente instala o Njinx, que é o
+
+nosso servidor web, né? É quem vai ligar o domínio com o projeto. Então, aptal- Yinx. E a gente precisa criar um arquivo de configuração pro nosso site, né? O endin permite que a gente rode vários projetos ao mesmo tempo. Então, a gente vai criar um
+
+específico pro e-commerce. Então, eu vou criar o arquivo aí. etc sites available, tá? E o nome do arquivo vai ser ecommerce. Dentro vocês vão colar essa configuração aqui, tá?
+
+Aí eu posso deixar junto com o PRD. Só só me lembrem nos comentários aí se eu vou colocar, tá? Então vai ficar aqui server name, né? Aqui tu vai ter que colocar o teu domínio. Só essa a diferença. O restante é a mesma coisa,
+
+tá? Vou dar um ES x. Ele vai salvar essas configurações. E agora eu preciso dizer pro Nin que esse serviço existe e reiniciar ele, que esse site existe e reiniciar ele. Os comandos são lns, aí o nome do arquivo em sites enable para dizer para endin que existe, tá?
+
+Ininx - t e system restartinx para reiniciar ele. Beleza? Para verificar se o Njinx está rodando, pode utilizar system CTL status Ninx. Se tiver tudo verdinho, quer dizer que deu certo, né? Nada do que a gente fez até agora, eh, fez ele parar de rodar, tá? E
+
+aqui por último, eu vou utilizar o comando setbot ninx D ecommerce, né, que é o nosso domínio para que ele aplique o SSL, tá? É que não tem o cert bot, tem que instalar ele. O comando para instalar o cert bot é apt install Y se bot e esse Python 3 setbotinx, né, que é o pacote que a gente precisa para configurar o setbot com Jinx. Isso aqui é tudo pro SSL, né, só lembrando aí aqui agora sim te dá o mesmo comando para gerar o certificado de segurança, tá? Aí tu pode colocar um e-mail para ele mandar mensagem de renovação, tá? Aí tu
+
+aceita ali as opções e ele vai gerar o certificado para aquele domínio do nosso e-commerce. E após isso a gente já pode acessar o DNS e o SSL. Eles demoram um pouco para propagar e isso pode fazer com que ele ele falhe de alguma maneira, tá? E aqui, galera, o meu tinha uma regrinha de firewall que não tava deixando o SSL ser emitido, né? Um de vocês não vai acontecer isso. Eu tinha
+
+instalado ali um outro programa e agora vocês podem ver que deu certo, tá? Então agora a gente vai acessar o e-commerce e ver se deu algum problema, né? Já pode acessar com o domínio final, ó. E aqui tá a loja virtual, né? Com o deploy fake. Beleza, galera? Então, todo o
+
+processo, né, para vocês poderem replicar aí com qualquer tipo de projeto, tá? Claro, dependendo do projeto, de plug guide ali que a gente criou vai ser um pouquinho diferente, mas dá certo no final das contas esse vai ser o resultado. Galera, só lembrando, né, a gente tá criando nossa formação de vibe code, né, tá para lançar em março. E se vocês têm interesse em conhecer os nossos treinamentos, os links estão na descrição. Então, queria chamar atenção paraa formação a gente de um treinamento completo 8N, onde a gente vai aprender do básico avançado a criar automações nesse software que hoje é quase que um requisito aí para muitas vagas da área tec, por exemplo, para DEF. Beleza?
+
+Então, de uma acessada ali, vejam se é para vocês e se for pra gente poder trocar uma ideia aí e crescer junto também, aprender muito em. Beleza? Bom, então fechamos aqui. A gente teve todo o processo, né, de criação de e-commerce. Todo esse passo a passo tu pode replicar em outros tipos de projeto, vai funcionar normalmente, porque é uma estratégia, né? Um workflow que pode ser
+
+implementado só mudando os dados do PRD. Então, se vocês curtiram, não esqueça, deixa aquele like, se inscreva no canal, ajuda bastante a gente a trazer conteúdos como esse e outros também, tá? Vejam lá, playlist de de antigravity, vai valer muito a pena, tem muito conhecimento lá, né, em vários vídeos, inclusive sobre o kit que a gente viu aqui, tem sobre skills, projetos completos lá, vai valer a pena mesmo, galera. Então, por hoje é isso. Vou ficando por aqui e espero vocês num próximo vídeo ou num curso ali da formação gente diária.

@@ -1,0 +1,103 @@
+---
+video_title: "Codex Grátis E Ilimitado: Rodando 100% Local Com Ollama (APENAS 1 Comando)"
+video_id: vEm6FxXr1Lo
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vEm6FxXr1Lo
+video_date: 2026-05-27T14:00:14+00:00
+video_description: |
+  Codex rodando local com Ollama é o setup que coloca o coding agent do OpenAI funcionando 100% dentro do teu PC, totalmente grátis, ilimitado, sem API key, sem cartão e sem mensalidade, com um único comando que cuida de toda a configuração.
+  
+  ⭐ Inscreva-se na Lista de Espera da Formação Codex Master: https://app.horadecodar.com.br/lp/esquenta-codex-master
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_codex_free
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  
+  Neste vídeo eu mostro como ativar esse modo, quais modelos open source rodam por baixo (gpt-oss, Qwen Coder, DeepSeek), como criar profiles pra trocar de modelo na hora, e como esse setup se aplica a casos reais de refactor, code review, boilerplate e projetos com código sensível ou NDA.
+  
+  Se você usa Codex todo dia e tá cansado de bater limite de uso, gastar com API ou pagar Codex Plus mensalmente, esse vídeo é pra você. Se você trabalha com código sensível, projetos sob NDA, ou em empresa que proíbe mandar código pra cloud, esse vídeo também é pra você. O Codex local com Ollama resolve esses dois cenários ao mesmo tempo.
+  
+  O recurso central é simples: o Codex CLI suporta apontar pra um endpoint OpenAI-compatible, e o Ollama serve qualquer modelo open source nesse padrão. O comando ollama launch codex --model gpt-oss:20b cuida de tudo automaticamente: verifica se o modelo tá baixado, faz download se precisar, sobe o servidor local do Ollama, e inicia o Codex já configurado apontando pra ele. Sem flag adicional, sem editar arquivo, sem variável de ambiente. Um comando, e o Codex aparece com header indicando "local via Ollama".
+  
+  Os modelos recomendados pra rodar como cérebro do Codex são vários, cada um com perfil diferente. O gpt-oss:20b é o equilíbrio padrão, recomendado pra começar. O gpt-oss:120b entrega máxima qualidade se a máquina suporta. O qwen3-coder:30b é especialista em código e costuma performar muito bem em refactor. O deepseek-coder:16b é o mais rápido pra quem quer respostas em segundos. O gemma3:27b é alternativa generalista boa. Trocar entre eles é trivial: roda o mesmo comando trocando o nome do modelo.
+  
+  Pra quem quer mais controle, existe o caminho do config.toml. No arquivo ~/.codex/config.toml dá pra definir profiles nomeados, cada um apontando pra um modelo específico do Ollama. Depois é só rodar codex --profile qwen-coder ou codex --profile deepseek e o Codex já abre com o modelo escolhido. Útil quando você usa modelos diferentes pra tarefas diferentes.
+  
+  O combo Codex + Ollama tem casos de uso óbvios: refactor de projetos privados sem mandar uma linha pra cloud, code review automatizado em código sob NDA, geração de boilerplate offline em viagem ou rede ruim, e qualquer fluxo onde privacidade ou custo são bloqueios. Não substitui Codex cloud em todo cenário, mas resolve uma fatia grande do uso diário.
+  
+  Existe um bônus que poucos sabem: o ollama launch funciona também com outros coding agents. Tem ollama launch claude pro Claude Code, ollama launch openclaw pro OpenClaw, ollama launch hermes pro Hermes Agent, ollama launch opencode pro OpenCode e ollama launch codex-app pro Codex App desktop. Mesmo padrão, mesmo nível de simplicidade, todos rodando local com qualquer modelo do Ollama.
+  
+  Quando precisar voltar pro Codex cloud, basta rodar codex sem flag e ele volta pro modo padrão. Você usa os dois lado a lado conforme a tarefa: cloud quando precisa do modelo mais forte, local quando precisa de privacidade, velocidade ou economia.
+  
+  Pra usar bem o setup, vale ter Ollama instalado, Codex CLI instalado via npm, e GPU decente pra rodar modelos de 20B ou maior com performance. Mas mesmo CPU dá conta dos modelos menores, então não tem barreira absoluta.
+  
+  E você, já usa IA de código rodando local ou ainda paga mensalidade? Comenta qual modelo do Ollama tu vai testar primeiro com o Codex. Deixa o like, se inscreve no canal e ativa o sininho pra não perder os próximos vídeos sobre IA local, coding agents e ferramentas open source.
+---
+Galera, hoje eu vou mostrar para vocês como rodar o Codex de forma totalmente gratuita, utilizando modelos de a local ou cloud via OLAMA. Mas a ideia aqui é que a gente não gasta com IA, a gente não gasta com LLM e tem acesso a todos os recursos do Codex. Simples assim. O passo a passo também é bem simples, bem intuitivo e é isso que eu vou fazer junto com vocês. A gente vai começar a instalação de tudo que precisa, as configurações, depois eu vou rodar para mostrar que realmente funcionou. a gente
+
+utilizou uma IA gratuita dentro do Codex. Então, se tu curtiu a ideia, não se esquece, acompanha o vídeo até o final, deixa aquele like também. Se inscreva aqui no canal se não é inscrito, isso ajuda bastante a gente continuar nosso trabalho aqui, colocando vídeos todo santo dia. Bora lá entender melhor como é que funciona essa estrutura. Fiz aqui um infográfico rapidinho, mas cara, antes, como a gente tá falando de Codex, não deixe para depois se inscreva na nossa lista VIP aqui da formação Codex Master, um treinamento que eu tô desenvolvendo aqui, focado em Codex, para que tu possa aprender a ferramenta do básico avançado, já que hoje ela tá se sobressaindo das demais ferramentas de programação com IA, né, Vugbe Coding. Eu
+
+resolvi fazer esse treinamento bem completão, com vários projetos, vários recursos e tudo que tu precisa para poder criar com maestria e usar com maestria o Codex, tá? Então o link vai est aqui na descrição, no comentário fixado. Acesse e garanta a tua vaga. Beleza? Bom, são vagas limitadas, né? A
+
+gente vai rodar algumas vagas aí depois quando lançar, quem se inscreveu ganho o desconto. Voltando aqui, que que a gente vai precisar, galera? A gente vai precisar do OLAMA, tá? Então o OLAN, para quem não sabe, é uma forma que a gente tem de baixar uma LLM na nossa máquina e rodá-la de forma gratuita, né? Tipo um char GPT no nosso PC. E ele
+
+também é um motor que vai fazer com que o Codex possibilite a gente usar LLMs gratuitas, tá? Então ele é necessário pro processo. E o codex é óbvio, né? Provavelmente tá aqui é porque tu veio por causa do Codex, então ele faz parte do processo, não vou instalar ele, já tenho ele instalado aqui. Bom, que que a gente precisa fazer? Vai instalar o
+
+Codex, como eu falei, instalar o OLAMA, bem simples. Aqui em olama.com tu vai ter acesso ao instalador, é gratuito também, tá? Basta fazer o download e aí deixar ele separadinho no canto, tá? Outra coisa também interessante, olhem os models, vejam aí models que tenham acesso a bastante tools, models que rodem na sua máquina, né? Nem sempre tu
+
+vai conseguir rodar todos e principalmente, né? Módelos que sejam indicados para coding, tá? É, alguns que eu sei que são bom. O Queen é bom, o Kim é bom, o Deepsek é bom, tá? O GPT osso também é bom. Então tu vai ter que
+
+testar, ver se funciona bem na tua máquina, né? Porque também alguns requerem placa de vídeo, por exemplo, né? Então tem que ficar atento a isso tudo. Beleza? Bom, dito isso, a gente volta lá. A gente precisa baixar um
+
+modelo. Baixar um modelo que a gente vai utilizar. O comando é esse, né? vai utilizar o lama pool e o nome do modelo. Aqui, por exemplo, eu tô baixando o GPT osso com 20 bilhões de parâmetros.
+
+Então, GPT osso, eu venho aqui e a gente vê que ele tem as versões de 20, 120, tá? A de 20 vai rodar em máquinas piorzinha, né? O de 20 vai rodar em máquinas mais fracas, né? O 120 provavelmente não vai conseguir rodar, né? Máquinas muito violentas. P aqui, ó,
+
+que legal. Ele até indica as aplicações que eles são boas, então o codex app é uma delas. E aí isso faz com que a gente consiga está utilizando o Codex bem, porque ele tá indicando. E o mais legal aqui também, galera, é que com esse comando a gente já fazer, consegue fazer tudo que a gente precisa. Então, com todas as ferramentas que eu acabei de falar instaladas, tu vai abrir um terminal. Eu vou aqui abrir o meu
+
+terminal dentro do VS Code numa pastinha. Então aqui eu tô com o terminal aberto dentro da pasta que eu criei, tá? E aqui eu vou colocar o comando lá do lama. Vamos ver se vai dar certo. Vai pedir para baixar o modelo.
+
+Tu dá um y ele baixa o modelo primeiro, coloca na tua máquina, aí ele executa, né? Então os processos funcionam porque a gente fez todo o setup de instalação para poder ter acesso a esses comandos e consequentemente depois de baixar tem um launch, tá? Percebam que lá no infográfico eu fiz aqui de uma maneira de configuração onde a gente eh edita um arquivo chamado configom. Esse arquivo aqui é o arquivo base de configuração para o Codex. Então é como se fosse um outro caminho. Esse caminho é via Oama,
+
+tá? E esse caminho aqui é via codex, que eu acho que é uma ideia bem interessante também, porque tu pode configurar perfis no tomo e aí iniciar via codex em vez de iniciar via lama. Então são opções, tá? E aí tu pode escolher qual tu deseja seguir. Eu vou te mostrar depois como configurar esse arquivo aqui também, só para tu entender como funciona por esse outro lado, né? indo pelo codex e também
+
+já deixando os perfis prontos para poder acionar a hora que tu quiser, não precisar utilizar o olama via esse comando ali. Então aqui, galera, ele terminou de baixar o GPT os, tá? E agora ele tá pedindo para inicializar o codex aqui com esse modelo. Então eu continuo e aqui se vocês verem eu já tenho acesso ao GPT osso e eu posso pedir para ele criar alguma coisa. Então vamos lá. e
+
+uma landing page com HTML, CSS, JavaScript para falar sobre o modelo GPT, os suas características e vantagens. Então vamos lá. E olha só, galera, esse aqui foi um problema clássico. Esse modelo que eu acabei de mostrar para vocês, que é bom e tal, nesse número de parâmetros ele não funciona bem para esse fim. Ele aqui endoidou. Eu pedi uma coisa, ele tentou
+
+acessar um atol e não conseguiu, então ele falhou. E isso faz com que a gente tenha que procurar outro modelo super normal, vai acontecer e a gente vai encontrar o modelo certo que vai fazer o que a gente pede. Então vou dar uma fuçada aqui nos modelos, mostro um outro mais eficaz para vocês. Galera, já ia esquecendo, nós temos a playlist Codex aqui no canal, tá? Lá tem um miniurs de Codex, tem técnicas avançadas. O editor
+
+vai deixar a TAMB do vídeo inicial, que é esse miniurso com projeto de Codex. E eu vou deixar o izinho aqui para tu poder acessar e curtir essa playlist aí depois desse vídeo aqui. Beleza? Bora seguir aqui. Então, vou sair aqui do Codex e vou utilizar esse modelo aqui que é o modelo GPTO 120B, né? Só que no
+
+cloud do lama, que eu posso usar gratuitamente também. Então vamos ver aqui se ele vai rodar. Aqui não precisa baixar porque como a gente tá rodando no cloud, né? Ele faz uma conexão como se fosse via API. Então, de vez em quando eles liberam alguns modelos gratuitos pra gente testar no cloud, tá? O que
+
+pode ser bem interessante. Então, vou pedir para ele criar essa land page e vamos ver se funciona agora, ó. Esse modelo aqui aparentemente deu certo e tá gratuito. Não paguei nada, tô utilizando o modelo cloud ali que o OLAMA disponibiliza. Esses modelos cloud a gente pode ver aqui, ó, ele é um modelo que tá disponível de forma gratuita e a gente pode utilizar também, tá? Ele não
+
+precisa ser baixado na nossa máquina. Ou a gente poderia baixar o 120b e rodar, né? Você já vem pelo tamanho aqui que não é brincadeira, né, galera? 65 GB só modelo ali para estar na nossa máquina. Rodar é outros 500. Então,
+
+galera, olha só que aconteceu aqui. Ele criou os arquivos no meu primeiro prompt, mas ele não criou na máquina de fato. Então, eu tive que colocar um outro prompt aqui para ele escrever os arquivos, tá? Então, agora sim ele foi. Ainda assim parece que ele não criou de CSS, então a gente vai enfrentar alguns problemas assim os modelos de vez em quando, tá? Talvez pela alimentação,
+
+talvez pelo modelo não ter tanta lógica, tá? Então eu vou continuar aqui, ó. Parece que o JavaScript está vazio e o CSS não foi criado. Então é claro, né, galera, não vai ser igual a um modelo top de linha, mas ele é possível sim de criar e programar pra gente, né? Sem que a gente tenha que pagar ali para um modelo como o Opus da vida, né? Então
+
+agora sim ele tá fazendo para nós e aqui agora ele também escreveu JavaScript. Então vamos fazer o teste aqui, ó. Ele criou landing page e tudo certo, né, galera? Tá funcional, tá? Claro que eu não pedi nenhuma estrutura, não passei conteúdo, mas a gente tem a landing page pronta em HTML, CSS e JavaScript, tá? Outra coisa que quero
+
+mostrar para vocês ali do Ton, né, que é o arquivo de configuração do GPT, vou abrir ele aqui rapidamente. Então, galera, é um arquivo que fica aqui na pasta ponto codex do nosso usuário, tá? Ele vai salvando algumas configurações que a gente libera ali enquanto a gente programa, tá? E aqui, por exemplo, tem esse profiles olama launch que justamente fez uma base de configuração do olama automaticamente pelos comandos, tá? Uma coisa que a gente poderia configurar aqui, por exemplo, também para rodar pelo codex o comando, em vez de rodar ali no comando do lama, seria algo nesse sentido aqui, tá? Vai ser uma
+
+configuração aproximada. A gente já viu ali que temos o perfil de olama launch que ele é necessário para isso. Então eu criaria uma configuração parecida com essa aqui, tá? Então eu boto um profiles, codex traço local, defino o modelo, defino o provider que é o olama. Posso escolher outras opções como janela de contexto, máximo output de tokens. E aí depois que eu tenho aqui
+
+configurado no tomel, se eu saio aqui, ó, eu consigo agora habilitar o meu Codex via profile. E isso faz com que ele abra pelo Codex em vez de abrir pelo OLAMA, como vocês podem ver ali, e funciona da mesma maneira. Então, profile medida interessante pra gente poder rodar vários modelos locais juntos aqui, só alterando a flag de profile, tá, para o modelo que a gente configurou. Então ficaria dessa maneira aqui uma configuração para ter um profile de qualquer modelo de A que a gente queira, não só esses modelos locais. Beleza? Bom, galera, espero que
+
+vocês tenham curtido aí a exploração do Codex. É uma tecnologia que eu pretendo trazer mais aqui pro canal e quero ouvir de vocês. Deixa os comentários aí. Vamos fazer uma discussão sobre qual modelo pode ser melhor para o Codex em si. Também deixa o teu like, se inscreva, isso é muito importante aqui pro nosso trabalho. Garante tua vaga lá no Codex
+
+Master, né? Se inscreva para poder ter acesso a um desconto especial do lançamento. Galera, lembrando também, nós temos aqui no canal vídeos exclusivos para membros, tá? É aquele valorzinho mais baixo do YouTube, R$ 78. Tu vai ter acesso a vários vídeos. Tô
+
+lançando toda semana um vídeo novo para que os membros tenham acesso a técnicas que eu uso no meus projetos pessoais e também recursos mais avançados nas tecnologias que a gente ensina de A aqui no canal, beleza? Então confere lá como se tornar membro e tô te esperando lá também, beleza? E por hoje é isso, galera. Eu vou ficando por aqui e claro te espero no próximo vídeo.

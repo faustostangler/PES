@@ -1,0 +1,140 @@
+---
+video_title: "NOVIDADE Channels no Claude Code: Agora você acessa remoto! (INSANO)"
+video_id: npB9tZ2ygc4
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=npB9tZ2ygc4
+video_date: 2026-03-21T15:00:00+00:00
+video_description: |
+  Você tá no ônibus, lembra que esqueceu de corrigir um bug. Pega o celular, abre o Telegram, manda uma mensagem. Quando chega em casa o bug tá corrigido. Isso não é ficção. A Anthropic lançou o Claude Code Channels: você conecta o Claude Code ao Telegram ou Discord e controla tudo pelo celular. Ele lê sua mensagem, codifica no seu computador e responde no chat.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_channels
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Channels é uma feature nova do Claude Code que transforma apps de mensagem em controle remoto pro seu terminal. Você roda o Claude Code com a flag --channels, isso sobe um servidor MCP que faz ponte entre o Telegram ou Discord e a sessão ativa. Manda mensagem no Telegram, o MCP injeta como evento na sessão, o Claude executa no computador local e responde de volta no chat. Tudo roda na sua máquina. Seu código não sai do computador. O Telegram é só a interface.
+  
+  No vídeo mostro a configuração completa do zero. Instalar o Bun que é o runtime JavaScript que a Anthropic usa. Criar o bot no Telegram pelo BotFather com nome e username. Instalar o plugin oficial do Telegram no Claude Code pelo marketplace. Configurar com o token. Iniciar com a flag --channels. Parear pelo Telegram mandando mensagem pro bot e recebendo o código de 6 dígitos. Configurar allowlist pra segurança. Todo o processo leva menos de 5 minutos.
+  
+  Depois da configuração mando tarefas reais pelo Telegram pra demonstrar o poder da feature. Criar um projeto Node.js com Express e TypeScript do zero com API REST de tarefas. Corrigir um bug específico onde a rota DELETE não retornava 404 pra IDs inexistentes. Gerar um relatório em markdown e receber de volta pelo Telegram como documento. Mandar screenshot de um erro pelo celular e o Claude analisar e corrigir. O plugin suporta envio de arquivos nos dois sentidos com limite de 50MB.
+  
+  Explico a diferença entre as 3 formas de controlar o Claude remotamente que a Anthropic oferece agora. Channels conecta Telegram e Discord ao terminal pra devs que querem executar código. Dispatch controla o Cowork pelo app mobile pra knowledge workers que mexem em arquivos e planilhas. Remote Control usa o app do Claude no celular como interface mostrando o terminal completo. Channels é o mais flexível pra dev porque a interface é natural: você manda mensagem como se fosse pra um colega de trabalho.
+  
+  Quem conhece o OpenClaw vai reconhecer o conceito. O projeto open source que viralizou fazia exatamente isso: mandar mensagem no Telegram e um agente codificava pra você. Agora a Anthropic entregou a mesma coisa nativa dentro do Claude Code com segurança e sem precisar configurar infra separada.
+  
+  Mostro também o Fakechat que é um demo incluso pra testar sem precisar de Telegram, rodando um chat local no browser. E explico como criar channels customizados pra Slack, WhatsApp ou webhooks via MCP. A feature tá em research preview então vai evoluir, mas já funciona pra uso real no dia a dia.
+  
+  🔗 Links do vídeo:
+  ▸ Documentação Channels: https://code.claude.com/docs/en/channels
+  ▸ Plugin Telegram: https://github.com/anthropics/claude-plugins-official
+  ▸ Claude Code: https://docs.anthropic.com/en/docs/claude-code
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Novidade Claude Code Channels
+  01:00 Como funciona o Claude Code Channels
+  05:00 Iniciando o setup do Channels no Telegram: criando o bot
+  07:33 Setup no Claude Code para o Channels: instalando o plugins
+  10:08 Integrando Telegram com o Claude Code Channels
+  12:35 Utilizando o Claude Code Channels via Telegram
+  15:00 Minhas considerações sobre o Claude Code Channels
+---
+É, galera, o pessoal da Antropic matou o Open Cloud. Será mesmo? Bom, hoje eu quero falar com vocês sobre a novidade do Cloud Code, que é o Channels, uma forma de a gente programar de maneira oficial um plugin Tropic via Telegram ou Discord, algum app que a gente queira no nosso computador. Então, Cloud Code vai ter uma conexão direta com o Telegram. A gente pega o nosso celular, vai pra praia, programa alguma coisa e ele vai est ali trabalhando incansavelmente, queimando tokens enquanto a gente pega aquele solzinho. É isso aí que tu vai
+
+aprender hoje para já programar o teu primeiro projeto, seja onde tu for sair hoje mesmo. Beleza? Então fica comigo até o final do vídeo aqui para tu aprender a configurar o Cloud Code Channels. Não esquece também deixar aquele like, se inscrever aqui no canal que é muito importante para que eu possa trazer vídeos todos os dias com novidades insanas como essa. Meu nome é Mateus Batista, sou programador há mais 10 anos e hoje estô aí me aventurando no mundo da Ya. Beleza? Bora lá então. Ó
+
+galera, o negócio não é tão simples assim, então eu fiz aqui infográfico rapidão pra gente entender tudo, tá? Novidade saiu hoje que eu tô gravando, né? Mas eu provavelmente vou lançar amanhã Cloud Code Channels, dia 20 de março, tá? Precisa atualizar o Cloud Code. Então tu já atualiza o teu aí.
+
+Como é que tu faz para atualizar? Te mostrar agora mesmo, ó. Cloud upgrade. Simples assim, ó. Já tá na versão certa, né? Aqui, mas vai lançou um patzinho,
+
+né? Ninguém sabe. Então aqui com esse comando, tu vai atualizar bonitinho, já tá pronto. E aí tu vai poder utilizar a funcionalidade nova, tá bom? Atualmente esse plugin que a gente vai ter que instalar, né, é um para cada rede, funciona para Telegram ou Discord. Tu
+
+vai mandar a mensagem, vai ter aqui um MCP Server para comunicar entre o teu editor, a tua sessão do cloud e o Telegram e vice-versa. Cloud Code vai executar o código terminal baseado no teu prompt e aí tudo vai est rodando no teu computador, né? Um código local e seguro, como eu coloquei aqui, ele volta um feedback pra gente no Telegram, beleza? Sei que quando lançou lá no OpenCloud, né, junto com OpenCloud, era uma loucura, uma febre, agora tá chegando no softwares da Antropic Setup, galera. Fiquem atentos a isso.
+
+Para você instalar o Ban, tá? Ou B, Ban, como tu preferir chamar, é tipo um Node JS, beleza? Esse cara aqui precisa ter instalado. Quando tu ter ele instalado, tu pode usar o comando ban menos version, tá? Opa, aqui não deu, ó.
+
+Mas vamos ao terminal aqui, ó. Aí aparece a versãozinha, quer dizer que tá certo. Beleza. Aqui terminal do VS Code deve ter alguma interferência que não tá pegando ele, mas está na minha máquina. Beleza? Bom, além disso,
+
+a gente precisa criar um bot ali no bot father, tá? instalar o plugin, que eu vou mostrar para vocês passo a passo, iniciar com command channels e depois tu vai parear ali o teu bot com o cloud code e isso é o setup, tá? Aí depois tu faz a primeira vez, eh, fica mais fácil, né? Só abrir a sessão e reiniciar. Que que dá para fazer? Mandar tarefas de
+
+código pelo celular, receber arquivos de volta até 50 MB, mandar imagens pro cloud, né, via Telegram ou Discord, né, executar skills e automações remotamente, fazer deploy pelo Telegram, dar teste e receber resultados, controlar qualquer ferramenta celador. Então, a gente tem um vídeo aqui do Celfing, galera, que é uma parada insana, lançou ontem, se eu vou lançar esse vídeo sábado aqui, dia 21, dia 20 lancei o vídeo do Cel Fing, vou deixar o izinho aqui para tu conhecer. Basicamente ele consegue ler qualquer software open source, criar um celai para ti, para tu poder usar ele via comando e o cloud code pluga esse cara nele e consegue usar o software por ti. Por exemplo, cadê em live para editar, o obsimp, qualquer software open source funciona bem doido, tá? Então isso aqui vai poder ser feito também via Telegram.
+
+Requisitos e limitações. Cloud Code ali atualizado, como eu mostrei para vocês, o Ban. Login AI, tá? Tem que tá autenticado. Plano Pro ou Max. A P não funciona nesse momento, tá?
+
+Por isso tem que tá logado. Sessão precisa estar aberta no computador. Então tu vai ter que iniciar ali o cloud code no projeto que tu quer. Sensão aberta não roda, tá? Permissões travam no terminal. Então a gente vai ter que
+
+utilizar a flag dangerous skip permissions, tá? Telegram não guarda histórico, mensagem offline se perde. Então, por exemplo, né, eh, se a gente mandar uma mensagem tiver off, provavelmente vai ficar no limbo e ele não vai remandar. Research preview, só plugins oficiais por enquanto, tá? Então, tá bem bacaninha, tá bem legal e o bom que é oficial da Antropic. Bora
+
+começar aí a configurar. Só antes, não se esqueça, estamos aí com inscrições abertas da nossa formação Web Coding. Se tu curte o Cloud Code, lá tu vai encontrar o suco do cloud Code, né, docinho para tu aprender tudo que tu precisa com vários projetos. Tem Antigraft também, tem Codex, é o treinamento para quem quer ser o vibe coder do ano, beleza? Link vai tá aqui na descrição, comentário fixado, conhece o treinamento aqui nessa página para poder baixar a grade curricular, falar com a gente no WhatsApp, se ficar alguma dúvida, entender qual é o a metodologia que eu implementei nesse treinamento, tá bem completinho, dá uma olhada lá que vai valer a pena, tá? Lembrando também
+
+nesse vídeo aqui eu vou pelo setup do Telegram, tá? Mas dá para fazer via Discord, então tá? Vou supor que tu tenha o ban instalado, que é super simples aqui, é só entrar aqui e rodar o comando no Windows ou o comando no Mac, né? E aí ser feliz, fazer o testezinho que eu fiz aqui, o teste de versão, né? E vamos para o bot no Telegram. Para
+
+criar o bot no Telegram, tem que entrar no bot, né? Bem simples isso aqui para quem já fez, mas para quem não fez também é. Tu vai digitar barra newbot, tá? E aí aqui tu usa esse comando, vai começar uma conversa com ele e vamos poder criar um bote em tempo real ultra simples. Tem até essa interfaceinha, né?
+
+Se tu quiser utilizar clicando aqui em open, você pode vir aqui, create new bot. colocar um nome do bot, tá aqui cloud dev nesse bote aqui. E eu preciso botar um nome com underlines. Então vou botar cloud deve hora de codar. Esse nome tem que ser único. Esse de cima não precisa,
+
+tem que terminar em bote. Cria o bot. Aí ele gera o secret aqui. Copia e não mostra para ninguém, né, galera? Isso aqui é segredo secreto.
+
+Então vou jogar em algum lugar aqui seguro, longe dos olhos de vocês, né? E beleza, o bote tá criado, tá? E a gente pode até iniciar ele aqui, só clicar aqui no no ar@ dele, tá? E aqui a gente vai ter possibilidade de dar um start. O teu bot estará criado, OK? Então é
+
+isso que tu precisa fazer no Telegram. Agora a segunda parte é lá pro cloud, a gente vai instalar o plugin que é necessário para isso, tá? Lembrando, recomendo que vocês deem uma olhada na documentação oficial do channels eles lançaram lá na documentação da Antropic, né, para dar uma olhada como é que funciona. Tem todo o passo passo que eu vou explicar aqui, talvez um pouco mais simples, que é um artigo, né? Mas dá para seguir por aqui também. E esse é o plugin oficial, tá?
+
+Para vocês saberem da onde que eu peguei. Vou tentar deixar os links aqui na descrição também para vocês acessarem de maneira mais fácil. é esse cara aqui que a gente vai instalar lá no Cloud Code agora. Então a gente vai abrir aqui cloud e aqui eu vou rodar os comandos de instalação do plugin. Então o comando eu vou tentar direto instalação do plugin sem colocar no marketplace, vai ser esse aqui, tá?
+
+Eu vou instalar pro usuário e deu certo. Não precisou colocar o marketplace. Se o teu deu erro de não encontrado, talvez tu tem que colocar o marketplace da Antropic, tá? Talvez tu nunca tenha instalado nenhum plugin deles. Esse comando aqui meu já tá, né? Então é
+
+redundante, não precisaria. Bom, agora a gente vai reiniciar o cloud para poder rodar os plugins, né? Então, tu vai rodar aí o comando cloud menos- channels plugin do pontos telegram @cloudçugins traço oficial e aí a flag de dangerously para poder executar qualquer comando sem permissão, porque se ele pedir permissão ele vai travar. Então essa flag faz isso, né? Não é a mais indicada, mas pra gente conseguir fazer alguma coisa tem que ser assim. Bom, e agora tu vai rodar
+
+o seguinte comando, Telegram Configury, tá? Veja, ele já tá ali embaixo, ó. Se eu botar o configure, ele já pega configur, tá vendo, ó? É esse aqui, telegram tal, tá? E aqui eu vou dar um espaço e vou colocar o meu token, tá?
+
+Então vocês vão colocar o de vocês aí aqui, ó, né? Em sequência eu vou cortar aqui para nenhum espertinho usar meu bote, né? Bom, galera, depois que a gente coloca ali o código do nosso bot, agora eu preciso ir lá no Telegram e mandar um oi, tá, galera? Um breve adendo. Muita gente pergunta como é que eu crio meus prompts. Tudo baseado em
+
+engenharia de prompt. A gente tem esse ebook aqui totalmente gratuito que eu vou deixar na descrição desse vídeo, beleza? Então, só clicar ali e baixar sem estresse, bem rápido e fácil. Aí tu vai aprender tudo o que eu sei também. Dinheiria de prompt vai criar prompts muito melhores. Bora sim. Eu vou mandar
+
+uma mensagem aqui. Oi, tudo bem? Qual é o código? E ele vai me retornar o código para eu poder eh fazer a mensagem lá. Aí ele vai me retornar aqui um código para eu poder fazer a sessão com o cloud, né? Fazer
+
+conexão de ambos. Bom, galera, acho que eu fiz algum pequeno erro aqui, tá? E o Cloud tá mandando reiniciar a a sessão com o channel, tá? Então eu vou fazer isso. Eu configurei ali, como vocês viram, né? Ele mandou mandar mensagem,
+
+mas não fez nada. Então ele falou que o servidor Telegram precisa estar rodando para o bot responder. Então eu tenho que reiniciar esse essa sessão aqui com esse channels. Então vamos fazer aqui de novo. Aqui lembrando, né? A gente vai ter que
+
+utilizar aquela flag. Então dangero skip permissions, mesmo comando, tá? Vamos ver aqui agora. Então ó, agora sim. falou que tá ouvindo mensagens, né? Então vamos tentar de
+
+novo. Bom, galera, aí finalmente ele apareceu aqui. Eu tive que reiniciar a sessão, né, e usar o mesmo comando. E aí depois eu mandei a mensagem e funcionou. Então agora a gente utiliza esse comando aqui que ele vai dar pr pra gente, né? O código vocês vai ser
+
+diferente aqui e aí vai parear um dispositivo ao outro, né? as sessões vão ser pareadas. Aí tem um outro esqueminha legal que dá para fazer. A gente pode fazer um um bloqueio de que só a nossa contentela, só aquele bote possa enviar mensagens para nós, né, aqui nesse cloud code. E isso é uma medida de segurança. É com outro comando
+
+que eu já vou executar aqui para mostrar para vocês, ó. Então ele fez o pareamento e agora o comando que vocês vão utilizar é esse aqui, policy allow list, tá? Isso vai fazer com que só vocês possam enviar mensagens para essa sessão do cloud code, o que aumenta bastante a segurança aqui do nosso nossa aplicação, tá? Outra coisa importante é que eu já poderia utilizar agora, né, o meu celular com o Telegram para poder fazer as mensagens, mas aqui para facilitar as coisas eu vou utilizar o próprio web, tá? Então ele foi lá, locou, né, só para mim enviar mensagens.
+
+Agora vamos começar a usar, né, basta enviar o prompt. Então vou colocar um prompt aqui. Cria um projeto node com Express. que serve um API rest tarefas, né? Um todo, usa type, inclui rotas get, post, Então, só um crudezinho básico, popula com três tarefas de exemplo, né? E inicia o servidor na
+
+porta 3.000. A gente envia a mensagem. Se eu venho aqui pro meu cloud code, a gente já começa a ver que a mensagem foi enviada, né? Aí ele já recebeu aqui, tá?
+
+Meu prompt e aqui tá a resposta de volta. tudo via MCP, como tinha comentado no começo, né? Aqui ele tá com probleminha de atualização, não sei por. Preciso recarregar para receber o feedback dele que foi um like, né? Uma reação à mensagem. Beleza? Aí agora vamos ver
+
+aqui, vão acompanhar o Cloud Code criando esse projeto, né, via remoto, utilizando essa nova tecnologia de channels. Bom, aqui, galera, ele aparentemente terminou, né? A gente vai ver aqui no index dados e tal, as rotas. Agora eu vou pedir para ele testar, né, como se a gente tivesse continuando a aplicação. Então, vou pedir aqui para ele testar. Vamos ver se ele me
+
+respondeu alguma coisa, né? Ó, ele me responde, né? Eh, não sei porque tá bugando aqui a resposta, mas vejo aqui, ele me responde sempre com o que ele criou. Agora vou pedir para ele fazer o teste. Ele tá digitando aqui, já recebeu, né? Ó, ainda tá fazendo o
+
+reply, né? Dá para ver aqui, ó. Ele foi lá, respondeu. Ó, aqui estão os resultados de cada rota. me me retornou ali com o resultado dos testes, tá tudo funcionando e eu poderia continuar, né? Por exemplo, agora vou
+
+pedir um ritm completo do projeto com a lista de rotas, exemplos de request, response, instruções setup, me manda o arquivo aqui no Telegram, porque ele pode mandar arquivos, né? Então vamos ver aqui isso em ação. Ele recebeu aqui, ó, tá fazendo a reação ao MCP, ó, reagiu, beleza? E agora ele vai criar o RIDM, né? Então, olha só aqui, galera, ele falou que me entregou o MD. Vamos
+
+dar uma olhada, carregar aqui. E, ó, tá o arquivo aqui à nossa disposição, né? Então, bem interessante também essa geração de arquivos que ele pode fazer através do channels. Bom, galera, espero que vocês tenham curtido essa ideia aqui de utilizar o Cloud Code via Telegram. Também dá para fazer via Discord. A
+
+configuração é bem parecida, né? Claro, vai ter as nuances do Discord, mas tu pode utilizar um dos dois, qual tu preferir. Eu gosto mais do Telegram, para mim parece mais objetivo, né? Discord, uma questão mais de servidor e tal, né? Um pouco diferente a dinâmica.
+
+E aqui, provavelmente, eu vou continuar utilizando o Telegram para poder programar de forma remota. Deixa aí nos comentários o que vocês acharam. Quero saber aí a opinião de vocês, se já estão utilizando, se vão utilizar. E é claro, não esqueça de conferir também a nossa playlist cloud code. Nós temos mais de 20 vídeos de cloud code. Vou deixar o
+
+izinho para vocês acessarem. Lá tem desde um tutorial para vocês entenderem tudo da ferramenta, né, os fundamentos, até projetos, recursos específicos, plugins como esse, enfim, é bem bacana e vai fazer sentido para vocês continuarem os estudos. Também espero vocês lá na formação de Vibe Code, né, como eu falei, treinamento que tem acesso vitalício, grupo VIP no WhatsApp, tem suporte para tirar todas as dúvidas, tá bem completo e toda semana eu tô colocando novas atualizações lá com novos recursos, novas ferramentas para que vocês consigam escolher o que vocês querem e criar os projetos que vocês precisam. Beleza? Então galera, vou ficando por aqui. Espero vocês aí no
+
+próximo vídeo.

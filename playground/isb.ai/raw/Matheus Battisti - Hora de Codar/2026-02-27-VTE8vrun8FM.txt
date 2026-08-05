@@ -1,0 +1,121 @@
+---
+video_title: "O Workflow que NINGUÉM Usa: Claude + Gemini JUNTOS no Antigravity (ABSURDO)"
+video_id: VTE8vrun8FM
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VTE8vrun8FM
+video_date: 2026-02-27T15:00:00+00:00
+video_description: |
+  E se você usasse dois modelos de IA no mesmo projeto, cada um fazendo o que faz melhor? É exatamente isso que eu faço nesse vídeo. Claude Opus 4.6 planeja, Gemini 3.1 Pro constrói, e com 3 prompts eu tenho um app completo com banco de dados, animações e dark mode funcionando.
+  
+  ❇️ Garanta seu desconto na Formação Vibe Coding: https://app.horadecodar.com.br/lp/esquenta-vibe-coding
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O projeto é o FormFlow, um clone do Typeform. Formulários multi-step com animações de transição, barra de progresso, validação em tempo real, tela de obrigado customizável, painel admin pra visualizar respostas e backend completo com Express e SQLite. Tudo feito dentro do Antigravity com 3 prompts e dois modelos diferentes.
+  
+  O segredo tá no workflow. Não adianta jogar tudo pra um modelo só. Cada etapa do projeto exige um nível diferente de raciocínio, e o Antigravity te deixa trocar de modelo e modo de thinking a qualquer momento. É isso que transforma o resultado.
+  
+  Prompt 1: Claude Opus 4.6 em modo Planning. Ele é o cérebro. Pedi um PRD completo com visão do produto, user stories, schema do banco de dados com todas as tabelas e relações, endpoints da API mapeados com método, rota, body e response, e um plano de implementação dividido em 4 fases. Cada fase com os arquivos exatos que precisam ser criados e o que vai dentro de cada um. Trabalho de tech lead em minutos.
+  
+  Prompt 2: Gemini 3.1 Pro em modo High thinking. Ele é o executor. Peguei o plano que o Claude gerou e mandei o Gemini implementar tudo. Setup do projeto, backend completo com Express e SQLite, frontend em React com Framer Motion e Tailwind, e a integração entre front e back. Modo High porque é tarefa pesada que precisa de raciocínio máximo. O app saiu funcionando: formulário com animações suaves, validação, barra de progresso, submit salvando no banco, painel admin mostrando as respostas.
+  
+  Prompt 3: Gemini 3.1 Pro em modo Low thinking. Aqui tá a sacada que pouca gente usa. O app já estava pronto. Queria adicionar dark mode com toggle e duplicação de formulários no admin. Features simples. Não precisa de deep thinking pra isso. Troquei pro modo Low, mais rápido, gasta menos cota, e o resultado é igual pra esse tipo de tarefa. Dark mode funcionando em toda a aplicação com preferência salva no localStorage. Botão de duplicar no admin criando cópia exata do formulário com todas as perguntas. Features novas em segundos.
+  
+  O conceito que quero que você leve daqui: não existe modelo melhor. Existe o modelo certo pra tarefa certa. O Claude pensa melhor. O Gemini executa mais rápido. E o modo Low te economiza cota e tempo quando a tarefa não precisa de raciocínio pesado. Quando você entende isso, seu workflow muda completamente.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMP
+  
+  00:00 Introdução sobre Antigravity com Opus e Gemini
+  01:47 Como funciona a integração entre Opus 4.6 e Gemini 3.1 Pro
+  03:42 Prompt inicial com Claude Opus 4.6 no Antigravity
+  06:44 Iniciando a aplicação com Gemini 3.1 Pro High
+  10:03 Funcionalidades adicionais com Gemini 3.1 Pro Low
+  12:28 Testando o projeto criado no Antigravity com Opus e Gemini
+  13:58 Conclusão sobre a junção de Opus e Gemini no mesmo projeto
+---
+Hoje eu vou te mostrar uma forma nova que eu tô utilizando para criar projetos no antigraft, utilizando aí duas diferentes e conseguindo ter resultados excelentes com poucos prompts. Essa estratégia aqui também é muito útil para quem não tem assinatura nem do cloud, nem do Gemini, porque também vai te ajudar a economizar a tua cota, né, a o uso de créditos ali que tu tem disponível no antigraft para conseguir fazer mais com menos. Então, se tu tem interesse nisso, fica comigo até o final que eu vou te mostrar tudo passo a passo, exatamente como eu faço para tu poder replicar aí. Eu sou Mateus Batista, programador há mais de 10 anos e agora tô me aventurando aí no mundo da IA, trazendo somente o que presta aqui para vocês e, é claro, o que eu tô utilizando também dos meus próprios projetos. Então, se tu quiser ficar par aí das novidades da IA, não se esquece, deixa esse like aqui e também se inscreva no canal para receber os próximos vídeos. E galera, continuamos a
+
+campanha Felicidade Mais. Deixa o teu comentário aí ou a tua dúvida. Prontamente irei te responder e ao mesmo tempo, logo quando eu te respondo, a minha felicidade vai aumentando. Isso é inacreditável. Talvez seja difícil para você crer, mas acontece. Agora chega de enrolação e
+
+bora pra prática. Bom, galera, muitos de vocês sabem que a formação Vibe Code tá para lançar aqui no momento que eu tô gravando esse vídeo. Faltam 12 dias pro seu lançamento oficial. Eu vou deixar essa página de esquenta aqui na descrição, no link fixado, para que tu possa se inscrever para o lançamento e isso vai te dar direito a um desconto especial. Aqui também tem alguns spoilers do que vai acontecer lá na formação VB Code. Então acesse esse
+
+link, se inscreva e depois garanta o teu desconto. Bom, seguindo aqui, galera, olha só qual que é a estratégia, qual que é o workflow que eu tô utilizando agora e tô testando muito e tô gostando para caramba. Na minha opinião e de muita gente, o Cloud Opus 4.6 é a melhor IA para programar, tá? A gente tem aí como utilizar ela not graph. A gente não
+
+precisa pagar o cloud pro para ter acesso a isso. E a gente vai utilizar justamente ela pra parte inicial, que é a parte mais delicada. A gente vai fazer um prompt, um PRD, descrevendo completamente o produto, utilizando o SA. Isso vai fazer com que os próximos prompts que são via Gemini serão mais fáceis de serem assimilados pela IA, né, pela IA do Google e fazer com que ela se torne mais assertiva, que ela consiga em um prompt entregar quase que o projeto completo, tá claro, depende da dimensão do projeto, mas vai entregar bastante coisa melhor do que se ela tivesse feito desde o começo. Isso também vai ajudar a gente não esmirilhar os nossos tokens, né? Então, a gente vai utilizar o
+
+Gemnight 3.1 Procar as coisas mais pesadas do projeto. E aí, quando tiver funcionalidades mais tranquilas, ajustes, a gente vai utilizar também o GMN 3.1, só que no modo low, que é uma variação do modelo. Então, em conjunto com o Cloud Ops 4.6 e o Gemnight 3.1
+
+high e low, a gente vai conseguir criar o nosso projeto muito mais fácil e rápido, beleza? sem, claro, tá assinando nenhuma IA, de maneira que a gente também economize a nossa cota e consiga estar utilizando o máximo delas, consiga est atingindo nosso objetivo, criando o nosso projeto. Bom, não adianta ficar só na teoria, vamos paraa prática. Vamos ver aqui o que eu preparei para vocês, pra gente poder entender como criar projeto utilizando esse workflow. Então, aqui estou com antigraphity aberto, uma pasta nova, né? e vou colocar o primeiro
+
+prompt que é destinado ao cloud 4.6, sempre em planejamento esse prompt inicial, beleza? Bom, o que que a gente vai pedir aqui para ele? Se vocês quiserem o prompt, peçam aí que eu deixo aqui na descrição do vídeo também. Coloquem nos comentários aí se vocês querem. Bom, eu defino um papel, você o
+
+product manager e eu quero que ele gere gere um PRD. O que é esse PRD? é um documento que descreve o projeto. Antigamente, quando os projetos eram feitos aí linha a linha, programador digitando tudo do seu código, né, só copiando lá do Tec Overflow, ele recebia um documento semelhante a esse ou uma apresentação que descrevia como o projeto deveria ser. E aqui esse documento que a gente vai criar será, né, o guia para a IA. Então, é como se
+
+nós guiássemos ela através de um arquivo de texto. Esse meu projeto ele vai ser clone do type form, né? Vou chamar ele de form. E aí eu escrevo que app deve ter formulários multist com campo com tipos de campo, texto curto, e-mail, múltipla escolha e escala de 1 a 10. Animações suaves de transição entre steps, né? É
+
+um formulário multic. Barra de progresso visual, validação em tempo real nos campos, tela de obrigado, painel admin para visualizar respostas recebidas, packend com express escelite. Por que que eu fiz isso aqui? Para ser mais fácil da gente criar o projeto, não precisar de dependências de banco de dados mais robustos, tá? Mas pode colocar o banco que tu quiser. API e
+
+rest para formulários e respostas. Então, projeto Ftec entregue tudo em um único arquivo MD, que é o PRD, né? Então ele vai ter aí a parte um que é a visão geral, list funcionalidades, user resistories, esquema completo da skelite, parte dois, como é que vai ser o plano de implementação aqui dividido em quatro fases. Primeiro setup, né? Armando projeto, back end, front end, integração, um unindo com o outro. E
+
+para cada fase list, exatamente cada arquivo que precisa ser criado, o que cada arquivo deve conter, a ordem de criação, seja específico o suficiente para que outro modelo de A possa implementar seguindo seu plano sem nenhuma ambiguidade. Então o prompt gira em torno disso, tá? No centro da questão criaremos um PRD que descreve o projeto. Então o nosso papel a cada um desse projeto é descrever do que se trata o projeto, tá? A ideia sempre será a mesma. Vou
+
+prosseguir agora. O Opus vai cuidar desse documento e depois o Gemni 3.1 Pro entra para executar esse código. Então vamos aguardar aqui e já mostro para vocês como que ficou. Não esqueça, galera, a gente tem aqui uma playlist completa de antigravit. Se tu quiser
+
+aprender mais sobre a ferramenta, eu vou deixar o izinho aqui. Tu pode estar acessando depois os outros vídeos. É bem completa, vários projetos, vários recursos, workflows como esse, vale a pena. Ó, galera, ele terminou aqui, tá? Ele criou o PRD bem completo. A gente
+
+pode ver aqui o arquivo MD está criado. Então, parte um, requisitos do produto, lista de funcionalidades, user histories, aí o esquema do banco, aí aqui embaixo tem os end points. Então, ele detalhou completamente o aplicativo, tá? Poderíamos aqui continuar com o opus, só que os créditos ser iriam acabar mais rápido. Então a gente vai fazer o seguinte. Agora a gente muda para o 3.1
+
+high. Ainda em plan, eu gosto, tá? Mas se tu quiser pode mudar para fast. Esse prompt inicial depois do PRD eu prefiro planet. A gente vai colocar um prompt semelhante a esse aqui. Então esse aqui,
+
+ó. Siga o PRD e o plano de implementação acima e construa o projeto forma de fogo completo. Execute todas as fases nessa ordem, né, que são as ordens é ordem tanto PRD. A stac está exibida aqui, mas tá no PRD também. Siga exatamente a estrutura de pastas e arquivos do plano.
+
+Tudo o app precisa estar 100% funcional e depois ele roda o npm run devcessar. Para ajudar ele, eu posso dar um arroba aqui e marcar o arquivo de PR. Agora seguimos para a criação do projeto, funcionalidades de MVP com o GM 3.1. Depois disso, a gente pode testar ele, né? seria o caminho ideal para ver como
+
+que ele ficou após a criação. Bom, galera, então ele me deu o projeto aqui, ele detectou um erro e corrigiu. Aqui está o projeto rodando, tá o formo à criação de novo formulário. Eu tenho aqui formulário já criado, ó, tem validação de e-mail, tudo mais.
+
+tem, eu tenho a tela de obrigados, né? Então a gente tem todas as etapas aqui presentes, né? Ó ver resultados ainda não é uma tela ativa no sistema, né? A edição já é possível. Vamos criar um novo formulário. Esse
+
+aqui tem que ser feito, galera. Esse teste aqui é obrigatório. Vou testar aqui. Vou adicionar a pergunta. Estou curto. Olá. Você te ajuda?
+
+Tudo bem? Pagrecimento. Tentei um previewzinho. Ficou bem legal. Salvar.
+
+Estáar online. Pronto. Funcionou. Esse fluxo inicial, o MVP da aplicação, tá pronto, tá? Então agora a gente tem algo palpável, né? com o uso
+
+de dois prompres praticamente. Claro, a aplicação tem que evoluir, tem que adicionar autenticação, tudo mais, né? Um passo cada vez, mas a gente já tem aqui um MVP da do exemplo, né, de aplicação que a gente deu, que era um Type Form. Então, como é que se continuaria o projeto? Pra a gente seguir essa ideia do workflow, agora a gente pode alterar pro Gemnight 3.1 Pro Low ou até mesmo o
+
+Flash. Eu recomendo o low. É o é o melhor modelo com a maior economia de tokens que a gente tem aqui hoje, tá? E tu pode também alterar para Fest, que aí a gente vai ter uma resposta que também vai gastar menos raciocínio, logo gasta menos limite lá dos créditos que a gente tem quando tá numa conta free, né? O pro também tem limitação, mas é muito maior, né? A gente pode usar muito mais vezes.
+
+E agora os próximos promptes nesse modelo aqui, né, nos modelos menores, teriam com que ficar com tarefas menores também, é claro, a gente não poderia fazer o mesmo promp que a gente fez lá inicialmente. O projeto iria apresentar bem mais falhas e tal e isso seria ruim. Então vamos vou dar exemplos também pra gente ver. Aqui eu vou adicionar dois recursos, um dark light mode, tá? Então, coloquei as instruções também uma de duplicar formulário.
+
+Então, são coisas pequenas porque a gente já tem toda a lógica acontecendo. Isso aqui seriam features adicionais que não demandaria o tanto de raciocínio do modelo, até porque, por exemplo, o darklight mode é o que qualquer app tem, então o modelo tem conhecimento suficiente. E aqui toda a lógica de criação ali de formulário tá pronta, né? Então eu estaria adicionando algo que é similar que já tem. Então vamos lá, vamos dar uma olhada aqui. A gente vai
+
+receber bem mais rápido também a resposta e a gente repete o ciclo de teste também para poder garantir que funcionou. E agora a gente ia novos prompts até terminar a nossa aplicação. Galera, aproveitando para quem curte aí projeto comigraphic, vê na prática do que ele é capaz, vou deixar um outro vídeo recomendado aqui. Esse é de um projeto que eu criei o design com uma outra IA do Google e consegui importar ele no antigraft e fazer ele full stack também com banco de dados. Então é outro processo bem importante, workflow, que vocês podem utilizar aí em conjunto até com esse, né? criar o layout lá com essa
+
+que eu falei e importar para cá e seguir ali com o layout diferenciado, né? Porque esses designs de que a IA cria, eles são meio padronizados assim, não tem uma difer não tem como diferenciar tanto assim só por meio do prompt, então o ideal é ter referências como eu fiz nesse vídeo, tá? Então depois assistam lá também. Bom galera, então ele me retornou aqui, tá? Ele adicionou o dark light e também duplicação de formulário.
+
+Vamos lá fazer o teste. Vou recarregar, ó, galera. Então esse aqui é a duplicação, esse esse blusinho aqui, ó, realmente duplicou. Posso ver o formulário duplicado. Beleza. E aqui é o
+
+light dark. Então, ó, o light dark ele não funcionou, então a gente vai ter que ir lá reiterar. É justamente isso. Pô, não tá mudando o tema. Então eu vai pedir para ele até recarregar aqui para ver. É, não muda mesmo.
+
+Então vou botar algo assim. A alteração de temas entre light e dark não funciona. O tema não altera as cores. E agora ele vai processar essa alteração e vai me retornar. Isso aqui vai custar muito menos de limite feito com esses modelos do que no modelo high ou nopus 4.6. E vejam que é um ajuste,
+
+né? Deve ser algum errinho bobo que ele cometeu. Então, com esse com essa retificação, ele vai ter aí a funcionalidade funcionando e pode seguir pra próxima. Ó, galera, então ele devolveu aqui. Vamos ver a correção.
+
+Recarrega. Ó, agora sim tem uma light dark funcionando perfeitamente. Então, agora a gente viria reiterando aqui até terminar o projeto. Como eu falei antes, não esqueçam, galera, se inscrevam aqui para entrar na lista VIP da formação Vibe Code. Logo ela tá lançando, vocês vão poder aí, tá? Aproveitando esse
+
+desconto especial para a turma aí do lançamento. Me contem o que que acharam, gostaram da ideia? Vão testar? Façam aí. Depois coloquem nos comentários. Quero
+
+ver se deu certo com vocês. Comigo tem fluído bem, tô conseguindo ter bons resultados. Gostei da ideia de alternar modelos porque eu consigo ter o melhor do cloud e depois como ele queia muitos tokens, eu utilizo os gemnis ali para poder controlar isso, manter o meu uso por mais tempo e ter sucesso na criação do meu projeto. Então é isso, galera. Vou ficando por aqui. Não esqueçam
+
+também deixem o like, se inscreva no canal. Isso é muito importante para ajudar meu trabalho aqui e é claro, espero vocês no próximo vídeo.

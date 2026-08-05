@@ -1,0 +1,202 @@
+---
+video_title: "Hermes Agent: O Agente de IA que APRENDE Sozinho (Tutorial Completo)"
+video_id: zEBma6vyJZc
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zEBma6vyJZc
+video_date: 2026-04-08T14:00:00+00:00
+video_description: |
+  Imagina um agente de IA que roda na sua VPS 24 horas, aprende com cada conversa, cria skills sozinho, e você manda mensagem pra ele pelo Telegram do celular como se fosse um colega de trabalho. Não é chatbot. É um agente persistente com memória, ferramentas e capacidade de executar tarefas reais no servidor. Hermes Agent da Nous Research, o mesmo lab que criou os modelos Hermes. Open source, MIT, gratuito.
+  
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_hermes
+  
+  🟪 Hospedagem que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O diferencial mais forte do Hermes em relação a outros agentes é o loop de aprendizado. Ele lembra tudo entre sessões em arquivos MEMORY.md e USER.md, cria skills sozinho quando resolve problemas difíceis, e fica melhor com o tempo. Quanto mais você usa, mais ele conhece seus projetos, suas preferências e seu jeito de trabalhar. É um agente que cresce junto com você em vez de começar do zero a cada sessão.
+   
+  A instalação é uma linha de curl que baixa, instala Python, configura tudo e deixa pronto pra usar. Funciona em VPS Linux, WSL2 no Windows ou macOS direto. No vídeo uso uma VPS da Hostinger porque o Hermes brilha quando roda 24h: o gateway do Telegram precisa ficar ativo, o cron precisa do servidor ligado e a memória vai crescendo com o tempo. PC pessoal não dá conta porque você desliga.
+   
+  O setup do provider aceita qualquer LLM. Anthropic, OpenAI, OpenRouter, Ollama local, mais de 17 providers nativos. No vídeo testo com Qwen 3.6 Plus pelo OpenRouter pra mostrar que funciona até com modelo gratuito. Trocar de modelo é um comando: hermes model.
+   
+  Demonstro todas as capacidades em sequência. Primeiro contato com as 40+ ferramentas built-in. Comandos no terminal real do servidor. Web search ao vivo. Memória sendo salva automaticamente quando conto sobre mim, e depois sendo carregada numa sessão nova provando que persiste. Os arquivos MEMORY.md e USER.md ficam visíveis no disco pra você editar manualmente se quiser.
+   
+  O teste de capacidade agentic é construir um projeto real do zero: encurtador de URLs com Next.js 15, TypeScript, Prisma, SQLite, dashboard com contagem de cliques, dark mode e seed de exemplos. O Hermes usa o terminal pra criar o projeto, edita arquivos, roda migrations do Prisma e testa funcionando. Tudo via SSH na VPS sem eu precisar tocar em nada.
+   
+  A parte mais legal é o gateway do Telegram. Conecto o bot do BotFather, instalo como serviço systemd que reinicia sozinho se a VPS reiniciar, e abro o Telegram no celular. Mando mensagem pro bot e o Hermes responde usando a MESMA memória do CLI. Pergunto quem sou e ele lembra. Peço pra executar comandos e ele executa no servidor. É o agente no bolso.
+   
+  Mostro também o cron com linguagem natural: peço pra todo dia às 8h buscar as top 5 novidades de IA no Hacker News e mandar resumo no Telegram. Outro cron pra checar se um site tá online toda segunda. O agente cria os jobs sozinho. E comparo Hermes vs OpenClaw nos pontos principais incluindo o comando hermes claw migrate pra quem já usa OpenClaw e quer testar sem perder configuração.
+   
+  🔗 Links do vídeo:
+  ▸ Hermes Agent: https://github.com/NousResearch/hermes-agent
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMP
+  
+  00:00 Hermes Agent: o Substituo do OpenClaw?
+  01:04 Como funciona o Hermes Agent: conheça todos os recursos
+  04:30 Instalando o Hermes Agent
+  11:30 Testando o Hermes Agent
+  12:40 Pesquisa web com o Hermes Agent
+  14:00 Testando a memória do Hermes Agent (MEMORY.md e USER.md)
+  17:05 Instalando novas skills no Hermes Agent
+  17:40 Configurando o Telegram no Hermes Agent
+  20:50 Criando um evento de Cron no Hermes Agent
+  21:50 Minhas considerações sobre o Hermes Agent
+---
+Herms Agent, o substituto do Open Cloud. Nesse vídeo aqui, tu vai entender porque muitas pessoas estão preferindo ele ao utilizar o Open Cloud, como instalar o Herms Agent para aproveitar aí de uma maneira muito interessante todos os seus recursos e ainda utilizando uma LLM gratuita. Então tu vai ter aí o RMS Agent instalado de graça, né, podendo testar ele e ver se é para ti ou não, vê se ele é melhor OpenCloud ou não. Vai tirar tuas próprias conclusões e depois comentar aqui no vídeo, beleza? Então a gente vai fazer uma breve introdução ao ERMS Agents, o setup dele e algumas utilizações básicas pra gente botar ele para funcionar. Beleza? Eu sou o Mateus
+
+de Batiste, programador há mais de 10 anos e hoje tô me aventurando muito no mundo da Iá, trazendo só o que interessa, as melhores ferramentas aqui para vocês. Então, se tu curtir, deixa o like no vídeo para me ajudar e também se inscreva no canal para receber vídeos todos os dias. Bora lá então conhecer melhor o Hermes. Galera, eu trouxe aqui tipo infográfico rapidinho pra gente poder entender o que se passa, né? Então, agents é um agente de a que aprende sozinho, o sistema de memória dele tá sendo muito elogiado e ele foi criado pela NOS Research em licença MIT, então ele é opens, tá? Tu pode fazer um
+
+forque do código e criar o teu próprio ARMS, se tu quiser, né? Enfim, dá para fazer isso. Instalação bem rápida, praticamente dois comandos, um para baixar e o outro para rodar, né? Fazer isso juntos. E aqui temos alguns diferenciais dele, memória persistente.
+
+Então ele tem dois arquivos de memória, um pro bote e um pro usuário nós, né? Ele lembra tudo, interessões, preferências, projetos. Isso o OpenCloud já faz, né? Tem esse sistema de memória também, o que é algo que a gente aproveita muito nos edits, mas é importante citar skills autogeradas. Então o que acontece? Se ele resolver
+
+algo difícil, em vez de a gente ter que mandar toda aquela sequência de promptes, ele vai entender isso e salvar como uma skill para poder reutilizar depois. Um dos diferenciais bem importantes. Self improv, quanto mais usa, melhor fica. Ele tem um loop de aprendizado contínuo. Gateway multiplataforma, vai poder conectar ele via Telegram, Discord, leck, WhatsApp para utilizar ele nesses canais, né? Em
+
+vez de acessar o servidor Chrome em linguagem natural é para poder fazer lembrantes diários, tarefas rotineiras, é só a gente pedir, ele vai configurar. Ele tem 17 providers atualmente e um deles é o Openho, então abre o leque para mais ainda, né? Providers seria as conexões com modelos de LLM. Yas. O sistema de memória dele é bem interessante, é diferente um pouco do OpenCloud, que tem vários arquivos MD.
+
+Ele vai ter dois, um para o agente, que eu já falei ali, né, memory MD, e outro para o user, que vai salvar as nossas preferências, né, o que nós somos, né, ou quem nós somos para o bot entender sempre que precisar fazer alguma coisa. Ele tem uma espécie ali de busca da sessão com SK Lite, que é um banco de dados mais FTS5. E isso vai fazer com que a busca em conversas passadas seja muito rápida e fácil ser executada, que deixa a memória melhor ainda e não precisa salvar, sobrecarregar esses arquivos aqui, tá? E ainda ele tem ali providers externos, né, que vão ajudar a gente a trazer mais funcionalidades ao EMS. Bom, uma breve comparação, Herms versus Open Cloud, memória básica por conversa. Claro, a gente pode configurar
+
+isso e tal, né? Tem milhares de coisas que a gente pode fazer, mas não por padrão. Já o Hermes, ele vem com memória persistente, session search, que eu acabei de explicar. Skills é manual, a gente tem que baixar do repositório, criar. Aqui a gente tem skills que são geradas automaticamente e melhoradas automaticamente. Tem um aprendizado
+
+contínuo entre sessões. O open cloud não tem Chron ativo. O OpenCloud ele tem, a gente consegue configurar isso, mas não é a mesma coisa, não é tão simples assim, apesar de dá para fazer algo muito semelhante. Aqui no Hermes, as coisas são mais desenroladas nesse quesito. E os providers, apesar de ter opener, ele não é focado tanto nisso. A
+
+galera foca mais em usar ele com o cloud, né? Ou já não dá mais. O a Antropic bloqueou, né? E agora provavelmente eles vão abrir mais o leque, tá bom? Em quesito comunidade, né? Open cloud muito maior porque ele já
+
+é mais antigo também, tá? O Herms é recente. Olha só, site oficial agents no ou knowsarch.com. Aqui tu pode entender melhor sobre a ferramenta. Sempre recomendo ler a
+
+documentação. É a fonte fiel de formação, né? De nenhum youtuber aí que começou a utilizar o recurso, pode me incluir na história também, tá? Mas a gente tem que ter essa vontade de olhar a documentação, tá? De ler, entender por nós mesmos. Aqui o GitHub tá com quase
+
+30.000 stars, tá? Tô atualizando bastante. Pode ver aqui, ó, uma hora atrás teve update. Tá bem legal o projeto. Então, agora sim, vamos lá
+
+instalar, galera. Só antes, não esqueçam, formação Vibe Code, nosso treinamento completo em programação assistida por IA, Cloud Code, Antigaraft, Codex e outros. muitos projetos para tu criar do zero, para tu poder se basear e criar os teus próprios. Beleza? Mais 35 horas de treinamento, atualizações semanais, acesso vitalício. O link vai estar no
+
+comentário fixado, beleza? Tu vai acessar essa página e entender tudo igual tu vai acessar a documentação do EMS, tu vai acessar a nossa documentação aqui da formação Webcode, entender que ela é para ti. Beleza? Bom, vamos lá. Então, que que a gente precisa para instalar? Ele não roda direito no
+
+Windows, dá para fazer umas gambiarras e tal, mas o foco dele é ambientes que são mais fáceis de gerenciar, vamos dizer assim. E a melhor opção é um butzão da massa. Aqui, galera, no canal, eu já falei várias e diversas milhões de vezes, a gente tem uma parceria muito boa com a Hosker. Eles oferecem a melhor oferta mais um cupom de desconto. Então, acessando esse link aqui que vai est na descrição, no comentário fixado, vocês vão cair nessa página. Tá falando de N,
+
+mas não tem problema. Isso aqui é só um setup que eles oferecem para facilitar a vida de quem usa N8N, né? Isso aqui veio do N8N, essa oferta especial. A gente vai aprender a mudar isso. Então, tu vai entrar aqui, vai escolher o teu plano, beleza? Precisa de um servidor, precisa
+
+de uma VPS para isso. Recomendo fortemente a KVM2. É a melhor opção, vai rodar com folga, vai deixar tu criar várias coisas em cima do Hermes e tornar ele um agente excelente aí para ser o teu segundo cérebro ou que tu preferir. Beleza, KVM2. Se tu quiser só testar, quiser ver como é que roda a brincadeira, KVM1 aguenta também.
+
+Beleza? Mas o KVM2 é a melhor opção. E os demais aqui, né, é para quem tá jogando o jogo já. Então iso tem aí uma ideia muito boa em mente. Talvez máquinas melhores sejam opções melhores.
+
+Escolhei o plano aqui clicando já vai vir cupom aplicado. Eu acho que o meu não aplica porque uma vez eu usei como demonstração, ele só funcionou uma vez, né? Então ele apagou aqui, mas vai vir o cupom, tá? vai melhorar ainda mais o preço. Aí aqui, ó, quanto mais tempo tu escolhe, mais desconto tu ganha, tá? As
+
+opções aqui não precisa selecionar, mas tu pode dar uma lida, ver se é interessante para ti. Beleza? Única coisa que tem que tentar aqui é selecionar o Brasil e aqui SO simples unto. Aí tu tira o N8N. Ah, o NN vai mudar alguma coisa? Não, mas assim tu
+
+vai vir com a máquina limpinha como eu vou ter aqui e pronto, tá? A gente vai direto pro Hermes, mas se tu tem interesse em new, tu pode deixar como que tava e pronto, já vai ter o inalado também por padrão, beleza? Certo? Caindo lá na hostia após a compra do plano ou outra VPS tenha vontade de comprar, não tem problema, tá galera? Só ofereci eles porque realmente é a melhor opção hoje do mercado. A gente coloca os nossos
+
+projetos lá, tem o preço excelente, tem máquina boa, tu vai ter aqui a opção na aba lateral de VPS. E aqui tu vai entrar na tua VPS. Eu tenho várias aqui. A minha é essa segunda aqui. Tu vai gerenciar e tu vai entrar em terminal. A
+
+gente vai ter que começar pelo terminal para depois fazer os conectores externos, tá? Abrindo o terminal ali. A gente vai começar o setup. Setup são alguns comandinhos bem simples. Se eu lembrar eu vou deixar aqui na descrição também para vocês e poderem utilizar.
+
+Mas, galera, tem tudo na doc, tá? Ó, então ele abriu aqui e a gente já começa fazendo o primeiro comando, que é o curar os arquivos, tá? Então ele já baixar o GitHub, que é justamente esse aqui. Então baixou, ele vai fazer um bash também ali para executar e isso vai deixar o Herms na máquina, tá? Ó, ele vai instalar alguns pacotes que precisa, que não estavam instalados na máquina ainda. E agora a gente vai para o setup,
+
+que seria o início, né? Então, olha só, galera, ele nem precisou que eu iniciasse ele, ele já iniciou sozinho. Show de bola. Então, a gente tem duas opções, quick setup ou full setup. O quick setup é o mínimo que a gente precisa para utilizar. Meio óbvio isso,
+
+né? Mas é interessante ir nesse modo aqui porque a gente pode ver o o Herms em ação, né? Então, vou utilizar o quick setup. Bom, primeiramente ele pergunta sobre o provider, né? Então, tenho aqui nos portal, opener antropic, né, galera?
+
+Não recomendo tanto porque eles estão aí, né, caçando quem usa agentes com as suas APIs. Open Codex, copilot, Huging Face e mais providers. Aqui eu vou utilizar o Open Houter, tá? E aí eu preciso colocar a chave da API. Então a gente vai abrir lá o Open Houter, para quem não conhece, é um roteador de LLMs.
+
+Então é interessante utilizar ele porque ele vai ter diversas opções, inclusive opções gratuitas, tá? A gente vai, a gente vai aqui em geti key. Tu vai fazer o teu login. Eu vou criar uma nova chave aqui pro Hermes. Pode cortar aqui também. Aqui não
+
+precisa. Ó, tu coloca um nome, pode colocar um limite de crédito, né, já que agentes costumam consumir um pouco mais. E uma inspiração, se tu tem interesse em expirar ela depois de alguns dias. Aí vai copiar a tua chave, né? Não esquece que depois tu não vai conseguir usar ela de novo. Aliás, usar não, né? Não vai
+
+conseguir ver o código de novo, vai ter que criar outra. Então, copia e salva no lugar que tu possa usar depois ou já cola aqui direto. Aí tu dá um enter depois de colar a chave e tu vai selecionar o modelo que tu quer. E olha só essa belezinha gratuita aqui pra gente poder utilizar. Show de bola total, né? Galera, não esqueçam, a gente
+
+tem um vídeo de Quen 3.6 Plus aqui. Eu achei uma excelente a eu vou deixar o izinho, o editor vai deixar a tamb tudo completo para tu assistir depois, para tu aprender a utilizar ela a todo vapor mesmo paga, ela vai ser muito mais barata que qualquer outra que tá aqui, tá? E eu criei vários projetos lá em Santos para tu poder entender o potencial desse cara aqui tá concorrendo com opus, tá? Então vamos de quen aí aqui. Agora eu posso escolher configurar
+
+a mensagem, o sistema de mensagens, né, que seria o Telegram, né? Mas galera, eu vou usar ele primeiro, tá? Depois eu vou configurar ele até se um dia tu precisar configurar depois tu vai conseguir ver que comando que foi, tá? Então vou dar um skip. Ó, ele falou que o setup foi completo e ele pergunta se eu quero lançar o Hermes. Agora aqui ele mostra
+
+onde os arquivos principais estão, né? As pastes que ele salva, alguns comandos importantes ali para editar configurações, tá? E alguns comandos ali para verificar se tá tudo certo, como começar ele, como configurar o gate de mensagens e o check for, que seria os problemas, né? Então, vão dar um yes aqui. E aqui estamos no Hermes. Então,
+
+eh, eu vou aqui perguntar, por exemplo, quais ferramentas ele tem disponível. Então, um resumo rápido para ver quais tools o Herms tem. Lembrando, né, galera, que diferente do Open Cloud, o Hermes, ele tá com uma premissa, né, de ser muito mais lightweight. O que que é isso? Ele ser muito mais ágil, tanto em executar comandos, como processar ações.
+
+Então, tá bem interessante. Ó, aqui vai um resumo rápido das minhas ferramentas. file para ler arquivos. Search files, patch, WR file. Então ele pode trabalhar todo no sistema operacional. Aqui ele
+
+pode navegar no fazer navegação web. Tem aqui a parte de memória, outras Chrome Job, né, que seria ações recorrentes. E bem interessante. Então vamos utilizar uma aqui da máquina. Mostra o uso de disco e memória dessa máquina. Quenta
+
+delicinha, hein? Tá respondendo bem rápido, hein? Curti bastante. Pode ver aqui. Resumo. Máquina bem fogada, disco
+
+com apenas 8% e uso 7 GB de memória disponível, né? Um abraço aí pra Host, né? Sempre oferecendo máquinas boas pra gente, tá? Agora vamos testar a busca web. Tá aqui, ó, busca as cinco últimas novidades sobre a coding tools dessa semana.
+
+Vamos ver se ele tem realmente esse search, porque o o open cloud, por exemplo, a gente tinha que configurar a API da Brave, né, para poder fazer o search. E aqui parece que tem, então estamos safe mesmo, hein? Vejam aqui, setup muito inxuto. E, opa, bloqueado pelo Google. Mas ele tem o seh, né? E agora tá
+
+entrando no bing. Então é legal, galera. A gente tem ali um se APIs de terceiro. Vamos ver se ele me entrega alguma coisa. Vou pedir outra coisa para ele.
+
+Aqui ele vai usar um curl. Então ele falou que é um comando perigoso, né? Ele até me alerta, mas nada demais. Só tá fazendo um get lá num site. Então eu vou deixar ele executar uma vezinha. Então
+
+olha só, galera, depois de um tempinho aqui, ele foi lá e me retornou para mim. Eh, ele achou um agent skills, Brad Greade Skills for AI Code agents, coleção de skills em alto nível de produção para code, né? De um cara do Google que fez meta agent wise. E aqui ele falou trending, tem aqui open code, né, que a gente conhece a gente open focado em terminal, não sei se surgiu alguma atualização. O vibe camban. Vibe
+
+Camban é meu Deus. Camban já é simples, né? Via vibe, meu Deus. Então tá, vamos agora testar um pouco da memória. Botar assim, ó. Meu nome é
+
+Mateus Batista e eu tenho um canal de IA e programação no YouTube chamado Hora de Codar. Então, na teoria, ó, vejam aqui, galera, um detalhe. Ele colocou que ele criou uma skill para isso. Agora ele já vai usar essa skill na próxima vez que a gente utilizar uma pesquisa web. Então, bem interessante, bem legal as coisas que eu comentei lá no começo, se concretizando aqui, eu falei uma informação tipo que é algo que ele não tem na memória, então ele também já falou aqui, ó, preparing memory. Então,
+
+ele tá preparando a memória, colocou isso nela e pronto. Legal, Mateus. Salvei aqui. Vou lembrar que você, Mateus Batista, que tem o canal. Beleza, então tá. Agora eu vou testar essa
+
+memória. Vou dar um exit. Eu vou sair do Hermes até mais Mateus. Qualquer coisa só chamar. Beleza? Deixa eu ver aqui.
+
+Deixa eu sair de tudo, ó. Saí de tudo. Beleza. Agora eu vou dar um herm continue, seria para arms not found. Herms. Galera, aqui eu só um
+
+detalhezinho. Pode ser que aconteça. Eh, vocês aí também não tinha me atentado a isso. Tem que recarregar o shell, tá? Quando tu instala e sai e quer usar de novo. Veja que eu vou fui usar aqui de
+
+novo, ó, ele não consegui entender o que que era. Mas só que ele mesmo deu uma mensagem, né? Reload shell. Então tinha que usar esse comando aqui, ó. Só B e B RC. Aí quando eu usei, eu consegui
+
+conectar de novo com apps, tá? Então beleza. É um detalhezinho importante. Qual é o meu nome? Testar a memória dele, né? Esse que tá insano pelo Open
+
+Houter, né? Muito rápido. Seu nome é Mateus Batista. Pronto, então, beleza, memória testada, deu certo. E aí eu vou só mostrar uma coisinha legal para vocês, que é onde ele salva as coisas, né? Isso é importante, é ponto herms. Aí
+
+aqui é a pasta dele, tá? Aí eu tenho a pasta memories e eu tenho o user MD. Então vejam aqui, ele salvou isso na memória do usuário. Aí aqui eu teria também, né, depois ali a o outro arquivo, só que ele não salvou nada a memória dele ainda, mas teria o memory MD aqui também, tá? E aqui, deixa eu ver, ó, skills, ó, entrei aqui na pasta, galera, ele já vem com várias, né? Aí
+
+confunde um pouco. Ele colocou a nossa numa pasta existente. Ó, eu entrei em research e aqui tá aqui, ó, HNECH News Research, que é justamente a skill que ele criou pra gente, tá? Então foi essa skill aqui para vocês entenderem o processo de criação de skills automática por ele, tá? Opa. Voltar aqui pro
+
+Hermes, então até para verificar, né? Botar assim, ó. Ah, ele já colocou aqui, na verdade, available skills. Então, todas as skills aqui, ó, ele já traz pra gente, né? E a nossa tá aqui, ó. Só de
+
+iniciar eu já trouxe a minha skill que eu acabei de criar. E eu ainda posso instalar skills da comunidade, né? Mas tem que tomar cuidado, galera. Tem que ver se a skill realmente tem código ali safe, né? A gente pode dar ums skill search, por exemplo, eu quero programar em next com ele. Aí eu
+
+quero programar skill de NextGS. Ele vai lá procurar e ele vai trazer pra gente opções. Olha, me trouxe todos esses aqui que são skills de community, tá? Não tem nada tipo assim verificado, provavelmente, né? Tem que entrar na skill e ver o que que é só. Ah, mas
+
+daqui tá tá safe ainda, porque olha só, ele tá trazendo skills SH. A gente já cobriu esse assunto aqui no no canal. Esse esse skill SH é da Versel, então se tá lá é que é curada, tá? Então tá de boa. Vamos fazer então o setupzinho do Telegram Hermes Gateway Setup. Aqui
+
+agora eu vou configurar o Telegram. Vejam vários que a gente tem aqui, né? Bem legal. E aqui ele tá falando que eu tenho que entrar no Telegram, que eu tenho que abrir o B bot father, né? criar um bot, copiar o token que o bot dá pra gente, que o botfer dá pra gente e também eh achar o find user ID, tá?
+
+Então vamos ver aqui se a gente consegue. Ó, entrei no bodyf, daí eu posso vir aqui, open, ele vai abrir essa interface aqui. É bem mais fácil para criar, não precisa de comando nenhum. Vou criar um novo bot, eu botou aqui Herms e aqui Herms HD bot. Tem que terminar com bot, tá? Create bot. Ele
+
+vai me dar aqui o token, tá? Eu gosto também de iniciar o bote. Copio o token em algum lugar aí, né? Gosto de startar o bot aqui porque evita problemas. Cara, meu Telegram tá com problema. Teve
+
+um outro vídeo que eu já usei ele, ele não aparece a mensagem só quando eu recarrego. Vai ser alguma coisa do Chrome. Tudo bem. Aqui eu acredito que deu certo depois de 1500 starts que eu dei sem querer. Aí com o token copiado, a gente vai lá de novo e vai colar aqui.
+
+Aí colocou o token. Agora ele vai perguntar e os user ids permitidos. Bom, galera, aí para receber esse token aqui do do usuário que é o nosso, né, ou vários usuários tu quer habilitar para outras pessoas, tu vai ter que acessar esse bote aqui, tá? Tem que procurar lá no Telegram. É um bot como se fosse bot father e ele aí tu dá um oi lá para ele e ele vai te dar o teu ID. Vai colocar
+
+aqui o teu ID ou os IDs que tu quer que tenha acesso a esse bot. E aqui ele pergunta para onde que ele vai mandar mensagens automáticas, tá? Pode ser o mesmo ID. Bom, aí terminou a configuração, tu dá um don aqui e aí ele fala que tem que instalar o gateway a system mdes, tá? Então isso aí vai fazer com que esse gateway rode em background.
+
+te aceita. Aí aqui tu vai escolher o modo que tu quer rodar em background, tá? O primeiro ali ele não tem acesso total, então é bom, como ele tá falando, é para laptops, né, para computadores pessoais, mas tu quer que ele tenha acesso a tudo para poder rodar esse gateway, tu pode selecionar a segunda opção. Como aqui é um ambiente controlado, vou com ela. Aqui eu escolhi rodar como root, tá? Assistant service.
+
+E agora eu vou fazer o teste ali se tá tudo certo com o Telegram e o Hermes. Então vou lá testar, mandar uma mensagem aqui. Opa, tudo bem? Ó, tá digitando. Então ele me respondeu: "Opa, Mateus, tudo ótimo com você? Como
+
+posso ajudar hoje? Então já tá batendo lá no Hermes, né?" E aí eu vou perguntar o que ele consegue fazer só pra gente ter uma ideia aqui dele, né? acessando as suas habilidades. Aí ele me mandou uma mensagem aqui, galera. Então, o que
+
+ele consegue fazer? Código dev, navegar em sites, ler, escrever arquivos, a IML, automação. Então, vamos testar aí a Chrome dele. Vou colocar uma mensagem assim, todo dia às 8 da manhã, busca top cinco novidades de A no Hacker News e me manda um resumo no Telegram. Vou setar esse essa rotina diária, né, em linguagem natural via Chrome, como a gente tinha comentado, e ele vai fazer a confirmação. Eu vou conseguir checar
+
+isso lá no Hermes mesmo, tá? Enquanto ele não responde, galera, queria comentar para vocês que a gente tem aqui um guia de geria de prompt para tu aprender a escrever bons prompts. Isso vai fazer com que tu economize de tokens, use as e as melhor e tenha mais assertividade aí nos teus projetos. O link vai est aqui na descrição, é só acessar e baixar, beleza? Então baixa aí, é um excelente material. Aí ele foi
+
+lá e criou a Chrome Job, ó, Chrome criado com sucesso. E como é que a gente pode verificar isso? Basta ir lá no servidor e dar um herm Chrome list e a gente vê que tá aqui. Beleza, galera? Bom, então espero que vocês tenham curtido aí esse overview do Hermes. Não
+
+se esqueçam, galera, usem a Hostger. É um serviço excelente para hospedagem e VPS, tá? Recomendo muito KVM2. vai fazer com que vocês tenham o melhor desempenho ali no Hermes. Se vocês acompanharam os vídeos de OpenCloud, vocês viram que ele demora muito mais para responder e tal.
+
+O RMS tá bem mais responsível, achei legal, tá? Também não se esqueçam de chegar a checar a formação Vib Coding. Esses dois links, tanto da hospedagem quanto da formação Web Code, vão estar aqui na descrição, beleza? E no comentário fixado, vocês aproveitarem as ofertas, tá bom? Agora eu quero saber de vocês que que acharam aí do Hermes.
+
+Comentem aí, deixem suas opiniões se vai ou não vai substituir o OpenCloud. Eu vou testar bastante pretend trazer mais conteúdo aqui no canal, beleza? E é claro, aguardo a presença de vocês para acompanhar a série. Deixem aí galera, por favor, o like, se inscreva no canal, isso me ajuda bastante e também a retribuir isso, trazendo vídeo todos os dias. por hoje é isso. Vou ficando por
+
+aqui. Espero vocês no próximo vídeo.

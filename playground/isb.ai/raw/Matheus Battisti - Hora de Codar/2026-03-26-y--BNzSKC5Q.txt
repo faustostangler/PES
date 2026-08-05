@@ -1,0 +1,90 @@
+---
+video_title: "Auto Dream: O Claude Code Agora Sonha e Lembra de TUDO (/dream)"
+video_id: y--BNzSKC5Q
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=y--BNzSKC5Q
+video_date: 2026-03-26T15:00:00+00:00
+video_description: |
+  A Anthropic soltou uma feature escondida no Claude Code chamada Auto Dream. É um subagente que roda em background, revisa todos os arquivos de memória do projeto, limpa o que tá obsoleto, resolve contradições e reorganiza tudo. O system prompt literal diz: you are performing a dream, a reflective pass over your memory files. O Claude Code agora sonha. E isso muda como ele lembra do teu projeto.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_cc_dream
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O problema que o Auto Dream resolve é real. O Auto Memory do Claude Code anota padrões, decisões e insights automaticamente enquanto trabalha e salva num arquivo MEMORY.md. Depois de 20 ou 30 sessões essas notas viram bagunça. Datas relativas que não significam mais nada como "ontem decidimos usar Redis" daqui a 3 semanas. Informações contraditórias porque trocou de Express pra Fastify mas a nota antiga não foi apagada. Duplicatas porque 3 sessões diferentes anotaram o mesmo bug. Notas sobre arquivos que já foram deletados. A memória que deveria ajudar vira ruído.
+   
+  A analogia é com o sono. Durante o dia o cérebro absorve informação e guarda como memória de curto prazo. Durante o sono REM ele revisa tudo, fortalece o que importa, descarta o que não importa e organiza em memória de longo prazo. Auto Memory é o cérebro acordado que anota tudo. Auto Dream é o sono REM que consolida, limpa e organiza. Claude Code sem Auto Dream era como uma pessoa que nunca dorme: anotava tudo mas nunca organizava.
+   
+  O Auto Dream segue 4 fases. Orientação onde o Claude mapeia o que já existe no diretório de memória. Coleta de Sinais onde busca informação nova nos transcripts das sessões com buscas cirúrgicas focando em correções do usuário, saves explícitos, temas recorrentes e decisões importantes. Consolidação que é o coração do Dream onde converte datas relativas pra absolutas, deleta fatos contraditos, remove memórias obsoletas e faz merge de duplicatas. Poda e Indexação onde atualiza o MEMORY.md pra ficar abaixo do limite de 200 linhas e resolve contradições entre o índice e os arquivos.
+   
+  Mostro como ativar, verificar se tá disponível com o comando /memory, e como forçar manualmente quando precisar depois de mudanças grandes como migração de framework ou refator pesado. Explico quando roda automaticamente: precisa de 24 horas e mais de 5 sessões desde a última consolidação, as duas condições juntas. Em um caso observado o Auto Dream consolidou memória de 913 sessões em menos de 9 minutos rodando em background.
+   
+  Explico as 4 camadas de memória que o Claude Code agora tem e como cada uma funciona. CLAUDE.md que é o que você escreve com regras e instruções. Auto Memory que é o que o Claude anota enquanto trabalha. Session Memory que são resumos de conversa pra continuidade entre sessões. Auto Dream que consolida e organiza tudo periodicamente. O setup mais forte usa os 4 juntos.
+   
+  Mostro o antes e depois concreto: MEMORY.md de 280 linhas com contradições e datas relativas virando 142 linhas limpas com informação atual e datas absolutas. Arquivos obsoletos removidos, duplicatas mergeadas, referências a ferramentas trocadas atualizadas. A diferença é visível.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Comando /dream no Claude Code (Auto Dream)
+  00:56 Como funciona o Auto Dream do Claude Code
+  04:51 Como configurar o Audo Dream no Claude Code
+  06:00 Ativando o /dream no Claude Code
+  07:34 Claude Code em dreaming (Memory Consolidation)
+  09:15 Minhas considerações sobre o Auto Dream (/dream)
+---
+Galera, a Antropic lançou uma funcionalidade que ainda tá escondida lá no cloud code, a autodream. Agora o cloud vai sonhar com o teu projeto. E o que que isso quer dizer na prática? Basicamente é um gerenciamento de memória. Ele vai ficar sempre polindo a memória de tempos em tempos para que ela contenha somente as informações mais atuais e conceituais do projeto, removendo tudo que tá obsoleto, fazendo que o cloud consiga ter uma visão geral do projeto de maneira fácil e sem se perder. com alterações ou recursos
+
+antigos que não existem mais. Então, é um recurso bem interessante que a gente vai ver agora na prática como ativar e utilizar ele. Eu sou o Mateus Batiste, programador há mais de 10 anos e tô aqui agora trazendo as melhores novidades do mundo da IA para vocês. Se curtiram a ideia, não se esqueçam, se inscrevam aqui no canal e também deixem o like para acompanhar os vídeos de todos os dias. Agora sim, bora lá. Bom, galera,
+
+como é algo novo, preparei aqui um pequeno infográfico só pra gente entender o problema. O que que o Dream resolve? Então, como eu falei ali, né, o Dream ele vai fazer com que o cloud sonhe para poder organizar a memória entre as sessões do teu projeto. O problema, né, que a gente tá enfrentando hoje é que a memória, como ela é ou foi desenhada, ela vai guardar tudo nela, né? Então, a gente vai ter desde recursos obsoletos, bibliotecas que a gente não usa mais, tudo vai est catalogado dentro do de um memory MD, tá? Então isso vai fazer com que o cloud
+
+se perca um pouco nas informações, né? Ele vai ler aquele arquivo e vai achar que é verdade que a gente tá usando tal coisa e na verdade a gente não tá mais. Então com o Autodream a gente resolve isso porque ele vai polir a memória somente com o que é mais relevante, com o que o projeto tá utilizando atualmente, fazendo com que o cloud consulte uma memória verdadeira, tá? Ele funciona em quatro fases. Então, a primeira é de orientação. Ele vai ler
+
+esse memória MD e vai mapear o que já existe de memória. Então, ele vai entender como é que tá o arquivo no momento. Ele coleta sinais, ele faz uma busca cirúrgica nos transcripts, correções, decisões, padrões, então na evolução do projeto para entender o que que mudou da memória para o ponto atual. E aí depois rola uma fase de consolidação. Ele entende ali o que que tá de obsoleto na memória e vai remover isso e também os dados duplicados, deixando a memória bem mais limpa. E por
+
+último, ele vai fazer a poda e a indexação. Memória MD sempre vai ficar com menos de 200 linhas. Isso ajuda também no consumo de tokens, porque uma memória inflada só vai prejudicar o projeto, porque ela vai conter informações antigas que não são mais relevantes pro projeto. E ainda eu vou enviar isso como input, vamos dizer assim, lá pro cloud code, certo? E isso vai me gerar um consumo de tokens maior do que uma memória bem alinhada. Então o
+
+outro drzinho vai funcionar dessa maneira aqui, nesses quatro passos, para deixar a memória sempre bem polida. Atualmente, né, a gente tem quatro camadas de memória. A do cloud MD, que é um arquivo que a gente vai criar e vai deixar ali como um guia do projeto, um PRD, a memória automática, o cloud que vai gerenciar ela e isso acontece por sessão, a memória da sessão que é mais a curto prazo, ou seja, sempre que a gente inicia uma conversa, ela vai est sendo reiniciada. E por fim, agora o Autodream, que vai fazer a consolidação da memória, ou seja, uma memória na versão final de tempos em tempos. A gente pode rodar manual, mas o cloud depois de configurado vai rodar de forma automática. Então, depois que passa 24
+
+horas da última consolidação, ou seja, quando ele executou a primeira vez, ele vai rodar de novo, né, depois de 24 horas. E também mais de cinco sessões aconteceram desde a última consolidação. Então se eu fui lá, programei, fechei o cloud, abri de novo cinco, seis vezes, ele vai rodar de novo para poder condensar esse arquivo com apenas a memória necessária. Agora vou mostrar para vocês como que a gente ativa isso num projeto lá no cloud. Só antes, né, galera, alguns de vocês já sabem, mas muitos são novos por aqui, nós estamos com as inscrições abertas para formação Vibe Code, nosso treinamento que tem cloud code, Antigraft, Codex e outras IAS que programam pra gente para tu aprender a criar projetos com programação assistida por IA. Então, se
+
+tu se interessa por Cloud Code, aqui tu vai ter uma imersão do básico avançado, desde na instalação até a criação de vários projetos. Aqui na página tem o link no comentário fixado, tu vai conseguir acessar essa página aqui, vai conseguir entender melhor o treinamento, baixar grá curricular, ver como ele se desenrola. O nosso método, lembrando que é vitalício, né? Acesso vitalício para vocês e tem grupo VIP no WhatsApp. Se ficar qualquer dúvida, chame a gente via WhatsApp aqui que a gente vai esclarecer o que falta, beleza? Então fica a dica
+
+aí para tu aprender mais sobre cloud code nesse treinamento imersivo aqui e ter uma comunidade junto contigo, né? vários outros alunos com o mesmo objetivo que o teu. Então, galera, como é que a gente vai fazer para rodar o Dream? Tá bom? Primeiro tu vai atualizar o teu cloud, tu vai colocar aqui cloud upgrade para chegar esta última versão, né? Sempre bom fazer isso, pelo menos
+
+toda semana. E aí tu vai iniciar o cloud num projeto, tá? E aí a gente vai verificar se o Dream já existe. Eu comecei aqui e eu tento barra Dream. Não tem ainda, tá? Não é um comando oficial,
+
+ele tá meio que oculto, tá? Mas ele já existe, já dá para usar ele de certa maneira, tá? Vocês estão fazendo o rollout, pode ser que quanto já tá quanto tiver vendo esse vídeo aqui, a funcionalidade já esteja estabelecida e ela seja executada de uma maneira um pouco mais simples do que eu tô fazendo aqui. Mas de todo modo, a gente vai vir em memory, isso vai existir quando a funcionalidade já estiver no cloud de fato, né? E aqui tu vai ter que habilitar o Autodream para que ele execute isso em 24 horas ou a cada cinco sessões. Aí aqui, ó, é só dar um enter,
+
+o teu vai est off, né? E tu vai botar para on, tá? Vocês estão vendo ali, a rodou há 3 minutos atrás que eu tava fazendo testes, né? Só que esse comando aqui ainda não funciona, a gente vai ter que rodar de outra maneira. Então a gente dá um S aqui, a gente configurou ali para ele rodar o Autream, tá? E aqui
+
+a gente vai rodar um comando de criação de memória, tá? Vai ser o seguinte, pode ser dessa maneira aqui, tá? Eu já vi outras pessoas rodando com dream, com auto dream, auto traço dream, mas para mim funcionou dessa maneira aqui. Perform a dream, consolidate and reorganize my memory files. Ele vai rodar aqui e ele vai fazer a criação da memória, tá? Que é algo padrão que já
+
+existe no cloud, tá? A memória não é algo novo, o Dream é a organização da memória já existente. Essa memória aqui, ela é criada na pasta do cloud, não no nosso projeto. Então, se a gente fosse achar a memória, vocês vão ter que entrar na pasta do cloud de vocês, encontrar o nome do projeto. O meu é esse aqui, GSD memory. Então, a memória
+
+tá aqui, tá? Essa aqui é a memória que ele vai melhorar com o Dream, tá? Então esse arquivo aqui, ele tem só 10 linhas, beleza? Né? Não não é não estamos tendo, digamos assim, o problema que o Dream resolveria, que é reorganizar essa memória, tá? Então aqui eu dou alguns
+
+algumas confirmações e aí ele vai recriar aquele arquivo ali que já existe, né? Porque eu tô meio que pedindo para ele criar a memória do projeto, não tem problema. Parte do processo. Quando a gente faz isso aqui, ele automaticamente vai entrar em estado de dream. Vocês vão ver depois ali no fim dessa tarefa. E aí, galera, quando a
+
+gente completa a ação da memória, agora a gente consegue ver aqui que a gente entra em estado de dreaming. E isso vai fazer com que o dreaming ocorra naturalmente. Se a gente utiliza o comando tesa tarefa em background. Então a gente consegue ver aqui, ó, consolidação de memória. E ele vai continuar isso aqui para que a gente tenha o efeito do dreaming ativo. Ó, ele
+
+tá fazendo aqui e tá continuando para poder melhorar, né, filtrar o que tem ruim da memória, adicionar coisas novas em função desse novo recurso do cloud Code. Como eu falei para vocês, é algo que ainda não entrou oficialmente, né? Al, o que descobriram no código font ali mesmo do cloud code, a gente consegue invocar dessa maneira que não é tão usual. Naturalmente, depois a gente vai ter esse comando Dream e vamos conseguir invocar de forma automática. Aqui nesse caso ele, ó, agora parou, né? Ele estava
+
+utilizando o Dreaming e ele vai continuar porque agora o auto dream tra, né? ali no memory, só que ele vai executar quando bater aquele cap ali de 24 horas ou cinco sessões. Que que é uma sessão? Quando a gente dá contrtrol c, inicia o cloud, mudou a sessão. Ou quando a gente dá um clear, ele também reinicia para uma nova sessão. Aí, só
+
+recapitulando, né, galera? Ali, como vocês viram, né, agora o meu projeto está em autoam, então ele tá fazendo todos esses passos quando atinge essas condições aqui, tá? E o meu projeto, além de ter o que o cloud já tinha, que é o Cloud MD, auto memory session memory, ele vai ter o Auto Dream para ter uma memória melhor ainda, tá? Então é, como eu falei, tem que esperar a funcionalidade lançar pra gente poder ter mais informações para ver como ela vai se comportar com o nosso projeto. Segundo esse passo a passo, provavelmente vocês vão conseguir rodar aí e talvez até no momento que vocês estejam vendo esse vídeo, ela já lançou, vocês já vão conseguir utilizar de forma livre quando vocês quiserem. Comentem aí
+
+o que acharam essa velocidade da evolução do cloud, da ecossistema todo da Antropic. Tá me animando? Tá bem interessante, tá muito melhor que o Google, né, que praticamente deixou o antigravity parado, só cortou as sessões. Tô gostando bastante ali de usar o cloud code é o meu principal, pelo menos atualmente. Galera, não se esqueçam, deixem um like, se inscrevam aqui no canal, super importante para mim, tá? Também deem uma olhadinha na
+
+formação Viboding que tá muito massa, mais de 35 horas de conteúdo para vocês. Vou ficando por aqui, espero vocês no próximo vídeo.

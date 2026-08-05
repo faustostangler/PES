@@ -1,0 +1,93 @@
+---
+video_title: "Claude Code Routines: Agora Ele Trabalha Enquanto Você DORME (Tutorial)"
+video_id: ecM9ahlwOjI
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ecM9ahlwOjI
+video_date: 2026-04-15T15:00:00+00:00
+video_description: |
+  A Anthropic acabou de lançar um recurso no Claude Code que muita gente vinha pedindo há meses: Routines. Agora dá pra rodar prompts na nuvem da Anthropic, agendados, sem precisar deixar seu PC ligado. Configura uma vez, escolhe o gatilho, e o Claude Code trabalha sozinho enquanto você dorme, viaja ou tá fazendo outra coisa. Nesse vídeo mostro na prática como configurar uma Routine do zero em menos de 5 minutos, que vai revisar seu repositório todo dia de manhã e abrir um relatório completo no GitHub pronto pra você ler quando chegar no PC.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_cc_routines
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Até ontem, se você queria automatizar o Claude Code tinha que deixar o PC ligado, configurar cron job no sistema, gerenciar MCP, credenciais, ambiente e sessão tudo na mão. Com Routines você define um prompt, escolhe um repositório, conecta os connectors se precisar e define o gatilho. Pode ser agendamento (tipo roda toda noite às 2 da manhã), chamada de API via webhook do seu sistema ou evento do GitHub (roda quando abre um PR por exemplo). E o melhor: tudo roda na infraestrutura da Anthropic. Seu PC pode estar desligado, você pode estar dormindo, pode estar de férias. O Claude Code trabalha pra você.
+   
+  O projeto demo que construo ao vivo no vídeo se chama Morning Report. Todo dia às 8 da manhã o Claude Code vai olhar os commits do seu repositório nas últimas 24 horas, analisar o que mudou procurando por bugs, problemas de segurança e débito técnico, e abrir uma issue no GitHub com um relatório completo marcada com label morning-report. Você abre o PC de manhã, vai no GitHub e já tem um relatório pronto do Claude sobre o estado do seu projeto. Sem abrir terminal, sem rodar nada manualmente.
+   
+  O setup é em 5 passos simples. Primeiro acessa claude.ai/code que é o novo ambiente do Claude Code na web (precisa de plano Pro, Max, Team ou Enterprise, free não tem Routines). Segundo conecta o repositório do GitHub que você quer monitorar. Terceiro escreve o prompt da rotina (e aqui tem uma diferença importante: prompt de routine é diferente de prompt de sessão interativa porque roda sozinho, então precisa ser completo, com passo a passo e formato de saída explícito). Quarto define o agendamento (hourly, nightly ou weekly). Quinto salva e testa com Run Now antes de esperar o horário.
+   
+  Dedico um bloco inteiro do vídeo pra ensinar como escrever um bom prompt de routine porque é onde a maioria das pessoas vai errar. Mostro 4 princípios fundamentais: dar um papel claro pro Claude no início, estruturar a tarefa em passos numerados pra não pular etapas, deixar explícito o formato de saída com título, labels e estrutura, e definir comportamento pra quando não tem nada pra fazer (exemplo: se não houver commits nas últimas 24 horas, não cria issue). Sem essa última instrução você recebe uma issue vazia todo domingo.
+   
+  Também mostro os gotchas importantes que vão te poupar dor de cabeça. Rotinas são stateless e cada execução começa do zero, então se precisa de memória entre execuções a solução é o próprio Claude escrever num arquivo do repo tipo .claude/history.md e ler ele na próxima execução. Não dá pra rodar nada que precise de confirmação humana no meio do caminho, tudo precisa estar pré-decidido no prompt. Connectors precisam estar autorizados na sua conta antes porque a rotina não consegue autorizar nada durante a execução. E é research preview, pode mudar e ganhar recursos novos.
+   
+  Explico também os limites por plano que todo mundo quer saber. Pro de $20/mês tem 5 execuções de routine por dia. Max de $100 ou $200/mês tem 15 execuções. Team e Enterprise tem 25 por dia. Isso tudo além do limite normal de tokens do seu plano, então se você já tá perto do teto de uso do Claude Code as routines vão consumir do mesmo bolso. Pra maioria das pessoas 5 execuções no Pro são suficientes se você for estratégico. Uma rotina de manhã, uma de meio-dia, uma à noite e ainda sobra pra duas rodadas manuais de teste.
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  00:00 Novidade no Claude Code: conheça o routines
+  00:53 Como funcionam as routines no Claude Code (triggers, casos de uso)
+  02:32 Como acessar as rotinas do Claude Code
+  03:40 Criando uma routine no Claude Code web
+  07:00 Routines vs /loop do Claude Code
+  09:25 Minhas considerações sobre o Claude Code routines
+---
+Galera, ontem a Antropic lançou um recurso novo chamado R tints para o cloud Code web, né? A versão web dele vai ter acesso a esse recurso que faz. É basicamente uma Chrome Job, ou seja, um recurso agendado que vai fazer algo que a gente peça para ele. E a gente pode criar várias rotinas e elas serão executadas como nós determinarmos. Nesse vídeo aqui, eu vou te mostrar exatamente o que é o recurso, como tu vai poder configurar as tuas rotinas e todos os modos que são possíveis lá dentro.
+
+Recurso bem interessante, fica até o final do vídeo que vai valer muito a pena. Para quem não me conhece, sou o Mateus Batista, programador há mais de 10 anos e hoje estô me aventurando aqui no mundo da trazendo só os melhores recursos e novidades para vocês. Então, se gostar do vídeo, não se esquece, deixa o like e também se inscreve aqui no canal para receber vídeos todo santo dia. Bora lá então entender melhor o R Kids. Então aqui, galera, fiz um pequeno infográfico só pra gente entender como funciona, mas o nome já diz tudo, são rotinas adicionadas ao cloud code na versão web, né, versão nuvem do cloud code. Tem vários triggers, ou seja,
+
+formas de disparar. A gente pode agendar por Chrome, que vai ser executada determinado dia ou a cada tantas horas, por evento do GitHub, então criou por request, ele dispara, né, um exemplo, ou chamada de API, eu ao ativar uma rota X ativo o meu protein ou a minha protein. Beleza? Caso de uso, revisão de por request, triagem de issues nos repositórios, auditoria de documentos, smoke checks de deploy, né? Então aqui eu trouxe mais casos de uso atrelados a um projeto web, vamos dizer assim, que precisa dessas interações determinados tempos e geralmente ser manual. A gente
+
+pode estar agendando via rochas. Então algumas coisas que eles compartilharam também que são interessantes. Stateless não tem memória, ou seja, a rotina de ontem não lembra o que ela fez. Aliás, a rotina de hoje não lembra o que a de ontem fez e ela vai executar o que tem que ser executado sem input humano, não precisa fazer nada, a não ser que seja disparado via uma API, né? Aí a API precisa disparar o recurso e aí acontece a rotina. Connectors pré-autorizados,
+
+então a gente vai ter acesso aos conectors do cloud ali, por exemplo, alguns serviços do Google são possíveis. Limites por planos, isso aqui é bem importante, tá? O Pro cinco runs por dias, né? cinco execuções max 15 e team Enterprise 25. Mas galera, se trabalhar sozinho, tá no Pro, já tá valendo a pena, é o suficiente. Beleza? Como é que a gente
+
+vai executar uma rotina, criar uma rotina? Bom, tu vai entrar no cloudic/code, tá? Que é o cloud code online. E aqui vai tá o recurso de broke tints. Clicando aqui, você vai poder ver todas as rotinas já criadas. Então tenho essa
+
+minha aqui de verificação de P request nesse meu projeto. E aqui eu criei uma rotina que verifica todos os PRs que foram abertos num determinado repositório resume para mim, ou seja, tudo que entrou de novo naquele projeto, eu ganho resumo lá no meu Gmail, beleza? Bom, aí aqui depois que tu cria várias rotinas, tem uma aba calendário onde tu vai poder ver todas as execuções programadas das tuas rotinas. Então, é bem interessante para ter um overview, assim, uma visão geral do que vai acontecer. Beleza? Para criar rotina é
+
+só vir aqui em nova rotina. A galera, lembrando, a gente tem uma playlist de cloud code aqui no canal. O editor vai deixar a tamb do primeiro vídeo. É um curso de cloud code em 25 minutos, mais ou menos, eu vou te explicar tudo que tu precisa entender para já sair criando teus projetos. Então, clica no izinho aqui e dá uma olhada lá depois que vale muito a pena, tá bom? Voltando para
+
+criar rotina, eu vou colocar o nome, então a verificação de tal coisa, uma descrição. Então aqui é o prompt que que o cloud tem que fazer. Então ah, tu vai primeiro fazer isso, depois isso e por fim isso aí. Aqui ele vai executar exatamente o que tu pediu. Todos os dias que a rotina precisa precisa ser executada, tu escolhe o modelo, tá?
+
+Então dependendo do que tu tiver fazendo, pode ser o Sonid, pode ser o Opus. H meio tenso para fazer algumas coisas, né? Mas entre esses dois tu pode alternar se não for nada muito pesado, tá? Percebam, tem meus três triggers aqui. O GitHub fica desabilitado porque eu preciso selecionar um repositório se eu quiser ativar por ele. A gente já
+
+volta ali, vamos ver os outros dois como é que funciona. Bom, schedle seria um agendamento normal, vulgo Chrome job. Eu escolho aqui quando que ela vai ser executada. A cada hora, cada dia, aliás, todo dia, né? Só dias de semana e assim por diante. E aqui eu escolho o tempo,
+
+né? Se for, por exemplo, todo dia às 9 horas, beleza? Eu adiciono trigger e aqui agora tem esse gatilho. Posso adicionar mais, não tá linkado somente a um. Então eu posso adicionar também via API. Que que é o trigger de API?
+
+Basicamente eu vou ter que acessar essa rota com um token nosso. E quando essa rota for acessada paraa nossa aplicação, né, imagino que vai acessar, vai deixar isso pré-programado na tua aplicação. Quando acontecer alguma coisa, acessar uma rotina, ele vai iniciar a rotina e pronto. Então a gente vai adicionar o novo trigger aqui. E agora ela inicia via API também, tá? Aqui a gente tem os
+
+connectors, então a gente pode conectar aos serviços do Google, então Gmail, Calendar ou adicionar novos, né? Se tu tiver outros conectores, tu tem na tua conta, beleza? E também permissões, é a aba que tu pode mudar as permissões do cloud no repositório, tá? O que ele pode fazer naquele repositório que tu conectar. Que que é repositório? Projeto
+
+teu que tá no GitHub. Então, se tu tem aqui projeto KitHub que tu quer monitorar, por exemplo, que eu acredito que vai ser a maioria dos casos de uso para isso aqui, por isso, pelo menos quando tá lançando, né, que tá meio cru o recurso, tu vai selecionar o repositório, por exemplo, aqui, vou selecionar esse aqui de exemplo e agora eu tenho a possibilidade de colocar um trigger de gitub. Então, eu posso escolher algum evento, a quando o PR é aberto, quando o PR é mergeado, quando uma release sai. E isso vai fazer com que esse evento seja disparado, né? Mas vejam aqui, tem um pré um pré-requisito, né? Eu preciso instalar o Cloud GitHub
+
+App nesse projeto aqui, tá? Então precisa ter as permissões do cloud lá no repositório para que eu possa atrelar o GitHub. E aí liberaria as permissões aqui para que a gente possa, por exemplo, trabalhar eh em qualquer brint, tá claro, galera? Recurso bem novo, ó. Vou criar aqui para vocês verem aqui.
+
+Agora ele me deu a o token ali que a gente vai usar para AP PI, né? E pronto, a Chrom tá criada. A gente sabe que ela vai fazer porque tá aqui as instruções. Eu posso rodar agora se eu quiser, né? Editar, excluir e ele me sinaliza o repositório, né? Que então é a visão
+
+geral de cada rotina. Voltando aqui para dashboard, tem acesso a todas elas, né? E aqui agora que eu recém criei, posso habilitar ou desabilitar também, né? Deixar pausado. Cara, bem interessante algo que não depende do nosso computador, né? Porque, por exemplo,
+
+trouxe aqui o o loop, né? que também é um recurso muito semelhante, ele roda nosso computador, ele precisa do PC, tá ligado e é bom ali para alguma tarefa do projeto que a gente tá trabalhando atualmente. Já a rotina não, ela vai rodar na nuvem, é independente do nosso computador está ligado, ela vai rodar naquelas programações estabelecidas por nós e ela vai seguir também a risca que ela tem que fazer sendo stateless, que é interessante aí para determinados tipos de ação, beleza? Lembrando também, galera, nós temos a nossa formação Vibe Coding, nosso treinamento completo em programação assistida por IA com Cloud Code, Antigraft, Codex e outras ids, outras IAS que estamos adicionando aqui semanalmente. Se tiver interesse em conhecer, link no comentário fixado, tá?
+
+para tu poder entrar aqui e conhecer o treinamento. Nesse vídeo eu explico tudo que tu precisa saber para tu entender como que eu criei o treinamento, a metodologia, o que tu vai aprender e o que tu vai conseguir depois ali de fazer boa parte do curso, tá bom? Então fica ligado nesse link. Antrópic também lançou um artigo, galera, ele não tá tão completão assim, né? Mas faz um overview aqui de como funciona as roxes. Então,
+
+recurso que saiu hoje que eu tô gravando, né? Eu falei ontem no começo do vídeo, mas é porque eu vou lançar amanhã. E ele tá disponível somente para a infraestrutura web do cloud code, né? Isso é bom porque, como eu falei, não depende do nosso PC e vai rodar infinitamente. Às vezes a gente precisa dessa segurança, dessa estabilidade e isso faz todo sentido. Ele mostra a
+
+criação, como eu já mostrei, ele mostra os triggers, como eu já falei para vocês também, e alguns casos de uso, né? Ele dá umas ideias de como que a gente pode estar utilizando esse recurso, como a gente pode tá eh começando, né, já sair daqui e criar a nossa primeira rotina. Então vou deixar esse link na descrição para também para vocês darem uma lida. Mas o recurso é bem simples, né? Então não tem tanta coisa a ser feita lá. Além
+
+das rotinhas que eu já mostrei aqui para vocês, aconselho a criar uma para testar. Se tiver alguma tarefa repetitiva que vocês façam aí, provavelmente com GitHub faz sentido atrelar uma rotina. Esse resumo de PRs vai ser bem útil para mim, para eu poder entender o que entrou nos meus projetos, que outras pessoas trabalham comigo também. Beleza, galera? Bom, espero que vocês tenham gostado aí da breaking news, né? É um recurso simples, mas
+
+ajuda bastante. Essas rotinas vão liberar mais tempo pra gente também, né? Consequentemente, e isso permite a gente trabalhar em outros locais. Galera, comenta aí o que vocês acharam, que estão achando dessa metralhadora de novidades antropic. Para mim, eu acho bem legal, por isso eleva a barra, fazer com que outras e também evoluam no mesmo passo ou fiquem para trás. Hoje para mim
+
+a Tropic com certeza é a melhor empresa com os melhores modelos e eu tô querendo muito que a Google se estabeleça de novo aí, traga o anti gravity pra linha de frente porque também era uma excelente ideia, mas agora tá meio que deixando desejar. Limite de sessão, modelo meio tolão, né? Mas eles têm cacife para isso, com certeza vão dar um umas novidades aí com o tempo, porque eles não vão querer ficar para trás. Galera, não esqueça, se inscreva aí no canal, deixa um like, isso é muito importante e, é claro, confira a formação Vibe Coding um excelente treinamento com mais de 30 horas, acesso vitalício, grupo VIP no WhatsApp. Vou ficando por aqui.
+
+Espero vocês no próximo vídeo.

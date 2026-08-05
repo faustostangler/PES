@@ -1,0 +1,104 @@
+---
+video_title: "Esse Plugin TRIPLICOU Minha Sessão no Claude Code (Context Mode)"
+video_id: ZX501qJP1CQ
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZX501qJP1CQ
+video_date: 2026-03-18T15:00:00+00:00
+video_description: |
+  Toda vez que você usa o Claude Code ele tá lendo arquivos, rodando comandos, analisando código e tudo isso vai pro contexto. Em 30 minutos o contexto enche, ele compacta e esquece o que tava fazendo. Você precisa reexplicar tudo do zero e o fluxo de trabalho quebra. Esse é o maior problema de quem usa Claude Code no dia a dia pra projetos reais.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_context_mode
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Existe um plugin que resolve isso. Chama Context Mode. Ele intercepta as operações pesadas do Claude Code como leitura de arquivos, fetch de APIs, output de terminal e grep, processa tudo num sandbox isolado e devolve só o essencial pro contexto. O resultado são sessões que duram muito mais tempo sem perder contexto e sem o Claude esquecer o que tava fazendo.
+   
+  A instalação é com dois comandos no marketplace oficial do Claude Code. Quando reinicia o plugin já configurou tudo automaticamente: servidor MCP com 6 ferramentas de sandbox, hooks que interceptam Bash, Read, WebFetch e Grep, um CLAUDE.md com instruções de roteamento e comandos de diagnóstico. Roda um ctx-doctor pra confirmar que tá tudo verde e pronto.
+   
+  O melhor do Context Mode é que ele é transparente. Você não faz nada diferente. Não precisa mudar seus prompts, não precisa aprender comandos novos, não precisa pensar em contexto. Ele trabalha em background interceptando e otimizando tudo enquanto você usa o Claude Code normalmente.
+   
+  No final do vídeo rodo o comando ctx-stats que mostra exatamente quanto o Context Mode economizou durante toda a sessão. Total de dados processados, total que entrou no contexto, porcentagem de economia, calls interceptadas e tempo de sessão. Os números são impressionantes e mostram que sem o plugin essa sessão teria compactado várias vezes.
+   
+  Por baixo dos panos o plugin instala hooks que interceptam toda operação pesada. Em vez de jogar o resultado bruto no contexto ele processa num sandbox isolado e devolve só um resumo compacto. Também rastreia tudo que acontece na sessão num banco SQLite. Quando o Claude compacta a conversa o plugin reconstrói o estado: quais arquivos foram editados, quais tasks tão pendentes, qual foi seu último prompt. O Claude volta sabendo exatamente onde parou.
+   
+  O repositório já tem mais de 5 mil stars no GitHub. É grátis e open source.
+   
+  🔗 Links do vídeo:
+  ▸ Context Mode: https://github.com/mksglu/context-mode
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Como economizar sessão no Claude Code
+  01:00 Como funciona o plugin Context Mode do Claude Code
+  04:12 Instalando o Context Mode no Claude Code
+  05:20 Simulando o uso do dia a dia no Claude Code e verificando economia do plugin
+  10:20 Considerações finais sobre o Context Mode para economizar mais no Claude Code
+---
+Hoje eu vou te ensinar uma forma de economizar a tua sessão no cloud, fazer com que ela dure mais e também melhorar a questão de contexto no teu cloud code para que ele nunca se esqueça das tarefas que tu tá fazendo. Antes o teu contexto, sei lá, durava 10, 20 minutos até ele compactar tudo e esquecer das coisas. Agora vai durar mais de uma hora tranquilo. Tu vai conseguir trabalhar num projeto por muito mais tempo, mantendo a IA sabendo o que tu quer que tu faça. É um simples plugin, dois passos tu tem ele instalado e tu já vai ver a real economia dele. Então, se tu
+
+curtiu a ideia, não se esquece, se inscreve aqui no canal, também deixa o teu like, isso ajuda muito a continuar o meu trabalho. Eu sou Mateus Batista, programador há mais 10 anos e hoje tô trazendo aqui as tecnologias, as melhores tecnologias da IA para poder aí acelerar a tua vida, seja da forma que for. Nesse caso aqui, por exemplo, programando, né? Então bora lá, sem mais delongas, bora conhecer o context mode, um plugin muito interessante. Bora lá.
+
+Bom, galera, antes de mais nada, só comentar sobre o nosso treinamento formação VB Code, um treinamento completo que tu vai aprender várias ferramentas que programam com IA, como antigraft, Cloud Code e outras, o Codex da Openi. E depois tu vai criar vários projetos nela, vários SAS, projetos completos que vão aí te proporcionar o entendimento pleno dessas ferramentas e também conseguir criar sistemas robustos, seguros com Vibe Code. O link tá aqui na descrição e no comentário fixado. Tu pode conhecer melhor o treinamento acessando ele, acessando essa página aqui. Tem a grade curricular para tu baixar, tem aqui os projetos que tu vai criar. E se ficar qualquer outra
+
+dúvida, acesse a gente pelo WhatsApp que a gente vai tirar todas as tuas dúvidas, beleza? Então galera, eu trouxe aqui um simples infográfico pra gente entender melhor como é que funciona o context mode, porque ele economiza tanto. Bom, aqui na parte da esquerda é sem o plugin. O que acontece? Tudo que a gente pede ali pro cloud, ele vai colocar no contexto até que chega uma hora ali, ele compacta e acaba esquecendo de algumas coisas, porque ele salva o que é mais importante, entre aspas, né? Tem toda a
+
+limitação, então nem sempre as coisas importantes conseguem ser salvas, né? Às vezes sim, às vezes não. A gente tem aqui problemas sendo gerados e também muitos tokens colocados no contexto, né? E isso também vai gerar consumo na sessão, porque ele vai e volta ali na API do cloud. Já que o context mode, ele tem duas coisas muito importantes. Uma é
+
+o sandbox, é tipo um filtro que vai tirar o lixo ali, não vai colocar as coisas que não importam no contexto e vai deixar só o que interessa. Então, num exemplo, né, de um contexto de 56 KB, que a gente teria sem e com, a gente teria uma economia muito grande, porque ele colocaria só aproximadamente 299 bytes no contexto e isso ajudaria a não poluir ele tanto. Além disso, que acontece? Ele salva todo o contexto no SK, no banco de dados local. E isso faz com que se mesmo o cloud por algum motivo compactar, ele acesse essa essa base de dados, entregue todo esse contexto que ele salvou, que realmente importa para o cloud entender onde ele estava e o que ele precisa saber. Então
+
+a gente tem essas duas ferramentas trabalhando em conjunto para salvar realmente o que importa e para economizar contexto. Então o funcionamento é basicamente esse. Um hook intercepta to c, né, chamadas de ferramenta. O sandbock vai processar os dados pesados, né? Então ele não deixa o contexto ser poluído, só o resumo volta pro contexto e tem um escalite ali rastreando tudo, sabendo de tudo o que a gente trabalhou naquela sessão. E se
+
+precisar depois que o contexto for compactado, ele volta com essas informações e o cloud sabe tudo de novo. Beleza? Então bora botar em prática e entender como é que funciona. Aqui é o a página do plugin, né? O github do plugin. Se vocês quiserem dar uma
+
+olhada. É esse context mode, tá com bastante stars aqui. E aqui ele também dá outras explicações aí para complementar o que eu falei, se vocês quiserem entrar em detalhes, tá bom? Voltando aqui, eu vou instalar o plugin. Então, primeiramente eu vou usar o comando plugin Marketplace ads, mkslu/concexte, que é ali o repo do cara, né? Ele vai
+
+adicionar esse marketplace e eu vou instalar o plugin contextmode @concextmode desse marketplace. Aqui eu vou instalar para mim, né? E aí tu pode escolher, talvez trabalhar só no repositório e tal para testar, né? Faz mais sentido, mas aí depois tu pode também remover se for o caso, não tem problema. E aqui a gente vai ter uma série agora de slash commands que vão ativar o plugin. Então
+
+a gente pode testar aqui utilizando esse aqui ctx Doctor. Se ele não aparecer tem que reiniciar o cloud. E agora vamos ver aqui, ó. Agora funciona. Podemos utilizar. Ó, como vocês podem ver, esse
+
+doctor ele verifica se tá tudo certo com o plugin e ele identificou que falta essa libra do plugin. Então, a gente tem que rodar esse comando lá dentro para que ele possa ter acesso ao SK, que é uma das partes fundamentais dele. Ó, rodei o comando lá e agora ele falou que resolveu a questão da SK Lite 3, tá? Então, importante, resolvam isso antes de continuar. O que acontece agora? A
+
+gente continuaria o nosso projeto normal com o plugin ativo, tá? a gente eh colocaria promps para avançar nele. Eu planejei alguns nesse projeto que eu já tenho pronto, tá? Esse aqui vai analisar todos os arquivos do projeto. Quero um relatório completo, estrutura de pastas, dependências, como a autenticação funciona, como o frontend se comunica com backend, quais as vulnerabilidades de segurança se encontra. Então aqui eu
+
+tô listando vulnerabilidade de segurança para corrigir elas, né? Passo muito importante, qualquer aplicação com vibe coding para que tu possa fazer depois o deploy, tá? Então vou aguardar aqui e logo retorno para vocês. Como vocês podem ver aqui, o plugin ele já sai se autoexecutando, ó. Tugin, context mode.
+
+Então nós temos já ele emção. Depois a gente vai ver aqui a economia. A gente tem um comando que a gente consegue identificar isso. Então ele retornou aqui, galera, algumas vulnerabilidades. Beleza? E agora eu vou pedir para ele
+
+corrigir elas, né? Colocar um outro prompt aqui. Aplique as três correções de segurança mais críticas que você identificou. A início, extrai a lógica de validação de controlers para um midware separado de validação com funções reutilizáveis. E isso, claro, né? Onde é que eu tirei? Porque antes eu
+
+pedi para ele fazer aqui um cloud MD, aí eu li e planejei esses promptes, tá? Por isso que eu sei o que tá acontecendo aqui nesse projeto. Então vamos acompanhar aqui. Vou rodar mais um depois desse pra gente ter realmente um trabalho sendo feito, né? Senão não vai ter tanta diferença assim. Trabalhando
+
+em algumas áreas diferentes, análise, trabalhando agora em correção de segurança, depois eu vou trabalhar em adição de recurso. Lembrando também, galera, muita gente me pergunta como eu crio os meus prompts. Todos os mistérios são revelados nesse ebook que tá na descrição desse vídeo. Então, basta baixar. e ler o material. Tem mais de 50
+
+páginas com todas as estratégias que eu uso de engenheira de prom. Beleza? Bora seguir aqui. Bom, ele terminou aqui a refatoração, tá? Das e os fix das vulnerabilidades. Agora eu vou pedir
+
+para ele colocar uma nova funcionalidade no projeto que vai ser um sistema de estatísticas. Vou ter que crie um novo end point geti testats, né? que retorna o total de tarefas concluídas, pendentes, porcentagem de conclusão, tarefas por categoria com contagem e a categoria com mais tarefas pendentes. No frontend, adicione uma sessão de status acima da lista de tarefas, né, mostrando esses dados com carres visuais e uma barra de progresso animado. Faça o fet dessas stats quando o dashboard carregar. Então agora ele vai criar um
+
+recurso e depois disso feito, vamos verificar o contexto. Bom galera, então ele terminou aqui, tá? todos os meus três prompts e esse último das estatísticas. E agora eu vou verificar o contexto. A gente tem o comando context mode CTX status. Isso vai fazer com que
+
+ele mostre pra gente a economia, né, os dados processados que entrou no contexto e a economia, tá? Então vamos dar uma olhada aqui. Então vejam aqui, os dados processados foram 84 KB. O que foi colocado na sandbox e nunca entrou no contexto foi 40k. E o que entrou no contexto foi 40k. Olha só a estimativa
+
+de tokens salvos. Então isso aqui é o que a gente economizou das sessões, né? A gente vai lá e vê ali o usage do cloud code, isso aqui estaria impactado desnecessariamente. Então ele colocou aqui que a gente eh reduziu, né, ou economizou 50% o tráfego de tokens. Beleza? Então,
+
+testem esse plugin que ele vai melhorar muito a questão de uso do cloud code para vocês, tá? Além disso, galera, não se esqueçam, tenho dois avisos bem bem importantes. A gente tem uma playlist de cloud code aqui. O editor vai deixar a tamb com o izinho sobre do vídeo que inicia ela, que é um miniurs de cloud code. Então, para tu que quer aprender um pouco mais sobre a ferramenta, dá uma olhada lá. Mas além desse conteúdo, né,
+
+que é mais para quem tá iniciando, tem outros que vão aí nível intermediário, avançado, projetos, sugiro dar uma olhada, é bem importante, tá? E além disso, galera, para quem usa antigraft, a gente fez um vídeo semelhante a esse aqui, que também trata de economia de uso nas sessões, porque agora tem muita gente comentando e reclamando com razão que o Google foi lá e capou as sessões, né? Usa algumas vezes e aí já bloqueia. por 5 horas ou até por 7 dias. Então eu fiz um vídeo explicando também cinco coisas que eu faço, né? Cinco dicas,
+
+vamos dizer assim, para ajudar a manter minha sessão por mais tempo. O editor também vai deixar tamb. Eu vou deixar o izin logo na sequência vocês vão ter esses dois aí. Deem uma olhada nesse segundo se vocês usam antigravit para ajudar a melhorar essa questão de consumo na economia de tokens e também na playlist ali que vale muito a pena. Beleza? Então fica a dica aí que vai
+
+ajudar bastante. Bom, galera, sobre o context mode, é isso. Só relembrando, né? Cada vez que a gente cria um prompt ali, ele intercepta essa chamada, faz o filtro ali, tirando a sujeira que polia o contexto, colocando somente o que interessa no contexto do cloud. E também ele vai salvando esse contexto todo no banco de dados, que é um esquelitate.
+
+Quando o cloud eventualmente, né, ele vai ali encher o contexto e compactar as coisas, o contex mode vai lá, pega tudo que tá no banco, injeta no cloud de novo. Então, por mais que ah, vai aumentar um pouquinho o contexto, vai, mas ele vai colocar as informações pertinentes do projeto e isso vai fazer com que o cloud não se esqueça de nada depois da compactação. Então são duas ações importantíssimas que vão ajudar tanto a melhorar o teu uso no cloud code como também economizar muitos tokens, como vocês viram ali, e consequentemente prolongar a programação de vocês viabe coding do cloud code. Beleza? Então galera, se curtiram a dica, não se esqueçam, deixem o like aí, se inscrevam no canal e, é claro, conheça a formação Vibe Code. O link tá aqui nos
+
+comentários fixados. Por hoje é isso. Vou ficando por aqui e espero vocês no próximo vídeo.

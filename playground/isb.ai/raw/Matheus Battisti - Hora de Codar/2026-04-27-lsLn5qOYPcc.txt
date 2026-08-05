@@ -1,0 +1,125 @@
+---
+video_title: "Context7 + Claude Code: Agora Ele Lê os Docs ANTES de Codar"
+video_id: lsLn5qOYPcc
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lsLn5qOYPcc
+video_date: 2026-04-27T14:00:00+00:00
+video_description: |
+  Toda vez que você pede pro seu agente de IA gerar código de uma biblioteca, ele usa o que aprendeu no treinamento. Problema: o treinamento é de meses atrás. A API mudou, a sintaxe mudou, funções foram deprecadas. Você recebe código que parece certo mas usa métodos que não existem mais ou segue padrões da versão anterior. E o pior: você nem percebe até quebrar em produção.
+  
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_c7
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Context7 resolve isso. É um MCP server open source feito pela Upstash que busca a documentação oficial e atualizada de qualquer biblioteca e entrega pro seu agente de IA antes dele gerar código. Quando você pede pra implementar autenticação com NextAuth, em vez do agente chutar baseado no treinamento ele consulta os docs reais da versão atual. Funciona com Claude Code, Codex, Cursor, Antigravity e qualquer ferramenta que suporte MCP.
+   
+  O Context7 tem duas partes. O MCP Server que roda em tempo real durante a sessão. Você adiciona "use context7" no prompt e ele busca os docs na hora. E o Skill Wizard que gera skills permanentes a partir da documentação. A skill fica salva e o agente usa toda vez que trabalha com aquela lib sem precisar pedir. Uma consulta pontual vs conhecimento permanente.
+   
+  A instalação do MCP Server é um comando no Claude Code. Uma linha, reinicia, confirma com /mcp que tá connected. Pra testar manda qualquer prompt e adiciona "use context7" no final. O Claude busca os docs atuais antes de responder e você vê no output que ele consultou o Context7.
+   
+  O Skill Wizard é onde fica mais poderoso. Roda um comando, ele pergunta qual biblioteca, pra que serve a skill e se tem algum foco específico. Consulta o Context7, puxa os docs atuais e gera um SKILL.md completo com boas práticas, padrões recomendados e exemplos. No final pergunta onde instalar e detecta quais ferramentas você tem: Claude Code, Cursor, Codex, Antigravity. Seleciona vários ao mesmo tempo. Uma skill, todas as ferramentas.
+   
+  No vídeo crio 3 skills que uso no dia a dia. Next.js App Router com foco em server components, server actions, middleware e caching. Prisma ORM com foco em schema design, queries, relations e migrations. Tailwind CSS v4 com a nova sintaxe e configuração. 3 skills em menos de 5 minutos, cada uma com documentação atualizada, prontas pra usar em qualquer projeto.
+   
+  Depois das skills instaladas o agente carrega automaticamente quando detecta que você tá trabalhando com aquela lib. Sem precisar pedir. Coda normalmente e ele detecta Next.js, Prisma e Tailwind no prompt, carrega as 3 skills e gera código seguindo os padrões atuais de cada uma. A diferença: sem skills ele gera baseado no treinamento que pode ter meses de atraso. Com skills do Context7 ele segue os docs da versão atual.
+   
+  Mostro também como gerenciar as skills instaladas, buscar skills prontas da comunidade e quando usar MCP em tempo real vs Skill Wizard. MCP pra consulta pontual e exploratória com lib que você não usa sempre. Skill Wizard pra lib que usa em todo projeto e quer que o agente sempre siga as boas práticas.
+   
+  🔗 Links do vídeo:
+  ▸ Context7: https://github.com/upstash/context7
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 O problema das bibliotecas atualizadas e o Vibe Coding
+  01:40 Conhecendo o Context7: documentação sempre atualizada
+  04:11 Utilizando o Context7 em um projeto
+  08:25 Gerando skills com o Context7
+  14:34 Minhas considerações sobre o Context7
+---
+Um dos principais problemas de criar projetos com IA, né, o famoso web code, é que quando a gente utiliza bibliotecas que atualizam muito, como React e Next, as informações da IA são desatualizadas e isso gera muito erro, muito consumo de token, porque ela tem que ir lá pesquisar uma documentação nova, qual é o fix que tem que fazer para reparar alguma coisa e isso vai gerando transtorno ao longo do tempo e na evolução do projeto. Por isso o Contex 7, que é uma biblioteca aí gratuita que a gente pode estar utilizando, resolve esse problema. Ele tem essa premissa de criar uma documentação e aí essa documentação estará atualizada com a última versão da biblioteca ou framework que utilizarmos. Logo, nós teremos aí a informação mais recente e a IA não vai mais errar, não vai cometer tantos erros como ela cometeria com informações muito desatualizadas. Isso é essencial nos dias de hoje para que a gente possa criar projetos robustos e com as últimas versões das bibliotecas. Me fala aí se
+
+tu já não recebeu aquele erro ali. Prisma eh descendo para a versão número seis e tava na sete. E isso acontece por causa das informações desatualizadas. E nesse vídeo a gente vai resolver exatamente esse problema utilizando o Context 7. Galera, para quem não me conhece, eu sou Mateus Batista, programador há mais 10 anos e hoje tô aqui me aventurando no mundo daáa, trazendo só as melhores tecnologias para vocês experimentarem, utilizarem, criarem seus projetos. Tu curtiu a
+
+ideia? Deixa esse like aí e também se inscreve no canal para receber vídeos todos os dias. Bora lá então entender melhor como funciona o Contex 7. Chega aí. Olha só galera, a gente tem aqui um pacote chamado Contex 7, tá? Ele é
+
+gratuito, como eu falei para vocês, beleza? Só que a empresa tem ali uns tiars pagos, só que para um projeto é bem tranquilo utilizar ele na forma gratuita, tá? Eu vou deixar o link do repositório para vocês verem depois, mas a gente vai fazer tudo passo a passo também. O Contex 7, o que que ele faz, né? o resumo da utilização dele, ele vai puxar a documentação oficial, então a documentação mais atualizada da tecnologia que a gente tá utilizando.
+
+Ele injeta isso no agente antes de gerar o código e no fim a gente vai ter o código certo, né? A gente não vai ter erros por causa de atualização de versão, que é muito interessante. A gente tem duas formas principais de utilizar. Uma é o MCP Server, que vai ali tá utilizando o Contex 7 sempre para buscar dados na hora, né? Então isso vai garantir que a gente sempre tenha a versão mais atualizada a cada prompt, né? Se a gente mudar a biblioteca
+
+também, né? Por exemplo, a gente tá falando falando de front end agora, depois a gente vai falar de back end. Então são duas coisas diferentes, duas bibliotecas diferentes. A gente pode ter essa jogada aí para sempre tá puxando dados atuais. E também tem o skill wizard, que é uma forma um pouco diferente de utilizar, mas que vai também ter muito resultado. Bom,
+
+simplesmente ele vai gerar uma skill com todas as informações e isso vai fazer com que o agente carregue essa skill em vez de sempre estar utilizando MCP. Então aqui a gente tem duas formas interessantes de utilizar, cada uma vai ter seu uso e a gente vai dar uma olhada passo a passo aqui nesse vídeo, beleza? Eu gosto da skill porque a skill vai ficar para sempre lá pra gente, certo? E aí a gente vai conseguir só consultar esse arquivo, não precisa estar trabalhando com MCP, que como é sabido, né galera, consome bastante token também, tá? Aqui eu trouxe o passo a passo de como a skill user funciona, tá?
+
+Lembrando que a skill pode ser criada para qualquer ferramenta de vibe coding, cloud code, codex, cursor, antigraft. Aqui eu vou utilizar o cloud code como exemplo, tá? Mas não se limita a ele. Beleza? Bom, galera, só antes de ir lá, não se esqueçam, formação Vibe Code, nosso treinamento mais completo aí sobre cloud code, antigravity, Codex e várias outras ferramentas de IA. Se tu quer
+
+programar com IA, né, programação assistida com IA, esse é o treinamento certo. Acesso vitalício, grupo VIP de alunos no WhatsApp, enfim, perfeito para que tu possa aprender e dominar essas ferramentas e também tá construindo aí várias parcerias, vamos dizer assim, com outros alunos que t o mesmo objetivo que o teu. link vai tá aqui no comentário fixado, fechou? Bom, eu vou aqui abrir um projeto que eu já tenho pronto, tá? E ele é em next. Então, a gente vai
+
+utilizar esse exemplo também para fortalecer a ideia de como utilizar o context. Primeira coisa, a gente inicia o cloud e adiciona o mcp, tá? O comando é bem simples, pode ser esse aqui. Cloud MCP add context 7 traço traço npx- y @upstash que é a empresa criadora, né? Contex traço mcp @latest que é a versão, tá? Então esse comando tá lá na
+
+documentação oficial também, fiquem tranquilos para dar uma olhada depois, beleza? Faz a confirmação aqui e deixa ele instalar o MCP. Vamos reiniciar o cloud aqui para ver se deu certo. Então dois cont C. Inicia o cloud.
+
+digita barra MCP e o context 7 tá aqui, ó, conectando. Conectou. Beleza, então tá tudo certo. Como é que a gente vai usar esse cara? Bom, basta eu pedir alguma coisa para ele e utilizar o ou falar no final, né? Use context 7.
+
+Então, vamos fazer o seguinte. Esse projeto aqui, ele tem rotas protegidas, ou seja, só pessoas autenticadas podem ver certos conteúdos. Então vou pedir assim para ele verifica se as rotas protegidas estão configuradas corretamente. Eu boto assim no final pode ser assim no next s, né? Use o context 7.
+
+Então assim eu vou verificar com base nas informações do context s que vai trazer para mim de next se as rotas protegidas do meu projeto estão corretas, tá? Porque eu fiz o projeto sem o context se e agora eu quero fazer uma revisão se está OK. Lembrando que eu não preciso fazer assim, eu posso começar o projeto já direto, né, com o counter s. Não é uma limitação eu utilizar ele no meio do projeto, tá? E até melhor que seja no começo, porque daí tu evita erros futuros, né? Então
+
+vou liberar aqui o uso do context 7. Vejam aqui que ele já tá fazendo a que na documentação, tá? Direto ali no Versel NextJS. E aí ele tem todas as informações e agora ele vai verificar com as minhas rotas do Next, tá? Ele vai fazer, ele vai bater essas informações para ver se tá tudo certo. E fica até de
+
+dica, né, galera? Testem nos projetos prontos de vocês. É uma maneira fácil de ver se tá tudo correto. Olha só, galera. Então, ele foi lá e identificou, né, individualmente que as rotas estão OK.
+
+Beleza? Só que ele encontrou alguns problemas. Rotas de API não estão no match do midware. Rota desafios sem subrotas na proteção do midware. E aí ele recomendou a configuração está funcionalmente correta. A única maneira
+
+possível seria adicionar uma verificação de API no mid para criar uma camada extra de segurança defens de mas como todas as rotas de API já verificam off individualmente, né, o risco atual é baixo. Então, olha só, ele me sugeriu uma melhoria baseada no que eu já tinha. Bem legal, coisa que o cloud sem essa doc atualizada não teria. É isso que eu quero que vocês entendam, beleza? Bom, aqui a gente viu o uso do MCP, ele sempre vai bater lá na PI, vai voltar e isso vai fazer com que a gente gaste mais tokens inevitavelmente. E agora a
+
+gente tem a questão do da geração de skills, beleza? E isso vai fazer com que ele gere uma skill para mim baseada em uma doc ou alguma coisa que eu queira. E ele vai, em vez de fazer essas conexões de MCP, cloud, cloud, resposta, ele vai bater no arquivo e vai pro cloud direto. Então é uma forma de termos localmente essa solução para o problema, né? E isso faz com que a gente consuma menos tokens, mas em contrapartida a skill é fixa, né? Só se a gente pedir para
+
+atualizar, aí ela será atualizada e terá novas informações. Digamos assim, que para a versão atual vai funcionar, OK? Mas daqui um ano talvez seria melhor atualizar de novo. Claro, se a gente for evoluir a versão do projeto, normalmente, né, os projetos mantém a mesma versão, né, só se tem muitas funcionalidades novas, se tem brecha de segurança, aí vai se atualizando, tá? Então, para isso, galera, a gente vai sair aqui, vai utilizar o terminal em si, tá? A gente vai utilizar o comando
+
+npx ctx7 skills generate. Então é uma execução do pacote, né? Não tem nada a ver com o MCP aqui, né? Algo isolado. Então a gente prossegue aqui. Nesse
+
+caso, a gente tem que fazer uma autenticação, tá? Então tu faz aí o login. Bom, deu certo aqui, só fechar. E aqui, ó, ele começa fazer uma série de perguntas, tá? E ele me cita alguns exemplos de como eu posso criar uma boa skill, tá? Então vou descrever a
+
+expertise aqui, tá? Para não prejudicar muito o andamento do pacote, eu vou escrever em inglês uma skill de next que eu quero, seguindo aqui as os exemplos de boas práticas, tá? Então, vou pedir para ele criar um uma skill de expertise em appro, tá? e que pode sabe escolher entre servers, server e client component que tenha boas práticas em server actions, händlers e padrões de midware, estratégias de cash e também data fating, né, que seria puxar os dados com next 15. Aí aqui ele pergunta quais as sources, eu vou dizer que é next. E aqui
+
+se a gente conhecesse, por exemplo, essas sources aqui, né? Ele puxou Paulo Client, eu não quero, GitHubs, eu não quero, mas vamos dizer aqui que a patterns dev é uma boa fonte ou esse design patterns, então a gente vai escolher também. E aí prosseguimos. Aí ele tá perguntando em qual dos aspectos do Nest 15 ele deve focar. E aí eu vou escolher a recomendada que é arquitetura de componentes. Qual é o estágio do
+
+appunter, né, desenvolvimento appunter que eu tô trabalhando? Então é criando componentes e features e quais design patterns a gente tem que focar. E aqui eu vou escolher padrões de arquitetura para escalabilidade. Então galera, ele me mostra aqui a skill, tá? A parte dela, né? Claro. E ele pergunta onde que
+
+eu quero instalar. Então vou botar aqui instal skill. Ah, o que que eu quero fazer? Eu quero instalar skill, tá? E aí ele detectou que tem um projeto aqui e aí eu posso dizer que eu quero instalar justamente aqui. E aí ele cria skill, ó.
+
+Temos a skill aqui. Aí a gente pode revisar ela completamente, beleza? Então ele colocou todo o código aqui, tudo mais, né? Pass práticas, beleza? E aí agora nós podemos utilizar essa skill que o Contex Sen gerou essas boas práticas de criação aí de componentes, de melhoria de decisão, né, de quando vai criar um server, um client component. Claro, é muito técnico, né?
+
+Mais para quem entende Next, mas isso vai ajudar bastante ao cloud a criar melhores projetos com o Next, né, que geralmente é uma dos frame bibliotecas mais utilizadas, né? Então fiquem atentos a isso que pode ajudar bastante vocês. E aqui eu pediria para ele criar, né, uma página que e que usasse essa skill. Bom, galera, aí a gente tem dois caminhos. ou a gente vai pedir para ele criar uma nova funcionalidade e tal, e aí eventualmente ele vai usar skill ou da maneira que eu mais gosto é ser explícito. Eu mesmo cito para ele usar a
+
+skill, se possível, ou usar a skill de fato, tá? Então ficaria algo assim o prompt, né? Então aqui eu tô criando uma página, deixa eu ver aqui rapidinho, quebrar um pouco o texto para vocês verem. Então prompt parecido com esse, né? A usa skill next 15 appunter architecture, que foi o nome da skill que ele criou, tá? Cria uma página
+
+contato com formulário de contato para pessoas tirarem dúvidas sobre o produto. Campos, nome, e-mail, assunto e mensagem. usa server action para processar o envio, salva no banco com Prisma e mostra a mensagem de sucesso. Estiliza com ter ind seguindo o visual do projeto. Então eu vou dar esse enter aqui e ele vai processar a criação dessa nova página seguindo ali agora os padrões arquiteturais e de decisão dessa skill criada pelo Contex S, usando a documentação oficial do Next e aquele outro repositório design patterns. Então agora
+
+o meu cloud ele tem as informações mais atuais e de boas práticas possível para que ele possa criar as melhores páginas com os últimos recursos do Next. Essa que é a ideia. E dessa maneira aqui que a gente fez com o Skill Creator, eu não preciso utilizar ali, por exemplo, o MCP que vai sem ficar puxando os dados lá diretamente. A gente usa essa skill. Por exemplo, se eu tivesse muitas páginas a criar, seria muito melhor eu utilizar skill, porque daí cada vez que eu precisasse, eu utilizaria ela e teria uma batida menos no MCP, né? Eu eu eu
+
+gastaria menos contexto também. Isso seria muito melhor pro meu projeto. Então vamos esperar ele terminar aqui e aí eu vou mostrar o resultado final para vocês. Esse projeto inclusive é de um vídeo aqui do canal galera de de stack, que é um framework de metaprompt bem legal para criar projetos. Inclusive a gente tem uma playlist aqui de cloud code, tá? Vou deixar aqui a tum, o
+
+editor vai deixar do vídeo inicial, que é tipo um miniurso cloud code, mas tem mais de 30 vídeos, galera, bem completa mesmo. Deixar o izinho aqui para vocês acessarem depois, tá? Deiem uma olhada que é bem interessante. Acho que ele terminou e agora ele tá iniciando o projeto pra gente ver. Bom, galera, e olha só, aqui tá a página criada, tá?
+
+Por ele barra contato, seguindo ali todas as boas práticas, o que a gente pediu, ele manteve ali o design system do projeto. Você tem home esse projeto aqui, já tô logado aqui e tal, mas veja que ele manteve, né? E ele utilizou para isso, paraa criação, todo o conhecimento mais recente de Next. Beleza? Então, assim que o Contex Seven vai ajudar vocês. Vou deixar o link aqui na
+
+descrição para vocês baix para vocês verem como é que funciona e tal. Processo de instalação bem interessante. E claro, não esqueçam o nosso guia de gir de prompts. Tem dúvida em como escrever os melhores prompts? Esse guia é gratuito e tá aqui na descrição desse vídeo, só baixar, beleza? Faça o
+
+download aí, aproveite esse material. Galera, espero que vocês tenham curtido. Comentem aí o que vocês acharam. Quero saber a opinião de vocês, porque é importante a gente trocar uma ideia, né? Se vocês acham que vale a pena, se não vale. Eu sinceramente acho, ainda mais
+
+que a gente sabe as tecnologias que a gente vai utilizar de você tá no início do projeto ali todas as skills comx 7, depois não precisa criar mais, né? Ficar utilizando elas a cada nova funcionalidade, cada nova página que a gente cria. Acho que é bem interessante a estratégia. Bom, não esqueça, formação Vibe Coding, link no comentário fixado, treinamento de mais de 30 horas disponível para vocês, CD Code, Antigravity, Codex e muito mais. Tem vários projetos da ideia ao deploy. Não
+
+esqueça também, se inscreva, deixa o like, isso é muito importante pra gente continuar nosso trabalho aqui dia a dia colocando vídeos e mais vídeos com muita qualidade, é claro. E espero vocês no próximo. Valeu,

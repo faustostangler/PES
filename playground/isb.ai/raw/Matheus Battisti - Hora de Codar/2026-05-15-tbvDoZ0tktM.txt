@@ -1,0 +1,90 @@
+---
+video_title: "Esquece Tmux: Claude Code Agora Tem Dashboard Próprio (Agent View)"
+video_id: tbvDoZ0tktM
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=tbvDoZ0tktM
+video_date: 2026-05-15T14:00:39+00:00
+video_description: |
+  Claude Code Agent View é o novo dashboard nativo que mostra todas as sessões do Claude Code rodando em paralelo numa tela só, eliminando a necessidade de tmux, múltiplos terminais ou orquestração manual.
+  
+  ⭐ Inscreva-se na Lista de Espera da Formação Codex Master: https://app.horadecodar.com.br/lp/esquenta-codex-master
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_agent_view
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  Neste vídeo eu mostro o recurso completo do v2.1.139, disparo 5 sessões simultâneas pra construir uma API REST inteira em paralelo, e demonstro cada atalho do dashboard: dispatch pelo input, /bg pra mandar sessão pra background, claude --bg pra fire and forget, peek com espaço, reply inline, attach e detach com setas.
+  
+  Se você usa Claude Code todo dia e já se pegou abrindo 5 ou 6 terminais pra rodar tarefas em paralelo, virando malabarista de janela, esse vídeo é pra você. O Agent View resolve isso de um jeito que faz parecer óbvio depois que você vê: cada sessão vira uma linha numa tabela, com estado em tempo real, e você dispara, espia, responde e gerencia tudo sem sair do dashboard.
+  
+  Começo o vídeo com o cenário que motivou o recurso: mosaico de 6 terminais abertos rodando Claude Code, caos visual, malabarismo puro. Em seguida atualizo pro 2.1.139, abro a tabela vazia com claude agents, e parto pro primeiro dispatch. Já tenho um projeto base de API To-Do em Hono + TypeScript criado off camera (CRUD completo de tasks, store in-memory, vitest configurado).
+  
+  O primeiro dispatch é direto pelo input do dashboard. Mando criar a infraestrutura de autenticação JWT com jwt.ts, middleware.ts e users.ts hardcoded, sem tocar em arquivos existentes. A linha aparece na tabela com indicador de trabalhando. Sem sair do dashboard, disparo a segunda sessão: schemas Zod com createTaskSchema e updateTaskSchema. E em seguida a terceira: testes Vitest cobrindo todos os endpoints atuais com casos de sucesso e 404. Três sessões rodando ao mesmo tempo, sem tmux.
+  
+  A quarta sessão demonstra o /bg. Abro um terminal novo, rodo claude em modo conversa normal, peço refactor do taskService pra extrair a camada de persistência com interface ITaskRepository, e quando começa a trabalhar digito /bg. A sessão some do foreground e reaparece como linha no dashboard. A quinta sessão é o claude --bg puro, fire and forget pela linha de comando: reescrever o README inteiro com título, descrição, stack, instalação e exemplos curl. Cinco sessões rodando, cada uma numa área isolada do projeto.
+  
+  Aí vem a parte mais bonita, que são os atalhos de navegação. Setas pra navegar entre linhas. Espaço pra dar peek na sessão sem entrar (abre painel mostrando último turno). Posso digitar resposta direto no peek panel e mandar com Enter, sem perder o panorama. Seta direita atacha a sessão completa em tela cheia pra revisar contexto. Seta esquerda em prompt vazio detacha e volta pro dashboard.
+  
+  E você, já tava abrindo 5 terminais pra rodar Claude Code em paralelo ou ainda usa uma sessão só por vez? Comenta qual caso de uso tu vai testar primeiro no Agent View. Deixa o like, se inscreve no canal e ativa o sininho pra não perder os próximos drops do ecossistema Claude Code.
+  
+  
+  TIMESTAMPS
+  
+  00:00 Lançou o Agent View no Claude Code
+  01:20 Como utilizar o Agent View no Claude Code
+  06:00 Rodando tarefas em background /bg
+  08:00 Minhas considerações sobre o Agent View do Claude Code
+---
+Galera, Antropic lançou uma nova funcionalidade pro cloud code que vai melhorar a paralelização de agentes, a Agent. O que é isso? Bom, antes pra gente abrir duas ou mais sessões de cloud code, a gente tinha que abrir dois ou mais terminais. E isso deixava o gerenciamento muito difícil. Precisava ficar alternando entre eles para ver se a tarefa estava concluída ou não e dar andamento em uma, depois em outra.
+
+consequentemente a gente perdia muito tempo entre essas mudanças e também não dava para gerenciar de uma forma tranquila. Agora com o Agent VIW isso é resolvido. Tu vai poder ter um panorama geral de todas as sessões de cloud code estão trabalhando no projeto, consequentemente acompanhar ali de uma forma muito mais fácil. Vou te mostrar como utilizar o Agent View e também as vantagens que tu vai ter ao estar implementando ele no teu projeto. Beleza? Eu fiquei até o final do vídeo,
+
+que é uma funcionalidade muito interessante, muito pedida pelos usuários e vai adiantar muito tua vida se tu usa mais de duas sessões no cloud code por projeto. Eu sou Mateus Batista, programador há mais de 10 anos e hoje vem me aventurando muito no mundo da trazendo só o que tem de melhor para vocês. Já deixa o like aí, então se inscreve para poder receber vídeos todos os dias sobre inteligência artificial. Agora chega de delongas, vamos pro que interessa. Bom, galera, tô aqui passando também antes para avisar que estamos criando, ou melhor, eu estou criando uma formação de Codex, tá? Que é um agente
+
+de programação tipo Cloud Code, só que da Open AI. Tem se mostrado uma excelente alternativa, principalmente questão de preço e usage, né? questão de consumo de usage enquanto a gente programa com IA, enquanto a gente faz o nosso querido vibe coding e estou me aprofundando muito nele e gravando um treinamento completo com vários projetos. Se tu quer receber um desconto de lançamento, se inscreva, o link está na descrição, é totalmente gratuito. Quando lançar, tu vai receber esse teu cuponzão, beleza? Bom, vamos lá. Pro
+
+Agent, a gente vai precisar aqui ou ter o projeto iniciado ou criar o projeto do zero, né? Mas aqui eu já tenho alguma base para poder trabalhar nele. A ideia aqui é que a gente precisa ter o cloud na última versão, tá? Como que tu vai ver isso? Cloud menos transversion, tá?
+
+Se ele estiver acima da versão 2.1.139, que é essa versão que eu tô aqui, já vai est funcionando, né? É essa versão ou superior que vai ter acesso ao agent view, tá? Para atualizar, basta dar um cloud update, ele vai checar a versão e vai atualizar. Já estamos na última,
+
+então ele não faz nada. Bom, como é que a gente inicia? É bem simples. A gente vai utilizar o comando cloud agents. Ele vai abrir um terminal muito semelhante ali ao terminal que já abria anteriormente, tá? Só que agora ele
+
+mostra alguns dados a mais. por exemplo, quantas estão esperando input, quantas estão trabalhando? Quantas estão completas, né, nas sessões que eu tenho que trabalhar aqui. Esse projeto é um projeto bem simples, então eu vou somente criar alguns prompts para mostrar aqui para vocês os recursos que a gente tem na no agent view, tá? Lembrando aqui também que eu posso apertar interrogação, galera, ele vai me dar aqui os as hot keys, que basicamente control S eu posso mudar de viw. Vou
+
+colocar um prompt. Então esse meu prompt ele vai servir para criar uma estrutura de autenticação para esse projeto, tá? E aí eu estou com uma ação sendo trabalhada, tá? Vou abrir uma outra conversa. E aqui depois de mandar um prompt, eu posso apertar, por exemplo, para trás, né, a setinha para trás. E aí
+
+eu vejo que um agente tá trabalhando, tá? Então essa é a minha visão geral. Vou aqui mandar um outro prompt que faria uma outra ação do sistema, né? É exatamente para isso que esse recurso serve, para trabalhar com paralelismo do projeto. E aqui eu vejo que tem duas trabalhando. Então, novamente, se eu vou
+
+aqui, ó, com as setas, eu consigo alternar entre as sessões. E aqui, galera, ao utilizar as setas, eu consigo voltar de novo lá pro agents, né? E aqui, galera, ele terminou a tarefa, né? Eu apertar a setinha para trás, vou voltar aqui e eu posso ver que todas as duas estão completas, né? Eu posso entrar individualmente em cada uma, apertando aqui a setinha paraa frente e para trás eu volto lá de novo, né? Então
+
+eu me movo aqui entre as completas, eu posso voltar até elas, posso mandar uma mensagem rapidamente aqui para alguma delas, sem ter que entrar na conversa aqui, apertando barra de espaço, tá? Aqui, revise o que foi feito. Eu dou um enter e ele começa a trabalhar de novo. Então eu não preciso entrar na conversa especificamente para trabalhar nela. Posso simplesmente apertar aqui barra de espaço e continuar a conversa.
+
+Tá? Além disso, se eu não vou utilizar mais aquela conversa ali que eu já parei de trabalhar, posso apertar contrtrl X para poder deletar. Então, duas vezes ele exclui a conversa, tá? E aí eu posso começar um novo recurso aqui se eu quiser. Aí notem, né, que dependendo de como ela está, é uma cor diferente que fica no status aqui. E esse status de
+
+ait input seria quando ele tem alguma dúvida. E aí eu preciso responder lá para ele continuar, né, trabalhando working, tá fazendo alguma coisa, complet, ele já executou a tarefa. Esses são os três status possíveis. Eu também posso, galera, mandar uma sessão pro Aent View, por exemplo. Vamos dizer que eu quero começar aqui uma nova sessão do cloud. E aqui eu vou pedir para ele
+
+escrever teste paraa aplicação. Escreva testes para essa aplicação. Eu acho que vai demorar, né? Não tem perspectiva de acabar rápido. Aí eu posso usar o comando BG e ela vai automaticamente para o agent view, tá? Então aqui agora
+
+se eu dou um cloud agent agents, né, plural, eu vejo a tarefa que eu acabei de mandar pro background. Então é interessante também para liberar o terminal, se algo que não preciso estar supervisionando, eu posso mandar ela aqui pro background, abrir um outro terminal e trabalhar no que eu quero, tá? Tarefas que são de revisão de segurança, de performance, pode ser executado dessa maneira, porque ela não atrapalha diretamente a evolução do projeto, né? Então, uma alternativa que a gente tem aí com esse novo comando que utiliza o Agent View aí também para fazer essa questão e condensa tudo nesse local aqui que é onde a gente vai controlar todos os nossos agentes simultâneos. E eu não preciso necessariamente abrir um terminal, eu posso usar uma flag chamada BG, ó. Então, se eu dou
+
+aqui um cloud menos men- BG, reescreva o Redm, não sei o quê, pedir alguma coisa aqui para ele, ele já vai mandar a tarefa para lá. E se eu tenho um terminal aqui aberto com edit view, eu já consigo ver que a tarefa veio pro background. Não preciso nem abrir a conversa, eu posso já mandar direto para cá. Então é mais uma funcionalidade interessante que a gente tem aí a possibilidade de realizar sem tá bloqueando terminais, né? Bem legal aí um novo recurso que colocaram no cloud code. Bom, galera, ele não é tão
+
+complexo assim, ele resolve esse problema bem específico, mas é legal ver que Antropic tá sempre colocando coisas novas, né? Vou deixar com vocês também o link por artigo que eles colocaram aqui sobre o lançamento do Agent, tá? E isso pode ajudar vocês a entender outras detalhes que tô faltando aqui no vídeo, mas realmente eu cobri tudo que estava aqui para mostrar para vocês. Não é algo que eu costumo usar muito, tá? Eh, mais naquela questão que eu faço ali, que eu comentei com vocês sobre eh ou revisão, criação de testes ou até mesmo parte de segurança que eu tenho algumas rotinas e skills que eu posso rodar. Então, para
+
+isso, eu gosto de trabalhar dessa maneira, né? Antes eu abri um terminal novo, então agora vou começar a usar o Agent View, mas eu não sou daqueles caras também que abre 15 terminais ali e saem programando o sistema simultaneamente. Para mim não funciona isso ainda. E eu acho que tem que ter muita confiança na IA para fazer uma ação dessas, né? Bom, galera, avisos finais aqui, né? Formação Vibe Coding,
+
+nosso treinamento completo em Vibe Coding que tem cloud code, antigraft, open code. Se tá esperando a formação Codex Master, já pode se matriculando nessa aqui. Acesso vitalício, o link vai tá aqui no comentário fixado. Galera tá curtindo bastante. Tô atualizando semanalmente também esse treinamento, tá? E os membros do canal aqui tem
+
+acesso a vídeos exclusivos. Então se torne membro aí eh uma questão de R$ 7 R$ 8 a assinatura, né, o mínimo do YouTube e a gente coloca só conteúdos com muita prática, focados em estratégias mais avançadas. Então que aprender é mais a fundo as tecnologias que a gente passa aqui no canal é uma alternativa também. Galera, vou ficando por aqui. Espero que vocês tenham curtido. Bora fazer uma discussão aí nos
+
+comentários e espero vocês no próximo vídeo.
