@@ -1,0 +1,69 @@
+---
+video_title: "The essentials of HTTP cookie attributes"
+video_id: CZ8geW9Zh4U
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CZ8geW9Zh4U
+video_date: 2026-04-24T16:00:00+00:00
+video_description: |
+  Learn how cookie attributes work to control when and how cookies are set and used by your browser. This video explains key features like domain, path, expiration, and security settings. Understand how cookie attributes can affect functionality and enhance user privacy.
+  
+  Resources:
+  Find more videos in the Cookie Basics series →.  http://goo.gle/cookie-videos 
+  Learn about third-party cookie → http://goo.gle/third-party-cookies  
+  Cookie basics → http://goo.gle/cookie-basics
+  
+  Watch more What is Privacy Sandbox? → https://goo.gle/Privacy-Sandbox
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Sam Dutton
+  Products Mentioned: Chrome
+---
+[MUSIC PLAYING]
+
+SAM DUTTON: When a web server responds to a request for a resource, the server can include a Set-Cookie header along with its response. And that header tells your browser to store some text, a name, and a value in a file known as a cookie. For example, Set-Cookie cat equals tabby sets a cookie with the name "cat" and the value "tabby." Now, in addition to providing a cookie name and value, the Set-Cookie header can include attributes to control when and how cookies are set and when cookies expire. Cookie attributes included in the Set-Cookie header are separated by semicolons.
+
+And here's an example that sets the expiry date of the cookie. Now, note that browsers may set their own limits on the maximum expiration date of a cookie. So this video explains the most important features of cookie attributes, and the article with this video explains cookie attributes in more technical detail. And if you're not sure how cookies work, well, take a look at our video, "What are Cookies," and the guide that goes with it. So first up, domain.
+
+If a Set-Cookie header has a domain attribute, the cookie is sent with requests to the specified domain along with any of its subdomains. Now, if the Set-Cookie header doesn't have a domain attribute, the cookie is not sent with responses for subdomain requests. In other words, when you include the domain attribute, it reduces domain restrictions. So, for example, take a look at the response from the cats.example website.
+
+If no domain attribute is set, the cookie is included with requests to cats.example and not any subdomains. However, if the domain is set as cats.example, the cookie is included with requests to cats.example, as well as any requests for resources on subdomains, such as fluffy.cats.example or user.assets.cats.example.
+
+And by the way, a cookie with a domain that does not match the server that set it is rejected by the browser. And one thing to bear in mind here. After a cookie is set, it's only sent to the site that's set it. For example, a cookie set by cats.example won't be sent in requests to a different site, such as dogs.example.
+
+Next up, the path attribute. Well, like domain, this attribute controls what URLs a cookie is sent to. And if no path attribute is included in a Set-Cookie response header, the cookie that's set will only be included in requests to the same directory. For example, you visit the cats.example website and your browser makes a request for an image in the site's images directory, cats.example.images/tabby.jpg.
+
+Now, in response, the cats.example server sets a cookie, but it does not include a path value. And not having a path means that the cookie is only included with requests to the resources in the same directory. In our example, a request for tabby.jpeg in the images directory includes the cookie, but not a request for a resource in the articles directory.
+
+So if a Set-Cookie response header does include a path attribute, the cookie that's set is included in requests to any URL path that matches the path value. So if the path is set to /articles, then a request to any URL path that begins with /articles, includes the cookie. For example, a request for cats.example/art icles/tabby/index.html will include the cookie.
+
+And so will a request to cats.example/art icles/breeds/tabby/index.html.
+
+However, the cookie will not be included in requests to the images directory or for any request to a URL that doesn't begin with the path /articles. If the path is set to a forward slash on its own, so path equals forward slash, then the cookie is sent along with requests for any URL on the site. Next up, expires and Max-Age. Well, you can specify a cookie expires date and time, or a cookie Max-Age in seconds, after which the cookie is deleted and no longer sent. For example, Set-Cookie cat equals tabby expires equal Tue, 31 Dec 2999 23:5959 GMT.
+
+Well, this cookie expires at the end of the millennium. And by the way, note that browsers may cap the maximum expiration. Now, another way to control the cookie lifetime is through Max-Age. And this attribute is used when you want the cookie to last a certain duration, but you don't want to base that expiration on a date. Now, Set-Cookie cat equals tabby Max-Age equals 86400, well, this cookie expires after 86,400 seconds, which is equivalent to one day.
+
+And if you don't specify a Max-Age or expires attribute, a cookie is deleted when the current website session ends. And this type of cookie is sometimes known as a session cookie. If a Set-Cookie header includes the HTTPOnly attribute, the cookie cannot be accessed from JavaScript code using the document.cookie method. The cookie can only be accessed by the server that set it.
+
+And this helps protect against certain types of attacks that use JavaScript to target cookies. And next up, the secure attribute. If a Set-Cookie header includes secure, the cookie is only included with requests that use the encrypted HTTPS protocol. The cookie will not be included in unencrypted HTTP requests. And doing this helps stop intermediary attacks, where an attacker secretly intervenes in communications between the browser and the server to pass on information or maybe to alter it.
+
+And if you're a web developer, you should set server cookies as HTTPOnly Secure whenever possible. Next attribute, SameSite. Well, this is a little more complex to explain. So, say you're visiting the website cats.example again.
+
+Well, this site includes a map from a different origin, catmap.example. And remember, that a request for a resource from a site that's different from the site that you're visiting is a cross-site request. A cookie set in response to a cross-site request is known as a third-party cookie. And the same site attribute controls whether a third-party cookie is included in a request.
+
+And SameSite can be one of three possible values-- strict, lax, or none. Now, with strict, the cookie is sent in response to requests from a page that's on the cookies origin site. For example, you visit cats.example and have a cookie set with the attribute SameSite=Strict. Now, later on, you're on a different site and you follow a link to a page on the cats.example site.
+
+Now that request is cross-site. So the SameSite=Strict cookie that was set previously will not be sent with the request for the cats.example page. Lax works the same way as strict, except that the browser also includes the cookie when the user follows a link to the cookie's origin site. Now, unlike the previous strict example, now the cookie is included when you follow a link to the cats.example site.
+
+And lax is the default setting if no same site attribute is included in the Set-Cookie header. With SameSite equals none, well, there are no constraints. A cookie is included with a request whether or it's cross-site. Though, of course, the cookie is still only sent to the site that's set it. With SameSite=None, the cookie must also have the secure attribute.
+
+Now, since third-party cookies must be SameSite=None, you can actually check for that value when you're auditing for third-party cookie dependencies. And finally, the partitioned attribute. And I have to say, this is my favorite cookie attribute, because it's relatively simple to use and it can make a big difference. This attribute lets you opt in a cookie to partitioned storage with a separate cookie jar per top-level site. And the cookie is double keyed by the top-level site, as well as the domain that sets it.
+
+For example, imagine that there are two websites, website A and website B, but both include an iframe from website C. A partitioned cookie set by the iframe on website A cannot be accessed by the iframe on website B. The AC cookie is separate from the BC cookie. Cookies with a partitioned attribute are known as CHIPS, Cookies Having Independent Partitioned State. And partitioned cookies must have the secure attribute.
+
+Now, partitioning cookies helps prevent data leakage and can enable a site to read and write cookies in cross-site contexts, such as iframes, where third-party cookies are blocked. And the good news is, that since CHIPS are partitioned by top-level site, they can't be used for cross-site tracking. But that also means that they're not blocked by third-party cookie restrictions. So, you should definitely consider partitioning cookies wherever you can. Well, that covers the basics of cookie attributes.
+
+Thanks so much for watching. Be sure to check out all the videos in the cookie basics series. And if you're not sure how cookies work, check out our video, "What Are Cookies." We have a guide and demos to go with this video, and lots more resources on our website to help you understand cookies. [MUSIC PLAYING]

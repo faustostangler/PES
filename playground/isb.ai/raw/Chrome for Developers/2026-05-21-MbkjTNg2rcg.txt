@@ -1,0 +1,208 @@
+---
+video_title: "What's new in Angular"
+video_id: MbkjTNg2rcg
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MbkjTNg2rcg
+video_date: 2026-05-21T22:37:30+00:00
+video_description: |
+  Discover how Angular is evolving to empower developers with new features and AI tools as you forge toward the future of robust web applications. It's an exciting time to be a web developer and the latest Angular updates will make you more productive and deliver better developer ergonomics.
+  
+  Resources: 
+  Watch more Angular content → https://goo.gle/4uVfw2c 
+  Learn more about Angular → https://goo.gle/3P9CAuS 
+  Get Angular Skills → https://goo.gle/4tyHwHD 
+  Get started with Angular MCP → https://goo.gle/4foegjh 
+  Checkout Chrome DevTools for Agents → https://goo.gle/42yBgop 
+  Learn more about Angular + AI → https://goo.gle/3P3iZfS 
+  
+  Speakers: Mark Thompson
+  
+  Watch the Chrome sessions from Google I/O 2026 → https://goo.gle/Chrome-at-IO2026
+  
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  
+  #GoogleIO
+  
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: Angular, Web, Chrome
+---
+[MUSIC PLAYING]
+
+MARK THOMPSON: I'm so happy to be here with you all. I'm so grateful for your time. Here's what I need you to do for me. If you can, place your hands on the sides of your seats right now because I want you to hold on because we're about to go through an exciting journey on what's new in Angular. If you are excited to know what's coming up, please make some noise.
+
+[CHEERS] Oh, look at this. This is amazing. You folks are absolutely outstanding. In case you don't know me, my name is Mark. I am the DevRel lead on the Angular team here at Google.
+
+And I just want to say thank you to all of you for being in the room with me and thank you to everyone at home who's watching and following along. Now, here's something interesting about how we've been working on Angular. See, we've worked to position ourselves as a solid foundation for building what's next on the web. And during our time together, we're going to spend time talking about two main pillars or two main areas of focus. The first thing we're going to talk about are Angular's API, based on how we've changed the API surface.
+
+And then the second thing, which I know a lot of you are excited about, especially if you're here at I/O, you know there's a lot talk about AI. Well, Angular has a very compelling AI story as well. So by the time we finished hanging out together today, you'll understand how Angular is improving that API. You'll also get a real good feel for where we've expanded our AI story. And then this is also very interesting to me.
+
+How is Angular reaching beyond the traditional developer experience to target even more users? Now, if you are ready, I need all of you to give me a big yeah. AUDIENCE: (TOGETHER) Yeah. MARK THOMPSON: How is this my job? I can't believe that I get to do this.
+
+This is amazing. All right, let's talk about these API updates. One of the things that we are so proud of on the Angular team, is our ability and our reputation for changing and evolving Angular. If you use Angular today, it is not the same Angular from five years ago. It's not the same Angular from three years ago.
+
+And we've worked really hard to build that trust and that reputation. And we've delivered updates across the API surface. I mean, if you just think about what we've done with Signals, you think about what we've done with SSR, I mean, there's a lot of work, but a place that I'm really, really excited about is how we've improved the template story. We've launched things like "let." We have the defer syntax and our expanded and revamped control flow.
+
+But please believe we didn't stop there because Angular templates are very, very good. Let's take a look at what we've done with something that's actually not as popular when people think about control flow and major updates. But let's talk about the switch statement. Now, here's a standard example that you may see in the code that you write today. We're using an order status property.
+
+And then there is a display message for each of these statuses. But if you notice, two of these display the same thing. And I can already hear you at your keyboards, at your desk saying, oh, this feels like something. It feels verbose. It feels like boilerplate.
+
+Can't the team do something better than this? Well, guess what? We can. And let me tell you what we can do. Now we've introduced multiple case matching with switch statements.
+
+So if you have multiple statements that have the same output, you can now make the code a little bit more concise. And this feels good. But we can go better because we did something else here that is really, really fantastic. What about if you're using a union type when you're writing a template? You see, we used three of these types in our example.
+
+But what if they contained more types? Now, this is where some very small but annoying bugs can come up in your code. Because if you're working on a union type, and then if that union type changes, well then your UI is what? It's out of sync. And that's one of those things where you might not think about until it bites you, and you're spending a lot of time debugging, or you're using your agent to debug, and you're burning tokens.
+
+Either way, you don't want to have to experience this. We can do better here. Now we have something called exhaustive checks for switch statements, where if you add the default case and use the "never" keyword, you'll get something really fantastic, a compile time error. Now, this compile time error means that when you are authoring your code, you find this bug way beforehand, saving you time and frustration. Now that was a lot talk about a switch statement.
+
+So what if I switched up? [LAUGHTER] Switch, switch, OK, you got it. You got it. You got it. When you're writing Angular templates, one of the things that we know developers want to do is they just want to inline functions because you may have a function or some logic that you want to implement, but you don't want to have to create another function in your TypeScript class.
+
+And you're like, oh, just make it easy for me to inline this. Fine, now you can do that. You can inline arrow functions in your templates. But before you start writing your long, really complex functions, let me give you a few guidelines. This is for small, short, quick functions, OK?
+
+Anything that's long running belongs in your TypeScript class. But if you have something quick, like this update, you can definitely do this here. And if you're worried about the impact on change detection, don't. I know that in the community there are two schools of thought. Some people say, don't call functions from the template.
+
+Some people say it's fine. I work on Angular team. I want to tell you something. It's fine. For short functions, it's fine.
+
+Friends at home, look at this face. It's fine. All right.
+
+I want to share some feelings with you. Is this a safe space for me? AUDIENCE: Yes. MARK THOMPSON: OK, it's a safe space. Let me share some feelings.
+
+And I want to share some feelings about template errors. I find them to be very annoying. Not only are they annoying, they can be very difficult to deal with, especially if you have a crashed change detection cycle. Because what happens? Your screen goes blank.
+
+Your users have a bad time. And in Angular, it feels like we should have a better solution. What do you all think? AUDIENCE: Yes. MARK THOMPSON: I am not convinced.
+
+What do you all think? AUDIENCE: (TOGETHER) Yes. MARK THOMPSON: OK, that's what I was saying. You need a better solution? Fine, then meet boundary.
+
+[APPLAUSE] All right, excellent, I'm so happy that you're happy. Let me tell you more about what boundary is. By the syntax, some of you in the room, and at home, already figure out that this is for error boundaries in Angular templates. Let me show you what the problem is, and we'll show you how it actually works. You see, your application may have a component or directive that crashes that crashes your entire change detection cycle and leads to that infamous blank screen.
+
+And you're kind out of luck right now if that happens. So let's go through an example, so you can see it very closely. Now in this example, we have some code, and then we have the rendered output in the browser. Now here is a promotional widget for free shipping. Now, if this crashes because some bug made it into it, it really shouldn't stop the entire checkout flow.
+
+But it could because here's what you may end up with if it crashes. And what's the problem here? Well, over time, you may lose users. And if you're working, especially with something where revenue is involved, and your application suddenly has less revenue, that's not what you want. So now you can add boundary into the template, and it gives you a way to isolate the errors in that particular code, so the rest of your component can still work.
+
+But we can take this further because you can also have a backup UI, a fallback UI. And what makes this really awesome is to think about what it can open up in the future. You can even think about really cool things, like, what if you could do intentional retry logic if your component crashed? It's very, very exciting. This will be landing as developer preview in Q3 2026.
+
+And you know our policy. We don't give you exact dates on the Angular team. We work on it until it's ready. But we've been working on this. The team is really excited about it.
+
+And you will see even more information in the upcoming weeks. [APPLAUSE] OK, yeah. Oh, the applause, you can never clap enough for me. Please understand that. You can clap as much as you want.
+
+You can always clap. All right, now let's talk a few more API updates that we think you will like. Signal Forms has made a splash in the Angular community. It's our new robust form solution because here's what we did. We took the best parts of Reactive Forms and Strongly Typed Forms, then everything you loved about Template-Driven Forms, plus everything that you love about Signals and mixed it together to create Signal Forms.
+
+And you all have signaled that you love it. Here's an actual quote. [CHEERS] Thank you. Here's an actual quote. OK, no one actually said.
+
+I said that. But it doesn't make it untrue because we've got an incredible positive feedback about Signal Forms and how it's transforming the way you compose forms in Angular. Now, some friends may not have had experience with it because it's been in developer preview. So let's walk through a quick example. Here's how you start.
+
+First, you define your model with a signal. Then you import the Form function, and you pass in that model to the Form function. Now you have a Signal Form. You have it right there. But you can take it further and provide things like a schema.
+
+And in that schema, you can do things like validation. And you can use our built-in validators. In this case, we're using the required validator that says that the schema payment type is required. But here's what makes it really interesting for you as developers. Your use cases are much more robust than this.
+
+So what about a custom validation? So here is an example of me defining a custom validation using the validate function. And what does this one do? It checks if the value of website starts with HTTPS. We pass in the field that we want to match against and then the function.
+
+You understand this logic. This is just TypeScripts. But check this out. This is the error that you return if it doesn't match. So you get to decide what the kind of error is and what the message that the user can see.
+
+And if it works, you return null. Now, we've been working behind the scenes since we first announced it. Here are some of the things that are new about Signal Forms. One, full set of documentation, so we've improved the documentation. We've fixed a lot of bugs.
+
+You all have been trying it and letting us know what you think, and we've been working really hard to fix those bugs. And guess what? Now we have full support for Angular Aria and Angular Material. [APPLAUSE] Yeah, this is the time for spontaneous applause. That's right.
+
+No, this is really, really exciting. And Signal Forms will be stable in Angular v22. So you can use this with confidence in your production applications. [APPLAUSE] I find Signal Forms to be a bright spot for Angular. But another bright spot is Angular Aria, our fully accessible and fully customizable set of UI directives and patterns.
+
+Now, Angular Aria as a concept, can be a little difficult to grasp, so what helps me usually is a good example. So let's take one. Here is an Angular Aria toolbar without any styles applied. This is right out of the box the basic HTML that we provide. Now, this in its current form is fully accessible and ready for you to apply logic to.
+
+But let's make it more fun. My goal here is to turn this into a neon sci-fi theme for my users. Let me show you how we do that. In the component template, this is what some of the markup looks like. This is a bit abbreviated, but notice that there's the ngToolbar and the ngToolbar widget.
+
+You need both of these directives to enable all the accessibility features that you're hoping for with Angular Aria and using the toolbar component. Now, how do we make it look nicer? Well, you apply the skills that you already have. Your CSS skills are what you use, your styles, your design system. Whatever you do where you work, you just apply it.
+
+So you can see here in this example, I'm applying things like gap, display, padding, border radius, et cetera, to make the look that I'm going for. So let's see how it turns out. And this is what you get. Now, there is no magic behind the scenes that I didn't show you. All the code for this you can find on things like angular.dev,
+
+for example. We have exhaustive code examples of how you can style Angular Aria components to meet your needs. Here's how we've improved it since the original introduction. One, the APIs are stylized, and a lot of the things that you all as a community have asked for, we've taken care of. Signal Forms are fully supported.
+
+And this is a big one. You wanted to test, so now test harnesses are available for Angular Aria components and directives. [APPLAUSE] Oh, so spontaneous, I love it. Thank you, thank you, thank you. That's so great.
+
+And I just showed you the toolbar. Remember, Angular Aria patterns, we have at least 11 patterns available. We're working on more. And you can take these patterns and create what you want for your users. And again, you bring the styles.
+
+You bring the business logic. And we bring the accessibility that helps you to serve all users, no matter how they use the web. Angular Aria, another feature that will be stable in Angular v22.
+
+In our mind, we want to bring as many of the trusted APIs that you use for your applications to Stable, so you can build with confidence. Not only is there Signal Forms, there's Angular Aria, but our asynchronous reactivity APIs are now moving to production, resource and httpResource. So stable all the way through. And again, you get to have the confidence that you want as a developer. You can learn more about all of these updates on Angular.dev.
+
+All right-- [APPLAUSE] I love it. Thank you. OK, the moment, many of you have been waiting for. What is Angular's updated AI story? Did you know that last year, on this very stage, I stood up here so proud, filled with joy to announce the angular.dev/ai, which is the home for AI and developers using
+
+Angular. And since then, we've expanded our story significantly. Let's talk about how developers can build with AI right now. AI has changed so much. If you think about six months ago, the world has moved so rapidly since then.
+
+We thought MCP was great then. Then there was a little time we were like, do we need MCP? Now MCP is stronger than ever, but now we have Agent Skills. We have so many technologies that we can use to build fantastic applications. And the stream of new ideas does not stop.
+
+So the Angular team, what we're doing, is trying to think as thoughtfully and meaningfully as we can about how do we empower you as developers to build apps with agents, with your AI tooling, in all the ways that you like to build. And the first piece of that formula is Angular MCP. MCP, or Model Context Protocol, is a way for giving agentic environments the tools that they need to accomplish tasks. Now, Angular MCP comes with some special tools already. There are things like the AI Tutor.
+
+It could look for examples to give to agents in order to be able to write more modern code, we can find best practices, lots of tools, but we've added some new things that we think you'll really love. When I have been writing applications, one of the hardest things for me is having to rely on ng build as the way that the server gets built, and depending on your agentic tooling, that workflow can feel a little disjointed. So now we've added MCP tools, one for a devserver.wait_for_build, which allows an agent to build, wait for the output, review the output, and then use that output to influence what the agent does next. Along with that, we have devserver.start.
+
+Perhaps the agent wants to start the dev server to run it in the browser or do something for you, now you have control from an MCP server to do that. We also have devserver.stop to be able to stop the server from the agent's point of view. But that's not all. Look at all the tools that we have to empower you to build what's next for the web using Angular, MCP, the AI tutor, all the new devserver controls.
+
+There's the Modernize tool that can help you to identify places where you can modernize your Angular applications. There's the Onpush Migration. There's just so many more things, and we're constantly thinking about what else we can do. If you want to get started with Angular MCP, here's what you run, in ng mcp to get the configuration to add to your agentic environments. But let's take this a little bit further.
+
+See, I've found in my development experience, is that when I mix MCP servers and tools, I can create something really, really special, a really special developer experience. So what happens when you use Angular MCP with Chrome DevTools for Agents? Let's take this example prompt that I ran. I want to update the Home page of this application because I want to show performance showtimes, like at a theater. But I want to take a screenshot of the Home page to verify the changes.
+
+Why do I want to do that? Has anyone here ever asked an agent to do something, and then it said that it did it, but it didn't do it? And then you go in this loop. You're like, hey, I asked you to do it. It's like, oh, you're absolutely right.
+
+And it still doesn't do it. OK, so now I'm asking for an extra step. Well, verify that you actually did something using a screenshot. Let me show you what the workflow would look like. First, you use Angular MCP to build the application.
+
+Then the agent can use the start command to start the application. Then we can turn control over to Chrome DevTools for Agents to actually go to the browser. That's where it starts to get really special. And then you can even ask Chrome DevTools for Agents to snap a screenshot. Now, this is just text.
+
+This is not as exciting. Let's watch it in action. So in this example, first I'm entering the prompt into the CLI tool.
+
+All right, now as the agent is thinking, it's going to start to figure out, well, which tools do I want to use?
+
+All right, so it read through the code. It started to make some code changes.
+
+See there it was already using the wait_for_server. So it can get some of that output, so it can influence what it does next. Then it opened it in the browser to verify. But then here I go. I actually want to see the screenshot.
+
+Now, this is with a small application. Think about what you can create when you combine multiple MCP servers to do these advanced agentic workflows. Because now there is no denying whether or not the changes I requested were done or not. That's a lot of power for the future of how you build. If you want to get started with Angular MCP, here's where you can go angular.dev/ai/mcp.
+
+Then if you want to check out Chrome DevTools for Agents, head over to github.com/ChromeDevTools/chrome devtools mcp.
+
+The next piece of the story are Agent Skills. I actually love Agent Skills as a mental model for me to understand how to empower agents to cover the gap between the training data and the new APIs. For example, with Angular, as we talked about before, we're always updating our APIs, and we're expanding the surface. But training data happens at a time that we don't get to control. But with Agent Skills, we've been able to do things like give it the skills it needs and the tools for things like Angular Aria and Signal Forms so you can get modern Angular applications.
+
+The first skill I want to just highlight is our Angular developer skill. Now, Angular developer skill covers the essentials for building modern Angular applications. But here's what's awesome. It's not just a dump of the documentation into a skill file. We optimize it down to less than 140 lines of code.
+
+And because we're using progressive disclosure, only the parts of the skills that are needed are loaded at that time. And if more things are needed, more context is needed, we've provided a set of reference files that are only loaded as needed. That's Angular developer. What about our other new Angular Skills? Well, there's angular-new-app.
+
+Let's say you've heard a lot about Angular, but you are using a new agentic development environment. You don't have anything set up. Well, you can use the angular-new-app skill in conjunction with angular developer, and the angular-new-app will configure your environment to use Angular.
+
+But that's not it. Now, some of you in this room are actually-- and watching at home-- some of you are contributors to Angular, and you would like to open pull requests. But one of the things that's really hard is to know where to start. Well, we set up a list of contributor skills that you can use to understand the mental models required for the agents, and even for humans, to become contributors of Angular. [APPLAUSE] So glad you like that one.
+
+So you can check this out. And I've read through these, and I've actually found them to be helpful for me because Angular's API surface is vast and robust. It's hard to know everything. But these help me to understand where to start if I'm wanting to make a change. So check out the contributor skills in the angular/angular/agent directory.
+
+All right, Angular Skills are available today, so please use them in your development environments wherever you do your agentic workflows, and let us know what you think. If you have any issues that come up or any feedback you want to share with us, like how much you love it and how great it is and how you can't wait for us to make more, definitely open the GitHub issue. We would really love to see it. All right, let's talk about Vibe Coding.
+
+Now, we've seen a big boom in the development space of this new community of developers. They call themselves builders. Now, these are people who want to bring their ideas to life, but they don't have the same skills of code to do that. But you know what? I feel like this.
+
+If you are building great apps, you are welcomed with us. You can use Angular to build your next great idea, whether you know how to code or not. And here's how some of the ways that we've made that happen. We worked really closely with the Gemini Canvas team for the web app, where you can specify in the prompt, the technology that you want to use, which is Angular in this case, to create an application. Now, my kid plays sports, and we have to rotate who brings the snacks.
+
+But some of these parents are not rotating. I'll be honest with you, I'm tired of bringing snacks all the time. All right, so we're going to have an app that's going to help us keep track of who brings the snacks. Now, here are the results that I got from that single prompt. And I'll tell you, this is just the beginning of what you can do from this vibe coding experience.
+
+You can take this code and chat with Gemini to extend it, still in Angular, or you can go and download the code and make changes yourself. You take it to whatever environment that you want. It is your choice, however you want to work.
+
+What about in Google AI Studio? They just released a fantastic suite of new advancements in their vibe coding experience. So let's talk about something you can do here. First, if you want to get started, in the configuration panel, you get to select your technology, so you can pick Angular from the configuration panel. And check this out.
+
+As a parent, I got a lot of bones to pick. So here's another one. I'm just airing out all of my feelings in here. You all said it was a safe space. When I learned math, especially multiplication tables, I wrote them over and over again, until I memorized them.
+
+My kid's teacher tells me I have to quiz him with math facts all day, which means I have to walk around like, hey, son, what's 5 times 5? What's 4 times 8? Nobody wants to do that. I don't want to do that. So luckily, I'm a genius, and I have tools that can empower my genius ideas.
+
+So here's my prompt. I need a math facts app to help my third grader improve multiplication skills. Now, make it use flashcards and keep track of the progress of specific facts that they struggle with. Now here is my one-shot result. OK, this is just from one shot.
+
+I did not edit this more. But I could also refine this app in the browser. I can update it. Or again, I can chat with the Gemini, and I can add tools like Firebase. I can do so many things from the browser.
+
+See, I want you to think about the power of vibe coding beyond what it means for who gets to code or not. Think about what you get to create because this is the opportunity to bring those things that you didn't have time for. And now you have the tools that empower you to create great applications. And then you could take something vibe coded in Google AI Studio, bring it into your IDE, and continue the work because I know you're Angular professionals, and I know you got all the skills. So use all the tools to your advantage to create the next great application.
+
+What an incredible time to be an Angular developer with the power of our expanded API surface. You can see the things that we're doing. We have the new Boundary coming up. We've improved our templates. That doesn't only benefit you as developers.
+
+We've added things that benefit agents because agents have their way of coding. We're like, oh, that actually makes sense. We should add this. And now even the agentic workflows are smoother. We've expanded our AI story with the MCP tools and the new Angular Skills that we really hope that you will try out.
+
+And then think about the integrations that we have with teams like Gemini Canvas and AI Studio to enable developers to build applications in the web in Angular, a powerful framework for building scalable web apps. Now you can build in a web app. What a time to be alive. Angular continues to be a solid, a rock solid foundation for building what's next for the web. And Angular version 22, we'll continue this story and announce even more features that will be available to developers.
+
+Version 22 launches the week of June 3, 2026, so be sure to tune in. [APPLAUSE]
+
+If you want to learn more about the things that I'm talking about, and you want to be tapped in with what's coming for Angular, be sure to head over to angular.dev. And thank you, thank you, thank you for hanging out. You all have been fantastic. Get out there and build great applications.
+
+See ya. [MUSIC PLAYING]

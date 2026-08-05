@@ -1,0 +1,223 @@
+---
+video_title: "Unlock modern web capabilities in your AI coding workflows"
+video_id: bo3i0FzDUYo
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bo3i0FzDUYo
+video_date: 2026-05-21T19:06:03+00:00
+video_description: |
+  Discover how Chrome is bridging the knowledge gap for AI tools, ensuring your coding agents have up-to-date guidance on what features are available and how to use them properly. Equip them to understand the user and browser support requirements of your project, so you can go beyond one-size-fits-all answers to bespoke solutions tailored to your specific needs.
+  
+  Resources: 
+  Modern Web Guidance → https://goo.gle/4uaZsJt 
+  
+  Speakers: Philip Walton
+  
+  Watch the Chrome sessions from Google I/O 2026 → https://goo.gle/Chrome-at-IO2026
+  
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  
+  #GoogleIO
+  
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: Web, Chrome, AI/Machine Learning
+---
+[MUSIC PLAYING]
+
+PHILIP WALTON: Hey, everybody. My name is Philip Walton. And today I want to start off by showing you a screen recording that I made of two different demos. Both of these demos look and function identically. Both have dropdown menus that smoothly animate in and out.
+
+They're both fully keyboard accessible. They both support light dismiss. And they both work in Chrome, Firefox, and Safari. These demos were both also generated using AI. In fact, they were generated using the same coding agent, the same model, and the same prompt.
+
+The difference, though, is the version on the left was generated using an agent in its standard, default, out-of-the-box configuration. And the version on the right was generated using the same agent, but with one extra thing installed, and I'll get to that later. But there is one more big difference between these two demos. If I open up DevTools, and I zoom in here on the Network panel, you can see that the version on the left loads 172 kilobytes, most of which is JavaScript. Whereas, the one on the right loads less than 3k, and uses absolutely no JavaScript.
+
+And to be clear, that's 172 kilobytes over the wire, minified and gzipped, with all of the production optimizations turned on. And I didn't modify this code at all. This is what the AI suggested. Now, admittedly, this is a bit of a contrived example because no app is just a settings menu and nothing else. Once you add more features, you might need to add some more JavaScript.
+
+Still, I do think this raises an interesting question. Why are AI coding agents recommending a solution that requires almost 172 kilobytes of JavaScript when the same exact solution can be built in a way that requires no JavaScript at all and still works across browsers? So if you were at any of the talks earlier today, you heard a lot about this, a lot about how amazing AI is. And don't get me wrong, AI is amazing. It truly blows my mind every single day.
+
+But that is just one side of the story. The truth is that, while AI has transformed the software industry, and it has enabled us developers to write code way faster than ever before, there is another side to the story. AI is definitely not perfect. And if you, like me, follow a lot of well-known frontend developers on social media, then you'll know that many of these folks are definitely not shy about pointing out just how not perfect these AI coding agents are, especially when it comes to writing HTML and CSS.
+
+And, you know, these folks, they're not wrong. There have been so many amazing developments on the web over the past few years and, yet, if you ask a coding agent to go build something for you on the web, it's most likely not going to reach for the latest web platform features to do it, even if those features really are the best tool for the job. And this isn't all that surprising if you consider that most of the training data used by these models was written during a time when most developers had to support legacy browsers like Internet Explorer. But regardless of the reason, the reality is that, for frontend web development, coding agents do tend to recommend legacy solutions even when there are better, more modern alternatives.
+
+Another big problem we see with AI models is that they have a knowledge gap. Every model has a knowledge cutoff date where any new developments on the web that occurred after that date are just not included in the model's training. In the past year alone, Chrome has shipped more than 50 brand new web features. But due to these knowledge cutoffs, many of these features are just completely unknown to these models. And while techniques like RAG and web search can help with this problem, they don't eliminate it entirely.
+
+And if you ask a coding agent to use a feature that it's never heard of, it'll usually do a web search. But if you ask it to do something that it thinks it already knows how to do, then it'll often just reply confidently right away without checking for more up-to-date information. For example, here's some code that an agent generated after I asked it to build a tooltip using the new interest invokers API. Now, if you look closely at the highlighted line of code, you can see that the model used the interesttarget attribute, which is not correct. interesttarget was the attribute name when this API was first proposed back in 2023.
+
+But right before the API shipped in Chrome last fall, the name was changed to interestfor. And so that means that the code you see on the screen will silently fail when run in a browser, which will make it pretty hard to debug. Now, this specific problem is probably going to be fixed for this API in the next generation of the models. But the larger problem is not going away anytime soon. A third problem we see is how AI models make cross-browser support decisions.
+
+In our testing, AI is way more conservative than it needs to be when it comes to cross-browser support. It's understandable that these models or these tool makers would want to optimize for broad compatibility. But now that we have initiatives like Baseline, which includes compatibility data for nearly every web feature, there's really no excuse for not using it. Agents should not be making generic, one-size-fits-all browser support recommendations. They should be tailoring their recommendations to the specific needs of your project.
+
+So that's a quick overview of the main problems we see with AI coding agents when it comes to modern web development. To recap, AI coding agents frequently recommend legacy patterns, even though better, more modern alternatives exist. Second, AI models have blind spots and either aren't aware of or have incorrect information about the latest web platform features. And third, AI models tend to make outdated, one-size-fits-all browser support recommendations. But the good news is that here, in Chrome, we believe that these problems are all very solvable.
+
+And we've been hard at work on a solution that we're excited to share with you all today, an early preview. We call it Modern Web Guidance. Modern Web Guidance is a comprehensive and expert-vetted set of skills covering all of Chrome's best practices on building for the modern web. This package embeds decades of Chrome's web platform experience expertise directly into your coding agents. And because it's based on skills, it works with any AI coding platform.
+
+You can install Modern Web Guidance with this single command, npx modern-web-guidance install. Or if you're using any of the IDEs or coding agents shown here on the screen, you can find and install Modern Web Guidance directly from within these tools.
+
+So I know, right now, the market is absolutely flooded with new skills releases. And as a developer, it can be challenging to keep up, overwhelming, even. It's also especially hard to determine which skills are good and worth using and which skills are-- let's face it-- basically just slop. So I want to stress here that Modern Web Guidance is not your ordinary skills pack. This is something that we on the Chrome team have been investing in a ton over the past six months.
+
+And it's something that we're committed to investing in for the long term. So let's dive in and take a closer look at what's included and how it works. So Modern Web Guidance is comprised of two distinct levels of guidance. First, we have a set of high-level guides codifying the best practices for broad web disciplines like performance, accessibility, security, user experience, and many more. In addition to these high-level guides, we also have a set of very specific low-level guides covering web features that have been recently added to the platform.
+
+And we've seen that AI models just don't yet have a good understanding of how to use them properly. All of these guides have been created by members of the Chrome team, in collaboration with a number of external subject matter experts that we've hired to contribute to this project. And because these guides focus on core web platform features, they will work regardless of whatever framework or stack you're using, or anything like that. Now, before I dig deeper into the specifics of these guides, I want to give you all a quick overview of how the tool works at a high level. So when you're using a coding agent out of the box, the flow is pretty simple.
+
+The user types a prompt into the tool. The prompt is given to the AI model, which then produces an output response. If you're using Modern Web Guidance, then, before the AI produces an output, it'll perform a semantic search locally within the Modern Web Guidance package to see if any of our guides match the use case in the prompt. If there are no matches, then those guides will get added to the context window. And if they're-- sorry.
+
+If there are matches, those guys will add it to the context window. If there are no matches, the AI will respond as normal. Now, note that this is a bit different from how most skills work where each skill is a distinct skill that MD file. With Modern Web Guidance, we expose a single entry point skill that has access to a CLI that does the search. And we do this because we currently have more than 100 distinct guides.
+
+And we plan to add likely hundreds more. So it just doesn't scale to expose these all as single, top-level skilled MD files. So let's take a closer look at what these guides look like. Now, I mentioned before that we have both high-level discipline skills and low-level feature guides. The high-level guides are very similar to the skills that you've probably seen before.
+
+But for the low-level feature guides, we took a different approach that I think is pretty novel, and so I want to talk about it. First, rather than focusing on the features themselves and documenting how those features work, instead, each of these guides focuses on a distinct use case that one of these features unlocks or makes easier to implement. For example, one of the use cases that we identified for the View Transitions API that's been unlocked was "Visually connect persisting elements across different page states or navigations by smoothly morphing their size, position, or other styling properties," for example, expanding a thumbnail image in a product list view into a full-bleed hero image in a product details view. Now, you'll notice that use case doesn't mention the View Transition API at all. Instead, it describes a task that the developer might want to implement or to accomplish, where the View Transition API happens to be the best choice to implement it with.
+
+And this is really important because developers don't generally prompt their coding agents to use specific features. They might not even know that those features exist. Instead, they prompt their tools to implement use cases. And so we need our guides to match the prompts that developers are actually using. So the second aspect of each of these guides is that they're optimized for AI consumption.
+
+And by that, I mean that each guide is concise, it gets straight to the point, and it contains only the minimum amount of information needed for the AI to properly follow it. This is more efficient than doing web search because, even if the agent finds up-to-date and accurate information on the web, which is not guaranteed, it still has to read through all of that content, use all of those tokens, just to find the bits that are relevant to your use case. Or perhaps not. It might not find it. Our guides are already scoped to the use case.
+
+They're already vetted and tested for accuracy. And they're already locally on your device. So third, every guide, we include a section that documents our specific recommendations and fallback strategies to ensure that the implementation of the use case works across browsers. Now, I want to dig into that last part because this cross-browser fallback guidance is, in my opinion, the absolute best feature of this tool. So let me explain how it works.
+
+For each guide, we start by documenting the ideal implementation using the most modern solution available. For this part of the guide, we do not take browser support into consideration at all. We assume that any feature can be used, and we pick the best feature for the task at hand. And we do this because we want to support people who are experimenting with new features, people who are building extensions, Electron apps, building internal company tools, or really any situation where cross-browser support is not a major concern. We don't want AI tools to prevent people from using new APIs if their situation allows for it.
+
+However, if any of the features in the ideal implementation are not Baseline widely available, then we always include a fallback recommendation. And whenever possible, we make sure that fallback recommendation works across browsers. The only exception to this is things like WebMCP, where there really is no cross-browser fallback. But in all other cases, if there is a cross-browser fallback, we use it. And if there's not, we make it crystal clear that the feature is only available in some browsers, and we show how to properly feature detect for it.
+
+And the reason we take this two-layered approach, starting with the fully modern and then going with the fallbacks, is so that the agent can pick and choose how to implement the use case based on your site's browser support requirements. And that brings me to the final feature I want to talk about in this package, our Baseline integration. I said that we want coding agents to be able to customize their implementation based on your browser support requirements. And for this to work, two things need to happen. First, you need to tell your agent what baseline target or browsers you support.
+
+Agents can sometimes guess or infer this information from various config files in your project, but we think it's better to be explicit, and we recommend putting this information directly into your AGENTS.md file. If you don't declare any specific browser support information, then the agent will assume based on widely available. Second, in the fallback section of each of our guides, we include detailed browser compat data so that the agent can then determine whether or not it needs to use a particular fallback based on the browser support requirements that you put in your AGENTS.md file.
+
+For example, if you're building an Electron app and you set in your AGENTS.md file that you only need to support Chrome 144 or newer, then if the agent encounters a fallback for something like, say, scroll-driven animations-- which shipped in Chrome 115-- then the agent can ignore that recommendation and just stick with the modern implementation. This allows the agent to custom tailor each guide's implementation to the specific browser support requirements of your project, rather than always having to take a lowest common denominator approach. So that's a quick overview of Modern Web Guidance. And I assume, at this point, many of you are probably thinking, sounds great, but how well does it actually work in practice?
+
+So I do have some demos that I'm going to show, so you will get to see it working. But before I show those, I do want to address this question directly because I think it's an important one. I think it's important that we, as an industry, are able to evaluate the effectiveness of the skills that we're using. When we started this project, one of the main requirements we had was to ensure that we had rigorous evals for every single feature that we used. As of now, our eval suite includes 554 distinct assertions covering most of our guidance.
+
+And we plan to expand that to full coverage before our stable launch later this year. And we run this full eval suite every single day against many of the popular AI-coding models, which right now includes Gemini 3.1, Claude Opus 4.7, and GPT 5.5.
+
+Here, on the screen, you can see a visualization of the aggregate results of all of these evals across all of these coding models. The number in green on the right shows the average pass rate of eval assertions for agents running with Modern Web Guidance installed. And the number on the left shows the average pass rate for the exact same set of assertions, but this time from agents running without Modern Web Guidance installed. And we call this the guided versus unguided pass rate. So as you can see, the guided pass rate, the guided agent performs meaningfully better than the unguided agent.
+
+It's not yet at 100%, but we're actively fine-tuning both our guides and our evals because we want this number to be as high as it can be. So what do these individual evals look like? Well, they're effectively prompts that we give an agent followed by a set of assertions or tests that we run against the agent's output. Here's an example of a recent eval from our scroll progress indicator use case. We run the prompt that you can see on the screen, along with the following assertions to test compliance with the guides.
+
+For this use case, the test checks to see that the implementation correctly uses scroll-driven animations rather than relying on scroll-event listeners. As you can see, with this particular instance for this particular run, with our guidance, all the tests passed. And without our guidance, all of them failed. So this is a snapshot of how these models are performing right now, but it's not hard to imagine this changing in the future. At some point, as the models improve and as the browser landscape changes, we fully expect that many of these evals will start passing even without our guidance.
+
+So I mentioned that we've run these evals daily. Our plan here is to watch this closely, monitor the results, and then remove use cases once we start noticing that the unguided version is consistently performing as well as the guided version in all of the popular models. This will allow us to keep the pack small, token efficient, and focus just on the features that are new and not well known by the models and not covered in the training. But also keep in mind that new features are shipping in browsers every single month, and knowledge cutoffs continue to lag far behind. So we believe this type of guidance is going to continue to be necessary long into the future.
+
+And speaking of the future, I now want to talk a bit about how we see this project evolving over time. For this early preview, we're launching with about a dozen high-level discipline guides and more than 100 detailed use case guides, but we're definitely not going to stop there. Our plan is to continue adding more guides to give us better coverage of the existing web platform, but we're also going to be covering new features as they land. In fact, our goal with this tool is to ensure that every single new web platform feature that ships in Chrome is covered by this tool by the time it lands in Chrome stable.
+
+If you take a look at chromestatus.com, you'll see that Chrome releases a lot of new features every single milestone, so this is definitely an ambitious goal. But it's one that we think is critical to support the ongoing health and success of the web in this new agentic world. We're also currently engaging with other browser vendors to try to get coverage for the features they're shipping as well. OK, so to recap what we've covered today-- first, AI models have a knowledge gap and blind spots.
+
+They recommend legacy solutions even when there are newer and better alternatives. Second, Modern Web Guidance fills those knowledge gaps with vetted recommendations from Chrome experts. This helps ensure coding agents have a full and complete understanding of the modern web platform, with clear instructions on how to implement those features in a way that is compatible across browsers. And third, Chrome is committed to keeping Modern Web Guidance up to date as the platform evolves so that agentic coding will always be at the forefront of modern web development, rather than constantly lagging behind. And with that, who wants to see some demos?
+
+[CHEERS, APPLAUSE] Demos? [APPLAUSE] All right. I don't know if you guys could hear my-- sorry about that. My phone was going off. I was supposed to pick my son up from preschool right now, I guess.
+
+Hopefully, my wife's doing that. All right, here we are.
+
+So I want to start here on this phone. I want to show you all an app that I'm building. Now, I don't know if it's not-- how's the focus?
+
+Can you read it? OK, this monitor is a bit weird. OK. So this is an email application. It doesn't really matter what the application is.
+
+I'm doing a project here where I want to build-- I want to build a mobile website. And my goal here is to make the mobile website function when I'm using it on my phone as smoothly and polished and seamless as the native applications that I use in my phone. I think, as an industry-- mobile first came out 15 years ago, and we got really good at building interfaces that look good on a mobile screen size. But we haven't really got good at building interfaces that feel good on a mobile screen size. So that's my goal with this.
+
+And so I was prompting Gemini-- I was using Antigravity. And I asked it to build something that looks similar to Gmail, and it did this. And then I said, OK, build me a sidebar navigation drawer with a hamburger menu. And when I click the hamburger menu, I want it to slide out. So it does that, and it looks OK.
+
+It had all the links that I wanted. But there's one thing here that's missing. And you might be able to guess what it is. When I put my thumb here and try to slide it closed, it's not working. Now, I assume everyone has experienced this at some point.
+
+You go to a mobile website, you try to slide the navigation drawer closed, it doesn't work. Literally every single native application supports this functionality. Pretty much no websites do. And so I want to change that. And the AI wasn't really helping me here.
+
+I asked it to do this, and I could keep prompting, but I wanted it to do that by default. So let's talk about how we could fix this using Modern Web Guidance.
+
+So let's switch over to my laptop. I have Antigravity here. And I want to talk through how I'm going to approach doing this. But I want to do something a little bit different. I have actually two versions of Antigravity running.
+
+I have this Antigravity in light mode, my editor's in light mode. That's how you tell the difference. And then-- hold on. And then this is Antigravity running in dark mode. If you look here on the right, it says unguided.
+
+And then, when I switch back, it says guided. So I have two branches off a single branch. They're the exact same code base. And I'm running two versions of Antigravity. One, I'm going to say, is guided, and one is unguided.
+
+So here in the guided version, let's go ahead and load up the terminal. I got it running, but I'm going to install Modern Web Guidance. And so you can see I'm just running the command npx modern-web-guidance install. And it's going to go through the flow. Let me Expand this so you can see it.
+
+It's going to install it. I'm just going to go ahead and click the default recommendations. I'm going to do it in my project. Proceed with Installation. And so if you look over here-- and actually, let me go ahead and rerun the dev server.
+
+OK. So if you look over here, it added this .agents folder. Luckily, my project-- if you've used Skills, you're used to this flow. And if I open this up, you can see Modern Web Guidance is installed here in the guided one.
+
+And then, if I switch back to the unguided, there's no skills. So that's where we're starting. I also have two browser windows open, one in dark mode. This is the unguided version running its local dev server. And this is the guided version running its local dev server.
+
+They're both-- like I said, they both started from the same exact branch. I can open up the sidebar, and I'm trying to swipe it closed here. You can see it's dragging behind, but the sidebar is not closing, so let's fix this. I have some prompts prepared, so you don't have to watch me typing. And let's go back into Antigravity.
+
+I'm going to start with the unguided version. Oh, I'll also mention they updated all of our Antigravities today. Obviously, you probably heard the announcement. So I'm going to try doing this with Gemini 3.5 Flash.
+
+Never tried that before. Hopefully, it will work. If it doesn't work, we'll go back to 3.1. But I want to try it.
+
+We'll see if it works. So I'm going to paste this in. I'm going to do it here, and then I'm going to switch back to the guided version, and then I'll read the prompt. So I say the Navigation Drawer in this app looks fine, but I don't like that it can't swipe to close it. Can you fix that?
+
+So we can see here what it's doing. I'm going to go ahead and close this sidebar. I'm going to zoom this over so we can watch what's happening. So if you look up at the top, it is running npx-- Modern Web Guidance is doing a search command, which is what I mentioned. It's searching through the guide database.
+
+It found a guide. It looks like it found a guide. Can I move this over? Found a guide called navigation drawer, and so it's starting to implement that. And then, if we go back and look at the unguided version, it's doing some things.
+
+It looks like this is already done. I'm going to go ahead and Accept these changes. Let's go back to the guided version. Is that done? Looks like it's almost done because it's running the npx build.
+
+OK, look, that one's done as well. This is why I decided to do a Flash because it is quite fast. So I didn't want you all to have to sit here and watch this running. So here we are in the unguided version. Now, this is an AI demo, so it's very risky.
+
+I don't know what's going to happen, so bear with me in case this totally fails. I'm going to click the Hamburger menu and see what happens. OK, now I'm going to try to close it with a swipe. OK. So it did swipe to close.
+
+You probably couldn't pick up on what was happening because you don't see-- you didn't feel what I was doing. Let me do this again because something felt weird about this. I am dragging here. I don't know if you can see behind. I'm dragging this.
+
+OK, they're closed. I didn't pick my finger up. I my finger down, I was dragging, and then I didn't pick my finger up and it closed. So I've done this demo a couple times. It seems like Flash is doing a similar thing.
+
+What I'm pretty sure is happening here is that it is trying to detect the swipe gesture, and then it is calling a close function. But what I want it to do is I wanted to literally pin the sheet to my finger as I'm moving it. This is what I would expect. And so again, it kind of works, but it doesn't-- it's definitely better than without it, but it's not quite what I want. So let's go back to the guided version and let's see how it did.
+
+Fingers crossed. OK, it opens up. I'm going to click. I'm going to drag. Click and drag.
+
+[CHEERS, APPLAUSE] And so you might even notice here, the backdrop is fading ever so slightly as I'm dragging. And this-- because I know what guide it used. This is using scroll-driven animation to do that backdrop fade. And it's tracking with the scroll gesture. The dragging here is being handled using scroll snap points.
+
+So it's actually a scroll interface, which means it uses the browser's default physics and all of the hardware acceleration of scrolling. So I can swipe it to close, and I can swipe it like that, and that looks great. OK. But we got to do some more features, so let's keep moving. All right.
+
+I'm going to add this-- copy of this next prompt. Let's go to the unguided version, paste it in, and then go to the guided version, paste it in, and I'll read what the prompt is. OK. So the prompt is, now add a message view drilldown so that, when I click an email link in the inbox, it drills down into the full email message view with a Back button so that I can return to the inbox view. The message should also have standard email action buttons like Archive, Reply, Star, et cetera.
+
+But don't hook those up yet, just get the Back button working. All right, so Modern Web Guidance is doing its thing. It's looking for some guides.
+
+Let's go back and see what the unguided version is doing. It's still working as well.
+
+And so I can see here that Modern Web Guidance is retrieving a guide called stack-drill-down. This is just the ID of the use case that it's retrieving. And if we have some time, I can-- if it's not going to finish yet-- it looks like this one finished. I might show the guides if you have some time. But since it's finished, I'm going to go back, and I'm going to check the unguided version to see what happens.
+
+So I'm going to click an email message in the inbox view, and I want it to show me the full message. OK, so show me the full message. It didn't animate our transition in. Like I mentioned, I want this to feel like a native application. Does the Back button work?
+
+OK, the Back button works, but this is kind of a harsh transition.
+
+So let's see if the other one is done. And let's see-- OK, it looks like it says I've successfully integrated the stack drilldown transition module into the main-- OK, it did it. It's using some of the-- describes here what it's doing. Now let's go and check to see what it looks like. Again, fingers crossed.
+
+OK, so it worked. It smoothly transitioned in. I can click the Back button, and it transition out. Now let's see if I can Swipe to go backwards. OK, I can Swipe to go backwards.
+
+That's nice. [APPLAUSE] I'm also noticing a little bit of parallax going on here as I'm swiping it, which is also done using scroll-driven animations. And actually, I'm looking up here in the Navigation bar, and I see that, when I click, it updates the history. And then let's see, if I click the Back button, swipes back. I didn't have to know how any of this stuff worked.
+
+I just typed it into the prompt. Let's do one more thing. Let's just try to get a little bit of a cherry-on-top situation here. All right. Let's go into the-- let me go back and Accept these Changes for now.
+
+OK, go back into the unguided version, and then again the guided version. All right. In the Inbox view, make it so that I can quickly archive or snooze messages by swiping them left or right without having to open each one individually.
+
+So I don't know if you guys are like me. You have your email app. You get a lot of email that you don't care about. I spend most of my time in my mail app just going like this-- swiping, swiping, swiping all of the unread emails-- or, that way. I don't want to have to click into each of them individually.
+
+OK, it says this one is done also. Is this one done? Yeah, this one's still working. So let's go check and see what the unguided version did.
+
+OK.
+
+So it's doing the same thing it did before where it's not pinned to my finger. It's not dragging with my finger, but it is detecting a swipe gesture. And OK, it looks like it does support both-- I'll be honest. I've done this demo a bunch. This is maybe the best the unguided has ever done, but it's still not-- it's still not exactly what I want.
+
+OK, let's see if the other one is done. Switching back to the guided version. OK, it looks like it is done. All right. And let's check how that one did.
+
+OK, much better. I mean, this kind of looks very similar to how Gmail looks. I can swipe it from that side, swipe them all closed. I can snooze it from this side.
+
+So this is great. But this is the kind of thing that you really can't know-- you watching me do this, you don't really know how it is. But I think if we switch back to the phone. I want to pull this up on my phone, and I want you to watch me doing it on the phone just to get the full effect.
+
+OK, so let's see. We click this-- oh, you can-- hold on. Let's see. There's that reflection. So I can swipe this closed.
+
+And this is the kind of thing where, if I put it halfway, and I let go, it swipes back. And if I do it more than halfway and let go-- sorry, it wasn't quite more than halfway.
+
+It's a little hard for me to see because it's reflecting on my face, but yeah. So it scrolls now. The way that it works is the same way that the native app physics work where, if you do it more than halfway, it'll finish-- it'll snap to it's snap point, which is great. If I click on a message, I can click on any of these messages. And then I think it should work as well if I do the Back gesture.
+
+Not very good at this. There we go-- the back gesture on Pixel. And then, if I swipe through the emails-- you know, snooze-- the whole thing feels really nice. It feels really nice and smooth to me. And just to show that what I said earlier is not a lie, I have an iPhone right here.
+
+Refresh. Do the same thing. Swipe. Click into a-- click into a message. The whole parallax thing.
+
+Sorry, I'm trying to get this so you don't see the reflection. It all feels very smooth. It feels like I can't tell this is not a native app as I'm using it, other than seeing the address bar down here at the bottom. [CHEERS, APPLAUSE]
+
+So let's switch back to the slides.
+
+Oops. We pressed at the same time. All right. So to wrap up, in Chrome, we care deeply about the health of the open web, and we invest a ton into improving the platform so that developers can build better experiences, and so that businesses that are built on the web can ultimately be more successful. But the truth is that improving just the web platform, it's not good enough.
+
+We have to actually improve the web because users don't visit the web platform, they visit the web, as it exists today, on the websites that they actually visit. So if we want to make the web better, then, at the end of the day, we're going to actually have to make it as easy as possible for you developers to use all of these amazing features that Chrome is adding to the platform. And that's why we built Modern Web Guidance. But also, that's why we want to hear from you all. We want to make sure that this tool works for you, and that it helps you build better experiences.
+
+So we'd love for everyone to try out this early preview and give us feedback. If you're running into problems, or if there are use cases that you feel are missing, then definitely let us know. The link on the screen here will take you to a site with information on how you can contribute and give feedback. And with that, thank you all very much. [APPLAUSE] [MUSIC PLAYING]

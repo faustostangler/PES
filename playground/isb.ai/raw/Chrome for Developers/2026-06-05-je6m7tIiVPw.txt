@@ -1,0 +1,27 @@
+---
+video_title: "Fix markdown image syntax with AI and JSON schemas #GoogleIO"
+video_id: je6m7tIiVPw
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=je6m7tIiVPw
+video_date: 2026-06-05T17:09:34+00:00
+video_description: |
+  If you’re struggling with Markdown image syntax, the trailblazers editor can help. It automatically generates proper HTML figures with AI-suggested alt text and captions. By using a JSON schema and a multimodal LLM session, you can easily paste images into the editor and let AI do the heavy lifting. Try it out!
+  
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs 
+  
+  #ChromeForDevelopers #Chrome #GoogleIO
+  
+  Event: Google I/O 2026
+  
+  Speaker: Thomas Steiner
+  Products Mentioned: Chrome
+---
+The markdown syntax is known to be hard. I can't even remember the regular link syntax, let alone the syntax. Also, while the mapimage supports Alt text, it doesn't support image captions. This is where Julia in the trailblazers editor decided to change things. You can just add images using a file open dialog, or even paste an image at the current cursor position.
+
+What happens in both cases is that the image will be marked up as a proper HTML figure, with an I suggested Alt text and an image caption that both can be easily adjusted if they don't fit. So how does it work. Again, as with the tags before, the secret is a JSON schema. This time it's even a bit simpler. We just ask for JSON object with an Alt and a caption property.
+
+Next, we create the session with the LLM, but this time we need to pass it one additional expected input type of image. This is the system prompt and brief the model to act as an Alt text and image caption writer. And finally, we create the session. Now we can actually interact with the session. The prompt is a bit more involved as it's multimodal.
+
+As before, we pass the response constraint that is the JSON schema. This call will then return a JSON object that we need to parse before we use it in the editor, and put it in the figure markup. Drupal CMS has implemented auto text generation for images that follows the pattern you've just seen in the code samples before.

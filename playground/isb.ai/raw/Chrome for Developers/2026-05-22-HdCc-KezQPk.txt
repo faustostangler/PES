@@ -1,0 +1,210 @@
+---
+video_title: "Build your website for the agentic era"
+video_id: HdCc-KezQPk
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HdCc-KezQPk
+video_date: 2026-05-22T23:03:58+00:00
+video_description: |
+  Build websites for an era where AI agents, like Gemini in Chrome, assist users by understanding page context and triggering actions. Learn how to prepare your pages to help agents perform tasks efficiently, and explore APIs like WebMCP that make agent interactions faster and more reliable.
+  
+  Resources: 
+  Create AI evaluations → https://goo.gle/4ntM3tu
+  WebMCP documentation → https://goo.gle/3RJzFJW
+  WebMCP Evals CLI experimental tooling → https://goo.gle/4wnYmvs
+  Lighthouse GitHub → https://goo.gle/49LgSEf 
+  
+  Speakers: Kasper Kulikowski
+  
+  Watch the Chrome sessions from Google I/O 2026 → https://goo.gle/Chrome-at-IO2026
+  
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  
+  #GoogleIO
+  
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: Web, Chrome
+---
+[MUSIC PLAYING]
+
+KASPER KULIKOWSKI: Hello, everyone. Good to see you. [CHEERING] Yeah, I think it's obvious, but are you having fun on I/O? [CHEERING] Fantastic. Good to hear that.
+
+OK, then let's start. For the past 30 years, we've built websites for humans, and we focus on things like UI, performance, SEO, and accessibility. I mean, don't worry, that's not going away. But at the same time, it's no longer the full story. I don't think it's too soon to say it, so I'll just say it.
+
+Welcome to the agentic era.
+
+This might be the biggest change for us developers since mobile, or maybe even since the web itself. As more people rely on AI agents to perform heavy lifting on their behalf, the websites that are not agent-ready risking being left behind. So it's not about maintenance. It's about staying visible in this AI-driven era. I am Kasper.
+
+I am a DevRel in Chrome AI team, and today, we will talk about how to build and prepare your website for this exciting shift. We are going to answer very, very important questions. How does an AI agent see your website? How to make interactions between websites and agents faster and more reliable. What are WebMCP tools, and how can they help us?
+
+How to audit your website for the agentic era? And last but not least, how to test and debug WebMCP tools. But before we get into the details, let's take two steps back. What is an agent? So in traditional computer science, an agent is an autonomous entity that observes its environment, processes collected information, and takes actions to achieve a specific goal, and then continues.
+
+What has changed recently is we unlocked new capabilities. We gave agents access to a LLM, the reasoning engine. What is the agentic web, then? In short, the agentic web is a web where primary users are increasingly AI agents performing complex, multi-step workflows on behalf of humans. We are going from browsing to delegating.
+
+So instead of you clicking through multiple tabs to find hotel, find a car, and book a flight, you can give a high level goal to an agent. The agent will do the work, but human user provides the final approval on every important choice and action. That means AI agents are shifting from being simple chatbots to being active participants. They process the page structure, click buttons, and trigger the actions on your behalf. There comes a new challenge for us developers.
+
+Building for humans is no longer enough. Because if an agent can't understand your site, your users lose out on automation, and you miss out on conversion. So how does an AI agent actually see your website? I mean, as you can imagine, agent does not look at your website on a monitor. They use machine readable representation of your website.
+
+And the quality of this representation, the machine readable representation, determines their performance. An AI agent can perceive your website in three primary ways. First, it can take a screenshot and use a vision model to interpret it similarly like a human would-- so what it sees. Based on screenshot, the agent recognized that the thing at the top is most likely a global search. Text fields in the middle, most likely form fields.
+
+Visual cues can also be helpful because agents can use color, size, and proximity to determine importance. For example, big red remove button will be treated with more caution than a small help link down below. However, analyzing screenshots can be slow and expensive in terms of use tokens, so it works when the structure itself is confusing. Second, the agent analyzes the DOM and read texts directly. What it sees, the nesting of elements.
+
+For example, a button inside of a div, the logical hierarchy of a DOM tree, specific attributes like IDs, classes, that define structure, and of course, raw data strings-- the text, the informational backbone of your website, if you will. Reading DOM helps the agent understand the relationship between elements. If a Buy Now button is inside a product container, the agent knows that button belongs to that specific product. The third method, accessibility tree. So this is a browser-native API that distills the DOM into what's most important-- the roles, names, and states of interactive elements.
+
+It's the page's semantic summary. It's also what screen readers use. And it's very, very important to mention that accessibility is for humans first. Agents just happen to benefit from it. For AI agents, the accessibility tree functions as a map that ignores all the visual noise to focus on pure utility.
+
+So by interpreting this tree, agents can understand the functional intent of every button, input, and slider. What should we do, then? How can we help agents see our websites better? First big question. So first, let's talk about visuals.
+
+Make actions visible on UI. In fact, make actions extra visible on UI. Why? Human users will have to switch their focus from any agentic surface that they are interacting with and your website. So it also means that we should not expose functionality to agents that only makes background changes on the website because that would result in user having limited options to verify correct agent trajectory.
+
+Next, ensure stable layout. Think about your favorite grocery store. You know exactly where the milk is. You walk in, you pick it up, of course, you pay, and then you're out. So what happens when they decide to reorganize and put the milk back in the pharmacy section?
+
+Your cognitive load just spiked because you expected the thing to be right where you last saw it. And yeah, the same applies to websites. So if your Buy Now button is in a different place for each product category, it creates unnecessary friction and can slow down agent's workflow. Next, do not hide actionable controls. I want to share a term that is used in marketing in UX that I absolutely love, which is the next best action.
+
+So it's all about reducing previously mentioned cognitive load. So the next best action should not be a puzzle. In well-designed UI, it should be only logical step forward. Things that are actionable should be ideally also visible in Viewport because it's not ideal if your Buy Now button requires a few scrolls down. Even for us humans, it's not ideal.
+
+So if your search bar appears on hover, or requires additional steps to show up, or is, I don't know, hidden behind fancy animation, you are making it harder for both agents and humans to navigate your site. There are also certain techniques on how we can tell, how we can hint agents that certain elements are actionable. For example, we can update the cursor in CSS to pointer. It gives pretty good hint to an agent, OK, there is potentially something actionable, but there are better ways of doing it. So let's talk about structural elements.
+
+If you use a semantic button or anchor elements, it's a very, very strong hint to the agent that this element is actionable. The browser also makes such elements focusable via Tab key and makes it clickable via Enter and Space keys. Because if you think about it, if you want to build a fake button, you need to-- and you're using a div, you need to manually add Tab index, custom JavaScript to handle Enter and Space keys and so on-- and ARIA roles, and so on. Semantic elements like nav, header, footer, they give clear instructions on what an agent can expect to find within those regions, and how to navigate the page's hierarchy with precision. Semantic HTML is the backbone of accessibility.
+
+So if your website plays nice with screen reader, if it's truly accessible, you are at least halfway there-- at least halfway there when it comes to agentic readiness. If we think about it, screen readers and AI agents seek the same foundation, semantic clarity. And the beautiful irony in all of this-- everything that makes a site agent-ready also makes it better for humans. So thanks. [CHEERING] Thank you.
+
+So we do not have to create a fork of the web, a separate web, to make it agent-ready. If we want to build a web that AI agents can actually navigate, we do not need to reinvent the wheel. We just need to go back to the basics-- build it well, build it accessible. Some users will continue, of course, to browse the web as they have always. Others will use agents, and the web has always been about providing the best experience for the user no matter their device or user agent.
+
+However, there's a catch. There's always a catch. However, the challenge is still there. So it can be still challenging for agents to solve complex user intents. So when you go to a hotel website, you also need to understand where to look for things.
+
+But you do have some mental model where to look for things because you in your life probably saw multiple websites that are similar. So right upper corner, login, account. Somewhere in the middle or somewhere at the top, search. So you trigger the search and you see some search results. And you might have some preferences like gym, breakfast, late checkout.
+
+So the journey becomes more complex. And you could think of additional steps that you could potentially take. So the more complex the journey becomes, the more complex it is for an agent to synthesize all of those mentioned signals, screenshots, DOM, and accessibility tree into the actionable plan. So the big question is, how can we make interactions between website and agent faster and more reliable? How can we reduce mentioned complexities?
+
+[INAUDIBLE] WebMCP. [CHEERING]
+
+So the WebMCP is a proposed web standard that aims to expose structured tools for AI agents on currently existing websites. What does it mean? It means that when a user wants to add certain kind of pizza to their shopping cart, in addition to analyzing visuals of your website, reading DOM, and reading accessibility tree, agent can use tools provided by your website. Because if there is a tool that can support user intent, and agent can call it, the whole journey becomes more simpler. Because agent does not have to synthesize every available signal.
+
+The tool is right there. Of course, I wouldn't be myself if I didn't show you some demos. And for the demos, I'll be using an extension that we are using during the dev trial. Yes, the developer trial is still ongoing, and this extension is something that you can use today. All right.
+
+So we started with hotel example, so let's continue with this. So in the right upper corner of the extension, you can see WebMCP tools that are registered in current context. Why do I say current context? Because tools might be available in different contexts. For example, when you have a page that is just a login page, it probably does not make sense to expose Add to Cart tool.
+
+So let's do something. Let's trigger some search. Let's look for Tokyo. Let's see if the different contexts will have different tools. Yeah, so filter search results.
+
+Get current search results. So we can register tools where they make sense. Let's try something agentic. So find me hotel in Tokyo. Filter for gym and breakfast.
+
+So what agent did is found tool, call Search location for Tokyo, then applied filters for gym and breakfast. In this extension, you can see the trajectory in the panel down below. But those are the demos that are usually shown. Yeah, like a find hotel, e-commerce, flight search. So let's do something that is non-obvious.
+
+Let's maybe try some interface where there are no user controls at all. Yeah, I like it. Let's make a pizza. OK, so first, I want-- obviously, I want large pizza.
+
+Add cheese.
+
+Add 10 bell peppers. Awesome. Add 10 mushrooms. Those are not the best mushrooms to have on pizza, but you get the idea. So let's try another demo that also do not provide any user controls.
+
+Let's play a game-- Maze Escape. So here, we can trigger the tool call manually by clicking Execute tool. In this example, we have multiple tools registered to help us navigate the game like a drop, look, move, pick up, and use. So tools are available, and we can do things like move down once. Notice that I am basically talking to the website using natural language.
+
+Now move down, down, and right, if I say it correctly. No, I did not say it correctly. So it cannot move to the right. So move down, right, down, left.
+
+So what we can tell agent is, for example, we can start the game once again to give the high level goal to an agent. Because that is the kind of abstraction on the complex system. So there is some complex system that provides multiple tools, multiple states, and we give high level goal to an agent. And we let the agent do the work. Of course, we will not wait until the agent finishes this maze.
+
+It will take us a while. But I highly encourage you to see the full demo at our WebMCP demo booth. OK, let's switch back to slides.
+
+[APPLAUSE]
+
+OK, so we've seen great capabilities, obviously, of WebMCP through the demos. But these capabilities, they extend beyond the demos. Many companies have already begun testing the WebMCP through a developer trial. These organizations are evaluating WebMCP use cases, user benefits, and technical requirements. And what they find is that it significantly improves the task performance and overall user experience.
+
+Let's start with MakeMyTrip. So MakeMyTrip see WebMCP evolving to enable deeply personalized travel experiences, including hotels, packages, and more. Users will be able to ask nuanced questions. As I mentioned, natural language-- is the hotel pet friendly, kids friendly? Is it suitable for me, and so on.
+
+Policybazaar-- Policybazaar experiments with WebMCP to test potential user interactions with finding relevant quotes, but also to compare them. Again, users will use natural language. No manual clicking. Sweet. CyberAgent experiments with their blogger helper extension, and they are checking if they can turn it into the agentic workflow using WebMCP.
+
+Yeah, so it seems like WebMCP will also help bloggers write personalized blogs. OK, before we dig into the details of what just happened, let's address the elephant in the room. How does WebMCP and MCP compare? So WebMCP is not an extension or a replacement of MCP. Instead, WebMCP and MCP address different needs.
+
+First, the purpose-- WebMCP is meant to make live website agent ready for the user right now. MCP's purpose is to make data and actions available to agents anywhere, anytime, not bound to the website. Lifecycle-- WebMCP is tab-bound. It's ephemeral. So if tab is closed, the tools are no longer accessible.
+
+Here, we are talking about currently active tab. While MCP is persistent. It runs as a server, so it's always available. Being tab bound, WebMCP connectivity is specific to browser agents or any other kind of agent that interacts with browsers. MCP, you can connect to MCP from any device any time.
+
+UI interaction-- WebMCP is browser integrated and DOM aware. DOM aware in a sense that the tools can be created in a way that interact with the DOM. Also, the agent interacting with a website inherits the user logged in state. So session cookies, security context-- those tools are being executed in currently active tab. And I think it's an important bit.
+
+The MCP server tools availability is not affected by the state of your website. As we said, it's just a server. Always available. How does discovery happen? For WebMCP, tools are registered on the website, and they are discovered during the user's visit.
+
+While for MCP, you need to specifically point your agent to given MCP server. Use cases-- MCP is the protocol an agent uses to talk to your backend infrastructure. WebMCP is how the same agent can interact with your front end interface and active user session right inside the browser tab. So now, you have a pretty good understanding how those two compare. OK, let's do a quick technical deep dive.
+
+How to define WebMCP MCP tools. You have two ways of doing this. You can do it in an imperative way using standard JavaScript, or in the declarative way by adding specific attributes to HTML forms. Let's take a look at the code example of imperative API. Yeah, that's it.
+
+So in order to register a tool, you use navigator.modelC ontext.registerTool. The tool should have name, description, input schema, and execute block. The execute block is what will happen if your tool is called.
+
+Parameters, as an execute params, they are defined in the input schema. You might ask, what is addTodoItem? It's your real JavaScript function that you have on your website, or we have in our abstract website right now. So any JavaScript function that you can call. At the end of the block, you see the return statement, which is basically what is being fed back to the model when the block finishes.
+
+To unregister the tool, you can use abort controller and pass it as a part of the register tool down below-- signal controller.signal. And later, when the tool is no longer needed, you can just do controller.abort. Then, we have a declarative API.
+
+So if you already have a form, it's actually very simple. There are just two required parameters, tool name and tool description. When you provide them, your form will be seen as WebMCP tool in the browser. Tool param description is optional, but it gives agents needed context about how to use this input. And I think that's a very interesting thing to remember, actually.
+
+So the way you name your tools, the way you provide description or description of tool parameters, this is not just a technical detail. This is being consumed by an agent, so this is very important context how to use your tool and when to use your tool. On the right hand side, you can see how browser would translate the declarative tool into internal imperative representation. And that's how you would write the same thing using the imperative way. Arguably, adding a few parameters to the form is way simpler.
+
+So you have tool name, tool description, and tool param description. Very cool. Additionally, you can add toolautosubmit to your form. What it does is we say that we allow agent to submit the form after it finishes filling it up. And it will be automatically submitted.
+
+Of course, the default behavior is that agent will just fill in the fields. It will not submit it.
+
+There is also special attribute that you can check on an event-- agentInvoked. So it will be true when the form was filled, and invoked, and submitted by the agent. So what you can do here is you can basically give some additional context to the agent. And can we quickly switch to the demo?
+
+Because that's what we exactly did, for example, for the French bistro demo. If we look for that form, you can probably see the tool name, tool description. And then the tool is just visible based on the form field.
+
+Back to slides, please.
+
+So you will find more details, for example, about event handlers and more in our developer documentation. So it was published literally this week. So you are first to hear about it.
+
+OK, so let's now review some good practices of building your tools. Number 1, ensure clarity of scope and intended use. So we have to distinguish execution from initiation. For example, if you want to create event immediately, the tool should be called Create Event. But if you want to start the process of creating events, it should be called Start Event Creation, and potentially redirect to UI form.
+
+Give positive and clear descriptions. So this tool can create a calendar event scheduled for a specific date and time. The bad example, do not use this tool to check the weather. Number 2, minimize cognitive compute for the model. So we have to accept raw user input, and we have to anticipate what user might want to type for our tools for our website.
+
+So we should avoid asking the agent to perform math or transformations, any calculations. So it should be all within your WebMCP tool logic. If user says from 11 to 15, the tool should accept strings 11 to 15. Do not require the model to calculate minutes from midnight. This can end up badly.
+
+Explicit types in business logic-- so ensure that all parameters have specific types. Strings should be strings. Enums should be enums. Numbers should be numbers. If user is ordering a product from your website, use shipping express regular instead of shipping type 1, shipping type 2.
+
+It becomes easier for agents to make a proper decision on what to put into the parameter. Turn failures into corrections. So we have to return descriptive errors. The schema constraints are helpful, but they are not guaranteed. So you should validate constraints within your function code and return proper errors.
+
+This allows the model to self-correct and retry with valid parameters. Good example-- product name has to be a string shorter than 100 characters. Bad example-- param error. How we can recover from this? Graceful failure for rate limits-- so tools should allow for reasonable repeated use-- for example, when comparing prices or doing search.
+
+If rate limited, return meaningful error. So not a bad error-- something went wrong. Very hard to recover. And last but not least, create non-overlapping composable tools. So tools should be atomic and composable.
+
+Each tool should have a single responsibility. Avoid similar tools with nuanced differences. When two tools are very similar, you can actually combine them with to a single tool with some input parameter that can control them. The tool registration management-- provide tools where they make sense. We did touch on this before.
+
+On the login page, it doesn't make sense to have an Add to Cart tool. And there are also certain things to consider when working with WebMCP. The browsing context is required. So since tools are called and handled in JavaScript, a browsing context, like a browser tab or a WebView must be opened. UI synchronization-- so for a satisfactory end user experience, we must ensure UI is updated to reflect the current app state regardless of whether the state updates came from human or a tool call.
+
+And there is a potential complexity overhead. So in cases where your website UI is very complex, you most likely will need to refactor something, or add some JavaScript that handles additional states.
+
+You might say, that's a lot to remember-- screenshots, DOM, accessibility, imperative, declarative, WebMCP, best practices, and so on. So how cool would it be, how cool would it be, if we would have a tool that can check some of those things for us? Very cool, right? Guess what? We do.
+
+So starting from Chrome 150, you can run lighthouse audit that is tailored to agentic web to check your website agentic readiness. It covers things we discussed today like visual readiness, accessibility, audit of WebMCP tools, content shifts, et cetera. And it's a first call to action today. So it's still evolving, and we're really looking for feedback. We are looking for your help.
+
+So please join discussions on GitHub. And yeah, let's build this together. [APPLAUSE]
+
+And that's a beautiful segue into testing and debugging. So WebMCP is still very fresh, and we have added an agent to our user journey. So how do we make sure that WebMCP tools we created actually work well with agents?
+
+Yeah, so we are used to testing the deterministic code. If A, then B. And here, we are dealing with something new. AI agents that will interact with your tools are non-deterministic. And we'll need different techniques to make sure they work well with our tools.
+
+These techniques are called evaluations, or evals for short. And while evals involve new workflows, your existing testing experience carries over directly to building great evals. The thing is that I would need another session for evals alone, so I really encourage you to take a look at our materials about evals. And for inspiration, you can check our experimental repository with Evals CLI for WebMCP. And yeah, we do showcase different sets of evals for different types of use cases there.
+
+OK, let's now take a look at debugging. So in this testing extension earlier, we saw details of tool calls, available tools, and so on. But not all integrations, not all agents might offer that. So what would be a great place to have all of those details? What would be the great place?
+
+Thank you. DevTools, yes. So yeah, so we are adding the support for WebMCP in DevTools. So first, you see which tools are getting called during the user journey. It also means you see which tools were not called during the user journey, and that can actually help you with evaluations.
+
+So the status of tool calls is clearly visible in the upper section of DevTools panel. You can use tool invocation counter to verify how many times tool was called. It's especially useful to verify, again, if certain tool was not called or called too little times, or less times than you expected. If there are too many tool calls in activity log, you can filter for declarative, imperative, status type, and even search for certain strings. Exciting.
+
+For each tool, you can also review input and output. So the output here is what is returned by WebMCP tool. If a tool was called by the agent, then the output is what will be returned to the agent. Last but not least, you can also find where tool is registered in sources in case of imperative API, and where it lives in the elements in case of declarative API. Make sure to visit our demo booth so you can see it live.
+
+Yeah, there is also experimental support for WebMCP in Puppeteer, which can also come in very handy when you will be doing any kind of testing automation. What you can also do is you can use Chrome DevTools MCP, which has experimental support for WebMCP to interact with your WebMCP tools. So the tooling's already out there for you to test with.
+
+The road ahead-- so as discussed before, WebMCP goes beyond demos. And companies are actively participating in a developer trial. And yeah, let's review some more demos. Here, we have redBus, and here, you can see the experimental improvements to bus booking journey. So show buses from Pune to Mumbai with AC and sleeper for a certain date.
+
+Now, user wants two window seats on the highest rated bus departing in the evening. Yeah, quick and simple. Nykaa-- Nykaa experiments with WebMCP to create AI-supported purchasing journey. Review history, add last purchased product to the cart, apply coupon if available, then proceed to checkout.
+
+Easy. Gadgets Now-- Gadgets Now is experimenting with WebMCP to help users find mobile specifications and apply relevant filters accurately. So the user's query, 5g phone under 30,000 Indian rupees. Yeah. Awesome.
+
+You can start experimenting with WebMCP today. Everything you saw today is controlled by those two Chrome flags. And what's great is origin trial, which is coming soon. [CHEERING] So yeah, stay tuned. And yeah, let's summarize.
+
+We began by understanding how an AI agent sees your website through a combination of screenshots, analyzing DOM, and leveraging the accessibility tree. We discussed that the agentic readiness starts with a principle we already know-- build it well, build it accessible. We have reviewed WebMCP, the proposed web standard that aims to expose structure tools for AI agents on existing websites. I really encourage everyone to start experimenting with WebMCP and join the upcoming origin trial. And finally, we've discussed the lighthouse audit for the agentic web.
+
+Reminder, we need your feedback. And debugging your WebMCP tools using the support in Chrome DevTools.
+
+Yeah, the agentic web is not a future trend. It's already here. And the developers who embrace it will build websites that are ready to use for everyone, human and machine alike. Thank you. [CHEERING] [MUSIC PLAYING]

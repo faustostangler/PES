@@ -1,0 +1,32 @@
+---
+video_title: "How to use the DevTools MCP server for AI debugging #DevToolsTips"
+video_id: -bxbeOBdmyE
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-bxbeOBdmyE
+video_date: 2026-01-22T22:56:08+00:00
+video_description: |
+  Chrome DevTools now has a Model Context Protocol (MCP) server that lets AI agents interact directly with your browser. Learn how to connect tools like Gemini and VS Code to Chrome for real-time debugging. Matthias covers how to set up the server and use it to fix performance issues and bugs.
+  
+  Chapters:
+  0:00 - Intro
+  0:46  What is MCP? 
+  2:04 - Example: INP 
+  3:10 - Example: Multi-step interactions
+  4:19 - Available tools
+  
+  Resources:
+  Chrome DevTools (MCP) for your AI agent - Blog post → https://goo.gle/4jSWS6C
+  Chrome DevTools (MCP) for your AI agent - Github → https://goo.gle/46c1vmz
+  The DevTools Times article → https://goo.gle/4qD1oZq
+  
+  Watch more DevTools Tips → https://goo.gle/DevToolsTips 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Matthias Rohmer
+  Products Mentioned: Chrome,  Chrome DevTools,
+---
+Hello, good evening. The Chrome DevTools team has released an MCP server, where the users say, drastically, oh, a Nietzsche explain MCP, right? In this video, I'll give you a quick intro on what MCP is, a brief overview of what the DevTools MCP servers and what it's useful for, and how you can get started using it in your own agenda coding workflows. To get started, back to the DevTools studio. Think of your favorite coding agent. It doesn't matter if it's Gemini CLI with Gemini, Klein with Claude or Vios Code with Co-Pilot. They are great at writing code, but they're all confined to a simple little text box. They can see your running app and they definitely can't use DevTools to debug it. MCP, short for model context protocol, can bridge that gap. MCP lets your AI agent reach out of its little text box and make programmatic use of the same tools you use every day, if those tools support the protocol with their own MCP server. In other words, think of MCP servers as APIs specifically designed to be used by AI models. Your agent can use those APIs and becomes an MCP client. DevTools also provides an MCP server. For your AI agent to work with the same powerful tooling you use in Chrome and actually debug your site at runtime rather than trying to take guesses from your source code. The great thing is, this MCP server and the attached Chrome instance are running on your device, so no additional external services to take care of. But examples are the same more than a thousand words, so let's dive into it. This is DevTools times our demo and use site. You can explore it for yourself with the link below. The site is a problem. Whenever I click a link, nothing happens for a few seconds. Looking at the performance panel live matrix, I can observe an IMP of almost two seconds. There definitely is something wrong here. Usually I would now go in, record a trace and dig through it to find clues. But with the DevTools MCP server, I can take a shortcut. I switch over to Gemini CLI with the DevTools MCP server enabled and just prompt, I have this weird delay whenever clicking a link on local host. Can you help debug? Now the DevTools MCP server spins up a Chrome instance, loads my page and navigates the DOM to find a link. Then, before it clicks the link, the agent kicks off a performance trace and ta-da! It identifies a slow third party analytics script, blocking the main thread, causing high IMP and additionally validated the assumption by mocking the script in question and performing the same test again. DevTools MCP is also great at helping you to act on bugs that require multiple steps to be performed on a page to reproduce. For example, look at one of the articles on our new site and scroll to the find. Visitors can comment on an article and format their comment with the editor toolbar. When trying this, you'll notice the final comment, lost all formatting. Let's ask our agent to help us with this. In some of my MCP client, cursor in this case, with DevTools MCP enabled, I prompt, fill the comment form on this URL. Try to format the comment using the toolbar buttons. Save the comment, debug while the formatting is rendered and the submitted comment. Again, my agent figures out I actually want to debug a page at runtime and starts a Chrome instance and tries to perform the actions requested. After it's submitted a comment, it accesses runtime data and cross matches it with my source code to inspect what it goes wrong, rather than just guesstimating like an LLM would with just the source code. And after a brief while, the agent presents its final conclusions back to me. The DevTools MCP server has a variety of tools to interact with your page in an automated way. There are tools for input automation, like clicking buttons and filling forms for performance debugging, like recording and analyzing traces, and many more to access data from other panels and DevTools, like console messages and network requests. Those tools are designed to give your model a choice just the data it needs when it actually needs it, and the most token efficient form possible. For an overview of all currently implemented tools, check the tool reference at this link. Usually, you don't need to worry about which tools are available and let your model figure it out for you. But getting yourself familiar with capabilities helps you to use the full power of DevTools MCP and write better prompts. Of course, prompting for details can become a sum, especially if you have a very specific thing you want to talk about. For those cases, you can also start DevTools and the MCP servers Chrome instance and select the specific DOM element or network request you're talking about. Those were the breaking news around DevTools MCP. We are excited for you to start using it in your AI workflows. To get started, click this link to find instructions to install for over 15 MCP clients, including popular tools like Gemini, CLI, Vios Code, Cursor and more. Good evening and good night.

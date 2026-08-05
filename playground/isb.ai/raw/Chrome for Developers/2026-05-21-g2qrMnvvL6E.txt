@@ -1,0 +1,88 @@
+---
+video_title: "Elevate the Chrome Extensions developer experience"
+video_id: g2qrMnvvL6E
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=g2qrMnvvL6E
+video_date: 2026-05-21T23:43:37+00:00
+video_description: |
+  Learn about the latest updates that streamline the Chrome Web Store Developer Dashboard and improve the overall developer experience. Also discover how to leverage the latest tooling to make building Chrome Extensions easier than ever.
+  
+  Resources: 
+  Learn about the browser namespace → https://goo.gle/extensions-browser-namespace
+  Learn about guidance for building Chrome Extensions → https://goo.gle/extensions-skill
+  Learn more about AI Coding Workflows → https://goo.gle/4dE19Im
+  Learn more about Chrome DevTools MCP servers → https://goo.gle/4tO89bK
+  
+  Speakers: Kevin Bay, Oliver Dunk
+  
+  Watch the Chrome sessions from Google I/O 2026 → https://goo.gle/Chrome-at-IO2026
+  
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  
+  #GoogleIO
+  
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: Web, Chrome, AI/Machine Learning
+---
+[MUSIC PLAYING]
+
+KEVIN BAY: AI has made development for the web easier than ever. And we see this reflected in how developers are building and utilizing Chrome extensions. With the rapid pace of development that AI enables, it is crucial that all parts of your ecosystem provide a great developer experience, which will be the focus of today's talk. Welcome to "Elevating the Chrome Extensions Developer Experience." I'm Kevin Bay, product manager for Extensions Platform.
+
+We're excited to share with you today the latest updates in the world of extensions. First, we'll talk about exciting updates to the Chrome Web Store and the extensions platforms that streamline your developer experience, before sharing tips on how you can leverage the latest tooling like MVP servers to build Chrome extensions easier than ever. Let's dive in. We're amid one of the most remarkable technology transitions of our time. And how we're building for the web has fundamentally shifted.
+
+With AI, coding has become more approachable, something we see reflected in our Chrome extensions developer community. Over the last year, monthly developer registrations have more than doubled. AI isn't just changing how we build, it's inviting a whole new wave of developers to the extensions ecosystem. The number of extensions that use AI also continues to rise. 17% of all extensions that were created for the Chrome Web Store last year use AI.
+
+And we're excited to give our growing developer community another boost. This year, we will open up developer registration to over 120 additional countries. With such momentum in our developer community, streamlining the developer experience is more important than ever. Let's talk about it. Many extensions are the result of close collaboration and teamwork.
+
+The first step to support this has been the introduction of our group publisher memberships many years ago. This allowed multiple team members to take actions on the Developer Dashboard on the same extension. However, in cross-functional teams, the actions that need to be taken vary widely. One person needs to be onboarded to the dashboard. Another is looking to upload the latest extension update, while a third only needs to review the latest metrics.
+
+The feedback across many of our conversations with developers has been clear. In a modern workflow, all-or-nothing access is a security concern and an operational headache. Managing an extension successfully means providing access to the right actions to the right people on your team. Today, we're making a big step forward with the launch of expanded member roles and permissions to the dashboard. Going forward, you will be able to invite other team members into different roles on your publisher.
+
+Now you can grant the right access to the right people with a single click. The member tasked with onboarding someone to the Developer Dashboard can do that as an admin. The one asked to submit a new update can do so as an item manager. And the team member who only needs to review metrics can see them through the viewer role. Additional members can be invited to your publisher without going through developer registration, and can be done at no cost.
+
+Expanded member roles and permissions are already live on the Chrome Web Store Developer Dashboard. Check it out. Now let's talk about making publishing more flexible. Last year, we launched a private Chrome Web Store experience, allowing organizations to create their own extension marketplace. This allows Chrome administrators to curate which extensions are presented and available to users within their enterprise, giving them a clear indication of which extensions they can add to their Chrome browser.
+
+It's been exciting to see the adoption of this experience since the launch last year. Offering a curated store for enterprises was an important step. But our goal at Chrome is to constantly improve the user experience and invest in our extension ecosystem. So we're excited to be sharing another improvement we made-- enterprise publishing for external organizations. Extensions with a focus on enterprise use cases are not only created by in-house developers, but also by amazing external developers that build bespoke solutions for many enterprises.
+
+These developers had only two choices on how to distribute their enterprise extensions-- either publish it on the public Chrome Web Store, requiring other mechanisms to gain access, or share them directly with enterprise admins to deploy them via group policy, device management, or local install. This led to fragmented deployments and an extra operational burden. And we're looking forward to improving this with enterprise publishing for external organizations as a new option. With this feature, an external extension developer can generate an approval link and send it to an enterprise administrator of another domain. If that admin then grants the approval, the external developer can now publish their extension across domains.
+
+This is done in a way that maintains full control for enterprise admins on what gets published and which extensions are available to their users. This simplifies the development workflow for any external developer building extensions for enterprises. And the best thing is it's already available. Now I will hand it over to Oliver to share more about exciting platform updates. [MUSICAL FLOURISH] OLIVER DUNK: Hi, I'm Oliver Dunk, developer relations engineer for Chrome Extensions.
+
+As we continue to add features to the Chrome Web Store, we know it's important to keep investing in the platform, too. Over the last few years, we've doubled down on our commitment to building a cross-browser web extensions platform. Through our participation in the WebExtensions community group, we meet with developers and other browser vendors regularly. And we work to make the implementation of web extensions more consistent and more capable in all browsers. The contributions of community members and engineers from Edge, Firefox, and Safari have significantly influenced the design of APIs we've brought to the group over the last year.
+
+And we've implemented features in Chrome that were first proposed by others. Since Chrome was the first browser to implement the current web extensions model, extension APIs are made available on a Chrome global. For example, to create a tab, you can use the chrome.tabs.create API.
+
+When other browsers implemented these APIs, they also introduced a browser global so you can use browser.tabs.create instead. Chrome is still supported by other browsers as an alias, so you can take an extension written in Chrome, which uses the Chrome global, and run it elsewhere. It's clear to us that a single shared global is better for everyone, which is why we're excited to be introducing support for the browser global in Chrome.
+
+For most extensions, this is available now. We're really excited about this because it makes it even easier for you to build cross-browser extensions. You can learn more in our documentation, which includes guidance on when and how to migrate. As part of this work, we also identified an opportunity to modernize the browser.runtime messaging APIs.
+
+To receive messages in your service worker from another part of your extension, like a side panel, you can add a listener to the browser.runtime.onMessage event. Previously, to respond to these messages, you could update your listener function to receive the sendResponse callback as a parameter. Then, when you have a response, you can call the function to return it to the sender.
+
+If your call to sendResponse happens asynchronously, for example, after awaiting a promise, you need to return "true" so that Chrome knows to keep the messaging port alive. In newer Chrome versions where the browser global is available, we now support returning a promise instead. You can use this as an alternative to the sendResponse function. Chrome will wait for the promise to resolve and respond to the sender with the resolved promise value. This is already supported in Firefox and Safari, and so we're excited that developers can now use it in Chrome, too.
+
+Support for the browser namespace and promises in runtime to onMessage are also provided by Mozilla's web extension polyfill, which many developers have used up to this point. You can continue using the polyfill, and it will deactivate itself in newer versions of Chrome. We've published more guidance on how to update your extension following these changes, which you can find in our documentation. These changes make it easier for you to write code as a developer, and they also make it easier for agents to write cross-browser extensions on your behalf. But we think it can be even easier.
+
+We're publishing a skill that gives agents guidance on the newest APIs and best practices for building Chrome extensions. If you're not familiar with them, skills are files that Antigravity, Gemini CLI, and other AI coding tools let you add to an agent's context. They give your agent's domain-specific knowledge that they can load as needed. This is one part of the guidance we're publishing for modern web development more broadly, which you may have heard about in another talk, "Unlock Modern Web Capabilities in Your AI Coding Workflows." Models like the Gemini models are getting increasingly powerful.
+
+In fact, in internal testing, we found that they could build many extensions from our set of evals in a single prompt. However, the guidance we're publishing helps improve the quality of extensions you can build with AI in tools like Antigravity even further. Firstly, it teaches them about the latest APIs, which may have been released after the model you're using was trained. Next, it makes your agents have access to all of the best practices our team has learned over the years building Chrome extensions. And finally, it keeps track of information that you might need to submit your extension to the Chrome Web Store, making distribution even easier.
+
+Let's talk about that last one in more detail. As part of the skill, we ask your coding agent to create a Chrome Web Store to md file that keeps track of all the information necessary to submit your extension to the Web Store. If you've ever tried to submit your extension to the Chrome Web Store only to realize you still need to fill in justifications for each permission you've requested, that just got a whole lot easier. In this example, I asked it to build me an example extension using the Side Panel API. Since I need the Side Panel permission, my agent creates a Chrome Web Store .md file with
+
+a justification. When submitting my extension, I can check if this justification is appropriate and copy it straight into the Developer Dashboard after making any necessary changes. You can learn more about how to install the skill and get started in the Chrome for Developers documentation. But what about testing and debugging your extensions? I'll hand you back to Kevin to tell you about another way we're giving new capabilities to coding agents.
+
+[MUSICAL FLOURISH] KEVIN BAY: Now let's talk about testing and debugging. We're thrilled to announce that the Chrome DevTools MCP server with Skills now officially supports extension debugging. For those who haven't heard about it yet, MCP is a universal bridge that brings the full power of Chrome DevTools to coding agents. With this MCP server, coding agents can launch Chrome and debug live websites. When we launched it, one of the first questions we received was, can we also use it to debug extensions?
+
+And this is finally possible. With the latest versions of the Chrome DevTools MCP server, it is now possible for your coding agents to also install and debug extensions. Let's look at a quick example of how this streamlines the workflow. In this demo, we asked Gemini CLI as our coding agent to build a simple hello-world extension that opens a pop-up when extension icon is clicked. As you can see, the agent doesn't just write the code and stop there.
+
+Once the extension is built, the agent also automatically launches a fresh instance of Chrome, installs the extension, and clicks the Action button to trigger the pop-up. It then inspects the pop-up page's dom to verify that it actually includes the "Hello World!" message and is rendered correctly. And the agent confirms, hello-world verified. While this is a simple example, the real power lies in how this handles more complex scenarios.
+
+For instance, a coding agent can now autonomously debug service workers and side panels. This is all made possible because the Chrome DevTools MCP server can now perform a robust set of programmatic tasks. It can install and uninstall extensions, list all installed extensions and reload them, and can trigger extension actions. Most importantly, it can now inspect every surface of your extension, from the pop-up and side panel to the service worker, helping you verify that your code works as expected. With tooling like this, creating extensions is easier than ever, even for personal use cases.
+
+We hear more and more about developers using AI to create personal extensions just for them, through which they customize Chrome to their liking and streamline their individual workflows. If you'd like to learn more, check out this I/O talk about Chrome DevTools MCP. The rapid pace of technological progress requires a streamlined developer experience. With today's announcements and tips for the Western platform and AI tooling for extensions, we are pushing forward towards our overall goal at Chrome-- remove the friction from your workflow so you can focus on what truly matters, building incredible experiences for your users. We are excited to see how you leverage these new capabilities and can't wait to discover what Chrome extensions you build next.
+
+[MUSIC PLAYING]
