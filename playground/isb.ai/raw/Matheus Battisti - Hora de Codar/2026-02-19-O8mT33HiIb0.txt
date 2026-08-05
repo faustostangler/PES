@@ -1,0 +1,156 @@
+---
+video_title: "OpenClaw BARATO: guia definitivo de otimização (2026)"
+video_id: O8mT33HiIb0
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=O8mT33HiIb0
+video_date: 2026-02-19T15:00:00+00:00
+video_description: |
+  Neste vídeo eu mostro 6 formas práticas de cortar 80%+ dos custos do OpenClaw (Clawdbot). Se você tá rodando o agente e tá achando caro, provavelmente tá usando errado.
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_openclaw_economizar
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O problema é simples: por padrão, tudo vai pro mesmo modelo. Heartbeat a cada 30 minutos? Opus. Pergunta sobre o clima? Opus. Sub-agent fazendo tarefa simples? Opus. Opus custa $30 por milhão de tokens. É como contratar um advogado pra checar sua caixa de correio.
+  
+  A primeira dica é Model Tiering com fallback models. Você separa modelos por complexidade: Opus só pra raciocínio pesado, DeepSeek R1 pra sub-agents, Gemini Flash-Lite pra heartbeats. Só isso já corta 60-65% dos custos. Pra funcionar você precisa do OpenRouter, que é um hub com mais de 400 modelos numa API key só.
+  
+  Depois mostro o comando /model pra trocar de modelo na hora. Vai fazer algo complexo, fica no Opus. Quer checar algo rápido, troca pra DeepSeek com /model ds e volta depois.
+  
+  A terceira dica é onde tá o maior desperdício que ninguém fala: skills computacionais. Muita gente pede pro OpenClaw processar dados e arquivos usando a IA, sendo que um script Python ou um comando bash resolve em milissegundos sem gastar um token. Mostro skills prontas do ClawHub como ffmpeg-video-editor, coding-agent e sherpa-onnx que fazem o trabalho pesado localmente.
+  
+  Falo sobre gerenciamento de contexto, que é o vilão silencioso. O OpenClaw envia o histórico inteiro a cada request, então conforme a conversa cresce, cada chamada fica mais cara. Mostro como usar o /new, configurar flush automático e limpar sessões antigas.
+  
+  Tem também a dica de desabilitar skills não usadas. Cada skill ativada adiciona tokens ao system prompt, mesmo as que você nunca usa. Um usuário reportou 15 mil tokens de input por request só com definições de skills.
+  
+  Por fim, mostro como configurar limites de gasto nos dashboards da Anthropic e OpenRouter pra se proteger de loops infinitos às 3 da manhã. E uma dica bônus: OpenRouter Auto, que roteia automaticamente pro modelo certo baseado na complexidade do prompt.
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Introdução sobre Economizar com IA no OpenClaw
+  01:03 Porque o OpenClaw gasta tanto?
+  02:51 Config 1: Configurando o model tiering no OpenClaw
+  07:14 Config 2: Economizando com o comando model
+  09:00 Config 3: Usando recursos do servidor com Skills
+  16:08 Config 4: Gerenciamento de contexto
+  18:42 Config 5: Desabilitando recursos não utilizados no OpenClaw
+  20:05 Config 6: Limite de gastos de API
+  21:50 Conclusão sobre como economizar no OpenClaw
+---
+Se tu tá utilizando o OpenCloud, são grandes as chances que tu tá queimando tokens por causa de configurações erradas e também estratégias que fazem aumentar o consumo de tokens desnecessariamente. Aqui nesse vídeo eu vou te mostrar seis recursos que eu utilizo para poder economizar pelo menos 80% nos gastos de token. E também, né, caso tu não esteja utilizando OpenCloud, é grande a chance, porque ele consome muito e gasta bastante dinheiro aí com inteligência artificial. Então, talvez depois desse vídeo tu passe a ter o OpenCloud rodando e te ajudando em várias tarefas. Eu sou Mateus Batiste, programador há mais de 10 anos e hoje tô me aventurando aí nas tecnologias que a IA nos proporciona e o OpenCloud é uma delas e hoje a gente vai falar muito dele. Então se tu curtir,
+
+não se esquece de deixar o like nesse vídeo e também se inscrever aqui no canal para receber mais vídeos sobre OpenCloud e claro outras IA. Bom, então chega de enrolar e bora pra prática. Ó, aqui eu trouxe, galera, um mapa mental para vocês verem quanta coisa a gente tem para fazer para melhorar a questão de economia de tokens, tá? Então, vou eu vou entrar em ponto a ponto aqui com vocês, mas primeiro eu quero explicar o problema. Então, o que acontece? Por que
+
+que a gente gasta muito token lá no OpenCloud? Todas as chamadas tendem a ir para um modelo só, que geralmente é o Opus 4.5, independente que tu usa, porque ele é o melhor modelo, então o OpenCl sai muito bem com ele, né? E todo mundo utiliza o Opus para as ações do Open Cloud. Só que a gente tem ações que não necessitam de as tampar rudas e outras ações que nem necessitam de A para poder ser executadas. E aí que a gente pode
+
+economizar, por exemplo, Heartbit, que acontece? O OpenCloud, ele precisa enviar uma solicitação para EA para ver se ele tá ativo ainda. Então isso consome tokens. É pouco, mas se a gente comparar com modelos ridículos que podem fazer isso ao Opus 4.6 e colocar aí para um mês, a gente vai ter uma economia enorme de gastos, tá? Então a gente tá
+
+falando também a longo prazo. E tem outras estratégias, né? Não só a requisição principal, como subagents, como as perguntas que a gente faz para ele com o riqueiro do dia a dia, que não precisam ativar ous, né? Qualquer outra conseguiria responder, por exemplo, o GM Flash e a gente manda para ele. Então tudo isso vai somando e a conta fica alta no final do mês. Eu tava dando uma
+
+olhada no Red para poder fazer esse conteúdo para vocês e tem relatos de gastos lá, né? E vão de 200 até quase 3.000 por mês em tokens. E é aí que a gente vai economizar e enxugar a máquina, tá? Então, como é que a gente pode fazer isso? Bom, vamos ponto a
+
+ponto aqui. Primeira coisa que a gente tem que fazer, que é obrigatório, que vai dar um impacto enorme, é o modeling, que seria também conhecido como falls. E o que que é isso? A gente vai destinar models para cada uma das ações diferentes que a gente tem no OpenCloud, tá? Aqui, por exemplo, a gente pode utilizar o flashlight, né? Ou o GPT5 nano para
+
+hard bits. É só para ver se ele tá ativo. Deixar o Opus somente para tarefas complexas. O Deep seek R1 ele pode ser utilizado para subagents. E falando de economia, né, o flashlight ele é 60 vezes mais barato e o Deeps R1 é 10 vezes mais barato. Então vejam aqui
+
+o potencial de economia que vocês tenham na mão, tá? Como é que a gente pode fazer isso? Bom, bem simples. Tô aqui com opc aberto na hospedagem, né? Essa essa aqui é a minha instalação original, então ele ainda tá com cloud bot, né?
+
+Para para vocês verem que eu tô utilizando realmente desde o day one aqui que lançou, né? E onde é que a gente vai? A gente vai ter que achar o Cloud Bot Jon, tá? Então a gente vai na pasta oculta aqui na raiz, né? Cloudbot e acessa o Cloudbot JSON.
+
+Isso tudo pode pedir para configurar também, não precisa configurar novinho. E o que que tem que se atentar? Bom, primeiro é configurar os models, né? Então nem é aqui ainda, na verdade, né? Vai ter que vir aqui em cloud botigure, tá?
+
+E aqui tu vai botar local model e tu vai configurar todos os providers que tu quer utilizar. Então antes tu vai ter que definir os modos. Ah, quero usar o o Nano. Então, vou ter que configurar as credenciais da Openi. Ah, eu quero utilizar algum modelo aí do Open Houter, então eu ten que configurar a API da Openouter, tá? Então, tem que configurar
+
+todas as credenciais para tu poder utilizar os módulos, né? Tu tem que ter o provider configurado aqui. Se tu quer economizar tempo, né? Não é a alternativa mais barata aqui tá falando de economia, vai colocar tudo na Open Houter, como eu fiz aí aqui na Open Houter, configuro aqui, seleciono os modelos que eu quero, tá? E aí dá o continue.
+
+Vai agora sim lá pro cloud bot Jon e muda os modelos. Ó, aqui em agents default model falls, tu consegue configurar os modelos todos. Então vejam aqui, eu tô usando para algumas coisas ou Opus, Sonet, Gem Flash, tipo SCAT, R1, Flashlight 5.2 e o auto, né? Então, olha só o que acontece aqui. Eu
+
+posso também colocar umas. Isso vai me ajudar a trocar de modelos quando eu quiser. Então, ah, chamous, chamo flash, chamo R1. E agora eu já tenho essa possibilidade de identificar o módel para cada uma das tarefas. Então vocês vem aqui, por exemplo, no Hartbit, eu tô utilizando o GM 2.5 Flash. Para
+
+subagents eu tô utilizando o Deepsic R1, tá? Então, e onde é que a gente tem essa informação, né, do que que a gente pode configurar na documentação? Então, esse aqui são exemplos, tem mais coisas que a gente pode destinar outras e as mais baratas. Aí tu vai ter que ir lá na documentação do OpenCloud, né, que é só acessar doc.Icar pelas eh ramificações, né, que usam modelos, por exemplo, Heartbit. E aqui a gente
+
+consegue ver todas as configurações que um Hartbit tem, inclusive o model. Então tudo que tiver model aqui, ele é ativado em certo ponto, né? Aí cabe a você entender que ponto que é, se o teu open tá utilizando e destinar um módel mais barato. Às vezes é testar mesmo, né? Não dá para só sair chutando ou só colocando flash em tudo, porque daí a resposta pode ficar ruim. Por exemplo, lá quero
+
+programar, provavelmente vai ter que ser o opos, né? não vai ser o flash, tá? Então, fazendo essa mudança aqui, depois de configurar os models no configure e colocando o cloud Bot Jon, já consegue ter uma economia instantânea, porque só de hard bit já vai ser 60 vezes mais barato do que utilizar o Opus para tudo. E aí vamos pro segundo ponto, tá? O comando barra modelo.
+
+O que que acontece? Nem sempre a gente vai estar executando tarefas complexas com o cloudbot, né, ou open cloud. Às vezes eu vou querer só lembrar o que a gente conversou ontem. Eu não preciso do Opus para isso. Então, no canal que tu tem com ele, por exemplo, aqui é o Telegram, né? Que que eu posso fazer? Eu
+
+posso vir aqui em barra model e utilizar qualquer um dos ilhas que eu coloquei lá. Então, se a gente for ver aqui,
+
+eu tenho todos esses modelos configurados e eu posso falar, por exemplo, com o GPT 5.2. Então, eu venho aqui model/model GPT, ele vai trocar pro modelo. Ó, ele modificou o modelo e agora eu tô conversando com o GPT 5.2.
+
+Isso vai ser útil para quando for aquela conversa do dia a dia. Ah, qual foi, sei lá, a ata da reunião de ontem que eu recebi de e-mail ontem, né? Dependendo do serviço tá conectado. Ó, veja que ele tá no GPT5.2. Então eu
+
+não tô torrando crédito de um opus para fazer pergunta besta de coisa que tá na memória dele. Então esse comando barra model onde tu utiliza, né, na comunicação, ele vai ser excelente para poder economizar token nessa conversa do dia a dia, né, que a gente não tá pedindo uma tarefa complexa para ele, a gente tá querendo apenas resgatar alguma informação, pedir algum ajuste pequeno. Então, modelos menores, mais econômicos, vão servir muito bem para isso, tá? Outra coisa, skills computacionais. Então, a gente pode destinar tudo para IA, né? A gente consegue fazer edição de
+
+vídeo com IA, a gente consegue fazer edição de imagem, sei lá, tem todas as possibilidades do mundo para processar a ação que a gente quer com inteligência artificial. E isso vai consumir token e vai gerar gasto pra gente, é óbvio. Então, o que acontece? nas skills que a gente tem disponíveis no Cloud Hub, eu consigo tá jogando algumas responsabilidades para os recursos da máquina. Então, por exemplo, aqui eu tenho a SKJQ, que vai fazer uma análise de logs, né? Aqui eu tenho uma skill que
+
+vai fazer edição de vídeo, né? algum processamento, pode ser redução do tamanho. E isso vai permitir que eu desafogue a EA e use o computador, que teoricamente é de graça, porque a gente tá pagando por uma hospedagem que não vai ter cursos, não vai ter cursos variáveis, né? Claro, se a gente tá utilizando uma AWS da vida, às vezes a gente também paga pelo consumo, então aí cai um pouco por terra, mas provavelmente vai economizar mais, tá? E galera, lembrando, né, todos os meus projetos e inclusive o meu OpenCloud estão hospedados na Hostk. Eles têm uma
+
+hospedagem dedicada a OpenCloud, tá? Vou deixar aqui a no link a descrição, beleza? Essa hospedagem já vem com as otimizações de segurança necessária para tu rodar no ambiente mais seguro e também performático para tu poder executar esses skills no teu PC ou no servidor, né? economizar dinheiro com IA. Planos, eu indico sempre KVM2, ele tem uma configuração muito melhor que o KVM1, tá? Então ele vai aguentar muito o
+
+tranco, mas se tá só começando, quer testar, o KVM1 já é suficiente, tá? Lembrando, esse link tem uma oferta especial mais o cupom de desconto nosso aqui da hora de codar, tá tudo aplicado automaticamente. Beleza? Tá voltando. Como é que a gente vai fazer isso então, né? Como é que a gente materializa isso?
+
+Bom, não deve ser novidade para vocês. A gente tem um hub de skills, que é o cloud hub, tá? E aí basta a gente entender o que a gente precisa fazer, tá? Qual que é a nossa ação que a gente tá delegando para EA e ver se tem uma skill para isso. Por exemplo, eu tenho a skill video frames. Ela
+
+extrai frames ou shorts de um vídeo maior usando FF MPEG. Então isso aqui não usa eu peço para ir a usar ela, mas depois é tudo utilizando essa biblioteca chamada FFMPEG. Notas. Sempre chequem isso aqui se ela é segura, porque a gente teve um problema recente de algumas skills com fase de segurança, né? Então isso aqui vai garantir que a skill é safe.
+
+Aí vocês podem ver como que usa, o que que ela com o que que ela trabalha e fazer a instalação via Cloud Hub. Cloud Hub é bem simples. Tu vai no teu servidor e tu vai instalar ele, tá? Aqui no meu ainda tá como cloud hub, né? que foi a versão inicial, mas se tu for instalar agora, tu vai usar esse comando aqui, npm install, tá? Aí aqui no meu ele vai dar pau
+
+porque ele já tá instalado como outro nome, né? Nome antípico. Bom, depois de instalar, tu pode fazer um search para poder encontrar a skill, tá? Então, ah, quero aquela skill ali do de vídeo. Então, cloud hub ou cloud hub dar um search e fmpeg, por exemplo, né, que é uma palavra chave ali daquela skill.
+
+Aí tu vai encontrar todas elas pelo nome, né? Aquela ali que a gente encontrou era videofames. Então, essa daqui, ó, video frames. E a gente vai instalar ela. Como é que a gente vai instalar? Tem o comandinho
+
+aqui também, tem esse aqui, install. Então é cloud hub install video frames cloud, né? No meu é cloud. Ele começa a instalar e pronto, né? Ah, por que é tão simples? Porque é um
+
+arquivo de texto com instruções. Aí se precisar alguma coisa, ele vai est descrito aqui o que tu precisa instalar ou se a própria skill já faz isso sozinho, tá? mensões ou rosas, skills que vão te ajudar a economizar dinheiro com IA, tá? Então a gente tem ali skills que vão fazer recursos pela gente que a gente não precisa utilizar, mas tem outras que inevitavelmente a gente teria que utilizar. E a E isso aqui dá uma tancada.
+
+QMD. Por que que eu não escolhi nenhuma, cara? Porque a principal ela tá com suspeita aqui de confiança pelo próprio OpenCloud. Mas cara, eu acredito que seja o próprio criador do OpenCloud que fez a skill, então não deve ter problema, tá? Mas eu não vou indicar ela por causa a suspeita. Que que isso aqui
+
+faz? Bom, de forma super simples, o OpenCloud ele salva tudo numa memória ali, num arquivo MD e sempre que tu manda algum prompt para IA, ele vai mandar toda essa memória junto, tá? Então, mesmo que tiver informação não relevante pro que tu quer fazer, mesmo tendo ou não tendo, não importa. Ele vai mandar tudo. O QMD vai pegar, encontrar só o que é mais relevante e mandar apenas aquela parte que tu precisa para fazer o que tu quer, tá? Então ele
+
+consegue economizar até 90% no envio de tokens para a IA. Então QMD é excelente pra economia. Beleza? E outra aqui que eu achei interessante, essa sim, ela tá com alta confiança nos dois, tá? é a Save Money. Olha só, lá no começo do
+
+vídeo eu falei sobre nós fazermos o roteamento ali via modelos que a gente escolhe, tá? Essa daqui é um pouquinho diferente. Ela vai utilizar todos os modelos do cloud, né, da Antropic, Haiku, Sonet, Opus. E ela vai entender, primeiramente que o Haiku é um modelo super barato, com a complexidade da tarefa. E aí, baseado nisso, ela vai escalando para utilizar LLMs mais baratas ou mais caras dentro desse ambiente do cloud, tá? Então tem que ter
+
+todos os modelos do cloud ali aptos a serem utilizados, né? Configurar ali a antropic e aí tu consegue utilizar ela, beleza? Então é um pouquinho diferente e o roteamento é automático, né? Então é mais para quem não conhece muito ali os modelos, não quer gastar muito tempo escolhendo o melhor modelo mais barato, tu pode estar utilizando essa daqui e deixando a IA decidir qual modelo ela vai utilizar. Bom, galera, vamos lá pra quarta dica que é o gerenciamento de contexto, tá? O que acontece? Sempre que
+
+a gente vai conversando lá no OpenCoud, ele vai unindo o contexto da conversa num arquivo só, beleza? E aí isso faz com que tudo seja enviado paraa mensagem. Já falei isso antes, né? Então a gente tem ali o QMD que vai ajudar a gente a mitigar isso, tá? Ou a gente pode proativamente queimar isso, né?
+
+Reduzir esse custo também, porque se a gente sabe que a gente vai mudar de tarefa, por exemplo, tô programando alguma coisa e agora que eu escrevi um e-mail, uma coisa tem nada a ver com outra. Então eu posso proativamente fazer isso, tá? Como é que a gente sabe se o contexto tá cheio? Basta vir no bote aqui que tu tá utilizando, funciona terminal também. E tu vai utilizar o comando status barra status. Aí ele vai te mostrar, ó, aqui
+
+ele tá falando que o contexto tá em 8% e ele não fez nenhuma compactação ainda, tá? Então o que que ele tá falando aqui? Que 9.300 tokens estão sendo enviados para IA. Se é necessário ou não, depende o que a gente tá fazendo, né? Porém, eu
+
+posso dar o comando new, que vai começar uma nova sessão e ele reseta todo este contexto aqui. E agora eu preciso escolher o modelo de novo, né? Então, modelar aqui flash porque ele reseta, né? E eu vou dar um status aqui. E agora ele vai mostrar ali que o contexto tá zerado, tá? Então essa é uma
+
+maneira de a gente economizar quando a gente muda de tarefa. O costume que a gente tem que ter é down new, tá? Isso vai fazer com que a gente não envie contexto desnecessário e queime tokens à toa. Outra configuração que vai ajudar bastante é o flush automático, tá? E o que que isso faz? Sempre que chegar a um
+
+número X de tokens, ele vai pegar essa memória toda que ele tem e vai colocar num arquivo e vai limpar a memória. Esse arquivo ele vai conter somente os pontos chaves. Um resumo, para configurar o memory flush, tu pode vir na documentação e ver aqui as chaves que tu precisa adicionar para ele poder fazer essa compactação de memória. Inclusive, eu tenho um vídeo aqui dedicado falando sobre configuração de memória pr ele lembrar de tudo que tu fala, para ele poder também compactar quando precisa e eu vou deixar o izinho aqui, tá? Então eu não vou me adentrar muito nessas configurações porque eu fiz tudo lá passo a passo e demora um pouco, tá?
+
+Então eu vou deixar aqui a documentação para vocês e também deixei o izinho para verem esse vídeo depois que é importante pra economia e também para ele lembrar de tudo que a gente conversa com ele de forma 100% efetiva. Bom, galera, o que acontece também é que a gente pode desabilitar as skills não utilizadas, tá? Então isso é bem importante, porque quando a gente instala skills, às vezes a gente vai fazer só alguma coisinha e tal, nunca mais usa. E ele pode estar ativando sem querer ou mandando via contexto essas skills, tá? Então, a gente pode estar acessando as skills aqui, ó. Isso vai mostrar todas as
+
+skills que a gente tem e inclusive as que não estão instaladas, né? Mas todas que estão ready aqui, elas estão rodando. Então, sempre que ele julga necessário algo aqui, ele pode estar enviando como tokens desnecessariamente para a API que a gente usa de A. Então, vamos dar um exemplo aqui. Cara, eu tô, eu não utilizo Notion, então para que que eu tenho uma skill de Notion? Tu tem
+
+que fazer essa limpa frequentemente para desabilitar skills que tu não usa mais. Então tu vai utilizar assim, ó, cloud bot config ou open cloud, né? Set skills entries, notion enable false. Isso vai fazer com que a skill seja desabilitada. Vai ter que dar um restart no gateway e a gente pode fazer a listagem de novo e ver aqui, ó, que ele não usa o notion mais de nenhuma forma.
+
+Assim, dessa maneira, a gente já consegue economizar também com skills desnecessários. Sexta e penúltima dica, eu tenho uma dica bônus ali para vocês, tá? Seria limitar os gastos. Então, para não ter surpresa na conta, toda plataforma que a gente conecta ali no Open Cloud tem uma forma de fazer a limitação. Aqui, por exemplo, no Open Houter, tu pode ir direto naqui, colocar aqui em edit e aqui, por exemplo, eu quero gastar no máximo 10 por dia. E esse
+
+limite reseta todo dia. Aí fazendo isso, agora eu tenho um limite de gasto e ele não vai passar disso, né? Então é um controle que a gente pode fazer para as coisas não ficarem descontroladas, né? E galera, a gente também tem uma playlist aqui de Open Cloud, né? Não sei se você já viu algum vídeo meu aqui. Vou deixar
+
+a playlist para vocês assistirem. Tem tudo o que vocês precisam para dominar o OpenCloud em todos os sentidos, né? Além desse vídeo aqui de corte de custo, tá bom? Última dica aqui é a questão de deixar o opener no automático, tá? O que acontece quando tu faz isso? O opener que vai
+
+decidir o modelo pela complexidade. É meio que um save money da vida aqui, só que ele pode utilizar qualquer modelo. Ele vai entender a tarefa e localmente, em milissegundos, tu vai decidir qual modelo precisa ser utilizado. Então não vai ter delay, não vai ter atraso nenhum e tu vai receber aí o modelo mais econômico em relação à tarefa que tu precisa fazer, tá? Então é mais uma opção que eu dou para vocês. Não curto
+
+muito porque eu prefiro estar no controle, mas isso aqui também permite praticamente zero config, né, como o save money. Então vai depender do que vocês preferem também, né? Deixar essa opção no ar para quem quiser utilizar. E aí galera, curtiram as dicas de economizar com OpenCloud? Já sabiam de alguma delas? Comenta aí. Se tiver mais
+
+alguma sugestão, manda pra gente poder saber também como economizar mais no OpenCloud, que é algo que dói no bolso, né? Se a gente deixa ali indiscriminadamente utilizando pelo US, vai dar ruim e a gente não vai conseguir manter. Dessa maneira aqui, a gente consegue tancar e ter acesso a todas as funcionalidades sem perder qualidade, que é o principal, né? Que é o opus que fornece isso pra gente, mas a gente só precisa utilizar ele na hora certa e não toda hora. Bom, se tu curtiu o vídeo, não esquece, deixa aquele like, se inscreve aqui no canal que ajuda a gente bastante e, é claro, te espero no próximo vídeo.

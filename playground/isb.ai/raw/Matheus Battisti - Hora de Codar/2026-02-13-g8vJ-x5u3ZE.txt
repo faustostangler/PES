@@ -1,0 +1,153 @@
+---
+video_title: "Antigravity Customizations: O que NINGUÉM te Explicou Ainda"
+video_id: g8vJ-x5u3ZE
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=g8vJ-x5u3ZE
+video_date: 2026-02-13T15:00:00+00:00
+video_description: |
+  Neste vídeo eu explico os 3 recursos de personalização do Antigravity que vão transformar a forma como você usa a ferramenta: Rules, Workflows e Skills.
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_antigravity_rules_workflows
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O Antigravity é poderoso por padrão, mas a maioria das pessoas não sabe que dá pra customizar completamente o comportamento do agente. Entender a diferença entre esses 3 recursos é o que separa quem usa o Antigravity de forma básica de quem realmente domina a ferramenta.
+  
+  Rules são as regras passivas que ficam sempre ativas. Funcionam como a "constituição" do agente. Tudo que você quer que ele sempre faça ou nunca faça vai aqui. Por exemplo: sempre usar TypeScript strict mode, sempre documentar funções, nunca commitar secrets. O agente segue essas regras em qualquer tarefa sem você precisar lembrar.
+  
+  Workflows são receitas que você ativa manualmente com comandos /slash. Diferente das Rules que estão sempre ligadas, os Workflows são disparados quando você precisa. Você pode criar um /deploy que executa todo o processo de publicação, um /test que roda a suíte de testes, um /review que faz code review seguindo seus padrões. São como macros que automatizam processos complexos em um único comando.
+  
+  Skills são capacidades sob demanda que o agente carrega automaticamente quando detecta que precisa. Você não precisa chamar explicitamente. Se você pede algo relacionado a banco de dados e tem uma skill de migrations configurada, o agente carrega esse conhecimento especializado na hora. Skills transformam o modelo generalista em especialista para tarefas específicas.
+  
+  Mostro na prática como configurar cada um desses recursos, onde ficam os arquivos, como criar do zero e exemplos reais de uso. Também explico quando usar cada um e como combinar os três para criar um ambiente de desenvolvimento totalmente personalizado.
+  
+  Se você usa Antigravity sem configurar Rules, Workflows e Skills, está deixando poder na mesa.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Introdução sobre Skills, Rules e Workflows
+  01:29 Iniciando um projeto do zero
+  04:15 Criando uma Rule no Antigravity
+  08:45 Criando um Workflow no Antigravity
+  13:17 Criando uma Skill no Antigravity
+  17:07 Verifique a documentação do Antigravity
+  17:45 Considerações finais sobre rules, workflows e skills no Antigravity
+---
+Hoje eu vou te mostrar três configurações do Antigravity que vão te ajudar em qualquer projeto, deixando eles mais performáticos, seguros e também vão ser desenvolvidos muito mais rápido. Tu vai conseguir aplicar em qualquer projeto que tu vai criar daqui paraa frente e nos teus projetos já existentes para ganhar velocidade, tração e conseguir colocar eles no ar sem se preocupar com nada, muito mais rápido. Eles são as skills, rules e workflows, configurações que a gente precisa setar em qualquer coisa que a gente cria no graft. Isso é muito importante e vai mudar a forma como tu usa o software. Eu sou Mateus Batista, programador há mais de 12 anos e venho trazendo aqui as novidades da IA, as ferramentas que funcionam. Se tu curtir,
+
+não se esquece de se inscrever, deixa teu like aqui também que fortalece muito o meu trabalho. Lembrando, galera, estamos aí continuando a campanha Deixe o Mateus Feliz. Isso aqui é uma das coisas mais divertidas do meu dia. Parte da rotina que eu mais gosto é ler os comentários, responder os comentários e ficar feliz. Quase um workflow aí do Antigraft. Então deixa o teu comentário
+
+aí e agora bora aí pro vídeo prática toda hora. Vou te mostrar criando um projeto como tu vai fazer também futuramente tudo no antigraft. Agora bora lá. Bom galera, então vamos lá. Nesse vídeo aqui a gente vai falar sobre três coisas que eu acredito que são fundamentais para qualquer projeto no antigravity, tá? E isso vale também pra
+
+gente poder fazer a nível global, não só a nível de projeto, tá? a gente consegue configurar todas essas três, esses três recursos dessa maneira, tá? Para contextualizar aqui e dar uma imersão melhor no que eles podem fazer, eu vou criar um projeto junto com vocês e aplicar cada um deles. E isso vai dar uma ideia, né, mais realista, mais na prática do que se eu só usasse isoladamente os três recursos, tá? a gente pode combinar eles. E aqui a gente
+
+tá falando de rules, workflows e skills, tá bom? Ó, vou criar um projeto e se vocês quiserem criem aí também, tá? Pra gente poder fazer juntos. Então, vou botar um promptinho bem simples. Criei uma estrutura de página única, né, uma spa usando HTML T. O layout deve ter uma
+
+barra lateral de ferramentas à esquerda e uma área de visualização central. Os JavaScript para gerenciar uma lista de itens, objetos com título e link e renderizeos na área central. Então aí uma aplicação que vai poder gerenciar uma lista de links, tá? Algo bem simples, né? Só pra gente poder ter o corpo físico, vamos dizer assim, e depois aplicar cada uma da desses dos recursos que eu falei para vocês, tá? Ou
+
+customizações, é como vocês preferirem chamar. a gente vai tá criando recursos que não iniciam junto com antigravity, né? Nós utilizaremos ali eles e eles podem ser reaproveitados depois em outros projetos também. Então vou aguardar ele criar esse projeto e depois a gente começa pelas rules, né, que são as regras. Ó, galera, então ele terminou aqui, tá? Eu abri o projeto no
+
+navegador. Inclusive fica uma dica, né? Se vocês usam com trabalho o projeto HTML, baixa a extensão Live Server, que ela vai abrir o projeto num P, né? Não por arquivo, fica mais semântico ali pra gente poder ver a estrutura de páginas. É só vir aqui com o botão direito e open with life sub, tá? Então o projeto é
+
+esse aqui, ó. Ele tem justamente o que a gente precisa, né? Gerenciador de links. Eu posso adicionar o novo link. Vou colocar ele aqui.
+
+Beleza, tá aqui adicionado o novo link. Tá bom final. Bom, agora sim vamos ao primeiro recurso, tá? Só antes eu coloquei aqui para lembrar todos vocês que a gente tem um guia completo gratuito sobre Vibe Code. O link vai est aqui na descrição. Material muito denso,
+
+de mais de 50 páginas, tá? Totalmente gratuito para tu poder entender melhor como que funciona a criação correta de projetos utilizando BB Code, tá? Depois baixa lá, vai fazer sentido para ti, tá bom? Ó, aqui eu vou querer começar primeiro pelas groupes, tá? A gente vai criar uma regra que ela vai definir padrões de desenvolvimento, tá? E
+
+lembrando, para a gente ter acesso a esses recursos, a gente precisa estar aqui no editor, tá? Lá no agent manager. Ainda não dá para fazer isso, tá bom? Então, como é que a gente vai criar uma regra? A gente vai vir aqui nos três pontinhos, customizations, então por isso que eu falei customizações, né? E
+
+aqui a gente vai acessar a aba Roots, né, que já é a primeira que abre. A gente tem uma opção ou a gente cria global, como eu falei, né, pode criar essa regra para todos os teus projetos, ou via workspace, que funciona só para esse projeto. Nesse caso, vou criar pro projeto em si, tá? Eu tenho que colocar um nome pr regra. Eu vou botar assim, ó, global dev standards. Eu gosto de
+
+colocar sempre em inglês, tá? Padrão que eu sigo desde que eu comecei a programar. E isso aqui seria padrões de desenvolvimento, né, para desenvolvimento. Padrões de desenvolvimento para desenvolvimento. Bom, tá? Aqui a gente tem duas coisas. A
+
+gente tem que ficar ligado aqui no modo de ativação. Então, nesse modo aqui, ele vai estar sempre ativo. Então, toda vez que eu pedir alguma coisa que tiver relacionada a essa regra, ele vai chamar ela para saber o que fazer, tá? Ou eu posso deixar o modelo decidir, eu posso deixar para escolher uma extensão de arquivo, tá? Ou eu posso deixar para eu pedir no prompt. Vou colocar aqui always
+
+on, vou deixar ela funcionando, tá? E aqui o conteúdo vai ser o seguinte, eu vou ter um ou vários padrões, né, de desenvolvimento. Para UI sempre utiliza escala das cores zinc ou slate, tá? São cores do ta wind, que eu vou trazer pros meus componentes. Interatividade. Todo
+
+elemento clicável deve ter transition e um feedback visual de active scale, tá? Código: Prefira funções puras e utilize nomes de variáveis que descrevam o propósito. Exemplo, eu coloquei aqui um exemplo para ele seguir. E acessibilidade garanta que todos os inputs tenham label e que as cores tenham contraste alto, tá? Então eu coloquei aqui quatro padrões que eu acredito serem interessantes pro meu projeto. Aí tu vai colocar os padrões
+
+pro teu. Beleza? E aí eu vou precisar salvar isso aqui, né? E testar. Ah, lembrando que tem um limite aqui, né, de 12.000 caracteres que a gente tem que
+
+seguir para a regra, né, qualquer regra que a gente cria, a gente não pode passar disso. Então, a gente pode dar um conttrl S para salvar, fechar aqui. Beleza? E agora a regra já existe. Como é que a gente sabe? Ela vai tá criada
+
+aqui nesse arquivo. Então, Pgraft cria automaticamente um uma pasta ponagents/rules, onde as regras estarão ali, tá bom? E agora no próximo prompt ela já pode ser ativada desde que influencie, né, meu prompt influencie algo que tá descrito lá dentro. Bom aqui que que eu vou pedir para ele vou pedir assim, ó, adicione um componente de header à área de conteúdo. Então vai ter um componente ali de cabeçalho que contém um título dinâmico, um campo de busca e um botão de ação principal, que seria adicionar o link, né, galera? Aqui eu vou adicionar para
+
+ele seguir as regras, tá? Mas teoricamente não precisaria. Vou dar aqui. Eh, observe as regras do projeto antes de executar as mudanças, tá? E vamos ver o que ele vai executar aqui e depois eu mostro o resultado final para vocês. Ó, galera, ele retornou aqui para
+
+mim, tá? Ele tá terminando a execução. Deixa eu só ver aqui, ó. Vamos ver se a gente consegue identificar onde que ele usou as regras, tá? Ó, galera, ele retornou aqui, tá? E vamos ver se a
+
+gente consegue identificar onde ele usou as regras, né? Deixa eu só ver o projeto primeiro, ó. Vou recarregar aqui. Esse é o projeto, né? Tá aqui com a o header, né? Ele adicionou, tem a busca e tal. Aí
+
+continua adicionando novo link, tudo funcionando ainda, tá? Mas a gente tem que identificar ali onde que ele viu as regras, tá? Deixa eu ver aqui, ó. Daí ele fala aqui, né? Tá meio no meio do texto, mas ele comenta aqui, ó. Tudo foi
+
+implementado, respeitando design existente, cores late zinc, que é exatamente que a gente pede lá no nas regras, né? e as regras de acessibilidade que a gente também comentou, tá? Então ele realmente ativou ali aquele arquivo para poder implementar essas mudanças do nosso projeto. Então as regras vão funcionar dessa maneira, tá? A gente pode deixar elas serem ativadas ali por diferentes maneiras, mas uma delas é esse always on que vai, né, sempre ativar elas quando algo que a gente pedir influenciar alguma regra. Bom, galera, agora vamos
+
+falar de workflows, tá? Só antes queria comentar também que a gente tem aqui um miniurso de antigraft comentando tudo sobre a interface, como utilizar as melhores formas de criar um projeto. A gente cria um projeto e faz o deploy, tá? Vou deixar tamb aqui o izinho também para vocês assistirem depois. Um vídeo bem interessante, complementar é esse aqui, tá? Olha só, os workflows, então
+
+eles vão fazer, como o próprio nome diz, fluxos de trabalho. Então aqui nesse projeto aqui, ele tem só uma página, né? projeto mais simples e tal, mas se eu tivesse um projeto com múltiplas páginas, eu poderia criar um workflow de como uma página tem que ser criada. E aí, sempre que eu precisasse criar uma página nova, eu poderia ativar esse workflow e o antiraph saberia os padrões que eu quero utilizar nas páginas que eu tô criando com ele. Então, é uma forma da gente automatizar ações complexas do nosso projeto, tá? E aí, como é que a
+
+gente pode criar um workflow? A gente vai vir aqui na mesma aba, em customizations, aqui também precisar no editor, tá? E aqui em vez de rules a gente vai acessar workflows. Da mesma maneira a gente pode criar global para todos os projetos. Se for um workflow que padroniza a criação de um projeto, pode ser também. Aí tu poderia utilizar
+
+o global. Agora é algo específico desse cara aqui, utilizando workspace. Aí eu tenho que colocar um nome, tá? E esse aqui, como eu falei antes, é um projeto de uma página só. Ele vai ser um workf para criar novas sessões do projeto. Eu
+
+vou chamar ele de new section. Aqui ele novamente cria a estrutura de passes para workflows, cria um arquivo e nesse modo, né, ele não tem um momento de execução. Eu já vou mostrar para vocês o porquê disso, tá? Então, no workflow eu vou colocar o conteúdo e também uma descrição, tá? Então, a minha descrição vai ser essa daqui. Pergunta ao usuário
+
+o nome da nova sessão, cria uma estrutura HTML semântica, adiciona comentários CSS JavaScript, se precisar, né? E aplica um padrão e também uma borda de zinco, né? Que é a cor zinco, zinc que a gente tá utilizando aqui, tá bom? Eu posso colocar uma descrição de no máximo 200 caracteres, né? Então, a auxilia o usuário a criar sessões no sistema. E o conteúdo é o que
+
+ele vai executar, né? É o workflow em si. Beleza? Pode dar um contrl S aqui para salvar e o an entender que a gente tem esse workflow novo. Agora a gente já pode fechar, a gente volta pra gente.
+
+Como que a gente executa workflows? Qualquer um. Pode ser global, pode ser a nível do projeto, tá? Eu vou precisar colocar assim, ó. New section barra new section. Então, sempre começo com barra,
+
+eu tô usando workflows. Aí ele vai ficar cinzinho assim, ó, dessa maneira. Isso quer dizer que ele tá ativado. Então eu posso pedir para ele criar a nova sessão agora. Então aqui eu vou descrever ela, né? Perceba que no meu prompt já tem o
+
+nome e tal. Talvez ele não me pergunte tantas coisas ali como tava descrito, mas ele vai seguir aquela ideia. Crie uma sessão do HTML com ID Analytics, né? Então, pra gente ver as análises do sistema, vai ter quatro cards, cliques, conversões, erros, ativos e injete no appjs uma lógica de sete intervalos que simula a atualização desses números a cada 3 segundos. Então, beleza, vou criar essa nova sessão utilizando o workflow. Se a gente clica aqui, a gente
+
+consegue abrir o workflow pra gente ver o que a gente tá executando. E ele vai misturar a inteligência artificial, né, o modelo que tá selecionado aqui com as instruções que a gente mandou com o workflow, tá? Então vejam aqui que ele tá eh iniciando workflow new section. Esse aqui fica mais lícito do que as grows, mas né, ambos funcionam. Então eu vou esperar ele responder aqui. Se ele
+
+perguntar alguma coisa, eu mostro para vocês. Senão mostro só o resultado final do workflow. Ó, então aqui ele falou que criou a sessão, então ele não perguntou nada, né? Porque eu já tinha dado alguns dados, mas ele também pode fazer as perguntas caso ficasse alguma dúvida, né? Porque tinha ali na news section ele perguntar o nome da sessão, tá? Então
+
+vamos ver como é que ficou. Ó, tá justamente aqui a sessão de analytics, né? E ele atualiza, ó, a cada segundos, né? Ele tá utilizando dados mocados, claro, mas ele tá fazendo atualização, ele tá mostrando isso pra gente. Se a gente coloca um novo link, ele vai aqui também adicionar na contabilidade, né? Na ele vai adicionar
+
+aqui na contabil, ele vai contabilizar esse novo link aqui pra gente, tá? Então, assim que funcionam os workflows, beleza? Bom, eh, o outro recurso que a gente pode customizar aqui para que eu quero mostrar para vocês são as skills, tá? As skills são mundo à parte praticamente, né? A gente cria habilidades, digamos assim, que o a gente pode seguir para criar coisas, para desenvolver padrões, para refatorar código, para adicionar segurança, para fazer análise. É um mundo infinito de
+
+possibilidades, né? tantas regras e os workflows também, mas em especial as skills que já vem, né, lá do cloud code que foi onde foi criado, digamos assim, né, esse recurso. Eu fiz um vídeo aqui também falando sobre as skills do Antigraft. Lá eu exploro bastante esse tema para falar, para dar mais profundidade mesmo. Então vou deixar aqui a thumbin também para tu poder ver esse vídeo depois, beleza? Tá. Como é
+
+que a gente vai criar uma skill? As skills elas não têm uma configuração ainda, tá? É algo novo no Antigraft. Talvez futuramente eles implementem. Como que a gente vai fazer? Na pasta
+
+ponagents, a gente vai criar uma pasta skills, tá? Igual ali ele criou automaticamente nos outros recursos. E aqui eu crio uma outra pasta com o nome da skill. Eu vou chamar ela de performance pro, tá? A pastinha e dentro da pasta eu crio um arquivo skill tudo maiúsculo. MD
+
+que é o padrão do anti graphit, tá? Aqui dentro eu vou colocar exatamente essa estrutura de skill. Essa daqui é uma de performance, né, para melhorar a performance dos projetos. Mas ela ele tem que ter essa skill para poder identificar um nome, uma descrição e o que que faz a skill, tá? E aí dessa maneira aqui, a gente vai conseguir executar ela no nosso código. Deixa eu
+
+fechar essa caixinha aqui. O que eu vou fazer? Eu vou salvar. Beleza? E agora eu vou fechar isso aqui e eu vou acionar ela via prompt. Então eu preciso chamar
+
+ela explicitamente. As skills funcionam assim. Eu preciso identificar qual skill eu quero utilizar. Beleza? Então vou fazer o seguinte, utilize a Skill Performance Pro para avaliar como deixar o projeto mais rápido e com código limpo, reutilizado. Isso que eu vou
+
+pedir para ele. A partir desse momento ele já consegue identificar a skill porque ele tá na estrutura de pasta correta, beleza? E ele vai justamente identificar ela aqui também no na etapa de pensamento. Ó, ele analisou o skill MD. Se a gente clica, a gente vê que tá exatamente na skill que a gente criou, tá? Então ele conseguiu acessar ela e
+
+agora ele fazer o processamento. Eu vou mostrar para vocês o resultado final, ó. Então ele me entregou aqui o projeto, tá? E ele fez essas modificações com base na skill performance pro. Ele fez o seguinte: event elegation, prioridade alta, né? Então cada card de on click in
+
+line, ele tirou, né? não deixou mais o click in line, ele também fez a redução de redundância de código e script loading. Ele falou que o teu indio é pesado via produção, mas funcional prootagem, né? Então ele foi lá e fez uma organização de scripts interpretos. Então essa skill aqui a gente pode ativar sempre que o projeto evolui, porque ela é uma skill que vai funcionar para sempre, pois ela se trata de performance e a gente sempre precisa de performance, tá? E se tu quiser se
+
+aprofundar mais nos assuntos, né, que a gente falou aqui esse vídeo, veja lá primeiro o meu vídeo de introdução do antigraft e depois o de skills, que é uma boa sequência. A gente tem uma playlist aqui inclusive de antigraft para te ensinar tudo sobre a ferramenta, tá? Inclusive a gente tá produzindo aqui uma formação de vibe code, onde a gente vai falar desses principais softwares que a gente tem estão dominando hoje, que é o Wing Grab, Call Code e outros. Beleza? Avisos finais aqui, galera, importantes. Olha só, provavelmente já
+
+ouvi falar de N8N. É um software para criar automações, tá? A gente tem uma formação dedicada a ele. O link vai tá aqui na descrição. Tu quiser conhecer mais para entender como tu vai poder aprender N8N, implementar ele no teu dia a dia, no teu trabalho, levar quem sabe pra tua empresa para automatizar processos muito burocráticos e até vender essas automações, tá? O link vai
+
+tá aqui na descrição, pode conferir todo o treinamento, tem como baixar grade curricular. Qualquer dúvida também fale conosco ali pelo WhatsApp que a gente vai tirar todas as tuas dúvidas, tá? Uma outra coisa bem importante é a documentação, tá? Essas coisas não tirei da minha cabeça, eu li a documentação antes e trouxe aqui para vocês. Então aqui na documentação do antigraphity, tu vai ter gulos workflows. E aí tu vai ter
+
+o passo a passo de como tu pode criar eles, né? Que é basicamente o que eu expliquei também. skills, vai ter aqui todo o processo. Vejam que é um pouquinho maior porque realmente tem mais densidade, por isso até recomendei aquele meu vídeo e, né, não tem comandos ainda ali via interface para criarmos skills automaticamente. Beleza? Bom,
+
+galera, então por hoje é isso. Espero que vocês tenham curtido aí aprender sobre as rules, né, as regras, os workflows, os fluxos de trabalho e também as skills. São assuntos importantíssimos e essenciais para projetos robustos que a gente cria com Vibe Code. Eles podem proporcionar pra gente muita qualidade ali de vida ao trabalhar com gravity, porque a gente não vai precisar reescrever aqueles promps toda hora, né? Como eu expliquei, a gente pode est trabalhando com segurança ali nas skills, a gente pode estar criando padrões de projeto nos workflows, ela pode estabelecer regras de design, né, design system nas rules.
+
+E isso tudo vai adiantar muito a nossa vida e vai cortar aquelas idas e vidas, bater a cabeça com prompt e tentando resolver alguns problemas eventuais que poderiam ter sido resolvidos por meio desse recurso. Bom, não se esqueçam, se gostaram da didática, gostaram do vídeo, do conteúdo, se inscrevam, deixem o like, isso é muito importante, fortalece bastante o meu trabalho e claro, espero vocês no próximo vídeo. Valeu,

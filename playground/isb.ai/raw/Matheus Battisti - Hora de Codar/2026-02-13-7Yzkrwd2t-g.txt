@@ -1,0 +1,130 @@
+---
+video_title: "GLM-5 no OpenClaw DE GRAÇA: Tipo Claude Opus só que custa R$0 (passo a passo)"
+video_id: 7Yzkrwd2t-g
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7Yzkrwd2t-g
+video_date: 2026-02-13T22:00:00+00:00
+video_description: |
+  Neste vídeo eu mostro como rodar o GLM-5, o modelo open source número 1 do LMArena, de graça usando o endpoint da Modal, e como conectar ele no OpenClaw pra ter um agente autônomo rodando sem custo de API.
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_glm_openclaw
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  ❇️ Modal: https://modal.com/
+  
+  📃 JSON para facilitar:
+  
+  {
+    "models": {
+      "providers": {
+        "modal": {
+          "baseUrl": "https://api.us-west-2.modal.direct/v1",
+          "apiKey": "SEU_TOKEN_MODAL_AQUI",
+          "api": "openai-completions",
+          "models": [
+            {
+              "id": "zai-org/GLM-5-FP8",
+              "name": "GLM-5 (Modal Free)",
+              "reasoning": true,
+              "contextWindow": 131072,
+              "maxTokens": 16384
+            }
+          ]
+        }
+      }
+    },
+    "agents": {
+      "defaults": {
+        "model": {
+          "primary": "modal/zai-org/GLM-5-FP8"
+        },
+        "maxConcurrent": 1,
+        "subagents": {
+          "maxConcurrent": 1
+        }
+      }
+    }
+  }
+  
+  O GLM-5 é o modelo da Z.ai que tem 744 bilhões de parâmetros no total mas só ativa 40 bilhões por vez usando arquitetura Mixture of Experts. Ele alcançou 92.7% no AIME 2026, 86% no GPQA-Diamond e 77.8% no SWE-bench Verified. É o modelo open source mais bem posicionado no LMArena Text Arena, competindo com modelos fechados que custam dezenas de dólares por milhão de tokens. E a licença é MIT, ou seja, totalmente aberta.
+  
+  A Modal está oferecendo um endpoint gratuito do GLM-5 até 30 de abril de 2026. O limite é 1 request concorrente sem limite de tokens, rodando em 8 GPUs B200 com SGLang a uma velocidade de 30 a 75 tokens por segundo. Você cria conta na Modal, gera o token na página do GLM-5 e já pode usar via API compatível com OpenAI.
+  
+  Começo mostrando como testar direto via cURL sem instalar nada. Faço uma chamada simples pedindo um componente React, depois uma com streaming pedindo uma API REST completa, e mostro como listar os modelos disponíveis no endpoint. Tudo funciona com o formato padrão da OpenAI, então qualquer ferramenta que aceita endpoint customizado funciona com o GLM-5 da Modal.
+  
+  Depois parto pra integração com o OpenClaw. Mostro o passo a passo completo: instalar o OpenClaw, exportar o token como variável de ambiente, configurar o openclaw.json apontando pro endpoint da Modal com custo zero, validar com o openclaw doctor e iniciar o gateway. Explico cada campo da configuração incluindo o maxConcurrent em 1 porque o endpoint free só aceita 1 request por vez. Mostro também como trocar de modelo na sessão com o comando /model e como verificar qual modelo está ativo.
+  
+  Na configuração avançada, mostro como adicionar fallbacks pra caso o GLM-5 fique indisponível. O modelo principal é o GLM-5 via Modal de graça, e se ele cair, o OpenClaw automaticamente redireciona pra Gemini Flash-Lite ou GPT-5 Nano via OpenRouter. Assim você tem redundância sem ficar na mão.
+  
+  Mostro também como usar o GLM-5 via Python com requests pra quem quer integrar em projetos próprios, e uma alternativa rápida usando Ollama Cloud com um único comando que lança o OpenClaw direto com o GLM-5 sem configuração manual.
+  
+  O custo total dessa estrutura é zero. O GLM-5 é gratuito via Modal até abril de 2026. O OpenClaw é open source. Você só precisa de uma máquina pra rodar o agente. É o setup mais barato possível pra ter um agente de IA autônomo rodando com um modelo frontier.
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Sobre a integração de OpenClaw e GLM 5
+  00:35 Como integrar o GLM 5 de graça no OpenClaw
+  02:19 Acessando o Modal e obtendo a API key
+  03:04 Instalando o OpenClaw
+  04:55 Configurando o GLM via Modal no OpenClaw
+  06:40 Testando o GLM 5 no OpenClaw
+  09:20 Conclusão sobre o uso do OpenClaw com GLM 5
+---
+Galera, para tudo, para tudo, GLM5 gratuito no OpenCloud. Tem uma maneira de tu utilizar esse modelo de graça no teu OpenCloud, um dos modelos mais poderosos aí da atualidade. Vou te explicar tudo passo a passo, como tu vai fazer aí também configurar junto contigo para que tu possa utilizar essa IA de maneira gratuita. Eu sou o Mateus Batista, programador há mais 10 anos e agora tô compartilhando aqui a minha vivência no mundo da inteligência artificial. Se tu curtiu o conteúdo, não se esquece de deixar o like e se inscrever aqui também, que ajuda bastante o meu trabalho, beleza? Então
+
+vamos lá entender a estratégia para depois a gente fazer todo o passo a passo. Então vamos lá, galera. Vou explicar para vocês de forma bem simples. A Zai, que é a empresa que criou o GLM5, fez uma parceria com uma empresa chamada Modal. E nessa empresa Modal tu consegue estar conectando a vários modelos de A. Um deles é o GLM5,
+
+que tá de forma gratuita lá. Então, a gente vai ter que criar a conta dentro do modal, gerar um token, né, uma chave de API para poder utilizar o GLM5, configurar o OpenCloud Jon lá no OpenCloud e aí, pronto, tá rodando o o OpenCloud com GLM5, a gente pode aproveitar o a gratuidade do modelo. Detalhes, esse modelo vai ficar gratuito até o fim de abril, tá? É uma previsão ali que eles deram, pode ser que se estenda ou pode ser que não, tá? Não tem limite de tokens, tá? frisão mesmo. E um
+
+outro detalhe bem importante, ele não é o modelo mais top deles, tá? Até não teria condições deles liberarem. Isso é o segundo modelo, é o chamado FP8. O melhor seria o F o BF16, tá? Mas esse FP8 aqui é uma alternativa que é menor, né, tamanho de gigabes, ou seja, parâmetros, metade aqui, né, só que ele tenta chegar na qualidade do melhor modelo. Então, uma forma de a gente
+
+utilizar um modelo com hardware menor, né, e ter a mesma eficiência do modelo completo. Beleza? Bom, dito isso, não se esqueçam, sempre aqui na descrição a gente tem o nosso guia de engenharia de prompt, que é um material com mais de 50 páginas para tu poder aprender de prompt básico avançado gratuitamente. Só clicar no link da descrição e baixar e depois tu pode aproveitar esses estudos para colocar em prática aqui no OpenCloud com GLM, beleza? Bom, site do Madal é esse aqui, muito simples. Mandal.com, basta
+
+fazer tua conta, tu vai precisar para para realizar, né, o processo todo. Aí depois de fazer a conta, tu pode voltar aqui para home e clicar nesse get started, ó. Tá vendo aqui? GM M5 disponível de graça no modal. Clicando no get started aqui, tu vai ser redirecionado para essa página, tá? Aqui
+
+tem a curão, né? Tu poderia fazer o teste se deu certo no teu terminal, por exemplo. Que que a gente vai querer aqui? A gente vai querer criar um token. Então, vai aqui no ladinho esquerdo, cria o teu token e copia, guarda ele, a gente vai usar mais tarde, tá? Então é,
+
+esse é o passo que a gente tem que fazer aqui no modal. Bom, o nosso próximo passo é instalar o OpenCloud ou ter ele instalado, tá? Aqui na Hosker é o hospedagem que eu recomendo pra gente ter de forma isolada, segura e performática, modal. O link também tá na descrição. Com esse link tu consegue uma oferta especial mais um cupom aí para poder rodar o teu open. Recomendo sempre
+
+o plano KVM2. Ele é o plano que tem recursos computacionais excelentes e vai rodar open com fogo, tá? Aí tu escolhe o plano. Nesse link que eu te coloquei na descrição, já vai ter um cupom ativo que vai est te dando mais desconto ainda. Beleza? Lá dentro da
+
+Hostia a gente vai entrar no nosso terminal. Lembrando, né, galera, aqui no carrinho tem um detalhe, tá? Quanto mais tempo dá mais desconto, tá? E aqui tu escolhe o servidor do Brasil para ter menos latência e tu pode escolher o sistema operacionalto, que é o que eu tô utilizando ali, beleza? Ficar igual o meu. Depois dá para mudar, mas assim já
+
+tu já com tu já obtém ele. Prontinho. Bom, aí entrando no teu servidor lá no terminal, a gente vai instalar o OpenCloud. Na própria página inicial do OpenCloud, tu consegue aqui o comando de instalação Micos Linux, copia e cola lá. Não tem muito mistério, a gente já fez isso aqui várias vezes, inclusive a gente tem uma playlist aqui de OpenCloud, né? Eu vou te colocar o
+
+primeiro vídeo dela aqui no izinho, que é o vídeo onde eu fiz toda a review completa do Opencloud, ensinei a instalar passo a passo ali aquela aquele setup inicial. Então mostro tudo, explico tudo que tu precisa saber e tu ainda vai conseguir ter o OpenCloud perfeitamente configurado de forma segura, tá? Então veja esse vídeo depois também. Bom, terminando a configuração aqui, agora a gente pode dar um sler, né? Ler. Eu preciso agora configurar o
+
+meu token aqui e ver se o OpenCloud instalou corretamente. Dititando OpenCloud aqui, a gente vê que ele instalou porque ele me mostrou as opções, tá? Agora aqui no na pasta oculta do OpenCloud, a gente vai ter o o OpenCloud Jon, tá? Esse arquivo aqui é o que a gente precisa configurar o model. Eu vou mostrar para vocês como eu configuro esse GLM5 daquela forma ali junto com o modo out. Bom, galera, eu configurei o
+
+arquivo aqui, tá? Eu gosto de abrir os arquivos com o editor VIN. E eu vou abrir o meu arquivo configurado aqui para vocês verem. Dá para tirar um print, pedir pro chatt transcrever. Se quiserem eu posso até deixar aqui na descrição, só mandem comentário falando isso, tá bom? Aqui eu tenho que alterar,
+
+né, algumas coisas. Por exemplo, em providers, eu coloquei modal, a URL que tá lá na documentação, a minha chave de API, né, que vocês tm de vocês. Aí aqui as outras opções, né, o ID do modelo, o nome, tal, e eu também coloquei aqui como modelo primário, tá? Então vocês tm que deixar igual o meu, né? Só usando a chave de API de vocês. E
+
+aí depois a gente vai utilizar um OpenCloud Gateway Restart, tá? Isso vai fazer com que as configurações comecem a funcionar com o novo modelo. Beleza? Depois do restart comando OpenCloud Models List, tá? Vou copiar o modelo, esse nome aqui, ó.
+
+Copiar. Eu vou utilizar agora o comando open cloud tu, que é o para habilitar a interface aqui dele. E eu vou agora usar o comando barra model e vou colar aquele nome de model que a gente copiou. Isso vai fazer com que o OpenCloud utilize esse modelo que a gente acabou de instalar. Eu posso perguntar qual modelo você é.
+
+E agora ele já tá batendo lá naquela API do modal e nos trazendo aqui a resposta através do GLM5, ó. Ah, olhando aqui, estou rodando o modelo GLM 5 FP8 via modal. Parece que a configuração dessa sessão usa o modelo específico. Tem mais alguma dúvida? Então agora a gente já consegue tá utilizando ele para o fim que nós quisermos, né? Não tem muita
+
+dificuldade, né? Mais aquele setupzinho inicial que vai ser mais demorado, mas agora ele é gratuito para sempre, tá? Tem algumas considerações a fazer porque é importante a gente citar. Só antes, galera, queria falar sobre o treinamento que a gente tem de N8N, do básico avançado, formação agentes de o link vai tá aqui na descrição, tá? Você pode conferir todos os cursos que ele tem, pode baixar grá curricular, ver alguns projetos que vocês vão fazer, enfim, o treinamento muito completo, mais de 40 horas sobre N8N, né? Um
+
+assunto que casa muito com inteligência artificial. E a gente tá produzindo também a formação de web code, né? deve lançar agora em março, se vocês têm interesse, baixando guia deia de prompt, vocês já entram uma lista que vai ter acesso a um cupom especial, tá bom? Bom, que eu quero começar com vocês aqui, galera, tem alguns detalhes importantes desse modelo, tá? Eh, muita gente tem comentado que ele, como é um modelo de raciocínio, às vezes até para problema simples, ele tá pensando demais para resolver algum problema, né, alguma questão. Então, ele
+
+pode demorar em algumas respostas. E também tem a questão de como ele está gratuito, muita gente tá utilizando e o modal ele vai fazer uma, não uma limitação, mas uma fila ali de utilização que vai acabar com que algumas pessoas sintam um pouco mais dentidão algumas respostas. Mas cara, pelo que vocês viram ali, é totalmente tranquilo, né? e não tá demorando nada para responder. Então, pelo menos na hora que eu tô utilizando aqui agora, tá tudo certo. Esses dias atrás, né, eu
+
+mostrei ensinando fazer com a integração com anti gravity ali, mas eles acabaram fazendo uma espécie de limit rate, né, onde eles identificavam que estava utilizando open cloud e acabavam dando time out mais rápido, né? Então essa estratégia já não tá tão legal, até dá para utilizar, mas quem vai fazer uso pesado, sugiro mudar para esse meio aqui que vai conseguir us til utilizar melhor, já que não tem limitação de token. Isso aqui é totalmente gratuito mesmo, né? Aquele lá também é, só que eles limitaram a sessão aqui não. Aqui até então se utilizar da maneira que eles estão pedindo ali, que é tem uma questão de tokens por segundo ali, né? Mas acho que não vai chegar a
+
+ultrapassar a utilização do OpenCloud. Acho que não, não, pelo menos nos testes que eu fiz não bateu, né? Então, acredito que ele tá dentro do esperado deles e vai dar para utilizar tranquilamente. Beleza? Comentem o que acharam, se já vão testar, se ficou algum problema também, que eu vou ajudar vocês aí, todas as dúvidas que vocês tiverem para que vocês possam rodar o GLM5 no OpenCloud de vocês. Beleza?
+
+Ficando por aqui e bora começar aí o final de semana, né? videozinho de última hora que é muito interessante. Espero vocês no próximo.

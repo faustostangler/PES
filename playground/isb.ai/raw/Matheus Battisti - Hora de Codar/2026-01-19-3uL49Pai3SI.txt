@@ -1,0 +1,931 @@
+---
+video_title: "Criei um Blog COMPLETO com Lovable (Login, Pagamentos, IA e Deploy)"
+video_id: 3uL49Pai3SI
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3uL49Pai3SI
+video_date: 2026-01-19T14:00:00+00:00
+video_description: |
+  Neste vídeo eu construo um blog completo sobre Inteligência Artificial usando apenas o Lovable, indo do zero absoluto até o deploy em produção com domínio próprio.
+  
+  Link para o Lovable: https://lovable.dev/?via=matheus-battisti
+  
+  💜 Conheça a Formação SaaS com IA: https://app.horadecodar.com.br/lp/formacao-saas-com-ia?utm_source=yt_blog_lovable
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  📕 Guia de Vibe Coding: https://app.horadecodar.com.br/ebookpages/guia-completo-vibe-coding
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  São mais de 2 horas de conteúdo prático onde você vai ver cada etapa da criação de um projeto real que pode virar um negócio.
+  
+  O projeto começa pela estrutura visual do blog. Criamos a página inicial com header fixo, seção de destaque para o post principal, grid de posts recentes e sidebar com categorias, posts mais lidos e newsletter. Cada post tem sua própria página com imagem de capa, informações do autor, tempo de leitura, conteúdo formatado com suporte a código e citações, tags e navegação entre posts. Também criamos páginas de categoria com filtros, sistema de busca com sugestões em tempo real e página institucional.
+  
+  A integração com Supabase inclui o banco de dados completo com tabelas para perfis de usuários com níveis de acesso, categorias com cores personalizadas, posts com suporte a rascunho e agendamento, tags e comentários com aprovação. Configuramos as políticas de segurança para cada tipo de usuário.
+  
+  O sistema de autenticação tem login e cadastro em modais, recuperação de senha por email e menu do usuário logado. A página de perfil permite editar nome, biografia, trocar foto com upload e alterar senha.
+  
+  O painel administrativo é um ambiente separado com layout próprio e menu lateral. Criamos listagem de posts com filtros, busca, ações em lote e paginação. O editor de posts tem título, geração automática de slug, editor rico com formatação completa, seletor de categoria e tags com autocomplete, upload de imagem de capa e opções de destaque e conteúdo premium.
+  
+  A integração com IA conecta a API da OpenAI para gerar posts completos a partir de um assunto, preenchendo automaticamente todos os campos. Também implementamos geração de imagens com IA.
+  
+  Para monetização, criamos página de planos com integração completa com Stripe. O fluxo de assinatura passa pelo checkout, processa o pagamento e retorna para página de sucesso. Configuramos webhooks para notificações de assinatura e pagamento. O paywall bloqueia conteúdo premium para não assinantes, mostrando apenas os primeiros parágrafos com blur no restante.
+  
+  Implementamos também sistema de comentários com moderação, curtidas e favoritos nos posts, página de favoritos do usuário e barra de progresso de leitura.
+  
+  No final, faço o deploy completo em uma VPS da Hostinger com Node, Nginx e SSL. O blog fica online com HTTPS em domínio próprio, pronto para receber visitantes e assinantes.
+  
+  
+  TIMESTAMPS
+  
+  00:00 Introdução do vídeo Blog com Lovable
+  01:45 Como funciona o blog que iremos criar
+  06:55 Iniciando a criação do blog no Lovable
+  14:18 Vendo resultado inicial da home do blog
+  16:47 Criando pagina do post individual do blog
+  21:55 Página de categoria de posts
+  24:27 Funcionalidade de busca no blog
+  26:38 Utilizando recurso de Visual Edit do Lovable
+  28:28 Criando página de Sobre Nós no blog
+  29:38 Conhecendo o Supabase - Banco de dados do projeto
+  31:34 Conectando Lovable ao Supabase
+  34:51 Prompt de preparação do Supabase para dados do blog
+  36:40 Criando autenticação no blog
+  40:57 Página de perfil de usuário 
+  44:31 Testando e corrigindo erros das fucnionalidades
+  45:33 Iniciando dashboard do admin do blog
+  49:44 Listagem de posts no admin
+  51:52 Tela para criação de posts do blog
+  55:16 Resolvendo problemas na criação de post Debug no Lovablew
+  1:03:42 Integração do Lovable com OpenAI
+  1:06:40 Testando geração de post com IA
+  1:09:37 Gerando imagem do post com IA
+  1:14:11 Criando página de gerenciamento de categorias do blog
+  1:17:30 Moderação de comentários dos posts
+  1:18:52 Funcionalidade de comentários nos posts
+  1:23:09 Página de gerenciamento de usuários
+  1:25:15 Configurações do blog no admin
+  1:29:47 Página de planos de assinatura do blog
+  1:35:33 Apresentando o Stripe
+  1:36:24 Integração do blog com Stripe
+  1:45:42 Implementando recurso de paywall no blog
+  1:50:48 Adicionando tema light e dark
+  1:54:17 Funcionalidade de curtir e favoritar postagem
+  1:57:40 Barra de progresso de leitura
+  2:00:34 Colocando projeto no GitHub
+  2:03:02 Escolhendo uma hospedagem
+  2:06:53 Iniciando processo de deploy do blog na VPS
+  2:19:09 Teste projeto no servidor
+  2:20:13 Conclusão e próximos passos
+---
+A gente vai criar agora um sistema de blog completo utilizando o Lovbow. Por que esse sistema? Ele vai ter pagamento integrado, ou seja, os usuários vão poder fazer assinaturas no site ou pagarem para desbloquear paywall. E também nós vamos ter criação de posts por inteligência artificial. Vamos plugar uma I e ela vai gerar todo o conteúdo do post e a imagem pra gente.
+
+Tudo agora na prática do zero até o deploy. Fala galera, beleza? Eu sou o Mateus Batista e hoje a gente vai criar esse projeto que eu acabei de falar utilizando o Lovble e Vibe Code. Para fazer esse projeto aqui, eu desenvolvi uma estratégia bem diferente do que tu tá acostumado, provavelmente a ver por aí. Tá? Que eu vou mostrar, claro, em
+
+detalhes na hora de mandar o prompt para ferramenta. Aqui embaixo vai ter vários links importantes aí de coisas que a gente vai utilizar ao longo do caminho do projeto, mas principalmente, né, o Lovble, que é a ferramenta que vai permitir a gente criar esse blog sem precisar de nenhum conhecimento em programação. Lembrando que o Lubble tem créditos gratuitos, né? Então qualquer um vai conseguir fazer. Claro que são, né, liberados todos os dias, né? Então
+
+não, provavelmente não vai dar para fazer uma vez só, porque é um projeto gigantesco, mas é gratuito, vai dar para acompanhar para conseguir fazer, tá? Então agora na sequência eu vou te apresentar o projeto, mas claro, né? Não se esqueça, se inscreve aqui no canal, deixa aquele like que ajuda bastante e bora começar. Então galera, antes de começar a criar esse projeto de blog aqui, vamos entender melhor como ele funciona e os seus principais recursos. A essência é de um blog normal, né? Não
+
+tem diferença alguma quando a gente bate o olho aqui, mas o grande lance tá por trás dos seus mecanismos. Eu acredito que o blog em si é uma grande ferramenta. Toda a empresa tem que ter o seu blog, porque ajuda a trazer novos visitantes, possivelmente novos clientes e pessoas aí que se identificam com a marca, dependendo do teu conteúdo, tá? E, né, mesmo hoje com a IA tão avançada que a gente procura muita coisa no chat e, os blogs têm muito acesso, inclusive a gente mantém o nosso na hora de codar e o os acessos costumam a crescer porque nós também trazemos assuntos bons e atuais, tá? Tirando essa parte, né, como é que funciona esse blog aqui? Bom, aqui
+
+temos uma home, um post de destaque, depois artigos recentes aqui para baixo ele continua mostrando até chegar ao footer, onde tem links estratégicos, tá? E a barra lateral aqui é onde a gente exibe categorias, uma forma de assinar o nosso blog, o que torna nosso blog um SAS também, porque ele dá benefícios para quem assina. Mas lidos, newsletter são outras coisas comuns aí de side bar, tá? Dentro ali do post nós vamos ter duas variações, tá? uma que vai ser um blog post normal, onde o usuário scrolla aqui, lê o conteúdo, tudo mais, e aí ele consegue ver esse popup aqui, que pode ser outra coisa, não precisa necessariamente ser uma assinatura, poderia ser uma forma, né, de a gente dar um e-book para ele, outra coisa, para poder resgatar o o lead, né, pegar o e-mail dele. Nesse caso, eu fiz
+
+assinatura porque eu queria fazer um blog SAS, tá? E aqui ele não impede a leitura, porque esse conteúdo é gratuito, tá? Eu só tô avisando que eu tenho aquele produto ali. Se o usuário decide ir lá para aquela tela de assinatura, ele pode ver aqui os planos que a gente tem disponível, fazer sua assinatura para poder desbloquear completamente, né, tirar todas as propagandas. Só que eu adicionei algo a mais que eu acredito que funciona muito, que é o payall, tá? conteúdos muito bons
+
+relevantes, tendem a ter muitos acessos e aí se a gente deixasse só no gratuito, a pessoa poderia simplesmente ignorar a assinatura e ver o conteúdo. Então tem esse conteúdo premium que faz o seguinte, que ele a gente pode até desabilitar esse popup aqui, né? Não tem problema, mas ele só vai exibir alguns parágrafos e depois é pay. Ele só deixa ver o conteúdo quem assina, tá? Então é uma outra estratégia para poder monetizar também com blog, né? Bom, essa
+
+é a parte básica padrão. Todo blog quase tem isso, né? O que vai diferenciar mesmo aqui entre as páginas comuns que a gente tem, né, que é de perfil, de verificar assinatura, favoritos que a pessoa pode deixar, tal, tudo mais. Tem o admin, tá? Onde teremos aqui como gerenciar tudo, né? Como os posts do
+
+blog, as categorias, os comentários, né? Os comentários aqui são privados, né? com moderação, o que ajuda a não ter spam, não ter link malicioso no teu site. Isso é interessante. Tu vai aprender a fazer isso também. As
+
+assinaturas que a gente tem no blog, né? Os usuários, SEO, porque o blog é construído de SEO e isso aqui vai ajudar ele a ser encontrado melhor no Google. Configurações gerais aqui para poder modificar algumas partes chaves do blog. Mas eu quero mostrar para vocês aqui de fato é a geração de post que pode ser um grande trunfo. Então vemos aqui em novo post e a gente vai aprender a criar o post todo com IA, tá? Então eu posso
+
+escrever aqui um assunto, por exemplo, automações para imobiliário. Ele vai lá na Open A, a gente vai integrar, ele vai trazer aqui a o o posto todo preenchido, tá? Então vamos dar uma guardadinha aqui, ó. Ele trouxe todo o post, né, com estratégia de SEO. A gente vai aprender o prompt também. E aí pro posto se
+
+performar melhor ainda, ele tem que ter imagem. Então também temos uma geração de a imagem. Aqui eu posso copiar o o assunto do post ser mais rápido e gerar a imagem. Ele também vai acessar a GPT Image, que é a API do chat E GPT do da Open de gerar imagens e vai trazer a imagem do post e vai facilitar muito a nossa vida. Não recomendo postar direto assim, tá? Eu acredito que tem que ter
+
+uma revisão, tem que ter uma melhoria do post. Aí a é um bom ponto de início e a TAM sim, a gente pode aproveitar integralmente, né? Porque seria algo próximo que a gente criaria, mas o conteúdo tem que ser realmente bem original, então a gente modificaria para poder ter mais chances de ter acesso. Ó, ele trouxe a imagem aqui, tá? E aí posso configurar com post destaque, conteúdo premium, publico e aí o post vai aparecer lá na home também, né, como a gente criou. Lembrando também a
+
+assinatura ela é integrada com Stripe já. Então já tem tudo pronto aqui para vocês fazerem certinho e conseguir monetizar no blog de vocês. Então tá tudo conforme a regra manda. Vou ensinar deploy também. Então, tu vai ter teu blog no ar aqui no final desse conteúdo.
+
+Bora começar. Então, para criar esse projeto, como eu falei, né, galera, a gente vai utilizar o Lovable, que é uma ferramenta que vem avançando e vem cada vez mais tendo muita assertividade aí para poder criar projetos web. Tô gostando muito dela e tô criando alguns projetos pra minha própria empresa utilizando essa ferramenta, tá? Aqui na descrição vai ter um link para tu poder acessar ela, beleza? Esse link é um link de afiliado meu, né? você com vocês,
+
+onde eu também recebo alguns créditos e isso ajuda a trazer mais vídeos aqui pro canal. Então, se quiserem acessar por lá, show de bola. Tá? Outra coisa, nesse vídeo aqui eu vou trazer uma estratégia nova de prompts que eu desenvolvi, onde melhora a entrega da IA, tá? Eu vou mostrar para vocês como ela funciona. É
+
+bem simples, mas ajudou bastante a e a interpretar melhor o que eu digitava para ela e me entregar sem muito rodeio, né? assim, eu ten que ficar eh batendo muito promptes e promptes ali, indas e vindas e torrando créditos. Lembrando também o te dá alguns créditos gratuitos por dia, então todo mundo consegue fazer esse projeto aqui. Beleza? Bom, vamos lá. Eh, eu vou colocar os prompts aqui e
+
+eu vou explicando para vocês. Esse prompt inicial do projeto, eu diria que é o mais importante, tá? Eu não costumo fazer muita coisa nele, mas eu gosto de estabelecer como o projeto vai ser, como se fosse uma orientação geral mesmo, tá? Então vamos lá botar aqui, ó. Crie a página inicial de um blog moderno sobre inteligência artificial chamado AI News.
+
+Esse aqui é o meu caso, né? Tu pode adaptar pro teu. Para copiar os prompts, tu pode utilizar o chat ept, só dar um print aqui e mandar ele transcrever ou ir copiando, tá? Se tu copiar parecido, já vai ter um resultado muito semelhante também. A página precisa ter um header fixo no topo com o logo, menú de navegação, home, categoria sobre, né, os links, campo de busca, botões, login, cadastrar, projeto e autenticação, né, mas preparação futura. Vejam aqui, eu tô
+
+criando só home, uma sessão de destaque mostrando postal, funcionalidade futura, né? Aqui não tá lidando nada com o banco de dados. A gente vai fazer esse projeto aqui com banco de dados externo, no SPA base. A gente não vai utilizar o cloud do Lovabook. Se tu quiser, tu pode utilizar, mas eu queria partir por essa estratégia para não deixar o código preso lá. E isso vai fazer com que a
+
+gente possa hospedar onde a gente quiser não fique refém deles, tá? Mas refém é uma palavra meio forte, né? Tu pode utilizar a infra do lavable, só que o pricing ali pode ser que altere. Então é melhor de ter um lugar onde a gente veja os custos de forma fixa, que é uma hospedagem proporciona. Eu pelo menos prefiro assim, tá? Mas quando chegar a
+
+parte do banco, se vocês quiserem integrar com o cloud, fiquem à vontade, vai ficar até mais simples de fazer, tá? Então bota aqui, cada card, mostra a imagem do post, categoria, o título, resumo curto. Então é para realmente instigar o usuário a querer ver aquele post, né? Uma barra lateral, side de barra com lista de categorias, posts mais lidos e um formulário para assinar newsletter. E aqui que a gente vai colocar a assinatura depois. O rodapéck
+
+com links úteis, redes sociais, informações de copywriting, de copyright, desculpa, porque é onde o cara vai saber mais sobre a empresa, vai poder ir para outras redes, né? E eu boto aqui os dados fictícios, o design deve ser limpo, moderno e funcionar bem no celular. Então o que eu tô fazendo aqui? Eu tô criando a home, mas ve tô estruturando um layout de blog que eu quero. Bem importante isso, tá? Então
+
+vou prosseguir aqui. Ele vai começar a criar a página. Esse prompt inicial provavelmente é o que mais demora, tá? E aí eu vou fazer alguns cortes aqui para poder deixar o vídeo mais dinâmico. Porém também eu acho que tem muita gente que nunca utilizou o lovable, né? Então
+
+eu vou explicar alguns detalhes importantes. Aqui na barra esquerda a gente tem inclusive um vídeo de eu construindo Microsas aqui com N8N e Lovabo. Bem importante continuar teu aprendizado em outra frente, né? Como é o SAS si é um software mais comercial. O editor vai deixar a TAMB aqui para vocês verem depois, beleza? Vou tentar deixar
+
+o izinho também, mas geralmente eu não lembro. Bom, vamos lá. Aqui na área esquerda é área de conversa, então é onde a gente vai poder ali trocar a ideia com a IA e desenvolver nossas funcionalidades. O Lorbo ele funciona basicamente em dois modos. o executor, que é o que eu tô usando aqui, que ele vai mandar bala no código, vai mostrar pra gente nessa área da direita visual aqui o que ele tá fazendo. Mas eu
+
+recomendo muito que quando vocês estão criando um projeto de verdade, cara, esse projeto que vocês vão monetizar, vocês querem avançar com ele nas funcionalidades mais críticas, cara, habilitem o modo chat aqui para que ele possa primeiro pensar e planejar e depois executar. Também ajuda a minimizar muitos erros, tá? E vai fazer com que ele mostre para vocês o que ele vai fazer. Então, se tu vê algo errado no meio do caminho, tu pode falar: "Ó, não quero isso, quero aquilo". Então, é bem interessante também, tá? Aí aqui ele
+
+tem mais algumas ferramentas, como editação visual, tu consegue selecionar a parte da tela e falar que não tá legal, tá? A gente pode aqui conectar com alguns serviços, mudar as configurações do projeto, mandar imagens para ele poder se referenciar. Então, tem alguns recursinhos a mais aqui. Bem, a lachar GPT não tem muito mistério, tá? Eu vim pra aba direita aqui é onde a gente vai visualizar o projeto, tá?
+
+Então a gente tem o preview, que é o projeto em si, é o que ele tá criando aqui. Ele não tá mostrando nada porque ele tá ainda gerando a parte inicial, tá? Aqui a gente pode ver o código que ele cria. Então se tu tiver interesse, tu manjar de código, pode alterar o código direto também, né? Aqui a ideia dá uma perspectiva mais vibe code. Então
+
+não vou fazer isso aqui. É para entregar integrar com o cloud, né? Aí o que acontece, cara? O código fica com eles, o banco de dados fica com lavable. Então é algo que facilita muito mais do que isso aqui já tá facilitando nossa vida que a gente tivesse programar, mas a gente fica dependente deles, tá? Então
+
+tem que tomar bastante cuidado porque é irreversível. Aqui tem outras opções que a gente pode dar uma olhada como analytics do projeto, a parte de design, segurança, velocidade, tudo que a gente pode olhar depois, mas o principal aqui, o grosso é o que ele já mostra pra gente, é o que a gente vai usar 99% do tempo, tá? Aqui são formatos de visualização, né? A gente pode mudar para layout de tablet, celular, PC. Aqui depois a gente vai ter as nossas páginas, né? Agora só tem a barra, né? A
+
+página inicial por enquanto. Aqui é onde a gente pode abrir um preview em outra abra pra gente testando o projeto, não ficar dependente dessa tela aqui que é meio capada, né? Não tem muita visualização aqui. A gente pode recarregar o projeto. Às vezes tem algum bug visual, pede aqui. Parece que
+
+alterou, mas não alterou. Então, para matar a curiosidade, a gente recarrega aqui. Eu gosto mais ainda de recarregar a página toda, tá? acontece um pouco, né? Por exemplo, ele muda alguma coisa na na interface e não não reflete. Mesmo
+
+recarregando ali, não vai. Então, recarregar a página cont shift R para tirar todo o cash ajuda bastante. Aqui tem algumas opções de colaboração do projeto, integração com Super Base que a gente vai fazer, que vai ser o nosso banco de dados, tá? GitHub, que é onde a gente vai colocar o nosso código também, a gente vai fazer isso também. E publicação seria publicar dentro do do logo em si. A gente não vai fazer isso,
+
+a gente vai ter uma hospedagem externa, porque eu acredito que seja o melhor caminho a seguir, tá? E não impede a gente utilizar o lovo, tudo fica conectado e a gente detentor do banco de dados e detentor do código fonte, tá galera? Bom, expliquei aqui o 8020. Agora outras coisas eu vou explicando aí ao longo do desenvolvimento e agora vou deixando um pouco mais dinâmico enquanto aí pensa. Bom, aqui ele finalizou, galera. E uma das coisas que vocês vão
+
+perceber é que o exemplo que eu mostrei vai ficar diferente desse aqui e o que vocês vão criar vai ficar diferente desse aqui. Então todos vão ficar um pouco diferentes, mas a estrutura é a mesma. O que importa é a funcionalidade, o layout, o design, tu vai alterar porque tu quiser depois, tá bom? Vejam aqui, ele tem a página inicial com o port de destaque, com os ports abaixo, com a barra lateral e é isso que a gente precisa, tá bom? Demorou um pouco esse primeiro prompt, os próximos são bem mais rápido, tá galera? E aqui eu quero
+
+fazer uma pequena amostra de outra funcionalidade que é o preview. Então a gente pode clicar aqui. Essa sessão que ele vai abrir aqui é independente dessa daqui. Então a gente pode testar duas coisas diferentes. Por exemplo, aqui eu teste com o cara logado e lá eu teste com o cara visitante. Aqui eu teste com
+
+a assinatura e lá sem. Então é muito bom para isso, tá? Outra coisa, se tu gosta dessa, vamos dizer, arte do vibe code, isso quer aprender melhor, isso quer ter uma mente ali de criação de projeto completo e complexo mesmo para poder justamente fazer coisas bem feitas, eu criei esse guia aqui totalmente gratuito, o link vai tá na descrição, tá? Basicamente são vários materiais onde explica melhor o conceito de vibe coding, como tu usa estratégia para poder criar teus projetos melhor. Ele tem um infográfico bem completo para te servir de referência ali para tu poder sempre que tu cria um projeto novo, tu usar ele e aí tu não precisa nem de mim.
+
+Tu vai seguir ele e tu vai saber exatamente como eu pensaria, como eu faria para criar projetos. Então, é, é o meu conhecimento que eu transformei em alguns materiais aqui gratuitos que tu possa evoluir no Vibe Code e criar os teus próprios projetos, beleza? Eu vou deixar aqui na descrição, baixa aí que vai ser muito importante para tua evolução nessa técnica, vamos dizer assim, né, de vib code, tá bom? Seguindo aqui, eu tenho a home, né? Uma outra parte essencial para o meu blog no geral aqui são os posts em si. Eu não consigo
+
+clicar neles, né? Eles só existem, mas eles não funcionam. Então, a gente vai começar a criar algumas páginas antes mesmo de ir paraas funcionalidades, porque elas vão estar presentes de qualquer maneira nos recursos mais avançados, tá? E aqui já entra também a minha estratégia de prompt que eu falei para vocês, tá? Que que acontece? Eu vou
+
+tentar deixar esses prompts aqui para vocês para ficar mais fácil, mas aquela estratégia do chat EPT também é bem boa de printar a tela, colar e pedir para ele transcrever, tá? E também escrever com as próprias palavras ajuda a bolar estratégias melhores. Agora eu quero aqui ir pra página do post em si. Beleza? Então eu coloquei aqui cria a página para ler o post individual no topo, mostrar um caminho de navegação, que a gente chama de bread crumbs, né?
+
+Home, categoria, nome do post, porque os três estão interligados, né? A página deve ter imagem de capa em tamanho grande. Então, toda aquela estrutura que vocês viram tá descrita aqui, né? Lá no projeto de exemplo. Qual a categoria do post? o título, informações, tempo de
+
+leitura, data de publicação, dados do autor com foto e nome. Então, tudo isso aqui é estratégico pro posto ser mais eh interessante de ler e também puxar as visualizações do Google, né, da pesquisa orgânica e possivelmente ser usado lá nos motores de busca de a também, que é importante hoje em dia, tá se fazendo muito conteúdo para isso. Conteúdo do post com boa formatação para leitura, tags relacionadas ao post, uma caixa sobre o autor com foto maior, nome, biografia, link para ver outros posts dele, né? Pro cara continuar relacionando o blog, sessão de posts relacionados, botões para compartilhar na rede social, o que ajuda também a crescer o blog, links para navegar para o post anterior e próximo. Mantenha o mesmo header, ó, aqui é uma questão de design, né, para ele não mudar bruscaramente as próximas páginas, o que pode acontecer. Então é uma boa
+
+observação de colocar não quer que mude, né? Mantém o mesmo header e footer da página inicial e também o mesmo design utilizado na home como paleta de cores e fontes. Os posts da home devem ser clicáveis com dados mocados inicialmente. Que que é isso? Dados fictícios para que a gente possa ter uma imersão melhor enquanto a gente não tem hosts de fato no banco de dados. Beleza?
+
+Então aqui eu vou dar o enter, ele vai começar a criar. Enquanto isso, eu vou explicar a minha estratégia de prompt nova, que eu tô utilizando bastante. Ela consiste sempre nisso. Vocês vão ver que vai se repetir esse padrão quando necessário. Eu costumo dar uma breve explicação, tá? E depois sempre fazer
+
+uma bullet list. Listas, como eu fiz ali com tracino, vocês viram, explicando cada detalhe. Então, cada ponto vai ter algo importante que eu quero tenha na página, tá? Escrevendo dessa maneira, eu vi que a IA consegue se organizar melhor do que se fosse uma massaroca de texto ali, que como eu costumava escrever os promptes, né? Textos muito longos, escrevendo tudo que eu queria. Às vezes
+
+eu dava um enter ou outro até que eu nem consegui entender que eu tava promptando, né, para poder organizar melhor. Mas essa questão de estruturação de lista, a IA consegue interpretar um pouco melhor. Pelo menos foram os resultados que eu tive, porque eh por dentro da do funcionamento dela, um texto corrido é um texto corrido, tá? E se eu insiro determinados caracteres, por exemplo, markdown, né? Para quem não conhece, vou botar aqui, ó. Isso aqui é
+
+Markdown. É exatamente o que a IA vai conseguir interpretar lá, porque no fim das contas, mesmo que ela mostre aqui uma listinha bonitinha, ela tá recebendo aqui esses esses caracteres que a gente insere. Então, por exemplo, a minha lista com os traços, ela vai conseguir entender melhor a separação e isso vai fazer com que ela organize melhor o que ela precisa integrar. Eu tô falando integração porque a gente vai ter vários projetos aqui, mas tudo bem. Eu vejo aqui, por mais que ela transforme isso aqui, o que a gente digitou lá, né, que foi uma transferência, por exemplo, de listas aqui, virou essa formatação bonitinha, o prompt vai assim, tá, como tá na esquerda. Isso faz com que a IA
+
+tenha cada coisa bem detalhada, tá? Por mais que eu não tenha me aprofundado muito, ela vai levar em consideração cada um dos pontos. Então vou usar essa estratégia aqui ao longo de todo o projeto e vocês vão ver que raramente, pelo menos eu espero, eu vou ter que refazer algum prop, vou pedir para ela arrumar alguma coisa ou uma detecção de erro do lóbo, né, que acontece bastante aqui, eh, quando algo dá errado e na maioria das vezes é por um prompto, nosso, tá? Que ele mostra ali um try to fix, né? Você deve ter visto quem já usou L. Bom, ele terminou aqui. Então
+
+agora todos os artigos devem ser clicáveis, né? Eu posso até testar aqui para poder ver como ficou. Ó, realmente tem a imagem, tem o texto, tem a caixa sobre o autor, tempo de leitura, tem aqui a formatação, né? O cara vê de forma dinâmica, ele tem mais centralizado, né? Focando aqui unicamente no texto, tem algumas imagens, tags, a caixa maior do autor, compartilhamento, próximo post, posts relacionados. Então ele entregou tudo
+
+que a gente precisava, inclusive Brad Cramps aqui eu falei para vocês, ó. Home categoria post, tá? Show de bola. Então vamos seguir assim. Agora eu preciso ter a página das categorias porque elas também vão ser uma parte importante. Se
+
+o cara entrar no post chat EPT, talvez se interesse por IA, a gente tem essa categoria leve ele ver mais conteúdos. No blog, a gente sempre tem que pensar assim, como que a gente pode enviar o usuário para um outro conteúdo nosso para que ele vá vendo que nosso conteúdo é de valor e ele vai se interessar para acompanhar a nossa marca, nossa empresa, tá? Então agora a gente vai fazer a criação da página de categoria, ó, cria a página que mostra todos os post de uma categoria. E nesse caso aqui eu não utilizei o bud point porque eu acredito que é mais simples, já que ele já tem a home e o post, então ele vai fazer a parte do meio, né? Então é só interligar tudo no topo, mostrar o nome da categoria, uma descrição e quantos posts ela tem, incluir uma opção de ordenar por mais recentes ou mais lidos. Estar
+
+os posts em cards, mesmo estilo da página inicial, né? Recorde isso a ele. Mostrar a barra lateral como na home. Então eu quero que essa said de bar aqui esteja lá também porque ela vai ter a venda do meu produto, entre aspas e aí reforça mais pra pessoa. Adicionar navegação de páginas no final, né? 1 2
+
+3. E aqui eu limito por cinco artigos. que vai ser mais fácil de testar a paginação. Isso depois a gente pode mudar, mas eu gosto de como como eu gosto de testar todos os recursos, ter no máximo cinco, eu preciso adicionar 1 milhão de artigos e ainda a página vai ter um corpo legal, então para mim faz sentido, tá? Então eu vou prosseguir aqui e a gente já vai ver o resultado da parte de categorias. Enquanto isso, p um
+
+cafezinho ali, coisa que o vibe code nos permite, né? Em vez de gente ficar programando tudo linha a linha. Já volto aí, ó. Cafezinho na mão aí. Acho que deu para ver, né? Agora vamos aqui seguir.
+
+Esse pronto foi mais rápido porque como eu falei, isso a gente vai pegando com o tempo, né? Ele já tinha ali uma estrutura que dava duas pontas, né? A home e a página do post. Faltava o meio nessa lacuna que era a categoria. Agora ele preencheu mais fácil porque muitas das informações já eram conhecidas, tá?
+
+Então aqui eu venho, por exemplo, em machine learning e ele já tem a página de categoria. Large language models já tem aqui dois artigos, tá? Alguns números estão errados aqui, mas como é aquela coisa que eu falei, são dados mocados, né? Ele tá com dados falsos em tudo ainda porque não tem banco. Depois, claro, antes do projeto de pro ar, o ideal é que a gente identifique todas essas partes e comece a pedir para ele, ó, aqui tem que colocar os dados reais do banco, tá? E aí vai se fazendo essa
+
+limpeza bem simples, o projeto fica correto, tá bom? Eu vou trabalhar muito nessa página, ou melhor, nessa parte do blog de front end, vamos dizer assim, né? Porque depois eu vou colocando as funcionalidades em cima delas. Então depois ele vai fazer o back end, que seria o admin, né, o backffice, que é onde a gente configura, tá? É onde vai entrar também as funcionalidades mais complexas. Então agora eu quero fazer a
+
+página de Pusca, né? Muito importante também para todo blog conseguir que digitar aqui o usuário conseguiu encontrar o que ele quer, tá? Então é o seguinte, aqui eu volto pros bullets, ó. Implement a funcionalidade de busca no blog, no campo de busca do header. Quando o usuário começar a digitar, mostrar sugestões de post de um dropdown. Isso é interessante porque ele
+
+não precisa pesquisar algo para ver se tem. Ele já vai digitando e já vai recebendo feedback em tempo real. Cada sugestão mostra uma miniatura, título e categoria, criar uma página de resultados. Então, se o cara quiser ir pra página de resultado, porque tem muito post, ele vê mais 500 ali, beleza? Então ele vai, mas senão ele acha o que ele quer aqui mesmo, tá? Melhor a
+
+navegação. O termo que daí essa página, né? O termo que foi buscado, quantos resultados foram encontrados, os posts encontrados e uma mensagem amigável caso não encontre nada. Tipo 404. A busca deve procurar no título e no conteúdo dos posts, o que melhor a chance dele achar. Às vezes ele procura puxar EPT e
+
+no título tá, sei lá, IA para negócios locais. Só que o cara usa chatt para fazer isso, tá só no conteúdo. Então, uma forma de melhorar a busca. Vou prosseguir aqui e agora vamos aguardar a criação da página. Ó, galera, então ele terminou aqui. Vamos fazer o teste, né?
+
+Aqui começa uma outra etapa também que é importantíssima. Tudo que a gente fizer de funcionalidade, a gente tem que testar, a gente não pode confiar cegamente na EA. E além de testar, a gente tem que tentar encontrar algum bug para poder corrigir isso antes que o projeto vai pro ar, tá? Então, por mais que a gente não esteja desenvolvendo de fato ali no código, nossa mente de programador tem que ser ativada. Novamente, se tu não tem essa mente, não é tão complexo assim, é uma mente mais analítica, não precisa entender de código de fato, tá? Baixa aquele
+
+material que eu te falei, ó. Então, vamos lá. Qu pro GPT? Ele já aparece aqui. Show de bola. Mas eu também tenho
+
+aqui a possibilidade de ver mais resultados. Vamos ver no grandão aqui, ó. Quero buscar por IA, tá? Então eu tenho aqui, ó, ética em IA. Você já muda post, beleza? e a ver todos os
+
+resultados. Então, ó, aqui eu tenho todos os resultados e ele segue uma ideia de post eh com suas categoria, né? E aí eu quero mostrar um recurso do l interessante para vocês. Vamos botar aqui a e vou chegar aqui, ó. Olha só, cara, isso aqui já me doeu a alma. Os putos estão
+
+colados um no outro, então vou usar o visual edits. Eu vou pegar, vou colocar aqui, vou selecionar esse cara. Ou melhor, que nesse caso era melhor um print. Ó, vou botar aqui take a screenshot. Aí tu seleciona a aba que tu quer, né? Aí ele vai entender o que tu
+
+tá falando. Ou tu pode usar alguma ferramenta, tipo essa aqui que eu tenho, que é o light shots. Eu tirei aqui o screenshot, ó. Vou falar: "Os posts na página de busca estão colados uns nos outros. Adicione uma margem entre eles. Então é
+
+um ajuste fino que me incomodou, tá? Vamos ver aqui como ele retorna. Todas essas coisas é melhor já ir arrumando em curso, né? Não deixar para o final, senão a gente vai ter 500 coisas ou pelo menos anota, tá? Mas eu sugiro testar e arrumar. Testar e arrumar. Faz esse
+
+ciclo infinito e depois vai pra próxima coisa, tá? Agora deu certo, deu um respirozinho ali, ó. Aqui no preview ainda não tá, sabe? Aí, que que a gente pode fazer? A gente pode tentar que aqui já tá, né? Mandar de novo. Ó, aqui ainda
+
+não refletiu, tá? Logo ele vai refletir, né? Às vezes pode demorar um pouco aí para Ó, agora foi, né? Às vezes tem um caszinho, né, galera? Então, vai no contl shift R ali até e acertar a mão.
+
+Beleza? Bom, opidade de pesquisa feita, né? Posso testar o 404 aqui. Teste. Dá um enter. Aí ele vai dizer que não
+
+encontrou nada, tá? Exatamente isso que a gente quer. Todas as coisas que a gente pediu, ele fez, tá? Para terminar aqui as partes de frontend, né, o que a gente tá que o usuário vai ver, eu vou fazer a página de sobre e aí a gente vai paraa autenticação, onde a gente vai ter que conectar com o banco de dados, tá? Eu vou mostrar o passo a passo para vocês também. Então, pra página de sobre
+
+vai ser o seguinte: cria uma página de sobre para o blog, incluir um título. Aí aqui é institucional, né, pra pessoa entender mais sobre a gente, né, se se o blog for de uma pessoa ou sobre a empresa. Incluir um título explicando propósito, quem são as pessoas por trás, formas de entrar em contato, link para as redes sociais, manter o padrão visual. Essa página é importante porque vai resultar em parcerias. Alguém quer anunciar no blog, gostou do conteúdo, quer fazer, sei lá, uma promoção, algum um guest post. É importante também, não
+
+só na assinatura do usuário a gente pode monetizar o blog, pode monetizar dessa forma também, né? Usuários pagarem para postar no teu blog acontece bastante. Então vamos ver o resultado aqui, ó. Ele terminou aqui. Vamos ver a página de sobre. Ele mostrou aqui o título, uma
+
+descrição do blog, os usuários, autores, por enquanto, né? Como entrar em contato. Depois poderia ter um formulário aqui, né? a gente pode implementar futuramente, mas o objetivo dela tá cumprido. Beleza? Bom, agora,
+
+como eu falei, a gente vai ter que integrar do do Supe, né? Tem a opção do lava cloud, mas como eu falei, a gente fica um pouco depente deles. Então, vou abrir o Supas aqui. Esse aqui é o cara, né? É um banco de dados gratuitos, a gente pode ter até dois projetos nele.
+
+Depois a gente tem que pagar, mas também não é um absurdo, tá? E claro, né, se a gente quiser, a gente pode criar mais contas, mas ficando mais difícil de gerenciar e tal. Então, o ideal é realmente colocar aqui os SAS mais validados para poder pelo menos se pagar. Só que como eu falei, tem dois projetos gratuitos. Então, cara, vai dar para fazer tranquilamente o teu projeto, os teus dois projetos, né? E aí, ah, um
+
+não deu certo, deleta o outro e assim por diante, tá? Tem jeito para tudo. Bom, aqui tu vai ter que fazer tua conta, tá? E tu vai entrar na dashboard, que é onde tu vai ver aqui as tuas organizações. Se tu não tiver, tu vai ter que criar. Eh, eu tenho essa daqui
+
+conectada ao lovable, tá? E eu vou criar aqui o meu outro projeto, que esse aqui é o de referência, tá? Vou botar aqui new project pra gente colocar o nome dele. V botar e news blog, botar curso, só para saber a referência ali, né? Na hora de conectar. Aqui a gente vai
+
+escolher uma senha, tá? Senha forte, né? A senha do teu banco de dados. região, quanto mais próximo de ti na teoria responde mais rápido. Então vou deixar Americas e vou dar create new project, tá? O que acontece aqui? Ele cria um
+
+projeto pra gente que vai se conectar ao nosso projeto lá do Lavab, tá? Tá totalmente zerado aqui e é isso que a gente precisa ter de resultado. Beleza? Então recapando, tu vai criar tua conta, vai criar uma organização aqui, né, que meu é teste supas e tu vai criar um projeto que esse aqui no caso é o news blog curso. Tendo isso, voltamos pro lavable. Aqui no lavable a gente vai no
+
+maisinho, tá? E eu acredito que aqui em project settings a gente já consegue conectar, tá? Se a gente for lá direto no link do Supase, ele fala que moveu daqui, porque ele tá forçando ou direcionando a gente utilizar o cloud, tá? que é bem mais simples mesmo, galera. Facilita muito a vida, só que tem problema que o preço pode aumentar enquanto projeto escala no super base não, preço é fixo, então eu prefiro por esse lado, né? A gente vai em settings
+
+aqui e aqui a gente precisa conectar. A gente vai connectors, tá? E o teu, se tu não conectou com super base, pode estar desabilitado. Então vai ter um projeto de autenticação super simples. Clica nele aqui. Se tiver aqui
+
+embaixo, né, ou em outra área, tu acha o Supas que a interface costuma mudar um pouco sempre, né, galera. E depois que ele conecta, né, ele vai conectar a organização, você vai conseguir conectar um projeto, tá? Então eu não consegui mostrar essa etapa aqui, mas é super simples. Provavelmente deve ter um Google Alf ali, tá? E tu vai ter esse resultado que eu tenho depois de conectar o teu superbase aqui. E agora a
+
+gente precisa conectar um projeto do Supase ao nosso projeto aqui do L. Aqui vai dar um connect a project. Aqui vai aparecer a organização que a gente conectou depois, que a gente conectou antes, né? E aqui ele não mostra o projeto que eu criei, tá? Então antigamente quando digitava aqui, ele procurava o projeto em tempo real e aí ele achava, tá? E agora mudou. Então o
+
+que a gente tem que fazer? Control shift R. A gente vai pro mesmo lugar ali, project settings, connectors, spa base. E agora deve ter aparecido o projeto, ó, news blog curso. Beleza, vou conectar aqui. Ele gerencia a conexão
+
+automaticamente ali. Ele vai fazer com que tudo esteja pronto para uso, né? Posso fechar aqui. E aí ele fala que conectou, tá? Ele dá aqui algumas informações pra gente. Ele fala que eh a
+
+gente tem que habilitar autenticação e tudo mais, né? Tem outros recursos mais avançados que a gente pode habilitar também. Só que se a gente tiver alguma dificuldade aqui, ele vai falando: "Ah, tem que fazer isso lá, tem que fazer isso, né? Então é bem tranquilo também". Mas voltando aqui, recarregando, agora que o projeto tá conectado, a gente pode vir aqui em authentication, tá? Um passo
+
+bem importante, a gente vem aqui em signers e a gente desabilita a confirmação de e-mail, porque isso vai fazer com que a gente precise de um servidor de e-mail no projeto para que ele dispare um e-mail pra pessoa, ela confirma esse e-mail, faça e aí ela diga que quer criar conta, tá? A gente não quer isso, então desabilita que vai facilitar a nossa vida. Beleza? Bom, aí agora a gente precisa fazer a integração inicial, né? Porque por mais que esteja conectado, ainda não criou nenhuma tabela, né? Por exemplo, aqui a gente só
+
+tem users, vão ser os usuários do nosso sistema, só que a gente não tem as outras tabelas, por exemplo, de posts, então é isso que a gente precisa configurar. Bom, e essa estruturação inicial é basicamente para falar como é que serão as tabelas lá do banco, né? Então é muito importante que antes de qualquer projeto vocês planejem o que vocês querem salvar, né? Isso aí vai ajudar muito a saber que precisa estar no banco para poder orientar um pouco o logo. Claro que algumas coisas ele vai criando automaticamente, por exemplo, relacionamento entre tabelas, mas as principais nós precisamos saber. Por
+
+exemplo, tabela de post, de usuário, de categoria, são coisas que um blog tem, tá? Então vou colocar aqui, ó. Agora preciso preparar para almacenar os dados no superabis. Essa é a estrutura de dados que eu preciso salvar. Perfis do usuário aí, os campos que eu quero.
+
+Categorias, os campos que eu quero, posts, os campos que eu quero, tá? Tags, os campos que eu quero, né? As tags são tipo categorias dos posts, né? Umas palavras chaves que a gente pode usar e os comentários dos post. É uma estrutura básica de blog, tá? Então vou prosseguir
+
+aqui e muito provavelmente ele vai refletir essa estrutura lá no Super Base depois, tá? Talvez ele não faça tudo agora, mas a ideia é que ele já entenda que a gente precisa salvar esses dados e se prepare para um eventual uma eventual autenticação, uma eventual linkagem entre usuário e post. Ó, então ele já tá fazendo aqui, ele tá fazendo modify database, alterando lá no superbase as tabelas que a gente tem. Às vezes o de vocês pode tá pedindo aprovação, tá? Aqui no meu eu configurei para ele sempre permitir alteração. Isso é
+
+interessante se tu sabe o que tu tá fazendo. Se tu tá com algum receio ou já enfrentou algum problema com isso, assim, com o banco de dados sendo criado errado, algum tipo de tabela, eu aconselho deixar no modo de ask time, né? Ó, aqui ele já criou as principais. Então, a gente pode ver que algumas a gente nem pediu, ele criou, porque ele sabe que ele vai precisar pra estrutura que a gente quer. Ele entende que, sei lá, se um post eh criado por alguém, os usuários precisam ter papéis no sistema, o leitor e o autor. Então, não precisei pedir
+
+para ele e ele já criou. Bom, tendo essa estrutura base, agora a gente avança pro banco de dados. Então, eu quero que a parte de login e cadastro funciona, tá? Então eu tenho o seguinte prompt para poder fazer essa estruturação no LB e no Superbase. Agora as coisas vão andar muito em conjunto, né? Então a gente tem
+
+que sempre pensar no banco de dados quando a gente tá fazendo alguma coisa. Aqui um sistema de login cadastro usando Supase. Login e cadastro são dois modais. Então eu não vou criar página. O usuário vai clicar aqui, vai abrir o modal. Isso vai ser útil lá na frente
+
+porque em algumas etapas a gente precisa de autenticação. Então eu já deixo a interação do usuário com o sistema mais fluida. Então são são dois modais, né, que é aquele popup que abrem quando clicar nos botões do header. Modal de login, abre clicar o botão de login, né? Campo de e-mail e senha, botão de entrar, opção de esquec minha senha e um link para forma de cadastro, né? Clicou
+
+no errado, ele consegue pro outro. Modal de cadastro, campo, nome, meio, senha, confirmar senha. Aqui eu deixei bem básico, dependendo do teu sistema, tu vai ter que pedir mais coisas. Validações eu também coloquei bem básicas, pode implementar mais aqui. Eu só tô vendo se as senas são iguais.
+
+botão para criar conta e link para voltar pro formulário de login. Depois que fazer o login, fecha o modal no header, troca os botões, né, para as informações do usuário para poder atualizar, não ficar aparecendo que o usuário tá deslogado ainda, que é esse cenário aqui. E o menu mostra a foto do usuário ao clicar, abre opções, meu perfil sair. Então vai ter um menu suspenso que vai ter outras opções depois se o usuário for adminar também painel admin que é onde vai ter as configurações do blog. Tela de recuperação de senha. É uma tela padrão
+
+ali para recuperar a senha, né? não tão importante. Agora vamos prosseguir e depois a gente vai testar se a autenticação funcionou. A gente tem que ver se o login funciona, se o cadastro funciona, se o logout funciona. Todos os ciclos a gente precisa testar ali para garantir que vai dar certo. Beleza? E
+
+cara, se tu ficou até aqui, tu é bem guerreiro e quer realmente aprender a criar SAS, criar sistemas completos, quero também te mostrar que a gente tem um treinamento completo sobre criação de SAS, né, com esse intuito de tirar a ideia do papel, transformar num software e vender ou vender ou sei lá, ter assinantes, né, dependendo do nicho que vai trabalhar. A formação SAS com IA também focada em lógica. O link vai tá aqui na descrição. Tu pode acessar essa página. ver como é que funciona o treinamento, né? Qual que é o passo a
+
+passo, né, da ideia até a monetização. Tem um vídeo meio explicando tudo aqui. Explica um dos projetos que a gente cria lá dentro, todos os cursos. Pode baixar grade curricular aqui também, tá? Tem grade curricular para tu entender que o treinamento realmente é bem completo, tá? As tecnologias utilizadas e
+
+depoimentos de alguns alunos e por aí segue a página. Também tem aqui um botãozinho de WhatsApp para tu falar comigo ou com a minha equipe se h qualquer dúvida que ficou sobre treinamento, beleza? Tô te esperando lá também, link na descrição. Bom, voltamos aqui. Essa parte também é bem complexa, tá? Então, base, eu logo tende a demorar
+
+um pouco mais para poder completar, beleza? Ó, aqui ele finalizou, galera. Eu vou testar lá no preview mesmo, tá? Então, vou fazer aqui os testes pra gente poder acompanhar todo o fluxo, tá? Então vou voltar para home. Ó, já tá
+
+funcionando. Então não tenho conta. Eu vou ter que criar uma conta, tá? Eu posso ver como é que ficou a página de esqueci minha senha. Não ficou uma página, ficou um modal. Beleza? Então
+
+vamos criar aqui, colocar nome, colocar uma senha. Ó aqui eu errei a senha de propósito, né? Não é a mesma senha, não coincidem. Beleza. Agora agora vai coincidir. Então criei a
+
+conta. Beleza, ele mudou a nave bar, né? Vamos sair, vamos fazer o login. Os testes são essenciais, tá? Ele não faz teste, vai entregar coisa bugada lá e vai dar problema depois. Vou fazer o
+
+entrar aqui. Fez o login. Beleza. E agora o último testezinho que é legal também é, por exemplo, criar uma conta com e-mail que já existia. Vou lá, ó, esse e-mail já se cadastrado.
+
+Beleza? Então, está com eh validações essenciais aqui paraa gente poder prosseguir e o sistema de login funciona, tá? Então, a gente tem mais um passo dado, né? Rumo certo. Bom, aí que que acontece agora? Eu quero
+
+criar a página de perfil do usuário para ele poder modificar ali os seus dados se ele quiser, né? Por exemplo, eh, o nome que aparece ali, né? Que não necessariamente o nome dele, a imagem, né? Trocar senha. precisar. Então vai
+
+ser o seguinte, cria a página de perfil do usuário, só acessível se estiver logado. A página deve ter foto perfil com opção de trocar, fazer o upload de nova foto, salvar foto para base aqui essencial, tá? Senão ele vai colocar um campo de URL ali para botar imagem. E aqui a gente deixa no superbase. Supase tem um storage, tá? Que vai fazer com
+
+que vocês consigam persistir os dados, ó, de mídia, né? Storage vai salvar aqui. Beleza? Então é bem importante, bem interessante utilizar dessa forma também, porque deixa o sistema mais completo. Editar nome, editar biografia, salvar alterações e uma sessão para alterar a senha, né, com tudo que precisa, mostrar mensagem de sucesso ou erro após a ação, as ações. Se o usuário
+
+não estiver logado, redirecionar pra página inicial. Vou prosseguir aqui e é bem importante começar a estabelecer essas regras para ele. Por exemplo, páginas que o usuário não pode acessar autenticado. Eu preciso determinar isso para ele. Páginas que o usuário não tem uma permissão X, esse usuário não pode acessar. Então eu vou, claro que algumas
+
+coisas vai fazer no automático, né? Às vezes a gente vai esquecer e tal, mas por exemplo um esse usuário aqui ele não pode acessar o admin, né? Só se ele tiver papel para isso, né? Road. E aí quanto mais eu vou orientando ele, mais ele vai entendendo as coisas. Então,
+
+pelo menos nesse começo aqui, é sempre bom dizer isso, né? Ah, pô, se o cara tiver lugado, ele não pode acessar o meu perfil, que não faz sentido, ele não tem perfil. E depois ele vai se trocando, depois ele vai se tocando nesse negócio, né? Porque as regras de negócio já vão estar escritas no código, ele vai reaproveitando. Então, bom mesmo é quando a gente cria uma página, né? Ou
+
+quando a gente vê que algo deu errado, o usuário se página não podia, então aí sim, né? Mas se ao longo do projeto a gente esquecer lá no futuro, não vai ter problema porque ele já vai ter esse código, vai reaproveitar. Beleza? Então vem aqui. Vamos ver o meu perfil não encontrado. Ele disz que terminou aqui.
+
+Não, não, ele não terminou ainda. Ah, ele ah tá que ele ele não tinha dado mais nenhuma informação, mas ele voltou a editar aqui. Beleza. Então não terminou ainda. Então vou esperar aqui um pouquinho e eu vou testar depois. Bom
+
+aqui ele retornou, né, com o sucesso, tá? E aí ele às vezes ele vai dar alguns toques pra gente, mas isso aqui a gente não precisa se preocupar, é só uma medida de segurança dos pais que ele tem que ele consegue avisar se aquela senha ali que o usuário colocou já foi vazada na internet, tá? Então a gente pode habilitar isso aqui lá. Beleza? Bom, agora sim, vamos testar meu perfil. Ó,
+
+ainda deu 404. Deixa eu só ver aqui. Agora foi. Então a gente tem que fazer o teste, né? Colocar algumas coisas aqui para ver se funciona. Então vou botar
+
+Mateus Batista, né? meu sobrenome, coloquei teste na biografia, salvo e da boa. Tá aqui, né? Tem que testar a troca de senha, ó. Erro alterar senha.
+
+Deixa eu ver aqui. Senha atual. Nova senha. É que eu tinha colocado a mesma senha. Vamos tentar de novo.
+
+Ó, deu certo. Beleza. Aqui agora eu vou fazer o pil de uma foto. Selecionei uma foto do meu computador. Ele deu erro.
+
+Então, ó, viu como a gente pega erros? Testar as coisas. Esse erro não tinha dado comigo lá no no projeto original. Agora eu vou ter que vir aqui e fazer um promir ele. Então, ó, não estou conseguindo enviar fotos no perfil do usuário.
+
+Acontece um erro. Corrija. Então, a gente vai tentar aqui agora corrigir o upload de fotos do perfil do usuário. A princípio, a gente pode tentar sim, se não der, a gente pode copiar o erro. Tem várias outras medidas que a gente pode tomar para que dê certo, tá? Vamos
+
+aguardar ele retornar e já retoma. Bom, ele falou que agora tá corrigido, tá? Vamos tentar aqui fazer o upload de novo. Sempre recarrega o contrl shift R, tá? Aí escolhe a foto de novo. Ó, agora
+
+eu enviei a foto, ele trocou, tá? Vamos salvar, recarrega e a foto já reflete ali em cima. Beleza? Então a gente tem a funcionalidade aqui agora correta, tá? Isso é bem importante porque vocês viram problemas que podem acontecer a um caminho. É exatamente assim que a gente
+
+corrige. Vai provavelmente ter outros tipos. Eu vou mostrando outras estratégias para vocês, beleza? Bom, agora eu vou pra área administrativa, tá? Eu preciso começar a criar os posts de fato, né? E é lá que eu vou fazer
+
+isso. Então, a gente vai ter o seguinte prompt. cria o layout do painel administrativo. Ele deve ser diferente do layout do blog para os usuários poderem diferenciar os dois ambientes. Então, vamos dizer que lá vai ter cores diferentes, vai realmente mostrar que a pessoa está em outro local. O painel só
+
+pode ser acessado por usuários do tipo admin ou autor. Então são dois tipos de permissão, tá? O usuário quando se cadastra ele é um leitor. Tá aqui, ó. O usuário ao se cadastrar tem o tipo leitor, tá? Se outra pessoa
+
+tentar acessar, redirecionar para home. Lout, menu lateral fixo com as opções dashboard, post, categorias, comentários, usuários, configurações. Isso a gente vai ver aí cada uma delas depois, né? Vai ter seu papel no sistema. Cada item do menu tem um ícone pra gente poder também entender que são áreas diferentes. Área principal onde o
+
+conteúdo de cada sessão aparece, né? Então a gente vai ter um uma sessão onde a página que a gente tá mostra o conteúdo dela. Header com título da sessão atual e o menu do usuário. E no celular menu lateral deve virar o menu que abre e fecha. Porque isso aqui também ele pode executar automaticamente, mas se ele seguir a risco que eu pedi aqui, a barra lateral vai est junto com o celular ali, não vai dar para ver nada. Então às vezes é bom
+
+citar, ainda mais porque mudou o layout aqui do que a gente tá fazendo, tá? E aproveita aqui o tempinho que ele tá criando pra gente testar as outras coisas, ó. como fica no tablet, como fica no celular. A gente pode ir fazendo ajustes baseados em como tá ficando em cada estrutura, né? Aqui, claro, ele utiliza preview os padrões, né? A gente
+
+tem mais resoluções que isso, mas ajeitando essas três aqui, a gente já vai, sei lá, tá certo para 99% dos dispositivos. Beleza? Então vamos aguardar aqui e depois testar a parte do admin, né? Que ainda não dá para acessar, né? Essa é a teoria. Eu não
+
+posso acessar, por exemplo, nem de visitante, nem logado, porque eu ainda não tenho usuários com permissão e o visitante não deveria poder acessar. Beleza? Então, galera, ele finalizou aqui, tá? E o que acontece, só para mostrar para vocês também um recurso que ele dá aqui, não se as continuidades pros próximos passos. Eu não gosto muito de usar porque são promps muito simplificados e genéricos, mas são coisas que a gente tem que fazer. Crude
+
+de posto, crude de categoria. Pode parecer uma mão na roda, mas eu acredito que a gente digitar o nosso próprio prompt vai ser mais assertivo, tá? Então eu não gosto de usar essas opções aqui. Beleza? Bom, a gente pode ver aqui as URLs que ele vai criando, ó, admost, categories, comentários, tá? E
+
+justamente elas não devem ser possíveis acessar através daqui, porque eu tô como visitante, ó. Vou para home, deu certo. E nem daqui porque eu sou um usuário comum, né? Eu vou tentar acessar aqui, por exemplo, categorias. Aí ele bota categoria LLM, faz o admin, ele volta para home. Tá? Então tá tudo certo, a
+
+parte de bloqueio tá correta. Agora eu quero que esse usuário aqui ele seja um admin, tá? Então vou tentar fazer isso via prompt. Tá aqui, ó. Promova o usuáriosuporte@codar.com.br
+
+para administ. Assim vou conseguir testar as áreas admin. Então vamos ver aqui o que acontece. Talvez ele não tenha permissão, mas daí ele vai instruir pra gente o que a gente tem que fazer para fazer isso. Beleza?
+
+Então vamos lá. Vamos esperar ele finalizar o pensamento. Então tá, ele falou que deu certo. Beleza. Ele manda deslogar, né? Mas vamos ver se eu
+
+consigo só recarregando. Ó, já apareceu o painel admin e agora sim eu tenho acesso à área administrativa. Então, antes de mais nada, né, a gente testou e viu que o usuário sem permissão e o usuário deslogado não tem acesso aqui, somente usuários administrativos, que é o caso desse cara aqui, tá? Então tá tudo vazio ainda, justamente porque o banco de dados, vamos dizer assim, não tá conectado com essas áreas. a gente vai precisar cada uma delas fazer com que funcione. Então, o nosso primeiro
+
+passo aqui vai ser a página de post, né? Aqui é a parte vital pro sistema do blog funcionar. Ele precisa poder eh ter a funcionalidade de criação de novas postagens. A gente pode adicionar aqui. Então, vou justamente para esse lado, ó.
+
+Cria a página de estágem de post no admin, né? Ele aqui já criou, tá? No meu outro teste ele não tinha criado, mas beleza. Campo de busca para filtrar o por título, filtro por status, filtro por categoria, botão destacado, novo post. Lista de posts em formato de tabela, miniatura da imagem, título, categoria, status, autor, data, visualizações e botão de ação, né?
+
+Permitir selecionar vários para ações em lote. Página ação cinco por página. Então, por mais que já tenha a página, ele vai saber como que eu quero que ela seja exibida, tá? E aqui é interessante a gente ver se ele não vai duplicar a página também, né? Porque eu pedi para criar, mas já tem. Então vamos ver aqui
+
+como é que ele desenrola. Então ele disse que terminou e agora vamos fazer o teste, né? Tem que vir aqui posts recarregar só para Ó, não tem nenhum post. E deixa eu ver se ele tem duas páginas. Não, ele utilizou a mesma, tá?
+
+Só que o que acontece? Não tem nenhum post e aí ele não mostra nada, né? Justo. Então o que a gente pode fazer? A gente pode avançar paraa criação de posts, tá? Ou pedir para ele criar
+
+alguns posts de forma fictícia e a gente testar lá. Então eu acredito que a melhor forma é partir pra criação manual, né? E depois a gente vê os dados sendo colocados nessa tabela aqui. Então vou justamente fazer a página de criação de posto, ó. Vai ser o seguinte: cria a página para criar e editar posts, né?
+
+Vai ser a mesma. Uma vem vazia e outra aparece com os dados preenchidos. Área principal, campo, título, endereço do post, slug. É que, né? Eu já peço para ele gerar automaticamente baseado no título, mas eu posso editar. Editor de
+
+texto com formatação, itálico, né? É o wise wig que a gente chama campo para resumo do post barra lateral com seletor de status eh agendamento, seleção de categoria, campo para adicionar tags, área para subir uma imagem de capa, opção para marcar como destaque, esse destaque esse post principal aqui. Conteúdo premium é o conteúdo que vai ser vai ter o pay, tá? Só para explicar para vocês. Botão de salvar rascunho e publicar. calcular
+
+automaticamente o tempo de leitura baseado no tamanho do texto para informar pro usuário se ajuda. Se for edição, carregar os dados do post existente. Após publicar o post, leve o usuário para a tela de gerenciar post. Então, publica, ele volta ali pra tabela, né? Então, vamos lá. E agora
+
+depois a gente vai poder criar o post, né, através desse botão e voltar para cá e ver a tabela preenchida com esse post que a gente acabou de gerar. Vamos ver se funciona. Bom, galera, ele retornou aqui com o sucesso, né? E uma coisa que eu não comentei, mas cara, tu sempre pode ler o que ele fala aqui, porque às vezes pode ser um resultado diferente do que tu espera, né? Nem sempre que tu coloca aqui, ele vai conseguir fazer, ele pode dar outras instruções e tal.
+
+Então é sempre bom ler esse retorno dele, tá? Se tu entende alguma coisa de código, tu pode entender, pode ver, né, o que que ele modificou, o que que ele adicionou, tá? que ele também adiciona, vamos dizer, pacotes adicionais que de código, né, para poder agilizar o desenvolvimento, não ter que criar todo o código do zero. Interessante para saber questões como peso do projeto, bibliotecas utilizadas, isso faz pouca diferença na prática, né? porque a gente já tá aqui querendo economizar o máximo de tempo possível e não precisar aprender a programar, mas não é quando a gente tá pensando em projetos mais de longo prazo e tal, que vão ter impacto em usuários, talvez a gente queira utilizar coisas boas e tal, então entender o que ele tá colocando aqui é importante pro longo prazo, tá? Vamos
+
+lá, então. Vamos ver se ele cria post, ó, volto para home, tá? post aqui ele já colocou os posts que eh estão cadastrados, né, no blog. Isso é legal porque a gente já consegue ver as coisas funcionando. Então vocês viram ali, né?
+
+Por mais que ele tivesse criado a página, ele ainda não tinha populado ela. Agora sim. Então eu posso procurar. Eu tenho minha páginação funcionando, eu posso filtrar e eu posso criar, tá? Então vou criar aqui meu post da, ele já cria o slog automaticamente.
+
+É aqui a gente pode brincar um pouco, né, com os títulos, né? Isso aqui é tudo questão de SEO, né? Vai ajudar ao post ser melhor encontrado lá pelo pela pesquisa orgânica, né? Então, tem que ter esses elementos aqui, beleza? Eh, resumo, né, para poder mostrar um texto curto do post. Aqui a gente também tem o
+
+status dele, né? Se ele vai vir com rascunho, se ele já vai ser publicado, qual a categoria tags. Colocar uma imagem. Ó, deu erro para enviar imagem, tá? Então eu vou só publicar esse post, mas eu vou relatar esse erro para ele. E aqui as as duas
+
+configurações, né, de destaque e prêmio. Beleza? Então vou botar como destaque, vou publicar, volto para lá. Ã, ó, outro erro que eu detectei. Ó, tem algumas coisas aqui erradas. Então, olha
+
+só, vou citar aqui para ele. Encontrei, opa, encontrei alguns erros. O post que eu publiquei, criei e publiquei, não apareceu a tabela de posts. Ã, dá erro ao enviar imagem, igual o erro que ocorria na imagem de perfil. E eu vou fazer um outro teste aqui. É isso aí.
+
+Tá aqui, quando eu recarrego uma página do admin, ele me redireciona para home. Aqui parece que não faz a validação da row do usuário, algo assim, só para ele entender o que tá acontecendo, tá? Então encontrei esses três erros. Vamos ver como é que ele vai corrigir pra gente. Lembrando, tô usando aquela estratégia de bullet points pr vocês, né? E bom que
+
+ele vai corrigir erros em tempo real, por isso que é importante testar. A gente pode ver se o post tá lá na home, mas acho que não tava, né? Ó, é, parece que ele nem cadastrou o post, né? Deixa eu ver, ó. Esse carregar mais artigos não tá funcionando. Tem que arrumar
+
+também, mas vamos ver se com isso aqui ele já corrige, né? Ó, ele fez as alterações aqui, tá? Então, como é importante ler, né, que eu falei para vocês antes que ele falou que ele vai aguardar o carregamento do roll. para poder não jogar o cara para home. Vamos ver se vai dar certo. Bom, deu boa, tá?
+
+Ele falou que o pilodem tá corrigido, tá? E ele falou sobre os postos não aparecer. A listagem ainda usa dado de Mox para ver postos reais. Precisamos conectar ao banco de dados. Desejo que eu faça essa conexão agora. Então, se a
+
+gente prosseguisse só e não lesse isso aqui, a gente achar que tava tudo OK, porque ele falou que deu certo, a gente ia lá testar de novo, ia quebrar a cara. Então é exatamente isso que a gente precisa. É, botar aqui, ó. Preciso que os posts não sejam mais MOC. Agora, os posts que aparecem no admin tem que ser os posts reais. Na home podemos manter o
+
+post reais. botar aqui. Eh, você pode criar alguns mocks para o banco de dados e já reflita o que aparece na home com os posts que você criou. Então, o que que vai acontecer? Ele vai tirar esses dados de mo que tá no código, ele vai provavelmente criar posts para o banco de dados, vai começar a refletir que aparece no admin lá na home e o que a gente criar também vai acontecer a mesma coisa, tá? Então vamos ver aqui o que
+
+ele vai fazer pra gente poder dar o próximo passo, né, que é ter a criação de posts, correto? Bom, agora é depois que a gente mandou esse prompt, o ideal é que os posts persistam aqui, ele apareça na home e vamos criar um para comprovar isso. Vou botar aqui post test aqui, testando teste, colocar uma tag, categoria, deixar ele publicado, já escolher uma imagem, ó. Ele enviou a imagem. Is aqui é a imagem de um vídeo que a gente tem aqui no canal, né? E por
+
+enquanto eu não vou testar essas funcionalidades. Eu vou deixar assim para ver o que acontece. Publicar. Ó, o post ele já teria que aparecer aqui. Vou recarregar.
+
+Ó, ele não tá aparecendo, né? E aqui na home, acredito que ele não aparece também. Deixa eu ver. É isso aí. Então vamos voltar lá, ó. Vou
+
+enfatizar isso para ele. Ó, eu crio um post e ele ainda não aparece na tabela e nem na home. Precisamos salvar este dados do post no banco. Corrija. E aqui vamos ver se ele vai resolver o problema. A gente pode sempre
+
+bater, né, lá pelo Supase. Então a gente pode vir aqui database aqui é tables. Aí escolhe a tabela que é posts, dá um view e vejo aqui o post não tá sendo salvo aqui, né? Então tem algum problema de persistência de dados ali no nosso projetos. Ó aqui ele tá vendo que realmente houve um erro, então vamos aguardar aqui ele responder a gente, ó. Ele retornou aqui,
+
+tá? E eu já vou, não vou nada. Vou ver que isso vai funcionar. Então botou aqui. Teste.
+
+Teste. Feixer mais rapidinho aqui. Colocar a imagem. Salvou a imagem. Publicando. É, ainda não funciona. Daí
+
+agora não aparece na home, não salva, né? Bom, então a gente vai ter que mudar a dinâmica. Que que eu faço quando não tá rolando de jeito nenhum? Eu não vou ficar torrando crédito aqui que vai alterar muito o código e pode piorar tudo. Então vou dar aqui, ó, ativo o modo chat. Veja o porquê dos posts não
+
+estarem sendo salvos no banco de dados e consequentemente não aparecerem na tabela. Após clicar em eu venho aqui, publicar. O post deveria ir para a tabela posts do banco de dados e aparecer na home do blog, como também na tabela que exibe os posts do admin. Então, cara, muito dificilmente vocês vão estar enfrentando esse problema no de vocês aqui. Foi algo bem pontual mesmo, testem que aconteça, tá? Então, eu ativo o chat, né? E
+
+qualquer problema que no de vocês dê parecido, façam o mesmo. Ele vai agora implementar uma sequência lógica para resolver e antes, claro, investigar o problema. Então vamos deixar ele se virar aqui um pouco. Bom, e aqui ele terminou plano, né? Então vocês veem que a análise é bem densa, muito mais do que ele mostra pra gente quando não está com a gente ativado, aliás, quando não está com o chat ativado. Aqui o ideal é a
+
+gente ler tudo, tudo mais. Eu já dei uma lida prévia, tá? E acredito que faz sentido para mim. Então eu vou apertar esse botão aqui, né, e implementar o plano, tá? A partir desse momento ele desativa o chat e começa a trabalhar com o modo agente novamente, né? Então é
+
+exatamente que vocês vão fazer caso ocorra algum outro problema e vocês queiram ao máximo evitar a torra de créditos, né? Novo essa funcionalidade funciona muito bem. Funcionalidade funciona é bom, tá? Inclusive, uma das estratégias que eu uso bastante nos projetos lá da formação SAS, tá? São projetos mais complexos e às vezes ca algum problema de lógica. Beleza? Bom,
+
+vejam aqui que eu tava me batendo um monte e ele resolveu rapidamente aqui. Então ele foi realmente identificou o problema e antes ele tava meio que só tentando atropelar as coisas. É, lembrando que o chat também gasta créditos, né? Mas na soma, se a gente for ver ali tentando resolver várias vezes e parar uma vez pro chat e depois resolver, claro que a gente vai gastar bem menos, tá? Então vou fazer o teste de novo. Teste. Teste. Testando.
+
+Ã indústria. Teste. Tá uma imagem. Colocar aqui para publicar agora. Publicar.
+
+E agora foi. Viram? Então, cara, provou o que eu acabei de falar. Esse recurso chat é fenomenal para resolver problemas mais complexos. Tá bom. Aqui ele deve
+
+est aparecendo na home também, né? Ele não é destaque. Esse aqui é o de destaque, tá? A gente já vai testar isso, ó. Ele tá aqui. Show de bola. A
+
+gente acessa, ele deu não encontrado. Já vamos dar uma olhada nisso, tá? Deixa eu ver aqui, ó. Ã, e usa, ó, ele não tá indo para nenhum post, então deixa eu ver se aqui também acontece isso, né? Eu vou recarregar aqui, ó. Vou botar aqui. Ao clicar em qualquer
+
+post da home, recebo uma tela de não encontrado. Corrija. Um problema simples no link, tá? Isso aqui não precisa do chat para resolver. Então vou aguardar ele aqui. A gente continua. Ó, ele disse
+
+que corrigiu aqui. Então vamos fazer o teste. Ó, realmente agora entrou, né? Estamos no post. Esse post não tem tanto conteúdo, né, galera? Então fica até
+
+ruim de ver. Então vamos ver um desses aqui, ó. Carregou, trouxe o poste pra gente. Beleza, então tá, tá funcionando. Eh, agora eu quero testar ali a funcionalidade de destaque, né? A outra
+
+precisa do pagamento estar ativado, né? Então, só vou testar o destaque aqui, publicar, né? E agora ele deveria ser o primeiro post da home. Ó, exatamente. Então, deu certo, tá? Então, a
+
+funcionalidade de destaque também tá rolando. Dito isso, agora a gente vai trabalhar na geração de post. Isso vai acelerar um pouco o nosso trabalho aqui, tá? E basicamente eu vou ter aqui uma possibilidade de gerar todo o conteúdo por inteligência artificial, né? Como eu falei no começo, eu não acredito que conteúdos puramente por IA vão ranquear muito bem, apesar de ranquearem, tá? O
+
+ideal seria fazer uma revisão, trabalhar num tema que tu domina para que tu possa potencializar isso e realmente aí a seja um acelerador do teu trabalho, tá? Mas é uma ferramenta que a gente vai usar aqui, vocês vão ver como é tranquilo de colocar. Então volto pro editor aqui e vou pedir justamente a integração, né? Então vou colar o prompt que diz o seguinte: faça integração com a Open Ei, adicione um botão na tela de criação de post, gerar com ícone que remete a isso, né? Geralmente é um uma varinha mágica, uma coisa assim. Ao clicar, abre o modal
+
+que pede o assunto do post. O retorno da OpenI deve preencher todos os campos da página automaticamente baseado no assunto do posto escolhido pelo usuário, ou seja, títulos, look, conteúdo, resumo, categoria, tags, né, tudo que dá para preencher ali. Beleza? Então, olha só como é que funciona esse processo de integração. Assim que a gente faz isso, ele pede a chave da Openi. Então, a
+
+gente tem que ir lá e pegar a nossa chave, que é bem simples, né? Só vou esperar ele pedir aqui. Aí eu mostro o processo para vocês. Não, preciso da chave da Openi. Beleza? Então, onde é
+
+que a gente vai? Vai lá no Google e digita Openi API. A gente vai ter esse API Platform aqui, tá? Aí vai ter que fazer tua conta ou login em API platform, né? Bom, aí a gente cai nessa página aqui, a gente vem aqui na engrenagem settings e vai acessar API Keys, tá? Que é essa segunda aba aqui.
+
+Te acessa aqui API Kys, vai ter todas as chaves que tu criou na tua vida. A gente pode criar mais uma para poder fazer esse projeto. Vou botar aqui, ó, blog logo 2, tá? Seleciona o projeto default mesmo, tá? Se tiver algum projeto específico, claro, tu vai selecionar ali, né? Tu separa em projetos e tu vai
+
+dar um create secrety. Aqui ela aparece, tu copia, dá um don aqui, pode fechar, tem que copiar, né? Que eu acho que não acessar mais depois, né? Eh, via única, vai só criar de novo também. Volta lá e tu vai colar a chave aqui. Quando tu
+
+volta pro L, dá o submit. Aí ele vai fazer a integração, tá? E ele vai entregar paraa gente o resultado final daquela funcionalidade. Assim eu espero, né? Então agora a gente aguarda aqui e depois provavelmente vai aparecer aquele botão que eu falei e quando a gente clicar a gente vai passar o assunto do post, ele já vai preencher tudo automaticamente. Vocês vão ver que vai
+
+ficar bem legal. Bom, aqui ele chegou com a resposta de positivo, então a gente volta lá, vamos acessar página de gradição de post. Tá aqui, ó, botão de geração com a abre o modal. botar ali, ó, tendências até usar aquela aquela referência ali, tendências e 2026, né? Vamos ver aqui. Ele vai paraa Open Ei,
+
+né? É uma API, demora para responder, né? E a ideia é que ele traga de volta todo o conteúdo e já preencha aqui pra gente no post, tá? Então, vamos ver aqui se é realmente o que vai acontecer. Senão a gente ajusta aqui algum detalhe para que deixe a funcionalidade, OK? Tá?
+
+Então, vamos aguardar. Demando, ó, voltou, tá? Então, beleza, trouxe tudo, OK? Menos o conteúdo. Então, vamos lá e vou corrigir. Os dados foram preenchidos
+
+através do retorno da IA, porém a parte de conteúdo ficou em branco. Verifique o problema e corrija. Então, detalhe, né? ou ele não pediu esse parâmetro ou esqueceu de setar o campo, mas provavelmente vai ser bem fácil de resolver. E agora na próxima intereração a gente já vai ter também o o retorno, né? Ó, provavelmente era por causa da
+
+biblioteca aqui que é diferente de inputs normais, né? Então ele não entendeu como preencher daquela forma que ele usou nos outros. E agora ele vai fazer aí o ajuste. Ó, voltou aqui. Então a gente volta lá, recarrega a página, né? sempre bom para poder dar um refresh
+
+no código, girar com IA, tá? Tendências de IA para 2026, gerar post. E aqui agora ele vai trazer os dados e preencher ali o conteúdo corretamente, tá? A gente tem mais um recurso pronto no nosso blog aqui, né? Que era um dos recursos principais, o a criação do post, né? E justamente isso, trouxe
+
+aqui. Beleza? Tá? Eu vou colocar uma imagem só para ter, né, de outro vídeo do canal, né, quando onde eu mostro o uso do anti graft, se quiser dar uma olhada, um tem que programar um pouco mais que esse aqui, né? Mas o conceito é o mesmo de vibe code. Vale a pena também
+
+dar uma olhada no canal do YouTube. Então vou publicar aqui. É, ficou com raspar agora. Voltar aqui, ó. Post tá aqui. Todo o texto gerado por IA, né?
+
+Bom, não vou falar de conteúdo agora, né? Somente a funcionalidade em si, tá? O ajuste de conteúdo poderia ser feito através de prompt, né, com a, tá? Mas eu vou deixar isso para mais paraa frente porque tem que fazer a funcionalidade ainda. Agora gerar a imagem, né, que é bem interessante também porque esse sim a gente pode usar integralmente, como eu falei, já que a imagem é algo referente ao post, né? Então a gente faria
+
+provavelmente muito similar, né? Eu botar aqui, ó, adiciona também o botão de imagem do do posto gerar imagem com a e um ícone, né, onde utiliza a PI GPT image da Open AI pra geração das imagens no post. Essa PI tá bem boa, né? Lançou versão nova recentemente. Antes de antes de girar, antes de gerar, abra um modal onde o usuário pode escolher a qualidade da imagem, já que essa é uma das opções dessa da PI, né? E isso aumenta ou
+
+diminui o custo, né? Então, quando tá em fase de teste, talvez a gente gerar tudo em baixa, depois a gente começa a gerar os posts reais em alta. Eu vou botar aqui também, se o post já tiver um título, reutilize o título no modal da geração da imagem, eh, trazendo ele pré-preenchido. E, se o usuário quiser, altera antes do envio, pois provavelmente a imagem terá forte. relação com o título do post. Então aqui
+
+que acontece, a gente gera primeiro, né, texto provavelmente, e depois gera imagem e aí já tem o título e aproveita, a gente não precisa nem preencher esse input, tá? Só se a gente quiser algo muito específico, aí podemos modificar. Vamos aguardar aqui, né, e verificar se resolve ou não. Bom, ele gerou a devolutiva aqui, então vamos ver se deu certo. Recarregar. Ó, tá aqui. Então, a
+
+gente gera o post. Vou botar aqui automações para imobiliárias. Ele vai gerar todo esse conteúdo e baseado no título que ele trouxer, imagin eu que ele já vai preencher ali a geração da imagem, a gente vai conseguir ter uma geração mais fácil ainda. Ó, foi lá, ó, ele trouxe aqui seletor de qualidade, tá? Vou deixar médio.
+
+Geralmente o baixo ali ele demora menos, mas fica muito feio. O médio até dá para usar normalmente, tá? É uma questão de custos, né? Se a gente for ver que o blog ele pode demorar um pouco para engrenar, então talvez começar na média, depois ir pra alta ou se não atrapalhar talvez até usar baixo, né? Vai do critério de vocês. Pode levar até 30
+
+segundos. Geralmente realmente a geração de imagens é algo bem demorado, tá? Então deve tá finalizando, ó. Retornou. Essa foi a imagem gerada, né? Vou
+
+publicar que foi com rascun de novo. Ah, mas por algum motivo ele tá salvando como publicado aqui, tá? Depois a gente ajusta também. Vou voltar para home. Ó, a imagenzinha gerada, né? Até
+
+interessante. Tal lá no fundo o post aqui. Então temos mais uma etapa comprida, né? Agora já cria o post com o IA e também gera imagem com o IA. Como eu falei, né? A gente tem que ter aquela
+
+observação ali da do conteúdo gerado, tá? Mas tá ficando legal. Vou arrumar um detalhezinho aqui, ó. Vou até circular aqui. Não sei se vocês estão vendo, mas eu tô criando um print arrumando a tag e arrumando a data.
+
+Tá aqui, ó. Eh, ajuste a tag, eh, deixando o fundo sem transparência para o usuário conseguir ler plenamente. É categoria ou tag? Categoria, né? E industry é categoria, a tag label de categoria e ajuste a data para o padrão DD mm an, né? Fica mais legível pro usuário porque
+
+ele tá uma data em algum padrão. Não sei qual esse padrão aqui, mas isso aqui não é interessante para blog, né? Então vou dar esses pequenos ajustes visuais, tá? E aí a gente melhora um pouco o card ali, o do blog em si. Ele terminou, então a gente vai dar uma olhada.
+
+Recarrega, ó, já tá na no padrão atual, no que eu queria, né? Também a categoria já tá mais visível, né? Da imagens que tem textos, elementos ali naquela região não atrapalham a leitura. Beleza? Então agora a gente pode ir pra próxima etapa que vai continuar aqui o admin, né? As
+
+outras páginas que estão sem nada, galera. Aqui eu vou seguir a ordem, tá? Então, de posts, eu vou para categoria, depois comentários, usuários, configurações, tá? Então, vou aqui eh fazer o propt paraa criação da página de categorias. Então, é o seguinte, cria a página de gerenciamento de categorias, lista das categorias, mostrando a cor da etiqueta. Então, cada uma a gente pode
+
+diferenciar, né? Aqui tá tudo igual, mas depois a gente pode customizar isso para ajudar a chamar a atenção do usuário. Nome, descrição, quantos posts tem na categoria, botão para editar, excluir e ao clicar em nova categoria ou editar, abrir um forme, né, com nome, descrição, seletor de cor, algumas cores pré-definidas. Isso vai ajudar a gente a escolher, preview de como a etiqueta vai ficar e ao excluir, avisar se a categoria tem posts e pedir confirmação. Adicionar a páginação, no máximo cinco itens por página. Vamos prosseguir
+
+assim. E aí agora essa página aqui, ela vai tá funcional. Beleza? Outras coisas, né, que a gente tem que começar a testar aqui, eh, é o os filtros também, né? Ver aqui se publicados aparece, se os rascunhos aparecem, tá? Se ele filtra
+
+por categoria e tudo mais, né? Pra gente poder ver se realmente tá tudo funcionando, tá? Então, esses testes fazem parte do ciclo de desenvolvimento, seja por VIP coding ou não. Então, vou aguardar ele retornar aqui pra gente e já mostro para vocês o resultado. Bom, retornamos aqui. Então, vou recarregar.
+
+Ele mostra as categorias, tá? Com cores. E eu tenho que ver se essas cores estão refletidas lá na home, ó. Então, eu vou mostrar para ele que não, né? Então, vou selecionar aqui, vou bater um print da tela.
+
+Eh, vou selecionar as labels e falar que, ó, as cores das categorias devem refletir os locais que elas aparecem, por exemplo, label do post da home e dentro do post, tá? Enquanto ele arruma, a gente já pode dando uma olhada lá, criar uma categoria de teste. Teste aqui. Vou botar amarelo. Paraela, já tem. botar laranja, ó. Aí
+
+ele computa minha categoria. Beleza, então aqui deu certo. Vamos só esperar ele fazer isso aqui e a gente já ver como é que vai ficar. Fica mais bonito, né? Mais chamativo, porque mostra que não é tudo da mesma coisa, né? Mas
+
+interessante pro usuário. Ó, voltou aqui. Ah, na verdade não são muitos lugares, né, galera? Mas a gente vê aqui que na home ele já refletiu. Se eu entro aqui num post, deixa eu ver aqui. Vamos
+
+ver. aqui ainda não mandou, não mandou para cá ainda, mas vamos trabalhar lá então, ó, aqui em ler artigo, ó, ele traz aqui também. Então, a gente tem já essa reflexão, tem as corezinhas aqui, ó. Ele já trouxe os dados atualizados, né? Estavam com dados mocados, números a mais do que realmente era, tá? E agora
+
+sim, ele terminou. Então, beleza, temos aí mais uma parte concluída, né? Aí, se eu quisesse, por exemplo, lá no post, eu criei, eu posso editar, mudar para categoria que eu acabei de criar e tal, né? As coisas já estão persistindo e sendo eh linkadas umas entre as outras, tá? Outra coisa que é muito importante pros blogs em geral é ter a possibilidade de comentários, né? Então
+
+os comentários eles podem ajudar ao post ser encontrado porque aquele texto que tá no post mais o texto do comentário complementa, né? Então eu vou vou querer adicionar isso agora. E eu vou botar assim, ó. Crie uma página de moderação de comentários, abas para filtrar, pendentes aprovados e todos. lista de comentários, mostrando foto e nome de quem comentou, o texto do comentário, em qual posto, né, com o link para ele, quando foi escrito, se é uma resposta e a outro comentário, né, porque eu vou fazer aquele esquema de tipo trad, né, que tu coloca um comentário, a pessoa pode comentar nele, né, ações para cada comentário, aprovar, reprovar, excluir, né, isso para lidar com eles individualmente. e na aba de pendentes
+
+mostrar um contador no título e opção de aprovar todos de uma vez, tá? Novamente paginação cinco por página. Vamos lá. Então, isso vai dar cara a essa página aqui. Beleza? O nosso sistema ainda não
+
+tem comentários, talvez ele insira algum para poder testar as funcionalidades, mas depois eu vou justamente colocar a funcionalidade de comentários dentro do post e aí nós poderemos mesmo comentar e testar tudo. Então aqui ele tá fazendo modificações na do banco de dados, né? Talvez o tenha que aceitar a modificação. Bom, galera, então aqui, ó, ele retornou pro positivo, né? Vamos ver aqui. Eh, ele não colocou nenhum
+
+comentário, então a gente pode seguir por nós mesmos comentando. Então, eu vou pegar aqui, vou criar a funcionalidade de comentar no post, tá? Então, eu botei aqui implemento o sistema de comentários na página do post, sessão de comentários mostrando quantidade total, lista dos comentários aprovados, tá? Isso aí é na página, então só vai mostrar os aprovados. É isso que eu tô falando para ele. Cada comentário mostra foto, nome
+
+de quem escreveu, quando foi escrito, o texto do comentário, botão para responder, para fazer aquele efeito de thread. Se for resposta de outro comentário, mostrar dentado, né, para poder ficar organizado ali, se é um comentário principal, você é resposta. Se não estiver logo, mostrar mensagem, faça seu login para comentar com o botão. Se estiver logado, mostrar campo de texto e botão enviar. OBS, o botão de login dos comentários, daí vai abrir o modal da autenticação. Então já tô
+
+padronizando isso aqui porque vai ajudar a gente ao longo do projeto todo, tá? Ao enviar comentário, se nas configurações tiver marcado que precisa de aprovação, mostrar seu comentário foi enviado e aguarda a aprovação. Se não precisar, mostrar o comentário imediatamente. Então essa configuração a gente ainda não fez porque ela é uma página depois aqui, né? Mas já deixei pronto essa lógica. Ao clicar em responder, abrir o
+
+campo de texto abaixo do comentário. Então, vou lá, vou pedir para ele implementar e aí dentro do comentário, eu vou testar aqui com uma outra conta e eu vou ver lá a aprovação com essa daqui que tá logada no admin, tá? Então vou só esperar ele trazer isso para mim e aí a gente faz o teste total da funcionalidade. Ó, galera, então aqui ele terminou, né? Então vamos ver se já dá para comentar num post. Eu vou
+
+utilizar justamente esse comentário, esse aqui que eu criei, né? Vamos descer lá, ó. Preciso fazer um login para comentar. Então, abriu o modal. Vou criar o João aqui.
+
+Cria. Ó, já tô autenticado. Ele já mudou todos os elementos. Isso é bem legal. Vou comentar. Enviei o comentário. Foi
+
+paraa moderação. É o padrão, né? Tá definido assim. Depois a gente vai poder escolher. Venho para cá, ó. Posso
+
+aprovar, posso ver o post. Então, vou aprovar. Ele tá na aba de aprovado. Voltando aqui. Recarreguei tudo. Não
+
+precisava, né? Posso vir por aqui também? Era para tá aqui, né? Talvez não tenha persistido ainda. Ah, tá aqui, ó. Então aqui o
+
+comentário. Talvez subi um pouco o comentário, não sei. Para ser uma melhoria. Tá aqui. Show. Ó, aí tem um
+
+bugzinho. Toda vez que eu digito alguma coisa, ele tá perdendo o foco do input, tá? Então a gente precisa corrigir isso, né? Então vou voltar aqui. Ao responder um comentário, cada caracter que eu digito perde o foco do input. Corrigia isso e eh configure o
+
+sistema para aceitar. automaticamente comentários de admins, ou seja, estes precisam de moderação. Botar mais uma lógicazinha, porque daí eu comento ali como admin, ele vai aceitar automaticamente. Não precisa ficar indo lá provar porque, pô, a gente é o dono do site, vamos dizer assim, né? Então faz mais sentido, né? Então vou
+
+ver se ele corrige aquele problema, né? Tô tentando, ó, comentar, ó. Ele vai perdendo foco, tá ruim ali. Vou esperar ele retornar. Então, ele voltou aqui, galera. Vamos fazer o teste lá, ó. Vou
+
+recarregar, tentar responder o comentário aqui, ó. Agora vai. Envio e o comentário aprovado, que eu sou admin. Ele até coloca badzinho aqui. Bem interessante. Então, né? Temos mais um
+
+recurso implementado aqui em comentários. O do admin também entra, apesar de ele ser automaticamente aprovado, né? A gente pode reprovar e tal. enfim, fazer bastante coisa e o sistema de comentários ali já tá funcionando, que eu falei ali que é interessante, né, para um blog, um blog com alcance aumentado, porque os comentários fazem parte do post, digamos assim, tá? Eh, por exemplo, pode surgir uma dúvida no comentário e outra pessoa responder a dúvida e isso ser relevante paraa busca, né? Agora vamos pra tela de usuários,
+
+onde a gente vai listar todos os usuários do sistema. Vou colocar aqui, ó, criar a página de gerenciamento de usuários. só administradores para acessar. Então a gente mantém, né, essa comunicação para dividir os papéis. A gente deveria ter feito isso nas outras, mas é necessário confiar um pouco também nas regras, né, mas e testar também.
+
+Essencial. Então, lista de usuários mostrando foto, nome, e-mail, tipo, né, a row dele, papel do sistema, quando se cadastrou, filtro por tipo de usuário e busca. Ao clicar em usuário, abrir o painel com informações completas, opção de mudar o tipo de usuário, né? Mudar o roll dele, se for autor, mostrar os posts que ele escreveu, opção de desativar a compra, não permitir que o admin mude o seu próprio tipo ou se desative, né? Isso pode gerar meio que um encerramento do site, né? Se eu for
+
+mais admin, não tem como outra pessoa ser. E aí isso ia gerar um problema, somente seria alterável via banco de dados, tá? Então vamos ver aí se ele cria também essa página corretamente. Ó, ele retornou. Vamos ver aqui a página de usuários carregar. E aqui tá o estão,
+
+né, os dois usuários do sistema, adminitor, né? Cadastro foi hoje mesmo, né? Quando tô gravando aqui, a gente pode ver que detalhes para poder mudar a row dele e também fazer a desativação da conta se for necessário. Beleza? Então agora resta aí a aba de configurações, né? Claro, tu pode adicionar várias
+
+outras e a gente vai colocar mais coisas aqui, mas, né, nesse escopo inicial a gente finaliza pra gente poder pro pagamento também, né, para ver a parte de assinatura, integração com stripe, que é bem interessante. Seguindo então aqui a ordem das telas, né, vamos paraas configurações. as configurações, elas podem ser dezenas, né, que até te encorajo a tentar criar outras que possam influir na utilização do blog pro usuário. Eu pensei em algumas aqui, né, que já vão ajudar a dar esse pontapé inicial, mas tu pode inserir outras para poder também fazer testes AB, né, sei lá, exibir um banner aqui oferecendo algum produto. Pode ser interessante.
+
+Depois tira teste se melhorou. Então vou botar aqui como é que eu planejei. Botei assim, ó, crie a página de configurações do blog, organizar em sessões. Então cada categoria de configuração vai ter uma parte na página geral, vai mostrar, vai permitir escolher quantos posts vai mostrar por página, também exibir e ocultar algumas sessões da sidebar, que é esse cara aqui, tá? Essa barra lateral. Comentários. Avar, ativar ou
+
+desativar a aprovação, permitir comentários de visitantes ou não, redes sociais, pra gente poder setar os links, né, que reflete lá no footer e só isso. Depois eu falei: "Ah, dá feedback quando salvar, já insira os dados nos campos e persista nos locais onde serão utilizados, né, para ele poder realmente levar as considerações aqui, as configurações aqui, né? Senão pode ser que a gente só preencha lá e não tá funcionando, né? Você deve trocar os links do footer por esse da configuração, colocar o nome do que aqui não precisa aqui é coisa errada, só os links, né? Que o nome a gente vai fazer em outra tela, né? Ajuste as
+
+configurações de exibição todas para exibir, né? Então o que que eu tô falando? Que esses caras aqui vão tá tudo setado para true, né? para verdadeiro e depois a gente pode mudar para ocultar se a gente quiser. Mas faça a checagem dessas configurações nas sessões que elas precisam interferir.
+
+Então vou fazer o teste aqui, tá? E isso tende a criar essa página, né? Preencher com outras informações. E aí quando preenchemos a gente vai ter a influência aqui na home e em outras páginas que precisam, tá? essa parte de nome e descrição que tá aqui, vai ter outra página que vai cuidar disso, tá? É uma
+
+página que eu vou dedicar a SEO, né? Search optimization, que vai melhorar a questão de encontrar a página do Google, né? A pesquisa orgânica. Então aqui, ó, tá dividindo em várias tesques. Isso é bem legal. provavelmente o consumo,
+
+essas tarefas aqui que tem mais tesques, eh, deve ser maior de crédito. Queria achar outra aqui que ele falou isso porque antigamente, vamos ver nessa aqui mesmo, antigamente ele tentava fazer tudo numa paulada só e isso prejudicava a qualidade da entrega. Então, quanto mais a gente divide, melhor, né? Vejam que eu tô dividindo às vezes por parte, às vezes por função. E aqui ele mesmo tá fazendo isso porque ele julgou, talvez seja muita coisa. Então vamos ter uma
+
+ideia aqui de prompt normal. Esse gerenciamento aqui deu dois créditos e meio. Depois vamos comparar quanto que fica esse aqui para ver se realmente foi mais ou não. Então ele retornou aqui, galera. Terminou as três tesques, né? A
+
+visualização tá branca aqui. Vou recarregar. Pode ser algum bug visual ou realmente deu algum problema, né? Ó, realmente gastou mais 3.9 créditos, né?
+
+Quase quatro. Então eu acredito que foi a melhoria do time do Lovabble, né? Por mais que consuma mais créditos, a entrega é melhor, porque ele tentar fazer tudo com um prompt só. A gente pode ver aqui, né, se realmente deu certo. Então, vou fazer um teste simples aqui. Eu vou tirar categorias
+
+mais lidos. Realmente some. E vou colocar, ó, não tem links nas redes sociais. Vou colocar nossa plataforma aqui em tudo, só para ver. salvar e aqui vem agora o link. Todos
+
+eles levam pra plataforma de codar. Beleza? Então tá funcionando, né? Poder testar as outras também, né? É o certo.
+
+Vou voltar aqui pra exibição normal, mas ficou bem legal, bem interessante a proposta, né? Essa parte de habilitar, desabilitar aí bem poderosa, tá bom? Agora a gente vai para uma outra parte vital do nosso sistema, que é a assinatura, né? o pagamento que o usuário vai fazer no sistema, que a gente vai linkar com Stripe e vai dar benefícios para ele, tá? Ah, quais são os benefícios aqui nesse cenário? Como é
+
+um blog hipotético, né? E a questão é ensinar vocês como integrar o pagamento e ver ele funcionando, né? Quem paga, quem não paga, eu só pensei em o cara pode ver qualquer tipo de post, né? Aqueles post de payall que a gente vai ter depois, tá? Não aparece mais as propagandas, né? Né? que a gente vai
+
+colocar um popup ali pedindo para ele assar toda hora e tal, então vai ficar melhor a navegação dele, mas né, po, no teu pode ter outros benefícios, pode dar algum curso, tu pode dar algum material extra, então aí tu que vai mandar, né? Então vou colocar aqui o prompt e é o seguinte, cria uma página de planos de assinatura, tudo começa por aqui, né? Título chamativo, explicando os benefícios de assinar, opções de escolher pagamento mensal ou anual com desconto no anual, né? sempre tem isso, que às vezes é aquele eh chequezinho que a gente aperta aquele botãozinho aí e muda o plano dá um descontinho, né? Dois cards de plano. Então, a princípio, eu
+
+vou pedir dois, o plano gratuito, que é basicamente o login, né? Ele vai criar a conta e vai ter acesso algumas funcionalidades extras, como eu vou comentar, eh, plano prêmio mensal, que esse aqui, opa, que eu acho que eu me bola aqui, né? Botei três e eu falei dois. Vamos botar só dois, né, para ele não botar aqui ou valor com o desconto no manual. Aqui eu vou botar benefício, acesso aos cursos normais, newler, poder comentar, né, que que o comentário liberado para quem tá alugado. E aqui o
+
+prêmio mensal seria o mais popular, né, e benefícios, acesso todo conteúdo, pô, exclusivo, sem anúncios. É isso aí, né? Nesse momento é isso. Eu posso botar aqui posts premium, já tá ali, né? Post exclusivos, tá? Aqui, ó, premium.
+
+e sessão de perguntas frequentes sobre a assinatura para poder tirar dúvidas do usuário, guardar os dados dos planatores do banco para controlar quem é assinante. Então isso vai est linkado com o usuário. Todo post, ó, aqui é o popup, todo post ao rolar, 30% da página deve exibir um popup mostrando os planos de assinatura. Aqui é algo bem chato, tá? Depois, quando tiver tudo certo, quando teu bloco tiver no ar, tenta salvar esse popup para não mostrar para uns 10 dias, senão vai dar para navegar.
+
+Mas aqui a gente precisa fazer teste, então vou deixar, tá? Mas é um uma dica que eu vou te dar na side bar também incluir um card após as categorias onde fala da assinatura, mostrando benefícios e criar uma configuração para habilitar ou desabilitar este card. Então já vamos incluir, né, com outra coisa que a gente fez. Se o usuário estiver com assinatura vigente, não deve disparar o popup mais, não deve aparecer card na home assinatura, ele pode acessar qualquer tipo de post. Então é isso, vamos prosseguir. E claro, a gente não tem
+
+assinatura ainda, né? E aí tá a jogada. Ele vai preparar o campo, né? Depois a gente vai fazer aí o o que falta para que realmente, né, dê certo assinar, né? Agora não vai ter como assinar. Talvez
+
+ele até permita assinar sem pagamento, né? Só pra gente testar, mas depois a gente vai ter que fazer o pagamento porque senão não faz sentido, né? Ó, que ele criou várias tesques, provavelmente vai ser uma cacetada de crédito, mas estamos iremos receber por isso, né? Então vamos esperar aqui e vamos que vamos ver o que ele retorna pra gente nessa primeira interação com os pagamentos, ó. Então ele fechou aqui, né? 460 também foi bastante. E veja
+
+aqui, ó, 5 minutos de trabalho. Cara, antigamente o LB não fazia isso. Então, um sinal de progresso, né? Tá cada vez mais autônomo, executando muito trabalho, sem pouca interação, aliás, sem interação com nós, né? Sem dúvidas.
+
+Muito legal. Tá bom. Vamos lá então ver se deu certo isso. Primeiro a gente vê aqui nas configurações, ó, tem o card da assinatura. Depois eu venho aqui e vou rolar um pouquinho, ó. Não aparece
+
+porque é só no post do blog. Show. Tem aqui, ó. Seja premium. Acessar um post, ó, o popup, tá? Então, vamos lá ver os
+
+planos. Aqui eu tenho como assinar, né? Anual, descontinho show, né? Ele que decidiu o desconto. Poderíamos ou não, não sei. Acho que foi. A gente poderia
+
+pedir isso também, né? Não tem problema. Plano atual, já estou logado, então já mostra que eu sou gratuito, né? Aí ele fala: "Acesse todo o conteúdo posto exclusivo, sem anúncios, acesso antecipado, suporte prioritário." Suporte prioritário do quê? Ele deu uma
+
+viajada, né? Mas não tem problema. Aí como funciona? Posso cancelar? Show de bola, né? A gente não falou nada de
+
+garantia, mas seria interessante colocar, né? Aqueles 7 dias pelo menos. E vamos lá então, né? Ó, aqui ficou meio bugado, né? Então vou dar um print, faço uma setinha aqui na página de assinatura parece que a nave barra escondeu alguma coisa justo. E aí ele vai lá e vai modificar
+
+esse detalhe, tá? Então só vão esperar de fazer isso aqui e aí eu já vou assinar aquele meu outro usuário. Mas tipo esse aqui que é o João, a gente pode deixar o João como desassinado, né, para ele poder sentir o peso de não ter uma assinatura, tá beleza? De boa. Alterou ali, ó. Ele ainda não entendeu,
+
+né? Eu acho, ou não transferiu, né? Deixa eu ver aqui como tem o caszinho, né? Não, tá aqui, ó, já. É questão de cash mesmo. Bom, daqui a
+
+pouco eu vou assinar aqui. Então, a princípio, essa é assinatura porque não tem a ligação com o pagamento ainda, mas podemos fazer os testes. Ó, some o card da assinatura e eu não recebo mais o popup, tá? Depois a gente vai fazer o payall com os posts premium, né? Não é esse momento agora. Agora eu preciso eh
+
+integrar com o stripe, né? É o nosso meio de pagamento aqui, tá? Então a gente pode ir lá no Stripe, pegar a chave de pagamento, tá? Aí aqui tu vai entrar em stripe.com, fazer tua conta, tá? E em determinado
+
+momento vai cair na dashboard. Nesse cenário aqui eu estou numa conta de teste, tá? A gente não faz nenhuma integração com a conta oficial, tá? Ele dá essa mensagem aqui, ó. Você está numa área de restrita, seu espaço para experimentar funções do stripe, tá?
+
+Alterar para conta produção. Assim que eu sei que eu tô no ambiente de desce, porque senão a gente vai ter que pagar de fato para poder fazer ali a integração, né? E aqui eu preciso pegar as chaves, que é a chave secreta. Então tu pode copiar aqui, tá? Mas o ponto é esse, a gente tem que chegar aqui para poder mandar o prompt lá pro label para ele criar a integração. Beleza? Então eu
+
+vou aqui agora voltar, eu vou colocar aqui o meu prompt, tá? E vamos lá. Integre o Stripe para processar assinaturas. Ao clicar em assinar, redirecionar para a página de pagamento do Stripe. Após o pagamento, voltar para uma página de sucesso no blog.
+
+Precisamos criar essa página. Salvar no banco que o usuário agora é assinante. Criar uma forma de receber notificações do Stripe quando uma assinatura é criada, uma assinatura cancelada, um pagamento falha. Isso aqui eh no próprio caminho aqui do usuário, né? Ele vai ver o que aconteceu para ele poder, por exemplo, colocar outro cartão, sei lá, na página de plantos, se o usuário já for assinante, mostrar você já é premium, tá? Para não exibir o plano lá
+
+e o cara pensar em assinar de novo, né? Botão para gerenciar a assinatura. Aí cria uma página para ele poder cancelar e ver as faturas pagas, né? Adicionar um link de gerenciar assinatura nesse menu suspenso. E aqui é uma observação para eu testar tudo, né? Porque eu sou um
+
+cara que testa tudo. Então a gente pode ignorar ali, vai tá lá no no guia dos prompts de vocês. Então eu vou seguir aqui, vou processar esse prompt, tá? E aí ele vai pedir a chave de stripe e é essa secreta. Então a gente vai copiar a secreta, a gente volta lá, ó.
+
+Restricted, né? É a secret. Então vou dar um submit. Ele disse se deu certo, se deu errado, né? Então se tu colocar a outra por engano, ele vai informar que não deu conexão, vai pedir a chave de novo, tá?
+
+E aqui é o que acontece, ó, quando é outro software, né, tipo Superabase às vezes e o Stripe ou outro, ele vai pedir algumas confirmações e a gente pode eh só aceitar ou declinar. Em alguns programas, né, algumas APIs, não tem opção de sempre deixar ele fazer, tá? Então aqui ele vai criar o produto se não tiver. Talvez ele puxe o produto do blog de exemplo que eu criei. Então o meu seja um pouquinho diferente de vocês, tá? Mas ó, já tem produtos, então
+
+ele vai usar o mesmo, tá? Esse aqui vai ser o único passo diferente de vocês vai criar direto. Aqui no meu ele tá puxando o produto. Eu vou deixar só para não dar alguma confusão aqui, porque o de vocês provavelmente ele vai retão lá, né? ele vai criar tudo certinho e tal, vai mostrar o processo. Então, para não ter
+
+nenhuma interferência no meu aqui, não ficar meio confuso, eu vou deixar ele pegar o produto criado já, tá? Ó, aqui eu vou permitir e tal, e aí ele vai fazer as adaptações baseado nisso, ó, ele pegou aqui e agora ele vai citar todas as testes que ele tem que fazer para poder chegar no fim ali e entregar pra gente o nosso resultado final. Então, beleza, agora a gente espera e depois tenta assinar com esse cara aqui. Então, vamos ver como é que funciona com o cara autenticado a assinatura. Bom, galera, olha só, ele terminou aqui e ele pede para fazer três coisas, tá? Então, isso aqui é bom a
+
+gente seguir para que a integração funcione bem. Primeiro é ativar, por último, na real, mas é o mais fácil, é ativar esse customer portal no stripe, tá? Então é só clicar no link. Aí tu vem aqui, pera aí que, ó, ativar link de teste, tá? E deixa eu ver aqui, ó. Beleza. Link do
+
+portal ativo. Então, a gente vai dizer lá pro LB que esse é o nosso link do portal. O link do portal é, tá? Eu não vou mandar agora, eu vou seguindo as outras coisas, ó. Adicione o secret no superbase. Então ele ele não passou aqui
+
+o link, mas a gente vai lá no superabase e eu vou ter que achar aqui agora. Então deixa eu dar uma procurada. Então a gente vai vir aqui, ó, em add functions secrets, tá? E aqui a gente vai fazer o seguinte, copia lá o nome que ele falou. Se o teu não pedir isso, beleza, ele conseguiu se virar sem, tá? Ó, colocar
+
+aqui. Vou lá no no stripe de novo e eu vou copiar o secret chave secreta. Coloca o value aqui. Save. Beleza. Aí eu
+
+vou dizer para ele tudo no mesmo prompt, né? Já adicionei o no base. E por último é configurar esse web hook, tá? que é um evento que o Stripe vai mandar pra gente. Então, a gente vai vir aqui configuração do Webhook, eu pedi para ele, né, como configurar para ele dar o passo a passo.
+
+Então, ele me deu o link, tá? Aí, deixa eu ver aqui. Vou abrir o link, ele vai cair na página de web hooks, tá? Eu vou adicionar destino. Aqui eu vou escolher selecionar eventos, né? Vai ter essa URL
+
+aqui, né? Olha aqui, ó. Selecionar eventos. Eu preciso escolher o evento, né? Então é esse três aqui, ó. Customer
+
+criado e pagamento falho. Então vou procurar pro customer criado, atualizado. Ó, tá aqui. Delete. Customer deleted.
+
+Ah, pera aí. Não é esse aqui não. Custom subscription. Ó, é isso daqui, ó. criado, deletado e atualizado, tá? Tem um que eu coloquei
+
+aqui errado. E o outro que ele pediu é o payment failed. Beleza? Aí eu vou continuar end point hook, tá? E aqui ele ele vai pedir um nome. Eu posso botar aqui a blog e a e
+
+ele pede a end point. E aí a gente copia aqui, ó. Aí agora eu vou dar um criar destino e pronto, ele tem o web hook criado para poder enviar eh mensagens desse web hook para nós, tá bom? Eh, eu vou formar para ele também. Criei o webhook no stripe.
+
+Vou botar. Podemos seguir. E aí agora nós vamos assinar quando ele der a devolutiva aqui, ó. Ele encontrou alguns problemas, por isso que eu perguntei se ele podia seguir. Agora, eventualmente ele corrigiu. E vamos
+
+tentar a assinatura. Então, vou fazer o fluxo aqui, né? Eu tô com uma conta que não é assinante. Vai vir. Opa.
+
+Ah, esse cara aqui, talvez pelo e-mail dele foi considerado premium. Vamos testar criar outra conta. Ó, tá assinado agora. Assinar. Eu preciso cadastrar. Então,
+
+vou tá Pedro
+
+criar a conta. E agora o Pedro pode assinar isso aqui. Vai pro stripe e volta. Talvez pelo estar no logo não fosse o mais ideal fazer isso. Acho que vamos ter que fazer de diferente. Vamos ter
+
+que ir lá nesse aqui, tá? Porque o LB não consegue fazer esse redirecionamento, tá? Precisa ser aqui no navegador de fato. Vamos testar.
+
+Cria a conta, assino, vai abrir o stripe. Então aqui para preencher as informações no Stripe, tu pode botar 42 42 no cartão, bota uma data futura, bota um CVV 424, tá? É um cartão de teste, um nome qualquer e dá um subscribe. Pagamento vai ser emitido, vai retornar para aquela página de sucesso. Beleza? E
+
+aí que que vai acontecer? Ele dá esse parabéns, né? Eu posso ir para minha página de assinatura, onde eu tenho que ver que eu sou assinado aqui, né? Ó, realmente sou, tá? E agora o popup não deve mais aparecer, não aparece. E aqui
+
+na lateral, ó, não tem mais a menção de assinatura. Beleza, show de bola. Aqui no lovob em si, eu vou deixar esse cara que não é assinado, mas aqui eu vou logar com a admin de novo para poder ter acesso ao administrativo, tá? Então, só para ver que o fluxo de assinatura deu certo, porque agora a gente vai fazer outras questões, né, que envolvem o não assinante. Inclusive, eu não sou assinante aqui, né? Vou ver
+
+propagandas, eu posso assinar com o meu usuário admin ou não? Ah, não, adminado. Não tem problema. Então agora vamos pra parte do paywall, que seria o artigo premium, né, que vai bloquear o conteúdo, só vai mostrar se o usuário for assinante. Então é outra estratégia para poder cobrar de conteúdos que tem alta demanda de acesso, né, e a gente não quer aparecer o popup, quer mostrar ali o o conteúdo bloqueado mesmo. Bom,
+
+galera, então a ideia agora é fazer com que essa configuração aqui da criação de posts, tá? Esse cara aqui, ó, post em destaque, desculpa, post conteúdo premium, funciona, seja o pay, tá? Então eu vou criar um prompt que vai remeter a isso e aí vai fazer com que usuários comuns não consigam ver aquele conteúdo completo, tá? Vários sites aplicam isso, né? E como eu falei lá no começo, geralmente é quando o conteúdo ele é muito importante ou tem muitas visitas, né? ou é de alguém muito famoso que
+
+escreve o blog e tal, aí tende-se a pagar para poder verê-lo. Então bota aqui, ó, implemente o bloqueio do conteúdo premium. Quando o posto é marcado como premium, se o visitante não está logado. Aqui é a configuração, né? Se o visitante não está logado, o que que acontece? Mostrar só os dois
+
+primeiros parágrafos, borrar o resto do conteúdo, mostrar caixa, faça login para continuar lendo, botão de login, abrir modal de login. Então ele vai fazer um login, tá? Mas ele vai ver depois que ele precisa ser assinante, porque é um conteúdo prumo. Se está logado, mas não é assinante, mostrar só os dois primeiros parágrafos, borrar o resto do conteúdo, mostrar caixa, esse conteúdo exclusivo para assinantes premium, lista de benefícios da assinatura e botão ver planos. Se é assinante, mostrar conteúdo completo, bad premium no post. Na
+
+listagem de posts, postum mostram um ícone de cadeado ou coroa, né? A gente pode especificar aqui, exatamente se quiser. Visual levemente diferenciado dos posts gratuitos. Vamos seguir aqui e ver como é que fica o post premium, né, pra gente poder dar andamento a mais esse recurso, né, no nosso blog. Então, vou aguardar aqui e mostro para vocês o resultado. Ó, galera, então ele terminou
+
+aqui, tá? E a gente vai testar tudo. Esse usuário aqui, ele não é assinante, então a gente pode testar justamente nele. Deixa eu ver aqui se tem algum conteúdo premium. Não tem. Então vamos
+
+lá. Vamos testar a criação completa do zero. Vou recarregar aqui. Eu vou gerar. Vou botar aqui eh o que é N8N.
+
+Então esse é o meu post. Ele vai lá na Open né. É bom testar essas coisas de tempos em tempos. Se a gente vê que coisas que foram feitas no código não alteraram o que já tava funcionando. Então, esses testes gerais do sistema também são interessantes, tá? E aqui ele
+
+me retorna, beleza? Eu vou gerar a imagem e também aqui eu vou marcar ele como um conteúdo premium, né, que é o grande diferencial desse cara. Então, vamos aguardar aqui a criação da imagem pela IA. Ó, ele retornou aqui. Show.
+
+Marc premium. voltar aqui que é publicar agora. Publicar. Pronto, tá aqui o post. Volto para cá. Carreguei tudo. Não
+
+precisava, né? Mas tudo bem. Aí eu vou utilizar esse usuário para verificar que o conteúdo é primo, tá? Aqui já identifiquei algo que não apareceu. Não apareceu a bad aqui na listagem de posts. A bed deve aparecer na home e
+
+onde também tem cards de post. aqui a bed deve aparecer nos cards dos posts, por exemplo, na home e em outros locais. Então vou pedir esse ajuste, mas entrando aqui, provavelmente vai ter alguma referência que é um conteúdo premium, ó, tá aqui premium. Se eu desço aqui, o conteúdo tá borrado e somente quem é assinete pode ver esse conteúdo, tá? Então vou dar aqui, ó, ver planos.
+
+Aí eu preciso assinar para poder eh acessar o conteúdo, tá? E aqui se é uma pessoa totalmente aleatória, que ela entra aqui e vai acessar, ó, já botou a bet. Ela vai entrar aqui, vai ver só uma parte, ela precisa fazer o login, não tem, vai criar uma conta e aí exibe que é um conteúdo para cinetes, talvez para eh não causar esse impacto negativo. Pô, fiz a conta, agora tem que assinar, talvez explicar antes, né? Seria uma estratégia interessante.
+
+Aí o usuário não vai ficar ressentido, né? Se eu tô aqui com o usuário admin logado, ó, ele não tem assinatura, né? Então vou fazer justamente a assinatura e a gente já testa aqui essa questão. Então vou ver planos assinar, vou pro stripe ó, preenchi tudo galera, tô processando a compra e agora veremos se eu posso ver o conteúdo de pay, né? Ele vai retornar provavelmente para aquela página de sucesso.
+
+Ó, deu certo. Explorar conteúdos. Vou para home. E agora posso ver o conteúdo com pay, tá? Então, mais um recurso aí que a gente implementou. Outra coisa que
+
+eu gosto bastante também é a questão de dar a opção pro usuário selecionar tema dark ou light. Vou adicionar isso no nosso blog, tá? Vou colocar aqui o prompt. Adicione a opção de modo escuro no blog no header. Adicione o botão de toggle, né, que vai mudar o ícone de sol ou lua. Tema light dark para alternar
+
+entre modo claro, escudo, modo claro, padrão, fundo, branco claro, texto escuros, o visual que já temos, modo escuro, fundo escuro, torno de cinza escuro, não preto puro, textos claros. É, esse aqui é uma estratégia de design muito utilizada, né? Nunca se usa o branco e o preto nos he exadecimais. fiéis, né, como FF e 00. Sempre se dá um tonzinho ali para não ficar tão eh escuro ou clara a cor, né? Isso aqui é
+
+muito utilizado. Textos claros, ajustar as cores do CS, botões e elementos para não ficarem para ficarem harmônicos. Imagem dos postos continuam normais. O sistema deve lembrar a preferência do usuário, né? Vai salvar no navegador, então local storage, né, para quem conhece. Respeitar a preferência do
+
+sistema operacional na primeira visita que dá para puxar, né? aplicar a transição suave ao trocar tema. Modo escuro deve funcionar em todas as páginas, mas não precisamos dele no admin, né? Então aqui funcionalidade não precisa estar presente nas telas admin. Então vou dar aqui o processar e vamos ver aqui como é que ele vai criar isso pra gente, tá? Como é que vai ficar o
+
+nosso blog nesses dois temas. Ah, costuma dar alguns problemas às vezes, né? ele não, alguns elementos ficam apagados e tal. Então, adicionar isso é bem complexo em algumas situações e a gente tem que fazer alguns ajustes minuciosos. O ideal seria testar o sistema todo para ver se os elementos estão condizentes com o tema ao contrário do que a gente já tem.
+
+Nesse caso, a gente já tem o dark, né? Ele vai criar um um light, tá? Então, vamos ver aqui logo logo como é que vai ficar. Ó, ele retornou aqui pra gente. Vou testar aqui nessa aqui que é mais interessante.
+
+Acho que ele entendeu um pouco errado. Ele tirou pro usuário adminim. Mas não era bem isso que eu falei, né? Os usuários admin estão sem a funcionalidade. Que eu quis dizer é que deixa um negócio aqui, ó. As telas que
+
+começam com barra admin.
+
+Tem uma uma lenda que foi comprovada com estudo que os prompts em inglês tendem a ser mais assertivos, tá? Além das estratégias que a gente tá utilizando, se tu manjar de inglês ou pedir pro GPT da vida traduzir, provavelmente tu vai ter resultados melhores em qualquer IA. Isso porque as linguagens são treinadas primariamente, majoritariamente na língua inglesa, tá? Então elas têm mais conhecimento, elas têm mais conteúdo e isso faz com que elas funcionem melhor com props em inglês, tá? Agora vamos ver aqui se deu certo. Ó, tem uma light.
+
+Ficou legal. Aqui eu achei muito estourada a imagem, né? Tivesse que pedir para ele melhorar um pouco a opacidade. Tema dark é o tema que já tinha. Beleza, galera? Então, mais um recurso
+
+implementado e aí o usuário pode escolher, né, o que ele quer e acessar o sistema da maneira que ele preferir. Beleza? Então, vamos seguir agora em outras funcionalidades que eu planejei aqui pro blog. Bom, que a gente vai fazer agora? Eu planejei fazer o sistema de likes e de favoritos, tá? O vídeo
+
+ficou tão grande aí que até parecia de cabelo cortado, né? Um dia pro outro complicado, tá? Então, como é que vai fazer esses favoritos? Olha só, eu coloquei aqui, ó, adicione sistema de curtidas e favoritos nos posts, em cada post, tanto no card quanto na página do post, né? Então, a gente vai poder curtir aqui na home ou lá dentro. O
+
+botão de coração para curtir, o número de curtidas ao lado. Se o usuário já curtiu, o coração fica preenchido, colorido. Ao clicar novamente, descurt, né? A ação contrária. Botão de favorito, um ícone de bookmark, né? Aquele
+
+livrinho, né? Tem vários ícones favoritos. Pode ser estrela, permite salvar o post para ler depois, né? Se já está no favorito, o ícone fica preenchido. Mesma história. Para usar
+
+curtidas favoritos, usará você tá logado. Se não tiver logo, clicar, abrir modal de login, criar a página meus favoritos acessível para pelo menu do usuário, né? Então esse menu suspenso que fica aqui depois de fazer o login, né? List todos os posts que o usuário salvou. Mostrar em cards como na home.
+
+Opção de remover dos favoritos. Mensagem amigável se não tiver nenhum favorito ainda. No banco de dados guardar quem curtiu cada post e quais posts cada usuário favoritou. Eu vou ter que ir um toast, que é aquele cardzinho que aparece, né, dando feedback. Quando curtir, cur, descurtir, favoritar e desfavoritar. Beleza? Então vamos lá
+
+esperar ele realizar aqui, aproveitar que já tá com o usuário deslogado e fazer o login depois, né? Já processar aqui. Deixa eu ver. É, tá indo já. Só não deu feedback. E aí aqui o card vai
+
+modificar um pouco depois que ele retornar. Beleza? a gente já vê se funciona e aproveita, né, que o usuário tá deslogado para isso aqui novamente, né, ele ele dividiu em várias tarefas, várias tesques. Então, provavelmente foi um um prompt muito complexo e vamos ver se ele vai realmente entregar tudo que a gente precisa, né, que vai demorar um pouquinho, pelo visto, mas fazer um cortezinho aqui e já volto para mostrar para vocês tudo no detalhe, ó, galera. Então, ele voltou aqui, tá falando tudo que ele fez. Vou tentar dar um like. Ó,
+
+eu tô logado aqui nesse momento, né? Vamos sair. Ó, que esse post tem um like, né? Carreguei aqui tudo. Vamos lá.
+
+Vamos tentar dar like de novo. Eu tenho um like, salvou, né? Ó, abre modal de login, tá? Vou criar uma conta nova aqui.
+
+Nem lembrava que tinha esse cadastrado, mas tudo bem. Vamos dar like, ó. Funciona. Favoritei. Funciona. Beleza. Favorito. Não tem
+
+contador porque só eu favorite o meu post, né? Se eu entro aqui, posso dar um like também, favoritar também. Beleza, tá funcionando. Meus favoritos. Eu consigo ver aqui os posts para poder identificar aqui quais eu favorei para ler depois, tá bom? Então, esse recurso
+
+também soma aqui no nosso blog, né? Temos mais uma etapa concluída, tá? Outra coisa que eu quero fazer aqui, que eu gosto bastante nos blogs, é quando tem aquela barra de progresso de leitura, tá? Então, por exemplo, nesse post aqui, quanto mais eu tô descendo, a barra vai aumentando, né? E eu consigo saber se eu tô no fim ou no começo do post, tá? Então essa vai ser a última
+
+funcionalidade que eu vou adicionar antes do deploy. Então vou fazer o seguinte, adicione uma barra de progresso e leitura na página do post. A barra deve aparecer fixa no topo da página abaixo do header ou como parte dele, tá? Então aqui eu vou deixar cargo dele para ele colocar encaixada aqui na na barra eh fixa, né? Ser fina discreta tr 4 pixelis de altura. Usar cor de
+
+destaque do blog, começar vazia 0% quando o post carrega ir preenchendo conforme o usuário rola a página lê o post. Chegar em 100% quando o usuário chega no final do conteúdo do post. Considerar apenas a área de conteúdo. Não incluir comentários no cálculo porque senão ia ficar desproporcional, né? A basta deve aparecer na página de leitura do post, não em outras páginas.
+
+Então vou prosseguir. Esse deve adicionar mais rápido, né? algo mais de front end não envolve o banco de dados bem mais simples. Então para ele concluir esse ciclo, tá? Acabando isso, a gente teria, vamos dizer a versão um do blog, né? Ai aí vamos dizer que esse
+
+projeto tá o suficiente pra gente, tu pode implementar mais coisas, é claro, mas agora a gente vai fazer o deploy vai partir para deixar o projeto no ar versionado, né, no GitHub e tal. Então a gente vai ter controle do código também, coisas que são essenciais pra gente poder deixar o site no ar, né? independência se deja um blog, qualquer outro projeto, a gente vai passar por todo esse processo para vocês verem como é que funciona e poderem replicar aí também e terem esse blog ou outro projeto no ar, que não vai diferenciar como é, né, o processo todo, independente do que vocês criarem, tá? Então vou aguardar ele terminar aqui e a gente já segue para essa próxima etapa. Olha, terminou aqui, galera. Vou
+
+recarregar e ver se já funciona, que eu estou num post, né? Então vamos dar o refresh aqui e vamos ver onde é que ficou a barrinha. Ó, a barrinha parece que não está. Eu acho que ele colocou no topo, mas daí ela não vai funcionar desse jeito, tá? Então vou botar aqui. Ã, adicione ela no
+
+na nave bar que é fixa, pois deste jeito não consigo vê-la. Vou mudar a posição dela, né? Porque eu acredito que ela deve est aqui, né? E isso torna ela invisível por causa da barra fixa. Beleza? Então vou fazer esse
+
+ajuste. Se eu deu certo, beleza, né? Menos uma coisa. Ó, agora sim aparece, ó. Tá do jeitinho que eu quero. Beleza?
+
+Acaba o post, acaba a barrinha também. Ele não considera outros detalhes. Beleza, pessoal? Então, tá, temos aqui eh um marco muito importante, né? uma hora ou outra a gente vai ter que definir que o projeto chegou ao fim, pelo menos, da primeira versão. Então,
+
+qual seria o próximo passo? Como é que a gente vai hospedar esse projeto? É simples, tá? A gente tem que seguir um passo a passo aqui, senão vai dar errado. Bom, primeiramente a gente vai ter que ter uma conta no GitHub, que é como se fosse uma pasta na nuvem, onde a gente coloca os códigos, tá? Então, vou
+
+acessar aqui. Aí, esse aqui é o site, tá? Tu vai ter que criar uma conta se tu não tem. E aqui a gente com a conta criada a vai conectar lá no lovable, né? Então voltamos pro lovable, a gente vai eh nas settings do projeto. Aqui a gente
+
+vai em connectors ou direto no github aqui mesmo, tá? E aqui ele tá dizendo que não tá conectado no projeto, então a gente tem que conectar. Como é que a gente vai fazer isso? Vai connect a tua organização. Então aqui é o meu próprio usuário, tá? A gente vai dar um
+
+transferway. O que que tá falando aqui? Que esse processo é irreversível. O código sai do LB e vai pro GitHub. Não muda nada a forma que a gente vai utilizar. Esse tá falando que não vai
+
+mais ficar responsável pelo gerenciamento do código. Na verdade, agora eles mudaram, ó. Agora mais tarde você pode desconectar o projeto GitHub com logo projets. Então dá para deixar ela independente de novo, tá? Mas antigamente não dava. O que acontece
+
+aqui é que ele vai simplesmente criar o projeto lá. né? E em vez de eh deixar tudo no lóvo, agora a gente tem o código em outro local e ele vai colocar o código lá quando a gente atualiza, a gente publica o projeto, tá? Então a gente vai dar um transfer anyway, n? Que antigamente tinha essa mensagem porque era meio que reversível, tá? O código
+
+ficava mais no GitHub, não ficava mais no no LB, mas agora dá para fazer o caminho inverso de novo, tá? Então beleza, a gente colocou lá e o que acontece é que se cria um novo repositório, que é uma nova pasta, vamos dizer assim, com todo o código do projeto. Então se a gente recarrega aqui, a gente pode vir aqui nos repositórios e aqui em primeiro lugar vai tá o novo projeto. Então esse no meu tá aí postub, né? Ele cria o nome baseado no no nome do projeto tá lá no lobb, né? Se a gente vê aqui, tá? Aí
+
+pulse hub ele criou exatamente igual, né? colocou os tracinhos que não daquele jeito. Beleza? Bom, aí o que acontece? O código é nosso e agora a gente tem que colocar no servidor para fazer o deploy, tá? A gente tem que escolher uma
+
+hospedagem. Eu sempre recomendo a Hostinger, que é onde eu hospedo todos os meus projetos, não só de lov. Eu hospedo os meus projetos pessoais, eu hospedo meu N8N, né, que é a minha automação e os projetos que eu tenho de Lovb. Além disso, a Hoster é parceira aqui do canal, então a gente tem um link com desconto para melhorar ainda o valor para ti. Vai tá aqui na descrição, tá?
+
+Mas é bem simples, é só acessar hoster.com.br/horcodar. O cupom ele já vai estar automaticamente aplicado, tá? E apesar dessa página que tá falando de NN, eh, porque eles planejaram assim, né, que grande parte do público do canal é de N8N, né, a hospedagem em si, ela serve para qualquer tipo de projeto. É um servidor
+
+em branco, né, como se fosse a gente comprar um computador novo, a gente vai poder colocar o que a gente quiser. E aí aqui embaixo a gente tem os servidores, tá, pra gente escolher. O que muda entre eles além do preço é a capacidade computacional, né? Então, mais pra direita vai ter servidores mais poderosos, mas tem uma regrinha bem básica aqui para escolher, tá? Que eu sempre falo para meus alunos. Se o teu
+
+projeto é só para teste, tu quer só ver como é que funciona a hospedagem, tu ainda não tem cliente, não tem pretensão de deixar o projeto comercial, KVM1, beleza? Isso vai ser servir para qualquer tipo de projeto, aguenta os alguns clientes e tal, né? Não vai ter problema nenhum e vai conseguir até botar vários projetos dentro. Agora se o negócio já não é mais brincadeira, é o teu projeto é uma realidade, tu vai criar uma empresa com base nisso, tu já tem um público alvo, né, tá tudo mais estruturado, eu aconselho fortemente o KVM M2 porque tu vai ter mais poder computacional, mais tamanho de disco e tal. Então isso vai fazer com que tu não precisa escalar tão cedo, tu já vai conseguir manter esse esse servidor aqui por muito e muito tempo, tá? ele vai
+
+aguentar bastante a carga de usuário do servidor. Então, basicamente é o seguinte. Esse aqui para fins mais de estudo, exploração, testar como é que funciona o deploy e esse aqui para fins profissionais, tipo, já tem minha empresa, é um negócio sério, já penso em começar a vender amanhã o meu serviço, meu produto. Então, cab, tá bem simples de escolher. Os outros seriam para empresas maiores, né? Não tem
+
+necessidade agora, mas estão à disposição aqui, né? Aí tu vai escolher plano aqui, ele vai dar opções de tempo, tá? Então o que que acontece? Maior desconto é sempre pro maior tempo, tá? Aí eu recomendo vocês a trabalharem com pelo menos um ano ou dois anos, porque essa condição inicial ela é única. Então
+
+vocês vão conseguir um bom desconto, não tem hospedagem por esse valor e vão estar com um servidor top de linha aí para poder hospedar os projetos de vocês, tá? Aí o local é no Brasil, tá? Aqui o SO vai dar para mudar depois, tá? Porque eles não instalam de cara. Eu boto aqui, ó, você pode alterar mais tarde. Só que se quiser garantir, coloca
+
+aqui SO simples e bota o punto, que é o Linux mais simples que tem para instalar. Confirma a versão que ele aparecer, que é a versão mais estável e mais atual, tá? E aí tu vai lá, continua, faz teu cadastro, né? E prossegue pra finalização de compra. Beleza? E agora eu vou te mostrar a
+
+tela. que tu vai cair quando tu adquirir teu servidor. Bom, vai ser uma tela muito semelhante a essa aqui, tá? Que é a página inicial da hospedagem. A interface muda de tempos em tempos, mas a gente comprou uma VPS e isso sempre vai estar aqui na na esquerda. Então a
+
+gente vai acessar e a gente vai selecionar a nossa. Como vocês podem ver, eu tenho várias aqui rodando porque são meus projetos em produção e vocês vão ter uma, né, provavelmente, ou mais uma se vocês compraram outra, tá? E a o que a gente precisa fazer aqui primeiro é gerenciar ela. A gente vai entrar no terminal acessando essa aba de gerenciar aqui, né? Esse essa opção, tá? Então vou
+
+usar esse daqui que é o mesmo que vocês selecionaram lá. Talvez a versão tá um pouco diferente porque a minha é mais antiga e tudo mais, mas é um bunto puro, tá? E aqui a gente vai direto lá pro terminal para poder instalar tudo que a gente precisa para poder fazer o deploy do projeto. Beleza? Bom, aí como eu falei, a gente tem que entrar no terminal. Ó, ele vai clicar aqui, tá?
+
+Ele vai abrir o terminal direto do navegador, que é uma das funcionalidades que a Rus oferece, que é uma mão na roda, né? Senão a gente precisaria conectar via SSH para estar aqui e daria uma trabalheira maior, tá? E aqui a gente precisa instalar algumas coisas e configurar algumas coisas e eu vou dando norte para vocês, tá? Primeiro comando é este aqui de curar o repositório de onde ele vai baixar o Node JS, que é uma dependência da nossa aplicação nessa máquina, tá? E depois a gente vai instalar o Node JS. Então ele
+
+vai pegar os dados desse repositório, né, que é um que tem a versão 20x ali do Node. E agora a gente instala o Node com esse comando aptal o Node S - Y. Depois de instalar o Node, a gente tem que verificar se funcionou, né? O node ele é como se fosse um motor para a nossa aplicação funcionar. Ó, se a gente dá um node men, ele mostra a versão. Então
+
+quer dizer que funcionou, tá? Que mais? A gente vai instalar o Ninx agora, que é o motor. A gente tem vários motores. Esse aqui é o motor que vai fazer nossos arquivos linkarem com o nosso domínio e vai est mostrando para um usuário na web, tá? Ele tem dois motores
+
+diferentes. Então, instala o Njinx, o servidor web, né? Tem tem o Apach, são os dois mais famosos. Aí depois de instalar a gente vai startar ele, né? System CTL Start Engins. E também
+
+habilitar ele. System CTL enable endings. Preciso instalar também umas dependências, que é o setbot. Esse Python 3 setbot. Isso vai servir para emitir o certificado de segurança, ou seja, o SSL, tá? E aqui eu já vou dar um
+
+aviso, não entre no domínio até a gente configurar tudo, porque senão ele vai aparecer que não tem SSL, vai demorar ali até ele apagar o cash do navegador de vocês para aparecer, tá? Mas mesmo assim se abrir na em aba anônima vai aparecer, né? Mas só para vocês não ficarem com essa pula atrás da orelha, tá? Temos que instalar o Git, que é o que vai baixar o projeto lá do GitHub, tá? Então apenit Y e beleza. Aqui acho que ele já tinha
+
+até o git instalado. Isso aqui é o necessário paraa primeira etapa. Agora a gente vai precisar de um domínio para poder justamente linkar, né, o domínio ao servidor e aí a pessoa vai conseguir acessar o nosso site. Então na host a gente pode comprar domínio também, tá? Aqui em domínios essa aba esquerda, tá?
+
+Tem até algumas promoções, às vezes quando tu compra um servidor, tu ganha um domínio gratuito por um ano, tá? Então tem que ficar ligado lá se na hora tu comprou isso. Eu vou aqui em registrar novo domínio e aqui vocês vão digitar o domínio que vocês querem. Por exemplo, meu blog deia.com.br.
+
+Ó, ele tem esse domínio, tá? E é R$ 1 no primeiro ano. Então, alguns domínios eles também vão ter esse descontão, beleza? Então faz sentido, vocês vão comprar o domínio e aí ele vai aparecer aqui em meus domínios, beleza? Tem alguns domínios aqui, né? E para esse
+
+caso aqui, eu vou utilizar esse aqui, tá? Então a gente vai em gerenciar, a gente vai em DNS e aqui a gente precisa adicionar o IP do servidor para ele poder fazer a ponte, né, entre servidor e domínio, que é onde o usuário acessa esse direito. Isso que se chama de gerenciamento DNS, né? linkar um domínio a um servidor. Bom, eu tenho aqui algumas coisas já apontadas, né?
+
+Inclusive esse blog aqui, que é o blog que eu instalei antes, tá? Então eu vou remover e vou fazer junto com vocês. Então a gente vai selecionar aqui tipo a nome, blog. Aí aqui vai ficar com subdomínio, tá? Ficar tipo blog.mateusbatista.com.br.
+
+Se tu não quiser como subdomínio, tu pode deixar www. Beleza? Eu preciso apontar para o IP da VPS. O IP da VPS eu vou conseguir vindo em VPS para dar um control click para não mudar de aba e eu vou copiar o IP da máquina. Então vou aqui nesse símbolo de copiar aqui, né?
+
+Vou voltar lá e vou apontar o TTL. Pode deixar como tá. Adiciona o registro, confirma. E aí que acontece? O subdomínio blog fica registrado naquele domínio apontado para aquele servidor, tá? E a gente pode continuar a
+
+configuração aqui. A gente pode até fazer um teste. Abre o cmd aí e dá um ping pro teu domínio ou pro teu subdomínio. No caso, esse aqui. Se ele responder, quer dizer que já funcionou, tá? Então,
+
+veja ali, eu dou respostas e ele funcionou, tá? Então, a maneira de ver que deu certo esse link entre servidor domínio, tá bom? Aí agora que eu vou fazer? Eu preciso eh configurar um token do KitHub nessa máquina. Por que disso?
+
+Porque esse projeto aqui ele tá como privado, tá? O KitHub ele só deixa colonar projetos públicos sem o certificado e tu vai querer sempre deixar privado porque tu não quer que vaze o código para outras pessoas, tá? Então é essencial que fique assim e é essencial que a gente faça essa configuração aqui no servidor, tá bom? Então, a gente vai entrar aqui na nossa fotinha, clicar em settings, a gente vai achar aqui, ó, developer settings lá embaixo. E aqui a gente vai escolher personal access token e tokens clask.
+
+Aí, o que que eu tenho que fazer? Eu tenho que gerar um novo token, tá? E aqui eu vou escolher classic também. Ele vai pedir uma forma de tu confirmar que é tu mesmo. Aí depois de tu confirmar, ele vai cair nessa tela de criação. Tu
+
+pode escolher uma inspiração de um ano. Deixa eu ver aqui se não tem. Ah, tem no inspiration agora, ó. Caramba, não tinha isso aqui. Agora tem. Então pode ser no
+
+inspiration se tu confia no servidor, tá? E aqui tu vai escolher ou todas as opções, se tu não quiser ter que voltar aqui para faltar alguma coisa e tal, tá? ou tu pode escolher só as de repositório, que é que precisa inicialmente. Beleza? Mas se tu já que quiser deixar prontinho, tu pode selecionar tudo. Claro, né, galera? Tem
+
+que confiar no servidor. Servidor tem que ser da gente, não passa sucesso para ninguém, porque tem coisa aqui que podem ferrar tua conta do GitHub e o teu projeto, né? Então aqui tu vai gerar o token. Ah, pr você colocar o nome, né? Então vou botar aqui VPS2.
+
+Aí tu gera token e aqui tu vai copiar o token, tá? Ele não vai aparecer de novo, né? Tu vai ter que criar um novo se tu perder. Então copia esse valor aqui que é essa chavezinha que tá aqui nesse símbolo de copiar. Beleza? E aí a gente
+
+volta pra VPS. Vamos entrar melhor criar um diretório para colocar o nosso projeto. A gente vai dar um mkadir - p/vwww. aqui que vai ficar os nossos sites, todos eles. A gente vai lá para aquela pasta com CD, beleza? Copia, ou melhor,
+
+cola o teu token num bloco de notas que tu vai precisar dele já já. Volta pro GitHub, volta lá pro teu repositório do projeto. O meu é esse aqui. Pega esse link aqui de clone aqui, ó. Code clone.
+
+Copia, tá? Volta lá na VPS, dá um git clone, botão direito, colar. e não dá enter ainda. Tu vai vir aqui, ó, depois desse barra barra e tu vai colocar o teu token, botão direito colar, tá? E aqui, antes de gitub tu vai colocar um arro, tá? E isso vai fazer com que ele clone o
+
+projeto com o teu token e depois a gente vai fazer um comando para salvar esse token nesse PC, nesse servidor, no caso. Daí eu vou dar um enter, ele clonou, então deu certo, tá? E agora eu vou dar um git config menos menos global credential ponhelper store. Aí eu não preciso mais usar o token em outros processos, tá? Somente se fosse outro servidor. Nesse
+
+servidor não precisa mais. Vou entrar na pastinha que ele criou, tá? E aqui eu vou usar dois comandos. Um para ele instalar todas as dependências do projeto com npm instal. Então aqui todos os pacotes que o Lovbon instalou, ele vai instalar também, tá? para poder
+
+rodar o projeto aqui nessa máquina. Tem mais um processo ainda que é o processo de build. O processo de build ele vai consistir em fazer arquivos finais somente para poder rodar o projeto numa passem separada. A gente vai dar um npm run build agora. Aí normalmente se cria uma pasta chamada Dist que ficam os arquivos finais onde o projeto roda de fato, tá? Ó, ele deu
+
+certo. Se eu se eu dar um LS aqui, ele vai aparecer a pasta dist. Beleza? Quando a gente tem essa pasta aí, quer dizer que estamos a um passo de ver o deploy funcionar, tá? Agora eu preciso configurar o endings para que ele eh roteie, vamos dizer assim, o meu site, minha pasta pro meu domínio, tá? Então
+
+eu vou aqui primeiro colocar um comando que vai remover as configurações padrões. Eu quero fazer as minhas do zero, tá? Então esse RMo padrão e eu vou criar aqui com vim o meu novo arquivo, tá? O arquivo pode ter qualquer nome, não precisa ser o nome do repositório nem nada. Depois a gente vai habilitar ele. Então a gente vai criar
+
+esse arquivo nessa pasta, nesse sites available e vai criar o arquivo aí traço o blog ou o que tu quiser aí. No vim para tu editar, tu vai apertar aí e tu consegue escrever aqui dentro, tá? Eu preparei aqui as configurações padrão para que vocês vejam o que que precisa colocar ali, tá? Então o que tem aqui? O servidor vai escutar na porta 80, que é a porta padrão. Quando a gente entra no
+
+site, a gente tá entrando na porta 80. O nome do servidor é o domínio blog.mateusbati.com.br, né? O root aqui é o nome da pasta, né?
+
+Então aqui eu tenho que alterar porque tá o nome da pasta antiga. O arquivo index é o index HTML que é padrão. Esse location do barra é para indicar qual que é o arquivo inicial. E esse gzip aqui para melhorar um pouco a performance do nosso site. Vou dar um ES Xlamação para salvar, tá? E eu tenho que
+
+acertar o nome da pasta que é esse aí. Traço o post, traço o hub. Então entro lá de novo. Então em vez de ser aí em sites hub que era o antigo, eu volotar aí, traço post. Traço o hub novamente, ESC X, exclamação, saio e salvo. E agora
+
+eu preciso eh fazer com que esse arquivo exista para Jinks. Então vou usar esse comando aqui, ln, traço S. E aí eu coloco o arquivo sites available que eu acabei de criar e essa pasta etc sites enable. Beleza? Aí agora eu vou dar um jinx men t, tá? Ele diz que as configurações
+
+foram vistas ali, tá tudo certo. E eu vou dar um reload, que é reiniciar o endinx. Então, system CTL reloadins, tá? E deve tá tudo certo. Porém, antes de nós acessarmos o site em si, beleza, vamos gerar o SSL. Como é que a gente
+
+vai gerar? Vai dar um set bote menos endins, né, que foi algo que a instalou antes, menos D. E aqui a gente vai colocar o domínio. Então eu vou colocar o meu, tu vai colocar o teu, né? Mateusbatiste.
+
+Ia, né.com.br. Vai dar um enter aqui. Eh, a gente precisa colocar um e-mail. Então,
+
+colocar aqui o e-mail do suporte. Dou enter. Yes. Yes. Ele registra minha conta. Ele tá
+
+requisitando certificado. As coisas aqui só dão certo porque ele faz uma triangulação do nosso servidor, do domínio e tal. E aí quando essa triangulação diz que tá tudo OK, né? Porque a gente tem que saber, ele tem que saber que o site é nosso e tal, né? Senão ele gerar uma coisa maluca, né?
+
+Ele dá o OK aqui, ó. Ah, foi gerado, tudo certo, deu certo. Se apareceu alguma mensagem de erro aqui, é porque algumas das configurações que vocês fizeram não tava correta, tá? Então, tem que olhar isso. Agora sim, a gente pode acessar o site e provavelmente já vai estar com SSL. Se ainda não, é porque
+
+pode ser que o DNS demorou para propagar, pode ser que o SSL demorou para propagar. Então tem algumas questões ainda, mas no mais é para tá tudo OK. Vou colocar aqui na nova aba e aqui está o nosso blog. Beleza? Ó, tá exatamente como tava lá no Lovabo, tá? E
+
+aí aqui vai uma questão importante, né? Talvez fosse uma questão separar os blogs, tá? Para que a gente não os bancos de dados, na verdade, para que a gente não alterasse aqui e alterasse lá, né? E aí seria conectar num outro projeto no Superbase, tá? Para que isso seja feito, beleza? Então, algumas
+
+coisas a gente pode fazer diferente do que tá aqui para melhorar ainda mais o nosso projeto. Mas o deploy tá feito. Se a gente quiser fazer um cadastro aqui, uma compra, vai tudo funcionar normalmente. Cadastrar aqui Josias. Pronto, cadastrei. Posso dar um like,
+
+posso favoritar. tá tudo ocorrendo da mesma maneira. Nosso deploy ele tá feito, tá? Então a gente conclui o ciclo de desenvolvimento projeto e também de como colocar ele no ar. Bom, galera, chegamos ao fim, tá?
+
+Foi um projeto bem extenso, mas tem um enorme ou vários diferenciais, né, diante de blogs tu vê por aí. Com certeza é um sistema que tu pode colocar no ar, expandir e até monetizar em cima dele, né? ter usuários assinantes, tu fazer o teu próprio paydo relevante e usar a IA para gerar o conteúdo para ti, né? Claro, eu aconselho sempre revisar o que a IA gera. Tem que melhorar ali um pouco a estrutura do post também, né?
+
+Isso a gente não trabalhou tanto para adicionar recursos de SO, mas já é um excelente começo. Lembrando aqui que nós temos duas formações principais sobre A. Uma para tu criar automações, que é a nossa formação agentes de A, que foca em N8N, e outra que foca em lov para tu aprender a criar sistemas como esse, que é a formação SAS com. Os links vão estar aqui na descrição e também no comentário fixado. Então, se tu se interessou, gostou aqui desse projeto, tem muito mais aí para ti conseguir aprender essas ferramentas e colocar tudo em prática, vender tuas soluções ou monetizar por conta própria, né, criando tua empresa.
+
+Tô te esperando lá nas formações também. Beleza? Vou ficando por aqui. Espero realmente que vocês tenham curtido. Não esqueçam, deixa o like que ajuda bastante. Também se inscreva para
+
+receber conteúdos semelhantes a isso. Vou ficando por aqui. Espero vocês outro vídeo ou num curso. Valeu,

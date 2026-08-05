@@ -1,0 +1,226 @@
+---
+video_title: "Webhooks no N8N: O Guia Completo para Iniciantes"
+video_id: GH6vvqpcbqA
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GH6vvqpcbqA
+video_date: 2026-01-05T14:00:27+00:00
+video_description: |
+  Aprenda tudo sobre Webhooks no n8n!
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_webhook_n8n
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Ebooks de n8n: https://app.horadecodar.com.br/ebookpages/materiais-aprendizado-n8n
+  
+  Nesse vídeo eu ensino como usar webhooks no n8n do zero ao avançado. Webhook é uma das funcionalidades mais importantes do n8n porque permite que qualquer sistema externo envie dados diretamente para suas automações em tempo real, sem precisar ficar consultando APIs ou fazendo polling.
+  
+  Com webhooks no n8n você consegue receber notificações de pagamentos do Stripe, Hotmart, Kiwify e outros gateways, capturar leads de formulários do Typeform, JotForm e Google Forms, integrar com CRMs como Pipedrive e HubSpot, receber eventos do GitHub, GitLab e Bitbucket, processar mensagens de chatbots e muito mais. Basicamente qualquer plataforma que dispara webhooks pode se conectar com seus workflows do n8n.
+  
+  Eu mostro em detalhes como funciona o nó de Webhook no n8n e explico a diferença entre webhook de teste e webhook de produção, que é uma dúvida muito comum de quem está começando. O webhook de teste usa uma URL temporária que só funciona enquanto você está editando o workflow, já o webhook de produção usa uma URL fixa que funciona quando o workflow está ativado.
+  
+  Também ensino como configurar a URL do webhook corretamente, como escolher entre os métodos HTTP como GET e POST, como definir o path do webhook e como tratar os dados que chegam no body, headers e query parameters. Mostro como usar o nó de Respond to Webhook para retornar respostas customizadas para o sistema que disparou o webhook.
+  
+  Explico como testar seus webhooks usando ferramentas como Postman e Insomnia antes de colocar em produção e os erros mais comuns que iniciantes cometem, como esquecer de ativar o workflow, usar a URL de teste em produção ou não tratar corretamente os dados que chegam.
+  
+  Se você está começando no n8n ou já usa mas nunca entendeu direito como webhooks funcionam, esse vídeo vai te dar a base completa para criar automações profissionais. Webhook é essencial para criar workflows que respondem a eventos externos e integram sistemas diferentes de forma automática sem intervenção manual.
+  
+  Depois de assistir esse vídeo você vai conseguir criar workflows que recebem dados de qualquer plataforma, processam automaticamente dentro do n8n e retornam respostas para os sistemas de origem. Você vai entender como funcionam as integrações baseadas em webhook e vai conseguir conectar o n8n com praticamente qualquer ferramenta do mercado.
+  
+  TIMESTAMPS:
+  
+  00:00 Introdução do vídeo
+  00:30 O que é Webhook?
+  04:40 Webhook no n8n
+  05:50 Configurações do Webhook no n8n
+  11:50 Extraindo informações do Webhook
+  19:55 Mais formas de usar o Webhook no n8n
+  24:00 Recebendo dados de Webhook em workflow do n8n
+  26:00 Autenticação no Webhook
+  32:00 Considerações finais
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+---
+Hoje eu vou te explicar exatamente como funcionam os web hooks do N8N para tu entender de uma vez por todas e saber utilizar todas as variações e configurações e conseguir dominar esse recurso que é muito importante para automações robustas. Tudo no detalhe passo a passo na prática com muitos exemplos. Bora lá então. Vou começar. Bom, primeiramente queria dar uma introdução teórica para vocês entenderem o que que é o conceito do web hook. Ele
+
+não é do N8N, é um conceito de desenvolvimento de software bem mais antigo do que o N8N em si, tá? E se tu gostar desse conteúdo, se tu gostar da minha didática, por favor, deixa o like, se inscreve aqui no canal que tu vai receber muito mais vídeos como esse. A gente tem aqui vários projetos de também, se quiser dar uma olhada depois tem também outras ferramentas de A, fica à vontade, beleza? Bom, como eu tava falando, o Web Hook aqui ele é um recurso mais antigo, tá? E a grosso modo, ele serve para enviar uma informação a um sistema, tá? Então ele
+
+recebe um dado e ele envia pro sistema. É um caminho contrário do que a gente utiliza, né, na API, que a gente consulta um sistema para obter uma informação. Então o Hook ele pega a informação e envia pro nosso sistema. API é o nosso sistema que busca uma informação, um sistema de terceiro, por exemplo, e vê se ela tá pronta. E aí ela retorna dizendo se tá ou não e o sistema prossegue. Então é muito melhor que nós
+
+recebemos a informação porque a gente só faz ou recebe, né, uma requisição do que a gente fazer milhares ali buscando se alguma coisa que a gente precisa já tá pronto, tá? Então eu fiz esse desenho, esse esquema aqui para explicar para vocês como funciona um sistema sem web hook e um sistema com web hook, tá? Primeiramente, um sistema sem web hook, ele vai funcionar da seguinte forma. Então aqui nesse caso a gente tá buscando um relatório. Eu preciso desse relatório pronto para poder fazer algo no meu N8N, tá? Então eu tenho aqui duas
+
+eh etapas, né? Duas formas distintas de fazer isso. Uma consultando se o relatório tá pronto e uma recebendo quando o relatório tá pronto. Exatamente. E aí partindo pro N. Da
+
+forma da API, né? consultando o sistema de relatórios, eu teria que a cada vez que o workflow tentasse iniciar, né, ver se o relatório tá ou não pronto. Então eu teria uma verificação, aí se ele dá negativo, eu não faço nada. Eu teria uma outra verificação, tá? E se ele dá negativo, eu não faço nada. teria uma
+
+outra, uma outra, uma outra e eu vou torrando recurso do meu servidor. Eu vou ocupando o meu servidor com uma automação que não startou porque o relatório não tá pronto e isso causa a longo prazo um problema, dependendo aí de quantas vezes eu tenho que executar isso por dia, tá? Essa é uma das formas que a gente tem como fazer isso. A gente chama isso aqui de puring, tá? A gente vai sempre consultar um sistema, ficar consultando direto ali para ver se tá ou não o pronto que a gente quer, tá bom?
+
+Aí eles inventaram o web hook que faz o caminho contrário. O relatório fica pronto no sistema X, o sistema X tem um web hook e ele envia pro nosso sistema que a informação tá pronta, tá? Então o web Hook não necessariamente vai est no nosso sistema, ele pode estar no sistema de terceiros e aí o nosso sistema recebeu uma requisição do web Hook. que ele pode começar a fazer o que ele precisa fazer quando esse tal relatório tá pronto. Então o que acontece quando a gente tem um webhook configurado? O
+
+relatório vai ficar pronto independente quando ele vai enviar essa informação pro webhook. Ele vai dizer que o relatório tá pronto. O webhook recebe essas informações e envia pro nosso fluxo. Então é algo muito mais linear do que eu ter que ficar executando milhares de requisições e quando o relatório tiver pronto eu executo o meu workflow. Então esse exemplo aqui ilustra muito bem porque a gente precisa do webhook.
+
+Se fosse o caso ali de uma automação de WhatsApp, ela funciona com Webhook. Por quê? Porque eu preciso saber quando o usuário me enviou a mensagem. Então a Evolution API, né, que é uma das estratégias que a gente tem, vai receber a mensagem e vai enviar por meio de web hook que a mensagem chegou e aí o nosso workflow dispara, tá? Então esse cenário é muito mais cômodo pro nosso sistema quando é claro, né? a gente precisa
+
+receber uma informação que a gente não sabe quando ela vai chegar. Beleza? Então agora bora lá para entender como é que funciona os nodes do webhook e como que a gente vai utilizar eles na prática quando a gente vai criar um workflow que precisa ter esse recurso. Bom, como a gente viu ali, o web hook ele é um sistema, né, um end point, vamos dizer assim, que vai avisar pra gente quando algo tiver pronto. Beleza? Então, nesse
+
+caso aqui, o que acontece? Eu tenho um workflow branco n e eu vou colocar um webhop trigger, tá? Justamente esse gatilho é o que tá esperando a informação do relatório ficar pronto e aí vai disparar esse workflow. Então esse workflow aqui quando ele tiver ativo, ele só dispara quando o relatório ficar pronto, né, hipoteticamente. Então entendendo isso, fica muito mais fácil, né, quando que o workflow vai executar ao ter o gatilho, o trigger de web hook.
+
+Observando aqui, a gente consegue ver uma estrutura muito importante que a gente tem que entender para utilizar o webhook, tá? Todas essas informações aqui são importantes e vão ser úteis ao configurar o web hook corretamente. Além disso, né, a gente tem esse node aqui de trigger, mas a gente também tem o o nó, né, respond to web hook, que ele vai fazer parte de uma estrutura um pouco mais completa logo em diante que a gente vai ver, tá? Mas vamos começar aqui pelo trigger. Bom, vou explicar todos esses parâmetros aqui que eles são importantes. Como eu falei,
+
+primeiramente a gente tem test, primeiramente a gente tem test URL e production URL, tá? Que que é isso? A gente tem dois cenários, quando a gente tá em fase de testes e quando a gente tá rodando o projeto. Então a gente vai iniciar sempre no teste até a gente verificar que tudo deu certo e aí sim prosseguir para a produção. A produção ela vai e funcionar, né, essa URL aqui, somente quando o workflow está ativo ou publicado, beleza? Então, nesse cenário
+
+aqui, ela não vai funcionar de jeito nenhum, só essa daqui, tá? Além disso, a gente tem métodos. Que que são os métodos HTP? É a forma que a requisição chega, tá? Temos vários. A gente tem
+
+get, post, pet, delete, head, cada um significa alguma coisa. A grosso modo, o get ele tá enviando uma requisição de consulta no nosso sistema. O post ele tá enviando uma requisição de inserção pro nosso sistema. O push de atualização, pet, atualização parcial, delete de remoção de algum dado, tá? E head é um outro verb http que usa mais para requisições de configuração, tá bom? No mundo real a gente vai ver os
+
+web hooks funcionando mais com get ou post, tá? A gente tem que configurar isso porque o sistema que envia esses dados pra gente vai enviar para URL que tá aqui e com o verbo htp y. Então a gente precisa saber disso para configurar corretamente o nosso node aqui. Então são informações de pré-configuração pra gente poder eh configurar o workflow como ele dispara, porque se ele enviar para essa URL, mas com o verbo post, ele não vai executar, tá? Então, essas duas informações precisam estar corretas no sistema que dispara a requisição para cá. PEF é o
+
+caminho que a gente tem aqui para executar a URL. Então, poderia, por exemplo, colocar teste e aí a URL fica um pouco mais simplificada do que aquele PEF que o N8N nos gera. Só que lembrando, né, os PEFs precisam ser diferentes. Aí não pode ter PEFs de dois workflows iguais, senão vai haver um conflito. Então por isso que ele já coloca aquela URL bem doida ali para que a gente tenha um PEF único, tá?
+
+Autenticação. Quando a gente habilita o nosso workflow aqui de web hook com production URL, qualquer pessoa pode mandar informações para ele. Então isso é ruim. Na maioria dos casos, a gente vai estar querendo configurar uma autenticação para que a gente tenha essa pequena barreira que vai já filtrar as requisições erradas, tá? Então eu vou ensinar vocês como colocar autenticação depois, mas fiquem com isso em mente.
+
+Isso aqui é muito importante também. O tipo de resposta, então quando que esse workflow vai responder, né, pro nosso pra nossa execução de web hook, vamos dizer assim. Então ele pode responder imediatamente, né, quando ele recebe a requisição, quando o último nó, né, se a gente tivesse um workflow, executa, quando tem aquele nó de respond. Então a gente pode conectar um workflow com esse trigger e o respond to hook no final para que a cadeia se encerre naquele nó. E também a gente tem streaming que não é tão utilizado, né, que ele vai retornar dados em tempo real. E pelo menos eu,
+
+particularmente, não tive situações que eu preciso utilizar profissionalmente aqui em fluxo, tá? A maioria das vezes a gente vai utilizar esse using respond to web hookne, que é o ciclo final do nosso workflow. A gente coloca esse nó, ele envia as informações para onde precisa, somente o necessário, tá? Aqui a gente tem mais algumas opções. Então, a gente pode, por exemplo, filtrar IPs, né? Eu
+
+vou explicar só algumas que são importantes, porque daí eu não precisaria colocar autenticação. Eu, por exemplo, só liberaria o IP do servidor que envia mensagem para esse web hook, tá? Ignore bots. É interessante para e não permitir que bots acessem esse web hook. Se a gente não colocar nenhuma autenticação, é mais o filtro que a gente tem, tá? E essas são as mais
+
+importantes aqui que vocês vão utilizar para deixar mais seguro o workflow de vocês com o web hook. Bom, dada as orientações gerais aqui do trigger e agora que a gente já entende que é hook, né, que ele vai receber uma informação e vai disparar esse workflow nesse cenário aqui do NN, como é que a gente faz para testar ele? Uma coisa bem interessante aqui que a gente tem é que o método get também é a forma que a gente acessa os sites. Então eu tô acessando esse site aqui do Scal Draw, tô acessando esse site aqui do meu N8N, ele tá utilizando o verbo get. Então isso quer dizer que se eu pegar essa URL aqui e der um execute workflow e acessar essa página no meu navegador, eu estarei executando esse fluxo. Por eu utilizei o RL correta
+
+e o verbo htp correto. A requisição da página web é um get, né? Lembra que eu falei que a gente tá pedindo alguma coisa com get? Então é exatamente isso. Tô pedindo essa página. E aí nesse caso,
+
+ele funciona porque deu met nas duas coisas, como eu falei lá no começo, ele bateu o verbo e ele bateu RL. Então ele executou o nosso webhook. Aqui a gente tem como testar mais facilmente se os o workflow tá executando, né? Como ele tá executando dessa maneira aqui. A gente não precisa ter um sistema de terceiros já mandando as requisições de cara. A
+
+gente pode fazer todos os testes aqui e depois mudar pras informações corretas. Beleza? Bom, queria fazer uma denda aqui, galera. Se vocês se interessam por NN, querem aprender mais sobre a ferramenta no geral, baixem nosso pacote de aprendizado aqui. Esse material é totalmente gratuito, o link vai est aqui na descrição, tá? E com ele vocês vão
+
+conseguir ter um entendimento melhor do NN, né? como é que funciona por dentro, as entranhas mesmo também, como levar isso pro nível profissional com esse outro ebook aqui de 10 ideias de agentes de A para vender. Eu vou mostrar para vocês não só as ideias, mas como eu construiria esses agentes também, comercializaria eles. Então, material gratuito para vocês, disponível aqui embaixo, só utilizar o link vai est na descrição desse vídeo, tá? Retomando, que acontece? A execução do web hook não
+
+é à toa, né? Não é só isso. Ela vai prosseguir o workflow. Então aqui eu poderia ter um mod edit, né, ou qualquer outra coisa que eu precisasse executar, tá? E eu posso começar a extrair as informações que chegam do meu web hook.
+
+Aqui não tá chegando nada porque é simplesmente uma chamada pro webhook que a gente acabou de criar, mas ainda assim a gente vai ter informações como o host, né, os cooks que estão na requisição aqui também ele vai ter se a gente tivesse dados, né, em parâmetros ou na query ou no bar, né, que que a gente vai extrair os dados. Eu sei se o modo de execução tá em teste ou em produção, tá? E eu posso arrastar aqui e passar pra frente caso necessário, né? se eu precisasse desses dados para não ter que lidar com todas as informações aqui, porque realmente chega uma estrutura de dados bem complexa do Hook. E a gente não vai precisar disso aqui tudo, a gente vai precisar dos dados que a gente quer prosseguir no workflow, certo? Bom,
+
+a gente viu ali que a gente tem uma opção de cure para distrair dados e esse cure são os dados que chegam na URE. Como é que a gente pode est mandando dados via cure, né? Porque o web hook ele precisa trafegar dados, precisa do que a gente quer para poder executar o workflow. Nesse cenário aqui é do relatório, né? Talvez é o RL do relatório para eu poder extrair ele aqui e tal e fazer alguma coisa no meu workflow. Aqui eu vou enviar alguma
+
+coisa pelo URL, tá? Para poder começar a brincar lá. Então como é que eu faço para acessar o cure? Eu posso botar uma interrogação aqui. Eu coloco algo com chave e valor, como se fosse uma variável na programação. Então vou botar
+
+aqui, ó, nome igual a Mateus. Aí quando eu executo aqui, ele roda o web hook. E agora eu tenho um dado em cure, então eu tenho o nome Mateus, tá? E isso aqui eu posso estar utilizando no meu workflow. Essa é uma das maneiras de passar dados via web hook. A gente tem várias, tá? E
+
+é importante a gente saber qual forma vai ser enviado pra gente poder tratar aqui num edit aí prosseguir o nosso workflow, beleza? Então o cure é uma delas. Então outra forma que eu tenho como enviar dados é via PEF mesmo, tá? Então aqui eu posso, por exemplo, dizer que no PEF eu vou receber um dado X, então vou receber uma chave chamada to. Então vou colocar aqui, ó, e dois pontos to. Beleza? E agora quando eu copio essa
+
+URL aqui, vou executar, eu posso enviar aqui, ó, em vez de dois pontos tool, alguma coisa. Vamos dizer aqui que chegou o dado do relatório. Então vou lá, mandei a mesma RL que ele me deu ali, barra o parâmetro, ele executa. E agora não chega nada no cure, chega onde? No parâmetros. Então é uma outra
+
+forma de a gente receber dados, tá? Eu posso pegar aqui, ó. E agora tem o relatório aqui enviado em parâmetros. Essas configurações geralmente não é a gente que vai editar, é o sistema que a gente tá integrando, tá? Que vai dizer, ó, vai chegar como cure, ó, vai chegar dados no PEF. E aí a gente vai ter que
+
+configurar o N8N aqui para poder receber igual a documentação desse sistema tá pedindo, beleza? Também é importante a gente frisar isso. Outra forma de executar, não somente por o navegador, né, a gente tem como executar, mas também por outros sistemas, né? Quem é da programação, por exemplo, pode testar com Postman, com Sônia, pode, sei lá, fazer uma API para poder bater aqui nesse end point, pode utilizar o curl. Então, ó, copiar o URL aqui, para executar. Vou abrir o cmd aqui do
+
+Windows e eu posso dar um cur. E aqui em vez de tu eu vou colocar PDF. Ó, executei workflow. Então aqui agora ele executou via curve e deu no mesmo. Então a gente tem várias maneiras de executar, né? Não somente no navegador, não
+
+somente recebendo a informação do sistema que a gente integrou. a gente pode criar as nossas próprias ferramentas para poder testar aqui antes dele ir pra produção. Então, vai depender do que a gente quer. E até, por exemplo, às vezes, se a gente colocar outro verbo aqui, o navegador não vai funcionar. Ó, botar possem.
+
+Salvar aqui. Executar. Ó, eu já bati na URL, ele dá um 404. Ele não encontrou. Por que isso? Porque não
+
+bateu a URL com o verbo. Então ele só vai funcionar quando eu utilizar um verbo post. Aí pelo navegador não vai dar. Eu vou ter que vir aqui na minha URL de cur e colocar -x post. Aí agora, pera aí que o X é maiúsculo aqui. Eu
+
+errei. Então vamos tentar de novo aqui. Botar o X maiúsculo. Ó, agora sim ele executou. Então quando tiver outro verbo e em vez do get, né, eu não vou conseguir utilizar viewl. Eu vou ter que
+
+testar via curramenta, mas aqui deu certo, como vocês puderam ver, né? Ele conseguiu acessar e executou o workflow. Vou trocar para get aqui para facilitar pra gente. Mas vocês agora viram que é necessário, né, bater verba HTP com URL aqui do Webhook, tá bom? Bom, galera, e seguindo aqui, uma outra coisa que eu quero mostrar para vocês é que a gente tem a ativação do web hook, né, como a gente viu ali, por exemplo, eu posso chegar aqui, acessar o URL e a gente recebe essa mensagem, workflow was started. Então, o que que é isso? Isso
+
+significa que a gente acessou ele lá, mas ele não retornou nada pra gente. Vai ter vários cenários que a gente vai querer que o workflow execute alguma coisa e nos retorne algum dado, tá? Então, a gente não pode utilizar essa estratégia aqui. Qual que a gente vai utilizar? É esse responde aqui como using respond to hook node, tá? E aí
+
+muda um pouco como a gente faz as coisas aqui. Que que eu vou precisar? Vou precisar utilizar esse nó aqui, respond to hook, tá? E aqui eu posso escolher a minha resposta. Como que eu vou responder de volta? Então a gente tem
+
+várias maneiras aqui, por exemplo, com tudo que vem. Então se tiver, se eu tiver que mandar todos os dados mesmo que estão chegando, eu posso utilizar isso aqui com um arquivo, né? Por exemplo, aquele exemplo do relatório lá que a gente fez, né? O SC draw, poderia responder com um arquivo binário, né? Que seria o PDF do relatório, com o primeiro item que vem, um JSON que nós mesmos desenvolvemos, desenvolvemos, né?
+
+Jon Web Token, sem dados, com redirecionamento, com um texto. Tem várias maneiras de responder de volta, tá? Então, vou botar um JSON. E aqui eu posso colocar dados dinâmicos ou dados fixos. Então, botar aqui resposta. E
+
+vamos dizer que lá no nosso workflow, no final ele chegou um resultado de, sei lá, 10, que é isso aqui que a gente tem que mandar pra frente, né? que é isso aqui que interessa lá no final do do webhook sendo executado. Então eu pego aqui, mudo para expression, tá? E aqui eu vou trazer o valor de 10, né, que eu tenho que executar para para vir, né? Então, deixa eu ver aqui.
+
+Executa. Aí ele vai trazer o 10. A gente pode ligar de novo. E aqui eu vou trazer a resposta, tá? Então, se liga só como é que muda. Agora vou salvar, vou
+
+reexecutar. e vou voltar aqui. E agora eu não recebo mais aquela resposta padrão que o workflow começou. Eu recebo a resposta. Então vai ter vários cenários que a gente vai querer isso. A gente vai
+
+querer uma resposta no final e é assim que a gente faz, tá? Lembre-se, né? Temos várias maneiras de retornar a resposta. Uma muito utilizada é todos os itens. Aí eu utilizo o que preciso ou não, tá? Ou posso montar o Jon fiz aqui
+
+e mostrei para vocês. Beleza? Bom, agora eu quero mostrar também uma outra forma de a gente utilizar o web hook. Então vou botar mais um trigger aqui. Vou não posso copiar para o RL não ficar igual, tá? Então vai ter duas, né? Ó, vejo
+
+aqui. Essa é 43 F10. Essa aqui vai ser a 6160, tá? E esse cara aqui ele vai ser um post, beleza? E eu vou ativar ele por meio de um outro workflow do N8N. Então,
+
+mais uma coisa para vocês aprender. Então, vou salvar aqui, copiar o RL, vou criar um novo workflow. E como é que a gente acessa o workflow com web hook por meio de outro workflow? É bem simples. Aqui, ó, webook envio teste.
+
+Bom, aqui eu vou colocar um trigger manual, já tava ali, né? E a gente vai ter que fazer uma API, né? Uma requisição que chega até o meu web hook. E isso é possível através do HTP request, que é outro nó muito importante do NM, tá? Aqui eu preciso mudar o método, então a gente vai adaptar exatamente procurar URL, tá? E aqui eu posso, por exemplo,
+
+colocar já cy parameters que vai chegar na cy lá do hook. Então vamos dizer que eu vou botar aqui X ig y, tá bom? Eu vou dar play nesse aqui, tá? Esse aqui que tá esperando a resposta. E quando eu executo, salvo, né, e executo, ó, ele chegou nesse web. Beleza? Mais uma vez
+
+combinação de método com RL, tá? E aqui a gente vê que o curâmet chegou com X = Y, tá bom? Agora eu quero melhorar ainda mais, deixar mais com cara profissional esse workflow aqui, tá? Então, no cenário ideal, o que que a gente vai ter aqui? Uma realmente uma eh algo que precisasse chegar lá, né? Então botou
+
+aqui mensagem, message, vou colocar como se fosse uma pergunta que eu vou ativar uma LLM lá. Então o que é o N8N? Tá aqui por params. Vamos ver como é que vai chegar, né? Que eu tenho minhas dúvidas de como isso pode chegar lá, mas tudo bem. Então eu vou fazer a execução
+
+de novo. A gente vai receber aqui, ó. Chegou certinho. Beleza, não tem problema. Aí agora o que que eu faria num num workflow profissional mesmo? Pegaria um
+
+edit igual el de cima, né? Ah, eu pegaria o que me interessa, a message, tá? Vamos dizer que eu tenho que processar isso aqui numa LLM. Beleza? Vou executar esse nó. Então, já vou ter
+
+aqui o dado que eu preciso, né? Extrair tudo que eu preciso aqui. É só esse cara. Os outros são vão só me atrapalhar, né? Aí agora eu vou rodar uma open AI. Aqui eu vou messager a
+
+model, tá? onde a gente vai acessar, por exemplo, um PT5, tem que procurar aqui mesmo. Então, 5 mini, beleza? E o user prompt vai ser a message, tá? E aqui eu posso adicionar uma system roll, né, para ver como é que a IA vai responder. Então, dou um add
+
+message system. Então você é um agente que responde didaticamente nas dúvidas do usuário de faça analogias para chegar na resposta final, tá? Vou colocar uma system e aqui eu vou passar o que o usuário me manda do workflow lá que a gente criou para o meu web hook. E aí eu vou retornar a resposta para ele também. Então vou executar aqui. A gente passou
+
+para uma LLM, né? Então o o chatpt open vai responder. A gente vai obter a resposta e agora eu quero enviar para lá, né, para aquele web hook distrair os dados. Como é que a gente vai fazer isso? Vai ter que esperar aqui, né? Aí
+
+utilizar a respond web hook. Ó, vejo aqui, tá? O texto, ó. Pense na N como maestro lá. Beleza. Aí eu venho aqui e
+
+coloco o meu último nó, que seria o respond, tá? Com um Jason. Então vamos testar o algem para vocês verem, né? Ele vai mandar todo esse retorno do output aqui, tá? E aí agora sim, se eu executo esse cara aqui e manda a pergunta, opa, ah, tá, que eu não mudei aqui a resposta, tem que mudar para isso aqui, né? Salva,
+
+executa de novo. E agora sim, se a gente não muda e tem aquele nó final, ele dá erro, ó. Ó, ele tá pensando porque ele tá executando esse cara aqui. Beleza? Inclusive, galera, já tô com 2 aqui, tá?
+
+Versão dois. Eu tenho um vídeo aqui no canal explicando tudo que mudou nessa versão. Editor coloca T aí pro pessoal ver que vídeo que é, tá bom? Voltou lá, recebi a resposta aqui e olha só como é que funciona o all incoming itens. É meio ruim porque vai vir tudo, às vezes a gente não vai usar tudo. Então tem que
+
+tomar cuidado, tem que escolher bem a resposta. Aí eu pegaria um edit, extraaria só o que eu quero e assim segue o baile de novo, tá? Só a respostinha da LLM, beleza? Que que a gente pode adicionar para deixar mais profissional ainda, né? Para seguir aqui no aprendizado também do Hook. Autenticação, galera. Autenticação
+
+para não expor essa URL, né, para todo mundo, pra gente poder criar uma trava de segurança. Só antes de eu te mostrar algo também muito importante. Quer aprender em 8N do básico avançado? Tá gostando da minha didática? Faça a formação a gente de Aar. O link vai tá
+
+aqui na descrição para tu acessar essa página. Vê como é o treinamento, tá? Todos os cursos que tem, tudo que tu vai aprender. Tem algumas aulas liberadas aqui, tá? Tem também alguns fluxos que tu vai criar ali comigo nos cursos, né?
+
+São mais de 30 horas. Tem aqui também algumas aulas liberadas para tu ver como é que tá lá dentro, tá? Tem o botão de WhatsApp para falar comigo, com a minha equipe, tem grupo de networking para tu falar com os outros alunos. Então, uma formação completa para tu aprender em N 8N e não só ter esse conhecimento, mas também aprender a como tu vai vender as soluções de automação que tu cria. Tô te esperando lá. Voltando, como é que a
+
+gente vai colocar a automação aqui? Automação, automação já tá aqui, né? A autenticação. Bom, é bem simples, né? Depende da autenticação, mas essa aqui que eu colocar é simples e já vai funcionar porque dificilmente alguém vai saber a senha que a gente colocar, né?
+
+Então, o problema, né, de tudo é o seguinte. a gente vai publicar o o workflow, beleza? Então agora tudo aqui é público e se uma pessoa copiar a production rl agora muda, tá? Agora é a productionl, colocar lá no seu cur, no seu N8N, qualquer outro software, trocar aqui, ó, e mandar uma requisição pro teu servidor. O teu servidor vai processar como tá processando aqui. E é
+
+isso que tu não quer, tá? Tu quer o quê? travar essa requisição, colocar uma senha para pelo menos criar uma barreira de proteção e não fazer com que o teu workfow dispare para qualquer requisição, tá? Aí tu tem algumas opções, ó, só te mostrar que ele vai responder aqui primeiro. Vamos dar uma guardadinha, ó. Respondeu. Viram? A URL
+
+de produção tá exposta, qualquer um consegue acessar. Então, a gente tem algumas opções. Vem aqui no nó primeiro, ignore bots. Tá perfeito. Isso aqui é excelente. Só setar aqui
+
+IPs whelist, tá? Coloca o IP do servidor que tá mandando a requisição, mas se forem muitos IPs, isso aqui vai dar um trabalhão e vai ficar manual. Então, né, se tu tem essa possibilidade de várias pessoas acessarem, vários sistemas acessarem, a melhor opção é autenticação. E aí tu vai ter basic, que não funciona bem aqui, porque é uma autenticação que pede no navegador, então quem manda por el não vai ter possibilidade. Header off, que é uma opção interessante porque vai no cabeçalho da requisição e via HTP request a gente tem como enviar. e JWT
+
+Alf, né, que utiliza o o JWT, né, Jason Web Tokens, que é uma forma um pouquinho mais complexa, que no fim das contas vai dar na mesma, né, porque a pessoa vai ter que ter teu token ou tua senha para acessar, só que aqui no Jason Web token, tu consegue enviar dados no token, tá? Então às vezes vai servir isso aqui, né? Isso aqui é muito utilizado na programação, mas aqui nesse caso a gente só quer uma trava para realmente impedir que qualquer acesso seja feito. Então a gente vai colocar um header off, tá? Nós vamos criar uma credencial para esse caso. A vai colocar um nome e valor.
+
+Então vou botar senha forte, tá? A gente coloca o nome web hook senha. Salva. E agora olha só o que acontece. Se eu venho aqui, executo, tem que salvar antes, né? Não vai executar. Então vamos
+
+lá. Se eu venho aqui e executo e também republico essa versão, tá? Então vou publicar essa versão nova. Agora vamos fazer o teste aqui, ó. Ele deu um erro de HTP. Que aconteceu?
+
+Autorization data is wrong. Ou seja, está sem os dados de autorização. Agora eu preciso adicionar a o meu header aquela aquele usuário e senha, tá? Aqui obviamente eu poderia utilizar, né, a credencial que eu criei e tudo mais, né? Deixa eu ver aqui. Generic header alf.
+
+Colocar aqui a a que eu acabei de criar, tá? Só que não é assim que vai funcionar as coisas. a pessoa lá do seu sistema vai ter que colocar sua autenticação. Então, ela poderia criar uma nova, tá? Porque ela não teria acesso à tua credencial ou ela viria aqui no header e colocaria o senha forte, tá? Que é uma
+
+das possibilidades, ou cria a autenticação credencial ou coloca nos reds, tá? E agora a gente vem aqui, a gente testa, tá? Ó, aqui deu um erro de credenciais, só que eu tenho certeza que a minha credencial tá correta, tá? E ele pode tá detectando que o N8N é um bote, tá? Então vamos só fazer o teste aqui de tirar o ignorar bots, beleza? E
+
+publicar, tá bom? Vamos fazer o teste aqui, ó. E foi. Então, galera, nesse caso aqui, ele detectou o próprio N8N como um bote. Pode ser que seja por causa da requisição do mesmo domínio e tal. Então a questão nesse caso aqui é
+
+que essa opção não tá funcionando, mas também nós temos a proteção da 100, então teoricamente ele vai ignorar boss de qualquer jeito, tá? Então não precisaria nesse caso aqui, nesse cenário, tá? Ó, voltou com a resposta e agora a credencial funcionou corretamente com os headers aqui de senha forte. Bom, galera, assim a gente entendeu todas as questões ali que envolvem web hooks. O que tu aprendeu aqui, tu já consegue fazer praticamente qualquer fluxo, né? O que vai mais
+
+depender é o que tá aqui no meio, porque eh requisição e resposta tu já domina, tá? Aqui no canal o editor vai deixar a TAM aqui também. Eu vou tentar deixar o Izinho, que é o agente trucionista, tá? Ele utiliza o WhatsApp para fazer a comunicação, né, entre o fluxo e e a pessoa que tá entrando em contato com ele. Inclusive, o meio de comunicação principal entre requisição e resposta desse fluxo aqui que tem aqui no canal gratuitamente é um web hook, né? E aqui
+
+no final ele não termina comook porque ele envia lá para WhatsApp, mas a ponta da lança, digamos assim, é o hook que vocês acabaram de aprender. Então seria interessante vocês darem uma olhada aqui agora nesse projeto e fazer algo eh voltado pro mundo real, né? Aqui nesse curso a gente faz interpretação de texto, áudio, vídeo, a gente salva os dados, é um sistema multiagentes, então é algo muito próximo que vocês criariam para vender, tá? Inclusive tem vários outros desses fluxos lá na formação agentes deada que eu mostrei para vocês. Beleza? Então eu acho, eu acredito que
+
+seria um bom ponto para continuar o aprendizado aí no N8N e também Web Hooks. Então faz lá esse projeto aí que tá bem bacana. Beleza, galera? Então fechamos por aqui até a Tuca tá participando do vídeo ali, ó. Tá ali embaixo ali. Espero que vocês tenham
+
+curtido. Se vocês gostaram deixem o like, tá? Se inscrevam. Isso é muito importante. Ajuda bastante a gente aqui, ajuda a impulsionar o conteúdo para outras pessoas. E não esqueça de baixar
+
+o material de N8N, isso vai ajudar vocês a aprender mais sobre a ferramenta, como ela funciona. E claro, tô esperando vocês na formação agentes de comentários aqui, sempre lei e respondo. Se tu tiver uma sugestão, dica aí pro próximo vídeo, tô te esperando lá também, beleza? Então, fico por aqui, espero vocês no próximo vídeo.

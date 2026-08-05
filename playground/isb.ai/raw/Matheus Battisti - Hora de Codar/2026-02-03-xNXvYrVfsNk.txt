@@ -1,0 +1,116 @@
+---
+video_title: "OpenClaw: Como Configurar a Memória do JEITO CERTO"
+video_id: xNXvYrVfsNk
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xNXvYrVfsNk
+video_date: 2026-02-03T15:00:00+00:00
+video_description: |
+  Neste vídeo eu mostro como configurar o sistema de memória do OpenClaw para que seu assistente de IA lembre de tudo: seus projetos, preferências, decisões e contexto de conversas anteriores.
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_openclaw_memoria
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Diferente do ChatGPT e Claude que esquecem tudo quando você fecha a janela, o OpenClaw mantém memória persistente em arquivos Markdown simples que você controla completamente. Sem black box, sem "onde foram parar meus dados". Você pode ler, editar e fazer backup de tudo.
+  
+  O sistema de memória do OpenClaw é composto por arquivos específicos. O SOUL.md define a personalidade e tom do seu agente. O USER.md guarda informações sobre você como nome, preferências e contexto de trabalho. O MEMORY.md armazena memórias de longo prazo curadas. E a pasta memory/ mantém logs diários de cada conversa.
+  
+  Mostro também como configurar o Memory Search, que cria um índice semântico dos seus arquivos de memória. Com isso o OpenClaw encontra informações relevantes mesmo quando você usa palavras diferentes das que foram salvas originalmente.
+  
+  Explico o Memory Flush, que garante que memórias importantes sejam salvas automaticamente antes do contexto ser compactado em sessões longas. Isso evita perder informações cruciais.
+  
+  E por fim mostro como fazer backup e migração da sua memória usando Git, para nunca perder seu histórico mesmo trocando de servidor.
+  
+  Se você quer um assistente de IA que realmente evolui com você e lembra do seu contexto, esse vídeo é essencial.
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 O problema de memória do Clawdbot (OpenClaw)
+  01:18 Como funciona a memória do Clawdbot (OpenClaw)
+  04:40 Verificando a estrutura do Clawdbot no servidor
+  06:17 Ativando a Vector memory Search no Clawdbot
+  08:37 Como configurar o Automatic Memory Flush
+  12:24 Estratégia para backup de memória do Clawdbot
+  14:30 Conclusão sobre as melhorias de memória no OpenClaw
+---
+Uma das coisas que as pessoas mais reclamam no Cloud Bot é a memória, que ela falha, que ela não guarda o que precisa, que ele se esquece de coisas da mesma conversa. E isso é uma questão de configuração. Nesse vídeo eu vou te mostrar passo a passo tudo que tu pode fazer na prática para deixar uma memória infinita e inabalável no cloud bot, Multibot, open cloud, como tu preferir chamar. O negócio é tão bom que já tem três nomes. Galera, eu sou o Mateus Batista, programador há mais de 10 anos e hoje estou me aventurando nessas ferramentas da IA e muito no Open Cloud, né? Inclusive, a gente tem uma playlist
+
+aqui. Vou deixar o izinho para vocês acessarem e verem todos os vídeos, que é uma sequência bem bacana para vocês dominarem a ferramenta. Se gostarem do vídeo, deixa o like, se inscrevam para receber os vídeos que a gente faz aqui em primeira mão. E claro, a campanha deixa o Mateus Feliz continua. Galera, vou te pedir um comentário aqui, pode ser sobre o vídeo, é claro, seria o o melhor cenário, né, para poder te responder, tirar todas as tuas dúvidas.
+
+Pode ser falando que tu gostou também. Qualquer coisa, comenta aí que eu gosto de ler e responder os comentários de vocês. Beleza? Agora sim, bora começar. Vamos lá pra prática. Bom, galera, a
+
+primeira coisa que eu quero fazer é dar um contexto geral aqui da memória, porque são duas partes diferentes, né, que a gente tem ali como configurar memória no Cloudbot. Beleza? Então, quando a gente instala ele, a gente vai ter dois diretórios principais, tá? E aqui vai variar o nome, né, dependendo de quanto tu instalou. Provavelmente agora os novos já estão vindo com OpenCloud, mas a estrutura vai ser sempre a mesma. Uma pasta oculta para
+
+onde vai ter as configurações e uma pasta não oculta, né, uma pasta pública que vai ter ali a nossa área de trabalho onde a maioria dos arquivos serão criados. Beleza? Na pasta oculta a gente tem um arquivo chamado Cloudbot JSON, que é onde a gente vai colocar as configurações do nosso cloud bot, tá? E lá a gente vai conseguir fazer alguns novos parâmetros, digamos assim, né, nesse JSON que a gente tem lá para melhorar a memória do Cloudbot, tá? Já no Workspace, nós temos vários arquivos que influenciam na memória do Cloud Bot.
+
+Vou explicar eles aqui bem rapidamente. O Agents MD, ele é um arquivo em Markdown, né? Todos esses aqui são em Mark. seguem aqui uma formatação bem específica e ele manda, né, ou melhor, instrui como a gente deve se comportar, tá? E todos esses arquivos aqui, eles podem ser editados por nós, né? a gente
+
+pode chegar lá e escrever o que a gente quiser ou a gente pode via promptir para ele alterar um deles ou de alguma maneira, digamos assim, explícita, falar que ah, salva isso na memória e aí ele vai encontrar o melhor arquivo para isso e salvar nele, tá? Tem o S MD, tá? Que ele vai ter a personalidade Tom, que é o agente responde a gente. Beleza? user MD, nossas informações, então tudo que ele sabe sobre a gente vai tá ali.
+
+Identity MD, o nome e a identidade do agente. Então vai ter o nome que a gente definiu lá no começo na instalação, né, quando ele pede pra gente algumas outras informações sobre ele. Tools medir, as ferramentas que a gente vai ter ali conectadas no cloud bote, heartbeat m checklist para ação explorativas. Então são rotinas que a gente pode pedir para ele, ah, todo dia de manhã me deu um bom dia. Aí vai salvar ali e ele vai sempre olhar de tempos e tempos o que ele precisa executar. E memory MD é onde são
+
+as são salvas, né, as memórias de longo prazo, tá? Então, tempos em tempos, né, ele tem que salvar a memória e ele compacta nesse arquivo aqui. Beleza? Bom, tendo isso em mente, a gente já entende como é que o Cloud Bot funciona, né? Então vou mostrar aqui na minha VPS exatamente a mesma coisa. Eu dou um ls -
+
+LHA, ele me mostra aqui o ponto cloud bote, que é o oculto e o cloud, que é a pasta visível, né? Ponto, quando começa com ponto, tem é a pasta oculta e sem ponto é a pasta visível. E aí eu posso, por exemplo, ver um arquivo de personalidade, então identity, tá? E aí ele vai est salvo aqui as informações, né? Esse situação tá bem crua, né? Ele não tem
+
+muitos detalhes. A gente pode ver como é, qual é o conteúdo do arquivo e da mesma maneira a gente pode ir lá e ver o arquivo de config. É basicamente o que foi instalado, né, inicialmente. Beleza? Então aqui, galera, eu quero fazer um teste prático com vocês, ó. Vou botar
+
+aqui, ó. Seu nome é TIO. Anote na memória. Então, vou mandar essa mensagem para ele e ele vai ter que salvar num daqueles arquivos ali e a gente vai verificar se ele vai salvar ou não, tá? Só para comprovar para vocês que realmente fica salvo lá. E a gente pode inclusive
+
+alterar e ver a mudança refletida aqui, né? A gente pode tanto pedir pro bot ou alterar manualmente os arquivos. Ó, ele anotou aqui, né? ele eh deu a confirmação. Se a gente vai lá no servidor e dá um grap o nome dele, ó, ele vai anotar no identity. Então, cada
+
+uma dessas informações vai preencher um daqueles arquivos ali que eu comentei com vocês, beleza? Então, esse aqui é o princípio fundamental para entender como que a memória vai ser distribuída nas diferentes partes do Cloudbot, tá bom, galera? E uma coisa muito importante, tudo isso que a gente tá vendo aqui é baseado em engenharia de prompt, né? Sempre que a gente puder melhorar em engenharia de prompt, a gente vai melhorar em inteligência artificial no geral, tá? Vou deixar um guia aqui gratuito para vocês. Basta acessar na
+
+descrição e baixar. São mais 50 páginas para aprender engenheiro de promptico avançado. Beleza? Conseguimos aqui. Então, galera, a primeira estratégia que eu quero mostrar para vocês é sobre o índice de memória. Então, o que
+
+acontece? A memória do Cloud Bot, porque a gente usa muito, tende a ficar grande, né? E aí ele não encontra algo dentro dela. Para resolver isso, a gente consegue incluir uma configuração que é essa daqui, né? Inclusive, recomenda dar uma olhada na parte da documentação de memória do Cloud Bot, tá? Que é bem
+
+completa, mas eu vou trazer as duas principais para vocês, tá? Que é essa parte aqui, ó, de vector memory search, tá? Então, a gente tem que configurar isso aqui. A gente pode escolher tanto com a Open AI ou como o Gemini, tá? São duas formas de configurar. Eu gosto
+
+muito de Gemini, que é o modelo mais barato, né? e vai fazer com que a gente consiga ter mais assertividade e encontrar o que a gente coloca na memória à medida que o arquivo cresce. Eu trouxe aqui um exemplo de configurações para vocês verem como é que funciona o memory search configurado no arquivo Jason, tá? Então a gente vai ter que configurar um provider, o modelo de embeding e colocar aqui a nossa chave de API. Isso aqui é o necessário para configurar esse tipo de pesquisa na memória. Porém, a gente tem outras
+
+configurações que é de colocar o fallo principal não estiver disponível, ir para o outro e também trabalhar de forma híbrida, né, com a busca semântica, mas é de palavras chaves, o que faria o cloud bot, né, ele ter mais opções na hora de pesquisar dentro da memória, tá? E isso tudo, né, seria inserido nesse arquivo aqui, ó. A gente utilizaria o Cloudbot, Cloudbot JSON, tá? Aqui a gente colocaria dentro dele uma chave chamada agents, tá? E dentro de agents a gente colocaria o memory search com essas configurações. Beleza? Lembrando,
+
+ó, aqui tá a configuração de agents, tá? Aí, aqui dentro seria o memory search. Tu pode seguir a documentação e tirar um pint ali do arquivo que eu te passei, que no fim das contas vai dar o mesmo resultado. Beleza? Outra coisa muito importante é o memory flush, tá? Que ele
+
+não vem configurado por padrão, a gente tem aqui na documentação também, tá? E isso vai fazer com que antes da compactação da conversa, né, o Cloud Bot, depois de tantas interações, ele vai começar a compactar para poder dar conta, né, de lembrar do contexto. A gente pode colocar esse memory flush que vai salvar a memória em arquivos, tá? E isso é fazer com que ele tenha cada vez mais memória e uma memória com bastante contexto, não só a memória que compacta automaticamente, porque essa memória que compacta, ela pode perder muitas informações, porque ele vai deixar as que ele julga mais importante. Então, com essa estratégia aqui, ele vai criar uma pasta que ele vai colocar outros arquivos de memória dentro dela e juntando com a busca, ele vai conseguir achar a informação que tu quer dentro do arquivo de memória principal ou desses arquivos criados aí com o memory flush.
+
+E aí a configuração do memory flush é essa daqui, ó, de compaction, né? Então o que acontece? Ele vai ter esse modo, né, safe guard compacta automaticamente, tá? E aí, quantos tokens ele reserva antes de compactar? E aqui a gente vai habilitar o recurso e ele vai inserir nessa pasta aqui, memory e o arquivo vai ser salvo com a data que ele compactou, tá? Então é interessante
+
+porque ele vai ter mais memória ainda. A gente tá ampliando a memória e não só deixando a memória padrão compactada no memory MD, que é o arquivo principal de memória. Então a gente pode fazer um teste aqui para vocês verem. Se eu colocar ali, lembre-se que eu gosto que meus projetos sejam feitos em Python. Essa informação aqui vai ser salva na memória, tá? E
+
+isso faz com que esse arquivo fique crescendo infinitamente, role a compactação, que é algo que vai acontecer de fato, né, no Cloud Bot para que ele consiga ler aquele arquivo, né, para ter contexto de tudo. E uma hora que ele compacta, ele pode perder informações importantes. Então, com o memory fush, ele vai fazer aqueles subrearchivos, vamos dizer assim, e vai ter mais memória ainda. Ó, ele falou que anotou, tá? Então, como é que a gente vai evidenciar isso? Pode vir aqui, dar
+
+um grap - R. Pera aí. Aqui também não. Lá dentro do cloud, ó. Em user MD ele colocou, tá? Então ele
+
+não colocou na memória, mas eu posso explicitar que eu quero na memória. Então também vai um pouco ali do da configuração que o Cloud Bot tem. salvar, por exemplo, as minhas preferências de usuário, mas ele também pode salvar alguma coisa na memória se eu deixar isso bem explícito ou se ele julgar que é dessa forma que tem que salvar, tá? Ó, galera, agora ele salvou na memória também. Então a gente tem aqui, né, as informações em ambos os lugares, né, porque é uma informação minha mesmo, né, mas ele também colocou ali Python como memória nos projetos e, né, a medida que esse arquivo vai crescendo, ele uma hora vai compactar, tá? E antes da compactação, como a gente
+
+fez o flush, ele vai começar a criar aquela pasta com os arquivos e colocar mais memória neles. Então assim, a gente vai ter o quê? Aquela pesquisa otimizada. que foi o que a gente configurou antes com a memória extra que a gente configurou agora. E isso faz com que o Cloud Bot, né, tenha uma memória infinita e com uma boa ferramenta de busca também, né? E aí sim a gente tem o
+
+melhor cenário de todos. Beleza? Uma outra coisa ultra importante é que essa memória está em arquivos e se a gente perder esse servidor já era pra memória do nosso bote. E isso pode ser um dano irreversível, né? Imagina, tem que deduzir tudo que tava na memória e nos outros arquivos aqui.
+
+Então eu recomendo vocês a salvarem isso no repositório, tá? Ou seja, no GitHub. Se vocês não sabem o que é, é bem fácil de entender, né? Basicamente um drive que coloca, que os programadores colocam os projetos deles, tá? E aqui tu pode até pedir pro cloud bote mesmo, né? Tu
+
+vai criar teu repositório aqui e colocar para ele inserir lá os arquivos MD, né? Versionar os arquivos MD. Tu pode fazer isso de tempos em tempos para ter eles atualizados lá. E aí, se der algum problema no servidor, tu vai ter como recuperar esses arquivos rapidamente, né? uma dica extra que eu deixo para vocês que eu faço e isso me dá mais segurança, né? Como se fosse ter um
+
+banco de dados da memória do meus bots. Beleza, galera? Bom, por último e não menos importante, todos os meus projetos em geral, né, estão na Hoster. Meu Cláudio Bot tá lá também. Eles tem um serviço excelente que também promove segurança, né, que é um dos pontos que o Cláudio Bot tem aí a melhorar, digamos assim. E lá a gente
+
+vai ter uma hospedagem segura. Vou deixar um link aqui na descrição com desconto exclusivo, tá? Recomendo sempre o plano KVM2 acima. Ele vai te oferecer aí um computador, né? Uma VPS excelente, com um grande espaço de armazenamento, né? Não vai faltar espaço para armazenar
+
+a memória e também ele vai responder muito rápido a todas tuas requisições. Então, assinalará o plano da roxa que pretende ter um cloud bot. Aqui já vai ter o cupom, né? vai ter essa oferta especial, mais um desconto ainda em cima para tu poder aproveitar essa condição, tá? Lembrando, é no plano anual para cima, link na descrição, galera. E
+
+claro, nós também temos nosso treinamento de N8N, formação agentes de A para tu aprender a automação do básico avançado. Link também vai tá na descrição e no comentário fixado. Galera, sobre memória no COD bot, era isso que eu tinha para falar para vocês, tá? Com essas estratégias aqui, vocês vão conseguir ter uma memória infinita e também uma ferramenta para pesquisa profunda de memória, né? Então vai ser rápido encontrar as informações, porque não adianta a gente salvar milhões de arquivos e não conseguir encontrar o que a gente quer. Então por isso que é muito
+
+importante aliar essas duas estratégias, tá? E olhem a documentação aqui, né? Ensina tudo o que eu mostrei para vocês, essas duas estratégias aqui ele fala muito mais coisa, né? Eu trouxe ali o principal que vai realmente fazer a diferença, mas tem outras configurações que são importantes de darem uma olhada. Então não esqueçam, passem lá na documentação do OpenCloud também, tá bom? Comentem aí agora, sabendo das
+
+estratégias, vão implementar, quero saber. Bora iniciar essa discussão aí. Deixem o like também, se inscrevam se não são inscritos para receber mais vídeos sobre cloud bote ou inteligência artificial. Vou ficando por aqui e espero vocês aí no próximo vídeo.
