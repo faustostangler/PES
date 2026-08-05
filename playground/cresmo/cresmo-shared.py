@@ -9,22 +9,94 @@ import sys
 import time
 from pathlib import Path
 
-# Local imports
-from helper import read_playlist_urls
-
 # --- Path Configurations ---
-ISB_ROOT = Path(__file__).parent.resolve()
-DEFAULT_RAW_DIR = ISB_ROOT / "raw"
-DEFAULT_ENRICHED_DIR = ISB_ROOT / "enriched"
-DEFAULT_CRESMO_DIR = ISB_ROOT / "cresmo"
-DEFAULT_CRESMO_WIKI_DIR = DEFAULT_CRESMO_DIR / "wiki"
-PROCESSED_CRESMO_LOG = DEFAULT_CRESMO_DIR / "processed_cresmo.json"
+CRESMO_ROOT = Path(__file__).parent.resolve()
+DEFAULT_RAW_DIR = CRESMO_ROOT / "raw"
+DEFAULT_ENRICHED_DIR = CRESMO_ROOT / "enriched"
+DEFAULT_CRESMO_DIR = CRESMO_ROOT
+DEFAULT_CRESMO_WIKI_DIR = CRESMO_ROOT / "wiki"
+PROCESSED_CRESMO_LOG = CRESMO_ROOT / "processed_cresmo.json"
 BRAIN_DIR = Path("/home/stangler/.gemini/antigravity-ide/brain")
 
 SKILLS_ROOT = Path("/home/stangler/gamer_d/Fausto Stangler/Documentos/Python/PES/.agents/skills")
 SKILL_EXPANDER_PATH = SKILLS_ROOT / "cresmo-expander" / "SKILL.md"
 SKILL_ATOMIC_PATH = SKILLS_ROOT / "cresmo-atomic" / "SKILL.md"
 SKILL_MOC_MANAGER_PATH = SKILLS_ROOT / "cresmo-moc-manager" / "SKILL.md"
+
+
+# --- File & Data Helpers ---
+
+def read_playlist_urls(file_path: Path) -> list[str]:
+    """Read seed video URLs from a text file, skipping comments and blank lines."""
+    urls = []
+    if file_path.exists():
+        with open(file_path, encoding="utf-8") as f:
+            for line in f:
+                if "#" in line:
+                    continue
+                line = line.strip()
+                if line:
+                    urls.append(line)
+    return urls
+
+
+def parse_merged_transcriptions(file_path: Path) -> list[dict]:
+    """Parse a file containing multiple transcription blocks separated by --- blocks.
+
+    Each block contains a dictionary of metadata and the corresponding text.
+    """
+    metadata_list = []
+    if not file_path.exists():
+        return metadata_list
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Split by lines containing only '---'
+        parts = re.split(r"^---$", content, flags=re.MULTILINE)
+
+        i = 1
+        while i < len(parts):
+            yaml_text = parts[i]
+            text_content = parts[i+1].strip() if i + 1 < len(parts) else ""
+
+            meta = {}
+            lines = yaml_text.splitlines()
+            in_desc = False
+            desc_lines = []
+
+            for line in lines:
+                if in_desc:
+                    if line.startswith("  ") or line.strip() == "":
+                        desc_lines.append(line[2:] if line.startswith("  ") else line)
+                    else:
+                        in_desc = False
+
+                if in_desc:
+                    continue
+                if ":" not in line:
+                    continue
+                key, val = line.split(":", 1)
+                key = key.strip()
+                val = val.strip()
+                if key == "video_description":
+                    in_desc = True
+                    continue
+                if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
+                    val = val[1:-1]
+                meta[key] = val
+
+            if desc_lines:
+                meta["video_description"] = "\n".join(desc_lines)
+
+            metadata_list.append({
+                "metadata": meta,
+                "text": text_content
+            })
+            i += 2
+    except Exception as e:
+        print(f"Error parsing merged transcriptions in {file_path.name}: {e}")
+    return metadata_list
 
 
 # --- Idempotency & Log Management ---

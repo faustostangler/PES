@@ -5,12 +5,12 @@ Executes full cumulative Cresmo skill pipeline (cresmo-expander -> cresmo-atomic
 using the active local IDE agent session (agentapi) and local filesystem disk reads/writes.
 
 Directory Topology:
-- Raw Transcripts Input:   playground/isb.ai/raw/[Channel_Name]/[Video_ID].txt
-- Enriched Compendiums:    playground/isb.ai/enriched/[Channel_Name]/[Video_ID].md
-- Cresmo Vault Root:       playground/isb.ai/cresmo/
-  - Atomic Notes:          playground/isb.ai/cresmo/wiki/<note_type>/[Exact Note Title].md
-  - MOC Files:             playground/isb.ai/cresmo/wiki/MOCs/MOC_*.md
-  - Idempotency Log:       playground/isb.ai/cresmo/processed_cresmo.json
+- Raw Transcripts Input:   playground/cresmo/raw/[Channel_Name]/[Video_ID].txt
+- Enriched Compendiums:    playground/cresmo/enriched/[Channel_Name]/[Video_ID].md
+- Cresmo Vault Root:       playground/cresmo/
+  - Atomic Notes:          playground/cresmo/wiki/<note_type>/[Exact Note Title].md
+  - MOC Files:             playground/cresmo/wiki/MOCs/MOC_*.md
+  - Idempotency Log:       playground/cresmo/processed_cresmo.json
 """
 
 import argparse
@@ -38,11 +38,11 @@ from cresmo_shared import (
     get_agentapi_binary,
     get_antigravity_env,
     load_processed_cresmo_log,
+    parse_merged_transcriptions,
     resolve_active_session,
     save_processed_cresmo_log,
     send_agent_message,
 )
-from helper import parse_merged_transcriptions
 
 
 def fetch_trajectory_response(session_id: str, tag_open: str, tag_close: str, timeout_seconds: int = 15) -> str:
@@ -93,7 +93,7 @@ def execute_stage2_expander(
     output_dir: Path = DEFAULT_ENRICHED_DIR,
     force: bool = False,
 ) -> Path:
-    """Stage 2: Pré-processamento e Enriquecimento (cresmo-expander)."""
+    """Stage 2: Pre-processing and Enrichment (cresmo-expander)."""
     channel_name = meta.get("channel_name", "Unknown Channel")
     video_id = meta.get("video_id", txt_file.stem)
     
