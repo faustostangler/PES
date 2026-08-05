@@ -1,0 +1,107 @@
+---
+video_title: "POV: You Learn Digital Forensics"
+video_id: cKHA89Nc6pk
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=cKHA89Nc6pk
+video_date: 2026-06-13T15:00:01+00:00
+video_description: |
+  Join The Family:💻👩🏻‍💻https://cyberflow-academy.framer.website/
+  Check Out The Courses We Offer: https://cyberflow-academy.framer.website/courses
+  
+  Educational Purposes Only.
+  
+  This video is about digital forensics, computer forensics, memory forensics, file recovery, metadata analysis, and the tools investigators use to uncover hidden evidence on modern systems.
+  
+  I always thought digital forensics was one of those cybersecurity topics I'd get around to eventually. Then I spent one night diving into it and discovered just how much information computers quietly keep behind the scenes.
+  
+  In this video, I explore digital forensics for the first time using tools like Autopsy, ExifTool, and Volatility. From recovering deleted files and analyzing metadata to investigating RAM dumps and hidden system artifacts, you'll see why digital forensics is one of the most fascinating areas of cybersecurity.
+  
+  Whether you're interested in cyber security, ethical hacking, incident response, malware analysis, OSINT, DFIR (Digital Forensics and Incident Response), or computer investigations, this video will show you how digital evidence can reveal far more than most people realize.
+  
+  
+  --- Challenge Link: https://drive.google.com/file/d/1s3SeNgGCtxge9KodKdrmihDW629TrTM3/view?usp=sharing
+  
+  🔥 What you'll learn:
+  • What happens when you delete a file
+  • How digital forensic investigators recover evidence
+  • How Autopsy analyzes disk images
+  • Why metadata can expose hidden information
+  • How ExifTool extracts forensic artifacts
+  • What memory forensics is and why it matters
+  • How Volatility analyzes RAM dumps
+  • Why digital forensics is a critical cybersecurity skill
+  
+  🎯 Challenge:
+  There's a hidden code inside the metadata of the image linked below. Find it and post it in the comments. The first three people to find it win a free month inside the Cyberflow private community.
+  
+  📚 Resources Mentioned:
+  
+  Dzuma's Video:
+  https://www.youtube.com/watch?v=V52bRPLm_Ls
+  
+  Autopsy:
+  https://www.autopsy.com
+  
+  ExifTool:
+  https://exiftool.org
+  
+  Volatility:
+  https://volatilityfoundation.org
+  
+  CyberDefenders:
+  https://cyberdefenders.org
+  
+  💻 Cyberflow Academy
+  Learn Web Hacking, Bug Bounty, Reverse Engineering, Digital Forensics, OSINT, Python for Hackers, C++, Hands-On Labs, CTFs, and more.
+  
+  Use code: Cyberflow50
+  
+  Subscribe for more cybersecurity, ethical hacking, Linux, digital forensics, bug bounty, reverse engineering, and OSINT content.
+  
+  #digitalforensics #cybersecurity #dfir #computerforensics #ethicalhacking #osint #malwareanalysis #forensics #linux #cybersecuritytraining
+  #hacking #ethicalhacking #bugbounty #cybersecurity #hacker #pentesting #infosec #cyberattack #hackingtools #sqlinjection #metasploit #cyberflowsacademy
+  
+  → Email: cyberflow10@gmail.com  
+  
+  00:00 How I Accidentally Got Into Digital Forensics
+  00:31 What Really Happens When You Delete a File
+  01:05 The Creepy Reality of Deleted Data
+  01:21 Reconstructing a Computer's Timeline
+  01:48 Your Computer Remembers Everything
+  02:03 Metadata Can Expose More Than You Think
+  02:28 The Problem With Learning Forensics
+  02:48 Why I Built Cyberflow Academy
+  03:14 Discovering Memory Forensics with Volatility
+  03:42 Malware That Never Touches Disk
+  03:59 What Digital Forensics Actually Taught Me
+  04:23 Forensics Challenge: Find the Hidden Code
+  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+Before anything else — this video was inspired by Dzuma's video on digital forensics. That video is genuinely what convinced me to go down this path. Go show him some love, link is in the description. Now let's get into it. So it's two in the morning, Monster half empty, and I've just finished watching Dzuma's video and something about it won't leave me alone. I've been doing cybersecurity for a while — web exploitation, OSINT,
+
+networking — and I've always treated forensics like that one elective you keep putting off. Told myself it wasn't my thing. Tonight I decide to actually find out what I've been missing. No roadmap, no course, no fourteen Reddit threads telling me to get a certification I've never heard of. I just start pulling threads and seeing where they go.
+
+First thread — what actually happens when you delete a file? I know the theory, the OS removes the pointer and marks the space available, I've known that for years. But I've never actually seen it so I download Autopsy, grab a practice disk image from CyberDefenders, load it in and hit analyze. Within thirty seconds Autopsy is showing me deleted files that are completely recoverable, sitting there intact like they never left. I open one and it comes back with full contents, original filename, and timestamps showing exactly when it was created, when it was last opened, and when someone tried to make it disappear.
+
+I pause and look at my own laptop for a solid ten seconds. There are files on this machine I deleted two years ago that are probably still sitting on the disk right now just waiting. I close that thought and keep going. Autopsy also has this timeline view that I wasn't expecting and it completely changes how you see everything. Every file system event on the drive laid out chronologically — every file opened, modified, deleted — all with exact timestamps. You're not reconstructing what happened by
+
+guessing, you're just reading it like a logbook the machine kept without telling anyone. Browser history reconstructed automatically, recently accessed documents listed, and every USB device ever plugged in logged with its serial number and connection times. That last one stops me completely because it means deleting your files isn't enough, clearing your browser history isn't enough — the machine has been quietly keeping records in places most people never think to check. Then I find metadata and this is the one that gets everyone. Every file carries information about itself embedded silently — creation time, modification time, what software made it. Photos taken on a phone carry GPS coordinates by default. There's a
+
+tool called ExifTool that reads all of it in one command and the output on a random photo from your camera roll is genuinely unsettling the first time you see it. People have been caught doing seriously stupid things because they posted a photo online and forgot their phone was signing it with their exact location. The image looked completely innocent. The metadata did not. This is also the point where I realize that everything I'm finding tonight is scattered across documentation pages, GitHub repos, forum threads from 2014 and YouTube videos with forty views.
+
+The information is out there but there's nobody organizing it into something that actually builds on itself and when you hit a wall at two in the morning there's nobody to ask. That's genuinely why Cyberflow Academy exists — forensics, OSINT, web hacking, reverse engineering, all structured in the sequence that actually makes sense with real material to work through. There's a whole community of people actively in it who are finding bugs, landing bounties, going through the exact same walls you're going to hit. I'm in there directly, not behind a ticket system. Link is in the description, code Cyberflow50 for fifty percent off. Now back to it.
+
+The next thing I find is Volatility and this one genuinely surprises me. Volatility does memory forensics — instead of a hard drive you're analyzing a RAM dump, a snapshot of whatever was in a computer's active memory at one specific moment. RAM holds things that never touch the disk at all — running processes, active network connections, encryption keys, and malware that exists entirely in memory and leaves zero files on disk for antivirus to find. You run one command and get every process running at the moment of capture, cross-reference with network connections and you see exactly what was talking to what. The stuff that hides in RAM specifically to avoid disk-based detection is exactly what Volatility surfaces and the fact that it's completely free is something I genuinely didn't expect.
+
+By the time I come up for air it's almost four in the morning and I've gone from knowing basically nothing about forensics to having a real map of how the whole discipline fits together. And the thing that sticks with me most isn't any specific tool — it's the realization that the machine records far more than anyone realizes, in far more places than anyone thinks to check. The evidence is almost never hidden cleverly. It's just sitting in the artifacts waiting for someone who knows where to look. You don't need to be clever to do forensics. You need to be thorough.
+
+Which brings me to this video's challenge. Linked below is an image file and somewhere in that file's metadata is a hidden code. Find it, drop it in the comments, first three people win a free month of Cyberflow's private community. Use ExifTool, use Autopsy, whatever works. The answer is in the data the file isn't showing you on the surface. Good luck.
+
+And go watch Dzuma's video. That's genuinely where this whole thing started.

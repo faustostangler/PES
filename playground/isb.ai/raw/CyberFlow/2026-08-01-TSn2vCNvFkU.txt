@@ -1,0 +1,118 @@
+---
+video_title: "How to Learn Rust (For Hackers)"
+video_id: TSn2vCNvFkU
+channel_name: "CyberFlow"
+channel_id: UCUvkPEm38w6pq8w5QYgtPPw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=TSn2vCNvFkU
+video_date: 2026-08-01T15:00:05+00:00
+video_description: |
+  Join The Family:💻👩🏻‍💻https://cyberflow-academy.framer.website/
+  Check Out The Courses We Offer: https://cyberflow-academy.framer.website/courses
+  
+  Educational Purposes Only.
+  
+  Rust is quickly becoming one of the most important programming languages in cybersecurity. Whether you're interested in ethical hacking, exploit development, malware analysis, reverse engineering, digital forensics, or building high-performance security tools, learning Rust gives you the speed of C while preventing entire classes of memory corruption vulnerabilities.
+  
+  In this video, I'll show you the roadmap I wish I had when learning Rust—from understanding ownership and the borrow checker to building real-world security projects like port scanners, packet analyzers, and binary analysis tools. Instead of wasting months jumping between tutorials, you'll learn exactly what to study, which resources are actually worth your time, and how Rust fits into modern offensive and defensive security.
+  
+  in this video
+  
+  • Why Rust was created
+  • Memory safety explained simply
+  • Ownership, borrowing & lifetimes
+  • Understanding the borrow checker
+  • The best free Rust resources
+  • Rustlings exercises
+  • Building your first cybersecurity projects
+  • Port scanners in Rust
+  • Network packet parsing
+  • Binary analysis with Goblin
+  • Working with raw sockets using pnet
+  • Rust for reverse engineering
+  • Rust for exploit development
+  • Rust for malware analysis
+  • Rust for security engineering
+  • A realistic learning roadmap and timeline
+  
+  If you're serious about becoming a penetration tester, reverse engineer, security researcher, malware analyst, or software engineer, Rust is one of the best investments you can make today.
+  
+  Ressources: 
+  
+  The Rust Programming Language (The Rust Book)
+  https://doc.rust-lang.org/book/
+  
+  Rustlings
+  https://github.com/rust-lang/rustlings
+  
+  Rust by Example
+  https://doc.rust-lang.org/rust-by-example/
+  
+  The Rust Standard Library
+  https://doc.rust-lang.org/std/
+  
+  The Rust Playground
+  https://play.rust-lang.org/
+  
+  Cargo Book
+  https://doc.rust-lang.org/cargo/
+  
+  No Boilerplate (YouTube)
+  https://www.youtube.com/@NoBoilerplate
+  
+  Jon Gjengset (YouTube)
+  https://www.youtube.com/@jonhoo
+  
+  pnet
+  https://github.com/libpnet/libpnet
+  
+  Goblin
+  https://github.com/m4b/goblin
+  
+  ripgrep
+  https://github.com/BurntSushi/ripgrep
+  
+  fd
+  https://github.com/sharkdp/fd
+  
+  #rust  #cybersecurity  #ethicalhacking  #programming  #hacker  #reverseengineering  #malwareanalysis  #systemsprogramming  #linux  #exploitdevelopment  #coding  #softwareengineering  #infosec  #rustlang  
+  
+  Timestamps:
+  
+  0:00 Why Every Hacker Should Learn Rust
+  0:21 Why Rust Exists
+  1:11 Why Rust Matters for Cybersecurity
+  1:36 Understanding the Borrow Checker
+  2:06 The Best Way to Learn Rust
+  2:50 Build Real Security Tools
+  3:55 The Best Rust Resources
+  4:28 When Rust Finally Clicks
+  4:53 Avoiding the Biggest Learning Mistake
+  
+  → Email: cyberflow10@gmail.com  
+  
+  
+  I believe in you. You can do it. 🖤
+  ======================
+  .▀█▀.█▄█.█▀█.█▄.█.█▄▀　█▄█.█▀█.█─█
+  ─.█.─█▀█.█▀█.█.▀█.█▀▄　─█.─█▄█.█▄█
+---
+So I've been putting off learning Rust for an embarrassingly long time. Every time someone brought it up I'd nod and say yeah I'll get to it and then go back to writing C like a normal person with no regard for my own wellbeing. Then I actually sat down with it for a week and I genuinely don't know why I waited this long because for security work specifically this language is something else entirely. Let me explain why Rust exists before we talk about how to learn it because the why is what makes it interesting. C and C++ are fast and powerful and also responsible for an enormous percentage of every serious vulnerability that's ever been discovered. Buffer overflows,
+
+use-after-free bugs, null pointer dereferences the entire memory corruption vulnerability class that malware analysts and exploit developers spend their careers studying exists almost entirely because C trusts you completely and you are not trustworthy. Nobody is. Rust was built around one core idea what if we could have the same raw performance and low level control as C but make the entire category of memory corruption bugs literally impossible to compile. Not harder to write. Impossible. The compiler just refuses. And somehow they actually pulled it off.
+
+For security work that matters in two directions simultaneously. If you're doing offensive work and exploit development, understanding Rust makes you better at finding the memory bugs that Rust prevents, because you understand exactly what C is doing wrong. If you're doing defensive work or building security tools, Rust gives you the performance of C without handing every future code reviewer a list of potential vulnerabilities. Either way you win. The way most people try to learn Rust is by fighting it immediately. They write C style
+
+code in Rust, the borrow checker rejects everything, they spend a week confused and angry and give up. The borrow checker is Rust's mechanism for enforcing memory safety at compile time and it will humble you in ways you did not expect. The trick is to stop fighting it and start listening to it because every time the borrow checker rejects your code it's telling you something real about memory that C would have just let you do wrong silently. For actually starting, The Rust Book at doc.rust-lang.org is free,
+
+comprehensive, and genuinely well written in a way that official language documentation almost never is. Read it. Actually read it, don't skim it. The chapters on ownership, borrowing, and lifetimes are the ones that feel confusing at first and are also the entire foundation of everything that makes the language interesting. Get through those and everything after clicks much faster.
+
+Alongside the book, do Rustlings. It's a collection of small exercises that run in your terminal, each one teaching a specific concept, and the feedback loop is fast enough that you're actually learning instead of just reading. Think of it like a less terrifying version of Bandit but for Rust concepts instead of Linux commands. Once you have the fundamentals, the projects are where Rust gets genuinely exciting for this field. Build a port scanner first. Rust's concurrency model means you can scan thousands
+
+of ports simultaneously with zero data races and the compiler guarantees that, not you. The performance difference between a naive Python port scanner and a properly written Rust one is genuinely shocking the first time you see it and understanding why requires understanding what Rust is doing with threads under the hood. After that build a basic network packet parser. Rust has a library called pnet that gives you raw socket access and the ability to craft and parse packets at a byte level. Building even a simple packet inspector teaches you more about protocol structure than reading documentation ever will because you're manually pulling fields out of raw bytes and figuring out what each one means. The same mental model that makes this project click is the same one that
+
+makes reading network forensics evidence in Wireshark feel obvious instead of mysterious. Then look into writing a basic binary analysis tool something that opens an executable, reads the ELF or PE headers, and extracts information about sections, symbols, and imports. There's a Rust library called goblin specifically for parsing binary formats and working through this project gives you an understanding of executable structure that transfers directly into reverse engineering work. When you've manually parsed an ELF header in code you stop treating binaries as black boxes. For resources beyond the official book No Boilerplate on YouTube is the channel I wish existed when I started. Fast, dense, genuinely exciting videos about Rust that somehow make
+
+the borrow checker feel like a feature you actually want instead of a punishment. Jon Gjengset's streams and videos are for when you want to go genuinely deep he builds real things in Rust on camera and the thinking out loud is worth as much as the actual code. And for the security specific side, read through the source code of tools written in Rust like ripgrep or fd and just study how experienced Rust developers structure real programs. The honest timeline the first two weeks with Rust will be slower than any language you've learned before because the borrow checker is a genuinely new concept that doesn't exist anywhere else. Push through that period without giving up because week three is where it clicks and the code you write after that point has a quality to it that C code almost never achieves, not because you're smarter but because the compiler is forcing you to be precise in ways that make bugs structurally difficult.
+
+Everything I just described is free and genuinely good. The Rust Book, Rustlings, No Boilerplate, the projects you can go very far with just those. The thing that tends to slow people down isn't lack of resources, it's losing direction when the borrow checker is rejecting everything and you can't figure out why, with nobody to ask who's been through the same thing. That's what Cyberflow Academy is for a community of people actively working through these exact topics, structured material that connects the language to the security work it actually enables, and direct access to me when things get stuck. Link is in the description. Now go install Rust.
