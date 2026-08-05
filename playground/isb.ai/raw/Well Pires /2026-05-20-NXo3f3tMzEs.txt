@@ -1,0 +1,207 @@
+---
+video_title: "Criando um sistema de R$8000 com Claude Code do zero!"
+video_id: NXo3f3tMzEs
+channel_name: "Well Pires "
+channel_id: UCOu9pKHv94bFeRy5vzB-b1Q
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=NXo3f3tMzEs
+video_date: 2026-05-20T21:27:44+00:00
+video_description: |
+  🔥 Minha Comunidade de IA: https://www.aimakersclub.com.br/
+  📚 Meu Curso Gratuito de Claude Code: https://youtu.be/RL5hlnHSmPE?si=Hloo9gQiQ4G5wnF7
+  💼 Me Contrate para Automatizar sua Empresa: https://calendly.com/wellpires/discovery-call
+  
+  Resumo do vídeo:
+  
+  Nesse vídeo, eu realizo uma construção do zero, de um portal de notícias que faz o scraping de postagens no twitter e transforma em artigos publicados no website, usando Claude Sonnet, Supabase, Nanobanana para gerar as imagens e modal para hospedar todas as automações construídas pelo claude code! Espero que curtam!
+  
+  VPS Hostinger com desconto: https://www.hostg.xyz/SHJKS + cupom WELLPIRES
+  
+  Agents.md: https://docs.google.com/document/d/1MQHF01jroAWSF5dIsI55eu3sJPUh6UwxSL8yAocmkjc/edit?tab=t.0
+  
+  
+  ⌛ CAPÍTULOS:
+  00:00:00 - Introdução 
+  00:00:57 - Demo
+  00:02:57 - Escopo do projeto
+  00:06:30 - Live Building
+---
+E aí, pessoal? É o Pires aqui. Sejam bem-vindos a mais um vídeo do meu canal. E no vídeo de hoje eu vou construir com vocês completamente do zero um portal de notícias 100% automatizado com IA. O propósito desse projeto aqui é pegar notícias que estão sendo publicadas por outros perfis no Twitter e conseguir transformar essas notícias do Twitter em um artigo publicado para um portal que eu vou publicar na internet feito completamente com o cloud Code. Então,
+
+nesse vídeo, você vai ver todo o meu processo de mapear o projeto, montar o escopo do projeto, pegar as referências do projeto, integrar as APIs do projeto, testá-lo e construir todas as ferramentas juntas em uma infraestrutura só. Eu tô bem animado para trazer esse tipo de conteúdo para vocês aqui no meu canal. É o tipo de masterclass gratuito que eu costumo postar por aqui. Então, já deixa o like, se inscreve nesse canal, só pelo esforço que eu tive para gravar isso daqui para vocês, beleza? Então, passando à frente, pessoal, vamos aqui com a demonstração do projeto. Esse
+
+daqui é o típico portal de notícias que a gente vai montar ao final do vídeo aqui junto com vocês. É um portal de notícias onde, como eu falei para vocês, a gente vai transformar essas notícias em artigos. Essas imagens aqui são geradas com o nano banana. Apesar de serem imagens muito genéricas, é porque o prompt foi genérico. No propósito demonstracional desse vídeo, eu só queria mostrar para vocês como integrar as ferramentas, como fazer um agente de IA geral prompt, pro nanobanana gerar essa imagem e publicar no seu banco de dados, pro seu banco de dados passar isso pra sua página na internet e no final das contas publicar essa notícia.
+
+Eu peguei o perfil de referência do Marion Fall. é um perfil de notícia de IA que publica com muita frequência e eu gosto da notícia dele. Então fica a dica se você tá buscando por um perfil de notícias de IA. E como eu falei, é um scraping automatizado. A gente vai pegar de maneira automática a cada 15 minutos ah todos os posts, todos os últimos cinco posts do Mario Nfall. E como esse
+
+daqui é um perfil não só de IA, mas também de crirypto, eu criei uma automação de filtragem. Ou seja, a gente vai primeiro puxar as cinco últimas notícias. que o perfil do Mar publicou no Twitter e a gente vai ver quais são de IA e quais não são de IA. As que são de IA, a gente vai passar paraa frente e vai passar para um agente de IA, que é o construtor dos dos artigos. é um agente de IA que eu mesmo treinei na construção desse vídeo para transformar uma notícia de 120 caracteres em um artigo completo.
+
+Aqui no portal de notícias você pode ver que o artigo ele tá muito bem montado com todas as headlines aqui. Essas coisas que são importantes para melhorar a o escaneamento da leitura e os portais de notícias usam isso daqui a centenas de anos já. Então todo esse processo eu vou mostrar para vocês do zero aqui no meu canal. Então, mais uma vez, eu tô bem ansioso. Fica até o final do vídeo.
+
+Beleza, pessoal? Então, antes de cair pra diversão, fazendo esse projeto aqui com vocês, eu vou primeiro passar brevemente pelo escopo do projeto. É basicamente a minha checklist de cada etapa que eu vou construir aqui nesse vídeo com vocês. Como a gente tá fazendo um aplicativo à base de raspar notícias de outras fontes, a gente vai criar uma automação de scraping de notícias. Eu vou querer pagar as notícias do Twitter porque é a maior fonte de notícias que a gente tem, pelo menos na internet. Ah,
+
+tem outras redes sociais que costumam ter um volume de postagem igual do Twitter, mas não com um cunho reportivo que ou de reportagem que o Twitter tem. Eu gosto bastante da ferramenta para isso e só para isso. Tem outras pessoas que acabam atirando muito ódio no Twitter, mas eu gosto para esse propósito. Ah, e depois disso eu vou querer criar um cronômetro de scraper aqui utilizando a ferramenta do modal.com. Por que que eu vou utilizar o
+
+modal.com? Bem, eu poderia utilizar o N8N para fazer essa mesma automação. Seria basicamente um relógio, um cronômetro mesmo, onde a cada horário determinado do dia ou a cada janela determinada de tempo, eu vou dar aqui, como por exemplo, a cada 15 minutos a gente filtrar todas as postagens no perfil do Twitter da CNN para ver quais notícias eles postaram. Esse tipo de automação, eu poderia sim fazer com o N8N, mas eu vejo que o N8N ele acaba, não é uma ferramenta feita para você acumular um volume de execuções, entende? Ah, você consegue lidar com
+
+isso criando os agentes de IA de atendimento. Se você faz IA de atendimento que vai acumulando execução, a cada mensagem que a sua IA recebe, até funciona bem, mas você colocar várias execuções a cada 15 minutos não vai funcionar bem na sua estrutura do N8N. Então eu prefiro o modal.com que vai ter o mesmo propósito do N8N, mas é uma ferramenta cloud, então toda a infraestrutura tá por conta do modal. Eu fico muito seguro para fazer esse tipo de projeto. E eles têm um plano de
+
+gratuidade muito abrangente, então eu não vou ter que me preocupar com os custos para rodar uma automação dessa daqui com modal.com. E eu vou construir a automação utilizando código em Python, que vai ser desenvolvido com o cloud Code. Não é uma novidade, porque esse projeto aqui vai ser completamente construído com Cloud Code. Então a gente vai fazer o banco de dados Supase. É uma
+
+outra ferramenta com plano de gratuidade muito abrangente, assinatura em plano cloud, fico muito satisfeito de trabalhar com isso. E o Suabase vai servir pra gente ver quais notícias já foram postadas no nosso portal ou não, porque às vezes tem duplicação de notícia e isso é algo que a gente não vai querer no nosso projeto. A gente vai ter também um AIA, que é o system prompt, ah, que a gente vai entregar pra nossa LLM para gerar os artigos. Honestamente, você vai querer que os artigos eles estejam todos em comunhão, com o mesmo estilo de comunicação entre eles. Você não vai querer um artigo falando de uma maneira totalmente rebelde e outro artigo falando de maneira totalmente polida. Você vai
+
+querer ter algo ali unitário. Então eu vou criar um system prompt para isso, ah, para rodar lá no modal.com. A gente vai também vai rodar isso no modal.com.
+
+e o nano banana para gerar as imagens que ficam nas manchetes, né? Uma parte muito significativa de qualquer portal de notícias. Você tem uma imagem que chama bastante atenção. Obviamente que imagens reais de uma notícia convertem muito mais, mas pro propósito demonstracional desse vídeo aqui, eu vou deixar as imagens com nano banana pra gente não ter as manchetes vazias, senão não é um portal de notícias. Beleza? Então, a primeira coisa que eu
+
+vou fazer é navegar aqui no RAP JJ API. O rap de API para dar um contexto para vocês, é um marketplace de APIs, exatamente essas APIs que a gente utiliza para fazer scrape, para raspar informações da internet. Então você pode utilizar o RaptI para criar o mesmo tipo de projeto que eu tô fazendo aqui, mas ao invés de raspar notícias no Twitter, você vai raspar notícias no Instagram, raspar no caso postagens no Instagram e por aí vai. Tem muita, muita, muita coisa mesmo que você pode raspar aqui com as APIs do Rapi. A gente vai utilizar essa daqui, Twitter API. Você
+
+só precisa clicar nela e se inscrever. Ela é gratuito também. Você tem um plano muito abrangente, gratuito aqui no Rapi. Enquanto eu ainda não fiz o setup dessa AP aí aqui no Cloud Code, o que eu vou fazer é o setup do Supase. Eu vou começar pelo menos com o Supase. É a
+
+melhor maneira de dar o start aqui no projeto para começar ele pelo piso e não pelo teto. Então deixa eu abrir aqui a minha IDE. Hoje eu vou utilizar o VS Code para fazer esse projeto com vocês. Vou escolher uma pasta. Deixa eu criar uma nova pasta. Vou colocar
+
+Maven News Demo YouTube. Esse daqui vai ser o nome do projeto. Uma vez que eu tô dentro da pasta, eu clico em abrir a pasta e pronto. É aqui nesse ambiente, nessa pasta que a gente vai começar a criar as nossas automações, as nossas conexões com superbase. A primeira coisa que eu vou fazer é já abrir o terminal. Eu gosto de
+
+utilizar o Cloud Code no terminal. Fica à vontade para utilizar como você quiser. É uma extensão do cloud code que você pode utilizar aqui no VS Code se você preferir. Eu prefiro utilizar no terminal. Eu sinto que eu tenho um ganho de performance. Pelo menos pode ser um
+
+alguma coisa da minha cabeça, algum efeito placebo, mas pelo menos eu já vi que já foi reportado alguns bugs onde a IA fica dando looping quando utiliza a extensão. Eu nunca tive esse looping, mas depois que eu fiquei sabendo disso, eu sempre fico com isso no meu inconsciente. Então eu gosto de utilizar aqui no terminal, que é a maneira mais garantida para mim desenvolver os projetos. E uma vez que eu já tenho o Cloud Code aqui no terminal do meu projeto, eu vou fazer a conexão agora com Supase. Eu vou copiar esse código aqui.
+
+Vem copiar e eu crio um novo arquivo. Vou dar o nome desse arquivo de pcp.jon. E dentro desse arquivo eu salvo o código. Uma vez que eu coloco o código mcpon, eu saio, eu finalizo essa sessão aqui no cloud code. Você pode finalizar
+
+dando barra exit. Eh, e eu abro de novo a sessão aqui no Cloud Code, só para ele ter um novo acesso. E agora ele vai ter o acesso à pasta do MCP. Então, sim, eu vou dar acesso agora ali à pasta do MCP e eu vou conferir aqui colocando/mcp/MCP, no caso. E ele já vê aqui o MCP do Supas precisa de autenticação. Então, vou
+
+clicar aqui e autenticar o meu Supase junto com o cloud code agora. Beleza, dei todas as permissões aqui pro Supase. A autenticação deu sucesso. Eu posso fechar essa janela e voltar pro cloud code. Maravilha. Já demos o primeiro
+
+passo aqui no projeto. Meu próximo passo é utilizar o Framework doy. Eu vou pegar aqui direto da comunidade, vou copiar todo esse texto e vou criar um novo diretório aqui chamado agentsmd. Um novo arquivo, perdão. Uma vez que eu coloco aqui agents.m. Isso porque é um
+
+arquivo Markdown e não se preocupem, eu vou deixar esse arquivo markdown aqui na descrição do vídeo de maneira gratuita para vocês. Mas voltando aqui pra IDE, eu vou colar, vou dar command s para salvar o texto. E essa parte aqui é uma maneira que é a maneira que eu construo os meus projetos de IA. Todos eles são construídos a partir de uma perspectiva corporativa das coisas. Então eu sempre divido o meu processo de construção entre um time operacional, um time tático e um time estratégico. Pelo menos
+
+todas as empresas que eu dei consultoria, elas se organizavam dessa maneira e a maneira natural que os negócios amadurecem. Você tem que ter essa divisão de times, porque se o dono ele tá sempre no operacional, ele não tem visão para tocar aquela empresa. E eu não tô falando aqui na parte de dono. O orquestrador nesse caso aqui é o Cloud Code. Mas assim eu consigo dividir o que o Cloud Code tá construindo. Se ele tá
+
+construindo uma automação, é uma parte operacional, é um trabalho que eu iria delegar para um mano, um trabalhador manual. Se é um system prompt, é uma parte estratégica, é algo que precisa de visão, leitura, é muito mais contextual do que determinístico. Então eu preciso que o meu orquestrador aqui, o Cloud Code, ele tenha noção dessas coisas na hora de construir o projeto, porque é a maneira que eu gosto de ter leitura quando eu faço qualquer setor aqui na minha empresa Maven i Solutions e nas empresas que eu presto consultoria através da Maven i Solutions. Então o que eu vou fazer agora é ambientalize o meu projeto de acordo com as instruções dadas em agents.m.
+
+Eu vou ativar o modo plano aqui e uma vez que ele tiver ambientalizado tudo isso, eu volto para vocês. Beleza? Gente, pessoal, tô aqui de volta para vocês. O ambiente já tá pronto pra gente iniciar o projeto. E o que eu quero dizer para vocês aqui, a gente tem essa pasta aqui de directives e essa pasta de execution. É assim que a gente divide os
+
+a hierarquia do projeto, né? A parte estratégica da parte operacional. A parte operacional vai ter em executions, ou seja, as automações em Python. E os scripts de LLM, os system promptes, vão estar aqui em directives. E o orquestrador é o próprio agente de cloud code. [roncando] Se você quiser prestar
+
+um pouco mais de atenção em como eu arquitetei isso, dá uma olhada no documento. Agora a minha próxima etapa naturalmente vai fazer o scraping funcional, ou seja, uma automação de scraping do Twitter. Essa automação, como eu falei para vocês, vai ficar na pasta de execution, sendo que, honestamente, eu acho que antes da gente começar a construir essa automação, acho melhor a gente pegar uma inspiração de design. Eu peguei aqui a inspiração da revista Oeste. Pelo menos é um projeto que eu tô familiarizado para fazer. Não
+
+é a primeira vez que eu faço um portal de notícias 100% automatizado com IA. Ah, e eu gosto de utilizar sempre como referência o portal de notícia West. Então eu vou mais uma vez pegar aqui a maneira deles usarem o system design e eu vou fazer o PRD do design system com o manusi. Eu gosto bastante do manus para fazer o PRD de projetos, concepção de projetos e descoberta de projetos, porque quase todo projeto que eu entro é um projeto diferente. Eu tenho que prestar basicamente uma consultoria extremamente personalizada pro meu cliente, identificar pontos de trava deles e às vezes fica realmente muito difícil de encontrar só através de uma reunião. Então, sempre manda reunião
+
+aqui pro manusi. O cara faz um bom trabalho, é um bom compiloto. Eu vou mandar aqui o Revista Oeste, vou falar: "Estou criando um portal de notícias chamado Maven News. Eu quero manter, eu quero me inspirar no system design do revista Oeste, mas deixando mais sofisticado e utilizando a paleta de cores azul e branco com detalhes em fade para o meu portal Maven News. traga um PRD detalhado de como o cloud Code deve interpretar o design para gerar esse portal de notícia comigo. [roncando] Vou colocar aqui 2000
+
+palavras no mínimo, nada menos que isso. Só faltou eu colocar sem erros, né? o clássico. Bem, eu vou colocar aqui para enviar. Enquanto envia, aí sim eu vou começar a fazer a estrutura aqui da nossa engenharia de API. Não engenharia
+
+muito robusta. Hoje esses modelos de LLM como Cloud Opus 4.7 eles fazem essa parte da engenharia. Então, basicamente quem vivia numa economia, preenchia uma lacuna na economia de ser um integrador de APIs, esse cara tá um pouco frito. Ah, mas vindo aqui a parte do Rapi, eu vou copiar.
+
+Aqui esse end point eu vou fazer o seguinte, venho aqui pro cloud code, eu falo vou criar o scraper de notícias utilizando wrap API. Minha intenção é que a cada 15 minutos rodeal.com. Eu vou abrir aqui o modal.com.
+
+Só para ver como que tá o status dos meus projetos no modal.com. Ah, eu vou utilizar esse projeto aqui só porque eu tenho um limite de projetos no modal.com e eu tô chegando bem perto desse limite. Eu vou utilizar esse projeto aqui, Proxy Marcela AI. Eu vou
+
+pedir para ele criar um novo projeto aqui, aqui dentro comom na minha conta dentro do aplicativo Proxy Marcela Ai, que eu tenho criado no modal.com. Ah, e só por via das dúvidas, para você integrar o modal.com junto com CloudCode é ultra ultra ultra fácil. Normalmente que você pede pro Cloud Code integrar um modal.com com a sua conta, ele já começa
+
+a fazer uma descoberta de como integrar com o modal.com CLI. E através do CLI você já consegue, ele vai pedir um monte de autorização para você no seu computador, ele vai abrir algumas abas. É importante que você não fique assustado, mas que você já tenha criado uma conta do modal.com. Eu sugiro que
+
+através do GitHub também e uma vez que você tem a conta criada e você pede pro cloud fazer a integração, ele vai pedir as autenticações, vai abrir as janelas no seu computador e você só precisa apertar botão e autorizar. Mas essa parte aqui de arquitetura também é bem mínima. Você vai pedir para ele criar um aplicativo. No meu caso, já tenho um aplicativo criado aqui dentro do modal.com, que é esse proxymarcela AI.
+
+Eu só vou pedir para ele criar novos web end points, novos web. end points.
+
+Quando a ativar o cronômetro, quero que faça um scraping das notícias de IA desse perfil. Eu vou pegar agora um perfil do Twitter que eu me inspire. Perfil escolhido foi esse daqui, pessoal. Qual é o perfil do Marino Fall? Mais voltado para IA e Crypto. Então,
+
+basicamente a gente vai fazer uma filtragem das notícias que são só de IA. E uma vez que a gente tem a notícia de IA, a gente vai passar pro nosso banco de dados para ver se essa notícia já tá no nosso portal de notícias ou não, porque no futuro eu posso querer colocar mais fontes. E se é uma outra fonte que pegou a mesma notícia do Mário, algo que acontece bastante no Twitter, ah, eu não vou duplicar essa notícia no meu portal. Então, basicamente, agora eu vou passar esse esse perfil aqui como referência,
+
+utilizando a API.
+
+E agora eu vou copiar aqui a API do RAP de API, mandar aqui e eu vou reler o meu prompt. Vou criar um script de notícias utilizando WP de API. Minha intenção é que a cada 15 minutos rode um cronômetro no modal.com na minha conta dentro do aplicativo Proxy Marcela AI que eu tenho criado no modal.com criando novos web end points.
+
+Quando tiver o cronômetro quero que faça um script das notícias de A desse perfil utilizando a API. E agora vou dar o direcionamento para ele subir essa notícia lá no meu superabase e sobe essa notícia no Supas, que será o banco de dados oficial do portal de notícias que estamos criando, o Maven News. Logo logo te darei as diretivas para gerarmos o design desse portal. Por agora, foque somente na automação de scraping e na montagem do banco de dados. Todas as tabelas criadas, todas as tabelas criadas no superabase terão underline maven news no final do seu nome.
+
+OK? Eu vou dar um ultra think aqui porque eu tô tirando essa parte aqui do zero. Vai também levar um pouco de entendimento e construção aqui pro cloud code. Então eu vou dar um ultra think ultra think this e utilizar o plan mode. E agora ele vai fazer um basicamente uma entrevista comigo todas as vezes que ele tem que tirar algo do zero com o plan mode. Ele faz uma série de um tipo de
+
+entrevista, né, com uma série de perguntas. Então, vou responder essas perguntas aqui. Vou ter a primeira versão das automações criadas já na pasta de execution. E uma vez que eu tiver finalizado aqui de ler o meu PRD do System Design do Maven News, eu trago para vocês os próximos passos da criação do aplicativo, beleza? Fala aí, pessoal.
+
+Tô aqui de volta com vocês. O cloud ele acabou de gerar o aplicativo dentro do modal.com e recapitulando com vocês, o modal.com é onde a gente vai rodar as automações. Eu tenho script de todas as automações aqui em Python já gerado.
+
+Isso daqui foi o resultado que eu tive, colocando automação para testar de ponta a ponta, utilizando o scraper que a gente tava utilizando aqui no RAP API, é o scraper do Twitter. Então ele testou o scraper, testou a API, se tá tudo gerando bem e ele testou através do modal. Eu tenho aqui os logs de tudo e ele refletiu os logs aqui para mim. E mais uma vez aqui tá o script Python da automação. Essa daqui foi a única parte que eu não fiz revisão porque eu não sou revisador de código. Ah, mas passando
+
+aqui para vocês também, ele construiu a arquitetura das tabelas no base. Isso daqui eu revisei, eu acho que é o 8020 do projeto. Você ter um gosto e você ter uma noção de como as coisas vão se conectar uma com as outras. Você não precisa ser um arquiteto de software, mas você pelo menos ter noção do que a IA criou. Então eu sei que aqui tem uma tabela de arquivos. Aqui eu sei que tem
+
+uma tabela dos tweets que foram raspados pela API. Então eu vou saber quais passaram, quais não passaram, quais usuários que eu quero fazer scraping naquele dia e etc. E o escopo do projeto, ele tá limitado para isso agora. Então aqui eu tenho o resultado do scraping que ela fez e a gente vai partir pra construção agora do design system desse projeto. Eu tenho o PRD do projeto já detalhado aqui. O manus fez
+
+esse trabalho para mim. Eu fiz a revisão, tá bem boa. Eu acho que vai ficar do jeito que eu quero. O Cloud Code, ele tem me surpreendido ultimamente. Eu tô fazendo muitos designs pelo Cloud Code. Às vezes quando
+
+eu tenho um pouco mais de tempo para fazer, eu gosto de fazer pelo Google Stitch, mas eu acho que o Cloud Code ele vai conseguir resolver para mim em one shot o que eu quero aqui para esse projeto. Então o que eu vou fazer é, eu vou baixar em Markdow, isso daqui, e eu vou colocar na pasta do projeto do VS Code. Para fazer isso, eu vou abrir uma nova instância do Cloud Code. Então vou dividir aqui o terminal. Isso porque o terminal da esquerda eu tô utilizando para construir as automações back end.
+
+Então o que eu vou fazer uma divisão entre back end e front end. É uma maneira bem dualística de você dividir as coisas, né? O ser humano ele sempre divide duas coisas. é sempre céu, inferno, bom e ma. Mas eu acho que nesse caso aqui é exatamente o que eu tô precisando. Ã, aqui na conversa que eu
+
+tava tendo sobre o back endo, eu tava na parte do da geração do artigo com IA. Os artigos eles vão ficar salvos no Supase. E o Supase vai ser o espelho do front endite. Então tudo que vai aparecer no design do website é tudo que tá escrito no Superabase e vice-versa. Então, bem, aqui eu já tenho um artigo publicado, sendo que eu vou querer que uma IA escreva esses artigos, ã, e que seja em comunhão, seja um uma linguagem unitária. E eu não tenho esse system
+
+prompt. Então, o que eu vou fazer é mais uma vez utilizar a boa vontade do nosso amigo Manus AI para criar [risadas] o system prompt da SAA. Eu vou fazer o seguinte, crie agora para mim um system prompt. com a mesma linguagem e divisão de espaço em Markings, que o portal revista Oeste também usa e me traga esse documento detalhado. OK? Enquanto
+
+ele começa a construir aqui pra gente, ah, eu vou tocar a parte do do design. Vou pegar aqui o download que eu fiz do design, esse PRD, eu vou trazer ele para cá, pra pasta do projeto. Dei contrtrl C, conttrl V e eu vou dar as instruções aqui pro cloud. Deixa eu fechar agora essa essa parte, essa pasta aqui de arquivos para não ficar muito bagunçado e não ativar o meu TDAH que eu não tenho. [risadas] Mas vamos lá. Eu quero criar o design
+
+desse portal de notícias chamado Maven News, que estamos criando. Todas as instruções do design estão no documento PRD que eu deixei aqui na pasta do projeto. Eu só não quero dividir as notícias. em sessões, tudo será a mesma categoria. Estamos criando um portal de notícias de IA com design sofisticado azul e branco com detalhes em degradê.
+
+Ah, crie essa versão inicial de design e me apresente em local host usando front end. Eu tô utilizando um plugin aqui de design, o front end design. Você pode instalar ele dentro do seu próprio cloud code. Eu não tive que fazer nenhuma bugiganga para isso daqui acontecer. É o próprio plugin do cloud.
+
+E vou dar um ultra think. aqui também e o play mode para tirar isso daqui do zero. Então bem, enquanto ele tá fazendo aqui essa primeira versão design, ele apresenta pra gente em local host, o que eu vou fazer é voltar aqui aos detalhes da automação, né? Falta a gente criar o system prompt da IA que vai gerar os artigos pra gente. Beleza, meus irmãos e irmãs? Tenho aqui de volta
+
+a documentação do system prompt. levou um tempo para fazer isso. Ã, a outra instância do cloud já tá gerando aqui o system design faz um tempo, tá? 4 minutos 20 gerando system design. O que eu vou fazer é, uma vez que eu já baixei o documento de system prompt, eu vou dar um conttrl C e contrtrl V aqui no no projeto e vou dar agora as referências pro cloud code para ele gerar os artigos. O system prompt vamos reler
+
+aqui o prompt, né? Mais um ajuste na automação. Eu quero que esse cronômetro a cada 15 minutos pegue somente as últimas cinco notícias do perfil do Twitter. Filtre as que falam notícia de IA e gerem um artigo usando o system prompt que eu colei no arquivo documento de system prompt MD. aqui na pasta do projeto. Vou deixar só
+
+um plan mode e OK. Eu vou trazer esperar um pouco de tempo para ver se sai o system design e eu trago o system design de volta aqui com vocês enquanto eu toco agora a segunda instância do back end. Eu acho que isso daí já vai ser os passos finais do projeto, porque a integração com a API eu já consegui fazer com sucesso aqui no modal. Ela tá funcionando, ela já publicou o artigo aqui no Supas, mas eu preciso do design para isso daí se espelhar, né? A instância aqui do Cloud Code já entendeu que vai ser espelhado as coisas, inclusive ele entendeu isso no processo de entrevista que ele fez comigo no Play Mode. Mas uma vez que eu tiver o design
+
+pronto, eu vou conseguir fazer os ajustes do jeito que eu quero. E uma vez que eu tiver a automação pronta, essa máquina, ela já vai estar girando 100% automática a cada 15 minutos. E aí, pessoal? Tô aqui de volta com vocês. Se passaram 25 anos, eu sou o filho do Elpiris Ai e as luzes não existem mais.
+
+A gente se comunica por outro maneiro, outra maneira fotossintética. Mas brincadeira, pessoal, me levaram alguns minutinhos aqui, aproximadamente 14 minutos pra gente conseguir ajustar toda essa automação. Ela ainda não tá pronta porque se vocês virem aqui os artigos eles ainda não estão com as imagens geradas pelo Nano Banana. Então esse é o próximo passo que a gente vai desenvolver. Eu vou utilizar a API do Nano Banana através do Faii. O FII ele
+
+funciona como o Open Router. O open router é esse marketplace de lls, onde você vai criar a sua chave API, você vai adicionar os créditos e você vai ter o token, né, da sua chave API. Você vai entregar pro cloud Code e você vai conseguir escolher o modelo de escrita que você vai utilizar para gerar os artigos do seu portal de notícias. Então, no meu caso, eu pedi aqui para ele utilizar o cloud Sonet. 4.6 para
+
+gerar os artigos das notícias. E eu vou utilizar o nano banana para gerar a imagem das notícias. Sobre o design do portal de notícias, eu vou ser 100% transparente com vocês. Eu não achei que tá 100% da maneira que eu gosto, mas para One Shot Prompt não tá tão mal assim, até porque eu não dei muita diretiva de quais são as tipografias que eu quero, etc e tal. Então, bem, eu poderia ter feito bem melhor, mas eu tô satisfeito aqui porque eu tô conseguindo demonstrar tudo para vocês, todo o meu processo de criação. A
+
+única diferença que eu tenho no meu processo de criação é que eu tenho mais tempo, eu investigo mais do meu cliente, eu investigo mais sobre a marca do meu cliente e por aí vai. Eu faço tudo que eu faço aqui, só que de uma maneira bem mais aprofundada, entende? Então agora vamos pro pro passo de integrar aqui a geração de imagens. Eu vou voltar pro F AI e eu vou utilizar o modelo do Nano Banana 2. Eu poderia de utilizar o Nano Banana Pro, mas o Nano Banana 2 ele tem esse equilíbrio entre ser rápido e ser bom. Cara, que belo cachorro, de
+
+verdade. Eu tenho, eu tenho quatro gatos, mas se a minha esposa ela liberar, eu tenho um Golden Retriever, eu ficaria bem feliz. ou então Husk siberiano. Aqui eu vou pegar a API, submit request e eu vou dar as instruções pro cloud code. Então vamos lá, colocar aqui a mão na massa. Ah, próxima etapa da nossa
+
+automação de geração de artigos. os artigos. Hã, precisamos gerar imagens para a manchete do artigo assim que gerarmos o texto com o cloud. Para gerarmos as imagens, vamos usar o nano banana 2 através do F AI. Aqui está o modelo de requisição via CURL.
+
+Esse é um modelo de requisição para gerar a imagem, só que além de gerar a imagem, a gente tem que pegar o resultado da imagem. Então a gente pede pro Fi gerar uma imagem com prompt. A gente fala: "Ó, cria a imagem de um husk siberiano". E daí ele vai criar, ele leva um tempo, geralmente leva de 30 a 35 segundos. Acho que no lodana dois talvez seja até um pouco mais rápido, mas ele vai gerar essa imagem e depois de 35 segundos, 40 segundos, você tem que pegar de volta essa imagem. Então
+
+você fala: "Olha só, aqui tá a chave da imagem de Husk siberiano que eu pedi para você gerar. Agora me traz o link dessa imagem". Então é assim que funciona a requisição aqui do F AI. É o response. Deixa eu ver se eu encontro aqui o response. Hum.
+
+Get the result. Tá aqui. Deixa só confirmar se eu mandei [risadas] a instrução correta. Eu mandei o subm submit request. Sim, eu mandei correto. E esse daqui é o
+
+get the result. E essa daqui é a requisição para pegar o resultado da imagem que será retornado via URL. A URL, você deve subir no supase como ah o URL da imagem da manchete. Eu tô sendo bem prolixo aqui, mas você pode deixar de ser um cara polido. Você não precisa ser extremamente conciso e objetivo para esses modelos de LLMs.
+
+Eles foram feitos para entender de pessoas burras mesmo. O que você precisa é não deixar nenhum passo faltando ou ser extremamente ambíguo. Tô aqui não sendo ambígo. Ah, ou seja, eu não tô pedindo para ele fazer duas coisas diferentes ao mesmo tempo. Mesmo que eu esteja sendo prolixo, eu tô tratando aá como se fosse uma criança de 8 anos, o que é irônico, porque acaba que a criança de 8 anos tô sendo eu. Mas vamos
+
+lá. como URL da imagem da manchete e fazer aparecer somente as as os artigos os artigos publicados no Supase. Aqui está a chave API do F AI. Vamos aqui gerar uma nova API. OK, vou copiar. Eh, eu vou tá excluindo
+
+essa chave API [risadas] aqui bem depois da publicação desse vídeo. Então não tentem usar essa chave API, cria própria de vocês. [roncando] E o próximo comando que eu vou dar é teste com teste agora com os últimos cinco tweets do Mario Nofall AI. Esse é o perfil do Twitter dele. Eu vou dar aqui o o username, na verdade, o código do username do perfil do Twitter que a gente tá utilizando. Lembrando, o
+
+perfil do Twitter que a gente tá utilizando é esse daqui. Eu posso colocar só o usuário, mas não vai funcionar na requisição do do RAPT API que tá que a gente tá utilizando. O que eu preciso, na verdade, é primeiro pegar o código dos do username para depois passar isso pro pro cloud. Deixa eu procurar aqui o código. O ID é exatamente esse daqui que tá do lado do parâmetro ID.
+
+Só para ter certeza, você vai utilizar esse get user tweets para pegar os tweets dele. E você vê aqui que na requisição URL você precisa do user. Então, onde tem user a você vai precisar pegar o usuário dele antes em get user by username. Você vai colocar o username dele para testar. Vem aqui em parâmetros e você vai pegar o ID dele e vai mandar para essa outra requisição chamada get user tweets. Beleza?
+
+Então vamos aqui e eu vou dar um ultraink e eu vou deixar com auto mode on. Não preciso de plan mode para isso daqui, tá? Prontinho, pessoal. Agora as artes do website, eles são as artes que foram geradas no Nano Banana. Esse daqui é um artigo sobre o Cloud Code que a gente pegou diretamente do portal de notícias do Marinal Falli. Cloud Code teria
+
+adotado o Opus 4.7 como padrão do modo fast. Bem, vai ser um pouco difícil de achar. Na verdade não, já tava bem aqui na notícia que a gente puxou. Cloud Code acabou de dar um upgrade no fast mode para o default do Opus 4.7. Exatamente a
+
+notícia que a gente pegou aqui de referência. Você tem até a referência aqui por Ox Marfall a 22 minutos. E você pode ver que um tweet de poucos caracteres, talvez menos de 120 caracteres, a gente conseguiu transformar em um artigo. Bem, eu não vou fazer uma análise aqui sobre a comunicação do artigo, a linguagem que tá sendo usada, mas é a linguagem de um artigo, a maneira que tá sendo dividida também. Eu gosto dessas headings aqui porque a maneira que as matérias jornalísticas elas dividem meio que para você escanear a leitura, para você bater atenção nesse texto aqui e daí você voltar a ler esse texto aqui, o que funciona bastante, né? Já é algo
+
+tradicional aí todo mundo já lê jornal assim há centenas de anos. Mas enfim, eu tava falando sobre a imagem. Essa imagem aqui foi gerada pelo Nanon Banana. É uma imagem bem genérica, porque o prompt foi bem genérico, mas mostrando aqui para vocês, eu vou trazer de volta o banco de dados do SPA Base. Esses daqui foram os artigos que foram publicados. Eles
+
+vieram exatamente da nossa automação aqui do modal.com. Você pode ver aqui que ele tem dado sucesso algumas severas vezes, mas aqui no Supaso diretamente o link da imagem. Então Cloud Code teria adotado 4.7. Essa terceira linha. E para achar a
+
+imagem, eu venho aqui no final, vou copiar ela e vou abrir, porque é um link público da internet e não consigo abrir e voa lá. É a mesma imagem aqui da da manchete, basicamente. Então, a gente tem um sistema de automação funcionando de ponta a ponta. Eu acho que no momento que a gente quiser publicar isso daqui, colocar o portal de notícia para ter um link na internet, o próximo passo, naturalmente que eu não que eu não coloquei no scopo do projeto, mas é você criar uma conta na verscel.com e você conectar, você vê aqui que todos os meus projetos feitos no cloud code eu coloco no vercel.com. É a maneira de eu colocar
+
+um link público, porque esse link aqui, local host, só eu consigo acessar. Esse é um erro de principiantes. Você constrói o seu primeiro projeto, você tá empolgado e você quer mostrar pro seu cliente, você quer mostrar para o seu amigo, você quer mostrar pro seu consegue porque o local host só o seu computador tem acesso. Para você publicar isso, você precisa criar uma conta no Versel, conectar o seu projeto do Cloud Code com a Versel. E mais uma vez, se você tiver a conta criada no Versel, pede pro Cloud Code fazer a integração, porque o Versel tem a CLI também. E como é um projeto muito
+
+conhecido, o Cloud Code vai fazer a descoberta dessa CLI igual é o modal.com e você vai ter sucesso na integração. Então é isso pessoal, esse foi o vídeo. Se você gostou, eu peço que você dê o like, se inscreva no canal e sinta-se convidado para fazer parte da comunidade AI Makers Club. Aqui é a comunidade onde eu encontro os meus amigos gestores e estrategistas de IA, que implementam o IA de maneira estratégica para empresas.
+
+Você vê que aqui o pessoal fecha projetos de A por diferentes valores. Obviamente depende do quesito estratégico que você oferece pra empresa, o tanto de de retorno que você vai oferecer pra empresa e obviamente o seu portfólio. Mas a gente tem muitas pessoas aqui que conseguiram fechar o seu primeiro cliente dentro da comunidade. A gente tem algumas páginas dessas daqui. Além disso, a gente tem os recrutamentos aqui dentro da comunidade, o que deixa muito fácil para você entrar no mercado de trabalho. Repetidamente,
+
+as pessoas buscam aqui por parceiros para criar a agência de IA, se tornarem sócios. ou simplesmente entrarem no projeto como freelancer para ajudar no desenvolvimento do projeto. A gente tem também a nossa biblioteca de cursos e eventos exclusivos aqui dentro da comunidade. E a gente também tem um feed muito ativo aqui na comunidade. Toda hora o pessoal tá trocando uma ideia sobre automação, sobre novidades, sobre projetos, sobre dúvidas de clientes, enfim, é o lugar perfeito para você iniciar sua carreira de empreendedorismo com IA. O link para fazer parte da
+
+comunidade Aak está na descrição do vídeo, junto com todos os recursos gratuitos que eu prometi para vocês. É isso, até a próxima.
