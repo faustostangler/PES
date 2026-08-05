@@ -1,0 +1,130 @@
+---
+video_title: "A conta da IA chegou: Uber e Amazon perderam o controle dos custos | As 3 perguntas que evitam isso"
+video_id: BnnIDUHh-ok
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BnnIDUHh-ok
+video_date: 2026-06-24T19:06:43+00:00
+video_description: |
+  A Uber gastou o orçamento inteiro de IA para 2026 até abril. A Amazon mandou um aviso interno para os engenheiros pararem de usar IA só pelo prazer de usar. A Workato viu o gasto subir sete vezes em um dia quando o fornecedor migrou para cobrança por token.  
+  
+  Isso não é descuido. É uma mudança estrutural no modelo de custos de IA, e a maioria das empresas ainda não está preparada para ela.  
+  
+  Nessa análise eu explico o que mudou, por que a conta explodiu agora, e as três alavancas concretas que qualquer gestor pode acionar para recuperar o controle. Sem precisar entender de infraestrutura.  
+  
+  O QUE VOCÊ VAI APRENDER 
+  • Por que a transição de assinatura flat para cobrança por token mudou tudo 
+  • A diferença entre chatbot e agente, e por que ela explica a explosão de custos 
+  • O iceberg de custos de IA: o que aparece na fatura e o que não aparece 
+  • As 3 alavancas de controle que qualquer gestor pode acionar 
+  • O checklist com 5 perguntas para fazer antes de aprovar qualquer projeto de IA  
+  
+  Esse conjunto de práticas (controle de custo, visibilidade de uso e roteamento de tarefas em IA) tem um nome que está começando a aparecer nas conversas de board: FinOps para IA. É a disciplina financeira aplicada à infraestrutura de inteligência artificial. Se alguém na sua empresa mencionar isso, agora você sabe o que está em jogo.
+  
+  Fonte:  Financial Times, junho de 2026. | https://www.ft.com/content/1d37cc08-e0aa-45a4-a45d-4ad282529314?syn-25a6b1a6=1
+  
+  Análise: Maria Alice Maia.  
+  
+  Apresentado por Maria Alice Maia, cientista de dados pela UC Berkeley, doutoranda pesquisadora de comportamento de uso e governança de IA na FGV, fundadora do Estúdio 68 e da Micah 6 AI. Ex-Ambev, Itau, Stone, Alun/FIAP.
+  
+  Chapters do Vídeo
+  00:00 O caso Uber e o orçamento inteiro de IA gasto até abril
+  01:30 O que mudou: de assinatura flat para cobrança por token
+  03:00 Chatbot vs agente: por que o custo não é linear
+  04:30 O caso Workato: gasto subiu 7x em um dia
+  05:00 O iceberg de custos: o que você não vê na fatura
+  06:50 Treinamento vs inferência em linguagem de negócio
+  09:00 As 3 alavancas de controle
+  09:20 Alavanca 1: AI Gateway, o ponto central de controle
+  11:00 Alavanca 2: Prompt Caching, não pagar duas vezes pela mesma resposta
+  12:50 Alavanca 3: Model Routing, o modelo certo para cada tarefa
+  14:30 Por que isso é falha de governança, não de tecnologia
+  15:55 O dado do Goldman Sachs que muda a urgência
+  16:20 Checklist executivo: 5 perguntas antes de aprovar projeto de IA
+---
+O Financial Times publicou essa semana um levantamento com empresas como Uber, Amazon, Walmart, Cisco, Meta, todas as bigteags. O título já diz tudo: criamos um monstro. E eles estão falando dos gastos com IA. A Uber gastou o orçamento inteiro de inteligência artificial para 2026 antes de abril. Abril. Faltavam 8
+
+meses para acabar o ano. A Amazon teve que mandar um aviso interno pros próprios engenheiros pararem de usar inteligência artificial. O Walmart limitou a quantidade de tokens que os funcionários podem consumir por mês. Mas o que que aconteceu? Porque essas empresas não são startups sem experiência com tecnologia, são algumas das organizações mais sofisticadas do mundo, inclusive em operações digitais.
+
+E mesmo assim a conta saiu do controle. Antes de continuar, você sabe quanto a sua empresa gastou em A no último mês e o que que foi gerado com esse gasto? Hoje eu vou te explicar por isso tá acontecendo agora, o que tá por trás da conta que ninguém consegue explicar e quais são as três alavancas que um gestor pode acionar para recuperar o controle sem precisar entender de infraestrutura. Eu sou Maria Alice Maia, sou cientista de dados pela University of Califórnia Berkley, sou doutoranda em comportamento de uso e governança de inteligência artificial na FGV e sou fundadora do estúdio 68 e da MICA 6 inteligência artificial. Antes de trabalhar na academia e com a MICA 6, eu fui executiva de dados de empresas como AMBEV, Itaú e algumas outras. Agora,
+
+para entender o que que tá acontecendo, eu preciso te mostrar o que mudou, porque a inteligência artificial corporativa existe há anos, mas a conta não tava saindo do controle dessa forma antes. Até pouco tempo atrás, o modelo de negócio era simples. Assinatura flat, você pagava um valor fixo por mês pelo acesso, tipo Netflix, 10 usuários, 100 usuários, o custo era completamente previsível. o time de finanças conseguia orçar. Aí duas coisas mudaram ao mesmo tempo. A primeira, as empresas de IA,
+
+incluindo a Antropic, começaram a migrar de assinatura flat para cobranças por token. Token é a unidade básica de processamento. Imagina que é um conjunto de sílabas, a grosso modo. Cada palavra que você digita, cada resposta que o modelo gera, cada ação que um agente executa, consome tokens. E agora cada token tem um preço. Isso expôs as
+
+empresas ao custo de cada prompt, de cada workflow automatizado, de cada agente rodando em background. A conta deixou de ser previsível e virou transacional, muito parecida com uma conta de energia elétrica, não como mensalidade de academia. A segunda mudança, as empresas pararam de usar chatbot e começaram a usar agentes. E a gente consume muito mais computação do que chatbot. Vamos lá. Chatbot versus agente. A
+
+diferença de consumo. Chatbot, você pergunta, ele responde. Uma interação, alguns tokens. Agente, você dá uma tarefa, ele pesquisa, processa, toma decisões, executa ações, verifica resultados em looping, de forma autônoma, potencialmente a noite toda, sem ninguém precisar estar supervisionando. Centenas de interações, milhares de tokens sem parar, sem ninguém olhar e falar: "Nossa, acho que extrapolou a quantidade prevista".
+
+O executivo da Cisco disse exatamente isso. Para cada humano, você pode ter 10, 100 ou no limite agressivo 1000 agentes e eles ficam trabalhando e isso consome compil, capacidade de processamento. Esse é o ponto que na minha leitura a maioria das empresas não calculou quando aprovou a expansão da inteligência artificial. Há alguns meses atrás, acho que cerca de 5 ou 8 meses atrás, todo mundo saiu na maior corrida para desenvolver agentes autônomos. Se você trabalha em alguma empresa que desenvolve tecnologia em casa, você deve ter visto aí sua empresa de um mês para outro desenvolver 50 agentes em uma área só. O piloto até 8 meses atrás era com
+
+chatbot, todo mundo usava IA, mas com chatbot. E aí quando veio a escala de inteligência artificial, veio com a gente. Então a expansão do custo não é linear, é exponencial. E o orçamento que foi aprovado era para chatbot, não para agente. E o resultado é esse. Por exemplo, a o Workel, uma
+
+empresa de software com 1300 funcionários, tinha seus funcionários usando agentes entusiasmadamente. Quando eles migraram a empresa paraa cobrança por token, o gasto subiu sete vezes no primeiro dia. E o CIO disse literalmente: "Criamos um monstro". Agora deixa eu te mostrar o que tá dentro dessa conta. Então vamos lá.
+
+O o porque o problema não é só volume de uso, é que a maioria das empresas não enxerga onde o dinheiro tá indo. Imagina um iceberg. Eh, vamos lá. Deixa eu desenhar para vocês. Imagina que a gente tem aqui um iceberg.
+
+E aqui é a parte que tá para fora, é a parte que tá para fora do mar, tá? O que aparece aqui em cima da água são as assinaturas e as APIs, né, que é a forma de conectar ali com eh as inteligências artificiais. Isso é o que você vê na fatura, tá? Isso aqui é a parte visível da fatura. Copilot, Chat GPT, Enterprise, Cloud, Gemini, todos esses que você conhece. O time de TI
+
+provavelmente já aprovou tudo isso. Abaixo é que tá a chave, o que não aparece imediatamente. Aqui tem o custo de processamento de cada gente que tá rodando. E tem, por exemplo, é aqui a gente vai ter, por exemplo, o custo de armazenar e preparar eh dados, apmazenamento e preparação de dados que vão alimentar os modelos, né, para os modelos. A gente vai ter também o custo de latência, que é quando o sistema fica lento e precisa reprocessar. E esse é o que mais
+
+surpreende, inclusive, tá? Agora a gente vai ter também o custo humano da revisão.
+
+Vou bom. Agora o custo que ninguém orça normalmente é que muitos sistemas de inteligência artificial precisam de uma revisão humana antes da ação chegar no cliente ou no no próximo sistema. Um agente que processa 1000 solicitações por dia pode precisar de 10 revisores humanos em tempo integral. Esse custo de pessoal raramente entra no orçamento de projeto de inteligência artificial. Ele entra no orçamento de operações que mais uma vez fica invisível pra área financeira corsando a tecnologia. E tem mais uma
+
+distinção que o gestor precisa entender. Treinamento versus inferência. Treinamento é o que custa bilhões. É quando a empresa de inteligência artificial ensina o modelo. Isso é custo delas, não seu. O que custa para você é
+
+a inferência. Cada vez que você usa o modelo é na inferência que as empresas estão sangrando dinheiro no dia a dia. Então, em linguagem de negócio, o treinamento é como construir a fábrica. Isso é custo da do Gemini, custo da da Open AI, da Antropic, né, da Google, de todas essas. A inferência é operar a fábrica, que é um custo recorrente e proporcional ao uso. E esse é o que você
+
+paga para elas, tá? é o custo que a Uber, a Walmart, a Orcate estão pagando. A maioria dos orçamentos de inteligência artificial aprovados em 2024 e 25 calculou custo de treinamento ou licença, que é um custo relativamente previsível, né? Ninguém calculou o custo da inferência em escala com agentes. É esse gap que tá produzindo as surpresas que o Financial Times tá reportando agora.
+
+Agora, antes da gente continuar essa explicação e falar o que você pode fazer, se isso tá fazendo sentido e você quer entender as alavancas para recuperar o controle, segue o canal e ativa o sininho aqui embaixo. Daqui a pouco eu chego nas três alavancas concretas que qualquer gestor ou gestora pode acionar. Bom, a conta tá saindo do controle, o que que você faz? Tem três alavancas. Nenhuma delas exige que você entenda de infraestrutura. Todas as três
+
+são perguntas que você pode fazer pro seu time de tecnologia amanhã, tá? Então vamos lá que agora o papo é sério. A primeira pergunta é: todas as nossas ferramentas de inteligência artificial passam por um ponto de controle ou cada uma fala diretamente com o fornecedor? Se cada ferramenta, cada equipe, cada agente fala diretamente com a Open AI, com a Untropic, sem com o Google, sem passar por um ponto central, um gateway, por exemplo, você não tem visibilidade do que tá sendo gasto ou onde. A conta chega no final do mês e ninguém consegue explicar de onde veio. O ponto central
+
+de controle, o time de tecnologia vai chamar de AI gateway, funciona como um guarda de trânsito financeiro. Todo o tráfego de inteligência artificial passa por ele. Você consegue ver quem tá usando, quanto e para quê. E você consegue colocar limites por equipe, por projeto, por tipo de uso. Agora a minha leitura eh, vamos lá.
+
+Amazon teve que mandar um aviso pros engenheiros porque não tinha esse ponto central funcionando adequadamente. Os engenheiros estavam usando agentes para subir nos rankings internos, por exemplo, sem que ninguém soubesse. Um AI gateway teria mostrado esse padrão antes de virar custo. Agora pergunta pro seu time, existe um ponto central por onde passa todo o uso de inteligência artificial na empresa ou cada ferramenta, cada funcionário é um silo separado? Essa é a alavanca um. Avanca dois. A
+
+segunda pergunta é: quando dois funcionários fazem a mesma pergunta pro mesmo sistema de inteligência artificial, a empresa paga duas vezes? A resposta na maioria das empresas de hoje é sim. Cada pergunta gera uma chamada ao modelo que consomem tokens, que gasta dinheiro, mesmo que a resposta seja idêntica. Pensa num sistema de atendimento ao cliente com inteligência artificial. Centenas de clientes perguntam como eu recupero a minha senha, a minha entrega tá atrasada, onde eu verifico o status.
+
+As formas que eles vão perguntar vão ser completamente diferentes. Um vai falar que quer recuperar a senha, o outro vai falar que não consegue fazer login. Mas sem controle, a empresa vai pagar por cada uma das perguntas como se fosse uma nova. E existe uma solução para isso. O sistema armazena as respostas para as perguntas frequentes e serve o resultado armazenado. Quando a nova pergunta é
+
+semanticamente equivalente. O cliente recebe a resposta mais rápido, o seu colaborador recebe a resposta mais rápido, porque a gente não precisa chamar a Antropic, a Google, a Open AI para responder de novo. a empresa não vai pagar pela computação duas vezes. Na minha opinião, é a alavanca de maior retorno imediato para operações com alto volume de perguntas repetitivas, principalmente as operações agênticas, saque, RH, suporte interno, empresas com volume alto, isso pode reduzir o custo de inferência, que é essa chamada nova pras empresas de IA, em 30 até 50%, eu já vi acontecer 50% reduziu seu custo pela metade. O seu time de TI provavelmente já sabe o que que é isso. A questão é só saber se isso
+
+foi ou não implementado. Então, pergunta pro seu time, temos algum mecanismo para não reprocessar as perguntas frequentes do zero toda vez? Isso chama prompt casing, tá? Eh, deixa eu até escrever aqui para vocês. Se vocês quiserem então falar com o time de vocês, a primeira solução é AI Gateway.
+
+A segunda é prompt casing. Agora vamos lá. A terceira alavanca. A pergunta da terceira alavanca é: todas as tarefas de IA estão usando o modelo mais caro disponível ou existe um algum critério para usar modelos mais baratos quando a tarefa não exige um modelo mais sofisticado? Inclusive porque alguns modelos mais baratos são ótimos para tarefas como para tarefas específicas.
+
+Por exemplo, o modelo mais simples do Gemini, o Flash, ele é ótimo paraa classificação. Então, os modelos de IA, eles tem preços muito diferentes, né? Quando você tá usando o Gemini, você pode escolher se você quer o Flash, se você quer o Thinking, se você quer o Pro. Quando você tá usando o Cloud, você pode definir se você quer o Sonet, se você quer o Opus. Então, cada modelo, né, vai ter um preço e uma capacidade chave. O
+
+modelo mais eh vanguardista, né, o mais capaz, o mais caro, ele pode custar até 100 vezes mais por token do que um modelo muito menor e muito mais barato. Para uma tarefa de raciocínio complexo, análise de contrato, geração de códigos sofisticados, síntese de dados que são ambíguos, o modelo caro faz sentido, mas para uma tarefa de extração simples, ah, qual o CNPJ nesse documento? um modelo barato ou até mesmo um modelo open source, como a gente tem o Lama, o Quem da Alibaba, que são open source e podem rodar localmente, ou seja, tem zero custo, próximo de zero para me corrigir, faz esse modelo faz o mesmo trabalho por quase nada de custo, certo? Se a tarefa é simples, então se a sua empresa tá usando o mesmo modelo para todos os tipos de tarefa, então você tá pagando como se toda a demanda elétrica da sua empresa fosse precisasse de ligar aparelhos médicos, sabe? Imagina você tá contratando energia para ter uma máquina de ressonância, outra de tomografia e diversos equipamentos médicos ligados, quando na verdade você podia basicamente contratar energia residencial pra lâmpada do corredor, entendeu?
+
+Então, existe uma empresa que é o GitHub, que é uma empresa para eh que é uma empresa para para armazenamento de repositório de códigos, né? E eles falam exatamente isso na matéria do Financial Times. Então eles trazem na matéria, né, que você não tá sempre procurando um modelo de fronteira. A questão é qual modelo é o mais adequado, né? Qual modelo é o mais adequado para cada tarefa.
+
+Então esse roteamento de tarefas, né, que é a tare mandar a tarefa simples pro modelo barato, mandar a tarefa complexa pro modelo caro, isso tudo pode ser automatizado. E quando tá automatizado, isso protege a margem de cada transação. Então agora pergunta pro seu time, existe algum critério para escolher qual modelo usar em cada tipo de tarefa ou estamos usando o mesmo modelo para tudo? Então, pra gente ter aqui todos os três nomes, né? A gente tá falando então de AI Gateway como a primeira alavanca, a gente falou de prompting como a segunda alavanca e por fim model routing ou, né, roteamento de modelos.
+
+E aqui é armazenamento de prompt e resposta. E aqui a gente fala de ponto central. Ele é muito mais que isso, tá gente? A gente ainda vai discutir isso em outros vídeos, mas tenham em mente esse isso, esse ponto do do AI gateway aqui, que é super importante, tá? Ah, então ele dá uma visão transparência de gestão.
+
+OK? Então, perguntando, perguntando isso e antes de fechar, eu quero te dizer uma coisa que eu acho super importante. O que tá acontecendo com a Uber, com a Amazon, com a Workel, não é falha de tecnologia, é falha de governança. Ninguém definiu o que era um uso adequado, ninguém estabeleceu limites antes de a conta chegar. Ninguém criou o processo de auditoria que mostra o padrão antes de virar problema. Isso não
+
+é crítica, tá? É diagnóstico. Eu vejo isso acontecer regularmente e o que a gente precisa fazer é entrar e corrigir. E é algo rápido, é simples, porque é governança. Então, a maioria das empresas acabou aprovando inteligência artificial como aprovariam um software, projeto, implantação, pronto, ponto final. Mas a inteligência artificial
+
+generativa com agentes não é um software estático, é infraestrutura. É infraestrutura viva que consome recursos de forma contínua e proporcional ao uso. É muito mais parecido com cloud do que na época que a gente implementou Google, Cloud, Azure e ou Azuri, né? E implementou todos todas essas outras ferramentas. Eh, a IA agêntica, ela é muito mais parecida com isso do que com o software.
+
+Então, ela exige governança contínua e não aprovação pontual. A minha leitura do momento é que a gente tá saindo da fase do deslumbramento e entrando na fase da responsabilidade financeira. As empresas que vão ganhar nesse próximo ciclo não são necessariamente as que mais t IA, são as que conseguem extrair valor real por real investido. O CFO, que antes era um espectador desse entusiasmo do time de tecnologia, agora começa a fazer perguntas que o time de tecnologia precisa responder. Então, o dado do Goldman Sax que saiu junto com essa reportagem é o que me deixa mais atenta, para falar bem a verdade, porque eles falam que o consumo de tokens deve multiplicar em 24 vezes até 2030. Deixa eu
+
+compartilhar a tela para vocês verem aqui. Mas eles trazem aqui que o Goldmanx diz: "Olha, o consumo de tokens devem multiplicar 24 vezes até 2030". E a isso deve se refletir, né, numa numa dificuldade de de do de fornecimento de chips, né, nos próximos 12 a 18 meses, tá? [roncando] Então, vai quem não quem tem a assinatura do Financial Times, eu eu recomendo fortemente ler essa reportagem inteira, porque eles trazem muitos insightes muito interessantes, tá? inclusive comparando os modelos chineses, enfim.
+
+Então aqui tem muita coisa interessante para quem é da área, certo? Então eu vou fechar com um checklist as cinco perguntas. Se o seu time de tecnologia não conseguir responder essas cinco, aí você tem um problema de governança de IA, independente de quantos projetos aprovados estão na fila. Então, cinco perguntas. Primeira visibilidade. Existe
+
+um ponto central por onde passa todo o uso de inteligência artificial da empresa com rastreabilidade por equipe, projeto, tipo de tarefa. Sem isso, você não sabe o que tá gastando, nem com o que tá gastando. Por exemplo, algumas empresas limitam que algumas áreas não tenham, enfim, não precisem de acesso a modelos mais avançados por causa da natureza daquelas áreas, né? ou que outras eh tenham ou que alguns outros cargos também não precisem, né, porque não fazem tarefas complexas como análise de dados. Enfim, esse é o primeiro ponto, visibilidade. E aí, nesse,
+
+seguindo esse exemplo do limite, a segunda pergunta é: existe algum hard cap, um limite máximo automático que impede que um erro de configuração ou um agente em loop gere uma fatura astronômica durante a madrugada? Essa é a segunda pergunta, limite, tá? Terceira pergunta, reutilização. Existe algum mecanismo para não reprocessar do zero as perguntas e as tarefas que já foram executadas recentemente? Para operações com volume alto, isso pode reduzir o custo até a metade. Lembrem-se
+
+disso. Quarta pergunta, roteamento. Existe algum critério definido para qual modelo usar em qual tipo de tarefa? ou todas as tarefas estão usando o mesmo modelo que é o mais caro disponível. E quinta pergunta e a mais importante de todas, ROI mensurável.
+
+Para cada projeto de inteligência artificial aprovado, existe um indicador claro do retorno esperado? Tempo economizado, erro reduzido, receita gerada. Se o projeto não tem esse indicador antes de começar, você não vai conseguir medir se funcionou depois. Então, se você conseguir responder as cinco perguntas, parabéns, você tem governança de IA na sua empresa. Se você não conseguir responder nenhuma, você provavelmente tem um projeto de inteligência artificial que vai te surpreender na próxima fatura.
+
+Agora, se você conhece um CFO, um diretor de TI, um gestor que tá aprovando projetos de inteligência artificial sem ter as respostas para essas cinco perguntas, para qualquer uma delas, compartilha esse vídeo, porque esse é o tipo de conteúdo que evita o problema antes dele acontecer. Yeah.

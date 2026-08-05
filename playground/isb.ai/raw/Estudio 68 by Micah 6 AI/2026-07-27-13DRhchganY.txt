@@ -1,0 +1,131 @@
+---
+video_title: "Por que o preço do Uber sobe quando chove? A IA que decide em tempo real e mata o Teste A/B | Aula 9"
+video_id: 13DRhchganY
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=13DRhchganY
+video_date: 2026-07-27T20:55:33+00:00
+video_description: |
+  Toda vez que chove e o preço do Uber sobe, você está vendo uma máquina fazer, em segundos, o que empresas antigamente levavam seis meses pra fazer com um teste. Nesta aula eu uso esse exemplo que todo mundo já viveu pra explicar, sem matemática, dois conceitos que estão no coração da IA moderna: a experimentação contínua (design Bayesiano) e o Safe Reinforcement Learning.
+  
+  Você vai entender por que o Teste A/B clássico perde dinheiro, como a máquina aprende e age ao mesmo tempo, e a pergunta mais importante de todas: o que impede uma IA que decide sozinha de fazer uma besteira catastrófica, tipo cobrar uma fortuna numa emergência.
+  
+  O QUE VOCÊ VAI ENTENDER
+  Experimentação contínua: por que decidir aos poucos vence esperar o teste fechar.
+  Ganho de Informação: como a máquina escolhe o próximo passo pra aprender mais rápido.
+  Safe Reinforcement Learning: aprender agindo no mundo real dentro de limites travados.
+  Por que definir o que a máquina NÃO pode fazer vale mais que definir a meta dela.
+  
+  PERGUNTAS FREQUENTES
+  Por que o preço do Uber muda em tempo real? Porque uma máquina atualiza a estimativa de demanda a cada minuto e ajusta o preço na hora, em vez de usar uma tabela fixa. É a lógica da experimentação contínua (Bayesiana).
+  O que é Safe Reinforcement Learning? É um método em que a IA aprende agindo no mundo e vendo o resultado, mas dentro de limites de segurança travados que ela não pode cruzar, mesmo que a matemática empurre.
+  Por que o preço do Uber tem limite máximo? Porque sem limite a máquina, buscando maximizar a receita, poderia cobrar valores abusivos em emergências. O limite é uma trava de segurança definida por humanos.
+  
+  Apresentado por Maria Alice Maia, cientista de dados pela UC Berkeley, doutoranda em comportamento de uso e governança de IA na FGV EBAPE, fundadora do Estúdio 68 e da Micah 6 AI.
+  
+  Chapters:
+  00:00:00 Por que o preço sobe quando chove
+  00:02:51 A morte do Teste AB e o raciocínio Bayesiano
+  00:06:26 Safe RL a máquina que muda o preço real
+  00:12:15 A falha real quando o surge disparou numa emergência
+  00:16:38 A mesma lógica na medicina ensaios clínicos adaptativos
+  00:23:09 Framework 3 perguntas antes de ligar uma IA autônoma
+  
+  #MachineLearning #InteligenciaArtificial #CienciaDeDados #SafeRL #TesteAB
+---
+Qual foi a última vez que você abriu um aplicativo de transporte e percebeu que o preço tava multiplicado por dois? E bom, provavelmente você já viu isso um monte de vezes. Eu já vi diversas vezes. Eh, e aí parece que a gente tá sendo punido, né, porque choveu ou porque é alta temporada, porque tá cheio de turista, enfim. Mas, né, isso tem por trás disso uma máquina fazendo e tomando decisões, tá? E decisões que antes
+
+levavam três meses para acontecer. E tem também uma decisão de segurança, que é o assunto mais importante da aula de hoje. Então, como vocês sabem, aqui a gente não fala de código, a gente não fala de fórmula, a gente entende a lógica. E eu vou explicar a lógica desse tema de hoje. Como uma empresa consegue deixar uma máquina tomar decisão de dinheiro sozinha, sem parar e como ela impede essa máquina de fazer besteira. Eu vou
+
+explicar tudo com um exemplo que todo mundo já viu na pele, o preço do Uber. Então vamos olhar para essa tela aqui que é bem familiar para todo mundo. Você provavelmente já viu essa mensagem aqui, preços mais altos do que o normal. E se você já olhou pra tela do seu motorista ou se você já foi motorista de Uber alguma vez, você já viu essa tela aqui, né? o mapinha cheio de zonas vermelhas. Isso não é uma tabela que
+
+alguém sentou e definiu de manhã ou uma regra que alguém define ali, né? Isso muda sozinho o dia inteiro, conforme a cidade se mexe, né? Então, antigamente decidia um preço era escolher dois, três preços, testar e deixar ali, né, R$ 12, R$ 14, mandar metade dos clientes para um lado, mandar metade pro outro e esperar para ver o que acontece. a gente espera semanas, meses, até a gente ter certeza estatística de qual preço vai vender mais. Só depois que a gente fecha o teste é que a gente decide, olha, esse aqui vendeu mais. E esse é aquele método
+
+que você já ouviu falar, que é o teste AB. E esse método ele vai ter um problema grande que a gente vai discutir agora. Pensa comigo, se na primeira semana de teste você percebeu que a maior parte dos seus clientes que compra tá vindo do preço mais alto e mais do que isso, entre os que vão pro preço mais alto, 70% tão comprando. Entre os que vão pro preço mais baixo, só 30% compram. Então, a gente tá falando de mais do que o dobro. a segurar sua ansiedade e
+
+continuar mandando metade dos seus clientes pro preço pior por mais dois meses só para fechar o teste direitinho e falar que estatisticamente você tem confiança, você não ia, né? Então aqui é exatamente o que a gente tá falando, tá? Guarda esse pensamento porque é exatamente isso que a Uber faz. Então vamos lá. Em vez de congelar, tá? ao
+
+invés de congelar o preço por 6 meses, a máquina, né, o algoritmo do Uber olha pra realidade a cada minuto. Então, de repente ela percebe que surgiu uma demanda alta por carro e tem pouco motorista na rua. Então, vamos lá. É como se ela tivesse olhando aqui para uma régua, né? Então ela tá olhando aqui para uma régua e aí conforme ela vai passando aqui, né, o dia começa como se fosse o dia aqui.
+
+Aqui ela começa de manhã, aqui tá vazio, não tem quase ninguém. Aí aqui quando chega a hora, a hora do almoço começa a aumentar por alguma razão aumentou, né? Pode ser, por exemplo, choveu, né? Ela percebe que tem muita gente querendo carro, pouca gente na rua e aí, né? ela começa a aprender e agir ao mesmo tempo, tá?
+
+Então é aqui que ela começa a de fato fazer o conceito que a gente vai trazer nessa aula. Ela não vai ficar esperando uma resposta final, ela vai querer entender quanto as pessoas topam pagar naquele momento. E aí cada corrida vai dando mais confiança para ela, porque ela vai acertando aqui, ela aumenta um pouquinho, percebeu que percebeu que teve demanda, aí ela aumenta mais um pouco, a demanda caiu, aí ela vai abaixar mais um pouquinho, cada vez ela vai chegando perto do preço ótimo, né, que é o que ela quer, certo? Então, a verdade, a verdade é que ela quer aprender o máximo possível, o mais rápido possível e usar o que ela tá aprendendo no próximo cliente. Então, ela vai ajustando, olha, cobrei R$ 5, caiu um pouco, então vou cobrar R,50.
+
+Aí já subiu demais a demanda. Então, e se eu colocar e 4,75? Poxa, tá na demanda nível ótimo. Eu tenho passageiros para todos os meus motoristas e não tenho nenhum motorista ocioso. É por aí, tá? Então essa forma
+
+de decidir que vai, né, ficando mais com mais confiança a cada novo dado, né, a cada novo acontecimento, em vez de esperar o teste terminar, é o que a gente chama de raciocínio baiesiano, tá? Deixa eu escrever aqui. Então, a gente tá falando, né, que de raciocínio baiesiano. E o que guia a máquina, né, para escolher o próximo passo é o ganho de informação, tá? Então, a gente tá falando aqui do ganho de informação. Ela vai na direção
+
+que vai gerar mais aprendizado para ela, tá bom? Então ela não vai ficar só aplicando o mesmo preço. Então, resumindo esse primeiro, essa primeira parte, o teste AB clássico é como se fosse um produzir um filme que você só vai revelar daqui a se meses depois que termina de filmar. Então você só sabe o resultado dele no final. E o esse jeito, né, Baahesiano, é como fazer TV ao vivo, sabe? Você já vai vendo a audiência,
+
+você vai regulando o que você vai mostrar ali, né? Então, um já decide agora. e corrige no mesmo no mesmo minuto, o outro só vai ter a resposta quando inclusive talvez o problema já não possa mais ser corrigido, né? Mas vamos prestar atenção numa coisa que a gente falou aqui bem a por alto, que é a máquina não tá só observando o preço, ela tá mudando o preço de verdade. Ela aprende e age, né? Então o preço, né,
+
+que sai, que que sai do seu bolso, né, ele é definido por uma máquina sozinha. E aí que mora o perigo e o que é mais importante a gente eh a a gente discutir, tá? Então, até agora isso pareceu uma decisão inofensiva, né? Ela ajusta um número para cima, para baixo e tudo mais. Só que esse número é um preço real que as pessoas pagam, né? E a
+
+máquina ela faz, olha o resultado, mais gente aceita, mas e ela vai ajustando, sem entender a dinâmica. Então ela tá tentando atingir um objetivo, uma recompensa, que é mencher a demanda e ganhar o máximo de receita possível. E aí um parênteses aqui, né, as aulas do YouTube são curtas, então simplifico algum conceito, mas só para esclarecer, não tô dizendo que o algoritmo da Uber só quer arrancar seu dinheiro, tá? A máquina não sobre o preço para te sacanear. Na verdade, na verdade, né, ela aqui faz isso, segundo a Uber, para balancear oferta e demanda, o que, segundo a Uber, é comum quando a gente tá falando de modelos de plataforma que conectam dois lados, né? Então, nesse caso, a gente tá
+
+falando de motorista de um lado, passageiros de outro. Então, segundo a Uber, é necessário subir o preço para atrair motoristas para uma determinada região e ao mesmo tempo reduzir a demanda, né, que aí diminui a espera, por exemplo, né, enfim. Então, é o que eles chamam de marketing, que é o equilíbrio de mercado. Então, voltando pro nosso cenário, a gente vai focar no efeito prático disso, né? Principalmente se não houver limites, porque no fim das contas o efeito prático é o preço pro usuário dispara e a receita da Uber acompanha, né?
+
+Então agora pausa e pensa comigo de novo. Se o objetivo da máquina é ganhar o máximo máximo de receita e numa noite, né? se o objetivo fosse ganhar o máximo de receita. E aí numa noite de deu uma tempestade, já vi isso acontecer no por aqui diversas vezes, então deu uma tempestade, tá todo mundo desesperado para conseguir um carro. Qual o preço máximo que essa máquina vai chegar? Até
+
+onde ela vai vai ir? Ela vai parar em R$ 300, R$ 1.000, né? Se você ficou meio sem saber o que responder, você tá certíssimo ou certíssima, porque sem ninguém segurando, a máquina vai até onde as pessoas aguentarem pagar, 200, 500, R$ 1.000. A máquina não tem noção do que é
+
+um preço abusivo. Ela não tem noção de nada. Ela é só tem uma meta. E a meta tá diz, a meta diz que ela tem que aumentar o ganho. Então ela sobe o preço, tá?
+
+Então, imagina aqui que a gente tem como se fosse uma régua, né, pros preços. Aqui é o preço normal que a gente consegue que que a que a gente tá acostumado a pagar. E aqui, né, é como se fosse o limite que ninguém mais vai aceitar pagar. E existe o que ainda às vezes, né, antes até do limite, algumas vezes, é abusivo, né? Às vezes, algumas pessoas ainda aceitam passar do abusivo, mas existe um um um outro limite aqui que normalmente tá próximo, que é algo que é abusivo, né? Vamos dizer assim, até
+
+certo moralmente para uma máquina, né? Então, quando a gente pensa, né, nesse limite, a gente tem que entender aqui que, né, a gente tá falando de um teto que a gente trava e diz: "Olha, daqui você não vai passar, né? Não importa o que a matemática diga". E aí, só para fazer uma explicação técnica, né? A gente não tá falando que um humano coloca um C no código, né? Se subir mais do que 30
+
+vezes, não aumente mais o preço, porque isso seria como se fosse uma regra de negócio, um guard rail, não é machine and learning. Exatamente. Tá? Mas a gente tá falando que de um safe reinforcement learning, né? Então é um aprendizado por reforço seguro, né? que
+
+é quando a máquina aprende a otimizar a política, respeitando algumas restrições durante o treinamento. Então, para isso, a gente usa algumas fórmulas matemáticas e ela aprende já no treinamento a não pisar em falso, tá? Então, a não cruzar esses limites, tá bom? Então, vamos lá. Agora, então, uma máquina agindo no mundo e vendo o resultado, né, é o que a gente chama de aprendizado por reforço.
+
+Agora, a palavra mais importante dessa aula é o safe, tá? Que é o seguro. Então, é quando o aprendizado por reforço ele tem alguns limites travados, os limites que a máquina não pode cruzar, mesmo que a matemática, né, o algoritmo fale para ela cruzar. Então, manter a máquina dentro, né, dentro desses trilhos, né, enquanto ela tá otimizando o algoritmo, né, otimizando o resultado, é a ideia por trás de controle robusto, controle seguro, tá? Então aqui, né, a gente até agora falou de teoria, mas na prática isso tem implicações seríssimas.
+
+Então, se a gente olha, por exemplo, né, as notícias, a gente vê que no final do ano passado, como é tradicional, né, no alta temporada de turismo, a gente tem o a Uber sendo notificada por alta repentina no preço das corridas, né? Então, tanto em dezembro quanto em janeiro, isso acontece muito. É aqui também dezembro em São Paulo, né? E também, né, em momentos de chuva, né? Então aqui a gente tem eh a gente tem, por exemplo, em Juiz de Fora o caso de durante um alaramento e sem transporte público o preço ter disparado, né? E esses são os
+
+casos mais polêmicos, né? E são a causa de limites precisarem existir. Porque quando esse teto não tá configurado direito, né, acontece esse tipo de notícia. E aí durante uma emergência, durante um desastre, durante momentos, né, de pico, o preço dispara e aí faz todo, né, pra máquina parece que faz todo sentido. Olha, todo mundo tá querendo sair ao mesmo tempo daquela região, então vamos maximizar a receita.
+
+pode cobrar uma fortuna, mas apesar de tá certa matematicamente, humanamente, socialmente, economicamente, isso é uma catástrofe. Então, cobrar cinco vezes mais de gente tentando escapar de um alaramento, de uma emergência, né, de um incêndio, de um furacão, isso vira escândalo. Então, em 2014, a Uber foi processada pelo estado de Nova York e foi obrigada, né, a fazer um acordo, né, e ela escolheu fazer um acordo para não subir mais o preço durante emergências. Isso porque, né, ela teve um aumento muito acima eh do valor eh do do valor padrão, né, eh durante um furacão, certo? Então, e e aí eles fizeram de fato o acordo de não subir mais o preço emergências de naturais, etc., né?
+
+Então, olha essa lição, né, que acho que é o mais importante da aula. A gente não tá falando, né, de uma máquina desobedecer, né? E normalmente quando a gente fala do risco, né, e do risco do machine learning, né, o problema normalmente é a máquina obedecer muito bem uma meta mal desenhada. Então, e esse é um dos grandes pontos cegos quando a gente fala de algoritmo, tá? Então, é quando a gente define mal, dá pouca atenção pro processo de definir custo, né, que é o contraincentivo do algoritmo e recompensa, que é, né, o que vai dizer de tá qual é a meta. Então, se
+
+você diz para pro algoritmo seu objetivo é gerar o máximo de receita, ele vai sempre maximizar a receita, inclusive na hora errada, quando humano nenhum faria isso. E aí tem uma parte que é mais incômoda, que é o limite só protege contra o que você imaginou. Então, definir os limites de um algoritmo é um é quase que uma arte e é um exercício que deve ser feito com muita atenção, porque você precisa pensar como uma máquina e precisa procurar o tipo de brecha que a máquina vai achar. Então, definir o que a máquina não pode fazer é muito mais difícil e muito mais valioso do que definir o que ela pode fazer. Então, quando a gente fala, vamos definir a meta do algoritmo, né? Vamos
+
+definir o o a o a recompensa. Legal. Isso é isso é o básico, mas é muito importante parar para pensar, né, no custo, né, no custo. Eu não tô falando custo financeiro de rodar, tô falando do contraincentivo que a gente dá para aquele algoritmo, né? Então esse é o é o limite também, né? Isso é parte
+
+do do de Isso é parte que vai compor o que vai ser o limite daquele algoritmo. Então, até aqui você pode estar pensando: "Poxa, legal, entendi tudo de Uber, valeu, mas eu não vou usar isso". E aí eu vou trazer aqui, né? Acho que vale trazer pelo menos mais um caso de onde a gente usa esse tipo de algoritmo, que é na saúde. Então aqui a gente falou de economizar dinheiro, mas agora a gente vai falar de salvavidas, tá?
+
+Então imagina, por exemplo, quando a gente tá fazendo um teste, deixa eu colocar na lousa aqui, de remédio novo e remédio antigo. A gente colocou dois grupos, né? Teste tradicional é o famoso teste AB. E aí a gente coloca dois grupos e fica esperando ali o prazo do teste, que é 2 anos, por exemplo, para ver qual o remédio teve o maior resultado, né? de forma simplificada, óbvio. Eh, quando, né, a gente fala do
+
+teste tradicional, que é o teste AB, a gente vai definir só depois que o teste fechar, então daqui a 2 anos, por exemplo. Agora, imagina, né, quão cruel é se lá no meio do estudo você percebe que o remédio novo, né, tem 50% a mais de chance de sobrevida. né, de de salvar, de de garantir mais vida pra pessoa que tá no mesmo estado, né, da pessoa daqui. Enfim, saúde não é minha área, gente. Então, tô tentando aqui me viver viver com com esse exemplo. Mas
+
+então, imagina, tô na minha sobrevida com esse exemplo aqui, mas imagina que a gente descobre que esse remédio novo teve um resultado melhor. Você vai ter que esperar do anos até o teste terminar. Já pensou nisso? quão cruel é com as pessoas que estão aqui no remédio antigo, que você sabe que estão tomando um remédio que não tem tanto resultado quanto elas poderiam ter. Então, se ali no meio do estudo tá ficando claro, né, a gente pode tomar a mesma decisão do preço do Uber. a gente não precisa
+
+continuar mandando metade de todo mundo aqui eh para tomar o remédio antigo. A gente pode aos poucos ir deslocando essas pessoas, né, aqui uma parte primeiro, enfim, pro remédio novo, né? E aí a cada paciente o algoritmo atualiza as o que o o a confiança que ele tem em cada um dos remédios, né? E aí ele vai deslocando mais gente pro tratamento que ele vai achar que funciona melhor, né? E aí tudo isso, como a gente falou, dentro de limites de segurança rígidos, tá? Que
+
+ali podem ser, por exemplo, regras de parada, enfim, para proteger o paciente, tá? É aquele safe que a gente falou do safe reinforcement learning. Então, no Uber, o limite de segurança ele protege o bolso. Quando a gente tá falando de estudo clínico, a gente tá falando a diferença entre a vida e a morte, por exemplo, tá? Então, a gente tá ali, né, quase que aprender rápido, né, eh, para não precisar eh ter uma perda muito grande do outro lado. Então, então, antes da gente
+
+partir pra parte final desse dessa aula, imagina que você é o diretor de marketing de um e-commerce, o e-commerce da sua empresa. Hoje é Black Friday e você colocou dois banners no ar às 8 da manhã. E aí um dos banners que tá oferecendo frete grátis, eh, bombou, tá? Todo mundo que vê ele, de todo mundo que vê ele, 80% compra. O outro banner oferece 20% de desconto.
+
+Ele quase não, quem vê ele quase não tá nem ficando no seu site. Então quando deu meio dia, você viu esse resultado, você não precisa virar pro seu time e falar: "Ah, vamos esperar o fim do dia", né? Não, vamos continuar mandando até a gente ter confiança estatística, né? Porque você tem um prazo, né? Você tem o a a Black Friday acaba no final do dia.
+
+Deveria acabar, né? Agora os Black Fridays duram um mês inteiro, mas eh então ela acaba ali, né, no final do dia. Então o custo de não agir agora é perder a venda da Black Friday desse ano. Então ali é a regra de ouro para você saber quando você usa essa tecnologia, né, esse algoritmo que a gente tá fal essa, né, essa técnica de machine learning, o método de aprendizado por reforço que a gente tá falando hoje. Você não vai usar isso para mudar a cor de um botão. Você vai
+
+usar isso quando o seu cenário muda rápido demais e aí quando errar devagar custa caro demais, porque é exatamente isso que que vai fazer reinforcement learning, né, ter um resultado melhor do que um teste AB, por exemplo, tá? Então agora quando a gente tá falando do safe reinforcement learning, né, aí a gente precisa pensar aí em outros exemplos também. Então, imagina que você pediu pro algoritmo maximizar o tempo que os usuários passam dentro do seu aplicativo, porque agora, né, engajamento é valioso, economia da atenção, a gente fala disso já há 10, 15 anos, né? Então, parece uma ótima meta de negócios, né? Só que sabe o que que o algoritmo vai fazer? Que a gente já viu
+
+isso acontecer, né? Se o objetivo é maximizar o tempo que o usuário passa dentro do algoritmo, né? O algoritmo vai passar a mostrar teoria da conspiração, conteúdo de raiva, conteúdo extremo, porque isso prende a atenção humana muito mais do que mostrar a foto de cachorrinho fofo. Eu, pelo menos, eu fico horas vendo o cachorrinho fofo, mas eu sei que o rage bait, né, como a gente fala, o clique da raiva, ele prende muito mais. Então, o algoritmo ele vai destruir a reputação da sua da sua marca. para manter as
+
+pessoas lá dentro a qualquer custo. Então, é assim que o gestor precisa encenar, enxergar o algoritmo, né? É como um como se fosse um gênio da lâmpada muito literal, né? E sem nenhum bom senso. Então, quando você na cadeira de negócios, você precisa verificar se o sistema é seguro antes de ir pro ar. Você não vai ler o código como
+
+engenheiro, mas você vai jogar o jogo. Você vai sentar com o time técnico, vai perguntar: "Olha, se a máquina fizer exatamente o que a gente tá pedindo, qual é o pior cenário possível?" Se ela for de só focar na meta, por exemplo. E aí você que tem que desenhar ali aquela parte do labirinto que o algoritmo não pode encostar, tá bom? Então, antes da gente deixar qualquer máquina tomar decisão sozinha em tempo real no seu negócio, lembra de três perguntas, tá? E elas vão valer um, né,
+
+al definir preço, oferta, limite de crédito, qualquer coisa que a máquina vai decidir aí no mundo real, tá bom? Primeira pergunta, qual a recompensa dessa máquina e qual o desastre que essa recompensa poderia premiar? Tá ali na Uber, por exemplo, o desastre era o preço abusivo numa emergência. Segundo, qual o teto e o chão que a máquina nunca pode cruzar? Qual o limite que a gente tem que travar? Terceira,
+
+em que situação essa máquina precisa ser desligada na hora, tá? É uma regra de emergência, ah, né? Enfim, é qualquer, você tem que pensar ali no que a gente chama de quebra do circuito, né? Então eu quero fechar com essa ideia, né, que a gente falou o curso inteiro, que é do mesmo jeito que eu sempre falo para vocês nunca decorarem fórmula antes de entender a lógica. Aqui vale o mesmo, tá? A maturidade, né, de de
+
+experimentação contínua não é experimentar mais rápido do que os outros, é experimentar rápido dentro de limites seguros que a gente escolhe com propósito, tá? Então, a empresa que ganha não é a que dá mais liberdade pro algoritmo, é a que sabe exatamente onde estão os trilhos ali, tá? Então, quando a gente fala de inovação autônoma, e a gente também precisa falar de prevenção, né, de erro. Então, são os dois lados da mesma balança. E aí da próxima vez que chover e o preço do seu carro aumentar, olha para aquele número e enxerga tudo que tá por trás, tudo que a gente falou aqui nesse vídeo. Uma máquina aprendendo
+
+em tempo real, correndo atrás de uma recompensa e com algum limite que alguém travou. Tá bom? Esse curso é totalmente gratuito. Se você gostou da aula, se você tá interessado em machine learning, passa para alguém que pode também se interessar por esse conteúdo. Compartilha. A gente sobrevive do
+
+compartilhamento, do like, do engajamento de vocês. Comenta bastante aqui embaixo, se inscreve no canal porque eu quero ver vocês na próxima aula. Yeah.
