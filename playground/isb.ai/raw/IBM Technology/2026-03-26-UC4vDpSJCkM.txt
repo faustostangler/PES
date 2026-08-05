@@ -1,0 +1,92 @@
+---
+video_title: "How to Pass Context in an Agentic AI Flow"
+video_id: UC4vDpSJCkM
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=UC4vDpSJCkM
+video_date: 2026-03-26T11:00:46+00:00
+video_description: |
+  Ready to become a certified watsonx Generative AI Engineer? Register now and use code IBMTechYT20 for 20% off of your exam → https://ibm.biz/Bdpikn
+  
+  Learn more about Agentic AI here → https://ibm.biz/Bdpike
+  
+  How do you manage context in agentic AI flows? 🤔 Grant Miller explains how to pass context effectively in agentic AI systems, covering context engineering, task history, and orchestration strategies. Learn how to optimize workflows and improve AI interactions with dynamic, multi-system solutions!
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/Bdpikb
+  
+  #agenticai #contextengineering #aiworkflows
+---
+Howdy, everyone. Context plays a crucial role in OWAF flows. And there's currently extensive conversation about how context is managed within agentic flows. In this video, we'll explore the role of context in an agentic system and discuss strategies for effectively utilizing it. To get started, let's look at what we think of as traditional OWA systems and traditional context.
+
+And when we think about this, we really need to kind of start with a definition. And it really is about you have a user granting an app, so this is very specific, we want to, we're working with an application and we want you to grant it permission to act on our behalf, the user's behalf.
+
+And this is critical during a single login.
+
+In other words, we want to grant permission for an application to do something on our behalf of, but during a single login. So let's draw this up. Let's just kind of take a view of how this looks. So we start, we have a user.
+
+They're interacting with an application. And somewhere along the way, there's a resource.
+
+That they're trying to tap into. And then as I mentioned, we have this authorization that happens. So let's say, let's just do a quick example. I have some application I wanna interact with my bank, but I don't want that application to go actually connect to my bank and do stuff. I want to give permission for that application to actually use certain features of my bank so that it can go and buy stuff, perform transactions.
+
+So we do this thing where I kind of. trust who I am, I say who it is, who I am, I interact with my application, I allow things to happen, I allow this to go and interact with the resource. And this all happens by via issue a token.
+
+That token represents me. It's something I've authenticated. And within that token, there is a set of scopes that say what I allow, what I am giving permission for this application to interact on my behalf with a resource and do read-only, read banking information, whatever it is that it needs to do. So this is what we look at when we think about more of a traditional context. And we can kind of break this down and think of it as there's who, which is the user.
+
+There's the what resource or what am I trying to connect to.
+
+And there's also the conditions, which in the case of OAuth, this is the scopes. What specific action am I saying that this system is allowed to perform? All right, so this is what we think of in terms of traditional OAuth flows and context within that. The context is the who, the what, and what am I trying to do, what am allowed to do. So let's talk about this in terms of agentic systems.
+
+And again, let's start with a definition of what like agentic context then would be similar to what we did with traditional. So this, this is about really it's autonomous because we have agents that are interacting they're doing things on, you know, thinking performing tasks, figuring out stuff. It's also very dynamic.
+
+In other words, it's non-deterministic. To solve a task, an agent may do one thing one time and something completely different the next time, depending on what it is that they're being asked to do. It may talk to multiple systems, multiple agents. And it also does delegations.
+
+Has that as a model.
+
+With multiple apps.
+
+So this is what starts making context more complex when we think about it in terms of agentic systems. It's autonomous, it's self-thinking, it's dynamic, it's figuring out how that flow is gonna look. It's not just a single application with a resource figuring out what I need to do. It's delegation. It delegates on behalf of me.
+
+It delegates down a flow. And there could be multiple applications. So let's draw this out as well. So we may have something here, which we add, which is an orchestration. So we add orchestration in the middle of it.
+
+We may have another agent. There's agent one. We can have multiple agents. So, there's agent two. And we potentially bring in things like an MCP server.
+
+And all along this flow now, we're interacting dynamically with multiple things. We also bring in, we can have an LLM. And that LLM is helping the orchestration figure out where it needs to, what is our dynamic path, it's working with agents, you know, in multiple places, the LLM now is coming in to help this whole process think and work through how it's going to do that. So if we think of it in terms of who, you know, what and the conditions in an agentic system, so we have the who, it's the user, but now we have agents, and there could be multiple agents that we have to take into our context. There's also, when we start thinking about what resource we're going to be interacting with.
+
+Well, again, this is autonomous, so it could be thinking on its own, and it's a multi-system orchestration.
+
+So when we were talking about this more in a traditional sense, really. Again, it's one user, there's an application, it is a single logon, and they're connecting to a resource. When we're looking, and that's our context, who, what and what are we allowed to do? In the terms of agentic, now we have multiple systems. We have multiple agents.
+
+We have LLMs. We have all this stuff that now comes into play when we're thinking about what is the resource. And then finally, when we think about the conditions and then we're really starting to think about more of really fine-grained access. And it's very dynamic. We get back to thi non-deterministic behavior that we're seeing in agentic systems.
+
+So this really starts expanding out what we need to think of when we start thinking about context in an agentic system. Well, the first thing you kind of do, so let's kind of go to our model now and let's start thinking about this. First thing you really do when you're interacting with a system is you have a prompt. You're asking a task. I want to see the financial information for a particular region, for a particular piece of my business and bring that information back to me.
+
+So we start, and we look at this as a prompt. And of course, the prompt is linguistic, right? It's in our native tongue and language. The LLM understands it and understands how it's going to route and get through the system. Now, because it is a multi-system environment, we have to really then start looking at the situational context.
+
+And this is really, when we think situational context, this is our environment state.
+
+So we have to take into account, all right, what are all the components? When we looked at traditional, it was very limited, so it was simple. But now we have to think of, we have orchestration, we have multiple agents, we have MCP servers, we gotta have multiple of those. We have multiple resources that are all being used to bring this together. So we really have to think about the environment's state when we start thinking about context.
+
+And of course, when we think about, you know, we're connecting ultimately to a resource or a tool, you know, there's actually a resource context here as well, right? So we have to understand what the context of this is. Because we could have multiple. And so if there are multiple, we have understand. What are they?
+
+What do they provide? What are they capable of? So we take that into account. Same kind of thing happens on the other end of this. We need to really look then at the user context.
+
+Who is the user? Is it an employee? Are they coming in from home? Are they coming in from work? So that starts driving, okay, we have a person.
+
+He's an employee. He's at work, he's performing a user prompt that's work-related. We know these are all systems, which systems are we gonna talk to and what are the resources? So now the context is starting to spread out a little bit on us. The other thing we kind of need to think about when we're looking at this as well is, you know, we've brought an LLM into this.
+
+So we have, you know, some sort of a model context. What is the model? Which one are we using? What is it, you know, tuned for? And then we also, and this is going to be very important is we have task history.
+
+Because this starts playing into it. What did I ask before? Did I get the right response? And in an agentic system, we're trying to learn and improve how we're answering our prompts and our questions. So the history becomes very important as we start learning better.
+
+We need to, if you think of this in terms of context, not only is it, what are all the systems I'm looking at? Who is the user? What are we connecting to? But also, what's the history? How did we solve this in the past?
+
+Because that now plays into the context of, of what the resources are we want to connect to and what conditions are we going to allow. So this all starts playing into everything. Now, originally when we kind of started approaching agentic systems, we started thinking about this in terms of how to get the best answer back is we looked at it in terms of prompt engineering. So we really thought, well, how do I shape my prompt? How do I craft my prompt?
+
+How do I ask it? How do I refine it, so that I get the right answer back. And that certainly has come a long ways in getting good responses back, but that's not nearly enough. We, it doesn't tell us about everything that's happening and all the different interactions. We really have to think about a couple of things.
+
+We have to about the state of the system. This is the user, the resource, all the things that are going into it. And we have to really start bringing in memory. What's the history? What's background?
+
+What are we learning from? And this is actually where we're starting to lead into what we are calling context engineering. And we add this on top of our prompt engineering to get the right response. And we take all of these different variables and things into account that drives what the context is of the entire system and then ultimately says what the user is allowed to do, where is that information coming from, and how do I best shape and retrieve it to bring it back for the user. So the real takeaway from this whole conversation, the whole thing, is that agentic systems are more, are beyond what we think of in traditional context.
+
+And there's a lot of variables. We've walked through all the different things that make this up. What you really need to start thinking about now is context engineering. How am I going to look at the system, all the things that really establish context, and bring those to bear through your prompts and your questions so you get the right responses back for your agentic system?
