@@ -1,0 +1,311 @@
+---
+video_title: "Your First Python App: Build a Food Ordering App from Scratch [Beginner Walkthrough]"
+video_id: d7pC4H0Y_cY
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=d7pC4H0Y_cY
+video_date: 2026-03-27T14:46:38+00:00
+video_description: |
+  Build a complete food ordering app in Python using dictionaries, functions, and loops. This beginner-friendly project walkthrough is perfect if you're ready to move beyond isolated exercises and build a real, interactive application from scratch. Follow along with Dataquest's Director of Curriculum, Anna Strahl.
+  
+  Complete the project here: https://app.dataquest.io/c/161/m/718
+  
+  What you'll learn:
+  - How to use dictionaries to manage menu items, prices, and quantities
+  - How to build reusable functions to organize your app's logic
+  - How to implement loops and control flow for user interaction
+  - How to structure a complete interactive Python application
+  
+  Key skills covered: Python dictionaries, custom functions, loops and conditionals, handling user input, structuring larger Python programs
+  
+  New to Python? Build the foundational skills you need with our Python Basics for Data Analysis course: https://www.dataquest.io/path/python-basics-for-data-analysis/
+  
+  
+  00:00:00 - Introduction
+  00:08:48 - Setting up variables and menu data in Python
+  00:14:25 - Building a display menu function
+  00:20:40 - Writing an add-to-cart function
+  00:27:00 - Writing a remove-from-cart function
+  00:33:00 - Modifying cart items with an update function
+  00:34:30 - Displaying the cart with formatted output
+  00:39:29 - Building a checkout and total calculation function
+  00:40:40 - Handling user input
+  00:46:25 - Creating the main ordering loop
+  00:54:40 - Testing the complete food ordering app
+  00:59:53 - Audience Q&A
+  
+  
+  [timestamps to be added]
+---
+Olá, seja bem-vindo(a) ao laboratório do projeto Data Quest . Meu nome é Anna Stroll e hoje vamos criar um aplicativo para pedidos de comida. Então, usando conhecimentos básicos de Python, como podemos criar uma experiência para um usuário visualizar um menu de itens alimentares, selecionar esses itens e finalizar a compra nesse ambiente de aplicativo fictício que vamos criar? Então, um pouco sobre mim: meu nome é Anna Stroll e sou a diretora de currículo aqui na Data Quest. Mas, antes de trabalhar na Data Quest, comecei minha carreira como professor de matemática do ensino médio e trabalhei nessa área por oito anos.
+
+E então, durante 3 anos, me tornei um analista de dados autodidata e usei o Data Quest para me ajudar nessa transição. Então, se você quer seguir carreira na área de dados, você pode, porque eu consegui. É possível. Agora, quero ter certeza de que você está no lugar certo. O webinar de hoje será focado em Python e em apresentar alguns conceitos básicos da linguagem, como listas, loops, lógica condicional (blocos if/else) e dicionários. Isso ajudará você
+
+a entender a sintaxe que abordaremos com mais rapidez. Mas, se você é iniciante nessas coisas, não tem problema nenhum . Este é um webinar muito indicado para iniciantes. E algumas coisas que podem ser novidade para todos; se você já viu alguma delas antes, ótimo. Se você ainda não fez isso, não se preocupe, pois falaremos sobre a importação de módulos e a função de entrada.
+
+Vamos então dar início à nossa agenda de hoje. Então, a primeira coisa que faremos é apresentar o projeto. Em seguida, vamos criar algo chamado variáveis ​​globais para o nosso projeto. Então, a maior parte do nosso tempo será dedicada à escrita de funções. Vamos criar vários blocos de construção que, juntos, os integrarão ao nosso ciclo principal de aplicativo. E vamos
+
+terminar com uma sessão de perguntas e respostas. Portanto, não se esqueça de me fazer essas perguntas na seção de perguntas e respostas . Mas, antes de mergulharmos no projeto, sempre faço essa ressalva porque essa é uma pergunta que sempre nos fazem. Por que fazer este projeto manualmente quando a IA pode fazer tudo provavelmente com um único clique? Bem, esse não é o objetivo do que estamos fazendo hoje. O objetivo do que estamos fazendo é
+
+praticar nossa programação em Python. Estamos praticando os fundamentos. Estamos aprendendo a depurar. Se ocorrer um erro, precisamos entender como corrigi- lo, o que procurar e o que está acontecendo no código. E a IA também erra às vezes.
+
+Adora inventar coisas. É muito ambicioso, mas nem sempre está certo. Portanto, desenvolver nossas habilidades fundamentais de programação nos ajudará mais tarde a saber sobre que tipos de coisas a IA pode estar seguramente errada. E, por fim, se você quiser adicionar isso ao seu portfólio, criar o código do zero ajuda a garantir que você tenha um conhecimento profundo do código. E você poderá falar sobre isso mais detalhadamente em uma entrevista. Muito
+
+bem, aqui está o resumo do nosso projeto. Então, vamos imaginar que você é dono de um restaurante local e quer criar um aplicativo onde seus usuários possam pedir comida diretamente pelo app. Se você já foi a um restaurante, tipo um lugar de comida rápida e informal, muitos deles têm aquelas telas grandes agora onde [bufa] você pode fazer sua seleção de comida e pagar ali mesmo. É basicamente isso que vamos criar. Assim, o aplicativo deve exibir as opções do menu e os preços para o usuário.
+
+E o usuário deve poder adicionar e remover itens, bem como atualizar as quantidades dos itens. Então, vamos começar. Estou no ambiente Data Quest e, se você é uma das pessoas que disse ser nova no Jupiter, este é o ambiente Jupiter Lab. Ao abrir o programa pela primeira vez, você verá este painel lateral com itens como "Achados e Perdidos", "Temporário" e, em seguida, todos terão um arquivo basics.ipynb.
+
+Para termos um pouco mais de espaço, vou recolher este painel lateral clicando no ícone da pasta. E isso nos dá uma área de trabalho um pouco maior . Então, a primeira coisa que faremos é definir nossas variáveis ​​de nível global. E essas são variáveis ​​do nosso aplicativo que são verdadeiras em todos os casos. Por exemplo, neste cenário, o restaurante precisa de um nome. Portanto, nossa primeira variável
+
+será o nome do restaurante. Estou chamando o meu de Lebre Faminta . Não sei porquê. E uma coisa sobre variáveis ​​de nível global é que, como elas são úteis e válidas em todo o código que estamos escrevendo, a convenção é escrevê-las com inicial maiúscula, assim . Isso não altera o seu funcionamento. É simplesmente porque qualquer pessoa que
+
+leia seu código entenderá que essa variável é acessível em qualquer lugar. Então, essa é a nossa primeira variável de nível global . E a próxima variável que vamos criar é o nosso menu. Portanto, nosso cardápio incluirá todos os nossos itens do menu e seus respectivos preços. Então, vamos usar um dicionário aninhado aqui.
+
+E vou copiar e colar o dicionário inteiro de uma vez. Vai parecer muita coisa, mas não se preocupe. É algo sobre o qual vamos conversar. Então, o motivo de estarmos usando um dicionário aninhado é porque, no back-end do nosso aplicativo, vamos querer nos referir aos itens pelo seu número de ID. Referir-se a algo pelo próprio nome, quando o nome em si pode mudar posteriormente, é demasiado rígido. Ao mesmo tempo que se refere a ele pelo
+
+seu número de identificação específico, que nunca mudará, é uma forma de garantir que seu código seja de fácil manutenção no futuro. Portanto, SKU1 é um número de identificação e será a chave para o primeiro valor em nosso dicionário. Assim, nosso dicionário principal tem cada chave como um número de identificação e o valor para cada uma delas é, na verdade, outro dicionário. Portanto, o valor do SKU1 é hambúrguer. E podemos ver que a chave aninhada é "name" com o valor " hambúrguer". A
+
+chave aninhada é o preço, com o valor de 6,51. Então, acredito que criamos 10 itens alimentares diferentes na minha amostra aqui. E cada um segue esse mesmo fluxo. Temos o número de identificação como chave no dicionário principal e, em seguida, um pequeno dicionário aninhado com o nome e o preço. Continuando com nossas variáveis ​​de nível global , vamos pensar no que mais é necessário para a totalidade do nosso aplicativo?
+
+Bem, também precisamos de uma lista de ações do aplicativo. Então, essa será nossa próxima variável aqui: ações do aplicativo. E eu disse lista, mas isso está incorreto. Vai ser um dicionário. E o nosso dicionário terá como teclas números que o usuário poderá pressionar eventualmente.
+
+E o valor é aquilo que corresponde à ação associada a esse número. Portanto, se um usuário digitar um, estará adicionando um novo item de menu ao carrinho. Se digitarem dois, estarão removendo um item do carrinho de compras. Se pressionarem três, irão modificar um item. O quarto passo é visualizar o carrinho de compras. Cinco farão o
+
+check-out e seis sairão do aplicativo. Muito bem, vamos ter mais duas variáveis ​​globais.
+
+A próxima será a taxa de imposto sobre vendas . Na Califórnia, nossa taxa de imposto sobre vendas é de 7%. Portanto, para porcentagens, precisamos mantê- las no formato decimal, mas você pode escolher a alíquota de imposto sobre vendas que desejar. Normalmente, o imposto sobre vendas, creio eu, fica entre 3% e 10%, mas a escolha é sua. E a variável final será o próprio carrinho de compras.
+
+Mas, já tem alguma coisa no nosso carrinho de compras? Não. Então, vamos inicializar nosso carrinho como um dicionário vazio. E essas são todas as nossas variáveis ​​de nível global . Resumindo rapidamente, temos o nome do nosso restaurante, o nosso menu como um dicionário aninhado, as ações do nosso aplicativo, a nossa taxa de imposto sobre vendas e o nosso carrinho de compras.
+
+Vou armazenar essas informações em nosso Laboratório Júpiter e existem duas maneiras de fazer isso. Podemos clicar no botão de reprodução enquanto a célula estiver destacada em azul, e isso executará essa parte do nosso código. E podemos afirmar que funcionou porque não está mais azul e há um pequeno "o" dentro destes colchetes aqui. Então, agora vamos começar a montar as peças do quebra-cabeça. E cada peça do quebra-cabeça será uma função definida pelo usuário. A primeira
+
+função definida pelo usuário que vamos criar como peça desse quebra-cabeça é a de exibir o menu para os usuários do nosso aplicativo. Portanto, quando definimos uma função, usamos a palavra-chave def e, em seguida, damos um nome à nossa função. Portanto, essa função se chama menu de exibição. Esta função não requer nenhum parâmetro. Falaremos sobre isso daqui a pouco, quando precisarmos da nossa função específica.
+
+E aqui temos os dois pontos. E tudo o que estiver abaixo do cólon será o que essa função fará. Então, quando você já viu um menu no Grubhub, Uber Eats ou algo parecido , geralmente vê a palavra "menu" bem no topo. Então, vamos imprimir o cardápio. E este é um caractere de nova linha, o que significa que ele adicionará uma linha em branco inteira. E isso
+
+ajudará a manter nosso aplicativo um pouco mais organizado, separando o texto do menu de tudo que vem antes ou depois dele. Os asteriscos que estou usando aqui são apenas um recurso de formatação para destacar o cabeçalho do nosso menu. E, na verdade, se quiséssemos, eu criaria uma nova célula abaixo desta. E se executarmos essa função agora, estaremos chamando a função com nossos parênteses. Vou usar a tecla Shift + Enter como atalho. Ao pressionar
+
+Shift + Enter, podemos ver que o comando foi executado com o número dois. Shift + Enter. E agora vemos que em nossa saída está impresso o menu. Obviamente, aqui ainda não estão sendo exibidos nenhum dos nossos produtos alimentícios. Então, precisamos fazer isso em seguida. Então, para
+
+cada item do nosso menu, e quando digo isso dessa forma, é uma dica de que vamos usar um loop "for". Então, para cada item do nosso menu, e estou usando SKU em vez da palavra "item" porque "item" às vezes é uma palavra reservada em Python. E se usarmos isso, pode ser que nos dê alguma funcionalidade interessante. Portanto, estamos usando a palavra SKU para o nosso loop. E a primeira coisa que queremos fazer é exibir o número associado a cada item do nosso menu.
+
+E qual é o número associado a cada item do nosso cardápio? Por exemplo, para o brownie, o número associado a ele é o número de identificação nove. E para o molho, é o número de identificação 10. Então, para extrair esse número do ID do SKU, vamos criar uma variável dentro da função e extrair o SKU, considerando tudo o que vem depois do terceiro caractere. Vamos chamar isso de SKU analisado.
+
+Então, o que mais precisamos exibir para cada item do nosso menu? Bem, precisamos exibir o nome do item. E é aqui que nosso trabalho com o dicionário entrará em ação. O item que estamos usando é do nosso dicionário de menus. Analisando o primeiro conjunto de chaves do dicionário [snorts] com esse valor de dicionário aninhado.
+
+Então, por exemplo, se estivermos analisando isso, vamos extrair o nome. Assim, ele irá extrair o nome de cada SKU à medida que percorremos o loop. Certo, então vamos exibir o número do item, o nome do item e, por último, o preço do item. Você pode verificar por si mesmo agora mesmo: se é assim que exibimos o nome, como podemos exibir o preço? O
+
+código será praticamente idêntico à linha anterior. A diferença é que vamos divulgar o preço em vez do nome. Então, agora temos todas as três coisas que queremos exibir. Mas, se tentarmos executar isso agora, ainda não veremos nada. Ainda vemos apenas o menu com os asteriscos, porque não imprimimos nenhuma dessas informações.
+
+Então, essa sequência vai parecer meio confusa, mas vamos analisá-la parte por parte. O que vamos fazer é imprimir e, em seguida, usar uma lógica de concatenação de strings para somar várias partes. Portanto, para exibir o número do item, decidi colocá-lo dentro de um conjunto de parênteses e usar esse número dentro do conjunto. Em seguida, vamos exibir o item. E então, vamos exibir um símbolo de dólar, porque estou nos EUA e estou usando dólares americanos. Você pode usar o
+
+símbolo de moeda que quiser. E depois vem o preço. Eis o que é interessante em relação ao preço. Lembre-se, nosso dicionário original armazena os preços como valores decimais. Portanto, precisamos ter cuidado e convertê- lo em uma string quando o exibirmos.
+
+Então, vamos ver o que acontece quando executarmos isso agora. Shift + Enter é o meu atalho para executar esta célula. Em seguida, pressione Shift + Enter para ver o que acontece. E pronto, agora todo o nosso menu é exibido quando chamamos o comando " display menu". Então, essa é a nossa primeira peça do quebra-cabeça da funcionalidade .
+
+Mas, quando um usuário interage com nosso aplicativo de pedidos de comida, ele precisa ser capaz de visualizar o cardápio e adicionar itens desse cardápio ao seu carrinho de compras. Então, nosso próximo componente será como permitir que os usuários adicionem itens a um carrinho de compras? Então, em uma nova célula, vou começar a definição desta função . Então, estamos definindo uma função. Estou chamando isso de adicionar ao carrinho.
+
+E teremos alguns parâmetros para essa função. Isso significa que, para a função ser ativada, é necessário que uma pequena quantidade de informação seja passada para ela. A primeira coisa a fazer é: o que vamos adicionar ao carrinho? Estamos adicionando um item alimentício. E quando adicionamos um item alimentar, queremos nos referir a ele pelo seu número de identificação.
+
+Então, vamos precisar desse número de identificação, que será um SKU. A próxima coisa que precisaremos saber ao adicionar um item ao carrinho é a quantidade que estamos adicionando. E para isso, vamos usar uma quantidade. Mas, para tornar nosso aplicativo um pouco mais fácil de usar, vamos atribuir um valor padrão à quantidade. Significa que, se um usuário não especificar a quantidade que deseja de algo, presumiremos que ele deseja apenas uma unidade desse item.
+
+Se eles especificarem que desejam mais daquele item, então esse valor poderá mudar. Certo, então agora vamos aos detalhes do que essa função pode fazer. Então, a primeira coisa que vamos fazer é verificar o que acontece se um usuário tentar fornecer um ID para um item alimentar que não existe? Isso é um problema, porque pode danificar nosso aplicativo. Então, vamos verificar se o ID está realmente no nosso menu.
+
+E se não estiver no nosso menu, vamos exibir uma mensagem para o usuário dizendo: " Desculpe, esse número do menu não está disponível." E basicamente incentivá-los a tentar novamente. Essa lógica "else" ajuda a garantir que nosso aplicativo não apresente falhas. Agora que temos uma lógica à prova de falhas, vamos dizer o que acontecerá se for um número de identificação válido. Portanto, se for um número de identificação válido, queremos interagir com nossa variável global do carrinho . E lembre-se, nossa variável global do carrinho
+
+começa como um dicionário vazio. Então, o que acontece se o carrinho já tiver o alimento dentro, em comparação com o que acontece se o carrinho não tiver o alimento dentro? Então, vamos inserir aqui alguma lógica condicional e dizer: "Opa, isso não está certo ." E digamos: "Se o item, ou seja, se o ID desse item já estiver no carrinho, vamos incrementar a quantidade desse item." Então, consultando o dicionário do nosso carrinho, encontramos o nosso ID. Portanto, isso significa que, para
+
+esse par chave-valor, o valor deve ser incrementado pela quantidade especificada na chamada da função . Mas, se ainda não estiver no carrinho, não precisamos incrementar, pois não está adicionando nada a algo que já exista. Nesse caso, o código será muito semelhante a esta linha. A diferença é que, como não estamos incrementando, será apenas um operador de atribuição, que é um sinal de igual. E, independentemente de estarmos incrementando ou atribuindo um valor, queremos exibir algumas informações aos nossos usuários.
+
+Isso é semelhante à experiência de interface do usuário em nosso aplicativo baseado em texto. Então, vamos imprimir a quantidade adicionada e, em seguida, exibir o nome do item no carrinho. E esta é a nossa função "adicionar ao carrinho". E, ao trabalhar em qualquer projeto de Python ou qualquer outro projeto de programação, recomendo fortemente que você faça testes durante o processo. Então, por exemplo, vamos testar nossa função agora mesmo . Mas da última vez que testamos nossa
+
+função de exibição de menu, fizemos isso. Então vamos ver o que acontece se tentarmos fazer isso. Ocorreu um erro. E qual é o erro? Está faltando um argumento posicional obrigatório .
+
+Isso mesmo. Isso mesmo. Precisamos especificar o número do item ou o ID do item. Então, vamos usar o SKU1 como exemplo e ver o que acontece. E podemos ver que o texto adicionou um hambúrguer ao carrinho. A gramática está um
+
+pouco estranha aqui, mas isso não é problema para esta fase de desenvolvimento da aplicação. No entanto, estou percebendo que temos alguns problemas de espaçamento, pois em nossa instrução de impressão, temos alguns espaços extras que ultrapassaram o espaçamento na saída. Então, vou repetir o processo aqui, removendo todos esses espaços extras, e ver se isso melhora a nossa saída . Pronto. Isso parece muito melhor.
+
+E a propósito, por que não precisamos especificar a quantidade em nossos argumentos aqui? Porque tem o valor padrão de um. Mas se quiséssemos especificar 10, poderíamos fazer isso desta forma. E agora diz que adicionou 10 hambúrgueres ao carrinho. Assim, nosso próximo elemento fundamental está criado.
+
+Portanto, se você pode adicionar itens ao carrinho, também precisa poder removê-los . Portanto, nossa próxima função será remover itens do carrinho. E para esta função, eu não estou especificando uma quantidade. Vamos simplesmente dizer que, se estivermos removendo um item, removeremos o item inteiro. Para alterar a quantidade de itens, teremos uma função diferente para isso.
+
+Para remover um item do carrinho, primeiro precisamos verificar se ele já está presente no carrinho. Então, se o item estiver no carrinho, o que devemos fazer? Temos um método muito interessante aqui. Se você nunca viu um pop antes, é divertido usá-lo porque faz duas coisas ao mesmo tempo. Ele consulta um dicionário, remove e armazena o valor removido.
+
+Então, o sistema pegará o número do item, o removerá do carrinho e o armazenará no campo de valores removidos. É incrível que eu consiga fazer duas coisas ao mesmo tempo. Eu realmente adoro isso. E então vamos mostrar ao nosso usuário que removemos esse valor.
+
+E se o item não estiver no carrinho, bem, não precisamos fazer nada porque não há nada para remover. Então, eu tive que fazer alguns ajustes de formatação no meu bloco de impressão, ou melhor, no meu bloco else. Então, caso contrário, imprimimos: "Desculpe, o item com SKU na na na na não está atualmente no carrinho." Sam, no chat, este é um webinar da Dataquest e tudo o que está sendo compartilhado no chat pelo meu contato da Dataquest levará você diretamente a este projeto, onde você poderá se inscrever. Uma coisa que eu quero destacar sobre essas instruções de impressão é que elas estão usando strings F.
+
+E isso significa strings formatadas. É isso que esse F significa. E eu adoro imprimir com cordas F porque acho que fica muito mais limpo. Onde podemos nos referir a variáveis ​​sem precisar usar vírgulas, sem precisar usar sinais de adição para juntar várias coisas diferentes em uma instrução print, podemos colocar tudo dentro de uma única string e qualquer informação que não deva ser um texto de string, colocando-a entre chaves, irá incorporá-la . Esta é a nossa função de remover do carrinho. Vamos testar
+
+rapidinho com o mesmo SKU dos hambúrgueres, porque já deve haver hambúrgueres no nosso carrinho.
+
+E diremos SKU um. Oh. O que eu fiz? Ah.
+
+Bem, isso é interessante. Precisamos mesmo dizer apenas uma coisa assim? Vamos imprimir nosso carrinho de compras. Isso me intriga. Certo, então no Jupiter você pode renderizar a última linha de uma célula sem precisar de uma instrução print. Então, se digitarmos "carrinho"
+
+em uma nova linha aqui, veremos que o carrinho está vazio. Então, acho que algo que eu fiz fez com que, quando adicionássemos o produto ao carrinho, ele estivesse apresentando um pequeno problema. Então, se fizermos isso e eu adicionar mais itens ao carrinho, agora nosso carrinho terá 10 hambúrgueres . Então isso deveria ter funcionado.
+
+E se eu simplesmente removesse isso agora? Aqui vamos fazer um teste de depuração ao vivo, porque o problema é que o item está sendo removido do carrinho. Então, acho que o problema está relacionado a essa questão da nomenclatura "val um" removida. Então, executar isso novamente está ok, tudo bem. Vamos adicionar nossos hambúrgueres de volta ao carrinho. Podemos
+
+confirmar que os hambúrgueres voltaram ao carrinho e agora estão bons. Por enquanto, se você está acompanhando meu código, não tenho certeza exatamente do que aconteceu aqui. Mas eu estou apenas alterando o valor de impressão para "valor removido" em vez de "valor removido" com essa chave de nome sendo chamada. Se vocês tiverem perguntas para mim, podem usar o painel de perguntas e respostas. Terei um tempinho no final da nossa sessão online de hoje, daqui a uns 20 minutos, para responder a todas elas.
+
+Então, vamos fazer um teste de depuração ao vivo para todos. Certo, então não temos nada no carrinho. Está tudo pronto. Portanto, nossa próxima função abordará o último tipo de interação com o carrinho que temos. Então podemos adicionar itens ao carrinho, podemos remover itens do carrinho e agora vamos modificar o carrinho. Digamos que você
+
+adicionou 100 hambúrgueres por engano, quando na verdade só queria adicionar um. A função de modificar carrinho será a forma como poderemos fazer isso. E como se trata de uma alteração na quantidade, precisaremos de dois parâmetros. Precisaremos do ID do item, bem como da quantidade. Observe que não estamos especificando a quantidade aqui porque não temos certeza de quantas pessoas desejam adicionar ou remover.
+
+Mas na verdade vou dar-vos um dever de casa. Porque tutoriais passo a passo são ótimos, mas a prática é a melhor maneira de aprender uma nova habilidade. Então, vou adicionar um texto de exemplo e dizer "imprimir isto é um texto de exemplo". E a razão pela qual estou fazendo isso é simplesmente para que tenhamos a função. Assim, quando você pegar esse tipo de código e trabalhar nele por conta própria, a ausência disso não quebrará nosso código mais tarde.
+
+Mas o motivo de eu estar passando isso como tarefa de casa é porque a lógica para modificar o carrinho é muito, muito, muito semelhante à lógica que já usamos para adicionar e remover itens do carrinho. Há algumas nuances a acrescentar. Mas acho que este é um ótimo teste para o seu conhecimento. Então vamos deixar isso por aqui. Vou armazenar isso no meu ambiente Jupyter Lab. E a próxima
+
+coisa que faremos é dar uma olhada na função de carrinho de compras. Porque se você adicionar vários itens ao seu carrinho, nós o chamamos manualmente assim, mas isso não proporciona uma experiência de usuário muito agradável. Por isso, vamos especificar uma função para visualizar o carrinho. Mas visualizar o carrinho não exige nenhuma entrada adicional do usuário, portanto não precisamos de parâmetros opcionais nem de parâmetros obrigatórios. E quando você visualiza um carrinho de compras, geralmente há algum tipo de cabeçalho na parte superior. Então, vamos dizer
+
+conteúdo do carrinho. Com licença . E mais uma vez estamos usando novos caracteres de linha para ter linhas de quebra brancas e limpas entre " Com licença". Sinto muito se você se irritou com isso . Eu bati no meu microfone.
+
+E deixe um pequeno espaço entre os nossos títulos aqui. Assim, ao visualizar um carrinho de compras, você verá o valor total que está investindo nessa experiência de compra. Então, vamos inicializar um subtotal que está atualmente definido como $0. E então, para cada item no carrinho, vamos adicionar a esse subtotal. Assim, para cada item em nosso carrinho, a primeira coisa que queremos verificar é adicionar alguma lógica de segurança para saber onde esse item está realmente no menu. Será que
+
+algum usuário adicionou algo ao carrinho que não tinha permissão ou não deveria ter adicionado? Como o item número 15, que não existe em nosso dicionário de menus. Isso quebraria toda a lógica. Então, queremos apenas verificar duas ou três vezes se o item realmente existe no menu. E então, se o item estiver no menu, primeiro precisamos saber a quantidade que está no carrinho.
+
+E para obter a quantidade, estamos olhando para o carrinho. E nosso carrinho armazena apenas o número de identificação e a quantidade. Não é necessário incluir o nome e o preço, pois podemos obter essas informações do próprio menu. A próxima coisa que faremos é, eu vou escrever isso linha por linha manualmente, incrementando o subtotal. E para incrementar o subtotal, estamos usando nosso operador de incremento.
+
+Mas para obter o preço, é aqui que precisamos consultar as informações do menu. Então, olhando para o menu, procuramos o ID. E agora estamos nesse dicionário aninhado. Caso você tenha chegado um pouco atrasado, aqui está a estrutura. Assim, para cada ID em nosso dicionário, existe um dicionário aninhado com um nome e um preço. E nós vamos querer
+
+baixar o preço. E é por isso que temos essa situação de colchetes duplos aqui. E também precisamos multiplicar isso pela quantidade que existe no carrinho de compras. Em seguida, vamos imprimir para o usuário o que estiver em seu carrinho de compras. Portanto, esta instrução de impressão mostra a quantidade multiplicada pelo nome do menu. Então, isso vai ser
+
+algo como, tipo, cinco hambúrgueres de presunto, algo assim. O próximo passo para mostrar aos nossos usuários o valor total que irão gastar é incluir o valor do imposto cobrado no pedido. Mas não precisamos mostrar o imposto para cada item no carrinho. O imposto é aplicado apenas uma vez. Então, vamos sair de quaisquer loops e ficar apenas no corpo da função principal, e dizer que o valor do imposto será o subtotal multiplicado pela nossa variável global da taxa de imposto sobre vendas .
+
+Assim, o valor total que nossos usuários deverão pagar pelo pedido de comida será o subtotal mais o valor do imposto. E, por fim, para melhorar um pouco a experiência do usuário ou a interface do usuário, vamos imprimir o total com o valor em dólares. E aqui vamos arredondar o total para duas casas decimais, porque o dólar americano só é representado por duas casas decimais. Se a sua moeda local for diferente, você pode alterá- la se desejar. E isso mostrará o conteúdo do nosso carrinho.
+
+Esta é a função completa. Então, vamos pensar: quais outros elementos fundamentais precisamos para ter uma experiência completa de pedido de comida? A última coisa que me ocorre é clicar em "finalizar compra". Então, se você já usou um desses aplicativos antes, você vê seu carrinho e, se estiver satisfeito com os itens, clica em um botão e pronto, está finalizando a compra. E, devido a esse fluxo de trabalho específico, não precisamos de parâmetros adicionais aqui. Vai simplesmente aparecer a mensagem "finalizar compra"
+
+. E não temos nenhum ponto de venda ou mecanismo de cobrança para adicionar aqui. Esse seria o próximo passo caso você quisesse implementar algo assim em um negócio real. Mas vamos apenas exibir o carrinho para o usuário. E então, vamos agradecê-los pelo pedido.
+
+Portanto, uma função bem rápida e simples em comparação com as outras que escrevemos hoje. E esta é a nossa função de finalização de compra. Tudo bem. Agora, vamos abordar, na minha opinião, a parte de código mais desafiadora que vamos escrever hoje. Então, fique comigo. Vou fazer o meu melhor
+
+para explicar, mas é claro que, se vocês tiverem alguma dúvida, adoraria respondê-las na sessão de perguntas e respostas, e com certeza vamos abordá-las. Portanto, essa função será a parte que receberá a entrada do usuário. E quando recebemos informações do usuário, quais são os tipos de informações que precisamos receber dele? Precisamos obter o SKU e, às vezes, a quantidade. Portanto, para nossos parâmetros, vamos fornecer um prompt de SKU.
+
+E às vezes, teremos uma solicitação de quantidade, mas não sempre. Portanto, temos aqui um valor padrão de "nenhum", o que significa que, em nossas funções que não exigem uma quantidade, podemos manter esse valor como "nenhum". Mas em funções que exigem uma quantidade, podemos especificá-la. Assim, essa função permanece flexível. Então, vamos usar uma função integrada do Python muito interessante chamada input.
+
+Isso é nativo do Python. Você não precisa instalar nada nem fazer nada complicado. Observe, no entanto, que se você estiver trabalhando com o ambiente Dataquest, a entrada de dados só funcionará no ambiente Jupyter Lab, pois é necessário que o usuário possa efetivamente inserir os dados. Então, vai funcionar no nosso caso. Então, vamos inserir ou receber informações do usuário por meio do nosso prompt de SKU.
+
+E isso será atribuído a uma variável chamada SKU do item. Então, este é o número de identificação do item. Mas não queremos que o usuário tenha que digitar o código SKU oito. Essa não é uma boa experiência para o usuário. Então, queremos apenas que o usuário digite oito, por exemplo.
+
+Mas sabemos que nossos números de identificação têm esse SKU na frente deles. Então, vamos dizer ou reatribuir o SKU do item para ser SKU mais o SKU do item. E isso levanta um ponto importante: a função de entrada criará uma string. Portanto, o SKU do item é armazenado aqui como uma string. Então, a próxima coisa que faremos é verificar se existe uma solicitação de quantidade.
+
+Basicamente, se não for "nenhum", então essa pequena linha de raciocínio será executada. E se houver quantidade disponível, solicitaremos ao usuário que a informe. Quantos hambúrgueres você quer? Eles vão digitar o número. Mas também precisamos verificar: e se um usuário, em vez de digitar 10 para o número de hambúrgueres, digitar apenas " um 10"?
+
+E se eles digitarem algum tipo de bobagem? Precisamos levar isso em consideração. Então, vamos verificar a quantidade. E então, este método vai verificar o tipo de valor que temos. Portanto, se não for um dígito, vamos atribuir uma quantidade padrão.
+
+Vamos dizer, ok, se eles digitaram algo estranho, vamos considerar que a quantidade é um. Vamos manter as coisas simples. Mas, se isso não precisar ser executado porque o usuário de fato digitou um dígito, diremos que a quantidade é igual à versão inteira da quantidade. E lembre-se, temos que fazer isso porque o input armazena o valor de entrada original como uma string, então precisamos converter esse tipo. Até agora, não precisamos retornar nenhum valor nas funções que escrevemos, mas esta será nossa primeira instrução `return`, e é interessante porque estamos retornando duas coisas ao mesmo tempo.
+
+Estamos retornando o SKU do item e a quantidade, e podemos fazer isso porque ainda está dentro da lógica condicional do prompt de quantidade. Isso retornará uma tupla, ou seja, uma tupla, e uma tupla é semelhante a uma lista, pois contém vários itens separados por vírgula. E depois vamos desempacotar essa tupla para que tenhamos ambos os itens disponíveis na instrução de retorno. Agora, se não houver nenhuma solicitação de quantidade, opa. Então, se houver uma solicitação de quantidade, retornamos esse valor. Se não houver um
+
+campo para especificar a quantidade, retornamos apenas o código SKU do item. E agora essa função está concluída. Parabéns se você me acompanhou até aqui . Acho que este é um ótimo ponto para testar seus conhecimentos e ver se você consegue analisar esse trecho de código sozinho. Porque eu acho que muita coisa está acontecendo aqui.
+
+Tudo bem. Então, já concluímos todas as etapas fundamentais. Agora vamos criar o nosso próprio loop de pedidos do aplicativo. Portanto, é com isso que o usuário interagirá para adicionar itens ao carrinho, remover itens do carrinho e finalizar a compra. Então, vamos definir nosso loop de ordenação. Não
+
+são necessários parâmetros. E vamos exibir para o nosso usuário: " Bem-vindo ao" seguido do nome do nosso restaurante. Vamos usar um loop while porque, se você já programou alguma coisa antes, sabe que você clica em executar, o Python é executado e depois termina. Mas não queremos que a experiência do usuário termine por aí. Queremos que continue até que eles terminem o processo de pedido de comida . Portanto, um loop while é a melhor
+
+maneira de fazer isso. Ops. Mas, embora os loops sempre precisem de uma condição de parada, caso contrário eles continuarão rodando indefinidamente . Então, vamos considerar que, quando essa função estiver em execução, o valor de `ordering` será verdadeiro, porque é isso que o nosso usuário está fazendo. E enquanto o usuário faz o pedido, vamos executar algumas operações lógicas.
+
+Se a ordenação for falsa em algum momento, o loop while será interrompido e o programa terminará. Assim, enquanto um cliente está fazendo um pedido, a primeira coisa que queremos fazer é exibir algumas opções de compra. E isso é apenas uma pequena demonstração da experiência da interface do usuário para que eles saibam o que está acontecendo. Então, para cada número em ações do aplicativo, e ações do aplicativo, como lembrete, era nossa variável de nível global que fornecia números para as ações. Portanto, para cada número nas ações do aplicativo, diremos que a descrição é o valor desse dicionário e imprimiremos o número da ação do aplicativo, bem como a descrição.
+
+Em seguida, após exibirmos as opções de pedido, precisamos obter a resposta do usuário. Por exemplo, se eles quiserem pressionar um número nas ações do aplicativo, talvez para adicionar um item ao carrinho, receberemos uma entrada que diz: " Por favor, digite o número da ação que deseja realizar" e armazenaremos isso em uma variável chamada "response". Então, se a resposta for igual a um, bem, um corresponde à adição de um novo item ao nosso carrinho, e esta é a parte mais empolgante de todo o projeto, na minha opinião, porque todos os nossos elementos básicos se unem. Porque, se eles estão adicionando um item, a primeira coisa que queremos fazer é mostrar o menu para que eles saibam quais itens estão disponíveis. Então, quando eles adicionam um item, precisam nos fornecer duas informações.
+
+A quantidade do item que desejam e a quantidade total desejada. E como temos duas coisas, vamos ter um campo para solicitar o SKU, que é o código do item, e um campo para solicitar a quantidade do item que o cliente deseja. Em seguida, vamos obter a entrada do usuário para essas informações usando nossa função de obtenção de entrada do usuário definida na célula anterior. E lembra como fizemos algumas operações com tuplas na nossa instrução de retorno? Aqui vamos desempacotar essa tupla e atribuir valores a duas variáveis ​​simultaneamente, separadas por vírgula. E a razão pela qual isso funciona é a nossa
+
+instrução de retorno, para onde ela foi? Nossa declaração de retorno mostra dois itens ou duas variáveis. E agora que temos o SKU do pedido e a quantidade, podemos pegar essas variáveis ​​e inseri-las na nossa função "adicionar ao carrinho". Que legal, né? Então, é assim que um usuário pode adicionar um item ao carrinho.
+
+Mas e se a resposta for dois? O número dois corresponde à remoção de um item do carrinho. Agora, vou acelerar um pouco o processo . E a primeira coisa que queremos fazer, se eles estiverem removendo um item, é exibir o menu para que saibam qual item corresponde a qual número, porque vamos lembrá-los de remover um número específico. Em seguida, obteremos a entrada do usuário com base nesse número de item e chamaremos a opção de remover do carrinho.
+
+A próxima questão será o que acontece se um usuário responder com três. E o número três será para modificar um item do carrinho. E esta aqui...
+
+Esta é a que eu disse que era tarefa de casa para vocês. Então, em vez de exibir o menu, vamos simplesmente chamar a função "modificar carrinho", e isso mostrará nosso texto de espaço reservado por enquanto. Portanto, quando você terminar sua tarefa de casa, você vai querer adicionar um pouco mais a esta parte específica do loop de ordenação. Então, o que acontece se um usuário pressionar quatro? O número quatro corresponde à visualização do carrinho.
+
+Bem, este é muito simples porque já o fazemos em nosso... na verdade, é muito simples porque visualizar o carrinho não requer nenhuma entrada do usuário. Acabamos de acionar uma função de carrinho de visualização.
+
+Então, a próxima é a número cinco, e é para o caso de o usuário querer finalizar a compra. Portanto, se eles quiserem finalizar a compra, nossa função de finalização de compra não requer nenhuma entrada do usuário, então podemos simplesmente chamar o método `checkout`. Mas há algo muito importante que precisamos fazer aqui. Se eles já finalizaram a compra, não farão mais pedidos. O pedido está completo, então nossa variável de loop para ordenação precisa ser definida como falsa.
+
+Assim, o nosso número final de resposta válida é seis, e isso ocorre se um usuário quiser sair do programa. E se eles estiverem saindo do programa, vamos avisá-los que entendemos e nos despedir. Mas se eles estão saindo, não estão mais fazendo pedidos, então, mais uma vez, vamos dizer que "fazer pedido" é igual a falso. Então, poderíamos encerrar aqui, mas as melhores práticas de programação indicam que precisamos de uma condição para o que acontece se um usuário responder com um número que não corresponde a nada válido. Então, vamos usar a lógica "else".
+
+Portanto, se eles responderem com qualquer outra coisa, vamos imprimir: " Você digitou um número de ação inválido. Tente novamente", e o loop continuará. Muito bem, parabéns, concluímos oficialmente todo o código deste projeto. Mas a parte mais divertida é testar. Então, vou salvar isso em nosso ambiente para sabermos que tudo está funcionando e, como sei que estávamos desenvolvendo durante o processo, vou pressionar as setas duplas para reiniciar todo o código desde o início e limpar o ambiente.
+
+E assim que a renderização for concluída, os asteriscos indicarão que o processo está em andamento. Muito bem, o código foi renderizado e agora vamos testar nosso loop. Então, para testar nosso loop, vamos chamar a função de loop de ordem. Para chamar uma função, você deve incluir parênteses. Caso contrário, a função será apenas um objeto e não fará nada por enquanto.
+
+Então, pressione Shift + Enter para executar este comando e é aqui que a mágica acontece. Olha só isso. Imediatamente, começamos a ver as ações do aplicativo. O asterisco está sendo exibido porque esta célula continua sendo executada, pois estamos sendo solicitados a inserir dados. Então, aparece a mensagem: "Por favor, insira o número da ação que deseja realizar." Bem,
+
+vamos adicionar um novo item ao nosso carrinho. Então, vou escolher a opção número um. E diz: "Por favor, insira o número SKU do item do menu que deseja pedir." Bem, eu estive falando sobre hambúrgueres durante todo este webinar, então digamos que eu vou pedir alguns hambúrgueres. E insira a quantidade que deseja encomendar.
+
+Bom, eu diria 10. Estou com fome, ok? Então, acabamos de adicionar 10 hambúrgueres ao carrinho. E vamos adicionar mais um. Quero acrescentar: Vamos adicionar algumas batatas fritas. Então, esse é o número
+
+quatro. E vamos adicionar 10 porções de batatas fritas para acompanhar nossos 10 hambúrgueres. O que acontece se visualizarmos o carrinho agora? Então, visualizar o carrinho é o número quatro. E podemos ver, veja só. Conseguimos visualizar o
+
+conteúdo do nosso carrinho. E agora, quero testar todas as ações que temos. Então, vamos remover um item do carrinho. E vou tirar as batatas fritas francesas do cardápio, porque 95 dólares por hambúrgueres e batatas fritas é um pouco caro para mim. Então, a quarta porção de batatas fritas, vou retirá-la. Grito. Ih, rapaz. O que eu faço?
+
+Oh não.
+
+Ah, eu estraguei tudo. Transformei isso em uma célula Markdown em vez de uma célula de código. Então, eu quebrei. Teremos que começar do zero. Ah, devido à entrada pendente, mas não posso usar entrada pendente porque ela se transformou em Markdown.
+
+Muito bem, vamos reiniciar este kernel novamente e limpá-lo. Pronto. Certo, então, rapidinho, vamos adicionar esses hambúrgueres de volta ao nosso cardápio. Peço desculpas por isso. Ok, então adicionamos 10 hambúrgueres ao carrinho. Vamos adicionar as batatas fritas de volta
+
+. Então, as batatas fritas ficaram em quarto lugar. Vamos adicionar 10 porções de batata frita. E agora vamos retirar as batatas fritas. E vamos retirar as nossas batatas fritas. Ok, retiramos 10 batatas
+
+fritas do carrinho. E agora, quero mostrar o que acontece se acessarmos a função de modificação. Ah, droga, fiz isso de novo. Como faço isso? Peço
+
+desculpas a todos. Ok, vamos ver o que acontece se clicarmos em modificar o carrinho. Aqui vemos que este é um texto de exemplo. Então, isso é algo em que poderíamos investir muito mais tempo testando, por exemplo, o que aconteceria se um usuário realizasse esta sequência de eventos. E se um usuário realizar esta sequência de eventos? Mas a última coisa que quero
+
+testar é a função de finalização da compra. Então, o caixa é o número cinco. E na hora de finalizar a compra, vemos o conteúdo do nosso carrinho e depois uma mensagem de agradecimento pelo nosso pedido e um "até logo". Peço desculpas pela pequena confusão com a questão do Markdown. Foi apenas um erro de digitação da minha parte.
+
+Você não deveria ter esse problema quando testa seu próprio código. Mas isso nos leva ao fim do código do nosso projeto. Tenho algumas próximas etapas para você. Portanto, se você quiser levar este projeto adiante, e eu sempre recomendo que o faça, adicione mais itens ao menu e seus respectivos preços. Modifique as ações que os usuários podem realizar no aplicativo. Por exemplo, talvez você tenha
+
+uma funcionalidade que coleta avaliações de usuários ou algo parecido . Bem, também existem algumas áreas no código que poderiam ser aprimoradas para reduzir a repetição, porque em programação existe um ditado que diz "não se repita". Portanto, se você perceber que está digitando a mesma coisa repetidamente, essa pode ser uma área onde a repetitividade pode ser reduzida. E outra ótima função a ser adicionada é: e se você quiser limpar todo o conteúdo do carrinho? Essa seria uma ótima opção para adicionar.
+
+Então, neste momento, vou responder às perguntas. Pode enviar as suas perguntas. Temos cerca de 10 minutos para responder a essas perguntas. Se precisar descer, eu entendo perfeitamente. Gostaria de agradecer a sua participação.
+
+Mas vamos em frente e analisamos essas questões agora.
+
+OK.
+
+Of Las pergunta: "A integração com entrega e pagamento estará incluída ou este é um aplicativo independente?" Então, esta é uma espécie de lógica de aplicativo de demonstração, onde você pode ver que na verdade não temos uma interface de usuário. Isso é bem básico, mas poderia ser interessante adicionar a algum tipo de experiência de interface de usuário . Se você quisesse experimentar isso, talvez algo como o Streamlit, você poderia criar um pequeno aplicativo divertido. Na verdade, não seria possível coletar o pagamento do meu usuário, porque a integração de opções de pagamento é um assunto completamente diferente e complexo , que vai muito além do escopo desta discussão, já que é preciso se preocupar com segurança e outros aspectos relacionados. Mas, para um
+
+projeto bem básico, esses são os fundamentos nos quais todos os tópicos mais complexos ainda se baseiam.
+
+E você está tentando criar exatamente um aplicativo para uma confeitaria que funcione em várias lojas. Então, se você está trabalhando com desenvolvimento de aplicativos, tipo para um celular ou algo assim, esse é o iPhone. Você precisará trabalhar especificamente com programação de aplicativos para celular. Não sei se é possível conectar o Python a isso ou não. Eu trabalhei um pouco com Kotlin para desenvolver um aplicativo para Android Studio, mas isso é algo à parte. É aquele que
+
+tem suas próprias opções de interface de usuário e tudo mais. Mas o tipo de funções que escrevemos aqui será traduzido.
+
+E como você utiliza cookies no carrinho de compras? Hum, não tenho certeza se você está falando de cookies como estes ou de cookies de computador. E se forem biscoitos como estes, você apertaria o número oito. Para computadores [bufa] biscoitos, isso é um pouco que está muito além do escopo do que estamos discutindo hoje.
+
+E será que usar R tornaria este aplicativo mais compacto? Utilizar o Shiny ajuda a trabalhar tanto no back-end quanto no front-end, tudo em uma única página. Hum, não estou muito familiarizado com o R, então não posso opinar sobre isso. Infelizmente.
+
+E Kingsley diz: "Sem a interface do usuário, parece que não fiz nada." Bem, tudo se resume à diferença entre front-end e back-end. E se você já ouviu essas expressões antes, desenvolvedor front-end, desenvolvedor back-end, desenvolvedor full-stack, esse é o tipo de trabalho que um desenvolvedor back-end faria. Então, não é... nada. Os
+
+desenvolvedores front-end são os responsáveis ​​por pegar essas informações e criar o que o usuário verá. Então, hoje estávamos atuando como desenvolvedores de back-end para este aplicativo.
+
+E Priscilla pergunta: "Você criou um aplicativo semelhante, incrível, mas era um aplicativo de linha de comando. Este também será um aplicativo de linha de comando?" Então, se você executar esse código em qualquer tipo de IDE, poderá executá-lo no seu terminal, que seria, você sabe, a sua linha de comando. E a funcionalidade seria a mesma. Bem , é apenas a forma como o Jupiter interpreta a função de entrada do Python.
+
+Ele renderiza o resultado nessas células de saída, mas sim , você poderia fazer exatamente o mesmo fluxo de trabalho usando a linha de comando.
+
+Muito bem, vamos dar uma olhada na nossa seção de perguntas e respostas. Hum, e Alu queria fazer uma ótima pergunta. Não seria melhor ver o que está no carrinho no momento da exclusão? Essa é uma ótima adição. Acho que, ao remover um item do carrinho, exibir o conteúdo real do carrinho seria algo simples de adicionar à função de remover do carrinho, o que agregaria muito valor ao usuário.
+
+Então, como você faria isso? Provavelmente, você chamaria a função de visualização do carrinho depois disso, para que os usuários pudessem ver o que tem lá dentro .
+
+E qual a diferença entre usar uma mensagem de entrada do tipo inteiro (int input message) e primeiro receber a entrada e depois verificar se é um dígito? Bem, a forma como verificamos o dígito é mais flexível, porque aqui está o que vou copiar e colar para que as pessoas possam ver a lógica que estamos discutindo. Então, foi isso que fizemos. A questão é sobre algo assim, onde você está usando um input do tipo int. Como estamos solicitando uma entrada e depois verificando se é um dígito, isso nos permite evitar que tudo quebre de uma vez se a entrada estiver incorreta. Portanto,
+
+isto é mais rígido. Mas se você contornar essa rigidez de alguma outra forma, como incluindo isso dentro de um bloco try-accept, então tudo bem. Isso seria equivalente.
+
+Muito bem, e agora posso ver o chat, pois já li todas as perguntas e respostas.
+
+Então, vamos conversar um pouco aqui no chat. Supriya pergunta: "Podemos enviar perguntas por e-mail após este webinar?" Você está perguntando porque perdeu o começo e precisa assistir à gravação. Então, no YouTube, eu adoro ler e responder aos comentários, e é por isso que vou postar essa gravação no YouTube hoje ou amanhã para que vocês possam me fazer perguntas nos comentários. Além disso, se você acessar a comunidade Dataquest e clicar neste link do projeto, será direcionado para um local onde poderá fazer perguntas sobre ele.
+
+E se você faz parte da comunidade Dataquest e me marcar, marque-me também. Então, se você me marcar em Anna_straw, terei o maior prazer em responder às perguntas por lá. Além disso, se você me marcar em seu projeto finalizado, darei uma olhada e poderei oferecer algum feedback . Portanto, o caminho a seguir é o YouTube ou a comunidade Dataquest. E Stephanie diz que há valor em aprender a lógica e a sintaxe aqui, especialmente se você for iniciante. Sim,
+
+este projeto é voltado para iniciantes. Ou seja, tivemos que fazer algumas concessões em relação ao design de nível de produção. Isto não está de forma alguma pronto para produção. Mas este projeto aparece em nosso conteúdo introdutório de Python . Então, para quem está começando a aprender Python, aqui tem um trabalho bem interessante para fazer.
+
+Então, talvez isso tenha alguma relação com a sua pergunta. Como você criaria um ambiente DevOps para este projeto? Você gostaria de transformar isso em algo profissional. Neste momento da minha carreira, não tenho muita experiência em DevOps. Bem , não posso falar sobre isso. No entanto,
+
+se você pretende trabalhar com DevOps, algo como o Django pode ser útil, caso queira permanecer no mundo do Python. Talvez você pudesse considerar algo relacionado ao Flask. Sim, eu começaria por aí.
+
+E Tanico, você atuará como desenvolvedor front-end para este aplicativo em outra sessão. Como eu disse, nada de trabalho por aqui, estamos terminando o aplicativo de pedidos de comida. No entanto, se você quiser fazer o design front-end, e se for completamente iniciante em design front-end, algo como o Gradio, eu vou digitar aqui para você em uma célula Markdown. Gradio é um design de front-end muito fácil de usar, assim como o Streamlit. Eu gosto de usar o Streamlit.
+
+Não se trata de uma interface de aplicativo sofisticada e perfeitamente renderizada para esse tipo de coisa, mas se você pretende compartilhar algum tipo de interface de usuário com o público, essas duas opções podem te ajudar. Então, neste momento, eu só quero agradecer a todos vocês por participarem do webinar. Espero que você tenha aprendido algo novo e desejo a todos muita felicidade na programação. Obrigado a todos.

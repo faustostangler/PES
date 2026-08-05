@@ -1,0 +1,345 @@
+---
+video_title: "Clean & Analyze Real Car Sales Data with pandas | Beginner Python Project Walkthrough"
+video_id: QXZN2ZEvgqw
+channel_name: "Dataquest"
+channel_id: UC_lePY0Lm0E2-_IkYUWpI5A
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=QXZN2ZEvgqw
+video_date: 2026-02-27T14:00:49+00:00
+video_description: |
+  In this video, we guide you through a real-world data analysis project using pandas to explore and clean a dataset of used car listings scraped from eBay Kleinanzeigen, the German eBay classifieds site. You'll step into the role of a data analyst for a used car classifieds service, tackling the kind of messy, real-world data challenges you'd actually encounter on the job.
+  
+  What You'll Learn in This Video:
+  ✔️ How to clean messy column names and standardize datasets
+  ✔️ How to identify and handle missing or invalid data
+  ✔️ How to clean and convert price and mileage columns from strings to usable numbers
+  ✔️ How to explore and filter out unrealistic registration year values
+  ✔️ How to group and aggregate data to uncover pricing trends by brand
+  ✔️ How to store and organize aggregate results in a new DataFrame
+  
+  Whether you're building your first data portfolio project or looking to sharpen your pandas skills on real scraped data, this walkthrough gives you hands-on practice with:
+  Python
+  pandas
+  NumPy
+  Exploratory data analysis (EDA)
+  Data cleaning and type conversion
+  Boolean indexing and filtering
+  Grouping and aggregation
+  
+  Recommended Prerequisites:
+  Introduction to NumPy and Pandas → https://www.dataquest.io/course/pandas-fundamentals/
+  
+  Access the Project: https://www.dataquest.io/
+  
+  Video Chapters:
+  00:00:00 - Intro
+  00:02:21 - Project Brief & Dataset Overview
+  00:04:06 - Loading the Data & Encoding Issues
+  00:07:22 - Exploratory Data Analysis
+  00:21:15 - Data Cleaning: Columns, Price & Odometer
+  00:38:05 - Handling Outliers & Invalid Values
+  00:40:20 - Brand & Mileage Analysis
+  00:48:24 - Creating a GitHub Gist
+  00:50:13 - Q&A
+  
+  #Python #DataScience #pandas #DataCleaning #PythonProjects #EDA #DataAnalysis #BeginnerPython
+---
+Certo, então este é o laboratório do projeto Data Quest e hoje vamos realizar um projeto de análise de dados onde examinaremos alguns dados de vendas de carros do eBay e trabalharemos com o pandas do Python em particular. Então, um pouco sobre mim: meu nome é Anna Straw e sou a diretora de currículo aqui na DataQuest. Então, eu ajudo a garantir que tenhamos muito conteúdo excelente chegando até vocês. Mantemos nosso conteúdo existente atualizado e relevante, incluindo as versões da biblioteca. E fique de olho no seu e-mail, porque em breve teremos conteúdo muito interessante. Sem
+
+spoilers. Mas antes de trabalhar na Data Quest, comecei minha carreira como professor de matemática do ensino médio. E fiz isso durante oito anos antes de fazer a transição para a análise de dados, onde aprendi sozinha a fazer isso e, na verdade, usei o Data Quest como plataforma para adquirir essas habilidades. Portanto, se você está buscando uma mudança de carreira, saiba que se eu consegui, você também consegue. Agora, um pouco sobre você. Eu adoraria
+
+saber. Bem, este projeto específico que vamos realizar hoje está no início da nossa jornada na área de ciência de dados. Fica mais ou menos no meio do nosso percurso de analista de dados. Portanto, você não precisa ter muita experiência para entender do que estamos falando hoje. Você deve ter alguma familiaridade com listas, dicionários, loops e lógica condicional em Python, e ter trabalhado um pouco com pandas tornará muito do que faremos mais tangível, mas não acho que seja um requisito essencial para acompanhar hoje.
+
+Então, na pauta de hoje, vamos falar sobre o cenário para este projeto. O que é que vamos fazer? Vamos explorar nossos dados, limpá-los e, em seguida, fazer algumas análises com visualizações simples. Depois, possivelmente compartilharemos o projeto por meio de um gist no GitHub e finalizaremos com uma sessão de perguntas e respostas. Então, o nosso projeto consiste em atuar como analistas de dados para uma plataforma de classificados de carros usados. Nossa função
+
+será analisar as vendas de carros usados ​​já realizadas no eBay e identificar possíveis tendências . Existem marcas de carros específicas que são vendidas por preços maiores ou menores? A quilometragem registrada no odômetro influencia o preço de venda de um carro ? É para esse tipo de pergunta que vamos nos preparar. Bem, em particular, estamos usando dados da versão alemã do eBay, e esses dados foram extraídos de um conjunto de dados da web.
+
+Então, sem mais delongas, vamos direto ao aplicativo Data Quest e trabalharemos neste ambiente Jupyter Lab.
+
+Então, a primeira coisa que faremos para nossa exploração de dados é importar nossas bibliotecas. Para aqueles que disseram ter familiaridade com pandas, esta frase não será nenhuma surpresa. Vamos importar o pandas como PD. PD é uma abreviação bastante comum na indústria para pandas. Bem, se executarmos isso, meu atalho para executar células no Jupiter é Shift + Enter no meu teclado. [bufa] Podemos
+
+ver que terminou de correr porque temos um pequeno número um aqui na lateral. Então, a primeira coisa que vamos fazer é importar, ou melhor, não importar, vamos carregar nossos dados e criar um dataframe do pandas chamado `autos` usando o pandas, certo? Essa é a nossa abreviação: `pdread.csv`. E o nosso arquivo CSV se chama `autoscv`.
+
+Vou cometer um erro de propósito aqui para mostrar o que acontece. Bem, se você quiser praticar junto, o link para este projeto está sendo compartilhado na caixa de bate-papo e você poderá programar junto ou simplesmente ouvir e absorver as informações dessa forma. Não existe forma errada de participar deste webinar. Então, se eu executar isso agora, vou receber um erro. Portanto, não vamos entrar em pânico quando virmos um monte de vermelho.
+
+Tudo bem. E qual é o erro que obtemos? Aqui está um pouco de depuração para fazermos. Ocorreu um erro de decodificação Unicode. E as mensagens de erro podem muitas vezes parecer assustadoras porque são muito longas e, nossa, será que eu tenho mesmo que ler todas essas linhas? Normalmente não. O truque é
+
+rolar a página até o final, até a última linha. E às vezes é preciso voltar um pouco mais no código de erro para entender o que está acontecendo, mas essa é sempre a melhor dica. E diz que houve um erro de decodificação Unicode: o codec UTF8 não consegue decodificar o bit 0xdc na posição 1059, bit de continuação inválido. Isso pode parecer um pouco técnico demais, mas a chave aqui é UTF8. Ao lermos arquivos, existem diversas maneiras diferentes de lê-los. E o UTF-8 é o método de codificação mais comum
+
+para a maioria dos arquivos. Mas ocasionalmente há certos caracteres, talvez um caractere não inglês, talvez um emoji estranho ou algo que o UTF-8 não reconheça. Não sabe o que fazer com isso. O programa pega todos esses zeros e uns da parte interna do computador e tenta transformá-los em texto legível, mas encontra um determinado caractere que não reconhece. Portanto, existem outros métodos de codificação.
+
+Vamos tentar o segundo método de codificação mais comum, que especificaremos como codificação igual a Latin 1. E minha dica é: se você se deparar com um erro de decodificação Unicode e o UTF-8 não funcionar, tente usar o Latin 1. E eu diria que nove em cada dez vezes vai funcionar. Vamos ver se, nesta situação, isso realmente funciona. Vou pressionar Shift + Enter para executar a célula.
+
+E podemos ver que está funcionando. Não ocorre nenhum erro porque temos um número entre parênteses. Assim, a codificação latina resolveu nossos problemas de codificação. Então, agora, na mesma célula, depois de termos depurado o código, vou exibir algumas informações sobre nossos dados. Estamos iniciando a fase de exploração de dados porque não podemos realizar nenhuma análise até entendermos o que nossos dados realmente nos fornecem.
+
+Portanto, o método `info` é uma ótima ferramenta inicial para visualizar a quantidade de dados com que você está lidando, os tipos de dados , os nomes das colunas e tudo mais. E então o método `head` exibirá as cinco primeiras linhas dos dados reais para que possamos ver, de certa forma, como esses valores se parecem. Então, no método ourinfo, é isso que vemos nesta saída aqui. Vejo que temos 50.000 linhas de dados. Temos 20 colunas.
+
+E quando vejo o método info, há algumas coisas em particular que procuro. Verifico quantos valores não nulos temos. Assim, valores nulos geralmente representam valores ausentes. E se você tiver muitos dados faltantes, sua análise poderá ser menos precisa e menos eficaz. Então, olhando aqui, 50.000 de
+
+50.000. Ótimo. Não há nenhum valor nulo aqui. Hum, existem alguns valores nulos no tipo de veículo . Parece que o nosso maior
+
+valor nulo está na coluna "danos não reparados" . Portanto, talvez devêssemos ficar de olho nisso . Bem, vamos manter isso em mente como uma possível etapa de limpeza de dados que precisaríamos considerar. Bem, para a análise de hoje, na verdade não estamos usando esta coluna. Então, tudo bem.
+
+Ah, outra coisa que gosto de analisar é o tipo de dado. Essa é a coluna do tipo DT . E "objeto" geralmente significa que é uma string. Então, em qualquer lugar onde virmos um objeto, o nome de um carro, por exemplo, será uma string. O nome do vendedor do carro será uma sequência de caracteres. Um int
+
+64 significa que será um número inteiro. E isso faz sentido para o ano de registro. O mesmo vale para a energia. PS é a quantidade de potência que o carro possui e a unidade aqui é PS. O mês de inscrição também é um número inteiro. O número de
+
+fotos associadas ao anúncio do eBay é um número inteiro. O código postal é um número inteiro, mas isso é um pouco problemático, pois é possível obter um código postal médio se você quiser somar todos os códigos postais? Não, isso não faz nenhum sentido. Portanto, para nossa análise, não precisamos nos preocupar com isso. Mas se você estiver trabalhando em um modelo de aprendizado de máquina, por exemplo, é importante ter em mente que o cálculo não resulta em um número inteiro. Hum, mais algumas coisinhas de
+
+identificação de coluna para o nosso webinar de hoje. Bem, o preço é o valor pelo qual o carro foi vendido no eBay. E isso é interessante. Neste momento, o preço está listado como um objeto. Mas o preço deveria ser um número. Então, quando analisarmos
+
+as cinco primeiras linhas dos dados, quero entender por que o preço está sendo rotulado como um objeto. Hum, e o que mais temos aqui? o odômetro. Este é o outro ponto em que vamos concentrar nossa análise hoje. E o odômetro também está listado como um objeto. Portanto, a quilometragem do
+
+carro deve ser um número. Então, o fato de ser um objeto é mais um aspecto estranho. Hum, mais algumas coisas para entender o conjunto de dados. Esses dados foram extraídos da web do eBay. Assim, várias dessas colunas nos fornecem informações sobre esse processo de raspagem. Portanto, quando dizemos "data de rastreamento", estamos nos referindo
+
+à data em que um robô rastreou o eBay para obter informações sobre um carro. De forma muito semelhante ao "onde está o último ?". Nossa última coluna foi publicada aqui. Este é o horário em que o bot foi visto pela última vez coletando dados desta página específica do eBay.
+
+Tudo bem. Vamos então analisar as cinco primeiras linhas do nosso conjunto de dados. Assim, podemos ver que nossa análise de dados se parece com uma data. Temos alguns nomes longos, do tipo string, para o nome do carro. O vendedor parece estar frequentemente listado como particular. E lembre-se que este é o
+
+eBay alemão, então as palavras podem estar em alemão. Hum, o tipo de oferta é angbot. Não sei o que isso significa. Eu não falo alemão. [bufa] E depois vem o preço. Lembre-se,
+
+este era um tipo de objeto. E agora estou entendendo por que é um tipo de objeto, porque há um símbolo de dólar e uma vírgula para indicar a casa dos milhares. Então, vamos colocar nossa primeira tarefa de limpeza de dados na fila. Vamos remover o símbolo de dólar e a vírgula e converter isso em um número inteiro para que possamos fazer algumas estatísticas descritivas com ele. Tudo bem. A caixa de câmbio indica se é manual ou
+
+automática. Ah, Edu, obrigado. Angabot significa oferta em inglês. OK. Portanto, quando vemos a palavra "angabot" aqui, significa apenas que há algum tipo de oferta disponível. Talvez seja oferta versus
+
+desculpa [limpa a garganta] hum, preço fixo ou algo assim e sim, nossa Nashri, espero estar pronunciando seu nome corretamente, você está correto, vemos também o odômetro, notamos que era um tipo de dado de objeto e agora estamos vendo o motivo: ele tem essa marcação de quilômetro, bem como a vírgula, então este é outro que precisaremos remover alguns caracteres de string para converter em um inteiro. OK. E o resto parece estar tudo bem. Bem, para nossa análise, não vamos abordar muito a maioria dessas colunas . Embora este seja um ótimo conjunto de dados, e caso você queira avançar para as próximas etapas após o webinar, tenho algumas ideias e, nesse caso, algumas dessas colunas podem ser úteis para você.
+
+[Limpa a garganta] Ok. Então, a próxima coisa que faremos é simplesmente um bom exercício. Se observarmos os nomes de nossas colunas. Por exemplo, o tipo de veículo. Isso utiliza um formato chamado camel case, onde, quando temos várias palavras para um único nome, as palavras são agrupadas sem espaço e novas palavras são indicadas com letra maiúscula. É chamado de "camel
+
+case" porque as letras maiúsculas criam uma espécie de saliência que nos mostra as novas palavras. Mas em Python, a melhor prática é usar o formato snake case, onde as palavras são separadas por um sublinhado. Para nos mantermos em conformidade com as melhores práticas, vamos alterar os nomes das nossas colunas. Para facilitar isso, a primeira coisa que faremos é usar o atributo `columns` para listar todas as nossas colunas de forma simples, permitindo copiar e colar o nome de cada coluna individualmente. Em seguida, vamos pegar essas colunas e eu farei essa parte para nós, mas recomendo que você copie e cole o que temos da lista de colunas aqui e, em seguida, faça as alterações necessárias. Portanto, em vez de "date crawled" como
+
+estava originalmente no conjunto de dados, substitua o "C" maiúsculo por um "c" minúsculo com sublinhado para que todas as colunas fiquem em snake case. E é importante manter a numeração exata das colunas na ordem correta, porque o pandas não saberá se você reorganizar os nomes das colunas. Isso simplesmente vai colocar o nome incorreto na coluna incorreta. Assim, mantemos todos os nomes das colunas na mesma ordem. E agora, atribuímos esse valor de volta ao atributo de colunas. E quando imprimimos as
+
+cinco primeiras linhas do nosso conjunto de dados, agora podemos ver os nomes das colunas em snake case. Essa é apenas uma pequena prática recomendada para nós. E agora, dando continuidade à nossa exploração de dados. Gosto muito de analisar o método describe. O método `describe` nos fornecerá quaisquer estatísticas resumidas. E como
+
+muitas de nossas colunas atualmente não são numéricas, elas são do tipo texto. Estou usando este parâmetro "incluir tudo". Isso incluirá todas as colunas do nosso conjunto de dados, sejam elas do tipo numérico ou não. Se não incluirmos isso, vamos ver o que acontece se não incluirmos isso. Sou muito fã de experimentar.
+
+Assim, vemos que faltam a maioria das colunas, pois essas são as únicas colunas numéricas nas quais podemos calcular a média, a mediana e o desvio padrão. Mas quando incluímos tudo, agora vemos tudo. [limpa a garganta] Então, se você é novo nisso, vai ver que tem um monte de nan n, que significa "não é um número". Isso significa simplesmente que essas são colunas de texto e não é possível calcular uma média. Não é um erro. É que simplesmente não temos essa
+
+informação disponível. Então, sempre que analiso o método describe para colunas de objetos, gosto de observar o número de valores únicos. Por exemplo, para a data rastreada, faz sentido que haja muitos valores únicos. Da mesma forma, quanto ao nome do carro, faz sentido que haja muitos valores novos, ou melhor, únicos. Mas essas com apenas alguns valores únicos, essas são as que eu talvez queira ter em mente.
+
+Hum, porque talvez elas não sejam tão valiosas se houver apenas dois valores diferentes. Portanto, o vendedor só possui dois valores diferentes. O tipo de oferta possui dois valores diferentes. No teste A/B , faz sentido ter dois valores diferentes, pois ou será o grupo de teste ou o grupo de controle.
+
+A caixa de câmbio faz sentido porque ela poderá ser automática ou manual. Hum, essa me parece um pouco interessante . O odômetro, que ainda está listado como um tipo de dados string, possui apenas 13 valores únicos, o que, para algo que deveria ser numérico, é um tanto estranho para mim. Então, vamos ficar de olho nisso. E depois percorrendo os nossos outros valores únicos.
+
+Essa é um pouco difícil de ver, mas a quantidade de fotos e o código postal... eu não sei. Essas são as que mais me chamam a atenção. Em relação ao
+
+número de fotos, em particular, todas as nossas estatísticas descritivas mostram que o resultado é zero. Então, existe algum valor diferente de zero aqui? Algo que vamos explorar. Tudo bem. E analisando agora nossos tipos de dados numéricos, vamos primeiro observar nossos valores mínimos e máximos.
+
+Isso nos ajudará muito a identificar quaisquer valores discrepantes. Então, para o nosso valor mínimo e o nosso valor máximo para o ano de registro, em que ano o carro foi registrado? O valor mínimo é 1000. Bem, eu não sou especialista em carros, mas tenho quase certeza de que carros não existiam no ano 1000. Então, vamos querer explorar isso. Da
+
+mesma forma, o ano 9.999 está muito distante no futuro. Portanto, esse valor máximo para o ano de registro de um carro provavelmente é um erro de qualidade de dados que precisamos corrigir. Então, o que mais temos? Poder. Talvez
+
+esse valor máximo esteja um pouco impreciso, mas não vamos incluir essa coluna em nossa análise de hoje. Portanto, não estou preocupado com isso. Se você quiser fazer uma análise mais aprofundada, especialmente sobre esta coluna , eu investigaria isso. O mês de inscrição faz sentido para mim. Hum, e não temos muitos outros valores numéricos. Por enquanto é só isso. Então, vamos
+
+começar selecionando os assuntos que gostaríamos de investigar mais a fundo. A primeira é aquela coluna com o número de fotos, onde tudo parecia ser zero. Quero ver a contagem de valores e verificar se há algum valor diferente de zero. E, se você é iniciante no pandas, o que estamos fazendo aqui é pegar nosso dataframe `autos` e dizer que queremos analisar apenas esta coluna. E essa notação entre colchetes é muito, muito útil para destacar colunas individuais.
+
+Então, o método de contagem de valores já está integrado. E podemos ver em nossa saída aqui que o número de fotos em todas as 50.000 linhas é zero. Portanto, esta coluna é inútil para os nossos propósitos. Podemos eliminar esta coluna completamente.
+
+Outros campos que vamos remover são o vendedor, pois havia apenas dois valores únicos, e o tipo de oferta, porque não nos fornece nenhuma informação necessária. Portanto, para remover colunas de um dataframe, diremos que nosso dataframe agora será diferente. Pegue nosso antigo dataframe ou nosso dataframe existente e remova as colunas que estão nesta lista de colunas. E para especificar que estamos descartando colunas e não linhas, usamos o parâmetro de acesso equals. E se dissermos "um", significa que estamos eliminando colunas. E se dissermos zero, significa que
+
+estamos descartando linhas. Só
+
+uma pequena explicação rápida sobre a diferença entre data frame e data set. Então, no pandas, você vai trabalhar com data frames. Essa é a forma como o pandas importa e analisa dados em formato tabular com maior facilidade. Portanto, se você já trabalhou no Excel com suas colunas e linhas, o pandas não tem nada a ver com o Excel. Assim, ele cria um quadro de dados para gerar colunas e linhas. Então, quando
+
+eu digo "quadro de dados", você pode visualizar esses dados tabulares. E quando digo conjunto de dados, é meio que um sinônimo, mas "data frame" é um termo um pouco mais preciso tecnicamente quando estamos trabalhando no ambiente de código, porque se trata de um data frame baseado em um conjunto de dados. Espero que faça sentido. Então, vamos executar isso rapidamente para descartar nossas colunas . E agora vamos cuidar das colunas de preço e quilometragem, que deveriam ser numéricas, mas atualmente são strings.
+
+Então, vou copiar um trecho de código e vamos analisá-lo passo a passo. Isso pode parecer um pouco intimidante. Mas o que vamos fazer é mostrar nossa coluna de preços. Estamos realocando parte do trabalho para nossa coluna de preços. E o trabalho que vamos fazer é analisar a coluna de preços existente.
+
+E para essa coluna, vamos garantir que seja uma string por enquanto. É importante que estejamos analisando as cordas. E então vamos usar esse método de substituição, onde o primeiro argumento indica que vamos substituir o símbolo de dólar e o segundo argumento indica o que usaremos para substituí-lo. Então vamos substituir o símbolo de dólar por nada. Então, esta é a maneira de remover caracteres de um valor.
+
+E estamos fazendo exatamente a mesma coisa para substituir nossa vírgula. Estamos substituindo a vírgula por nada. E por fim, a última coisa que faremos aqui é alterar o tipo, pois atualmente é uma string. E agora vamos dizer que o tipo será um número inteiro. Isso se chama encadeamento de métodos, e a forma como é apresentado aqui torna a leitura bastante fácil, linha por linha. O resultado é o
+
+mesmo se removermos todos os espaços e deixarmos tudo em uma única linha. E quero mostrar isso a vocês, porque sei por experiência própria que, quando era iniciante em Python, o encadeamento de métodos parecia um pouco intimidante. Mas o que isso faz é facilitar a realização de várias tarefas ao mesmo tempo. E o encadeamento vem de ponto ponto ponto. Estamos fazendo este ponto, depois estamos fazendo este ponto, depois estamos fazendo este ponto, depois estamos fazendo este ponto. Assim, uma única linha
+
+de código pode fazer três coisas ao mesmo tempo para nós. Está substituindo duas coisas diferentes e criando um número inteiro. Bem, e agora, quando olhamos para o cabeçalho, e Dave faz uma boa observação, muitos países europeus substituem um ponto decimal por um comentário. E é por isso que é realmente importante termos analisado nosso método de cabeçalho hoje mais cedo, porque conseguimos identificar corretamente os caracteres exatos que estavam fazendo com que nosso preço fosse uma string em vez de um número. Portanto, se não fizéssemos essa análise detalhada, poderíamos extrair os caracteres errados.
+
+OK. Agora, quando analisamos o preço e os primeiros valores usando o método doad, vemos que, na verdade, são números inteiros e o tipo de dados é um número inteiro. Agora vamos fazer o mesmo para o odômetro, mas vou dar um segundo para vocês verificarem se entenderam. Então, o que queremos fazer com o odômetro para transformá-lo de uma string em um número inteiro? Há duas coisas que precisamos levar em consideração
+
+no chat. Eu vejo isso. Remova a unidade km e a vírgula. Sim, vamos usar o método de substituição. Exatamente.
+
+Portanto, é praticamente o mesmo código. Poderíamos copiar e colar daqui e simplesmente alterar os caracteres específicos.
+
+Então, vamos substituir km por nada, substituir a vírgula por nada e depois transformar o resultado em um número inteiro. H. E para nos ajudar a especificar que o odômetro agora está em quilômetros, porque estamos removendo essa informação da própria unidade. Bem, vamos renomear a coluna. Em vez de odômetro, vamos chamá-lo de odômetro_km.
+
+O acesso é um deles. Lembre-se, isto é para a nossa coluna, não para a nossa linha. E então, `in place equals true` apenas ajuda o pandas a saber que não estamos adicionando nada de novo. Simplesmente mantenha tudo como está. Basta pegar esse novo nome e inseri-lo. E agora, quando
+
+olhamos para o cabeçalho da coluna de quilometragem do nosso odômetro , podemos ver que sim, tudo é um número inteiro. Tudo bem. Bem, o que queremos fazer agora é nos preparar para realizar nossa análise. Já limpamos o que precisávamos limpar por enquanto, pois vamos analisar especificamente o preço e a quilometragem. Mas havia um outro aspecto do odômetro que queríamos explorar durante nossa fase de análise de dados. E,
+
+para relembrar o que era isso, o odômetro tinha apenas 13 valores únicos. Se é um número, por que existem apenas 13 valores únicos? A quilometragem pode variar muito de um carro para outro. Então, vamos analisar a quantidade de valores nisso. Então, já vimos isso antes. Estamos usando
+
+nosso conjunto de dados de automóveis. Estamos extraindo especificamente a coluna do odômetro e usando um método de contagem de valores. E podemos ver que sim, temos 13 valores diferentes. que abrangem todos os nossos dados. E a minha melhor hipótese sobre o que está acontecendo aqui é que, ao anunciar um carro para venda no eBay , pelo menos no mercado alemão em 2016, de onde vêm esses dados, era preciso escolher entre uma lista suspensa de opções. Portanto,
+
+isso atende perfeitamente aos nossos propósitos. Está tudo bem. uma diferença entre um carro com 125.000 km rodados e um com 150.000 km rodados.
+
+Não estamos perdendo um nível de detalhamento essencial. Portanto, no que diz respeito à limpeza de dados , não estamos preocupados com isso. Mas é bom verificar exatamente o que estava acontecendo com aquela coluna. OK. Agora que nossas duas análises estão em formato numérico, vamos reexaminar o método de descrição.
+
+Então, vou analisar primeiro a coluna de preços e observar as estatísticas descritivas correspondentes. E também vou analisar a quantidade de valores associados ao preço, mas apenas os dois primeiros, porque temos muitos valores únicos para cada preço. [bufa] Ah, só para começar a ter uma ideia do que está acontecendo aqui. Tudo bem. Primeiramente, estou percebendo que nossas estatísticas descritivas estão sendo exibidas em notação científica, o que é um pouco irritante, mas ainda conseguimos obter o que precisamos a partir delas. A
+
+primeira coisa que vejo é o preço mínimo. Não precisamos ser especialistas em notação científica para entender que o preço mínimo é zero, o que torna incoerente o fato de um carro ser vendido por US$ 0. O preço máximo, no entanto, é um seguido de oito zeros, o que representa uma grande quantia de dinheiro para um carro. E acho que vamos precisar analisar nossos valores máximos para ver se são valores atípicos, porque não consigo imaginar um mundo onde um carro esteja sendo vendido por essa quantia de dinheiro. Bem , analisando os primeiros valores e a quantidade de valores relacionados ao preço, vemos que cerca de 1.400 instâncias
+
+têm preço zero. Bem, se nos lembrarmos, nosso conjunto de dados tem 50.000 linhas. Este é um número bastante pequeno de casos em comparação com o contexto geral, e acho que provavelmente faz sentido excluir os carros que constam como vendidos por US $ 0. Talvez isso signifique que o carro não foi realmente vendido. Talvez signifique que
+
+eu nem sei o que isso significa, mas para os nossos propósitos como analistas de vendas de carros usados, não é para isso que estamos fazendo nossa análise . Então, vamos removê-lo. E agora vamos analisar os preços mais altos , aqueles valores potencialmente atípicos. E a forma como faremos isso é analisando a quantidade de valores que utilizamos. Mas vamos ordenar o índice em ordem decrescente. E a maneira
+
+de especificarmos a ordem decrescente é dizendo que " ascendente" é igual a falso. E veja os 20 principais valores aqui. OK. E podemos ver que temos alguns preços astronômicos. Bem, tudo aqui é um carro sendo vendido por milhões de dólares. E quanto a
+
+esses valores principais, vou tomar a decisão executiva de removê-los. É aqui que entra a arte da limpeza de dados. Talvez você tenha um limite diferente para o que deseja manter e o que deseja remover. Mas, para mim, o que estou dizendo é que se um carro está sendo vendido por mais de um milhão de dólares, ele não tem lugar em nossa análise. Margaret fez uma ótima pergunta esclarecedora. São dólares? Se for um
+
+site alemão do eBay, provavelmente os preços estão em moeda alemã. Mas mesmo assim, dado que nosso conjunto de dados tem 50.000 linhas e cerca de 10 a 15 valores, temos mais de um milhão, embora eu não saiba a taxa de câmbio exata de dólares para euros alemães. É isso que a Alemanha está fazendo? Desculpe, Europa. Hum, provavelmente isso não ajuda
+
+em nada nossa análise. E poderiam ser carros de luxo, mas, novamente, como há 50.000 linhas de dados, 15 delas estão nessa faixa específica, a conclusão é que não precisamos delas. Hum, mas talvez você queira explorar estes carros de ponta. São carros de luxo? Talvez haja
+
+alguma análise que você possa fazer aí. Marca alemã. Obrigado. Minha geografia americana está me deixando na mão. Tudo bem. Agora, vamos fazer o mesmo
+
+para a quantidade de valores dos nossos preços mais baixos, porque tínhamos alguns valores pequenos aqui. Então, é a mesma coisa, mas estamos fazendo " ascendente é igual a verdadeiro". OK. E podemos ver que temos vários preços muito baixos. Preço: $0. Já vimos isso antes, em
+
+cerca de 14.000 casos de carros sendo vendidos sem nenhum custo. E depois há alguns carros que estão sendo vendidos por preços muito, muito, muito baixos. Então vamos remover os valores discrepantes. É uma questão de julgamento. Essa foi a decisão que
+
+tomei. Decidi que só vamos ficar com carros com preços entre 1 e 350 mil dólares. E isso eliminará nossos valores discrepantes extremos, bem como nossos valores discrepantes zerados, porque parece haver alguns carros sendo vendidos por um dólar. Não conheço a história por trás disso, mas acho que não podemos removê-los completamente. Bem , agora que estamos removendo esses extremos, vamos reavaliar nosso método de descrição. E como nos livramos
+
+daqueles valores muito, muito grandes, não estamos mais em notação científica, o que é bom para a legibilidade humana. E podemos ver que sim, nosso valor máximo está dentro do nosso intervalo. Nosso valor mínimo agora é um. E não perdemos uma quantidade extraordinária de nossos dados. Ainda temos 48,5.000
+
+linhas das nossas 50.000 originais. Muito bem, se vocês estão acompanhando meu caderno de soluções, vou pular a próxima parte por falta de tempo, para que possamos chegar à parte da análise, que era a que todos estavam mais ansiosos para ver. Sim,
+
+estou tentando aproveitar ao máximo o nosso tempo aqui. Vamos ver. Vamos ver. Vamos ver.
+
+Sim, todas as informações coletadas, nós vamos ignorar. Última cena que vamos pular. Mas vamos levar em consideração o ano de registro, porque, lembrando da nossa pesquisa, quando o carro foi registrado, o valor mínimo era de 1.000 e o máximo de 9.999.
+
+Esses anos não fazem sentido para carros. Portanto, precisamos cuidar deles. E estamos fazendo uma avaliação subjetiva aqui. Mais uma vez , não sou especialista em carros, mas vamos considerar que um ano de registro válido para os nossos propósitos é qualquer ano entre 1900 e 2016. E 2016 foi escolhido aqui porque o conjunto de dados termina em 2016.
+
+Então, esta linha vai nos ajudar a ver quanto desses dados não está dentro desse intervalo. Porque se tivermos uma grande quantidade que não esteja dentro desse intervalo, precisaríamos considerar se realmente precisamos mantê-la. Mas podemos ver aqui que, na verdade, temos apenas cerca de 3% dos dados que estão fora desse intervalo. Então, tudo bem. Qual a função do símbolo til (til) ? Este é o símbolo de negação. Então, quais carros
+
+não estão incluídos na nossa gama de veículos válidos? E há cerca de 4% de carros que não estão dentro dessa faixa válida, o que, para fins de descarte, é aceitável. Esse número de linhas é tão pequeno que podemos removê-las sem problemas. [Limpa a garganta] Então vamos removê-los. E agora podemos ver que estamos reatribuindo nosso quadro de dados. Enquanto
+
+antes fazíamos apenas um cálculo rápido nesta linha, agora estamos dizendo: "Ok, vamos incluir apenas os anos de registro". entre 1900 e 2016. E apenas uma rápida olhada nos valores registrados para aquele ano, para ver se faz sentido. OK. Sim, está tudo bem. Bem,
+
+os anos com maior número de registros parecem ser 2000, que representa cerca de 7% dos nossos dados. Em 2005, esse número foi de 6%. E tudo isso faz sentido para carros que estão sendo vendidos como usados ​​há anos. Muito bem , agora
+
+vamos começar nossa análise. E a primeira coisa que faremos é analisar quais marcas são mais populares para vender no mercado alemão do eBay. E vamos analisar a nossa importância . Estamos usando a função normalizar, que basicamente transforma os dados em porcentagem em vez de um número bruto. Assim, entre as marcas mais populares, podemos observar que a Volkswagen detém cerca de 21% das vendas. A BMW detém 11% e a Opel, 10%.
+
+E a partir daí diminuem. Agora, existem alguns valores realmente muito, muito pequenos, menos de um por cento, como no caso do Volvo Mini Cooper, e assim por diante. Você poderia guardar todas essas informações para sua análise, mas vamos manter apenas as marcas mais comuns para ajudar a empresa de carros usados ​​para a qual estamos atuando como analistas a obter o máximo de informações para a tomada de decisão. Portanto, vamos manter as marcas comuns como aquelas que representam mais de 5% do total de marcas utilizadas. E podemos ver que a lista diminuiu drasticamente. Temos Volkswagen, BMW,
+
+Opel, Mercedes-Benz, Audi e Ford. [Limpa a garganta] Muito bem
+
+. E agora, o que vamos fazer é basicamente encontrar o preço médio utilizado para cada uma de nossas marcas mais comuns. Então, estamos criando um dicionário vazio e vamos definir que, para cada marca em nossa lista de marcas comuns, vamos extrair o nome da marca. E então vamos divulgar o preço dessa marca. E estamos usando o método da média para obter o preço médio. E então estamos
+
+convertendo de volta para um número inteiro apenas para garantir. Vamos dar uma olhada em como isso se parece. Tudo bem. Assim, podemos ver que a Volkswagen tem um preço médio de 5400. A BMW, por sua vez, tem um preço médio de 8300. Parece que o mais barato aqui
+
+é o Opal, por 29. Hum, isso é bem legal. Mas a última coisa que quero fazer aqui é transformar isso em um recurso visual bem rápido. E para isso, vamos converter essa informação que atualmente está em formato de dicionário. Vamos convertê-lo em um data frame. Relembrando nossa
+
+conversa sobre conjunto de dados versus data frame? Os data frames são a maneira mais fácil de calcular, obter informações e fazer uma pequena visualização rápida no pandas, pois essa é a essência do pandas. Para transformar isso em um data frame, vamos extrair uma série de preços e, em seguida, definiremos que o nome da série será o número de linhas e o preço médio será o número de colunas . E veja só, transformamos esse dicionário em um dataframe com uma aparência muito bonita . Mas, como bônus, vamos visualizar isso. Espero
+
+fazer isso corretamente.
+
+OK. Então, vamos dizer, na verdade, vamos dizer auto dataf frame igual a. Então, estamos atribuindo o frame de dados a um nome de variável. E então vamos executar o comando `auto dataf frame.plot`.
+
+E se plotarmos isso agora, podemos ver que obtemos um gráfico de linhas que não faz muito sentido para os nossos dados. Bem , vamos especificar que o tipo é um gráfico de barras. E com uma única linha de código, para a qual você não precisa conhecer nenhuma biblioteca adicional do Python, podemos ver essa visualização bastante interessante mostrando os diferentes preços. Portanto, se você estiver preparando dados para um stakeholder, sempre recomendo incluir um recurso visual quando possível. OK.
+
+Agora vamos fazer algo muito parecido para a nossa quilometragem.
+
+E assim, mais uma vez, estamos criando um dicionário vazio. E para este dicionário, vamos percorrer as marcas em nossas marcas comuns e basicamente encontrar a leitura média do odômetro dos carros vendidos de cada marca. E então nós [limpa a garganta] vamos transformar isso em um dataframe. E vamos exibir o quadro de dados. Bem, analisando apenas os números brutos do nosso conjunto de dados, parece que a quilometragem média não está variando tanto quanto variou o preço. Os preços variam bastante,
+
+com a Audi, a Mercedes-Benz e a BMW representando as faixas de preço mais elevadas, a Volkswagen ficando em uma faixa intermediária, enquanto a Opel e a Ford representam faixas de preço um pouco mais baixas. Em termos de quilometragem, tudo é praticamente igual. Hum, podemos fazer uma visualização bem rápida novamente. Então, vamos criar um gráfico de informações da marca. E nós queremos um bar.
+
+Sim, podemos ver tudo mais ou menos da mesma forma . Então, vamos dar aos nossos stakeholders um pequeno resumo bem interessante no final, onde reunimos tudo em um pequeno dataframe, criando uma nova coluna nas informações da nossa marca chamada "preço médio" e atribuindo a ela os valores dos nossos preços médios. E agora podemos ver tudo lado a lado. Então [limpa a garganta] podemos dizer, ok, em geral, se quisermos vender carros de maior valor, BMW, Mercedes-Benz e Audi serão essas marcas. Mas se quisermos encontrar o ponto ideal, talvez a Volkswagen seja uma boa candidata, porque não é necessariamente da gama alta, mas também não é da gama baixa como a OPPO e a Ford. [bufa] Então é aqui que nossa
+
+análise termina hoje. Mas esse conjunto de dados é tão robusto e oferece muito mais oportunidades. Então, tenho alguns próximos passos. A próxima pergunta é: e quanto às combinações comuns de marca e modelo? Analisamos apenas a marca, mas também temos informações sobre o modelo. Então, o preço
+
+varia drasticamente para marcas comuns dependendo do modelo? E se dividíssemos a leitura do odômetro em grupos, já que tínhamos esses 13 grupos distintos, e depois víssemos se os preços médios variam drasticamente com base na leitura do odômetro? E outra coluna que não usamos hoje, mas que poderia ser interessante avaliar, é a de carros com danos. Existe uma coluna que pergunta: o carro está danificado ou não? Os carros danificados são vendidos por um preço muito, muito menor?
+
+Algumas ideias interessantes aqui. Tudo bem. Bem, infelizmente, acho que não temos tempo para trabalhar no gist do GitHub. Sim, temos. Sim, temos. Vamos fazer isso bem
+
+rapidinho. Então, ao acessar seu notebook Jupyter, minha maneira favorita de fazer isso é no painel lateral, onde você pode recolher ou expandir clicando neste pequeno símbolo de pasta. Se você clicar com o botão direito do mouse no seu bloco de notas e selecionar "Abrir com editor", você verá o código-fonte de tudo o que já escreveu. Em seguida, você acessará gist.github.com
+
+e chegará a uma página semelhante a esta. Você precisará fazer login no GitHub e ter uma conta do GitHub para fazer isso. Em seguida, você deverá descrever a essência da sua ideia . Hum, eu diria que é uma demonstração de laboratório de projetos para carros do eBay. Em seguida, você deverá fornecer um nome de arquivo, incluindo a extensão. É muito
+
+importante fornecer a extensão para que o GitHub saiba como renderizar seu arquivo. Então, vou dizer eBay ponto e, como trabalhamos em Jupiter, a extensão é I pi NB. Em seguida, você vai colar o código bruto que acabamos de copiar. Em seguida, você pode clicar em "Criar um gist secreto" se quiser que ele seja acessível apenas a você, ou pode criar um gist público que qualquer pessoa poderá ver. E, rufem os tambores, agora podemos ver que todo o nosso notebook Jupyter está renderizado corretamente no GitHub. E isso é algo que você
+
+pode compartilhar com outras pessoas. E se você rolar até o final da página, verá que há uma área para deixar comentários. Assim, você pode pedir feedback às pessoas. E eu adoro isso. É uma forma muito agradável, simples e prática de compartilhar código Jupiter, em particular.
+
+OK. Agora temos algum tempo para perguntas. Sei que estamos nos aproximando do fim do tempo oficial do webinar. Portanto, se precisar sair, eu entendo perfeitamente e agradeço por ter participado hoje. Eu sempre adoro discutir projetos de dados. Bem, vou
+
+ficar por aqui mais uns 12 minutos para responder a algumas perguntas. Tudo bem. Tudo bem. Portanto, se você tiver alguma pergunta para mim, certifique-se de fazê-la na caixa de perguntas e respostas. Tudo bem.
+
+Então, Richard pergunta: "Qual é a melhor IDE de Python para usar em análise de dados?" Então, " melhor" é algo subjetivo, na minha opinião. Eu pessoalmente uso o VS Code porque é gratuito. É um termo de uso comum e compreendido. A documentação é boa. É muito flexível. Hum, mas meu
+
+colega usa o PyCharm e gosta muito. Portanto, acho que esses são os dois principais candidatos. Você também pode considerar o Google Collab se quiser manter tudo completamente online. Bem, eu sei que quando estava fazendo a transição de um ambiente de aprendizado em um aplicativo online como o Data Quest para trabalhar localmente, houve uma pequena curva de aprendizado. Bem, se você está se fazendo esse tipo de pergunta, recomendo fortemente que você explore uma IDE (Ambiente de Desenvolvimento Integrado). Bem,
+
+a interface pode parecer complexa no início, mas é essencial familiarizar-se com ela e começar a desenvolver fluência. "
+
+Muito bem", pergunta Jennifer, "Precisamos importar como PD? Podemos deixar como pandas?" Portanto, isto se refere à nossa declaração de importação. Você pode deixar como pandas? pode. Então, por exemplo, se eu
+
+excluir esta parte e executar essa célula novamente, e então aqui, acho que teríamos que fazer isso. Sim. Então, você pode fazer isso, mas é um pouco mais trabalhoso ter que escrever a palavra "pandas" por extenso toda vez, especialmente quando você começa a usar encadeamento de métodos, como fizemos mais tarde. Portanto, o padrão da indústria é realmente usar essa abreviação. Você verá isso em muitas bibliotecas comuns de análise de dados. Por exemplo,
+
+NumPy é NP. Um Seabour é uma biblioteca de visualização. Este é o SNS. Não sei por que escolheu as redes sociais. Hum, e depois mais uma. Essa
+
+sintaxe não está correta, mas é a biblioteca mattplot para plotagem. Este é plt. Portanto, familiarizar-se com essas abreviações muito comuns ajudará você a entender o código de outras pessoas com mais facilidade e ajudará outras pessoas a entenderem o seu código com mais facilidade.
+
+E Adu pergunta como instalar o pandas. Hum, você poderia fazer essa pergunta na seção de perguntas e respostas, por favor? Vou tentar chegar lá dentro. Hum,
+
+tudo bem. Ranji pergunta quando o nome da coluna indica uma contagem não nula. Então, acho que isso tem a ver com o método info. Por que os valores aparecem em ordem inversa? Portanto, "não nulo" significa que está preenchido com informações.
+
+Assim, os dados coletados contêm 50.000 linhas com informações. O campo "Nome" contém 50.000 linhas com informações. O valor nulo seria zero. Então, isso
+
+nos mostra quanta informação está presente em comparação com a quantidade que não está. Espero que [limpa a garganta] isso responda à sua pergunta. Caso contrário, me avise. Tudo bem. Então Bode pergunta sobre o erro de decodificação Unicode. Isso se refere à
+
+codificação.
+
+E quando eu já fiz webinars sobre codificação ou precisei ensiná-los antes, esse é um ponto problemático bastante comum. Bem, acho que a melhor maneira de pensar nisso é como uma tradução, onde, se estivermos traduzindo do inglês para o espanhol, por exemplo, precisamos especificar que estamos começando em inglês e, então, sabemos como chegar ao espanhol. Mas se o código, ou as palavras que temos, não estiverem em inglês e sim em alemão, por exemplo, e dissermos: "Tudo bem, peguem o que temos e transformem em espanhol." Se não for inglês, não sabe como traduzir isso para espanhol. Então, se a codificação não for UTF-8, que é o padrão, precisamos especificar com qual codificação estamos começando . É por isso que
+
+estamos incluindo a codificação. Se você não incluir a codificação, receberá um erro e adicioná-la deverá resolver o problema. Edu pergunta: como você faz as observações com facilidade ? Isso vem com a experiência, e acho que é por isso que desenvolver projetos enquanto se aprende é tão importante: seguir esse processo de aprendizado sobre como explorar seus dados. Aprender a identificar o que é importante nos seus dados.
+
+Isso não é algo que eu sabia desde o início. É algo que desenvolvi ao longo de muitos e muitos projetos, primeiro como aluno e depois como professor, participando desses laboratórios de projetos. Bem , se eu fosse você, as principais conclusões que eu anotaria seriam sobre o que observar, analisando valores não nulos, tipos de dados e
+
+valores únicos em colunas de texto. Analisando os valores mínimo e máximo de colunas numéricas. E com essa pequena lista de verificação, você já terá um ótimo ponto de partida para descobrir onde estão seus dados bons e onde estão seus dados ruins. E Muhammad pergunta: haverá uma sessão de construção de modelos com base nesses dados analisados? Hum, essa é uma ideia interessante.
+
+Você se importaria de enviar um feedback sobre o webinar com essa ideia em mente? Porque estou sempre à procura de novas ideias para webinars.
+
+E Allison pergunta: "Qual é a vantagem do Gist em comparação com o GitHub propriamente dito?" Nossa, como é rápido. Gosto de usar gists para simplesmente publicar um código online em um formato renderizado. Bem, se você usar o GitHub propriamente dito, você precisa criar um repositório, precisa criar uma branch para o seu novo código, precisa enviar as alterações (push), precisa fazer um pull request, e o fluxo de trabalho é um pouco mais longo. E se você é novo no GitHub, tudo isso pode parecer um pouco intimidante e complexo. Em
+
+resumo, você não precisa saber nada disso. Basta copiar o código e pronto. Então, quando estou criando aulas e tudo mais , uso o GitHub corretamente. Mas quando preciso compartilhar um código rapidamente com um amigo, uso o GitHub Gist. E Charles pergunta: você só coloca no GitHub no final? Bem, acho que a maneira
+
+mais fácil é colocar tudo no GitHub no final, mas você pode criar versões. Então, por exemplo, nesta demonstração rápida que adicionamos, se clicarmos em editar e copiarmos uma nova versão, digamos que copiamos uma nova versão e estou tentando encontrar um bom código. Hum, e nós não o importamos como domínio público. Não é a melhor prática. Estou apenas fazendo uma demonstração muito rápida aqui. Hum, e
+
+atualizamos o resumo. Agora podemos ver que está a renderizar a nossa nova atualização. E podemos ver uma aba de revisões que nos mostra exatamente o que foi alterado. Assim, você pode criar várias versões em um gist do GitHub. Bem, acho que é mais fácil esperar para publicar um gist até ter uma boa quantidade de código, porque isso adiciona algumas etapas.
+
+Tudo bem. E então Adu pergunta: " Instale o pandas com o pip." Sim, o comando `pip install` pode ser um pouco complicado. Bem, se você estiver trabalhando no ambiente DataQuest, não precisará se preocupar com isso. Mas se você estiver trabalhando localmente, como no VS Code, por exemplo, você precisa abrir um terminal. E se
+
+você estiver usando Linux ou Mac, acredito que o terminal padrão seja o bash e o pip funcione no bash. Isso não vai funcionar. Estou apenas mostrando a digitação aqui, mas instale o pandas com pip. E se você pressionar Enter no seu terminal, deverá ver várias linhas de código passando rapidamente enquanto o programa é instalado. E então, no final, mostrará que a biblioteca um instalada fez o que precisava fazer. E depois de fazer
+
+isso, você terá o Pandas no seu computador. Você pode fazer isso para qualquer outra biblioteca. Por exemplo, Seabour, se você quiser instalar essa biblioteca de visualização, é assim que você faria isso no seu terminal. Hum, acho que minhas habilidades com a linha de comando são, na melhor das hipóteses, medianas. Bem, se você quiser instalar várias bibliotecas de uma só vez, basta separá-las por espaço, assim. Mas, se você encontrar algum
+
+erro com isso, eu sei que encontrei no meu computador com Windows. Hum, isso vai um pouco além do escopo do webinar de hoje. Bem , devo dizer que a IA é bastante eficiente em ajudar a depurar erros de linha de comando, como os encontrados no terminal. Então, se você copiar qualquer erro que receber de um terminal para o AI e disser: "Ei, estou tentando instalar isso com o pip e aqui está o que estou recebendo." Você pode iterar dessa forma e isso pode te ajudar a resolver o problema.
+
+E o comando `tree lock` seguido de um ponto de exclamação e `pip install` é o que você precisa aqui. Sim, não tenho certeza se o ambiente do Data Quest está configurado para isso. Hum, isso pode não funcionar. OK. Sim, você não está vendo as bibliotecas que estão listadas porque o ambiente do DataQuest tem uma camada intermediária. Hum, mas o
+
+ponto de exclamação (pip) tecnicamente funcionaria. Procuramos garantir que nosso ambiente Jupyter Lab esteja configurado com todas as bibliotecas que você possa querer usar em um projeto de análise de dados. Bem, porque o ambiente pip fica um pouco mais complexo aqui. [Limpa a garganta]
+
+Muito bem, pergunta Ty, "Nossa, já estamos no horário e temos muitas outras perguntas. Obrigado a todos que ficarão depois. Ficarei mais quatro minutos. Hum, e depois preciso ir. Hum, ok." Então Tai pergunta: "Temos alguma dica
+
+ou orientação para usar IA como ferramenta e não como muleta?" Sim. Acho que, ao escrever qualquer tipo de código pela primeira vez, tente escrevê-lo à mão. Principalmente quando você está aprendendo o básico de funções, classes e métodos, esses conceitos-chave da programação, digitar o código manualmente vai desbloquear camadas do seu próprio entendimento . E se você vir a IA cuspindo algum código e não entender nada, isso é um bom indicador de que talvez precise deixar isso de lado por enquanto e me concentrar em tentar sozinho primeiro.
+
+Acho que a IA é ótima para ajudar na depuração. Se você receber um erro de rastreamento, sabe, aqueles erros grandes, tipo, "h", isso é... Tudo ruim. A IA é ótima. Você copia esse
+
+rastreamento de volta para a IA e diz: "Ei, o que eu preciso fazer para corrigir isso?" e ​​ela pode te apontar a direção certa. Lembro que comecei a aprender a programar antes da IA ​​existir e passava horas tentando depurar uma única linha de código. Sim, talvez fosse valioso, mas também atrasava bastante meu aprendizado. Então, acelerar esse processo é muito bom.
+
+[limpa a garganta] Outra situação é quando você sabe o nome de uma função ou método que aprendeu, mas não consegue se lembrar da sintaxe exata. A IA é uma ótima ferramenta para isso. [bufa] Por exemplo, durante este webinar, eu estava tipo: "O que é isso para especificar o tipo de gráfico? " Espero que minha internet esteja conectada, estou com um pouco de dificuldade aqui.
+
+Ok. Acho que está tudo bem. Então, posso perguntar à IA: "Ei, copie esta linha de código. Como eu especifico um gráfico de barras?" E ela me retorna com o tipo...
+
+Certo. Então, Ajith pergunta: "Alguns deles são objetos." Como verificamos o tipo do objeto? Então, eu não sei o motivo exato pelo qual o pandas usa `object` em vez de `string`. Hum, isso tem a ver com classes e tudo mais, mas a forma como eu penso em um objeto é que ele é basicamente qualquer coisa que não seja um número.
+
+Hum, e se você olhar um pouco mais para os seus dados e perceber que é uma string, tudo bem, ele continua sendo um tipo de dados `object`. Sem problemas. Hum, datas também são inicialmente analisadas como ` object`, mas existe um tipo de dados melhor para datas no pandas. Você pode usar um tipo de dados `datetime`. Então [limpa a garganta] como você verifica o tipo do objeto? Acho que olhar para `info` é
+
+a maneira mais rápida, mas também existe a opção de... digamos, `autos` e depois `name`. Estou olhando para um valor aleatório.
+
+É isso? Isso é potencialmente um bom uso de IA. Ok, podemos fazer uma verificação de IA ao vivo aqui. Então, usando o Chandra, como eu vejo o tipo de dados? Isso não está certo.
+
+E podemos ver que o tipo `DT` é o quê? Eu errei. E não preciso dos parênteses porque não é uma função. E então podemos ver que o tipo DT está listado como O, que significa objeto. Então essa é outra maneira de fazer isso.
+
+Muito bem. Já passou bastante do tempo previsto. Hum, obrigada a todos por ficarem para mais perguntas e respostas. Se eu não consegui responder à sua pergunta, por favor, entre em contato comigo na comunidade DataQuest. Se você for à comunidade DataQuest e fizer uma postagem neste curso e me marcar, pode me marcar como anna_strol, e eu adoraria continuar a conversa por lá. Hum, se você tiver
+
+alguns minutos, seria ótimo se pudesse preencher a pesquisa de feedback. Me conte o que achou da sessão de hoje. Se você tiver alguma ideia para tópicos de webinars futuros, eu sempre leio todas as sugestões para ajudar a definir o tema do próximo webinar. Então, muito obrigada a todos por participarem. Espero que vocês tenham um ótimo resto de dia e nos vemos na próxima.
+
+Tchau, pessoal.
