@@ -1,0 +1,126 @@
+---
+video_title: "Guardrails: IMPEÇA seu Agente de IA de falar besteira"
+video_id: FV_P03nn_Vk
+channel_name: "Ronnald Hawk"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=FV_P03nn_Vk
+video_date: 2025-12-09T18:06:37+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade  https://www.rhawk.pro/comunidade 
+  –––Consultoria –––
+   A melhor consultoria em IA do Brasil: https://simplework.ai
+  
+  ––– Descrição –––
+  Quer construir aplicações com IA Generativa mas se preocupa com a segurança e o comportamento do seu agente? Neste tutorial completo, você vai aprender o passo a passo para implementar guardrails no seu agente de IA de forma rápida e gratuita, utilizando o poder do LangChain 1.0 e o modelo de moderação da OpenAI. 
+  
+  Descubra como usar o conceito de "middleware" para filtrar entradas de usuários, validar as respostas do seu LLM e até os resultados de ferramentas, garantindo que sua solução se comporte de maneira segura e previsível. Seja você um desenvolvedor, empresário ou um entusiasta de IA, este vídeo é o seu guia essencial para criar soluções mais robustas, começar rápido e customizar sem limites.
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:30 Entendendo a estrutura do Guardrail com Langchain
+  5:12 Modelo de Guardrail e categorias
+  6:18 Parâmetros do GuardRail
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  #inteligenciaartificial  #iagenerativa #negocios #automação
+---
+Se você tá colocando uma solução de a no ar, cedo ou tarde você vai querer colocar um guardio. Acontece que a discussão nesse tópico parece sempre algo muito complicado, mas na verdade é algo bem simples. E eu vou te mostrar como implementar uma solução usando o LC Chachain e um modelo de moderação do UPNA de forma rápida e gratuita. Para você que não me conhece, eu me chamo Hulk e eu ajudo indivíduos e empresas a colocarem soluções de A no ar e lucrarem com isso. Bora pro vídeo, então. Vamos
+
+lá, caras. Vamos lá. Sem enrolação. Esse aqui é o nosso agente e vamos começar a usar ele é de maneira normal. Oi. Tá.
+
+Vamos lá. Vamos ver o que ele responde pra gente, né? Parará. Foi lá pro modelo e aí ele vai nos dar a resposta, né? Eu tô com tudo ativo aqui, então tá super verboso. Beleza. Se a gente vier aqui no
+
+nosso chat, você vai ver aqui eh, olá, como vai? Tudo mal. Beleza, show de bola. Agora vamos fazer aqui, ó. Ó aqui.
+
+Não gosto do Hulk. Ele é bobo, feio e chato. Essas são as críticas às vezes que a gente recebe, né? E aí você vai ver aqui que na resposta ele trouxe pra gente aqui um não seja mal educado. Sua mensagem caiu na categoria X. E é isso
+
+que eu vou mostrar para vocês, como isso aqui tá implementado, porque ele caiu naquela categoria ali e como você vai fazer. Bora então. Beleza. Beleza. O que acontece, caras? Vocês estão vendo aqui,
+
+ó, eh, o nosso agente. E aí, se você já tem um olhar mais atento, você anotou coisas importantes aqui. Ele tem esse cara aqui chamado Medware e ele tem tanto modelo quanto ferramentas. Então, eu vou mostrar para vocês como isso aqui funciona. E vocês vão notar, cara, que é bem simples. Na verdade, esse cara aqui
+
+é um agente React como outro qualquer. Se você não conhece agente React, tem vários vídeos aqui, é, no canal sobre isso, né? E se você não ouviu falar de mediware, depois aí procura o meu vídeo sobre LCH 1.0. Essa é uma feature bem interessante que eu tenho usado muito.
+
+Então n esse é mais um caso aqui de uso muito fácil, muito simples. Beleza? Beleza. Tá? Então vamos ver esse cara aqui de perto. Primeiro, para você ter
+
+uma ideia mais clara do que eu tô falando, eu vou tirar o midwer daqui, tá? E aí a gente vai ver como que o nosso agente lá vai esparecer. Vamos lá. E aí você vê que o nosso agente ele tá exatamente um agente React, né? Um agente React como outro qualquer.
+
+Reasoning and act. Então ele recebe a mensagem, ele vai vir aqui na ferramenta ou não, né? É opcional e ele vai dar resposta. Então esse é o nosso agente React tradicional da família brasileira, porque todo mundo conhece, né? Só que aqui a gente tá usando esse medior.
+
+Beleza? Beleza. Show de bola. Aí o o Discord querendo participar, né, do vídeo, tá? Então vamos fazer um breaking down aqui dessa solução, tá? Primeiro
+
+ferramenta. Tem uma ferramenta aqui pra gente ilustrar, para eu trazer isso para vocês. Segundo, tem um prompt bem simples, um prompt, ih, aqui tá errado, ó. Ó, vamos, quem sabe faz ao vivo, cara. Vamos lá. Beleza. O prompt esta
+
+tava errado. Consertei o prompt. Ah, e aqui tem um modelo. O que que é esse modelo aqui, cara? Se você já tentou usar o GPT5, GPT5 1.1, etc.,
+
+e acha que os resultados são ruins, muito provavelmente é porque você não sabe usar esses dois parâmetros aqui. Então fica aqui um um asterisco para você olhar. Se você tá na comunidade, o qual tava me mandando mensagem aqui agora, eh tem a explicação lá no curso de prompt, beleza? Mas esses dois parâmetros aqui são muito importantes, fazem toda a diferença no GPT5. Então se você quer usá-lo, você deveria conhecer esses parâmetros. Beleza? Vamos aqui pro
+
+nosso agente. O nosso agente, ele tem o modelo, ele tem a ferramenta e ele tem o prompt. Então, pense no modelo como o cérebro, na ferramenta como o coração. Ferramenta é algo muito importante no seu agente. Se você cria agentes e não sabe usar ferramentas, eh, não sabe criar ferramentas ou só usa ferramentas criad por outros, você tem um problema, tá? Porque você não vai conseguir e
+
+fazer com que ele se comporte sempre da maneira que você precisa pro teu negócio. Show de bola. E por último, prompt, que é tão importante quanto os outros dois, e prov instruções. Beleza? Mas aqui a gente vai falar do medware. E
+
+aí você vai ver este nosso querido modelo aqui, tá? De onde vem esse modelo? O que é esse modelo? Esse modelo, caras, é um modelo da Open AI para moderação de chat, tá? Então o que a gente tá fazendo aqui é usar esse modelo depois e daquele nosso modelo inicial.
+
+Então você você vê aqui que a gente tem esse modelo. Então esse modelo aqui é o nosso responsável pelo chat, pela resposta. pelo raciocínio, como você queira classificar. E esse cara aqui, esse modelo é só responsável por identificar o que tá entrando. E se ele vê algo errado, algo estranho, guardail, correto? Ele vai ser acionado, né? Ele
+
+sempre é acionado, na verdade, né? E ele vai entrar em ação se ele precisar. Então, toda vez que entrar a mensagem, ele avalia, pô, é, é para eu fazer alguma coisa assim? Faz. Não, não faz.
+
+Beleza? Beleza. E o mais legal é que esse modelo é gratuito. Ronald, o que que significa? Significa que você pode usar e ele não tem nem rate límite. Você
+
+pode usar à vontade, o que é meio estranho, né? Porque a gente sabe que não existe almoço grátis, então isso aqui não vai ser para sempre. Então aproveite essa janela de oportunidade que tá aqui. O modelo é literalmente gratuito, tá? E esse modelo é treinado especialmente para moderação de conteúdo. Beleza, Ronald? Eu poderia
+
+usar um outro modelo e fazer um mediwor, assim, você poderia, mas para que você faria isso com modelo genérico se tem um modelo próprio para isso, né? Não faz sentido. Beleza? Show de bola. Show de bola. Então vamos ver aqui como ele
+
+funciona nos parâmetros que eu quero mostrar algumas coisinhas para vocês. Vamos lá. Eh, categorias, cara. Quero falar de categorias, tá? Quando ele classificar aqui, ele pode botar a nossa pergunta, né? Ou a nossa entrada, e você
+
+vai ver que não é só a entrada daqui a pouquinho, eh, em diferentes categorias. E essas categorias são essas aqui. Eh, eu incentivo a você eh a olhar a documentação se você tiver interesse, mas basicamente é o seguinte, ele vai pegar a entrada, ele vai classificar, ele vai dar um valor numérico a essa entrada e se um desses valores numéricos atingirem certo valor, ele vai eh criar uma flag com uma dessas categorias aqui. E aí, se você vê no nosso exemplo aqui, vamos lá, é, ele caiu na categoria é essa categoria aqui. E aí você vê aqui, ó, é que eu tô dentro do prompt aqui, dentro do violation message, eu tô usando o a categoria. Então é por isso
+
+exatamente que ele aparece lá. Existe um parâmetro que você pode usar para ver como ele classificou cada categoria também, se você precisar debugar, o que é interessantíssimo. Beleza? Beleza. Outras coisas que eu quero falar aqui é sobre esses carinhas aqui, esses parâmetros. Na verdade, esses caras aqui
+
+são opcionais, tá? N? E eu botei aqui para vocês verem eh no detalhe. Ah, mas não se preocupe, deixa eu mostrar aqui, cara. Esse conteúdo aqui, exatamente, tá na Rockpr, tá? Eh, esse código que eu tô
+
+rodando, tô mostrando para vocês aqui. Então, vocês podem baixar depois, eh, e rodarem aí hoje mesmo o guardio, tá? Então, só a seguir instrução. Lá, tem o RIDM, você roda aí na tua máquina. Beleza? Beleza, mas vamos ficar aqui
+
+para pegar a ideia, para você poder usar direito, tá? Check input. Então ele vai checar a entrada do usuário. Então quando o meu usuário aqui falou que eu sou bobo, feio, chato, ele checou aquela entrada e falou: "Ou você tá transgredindo um acordo aqui". E ele mostrou a mensagem: "Não seja mal educado, parará parará, como você viu ali." Beleza? Você também
+
+pode checar o output. O que seria checar o output? Seria checar a resposta do teu agente. Isso é importante, isso é legal, correto? O teu agente, ele pode falar uma coisa que ele não deveria falar.
+
+Correto? Se você já fez teste massivo com RLM, dependendo do tamanho do contexto, dependendo do teu modelo que você tá usando, etc, etc., às vezes ela pode sair do trilho, ok? Então, é exatamente para isso que serve. Ela vai ficar ali olhando. Então, vamos voltar
+
+aqui pro nosso nosso nosso querido agente. Você tá vendo aqui, ó, na saída do modelo, ele tá olhando, então ele vai ficar um portão, só vai passar o que for permitido. Show de bola. Show de bola. Maneiro, né? Maneiro. Maneiro. Tá, bem
+
+fácil de usar, né? Por último, check to results. Isso aqui é muito legal se você tá usando ferramentas de busca na internet, por exemplo, em que você não tem exatamente controle do que ele vai buscar, né, do que vai entrar, porque ele pode bater numa página lá, a página falar que tem tal conteúdo, o tal conteúdo voltar e não é bem aquele conteúdo e aquilo entrar na tua janela de contexto e aí é feito cascata. Então você pode usar isso aqui para prevenir que a tua ferramenta, principalmente busca na internet, traga resultados que caiam em alguma dessas categorias que a gente comentou aqui anteriormente. Então é interessante por conta disso. E aí o
+
+que ele vai fazer, se você notar aqui, ó, n saída da tool, ele vai para esse cara aqui e ele vai verificar a resposta da tool. É, no nosso caso aqui, eu botei false. E esses são os valores padrões, tá? Então você pode alterar se você quiser. Show de bola. Show de bola.
+
+Maneiro, né? Então assim, bem simples de fazer, tranquilo. Já falei para vocês, aquele meu vídeo do Lengcha 1.0 Checkmat é a curado o título, porque é exatamente isso que tá acontecendo agora. Beleza?
+
+Vamos lá para comportamento de saída, que é algo importante também. Ã, vamos lá aqui na minha pequena cola, tá? Então, você pode ter três tipos de comportamento de saída. Você pode ter o comportamento de terminar a conversa, tá? Ah, você pode ter o comportamento de erro ou você pode ter o comportamento de replace. O end é o que a gente tá usando
+
+aqui. E aí você vai notar que ele termina aquela aquela aquela rodada, né? E ele bota essa mensagem aqui pro cara não seja mal educado, né? Aqui não seja mal educado. Parará, parará. Então a
+
+gente terminou a conversa. O que a gente poderia fazer aqui também é lançar um erro, tá? Então eu não sei onde você usaria isso, lançar um erro feio, né? Um erro grosseiro na cara do usuário, mas você pode fazer também, tá? Então fica seu critério. E por último, você tem o
+
+replace. O replay é interessante porque o cara manda mensagem, aí ele mandou lá, é bobo, feio e chato. Você pode substituir essa essa mensagem dele por alguma mensagem que seja válida, por exemplo, eh, que seja legal ou que seja interessante e na saída aqui e e aí quando chegar no teu modelo, por exemplo, ele vem passa aqui, né? Quando ele chegar no teu modelo, ele chega uma nova mensagem, tá? Também não sei como você usaria isso, mas é possível fazer.
+
+Então, eh, tá começando a fazer, faz com esse end, eh, porque ele é o caso de uso mais básico. E aí você pode começar a brincar, cara, e vocês vão ver que, eh, parâmetros trazem possibilidades, né? A gente tem, se a gente fizesse uma análise combinatória aqui, né? A gente tem várias possibilidades aqui que a gente pode brincar. E esse universo de guardios é muito interessante. Uma
+
+dúvida que você pode estar tendo agora, Ronald, ele só vai checar por essas categorias aí que você mencionou. Exatamente. Se você precisar de alguma categoria extra, por exemplo, sei lá, eh, toda vez que vier a palavra eh, não sei, N8N, que vocês gostam, tá? Você dá uma resposta para dando para ele, você nem chama o modelo, você não quer, tá? Então, o que que você poderia fazer? Se fosse só uma palavra, é muito
+
+fácil, né? Você checa a mensagem que entrar, pode ser até com uma expressão regular mesmo, né? E aí você faria um midware eh aqui para isso. O que tá entrando eh busca a palavra. Se aquela palavra tiver, você manda aqui pro final direto. Pum, manda a resposta. Senão
+
+você deixa passar, tá? Ah, não, Ronald, ele pode mandar eh um significado, né? Ele pode estar falando alguma coisa que eu acho que é ruim. E aí você vai ter que usar algum modelo, né? Não vai ter jeito, você vai ter que usar algum modelo de fora. E aí você pode
+
+simplesmente customizar esse midware aqui, eh, ou criar um medware seu, eh, personalizado, como a gente faz lá no, e no protocolo Gênesis, quem tá lá no curso VI, eh, que a gente customiza um desses medwares para ele ter um comportamento que a gente quer e que não tá previsto anteriormente. É assim que o mundo real funciona, caras. Nenhuma solução eh dessas aqui que já vem com esses eh building blocks, né, que são muito úteis, eles atendem 100% dos casos. E aí cabe a você que tá construindo a solução fazer a mais que acontecer. Beleza? Eu
+
+acho que isso é tudo que eu queria mostrar para vocês. Ah, é você que tá na comunidade aí e a gente tá definindo o nosso roadmap do primeiro trimestre de 2026. Tem lá uma votação aberta entre deep agents. A gente entrar no detalhe do Lengchang. Principalmente Midra. E lá
+
+o protocolo êxodos, tá? Que eu tô chamando de protocolo êxodos, onde a gente vai fazer certas coisas que a galera que tá saindo do N8N precisa, né, da de uma porçabilidade, a gente tá fazendo lá. Então a votação tá aberta pra quantidade de pessoas que tem tem poucos votos. Então você não pode reclamar do próximo conteúdo, beleza? A oportunidade tá lá e a gente tá discutindo lá abertamente e não tem e nada escrito em pedra. Você pode
+
+participar lá, trocar ideia, beleza? É isso, gente. Abraço, até a próxima. M.

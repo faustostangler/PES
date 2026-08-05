@@ -1,0 +1,196 @@
+---
+video_title: "Recriei o Claude Dynamic Workflows com LangGraph"
+video_id: JAz0jPetSjI
+channel_name: "Ronnald Hawk"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=JAz0jPetSjI
+video_date: 2026-06-04T16:24:02+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade (Engenharia de IA de verdade) https://www.rhawk.pro/comunidade
+  –––Serviços–––
+  https://www.rhawk.pro/empresas
+  
+  ––– Descrição –––
+  O Claude Code lançou uma nova feature chamada Dynamic Workflows. Neste vídeo, eu mostro por que isso é importante, como esse padrão funciona e como eu recriei o núcleo dos Claude Dynamic Workflows usando LangGraph.
+  
+  A ideia central é simples: em vez de depender de um único agente tentando resolver tudo dentro de um contexto gigante, você cria uma harness capaz de planejar, dividir o trabalho em subagentes, verificar resultados, guardar estado e sintetizar uma resposta final com mais controle.
+  
+  Você vai entender por que Dynamic Workflows ficam no meio do caminho entre workflows determinísticos e agentes autônomos, por que contexto é uma das partes mais importantes da engenharia de IA e como padrões como fan-out-and-synthesize e adversarial verification ajudam a construir sistemas de IA mais confiáveis.
+  
+  Neste vídeo, você vai ver:
+  
+  - O que são Claude Dynamic Workflows
+  - Por que Dynamic Workflows são uma evolução importante no Claude Code
+  - A diferença entre workflow determinístico, agente e subagente
+  - Por que contexto é rei em sistemas com LLM
+  - Como padrões de workflow ajudam a construir soluções reais de IA
+  - Como recriei Dynamic Workflows com LangGraph
+  - O que é uma WorkflowSpec dinâmica
+  - Como usar fan-out-and-synthesize com subagentes
+  - Como funciona a verificação adversarial com verifier local
+  - Como usar modelos diferentes por nó com OpenRouter
+  - Como rastrear a execução com LangSmith e LangGraph Studio
+  - A diferença entre a implementação do Claude Code e uma harness em LangGraph
+  - Por que esse tipo de arquitetura importa para empresas, consultoria e IA aplicada em produção
+  
+  Se você quer construir agentes de IA, automações inteligentes, sistemas com LLMs, harnesses com LangGraph e soluções reais com IA aplicada, este vídeo mostra um padrão que tende a ficar cada vez mais importante: transformar uma missão aberta em uma estrutura executável, verificável e reutilizável.
+  
+  ––– Playlist –––
+  Playlist IA: https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  Playlist Negócios: https://www.youtube.com/playlist?list=PLk6saMUFiINl-TQpZjq6isCdhw8eZ7c9P
+  
+  ––– Capítulos –––
+  
+  00:00 Claude Dynamic Workflows
+  01:35  Workflows, agentes, subagentes e contexto
+  04:21 Os padrões por trás dos Dynamic Workflows
+  07:11 Recriando Dynamic Workflows com LangGraph
+  17:17 Demo, comparação com Claude Code e próximos passos
+  
+  ––– Social –––
+  Instagram: / rhawk.pro
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  
+  #ClaudeCode #DynamicWorkflows #LangGraph #AgentesDeIA  #AIEngineering #ContextEngineering #Subagentes #Harness
+---
+Na semana passada, Antropic lançou uma grande novidade no Cloud Code chamado Dynamic Workflows. E um dos engenheiros postou isso aqui. Ele comparou o Dynamic Workflows a um salto tão grande quanto foi a capacidade de skills e subagente. E eu concordo com ele que isso é uma grande capacidade, isso é uma feature muito legal. Só que eu discordo em um ponto, você não precisa do cloud code para usar dinamic workflows. Eu entendi
+
+o que eles implementaram, fiz a engenharia reversa e implementei no Lang Graph. E eu vou te explicar porque isso é tão importante como eu implementei. Então você pode fazer aí na sua solução também. Eu sou o Ronald Hawk. Eu ajudo indivíduos e empresas a construírem soluções de e lucrarem com isso. Se você
+
+é um indivíduo procurando conhecimento, eu indico a comunidade. E se você é uma empresa procurando consultoria ou treinamento corporativo, Rockpr Empresas, ambos os links estão na descrição. Bora pro trabalho. Vamos lá. Tira as crianças da sala porque agora os adultos vão falar de IA aplicado ao mundo real. o que tá acontecendo
+
+exatamente na indústria. Antes de eu entrar a fundo aqui, eu vou mostrar esse artigo da Antrópica que eles fizeram e que eles baseam isso e exatamente como eu baseei minha solução. Eu fiz a engenharia reversa e se você tá se perguntando, a solução é isso aqui. Eu criei uma CLI para mostrar ela e fica mais fácil da gente usar. E eu vou mostrar exatamente a harness, a estrutura e como ela tá montada, tá?
+
+Então tem bastante coisa que eu vou cobrir aqui. Então aperte os cintos e vamos lá. Então vamos voltar aqui pra minha apresentação, né? O que aconteceu? Eles anunciaram isso aqui. E por que que
+
+isso aqui é importante? Porque que isso aqui é uma fatura tão legal quanto o suagente e o skill, tá? Segundo eles. OK. O que que a gente tem até agora? A
+
+gente tem workflows e a gente tem agentes e subagentes, tá? De um lado, a gente tem um papel totalmente determinístico. O que que seria isso? Eu tenho uma atividade, eu tenho um trabalho lá na minha empresa em que eu consigo falar exatamente o que acontece em todos os espaços. Isso, depois aquilo, depois aquilo outro. De repente
+
+você precisa de uma LLM para tomar alguma decisão no meio e depois aquilo outro, tá? Isso é determinístico, porque isso é tão valioso em empresas, diferente de quando você tá usando lá o cloud code, o chat GPT, onde tem claramente, presta atenção nisso, tem uma mensagenzinha lá falando assim, ó: "A IA pode cometer erros, confira o resultado, etc." Correto? Nós que estamos criando solução do mundo real, não temos essa possibilidade. Muit das vezes, se você vai implementar uma solução mundo real, você tem que garantir que ela funcione. Então,
+
+workflows entra muito bem aqui, porque você consegue garantir repetibilidade de processos e auditoria. Então, não é, ah, o meu agente funciona mais ou menos. Você consegue garantir que um workflow funcione de ponta a ponta, se ele executar agora, amanhã ou depois da amanhã. Então, workflows é muito importante aí. E é por isso que, provavelmente, eh, desde que eu comecei a prestar serviços de IA, eu fiz mais dinheiro com workflows do que supostamente com agente, porque o workflow traz muito mais valor, muito mais roy, muito mais fácil de você verificar do que um agente, tá? Isso não
+
+quer dizer que um agente não tenha valor. Já tr trouxe aqui infinitos casos de agentes, como a gente faz, como a gente melhora eles, etc, etc. Só que ele vai entrar no não determinístico. O que que seria isso? você tem um agente com ferramentas, por exemplo. Então, o
+
+agente pode consultar essas ferramentas, só que às vezes ele pode não consultar essas ferramentas da maneira que você pensou, correto? Dependendo da entrada do usuário. Existem diferentes técnicas que a gente pode usar aqui. Eu já falei sobre val, já falei um monte de coisa aqui que a gente pode fazer isso, mas claramente a gente tem eh uma coisa de um lado e a outra coisa de outro. E aonde o dynamic workflows entra aqui, ele entra exatamente nesta coluna aqui do meio, cara. Eu vou pegar aqui, ó. Vou
+
+pegar aqui para botar para você ver. Ele entra exatamente aqui, mas não precisa ficar tão grande, né? Dynamic. Dynamic, tá? Ele fica exatamente aqui, tá? Entre
+
+um e outro. Então o dynamic Workflow cumpre esse papel aqui do melhor dos dois mundos. Então, por isso que ele é tão importante, porque basicamente você vai usar o agente para criar um plano e esse plano vai ser transformado em uma estrutura rígida e essa estrutura rígida vai ser executada on fly. E é exatamente o que eles implementaram e o que eu implementei também eu já vou mostrar, tá? Show de bola, tá? Só que essa implementação ela
+
+não vem do nada, existem padrões, tá? Então, como existe padrão de projeto de eh API, de banco de dados, também existem padrões projetos em workflow. Inclusive, eu cobri isso nesse artigo aqui, na época que eles lançaram esse artigo, tem um vídeo aqui no canal chamado como construir agentes efetivos. Eles lançaram esse blog post, eu li o blog post, eu descobri qual era os padrões, descobri não, né? Tá aqui escrito, só que eu descobri como implementar, obviamente, e eu os implementei.
+
+Inclusive eles estão aqui no repositório da comunidade ser membro, eles estão aqui, ó, já tem mais de um ano. Inclusive a época a gente estava começando a comunidade e o Claus me ajudou a construir, né? Ele ele fez umas revisões e tal. Na época não existia Vibe Coding como existe hoje, então a gente teve que entender de fato que fazer engenheiria reversa. Inclusive Claus Abraço aí sabe muito também. E a
+
+gente construiu isso aqui, tá? E que que seriam esses padrões? Então, por que que eu chamo de novo padrão? Por que que eu botei esse esse título aí? Porque esses são padrões novos, mas eles são derivados dos padrões antigos. E se você
+
+quer ter uma ideia de como eles se parecem, nesse repositório, ele tá aqui assim, ó. Então você tem um padrão de paralelização, você tem o padrão de routing, que a gente usa até hoje. Eu já ajudei muita gente a fazer isso aqui no mundo corporativo. Ah, tem chaing, que é bem óbvio, né? Um atrás do outro. E por que que a gente
+
+gostaria de fazer workflows? E a gente gostaria de separar assim em nós, por que que a gente faz isso, tá? Vamos lá, deixa eu voltar aqui paraa minha apresentação, tá? Por que que a gente faz isso? Por que que essas coisas existem? Tem um vídeo aqui no meu
+
+YouTube chamado contexto é rei. E por que que o contexto é rei? Ll tem um tamanho de contexto, correto? Pode ter 1 milhão de tokens, 256.000, etc, etc, etc. Só que apesar deste tamanho
+
+nominal, ela vai perdendo performance à medida em que o contexto aumenta, correto? Então, se você der muita coisa para uma LLM fazer, existe o risco do contexto, apesar de suportar, a qualidade vai começar a decair. Então, por isso que o contexto é rei, por isso que a gente faz context engineering. E é exatamente o que a gente faz muito bem com workflows, porque a gente separa cada pedacinho. Vamos lá. Acabei, deixa
+
+eu voltar aqui. Então, cada pedacinho aqui seria uma LLM e cada um tenha seu próprio contexto, de modo que a tarefa um não tem o contexto da tarefa quatro, ela é guardada em outro lugar aqui, que a gente chama de eh lá no estado do grafo, né, propriamente quando a gente implementa desse jeito que eu implemento e ele fica separado do contexto da Llm e é assim que a gente consegue ter a melhor performance possível com o menor custo possível. É isso que uma solução profissional se parece. Show de bola. Show de bola. Tá,
+
+dito isso, existem esses novos padrões e a gente, se a gente vier aqui nesse artigo, exatamente isso que eles falam, tá? Eles falam aqui desses novos padrões. Então, se você quiser lá ler, tá lá no no no blog deles, então vai lá e leia, tá? O que eu tô fazendo aqui é dizer o que eu fiz exatamente. E é basicamente eu li esses padrões aqui e faz mais ou menos uma semana que lançou e eu implementei algum desses padrões. Dois deles estão
+
+completos, dois deles estão pela metade, dois deles eu ainda não implementei porque eu sou um só, né? Então eu implementei esses dois padrões para provar o ponto, mas agora é só evoluir porque já tá basicamente tudo no lugar. E eu implementei os dois padrões que me interessam mais agora, que são o Funs e o syntetizer, e esse aqui de verificação adversária para ver se a resposta ou se a hipótese eh faz sentido, tá? O que que eu vou fazer aqui agora? Eu vou deixar um teste rodando, tá? Eu deixei esse
+
+cara aqui e o que que eu quero mostrar para vocês? Esse aqui ele vai usar um desses padrões aqui, ele vai usar o fun, tá? E o que acontece, se você observar aqui, eu tô usando diferentes modelos, correto? Eu tô usando um modelo para o Node plan, eh, outro modelo para os subeagentes. Então, o que que vai acontecer? Ele vai criar um plano e eles
+
+ele pode criar até 160 suagentes. Por que que eu botei 160 subagentes? Essa é uma configuração que eu decidi, tá? Eu poderia botar 300, 1, 2, 3, tá? Na minha configuração aqui da minha harness tá 160 porque eu quis e é assim que a gente faz. Tem certas coisas que quando você
+
+tem todo o poder de controle e de criação, você faz do jeito que você quiser. E exatamente como eu fiz, tá? E a mesma coisa eu fiz para os outros nós. Então, por exemplo, o nó de verificação, eu usei um modelo pequenininho, porque isso aqui é uma tarefa fácil. Para EVAL, eu usei um modelo diferente do modelo do subagente. E para sintetização final, eu
+
+usei o Quen 3.7 Max, tá? Então, eu vou deixar rodando aqui. E o que que é isso aqui, tá? Eu tô rodando um comando ali barra pesquisar se você vê, né? E eu tô
+
+dando um comando para ele. Procure oportunidades de aumento de receita em nossa empresa. Por que essa barra aqui? E aí eu vou mostrar o meu grafo, tá? Esse aqui é como a minha solução se parece. Deixa eu dar um zoom aqui pra
+
+gente ver melhor, tá? Esse aqui é como nossa solução se parece. Essa aqui é a arquitetura da minha harness, Ronald, mas a sua harness não é dinâmica. Exatamente. Ela é dinâmica, só que a estrutura, existe uma estrutura física, né? Existe um esqueleto para ela ser
+
+dinâmica. Ela não é dinâmica no ar, nada é dinâmico magicamente. Apesar de tecnologia parecer mágica para quem não entende como é implementado. Nós somos os mágicos, tá? Eu tô falando aqui com pessoas que criam, não com pessoas que eh, tá, enfim, só falam que criam, né?
+
+Aqui nós falamos, falamos e fazemos e mostramos. É isso que eu tô fazendo aqui, tá? Show de bola. Então, o que vai acontecer? Eu tô mandando aquele comando ali barra pesquisar e eu tenho dois comandos hoje, tá? Eu tenho comando
+
+pesquisar e eu tenho comando auditoria. Barra pesquisar barra auditoria. Se eu não der nenhum comando, ele vai sempre cair no pesquisar. Eu vou explicar os padrões já já quando eu voltar ali pra apresentação. Se eu especificar, ele cai no pesquisar no auditoria. Então esse primeiro nosso
+
+é ocupa disso. Depois ele vai cair no planner, tá? Deixa eu ver aqui. Ele já passou do planner, né? Ele tá lá executando subagente. Então você vê que
+
+aqui ele já passou do planner, tá executando subagente. Então deixa eu voltar para cá. O que que esse cara aqui tá fazendo? Ele começa a planejar a execução do problema. Ele não tá fazendo nada ainda. Ele não tá resolvendo o
+
+problema. Ele vai pegar aquele modelo maior lá, vai começar a planejar, planejar, planejar, planejar. Pô, o problema é esse. Eu tenho essas X fontes de dados. E o que que ele tá fazendo ali? Quando eu perguntei,
+
+procure oportunidades de aumento de receita na minha empresa, ele tá olhando o meu dado, ele não tá tirando da cabeça dele, ele tá olhando o dado que eu disponibilizei para ele dentro da minha harness. Esse dado poderia ser um banco de dados externo, poderia ser um relatório, poderia ser o que que você quisesse que é possível conectar através de uma IPI, por exemplo, tá? Então, o que eu tô fazendo aqui é conectar com o meu dado, o dado da minha empresa e eu pedi uma auditoria sobre o dado da minha empresa usando o modelo que eu quero. Show de bola. Show de bola, tá? Depois
+
+disso ele vai montar harness e aqui que é o pulo do gato, tá? Aqui é que é a parte dinâmica. Esse nó aqui se ocupa de ele entendeu o planejamento e agora ele entende muito bem desses padrões que eu implementei. Ele vai olhar esses padrões, vai olhar os problemas e ele vai criar o que eu chamo de eh deixa eu ver aqui que tá na minha cola. Calma aí que eu passei a chamar de de Vamos ver aqui. Eu vou chegar lá. Calma aí. Tá.
+
+eh, o workflow spec, tá? Então, exatamente workflow, né, só que é uma especificação dinâmica e ele literalmente cria um MD sobre esse workflow e é ele que vai gerar tanto os subreagentes quanto a tarefa dos subagentes e ele vai executar sozinho. A gente vai ver já, tá? Voltando pra explicação aqui, a gente já entendeu o contexto errei que aí você deve estar se perguntando, tá, Ronald, mas por um estado, um workflow dinâmico e um workflow estático? Workflow estático funciona muito bem quando você tem esse problema que consegue definir muito facilmente. Mas, por exemplo, um
+
+problema de pesquisa ou de uma pergunta muito aberta, se você entregar para um agente puramente, ele pode spamar até subagente, se você tiver uma tecnologia já de subagente. Só que ele pode ser muito frouxo, né? Ele pode não ter método, ele pode usar, nunca usar algum desses padrões que são bons e consagrados, por isso os novos padrões. E a gente eh não tem o resultado ótimo. Ele pode acumular muita coisa num contexto. Então, se a gente voltar para
+
+cá, ó, vamos lá. Se a gente voltar para cá, eu garanto que essa LLM aqui vai ser usada apenas para planejar. Ela pode gastar todo o contexto dela apenas planejando. Essa aqui vai gastar todo o contexto dela apenas montando a harness. E aí o que acontece aqui no subagente?
+
+Qual é a mágica aqui? Tá? Se você vê um subagente, ele tem essa unidade aqui, tá? Isso aqui se chama de subgrafo nessa maravilhosa tecnologia aqui, eh, que eu estou apresentando para vocês. E o que que ele vai fazer? Esse essa caixinha
+
+aqui, ele pode ter até 160 delas, tá? Baseado apenas no problema que eu dei. E quem vai decidir vai ser o planner como que esses suagentes serão montados, tá? E o que que ele vai fazer? ele vai fazer o trabalho dele, correto? Ele vai
+
+trabalhar, vai fazer o que ele tem que fazer, pesquisar uma tese, etc, etc. Ele vai dividir esse problema em um monte de coisa, né? O o nosso planner, ele vai falar assim: "Ó, eu quero um subagente para verificar o funil. Eu quero um outro subagente para verificar os dados de marketing." Por exemplo, quanto tempo tá demorando para fechar? Eh, o lead é
+
+qualificado, então ele vai abrir tudo isso baseado no problema e nos dados e nas ferramentas que eles têm acesso e depois eu vou ter um outro sobreagente para verificar o trabalho do agente anterior. E assim eu garanto consistência no trabalho. Então, se tiver alguma coluna faltando, se tiver algum erro grande aqui, ele vai falar assim: "Ô, volta aí, refaz o trabalho". ou ele vai guardar no estado eh o que seria um warning do tipo essa informação não é muito confiável, tá? E a coisa vai seguir, ele vai comentar e vai seguir, tá? Próximo passo, a gente vai ter um
+
+avaliador global que vai verificar o trabalho de todos os agentes e vai ver se tem algum sinal ali de uma informação deteriorada, errada, etc, etc. E finalmente ele vai sintetizar e vai entregar e o resultado pra gente, tá? Ele ainda tá trabalhando agora. Ele tá sintetizando, como eu acabei de falar, ele vai sintetizar e vai dar o relatório pra gente. Mas eu quero mostrar isso aqui por dentro, cara. Eu quero mostrar
+
+para vocês o esqueleto desse cara executando, que é basicamente assim, ó. Se você analisar, eu tenho aqui um run. Esse run aqui tá rodando, né? Vocês estão vendo aqui, mas vou num que já tava aqui pronto, que eu rodei antes. E é o seguinte, se você vê, ó, o que acontece é vai entrar a pergunta, tá entrando aqui a pergunta e você vê que assim, ó, esse aqui foi auditar, você tá vendo? Então ele vai interpretar a
+
+missão e ele vai mandar para auditar, tá? Então beleza, show de bola, tá? O planner vai fazer o trabalho dele e aqui você consegue ver exatamente tudo que tá acontecendo. Tem um vídeo meu aqui só sobre eh trace, tá? Então por que é importante o tracing, tá? E aqui você
+
+consegue ver exatamente o que esse workflow fez. Então ele tá entendendo que o problema é é harness e com um suaggente. Então ele planejou, ele criou isso aqui tudo e ele falou: "Qualis são as fontes sugeridas?" que são exatamente as fontes de dados da minha empresa, tá? Ele falou quantas tentativas ele quer.
+
+Ele cria todo o plano de fato para ser executado, tá? No próximo nó ali que a gente viu, ele vai criar a nossa querida harness. Então é exatamente aqui tudo que acontece. Você vê que cada detalhezinho aqui, ó, cada negocinho desse aqui é exatamente o nosso estado, tá? O nosso estado ele pode entrar ou não nas próximas LLMs?
+
+Baseado no meu desejo. Como fui eu que construí arquitetura, eu sei exatamente onde vai cada coisa, onde cada coisa é aproveitada ou não. Então eu tenho sempre, sempre um contexto limpo com a melhor informação possível para cada nó. E é por isso que esse tipo de trabalho se torna tão eficiente, porque eu literalmente consigo criar padrões, consigo me mover para um para um nível de abstração mais alto e desse modo eu consigo resolver diversos problemas, principalmente problemas que são mais abertos de maneira consistente. E aqui você tá vendo o workflow spec, tá? Ele
+
+criou lá o critério de parada, ele criou o critério de síntese, ele criou o nome do workflow, ele criou as fases do workflow, ele disse qual é o subagente e ele disse todo o resto lá paraa síntese. Então todos aqueles caras lá vão receber prompts ou dados dinâmicos, tá? Então cada nozinho daquele ali tem uma LLM, cada nozinho daquele ali tem uma um prompt e todos eles funcionam de maneira dinâmica a partir dessa minha configuração que se adapta ao problema e ao dado que ela tem. E é por isso que é muito legal, tá? E aqui segue, né? O
+
+subagente vai fazer o trabalho dele, né? O Global Evaluator vai fazer o trabalho dele e o Syntetizer vai fazer também o trabalho dele e vai entregar o que ele precisa lá, tá? Então vamos voltar lá pra solução. Vamos ver se ela terminou. E aí, muito bem. Aí você vai ver aqui
+
+que ele gerou o relatório, né? Eh, baseado no que a gente tinha. Qual era a pergunta? Procure oportunidade de aumento de receita em nossa empresa. A análise consolidada indica que as maiores oportunidades de aumento de receita no curto e médio prazo reside na captura de demanda. que já existe, mas
+
+que está vazando devido a cargá-las operacionais. Cara, vocês não têm noção ainda, muitos de vocês ainda não tem noção que a sua solução de a obviamente é tão boa quanto o uso que você faz da IA, da harness que você constrói. E eu mostro muito disso aqui, mas o dado é muito importante. Então, eh, se você trabalha com IA, é dado é goiabada de queijo com IA, né? O que eu tô fazendo aqui é exatamente consultar um dado que me interessa. E eu
+
+sei que esse dado tá bom. Isso também faz parte da nossa construção. E é por isso que muita gente fala e pouca gente faz, porque pouca gente tá a fim de eh ter todo esse trabalho. Muita gente só quer o resultado eh do trabalho. E é por isso que essa indústria é tão boa de tá, porque existe claramente uma diferenciação. Se você
+
+notar, eu falei aqui de padrões no final de 2024, que a troppo lançou o artigo, eu implementei em 2025. Esses padrões agora já tem uma abstração em cima deles. Então o que tá acontecendo é quem começou a construir antes e entende essas coisas e tá de fato fazendo, tá se distanciando cada vez mais da massa. A massa ainda acredita que um prompt resolve todos os problemas. A massa ainda acredita que botar um agente lá chamando Invoque na IPI é engenharia de A. A massa ainda
+
+acredita que é engenharia de A é fazer um agente rodando na tua máquina. A massa acredita que ser especialista de A e ser especialista em cloud code. Cara, existe uma diferença entre usar cloud code para fazer código, né? Beleza, todo mundo vai usar. Inclusive eu não uso mais, eu tenho usado muito Codex e o Open Code, inclusive muito Open Code.
+
+Mas existe uma diferença enorme entre construir soluções com IA nativamente, empresas que t IA no seu núcleo e empresas que estão falando que estão fazendo IA só para ficar bem na fita. Mas existe uma diferença enorme. E quem é de verdade sabe quem é de mentira. A gente consegue ver quando a gente entra numa reunião, quando a gente conversa com as pessoas, existe um gap. Isso vai ficar evidente quando a maré baixar, né?
+
+Quando a maré baixar, a gente vê quem tá vestido e quem não tá. Segundo ditado, e isso vai acontecer mais cedo ou mais tarde, tá? Show de bola. Você viu aí, né, que ele pegou todas as minhas referências lá, métrica de de funil, briefing de operação, briefing de operação comercial, ele deu as justificativas dele, ele deu a ressalva dele e basicamente o que eu fiz aqui foi dar a minha operação um método inteligente de relatório customizado para o meu problema. E exatamente o que a gente tá fazendo. Existe uma demanda
+
+infinita por inteligência e quem tá fazendo dinheiro tá levando inteligência para as empresas de maneira sustentável, verificável e principalmente de maneira automática. Mas você não pode fazer isso sem conhecimento. Você pode ser muito bom em vender, mas eventualmente eu vou te passar porque eu sei tecnicamente eu sei implementar e vender não é tão difícil quanto vocês tentam fazer acreditar. Se você tá se perguntando, eh, qual é a diferença desse pro meu Cloud Code, se isso não ficou claro, tá? Eh, eles, o Cloud Code orquestra dinamicamente sub gente, orquestra e o meu também, tá? Qual é o modo de
+
+execução? O Cloud Code executa um JavaScript isolado na runtime lá deles, né? Executa literalmente na tua máquina. E a diferença do meu é que você pode executar na tua máquina, pode executar no servidor privado, pode rodar na internet. E é aqui que a gente faz dinheiro no mundo real. A solução não
+
+roda na máquina do cliente. A solução roda num servidor, correto? Então o meu é preparado para rodar em servidores. Show de bola. Qual é o padrão? Como eu
+
+falei, eu não implementei todos os padrões ali do artigo. Tem seis. Eu implementei dois deles de maneira eh completa. O classify eu implementei de maneira parcial porque eu dependo muito do barra ali, né? Eu boto barra pesquisar ou barra auditar. Se eu não
+
+botar barra nenhuma, ele cem pesquisar. Mas esse Classify poderia ser inteligente, ele ainda não é, mas tudo bem, uma semana de lançamento, né? Tem dois CNPJ para tomar conta essa altura do campeonato, tá? Os outros padrões aqui eu não implementei porque eu não tinha interesse em implementá-los agora, então tudo bem, tá errado isso aqui. Então beleza. Eh, vamos ver aqui. Ah, e
+
+outra coisa, esse loop until done, eu implementei ele parcialmente naquele exemplo lá que eu mostrei que é vê se o agente tá pronto, tá? vê se a resposta faz sentido e volta pro agente. Eu implementei como retry se a resposta tivesse falha, se a IPI tivesse algum problema, mas é só uma evolução natural, tá? E a grande diferença que os modelos que você pode usar lá são os modelos da Antropic. Você tem que botar extra, high, ultra blá. Se você ler o o o post
+
+lá, ele vai falar assim: "Ó, toma cuidado que isso aqui gasta muito token." Então, se você já tem um drama aí de token e usando normalmente, você vai ter um problema ainda maior com isso aqui, porque ele vai gastar muito token. E o que eu fiz aqui foi usar qualquer modelo que você quiser que tenha na Open Houter, é só você passar um modelo lá no Envy file. Se você não sabe o que eu tô falando, não tem a mínima ideia. Tem aqui um exemplo, não, não, esse repositório não. Tem aqui esse exemplo
+
+aqui de file, tá lá no nosso repositório da comunidade. Eh, você configura aqui o modelo que você quiser, bota lá os quantos subagentes você no máximo quer e manda brasa, você consegue também ter os três todos no Language Mif, só passando as variáveis. Então, já tá muito bem montado. E aí, meu amigo que é membro, você membro, meu membro querido, a gente pode evoluir esse projeto aqui, a gente pode eventualmente tornar ele open source, mas eu dependo de você. Aqueles outros padrões que estão faltando ali, você pode implementar. Todo o
+
+conhecimento para fazer isso tá lá na comunidade. Existe um curso lá de L Graphic que tem um ano exatamente agora que envelheceu como vinho, porque todos esses padrões que a gente discutiu lá são usados aqui também e são continuam sendo usados na indústria. Se você quer praticar, esse é um ótimo momento para você pegar esse repositório aqui. Eu tô lá na comunidade, a gente troca ideia, a gente vai evoluindo. Eu não vou abrir isso aqui publicamente, a menos que esteja e com mais gente olhando, né? Eu
+
+não posso tornar isso open source porque eu tenho muita coisa para fazer. Então não tem como manter o projeto open source. fazer vídeo no YouTube e todas as outras coisas que eu tenho feito. Beleza? Mas a oportunidade tá aí. Se
+
+você quer aprender num projeto prático, real, que traz muito valor, repositório tá lá na comunidade. Então, agora sim, eu espero que você tenha aproveitado aqui, que esse conhecimento seja válido pra sua empresa, pra sua carreira, para você se posicionar de fato para colher os louros dessa maravilhosa indústria que todo mundo gosta de falar, mas pouquíssima gente gosta de fazer. E essa é uma oportunidade enorme para fazer dinheiro. Abraço.

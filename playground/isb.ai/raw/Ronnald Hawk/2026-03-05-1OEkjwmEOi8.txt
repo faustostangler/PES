@@ -1,0 +1,152 @@
+---
+video_title: "Anthropic e o FUTURO da MEMÓRIA em Agentes (Como eu implemento)"
+video_id: 1OEkjwmEOi8
+channel_name: "Ronnald Hawk"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=1OEkjwmEOi8
+video_date: 2026-03-05T16:43:24+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade (Engenharia de IA de verdade)  https://www.rhawk.pro/comunidade 
+  –––Serviços–––
+   https://www.rhawk.pro/empresas
+  
+  ––– Descrição –––
+  A Anthropic lançou uma nova feature de memória persistente para o Claude, e neste vídeo você vai entender como funciona a memória cross-thread, por que ela é essencial para produtos de IA e como implementar em uma solução real em produção. 
+  
+  Você vai ver na prática como salvar e recuperar memórias de usuário usando PostgreSQL, as duas principais arquiteturas para agentes com memória persistente, como busca semântica com embeddings funciona na prática, e como essa feature aumenta o LTV do cliente e reduz churn no seu produto. 
+  
+  Para desenvolvedores e profissionais que querem implementar agentes inteligentes em produção, sem over-engineering e com foco em resultado real.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  Playlist Negócios: https://www.youtube.com/playlist?list=PLk6saMUFiINl-TQpZjq6isCdhw8eZ7c9P
+  
+  ––– Capítulos –––
+  00:00 Introdução
+  01:05 Memória: thread e Cross thread
+  03:44 Memória Cross Thread na prática
+  07:43 Como a memória é armazenada
+  09:39 Engenharia reversa da memória da Anthropic
+  13:07 Customizando a memória do seu agente
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  #software #ia #engenharia 
+  
+  
+  
+  #anthropic #agentesia #memoria #openai #arquiteturadesoftware #engenhariadeai
+---
+Essa semana Antropic lançou essa feature aqui que permite você migrar suas memórias da Open AI para o cloud. E nesse vídeo aqui você vai entender porque esse tipo de memória é importante e como você pode implementar aí na sua solução. Para você que não me conhece, meu nome é Hulk e eu crio soluções de A e as coloco em produção. Bora pro vídeo. Vamos lá. O que eu vou mostrar para
+
+vocês aqui é uma solução real em produção. Você tá vendo aqui que eu tô com https. Na verdade, eu vou dar um um redact isso aqui na edição para você não tentar ficar hitando meu end point lá, mas você vê que tá em https. E essa aqui é uma solução real que eu já implementei e que eu uso nos meus clientes. O que você tá vendo aqui na tela é a plataforma administrativa para a gente aqui é tomar conta dos agentes, ver o que tá acontecendo. Parará parará. Tá?
+
+Então eu vou mostrar através dessa interface aqui administrativa ele funcionando. Mas esse mesmo agente que tá funcionando aqui, deixa eu te mostrar. Olá, ele poderia funcionar tanto pro WhatsApp ou qualquer interface que você tivesse no aplicativo, tanto faz. Esse aqui é a interface administrativa. Beleza? Tá bom. Então
+
+vamos lá. O que que eu quero mostrar aqui para vocês? Deixa eu pegar esse cara aqui e mostrar é as diferenças de memória. Então vamos lá. Memória. Não
+
+vou botar aqui não. Thread. Thread. Tá? É, o que que é uma thread? É quando você
+
+tem uma conversa com o seu agente, né? Você tem lá tua conversa. Olá, como vai? Deixa eu dar um zoom aqui, né, pra gente ver mais de perto. Beleza, você perguntou aí, teu agente vai responder: "Vou bem, como posso ajudar?" Não é
+
+isso? É isso que acontece numa conversa. Geralmente, né? Quando você vai alongando essa conversa aqui, a memória vai crescendo. Essa é a memória padrão.
+
+Algumas soluções, ela implementam uma memória que faz sumarização, por exemplo, as soluções mais sofisticadas de chat ou soluções do tipo, né? Aquelas soluções mais grosseiras, elas acabam cortando a mensagem em algum momento. É assim que a memória de agentes funciona, beleza? É assim que funciona de maneira geral. Mas se, por exemplo, você criar uma nova thread, né, você vai vir aqui e vai criar uma nova thread. Eu quero
+
+conversar de novo. Você vai lá no teu chatt vai perguntar assim, ó, nova trad, né? Thread, eu quero uma nova thread, né? O que vai acontecer é que se você falou assim aqui, ó, é lá, eu gosto de chocolate, né? Se você perguntar do lado de cá agora é do que eu gosto, o teu agente não vai saber.
+
+Olá, eu não sei. Então, esse tipo de memória aqui que a Antrópic implementou resolve esse problema, como a Open AI resolvia esse problema. E o que eu vou mostrar para você, exatamente, resolve este problema. E aí agora o que que você vai ter é o seguinte, você vai chegar aqui e ao invés de ter um do que eu gosto e ele vai falar assim: "Eu não sei, ele vai falar: "Você gosta de chocolate?" Tá? Isso aqui se chama memória cross
+
+thread. A memória ela persiste é em diferentes threads. Ficou claro para você agora? Então você a partir de agora, tanto no cloud quanto no Open Ai, você tem esse tipo de feature e é exatamente isso que você pode implementar. Eu vou mostrar como eu faço. Eh, tem duas maneiras diferentes e
+
+tem algumas situações aqui de assim de pensamento, de arquitetura que são interessantes. Então, vamos lá, tá? Primeira coisa, vamos mandar aqui, eu vou criar uma nova uma nova thread aqui, tá? No meu ambiente, beleza? Tá? E aí eu
+
+vou botar aqui, ó, Hulk, beleza? Então, essa aqui seria o meu usuário. O que que eu faço? Geralmente as soluções, né? tem um login senha. Então, eh, cada usuário
+
+tem a sua thread, obviamente, e eu pego o prefixo do usuário, eu também guardo quem é o usuário na minha trad. Beleza? Então, é assim que funciona no mundo real, tá? O que você tá vendo aqui é o debaixo do capo, beleza? Então, vamos lá, vamos conversar, começar a conversa aqui com o meu usuário HWK. Show de
+
+bola. Aí ele vai lá, como eu posso te ajudar, parará. E eu criei esse esse agente aqui só para pra gente para eu te demonstrar aqui, tá? Então ele é o agente exclusivamente para essa demonstração aqui no YouTube, mas ele tá no ar e eu posso fazer deploy de agente muito rápido hoje em dia, tá? Então vamos lá. Eu gosto de música
+
+progressiva, tá? Aí o meu agente ele vai ler isso aqui. Ah, e ele vai demorar um pouquinho mais porque tem um processo aqui acontecendo, tá? Excelente escolha. Rock metal progressivo, tem composições incríveis, barará, beleza, etc. Show de
+
+bola. Você tá vendo aqui e que essa aqui é o thread ID. O que que é o thread ID se você nunca viu isso? Cada thread dessa aqui tem um número único que garante que ele não se repita. Então, se você criar uma nova thread, ela vai sempre ter uma nova. Você vai ter uma
+
+lista de conversas igual você tem lá no chat EPT, no cloud tarará. Aqui você vai ter uma lista de conversas exatamente por conta desse número único. Show de bola. É assim que funciona na realidade, tá vendo? Não é mágica, não é clique e fique rico, é trabalho normal. Beleza?
+
+Beleza? Não tem muito mistério, né? Se você quiser estudar, obviamente, quiser construir de verdade, né? Beleza. Então, vamos lá. Você tá vendo esse número
+
+aqui? Parará se é 4 5. Beleza, show de bola. Tá bom. Vamos criar uma nova thread aqui, tá? Só que agora vamos usar
+
+o o usuário. Vamos usar o outro usuário aqui. E você vê que a tradou, é uma outra trad. Vamos usar um usuário, sei lá, eh frog. Frog, tá? Usuário sapo. Então,
+
+vamos lá. Olá, de que música eu gosto? Aí ele vai lá e provavelmente ele vai responder pra gente que ele não faz, não sabe, não tem ideia, ainda não tem informações registradas na minha memória. Beleza, tá bom. Agora vamos criar uma nova e thread. E aí você vê
+
+que não é aquela seis, é parará, é uma outra thread, só que para usuário hk de novo. Agora vamos lá. Eh, me indique músicas que eu possa gostar. Vamos lá, tem umação ao vivo. Espero que funcione.
+
+A gente tem a maldição do da gravação, né? Mas aí, muito bem, você vê que funcionou. Para você que não conhece esse porco pine tree. Você tá muito errado, você deveria ouvir também é muito legal. Faltou banda aqui, faltou.
+
+Mas ele pegou a ideia. Como você gosta de música progressiva, eu selecionei algumas músicas recomendadas e aí você lembra lá que no início da demonstração aqui eu tinha perguntado, eu tinha falado para ele que eu gosto de música progressiva. Beleza? Então é assim que funciona a memória cross trad. Você pode fechar uma trad, abrir de novo e ele vai lembrar certas informações que o teu usuário gosta. Porque isso aqui é
+
+importante no contexto de negócios, você cria um certo lockin no teu produto, obviamente, né? Se o teu produto sabe o que o teu cliente gosta, o teu cliente fica cada vez mais acostumado à tua solução e ele tem menos motivo para ir embora. Você aumenta o LTV fazendo isso. É assim que a OpenI fez, é assim que a Entrópico fez. E se você não quiser fazer, você tem que ter uma razão muito boa para isso, né? Então a gente vai, eu vou
+
+mostrar aqui agora o banco de dados e a gente vai ver por dentro. Sem teoria, vou mostrar o banco de dados em produção, não é? Ah, eu acho que é. Não é, eu acho que é. Eu sei como é. Eu tô
+
+te mostrando. É, rodeiça a querer e aí você vai ver que a query tá aqui, ó. O usuário gosta de música progressiva. Você lembra que eu falei o seguinte? Eu falei: "Eu gosto de música progressiva".
+
+E a memória salva. Obviamente eu tô mostrando só a coluna memória, tá? Não tô mostrando o banco de dados inteiro aqui para você, mas só a coluna memória. É. E a memória tá exatamente assim. O
+
+usuário gosta de, tá? Então você vê que o meu agente ele recebeu aquela informação, ele processou essa informação, ele transformou o que foi de entrada e guardou na memória. A sua memória nada mais é do que uma linha no banco de dados, não só uma linha. Eu vou te mostrar eh o segredo disso aqui, tá? Eh, o que que acontece aqui? Se você já
+
+tá familiar com isso aqui, ó, isso aqui nada mais nada menos do que um embeding. Você tá vendo aí um monte de número. Essa aqui é a memória que o computador entende, tá? Essa aqui é a memória que ele faz busca na hora que eu falo eh me indique músicas, ele vai olhar nessa coluna aqui e vai procurar se essa coluna se assemelha a alguma coisa com música e ele vai descobrir que sim e aí finalmente ele vai naquela outra tabela ali e pega a informação que ele quer pegar, tá? Ah, Ronald, mas me falaram que é busca semântica não funciona e tudo mais. Mentira. Obviamente nós
+
+estamos trabalhando com soluções. Soluções existem tradeoffs. Para memórias que são eh aproximadas como essa aqui, busca semântica funciona muito bem. Obviamente, se você tá trabalhando com um conjunto de documentos que você precisa de uma palavra fixa, de repente você tem que botar eh uma busca por chave, palavra-chave. E aí eu já tenho vídeo aqui no YouTube sobre busca híbrida. E
+
+em breve eu vou ter um outro vídeo aqui sobre ha, uma nova técnica que eu tenho usado e tem funcionado muito bem. Eu vou compartilhar aqui com vocês, beleza? Então, é basicamente assim que funciona a sua memória. Ela é, digamos assim, o que você fala e o que o agente interpreta, que pode ser memória, é vem para cá e se transforma em memória. Beleza? Show de bola. Mas como afinal
+
+eles implementam? Se você vier aqui na documentação, eles deixam pistas pra gente entender, tá? Eles falam aqui que tem dois, duas ferramentas, uma ferramenta de memória. Uma é para eh guardar a informação e outra é para fazer retrieve de informação. Esse é o método exatamente que eu tô usando aqui.
+
+Como isso funciona? Tá? Eh, vamos aqui. Lapizinho, tá? Quadradinho. Ah, R, você
+
+desenha mal. Desenho mal, tá? Beleza. Mas desenhos são bom para pensar. Então, aqui a gente tem a LLM, nossa LLM. E eu
+
+tô fazendo aqui no negocinho do Mac também, né? É sofrido aqui, pô. Difícil, mas vamos lá. E você tem a tool. Então, o que que acontece? Chegou a a a
+
+mensagem do usuário aqui, você, eu gosto de música progressiva. O que que ele vai fazer? Vai lá na Tool, ele identifica que é uma informação pessoal do usuário e guarda isso aqui lá. Beleza? É assim que funciona. Show de bola. Show de
+
+bola. Tá, chegou a próxima pergunta. Me indique músicas que eu possa gostar. Ele entende que música é uma informação pessoal. Ele vai lá na Tudo Retrial e pergunta se tem alguma coisa de música.
+
+Ele identifica que eu falei que eu gosto de música progressiva. Ele gera resposta, tá? Esse aqui é o padrão que a gente já conhece, tá careca de ver aqui no canal, que é o React, React agent, tá? Então você tem ferramentas e e uma LLM e ela faz o trabalho ali baseado num prompt que você der. Show de bola. Show
+
+de bola. Mas existe um outro padrão que eu tendo a achar que às vezes eles usam porque eles não têm a mesma dificuldade que eu e você, que é hardware infinito provavelmente, né? Eh, então o que que eles fazem? Eles não, se você não quiser depender totalmente da LLM para fazer esse trabalho de retrieval, você pode. O que que você pode fazer? O usuário
+
+mandou a pergunta, a querer dele. Você pode botar o retrieval antes da ll, ó, tá? Você pode fazer essa arquitetura aqui, tá? Essa arquitetura ficaria mais ou menos assim. eh, manteria uma tua aqui e seria assim.
+
+Então, a pergunta do cara chegaria aqui, por exemplo, me indique músicas que eu quero, como a gente fez aqui, me indique músicas que eu possa gostar. Ele entraria aqui nessa parte aqui. Entraria aqui. Aqui a gente faria uma busca já aqui de cara, ó, antes de ir para LLM, tá? Qual é o custo disso aqui? Você tá
+
+sempre indo no banco de dados baterá, mas pode ser que para eles não seja um problema, né? para você de repente é então desse modo aqui você sobrecarrega menos a LLM com ferramentas, então você tem menos problema de contexto, OK? menos problema de contexto. Eu acredito que eles tendam a fazer isso aqui, mas é só um chute por pelo seguinte, provavelmente essas essas essas essas soluções deles, o prompt é gigante e eles têm muitas ferramentas e tanto cloud, opena, e qualquer uma dessas essas ferramentas aí online deixaram de ser simplesmente um uma IA, né, uma LLM. Eles são agentes, você tá conversando com um agente ali e ele tem acesso a muita ferramenta, busca na internet, parará, parará. Então eu
+
+imagino que eventualmente eles possam usar esse tipo de arquitetura também. Ah, e o que que você pode fazer aí? Você pode escolher, você pode tentar, por exemplo, ah, Ronald, eu tenho aqui uma limitação que minha LLM não chama muito bem a ferramenta, então de repente você pode ir nesse caminho aqui. Ah, não, eu não me importo, eu vou jogar tudo aqui que se lasca. Então, tudo bem, você pode usar aqui. No fim do
+
+dia você tem que testar e ver o que você vai de fato fazer, tá? Mas aí a pergunta, você daí tá se perguntando, Ronald, mas como que você importa? Como que eles importam memórias, tá? Como que eles podem fazer isso? Ele pega uma memória de algum lugar e gera pro outro.
+
+Aqui em algum lugar eles estão falando que você copia um prompt, eh, cola lá, ele vai gerar as memórias e depois você importa. O que que você poderia fazer se você quisesse grar suas memórias do chatt, por exemplo, pro seu sistema? Por exemplo, hoje em dia eu não uso nenhuma dessas plataformas, eu só uso os meus sistemas, tá? Eh, você poderia pegar e incorporar suas memórias no seu sistema, se você quisesse, ou as memórias do seu cliente, ou as preferências do seu cliente, que ele nunca interagiu com o teu sistema, mas você conversa com o teu cliente, você entende as preferências dele e você já entrega a sua solução com as preferências dele configuradas nesse tipo de memória. Não seria legal? Sua
+
+solução não ficaria melhor? Ficaria melhor, você tem como fazer isso. Beleza? Vamos voltar aqui pro banco de dados. Você tá vendo aqui que é um banco de dados normal, tá? Então você teria eh
+
+coisas do tipo assim. E já que é um banco de dados, você pode pegar essas informações e inserir aqui normalmente, sem teu cliente usar o chatbot que você fez daí a tua IA. Você simplesmente pode pegar o dado, fazer um processo de ingestão de dados e incluir isso aqui na tua memória. Ronald, eu não preciso de um banco de dados vetorial. Não, você não precisa de banco de dados vetorial.
+
+Isso aqui é um post gre, tá? Ronald, mas me falaram, falaram provavelmente errado, tá? Eh, tem um artigo muito bom mostrando como a Open A usou eh post gre para escalar para milhões de usuários. Eh, e assim eh no geral eh as pessoas tentam complicar demais para criar uma solução e é por isso que elas não colocam em produção. Você tem eh dois lados da moeda. Você tem a galera que
+
+acha que tudo será resolvido é sem saber nada e tem a galera que acha que tem que complicar demais subir um coista cubernets. É claro que eventualmente você tem que ter, né? Mas para colocar em produção, muitas coisas podem ser eh simplificadas e serem muito sólidas. Você não precisa ter o mesmo custo de hardware, eh, se você é uma empresa pequena, eh, do que uma empresa muito grande que tem um contrato com AWS, por exemplo. Você pode procurar alternativas, você pode, eh, fazer be metal, você pode, eh, ter uma VPS pequena, você pode ter 1000 alternativas desde que você entenda o que você tá fazendo. E no fim do dia e retenção do
+
+seu cliente é importante, então essa memória te dá essa possibilidade e controle de custo é importante. Então, você tem que aprender a simplificar sua stack. E a sua stack no fim do dia deve ter o seguinte, cara. Ela não deve sobrar nada, nem faltar nada, ela deve funcionar de maneira ótima, se possível, tá? Então, espero que você tenha curtido o vídeo. A realidade do mercado de A,
+
+ela, pelo menos aqui na internet, não é exatamente o que parece, mas o mercado tem evoluído muito, as técnicas têm evoluído. E o que eu faço aqui é ficar em cima do lance o tempo inteiro, eh, entendendo como os grandes laboratórios implementam, fazendo a engenharia reversa e implementando nas minhas próprias soluções e mostrando as pessoas como eu faço. Beleza? Então, se você curtiu, eh, deixa o like aí, se inscreva se você não tá inscrito. Se você acha que você tá pronto para construir o futuro comigo e com outras pessoas que estão construindo, a gente a gente não só eh acha para onde a coisa vai, a gente tá com a mão fazendo e a gente tá vendo as possibilidades e a gente vê a indústria mudando, mudando, mudando. Mas
+
+o fundamento que eu já apresento aqui há mais de um ano, é fundamental para você entender para onde a gente tá indo esse tipo de solução aqui. Você vê que não tem nenhuma máscara, é só uma adaptação de engenharia, é um boa e velha engenharia que faz as coisas funcionarem sem ninguém ver. Beleza? Então parece máscara para alguns, mas para nós é trabalho. Então fica o convite aqui da comunidade se você tiver interesse.
+
+Então até a próxima. Abraço.

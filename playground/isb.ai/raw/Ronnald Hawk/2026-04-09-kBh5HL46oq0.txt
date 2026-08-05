@@ -1,0 +1,216 @@
+---
+video_title: "O Guia das LLMs locais: Você Não Precisa Ficar Preso à Anthropic"
+video_id: kBh5HL46oq0
+channel_name: "Ronnald Hawk"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=kBh5HL46oq0
+video_date: 2026-04-09T16:42:31+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade (Engenharia de IA de verdade)  https://www.rhawk.pro/comunidade 
+  https://rhawk.pro/biblioteca/conteudo/guia-llms-locais
+  –––Serviços–––
+   https://www.rhawk.pro/empresas
+  
+  ––– Descrição –––
+  LLMs locais finalmente cruzaram o limiar de qualidade para uso profissional. Neste vídeo, eu mostro como pensar sobre modelos locais de forma prática: famílias de modelos, arquitetura, benchmarks, quantização, hardware e serving.
+  
+  Você vai entender como ler nomes como Gemma 4, Qwen3.5 e GLM, o que significa Dense vs MoE, o que são active parameters, quando vale usar GGUF, quando pensar em vLLM ou llama.cpp, e por que modelos como Qwen3.5 27B, Qwen3.5 9B e GLM-4.7-Flash estão ficando cada vez mais relevantes para aplicações agênticas e privadas.
+  
+  Além disso, eu explico:
+  - como comparar modelos locais sem cair em hype
+  - por que benchmark é útil, mas não substitui teste real
+  - o que olhar em tool calling para aplicações com agentes
+  - como pensar em quantização e KV cache
+  - onde entra TurboQuant
+  - quando um modelo local já faz sentido para produção
+  - como escolher entre custo, qualidade, latência e privacidade
+  
+  Se você quer rodar LLMs localmente ou em servidores privados, este vídeo vai te dar uma base sólida para entender Gemma 4, Qwen3.5, GLM, MoE, quantização, hardware, vLLM e llama.cpp sem se perder na nomenclatura.
+  
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY
+  Playlist Negócios: https://www.youtube.com/playlist?list=PLk6saMUFiINl-TQpZjq6isCdhw8eZ7c9P
+  
+  ––– Capítulos –––
+  0:00 Introdução
+  0:52 Tamanho de modelos e nomenclaturas
+  2:28 Gemma, Qwen e GLM: como esse mercado se organiza
+  4:08 O que são effective parameters
+  5:29 Dense vs MoE sem confusão
+  7:32 Como ler nomes de modelos
+  09:04 Benchmarks: separando hype de realidade
+  11:36 Tool calling e aplicações com agentes
+  13:13 Dinheiro para treinamento e inferência de modelos
+  14:56 Quantização sem misticismo
+  17:11 llama.cpp ou vLLM?
+  17:31 TurboQuant vale atenção?
+  20:41 Qual hardware você realmente precisa
+  23:20 O erro de jogar o jogo da Anthropic
+  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  
+  #llmslocais #qwen35 #gemma4 #glm #moe #vllm #llamacpp #quantizacao #ia #agentesdeia
+---
+Modelos open source vieram para ficar nos últimos meses, eles cruzaram thrash roll de qualidade e agora de fato é possível usá-los em aplicações profissionais. E é exatamente nesse momento que Antropic lança um modelo que você, Merleb, não pode ter acesso apenas empresas escolhidas, já que esse modelo supostamente é muito poderoso. E aí você vai ter que decidir ficar preso a uma distribuidora que pode mudar de ideia do dia pra noite sobre o que você pode fazer ou não com a sua aplicação, ou ir rumo à liberdade. Acontece que para você rodar esse tipo de modelo, tem uma série de coisas que você precisa prestar atenção e é exatamente o tema desse vídeo. Eu sou o Ronald Hawk. Ajuda o
+
+indivíduos e empresas a colocarem soluções G em produção e lucrarem com isso. Se você tem interesse em colocar soluções de em produção, comunidade. E se você tem interesse em ajuda em soluções de A na tua empresa, Rockpr Empresas. Bora pro vídeo. Então, vamos lá. Tem muita coisa que eu quero mostrar
+
+aqui para vocês. E esse vídeo, na verdade, é um guia. Ele não é um guia exaustivo, né? Eu vou abordar tudo no máximo do detalhe porque seria impossível fazer em um vídeo, né? teria que fazer uma série. De repente eu até
+
+faço aqui, mas vai te dar uma visão geral, porque existe muita confusão. Por exemplo, você pode ver alguém falando que, ah, eu tô rodando um modelo local aqui baratinho e ele é melhor que o Ops. Obviamente não vai ser, né? Então, a gente vai separar aí o joio do trigo e aí você vai descobrir: "Ah, o que que eu posso rodar na minha máquina, o que que eu deveria olhar e o que que é importante eu olhar se eu quero rodar Enterprise é numa solução privada". Tá bom? Vamos lá. Primeira coisa que eu
+
+quero mostrar aqui é isso aqui, tá? Essa semana eu vi esse tweet do Elon Musk, eh, e aí eu achei muito curioso. Isso aqui, ó, eh, guarda isso aqui. Ele falou que existem alguns modelos em treinamento lá e que você tem um modelo de 6 trilhões de parâmetros e outro modelo de 10 trilhões de parâmetros. Guarda essa informação, tá? Trilhões de
+
+parâmetros. Vamos vir aqui, ó. Primeira coisa que a gente tem que prestar atenção, e a gente vai voltar aqui no futuro, tá? Primeira coisa que a gente tem que prestar atenção são nas famílias. Você vai ver lá, por exemplo, o Gema 4 foi lançado recentemente, correto? E aí você vai ver lá que tem um
+
+monte de nomezinhos. Vamos ver aqui nas notas de release, por exemplo, que a gente vem aqui. E aí você vai começar a ver assim, ó. É 2B é B, 4B é B, 27 mol, 31B. E isso causa muita confusão nas pessoas, né? Porque às vezes ela pensa
+
+que um número maior é bom. Talvez elas pensem que o número tá ali sem sentido nenhum. E na verdade tudo isso tem razão. É, é curioso nessa página aqui que os links não estão funcionando a contento. Então, alô Google, alô Google, corrija esses links aí, mas de qualquer forma pra gente não importa, tá? O que
+
+que a gente vê nesse lançamento do Google aqui? Eles tiveram muita preocupação em otimização, ou seja, eles se preocupam tanto em rodar numa máquina pequena quanto rodar de repente eh num servidor pequeno, que é basicamente o nosso caso aqui de maneira geral, tá? E como que essas famílias se dão? Se você vir aqui, ó, você vai ver esse E2B. Eu já vou explicar o que isso significa. Você vai
+
+ver B A4B. Então você é bem confuso. E você vai ver B, tá? Aí, por exemplo, no Quen. O Quen é um modelo que eu tenho usado constantemente, então eu posso falar com propriedade do uso dele. Eu
+
+ainda não usei o Gema além de testes preliminares, né? Mas eu tô bem impressionado com a qualidade do 27B. Já falei isso aqui e minhas aplicações estão rodando com 27B exatamente agora a um custo muito agradável. Então ele é um bom modelo e eu tenho feito uns trabalhos com 9B que tem me surpreendido também, tá? É, obviamente ele é pior do que o 27B e não tem almoço grátis, mas ele funciona bem. Beleza? E aí você vai
+
+ver aqui a mesma o mesmo comportamento, né? B3B. E aqui no GLM, que também é o modelo open source, tá? você vai ver que às vezes tem era, às vezes tem flash, tudo isso gera muita dúvida, né? Muito complicação. E aí a gente vai resolver
+
+esse problema agora, vai tirar isso da nossa frente para podermos progredir na análise, tá? Primeira coisa que a gente quer ver aqui, ó, você vai ver que o effective, tá vendo aqui? É o seguinte, se a gente vier aqui na documentação, e isso é uma arquitetura própria do Google, o que que eles quiseram com esse tipo de arquitetura, com esse tipo de solução fazer com que modelos rodem na borda. Ou seja, idealmente esse modelo vai rodar num celular, por exemplo, ou num aparelho que tem pouquíssima memória RAM. Essa é a ocupação deles. Então, se você voltar
+
+aqui, ó, e você vai ver esses pequenininhos aqui do Quen, eles são equivalentes, tá? O nove, de repente, eu eu tiraria daqui e botaria para cá, mas pro bem do exemplo aqui vale. Então esses exemplos aqui, esses modelos são modelos pequenininhos, miudinhos, tá? Ronald, eu vou conseguir substituir meu Cloud por eles? Obviamente não. Não
+
+acredite nesse tipo de fantasia, OK? O tamanho do modelo importa e a gente vai falar disso já. E porque essas empresas estão fazendo isso aqui, você vai entender o que tá acontecendo, tá? Então, essa aqui é uma classe especial do Google, eles chamaram de Gfective, mas você pode compará-los a modelos pequenininhos, assim como 08, 2, 4. Infelizmente, esses modelos 08, 2 e 4 aqui e eu não consegui ter bons resultados, tá? Eles são ótimos para
+
+você rodar localmente. Uma máquina simples, mas ele ainda eles ainda não estão lá. Beleza? Beleza. Vamos falar da próxima classe, dos modelos que já estão lá, bem lá, tá? Que são esses aqui, ó.
+
+Só que aqui tem uma diferença. Você vai ver aqui, ó, 27B a 4B. O que que é isso aqui? O que que isso tá dizendo? O 26B quer dizer o quantidade de parâmetros.
+
+Então são 26 bilhões de parâmetros e o A quer dizer que são 4 bilhões de parâmetros ativos. Ronald, o que isso quer dizer? Então vamos voltar aqui pro Elon Musk mais uma vez. Ele tá falando que tem um modelo em treinamento com 6 trilhões de parâmetros. Entende isso?
+
+Guarda essa informação de novo. E o que a gente tá fazendo aqui é usar um modelo de 26 bilhões de parâmetros. Beleza? E aí você vai ver aqui que esse modelo do do Quen tem 27 bilhões de parâmetros. O que que é isso aqui? Esses aqui são
+
+diferenças de arquitetura. Existe um tipo de arquitetura aqui e eu vou falar dele agora logo, tá? É que é o seguinte. Esse modelo aqui que tem só o B no final são modelos densos, tá? Então isso quer dizer o quê?
+
+Sempre que você usar o modelo, ele vai usar todos os parâmetros para dar resposta para você. O que isso significa? pelo menos na prática, ele funciona melhor, ele é o melhor modelo de qualidade final, porém ele pode ser mais lento. Então, o que a gente veria aqui entre esses dois caras seria algo, esse aqui seria um pouco melhor em teoria, só que esse aqui seria mais rápido porque ele ocuparia menos memória lá no nosso GPU quando a gente precisasse de uma, enfim, de contexto e tudo mais, ele faria uma inferência mais rápida. É basicamente isso, tá? E aí a gente tem a terceira
+
+categoria aqui, que são os modelos um pouco maiores. É difícil comparar diretamente um com o outro, mas só para te dar ideia desse tipo de coisa. Então vamos lá. A gente tem os modelos densos, né, como eu já falei, que é o 27B e a gente tem esse mol, tá? O que que é o mow? Seria o mixture of expert. Aqui ele
+
+coloca também, vamos voltar para cá, pro artigo. No artigo tem aqui, tem uma boa explicação, tá? Então ali aqui, ó, m 26B. Mo. E aí, como que você pode ler isso aqui? Quando você vê esse modelo aqui,
+
+ó, você vai saber, quando você olhar isso aqui, você vai saber que ele é um mol. E aí você vai saber que o tamanho dele, o tamanho do do modelo são 26 bilhões parâmetros e que ele ativa 4 bilhões parâmetros na hora da execução. Você sabe que potencialmente esse aqui é melhor, mas esse aqui é mais econômico. Como sempre, não existe almoço grátis, você vai ter que fazer escolhas. Quanto menor o modelo e menos capaz ele for, mais trabalho você tem de controlá-lo, de fazer ele seguir as regras e aí você constrói uma harness, não só um prompt para ele fazer isso, que é um outro tópico, beleza? Mas é um subtópico do
+
+que a gente fala aqui, obviamente, né? Mais uma vez, eh, o effective parameters aqui, parameters é do Gema, então é é uma linguagem deles, mas você pode interpretar que são modelos pequenininhos para rodar na borda. E por fim, aqui o nosso querido GLM, que são modelos ótimos, inclusive lançou o 5.1 ainda agora, ele tem essa essa nomenclatura aqui que é uma nomenclatura comercial. Então o que importa para você identificar ele aqui é o tamanho dele, tá? Então se você vier aqui no na boa
+
+Open Houter, a gente consegue ver aqui que esse modelo tem 30 bilhões, tá? De de parâmetros. E você vê que o preço dele é muito camarada. E a gente vai ver benchmark já já, mas isso aqui é muito importante. Então guarda aqui. É, a
+
+gente tá vendo benchmark aqui preliminar e eu vou mostrar porque é importante a gente olhar esse benchmark. Obviamente você vai ter que testar aí na sua solução quando você for implementar. Beleza? Então aqui é o Hugin Face que não abriu do Google e a gente, eu quero mostrar para vocês aqui a comparação entre modelos, tá? Deixa eu voltar para cá antes fechar isso aqui. Então você já
+
+entendeu as famílias, você já entendeu a arquitetura e agora a gente vai ver os benchmarks antes da gente ver quantização. Por que quantização é importante? Porque eventualmente o seu hardware não vai ser capaz de rodar tudo a contento e aí você vai querer ver essas técnicas. Mas isso aqui já é algo um passo já é um terceiro passo, tá? Então primeiro você olha a família que você quer usar, depois você olha eh arquitetura ou o nome e entende o que você tá fazendo para só depois pensar nisso aqui. Beleza? Antes da gente ver
+
+isso aqui, vamos ver os benchmarks, porque isso aqui é muito interessante. Eu criei esse essa esse bench, não criei o benchmark, né? Eu criei esse filtro aqui pra gente comparar. O que que eu fiz aqui? Eu coloquei o GPT 5.4 X High,
+
+que seria o stado art, tá? E eu coloquei o OPS com max, tá? Max thinking aqui. E aí o resto todo são modelos open source, tá? Dali para lá. E aí quando, como eu
+
+botei na capa, temos opções, porque temos mesmo opções. E aí o que que eu tenho feito? E aí, qual tem sido minha grata surpresa? Tanto o Min Max quanto o Kim 2.5 são modelos bem grandes. Eles
+
+não são modelos nem baratinhos se você roda, por exemplo, na Uen Router. Só que acontece que esse modelo aqui é surpreendentemente bom. E aí você vê que ele tá aí eh cabeça a cabeça em teoria com o Gema 431B. Então é por isso que eu não estou ansioso para trocar de um pro outro. Aqui tem o com thinking e aqui tem o sem thinking. É basicamente isso.
+
+E a gente vai ver isso aqui na comparação mais aqui um pouquinho abaixo. E aí você vê que como esperado esses modelos gema aqui embaixo, ó, tem a performance bem menor, como eu havia dito para vocês, ó. Então esses caras aqui vão privilegiar eh performance, né? Tá? Então aqui, ó, você vê aqui performance, performance e você vê aqui que o nosso 9B, glorioso 9B que eu tenho trabalhado com ele, tem uma performance até decente e não adianta, tamanho importa, tá? Não há, cara, esse jogo é
+
+um jogo de força bruta ainda. Você vê que essa tentativa de fazer MO funciona, mas ela tem certas deficiências. E tudo bem, o que você tem que fazer é conseguir escolher o que você precisa. E no fim do dia o modelo que você usa tem que ser bom suficiente pro teu problema. Bota na tua cabeça, você não é Open AI, você não é Antropic, você cria uma solução específica para resolver um problema. É assim que se faz dinheiro,
+
+não é tentando abraçar o mundo. Você não tem os computadores que eles têm. É basicamente isso, tá? E aqui uma coisa que eu queria mostrar para vocês que é muito importante, se você tá criando aplicações agênticas é a chamada de ferramenta. O que seria a chamada de ferramenta? Você cria a ferramenta lá de
+
+ler alguma coisa do banco de dados, de chamar uma ferramenta da internet, etc, etc. São ferramentas, tá? Se o teu modelo não chama ferramenta, basicamente você não consegue construir aplicações cara, é ruim, é péssimo, tá? Então para o que é importante pra gente construir com modelos é a chamada de ferramenta em muito dos casos. E aqui pra minha surpresa, o GLM 4.7 Flash é muito bom em
+
+chamada de ferramentas, a menos nesse benchmark aqui, obviamente. Mais uma vez, você tem que testar na tua solução, não confiar cegamente em BMK, mas eles são guias. E aí você vê que nós temos aqui uma sequência de modelos open source e como eu venho falando, o nosso Quen 27B tá aqui nas cabeças, cara. Inclusive aqui, ó, batendo com opos. Eh, aqui é o sem reasoning e aqui é o com reasoning. E você vê que existe uma
+
+diferença gritante para o modelo do Google, correto? Então, é por isso que eu não adotei. Ai, meu Deus, isso muda tudo, cara. Calma, não muda tudo. Vai, vai devagar, testa as coisas e tal. Mas
+
+é interessante ver que a gente tem mais opções, só que claramente se você tem uma um modelo que chama 21% das vezes a ferramenta de maneira correta, você [roncando] tem um problema grande, né? você vai ter muita dificuldade em criar uma aplicação agêntica confiável, diferente se você usar o 27B, que é uma modelo acessível, ou o G, o o GLM 4.7 Flash, que é muito acessível, como você tá vendo aqui. E é exatamente nesse momento que a gente volta para cá e a gente vê isso aqui que eu quero comentar antes de entrar em conção, tá? Eh, provavelmente a Antropic tá escalando o treinamento para algo assim, tá? Então, a gente tem aqui
+
+modelos de 27 bilhões e eles estão fazendo modelos de 10 trilhões. Essa é a única vantagem que eles têm, que é uma cacetada de computador. Agora, a arquitetura a gente já sabe como treina o modelo. Os chineses descobriram como fazem isso aqui em massa, tá? Então, provavelmente a Antropic, tanto a Open AI estão num caminho para fazer IPO, para abrir o capital da empresa e eles vão ter que fazer alarmismos de todo quanto jeito. Obviamente o modelo de 10
+
+trilhões tende a ser melhor do que o modelo de 27. Isso não tem o que fazer por enquanto, mas isso não quer dizer que você não possa construir com o modelo de 27 bilhões. E é isso que você tem que acordar, cara. Acorda você. Eh, esse jogo desses caras não é o jogo que você tá jogando se você tá construindo aplicações agênicas. Beleza? Uma coisa
+
+que eu quero mostrar a gente de avançar aqui, não sei se você conhece, a Open AI tem esse modelo aqui, ó, chamado GPT4 Pro. E ele é um modelo caríssimo, como você pode ver aqui, ó. 30 dólares entrada e 180 saída. Provavelmente esse modelo aqui é um modelo enorme, já foi treinado, isso já foi tentado, só que provavelmente Antropic, como é muito boa de marketing, eh, botou esse terror, que é quase um terrorismo, né? Olha, todas as aplicações tão tão tão, eh, ameaçadas com esse novo modelo, que ele é um semideus e parará e piriri. Eles fazem o
+
+melhor que é pra empresa deles. Você que toma decisão na tua empresa, você deve acordar pra realidade, tá? E essa é a realidade aqui. Show de bola. Tá bom?
+
+Vamos lá. quantização. Essa palavrinha eu já expliquei em outro vídeo aqui, mas passando rápido, tá? O que que você vai ver geralmente quando a gente falar de quantização? Deixa eu vir aqui, vou botar esse cara aqui, ó. Se a
+
+gente vier aqui no Hugin face, você vai ver algumas coisas quantizadas ou a tentativa de quantização, que é isso aqui, ó. Você vai ver GG UF. Obviamente você vai ficar confuso, né? Você vai ver eh, de repente Q4, Q5. Vamos botar esse cara aqui pra gente.
+
+Fui no meu rate limits, então você tenta aí na tua casa quando você puder, tá? Mas se você entrar aqui, você vai ver vários formatos, como esse aqui, GGUF, às vezes você vai ver e a qw parará e eu botei tudo aqui, tá? AQW, não, awq. Você vai ver GPTQ, etc, etc. Basicamente, o que você precisa saber é se você quer rodar lama CCP. E o que que
+
+é lama CCP? É um run time. A gente vai chegar aqui, tá? Você vai querer algum modelo desse? O lama CCP é indicado se você tá rodando localmente, sem pretensões de servir pessoas. O que que
+
+é servir pessoas? R, você tem um servidor, correto? Várias pessoas ou várias aplicações podem acessar aquela LLM que você tá servindo. Isso é servir pessoas. Beleza? Ah, não, eu quero rodar
+
+só aquele local. Então vai pro lama CCP, começa no Lama CCP para fazer seus testes. E aí aqui no Rugin Face você vai ver um monte de coisa que é GG Parará, tá? E aqui é um lugar legal que você vai ver vários desses modelos e você consegue ver o tamanho deles também. Então é um bom lugar para você dar uma olhadinha, uma paquerada, mas não se sinta perdido porque aqui na Rock Pro você vai ver aqui na biblioteca e eu criei um guia das LLMs locais, um artigo muito legal, escrito com muito carinho. Eh, eu botei
+
+aqui algumas coisas eh da minha experiência com o 27B, mas depois disso aqui é um guia geral para você não ficar perdido e todos esses detalhes aqui. Então dá um pulo lá e confere quando você tiver um tempo. E na verdade, eu acho que você deveria até salvar ou esse vídeo aqui ou esse artigo, porque ao longo do tempo você vai se esbarrar nesses termos aqui, provavelmente você vai ficar confuso, assim como eu fiquei no início quando eu tava tentando fazer. E eu acho que isso aqui pode de fato adicionar valor e te adiantar muito. Beleza? Voltar para cá, tá? Então a
+
+gente tem essa ideia aqui tanto desses formatos aqui, tá? Então se você vê GG UF, pensa em lama. Se você vê os outros, você pensa em VLLM. O que que é VLLM? seria para você fazer servir a vários usuários, tá? Então, ah, Ron, eu quero
+
+botar isso em produção na minha empresa parará. Então, começa a pensar em velm lama. Beleza? Show de bola. Outra coisa que você vai ver comumente por aí seria o cave cash. Eu não vou me estender
+
+absurdamente nesse assunto, mas eu quero só tocar no ponto aqui do Turbo Quant, tá? O Turbo Quant foi uma técnica que o Google lançou recentemente, muito recentemente aqui, tá? Em março aqui, tá bem fresco, março de 2026. E ele promete reduzir a quantidade de verran que você precisa para usar a LLM que você hospedou e de maneira ótima, tá? O que que eu quero dizer com isso? Esse site aqui, inclusive, ó,
+
+tanto esse site aqui quanto esse site aqui, esse aqui e esse aqui, do jeito que tá aqui no vídeo, eu coloquei aqui na Rock Pro lá no final, tá? As referências dos artigos estão aqui. Então você pode clicar aqui e ver exatamente o que eu tô vendo. Beleza? Tá? Esse site aqui é legal porque a
+
+gente consegue ver eh os modelos, a gente consegue ver o tamanho, parará, etc, tudo mais. E a gente consegue estipular qual tipo de hardware a gente precisa para executar eles, tá? Ele dá algumas dicas aqui de placa de vídeo, então você não precisa ficar toda vez perguntando o que você precisa, você pode vir aqui e usar. Você vai ver que se você aumentar o contexto, a quantidade de gigabes aumenta muito, né, necessárias de verram requerida. O que que seria verran? Seria a sua placa
+
+de vídeo. Então isso aqui começa a ficar impraticável, tá? Então a gente tem uma coisa chamada quantização. O que que seria a quantização? Como eu expliquei no outro vídeo, você comprime e os parâmetros em um certo nível até que ele fique razoavelmente rodável. Então você
+
+vê que muda muito, mas mesmo assim em alguns casos você vai ter dificuldade em rodar em um hardware comum, né? Um playb dificuldade em rodar isso aqui localmente. Isso é um fato. Mas a boa notícia é que empresas como a Open Houter e várias outras, tem várias outras, elas hospedam esse modelo a um precinho camarada, como você pode ver aqui, né? Precinho super camarada. Aqui
+
+sim dá para brincar de criar solução, tá? Por quê? O teu usuário, ele vai usar mais de um, muito mais de 1 milhão de tokens no mundo real quando você botar a aplicação na mão dele. E é importante que você tenha controle de custos real. E você pode pegar isso aqui ou espedar numa LLM ou num num pod, né, como a Rampod. Tem um serviço chamado Run
+
+Podod, que você pode instanciar ele, como eu falei no outro vídeo, e eu convido você a velar sobre GPUs, beleza? Beleza. Tá, vamos voltar para cá. Então, você já entendeu o que que é o Turbo Coint, o que que ele o que que ele tenta fazer? Então ele não melhora a quantização, ele melhora na parte da inferência, da execução. Ele promete
+
+reduzir custos de inferência. O que que seria inferência? Quando o cara usa, tá? Então isso que pode ser importante no nosso futuro próximo. A implementação tá aí, a ideia tá aqui. Como você viu,
+
+março de 2026, é algo bem recente. Isso ainda não pegou, mas a ideia é ótima e tá todo mundo querendo que isso funcione de fato, porque parece sensacional. Beleza, mas a gente ainda tá no meio do caminho. Show de bola. Beleza? Então, a
+
+runtime, como eu falei, lama CCP, você for rodar local, VLM, se você for rodar multiusuário, ela já vem com uma API embutida no estilo open AI. Então, o que você vai fazer? Quando você subir ela, o modelo vai est rodando, você vai usar aquele adaptador do chat, open AI, por exemplo, uso o LC Chain, vai passar o teu IP ali, o IP da tua máquina e já era, vai funcionar e é bem legal, funciona mesmo, tá? Por último, não menos importante, a questão do hardware, né? Então, eh, tem um hardware pequenininho, eu quero rodar, quero ver como é que é, R, quero brincar aqui, tá?
+
+Vai aqui no nesses pequenininhos aqui como gema, tá? Que são os effective, como a gente viu, ou naqueles queens que são bem pequenininhos, tá? 0.8 2, etc, etc. Mais do que isso vai ser complicado. A partir desse momento aqui,
+
+se você tiver bala na agulha, e eu recomendo fortemente você rodar um algum desses aqui, mas aqui a gente já tá falando de quase 30, né? Quase 30 bilhões já é difícil. Então, de repente, você pode tentar um gema aqui e o modelo de 9 bilhões de parâmetros do, vamos voltar para cá para essa comparação. O modelo de 9 bilhões aqui, ó, do Quen, eu realmente tô impressionado com a qualidade dele. De repente, vale a pena você dar uma chance. Qual é o senão aqui? Ele não é
+
+tão bom de seguir instrução, tá? Mas ele é muito bom chamada de ferramenta, mas às vezes ele pode desviar no prompt ali, ele ele ele toma um caminho e faz parte do jogo, né? Você tá usando um modelo menor. O que cabe a você é otimizar a solução, tá? Então é um trabalho de engenharia, veja só, tá? Então,
+
+recomendo fortemente você tentar esse modelo aqui, se você tiver procurando algo baratinho. Vamos ver quanto é que ele tá aqui no no no Open Houter. Queen 9B. QuB. OK. Qu 9B. Vamos ver como
+
+é que ele tá aqui. É, ele tá 5:15, né? E o, como é que tá o outro? Tá aqui 6,40. Então você vê que tem uma diferencinha de preço, de repente não compensa rodar ele, né? Mas vale o teste. Vale o teste
+
+para você sentir. E você pode, por exemplo, se você tá estudando, você é um cara que tá na comunidade, a gente faz um monte de solução lá, você tá estudando, cara, não roda modelo caro, bicho. Roda esses modelos baratinhos, tá? E aqui na Open Houter, inclusive, vira e mexa eles dão modelos barato de graça por alguns dias para você testar e tal. Então, cara, usa, usa, tá?
+
+Aproveita enquanto ainda tem essa oportunidade desses preços, tá? Pode ser que um dia mude, show de bola. Tá bom. É, e se você de fato tiver com bala na agulha, Ronald, quero fazer uma solução Enterprise aqui para atender 100 pessoas e tal. Aí você pode pensar em outros modelos, mas isso aqui já é factível, cara. Isso aqui já é real. Você pode
+
+literalmente baixar e você vai ter um servidor local. Ronald, manter servidor local é difícil. É, cara, é a vida, a vida tem sua particularidade de dificuldade, mas isso é possível hoje. Você não vai depender da Antropic, eu falar assim: "Ah, agora você não pode acessar IPI". Tá? E por que que eu tô
+
+falando da Antropic? Antrópic, ela tá fazendo o jogo que é interessante pra empresa deles. Provavelmente eles estão querendo se livrar das vibe coders e ficar com a enterprise e tudo bem, tá? É decisão da empresa deles. É muito melhor você fechar um contrato gigante, sei lá, com a Microsoft ou seja lá com quem eles tm de cliente, do que ficar no Vibe Coder e reclamando que tá lento, que não funcionou e tal. E então eles estão de
+
+repente fazendo essa essa escolha aí comercial, faz parte do jogo, mas você já entendeu o que que tá acontecendo, né, cara? Eles estão buscando o interesse deles. Cabe a você buscar o seu interesse. Se você é devoto do São Cloud, do Shat GPT, sinto lhe dizer, tá? Mas esse mundo aqui não é exatamente o que te venderam, tá? Mas é um mundo
+
+real, é um mundo possível, você pode criar solução, você jamais vai ter a vantagem competitiva de poder treinar. A gente não pode treinar, né? Por mais hardware que eu possa ter e possa ir comprando, jamais eu vou ter um cluster, né? É. De repente, um dia eu voltei, não custa sonhar, né? Mas assim, sendo
+
+realista, ter um cluster de máquinas para eu poder treinar o modelo é muito difícil, correto? Essa é a vantagem competitiva de todas essas empresas. Se você vê nos últimos anos, eles fizeram milhares de contratos para a construção de data centers. Milhares de contratos. Se esses data centes vão sair ou não, não sei, mas é fato que eles estão apostando tudo em força bruta. A gente
+
+teve o salto de qualidade dos modelos quando a gente descobriu o Shen of Hots, que é basicamente o custo de inferência, a força bruta. Eles estão aumentando o número de o número de parâmetros dos modelos. É força bruta. A gente não tem como competir com força bruta. Então deixa eles brincar, jogar o jogo deles, se afasta do ruído e começa a construir, que você vai descobrir que existe um novo mundo aberto para todo mundo. Quem quiser
+
+entrar, o jogo tá tá sendo jogado. Só que a maioria tá distraído com notícias sensacionalista, com isso muda tudo, como sempre, como foi o ano passado. E mais uma vez eu digo, os caras que me escutaram lá no ano passado, eh, começaram a se adaptar paraará, hoje estão empregados, arrumaram as coisas dele, estão abrindo empresa e eu não tô mentindo, tem vários casos de É, e vai acontecer o mesmo aqui, com certeza. A gente, eu costumo dizer que a gente aqui na nossa bolha, a gente tá pelo menos aí uns se meses na frente do mercado e isso é verdade, tá? Então, aja de acordo com a informação que você recebeu desse vídeo. Se você tem interesse em ler de
+
+fato isso aqui com mais detalhe, com mais atenção, vai lá e dá uma lida. Ronald, mas a LLM, cara, é um texto de 5 minutos, bicho. Você você não pode não ler um texto de 5 minutos, não ter mais paciência, você não pode perder essa habilidade. Beleza? E é por isso que eu escrevo, até porque é um bom exercício para mim também, né? No fim das contas,
+
+para não perder o exercício, não perder a a habilidade de concentração. Isso é muito importante no mundo de hoje e vai ser mais importante pro seu futuro também. Então é isso, gente. Mais uma vez prazer em vê-los. Obrigado por assistir. Até a próxima.
+
+Yeah.
