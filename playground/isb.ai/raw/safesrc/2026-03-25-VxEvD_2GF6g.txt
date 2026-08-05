@@ -1,0 +1,64 @@
+---
+video_title: "PACOTE PYPI LITELLM sofre ATAQUE SUPPLY CHAIN com base em SOFTWARE de INSPEÇÃO de CÓDIGO FALSO"
+video_id: VxEvD_2GF6g
+channel_name: "safesrc"
+channel_id: UCWFmlmegFcu6lvAmeBtV3cg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VxEvD_2GF6g
+video_date: 2026-03-25T12:30:00+00:00
+video_description: |
+  Mais informações: https://safesrc.com
+  
+  Quer ajudar?
+  
+  Doações em Bitcoin: bc1qk67xsekuhfweu3c5pwqraj9vrgs8h4jhyyuxtd
+  
+  Referências:
+  
+  https://cyberinsider.com/new-supply-chain-attack-hits-litellm-with-95m-monthly-downloads/
+  https://www.litellm.ai/
+  https://x.com/karpathy/status/2036487306585268612
+  https://snyk.io/articles/poisoned-security-scanner-backdooring-litellm/
+  https://checkmarx.com/product/application-security-platform/?utm_source=google&utm_medium=cpc&utm_campaign=AMS-AD-FY25Q1-Brand-Google-US&utm_group=Checkmarx&utm_keyword=checkmarx&utm_campaign=AMS-AD-FY25Q1-Brand-Google-US&utm_source=google&utm_medium=cpc&utm_term=checkmarx&hsa_acc=2852355864&hsa_cam=22072530657&hsa_grp=172516267149&hsa_ad=727402369648&hsa_src=g&hsa_tgt=kwd-327138679131&hsa_kw=checkmarx&hsa_mt=e&hsa_net=adwords&hsa_ver=3&gad_source=1&gad_campaignid=22072530657&gbraid=0AAAAADihu0F-8h-lntQrhriOJf2gFg75e
+---
+um pacote chamado Lightlm, que estava na PIP, né, que é o repositório de componentes do Python. Esse componente light llado para acessar inteligência artificial, acessar LLMs, né? Tá aqui a descrição dele, ele acessa várias LLMs e não sei que lá. E é muito fácil de usar. e é e eh download é descarregado 95 milhões de vezes por mês. E esse pacote
+
+foi alvo de um ataque de supply chain, ou seja, colocar um código malicioso, um código malicioso muito danoso que ã mesmo que você remova depois o pacote, ele continua operando na sua máquina e capturando credenciais e mandando para algum ator aí. Então é realmente uma coisa muito crítica, né? Isso daqui tem duas observações interessantes nessa história. A primeira coisa é mais uma vez o alerta para esses pacotes em repositórios de pacotes. O PIP é um desses repositórios do Python, mas tem outros de outras e eh de outras ferramentas, né, do do Node, o npm do do do Java, enfim, tem um monte de pacotes desse tipo aí, de gerenciadores de pacotes que atuam da mesma forma e que são um local muito muito tranquilo de você obter e de você fazer um ataque de compromisso desse, né, de supply chain.
+
+Outra coisa importante é como que esse pacote foi comprometido, porque no final das contas o que acontece é que o código não o código no GitHub do pacote Light Llm não foi, não tava ruim, não tava errado. Apenas é e o executável é que foi é que foi comprometido, o código fonte não. Como é que eles fizeram esse ataque? E aí que tá? Foi usando um scanner de código comprometido. Vamos
+
+entender esse caso aqui. Eu sou Ricardo Albuquerque, esse é o Safe Source e nós vamos falar aqui sobre essa questão do Light LLM, que é um compromisso muito sério, um comprometimento muito sério que pode ter prejudicado muita gente. Essa notícia foi sugerida por A Dalva tá pagando imposto F6 e várias outras pessoas. Obrigado aí o pessoal que sugeriu notícias lá no nosso site, no safesource.com.
+
+É safesrc.com. E obrigado a você que tá assistindo o nosso vídeo. Se você gosta do nosso conteúdo, por favor, deixa o seu like, se inscreva aqui no canal, né? Então, eh, ataques de supply chain com pacotes no PIP não é nenhuma novidade.
+
+Também no npm, em outros vários outros repositórios desses aí, no GET, enfim, cada linguagem, cada cada ecossistema de codificação tem o seu gerenciador de pacote. Para quem não sabe para que que isso serve, quando você desenvolve um sistema, evidentemente você não quer desenvolver tudo do zero, você quer usar pacotes que já estão prontos, coisas que já estão prontas, né? E aí vocês têm esses grandes gerenciadores de pacote que além de fornecer esses pacotes já para fazer coisas que, né, que você pode precisar, eles também garantem atualização. Então, quando tem uma mudança, uma alteração qualquer, eles atualizam e coisa e tal. Então, é um gerenciador de pacotes. E você, como
+
+desenvolvedor, você pode colocar um pacote nesses gerenciadores e fornecer isso para outros usuários, né? O Light LLM era exatamente esse tipo de coisa, é um é um pacote que faz acesso a a sistema de inteligência artificial, né? LMS, várias LLMs, né? Você usa, usa esse pacote Light LLM e ele é um pacote muito baixado, né? 95 milhões de downloads mensais aqui, né? E bom, o que
+
+que aconteceu? Eles identificaram que duas liberações desse pacote aqui, particularmente é a versão pon7.8 aqui, estavam comprometidas. Na última versão que não estava comprometida era a ponto se então e nesse momento de mais imediato, se você usa esse pacote, é a coisa mais imediata é garantir que não vai atualizar além da da versão pon, tá? Porque é a versão 1.82.6,
+
+é a versão, é a última versão confirmada como limpa, tá? que não tem esse ataque. O ataque consiste nesse eh payload aqui, ó, de em código 64, né, em base 64, que é expandido. Ele tá na forma 64 para evitar ser detectado por algum inspetor de código, alguma coisa que inspecione código, mas ele eh basicamente cria uma um espião que vai capturar credenciais na sua máquina e passar para outras pessoas. Então, tá aqui o código descompactado e coisa e tal, como é que ele faz, como é que ele opera. E uma
+
+coisa muito importante, tá? Eh, em algumas versões desse payload, ele ele é persistente, mesmo que depois você retire o pacote, ele continua instalado na sua máquina. Então, é muito importante você dar uma zerada nessa máquina completamente, se você foi uma das pessoas afetadas por isso daqui, tá? Então, é uma coisa bastante crítica, tá? Aqui o pessoal falando aqui que é um horror de software, né? Esse ataque de
+
+supply chain, ataque de supply chain é quando você ataca o desenvolvedor para comprometer a segurança do produto desenvolvido, né? No caso do supply chain, você tá atacando um pacote que depois alguém vai usar aquele pacote no software dele e vai acabar sendo comprometido, né? Então, ã, e a a questão que tem aqui é a o artefato e eh envenenado ficou no ar menos de uma hora. Ainda assim teve um monte de downloads nesse período e muita gente pode ter comprometido, né? O grande problema é esse aqui, ó. Light ll foi
+
+comprometido, não atualize. Descobrimos que o light ll p release 1.82.8. Depois ficamos sabendo que 1.7 também já tava
+
+comprometido. E isso tá gerando esse problema. Então, se você usa esse pacote, tome cuidado para não atualizar nesse momento. Lembrando que quando você faz o build do seu pacote em Python, muitas vezes ele já atualiza automaticamente. Então tome cuidado com isso também. Pode ter
+
+atualizado automático, você nem ter percebido isso daqui, tá? Outros pacotes podem também instalar esse pacote por default, né? Por exemplo, ele dá o exemplo aqui, ó, do DSP Dayspy, que depende do Light Llm 1.64.0.
+
+Então, se você tem esse outro pacote, ele pode ter instalado o Light LLM automaticamente para você. É isso. Esses gerenciadores de pacote fazem isso automático para você. Isso é bom por um lado, né? Facilita a vida do desenvolvedor. Por outro lado, olha a
+
+merda, né? Agora, a grande dúvida é a seguinte. O pessoal olhou o código fonte do sistema na no GitHub do Light Llm e não tinha o ataque ali. Então, como é que esse ataque foi parar no pacote final da coisa, né? E aí eles descobriram que alguém rodou um cheque marks falso, o chequ. Zone. Checkmarks,
+
+para quem não sabe, é um sistema de inspeção de código para você detectar justamente problemas de de codificação no seu código. Você roda ele, coisa tal, e ele aponta eventuais fragilidades no seu código, né? Só que o checkemmarks. Zone é um e eh uma coisa falsa que aparentemente tá introduzindo isso no código, tá introduzindo problemas no seu código fonte. Olha que coisa, né? Aqui,
+
+ó. Esse aqui é o site do Checkmarks, tá? O Checkmarks é uma plataforma de eh de inspeção de códigos e coisa e tal. Então, tem todo tudo aqui. O Checkmarks, até onde eu sei, tá OK. Só que tem um
+
+tal de checkmarks. Zone que tava e justamente fazendo essa aqui, ó. Ele impersona a empresa Checkmarks de segurança e eh usa eh permite descarregar um software que é muito parecido, só que esse software, na verdade, vai lá e coloca problemas de segurança no seu site, né? Olha que coisa complicada isso, meu amigo. Tá ficando complicada essa brincadeira, né?
+
+Realmente ele segue descrevendo aqui todo o payload, como é que funciona a coisa na na prática, mas isso aí já não interessa pra gente, né? O mais importante é isso. Se você foi afetado diretamente por isso, tome muito cuidado. Se você não foi, olha só a dor de cabeça que é esse negócio de pacote, né? Evita configurar o seu P com autorização automática de pacotes, né?
+
+Por mais que seja uma coisa cômoda pro desenvolvedor, o risco de acontecer um ataque desse tipo é muito grande. É melhor você fazer essa atualização manualmente, de tempos em tempos. Obrigado por assistir nosso vídeo até o final. tem alguns links para você nos ajudar aí na tela e também na descrição desse vídeo.
