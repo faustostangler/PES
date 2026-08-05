@@ -1,0 +1,398 @@
+---
+video_title: "Debug Storage APIs"
+video_id: ESZX18Ty5V0
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ESZX18Ty5V0
+video_date: 2026-02-26T18:05:56+00:00
+video_description: |
+  Learn how to inspect and debug various Storage APIs using the Application panel in Chrome DevTools. Matthias shares how to view and modify data for Cookies, Local Storage, Session Storage, and IndexedDB. 
+  
+  Chapters:
+  0:00 - Intro
+  0:30 - Storage APIs
+  1:20 - Demo: Application panel 
+  2:20 - Demo: Sensors panel
+  
+  Resources:
+  Check out the demo → http://goo.gle/storage-kittens  
+  Documentation → https://goo.gle/4kVLI1r
+                                      
+  Watch more DevTools Tips → https://goo.gle/DevToolsTips 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  Subscribe to @ChromeDevTools → https://x.com/ChromeDevTools
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Matthias Rohmer
+  Products Mentioned: Chrome,  Chrome DevTools,
+---
+MATTHIAS ROHMER: Are you more of a cat-- [MEOW] --or a dog person? [WHINES] Or neither? [CHIMP SCREECHING] It doesn't really matter. Just be warned that this brief overview of storage APIs on the web and how you can inspect them with DevTools might involve some kittens. [MEWING] Let's unravel this yarn.
+
+[DRUMMING] [MUSIC] [WOMAN EXCLAIMS]
+
+[TYPING] Web apps need to remember things, whether it's your shopping cart, your login session, or that half-written draft you forgot to save. To do this, browsers provide several storage APIs. You've probably heard of cookies, the classic way to store small bits of data. Then there's local storage for things that should stick around forever, and session storage for data that only lives as long as your tab is open. For more complex needs, we have IndexedDB, a full-blown database right in your browser.
+
+IndexedDB, is also supported by the fairly new Storage Buckets API, which helps organize data and manage disk space usage more effectively. All of those storage interfaces can be inspected with DevTools. To show you how, we created this demo site involving five little cats. You'll find it at this link. The cats don't have names yet, but we can assign them one using the respective storage interface.
+
+Click Assign Name next to any of the cats. Then open Chrome DevTools and head to the Applications panel. On the left-hand side, you'll see all storage interfaces listed. Find the one matching your selected cat. Click on it to reveal currently stored values.
+
+Look for any identifier, like kitten or kitten name, to find the cat's name. Once you find it, write it into the cat's name tag and get rewarded with a few wool balls for your kitten to play with. Now go ahead and find the names for all the other kittens using the local storage, session storage, IndexedDB, and Storage Bucket sections in the Application panel. Now, so much for the storage APIs and the Application panel, but we're not done yet. Here's the bonus.
+
+Those balls of wool actually react to the device orientation sensor. Too bad you're likely on a desktop device, right? Here's the trick on how you can emulate device orientation with DevTools. Open the Sensors panel. Scroll down to Device Orientation.
+
+By default, it's off, so let's enable it. Now watch this. As I rotate the virtual device, the wool balls react. And this is how you can use the DevTools to test and debug animations and effects based on the device orientation API using the Sensors panel. Now next time you want to debug constant dialogs, login sessions, or shopping carts, you know where to start, and had some fun with emulated sensors along the way.
+
+Let us know if you're Team Cat or Team Dog in the comments below, and see you next time. [MUSIC]
+
+---
+video_title: "Building a profitable Chrome extension | Lessons from Pretty Prompt"
+video_id: 7i2N7Hqyqyg
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7i2N7Hqyqyg
+video_date: 2026-02-25T16:09:41+00:00
+video_description: |
+  Monetizing a Chrome extension can feel complex, but co-founders Charlie and Eli share their journey to success with PrettyPrompt. Learn how they grew to 15,000 users, integrated payments, and built a product users are eager to pay for. This video provides practical advice on validating ideas, supporting customers, and strategically evolving your monetization approach.
+  
+  Chapters:
+  0:00 - Introduction
+  0:43 - Explaining the product functionality
+  3:05 - Validating if users are willing to pay
+  4:09 - Implementing the payment flow
+  6:00 - Designing the upgrade user experience
+  8:28 - Early growth stages and organic traction
+  13:00 - Analyzing annual versus monthly subscriptions
+  15:00 - Zero-spend marketing and customer advocacy
+  18:40 - The freemium model and conversion tactics
+  23:35 - Handling internationalization and languages
+  25:42 - Addressing client-side security concerns
+  29:20 - Prioritizing problems and earning the right to monetize
+  33:30 - Future opportunities in the B2B market
+  37:15 - Conclusion
+  
+  Resources:
+  
+  Watch more Developer Mode → https://goo.gle/dev-mode 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk, Charlie Day, Ilai Szpiezak 
+  Products Mentioned: Chrome
+---
+ILAI SZPIEZAK: We are yet to understand why they choose an annual versus a monthly pay plan, and it's really interesting data for us. But again, we are still learning from our users. [MUSIC PLAYING] OLIVER DUNK: Hello, and welcome back to "Developer mode." Today, I'm joined by Charlie and Ilai, two co-founders who are earning money from their Chrome extension. How to successfully monetize an extension is something a lot of developers ask about.
+
+And so today, I really want to focus on everything they've learned about how to build something users will actually pay for. Welcome both to the show. How are you doing? CHARLIE DAY: We're very good. Thanks for inviting us.
+
+OLIVER DUNK: Awesome. ILAI SZPIEZAK: Thanks much. OLIVER DUNK: I would love to just hear a little bit about what your product is and how it's going so far. CHARLIE DAY: Yeah, so we build Pretty Prompt, which is a Chrome extension that sits on top of your AI providers. Think ChatGPT, Claude, Gemini.
+
+And we help you improve your prompt as you write it. OLIVER DUNK: Nice. ILAI SZPIEZAK: And it's really, really easy to get started. Once you install the Chrome extension, people just press this Improve Prompt button, and they get this small prompt that they wrote into a whole enhanced piece of text that hopefully gets them better results. And it's been really an interesting journey.
+
+OLIVER DUNK: And how's it going? Where are you at the moment? What's your journey been like so far? And what milestones have you hit recently? ILAI SZPIEZAK: So we recently passed 15,000 users, which is really amazing.
+
+OLIVER DUNK: Congratulations. ILAI SZPIEZAK: Thank you. I remember when we started this a few months ago. And yeah, we've only been live as a product for a few months, to be honest, so it's been pretty fast. CHARLIE DAY: So I think we started around about early June, and we've been going since then.
+
+And yeah, we started off as a sort of internal tool we were both using. And we thought it would be a great idea to just launch this out and release it. ILAI SZPIEZAK: And the reason was because Charlie, who is actually the main technical co-founder from both of us. I deal mainly with customers. Charlie deals mainly with the product and the building.
+
+And I think that the good thing is we were building a separate product before. And internally, we were constantly prompting and changing things. CHARLIE DAY: It took up all our time. ILAI SZPIEZAK: It's super hard. CHARLIE DAY: Should we just build something to solve this problem for us?
+
+ILAI SZPIEZAK: Which I think is a great learning. If you have a problem, just solve it yourself first. CHARLIE DAY: And we released it, and it had such a good response, we decided to burn the boats and go completely on to this. And I think it was a good decision since then. ILAI SZPIEZAK: 100%.
+
+So since June, within the first week, I remember, of launching, we had about 3,000 users, which is a pretty good milestone. OLIVER DUNK: That's already a lot of progress in a bit of time. ILAI SZPIEZAK: Yeah. But again, we didn't launch trying to make money. Again, it was an internal tool.
+
+CHARLIE DAY: Yep. ILAI SZPIEZAK: And we wanted to almost validate if people would first of all use it, and second of all, want to pay for it, because there's no point to build something no one wants. Everybody talks about the main reason why products fail are not because of the product-- are because customers don't need the one. Maybe they don't get it, which is completely fine. OLIVER DUNK: It doesn't find the product-market fit.
+
+ILAI SZPIEZAK: Exactly. OLIVER DUNK: So did you find that users were actually willing to pay for your extension? CHARLIE DAY: Yeah, so when we first launched it, it was completely free to use. But within about a week-- we launched it around about the start of June. ILAI SZPIEZAK: Well, four days.
+
+CHARLIE DAY: About four days-- OLIVER DUNK: Based on email? CHARLIE DAY: Four days based on the email. We got an email from a user saying, yeah, we really want to pay for this. And that was the gold standard for saying, OK, we should really implement a payment provider. ILAI SZPIEZAK: And again, it was part of validation.
+
+It's like level 0, level 1, level 2. We were still in level 0, and we are now in level 1 or 2, no more than that. It gets harder and harder and harder. But the fact that someone emails you and say, hello, I was trying to subscribe and potentially pay for the service, it's like, we should have a paywall. CHARLIE DAY: We should get on this as a priority.
+
+OLIVER DUNK: And we talk about adding a paywall as something you just decide to do, and then it's done. But I know realistically, there's a lot of work and a lot of complexity to handling chargebacks and maybe refunds. ILAI SZPIEZAK: Upgrades. OLIVER DUNK: Upgrades, even. Yeah, how do you handle all of this?
+
+CHARLIE DAY: So yeah, I think-- so we started off, OK, what's the most basic way we can do this? And that's really taking a payment from a user, sending them to a checkout. So we just integrated with payment provider Stripe. And then we linked that to our database. And then that would update the user just as a flag which says Is Paid.
+
+Really super basic. There was no way to-- refunds, we did that all manually. Upgrades, we did that all manually. ILAI SZPIEZAK: When they would pay, I would send them a message, because we would get a notification. And I would see someone paid, I would go manually to send them an email.
+
+There was no automated email in the beginning. I was like, welcome to Pretty Prompt Pro. No, there was no that. I was like, hey, I'm Ilai. I'm one of the co-founders.
+
+I'm super excited to welcome you, and thank you so much for paying. If you have any issues, let me know. OLIVER DUNK: So if you got an email in the first weeks or months of Pretty Prompt, then maybe it was directly from you? ILAI SZPIEZAK: And it's still from me, because I message people directly. And funny enough, even technical founders should-- and not that this is for everybody-- but should feel that sometimes part of building a product is not building, but it's actually talking to the people.
+
+Charlie does support. CHARLIE DAY: Yeah. I think that's a big thing. I think all engineers should do support. They should get on a call with the customer, and they should really feel like, OK, if the customer is asking for a certain feature-- ILAI SZPIEZAK: Why?
+
+CHARLIE DAY: Yeah, why are they asking? Why are they asking for it? Dig a little bit deeper. Don't just build it, but understand, OK, what is the underlying principle as to why they want feature x? And can this be solved in maybe not even an automation way?
+
+Is this something that isn't even a problem to start with? ILAI SZPIEZAK: Yeah. And going back to the payment flow, we put together this early on to understand how we would do it. And we came up with literally these four steps, which is from the extension, you have this button that says Upgrade, which you can click anytime. But it would come to the front once you hit the limit that we are testing-- what is the limit that the user wants to upgrade?
+
+And that will take you directly to a checkout in the very beginning. CHARLIE DAY: So it'd take you to a checkout, and then you'd have a webhook that would call your super base backend and then update the tier on-- it's actually on the Chrome extension. It wasn't even on the back end. We only logged when you get paid. So we capture their customer ID.
+
+So if there were any problems on our payment provider, we had some kind of indication of who they are. ILAI SZPIEZAK: Something interesting with Chrome extensions specifically is when they would come back from that payment into the conversation, we would reopen the popup, which is kind of on the top right corner of your browser to refetch and make sure that that is updated, and make sure that now they appear at the top. OLIVER DUNK: To get the latest payment data from your server or wherever you need to check. ILAI SZPIEZAK: Exactly. So every time that you upgrade and change your tier, that gets reopened.
+
+CHARLIE DAY: And I think making sure that flow works quite well is important, because there's nothing worse than you've paid, you've given over your debit card details. You've paid for something-- ILAI SZPIEZAK: And then nothing happened. CHARLIE DAY: Nothing happened, so you have then to email them. And so we really tried to test that to make sure it really does work flawlessly so there's no break in what they're doing. OLIVER DUNK: And I think that's where customer support becomes really important.
+
+I think if you have an issue and you get back to someone really quickly and say, something went wrong with our system and we're going to fix it, then all is good. The longer you leave it, the more users start to think, maybe they did just take my money and something is not right. CHARLIE DAY: Exactly, exactly. You want to keep that kind of almost asynchronous communication, as opposed to just synchronous. And I think that's maybe worked quite well for us.
+
+OLIVER DUNK: And we've spoken in the past, and I think something we all agreed was there just isn't much data for developers to aspire to around what's possible with extensions and what size of an audience can you reach. How willing are users to pay for extensions? So I'm curious. Are there any numbers you can share, any insight into what you found is possible and what you think is realistic? ILAI SZPIEZAK: Yeah.
+
+CHARLIE DAY: Yeah. ILAI SZPIEZAK: So over 15,000 users right now, and within the first 60 days-- so we got a user-- we launched. That was kind of first stage. Second one was what Charlie said, which is-- CHARLIE DAY: Getting a pay-- someone's asked to actually pay for it. ILAI SZPIEZAK: Exactly.
+
+So I ask to pay. Great. Tick. So very quickly. CHARLIE DAY: And then afterwards, we actually got some sort of TikTok organic growth from just people building videos, whether it be on YouTube, TikTok, or wherever.
+
+And that was also an amazing kind of validation for us, because we didn't ask these people to do it. They were just like, this is such an interesting product. We'd really like to do it. And that sort of drove even more growth with it. OLIVER DUNK: Yeah.
+
+It's a nice cycle where maybe a creator feels like, if I share this and this is useful to my audience, and of course, it's useful to you because it brings you an audience. ILAI SZPIEZAK: Exactly, but I think that the very first thing is we all as builders are trying to think about what the market wants and what is the big opportunity. And I think that is a great way of looking at it. But we took almost the counterintuitive way of doing it. And it's easy to say now.
+
+When you are in the moment, you don't think about, I'm doing the opposite. No. OLIVER DUNK: Yeah. ILAI SZPIEZAK: But right now, looking back, we built something that we wanted. There was no big audience.
+
+We actually launched on Charlie's birthday. CHARLIE DAY: Yes. ILAI SZPIEZAK: It was a Saturday. CHARLIE DAY: I was actually in Greenwich Park having a pizza. And then suddenly-- ILAI SZPIEZAK: Slack.
+
+CHARLIE DAY: --a Slack notification started going off. Funnily enough, later that day we actually got kicked out of Slack, which has never happened before in any other company I've been in, so we had to switch very quickly. ILAI SZPIEZAK: But why did we get kicked out from Slack? CHARLIE DAY: So we got kicked out because we had two high rate limits on our analytics channel. OLIVER DUNK: And you were posting every time there was a new user?
+
+CHARLIE DAY: So given that it was a new product, you never know what to track, so you just try and track everything. ILAI SZPIEZAK: We were getting the notifications on Slack, essentially. CHARLIE DAY: Every single second, you were getting 10, 20 notifications. ILAI SZPIEZAK: Like for example-- sorry, but we just got a customer upgrading and sending some feedback. So it's really, really useful, because you get it in real time.
+
+OLIVER DUNK: You're really tapped in to what's happening and how things are doing. ILAI SZPIEZAK: We got rate-limited. CHARLIE DAY: We got rate-limited, and then we had to get kicked off of Slack. So it was only for about 24 hours. But it was a lesson to be like, OK, this is something people want, they want to pay for.
+
+ILAI SZPIEZAK: Yeah, so in terms of a little bit of metrics, so we started without a paywall. Within the first week, people sent these emails and messages with a lot of requests, lots of questions, a lot of stuff that is like fluff. "Oh, I love this!" No one cares about that. What you want is actually what is not working and why they care, why they like it, not that they like it.
+
+Tell me why you like it. What is the single most important feature or capability or unlock that this product does for you? If you tell me that, then we know where to double down. And if you tell me what doesn't work for you, we also know what we need to work on. So it's the good and the bad, not the neutral that no one cares.
+
+OLIVER DUNK: It's nice to get that neutral feedback, but it's just not very useful for building a product. ILAI SZPIEZAK: Yeah, but for other developers, don't seek approval.
+
+Seek for want to pay. I think that is very different from "I love this, but." OLIVER DUNK: Yeah. CHARLIE DAY: Yeah. No, no, I completely agree.
+
+I think you can have a lot of reviews giving you such positive, positive things. But ultimately-- reviews are great, but if you want to monetize a product, the only hard evidence is, are people willing to pay for this? ILAI SZPIEZAK: Putting the credit card. CHARLIE DAY: Putting your money where your mouth is. OLIVER DUNK: Were people willing to pay?
+
+What did you find? CHARLIE DAY: They were. So yeah, they were. They were really willing to pay. It immediately solved their problem.
+
+I think one of the big things we did, which worked out quite well, we didn't think was super, super big at the start, was the onboarding was really seamless. It takes about 10, 20 seconds. ILAI SZPIEZAK: No onboarding. CHARLIE DAY: Yeah. OLIVER DUNK: It's Add to Chrome.
+
+CHARLIE DAY: It takes about 10-20 seconds to get any kind of value from it, so they can immediately see where it is. And what was quite interesting is then we started adding an annual plan to this. And we just threw that out. We thought, oh, we'll see what-- ILAI SZPIEZAK: What happens if we can give them a discount for what usually SaaS tools are doing. CHARLIE DAY: To say get you two months free over the whole year.
+
+And then suddenly, loads of people were signing up, because they were like, we want to take advantage of this. ILAI SZPIEZAK: I learned my metrics as a founder, so I want to say this. 25% of users today pay for annual subscription, which is huge. OLIVER DUNK: That's amazing. ILAI SZPIEZAK: 25%.
+
+That's a quarter of our user base which pays pays for annual. Now, we are yet to understand why they choose an annual versus a monthly pay plan. And it's really interesting data for us. But again, we are still learning from our users. But we definitely know that it works, because we didn't have it.
+
+Like Charlie said, we added it. Now 25% of users are choosing annual versus the other one. And as a startup, as a small company, this is huge to be able to take this, because you don't just take the money. You take their trust for you, so it's a lot. OLIVER DUNK: And yeah, I imagine the user then feels more invested to continue using the product for a year and see it through while they have the premium access.
+
+CHARLIE DAY: Absolutely. I think one of the other big things is getting users who are engaged and willing to give feedback and deeply think about, OK, is this actually solving my problem? And if they are invested for the entire year, that's really, really helpful. ILAI SZPIEZAK: And we try to do-- yesterday we did three calls with different users. We tried to do every week since that beginning of June calls with customers to understand exactly what's working, what is not working, what they like, they don't like.
+
+And not only it helps to create a cycle back to the product, but actually it makes them be more invested in the product themselves, which means it drives more word of mouth, which means you have more probabilities of charging more money eventually, because they became your biggest advocates. So we actually haven't spent a pound, a dollar on marketing so far-- OLIVER DUNK: That's amazing. ILAI SZPIEZAK: --which is amazing. OLIVER DUNK: Yeah. And I think a lot of developers will be watching this and will be thinking, I would be more than happy to do the customer calls.
+
+I would love as much feedback as I can get. But I just don't know how to even get in touch with the customers who could give me that feedback. So do you have any advice for how to initiate that sort of thing? CHARLIE DAY: So, yeah. I think-- for your existing customers, make it very easy to contact you.
+
+So-- ILAI SZPIEZAK: Sorry. And when they say you, it's you. It's not like this, or like a team. No, put your name, put your face. Make sure people talk to a human.
+
+CHARLIE DAY: Yeah. And yeah, make it very easy for them to contact you. And reply quickly. I think that's a really underappreciated thing. Sometimes you take 24 hours to reply.
+
+If you can reply within 10, 15 minutes-- ILAI SZPIEZAK: 60 seconds. CHARLIE DAY: Yeah-- ILAI SZPIEZAK: 60 seconds. CHARLIE DAY: --realistically. And if you can consistently do that and you can solve a bug for them within, let's say, 30 minutes, suddenly they're like, oh, this is fantastic, because they're not used to that kind of customer support. Because whether it's a big company, there's so many layers that it has to go through.
+
+But it's almost very refreshing when you have some kind of very, very quick customer service. And it's to the direct founders, so they don't have to go to management to ask, can we add this? They can just go, OK, I can commit this straight to the GitHub repo, test it, and it's already live in production. And you can test it with them and say, is this fixed for you? And they say yes, and they give you a fantastic review.
+
+OLIVER DUNK: That's really cool. CHARLIE DAY: Yeah. ILAI SZPIEZAK: And I think don't be ashamed of asking them for a review, because especially for Chrome extensions, reviews are extremely powerful, because they are, first and foremost, center in your page of your application. So if it worked out, ask them for a review. It's like, hey, thank you so much.
+
+I'm glad that it's working now. Would you mind leaving a review for us, five-star review or not? But ask them for an honest review, because they also will say what they like or they don't like. And that is really, really powerful, because people are willing to share their experience. Whether it's good or bad, usually they are willing to share their experience.
+
+OLIVER DUNK: And I think this is an important clarification, because I've sort of seen some misunderstanding here. We have Chrome Web Store policies against manipulating reviews or asking for dishonest reviews. But reviews are really important. And if you have a customer who's had a good experience, encouraging them, please just leave an honest review of how you found the product, that's completely fine, and you should absolutely do that. ILAI SZPIEZAK: And I think you ask it exactly like that.
+
+Please leave an honest review of your experience. That's it. There is nothing more to ask or to say there. And that's the best way to get people back into the tools. CHARLIE DAY: And I think given that it's almost getting harder to trust what people say on their landing page-- OLIVER DUNK: And just on the internet in general.
+
+CHARLIE DAY: On the internet in general. So the fantastic thing about Google Reviews, it is linked to someone's name. So it's linked to the date they did it, and it is on the Chrome Web Store website. So we actually link it directly there. These aren't just reviews someone has given us in an email.
+
+They're actual reviews that exist on the Web Store. ILAI SZPIEZAK: So touching a little bit of monetization and what Charlie just said-- so we call that social proof. So social proof are reviews, what people say, all the logos and all the nice smiley faces and all these five stars in the Chrome Web Store. So what we actually learned is we originally had this button that said Upgrade for paying customers, once they hit a limit. So the way that it works is you can try it without even logging in, which is an amazing idea that Charlie had.
+
+And it works amazingly, because you Add to Chrome, you try it, you like it. Only after, if you want, you go to our free plan, which you get a limit per week. Great. If people need more and want to unlock all these amazing features, which are amazing on Pretty Prompt, they can click the Upgrade button. Originally, we would take them directly to the payment page, which is just checkout.
+
+We realized through our analytics that people were clicking but not upgrading. So we were like, what is happening there? CHARLIE DAY: So how do we fix this or get some kind of information? So we added an intermediate page between there so we could actually see, OK, if we give a load of features, what features do people want? We have those on the pricing plans.
+
+And the advantage-- ILAI SZPIEZAK: Social proof. CHARLIE DAY: Social proof is also really a big thing, because if you see 10,000 other people are using this, you're not the first Guinea pig. ILAI SZPIEZAK: No one wants to be the first one. CHARLIE DAY: I know, yeah. OLIVER DUNK: It may be worth explaining that in more detail.
+
+What is encompassed when you say "social proof?" What does that mean in practice? ILAI SZPIEZAK: So I like to call it-- I like to divide this in quantitative and qualitative. So quantitative is literally number of people who have left a review, number of good reviews-- your star rating, essentially. Out one to five, how many five-star reviews you have.
+
+So we actually have over 90 five-star reviews. OLIVER DUNK: And so anything you see on some sort of landing page or interstitial that says this extension is trusted by this many people. ILAI SZPIEZAK: X number of people, and 4.9 over 5 on the Chrome Web Store. All those things are quantitative.
+
+Qualitative is actually the words people use to describe that review. And you need both, because sometimes people don't trust just great reviews. This is amazing. CHARLIE DAY: They want something specific. ILAI SZPIEZAK: They want to know what they like.
+
+Specific, yeah. CHARLIE DAY: So yeah, yeah. The best reviews are not just are "I really love this," it's "I really love this particular functionality." ILAI SZPIEZAK: So finding out-- someone else the other day left a review actually yesterday on the Chrome Web Store, saying it used to take me 20 to 30 minutes. Now-- you're right.
+
+CHARLIE DAY: I know exactly which one you're talking about. OLIVER DUNK: People love a story, so that's a nice-- this is the problem I had. This is the solution. This is [INAUDIBLE]. ILAI SZPIEZAK: I read that, and I was like, wow!
+
+I sent to Charlie the screenshot, and I was like, this is awesome, because it shows that someone else find the value that we find from our tool without us knowing who this person is. I don't know. CHARLIE DAY: And they give actual numbers and time to it, so it's more quantifiable. ILAI SZPIEZAK: So that's the qualitative part of the social proof. So when you're adding this, put it first on the front of your website also.
+
+Don't just rely on the Chrome Web Store, because you can control it. Take and put it also on your website. And what Charlie was saying, which is the upgrade page. CHARLIE DAY: Yes. And I suppose the other advantage of having an in-between upgrade page is we all know with Chrome extensions, it can take some time to make any update, because you guys have a fantastic review process-- ILAI SZPIEZAK: Which makes it really secure, which is a good thing for customers.
+
+OLIVER DUNK: We try our best. ILAI SZPIEZAK: We love it. It's good. CHARLIE DAY: But sometimes you want to test some pricing things very quickly just to be like, OK, I have an idea. Can I just very quickly test this?
+
+Or we've got suddenly an influx of users. Does this pricing structure work? And having an intermediate web page where you kind of control updating it very quickly, I think, has benefited us quite a lot and helped us get into that good maybe pricing structure. We're not there yet. ILAI SZPIEZAK: We're still learning.
+
+CHARLIE DAY: We're always experimenting. ILAI SZPIEZAK: There is no-- sorry. I don't think that there is a linear path to your pricing and monetization strategy. I think that there is what works for you, what works for them, what works for the other person. Each app will have its own story.
+
+But we learned that there is nothing better than just putting out there something and seeing what happens. It's better than strategy. It's better than research. It's better than talking to customers. The best thing is to have your own page where you can control what happens.
+
+You put it out there and seeing that actually people pay. That is, like Charlie said, the ultimate validation of making something that people want. So we recently also tested a medium plan. So you have your free, you have your pro, and then we added a capped one every month, which is a little bit cheaper, to see what happens. So you're giving options to the people.
+
+We have the annual, seeing what happens. People convert. Great. Let's not touch it. That's kind of has been really interesting.
+
+OLIVER DUNK: I wanted to ask you about internationalization. I think it's easy to build something that just works in English. But what have you found? Do you have users that are trying to use your extension in other languages? And are there interesting challenges you had to face there?
+
+CHARLIE DAY: I think so, yeah. So when we first started, a majority of our users were English-speaking. But as we grew, as we got organic growth, we started getting people from all different places in the world. And then suddenly we had to support all different kinds of languages. And we've got maybe some numbers on the-- OLIVER DUNK: That would be really interesting.
+
+ILAI SZPIEZAK: Yeah, and it's interesting because the numbers follow usually when you get a spike of users from, say, Korea. Usually it's followed by someone, a creator, or some newsletter or a TikTok video that someone created on this. And it's really interesting to understand how the audience follows. So about 10% to 15% come from Asia, like Korea, and this kind side of the world. We have 20% of users that are in Middle East, which is really interesting, because it's a complete different language, and we are an AI-based product.
+
+So we also had to figure out all the difficulties to translate these languages so they make sense to the user also. CHARLIE DAY: I think so. That's really important. Certain languages, unfortunately, are easier to process than other languages. OLIVER DUNK: So the quality of the AI output is different, depending on the language?
+
+CHARLIE DAY: Exactly. ILAI SZPIEZAK: And we are all about improving the output, so we need to validate this. CHARLIE DAY: And yeah, regardless of your language, you should be able to use it. ILAI SZPIEZAK: And then, the majority of users are still English-speaking, like the US, UK. However, Europe is huge.
+
+We had some users from the Netherlands the other day and Germany, actually, that I had a call with them. And I was talking to them and understanding what they use it for and all of this. And I don't think there's a correlation where they come from to what they use the tool for. But I think it's always interesting when you build the tool and you start to see all these different people coming from all over the world. And yeah, it's a really interesting journey.
+
+OLIVER DUNK: Nice. And then I'm curious to ask a very technical question, but this is something that I've heard developers ask us before, and I'm curious for your perspective on. Everything in a Chrome extension is running client-side. So sometimes users are worried, or developers are worried that users might find a way to circumvent the paywall that they have and get access to features that they shouldn't. Is that a problem that you have?
+
+Is that a problem that you've solved or that you think about? CHARLIE DAY: Yeah, that's a great question. So when we started-- ILAI SZPIEZAK: I know what you're going to say. CHARLIE DAY: So when we started, we integrated with Stripe. And that basically updated the user to basically say, we have a flag which says "is paid, true."
+
+Now, when you first started using us, if you jumped into the DevTools, you could switch that over. ILAI SZPIEZAK: Is paid, false. OLIVER DUNK: Just changed it. CHARLIE DAY: And it's how we tested-- ILAI SZPIEZAK: We were testing that internally. CHARLIE DAY: And we were like, OK, it doesn't need to be super complicated.
+
+But as we grew and as we got more users, we needed to be a bit more sophisticated. So the way we do it is-- and it's the standard way you do it on web apps, which is the database is the source of truth. So technically you could jump into the DevTools and you could change it, but the moment you reload, it will revert back to your correct plan. And I think one really interesting thing certainly with monetization is you have different tiers of users. And that's always a hard thing.
+
+I've never seen a sort of internal company really solve this fantastically, because really it's just a matrix of your tiers and the features people have access to. But I think starting off really basic and accepting that it's not super, super secure, in the sense users can get free stuff. And then validating that, and then going over to being like, OK, now we're going to spend a week making this a bit more secure, because we've got more users and there's more chance of this happening. OLIVER DUNK: Yeah, that makes sense. I feel it's very much just sort of picking your battles.
+
+To begin with, we just want users. And so we don't even need, as you said, to necessarily have the monetization working. And then we get the monetization working, but maybe it's possible to circumvent. And then the last hurdle, once everything else is working is, maybe we can add some more checks and balances there. CHARLIE DAY: Exactly.
+
+ILAI SZPIEZAK: I like to think about as a founder, or as a builder, as a developer, you need to earn the right to have that problem. So your first challenge is to just build it, the first. The second challenge is to get people to pay. If you earn the right because someone paid, now you can worry about the next problem. If no one is paying yet, then why would you worry about even the problem that is not there yet?
+
+So it's almost like earn the right first to unlock your problem. It's like playing Mario games, when you-- you have your level, and then you win against the big guy in the end of the level. But then the princess goes to the next castle, so you need to go to the next castle. So we think about building a product or a company in the same way. You have levels.
+
+And each level gets harder, because the product problems get harder. But no point to jump to the next level if we hadn't fixed the first one yet. CHARLIE DAY: And also, I also think if a developer can circumvent your systems-- ILAI SZPIEZAK: That's a good thing. CHARLIE DAY: I'm impressed. You can have it for free.
+
+I respect your curiosity of diving into those DevTools. OLIVER DUNK: I think it's usually the minority, right? Most users who are using your extension aren't going to have that technical ability and aren't going to try and do that. ILAI SZPIEZAK: Which also shows-- and we are a balance, because we are like the black and white of the two sides of the coin. But developers sometimes think in developer terms.
+
+Customers are not always developers, especially for a lot of Chrome extensions. So don't think what is good for you as a developer might be good or the same way as a customer is thinking. CHARLIE DAY: I think-- ILAI SZPIEZAK: We were in a call with someone that we got them to open the DevTools. And they were like, [GASPS]. CHARLIE DAY: Yeah, it's like going into Narnia-- suddenly this entire world, and it's completely normal to us.
+
+But quite a lot of the time, I think, yeah, you do have to consider there are things that a lot of other people may not know. And you can't assume that. So if you just ask them to-- especially if you're in a customer support ticket or something-- you've got to be very basic and assume almost zero knowledge, I suppose. ILAI SZPIEZAK: I was just thinking about monetization. So in the first 60 days-- so in under three months, we actually hit the 10,000 users.
+
+Right now, we are on 15k, something like this. Within the first 60 days, we actually managed to get a conversion rate-- because not every user is paying, which is also something to understand about the way we build our tool and many other Chrome extensions out there is a "freemium" model, they call it. CHARLIE DAY: It's majority free users. And then it's almost like you use those free users to make the product amazing and justify, why would you pay for this? OLIVER DUNK: Do you have any sort of numbers for what's a reasonable expectation for free users versus paid users?
+
+ILAI SZPIEZAK: So I've been researching a lot of this from other tools out there beyond extensions, like mass market tools. And I think anything above a 3% conversion rate is so incredible. And of course, this is just big numbers. It doesn't mean that it's right for every tool. So please don't quote me, but it is really good if you could get a tool that converts between 3% to 5%.
+
+We are actually just about two, so not far, but also not there. So we're still working on this, and that's why you need to test your pricing, your annual, your middle plan, your social proof, all these different. CHARLIE DAY: It's just a big kind experiment you're doing. You're constantly experimenting and see, OK, what dials and knobs work when you tweak them? ILAI SZPIEZAK: And I think also something really important is the non-scalable part of making your product monetized, to be able to make money from your product.
+
+Yeah, sorry. I mumble my words. We are live here, by the way. And I think that the good thing is, if you see an email of someone that signed up, send them a message. Send them an email.
+
+Send them a Reddit message. Send them a LinkedIn message. Wherever your audience is, hang out where your audience is. And I think this is a really underappreciated thing. But if you send them a message, and you make sure that they know it's you and not like-- we don't have any automations in messages yet.
+
+We are small enough to be able to do it. CHARLIE DAY: I think that's a really important point, in the sense you probably don't want to rely too much on automation or AI-- ILAI SZPIEZAK: Not at all. CHARLIE DAY: --in your reply. ILAI SZPIEZAK: Be yourself. CHARLIE DAY: Yeah, simply from the user's side, they could probably recognize an AI email, but also from your side, that you start to-- we know users almost from their emails.
+
+ILAI SZPIEZAK: I know exactly what a specific user will ask for, because I've been seeing their messages beforehand. OLIVER DUNK: You've already seen the comment they left on Reddit and the Chrome Web Store review they left, and then you're like, oh, it's great to meet you over email. ILAI SZPIEZAK: And like a week ago, I saw that someone hit the free limit, and I sent a message to Charlie. It's like, upgrade is coming. OLIVER DUNK: Oh, nice.
+
+ILAI SZPIEZAK: Upgrade. CHARLIE DAY: It actually did come. It was a bit-- yeah, it was almost like magic. But yeah, having that kind of almost first name basis-- you understand your users, I think, is really important. ILAI SZPIEZAK: And also, it gives you an idea of what different type of users want from your product and which ones you should focus on.
+
+You don't build everything for everybody. And actually the super hard thing is not how to add features. We can add features every day, all day, apart from when we're doing a podcast. But it's really hard to know what not to build. CHARLIE DAY: Yeah, that is quite hard.
+
+When to say no is really important. ILAI SZPIEZAK: But be honest to your customers. That's also part of making money from your app. CHARLIE DAY: Yeah, yeah. ILAI SZPIEZAK: Telling them we are not working on this right now, but I really appreciate what you're saying.
+
+And I'll let you know if we build it, and when. OLIVER DUNK: Yeah. I guess the roadmap can always change. It might not be a priority now, but it might be a priority six or 12 months down the line. ILAI SZPIEZAK: And I think we originally saw a lot of @gmail emails that were signing up.
+
+And then lately in the last two months, we started to see a lot of more like @companysomething.com kind of joining and signing up and trying the tool. A lot of them are easy to find, because they are real people. It's not some whatever email. So you also start to learn what different requirements, different, again, type of users need.
+
+So do these people at companies need the same that me myself at home? What do they use the app for? Do they need something for us to add so that they can use it as a team in a company? And that unlocks a whole new way of looking at the Chrome extension. OLIVER DUNK: And how do you think about that opportunity space between consumer and enterprise?
+
+Because I think the wants are very different. Does one feel like a bigger opportunity? Is that product-dependent? And do you just pick one and focus on it, or do you try and split yourself between the two? CHARLIE DAY: Yeah, so I think maybe starting off going, are we going to go to B2C or B2B, I think maybe that might be a mistake in the sense, OK, have you built something useful first?
+
+And then find out where-- ILAI SZPIEZAK: Where does it fit? CHARLIE DAY: Yeah, where does it fit? So right now, you could class us maybe as a consumer app. But really, they're using it for business purposes. ILAI SZPIEZAK: So it's what we call a prosumer.
+
+CHARLIE DAY: Yeah, a prosumer. And then the idea is, if they really like it and they find it's really useful for their business, they should expand to the rest of their team, to the rest of their business, because then that would make them all more productive. ILAI SZPIEZAK: And I think, at least internally, we always think about growing this exponentially. And that's what we want to do with Pretty Prompt, because we see where at least the opportunity is going internally. But I think even though we want to get every company and every organization and every enterprise with a B2B deal with Pretty Prompt, it takes time.
+
+Things are not magical. It's a lot of unscalable things. And I think we will never unlock that as a company, as a product, not just us, but anybody out there also, until you unlock the user for a single user. Unlock it for a person before you unlock it for a brand, because a brand is a bunch of people together. So I really like Brian Chesky, the co-founder and CEO of Airbnb.
+
+He says, it's much better to have 100 people that love you than a million people that sort of like you. And that's always stuck with us, and it's always in our mind. Get 100 people to really love what you build is extremely difficult to do. If you do that, then you can scale to the millions and to everything else. But first make it-- and we didn't talk about paying.
+
+You talk about loving. If you make someone love what you do, it's much easier. The payment is just a small step. OLIVER DUNK: And I don't think we could have wrapped that up more perfectly. That's such a poetic way to end the episode.
+
+Thank you so much. I'm curious, if users want to give your extension a try and to learn more, where should they go? CHARLIE DAY: So they can go to pretty-prompt.com. That's pretty dash prompt dot com, and they'll be directed to the Chrome Web Store.
+
+And you can install it. And like I said, you don't even need to sign up to use it. Once you click on it, it will take you directly to one of your AI providers, and you can start using it. ILAI SZPIEZAK: And any questions or any ideas, any thoughts, just hit us up online. You will talk with us.
+
+CHARLIE DAY: We'll reply in 15 minutes. OLIVER DUNK: That's a guarantee. ILAI SZPIEZAK: 60 seconds! OLIVER DUNK: This was kind of a different style of episode, asking the team here some questions. But I think it was really nice, and we really got to talk about monetization in detail.
+
+If you have further questions or other ideas of what you want to see, then feel free to leave them as a comment below. Otherwise, thanks for watching. Thank you both so much for joining us. And we'll see you next time. [MUSIC PLAYING]
+
+---
+video_title: "How Chrome Extension IDs work"
+video_id: 9IEBYgdjlQY
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9IEBYgdjlQY
+video_date: 2026-02-18T16:00:00+00:00
+video_description: |
+  Learn about Chrome Extension IDs and their importance on the Chrome web store. This video explains how these unique 32-character identifiers are used to recognize your extension. Discover how your extension ID is used to form an extension's origin and supports identification in server requests for your applications.
+  
+  Watch more Developer Mode → https://goo.gle/dev-mode
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome
+---
+[MUSIC PLAYING]
+
+---
+video_title: "How to understand Chrome extension IDs and the key field"
+video_id: cHzsNU84u6g
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cHzsNU84u6g
+video_date: 2026-02-11T16:00:00+00:00
+video_description: |
+  Learn the fundamentals of Chrome Extension IDs, from their generation to their critical role in security and resource management. Oliver clarifies the difference between IDs for unpacked extensions (based on file path hash) and published extensions (derived from public keys). Understand how to work with deterministic IDs for development, the importance of ID uniqueness, and the security implications of using an ID as an extension's origin.
+  
+  
+  Chapters:
+  0:00 - Introduction
+  0:36 - Understanding extension ID structure
+  1:00 - Using the ID as an origin
+  1:24 - Unpacked extension ID generation
+  1:49 - Public key cryptography explanation
+  2:52 - The public key manifest field
+  3:07 - Demo: Replicating an extension ID
+  3:47 - Security in development vs. production
+  4:23 - Generating consistent IDs with OpenSSL
+  5:07 - Conclusion
+  
+  Watch more Developer Mode → https://goo.gle/dev-mode 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome
+---
+If you've ever looked through the Chrome extension's documentation, you might have seen the key manifest field. Or perhaps you've even looked at the manifest for an extension in the Chrome web store and seen it there. But what does that do? How does it relate to a Chrome extensions ID? And how did the IDs work anyway? Hello and welcome back to developer mode. I'm slowly getting through some of the questions that you regularly ask about Chrome extensions. And one that I've seen come up a lot is about how extension IDs work and how you can control them. So let's start really basic. Here's an extension that my team publishes on the Chrome web store. And as you can see, it has an ID which consists of 32 characters from A to P. And this is used to identify the item in the store. And for published extensions, it's guaranteed to be unique. For reasons we'll get to for signed extensions, this will also always be unique, even if an extension isn't published in the store. Your extension ID is used as the origin of your Chrome extension and resources for this extension are served for the URL based on this ID. So if I copy this ID, I can go to the URL for this extension and I can see the manifest file. This can be useful to know if your extension makes a request to a server and you want to allow requests from only your extension. But this isn't for proof and I'll get to that shortly too. So how is the extension ID generated? Well, for unpacked extensions, which means an extension that you've loaded from a directory during development, we take a hash of the absolute file path the extension was loaded from. That means that as long as you keep loading the extension from exactly the same place on your machine, that ID will always be the same. But as soon as you move the directory, then the file path is different and the ID will change. Once you upload an extension to the store, things are a little more complicated. We use something called public key cryptography. If you're not familiar with that, all you really need to know is that we generate a pair of keys called the public key and the private key, which are mathematically related. The private key is used internally by the Chrome Web Store as part of publishing your extension and the public key is used to generate your extensions ID. Now in practice, this means that two extensions should never have the same ID by chance. The public and private keys are randomly generated and the resulting extension ID will vary as a result. It's actually not impossible to have the same ID twice. We could generate the same private key and there's also something called a hash collision. But that's very in the weeds and very unlikely. So we don't need to worry about it for our case. Now once you upload your extension to the Chrome Web Store, we also have internal logic to make sure that your ID can never be taken by anyone else. You might have noticed that I've been carefully choosing my words a bit and that's because there are some ways that two extensions could end up with the same ID. The most relevant one is all about that public private key pair we mentioned earlier. As the name suggests, the public key is public. Actually in the manifest for the extension that I showed earlier, you can see this key field in the manifest and this is the public key for the extension. Let me show you how to use this to create an extension with the same ID. I'll copy this line and I'll head over to the Web Accentions playground and then I'll go ahead and paste it into the manifest. And so now I have a completely different extension, but it's using that same public key. And then we're going to go ahead and download this. I'll remove the existing extension that we have, but make a note of this ID. And then if I go ahead and drag in this new extension, you can see that we actually get our new extension, but with the same ID as the previous one. And that was really easy and that's why you should never trust the extension ID as a guarantee that a particular ID means a particular extension for any security critical use case. Now, if you know anything about public key cryptography, you might find it a bit strange that we can do all of this with just the public key. And that's because in development, we're actually not doing any cryptography. The public key is just being used to generate the ID directly. Of course, once we publish to the store, then cryptography starts to come into play and things are different. By the time you upload to the Chrome Web Store, you need to remove the key field. And that's because the cryptography comes into play as I mentioned. We'll start to use the public key associated with the private key we hold for your extension in simple terms. The key we're using for your extension is fixed and can't be changed. We can also generate a value for the key field on the command line. So I have some commands here that I can talk you through. If I take this first one, then I can use this to actually generate a private key for my extension. And now I have the private key. I can use the second command to actually get the public key that I'd need to put into my extension manifest. And then if I take this final command and run this, you can see this will actually give me the extension ID that would result if I was to use that public key in an extension. And using one of these two approaches can be really useful if you need a consistent ID in development. For example, if you're working in a team and you want to make sure that everyone has the same ID for the extension, even if they're loading it from different file paths on their machine. And that's everything I have for today. If you have suggestions for other questions you'd like to see answers to, drop them in the comments below. Otherwise, we'll see you in the next video. You
+
+---
+video_title: "How to build Chrome extensions with React"
+video_id: YESAmRvJQuA
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YESAmRvJQuA
+video_date: 2026-02-04T17:53:46+00:00
+video_description: |
+  Learn to build Chrome extensions with modern web frameworks like React, Angular, or Svelte, fully compatible with Manifest V3. This quick guide shows you how to pick a framework for efficient development.
+  
+  Watch more Developer Mode → https://goo.gle/dev-mode 
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome
+---
+Você pode criar uma extensão do Chrome com qualquer framework web moderno, como React, Angular ou Spelt. Isso é verdade mesmo na versão 3 do manifesto. Deixe-me dar um exemplo bem rápido. Então, tenho uma extensão básica aqui. Possui um arquivo background.js
+
+que abre o index.html, e este, por sua vez, contém uma tag script que carrega o arquivo index.jsx. E este é um aplicativo React muito simples que apenas renderiza "Olá, mundo!" na página.
+
+E então eu compilo o ES, já que estou usando JSX para templates e isso requer uma etapa de compilação. E então eu posso prosseguir e executar isso. Posso carregar isso no navegador. E você pode ver que a página se abre e aparece o "Olá, mundo!".
+
+Isso funciona muito bem. [música]
