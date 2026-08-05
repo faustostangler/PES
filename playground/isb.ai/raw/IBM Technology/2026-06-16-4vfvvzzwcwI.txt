@@ -1,0 +1,58 @@
+---
+video_title: "Kagenti’s Approach to Multi-Agent Security for AI Agents"
+video_id: 4vfvvzzwcwI
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=4vfvvzzwcwI
+video_date: 2026-06-16T11:00:03+00:00
+video_description: |
+  Learn more about AI Agent security here → https://ibm.biz/~ev730VA3X
+  
+  Confused agents can leak data without anyone noticing. Legare Kerrison explains how Kagenti secures multi‑agent systems using identity, delegation chains, and open source infrastructure. Learn why agentic AI needs identity‑based security to prevent invisible breaches in production.
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~4BCQane2m
+  
+  #aiagents #agenticai #multiagentsystems #zerotrust
+---
+Today, we're going to look at how to use open source security logic at the infrastructure level to combat a common security problem when running multiple AI agents in production. Ever heard of a confused deputy security vulnerability? A confused deputy is when an agent with completely legitimate authority is tricked into using that authority for a request that shouldn't have it, and this can to invisible data breaches.
+
+Malicious tool calls.
+
+And prompt injection.
+
+This is a huge deal. Protected information like patient records, financial histories, or internal communications could be stolen with audit trails that show nothing but normal authorized activity. And without the right security for a multi-agent system, you might end up with at least one confused deputy running around. The project we will use to combat this is called Kagenti.
+
+Kagenti allows you to bring your own agent regardless of what framework you used to build it. And then it adds the security layer around it. Kagenti can retrieve your source code from GitHub or deploy directly from a container image you might have running locally and then adds that security infra. The platform has four pillars, lifestyle orchestration, networking, security and observability. Today, we're going to be focused on the security pillar because that's where this confused deputy problem gets solved.
+
+Here's a confused deputy scenario showing credential leakage that can occur with security at the application level. A hospital has an agentic system. It's for patient billing. And they grant a bearer token to this orchestrating agent. Now, this bear token is going to grant access to the hospital's patient data.
+
+And as agent A orchestrates the task, it's going to call subagents to help,
+
+agents B, C, and D.
+
+Now, Agent D gets the task to verify if the patient has insurance, but it also gets this access token because it's sitting in the context or has been passed the chain. Now, agent D was never supposed to have access to patient records. It was just verifying if it had insurance, but it now does have that access because the token traveled with the request. Now that's a confused deputy, and here's what makes them so hard to combat in agentic system specifically. In a traditional application, you have a defined call graph.
+
+You can say, this service goes to this service, and you can bake that into your network, and segment, and you're done. Agents don't work that way. The value of an agent is that it decides what to do next. You can't statically guarantee the path a request will take. You can't bake authorization into this topology.
+
+So what do you do? You stop trying to secure the path and you start trying to security the identity. When you deploy an agent via Kagenti, two side cars are deployed along with your agent.
+
+The first is SPIFFE. This stands for Secure Production Identity Framework for Everyone. What it actually does is give your agent a cryptographic workload identity, an X.509 certificate called a SPIFFE Verifiable Identity Document. This is not a username or a password.
+
+It's not a static API key that someone can copy and paste out of your context and reuse for years. It's a short-lived certificate tied to this specific workload in this specific namespace on this specific service account. And your agent proves who it is the same way a server on the internet proves it's actually your bank with a cert and not a secret. Now, the second is the Kagenti client registration. And what this does is register the agent as an OAuth2 client in KeyCloak.
+
+KeyClock is an open source identity and access management solution. So it can, so that your agent can request limited tokens for specific tools. Okay, now here is where we solve the confused deputy problem. Remember agent A and D? It was never supposed to touch these patient records,
+
+but it got the access token passed through it via the context. So, Kagenti ships a component called authbridge. And every time an agent makes a call, authbridge
+
+injects a header.
+
+And this header doesn't just say, this is agent D, it says, this agent D called by agent A on behalf of this specific user, and it has the full chain in order cryptographically signed. Now, when the request arrives at the patient record tool, or the gateway in front of it, you can check whether every actor and the entire chain is authorized for this resource. If Agent D should never touch patient data, the policy fires and it's blocked, regardless of whether Agent D holds a valid token that it received via the chain. And that's the fix. The authorization decision is made against the full delegation chain.
+
+You could not do this with traditional RBAC role-based access control because you need to know the path ahead of time. Whereas this approach works precisely because the identity travels with the request. From a developer experience standpoint, AuthBridge handles three things at deploy time. So fetching and rotating that SPIFFE identity, registering the OAuth2 client in KeyCloak, and standing up in InvoidProxy.
+
+That validates inbound tokens before your agent code ever sees the request and your agent container is untouched. Now on the tool side, the MCP gateway sits in front of your tools like this patient access tool and every tool call goes through it. It handles routing, rate limiting and token validation all in one place. Swapping out a tool is one URL change Connecting all of this is Istio in ambient mode, which handles encrypted, mutually authenticated networking between every agent and every tool with no additional configuration request per pod. Now, because all of these runs over standard HTTP, OpenTelemetry instruments it automatically.
+
+You can get a single trace ID that follows the entire request path. Kagenti ships with Phoenix for end-to-end agent tracing and MLflow for experiment tracking. So when something goes wrong, you can see what happened and who authorized it. Every component in this stack is open source, Apache licensed and wired together via Kagenti. If you're building a multi-agent system and this hits close to home, drop me your setup in the comments.
+
+I wanna know what you're working with. And if this was helpful, please like and subscribe. Thanks so much.
