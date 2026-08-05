@@ -1,0 +1,203 @@
+---
+video_title: "Tudo sobre o modelo brasileiro que supera o DeepSeek e foi acusado de plágio"
+video_id: 8rJ7Lfj30kg
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8rJ7Lfj30kg
+video_date: 2026-06-15T21:24:00+00:00
+video_description: |
+  Inscreva-se na formação em Engenharia de IA ➡️ https://programe.ai?utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  O Rio 3.5 Open apareceu de surpresa no Hugging Face como um modelo open-weight brasileiro, criado a partir da base do Qwen 3.5, com benchmarks fortes em programação, tarefas multilíngues e raciocínio. Neste vídeo eu explico por que esse lançamento chamou atenção fora do Brasil e por que ele importa em um momento em que depender só de modelos fechados ficou cada vez mais arriscado.
+  
+  Na prática, eu analiso os benchmarks, o tamanho do modelo, a arquitetura MoE, a ideia de Sweet Reasoning com raciocínio no espaço latente e a promessa de mais eficiência de tokens. Também entro na polêmica que surgiu depois da gravação: a acusação de que o Rio 3.5 Open publicado inicialmente era um merge entre Nex e Qwen, o ajuste feito na página do modelo e o que isso muda na leitura do lançamento.
+  
+  A tese do vídeo não é que esse modelo já substitui os frontier models, até porque ele ainda é grande demais para a maioria das pessoas testar localmente. O ponto é maior: modelos abertos, fine-tunes, merges e pesquisa local vão ser cada vez mais importantes para reduzir dependência de poucas empresas e manter a IA usável, reproduzível e economicamente viável.
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS com suporte 24/7 em português é na Hostgator 🔻🔻
+  https://www.hostgator.com.br/52611-13-3-12.html
+  
+  🔻🔻 Teste seus apps com IA utilizando o CodeRabbit (14 dias grátis) 🔻🔻
+  https://coderabbit.link/rafael
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=3VaLMYJgR3g
+  https://www.youtube.com/watch?v=e6Bigq5GfPY
+  https://www.youtube.com/watch?v=Pvc7qCd3cxc
+  https://www.youtube.com/watch?v=wF15C3IPCCc
+  https://www.youtube.com/watch?v=YMc0f5i70Hc
+  https://www.youtube.com/watch?v=vo0iWCIIjr4
+  https://www.youtube.com/watch?v=D0tZP4dX6d0
+  
+  🔻🔻 Inscreva-se no canal de cortes e não perca mais nenhum destaque 🔻🔻
+  https://www.youtube.com/@cortesrafaelquintanilha
+  
+  🔻🔻 Modelo no Hugging Face 🔻🔻
+  https://huggingface.co/prefeitura-rio/Rio-3.5-Open-397B
+  
+  🔻🔻 Artigo sobre o SwiReasoning 🔻🔻
+  https://arxiv.org/pdf/2510.05069
+  
+  #gemma4 #deepseek #qwen3
+---
+E quando absolutamente ninguém esperava, a prefeitura do Rio de Janeiro lançou um modelo open source e openweight, capaz de bater de frente com os principais modelos chineses. É justamente isso que eu quero te contar no vídeo de hoje, com a introdução do Rio 3.5 Open, um modelo baseado na arquitetura do Quen 3.5, mas que tem sido superior inclusive às principais modelos chineses em diversos benchmarks. Por isso, no vídeo de hoje, eu quero te contar por que que isso é relevante, por que que nós deveríamos ficar felizes com essa notícia, o que que torna o Rio 3.5 Open tão diferente
+
+em relação ao modelo original? E responder a pergunta, será que nós estamos presenciando o nascimento da Quem BRZ? Pessoal, brincadeiras à parte, eu fiquei realmente bastante feliz ao ver que aqui no Hugin Face agora nós temos o modelo Rio 3.5 Open 397B, um modelo de 397 bilhões de parâmetros baseado na arquitetura do Quen 3.5, só que ele é um fine tuning, certo? Então
+
+ele foi trabalhado em cima desse modelo aberto e refinado pelo pessoal lá da Prefeitura do Rio, ou melhor dizendo, sendo mais específico aqui, pessoal, lá do Iplan Rio. Beleza? Isso claro no final de semana que nós tivemos o Fable 5 sendo banido pelo governo americano, tá? Então a gente vai fazer essa conexão, né? Por que que isso é importante? Mas é claro, não dá para
+
+falar de uma coisa sem falar da outra. O Fable 5, modelo que eu fiz o review aqui no canal, vou deixar o link para você dar uma olhada depois, foi, né, embargado ali pelo pelo governo americano que pediu para que ele não fosse disponibilizado para cidadãos não americanos, independente deles estarem ou não nos Estados Unidos. E por não ter como, né, garantir isso, a Antropic decidiu simplesmente remover o acesso do Fable para todas as pessoas. Eu não sei se no momento que você assistir esse vídeo, se o Favor já vai ter sido eh restaurado, né? Mas independente disso, e eu até acredito que em algum momento ele vai voltar aqui ao público, esse episódio marcou a necessidade, a ampliação da discussão de nós termos modelos locais pra gente não ficar dependendo, claro, de entidades estrangeiras. E aí você pode falar: "Ah,
+
+Rafael, mas aí também não é o governo que tem que fazer isso? Independente de quem você acha que tem que tomar esse bastão e seguir trabalhando com os modelos open source, seja um governo, seja uma empresa, não me interessa. O importante é que quando cada vez mais vai ser relevante que empresas, como foi o caso do cursor ou até mesmo agora entidades governamentais, como a gente tá vendo aqui, o pessoal do IPLAN lá da Prefeitura do Rio, vão pegar esses modelos open source para que a gente não esteja nas mãos de pequenos players. Inclusive, você deveria ter assistido o meu vídeo lá da Magnífica Humanitas, quando o próprio Papa Leão X disse isso. Nós estamos nas mãos de grandissíssimas empresas que se espalham globalmente hoje, não tem fronteiras mais, né? E a
+
+gente precisa, né, tomar cuidado com esse poder concentrado na mão delas, seja por iniciativa da própria empresa, seja por iniciativa do governo. O fato é que sim, nós estamos concentrados nas mãos de poucas empresas e por isso essas iniciativas de trabalhar, refinar, melhorar os modelos open source são sim muito bem-vindas e mais bem-vindas ainda elas sendo aqui no nosso Brasil. Beleza? Então isso aqui é algo bem interessante, pessoal. Primeiro porque a gente sabe que os modelos open source, a comunidade open source, openweight, ela é justamente para que você melhore os modelos que são lançados. A gente viu
+
+isso acontecer com o Composer 2.5, que é baseado no Kim K2.5 e muita gente acha ele talvez a terceira via hoje. Se você for comparar com os modelos da Open AI e da Antropic, o Composer 2.5 talvez seja o que vem logo depois. E de novo, ele
+
+foi construído em cima de um fine tuning de um modelo já existente lá do Kim, do Moonhot. E aqui o pessoal do Iplan lá do Rio tá fazendo a mesma coisa, o mesmo princípio, só que agora em cima do quen 3.5. Beleza? Vamos dar uma olhada aqui em porque que esse modelo tá chamando atenção não só de nós, mas também da comunidade, por exemplo, lá do Hacker News, tá? Então, de cara, a gente já vê
+
+coisas bem interessantes aqui. Por exemplo, no terminal 2.1, né, nesse benchmark, o Rio 3.5 Open, ele tá na frente dos principais modelos chineses, tá? A gente pode até vir aqui para essa tabela, ó. E no benchmark de Agency
+
+Coding Software Engineering, que é o que mais interessa aqui para grande parte do público desse canal, a gente vê que o Rio 3.5 Open, ele tá na frente basicamente de todos os modelos chinês aqui, com exceção do GPT 5.5, tá? inclusive dopsek V4 Pro que é um excelente modelo com N3.7 Plus, olha só que coisa, né? O 3.5 base, né? Que foi o
+
+a base para o Rio 3.5 Open. Você pegando o modelo base e refinando ele, você consegue chegar num num num resultado muito melhor do que a base e também muito melhor até do que o 3.7 Plus, tá? No deep SWE, né? Um benchmark que é
+
+aberto, né? Muito interessante também eles utilizaram o Jeep SW na comparação, tá? Ele ele tá aqui com uma nota excelente aqui, né? Claro, é muito abaixo aqui do que seria o GPT 5.5. Não
+
+é o momento da gente achar que eles vão bater os Frontier mods. O GPT 5.5 para mim é o modelo que eu mais gosto de utilizar no dia a dia, ainda mais agora que a gente não pode utilizar o Fable. Então claro, não é essa comparação, mas sim bem relevante. Olha como ele tá bem melhor do que o Dipsic V4 Pro, por exemplo. E se a gente olhar outros como
+
+o SW Bench Pro e o SW Bench Verify, ele também vai muito, muito bem, tá? E talvez outra coisa bem importante aqui é que no benchmark multilingual ele é o grande vencedor. O que o próprio pesquisador por trás aqui disse que foi o foco deles que eu já vou mostrar para vocês, tá? Agora pessoal, benark você sabe como é. Quem me acompanha aqui no canal sabe que eu não sou grande fã de Benchmarks e não levo eles muito a sério. Porém é interessante, pelo menos
+
+direcionalmente, tá? Porque se você colocar ele lá na água, testar ele na água lá e ele for ligeiramente pior do que o Deepsic V4 Pro, pessoal, isso já é uma vitória absurda, porque a gente tem um modelo que é compatível, comparável, em pé de igualdade com talvez um dos melhores modelos open source chineses que nós temos, que é o Dips 5 V4 Pro. Então, só dele tá na discussão da briga e só por ele ter sido feito por uma equipe de uma municipalidade, é algo incrível. Imagina se não fosse devotado mais recursos, mais pessoas para trabalhar nisso. Olha onde que a gente pode chegar. Talvez a gente possa chegar
+
+no nível dos modelos frontier daqui a pouco. Então isso sim, por mais que os benchmarks não sejam 100% confiáveis e possa haver discrepâncias aqui e ali, não é esse o ponto, não é o número. Não se apeguem ao número, mas se apeguem ao fato de que nós temos um modelo que está em pé de igualdade com esses principais chineses. Beleza, pessoal? já tinha terminado de gravar o vídeo, mas claro, como esse é o modelo brasileiro e como nada no Brasil é tradicional, é normal, claro que nós tínhamos que ter um pouco de polêmica aqui, né? Então, olha só,
+
+pessoal, o que aconteceu foi que o pessoal do Nex, que é um modelo também construído em cima da mesma base do Quen 3.5 de 397 bilhões de parâmetro, veio ao Twitter dizer que descobriu, né, fazendo uma análise que esse modelo, né, o Rio 3.5, nada mais seria do que uma mistura dos modelos Next Pro e do Quenten 3.5 base, certo? Então eles pegaram os pesos, né, os tensores do Next, o tensor do Quen, fizeram uma mistura ali, é 06 04 e pronto, esse seria o que eles tinham chamado de rio 3.5. Eles
+
+conseguiram literalmente provar isso aqui, né, matematicamente, etc. E você consegue cair aqui no gitub deles e eles mostram as evidências e até que se você perguntar, né, tirando ali parte que foi hardcoded, ele diz: "Não, eu sou o next", etc, etc. Tá? Então assim, um pouco esquisito toda essa história, né? Mas de fato ela foi confirmada. Tanto é
+
+que se você ver agora na página do Huging Face, na hora que eu gravo esse vídeo, né, eles tiraram o que estava aqui originalmente e falaram que esse modelo é construído agora sim usando um merge do Next2 Pro base e aí sim feito o on policy desillation, né? Então olha só pessoal o que eu acho que aconteceu, tá? Obviamente a internet caiu em cima falando que o Rio de Janeiro, mais uma vez é um carioca, saltou as pessoas, o que vamos dizer aqui que não não seria a primeira vez. É bem verdade, mas brincadeiras à parte também, pessoal, eu vou dar um voto de confiança pro pessoal aqui, tá? Repito, eu não conheço, não sei quem são, mas assim, não vejo muito sentido porque eles dariam crédito para um e não dariam pro outro, tá? Você
+
+poderia falar: "Ah, Rafael, é porque o o N2 ele é melhor, então eles só disseram que é igual o N2 para pegar os créditos." Acho que isso um pouco esquisito, tá? Não, não faz sentido da minha visão, tá? Então, o que eu acho que aconteceu, o N2 ele, como disse, ele é construído em cima do mesmo quen, tá? E aí também tem uma performance muito boa. Então aqui o N2 Pro construído em
+
+cima do 397B e tem até o Mini construindo em cima do A3B, tá? E se a gente olhar aqui os benchmarks eles são melhores de fato. Então o que eu acho que aconteceu por o N2 Pro ser construído em cima do Quen 3.5, muito possivelmente eles disseram: "Ah, eh, o modelo base é o Quenten 3.5". A gente
+
+pegou, fez o merge, mas o base é o Quentin 3.5. Não estou dizendo que foi isso que eles fizeram, mas é o que me parece que eles fizeram, tá? E aí eles fizeram todo o processo de destilação e dynamic reasoning lá que nós conversamos depois, tá? Só que quando eles fizeram o upload pro Huging Face, eles fizeram o upload da versão só com o Morge, sem o modelo final destilado, tá? Então, de
+
+fato, o que foi colocado no Huging Face, ele era só a mistura do next concluente. Isso é o ponto pacífico, tá aqui, né, admitido por eles e bem observado pelo pessoal do Next, tá? Agora eles dizem que tem essa etapa posterior que no momento que eu gravo esse vídeo não está disponível, tá? Tô até dando um F5 aqui, não está disponível. Então assim, ficou um pouco chata a situação, vamos ser sinceros aqui. Eu dou sim o voto de
+
+confiança pro pessoal. Não acredito que eles tenham feito na malícia, na maldade. Não parece que eles fizeram isso também para viralizar de propósito, tá? É claro que como isso aqui envolve política, né, pessoal? Óbvio, né, o prefeito do Rio aqui apareceu para para cantar vantagem, né? Só que no próprio
+
+GitHub aqui, alguém postou um print dizendo que eles não tinham alinhado tudo com o prefeito, que a viralização foi inesperada e aconteceu no sábado no jogo do Brasil, né? Então tá todo mundo vendo o jogo do Brasil, alguém descobriu o modelo, viralizou e ninguém conseguiu alinhar nada. Obviamente a política fez politic e agora os caras ficaram vendidos com o modelo errado lá no Hugin Face, com fama agora de que roubaram, né, o modelo lá do Nex, etc. Enfim, pessoal, obviamente de novo Brasil, tudo pode acontecer aqui no Brasil. Então, tá, pessoal, esses são os fatos do momento. Eu sei que isso acaba manchando
+
+um pouco o release, manchando um pouco a animação que as pessoas tinham. Não acho que isso afeta o que nós conversamos. Primeiro tudo que nós falamos ali, né, da da destilação, do reasoning no espaço latente, tudo isso é relevante. Continua achando que toda a parte de open source extremamente importante pro momento que a gente tá vivendo. Se eles fizeram alguma coisa de errado, que seja. Isso
+
+aqui mostra que no mínimo, no mínimo, se você combinar dois modelos open source, você tem um resultado bom, né? Então, se foi só isso que eles fizeram, que eu não acredito que tenha sido, mas tentem ficar com a mensagem positiva aqui, Peguei o modelo open source, peguei o outro, né, fine tons em cima dele, misturei os dois e consegui fazer algo ainda melhor. Então tem muito espaço para se caminhar nessa área. Beleza? Mas vamos voltar aqui então pro cardio desse modelo, né? Então o Rio 3.5 Open 397B é
+
+um modelo de propósito geral desenvolvido lá pelo Iplan Rio, como eu disse, uma empresa de tecnologia lá da prefeitura do Rio de Janeiro. Então ele foi post trainer, né? Foi treinado, foi fine tuneled a partir do Quent. 5397B e ele entrega ali estado da arte, né, em performance de modelos abertos, tá, para agenting, matemática, ciência no geral, né, stand, performance multilingual e etc, inclusive superando o modelo base por margens significativas, como nós vimos, tá? Mas o que que torna esse modelo tão superior? Qual que é o
+
+segredo para pegar o modelo base e fazer com que ele fique tão melhor assim? Bom, uma das coisas que foi implementado pelo pessoal lá do Iplan foi o SU Reason, tá? Então é um framework de inferência novo que nós já vamos conversar sobre ele, mas que basicamente e de forma resumida, no momento do reasoning, enquanto o modelo está pensando, ele alterna entre o chain of thought, né, a cadeia de pensamento, aquilo que a gente tá bastante acostumado, onde o modelo vai escrevendo e pensando. E um reasoning no espaço latente, tá? Calma. Você quer
+
+saber o que é espaço latente? Eu já falei disso num vídeo onde eu analiso por que o Codex é superior em tarefas de longo prazo, né? Eu chamei de o segredo do Codex. Vou deixar o card para você dar uma olhada nesse vídeo depois. Ficou bem denso, ele é bem técnico, mas ele é interessante para você entender o que tá acontecendo aqui, tá? Por estar fazendo
+
+esse reasoning no espaço latente, você economiza muito mais tokens, tá? E essa técnica do sui reasoning é justamente uma forma de você alternar entre o chain of thoughts e o latent space reasoning baseado em probabilidade, né, que a eles é uma probabilidade baseada em entropia e sinais de confiança que eles analisam, beleza? E aí, segundo eles, isso possibilita uma maior precisão e dramaticamente melhora a token efficiency, a eficiência de token, que é uma das coisas fundamentais que eu também bato sempre na tecla aqui do canal. Não adianta só olhar quanto custa o input, o output token. Você tem que olhar quantos tokens você gasta para resolver uma mesma tarefa. É aquela
+
+noção da inteligência por centavo, né? Para cada centavo que o modelo te custa para fazer uma inferência, quanto de inteligência ele te retorna, tá? E aí essa técnica aqui do Sim Reasoning aumenta isso também dramaticamente segundo os criadores. Beleza? Então, features principais aqui do modelo, ele tem 397 bilhões de parâmetros no total, 17 bilhões ativos, tá? É o modelo de
+
+mixture of experts. Que que significa isso, pessoal? Significa que você tem ali diversos parâmetros que podem ser utilizados para ativar o reasoning, dependendo da query, né, da inferência que você tá fazendo, mas apenas 17 bilhões deles estão ativos em cada momento. Por isso que é o mixture of experts, né? você elege aqueles parâmetros mais relevantes paraa tarefa que tá na mão. Uma analogia para que
+
+você entenda isso bem é o seguinte. Imagina que você tem uma empresa com 1000 pessoas, apareceu um pequeno problema para você resolver. Você não bota as 1000 pessoas para trabalhar numa mesma sala. Você pega ali os 10 que são responsáveis, os especialistas, os que conhecem melhor o domínio daquele problema, eles vão resolver aquela parte. E talvez depois que eles resolvam aquela parte, entram cinco que são relevantes pela parte seguinte. Então
+
+você sim tem um time muito grande, muito completo, mas a cada momento você chama os especialistas para cada tarefa específica, tá? Então isso permite que os modelos sejam muito mais rápidos e muito mais leves, apesar, claro, de você ter que carregar esses 397 bilhões na memória. É por isso que eu não consigo rodar no meu Mac Stúio, né? Eu consigo rodar um modelo ali de 32 bilhões, de 27 bilhões, de 35 bilhões, mas eu não vou conseguir carregar isso aqui tudo na memória, pelo menos sem quantos, tá? Esse aqui é um modelo de 1 milhão de tokens de contexto. Então, muito bom,
+
+particularmente interessante se ele consegue fazer essa esse reasoning no espaço latente. Algo que me agrada bastante. E de novo, é bastante bom para agenting, reasoning, é seguir instruções e performance multimodal. Então, não é importante dizer que ele é multimodal. Então, vamos ver aqui um pouquinho mais sobre a técnica do SU reasoning, tá?
+
+Então, muito bem. Então, essa é uma técnica implementada aqui pelo Shep All, tá? Eu até peguei aqui pra gente dar uma olhada no paper, tá? Então, o paper tá disponível, vou colocar ele na descrição aqui desse vídeo. Ele é um paper escrito em 2025, publicado como um conference paper na ICLR 2026, tá? Inclusive, foi
+
+um evento que aconteceu no Rio de Janeiro. Então, olha que legal, né? Provavelmente pessoal lá do IPLAN participou do evento e foi apresentado por um pessoal da George Atente lá da Microsoft, tá? Então ele é um paper aqui que não é tão grande, tá? Apesar dele ter 34 páginas aqui, eh, a partir de um certo ponto aqui, ele é basicamente só é referência, tá? Então ele é um paper de
+
+10 páginas, tá? Então não é complicado para você tentar ler e entender os resultados aqui. Vamos voltar para ver como que eles resumem. Então, basicamente, como eu disse, né? Então, o SU reasoning ele é um framework que vai dinamicamente alternando entre esses dois modos de reasoning, tá? O explicit
+
+reasoning e o latent reasoning. Então, o que que seria esse reasoning, esse raciocínio explícito? Então isso aqui é a cadeia de pensamento padrão em linguagem natural, onde o modelo vai carregando tokens, vai gastando tokens para cada caminho de reasoning que ele decide é percorrer, tá? Que que seria o chain of thought, pessoal? O chain of thought é basicamente a cadeia de pensamento, onde você vai fazendo o raciocínio, você vai construindo o raciocínio linha por linha em linguagem natural. Então isso é algo dependente da
+
+linguagem. E aí, isso aqui dá uma dica pra gente do por esse modelo vai tão bem em tarefas multilinguais. Porque quando você tá no reasoning explícito, você está pensando em linguagem, você está pensando em escrita, é como se você estivesse escrevendo o teu raciocínio, que é justamente o que a gente vê os modelos fazerem, tá? Já no latentasing, é como se ele estivesse pensando na sua mente. Vamos botar assim, vamos tentar fazer essa analogia, tá? O explicit
+
+reasoning, você tá pensando, você tá escrevendo. Como se você tivesse fazendo uma alguma tarefa de matemática, você tá escrevendo cada coisa que você tá fazendo ali. O latent reason é como se você tivesse imaginando tudo na sua cabeça que você tá pensando, você tá pensando em alternativas, você tá pensando em possibilidades, só que você não tá escrevendo nada, você tá explorando as alternativas mentalmente. Vamos pensar assim, vamos tentar fazer essa antropomorfização dos modelos, tá? Então, no latent reasoning, ele vai pensando na mente dele, ele só vai explorando na cabeça dele. E isso permite que ele explore
+
+múltiplos caminhos implícitos sem gastar token. Porque quando você tá ali no reasoning explícito, você vai escrevendo, você vai pensando, o modelo vai pensando, isso vai gerando tokens, isso vai sendo incorporado nas próximas etapas. No latent reasoning não. Beleza? Só que qual que é a diferença aqui? Não
+
+é apenas o latent reasoning, tá? Até porque se a gente vier aqui no paper, eles dizem que o laten reasoning, ou seja, você pensar continuamente no espaço latente, né, por mais que ele permita tudo isso, né, ele permita essa token efficiency, ele tem dois desafios principais, tá? Primeiro que se for apenas esse reasoning, esse pensamento, esse raciocínio puro no espaço latente, as buscas se perdem muito, tá? Você pode explorar tantos caminhos e tem tantos caminhos implícitos que você acaba adicionando muito ruído e impede a convergência numa solução de alta confiança. É como se o modelo se perdesse em diversos devaneios, tá? Ele
+
+ficasse devaneando para sempre e nunca chegasse numa conclusão, tá? E o segundo problema é justamente que o overthinking, né, ele pensar demais continua, mesmo se você não tem texto e é explícito, né? ele continua gastando tokens ali e degradando a eficiência, tá? Então, por isso que você não usa apenas o latent reasoning. E aí o su reasoning, né, esse novo framework, né, apresentado pelo pelo pessoal aqui nesse paper, que que ele faz? ele
+
+dinamicamente, ou seja, a na medida que ele vai analisando o que foi pedido, ele vai alternando entre os reasons explícitos e latentes, guiado pela por uma confiança. Então, se ele tem uma alta confiança, que aquele caminho que ele seguiu, baseado na exploração dos caminhos implícitos que ele fez, se ele acha que aquela confiança ali é autossuficiente, ele para dear, ele para de viajar e ele entra no modo explícito. Então, beleza. Então agora que eu já entendi que esse é o melhor caminho, porque eu já explorei diversos, ou pelo menos eu entendi que ele tem uma alta probabilidade de ser o melhor caminho, deixa eu agora entrar no modo explícito e fazer o meu raciocínio chain of thoughts, aí sim cometando tokens, tá? E aí isso é bem legal porque faz com que ele consiga equilibrar a exploration, né? Ou seja, a exploração da ideias como
+
+através da exploração lá do espaço latente com a exploitation, né, pessoal? Que que é isso? Que que é exploit? Que que é você exploitar alguma coisa, né? Não sei lá se existe essa palavra em português, mas um exploit é uma vez que você identifica uma falha, você exploite aquela falha, você eh vai justamente nela ali, você explora aquela falha, né?
+
+Que quando a gente fala de exploração no contexto aqui, né, que eles disseram, a gente tá dizendo exploração no contexto de testar diversas ideias, testar várias coisas, explorando o que eu posso fazer. E exploitation seria você explorar uma vez que você identificou uma vulnerabilidade. Opa, entendi que aqui que é a boa. Vou exploit, esse caminho que eu entendi que é o melhor, baseado na confiança lá que vem da entropia, beleza? Então, por conta disso, ele vai muito bem em matemática, em ciência, em programação. E, claro, por isso também
+
+ele vai bem em tarefas multilinguais, porque se ele não está comitando tokens, ele está pensando no espaço latente, ele está pensando na cabeça dele, pensar na cabeça não gasta token, não é dependente de linguagem. Agora, pensar com texto, sim. Inclusive, essa é uma das razões pelas quais eu gosto de escrever os meus prompts em inglês. Eu sempre falo isso aqui no canal, sempre sou criticado, mas já escrevi sobre isso e já gravei um vídeo sobre isso aqui também. Vou deixar o link para você dar uma olhada. Fato é
+
+que você poder trabalhar no espaço latente vai sim possibilitar que você consiga trabalhar de forma multilingual bem melhor, o que de novo também é uma vantagem para nós que não falamos inglês nativamente. Muito bem [risadas] pessoal, então aqui tem instruções de como rodar. Eu, como disse não vou conseguir rodar para vocês, infelizmente. Eu vou ficar de olho aqui porque parece que muito em breve a gente vai conseguir, tá? a gente olhar aqui, né, em inference providers, vai ver que ainda não tem o suporte, mas mas não tenho a menor dúvida de que considerando o barulho que eles estão fazendo lá na comunidade internacional, ó, se a gente atualizar aqui, a gente vai ver que tá até subido os pontinhos aqui no Hacker News, quer dizer que que a comunidade tá hypando, né, esse esse artigo aqui.
+
+Então eu imagino que muito em breve, né, vão sair outras quantizações, como essa pessoa que que já tentou fazer e o próprio pesquisador por trás já deixou implícito, tá? Por quê? Porque ele postou aqui no próprio Redit local lhama. Então esse nick aqui, ó, K Zoncala, é justamente a pessoa que uma das pessoas que tá por trás aqui desse projeto, tá? Então queria passar aqui rapidamente por algumas coisas que ele ele disse aqui, porque tem coisas interessantes, tem informações interessantes aqui, tá? Primeira coisa,
+
+o post com mais votos aqui é dizendo que ele trabalha como pesquisador, né, no município do Rio de Janeiro. E a pessoa dizendo que de todos os lugares para você soltar o modelo não esperaria, né, de uma municipalidade, uma prefeitura, o que de fato é inesperada. E eu concordo com esse cara aqui, o Fox Panda, que é justamente o cara que que fez o fine tuning, né, de fato é inesperado, não vamos fingir que não é, mas é muito muito bem-vindo, tá? E aí ele diz que começa a fazer a quantização, né? É daqui que eu peguei aquele link da quantização, tá? Aí, outra coisa
+
+interessante que é dita aqui, ó, alguém pergunta se esse modelo, se essa técnica, né, do SU reasoning funcionaria pros 27 bilhões de parâmetros, né, ou, e aqui uma dúvida bem legítima, né, se o latent reasoning ele é muito melhor com mais parâmetros, porque veja, se eu preciso explorar essas ideias na minha cabeça, isso significa que eu preciso ter bastantes parâmetros ali, né, bastantes trabalhadores, vamos colocar assim, para explorar essas ideias. Então é justo você pensar que um modelo pequeno com menos parâmetros não vai conseguir explorar tanto essas ideias. Mas o Zoncala vem e diz: "Não, funciona perfeitamente", que eles já testaram em outros modelos menores, tá? E então isso é algo pra gente imaginar que já já certamente vai vir em outros modelos, tá? que a gente vai conseguir rodar localmente nos nossos computadores. Uma
+
+outra pessoa vem e fala aqui, ó, cara, se esse modelo realmente for comparável com 3.7 Plus, que é um grande que é um grande modelo, vocês fizeram um grande trabalho. De fato, se a gente for olhar, pelo menos na questão de benchmar, ele é bem compatível aqui, na verdade, ele bate o Quent. Plus em todos os benchmark, né? Então, se de fato isso aqui se persistir, é bem interessante, tá? Mas aí o Zonk até diz aqui, ó, não
+
+tava no plano sim de fazer o de 122 bilhões, mas acabou o dinheiro, né? Acabou o dinheiro, como diria o Márcio Praga, não conseguiram mais continuar. Então, esperamos que o budget seja restabelecido pro pessoal lá, talvez com essa atração que eles estão ganhando da comunidade. Mas ele diz uma coisa bem legal aqui, que eu tô bem animado, que eles vão soltar mais de 100 modelos open source nos próximos meses. Então, pra gente esperar que vão vai vir coisa interessante por aí. E olha só, é
+
+pessoal pedindo o Quentin 3.6 27B, né? É um dos que eu mais gosto de utilizar. Utilizei ele lá no P Agents junto com 35B A3B. Também vou colocar o link aqui se você quiser dar uma olhada nos meus testes utilizando esses modelos. São
+
+modelos muito bons para você rodar localmente. Ó, essa pessoa perguntou aqui se ele pode falar um pouco mais do projeto. E aí o Zoncala disse que eles estão treinando desde a época lá do O1, né, dos modelos O1, que o objetivo original era começar com deep seek, mas como eles não têm um budget muito grande, eles tiveram que lentamente acumulando, pesquisando, né, até que eles conseguissem, né, fechar esse gap. Isso aqui é muito interessante pra gente entender também, né, pessoal? Poder da resiliência. Você trabalhando com
+
+recursos escassos faz com que você tenha que desenvolver novas técnicas, buscar novas pesquisas e conseguir, pô, ter um resultado, né, tão bom, sem precisar necessariamente jogar dinheiro em cima. Claro que jogando dinheiro em cima deixa tudo muito mais fácil, mas você consegue sim com dedicação e estudo e persistência, né, mesmo com restrições de recursos também atingir excelente resultado. Então, parabéns de novo pro pessoal lá do IPLAN, né? Ele segue dizendo que ele sente que agora os modelos são competitivos o suficiente para serem soltos, né, publicados e que eles fizeram isso, mas que eles têm um catálogo muito grande de modelos experimentais, alguns que são bons, outros que são apenas interessantes para uma parcela, para um nicho pequeno, mas que no entanto ele vai soltar, eles vão publicar a maior parte deles como open source, né? E de novo ele dizendo aqui que a gente deve esperar múltiplos dezenas de modelos nos próximos meses, continuar de olho ali no hugin face.
+
+Então vou deixar o link lá pro Hugin Face deles também na descrição. Você que criou sua conta para ver se roda no seu dispositivo, segue eles lá também para ficar de olho no que vai sair de lá, tá? E aí ele até deixa claro aqui que eles estão trabalhando com as universidades locais lá do Rio, imagina para validar os benchmarks, né? Para não ficar ali não cair ali no que o pessoal chama de benchmxing, que inclusive eu tô vendo aqui a grande parte da crítica no hacker news é justamente dessa ideia do bench maxing, né? Que que é isso? É você
+
+optimizar o modelo para o benchmark. Então claro que muita gente, o RCK news, tem uma tendência de ter um público mais cínico aqui, né? Então deixando de lá, dando um voto de confiança aqui para esse pessoal que tá trabalhando basicamente sozinho, sem budget, né? E model os open source, soltando as coisas pro comunidade, dando esse voto de confiança para eles aqui. Acredito sim que eles não estão fazendo benchmxing, mas que também gostaria de testar, né? A
+
+verdade essa a gente não vai conseguir testar, então temos que acreditar na palavra deles aqui, o que eu acredito. Beleza? E aí, uma última coisa que eu quero falar aqui nessa discussão é que eu falei aqui no início que o modelo é open source, porque eles mesmos dizem que é open source e alguém perguntou aqui, ó, eu não estou vendo os links para o dataset, nem os script de treinamento, então é, não tô vendo alguma coisa ou ele não é open source? E aí o Zon Cala diz, ó, os dados são apenas uma coleção dos Nvidia, Nemotron, Post Training data, né? Então ele basicamente reutilizando aquele dataset que já é open só. O script de
+
+treinamento é apenas um OPD de um modelo maior. E aí, espero que eu não esteja errado, mas OPD aqui me parece ser on policy distillation, uma técnica para você fazer fine tuning, tá? Então eles basicamente fazendo uma destilação do modelo maior. Então nada particularmente relevante que ele diz aqui, mas aí ele fala, né? Eu entendo que o termo open weight talvez tivesse sido mais adequado. Ou seja, pessoal, se você
+
+entrar lá, você não vai ver os links, mas eles usaram coisas baseadas em links abertos, entendem? Então, por mais que eles não tenham compilado tudo aqui, não tem nada que é proprietário dele. Se eles chamaram aqui de open weight e open source, claro, não tá tudo num gitub bonitinho, então chamar de open source aqui pode ser um stretch, mas dá a entender que se eles quisessem organizar eles fariam isso. Então tem essa tecnicalidade aqui de nomenclatura. Beleza? Muito bem pessoal, então esse
+
+vídeo foi um pouco diferente dos que eu costumo fazer aqui no canal, porque eu sempre gosto de trazer a parte prática, né? Infelizmente eu não consigo testar ele nesse momento, mas eu acho que a história vale a pena. Por quê? Porque a gente tá vivendo um momento extremamente específico e relevante para trabalhar com modelos locais, tá? Então, a própria comunidade de tecnologia está reconhecendo isso. Tanto é que lá no
+
+hack, se você vier após o que aconteceu com Fable, a gente vai ver esse movimento aqui de open source AI must win, ou seja, a gente precisa que a IA seja disponibilizada de forma aberta para as pessoas. E aí, nesse manifesto é dito, né, se inteligência se tornar algo que as pessoas possam apenas alugar de algumas poucas instituições fechadas, o público não apenas vai perder a liberdade de software, vai perder também a liberdade operacional, tá? De novo muito parecido com o que foi dito lá na Magnífica Humanitase, no vídeo que eu fiz sobre isso também, né? Novamente um destaque aqui, né? A IA aberta open source deve permanecer usável, é entendível, né? Você pode, você deve ser
+
+capaz de entender o que tá acontecendo ali. Reproduzível, deve ser possível rodá-la localmente, deve ser economicamente viável, ou seja, não deve ser algo que apenas nações mais ricas podem ter. E a gente tá vendo aqui isso na prática com esse pequeno time lá do IPLAN do Rio de Janeiro, fazendo algo economicamente viável, né? E claro, governado pela comunidade, né? mesmo se os laboratórios mais dominantes hoje em dia, os laboratórios estrangeiros, os vendedores de hardware, as plataformas de nuvem e os provedores, né, de modelos openweight, mesmo se eles mudarem de direção ou desaparecerem, a gente precisa que a IA local continue caminhando em suas próprias penas.
+
+Repito, isso é particularmente interessante na época que a gente tá vivendo com o que aconteceu lá com Fable, independente se ele voltar ou não, pessoal, a gente tá vendo como a política, vamos chamar assim, pode influenciar na IA, no desenvolvimento dos novos modelos, né, na distribuição desses modelos, né, até em questões geopolíticas, né, na restrição desses modelos para algumas nações. E, portanto, deve ser prioritário que os modelos abertos sejam sim desenvolvidos e fomentados. Portanto, queria deixar aqui registrar aqui os meus parabéns ao pessoal lá da Prefeitura do Rique, que eu não conheço, tá? Não sei quem são, mas aqui no canal, né, se eles continuarem com esse trabalho, sem dúvida nenhuma, quero dar mais espaço, quero fazer os testes, vamos fazer o benchmark da capivara. Será que o nosso modelo brasileirinho vai passar finalmente do benchmark da capivara jogando bola? Vamos descobrir isso nos
+
+próximos episódios. Vamos ficar de olho aqui nos modelos que eles vão lançar, beleza? Espero que vocês tenham gostado do vídeo de hoje. Se você gostou, já peço por gentileza, curta esse vídeo também, compartilhe com seu amigo e sua amiga que gosta de ir a local, mas também goste de programação agênica e engenharia de software no geral. Também aproveita e já se inscreve aqui no canal para você ficar por dentro de tudo que sai, né, de testes reais, dos novos modelos, enfim, tudo que pode ser utilizado no contexto de programação agêntica, engenharia de software, engenharia de a, você vê aqui nesse canal. Agradeço a todos pela audiência
+
+de sempre e até a próxima.

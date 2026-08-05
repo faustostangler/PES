@@ -1,0 +1,286 @@
+---
+video_title: "Criando uma API e adicionando testes com IA (Criando um SaaS do Zero #05)"
+video_id: m43kZEzY0Z0
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=m43kZEzY0Z0
+video_date: 2026-01-04T19:00:48+00:00
+video_description: |
+  Neste quinto episódio da série Criando um SaaS do Zero, decidi frear as features para garantir a qualidade. Hoje mostro como usei Inteligência Artificial (Claude Code) para configurar todo o ambiente de testes com Vitest em um Monorepo. 
+  
+  Depois, partimos para o Milestone 3: a fundação do nosso backend. Utilizando MCPs para ler documentação atualizada, configuramos o Hono, o Drizzle ORM e criamos o primeiro endpoint da aplicação usando Cloudflare Workers.
+  
+  Capítulos
+  
+  00:00 Recapitulando o projeto
+  04:49 O que será feito no episódio 
+  05:43 Planejando testes
+  07:32 O que é o Vitest
+  08:45 Implementando testes com o Vitest
+  18:15 Fundação da API
+  19:10 O que é o Hono
+  20:16 Configurando o Hono
+  22:05 Instalando e o utilizando o MCP do Context7
+  24:10 Configurando os primeiros endpoints
+  28:40 Testando os endpoints
+  32:39 Conclusão
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS na Hostinger com 10% OFF 🔻🔻
+  https://www.hostinger.com.br/quantbrasil
+  CUPOM: QUANTBRASIL
+  
+  🔻🔻 Ganhe $10 de créditos no Replit 🔻🔻
+  https://replit.com/refer/quantbrasil
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=cpH8Aw-UqWk
+  https://www.youtube.com/watch?v=mxhpY1Ui4mE
+  https://www.youtube.com/watch?v=PZzWx3lTf0E
+  
+  #saas #buildinpublic #claudecode
+---
+Sejam bem-vindos ao quinto episódio da série Criando um site do zero, onde você consegue acompanhar a criação de um app na prática, desde determinar arquitetura, levantar os requisitos até escrever a primeira linha de código, colocar no ar e quem sabe ter os primeiros clientes. Que que nós estamos construindo, pessoal? A gente tá construindo um app chamado program ai ou quinta code ainda está para ser decidido. Você pode me contar aqui nos comentários o que que você prefere, qual nome você acha que casa melhor com esse projeto. Mas aqui a gente tá construindo um app onde eu vou poder ofertar cursos.
+
+Eu quero poder gravar um curso, né, e não depender tanto de colocar formatadinho no YouTube, né? Aí você pode ir lá comprar teu curso como se tivesse comprando o DVD e poder ali assistir quando você quiser. A minha ideia é essa, é colocar cursos de programação. Então o que que nós decidimos fazer? Vamos construir um monoriple. Esse monoriple vai ter um
+
+front end escrito em NextJS e um uma API escrita com o framework Hono, que é um framework otimizado para o Cloud Flare Workers. Nós vamos rodar esse app no Cloudflare Workers porque eu quero utilizar o Cloudflare Streams para fazer esse streaming de vídeo. Por que escolher o Cloud Flash Streams? Porque ele é bem mais barato e também porque eu queria aprender o stack do Cloud Flash. Eu não sou versado no Cloudf, apesar de ter bastante tempo de experiência com programação no geral. Então essa série
+
+aqui também está servindo para que eu aprenda essa funcionalidade. Que que nós construímos até aqui, pessoal? Nós construímos primeiro Bootstrap, tanto do web quanto da API. são os nossos apps. E já fizemos os packages, os pacotes, aquelas bibliotecas que podem ser importados nos dois apps, são compartilhados. São os esquemas do banco
+
+de dados do drizzle, que é o ORM que a gente tá utilizando. Esse é um banco de dados D1, ou seja, SK lá do Cloud Flare também. A primeira vez que eu estou utilizando o Drizzle, é o RM e o pacote shared. Nós fizemos no último episódio as validações com os esquemas ZOD. Criamos DTOs e alguns helpers para ver se o usuário teria, por exemplo, permissão para acessar uma aula, por exemplo. Então, eu parei a última aula
+
+nesse ponto aqui. Se a gente olhar aqui as dependências milestones, né? Então, a gente parou aqui no M2. Deixa eu olhar aqui no código, voltar aqui no código, a gente consegue ver, ó, onde que a gente parou, beleza? Então, definimos os contratos, né? É um termo que a gente
+
+costuma utilizar na programação, um contrato entre dois programas, entre duas interfaces. É aquilo que você concorda em se comunicar dessa forma. A gente define isso no shared, no pacote compartilhado, contrato fica ali e tanto o back end quanto o front end, quando eles quiserem trafegar dados entre si, eles precisam respeitar esse contrato. O legal que fica bem isolado, bem modular. E nós implementamos essa função aqui no último vídeo chamado can watchless, tá?
+
+Aqui, ó. É uma lógica para ver se o usuário tem permissão ou não para assistir uma aula. Eu queria aproveitar que essa foi a primeira, essa foi a primeira função que nós escrevemos aqui e eu queria colocar um pouco de testes, tá? Nós não fizemos testes ainda, então deixa eu aproveitar aqui, ó. Deixa eu comitar lá do último vídeo. Eu acabei
+
+não comitando. Já vou comitar e já vou jogar lá para o GitHub. Então, se a gente vier aqui, der um F5, ó, tá aqui, beleza? O nosso repositório com as mudanças feitas, tá? Eu tô gravando esse vídeo logo em sequência do episódio número quatro. Esse é o episódio número
+
+cinco. Depois desse vídeo aqui, vão vão ter outros que vão entrar no ar, então posso coletar o feedback de vocês, trazer aqui também pra gente discutir ao longo dos próximos vídeos. Então, continuem deixando suas dúvidas e sugestões. Lembrando que eu não sou especialista, como disse, no Cloud Flare, particularmente aqui na parte do back end do banco de dados. Então eu posso estar cometendo alguns erros ainda, não chegamos na parte que é onde eu tenho mais domínio, que é o front end. Beleza? Como que a gente fez isso,
+
+né? Então, para recapitular, para quem não viu, no primeiro episódio, eu defini tudo que eu queria numa conversa com o chat GPT 5.1 Pro, era o modelo mais inteligente que eu tinha acesso no momento. E ele criou esse arquivo de especificações que nós estamos seguindo e falando pro cloud code acompanhar. A gente tá utilizando o Cloud Code porque estamos monitorando aqui bem de perto.
+
+Ele tá fazendo só operação via CLI, então eu gosto de deixar o cloud Code. Nesse caso eu consigo monitorar bem a o app, né, o o produto, né, Cloud Code é mais agradável do que o Codex, que embora o Codex seja o meu modelo favorito, como a gente não tá fazendo aqui grandes coisas, estamos só inicializando e fazendo coisas mais simples, eu tô gostando de acompanhar aqui pelo Cloud Code, que é um uma UI bem agradável. Então o que nós deveremos fazer hoje é esse M3 aqui, que é a fundação da API, que é começar já fazer o Rono, o D1, binding e um pouco de error hand. Mas antes de fazer isso, eu queria colocar testes, como eu disse, beleza? E olha que legal, pessoal, esse é o episódio cinco. Então, se no
+
+episódio um a gente definiu tudo que a gente ia fazer, 2, 3 e 4, nós fizemos, né, m, m1, m2, então eu tô a três episódios praticamente só dando um prompt e seguindo o plano lá do M0. para vocês verem a importância de você levantar requisitos antes de sair programando igual o maluco. Então veja, a gente perdeu bastante tempo ali naquela aula, na primeira aula, no primeiro episódio, para saber o que a gente ia fazer. Colocamos um monte de validações ali na aula número dois, né, com type check, linter, etc. E chegou a hora da gente colocar mais uma, que é os testes. Então, três aulas praticamente
+
+só seguindo no autopilot, só gerenciando por cima. E agora sim, vamos colocar a parte dos testes. Beleza? Então, eu tô aqui na conversa anterior, nem finalizei a conversa, né? Veja que a gente nem chegou a encher muito do contexto. Ele
+
+fez, foi bem bem preciso assim nas instruções nesse último episódio. Então, antes de continuar com o M3, eu vou falar para ele justamente isso. Então, pessoal, eu falei aqui, ó, antes de começar o M3, ou seja, Milestone 3, que seria a ordem natural, eu acho que nós deveríamos colocar testes especialmente para os helpers, né? Então, essas funções de lógica, essas pure functions que eu coloquei no último vídeo, faça um plano, venha com plano de qual tester, né, qual testador utilizar. Eu suspeito que ele vai sugerir o V test, mas vamos ver, seria pelo menos a minha a minha expectativa aqui, ó, ele já tá já foi até procurar, ó, para ver se já tinha algum setup, né? Ele procurou se tem
+
+algum vitest config ou Jess config. Vamos deixar e pode rodar o comando find sem me perguntar depois. É um é um comando inofensivo. E aí uma dica legal é o seguinte, eu o pedi para ele fazer um ultra think, ou seja, usar o máximo de poder computacional aqui e liguei aqui o plan mode apertando shift tab. Por quê? Porque eu quero saber o que que
+
+ele vai me propor antes de sair aceitando. E quando eu passo o ultraink, eu também garanto, ou pelo menos dou a dica para ele que eu quero que ele gaste bastante poder computacional para ele me vir com uma boa resposta. Tipicamente eu poderia fazer isso aqui fora ali no chat PT5.1 1 Pro, por exemplo, ou até no Codex jogar ali o X High, né, de reasoning, mas como é algo meio que controlado e conhecido, não tem muito para onde fugir. Eu realmente acredito que ele vai me propor o V test. Eu acho
+
+que o Cloud Code com o output 4.5 vai me resolver, mas por via das dúvidas, eu liguei o Plan Mode, que é justamente para eu poder validar antes da implementação. Um dos problemas do plan mode é que ele realmente é bem lento, né? Então ele tá aqui rodando há praticamente 3 minutos. Quanto ele termina? Vamos dar uma olhada no Vtest
+
+aqui, que que é isso, né? Então, o Vtest é a próxima geração de teste, né? O framework para testes da próxima geração. Ele é nativo do Vit, né? O Vit é também um framework react, mas ele funciona super bem no NextJS, né? É a
+
+vantagem que ele é compatível com o Jess, que é o mais famoso, talvez, mas que já ficou um pouco para trás, né? E ele tem, enfim, ele é bem mais rápido, coisas do tipo, já se integra com Typecript de cara, né? Então que eu saiba, o Vitest tem sido o mais utilizado pelos desenvolvedores hoje em dia. Rafael, que relevância é isso? Se é o Maria vai com as outras. Não, pessoal,
+
+quando a gente tá falando de programação, é sempre interessante que a gente use bibliotecas que são conhecidas, que são utilizadas. Primeiro porque nós vamos ter muito mais documentação e segundo porque com a IA ela vai ter acesso a bem mais informação. Então veste aqui, ó, 15.000 estrelas no GHub. tá sendo atualizado no último, três dias atrás, teve atualização, o último release, o 4.0.15,
+
+é duas semanas atrás, então tem sido tem sido gerenciado, né, mantido, que é algo que a gente tá sempre de olho. Nesse tempo que a gente estava olhando, ele finalmente terminou aqui o plano. Então, vamos dar uma olhada. O plano está pronto, decisões chave. V test overest.
+
+Aí justamente o que eu já imaginava, ó, SM, né, nativos módulos JavaScript, TypeScript, é mais rápido, configuração mínima. Colocated tests. Que que é isso, pessoal? O que que é colocated? Antigamente muita gente criava uma pasta test, colocava todos os testes ali. Isso
+
+tem suas vantagens de vantagem. Mas o que nós chamamos de colocated é justamente isso, é cocated, ou seja, localizado junto, né? Então tá na mesma pasta que o arquivo que você tá testando. Então isso ficou muito mais fácil porque o seu arquivo de teste tá junto do arquivo que você tá escrevendo, o arquivo de origem, né? Então falou para instalar na raiz. configuração vai
+
+ser por pacotes. Cada pacote vai ter a sua própria configuração e foco agora nos helpers e nos erros no que nós temos ali no no shared, né, no package shared, que é o único lugar que a gente tem lógica, né? Então tá aqui o plano V testing framework antes de prosseguir pro M3. Justamente isso que eu pedi aqui. Ele justificou a razão pela qual ele escolheu o Vtest e não oest.
+
+Maravilha. Comandos que ele vai precisar rodar. a configuração vai precisar, né, colocar aqui os scripts de teste, né, mexer ali no TS Config, mexer no Turbo Jon e aí criar os testes, o o arquivo de teste e as funções que ele vai testar. Testar também a API, atualizar o agent com as as guidelines. O legal desse plano do Cloud Code é que, cara, ele já te dá os arquivos que ele vai modificar, ó. Pô, esses ele vai mexer, esses ele
+
+vai criar, como ele vai fazer para testar. excelente. Isso aqui é muito bom. Dá até vontade de deixar um autoaccept aqui, mas eu vou manualmente aprovar pra gente poder, né, ver exatamente o que ele tá fazendo. Mas eu confesso que se eu não tivesse gravando isso aqui, eu provavelmente deixaria ele trabalhar sozinho. Eu tenho plena
+
+convicção de que com esse plano e sendo esse isso que ele quer fazer, algo muito bem definido, né? Instalar teste, não vejo, porque isso daria problema, tá bom? Então, primeira coisa, vai instalar o Vest. E aí, uma coisa interessante, ele tá instalando no Hult, né? Ele tá instalando no monoriple e não em cada pacote individual. nunca tinha não tinha
+
+pensado em fazer dessa forma. Ele quer criar o arquivo. Deixa eu deixar ele criar o arquivo aqui. Não tem uma forma de inicializar o V teste não, porque a gente viu no episódio número dois que sem inicializar ele acaba às vezes fazendo umas besteiras, né? É, não, não parece ter nenhuma forma de inicializar mesmo, não. Tem que criar o VTS config
+
+mesmo. Então, aí tá certo, vai definir a config, colocou aqui os scripts no package Jason, atualizou o TS config também. E o legal que o quando ele fez o plano, ele meio que já na hora de levantar o plano, ele meio que já levantou os arquivos que ele ia que ele ia mexer. Então fica bem rápido depois que o plano foi feito, né? E é excelente porque a gente perde tempo, perde tempo fazendo o planejamento. Então toda a
+
+configuração já foi feita, ó. Ele já tá agora na parte de criar os arquivos de teste. Pessoal, eu não sei quantos de vocês já precisou ficar fazendo configuração de teste em repositório. Cara, isso é bem chato, sabe? Você demora um tempinho para fazer. Então
+
+assim, é muito bom saber que a gente consegue ligar um cloud code da vida, mandar ele criar um plano e seguir com uma altíssima chance de sucesso, assim, pouquíssima intervenção necessária. Basicamente agora ele tá criando os arquivos de teste. Não faz muito sentido eu olhar aqui linha por linha, então vamos vamos deixar vamos aceitar isso aqui que a gente vai olhar ali direto na IDE que fica mais fácil. Inclusive, se você já viu o meu vídeo sobre usar a IDE ou CLI, qual você deveria utilizar, eu vou deixar o link aqui, se você ainda não viu, mas esse é justamente um dos casos que eu falo, é justamente quando eu quero olhar o código com mais calma, né? Então fica muito bom fazer aqui pela IDE e não pela CLI, de fato. Vamos
+
+deixar ele trabalhando aqui. Vamos ver o que que ele fez. Então ele importou as funções. Aí ele aqui ele criou um helper para ajudar na criação dos próprios testes, né? Para não precisar ficar duplicando muita coisa. Ah, isso aqui é
+
+legal, cara. que dá um trabalho para fazer na mão. Sempre me deu, era um saco na época que eu tinha que fazer teste unitário lá com reactime. Putz, cara, chato para caramba. Ó, é esse fake times, né? Você poder testar coisa com
+
+tempo. E aí aqui ele já vai poder verificar, por exemplo, que quando passou, né, de uma determinada data, inspirou, por exemplo, o grant, né, a permissão para você assistir um vídeo. Então, ó, passando aqui os parâmetros, então se eu não tenho grant, não adianta, vai ser sempre falso, né? Não tem nem o que fazer. Quando quando o usuário não está autenticado, sempre vai ter que dar um deny. Aqui ele tá
+
+testando o API error, né? Tem que ver se esses testes aqui são realmente relevantes, tá? Eh, eu não acho que esses testes que ele tá fazendo aqui são realmente muito relevantes, não. Eu queria testar mais era os helps, mas eu vou eu vou aceitar aqui e a gente vai dar uma olhada depois no que que ele fez. Então, segundo, ó, o segundo teste aqui, mesmo que uma aula seja esteja trancada, não adianta se o cara não tem nenhum grant, sempre vai dar um authenticator. Mas aqui o teste é legal
+
+para você ver que mesmo a aula estão trancada, o erro é not authenticated e não not entitled, ou seja, você não é um cara autenticado, não é que você seja não autorizado, né? É, ele já terminou aqui basicamente. Agora ele vai colocar aqui no agentated, como rodar via turbo reple, via test. Beleza, vamos aceitar isso aqui. Ele botou aqui como escrever teste. Não sei
+
+se isso aqui é tão relevante. Posso ir ali depois e editar na mão, mas ele vai rodar os testes agora. Isso que eu quero ver. Eu quero ver que os testes vão passar, né? Possivelmente ele deveria ter rodado os testes antes de sair escrevendo, né? Como fazer as coisas.
+
+Bom, falhou algum teste aqui. Um teste falhou. E olha que legal, pessoal. Ele vai, ele vai ver o que que falhou. Foi um problema de implementação, pelo visto, não, era um problema de código mesmo. Olha lá, olha a vantagem da gente
+
+ter um teste, porque se o details fosse undefine, estava dando um erro. E olha, ele corrigiu a implementação com teste. Ele, ele não corrigiu o teste, ele corrigiu a implementação. Excelente. É para isso que a gente quer os testes, né, pessoal? Agora ele vai rodar e vai
+
+passar tudo. Maravilha. Testes feitos. Vamos seguir então aqui dando uma olhada. Agora, quando o usuário é autenticado, mas se ele mesmo que ele não tenha nenhuma nenhum grant nenhuma autorização, mas ele tá autenticado e tiver olhando uma aula que a gente tá marcando aqui como preview, né, ou seja, uma aula liberada, ele consegue assistir. Então, autenticada preview,
+
+ler assuns, ele consegue. É, independente do grant, né? E se o cara tiver um grant qualquer para um outro curso, consegue ver também. Aulas fechadas. Se o cara não tiver grant, vai receber o not entitled, ou seja, não autorizado. Se ele tiver exatamente o
+
+mesmo grant da aula, né? E aí, como que eu sei que é o mesmo grant? Porque é One. Corse One era o nome da aula que ele tá usando aqui. E aí ele criou um helper para gerar justamente esse grant.
+
+Cadê? Funcionou. E se for um outro curso aí, não tenho, não autorizado. Perfeito, funcionando. Aqui ele testou o active pass. Então, se eu tenho um passe que
+
+finaliza ali dia primeiro de janeiro de 2025, por que que isso passou? Por que que isso passou, pessoal? Porque ele setou a data em 15 de junho de 2024. Engraçado isso, né? Tem alguma coisa em relação, provavelmente com a data de treinamentos aqui. Então, pro para todos
+
+esses testes aqui do Canel Watch Lesson, ele determinou que o horário do sistema é 15 de junho de 2024. Então, naturalmente, se eu tô finalizo em 2025, o meu acesso, eu consigo assistir sem problema nenhum. Se o meu passe for perpétuo, ou seja, nunca finaliza, eu consigo assistir a aula. Se o meu passe já expirou, ou seja, ali, ó, 1 janeiro de 2024, não consigo assistir. Se o meu grant é pro futuro, sei lá, imaginando isso, também não consigo assistir. O
+
+caso de uso talvez um pouco inexistente, mas bom que o teste tá lá. Então, tá aqui, ó, um um grant também dentro do prazo, funcionou. E aí o resto aqui vai ser tudo muito parecido. Então, beleza, esses testes aqui, OK, era isso que eu queria. E vamos dar uma olhada nesses testes de API. Que que ele fez? Ah, tá
+
+aqui. Ele tá é que ele vai testar aqui para um erro tal, vai dar uma mensagem, a mensagem que deveria ser. Eu não sei se eu gosto desse teste aqui, pessoal. Por quê? Porque é um pouco duplicado. Tá
+
+vendo? Se eu trocar de recurso não encontrado para alguma outra coisa não encontrada, vai dar um outro erro e vai e vai falhar aqui, né? Não sei se é isso que eu quero. A error code tem que ser 401. Se eu entrar aqui, cadê? Preview
+
+requires login. Preview requires login. Tá aqui, é mapeado direto para 401, né? Então, esse aqui eu acho que é um erro meio meio inútil, sinceramente, pessoal. Eu não gostaria de testar isso aqui não.
+
+Aí ele tá testando que alguns, ele tá testando a API aqui. Eu sei lá, isso aqui eu não gostei muito não. Eu vou fazer o seguinte, não sei se eu deleto ou se eu tiro isso aqui. Vamos deixar por enquanto, vai. Vamos deixar por enquanto aqui. É, não sei, na real não.
+
+Eu não gostei disso aqui não. Eu não gostei disso aqui não. Eu vou deletar esse arquivo de teste aqui, pessoal. Eu acho que ele não tá testando nada de relevante e apesar dele ter achado um problema ali no na assinatura, ele tá tá testando como que o formato tá vindo em de uma forma exata, mas isso não é tão relevante para mim aqui. Então eu vou deletar esse arquivo e aí eu vou ali no, cadê o nosso agent MD que ele editou e eu vou simplificar isso aqui também. Eu
+
+só quero essa parte que é o V test, que é collocated, como que você roda, writing test e usar fake timers. Isso aqui não precisa. Isso aqui ele vai saber, tá? E os comandos para rodar. Beleza, é isso. Não precisa de muito
+
+mais do que isso. Tinha colocado 72 testes. Olha isso, cara. 35 pro erro handling. Meio exagerado. Realmente acho
+
+que foi bom ter teletado. Mas é isso. Então, finalizamos a parte de teste aqui. Deixa eu dar um stage e comitar os nossos testes para que a gente possa começar então o M3. Então, fechei aqui.
+
+Vamos tá limpo, com ambiente limpo aqui. Beleza? Então, V teste feito. Vamos dar um F5 aqui. Então, isso aqui a gente trabalhou uma parte separada, ele não tinha colocado em nenhum lugar os testes. E aí, segundo o nosso diagrama
+
+de dependências aqui que o Cloud criou como artefato, a gente agora vai criar a fundação da API. E a fundação da API é justamente, pessoal, a parte de trabalhar aqui no bootstrap do nosso framework. Então, vai ser um worker, um cloud flow worker, ele é serveress. a gente vai conectar ele com a conexão lá no banco de dados. Então isso a gente precisa de um binding, né? Então a gente
+
+precisa dizer que aquele worker se conecta com aquele banco, tem que ter um course rate limiting e vai finalizar com health. Então é um end point para dizer que a API tá rodando. Beleza? Vamos lá. Vamos deixar ele seguir então. Let's go.
+
+Ready for M3 now? Ele perguntou. Vamos lá. Seguindo aqui na mesma conversa. Veja aqui, de acordo com o meu plugin aqui, 18% do contexto. Temos bastante
+
+espaço para trabalhar nisso aqui. E agora eu tô bem empolgado porque a gente vai finalmente botar o código do back end para jogo. E vamos enquanto isso dar uma olhada aqui no Rono, beleza? Então, como eu disse, o Hono é um framework, é uma espécie de substituto, né, do Express. Para quem tá acostumado a utilizar Express, né, como servidor Node JS, ele é, segundo os criadores do Rono, ultra fast e lightweight, então muito rápido e leve. roda ali com alguns
+
+poucos kilobby funciona em qualquer runime, por exemplo, no Cloud FL, no Fastle, no deno, no Ban, na WS ou Node, então se um dia eu decidi tirar isso aqui do Cloud Flare Workers, eu posso sair sem problema nenhum, não vou precisar reescrever tudo trabalho. Eu vou eu vou indo lá e eu volto aqui pro terminal para ver sempre que ele me perguntar alguma coisa. Então, OK. Primeira coisa que ele quer instalar é o Drizzle ORM e o Zod Validator específico aqui do Hono. Vamos deixar ele instalar e vamos seguir aqui. Então, vem com as
+
+baterias incluídas que na nomenclatura dele são middlewares, custom middlewares, third party middlewares e helpers. Ah, não quis dizer muita coisa, não foi tão clara essa land page aqui do pessoal do hom delightful, super clean API. Todo mundo sempre acha isso, né? Mas vamos acreditar neles. First classes script support. Isso é bom de saber, tá?
+
+Ó, aí agora ele quer gerar esse PNPM CF type G. Generate Cloud Flare Worker Types. É assim que se instala? Vamos dar uma olhada aqui. Vamos ver como que ele como que ele sugere aqui, ó. Eu não vi
+
+onde que ele rodou isso. PNPM create Hono latest. Deveria rodar isso aqui. Vamos ver o que que a gente tem aqui. Vai, se a gente ver aqui no na API. Ah,
+
+a gente já tem o Rono configurado aqui, tá? Vamos deixar ele rodar esse CF type que eu não sei o que vai fazer. Ele tá gerando os bindings aqui, ó. Tá vendo? Esse aqui gerou alguma coisa automática.
+
+Esse worker configurations aqui basicamente é basicamente para a gente ter a tipagem ali, né, do cloud flare, v instalar o type node, remover cloud flare workers. Bom, vamos deixar aqui. Por enquanto é só clean up, né? Tá só instalando tipo e gerando coisas desse tipo. Como ele vai ser capaz de se validar depois com o type check, eu não tô muito preocupado com o que ele tá instalando aqui, tá? É, eu sei que se
+
+ele errar, ele vai eventualmente achar o caminho aqui, né? A partir de rodar o type check. Então vamos deixar ele instalar o que o que é necessário. Eu tô olhando aqui para ver se, né, tem algo que eu deveria rodar antes. No getting starter do Hon aqui não tá dizendo nada, só tá dizendo para rodar isso aqui. Já a
+
+gente já tá num num template do Cloud Flir Workers. Eu não lembro se a gente fez isso no episódio número dois ou se ele fez na mão, tá? Ele tá tirando o Cloud Flare Workers type, colocando types node, incluindo aqui o worker configuration. Aí aqui eu vou ter que perguntar para ele, né? Eu perguntei por que que você fez isso? Essa é a é a
+
+forma de se utilizar o é, ele tá se enrolando um pouco aqui, pessoal. Ixe, ele quer deletar mais coisa aqui. Tá calma aí, pessoal. Eu vou matar isse aqui, ó. Alguma coisa não deu muito certo aqui. Vamos, deixa eu dar uma
+
+olhada no Eu quero olhar o meu MCP aqui. Não tô conseguindo. Ah, tô sem MCP configurado porque eu tô num outro repositório, tá? Eu ainda não inicializei nenhum MCP aqui. Então, eu quero inicializar o Context 7. Context 7
+
+é um MCP de documentação, então ele busca as documentações mais atualizadas, tá? Então vamos fazer a instalação aqui direto. É basicamente esse comando aqui que eu preciso. Eu preciso substituir your API key pela minha API key. Então deixa eu sair aqui do cloud code. Então
+
+basicamente preciso vir aqui e pegar a minha API ke vou fazer agora entrando aqui no link. Eu já tenho uma conta no context 7. Beleza, pessoal? Entrei aqui no dashboard contex7.com/dashboard.
+
+É de graça. Gerei uma API aqui pro projeto. Então vamos voltar aqui agora. Cloud- resume. Vamos voltar para aquela conversa justamente onde eu tava aqui no MCP, ó. E aí se eu mandar aqui agora
+
+MCP, agora sim tô conectado no Contex 7. Então eu vou falar isso aqui. Então antes de continuar a fazer o setup do Rono, use o MCP do Contact 7 para buscar os últimas a última documentação do RON, né? E como fazer o setup apropriadamente. Então, eh, já tá aqui.
+
+Eh, yes, don't ask me again. Pode rodar o contex quantas vezes quiser para buscar documentação mais avançada. E isso é importante, pessoal, porque o Rono é uma biblioteca relativamente nova, então ela não vai ter tanta coisa ali no corpo de treinamento como seria do Express, por exemplo, que tá lá sei lá quantos décadas aí, sei lá, de Express rolando. Então é importante, né, a gente sempre dá para e há a possibilidade de buscar a documentação mais avançada. Então, o Contact 7 te ajuda isso. É um MCP muito, muito útil
+
+de graça. Inclusive, eu falei dele e de vários outros MCPs no meu vídeo sobre quais MCPs eu utilizo para programar. O link vai tá aqui para você dar uma olhada depois, mas um deles é o Contact 7, já adianto. E aí, ó, ele já tá buscando aqui, ó, um monte de informação, inclusive sobre core, rate limit, que eram aquelas outras tarefas, né, para esse milestone que a gente tem aqui. Então, ó, finalmente ele falou I have all the context e e aí ele vai instalar de novo o worker type. Então,
+
+tava certo anteriormente, pelo visto. Uma coisa importante aqui, pessoal, vocês vejam que quando sempre que tem alguma alguma coisa a ser deletada, eu peço para ele aprovação. Eu nunca deixo ele deletar sem aprovação nenhuma. Ele instalou de volta ali o Cloud Fers, ele instalou. Agora ele tá colocando o types Node volta ali, que tá criando um TSBKup. Que que é isso? Meu Deus do céu.
+
+Não sei se alguma coisa do cloud code aqui. Agora a gente tá vendo começar a se engasgar, né, pessoal? Sorry, that was a mistake.
+
+Tá, né? Bom, começou a se perder um pouco aqui. Vamos torcer para que sejam os últimos erros. Beleza? Bom, ele vai validar o tipo dele e a gente vai ver se vai dar certo. Vamos lá. Tipos que ele
+
+tá criando aqui são tipos específicos a serem utilizados no back end, né? os binds ali do banco de dados, a biblioteca que vai se acessar ali no banco de dados também, no drizzle. Aí aqui, ó, ele já importando os erros lá do shared e aí vai ter um erro handler aqui genérico do back end. E aí ele tá mapeando os error codes ali que vem direto ali do shared para, né, para algum caso, ou melhor, tá, tá mapeando os erros, os HTTP codes para os erros codes, né? Então quando a gente for dar o erro ali no backend, a gente pode dar direto o http code normal, né? E aí vai,
+
+esse mapeamento vai acontecer automático. Corse, muito importante quando a gente tá trabalhando no monoripo, né? Então back end precisa p ali para o front end. Claro, quando a gente tiver em produção, eles vão estar no mesmo domínio. Estando no mesmo domínio, não temos programas de course, se a gente colocar aqui os semains, né?
+
+Aqui a gente vai permitir aqui pro local host ou ter algum courseing. OK? Que que a gente vai admitir? Beleza? Isso aqui só vai acontecer quando tiver o front end. Tá criando um middleware de logger,
+
+beleza? Então isso aqui vai, muito legal, já ter isso aqui de cara, então já vai logar, né, todas as requisições. Isso é muito interessante pra gente poder ver isso depois no servidor, o que que tá acontecendo. E tá aqui a rota de health. Basicamente o que que essa rota tá fazendo? Ela tenta ver que a gente
+
+consegue fazer uma conexão lá no banco de dados. Tá vendo? Se eu consigo acessar no banco de dados, tá tudo certo. Coloco um time stamp para garantir que tá sempre sendo atualizado e, né, retornando aqui se eu consegui me conectar ao banco de dados ou não. Então que vai decidir se tá healthy ou não é a possibilidade da gente entrar no banco de dados. Beleza? Maravilha. Aí aqui ele
+
+já tá criando o middleware para rate limiting. Isso talvez seja um pouco exagerado. Não precisava ser aqui. No momento que eu já vejo que o auto compact tá se aproximando. Dá um zoom aqui. Editor sumiu, mas tava 13% ali.
+
+Então ele vai criar aqui um rate to limit. É importante ter o rate limit pra gente evitar, né, ser tomar algum ddos, alguma coisa do tipo. A gente pode fazer isso direto lá no cloud flir. Ah, no momento que vai tá tudo em memória. Ah, cara, eu não quero, eu não quero rate limit. Eu vou falar para ele sair disso
+
+aqui. Falei ali pra gente não fazer, tá? E aqui ele tá criando o índice normal ali, né, do com os end points. Então aqui vai ser basicamente o end point do com o health, né? Vamos aceitar. Vai
+
+deletar aqui o rate limit. Eu acho pessoal isso um pouco desnecessário da gente fazer aqui. É claro que o rate limit aqui, é, não é tão relevante também. Para MVP, a gente não precisa de ter tanta complicação. Bom, ele está mudando um pouco aqui a forma do Wrangler, talvez por ter pegado a documentação mais avançada. Será que é isso? Então
+
+vamos permitir que ele já determine algumas variáveis. Eu acho que essas variáveis aqui, pessoal, depois a gente consegue vir aqui nesse secret store do Cloud Flare e salvar as variáveis diretamente aqui, ó. Como se fosse ali o sequ da AWS, né? Ó, ele já foi rodar o type check, já deu erro. É, será que ele só importou coisa errada? Tá ajeitando
+
+ali. É, tá vendo? São secrets que eu posso fazer e reutilizar, né? A cross cloud flare não tenho nada aqui agora no momento. Depois a gente vê também a questão lá do rate limit. No momento,
+
+não me preocupa isso. Beleza, pessoal? Bom, parece que tudo tá passando e agora a nossa, o nosso Milestone 3 foi feito. Ele vai marcar aqui. Eu vou pedir para ele antes de marcar para testar. Bom, na
+
+verdade, vamos fazer o seguinte, vamos deixar ele marcar aqui logo. Ele vai ticar tudo, vai falar qual é o próximo passo. Legal que ele falou defer native na 3.4. Ok. E aí ele vai querer pular
+
+pro próximo maior sono, que nós não vamos fazer nesse vídeo, mas eu quero testar o end point, né? Ele em nenhum momento testou, né? Então tá aqui tudo que ele criou. Então, antes da gente passar, eu vou falar justamente isso para ele. Então, teste o end point. A
+
+gente tá aqui na CLI, é ótimo da gente conseguir pedir pra IA fazer isso. Ela pode inicializar o servidor daqui mesmo e já tentar ver se tá funcionando. Então, ele vai rodar que o PNPM deve, vai dormir e vai ver se o local host tá funcionando e se o end point health tá rolando. Ele consegue fazer tudo em um comando só. Já vi que não, até achei que ia ia ser algum erro aqui, ó. Tem alguma
+
+algum run time incompatível. Tem um bem recente aqui de dia 2 de dezembro. Fallback tá funcionando. Beleza. Ó, parece que o nosso servidor tá rolando, ó. Tá aqui o servidor. Acho que tudo
+
+funcionou, pessoal. Vamos botar o barra health aqui, ó. Heal DB Connected. Maravilha, pessoal. Nosso back end está funcionando. Ele quer ler alguma coisa
+
+aqui. Cloud. Às vezes o cloud code dá umas bugadas sinistro aqui. Servidor tá rodando. Agora ele vai mandar os curls, né, para tentar, o que é basicamente tentar acessar o end point, né? Ó, tudo
+
+retornando certinho. O not found retornando no not found, né? Botar alguma coisa aqui qualquer, ó, o erro naquele formatinho que a gente tinha determinado na no episódio anterior. E que que ele mais que ele tá testando aqui, gente? Quer testar? Ah, ele quer
+
+testar um que cor provavelmente, né? Que se eu conseguir mandar, né? Porque eu tô rodando o back end nesse nessa porta 87. Se eu tiver com front end na porta 3000, ele vai funcionar. Tudo rodou, já matou até que o servidor ou não matou o servidor. O servidor tá aqui, ó. Ver um
+
+teste aqui. É, o Doc ainda não tem o Doc. Aí tá limitando direto aqui na rota da API. E é isso, pessoal. Maravilha.
+
+Tudo feito. Nosso primeiro end point, claro, end point de teste, mas mostrando que a gente consegue ver aqui, ó, no index. E a gente tem essa rota, nossa primeira rota aqui do Health, que basicamente só faz uma conexão com o banco de dados para mostrar que a gente tem acesso ao nosso banco. Então isso é justamente o que a gente já precisava. Quais são os middlewars que ele colocou?
+
+middle são aquelas funções que rodam justamente entre a a requisição, né, do cliente e o servidor, você passa pelo middle. Isso é muito bom para a gente fazer, por exemplo, loggers, né? Então a gente ele criou aqui, né, uma pasta middle, cada uma aqui com a sua função. Então o logger basicamente vai colocar um console log, o course middleware basicamente vai verificar se aquela requisição pode ser feita de um outro domínio. E o DB middleware basicamente é só uma forma de inicializar o banco de dados e deixar disponível através desse C.var.db.
+
+C é o contexto VAR, né? Variável. DB. Tanto é que se a gente vê aqui no health, ó, como que ele acessa aqui, ó. Aqui ele fez por C. env.db. Engraçado,
+
+né? Vamos fazer essa pergunta aqui. Então, basicamente eu perguntei por que que você acessa de uma forma usando o ponto env e você usou o middleware do DB. Não é para usar a mesma coisa. Aí, olha só, good catist.
+
+I should use c.varv.db, que é fazer a conexão diretamente via drizzle. É, tá, porque é como se tivesse fazendo uma, né, uma conexão raw ali, né, em vez de passar pelo drizzle. Aqui não. Aqui ele tá usando drizzle direto.
+
+Como ali era só um teste, eu não sei se era necessariamente um erro, tá? Mas aqui mostra que a gente consegue fazer o acesso direto ali pelo drzel também. Type check tá passando. É isso que eu queria saber. Isso se ele vai rodar o servidor. A gente vai entrar no auto
+
+compact. Tomara que dê tempo. Aí funcionou. Beleza. Conectado. Feito,
+
+pessoal. Maravilha. Então, ó, foi bom a gente ter feito essa verificação aqui na ideia, né, pra gente ver como que se conecta. Tá? Então aqui de fato ele se conectou via drizzle e aí obviamente ele até tirou aqui a parte de connected ou não, porque se eu tô fazendo conexão direta aqui, eu tô garantindo que eu só passo daqui, né? Por causa do a weight.
+
+Se esse aqui falhar eu caio no catch, né? Então se eu cair aqui é porque de fato está conectado. Beleza? Maravilha pessoal, era isso que eu queria. Vamos comitar. E nossa, mas foi na limite
+
+aqui, no 0% do contexto a gente conseguiu finalizar essa tarefa, pessoal. o nosso milestone número três. Então, gerando aqui a mensagem de comit próprio cursor, sem peso na consciência e feito. Qual que é o nosso próximo passo? Qual será o próximo episódio? O
+
+próximo episódio é fazer a configuração da autenticação com Bear Off. Então, vai ser um episódio muito bom, o nosso próximo episódio da série Criando um site do Z. Se você está gostando dessa série, pessoal, te peço, por favor, curta esse vídeo, se inscreva no canal, ajude a palavra do canal a ser difundida pelo YouTube, ajuda bastante a gente aqui. Compartilhe esse vídeo com seu amigo, sua amiga, principalmente aqueles que gostam de programar e são abertos a programar coiá. E se não gostam de programar coiá, aí mesmo que você tem que mandar o vídeo, porque eles vão ver como pode estar aumentando a produtividade de vocês que programam no seu dia a dia. Beleza, pessoal? Esse
+
+aqui é o quinto episódio, né, da série. Olha quanta coisa a gente já fez. A gente já levantou o back end, já fez o banco de dados, já organizamos todo o mono e já já a gente vai começar a criar os end points e partir para UI. Então, tá realmente andando bem rápido e tudo que eu tô fazendo nessa série, pessoal, vocês estão vendo, não estou trabalhando nela fora da câmera, então o tempo que tá gastando aí é o tempo que eu estou gastando aqui. Então, você consegue ter uma noção da dificuldade e do que pode ser feito hoje, modernamente para se criar apps na web. Agradeço pela
+
+audiência, não se esqueçam de se inscrever e curtir o vídeo e até a próxima. Yeah.

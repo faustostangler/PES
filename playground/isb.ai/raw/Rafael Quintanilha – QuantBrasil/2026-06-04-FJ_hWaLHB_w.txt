@@ -1,0 +1,285 @@
+---
+video_title: "O Claude Code agora cria um harness para cada tarefa (Dynamic Workflows)"
+video_id: FJ_hWaLHB_w
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FJ_hWaLHB_w
+video_date: 2026-06-04T22:00:38+00:00
+video_description: |
+  Teste seu código de graça com o TestSprite ➡️ https://www.testsprite.com/?via=rafael
+  
+  Conheça a formação em Engenharia de IA ➡️ https://programe.ai?utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  Dynamic Workflows é o novo recurso do Claude Code para tarefas longas, incertas e difíceis de resolver em uma conversa normal com a IA. Neste vídeo eu testo a novidade na prática e comparo com /goal, Agent Teams e os workflows que já uso para trabalhar com agentes.
+  
+  A ideia central é que o Claude Code passa a criar um harness sob demanda: ele monta agentes, divide etapas, verifica hipóteses e sintetiza resultados. Eu passo por exemplos de testes intermitentes, mineração de sessões para melhorar CLAUDE.md, brainstorm no formato de torneios, triagem, code review, pesquisa e uma simulação com vários agentes.
+  
+  A conclusão não é que você deve usar Dynamic Workflows para tudo. Ele consome mais contexto e tokens, mas pode ser muito forte quando a tarefa é longa, paralelizável, pouco determinística ou precisa de verificação adversária. Entender quando esse nível de orquestração realmente melhora o resultado é fundamental.
+  
+  Capítulos
+  
+  00:00 Intro
+  02:00 O que são os Dynamic Workflows Claude
+  06:26 Testando exemplos de prompts
+  18:36 Como os Dynamic Workflows funcionam
+  19:23 Por que usar Dynamic Workflows
+  25:04 Workflow Dinâmico vs Estático
+  26:49 Quando usar os Dynamic Workflows
+  32:05 Gasto de token
+  33:05 Casos de uso
+  35:02 Dicas para criar esses workflows
+  37:03 Dynamic Workflow de torneio
+  42:38 Conclusão
+  
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS na Hostgator com suporte 24/7 em português 🔻🔻
+  https://www.hostgator.com.br/52611-13-3-12.html
+  
+  🔻🔻 Teste seus apps com IA utilizando o CodeRabbit (14 dias grátis) 🔻🔻
+  https://coderabbit.link/rafael
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=pvRBwqJkdyI
+  https://www.youtube.com/watch?v=ZiWW0mzRc7c
+  https://www.youtube.com/watch?v=AUk8bhpXzpE
+  https://www.youtube.com/watch?v=kyvdBqLfJko
+  
+  🔻🔻 Link do artigo 🔻🔻
+  https://x.com/trq212/status/2061907337154367865
+  
+  #anthropic #claude #claudecode
+---
+Embora a atualização do Opus 4.8 tenha sido apenas modesta, uma novidade do Cloud Code chamou a atenção, a introdução dos Dynamic Workflows, uma nova forma de executar tarefas de longo prazo, com alto grau de incerteza e um maior nível de inteligência. Por isso, no vídeo de hoje, eu quero te contar tudo sobre os dynamic workflows. Vamos colocá-lo à prova, testá-lo na prática, dizer casos de uso, quando você deve utilizá-lo, quando você não deve utilizá-lo e responder a pergunta: será que essa é a melhor forma de executar tarefas de longo prazo? Pessoal, a própria Antropic reconheceu que a introdução do Opus 4.8 foi apenas um
+
+ganho modesto em relação ao 4.7, embora o 4.8 tenha sim nos principais benchmarks apresentado uma redução de custo, o que é sempre bem-vindo. Mas o que para mim chamou mais atenção foi a introdução desse novo modo de programar chamado Dynamic Workflow. E eu confesso a vocês que assim que saiu, eu fui testar, eu li aqui, né, o blog do Cloud Code, eu não consegui entender muito bem os casos de uso e como que o Dynamic Workflow se compararia, por exemplo, com as ferramentas de execução de tarefas de longo prazo, como o barra go, que nós temos no Codex, né, que eu já fiz inclusive vídeo, eu vou deixar aqui se você quiser dar uma olhada e agora temos no Cloud Code também. E como que esses
+
+dynamic workflow se comparariam também com o Agent Teens, que eu também já fiz vídeo aqui no canal. Então eu confesso que lendo eu não fiquei muito, não ficou muito claro na minha cabeça quando eu deveria usá-lo ou não. Porém, o TerC, que é um desenvolvedor lá no Cloud Code, acabou de publicar um artigo onde ele explica com muito mais detalhe e precisão quando você deveria utilizar o Dem Flows, quando que eles realmente brilham e quando que você não deveria utilizá-lo. Eu achei esse artigo bem interessante, decidi trazer aqui pro canal e eu acho que existem muitos casos de uso relevante e eu quero testar com você na prática. Beleza? Muito bem,
+
+vamos tentar entender aqui um pouco do Dynamic Workflow. Então, tá, no blog oficial do cloud, eles dizem que o Dynamic OFS estão agora no cloud code ajudando, né, os modelos do cloud a executar as tarefas mais desafiadoras do início ao fim. E aí eles dizem que é trabalho que você normalmente planejaria em trimestres, agora finalizado em dias. E obviamente quando você lê isso você pensa: "Tá, então só vale a pena utilizar Dynamic workflows para aquelas tarefas massivamente gigantes, né? O que obviamente não é muito o caso, né? Não é
+
+sempre que você vai ter esse tipo de tarefa. Então você lendo aqui, você acaba achando que é menos importante do que é, tá? Eles até dizem que o cloud é capaz de dinamicamente, né, escrever scriptes de orquestração que podem executar de dezenas a centenas de subagentes em paralelo. De novo, não parece algo muito factível. E aí os exemplos que eles vão dando fazer uma refatoração muito grande ou uma migração de uma codebase legado complexa, né? Uma
+
+migração que envolve centenas de arquivos, etc, etc., né? Então, parece algo muito distante do que seria o caso de uso típico de um programador. Eles até dão um exemplo aqui da reescrita do BN que saiu de Zig para Rust, né? E escreveu ali 750.000 linhas, né, de Rust
+
+em apenas uma semana, né? inclusive chamou bastante atenção, né? Muita gente até desistiu de usar o ban, eh, não tá confiando mais por causa dessa suposta reescrita vibe coded, né? Entre parênteses aqui, fica claro que o termo vibe coding é até um pouco datado, né? A gente tá vendo bibliotecas sérias com milhares, milhões de usuários, como é o caso do banco, passando por um processo onde não necessariamente você vai ter reviews manuais, né? Eu garanto a vocês
+
+que ninguém leu as 750.000 linhas em uma semana, tá? Então isso aqui faz parte também de uma era nova da programação, onde você confia cada vez mais no código, dado que você coloca os guard rails necessários. Beleza? A gente já vai falar um pouco mais dos guard rayos daqui pra frente, mas eu quero pular aqui pro artigo do Teric, que na minha visão é muito mais explicativo. E ele já
+
+começa com uma frase que você não vê ali no post original, que é ele dizendo que o cloud agora escreve o seu próprio harness on the fly, ou seja, na hora que ele tá executando aquela tarefa, né? É um harness específico para aquela tarefa que ele está executando no momento. Então é um harness engineering sobre demanda aqui, tá? Se você quer saber um pouco mais sobre Hend anime, eu já fiz um vídeo exclusivo sobre isso. Vou deixar o link para você dar uma olhada aqui depois. Ah, não esquece também que
+
+a gente tá com as listas abertas para você se inscrever nos cursos lá do programa aí, do qual um deles é o Hness Engineering e nós também temos aqui orquestração de agentes e dominando cloud cloud, que são módulos que são muito relevantes com que a gente tá falando aqui também. Beleza? O link para você entrar na lista de espera do programa aí vai tá na descrição e no comentário fixado. Mas voltando aqui pro artigo, ele continua dizendo que embora o harness padrão do cloud code seja construído, tenha sido projetado para programação, ele também é muito útil em diversos outros tipos de tarefas, porque como você vai imaginar, muitas tarefas parecem tarefas de programação, que tarefas de programação são sempre muito metódicas, né? Então você consegue aplicar esse framework em diversas outras tarefas. Eu já me antecipei há
+
+muito tempo aqui lá no Code Capital, por exemplo, que é a minha newslera, dizendo que o Cloud Code era a minha forma favorita de programar com agentes generalistas, tá? Escrevi aqui, ó, dia 2 de novembro de 2025, a era dos agentes generalistas, onde eu usava cada vez mais o Cloud Code para outras coisas que não era programar. E de fato eles estão reconhecendo isso aqui. Agora você consegue utilizar o Cloud Code para diversas outras tarefas, mas existe uma certa classe de tarefas e nós temos que construir harness customizados em cima do cloud code para atingir e um máximo de performance. E são tarefas do tipo de pesquisa, análise de segurança. Aí eles
+
+falando aqui do agent e também de code review. Ele resume então dizendo que workflows permitem que você dinamicamente crie esses harness que habilita o cloud a resolver esses problemas nativamente dentro do cloud code que você pode também salvar e compartilhar esses workflow. E aí no artigo ele pretende falar sobre a experiência do workflow e como a gente pode aprender com eles, tá? Então vamos ficar aqui até o final que tem bastante dica interessante aqui. E ele começa inclusive dando alguns exemplos de prompt, tá? Para situar no que a gente
+
+pode fazer antes de entrar na implementação técnica. E o que eu quero fazer com vocês é, dado os prontos que ele sugeria aqui, nós vamos rodar alguns, vamos deixar eles rodando até porque eles demoram um pouco e vamos voltar para continuar entendendo como o que que ele tá fazendo, tá? Então, olha lá, pessoal, essa parte aqui para mim é principal, talvez uma das principais aqui do artigo, tá? Onde ele vai te dando os exemplos, o que que você pode fazer com isso, tá? E vocês vão notar que existe uma particularidade nesses exemplos. Então, o primeiro exemplo que
+
+ele dá é o seguinte, ó. Esse teste falha talvez uma a cada 50 execuções, né? Crie um workflow para tentar reproduzir. Crie teorias e teste de forma adversária, né? Tente, coloque uma opinião contra outra em work trees e execute o barra go, ou seja, continue trabalhando sem parar até que alguma dessas teorias funcione, tá?
+
+Então aqui já tá um caso de uso bem claro de um programador, né? Você que trabalha num time de desenvolvimento, é bem comum que você vai ter um teste que a gente chama de flake, né? aquele teste que ele falha, né, de forma intermitente e isso é é extremamente irritante e também faz com que você acabe perdendo um pouco a confiança na sua test, né, na sua forma de executar teste. Por quê? Porque isso aí tá toda hora falhando, você fala: "Ah, tá, isso aqui é flake, isso aqui não é relevante". porque você
+
+para de se importar com um teste falhando. Então é muito relevante esse trabalho de você entender porque um teste está flake ou não, porque que ele falha de forma intermitente. E aproveitando que a gente tá falando de testes e de guard rails para deixar que a IA trabalhe de forma autônoma em tarefas de longo prazo, gostaria de mostrar para vocês hoje o nosso parceiro do vídeo, que é o Test Sprite, que permite que você inclusive crie testes diretamente do seu app live Live. Então você consegue mandar uma URL do página e o testite vai carregar aquela página e desenhar testes e executar testes para aquele seu próprio projeto. Beleza?
+
+Então é uma excelente forma de você se preocupar apenas com a programação e deixar o testite para fazer os testes. Se você quiser conhecer mais o testite, que também tem o MCP que você pode integrar direto ali nos workflows do cloud, o link vai est na descrição e no comentário fixado. Seguindo pro segundo exemplo, ele diz: "Utilizando um workflow, busque nas minhas últimas 50 sessões e minere, né? ache a as correções que eu que eu continuo fazendo no cloud e que poderia se transformar em algo para ser persistido no cloud MD. Olha, isso aqui é excelente, tá? Isso
+
+aqui é algo que a gente já pode testar diretamente, tá? Então vou até fazer o seguinte, eu vou pegar aqui, por exemplo, deixa eu entrar no app do Quant Brasil, que talvez seja o app que eu mais utilizo há mais tempo, né? Já vou inicializar aqui o cloud e eu vou fazer isso, tá, pessoal? Eu vou deixar eh vários workflows rodando à medida que a gente vai fazendo esse vídeo, até pra gente poder ver eles na prática. Tá?
+
+Então, olha só, existem algumas formas de você executar o workflow. Primeiro, você pode vir aqui e jogar o effort para Ultra Code. A gente vai fazer isso depois, mas como no próprio exemplo ele já dá a dica para usar um workflow, a gente não precisa fazer isso. A gente pode simplesmente copiar esse prompt e jogar aqui e ele já vai entender que vai ter que usar um workflow. Antes disso, vamos registrar o usage do cloud code e quanto que a gente vai gastar nos nossos experimentos, tá? Então, vocês estão
+
+vendo que tá zeradinho. Eh, a sessão acabou de começar, não tem nada, beleza? Então, já vamos mandar esse primeiro aqui. Vamos ver se ele vai ser inteligente o suficiente para disparar o workflow automaticamente, tá? Aí, olha que legal, ele entendeu que a primeira coisa que ele precisa fazer é achar as transcrições e entender que existe um cloud MD e aí sim ele vai criar um pipeline passando por um workflow.
+
+Guarda essa informação de que ele vai criar um pipeline que a gente vai voltar nela daqui a pouco. Ó, ele disse que só achou 13, né, sessões live. Eu não sei o que que ele quer dizer com live nesse sentido, né? Porque certamente eu já tive mais do que isso. Talvez seja alguns tenham ficado para trás. E aí ele
+
+até falou: "O Global View é mais barulhento, né? Então tem várias coisas aqui e vários outros projetos que eu tenho trabalhado além desse projeto aqui do Conte Brasil, tá? E aí ele até tá me perguntando quer que eu olho apenas o Conte Brasil ou em todos os projetos. Então vou falar cara todos os projetos, né? O importante aqui é tentar fazer com que o Cloud me entenda. Vamos falar para
+
+ele olhar em todos os projetos e vamos deixar ele aqui trabalhando e vamos seguir para os exemplos, tá? Então, terceiro exemplo que ele dá, use um workflow para entrar lá no canal Incidents no Slack nos últimos seis meses e achar uma causa comum, recorrente, que ninguém ainda entendeu e ninguém queria um ticket. E aqui agora a gente já começa a entrar em coisas que não são necessariamente programação. Ó, veja esse meu business plan, esse meu plano de negócios e execute um workflow onde diferentes agentes tentam quebrá-lo, né? tentam desse ponto de vista de um investidor, de um cliente e de um competidor. Olha, muito
+
+interessante aqui para você que é empreendedor, você que tem o seu próprio você colocar ali o cloud code para fazer esse trabalho de advogado, né? Ele olhar de várias vários prismas e chegar a alguma conclusão onde que pode ter algum ponto de falha, onde tem algum ponto cego que você não viu, tá? Mais um exemplo que não é programação. Tome aqui uma pasta com 80 currículos, execute o workflow para rankeá-los, né, pra vaga de back endifique o top 10, né? Faça uma entrevista utilizando o ask user question, né? Uma
+
+ferramenta nativa ali do cloud code para ter uma rúbrica. Então, novamente, mais uma tarefa. Você coloca ali, tem vários arquivos, você precisa fazer uma mineração naqueles arquivos ali, você passa um dynamic workflow para fazer isso também. Outro excelente exemplo aqui, eu preciso de um nome para essa CLI. Use um workflow para fazer um brainstorm de diversas opções. Execute
+
+um torneio. Guarda essa informação do torneio aqui também e selecione o top três. Aqui tá um ótimo exemplo que a gente pode fazer também. Por quê? Eu vou iniciar mais uma sessão aqui do Cloud Code e dessa vez eu vou entrar no meu harness específico do YouTube, onde eu tenho as informações do meu YouTube e tudo mais. E eu vou pedir para ele algo
+
+bem similar projeto que eu acabei de inicializar com o Vini, meu parceiro lá da AI Coders Academy, onde a gente começou um projeto do podcast que teve o primeiro episódio piloto agora segunda-feira e vai ser toda segunda-feira 7 horas da noite. A gente criou o nome podcast cham de limite semanal. Então eu quero fazer uma coisa similar. Eu quero passar para ele aqui a ideia do podcast e eu quero ver se ele consegue achar um nome ou até talvez se ele consegue validar esse nome. Então vou fazer o seguinte aqui. Eu vou colar
+
+esse promp, só que eu vou alterar um pouco. Então vou falar assim: "I need your name for a weekly podcast. I will be running with Vin from AI Coders Academy. Use a workflow to brainstorm a bunch of options and run to pick the top three." Beleza? Vamos deixar só isso
+
+aqui, tá? Só vou falar que é no YouTube, Wick podcast on YouTube. Então vamos ver o que que ele que que ele sugere. Vai que ele sugere um nome melhor, a gente já vai lá até e troca para ver que estamos só no episódio piloto. De novo, não precisei ligar o Ultra Code porque no próprio prompt já está a instrução de executar um workflow. Beleza? Vamos
+
+voltar aqui pro nosso workflow original, onde ele tá me perguntando, quer executar esse dynamic workflow? E aí, justamente, ó, fazer essa mineração das 50 sessões mais recentes para eh correções que eu costumo fazer de forma recorrente e criar ali um cloud MD, persistir elas no cloud MD. E aí ele dizendo, esse esse workflow dinâmico vai criar múltiplos subagentes para fazer a mineração e depois para fazer a sintetização, né? E ele dá o aviso aqui que pode gastar muito token. Eu vou falar y run it. Vamos deixar ele
+
+trabalhando e vamos voltar aqui pros exemplos. utilize um workflow para renomear nosso user model, né, que falando, né, de programação para account everywhere. Então isso aqui muito comum, né, às vezes você tem ali um código, né, ou uma instância que você criou ali no seu na sua base de código, que ela é reutilizada em vários lugares. Aí você quer fazer a renomeação, você quer trocar o nome, só que tem mudar tanto o lugar que você acaba às vezes deixando para lá e só fazer um command F, um contrtrl F, muitas vezes não ajuda. Então você pode usar a IA para fazer isso aqui também. E por fim, analise o
+
+rascunho do meu blog post e utilize um workflow para verificar cada alegação técnica frente a base de código. Eu não quero publicar nada errado. Então, vejam, pessoal, esses exemplos aqui são muito mais práticos do que reescrever o ban do zero ou até do que fazer uma migração que você faria num triestre, né? Então são coisas aqui que você poderia usar num dia a dia ou você poderia usar em diversos projetos. E o que que chama atenção nesses exemplos, pessoal? Chama atenção que a maior parte
+
+dessas tarefas, elas são pouco determinísticas, ou seja, ela tem um certo grau de inteligência, entre aspas, que você tem que colocar nela. Elas não são óbvias, certo? Por exemplo, por que que o meu teste tá falhando só 5% das vezes? É algo que não é claro. Tem alguma condição ali que você tem que investigar. Use o workflow para tentar
+
+fazer uma sintetização de de um uma conjunto de dados, né, que não é uniforme, né? Tente achar aqui uma uma causa raiz que ninguém ainda achou. Pegue esse meu eh plano de negócio e desconstrua ele de vários prismas. Pegue aqui esse monte de arquivos e ordene eles para mim. Então assim, veja, pegue um nome, talvez tirando esse exemplo aqui do renomear o user model, todos os outros são exemplos que eles não são determinísticos, né? Eles requerem um
+
+certo grau ali de percepção do que tá acontecendo, né? De investigação, de pesquisa. Isso para mim é muito interessante porque ele abre uma outra janela, um outro escopo de tarefa que a inteligência artificial agora pode te ajudar. Antes da gente continuar, vamos dar uma olhada em como estão os nossos dynamic workflows. E aí aqui você vê, ó, ele já começou a fazer algumas modificações aqui. E aí ele fala que o
+
+workflow tá até rodando em background, né, que ele reexecutou e que vai ser notificado quando finalizar. Então aqui não tem muito o que fazer. Ele até diz aqui embaixo, ó, tá rodando. E eu posso botar barra workflows para ver que os agentes rodando. Tá vendo? Olha aí, já
+
+foram 50 agentes que ele disparou para minerar, né, as minhas últimas sessões e agora ele tá sintetizando nesse agente, é o único que tá rodando, tá? E aí vamos voltar aqui pro nosso segundo workflow aqui de dar uma ideia de nome pro podcast. E olha só, ele dessa vez tá até bem rapidinho, né? Ó, ele conseguiu achar, ó, qual que é o nosso nicho, AI, aicing coding agents é dev tooling, etc. Ele entendeu aqui quem é o Vini? Ele tá
+
+no, tô no meu harness do YouTube, então ele tem acesso lá a minha, a minha IPI aqui do YouTube, consegue buscar dado direto lá no, lá no, no próprio YouTube. E aí ele executou esse torneio. Caramba, agora olha a quantidade de tokens que gastou, pessoal. Quase 1 milhão de tokens em 39 agentes, tá? Qual que foi a ideia? É nomes de podcast numa ótica
+
+criativa e aí executar um torneio julgado para pegar o top três, tá? Qual que foi a estrutura? Primeiro ele fez um brainstorming, seis agentes gerando nomes, depois um painel ali com os três juízes, quarta de final, final, né? Bem interessante isso aqui, né? E aí ele finalizou e aí chegou nesses três resultados aqui, ó. Top um aqui que ele
+
+considerou é o vibe e verify. [limpando a garganta] Two builders, one vibes, one verifies. Essa é a ideia dele aqui. Segundo, dois agentes, o nome do podcast, dois agentes, um loop, zero alunção. Dá até uma tagline aqui. Três vibe compiler,
+
+né? E aí ele duplicou aqui, eu não entendi muito porquê. E alguns outros resultados que ficaram para trás ali, ó. Papo agente com café com a gente, dois devs e um agente. É, não sei, né? E aí ele ele até depois
+
+aqui no final ele falou: "Ó, vai em inglês, né? escolhi em inglês ou escolhi em português. Então, claro que daria para dar alguns outros tipos de instrução aqui, por exemplo, ele não usar em inglês ou para pedir para ele fazer justamente isso, a disponibilidade, né? Vê se tem, por exemplo, um domínio, vê se tem o canal do YouTube disponível. Eu não falei nada disso, então ele parou por aqui, foi até relativamente rápido, tá? Francamente,
+
+eu não sei se eu gostei muito, não, acho que eu prefiro ficar com nós, mas tá aqui uma ideia do que você poderia fazer. Vamos voltar aqui agora pra parte mais técnica, tá? Como que os dynamic workflows funcionam, beleza? Então, basicamente, eles executam o arquivo JavaScript com algumas funções especiais que permitem que eles criem e coordenem suagentes. Então, tem aqui um agent, né, basicamente a função. E aí você tem duas
+
+opções, a função de paralelizar e a função de rodar o pipeline. Lembra que eu falei para vocês e segurarem aqui, a gente ia falar mais do pipeline? Por quê? Porque no pipeline você vai uma tarefa, termina ela entra na outra, termina ela entra na outra, termina ela entra na outra. Certo? paralelo não,
+
+elas executam diversas em paralelo e elas precisam que cada uma delas finalize para que você siga, tá? É a ideia de fun, né? Uma expressão em inglês. Funout é espalhada, né? Você espalha entre diversos agentes. Beleza?
+
+E por que utilizar dynamic workflow? Bom, o Tick diz aqui, quando você pede para o Cloud Code, né, o harness padrão do Cloud Code fazer uma tarefa, ele precisa planejar e executar dentro da mesma janela de contexto. para muitas tarefas de programação, isso é muito efetivo, mas em algumas circunstâncias isso pode deteriorar em tarefas particularmente, né, que executam por muito tempo ou massivamente paralelizáveis ou quando você tem essas tarefas eh adversárias, né, altamente estruturadas, tá? E aqui é interessante, pessoal, ó, essa parte aqui é bem importante nós que trabalhamos construindo harnesses entender que é o seguinte, quais são as armadilhas, quais que são os problemas de você executar essas tarefas de longo prazo, porque quanto mais o cloud, aí você pode substituir o cloud aqui pelo Codex, por qualquer outro e harness que trabalhe de longo prazo, quando eles trabalham numa tarefa complexa numa mesma janela de contexto, essas elas acabam ficando mais suscetíveis a alguns modos de falha, tá? E ele ele lista três modos de falha aqui. Primeiro, lazess, seria a preguiça
+
+ali do agente, né, que é quando o cloud para antes de finalizar algo que é particularmente complexo, né? Então, por exemplo, ali você pede para ele fazer 50 coisas, ele faz 20 e fala que acabou. Fal, não, meu filho, faltou fazer aquele resto ali. Isso vai progredindo à medida que a janela de contexto vai sendo compactada e compactada e compactada, certo? Uma solução para isso, né, é você utilizar um arquivo externo que ele sempre se referencie, por exemplo, um SPECs MD, né, fazer aquele e SDD, spec driven development ou algo parecido com isso, tá? Um outro problema que ele
+
+lista aqui é o self preferential bias, é o viés de preferência própria, vamos dizer assim, né? Que é a tendência do cloud ou da IA de preferir seus próprios resultados, especialmente quando perguntado para verificar ou julgar contra uma rúbrica. Então, ou seja, você pede para ele fazer alguma coisa, ele vai achar um resultado e aí você fala: "Ó, verifica contra isso aqui". Ele 90% das vezes vai falar: "Não, o meu tá bom". Entendeu? Então, quando você
+
+coloca, por exemplo, dentro de um dynamic workflow nessa estrutura adversarial, você limita esse self preferential bias, que também é muito importante, tá? E o terceiro e bem comum também é o gold drift, né? é quando você dispersa do objetivo, que é aquela perda gradual de fidelidade do objetivo original à medida que você vai passando por vários e vários turnos, especialmente depois da compactação. Claro, cada etapa de resumo é loss, né? é, você tem uma perda ali e aí os detalhes e de cases, né, e requisitos do tipo, não faça tal coisa, vai sendo perdido. Então esse go drift é real e os
+
+dynamic workflows ajudam você a limitá-lo, beleza? E aí ele diz, né, criar um workflow ajuda a combater e orquestrar diferentes clouds, nesse caso, com seus próprios, suas próprias janelas de contexto, né, em objetivos isolados e focados. Beleza? Olha, pessoal, aquele nosso primeiro workflow onde eu pedi para ele analisar as minhas sessões e propor mudanças para, né, o Cloud MD já retornou e ele fez a etapa de sintetizar. Que que ele me mandou aqui? Vamos dar uma olhada. Primeiro,
+
+cavem compressed mode off by before. Excelente isso aqui, tá? Que acontece? Eu coloquei o cave, fiz um vídeo aqui no canal, vou até deixar o link para você dar uma olhada depois. E eu gostei bastante dessa skill, só que ela tem hora e lugar, tá? A hora de você
+
+utilizar ela é basicamente quando você tá programando. E aí várias vezes eu começava uma conversa aqui com o Cloud e eu tava querendo discutir alguma coisa e ele me discutia naquele formato do cavem, ou seja, muito truncado. Eu tinha que ficar pedindo para ele desligar. Por quê? Porque o cavem tava ligado por padrão. E aí eu fiquei toda hora pedindo
+
+para ele desligar e ele identificou, ele identificou que eu tava toda hora falando cavem off. E olha que legal, ele até falou, achou isso em quatro sessões, autoconfiança. Eu tava de forma repetida pedindo para desligar e sugeriu colocasse aqui a regra: não use o cavem ou comunicação eh comprimida, né? A menos que eu diga de forma explícita. Então, excelente isso aqui. Segundo
+
+ponto que ele falou aqui, continue no escopo, né? Mudanças mínimas e focadas, sem refatorização ou fallbacks especulativos, né? E aí ele até cotou o que eu falei aqui, ó. Não, o que que você fez? Eu só falei para renomear tal coisa. Você foi lá e fez tal e tal
+
+coisa, né? E aí a sugestão que ele dá aqui é implementar exatamente a mudança e nada mais, né? Fazer edições focadas e mínimas, minimalísticas, né? Então aqui é para deixar ele um pouco mais constraint, né? Terceira coisa que ele sugere, respeitar as instruções já dadas, né? Aí botou aqui, eu gritei aqui
+
+com ele, told you already. Isso aqui é uma coisa assim meio óbvia, né? você vai colocar uma uma regra que já diz para você seguir o que você falou. Meio, não sei se isso faria muito muita diferença, mas ele achou isso aqui. E um quarto e bem interessante que ele achou aqui, ó, é copy, né? Texto real e natural em
+
+português, né? Não usar um place holder interno fabricado, né? E aí ele até sugere essa regra aqui. Nunca insira e texto genérico, working progress numa UI. Escreva a Iui, o texto da UI de uma forma natural, idiomática, eh, nunca traduções lerais palavra por palavra, acontece muito no inglês, né? E concerte
+
+a origem das palavras, não tem, não faz sentido você ficar propagando elas, né? Então, tá aqui as descobertas que o Cloud fez e ele até já me dá a sugestão aqui de aplicar, né, colocar cada rec. Eu não vou botar, a ideia não era essa, mas interessante que você pode fazer esse teste você mesmo. Muito bem, seguindo na leitura aqui, ele faz uma distinção do que são workflows estáticos e dinâmicos, tá? E aí ele diz, ó, se você já usou o cloud agent SDK, muito provavelmente você já fez ele de forma estática. E agora a gente tem a
+
+introdução dos dinâmicos. E aí ele dá até um gráfico aqui pra gente entender, ó. Por exemplo, se você fizer um prompto, devo migrar o meu checkout service para um novo provider, sei lá, você tá no stripe e você quer saber, você quer trocar pro outro, né? Um hardness estático, ele vai lá, faz, né, cinco buchas na web, pega o resultado, verifica, eh, resume e te dá o resultado, né, um research report mais genérico. O dynamic Workflow, por sua vez, ele vai ler o código, ele vai verificar cada feature que você já tem contra o possível novo provedor, né? e
+
+olhar a documentação daquele possível novo provedor. Em paralelo, ele vai verificar, por exemplo, qual é o seu volume transacional e quanto seria o preço para cada novo provedor. Vai passar esse resultado por um advogado que vai tentar fazer um caso ali contra fazer a migração, ou seja, você realmente precisa fazer a migração e vai te dar uma uma recomendação específica. Veja, você poderia pedir para ele fazer tudo isso aqui, tá, no seu prompt, só que o dynamic workflow já é vai te vai te salvar esse esse esforço, mas você vê que ele vai consumir muito mais informação no contexto, que naturalmente aumenta o seu consumo de token. Porém, mais vale você gastar mais token e ter o resultado que você quer do que você gastar menos token e ter um um research descartável, genérico, não serve para nada, você só jogou token no lixo, tá?
+
+Então eu entendo que existe toda a questão de preocupação com token, mas se de fato ele entrega isso aqui, essa recomendação específica contextualizada, eu acho que é uma vitória. Outra sessão muito importante aqui do artigo é onde ele diz de padrões úteis de quando utilizar os workflows dinâmicos. Beleza? Então você pode começar basicamente pedindo para ele criar um, como a gente já mostrou aqui, ou utilizar a Trigger Word Ultra Code, né? Eu vou limpar a sessão aqui. Eu posso jogar aqui o meu
+
+level de effort pra ultra code. E aí você vê que ele entrou aqui no ultra code, que automaticamente joga o thinking level pra X high e já liga o dynamic workflow orchestration. Beleza? Então essas são formas de fazer. Mas segue ele, construir um modelo mental de como os os dynamic workflows funcionam irá te ajudar a entender quando utilizá-los e quando você deveria sugerir ao cloud e utilizá-lo também via prompt. E aí alguns padrões aqui que ele
+
+que ele diz, tá? Então vou até abrir isso aqui em uma outra tela e a gente vai ver cada padrão aqui e comparar com o que ele tá dizendo aqui. Então são seis padrões que ele sugere. Primeiro é o classify and act, certo? Ou seja, classifique e aja. Então, use um agente
+
+classificador para decidir o tipo da tarefa e então roteie essa tarefa para diferentes agentes ou diferentes comportamentos baseados na tarefa ou use o classificador no final para determinar o output, tá? Então isso aqui seria interessante se você primeiro precisa saber quem deve realizar tal tarefa. Você quer, por exemplo, algo muito claro nisso aí seria um agente de triagem, né? Você faz uma triagem, chegou aqui um problema, eu quero fazer uma triagem. Qual é, identificar qual é esse tipo de tarefa, qual é esse tipo de problema e rotear, né, pra pessoa, pro agente mais adequado para resolvê-lo, tá? Então esse
+
+aqui é um exemplo bem padrão de workflow. O segundo que ele chama é o fanout and synthesize. Isso foi justamente o que a gente acabou de fazer ali no exemplo do cloud MD, né, de olhar ali as sessões. Então ele dispara vários agentes, cada um olha uma sessão. Então ele fez um fanout, espalhou eles e aí depois eles se unem e resumem. Em no
+
+nosso caso ali foram quatro sugestões, tá? Então aqui é para você quebrar uma tarefa entre muitas etapas pequenas, executar um agente para cada etapa, sintetizar os resultados, particularmente útil quando existe um grande número de pequenas tarefas, como é no caso de você analisar 50 conversas ou quando cada etapa se beneficia de ter um contexto limpo, né, de modo que eles não interfiram um com o outro, tá? Isso aqui é bem interessante também. O terceiro seria o adversarial verification, né? Esse aqui é mais simples. Basicamente para cada agente
+
+você executa outros agentes que vão tentar verificar aquele output contra um critério ou contra uma determinada rúbrica, tá? Então você quer verificar se aquilo que você fez de fato tá se adequando no seu critério de sucesso e aí cada agente vai disparar outros agentes que vão se autverificar. Obviamente isso aqui aumenta sua confiança, mas também gasta bastante token, tá? Generate and filter, ou seja, gere e filtre. Gere um número de ideias sobre um determinado tópico e então filtre baseado numa rúbrica ou por verificação, né, pelo adversério verification, elimine duplicatas e retorne apenas aqueles de maior qualidade, tá? Então isso aqui foi
+
+basicamente algo feito ali naquela ideia dos nomes. Ele gerou, filtrou, só que aí depois ele rodou um tournament, que é o que a gente vai ver aqui em sequência, tá? Que é ao invés de dividir o trabalho, tem agente competindo nele, né? Eh, execute n agentes, cada um com a tentativa de resolver a tarefa em diferentes abordagens. Os prompts ou os modelos irão julgar os resultados, né, de uma forma eh pairwise, né, vai fazer ali uma combinatória, colocar duplas ali para combinar e analisar. e vai ter um
+
+agente, um judging agent, até que você tenha um vencedor. Então, foi basicamente o que ele fez aqui no generating and filter, gerou várias ideias, filtrou e colocou aquelas ideias filtradas num torneio para que um judging agent verificasse qual era a melhor ideia, tá? Então a gente consegue ver aqui, ó, o generating and filter vai gerar várias ideias, vão filtrar baseado no critério, vai eliminar, vai gerar os melhores. E aí você poderia pensar que esses melhores aqui podem entrar, né, num torneio e vão ser julgados par a par até você chegar ali na na escolha final, tá? E claro, o top três, top oito, como ele mostrou ali, acaba, né, sendo visível também, porque eles fazem parte do torneio, tá? Uma coisa que eu fiquei
+
+curioso aqui, tá? A gente tá falando tanto de torneio, vamos aproveitar que a gente tá aqui na época da Copa do Mundo. A Copa do Mundo tá quase começando, vamos falar para ele se ele consegue gerar o torneio para, né, sugerir quem deve, quem deve ser o campeão da Copa do Mundo. Então, vou falar até para ele aqui, ó. We are getting closer to the FIFA World Cup. Please create a
+
+tournament based on the real brackets and tell me what is the nation that should win the tournament. E aí eu vou voltar para cá, vou falar tournament workflow, tá? Só porque eu eu realmente tô curioso para saber como que ele faria isso aqui. Você poderia pensar numa forma de fazer diversas simulações, tá? Vamos ver como que ele vai, como que ele vai se virar para fazer isso aqui, tá?
+
+Quando ele começa, vamos dar uma olhada ali no como tá o nosso uso aí. Olha, olha só, pessoal, como que gasta, né? Eu tô no plano max de $, eu rodei aqueles dois workflows que foram rápidos e gastou 35% da minha sessão, né, de 5 horas ali, tá? Então já foi mais de 1 terço, né, para um um período bem pequeno de trabalho. Então eu não recomendo que você fique usando isso direto, mas você tem uma janela ali limpa, você não tá planejando fazer nada, ou você tá combinando ali com Codex, como é o meu caso, se eu gosto de fazer, ou se você usa um modelo mais baratinho, um Deepsic, um minimx, um composer, você pode deixar o cloud code para fazer esse tipo de coisa e as outras, né, ter um outro modelo ali mais voltado pra tarefa de programação que realmente vai consumir o teu contexto.
+
+Aí olha que legal, de novo ele tá separando em duas fases, né? Primeiro ele tá buscando qual é o bracket real, né? Então, fazendo a busca na web e aí depois ele vai rodar esse multiagent tournament simulation. Então, eu tô curioso para saber o resultado aqui. Bom, vamos deixar ele trabalhar. Esse
+
+deve demorar um pouquinho e vamos continuar aqui no artigo do Ter, onde ele vai falando de casos de uso. Aqui sim, sempre muito importante a gente entender casos de uso. E o que que ele sugeriu aqui? Pense de forma criativa quando e como você deve pedir para o Cloudf dynamic workflows. E aí ele diz, né, que na experiência deles os workflows são muitas vezes mais úteis até para tarefas que não são técnicas. E
+
+aí ele sugere aqui, ó, migrações, né? Então, um agente para cada fix que você tem que fazer. Então, imagino, tem várias coisas, cada agente focado em uma coisa só. Research, pesquisa, né, um excelente caso de uso, verificação, né, aqui fica claro também. Sorte, né? Fazer
+
+ali um algoritmo que ordene regras, né? Verifique baseado numa regra root calls, né? Você colocar teorias que competem uma contra si para você tentar entender qual delas faz mais sentido. Fazer uma triagem, o exemplo que eu falei, né, mais cedo de classify inx taste para você explorar versus qual seria a sua rúbrica, né? Então você deixa o modelo ali, né? Ter um pouco mais de
+
+criatividade, fazer ali e avaliações, né? E vols, rodar notas, né? Dar dar notas também. frente uma rúbrica e roteamento, tá? Então sempre que você precisa fazer um roteamento também é interessante. E aí ele vai falando aqui,
+
+né, migrações, dá o exemplo do ban. Aí ele também fala o deep research, que é forma de pesquisa, Deep verification, que ele diz aqui, né, que é de novo você pedir para ele verificar aquilo que tá sendo dito. A parte de sorting para mim é bem interessante, tá? É, tem bastante a ver aqui também com com a parte de de torneio, né, de tournament, mas você pode pensar aqui que sempre que você quer fazer qualquer tipo de priorização, você pode rodar o dynamic workflow nisso também. Isso é bem bem legal, principalmente se você tem uma um calhamaço ali de informações e você precisa de de uma ajuda para isso, a IA pode te ajudar, tá? memória e você
+
+aderir, aliás, regras, a gente já falou da parte de de ele deteriorar à medida que o contexto vai aumentando, é investigação das causas principais, fazer uma triagem e em escala, explorar avaliações, etc., né? Tudo que a gente já viu aqui, algumas dicas para construir workflows dinâmicos, o prompting, né? Então, dizendo para você dar um prompting, eh, detalhado usando técnicas específicas, né? Ou seja, essas técnicas de eh tournament, como acabei de fazer aqui, fun, filter, etc. Então,
+
+usar esses termos aqui que o próprio Cloud Code vai reconhecer, tá? Muito interessante também combinar com o barra go e o barra loop, né? Então você pode colocar um workflow rodando num loop, né? Por exemplo, ah, eu quero que a cada x horas ele verifique, né, os p requests criados na minha organização e revise ou faça ali eh algum tipo de filtragem. Maravilha. Você consegue colocar ali
+
+também. E obviamente o barra gol, né? Porque você vai trabalhar numa tarefa ali de longo prazo, você coloca o workflow ali, justamente para que ele não deteriore o objetivo ao longo do tempo. Uma coisa bem interessante é que você consegue setar um budget específico pro uso de tokens, tá? Então você consegue limitar, por exemplo, use somente tantos tokens que vai setar ali o máximo. Embora eu veja que isso tira
+
+um pouco o propósito de você rodar o Dynamic workflow, né? que você tá usando Dynamic workflow justamente para que ele coloque todo aquele poder, né, para te dar a resposta. Se você limitar o token, você vai est limitando o resultado do dynamic flow. Aí talvez não vha nem a pena utilizar, tá? Eu penso um pouco dessa forma. Você pode salvar e
+
+compartilhar os dynamic workflows, beleza? É, isso aqui seria interessante de novo para tarefas recorrentes, como eu disse, né? Você revisar eh mudanças no request ou analisar todos os requests da sua organização, coisas que você se vê fazendo muitas e muitas vezes, você pode salvar, beleza? E aí ele salva dentro desse arquivo cloud.cloud/workflows, beleza? E aí você pode até distribuir
+
+via skill pro seu time, criar um bundle com plugin e coisas do tipo. Maravilha, pessoal. Então, muito bom esse artigo. Eu vou linkar ele para você dar uma lida com calma depois. E pra gente finalizar nosso vídeo, vamos ver quem que vai ser o campeão da Copa do Mundo de acordo com Dynamic Workflows do Cloud, utilizando o Tournament Metplod. Beleza? Olha, ele já
+
+conseguiu buscar aqui de fato todos os grupos e tudo mais. Ele entendeu a regra da Copa do Mundo, tá vendo? Entendeu ali, viu quem tá nas nas metades opostas aqui, por exemplo, e agora ele falou que vai criar a simulação do torneio. Já criou aqui o workflow, beleza? E basicamente ele já terminou para mim aqui. Como que ele disse que vai fazer?
+
+Na fase de grupos são 12 analistas, né? Agentes analistas, um para cada grupo, né? Cada um fazendo ali aquele six match ro hobbing, né? Então são cada um, cada time joga contra o outro, né? produzindo uma tabela real. Olha que legal. E até
+
+entendeu a regra aqui dos e melhores oito terceiro colocados vão ser colocados ali na fase de de knockout, né, na fase de mata-mata. E aí a fase de mata-mata é cada partida é decidida por um painel de agentes especialistas independentes. Olha que legal, com reasoning por diferentes lentes. Olha que legal. Um olhando tática, né? A
+
+forma do time, o time em si, né? dados contextos upset hunted seria que seria o caçador de zebra, né? Vamos botar assim, e um agente mais holístico, né? E o voto majoritário avança, beleza? E aí tá dizendo que toda como que fica, né? Na
+
+na fase de knockout, na fase de mata-mata. E aí no final o veredito vai ser um agente que vai sintetizar tudo para dizer quem deve ser o campeão. São 120 agentes em sete é rounds sequenciais, né, cara? Vai demorar um pouco isso aqui, mas a gente pode ver aqui pro workflow agora. Fiquei curioso, né? Ó, o Brasil tá no grupo C. A gente
+
+pode até entrar aqui para ver. Ele botou o Brasil em primeiro aqui, ó. Falou que o Brasil ganhou as três partidas, inclusive os resultados aqui, ó. Cadê? Você que veio do futuro e veio e viu esse vídeo, me fala aí se o Cláudio acertou ou se ele não acertou. Beleza? E
+
+aí, então, então ele já deu, todo mundo que passou aqui, já foi pra fase de, né? Não seria oitava de final, 16 de final aqui, inclusive com cada partida, ó. Vamos até ver aqui no Brasil, tem os três agentes aqui. Foi Brasil e Japão. Sempre dá Brasil e Japão, né? E aí aqui,
+
+ó, o agente tático deu a um Brasil. O agente de forma, né? Assim foi o resultado, né? Foi o alto campo de todos, né? Tá falando que o Brasil ganhou também e o de time, né? Também
+
+falou aqui que o Brasil passa, né? Então o Brasil passou aqui do Japão, Copa do Mundo ao vivo aqui, hein? E aí, nas oitavas de final, Brasil e Holanda, é isso, Noruega. Deu Brasil aqui também de novo. 2 a 1. Eu esse 2 a 1 que ele tá
+
+falando, não tô entendendo muito bem. Aí, olha que legal, pessoal. No prompt ele coloca assim, ó. Tá aqui as oitava de final, precisa ter um vencedor. Se for empatado depois de 90 minutos, jogue o tempo extra e depois os pênaltis, né?
+
+E aí ele coloca aqui a ótica, a lente que você tá analisando aqui, no caso, é a forma, né? Então, e pese os resultados baseado ali no momento, né? e julgue de acordo com a força do time recentemente, né, no na temporada 2025, 2026, etc. Decida quem avança, né? Resultado, o vencedor e um scoreline realístico. É,
+
+então realmente ele tá dando 2 a aqui também. E é, todo mundo tá dando 2 a aqui, mas ele falou aqui que o, ó, tomar cuidado com Rand e com o Odegard aqui. Então, fica de olho aqui, hein, beleza. Próxima jogo, quartas de final. E aí já entraram mais agentes aqui, hein? Que
+
+que a gente tem aqui? Inglaterra e Brasil. Primeiro deu Inglaterra, segundo deu Brasil, mas confiança baixa, né? Confiança baixa, terceiro Brasil, quarto Inglaterra e agora nos pênalos Inglaterra. Agora vamos decidir aqui se o Brasil passou ou não. Brasil passou no
+
+tempo extra, hein? Parabéns. Um coin flip que ele disse. É, ele até falou do Rodrigo que não tá jogando, né? Não foi pra Copa. Então, Brasil foi pra semi,
+
+pessoal. Brasil e Argentina na semi. Aí botou a Argentina, passou o primeiro nos pênaltis. De novo Argentina nos pênaltis. É, acho que aqui deu Argentina, hein, pessoal. Acho que deu F
+
+aqui pra gente. E aí o Brasil caindo na semifinal paraa Argentina nos pênaltis segundo o Cláudio e a final Espanha e Argentina. E não vou ver tudo no longo aí já fiquei com raiva aqui. Campeão só não pode ser argentino, né? Cadê quem ganhou? Perdi Espanha. Espanha ganhou.
+
+Então Espanha é the most logical pick, né? A Copa do Mundo aqui na opinião do tournament do Cloud Code, né? E aí, agora ele tá até finalizando para escrever aqui para mim o veredito final. Pessoal, muito interessante, né? Vale a pena enquanto simulação. Consigo ver
+
+isso aqui sendo utilizado em tese de investimento. Consigo ver isso aqui sendo utilizado em diversos outros contextos. Então, claro que aqui um pouco mais de é um pouco mais lúdico esse exemplo que eu dei aqui para vocês, mas espero que tenha servido de inspiração para que você entenda, né, como que você pode utilizar o Dynamic Workflows no seu dia a dia. Beleza? Ele tá até montando aqui. Bonfí colocou o
+
+Brasil, né, aqui caindo nas semifinais, nos pênaltis pra Argentina. A desgraça, né? E a Espanha ganhou da Fran. Pelo menos a Espanha ganhou da Argentina, menos mal. Então assim, gostei bastante, achei bem legal, né? Não foi um Monte
+
+Carlo, né? Ele até falou aqui, não foi um um uma análise de Monte Carlo, foi uma uma simulação julgada, vamos colocar assim, né? Embora tenha tido algumas falhas, a gente viu ali, por exemplo, que ele buscou jogadores que não tem e tudo mais, poderia ter feito isso também, pedido para ele, né? Olha, antes de você executar a simulação, pegue a convocação de cada time, etc. Não, claro, você pode melhorar isso aqui, tá?
+
+E só para curiosidade, pra gente finalizar o vídeo, quanto será que a gente gastou? Vocês lembram que tava em 35%, né? E aí, se a gente ver aqui agora quanto que gastou pra gente fazer essa simulação, mais 35% que gastou 1/3, né, do que seria o meu limite de 5 horas do cloud de $ para fazer essa simulação. Obviamente é uma simulação grande, muitos jogos, mas fica aqui o exemplo bem interessante, pessoal. Então, agora eu quero saber de você, o que que você achou dos dynamic workflows? Você acha
+
+que faz sentido pro seu caso de uso? Você consegue se enxergar utilizando ou você acha que é só uma forma de consumir token? me conta aqui nos comentários. Claro, já aproveito, se você gosta desse tipo de assunto, se você gosta de inteligência artificial, cloud code, Codex, programação agente, esse canal é para você. Então, por gentileza, se inscreva aqui no canal, curta esse vídeo. Se você tá no celular, aproveita
+
+e já hype aí que ajuda bastante com o algoritmo do YouTube. Agradeço a vocês pela audiência de sempre e até a próxima. M.

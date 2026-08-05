@@ -1,0 +1,210 @@
+---
+video_title: "Pare de escrever prompts. Crie loops para seus agentes de IA"
+video_id: SZTwdyUmmjs
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SZTwdyUmmjs
+video_date: 2026-06-28T17:00:05+00:00
+video_description: |
+  Conheça a CLI do TestSprite ➡️ https://github.com/TestSprite/testsprite-cli
+  
+  Inscreva-se na formação de Engenharia de IA ➡️ https://programe.ai?
+  utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  Loop Engineering virou um dos termos mais discutidos entre quem trabalha com agentes de IA, Codex, Claude Code, OpenClaw e automações. Neste vídeo eu explico o que esse conceito realmente significa, de onde ele veio e por que a ideia de “escrever loops” pode ser mais importante do que tentar escrever o prompt perfeito.
+  
+  Na prática, eu comparo loop engineering com prompt engineering, context engineering e harness engineering, usando exemplos reais de automações que rodam em cadência, analisam notificações, vasculham backlog, escolhem tarefas, usam skills, conectores, worktrees, subagentes e memória. A ideia não é só mandar uma tarefa para a IA, mas criar um sistema que ajude o agente a descobrir o que precisa ser feito e a validar o próprio trabalho.
+  
+  O ponto principal é que loops podem aumentar muito a produtividade com agentes de IA, mas não removem a responsabilidade do engenheiro. O loop pode encontrar trabalho, executar, revisar e reportar, mas você ainda precisa definir as regras, criar as linhas de defesa e manter o controle técnico do sistema.
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 Assine sua VPS na Hostgator 🔻🔻
+  https://www.hostgator.com.br/52611-13-3-12.html
+  
+  🔻🔻 $5 off na assinatura do OpenCode Go 🔻🔻
+  https://opencode.ai/go?ref=9Q68EPZMN6
+  
+  🔻🔻 Teste seus apps com IA utilizando o CodeRabbit (14 dias grátis) 🔻🔻
+  https://coderabbit.link/rafael
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=178JbQU_67Q
+  https://www.youtube.com/watch?v=AUk8bhpXzpE
+  https://www.youtube.com/watch?v=FJ_hWaLHB_w
+  https://www.youtube.com/watch?v=p5gCnsMJfPg
+  
+  🔻🔻 Artigo mencionado 🔻🔻
+  https://x.com/addyosmani/status/2064127981161959567
+  
+  #claudecode #harness #inteligenciaartificial
+---
+que o pessoal da OpenCla e da Antropic não se dão muito bem, você provavelmente já sabe. Agora, o que eles aparentemente concordam é que você não deveria escrever mais pront e sim loops. >> Por isso, no vídeo de hoje, eu quero desmistificar o conceito de loop engineering. Nós vamos entender o que que ele significa, como ele se compara com prompt e context engineering. Eu quero te dar exemplos práticos. Vou
+
+mostrar como eu tenho utilizado na vida real e responder a pergunta: será que loop Engineering é legítimo ou apenas hype? Pessoal, nosso pequeno mundinho da internet aqui da bolha da inteligência artificial foi a polvorosa quando Peter Steinberger, o criador do Open Claw, veio aqui no Twitter dizer: "Este é o seu lembrate mensal, que você não deveria estar mandando prompt, né, escrevendo promptes de programação mais você não deveria estar mais fazendo isso. Você deveria sim estar projetando os loops que vão enviar promps para os seus agentes." Beleza? Isso aqui viralizou. A gente tá vendo aqui, ó, 8.2
+
+2 milhões de visualizações, 14.000 bookms e uma discussão aqui, né, infinita, porque claro, né, parecia mais um termo hypado, mais algo despropositado. Como assim tem que ficar projetando o loop? O que que é isso, né? Então isso acabou propagando essa discussão. Só que o mais curioso foi que
+
+o Peter Steinberger falou isso aqui no dia 7 de junho e logo em seguida o Body Sterney, né, o criador do Cloud Code lá na Tropic falou algo muito parecido, tá? Isso aqui foi no dia 8 de junho, basicamente no mesmo dia, porque isso aqui é uma gravação, então foi em épocas parecidas. Então vamos dar uma olhada nesse vídeo aqui do Boris, beleza? November un. >> Então aqui ele falando que desinstalou a ideia porque ele não tava mais utilizando a ideia, basicamente fazendo tudo pelo cloud code, né?
+
+Ele dizendo que um ano atrás dessa entrevista, a forma como ele usava IA para programar é ele sentava na ideia um cursor, por exemplo, VS Code e a a Ia era nada mais nada menos do que um auto complete, né? Ela completava o que você estava querendo escrever, mas você ainda precisava sentar ali para escrever, né?
+
+E aí isso naturalmente evoluiu, onde ele até fez um post no início do ano que eu até gravei um vídeo, né, dicas do criador do cloud code para utilizar o cloud code da melhor forma, né? E ele fala de executar gente em paralelo, de trabalhar em diversas tarefas ao mesmo tempo, work trees e coisas do tipo. Muito disso, né, foi possível, dado a melhoria, o avanço dos modelos de inteligência artificial que aconteceram em novembro de 2025. Mas essa era a etapa, digamos assim, seguinte, né? A etapa seguinte de você programar na IDE era você ter ali múltiplos agentes em paralelo trabalhando. Logo em seguida
+
+veio o app do Coldex, que facilitou muito isso também. Aí veio o cloud desktop, a gente viu o antigravy ir para essa direção, cursor ir para essa direção. Então essa foi a a próxima fase, né? Foi a fase de ter apps, né? seja super app como Codex e o cloud Cowork, seja na CLI mesmo como o cloud code e o cloud agents e tudo mais, mas basicamente vários agentes trabalhando em múltiplas tarefas ao mesmo tempo e você controlando ele, né? Você enviando
+
+seus prontos para cada um deles, certo? >> Então ele falou que agora isso evoluiu para um nível acima de abstração. Ele não envia mais o prompt para o cloud, né? Pronto. Tá aqui, ó, de novo a palavra que a gente viu o Peter Steinberger falando. Eu tenho loops que estão
+
+rodando, né? >> E os próprios loops estão enviando o prompt para o cloud. Vê se não é exatamente a mesma coisa que o Peter Steinberger falou. Should be design looks that prompt your raid. Então ele falou exatamente a mesma coisa que o criador do Cloud Code, que é bem curioso, considerando que eles realmente não se batem, né? Loops.
+
+>> E aí ele veio com essa frase aqui que também pegou todo mundo desprevenido, né? Meu trabalho é escrever loops, né? Então veja daí, claro, surgiu esse termo de loop engineering, né? Que é você escrever os loops. Em vez de escrever os prompos, você escreve os loops. Pessoal,
+
+eu sei, esse termo provavelmente tem um pouco aqui de piada, né? De tong, como diriam os americanos. É um certo um certo tom irônico nesse termo looping de new. Obviamente não é só isso, mas é importante a gente entender aqui um pouco a evolução, porque a gente começou falando de prompt engineering, que era basicamente você eh masterizar, você dominar o prompt exato que você ia enviar para que a IA fizesse exatamente o que você queria, né? Isso era muito importante numa época onde as IA não eram muito inteligentes. A gente tinha
+
+que ser muito preciso nas instruções para que ela não alucinasse ou fosse fazer alguma coisa totalmente diferente, certo? Então essa foi a primeira etapa. Logo depois veio a parte do context engineering, que eu já fiz vídeo aqui no canal, inclusive como uma evolução natural do prompt engineering, onde você não tá tão preocupado em escrever o prompt preciso, mas você sim está preocupado em dar para o agente de A tudo aquilo que ele precisa para responder a sua pergunta, para resolver aquela tarefa. Então isso seria dar para ele MCPs, seria dar para ele a possibilidade de editar um arquivo, de editar seu file system, de fazer buscas no banco de dados, de fazer busca na web, etc, etc. Tá? Então isso seria a
+
+ideia do context engineering, a engenharia de contexto, o seu agente agora tem acesso às coisas que ele precisa para resolver as tarefas. Naturalmente isso teve um salto ainda maior quando nós falamos de harness engineering, que ficou o termo mais técnico de todos, tá? E eu já fiz um vídeo bem completo sobre Highland Newing. Vou deixar aqui se você quiser dar uma olhada. Eu também tenho no programa aí, que é minha formação em engenharia de a uma lista de espera se você quiser aprender tudo sobre harness new, tá? Então eu vou deixar o link na
+
+descrição também para você entrar aqui e ser notificado quando o curso ficar pronto, beleza? Mas qual que é a ideia do harness engine, pessoal? Bom, a gente já viu no vídeo que eu acabei de falar que o hardness é tudo que não é o modelo. Então, se você pegar o modelo e der para ele o hardness, o ambiente onde ele opera, você tem um agente de inteligência artificial, tá? Então aí você evolui para skills, pros sistemas de loop, pros sistemas de automação, etc, etc. Então, no fundo, no fundo, o
+
+harness é onde o modelo, o cérebro, o RLM está operando, tá? Só que o que aconteceu, pessoal, com a evolução do R and New, vamos falar assim, realmente você escrever o próprio prompt, né, não não faz mais tanto sentido. Por quê? Porque você consegue hoje com um harness bem feito, fazer com que aquele agente ele mesmo entenda o que ele precisa fazer. E é isso que eles querem dizer aqui com loop em genio, tá? O próprio
+
+agente identifica as tarefas, propõe soluções, executa, se valida, etc, etc. Por isso que é um loop. Porque o próprio agente vai trabalhando de forma automática ou dentro de um artit, buscando aquilo que ele precisa fazer e trabalhando naquilo. Eu já vou dar exemplos práticos para você, tá? Mas antes de eu falar como eu faço isso, vamos ver alguns exemplos que o próprio Peter Steinberger falou, beleza? Ele
+
+falou: "Tá aqui um loop sim, dizer para o Codex manter os seus repositórios". Então, prestem atenção que vocês vão entender aqui o que que distingue cada loop, beleza? Então acorde a cada 5 minutos e direcione esse trabalho para threads, né, para suagentes, como se fosse, tá? Isso permite que seja muito fácil de você paralelizar e direcionar o trabalho se necessário. E aí ele diz que usa uma skill de orquestração para combinar com skill de triagem, auto review e computer use para que o trabalho seja feito de forma autônoma.
+
+Beleza? Aí você tá vendo que ele colocou um print onde são diversos repositórios e o agente tá trabalhando no que tá surgindo, que tá pipocando naqueles repositórios, tá? Então ele não sabe o que vai acontecer. Al, ele não está dizendo, por exemplo, ah, vá aqui no repositório Terminator e faça XY Z. Não, ele tá falando o seguinte: a cada 5 minutos você dá uma limpa ali nos repositórios. Se aparecer alguma coisa
+
+de relevante, você trabalha neles e me envia um por request depois. Então, por isso que é loop engineering, beleza? Porque você não está dizendo estritamente o que fazer, mas você está falando pro agente como ele pode descobrir o que fazer, dar para ele as ferramentas para resolver o problema, dá para ele as ferramentas de validar o problema e aí sim você só sign, você só assina quando você confere que tá tudo OK, tá? Agora, pessoal, você pode estar se perguntando como que isso se diferencia do hardness engineering, se tem algo além aqui ou se é só uma nomenclatura nova, tá? E eu já vou falar a minha opinião particular e mostrar os exemplos práticos para vocês. Só que
+
+antes disso eu queria passar por esse artigo aqui, Loop Engineering do Ed Osmoney, tá? Esse cara trabalha do Google lá das antigas. Eu muito tempo que eu conheço esse cara lá da época do Google, 400.000 seguidores que ele já tem hoje, tá lá no Google Deep Mind, né? O time por trás do Gemma e tudo mais.
+
+Então é um cara muito respeitado, tá? E ele escreveu esse artigo, Loop Engineering. Então veja, a gente falou do Peter lá do Open Cloud, né, que é da Open AI, o Boris do Cloud Code e agora alguém do Google entrando aqui na conversa, tá? Então todo mundo tá meio que falando desse assunto. Eu acho relevante que a gente entenda o que que eles querem dizer, ainda que o termo te dê um pouco de coceira, né? Você acha
+
+que é só mais um termo rypado, marquetado. Não estou dizendo que necessariamente não é, mas tem algo relevante aqui. Beleza, pessoal? Beleza? Então ele começa dizendo que loopend new está substituindo você como a pessoa que envia um prompt pro agente. Isso a gente
+
+já viu. Você projeta o sistema que faz isso no lugar no seu lugar. E um loop aqui pode ser pensado como um objetivo recursivo, onde você define o propósito e aí a itera até a completude. Isso aqui também vai em direção dos das novas funcionalidades de trabalho de long horizon, né, de longo prazo. A gente tá vendo um esforço muito grande das empresas nesse sentido, tá? com Dexo
+
+Gol, próprio Cloud Code Gol, a gente viu o próprio Fable 5, antes de ser suspenso, né, dizer que uma dessas grandes capacidades era trabalhar em tarefas de longo prazo. Então, obviamente isso é um tema bem grande, bem premente no momento. E aí o autor desconstrói essa ideia do Loop Engineering em cinco blocos principais e que tanto o Cloud Code quanto o Codex tem, tá beleza? Então ele segue dizendo que ele acredita que esse pode ser o futuro de como a gente trabalha com Code agents, né? Basicamente o que o Boris falou ali, mas ainda tá cedo e ainda temos que ter um pouquinho de cuidado, principalmente quando a gente pensa em relação ao custo de token. Não vamos
+
+esquecer que tanto o Peter Steinberger quanto o Boris tem tokens infinitos. Eles trabalham na Open AI e no cloud Code. Eles podem gastar o quanto quiser. Não é o caso da maior parte dos mortais. Muito embora, né, com os modelos open source ficando melhores, você pode pensar que isso é algo factível, embora, claro, não sejam tão inteligentes, né?
+
+É, de fato, você precisa de alguma forma de garantir a qualidade, né, para que você não só esteja fazendo slop ali com a IA. Beleza? Muito bem. Então ele também faz uma recapitulação da evolução de como a gente trabalha com a IA, né, dizendo que por dois anos, né, quando a gente queria tirar algo de um agente de programação, a gente enviava um bom prompt e compartilhava o contexto correto, né? Você escreve uma coisa, você lê o que o que volta, você escreve a próxima coisa. O agente, então, ele é
+
+uma ferramenta e você tá ali utilizando, você tá segurando o agente, tá ali operando ele a cada turno, certo? Agora a ideia então é que você construa um sistema que vai ele mesmo achar, né, buscar o que trabalhar, vai entregar aquilo que ele que ele terminou, né, vai verificar o que ele fez, vai escrever o que foi feito e decidir o que fazer em sequência. E aí você vai deixando esse próprio sistema e chamando os agentes em vez de ser você que está fazendo isso, né? E aí o autor, oy diz que esse processo seria um primo do Harness engineering, né? No Harness Engineering é um único agente executando dentro de um um factory model que ele chama, né? O
+
+sistema que que constrói o software. E na opinião dele, o Loop Engineering tá um andar acima, certo, do Harness. Então o harness é operado, né, nesse loop, certo? Por isso é o Harness operando num num timer, numa automação, né? Ele vai se alimentando. Beleza? Eu já vou falar
+
+se eu concordo com isso, mas de qualquer forma essa aqui é a opinião do autor, beleza? Mas aí, o que que mudou? O que que está vindo agora, certo? E basicamente é porque um ano atrás, se você quisesse, você escrevia um loop, que seria um bondo de comando, né, de best comando ali, você tinha que ficar mantendo aquele loop, certo? E agora isso já tá dentro dos produtos, isso já vem por padrão lá dentro do Codex ou do Cloud Code. Beleza? E por isso é que
+
+esse essas duas personalidades estão falando disso, beleza? Então vamos dar uma olhada aqui nos nas nos cinco pedaços, né, nos building blocks como ele falou, que compõe o loop engine, um loop precisa de cinco coisas e um lugar para lembrar as coisas, né? Então vamos listar aqui primeiro quais são essas coisas, então mapear. Então a primeira coisa que você precisa para um loop são automações que disparam, né, numa cadência especificada e que vão executar a etapa de descoberta e de triagem de forma automática. Beleza? A segunda
+
+coisa que você precisa são de work trees, ou seja, espaços para que cada agente trabalhe de forma independente, sem que eles fiquem esbarrando um no outro, tá? Então eles vão criando workes, eles trabalham como se fosse numa espécie de sandbox, né? E podem trabalhar de forma independente, né, com múltiplos agentes ao mesmo tempo, tá? A terceira coisa que você precisa são skills para que você possa compartilhar com esses agentes todo o domínio de conhecimento daquele projeto que você tá trabalhando para que o agente não fique chutando o que precisa ser feito. A quarta coisa que você precisa são plugins e conectores para que você dê para o agente as ferramentas que ele já usam. E a quinta coisa seriam subagentes
+
+para que ele possa se autovalidar, né? Então um tem a ideia, outro verifica e aí você tem um feedback loop mais robusto, tá? Então, naturalmente, isso aqui você sabe, tem tudo no cloud Code, tem tudo no Coldex e a sexta coisa seria a memória, beleza? E essa memória pode ser um arquivo do Mark, pode ser um board no linha, pode ser qualquer coisa que viva fora de uma tradica para que você possa compartilhar o que tá sendo feito com as suas próximas etapas e coisas do tipo. Beleza? Então é a mesma
+
+técnica de quando você tem longs, né? A gente de longo prazo, como o modelo vai executar por bastante tempo, vai ter muitas compactações, você precisa persistir, o que é importante em algum lugar no disco e não no contexto. Beleza? Aí ele até lista aqui que tanto Codex quanto cloud Code tem as cinco coisas hoje em dia, né? Automação, o Codex tem a tab de automações. Aqui o
+
+Cloud Code tem Loop, go, Hooks, etc., né? Tem Chrome que você configura por ali também. Work trees. O Codex já tem as work trees nativas e você também pode criar workes diretamente aqui. Se você
+
+entrar em um projeto qualquer aqui, você tem aqui a opção de trabalhar localmente ou trabalhar numa work, mas o próprio agente pode saber já fazer isso por si só, tá? Lá no Cloud Code, mesma coisa. Skills, claro, todos eles têm, você já tá careca de saber. Plugins e conectores como MCPs, você já sabe e eles também tm. Inclusive, MCPs podem servir bastante na etapa de validação. Se você
+
+utilizar um MCP como o Test Sprite, que é um dos parceiros aqui do canal, você pode no meio do seu trabalho pedir para que o agente execute testes and to endent. Então você tem essa paz de espírito porque você deixa com que o agente identifique e faça a descoberta, a triagem, a execução. E na hora da validação ele pode, utilizando o MCP como do test sprite, escrever ali testes toend scripts in Python usando playw testes que você pode validar depois, que você pode modificar, depois gerar outros testes baseados num PRD ou até mesmo eh testes baseados na funcionalidade que você acabou de implementar. Tudo isso ajuda muito no feedback loop, ajuda muito para você dar pro agente o que ele precisa para trabalhar de forma autônoma. Beleza? Então o Test sprite é
+
+um MCP que permite que você faça isso. Se você quiser testar o test sprite de forma gratuita, eu vou deixar o link tanto na descrição quanto no comentário fixado. Voltando aqui, subagentes também são nativos tanto do Codex quanto do Cloud Code. Você pode defini-los aqui nocodex/agents ou do poncloud/agents, assim como no agents, assim como no dynamic workflows, que eu já fiz um review bem completo, vou deixar o link aqui para você dar uma olhada depois. de dynamic workflows solta diversos múltiplos centenas de agentes por vez, né? E claro, uma forma de você manter o
+
+estado. E aqui ele diz que tanto COD S quanto cloud, você vai poder fazer isso, né, com markdown e com linear, né, utilizando tanto MCP como um conector. A graça é que você consegue sim se conectar com um estado que está fora do que aqueles agentes estão trabalhando, beleza? Então vamos passar aqui por alguns dos pontos principais, né? Primeiro de tudo, sobre a automação, beleza? A automação vai ser o que vai de
+
+fato fazer o loop ser um loop, né? E não apenas uma execução feita uma única vez, beleza? E aí na automação você vai selecionar o projeto, o prompt que você vai executar quantas vezes e se ele vai executar no seu checkout local, né, do seu repositório ou se ele vai executar numa work. E aí ele dá alguns exemplos, né? O pera usa internamente para coisas que são chatas, né, tediosas, como fazer uma triagem diária, resumir falhas lá no seu C, é escrever briefings de commites, caçar bugs que foram adicionados na semana passada, etc. Tá? Então, se a
+
+automação pode chamar uma skill, você pode então criar uma skill que seja recorrente e que possa ser mantida por um time ou por você mesmo, que vai sendo executado a cada vez, né? para que você não precise ficar colocando ali uma instrução gigantesca. Isso aqui para mim, pessoal, é uma uma das principais coisas que você pode fazer, tá? Você ter uma automação que vai chamar uma skill que você já preparou com carinho, porque você sabe tudo que você quer que seja feito e aí ela vai trabalhando de forma autônoma. Isso talvez seja o que muda o jogo e é isso que eu quero mostrar já já para vocês. Beleza? Aí ele segue falando
+
+aqui dos exemplos específicos de cloud code e tudo mais. Eu vou passar essa parte, você já entendeu do que eu tô falando, né? Você entendeu quais são as primitivas aqui. Vou passar aqui a parte da work também. você já sabe qual que é a ideia da work, ele trabalhar num ambiente isolado, as skills para que você não precise ficar explicando toda vez a mesma coisa. Então isso aqui
+
+também é algo bem comum, os plugins, né, para que você possa se validar. Então falei aqui do MCP, do Test Prime, já falei aqui no passado do Code Rabbit, da CLI do Code Rabbit, que ajuda também a revisar o código. Vou deixar o link aqui para você dar uma olhada. Depois também tanto o Code Rabbit quanto o Test sprite vão poder rodar jobs lá num gitub, né, num pur request que é criado. Então você consegue ter ali toda uma validação feita direto ali nas actions do GitHub.
+
+Tudo isso vai ajudar o seu agente a trabalhar de forma autônoma, sem que você precise ficar dizendo para ele faz isso, faz aquilo. Não, você vai dizer para ele: "Olha, trabalhe até que o público class esteja tudo verdinho, todos os testes estejam passando, todos os jobs estejam passando, aí você pode seguir adiante." Então é importante que a gente entenda também que essas ferramentas fazem parte da validação do que o seu modelo vai fazer, tá bom? Então vamos dar uma olhada nesse exemplo que ele sugere aqui, tá? Então, imagine uma automação que executa toda manhã um determinado repositório e aí na hora que ela que ela executa, ela chama uma skill que ensina ela a ler quais foram as falhas que aconteceram no ambiente de CI, né, de ontem, as issos que foram abertas, né, os tickets que foram abertos, os commits recentes, escreve tudo isso num arquivo markdown ou no board do Linha. Pra cada coisa que for
+
+encontrada, que é valiosa de se trabalhar, então ele vai abrir uma tradagente
+
+para criar ali um rascunho do que seria o conserto, né, o que seria o fix. E aí, ao mesmo tempo, um segundo suagente vai revisar o que foi feito frente às skills do projeto e aos testes que já existem, tá? E aí conectores permitem que o próprio loop abra o por request e atualize o ticket. Por exemplo, se você se conecta com o GitHub, por exemplo, se você tem ali um MCP do Lineer, você pode permitir que o próprio Loop vá fazendo isso, tá? E aí o arquivo de estado é a espinha de todo o negócio, né? Ele se
+
+lembra do que foi testado, o que passou, o que ainda tá aberto e aí amanhã, no dia seguinte, o loop continua com o que foi resolvido, o que não foi, o que foi adicionado no dia de hoje e por aí vai. Beleza? E aí conclusões desse artigo. Bom, o que que o loop não faz para você ainda? Então o loop muda o trabalho, mas ele não te remove dele. E aí três
+
+problemas que você precisa resolver mesmo com os loops, tá? Primeiro, a verificação ainda é com você, tá? Então um loop que tá sendo executado sem que ninguém esteja olhando para ele, é um loop que tá fazendo eh cometendo erros e ninguém tá olhando para aqueles erros, tá? Então você precisa estar validando que aquilo foi feito. Claro, você coloca os MCPs, os conectores, os plugins, né, para testar o que foi feito, né, o Code Rabbit, o Test Fright, o Cloud Code, o Codex, para que eles te deem mais subsídio, para que você tenha mais confiança no que foi feito. São diversas
+
+linhas de defesa. Agora, o chefão final ainda é você. Você ainda precisa estar lá para validar. O segundo problema, pessoal, é que o seu entendimento ainda vai deteriorar se você permitir, tá? Então, tão rápido quanto um loop é capaz de colocar em produção o código que você não escreveu, maior vai ser o gap entre o que existe e o que você realmente tá entendendo. Você vai perdendo a
+
+referência com o seu código, com o seu projeto, certo? E aí o terceiro problema que ele diz é que você acaba ficando um pouco confortável demais, né? Achando que o loop tá resolvendo tudo sozinho. Então é muito tentador que você pare de ter uma opinião e simplesmente delegue pro seu loop, né? uma espécie de deificação do seu loop, como ele tudo que ele tenha feito seja sempre correto, ele não precise mais de você ali, né? E
+
+aí ele chama isso de cognitive surrender, né? Que seria rendição cognitiva. Quando você falar, cara, quer saber? Faz aí a membro, tô nem aí para isso. Beleza? E ele termina com essa
+
+mensagem de crie o loop, mas permaneça o engenheiro, que é muito na linha do que eu tenho dito há bastante tempo, de que o trabalho do engenheiro de software moderno é construir o hardness, é o hardness em. E aqui a gente entra se de fato o loop é algo diferente do harness ou não, tá pessoal? Da forma como eu entendo, Harness Engineer e Loop Engineer são a mesma coisa. O harness é tudo aquilo que o seu modelo vai precisar para executar a tarefa de forma agêntica. Se essa tarefa é disparada numa automação ou não, para mim pouco importa, tá? a questão do loop, ou seja,
+
+de você não precisar dar a instrução específica para o agente, mas dá para ele os meios de entender o que ele vai fazer e dar para eles a forma de validar, isso a gente já sabia, isso já vem da parte do harness de new. Agora é bem verdade com o advento dos loops, dos golos e das automações, tenha ficado mais fácil que nós realizemos essas tarefas sem necessariamente passar ali o prompt mais preciso, tá? E aí eu queria finalizar esse vídeo mostrando exemplos práticos de como eu tenho feito isso no meu dia a dia para que você adapte isso pro seu, entendendo as armadilhas de você confiar muito no loop, mas também como você pode se beneficiar dele. Então tá pessoal, tô aqui na minha tela do Coldex aí de cara vocês vão ver que eu tenho algumas conversas pinadas aqui, destacadas, tá? E dentro dessas conversas destacadas, cinco delas são automações. Elas executam de tempos em
+
+tempos. Eu tenho outras automações, na verdade, se a gente entrar aqui na aba de automações, vocês vão ver, mas eu tenho destacadas essas sim, que seriam basicamente os meus cinco loops principais, tá? Deixa eu falar com vocês alguns deles. Talvez o que mais tenha a ver com o que a gente discutiu até agora é esse backlog scout aqui. Qual que é a ideia dele aqui? A ideia desse backlog
+
+scout é o seguinte: eu quero todo dia, no final do dia, olhar no backlog da empresa onde eu trabalho. Então, para quem não sabe, eu sou diretor de engenharia numa empresa lá nos Estados Unidos. A minha função principal na empresa hoje não é programar, mas ainda assim eu creio que eu posso ajudar de algumas formas. Basicamente ela faz o seguinte, no final do dia, ela olha o backlog, né, da empresa, os tickets que foram criados ali, e ela vai varrer aquele backlog em busca de um ticket que seja simples para que ela possa trabalhar end. E aí eu dou para ela algumas regras do que pode fazer sentido, tá? Então, o objetivo é
+
+encontrar uma tarefa pequena, de baixo risco. Eu coloco aqui que não seja mobile, porque para você trabalhar no app mobile você precisa, né? Às vezes tem várias diferenças para Android, iOS, coisas que eu prefiro deixar pros meus engenheiros mobile. Então, para ele selecionar esses tickets, de modo que ele possa fazerem uma implementação com uma alta confiança depois que eu aprove, tá? E aí, basicamente, o objetivo aqui é preservar o meu tempo, fazendo todo esse trabalho de seleção e apresentando uma decisão clara. E não é para criar
+
+qualquer coisa, tá? Então é aceitável basicamente dizer, ó, não tem nenhum candidato que é seguro o suficiente aqui, tá? E olha como que o workflow casa com o que a gente viu no artigo. E eu já tinha feito isso aqui muito antes de ler o artigo, tá? Para vocês verem como como isso já é algo que tá sendo feito mais na pegada do Rening, tá?
+
+Então ele lê a skill. Opa, lembra? A gente viu um dos pilares é ter uma skill para que você não precise ficar dizendo toda hora a mesma coisa. Então ele lê skill com a referência, ele usa a API do Lí, beleza? Conectores, ele rejeita aquilo que eu já disse para rejeitar, lembra? Memória para que ele não precise
+
+ficar fazendo toda hora a mesma coisa, que ele poderia me sugerir um ticket num dia. Eu falo: "Não, esse não". E aí no dia seguinte ele roda de novo, me sugere o mesmo ticket. Aí precisa ter a memória. Inspecionar o ticket de novo.
+
+Conectores, áreas afetadas do repositório. Tem que ter acesso ao repositório. Testes resistentes. Opa, lembra? Subagente. Testes de Qway. Como
+
+que ele pode fazer para validar? Lembra? validação, self validation, possíveis branches e o estado do PR antes de me perguntar, né, se é para fazer ou não. E aí falei para ele, exclui coisas que estão relacionadas ao aplicativo mobile, autenticação, pagamentos, banco de dados, migrações, algoritmos de inteligência artificial, backend, kills, etc., coisas que sejam mais complexas de você delegar end to end para um agente, tá? E vocês viram que eu tirei aqui a
+
+parte back end porque eu trabalho mais na parte front end. Então a ideia, ó, vamos pegar algo que seja no front end, que você consiga se autovalidar e que não seja muito complexo, de modo que eu não precise carregar cognitivamente o meu time de engenheiros com esses pequenos tickets. Eu já vou fazendo essa varredura e deixo o Coldex fazer isso de forma autônoma para mim. Aí também fala para não selecionar tickets que estão com outras pessoas, né? prefira tickets que não estejam assinalados a ninguém, que sejam basicamente front end, que seja claramente autoconto, que possa ser validado localmente e quando aplicável dentro de um caminho real lá na UI, que ele possa, por exemplo, utilizar o computer use lá e validar. Beleza? E aí
+
+tem toda a parte de approval, como ele vai editar os arquivos, que ele vai trabalhar numa work, lembra? Work tre, como ele vai fazer o code review rodando, por exemplo, codex exact review e femal. como ele vai usar o computer us se ele precisar testar alguma coisa que dependa de ele estar logado e por aí vai, pessoal. E no final o output é o seguinte, que que ele vai me retornar? Se um candidato existir, ou seja, se ele analisar o meu backlog, identificar um ticket que se encaixe, ele me notifica para que eu possa aprovar ou não. Se não
+
+tiver nenhum candidato, ele vai falar: "Cara, nada para hoje". E segue a vida. E aí depois que eu aprovar uma implementação, ele vai criar um draft PR e vai me enviar para que eu possa validar. Então veja como isso aqui tá encaixado tudo aquilo que a gente conversou, todos aqueles elementos, todas as possíveis armadilhas que o Ed falou ali, tudo isso tá encampado nessa automação. E ela funciona super bem, pessoal. Tá aqui um exemplo que rodou no
+
+último dia. Ela achou um pequeno bug na UI, numa interface interna. O date picker deveria abrir na data selecionada. Baixíssimo risco, nada demais, tranquilo, auto contido, fácil de verificar. Excelente candidato. Em
+
+vez de pegar isso, pegar um engenheiro meu e parar ele para consertar esse bug ou que eu mesmo pare e conserte esse bug, eu tenho agora o Coldec fazendo isso de forma autônoma para mim. Aí ele resolve isso. Se eu aprovar, ele faz. Próximo dia ele vai fazer alguma outra coisa e assim sucessivamente. Tá claro que eu tô fazendo aqui numa cadência diária e o pessoal lá do Cloud Code e do Codex roda a cada 5 minutos porque eles tm um volume absurdo de problema. Você
+
+ajeita isso pra cadeia que fizer sentido pra sua empresa, pro seu time, enfim, pro repositório que você tá mantendo. Agora, falando de automações que rodam com mais frequência, eu também tenho uma chamado attention game, que faz algo muito parecido, tá? Ela vai olhar todas as minhas possíveis notificações e vai ver se tem algo que requer a minha atenção. Por quê? Porque eu tô no Slack, eu tô no Líia, eu tenho e-mail, tenho calendário, tenho por request. E aí
+
+existe uma gama de notificações que eu vou recebendo todo dia. Se eu ficar só focando notificação, eu vou ficar o dia todo limpando meu inbox. Então o que que eu fiz? Eu passei todos os conectores para o Coldex e falei: "A cada 30 minutos você vai olhando se tem alguma notificação que é relevante para mim. Se alguém me marcou lá no Líia, se alguém me marcou num request, se alguém me enviou uma DM no Slack, você vai lá, identifica se teve algo relevante, reporta para mim e aí eu vou ali parar o que eu tô fazendo e de fato responder aquilo que eu fui requisitado. Por que
+
+isso? Porque eu não preciso ficar parando toda hora, porque senão eu fico ali com aquela carga cognitiva muito grande, toda hora sendo trocando de contexto, toda hora trocando de contexto, eu não consigo focar no trabalho. Então eu fiz isso aqui, ele vai um loop vendo todas as possíveis coisas que eu posso fazer. Agora veja pessoal, tanto aqui no attention gate quanto no backlog scout, né, essas duas automações que eu mostrei para vocês, que que faz com que elas sejam loop? Elas não tm um prompt específico, elas não têm vá lá e faça X, ou seja, vá lá e aprove esse por request ou vai lá e crie um draft PR para esse ticket 1 2 3 4.
+
+Não, ele é instruído a buscar o que fazer, a ele mesmo identificar o que ele vai fazer, certo? Não sou eu que digo explicitamente o que ele vai fazer. Ele precisa identificar e eu dou para ele as ferramentas para que ele identifique quais são as ferramentas aqui no attention gate. Além da instrução da skill para que ele saiba o que ele precisa fazer, os conectores, qualquer ferramenta ali no backlog scout, além da skill para que ele saiba o que fazer, os conectores, acesso ao Líia, acesso ao gitub, acesso ao computer use e por aí vai. Beleza? Muito bem, pessoal. Então,
+
+pra gente recapitular, loop Engineering nada mais é do que o seu próprio harness operando de forma automatizada, instruído a ele mesmo identificar o que ele deve fazer. Para que ele identifique o que ele precisa fazer, ele precisa de uma skill que instrua o que ele precisa fazer, dos conectores, de work para ele trabalhar de forma isolada, subagentes para que ele possa trabalhar em múltiplas coisas, etc, etc. Então, loop Engineering nada mais é do que isso. Se o termo em si faz sentido, se é só mais um hype, o nome marquetado, aí eu deixo a conclusão para você. O que eu queria que você aprendesse desse vídeo é que sim, é escrever loops para que os seus agentes executem nele. É algo sério que
+
+quem trabalha com IA deveria, né, aprender. Beleza? Então, eu tenho feito bastante, tem sido extremamente útil para mim, permite que eu ganhe muito tempo, que eu reduza bastante a carga cognitiva de ter que ficar decidindo o que fazer. Eu deixo que a IA faça isso baseado nas regras. É um processo iterativo. Então, essas skills que eu
+
+mostrei, essas automações, elas foram refinadas múltiplas vezes até que eu tenha ficado feliz com o resultado. Beleza? Então não deixe o termo te afastar dessa área importante que é criar loops para os seus agentes de Se você gostou desse vídeo, eu peço por gentileza que você se inscreva no canal, que você curta e compartilhe esse vídeo com seu amigo, sua amiga que gosta de inteligência artificial, que gosta de programação agêntica, que quer aprender a ser um engenheiro de ar. Eu tenho certeza que esse vídeo vai agregar bastante. Lembrando, se você tem interesse numa formação em engenharia de a, eu recomendo que você entre na lista de espera aqui do programa aí, beleza?
+
+Dá uma olhada nos cursos que tem aqui, vê aqueles que mais se adequam pro que você gosta. Se você tá até aqui, né, nesse vídeo, muito provavelmente você vai ter interesse no curso de Harness de Gener. Então, deixa o seu nome lá, você vai ser notificado quando o curso estiver pronto. E você também me ajuda a decidir quais cursos eu faço. Primeiro, tem muitos cursos, tem muito assunto para falar, muita coisa que as pessoas pedem e você se inscrevendo na lista de espera é uma forma de me incentivar a começar a gravar justamente aqueles que tem mais interesse. Beleza? Agradeço a
+
+você novamente por estar comigo até agora. Agradeço o pessoal do Test Part por ser um parceiro do canal e até a próxima.

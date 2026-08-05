@@ -1,0 +1,197 @@
+---
+video_title: "Gemma 4 12B: a IA local multimodal que roda no seu computador"
+video_id: k2g6bB2AKLQ
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=k2g6bB2AKLQ
+video_date: 2026-06-07T21:00:38+00:00
+video_description: |
+  Inscreva-se na formação em Engenharia de IA ➡️ https://programe.ai?utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  O Google lançou o Gemma 4 12B, um modelo local multimodal que consegue processar texto, áudio e vídeo rodando no seu próprio computador. Neste vídeo eu testo o modelo na prática para entender se ele é só mais um lançamento open source ou se realmente abre novos casos de uso para IA local.
+  
+  Eu mostro como rodar o Gemma 4 12B com llama.cpp, o problema temporário com a versão do Homebrew, as quantizações, a velocidade em tokens por segundo, a transcrição de áudio, classificação de notícias em JSON e o uso dentro do Pi Agent. Também comparo a proposta dele com modelos como Qwen 3.6, especialmente quando o assunto é programação.
+  
+  A conclusão é que o Gemma 4 12B não é o melhor modelo local para programar. Mas ele pode ser muito interessante para tarefas de assistente, classificação, resumo, limpeza de texto, tradução, processamento de áudio e pequenos serviços locais, com privacidade e sem depender de limite ou uptime dos provedores.
+  
+  Capítulos
+  
+  00:00 Intro
+  00:38 Artigo de lançamento
+  04:03 Gemma4-12B para programação
+  05:38 Repercussão na comunidade
+  07:14 Como rodar LLMs localmente
+  08:45 Configurando o Gemma4 com Llama.cpp
+  12:13 Testando o Gemma4-12B na prática
+  18:17 Testando o Gemma4-12B no Pi Agent
+  22:02 Considerações finais
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS com suporte 24/7 em português é na Hostgator 🔻🔻
+  https://www.hostgator.com.br/52611-13-3-12.html
+  
+  🔻🔻 Teste seus apps com IA utilizando o CodeRabbit (14 dias grátis) 🔻🔻
+  https://coderabbit.link/rafael
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=YMc0f5i70Hc
+  https://www.youtube.com/watch?v=u0AmA7DNog8
+  
+  🔻🔻 Inscreva-se no canal de cortes e não perca mais nenhum destaque 🔻🔻
+  https://www.youtube.com/@cortesrafaelquintanilha
+  
+  🔻🔻 Artigo de lançamento 🔻🔻
+  https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemma-4-12b/
+  
+  #gemma4 #ollama #qwen3
+---
+O Google acabou de anunciar o GEMA 412B, um LLM local multimodal que consegue processar áudio e vídeo e o melhor de tudo, roda do seu computador. Por isso, no vídeo de hoje nós vamos colocá-lo à prova, discutir quais são suas vantagens, quais são suas desvantagens, será que a gente consegue utilizá-lo para programar? Como ele se compara com Coen 3.6, por exemplo. Vamos testá-lo em casos reais e responder a pergunta. Será
+
+que esse é o modelo local mais eficiente do momento? Pessoal, no dia 3 de junho, o Google veio a público para anunciar aqui o Gema 412B, um modelo multimodal e projetado para trazer alta performance diretamente no seu computador. É, inclusive, por exemplo, com uma eficiência, né, mobile first, né, voltada para dispositivos mobile e com advanced reasoning. Que que isso aqui é legal, pessoal? Porque ele sendo um modelo de 12 bilhões de parâmetros, ele consegue rodar numa máquina que não precisa ser necessariamente tão potente, tá? O Google recomenda que você tenha 16
+
+GB de eh V RAM ou de memória unificada e a gente vai conseguir ver se que dependendo de algumas ponizações, você consegue rodar até em dispositivos ainda mais simples. Beleza? E onde que ele se encaixa? Bom, o próprio Google diz que o 12B ele preenche o vazio, a lacuna entre o modelo E4B, né? É um modelo muito eficiente, muito pequeno, que consegue rodar, por exemplo, num iPhone de alta performance e o modelo de 26 bilhões de parâmetros de mixture of experts, né, que aí já seria um modelo bem maior para você executar tarefas mais complexas.
+
+Então o 12B tá entre esses dois modelos e, portanto, é importante que a gente entenda que ele foi projetado para resolver uma classe específica de problemas, onde você precisa de uma inteligência maior do que o 4B vai te oferecer, mas você também não quer um modelo tão grande quando é o caso do 26 bilhões de parâmetros, tá? E aí, quais que são os destaques aqui segundo o pessoal do Google? Bom, primeiro, uma arquitetura unificada nova, né, que não utiliza em encoders multimodais, mas que tanto a vision, né, a visão do modelo, quanto os inputs de áudio vão diretamente lá para dentro do LLM. A gente vai testar isso hoje. O processamento de áudio no modelo que você consegue rodar localmente é bem interessante, tá? Ele já vem com
+
+advanced reasoning, né? Então, segundo os próprios testes do Google, a performance é parecida com modelo de 26 bilhões de parâmetros, o que é incrível. e também permite que você utilize ele para workflows agênticos com múltiplas etapas, tá? O principal talvez aqui seja o fato de que você consegue rodá-lo num laptop, né, num notebook mais simples, ó, com apenas 16 GB de ver RAM ou memória unificada. Ele é aberto, né?
+
+Então é o modelo open source e ele já vem com arquitetura MTP, né, que a gente viu no último vídeo que eu falei do P agent, que tava para ser colocado lá no lama.cpp CPP já vem aqui no Gema 4, então ele consegue teoricamente reduzir a latência sem perder qualidade, tá? Se você quiser ver o vídeo onde eu faço todo o overview tanto do lama.cpp quanto do P Agent, eu vou deixar o card para você dar uma olhada depois. Então, antes da gente partir para testá-lo na prática, pessoal, é interessante a gente entender que ele é um modelo de 12 bilhões de parâmetros que lida nativamente com visão e áudio, tá? Para
+
+fazer isso, o Google teve que fazer todo um trabalho de engenharia para simplificar todo o processamento. Isso é bem relevante porque caracteriza o GEMA 12B como um modelo que você consegue utilizá-lo para diversos tipos de tarefas gênticas, tá? Não necessariamente de programação. Inclusive, se você vier aqui pra discussão que teve, né, lá no Hacker News, que é talvez o principal portal da nossa área aqui de tecnologia, você vai ver que muitas pessoas compartilham desse sentimento, tá? Provavelmente ele não foi um modelo treinado pra programação, ainda mais porque ele tem tanto esse input de áudio e visão em apenas 12 bilhões de parâmetros, certo?
+
+Então não espere que o GEMA 12B vá ter uma boa performance em programação, tá? E a gente pode até comparar ele com outros modelos, por exemplo, 3.6 35B A3B, que vai ser bem mais rápido, porém a comparação não é tão justa. Primeiro porque o Quen 3.6 foi focado em programação, né? Foi treinado para ser o
+
+modelo de programação. E o segundo ponto é que o Quentin 3.6 é um modelo de 35 bilhões de parâmetros. Ainda que só tenham três ativos, você ainda precisa carregar aqueles 35 bilhões de parâmetros na memória, o que faz com que rodar no computador de 16 GB seja inviável. Então você vai precisar ali de pelo menos 24 a 32 GB de RAM para rodar o Qen. Então a comparação é um pouco
+
+injusta, mas eu queria que ficasse claro aqui para setar as expectativas de que o GEMA 12B muito provavelmente não vai ser o melhor para programar, beleza? O que não significa que ele não seja útil. E aí até nessa thread aqui, né, do hacker news, né, alguém perguntou quais seriam esses casos de uso para os modelos menores, tá? E aí, pessoal, eu acho que é sempre legal a gente ver aqui o que as pessoas estão fazendo pra gente trazer isso pra nossa realidade, que quando a gente fala de IA, principalmente com a programação, a gente tá acostumado aqui com Ocus, com chat GPT, são modelos muito avançados também caros, ficamos na mão da disponibilidade desses provedores. Claro que quando a gente coloca esses modelos mais simples, a gente não tá comparando com os modelos flagship do estado da arte. A gente tá,
+
+a gente tá comparando com pequenos workflows que a gente consiga utilizar esses modelos de graça localmente, tá bom? essa pessoa que disse, ó, transcrever documentos escaneados em texto formatado, né? Ou seja, você fazer aqui toda essa análise de imagem e gerar um texto, né? Colocar ali uma legenda ou descrever imagens e classificar pra audiência, né? Então, por exemplo, isso aqui é um trabalho de classificação, de moderação excelente para você fazer com esses modelos menores, tá? Excelente. Eu
+
+quero até fazer um teste com vocês de classificação já. Então, fazer aqui algum tipo de matching, né? Então vocês estão vendo que é processamento de dados. Então, realizar tarefas de processamento de dados, de análise de imagem, análise de sentimento, classificação, é algo bem interessante com esse tipo de modelo. E como ele desbloqueou agora a análise de áudio, você consegue fazer coisas como esse cara fez aqui também, ó, criar um app de ditar, né, por exemplo, para substituir um whisper flow, um super whisper da vida, utilizando um modelo local que ainda consegue corrigir, né, a gramática, né, o seu texto. Se você
+
+utilizar, por exemplo, o modelo Whisper normal, que são open source para para fazer transcrição de áudio, que é o inclusive o que eu utilizo para gerar aqui as transcrições dos vídeos, você vai ver que ele consegue transcrever, mas ele vai cometer vários erros de gramática. Ele não vai, ele não é inteligente nesse sentido. Ele vai tentar só fazer a transcrição do texto. Só que se você pega e faz um pipeline, onde você transcreve esse texto e aí passa ele numa iá local que pode processar esse texto, você sai com um texto já muito mais formatado e melhor escrito. Então também é um grande caso de uso para se utilizar. Mas calma que a
+
+gente vai testar ele lá no Harness do P agent já. Beleza? Antes disso, a última coisa eu queria mostrar para vocês aqui oloh né, que disponibilizam lá no Huging Face os modelos para você baixar e rodar localmente. Eles publicaram aqui no Twitter que o novo modelo Dema 12B pode rodar localmente em máquinas de somente 8 GB de RAM, tá? Eles têm inclusive quantização de 2 bit, tá? Que ocupam
+
+apenas 4.66 GB de disco e você conseguiria rodar com até 6 GB de RAM, né? Então, bem incrível o que o pessoal do Onl fez. Então isso aqui é para vocês saberem que ele realmente é passível de rodar em máquinas bem mais simples. Beleza? Agora olha como é louco, né,
+
+pessoal? aqueles primeiros exemplos que foram dados ali, né, de transcrever textos, fazer toda uma classificação. A pessoa que escreveu disse que está rodando numa máquina Linux, né, conectada via Tailse. Então você pode basicamente vir aqui hoje numa VPS, né, eu recomendaria você utilizar a parceira aqui do canal que é a HostGator. E olha isso, né, com uma máquina tão simples aqui como esse NVME8 que tem 8 GB de RAM, você conseguiria rodar a configuração ali da quantização de onl, né? Aí se você aumentasse aqui o
+
+desempenho, você conseguiria aqui, ó, nessa máquina aqui no MVM 16 de 16 GB de RAM, você conseguiria colocar, né, o modelo total ali, né? Então, muito impressionante. Você consegue ali um valor bem acessível colocar o modelo que você vai utilizar de forma infinita localmente, tá? E se você tiver interesse de fazer esse teste numa VPS local, minha recomendação é HostGator, que é passei do canal. O link vai est aqui na descrição. Muito bem, pessoal.
+
+Vamos rodá-lo agora, vamos colocá-lo à prova, beleza? Tô aqui na página do Huging Face com o modelo aqui oficial do Gema, né? E eles já tão dão até aqui a sugestão de como você pode executar ele, né? Direto ali no lhama. Eu vou utilizar o lhama CPP, você pode utilizar o Olhama, você pode utilizar o LM Studio, todos vão funcionar igual, tá? Eu, a
+
+minha preferência hoje tem sido utilizar o lama. CPP, porque também eu estou no Mac, né? Eu rodo tudo isso no Mac Stú. Se você quiser saber todo o meu setup, eu já fiz um vídeo sobre isso, eu vou colocar aqui onde eu mostro como você pode executar as IAIS locais. E uma coisa que eu recomendo a todos aqui fazerem, que sempre vai vir gente no comentário: "Ah, ele roda numa RTX 4090". "Ah, ele roda não sei que aonde
+
+não se roda nessa placa de vídeo, não sei o que, não sei o que lá". Pessoal, façam a conta de vocês aqui no Huging Face e coloquem a configuração da máquina de vocês aqui, tá? Porque ao fazer isso, ele automaticamente já te fala aqui do lado a compatibilidade com o seu hardware, tá? Então, tá aqui, ó, minha máquina, um Apple M4 Max de 64 GB. E aí ele fala, ó, então todas as quantizações vão rodar de boa, né? O Q4,
+
+o Q8 e o BF16, tá? Já adianto que eu fiz os testes aqui nessas três quantos Q4 para mim foi o melhor de todos. Eu não notei uma perda muito grande de qualidade, mas a velocidade foi muito superior, tá? saí do de 4 bits para o de 8 bits me fez perder ali mais ou menos 1/3 da velocidade. A gente já vai ver quantos tokens por segundo a gente consegue aqui. Beleza? Então esse é o
+
+comando. Deixa eu entrar aqui no meu computador. Eu faço isso, né, de forma remota, né, via task, inclusive, como o cara lá no comentário falou. E aí, basicamente, vou executar esse comando aqui. Eu já baixei ele localmente. E aí
+
+eu tenho um erro, pessoal. Por que que eu tive esse erro aqui, tá? Se vocês forem ver, vai aparecer aqui, ó, justamente o erro MTMD, né, que é multimodel fail to get memory uses of mm pro. O que acontece? Eu estou aqui numa versão do lama server, que é essa 8430, tá? Que no momento que eu gravo esse
+
+vídeo é a última versão. Então eu tô na última versão do lama server, só que essa versão ainda não tem o que é necessário para você executar o GEMA 412B multimodal. Então, se você tiver rodando via lhama aqui no momento que eu tô gravando esse vídeo, você vai ter esse erro, tá? Só que os releases mais recentes já corrigiram isso, só não tá atualizado lá no homebrew, que foi como eu fiz a instalação, tá? Você vê que aqui, ó, o último tá no B9524 e aqui a gente tá no 9430. Beleza? Então você
+
+pode simplesmente baixar o release direto sem ser pelo home brew e rodar por ali, tá? E você vai conseguir explorar o máximo do gem. Repito, isso aqui é no momento que eu gravo esse vídeo. Pode ser que quando você esteja assistindo isso já tenha sido atualizado. Então você faz a instalação normalmente. Vou mostrar esse work
+
+around aqui para quem quer testar ele assim que ele saiu. Então, basicamente eu já tinha feito aqui a instalação até da versão 9521, né? A gente já tá até na 9524. Eles rodam bem rápido aqui. Então eu baixei, instalei ele, fiz a build dele aqui numa pasta temporária enquanto e eles não corrigem, não atualizam lá no home brew. Mas aí você vê, ó, que agora
+
+eu consigo rodar ele bonitinho. Então, só em vez de rodar o lhama server direto, eu vou rodar colocando aqui esse binário dessa forma, beleza? E aí assim eu consigo utilizar o que é mais recente aqui do Gem. Então, basicamente posso só copiar esse resto aqui e executar. E agora sim, funcionando. Tá funcional,
+
+bonitinho. Como eu estou no tail scale, eu consigo rodar ele direto aqui do meu Mac e cair aqui já na UI do lama. Beleza? E vocês vejam que já está aqui, ó, selecionado o meu modelo Gema 4 12B. Um contexto de 260 tokens, né? O tamanho
+
+do modelo muito pequenininho, né? 7 GB, um pouquinho menos de 7 GB. Maravilha, já está funcionando. Então posso mandar alguma coisa do tipo: "Hello, how are you?" E olha só, pessoal, 50 tokens por segundo que eu consigo aqui na minha máquina. Claro que isso aqui vai
+
+depender da sua, mas 50 token já é bem usável, beleza? A gente já consegue utilizar ele para grande parte das tarefas sem problema nenhum. Então é um modelo realmente bastante usado. Então, who are you and what are your main capabilities? Então, o que que ele consegue fazer? Ele já entendeu que ele
+
+é um diama 4, né, lá pelo pessoal do time do Zip Mind. E aí ele já fala principais capacidades dele são processamento de texto, input multimodal, como nós já vimos, né, audio capability, né? Então consegue processar áudio, que é a novidade, reasoning e to, né? Possibilidade de utilizar ferramenta. Você veja que ele não fala aqui de programação, tá? Na verdade, ele
+
+fala aqui um pouco, né, reasoning problem solving, onde ele pode ajudar com tarefas eh baseadas em lógica, programação e responder algumas perguntas, né, o treinamento dele até dia 25 de janeiro, então 1 ano e meio mais ou menos ali. Então não é o foco dele programação, tá pessoal? Entendam isso porque não significa que ele não possa ser útil, beleza? Então a primeira coisa que eu quero fazer é colocar para ele aqui um áudio e mandar ele analisar, tá? Então, deixa eu jogar aqui um áudio que eu já tenho gravado. Na verdade, são
+
+os primeiros 20 segundos de um vídeo. Então, vou até dar um play aqui para vocês verem como que é o áudio. Vamos ver se ele é capaz de fazer essa transcrição para mim. A inteligência artificial gera código cada vez mais rápido e isso traz problemas e benefícios. Se por um lado conseguimos tirar nossos projetos do papel com mais facilidade, por outro também fica bem difícil garantir a qualidade, beleza?
+
+Né? Então é basicamente uma parte de uma intro que eu faço aqui. Eu vou falar para ele basicamente, please transcribe this audio for me. Tem um detalhe, tá pessoal? O Diama 12B ele consegue processar áudios de até 30 segundos, tá?
+
+Então se você tiver que processar um áudio muito maior, você vai ter que fazer isso em batches ou em chunks, tá? Ó, processamento foi bem rápido, né? Inteligência artificial gera código para bem mais rápido, problemas benefícios. Por um lado conseguimos tirar nosso projeto papel com mais facilidade, por outro também fica bem difícil garantir a qualidade. Agora veja o detalhe aqui, tá pessoal? ele realmente processou, né,
+
+transcreveu o texto de forma sem falha nenhuma. Esse artificial gera código cada vez mais rápido e isso traz problemas e benefícios. Se por um lado conseguirmos tirar nossos projetos do papel com mais facilidade, por outro também fica bem difícil garantir a qualidade. Então, excelente, né? Muito bom isso aqui. E o mais legal é que a
+
+transcrição já vem com toda a pontuação adequada, né? Então, muitas vezes quando você fizer uma tarefa de transcrição, você vai ver que pode vir ali, né, um texto meio mal formatado. Aqui não, já saiu perfeitamente formatado, tá? Então excelente para você lidar com esse tipo de tarefa. Vamos fazer um outro teste aqui, deixa eu começar uma outra conversa. Eu quero fazer um teste de
+
+classificação, tá? Então, por exemplo, imagina que eu tenho um artigo, tipo esse aqui do investing.com falando que o Bitcoin caiu para 61.000, tá? se aproximando uma perda semanal de 16%.
+
+Então o que eu posso fazer aqui? Eu posso pegar esse texto, vou vou só copiar aqui, né, basicamente aqui, eu vou jogar aqui para esse modelo e vou falar para ele me dar uma análise de sentimento, ou seja, para ele me dizer se essa é uma notícia positiva, negativa ou neutra, né? Então, claro, né, tá dizendo que o Bitcoin se aproxima de uma queda forte, então tem que ser uma, tem que dar um sentimento negativo aqui, tá? Então, deixa eu passar para ele aqui. Beleza, pessoal? Então, a gente quer ver
+
+um prompt aqui, ó. Classifique a notícia a seguir em positiva, negativa ou neutra. Responda no formato Jason com veredito e razão, ou seja, por que ele selecionou isso. E inclua apenas o Jason na sua resposta. Então eu vou abrir aqui uma tag texto. É, nem deu certo. Eu ia
+
+abrir uma tag texto, colocar, mas aqui na própria UI do lama ele já fez como se fosse um anexo. Então vou deixar assim mesmo. Obviamente isso aqui dá para ser feito melhor, tá? colocar aqui, né, a assinatura que eu quero, eu vou dizer, né, de uma forma bem simpló aqui. Eu quero ver a capacidade dele de se adequar, tá? E olha isso, pessoal, bem
+
+rapidinho, tá? Então, de novo, ó, 47 tokens por segundo. Ele me respondeu com Jason, tá aqui, ó, veredito negativo. Aí diz, o artigo reporta um drop significativo. Bem tranquilo, né? Deixa
+
+eu pegar uma outra notícia aqui, um pouco mais complexa. Por quê? Porque aqui tem vários ativos na mesma notícia, tá? Ele falo, ajuste de risco pressiona a bolsa, mas favorece. Então aqui, por exemplo, pro ouro é bom, mas tá dizendo que pro petróleo caiu, para alguns países foi bom, para outros foi ruim, tá? Então vou fazer o seguinte, eu vou
+
+copiar isso aqui e vamos ver se ele é capaz de entender essa diferença também. Então pegar essa notícia, voltar para cá e falar o seguinte: I'll send you now another article but this contains multiple return in your Jason. Now your Jason should be turned an array with each identified asset and verdict and reason for each of them. Então aqui um pouco mais complexo porque ele vai ter que transformar isso aqui num arrei, tá? Vamos lá, vamos ver o que que ele responde. Ó, conseguiu entender a
+
+estrutura bem, né? Então ele conseguiu identificar, ó, et e bovespa foi negativo, ouro positivo, dólar neutro, né? Então ele até fala aqui, ó, o dólar teve uma pequena fortalecida, né, no curto prazo devido à redução de risco, mas não tem nada que diga que tenha sido uma mudança estrutural, tá? E aqui pro Brasilian real, né, pro nosso real, o real está sob pressão, principalmente por conta da queda no preço do petróleo e do minério de ferro. Então, segundo o reasoning dele aqui, isso atrapalha o nosso real, tá? Mas de novo, ele foi
+
+conseguiu entender aqui que o ouro foi positivo. Então, muito bom, tá, pessoal? Funcionou super bem. E olha as possibilidades agora. Você coloca isso lá numa VPS, como eu sugeri, num computador antigo, você monta um servidor, você agora consegue ter um endp, por exemplo, classificador de notícias, de textos, o que você achar melhor de graça, né, disponível para você rodando localmente, privado, né, sem depender de limites, sem depender do uptime dos provedores. Excelente caso de
+
+uso para você utilizar o Dema 412B. E aí, para fechar esse vídeo, eu queria mostrar como você poderia utilizá-lo, por exemplo, no PI, né? O Pi é um coding harness minimalista. Por ser minimalista, ele carrega bem menos bloat, bem menos informação na hora de executar as tarefas, o que torna o bem factível e interessante para rodar com os modelos que são um pouco mais limitados, onde você precisa controlar melhor a memória dele. Então, se eu inicializar o pi, você vai ver que eu tenho, né, carregado aqui como modelos o Quen 3.6 de 27 bilhões de parâmetros e
+
+agora o Gema 4 de 12 bilhões de parâmetros. Beleza? Então, deixa eu trocar aqui pro Gemma, falar algo do tipo hello e olha lá, ele passou pelo thinking e me respondeu. Agora um detalhe, tá? Você pode desabilitar o thinking, o reasoning, se você quiser aqui, né, para deixar ele um pouco mais rápido, até porque na minha experiência às vezes ele entra num certo loop no thinking, tá? Mas vamos fazer o
+
+seguinte, vamos tentar fazer aquele primeiro teste aqui. Eu vou copiar aquele primeiro pronto, ele funciona direitinho por aqui também, ó. Aqui a gente consegue ver ele entrando no fininho, né? Beleza, mesma coisa, né? negative e a razão aqui, detex reports, blá blá blá, né? Aí você vê que é
+
+diferente aqui, mas o sentimento foi o mesmo, tá? Aí deixa eu copiar aqui nosso segundo prompt, vou mandar para ele aqui. Eu já consigo ver aqui, ó, que ele entendeu outras classes de ativos aqui, por exemplo, commodity, euro, tudo mais, né? Então você tá vendo que aqui tem um thinking, né, mais longo e a gente não teve ele quando a gente rodou pela UI, então ele deu uma resposta bem maior aqui, tá? É, aqui tá dentro do thinking dele e aqui tá o output final dele, né?
+
+Por exemplo, colocando aqui, ó, é o euro, né? A, colocou aqui commodities, né? O dólar aqui ele colocou como positivo em vez de é neutro. O o Ibovespa ele colocou neutro, o mercado global colocou. Então teve algumas mudanças aqui. Então é claro, como é o
+
+modelo mais limitado, você não vai dar para ele tanta liberdade. Importante que você faça um um pré-processamento aqui, por exemplo, tente identificar quais são os ativos que você se importa, né? E aí passe para ele, ó, analise para esse, esse e esse. Coloque isso no prompt, né? Então tô dando esse exemplo prático aqui para você entender que você consegue assim colocá-lo num projeto em produção, num serviço em produção, mas que diferente de quando você roda lá com OPS 4.8, um GPT 5.5, você pode confiar muito
+
+mais no julgamento que aquele modelo vai ter, nesses modelos mais simples, você consegue utilizar a sua capacidade computacional, mas que você deve fazer ali um certo pré-processamento para impedir que ele saia um pouco daquilo que é o esperado. Só uma curiosidade aqui, pessoal. Em vez de rodar o servidor aqui, passando diretamente o gema, se eu remover essa flag aqui, ele vai rodar com todos os possíveis modelos que eu tenho aqui, tá, pessoal? Lá do on, né, que eu já mostrei para vocês, 3.6 aqui e o gema 4 nas quantizações.
+
+Então, tava usando a quantização Q4, tá? Vamos pegar aqui, por exemplo, o Quen 3.6 35B A3B e rodar ele aqui também, deixar ele carregar. Beleza, já tá carregado. Deixa eu mandar os mesmos prompts para cá. E a gente vai ver se
+
+tem alguma diferença material, tá? Então claro, teve a velocidade, né? É um modelo de apenas 3 bilhões de parâmetros ativos, né? Ele me respondeu aqui, ó, veredito negativo. Muito embora não tenha colocado bonitinho aqui no formato de Jason, mas tudo bem, né? Aqui, aqui
+
+ele entrou como Jason, aqui não. Deixa eu mandar esse aqui agora. E aí ele colocou aqui, ó, Lisbon stock index. Tem alguma coisa de Lisboa aqui que eu não vi? Ah, ele fala aqui, destaque para Lisboa, né? É, ele conseguiu identificar
+
+ele. Separou aqui entre petróleo e minério de ferro. É, falou do BTG aqui. Onde que tir o BTG aqui? Talvez na hora que eu copiei aqui tenha entrado alguma outra coisa. Mas veja você aqui que o
+
+resultado é muito parecido, né? Claro, um ficou bem mais rápido do que o outro, quase o dobro da velocidade, mas é a questão de estrutura do modelo. Mas você vê que para um determinado tipo de tarefa, às vezes você nem precisa de tanto. Aqui você precisa de um computador com dobro de memória do que o que nós fizemos ali no Gema 12B. Beleza?
+
+Muito bem, pessoal. Considerações finais sobre esse novo modelo. Devo utilizá-lo para programar? Bom, ele não é o mais adequado para isso. Isso é claro, tá?
+
+Ele vai ficar atrás do Coen 3.6. Se você puder rodar o Qen 3.6, ele provavelmente vai ser superior. Inclusive, se a gente voltar ali para aquele pr aquela thread do Hacker News, uma pessoa sugere que pra programação você utilize o Quen 3.59B,
+
+né, nesses laptops mais simples, né, um laptop de até 16 GB de memória. Então esse aqui já seria um modelo mais adequado pra programação, até por tentar fazer menos coisas. tem um espaço limitado, você treina ele em menos capacidade para que ele fique melhor em uma tarefa particular, tá? Então eu não usaria o GEMA 12B para programar tendo a possibilidade de executar o Qen, beleza? Quando que eu usaria o GEMA para aquelas tarefas mais de assistente, então ele vai conseguir fazer uma classificação para você, fazer um resumo para você, limpar um texto, traduzir um texto, né?
+
+Então, excelente para você utilizar como chatbot, colocar ali como um assistente no WhatsApp da vida. Existem diversos casos de uso onde eu vejo esse novo modelo do GEMA sendo bem interessante, com a grande particularidade de que ele roda num computador de até 16 GB de RAM. Pessoal, olha só que avanço que nós tivemos. um um modelo relativamente inteligente, um modelo que você consegue utilizar para diversas tarefas num computador que é considerado simples. Você não precisa ter uma grande máquina, claro, vai ter uma diferença ali de token, vai ficar mais lento, etc, etc.
+
+Mas se você fizer talvez isso ali num serviço, um microsserviço programático, uma tarefa de classificação, algo que não seja tão time sensitive, eu consigo ver isso bem relevante. Melhor de tudo, você não fica dependendo de limite, de provedores de up time, de nada disso. Agora eu quero saber de você, o que que você achou do GEMA 412B? Quais casos de uso você pensa em utilizá-lo? Me conta aqui nos comentários. E se você gosta
+
+desse tipo de conteúdo, de programação agêntica, de inteligência artificial, de modelos e locais, esse canal é para você. Então já te convido a se inscrever aqui no canal, curtir e compartilhar esse vídeo. Se você tá no celular já aproveita e hype que ajuda bastante a gente com o algoritmo. Agradeço a audiência de sempre e até a próxima. Yeah.

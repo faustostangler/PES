@@ -1,0 +1,300 @@
+---
+video_title: "O workflow que corta o custo do Replit pela metade (ou mais)"
+video_id: qNYR6Z8SjPM
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qNYR6Z8SjPM
+video_date: 2026-02-03T22:00:56+00:00
+video_description: |
+  Ganhe $10 de créditos no Replit ➡️ https://replit.com/refer/quantbrasil
+  
+  O Replit é minha ferramenta favorita para criar apps com IA, mas o custo pode assustar. Neste vídeo, revelo meu workflow híbrido para prototipar rápido no Replit e desenvolver "de graça" localmente usando o OpenCode e modelos gratuitos como o Kimi 2.5. 
+  
+  Criamos junto um app colaborativo utilizando WebSockets, usando a sincronização via GitHub que é nativa ao Replit e previne o infame "vendor lock-in". Usamos o Design Mode para ter um MVP minimamente funcional, e iteramos utilizando modelos de baixo custo mas que entregam performance.
+  
+  Link dor repositório criado: https://github.com/rafaelquintanilha/canvascollab
+  
+  Capítulos
+  
+  00:00 Intro
+  03:03 O workflow 
+  05:41 Prototipando o app no Replit
+  07:38 Resultado do protótipo e quanto custou
+  09:18 Exportando o app e criando um repositório
+  11:56 Programando com o Kimi 2.5 no OpenCode
+  23:24 Programando com o Opus 4.5 no OpenCode
+  27:53 Importando o código do GitHub no Replit
+  30:18 Sincronizando Replit e OpenCode
+  32:15 Conclusão
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 Ganhe $10 de créditos no Replit 🔻🔻
+  https://replit.com/refer/quantbrasil
+  
+  🔻🔻 VPS na Hostinger com 10% OFF 🔻🔻
+  https://www.hostinger.com.br/quantbrasil
+  CUPOM: QUANTBRASIL
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=gPUGz8YSQwc
+  https://www.youtube.com/watch?v=sqp0rtjKCrw
+  https://www.youtube.com/watch?v=Z3lkuq9egIg
+  https://www.youtube.com/watch?v=Mgp2PM7AJzk
+  https://www.youtube.com/watch?v=whB5g1_0ylM
+  
+  #replit #opencode #vibecoding
+---
+que o RLET é minha ferramenta favorita para construir apps com IA sem programar. Eu já disse diversas vezes no canal. Agora é bem verdade que esse desempenho vem com um custo e um custo em dólar. Portanto, no vídeo de hoje eu quero mostrar para você um workflow que permite unir o melhor dos dois mundos, prototipar com Raplit e iterar com o seu editor de código favorito, o que diminui drasticamente o custo para desenvolver um app. Pessoal, eu já disse diversas vezes aqui no canal que o Rapid para mim é como se fosse a Ferrari dos Vibe Coders, ou seja, vai te entregar desempenho, mas custa caro, certo? Então
+
+é bem legítima essa objeção de que o Rapid pode acabar gastando muito dinheiro e tudo mais, ainda mais aqui no Brasil, a conversão realmente machuca a gente e dependendo do tamanho do seu app, isso de fato pode escalar. Então eu sempre fiquei pensando em formas mais adequadas de você usar o Raplit, né, no que ele realmente é muito bom, seja para fazer uma prototipação inicial, seja depois para manter o seu app depois que o grosso já foi feito, digamos assim, né? de modo que você não perca muito ou gaste muito dinheiro naquelas iterações contínuas que às vezes você faz para ajeitar pequenos detalhes. Então você pode, por exemplo, deixar todo o poder do Rapid para essa parte e usar modelos mais em conta, por exemplo, quando você tá iterando. É justamente isso que eu quero mostrar para vocês hoje. E como
+
+que a gente vai fazer isso? Nós vamos fazer utilizando o Open Code. Por quê? Porque lá no Open Code você pode usar diversos modelos, inclusive modelos gratuitos. E aí durante o vídeo de hoje a gente vai fazer inclusive com o modelo Kim 2.5, que muita gente tá dizendo que
+
+é bom, eu ainda não testei, vamos testar juntos. Inclusive, no momento que eu tô gravando esse vídeo, o Kim 2.5 está gratuito. Evidentemente que ele não vai ficar gratuito para sempre, mas se você utilizar o Open Code, sempre vai ter algum modelo gratuito ali. Então vou até deixar o link se você quiser depois dar uma olhada em como utilizar o Open Code.
+
+Evidentemente tudo que eu fizer aqui você pode utilizar com Codex, Cloud Code, etc. É que o objetivo desse vídeo é mostrar um workflow low cost, certo? Falando em low cost, eu também já fiz um vídeo mostrando como você pode usar o Open Router, que também se conecta lá no Open Code. Então também vou deixar um vídeo aqui para você olhar depois, onde eu explico o Open Router, que também vai te dar acesso a modelos gratuitos. Tudo isso é para tirar da frente a desculpa de que você não pode utilizar o Rapid ou não consegue utilizar o Rapid porque ele é caro. Evidentemente, se você fizer
+
+tudo por lá vai ficar mais caro, mas hoje a gente vai ver uma forma de baratear bastante os custos de desenvolvimento. Aí um disclaimer rápido antes da gente começar. Esse vídeo é uma parceria com Rapid, porém eles não tiveram gerência nenhuma sobre o conteúdo. Inclusive tô fazendo aqui um vídeo dizendo como você pode gastar menos com ele, certo? Mas uma forma de você economizar também é usar o link que tá aqui no comentário fixado. Se você se
+
+inscrever lá no Rapid com esse link, você ganha $. O que a gente vai ver, já vai dar para você fazer bastante coisa. Beleza? Maravilha. Pessoal, qual que é o workflow que eu quero propor para vocês hoje? Pra gente poder aplicar essa
+
+técnica, a gente vai ter que usar essa funcionalidade do Raplet de importar um repositório do GitHub, certo? Na verdade você pode importar de diversos lugares, inclusive no zip, né? Mas o KitHub é a melhor forma de você trabalhar com a Inclusive eu já fiz uma masterclass aqui ensinando como você usa o GitHub para criar seus apps em A. Vou deixar o link aqui para você dar uma olhada depois. Mas isso é muito legal porque você consegue, claro, tirar o seu app, né, do Rapid se necessário, e você não fica preso, né? a gente na programação tem o
+
+termo de vendor lockin, você não tá preso ali naquele e ambiente de quem você tá criando o app. Então isso é muito importante, é bem legal que você faça isso, independente dessa técnica aqui que eu vou mostrar hoje, beleza? Mas então nós precisamos ter o nosso app lá no GitHub para que a gente possa importar aqui no Raplet e a gente possa mexer no repositório quando faz sentido e mexer no rapidit quando a gente quiser editar pelo rapidit. Beleza? Então como que a gente vai fazer isso aqui hoje? Eu
+
+vou fazer utilizando primeiro o design mode. Inclusive eu já fiz um vídeo sobre o design mode, exclusivamente sobre isso. Vou deixar o link para você dar uma olhada depois. E o design mode a gente vai ver que ele é muito mais barato. Então você consegue prototipar ele bem rápido. Nós vamos prototipar,
+
+vamos iterar sobre ele lá com o open code, utilizando o modelo gratuito e depois vamos importar via GitHub no Rapid, criando um novo projeto e aí sim ter essa conectividade. Mexo lá no Open Code ou no Cloud Code ou no Codex. Mexo no rapid todos, né, conectados, sincronizados. Muito legal. Isso funciona bastante. Então, vamos lá,
+
+vamos criar um app. Aqui eu coloquei na comunidade aqui do YouTube esse anúncio de que o Kim 2.5 tava de graça. Eu queria testar e pedir algumas sugestões e eu recebi sugestões muito boas, tá? Essa é uma forma de você colaborar no canal também, claro, dar sua sugestão de vídeo e tudo mais. Nós temos um clube de
+
+membros aqui que você também pode, né, se tornar um membro e aí a gente tem até uma conversa mais comunitária, então fica bem legal esse ecossistema que a gente tá construindo aqui. Mas eu gostei de umas sugestões aqui, né, em particular essa aqui do Alexandre Lara, ele falou testar se ele consegue implementar uma ferramenta de colaboração em tempo real como Figma ou Google Doc. Não completo, só uma funcionalidade mais básica para ver se consegue bem com a parte de sincronização e a resolução de conflitos, tá? Então isso aqui era pra gente testar o Kimi 2.5, mas eu achei isso um excelente desafio, tá? Então
+
+vamos aqui no rapid e eu pensei, né, claro, adaptar um pouco aqui, né, para não ficar algo muito grande até pro vídeo, mas eu pensei em fazer tipo uma ferramenta colaborativa de whiteboard, sabe, que você, né, tem pode ir lá escrever, desenhar junto com as pessoas e tal, cada um no seu computador. Então, eu vou fazer isso aqui, sei lá, vamos ver se vai dar certo. Não sei se vai, tá, pessoal, não tentei fazer antes. E aí no design mode, o legal é que você pode descrever sua ideia em termos bem e rústicos e depois ele vai, né, transformar em algo mais palatável. Então eu escrevi aqui, ó, eu quero construir um aplicativo colaborativo em real time de um whiteboard, né, quadro negro seria assim, onde as pessoas possam utilizar para fazer um brainstorm de ideias, né, mostrar apresentações, etc. Você vê que é uma frase, uma
+
+sentença, né, sem muitos detalhes. E aí eu vou clicar aqui nesse botão de improve prompt e o Rapid vai transformar isso em algo que ele consegue criar o protótipo de uma forma mais fácil. Olha lá, bem rapidinho, né? Aí ele transformou isso aqui em, né, uma aplicação web de colaborativa em tempo real de um whiteboard, onde múltiplos usuários podem simultaneamente desenhar, rabiscar e ter fazer o brainstorm de ideias juntos para apresentações e colaborações visuais. features principais, eh, drawing tools, né, ferramentas de desenho, colaboração multiusuário com cursor, né, ao vivo lhe mostrando onde que cada um tá fazendo, controle do canvas, salvar, exportar a o whiteboard como uma imagem. Aí as
+
+referências, isso que é, isso aqui é muito legal, né? que quando você faz, pede para ele e dar melhorar o prompt, ele vai buscar referências, ou seja, ele vai buscar apps que fazem coisas similares. Isso é muito bom porque pode estar no corpo de treinamento da IA, então fica muito fácil da IA entender o que você quer fazer, né? Então ele tá dizendo para você se inspirar aqui no Miro e no Scool Draw, era justamente isso que eu tava pensando mesmo. E aí ele dá até um style guide aqui que eu não vou mexer, beleza? Então vamos
+
+deixar o Rapid trabalhar agora. Normalmente esse processo aqui demora entre 2 e 3 minutos, certo? E a gente vai ver quanto custou no final do tempo. Boa, pessoal, olha lá, passaram-se 3 minutos e o custo foi 25 centavos de dólar. Beleza? Então assim, olha, olha
+
+que legal, olha esse protótipo que maneiro. Eu não sei, eu não sei quem são essas pessoas e não sei se aqui é random, que ser é totalmente aleatório. Deixa eu até ler o que que ele fez aqui, ó. Chamou o app de collab board. É whiteboard white clean mirx colidraw inspired floating icon. Beleza. Posso
+
+desenhar aqui com a, ó, posso desenhar, tá funcionando. Posso trocar de cor. legal para caraca isso aqui. Muito maneiro. Diz que não valeu. Já já
+
+não valeu a pena pelo menos o uma curtida nesse vídeo aí, ó. Valeu, vai, ó. Posso apagar redo, pô. Muito maneiro, cara. Posso criar outras points, né?
+
+Posso dar o zoom aqui, cara? Bem, claro que não tá 100% perfeito, né? Tem algumas coisas aqui que não tão, né? Tão uma por cima das outras, mas assim, foi 3 minutos e já saímos disso aqui, ó. Cara, bem legal. Como que faz o
+
+pen mode? Ah, tá aqui, ó. Pen mode aqui, ó. Posso fazer? Putz. Muito legal, cara.
+
+Muito bom. Muito bom mesmo. Beleza, pessoal. Deixa eu até ver se esse salvar tá funcionando aqui. Não, acho que ele não implementou.
+
+Não implementou sim, cara. Que isso? Olha isso. É a funcionalidade de exportar já tá funcionando, cara. Muito top isso aqui, pô. Bem legal. Muito melhor do que eu
+
+imaginei que ele fosse dar de primeira. Tá por 25 centavos de dólar. Que que nós vamos fazer aqui agora? Tá, eu poderia continuar iterando aqui, certo? Falar, ó, isso aqui ficou na frente e tal. Eu
+
+queria um atalho para poder entrar no play mode, sei lá, apertar é comand aqui, troca pro pan mode para poder fazer isso aqui, né? E não não se clicar e tudo mais. Poderia fazer isso por aqui por mais por mais tempo, né? Inclusive não foi caro, né, de fazer isso no momento, mas o objetivo do vídeo não é esse. Então o que eu vou fazer nesse momento é o seguinte, veja, a gente podia clicar aqui para transformar esse app numa aplicação funcional e continuar o desenvolvimento dele através do Rabit.
+
+Beleza? Mas o nosso objetivo aqui hoje é mostrar o workflow ali programando depois no Open Code. Então eu vou clicar aqui, ó, nessa side bar aqui. E aqui você a gente tem a opção, ó, de download é zip. Beleza? Então eu vou baixar isso
+
+aqui, tá? Baixei o canvascab.zzip e agora vou extrair isso lá no meu repositório. Beleza, pessoal? Extraí aqui o arquivo, nada demais. Chamei ele
+
+de canvas colab. Dei uma renomeada para ficar no padrão que eu gosto de escrever. E já tô aqui nele, ó. Tô aqui no canvas colab. Você vê que que a gente consegue até ver o que que ele é, né?
+
+Ele é um app, né? Tem o Dzon, embora não provavelmente não tá sendo usado. Então, de cara já vamos fazer o seguinte, vamos criar um repositório aqui para ele. Então, vou vir aqui no meu gitub, vou clicar nesse botãozinho de mais, novo repositório, deixa eu chamar de como é? Canvas colável, como que eu chamei? Canvas
+
+colável. Whiteboard Collaborative Canvas app. Vou vou deixar ele público aqui. Depois eu até coloco ele no no nos comentários aqui no na descrição desse vídeo. Então, beleza. Criar repositório.
+
+Agora, né, a gente pode já inicializar o repositório aqui. Então, deixa eu fazer esse comando. Git remote add origin a branch main e dá o push aqui. Certo? Então, OK, fizemos o que ele mandou. Posso dar um refresh aqui agora,
+
+ó. E nosso código já está no GitHub. Beleza? Então, seu código já está traqueado pelo GitHub. Excelente, né?
+
+Muito bom. Então, maravilha. Então, essa essa parte já foi. Então, já trabalhamos do design mode, exportamos, já estamos com esse, já tiramos esse código do Rapit. O Rapid agora, se a gente não quiser mais fazer nada com Rapit, não precisa mais fazer. A gente vai voltar
+
+para fazer depois. Eu vou mostrar para vocês como você ainda pode mexer hora no raplet no seu terminal ou no seu IDE, onde você prefere. Mas só para mostrar para vocês como é fácil você getar um app do Raplet e como eles fazem isso por design, ele não tem interesse em te prender lá. Beleza? OK. Então vamos
+
+agora pra parte de desenvolvimento. Vou inicializar aqui o open code. Tem o open code instalado. E aqui eu vou apertar contrl P switch model. E aí vocês vão ver, ó, que o Kim 2.5 está de
+
+graça, tá gratuito, tanto ele quanto o GLM 4.7 e esse Trinity Large Preview que eu não sei o que que é. Ainda tem Minimx 2.1, Big Pickle, tem vários outros aqui. Vamos, vamos de Kimi, né? Kimi 2.5 free.
+
+Eu vou agora falar para ele o seguinte. Então, escrevi, ó, acabei de receber esse repositório de alguém, a especificação original era e aí eu basicamente copiei aqui do Rapid o que ele gerou, né? e perguntei: "Você pode revisar isso para mim e ver o que que foi feito e o que não foi feito?" Veja aí, eu tô aqui no open code, tô no build mode. Eu poderia, né, trocar para plan mode se fosse o caso, né? Acho que não vai fazer
+
+muita diferença aqui pra gente, que eu não tô planejando nada, eu só quero que ele dê uma, que ele investiga o repositório. Então, vamos fazer isso aqui. Beleza? Ó, detalhe, pessoal, já saiu funcionando até com uma certa velocidade, tá? Até imaginava que fosse demorar mais. A
+
+gente consegue ver aqui o thinking no open code, que é bem legal. Olha a quantidade de tool calls que ele chamou, tá? E 2.5 free, tá? De gráfico. Não
+
+pagando, não botei API aqui, eu não fiz configuração absolutamente nenhuma, tá? É a primeira vez que eu tô até testando isso aqui no Open Code. E olha lá, já terminou. Foi bem rápido, tá, pessoal? Bem rápido mesmo. Vamos lá. Ele fez o o
+
+review para mim, foi construído. É as ferramentas principais de desenho, o controle do canvas, exportar. Aí falou que o save não funciona muito bem, né? O multiuser collaboration aí tá mocado, né? Então esse é um fake cursor e web socket e não foi feito, né? Então não
+
+tem nenhuma nenhuma conexão, né? Feita, realmente. Então o Real Web Socket Collaboration não tá existindo, não tem nenhuma nenhuma persistência no banco de dados. Eh, aí ele fala de algumas outras coisas que não tem, né? Multiple boys, etc. Várias coisas que não faz sentido
+
+aqui também para botar. Veredito. Isso é um um MVP polido de um whiteboard single player com excelente UIUX. A experiência de desenho é smooth, né? Mas a colaboração ainda não existe, tá? Os
+
+excursores são simulados com set interval. Então matamos aqui a charada. O que que tá acontecendo ali com movimento random, né? Aleatório. Exatamente. Backend é um place holder.
+
+Aí para fazer ele colaborativo, web socket room e operational transformation, etc. Beleza? Então, OK. Isso mesmo que eu já imaginava que o que o Rapid ia fazer, porque o design mode se propõe de fato a ser isso, né? Um polished MVP, um MVP polido, beleza?
+
+Então eu falei o seguinte: "OK, justo, vamos adiantar, né? Vamos seguir implementando a colaboração apenas no no frontend, né, no client. Claro que eu poderia fazer isso no backend, mas o objetivo não é esse, tá? E até falei aqui, ó, considere que isso possa ser feito deploy para apenas um single tenant, né? Ou seja, só uma empresa, digamos assim, por exemplo, como fosse uma VPS de uma empresa, né? Eu também
+
+não tô interessado em autenticação, múltiplos boards, etc. E o modelo mental do que eu tô querendo construir é como se fosse um whiteboard, né? Um realmente um quadro no meio de um de um office, de um de um escritório. Tem lá um um whiteboard, qualquer um passa, vê, escreve, desenha, etc. Aí ele já começou o processo de thinking, né? Então já
+
+entendeu, não precisa de backend nem banco de dados, sem autenticação, single board, todo mundo no mesmo whiteboard. E aí o mental model, exatamente que eu falei. E isso que eu queria, ó, client, então ele tem que pensar como fazer. E aí as opções são web, RTC, broadcast, web socket polling e shared storage. Tô bem interessado para ver o que que ele vai decidir aqui, o que que o Kim vai vai decidir, qual vai ser o reasoning dele, tá? Web RTC e sem
+
+servidor, real time. Me distraí aqui porque apareceu alguma mensagem de erro aqui, mas ele se consertou. Não sei se é alguma coisa do do Kim tá gratuito, sei lá. Eu eu inclusive tava realmente pensando em fazer com web RTC, né? Eh, mas eu nem sei se hoje em dia esse é o padrão, porque eu lembro de estudar isso aqui na faculdade muitos anos atrás com aqui que ele disse aqui não escala muito bem.
+
+Bom, não tô muito preocupado com isso também. Broadcast Channel API simples, já tá na própria API do browser, só funciona no mesmo dispositivo e browser, não em diferentes máquinas, não faz sentido nenhum isso aqui. Espero que ele não decida fazer isso. Web socket com simple relay server, mas o usuário disse não backend. Engraçado, ele dá para ver quase a cara triste dele aqui, né? Pô, o
+
+usuário falou que não quer o back end. É ping shared. É, isso aqui não é não é real time, né? Tem que ser o RBRTC. Exatamente. E ele já decidiu o que que é
+
+o web RTC. Aí ele chega aqui em várias, enfim, vai pensando, mais e aí no final ele diz: "É totalmente possível é, vamos fazer o web RTC peer to peer." É perfeito, sem backend necessário, funciona em em múltiplos dispositivos, né? Na mesma rede ou VPS. Eu vou implementar uma topologia MESH, onde cada cliente se conecta com cada outro cliente para uma empresa, para um whiteboard de uma empresa ali, considerando menos de 30 usuários. Isso
+
+é bom o suficiente. Beleza? E aí ele já criou os studos aqui, né, do dentro do próprio Open Router. A gente tá vendo que os tokens estão sendo consumidos aqui, ó. Mas nada, não gastei nada, zero zero doll. E agora ele vai seguir para
+
+implementar isso aqui, pessoal. Agora ele tá pensando, começando a escrever o código, né? Legal que como sempre no open router aqui, você consegue ver e o DIF muito de uma forma muito mais fácil, né? Você consegue ver o que que ele tá mexendo no código. Bem legal. E aí,
+
+pessoal? Parece que ele terminou todas as tarefas agora, ó. Ele vai verificar se o Typescript compila, né? Eu não lembro de ter falado isso. Não sei se tem alguma coisa aqui no próprio repositório do Rapid, né? Que
+
+o Rapid gera algumas instruções aqui, ó. Não, aqui não tem nada demais. Enfim. É, pô, maravilha. Ó, já finalizou. Show. Então é para tá
+
+funcionando. Agora eu não sei como eu executo. Deixa eu perguntar. Ele ficou 4 minutos e 30 segundos para implementar o web RTC. Tá, pô, 4 minutos e 30 segundos para você fazer uma uma feature dessa de real time.
+
+Impressionante, né? Beleza, pessoal. Vamos testar aqui, então. Então, vou abrir aqui o navegador. Ó, cair nessa tab. Ele até fala: "Desenhe uma tab,
+
+depois abra a outra". Cada cada tab vai tá com nome random, né, aleatório. Então vamos ver aqui. Deixa eu desenhar vermelhinho aqui. Deixa eu abrir uma nova tab. E ó, dá para ver, ó, que tem
+
+dois de fato, ó. E e c. Não dá para saber quem é quem. Ah, tá ó. E tá aqui o o onde ficou o cursor dele. Tá vendo? Só
+
+que eu não estou vendo o desenho, né? Isso quase não está funcionando. Ó, fiz um, fez o desenho aqui e apareceu. Beleza. Tá semifuncional isso aqui, né?
+
+Deixa eu mostrar isso aqui pro Kim. Então, então disso, isso não tá funcionando de forma perfeita quando eu abro uma tab e eu vejo, mas vou paraa outra tab na na original, né? E aí ele é pensando, ó, o usuário está certo, quando o peier 2 e entra, não pega o estado e existente do pier um, né? O problema é que novos peerss apenas recebem novas operações daquele ponto em sequência, né? Mas não o board original.
+
+Ele foi bem rápido de debugar isso aqui, tanto e aí já criou aqui inclusive as tarefas dele. Então assim, o esse vídeo, o foco desse vídeo não é o Kim 2.5, né? Mas já que a gente tá aqui, é realmente muito rápido o Kim 2.5, tá pessoal? Eu
+
+achei que por ser gratuito, estar gratuito, ia demorar bastante. Evidentemente, como disse, não deve ser algo que vai se manter para sempre, mas assim, você pode testar hoje no open code, né? E você não vai ser prejudicado pela velocidade, tá? Muito boa a velocidade aqui. Bom, parece que ele já terminou, colocou aqui um sync, né?
+
+Então ele diz, ó, o problema é que os novos peerss não estavam recebendo o estado do board original. Aí fez aqui o que que ele mudou, tal, né? E beleza, vamos ver se se funciona. Então, deixa eu fechar tudo aqui, entrar de novo, desenhar aqui, abrir uma nova tab e não, ah, tá, entrei aqui, mas eu continuo sem ver, né? Continuo sem ver e não tô vendo o cursor, né? Aqui eu vejo, se eu
+
+desenhar aqui agora, aí aparece ainda não puxou, né? E ele não está pegando o cursor, pode ser porque eu tô aqui no mesmo, na mesma tab mesmo computador, então não tô muito preocupado com isso aqui, mas ele continua sem pegar, né? Ele continua sem pegar o original, né? Por exemplo, se eu entrar aqui de novo, ó, ele vai fazer alguma conexão, provavelmente aqui, ó, tupês pessoas online, mas ele continua sem pegar. Vamos voltar lá. Bom, é, ele
+
+na verdade não fez nada além de colocar logs, tá? Então vamos dar essa colher de chá para ele aqui. Vamos ver o que acontece, né? Então entrei. Ele até pediu aqui, ó. Abra o seu
+
+developer console, teste de novo, tá? Então quer ver o que acontece quando eu abro uma segunda tela? Então, desenhei, não aconteceu nada aqui,
+
+ó. Então, temos os consoles aqui. Eu vou copiar esse aqui e vou colar.
+
+Quanto ele tenta identificar aqui, pessoal, veja uma coisa, tá? Por que que eu tô mostrando isso e tô até fazendo questão de mostrar o processo interativo? Que é comum, dependendo do modelo que você utilizar e dependendo das instruções que você der. Veja que eu criei um app, né, sem dar instrução nenhuma de como ele deveria funcionar, né? Então eu deixei muita coisa a cargo da IA, não é algo que eu costumo recomendar, mas eu tô mostrando para vocês justamente que esse processo iterativo é algo que às vezes você tem que mandar e a fazer consertar e ela vai te falar: "Olha o log para mim" e tal. Isso pode
+
+demorar um tempo e se você fizer isso no rapping pode te custar dinheiro. Então a gente tá fazendo isso aqui agora no Kim 2.5 que está de graça, tá? E aí parece com o console ele ele entendeu. Vamos ver aqui, ó. Ele falou fixed, né? O
+
+problema era o stale closure desse handle s request, blá blá blá. Vai mudou alguma coisa e tá tá tá confiante que vai funcionar, né? Vamos vamos ver então. Matar isso aqui de novo. Entrei.
+
+Que que ele mandou fazer aqui, ó? Eh, draw something. Tem que aparecer alguma coisa no console. Vamos ver aqui, ó. Hum. Não sei. Não tá com car que vai
+
+funcionar não. Vamos abrir de novo. Nada. Ó. I have zero items to share. Não
+
+apareceu, né? Não apareceu. Bom, pessoal, ele não resolveu. Mas deixa eu aproveitar e mostrar algo que é poderoso desse workflow. Como eu tô aqui no Open Code, eu posso trocar esse modelo, tá? Então,
+
+sei lá, vamos pegar aqui o Opus 4.5, tá? Vamos pegar o Opus, certo? Tô aqui com eh ele no máximo, né, de thinking e vamos ver se o OLP 4.5 consegue resolver, tá?
+
+Então vou copiar de novo isso aqui
+
+e deixa eu copiar aqui também, né, da outra tab. Beleza? Então agora eu troquei de modelo. Claro, por acaso eu tenho a conta do Cloud Max, então eu tô pagando para isso, mas veja que, né, olha esse workflow. Começamos no design mode, fomos com Kim 2.5,
+
+avançamos bastante com ele, por acaso ele não realizou, não conseguiu finalizar essa tarefa e tentamos mais, mas tentamos de graça. E agora, beleza, vamos ver agora se o modelo mais caro, né, o modelo que realmente é mais conhecido, mais poderoso, consegue resolver, né? E aí, evidentemente que aqui você entra com esse modelo mais caro só no momento crítico, só no momento crucial. Então você consegue fazer esse gerenciamento do seu do seu próprio budget, né, do seu próprio orçamento, né? Agora, se o se o Opus 4.5 matar de primeira depois que o
+
+Kim 2.5 não conseguiu, ele vai farmar uma aura aqui, né? Vamos ver se o Op vai farmar a aura aqui. Ele tá colocando uns uns logins aqui também, né? Então não sei. Normalmente quando ele começa a
+
+colocar muito log é porque ele não tem não tem muita certeza. É bem verdade que ele tá herdando o contexto da conversa original, tá? Então por isso que ele tá ele tá assumindo que isso é uma forma correta de se fazer. Então tem tem um pouco disso também, ó. Tá 40% aqui do nosso contexto. Bom, diz ele que
+
+corrigiu. O problema é que o initiator só tava fazendo um s request. Ah, blá blá blá. Tá um monte de coisa aqui. Vamos ver. Vamos ver quem quem vai
+
+vencer a batalha aqui. Abrir. Desenhei. Apareceu nada no console. Ah.
+
+Olha a farmada de Aura, hein? Farmou Aura. Então, Kim 2.5 acabou de ser mogado pelo pelo Opus 4.5, pessoal. Olha
+
+lá, funcionou, né? Agora funcionou. Vamos entrar, vamos criar o novo aqui. Ah, show. Todo mundo certo. Todo mundo
+
+sincronizado. E esse último aqui não foi não. Ih, rapaz, tá exatamente perfeito. Não, hein. >> Ah, ah, tá que eu acho que eu não larguei o clique aqui, ó. Eu fiz errado.
+
+Não, tá certo. Tá certo. Pera aí. Agora sincronizou um sincronizou o outro. >> Mas já foi um avanço, né? Deixa eu falar
+
+isso lá com ele. Até ver uma coisa aqui. Se eu vier aqui no vermelho e botar isso aqui, ó. Sincronizou aqui e sincronizou aqui. É, ele só perdeu a sincronização do terceiro, né?
+
+Bom, mais um tempinho aqui. E aí o Opos falou que consertou o problema e disse que identificou qual que era o problema, etc, etc. Mandou a gente testar de novo. Vamos fazer um último teste aqui, pessoal. Ó, tab um, botei isso aqui. Tab
+
+2, botei isso aqui e apareceu na na um. Teve três, todo mundo aqui. Botei isso aqui, apareceu na dois e apareceu na um. Olha lá, funcionando. Maravilha. Que
+
+beleza. Excelente, pessoal. Então, realmente o 4.5 resgatou e salvou o planeta. Então, agora o que que a gente vai fazer? Obviamente podia continuar
+
+iterando aqui, etc., mas eu vou simplesmente pedir para ele agora fazer o commit para mim. É legal aqui que eu posso mandar ele fazer o commit direto aqui do do terminal. Enfim, muito fácil aqui, né? O open code fica bem legal. A
+
+a e o ex do open code é sensacional, né? Parece que já foi o push. Vamos até dar uma olhada aqui, ó. Feito, pessoal. Podemos ver ver aqui o commit, ó. Peer topear real time
+
+collaboration via web RTC. Então, todo o código. Eu vou deixar, né, isso aqui, né, como disse, público no repositório para quem quiser dar uma olhada. E agora vamos então pra parte final desse vídeo, que é mostrar que a gente consegue fazer a sincronização. Então agora a gente vai importar o app do GitHub, beleza? Aí
+
+fala até para botar o repositório, o link do repositório. Vamos colocar aqui. Coloquei o link ready for import. Beleza. Aí ele até já detectou que era um um repositório que já foi originalmente do RPL. Tá aqui o nome.
+
+Beleza. Vamos importar. E feito a importação bem rapidinho. Ele basicamente só dá um checkout lá no GitHub. Agora ele vai instalar o app. E
+
+aí o nosso teste final vai ser o quê? Vai ser fazer alguma modificação aqui via Rapid, puxar lá no Open Code, né? Dar um pull localmente, ver que tá tudo sincronizado, bonitinho, que a gente pode trabalhar hora em um, hora no outro. Beleza? Feito, pessoal. Olha lá,
+
+ele gastou 9 centavos para fazer isso e eh ele acabou importando o repositório como ainda no design mode, tá? Eu a até achei que ele fosse importar como um app direto, mas como ele identificou que era do Rapt, provavelmente por conta disso, tá? Então vamos fazer o seguinte, vamos clicar aqui para converter para uma para uma aplicação eh funcional. Teoricamente a gente não precisaria, né? Mas vamos fazer isso aqui porque na na maior parte dos casos, provavelmente isso aqui vai ter que virar um appic, vai ter que colocar back end, banco de dados, etc.
+
+Então vamos deixar ele transformar normalmente. Eu vou voltar quando ele terminar aqui e aí a gente faz o teste final. Já foi, pessoal? bem rapidinho, ele transformou aqui. Aí você vê que já gastou um pouquinho mais, 33 cents. Mas
+
+beleza, vamos fazer o seguinte aqui, vamos pedir uma coisa bem boba, tá? Eh, deixa eu pegar, sei lá, a cor aqui do co Brasil,
+
+pegar essa cor aqui, voltar pro rapt, colocar assim. Eu falei, ó, eu quero que alguma das cores seja esse verde aqui, né? Esse verde do quant Brasil aqui, só pra gente ver que isso pode funcionar bonitinho, como que a gente pode fazer a colaboração. Beleza, já foi, né? Já entrou o verde aqui.
+
+Ótimo. E aí, que que a gente pode fazer aqui agora? Tá? Então, a gente pode criar aqui uma nova tab e aqui em Git, como ele já veio do repositório, basicamente tem esse botão, ó, sync, né? As mudanças que ele fez. A gente até
+
+pode ver, ó, claramente a mudança que ele fez aqui no commit, né? Basicamente o o split ali, ah, ele já ele já deu commit aqui antes de quando eu tava mexendo, ele deu commit. Vou clicar aqui em sync changes, autorizar as credenciais, né? Feito. Vamos vir aqui no repositório, ó. Update preset col to include a new
+
+green option. E agora posso vir aqui no open code e falar o seguinte, pegar o último código. Obviamente não preciso fazer isso aqui no open code, né? Podia estar eu mesmo rodando se não fosse preguiçoso, mas como a gente já tá com a gente com a mão na massa aqui, deixar ele dar o pull. E aí, ó, quando a gente atualizar, olha lá, nem preciso atualizar. Olha o verdinho novo aqui,
+
+lembram? Trocamos pro verdinho novo do Conte Brasil. Tá feito, pessoal. Tá feito. Ah, então só para mostrar que você consegue fazer o caminho reverso.
+
+Você ainda não acredita em mim. Vamos pegar uma outra cor aqui, pegar esse azul aqui. Pronto. Então, ó, bota esse azul aqui também. É. E faz o push. E aí eu vou
+
+fazer o sy lá no rapid. Aí você vai ver que a gente consegue fazer as duas coisas. Jogar do replet open code, do open code pro rapid. Claro, open code eu tô dizendo aqui, mas qualquer terminal que você queira, né? Trocou o azul.
+
+Vou até ver que pra gente ver que é diferente, ó.
+
+É um azulzinho bem sutil aqui a diferença, né? Mas imagino que dê para ver aqui, tá? A diferença do dos azuis aqui, ele já deu o push, né? Ó, update blue color. Beleza, então agora vamos vir aqui no git de novo.
+
+Vamos até atualizar aqui para ele ver, ó. Ó, SN change. Tá vendo a setinha para baixo? Dizendo que a gente tem que fazer o pull ali, né? Pegar o código para dentro do rapid. Feito. Cadê? Vamos
+
+olhar aqui, ó. Ó o azul novo. Feito. Certo? Mesmo azulzinho. Então, pessoal,
+
+tá feito aqui a nossa tarefa do dia. Excelente workflow. Espero que você tenha gostado. Vamos fazer uma rápida recapitulação que nós fizemos. Utilizamos o design mode do Raptid, que é baratinho, questão de alguns poucos centavos para prototipar a UI do app que a gente queria criar. Pegamos esse app,
+
+exportamos ele como zip e começamos a trabalhar localmente. Ali você pode trabalhar com cloud code, com Codex, com a sua IA de preferência. Eu usei o Open Code. Por que que eu usei o Open Code? Porque ele te provê modelos gratuitos.
+
+Então a gente erou bastante ali usando o Kim 2.5. funcionou bem no sentido que ele conseguiu implementar ali o web RTC, ele fez ali a escolha certa de tecnologia, a implementação acabou não finalizando. A gente podia continuar iterando ali, mas a gente substituiu pro OP 4.5 que resolveu o problema. Beleza?
+
+E aí nós fizemos o push, importamos esse código que tava lá no GitHub de novo pro Rapid, transformamos num app, né, normal do Rapid e mexi no Rapid, puxei localmente, mexi localmente, puxei no Rapid, tudo sincronizadinho. Então você pode trabalhar em um ou no outro, dependendo, Rafael, por que que eu iria trabalhar no Rapit não local? Muito simples, porque a interface no raplet é muito boa, porque você consegue usar o aplicativo mobile dele, você consegue mexer no tablet, você consegue rapidamente ali visualizar, né, ter uma forma muito mais interativa de mexer. E se você quiser talvez desenvolver alguma coisa mais complexa ou iterar em coisas pequenas, aí você vai localmente e resolve. Então, muito mais flexibilidade e diminui drasticamente o custo que você pode ter com o Rapit. Beleza? Espero que
+
+você tenha gostado desse vídeo. Espero que você tenha gostado do experimento com o Kim 2.5 e o OP 4.5. Se você gostou e tá assistindo o vídeo até agora, então por gentileza, se inscreva no canal, curta esse vídeo, compartilhe, hype aí se você tiver no celular. Agradeço a
+
+audiência de sempre, agradeço ao pessoal do Rapid pela parceria e até a próxima. Yeah.
