@@ -1,0 +1,109 @@
+---
+video_title: "🚨 A API DO GOVERNO QUE VAI MUDAR TODO SISTEMA DE PAGAMENTO | SPLIT PAYMENT EXPLICADO PRA DEV"
+video_id: 35pEhb_BzZI
+channel_name: "mano deyvin"
+channel_id: UC1VZDEtGNxfQzh7EYcD2frg
+channel_category: "News & Politics"
+url: https://www.youtube.com/watch?v=35pEhb_BzZI
+video_date: 2026-07-16T21:35:00+00:00
+video_description: |
+  A Reforma Tributária tem uma funcionalidade que nenhum dev de sistema de pagamento pode ignorar: o Split Payment.
+  
+  A partir de 2027, quando o seu cliente pagar com Pix ou boleto, o PSP vai separar automaticamente a fatia do IBS e da CBS e mandar direto pra Receita Federal — antes que o dinheiro chegue na sua conta.
+  
+  O governo já publicou a API. Swagger em OpenAPI v3. Manual de Integração v1.0. Endpoint em consumo.tributos.gov.br. Tudo documentado.
+  
+  Nesse vídeo eu explico o mecanismo técnico completo: como a Plataforma Pública de Split Payment funciona, o que você precisa implementar, e por que você precisa começar agora, não em dezembro de 2026.
+  
+  ⏱️ Capítulos:
+  00:00 — A API que separa o imposto antes de chegar em você
+  01:03 — Intro
+  01:20 — O que é o float fiscal (como funciona hoje)
+  02:32 — O foco técnico + base legal (LC 214/2025)
+  03:03 — O fluxo passo a passo: o diagrama
+  04:26 — Parceria: AppMax
+  05:01 — A API do governo: o Swagger publicado
+  05:44 — O que a Plataforma faz (e o que NÃO faz)
+  06:45 — O pipeline completo + a NF-e
+  07:38 — Cronograma: de 2026 a 2033
+  09:10 — O que fazer agora: 3 passos
+  10:12 — O recado final
+  10:43 — AppMax: fechando o loop
+  11:09 — Encerramento
+  
+  💚 Parceiro do vídeo - AppMax (stack de pagamento feita pra dev):
+  → https://appmax.com.br/desenvolvedores/?utm_source=mano-deyvin&utm_medium=social&utm_campaign=influencer-tech
+  
+  📌 Links mencionados:
+  → Plataforma Pública de Split Payment: consumo.tributos.gov.br
+  → LC 214/2025 (arts. 31 a 36)
+  → Decreto 12.955/2026 (CBS)
+  → Resolução CGIBS nº 6/2026 (IBS)
+  → Ato Conjunto RFB/CGIBS nº 2/2026
+  → Nota Técnica NF-e 2025.002
+  
+  #ReformaTributaria #SplitPayment #Dev #Fintech #IBS #CBS
+---
+Em junho de 2026, o governo federal ele publicou um Swegger, um Open API da versão 3, com end points, esquemas, Jason e exemplos de requisição. A função dessa API era só uma, separar o imposto do seu pagamento antes que o dinheiro chega na sua conta. Pensa só nesse fluxo. O cliente ele vai lá, faz um pagamento via Pix. Antes de liquidar aquele dinheiro pro seu caixa, o PSP ele consulta essa plataforma, recebe a instrução de segregação e repassa a fatia do IBS e do CBS direto pra Receita Federal. Aí você vai lá e recebe o
+
+líquido, porque o imposto ele nunca foi seu para começo de conversa. Eu não tô aqui para defender se tá certo ou errado. Tô aqui trazendo a parte técnica. E o nome disso é Split Payment, que a partir de janeiro de 2027, nós que somos devs, que desenvolvemos sistema de pagamento, marketplace, SAS, a gente precisa fazer integração com isso. E existe uma documentação, existe um cronograma, o que tá faltando ainda é uma clareza técnica do que você precisa fazer agora para poder tá, mano, 100% nivelado com o governo. Beleza? Se você
+
+não me conhece, eu sou o mano Davin. Você que é o canal Mais Chorume de Tecnologia. Então já se inscreve no canal, deixa o like, ativa a notificação para não perder nenhum vídeo e você que é inscrito, dá uma olhada aqui embaixo se você continua inscrito, porque o YouTube está derrubando as inscrições. Antes de entrar em Split Payment, meu jogador, a gente precisa entender o que que ele tá destruindo aí. Hoje basicamente funciona assim. Você vai lá,
+
+faz uma venda, o cliente vai lá, ele te paga, sei lá, papo de R$ 1.000. Aí R$ 1.000 vai lá e cai na sua conta, pô, inteiro. Aí num prazo, um prazo definido, você vai lá, apura o imposto e recolhe esse imposto, paga aquele boletinho lá pro governo. O intervalo
+
+entre receber o valor cheio e repassar o imposto, ele tem um nome chamado float fiscal. E empresas, mano, que já tem um caixa estruturado, financeiro estruturado, ele já calcula esse float. Ele sabe exatamente quanto tempo ele pode ficar com esse dinheiro do imposto parado lá no caixa lá e quanto isso rende fazendo movimento. E não é só negação não, mano. É basicamente uma lógica de sistema. É algo que todo mundo
+
+faz. Só que aí chegou a reforma e tá falando o seguinte: "Acabou, meu jogador, acabou essa farra com split payment, o imposto ele nunca vai ficar lá preso no caixa. A segregação, tá ligado? Essa parte de governo seu, ele acontece antes de chegar até você. O estado basicamente ele tá pulando aquela fila de receber depois e já tá querendo a parte dele direto da fonte.
+
+Basicamente o imposto de renda embutido lá dentro da transação e tal. Só que tem muito canal já trazendo opiniões e tal. E o foco desse vídeo é a gente olhar um pouco mais técnico de como isso vai funcionar, o que que isso vai impactar no nosso dia a dia como programador. A base legal é a LC214 de 2025. Tem um artigos lá do 31 ou 36. E em 2026 eles
+
+vieram com decreto 12.955 pra CBS. E a resolução CG IBS que tá no número seis lá que é pra IBS. Isso, paizão, é uma lei que, mano, já já tem até decreto para ela. Não é um projeto piloto, não é MVP, não é nada. Essa
+
+parada, mano, já tá aí. Agora o fluxo passo a passo para você entender como isso vai funcionar, é tecnicamente. Acompanha só esse diagrama que está aqui. A gente tem um primeiro passo que é basicamente o comprador, ele vai lá, inicia o pagamento lá via Pix, via boleto, via TED. Nada pro comprador, ele vai mudar teoricamente. Falando
+
+tecnicamente não vai mudar nada pro comprador. Aí a gente vai pro passo dois, que o PSP ele intercepta antes de liquidar. o prestador de serviço, sei lá, a própria Max, que é nossa parceira, o seu gator de pagamento, agora tem obrigação de consultar a plataforma pública de split payment antes de creditar esse valor direto no vendedor. E o passo três, a plataforma ela avalia e ela instrui. Basicamente, ela vai lá, recebe os dados de pagamento, valida, gera o identificador único lá, aquele resance ID, aí retorna lá, separa X% para CBS e Y% para IBS. Aí no passo
+
+quatro, o PSP ele basicamente ele vai lá e executa essa segregação, essa separação de valor. O CBS ele vai direto pra Receita Federal e o IBS ele vai pro comitê gestor do IBS e o valor líquido ele vai pro fornecedor. Aí no passo cinco, você recebe lá o net limpo, sem imposto, porque teoricamente o imposto ele nunca foi seu. E para você que tá de fora, às vezes esses termos são bem complicado, resource ID, PSP, hub, campo novo na nota. Vender tudo isso assim de uma única vez, mano, pode parecer totalmente absurdo, mas segura 30 segundos aí que eu vou falar aqui uma parada que vai te ajudar para caramba, porque montar infraestrutura de pagamento já é uma parada complicada, sem reforma nenhuma. E isso, paizão, ele
+
+é mais decisão de arquitetura do que decisão de negócio. Porque se você jogar para time de negócio, ele vai achar lá qualquer plataforma lá duvidosa lá com a taxa boa. E é exatamente nessa parte que o nosso parceiro Epmax, ele consegue te ajudar. Ele é basicamente é uma stack de pagamento feita para dev, já com split já nativo e toda essa parte pesada de cobrança já tá resolvida, mano. Você não tem que reinventar a roda. Então você
+
+quer saber mais, troca uma ideia, dá uma lida na documentação. Deixei um linkzinho na descrição aqui. Mas calma, calma que agora vem a parte mais importante dessa história. Em 3 de junho de 2026, o ato conjunto FRB, CGBS número dois, ele publicou dois documentos, o manual de integração na versão 1.0 zero e o swagger lá da plataforma pública que nós backend nós amamos quando a gente vê um um documentação swagerzinho lindo que tá lá e tá na plataforma pública lá de split payment tem lá o open API na versão 3 tem esquemas de Jason exemplo de request response o governo ele entregou um contrato de API com uma documentação cara absurda que eu achei muito da hora, tá muito acima da média do mercado e ela tá lá em consumo.tributos.gov.br.
+
+br. Anota essa informação, mas também deixei o link na descrição. Agora, o ponto crítico que vai te economizar, paizão, semanas para você ficar debugando o sistema e, mano, vai dar ruim para caramba. A plataforma ela não executa regras de negócio, ela não calcula esse imposto, ela não decide qual alíquota, ela não valida se o valor ele tá correto ou não. Ela simplesmente faz apenas três coisas. Primeiro, uma
+
+validação sintática e de semântica. Basicamente ela vai lá validar lá se o payload ele tá tudo certinho, tá bem formatado. Segundo, ela gera o resce que basicamente é o é o identificador único para poder rastrear lá e fazer essa parte de conciliação. Três, ela faz o roteamento. O CBS pra receita, o IBS pro CG IBS. Basicamente é um é um hubzinho
+
+em HT. E esse rolê de roteamento é basicamente o core dessa PI. E quem calcula esses impostos? o seu sistema com base nas suas regras de tributação, na líquida do do seu CNPJ, na natureza da operação. E isso, paizão, ele se conecta com a nota fiscal. A nota
+
+técnica lá 2025002, ela adicionou alguns campos específicos para split. Tem lá o payment lá no XML da NFE e sem esses campos preenchidos, certo, meu jogador? O fluxo ele simplesmente não vai funcionar. Então o pipeline completo para você é o seguinte, ó. O seu sistema ele vai lá, emite a nota com os campos novos. O PSP ele consulta a plataforma,
+
+a plataforma ela valida, gera o resource ID e retorna a instrução. Aí o PSP ele segrega e liquida. Cada elo tem um dono técnico. E você que é dev, assim como eu, nosso programador e o show, a gente é o responsável por mais um nessa parada. E a real é essa, paz. Real é
+
+essa. O Seg ele tá publicado, o Hub existe lá em em homologação. Em 2026 é o ano pra gente construir stagem, construir, fazer teste para caramba, sem cobrança real, sem processo na receita, se der bug. E essa é exatamente a hora, é o time de você testar isso. Isso, paizão, isso é cinema. A Receita
+
+Federal, ela entregou uma payetar o imposto em tempo real. É o xadrez fiscal acontecendo, né, meu jogador? Por isso que eu falo, pô, galera tá batendo cabeça lá com react. Não, mano, o programador de verdade tá preocupado com isso aqui, mano. Agora deixa eu trazer uma linha do tempo rápida para você não se perder e você falar assim: "Mano, o mano Davin não me avisou". Inclusive, se
+
+você não deixou o like, já deixa o like só por conta disso, meus jogos. 2026 a gente tem lá o Sand box aberto, não tem cobrança. Esse é o seu ano de integrar, de testar, quebrar tudo que tiver quebrar. Se você não usar esse ano, você vai usar papo reto, dinheiro para poder pagar multa lá em 2027. Janeiro de 2027 já começa a fase um, que basicamente é um B2B opcional que é restrita a seis arranjos. Boleto, Pix dinâmico, Pix
+
+automático, Pix estático, TED, TEF. Agora cartão VCH e crirypto, eles vão ficar lá pra etapa dois. Então não vai achando que cartão vai est isento não, mano. Mas aí se seu produto ele opera com Pix boleto e quase hoje todo SAR, e esse B2B brasileiro usa esses meios de pagamento, essa é a sua data. 2027, mano, CBS plena. De 2029 a 20, IBS em
+
+transição gradual. Em33, regime pleno, split payment, ele vira uma realidade fiscal do Brasil. Lógico, se não mudar nada, né? A gente agora sabe que tá em ano de eleição, a gente não sabe se isso vai pra frente, se não vai. Mas calma, é só para você ficar tranquilo que isso não vai começar semana que vem. Só que
+
+pra gente que é programador, mano, 2033 ele parece que tá bem longe, mas a integração técnica, ela precisa começar agora em 2026. Você não ia querer tá fazendo, subindo PR de integração fiscal aí em dezembro de 2026 com deadline para janeiro. Eu não desejo isso aí nem pro meu pior inimigo, mano. Pelo amor de Deus. A gente que já mexeu com nota, com essa parte fiscal, a gente sabe o caos que é. E o que que eu faço agora, papai?
+
+Ai, meu Deus. O que que eu faço agora? Calma, calma que eu vou deixar três passos para você. Anota, salva esse vídeo. Como diz meu amigo Charlão, esse aqui pode ser o vídeo mais importante do canal. Anota isso aí. Primeiro, dá uma
+
+lida lá no manual de integração, no Swagger lá, que ele tá lá em consumo.gov.br. Link vai tá na descrição. Ele tá de graça, tá publicado. Ele basicamente é o
+
+contrato técnico que você vai ter que implementar. Tem desculpa não, paizão. Segundo, segundo, dá uma verificada aí no seu emissor de nota fiscal eletrônica, no seu NFE, se ele já tem suporte a nota técnica 2025002. Se ele não suporta, já manda mensagem para esse fornecedor agora. Se você mantém esse módulo internamente, abre a especificação e mapeia os campos novos hoje, pelo amor de Deus. Três, meu
+
+jogador. Três. Mapeia lá os PSPs lá que você usa. Pergunta para cada um o roadmap de integração lá com a plataforma de split payment, porque se o PSP ele não integrar com hub, mano, esse bagulho ele vai quebrar. E você precisa saber onde tá cada fornecedor antes de janeiro de 2027. O Brasil ele construiu
+
+uma infraestrutura técnica para poder coletar imposto em tempo real no ato do pagamento. A lei ela já tá promulgada, o decreto ele já tá assinado, o Sweger ele já tá publicado e quem preparar o sistema agora, ele passa por essa transição, paizão. Sem dor de cabeça, mano. E quem não se preparar, mano, na moral mesmo, vai tá muito ferrado aí mais pra frente aí, mano. até prejuízo vai ter que tomar. Então, me
+
+conta aí nos comentários aí, você já sabia desse split payment? Já sabia o tamanho do BO? Você que é meu vibe coder, você que é dev raiz, mano, vai impactar todo mundo. Agora, e fechando a parte que eu falei ali no meio, essa parte de cobrança, ela não precisa ser você sozinho quebrando essa cabeça, mano. Você precisa de um parceiro para estar junto com você. Então, se seu
+
+produto ele vai cobrar alguém, logicamente que ele cobra, hoje tudo faz cobrança. Dá uma olhada de verdade na documentação da App Mac e para de sair plugando aí, gate de pagamento aleatório aí. O linkinho tá na descrição para você conhecer eles. Se conversa com o suporte, fala assim: "Eu vim pelo mano Davin". E eles vão falar assim: "Pô, mand nosso brother, nosso parceiro". Se
+
+você não é inscrito no canal, se inscreve no canal, deixa o like, ativa a notificação para não perder nenhum vídeo. Assiste agora essa recomendação que tem muito a ver com esse assunto que vai ser brabíssima. Tamos junto. Forte abraço. Até o próximo vídeo.
