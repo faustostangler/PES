@@ -1,0 +1,63 @@
+GERADOR DE NOTAS ATÔMICAS E MAPEAMENTO DE WIKILINKS (OBSIDIAN LLM SECOND BRAIN)
+1. Diretrizes Fundamentais do Modelo Atômico
+Sua tarefa é transformar o conhecimento consolidado em uma coleção de Notas Atômicas Interconectadas formatadas para o ecossistema Obsidian.
+Princípio da Atomicidade: Cada nota deve tratar de uma única ideia, entidade, evento ou processo, contendo todo o contexto necessário para fazer sentido de forma autônoma.
+Densidade Semântica e Contextualização: Não crie notas vazias. O corpo da nota deve extrair a substância factual do texto, enriquecendo a definição sem perder o rigor conceitual.
+Sintaxe de Links Internos (WikiLinks): Toda menção a qualquer outro nó existente no grafo deve ser convertida na sintaxe [[Nome Exato da Nota]].
+2. Tipologia e Regras de Nomenclatura dos Arquivos
+Cada nota gerada deve pertencer estritamente a uma das quatro categorias abaixo e seguir o padrão normativo de nome do título:
+2.1 Notas de Entidade (type: entity)
+Abrangência: NER apresentados
+Padrão de Nome do Título: Nome Oficial da Entidade (ex: [[Federação Russa]], [[Lloyd Austin]], [[Sistema 9K720 Iskander]]).
+2.2 Notas de Conceito (type: concept)
+Abrangência: Modelos teóricos, doutrinas de segurança, leis da física, construções filosóficas, abordagens metodológicas e todos os conceitos.
+Padrão de Nome do Título: Nome do Conceito ou Doutrina em sua forma SSOT/Enciclopédica (ex: [[Dissuasão Nuclear]], [[Destruição Mútua Assegurada]], [[Pulso Eletromagnético de Alta Altitude]]).
+2.3 Notas de Evento / Marco Temporal (type: event)
+Abrangência: Ocorrências históricas pontuais, acordos, tratados, reuniões ou testes delimitados no tempo.
+Padrão de Nome do Título: Adote a notação Big-Endian antecedendo o nome do evento. Para eventos de séculos ou sem dia exato, use o prefixo temporal adequado.
+Exemplos: [[1994-12-05 Memorando de Budapeste]], [[2022 Terceiro Trimestre Crise Nuclear de Kherson]], [[2026 Fim do New START]].
+2.4 Notas de Processo / Síntese Causal (type: process)
+Abrangência: Mapeamentos de processos e sequências operacionais, dinâmicas de causa e efeito e fenômenos em geral.
+Padrão de Nome do Título: Nome do Processo ou Fluxo Dinâmico (ex: [[Escada de Escalada Nuclear]], [[Efeito Cascata de Proliferação Regional]]).
+3. Template Obrigatório de Estruturação das Notas
+Você deve gerar o conteúdo de cada nota seguindo rigorosamente a estrutura Markdown abaixo, sem alterar os cabeçalhos YAML:
+Markdown
+---
+type: [entity| concept | event | process]
+tags:  [tag_principal], [subtag_tematica]
+aliases:  "Nome Alternativo 1", "Sigla ou Nome Curto"
+---
+# [Nome Exato da Nota]
+## Definição e Análise Contextual
+[Descrição analítica de 1 a 3 parágrafos contínuos. O texto deve consolidar a definição fundamental, o contexto histórico ou técnico e o papel da nota na análise global. Toda menção a termos pertencentes ao grafo deve ser anotada obrigatoriamente como [[WikiLink]].]
+## Conexões e Relações Diretas* [[Nota Origem ou Sujeito]] -> [Verbo de Ação ou Conector de Ligação] -> [[Nota Destino ou Objeto]], em linguagem natural similar ao texto original
+## Matriz Causal e Atribuição Epistêmica
+* **Causa / Premissa:** [Fator condicional ou evento que origina/sustenta esta nota]
+* **Efeito / Impacto:** [Desdobramentos e consequências decorrentes desta nota]
+* **Atribuição Epistêmica:** [[Entidade Proponente ou Fonte Histórica]]
+## Redes de Conexão e Contexto Cruzado
+* **Precursores e Ancestralidade:** Contexto em relação à [[Nota Precursora 1]], Contexto em relação à [[Nota Precursora 2]]
+* **Eventos Laterais e Paralelos:** Contexto em relação à [[Nota Lateral ou Paralela 1]], Contexto em relação à [[Nota Lateral ou Paralela 2]], 
+* **Desdobramentos e Posteridade:** Desdobramentos relacionados à [[Nota Posterior 1]], Desdobramentos relacionados à [[Nota Posterior 2]]
+4. Instruções de Execução do Grafo de Links Bilaterais (Double-Side Linking)
+Hipervinculação Exaustiva no Corpo do Texto:
+Ao redigir qualquer nota, insira [[WikiLinks]] em todas as ocorrências de nomes próprios, tratados, datas históricas, teorias e processos que possuam notas dedicadas existentes ou futuras.
+Consistência de Nomes e Aliases:
+Garanta que o texto do link [[Nome da Nota]] corresponda exatamente ao título da nota de destino. Se utilizar uma variação gramatical ou flexão do nome no texto, utilize a sintaxe de aliasing nativa do Obsidian: [[Nome da Nota|Texto Flexionado]], e inclua a variação no cabeçalho YAML respectivo
+Mapeamento Transversal na Seção "Conexões e Relações Diretas":
+Converta as triplas e processos extraídos na Etapa 2 em relações declarativas de linguagem natural interconectadas por links (ex: * [[Federação Russa]] -> assinou -> [[1994-12-05 Memorando de Budapeste]]).
+Resolução de Termos Órfãos:
+Nenhuma nota atômica pode ser gerada isoladamente. Se uma nota for citada no corpo de outra, a nota correspondente também deve ser gerada no lote final de notas atômicas.
+5. Regras de Saída Automatizada
+A resposta final deve apresentar as notas atômicas geradas em sequência contínua, contidas dentro de marcações XML para importação direta:
+```
+<xml>
+<nota>
+[Conteúdo completo de cada Nota Atômica seguindo o Template]
+</nota>
+<nota>
+[Próxima Nota Atômica]
+</nota>
+</xml>
+```
+Não inclua introduções, saudações, conclusões ou textos explicativos antes ou depois da tag XML. Apresente exclusivamente o bloco XML com as notas formatadas. 

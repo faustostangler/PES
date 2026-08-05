@@ -1,17 +1,41 @@
 """
 Utility script to incrementally batch git stage and commit raw transcriptions
-without freezing IDE UI or hitting HTTP 500 push body limits.
+without freezing IDE UI, hitting HTTP 500 push body limits or GitHub 100MB file limit.
+Fast Python globbing for .txt and .md text files.
 """
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ISB_ROOT = Path(__file__).parent.resolve()
 RAW_DIR = ISB_ROOT / "raw"
 REPO_ROOT = ISB_ROOT.parent.parent
+LOCK_FILE = REPO_ROOT / ".git" / "index.lock"
 
 
-def sync_raw_in_batches(batch_size: int = 10, push: bool = True) -> None:
+def clear_stale_lock() -> None:
+    """Remove index.lock if it exists."""
+    if LOCK_FILE.exists():
+        try:
+            LOCK_FILE.unlink(missing_ok=True)
+        except Exception:
+            pass
+
+
+def run_git_command(args: list[str], max_retries: int = 5) -> subprocess.CompletedProcess:
+    """Executes a git command with lock retry logic."""
+    for attempt in range(max_retries):
+        res = subprocess.run(args, cwd=REPO_ROOT, capture_output=True, text=True)
+        if "index.lock" in res.stderr and attempt < max_retries - 1:
+            time.sleep(0.3)
+            clear_stale_lock()
+            continue
+        return res
+    return res
+
+
+def sync_raw_in_batches(batch_size: int = 10, push: bool = False) -> None:
     """Stages and commits raw transcriptions channel by channel."""
     if not RAW_DIR.exists():
         print(f"Directory {RAW_DIR} does not exist.")
@@ -24,51 +48,39 @@ def sync_raw_in_batches(batch_size: int = 10, push: bool = True) -> None:
     batch_count = 0
 
     for idx, channel_dir in enumerate(subdirs, 1):
-        rel_path = channel_dir.relative_to(REPO_ROOT)
-        print(f"[{idx}/{len(subdirs)}] {rel_path}")
-        # Stage directory
-        res = subprocess.run(
-            ["git", "add", str(rel_path)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True
-        )
-        if res.returncode != 0:
-            print(f"  Warning: git add failed for {channel_dir.name}: {res.stderr}")
+        clear_stale_lock()
+
+        # Find all .txt and .md transcript files under this channel
+        txt_files = list(channel_dir.rglob("*.txt")) + list(channel_dir.rglob("*.md"))
+        if not txt_files:
             continue
 
-        # Check if anything is staged for this path
-        diff_res = subprocess.run(
-            ["git", "diff", "--cached", "--name-only", str(rel_path)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True
-        )
+        rel_files = [str(f.relative_to(REPO_ROOT)) for f in txt_files]
+
+        # Stage files in chunks of 500 to avoid OS CLI argument limits
+        chunk_size = 500
+        for i in range(0, len(rel_files), chunk_size):
+            file_chunk = rel_files[i:i + chunk_size]
+            run_git_command(["git", "add"] + file_chunk)
+
+        # Check if anything is staged for this channel
+        rel_channel = str(channel_dir.relative_to(REPO_ROOT))
+        diff_res = run_git_command(["git", "diff", "--cached", "--name-only", "--", rel_channel])
         staged_files = [f for f in diff_res.stdout.splitlines() if f.strip()]
 
         if staged_files:
             msg = f"sync(raw): add {len(staged_files)} transcriptions for '{channel_dir.name}'"
-            commit_res = subprocess.run(
-                ["git", "commit", "-m", msg],
-                cwd=REPO_ROOT,
-                capture_output=True,
-                text=True
-            )
+            commit_res = run_git_command(["git", "commit", "-m", msg])
             if commit_res.returncode == 0:
-                print(f"  Committed {len(staged_files)} files for '{channel_dir.name}'")
+                print(f"[{idx}/{len(subdirs)}] Committed {len(staged_files)} files for '{channel_dir.name}'")
                 committed_count += 1
                 batch_count += 1
             else:
-                print(f"  Commit error for {channel_dir.name}: {commit_res.stderr.strip()}")
+                print(f"  [{idx}/{len(subdirs)}] Commit error for '{channel_dir.name}': {commit_res.stderr.strip()}")
 
         if push and batch_count >= batch_size:
             print("--> Pushing batch to remote...")
-            push_res = subprocess.run(
-                ["git", "push", "origin", "main"],
-                cwd=REPO_ROOT,
-                capture_output=True,
-                text=True
-            )
+            push_res = run_git_command(["git", "push", "origin", "main"])
             if push_res.returncode == 0:
                 print("--> Batch push successful!")
                 batch_count = 0
@@ -77,11 +89,11 @@ def sync_raw_in_batches(batch_size: int = 10, push: bool = True) -> None:
 
     if push and batch_count > 0:
         print("--> Final push to remote...")
-        subprocess.run(["git", "push", "origin", "main"], cwd=REPO_ROOT)
+        run_git_command(["git", "push", "origin", "main"])
 
-    print(f"Done! Processed {len(subdirs)} channels. Created {committed_count} new commits.")
+    print(f"\nDone! Processed {len(subdirs)} channels. Created {committed_count} new commits.")
 
 
 if __name__ == "__main__":
     push_flag = "--push" in sys.argv
-    sync_raw_in_batches(batch_size=10)
+    sync_raw_in_batches(batch_size=10, push=push_flag)
