@@ -1,0 +1,176 @@
+---
+video_title: "Claude mudou TUDO sobre criar agentes de IA (Managed Agents)"
+video_id: 4WgMR4ZB0Zc
+channel_name: "Eli Rigobeli - AI"
+channel_id: UC1aW5Cdw3hOmygxAQI2O9oQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=4WgMR4ZB0Zc
+video_date: 2026-04-09T23:30:02+00:00
+video_description: |
+  🔥Se inscreva para receber novidades:
+  https://links.elirigobeli.com/lista
+  
+  ⚠️ NÃO assista esse vídeo 👇🏻
+  Crie seu APP: https://youtu.be/JEESRkJ0fXA
+  
+  Claude Managed Agents. Veja como criar agentes de IA que executam tarefas sozinhos, integrar com APIs e entender como isso muda o futuro da automação.
+---
+A Antropic, mais uma vez, eles não param, acaba de lançar algo que pode mudar completamente a forma que nós criamos agentes e automações com IA. O Manage agents, os agentes gerenciados do cloud. E a ideia aqui é simples. Antes você precisava de toda uma estrutura para criar agentes. Agora você só descreve o que que o seu agente precisa fazer e a própria Antropic cuida de tudo para você. Será que esse é o
+
+começo do fim de ferramentas como o N8N e até mesmo o OpenCla? Será que é por isso que eles limitaram o uso do cloud dentro do OpenCl? Nesse vídeo eu vou te mostrar como tudo funciona. É praticamente um curso. Mas antes eu queria mostrar isso aqui para vocês.
+
+Isso aqui é graças a vocês. De verdade. Muito obrigado a todo mundo que acompanha o canal, que curte, que comenta, que compartilha. Um agradecimento especial também pros apoiadores do canal. Eu espero de verdade tá ajudando vocês, seja aprendendo IA ou criando novas oportunidades. Muito obrigado mesmo. E
+
+agora bora para cima que você vai curtir esse vídeo. Para acessar, eu vou vir aqui no Google pesquisar por Cloud Console e vou acessar esse primeiro link aqui, ó. Vou fazer o login com a minha conta. Estamos na plataforma. Agora repara aqui no menu, ó, que nós temos o gerenciador de agentes. O nosso foco vai
+
+ser nessas opções: quickstart, agentes, sessões, ambientes e credenciais. Mas a gente precisa entender algumas coisas antes de começar ali a criar nossos agentes. Basicamente hoje nós temos duas formas de construir com o cloud. Então, criei minha aplicação, quero integrar com a inteligência artificial lá do cloud. Eu preciso usar aqui, ó, a API de mensagem. Aí eu estudo a documentação da
+
+API, crio um código parecido com esse para fazer integração. Repara, eu tô acionando aqui o endpagem, passando a minha API aqui, outros parâmetros no header. Tô configurando um modelo e passando uma mensagem aqui, olá, cloud. E ele vai me retornar uma estrutura parecida como essa. Vai passar um ID, vai passar aqui o conteúdo, ó, que é um texto e a resposta hello. Dessa forma,
+
+eu consigo criar meus agentes usando API. Eu consigo criar esses loops, ter um controle mais preciso. Porém, eu tenho que codificar tudo isso, eu tenho que tratar todos os possíveis erros. Isso tudo vai rodar num ambiente que eu tenho que criar, eu que tenho que gerenciar. E a ideia do gerenciador de agentes é ser uma plataforma já pré-configurada e que roda ali na estrutura deles. E é ideal para tarefas
+
+que demoram mais tempo, para trabalho assíncrono, que eu não preciso ficar esperando. Então hoje se eu quiser criar um agente usando API de mensagens, eu consigo, mas eu vou ter que me preocupar em criar um ambiente seguro, fazer todo o gerenciamento de estado. Preciso me preocupar em conectar com diferentes aplicações que eu quero utilizar e manipular as credenciais dela. preciso salvar isso em algum lugar. E aí eu preciso tratar os erros que vão acontecer, gerenciar o contexto. E pra
+
+antropic, essas tarefas consomem tempo e tira foco do que é importante. Então a ideia do gerenciador de agentes é fornecer tudo isso. Pronto. Quem tá desenvolvendo precisa se preocupar com o que o agente vai fazer e não como ele vai ser executado. E para isso, nós entramos no conceito principal, que são quatro pés: o agente, o ambiente, a sessão e os eventos. o agente, tudo
+
+aquilo que a gente já tá acostumado, as instruções, as conexões com os MCPs, as skills, as ferramentas que ele tem disponível. E o interessante é que quando a gente cria esse agente, ele passa a ter um ID. significa que eu vou poder referenciar esse agente em várias sessões. Depois nós temos um ambiente que é um template de contêiner e lá ele vai ter pacotes, pode ser o Python, Node, vai ter também as regras de rede, o que que ele pode acessar, o que que ele não pode. Cada sessão que a gente iniciar vai lançar um novo contêiner com base nesse template, com base nessa configuração. Depois nós temos a sessão,
+
+que é uma instância desse agente executando dentro do ambiente. é na sessão que ele vai executar as tarefas e retornar um resultado. E por último, temos os eventos, que são as mensagens trocadas entre nossa aplicação e o agente. Entendido esses conceitos, então a gente vai precisar fazer o seguinte, criar o agente, vamos dar um nome para ele, falar qual que é o modelo que ele vai usar, as instruções, você vai ter ali conexão com outras plataformas via MCP, criar o ambiente, criar o contêiner, que são as permissões que ele vai ter de rede, os pacotes que ele vai utilizar. Depois, naturalmente ali nos testes que a gente fizer, uma sessão vai ser iniciada. Aí nós vamos enviar
+
+mensagem para ele e depois nós vamos poder continuar enviando mensagens para esse agente, pedindo para ele fazer outras ações ou simplesmente interromper. E lógico que depois paraa gente ver isso funcionando, a gente precisaria aqui no mínimo de uma integração, que eu confesso que é onde não ficou muito legal isso ainda, pelo menos pro público em geral, eles poderiam facilitar um pouco, vocês vão entender. Bora lá, vamos criar o nosso primeiro agente. Então, voltando aqui, ó, quero criar um agente. Agentes aqui em cima, novo agente. E ele traz uma
+
+popup de configuração. Aí ele mostra aqui, ó, dois formatos, tá? Que eu posso preencher, YL ou Jzon. Isso daqui é uma forma padronizada de organizar informações para facilitar a troca de mensagem entre as aplicações. Esse formato é mais fácil para nós humanos ler. Já aqui o Jzon é mais rápido pra
+
+máquina fazer o parcer que a gente fala que é extrair os dados, tratar os dados. Cada um vai ter as suas vantagens e desvantagens. Mas aqui isso não vai fazer muita diferença pra gente. O ponto é, eu posso começar a preencher esses dados aqui, ó, a alterar mesmo. Ou eu posso vir nessa opção aqui e descrever o que que eu quero que meu agente faça, porque aí ele vai preencher aqui embaixo. Ou também utilizar um template.
+
+E já tem alguns exemplos prontos. Sessões. Clico aqui em sessões. Nova sessão, nome da sessão. Quem que é o agente? Não tá mostrando nenhum porque
+
+eu não criei. Qual que é o ambiente? A mesma coisa. o cofre de credenciais dele e aí criaria a sessão ambiente, ambientes, novo ambiente, um nome para ele, descrição e onde que ele vai est executando. Nesse caso aqui é nas nuvens. E para finalizar, como eu falei,
+
+o cofre aqui pras credenciais novo, dou um nome para ele e crio. Porém, felizmente nós temos aqui um quickst facilitar um pouco a nossa vida. Kickst. E aqui ele pergunta: "O que você quer construir? descreva o seu agente ou comece com um template. Os templates são
+
+esses, ó. Se eu clicar, eu vejo mais informações do nome do agente, a descrição, o modelo, o prompts que vai estar configurado. Se eu quiser usar, eu clico aqui, ó, em usar template. Repara que aqui em cima ele mostra os passos que a gente vai precisar fazer aqui para criar esse agente. Então, é criar o agente, configurar o ambiente, iniciar a sessão e fazer a integração. Agora, olha que
+
+interessante, tá vendo aqui? Post V1 Agents. O que que acontece? Tudo isso que você viu que a gente precisa criar poderia ser feito também através da API. Poderia aqui no meu computador abrir o cloud, abrir o Codex, abrir qualquer IA ou também codificar mesmo a integração com ele. Então eu usaria a API para
+
+criar o agente, passaria todos esses dados para ele, beleza? Criou o agente, tá aqui o ID, depois criaria o ambiente, poderia iniciar uma sessão e assim por diante. Mas a ideia é justamente simplificar. E como que a gente simplifica? escrevendo aqui no prompt o que que eu quero que o meu agente faça.
+
+E aqui eu vou pegar um exemplo mais simples, beleza? Eu quero criar um agente que responda questões do meu cliente com base em uma base de conhecimento disponível no Notion. Depois quero integrar isso em uma página dentro da minha aplicação. Eu vou enviar e aí ele já começa aqui, ó, a escrever. Repara que ele deu o nome aqui de suporte ao cliente via Notion.
+
+Descrição, agente que responde perguntas de clientes com base em uma base de conhecimento hospedada no Nion. Modelo, isso é importante, ele configurou o modelo. No caso aqui, ele viu que não precisava do Opus, colocou o Sonet 4.6. System prompt, você é um agente de suporte ao cliente. Seu papel é
+
+responder perguntas dos clientes com base exclusivamente na base de conhecimento disponível no Notion. Ao receber uma pergunta, busque informações relevantes no Notion e forneça uma resposta clara, precisa e amigável. Se a informação solicitada não estiver na base de conhecimento, informe o cliente de forma educada e sugira que ele entre em contato com o suporte humano. Poderia, por exemplo, colocar o e-mail aqui. Nunca invente informações.
+
+Responda apenas com o que estiver documentado. E aqui você pode fazer a alteração que você desejar. Nesse caso aqui, o legal é que ele já entendeu também que ele tem o MCP do Notion. Então ele colocou aqui MCP Server Notion, colocou a URL do MCP e o tipo URL e colocou também aqui as ferramentas. Aqui em skills, ó, não colocou nada porque não tem skills, mas a gente conseguiria criar skills também, as habilidades para esse agente. E aí, o
+
+que que eu quero fazer? Eu quero criar esse agente ou continuar refinando ele? Se eu clicar em continuar refinando, eu posso falar o que que eu quero que ele altere no prompt, alguma melhoria. Se eu clicar em criar agente, ele vai fazer o quê? vai fazer um post naquele end point que cria agentes. É por isso que eu
+
+conseguiria usar o Cloud Code para criar o agente também direto da minha máquina. Lógico que eu precisaria configurar uma chave de API. Por quê? Porque aqui eu tô no ambiente já logado. Mas beleza.
+
+Agente criado com sucesso. Um agente é uma configuração reutilizável e versionada. Ele define a personalidade, o modelo e as ferramentas disponíveis, mas não executa nada sozinho. Para isso, você cria sessões a partir dele. Se eu clicar aqui em agentes, tá aqui o meu agente de suporte ao cliente Notion. Ele
+
+tá com esse modelo, tá ativo, foi criado há 2 minutos. Se eu venho aqui, ó, em suporte ao cliente e clico nele, eu vejo os detalhes de configuração desse cliente, os MCPs e ferramentas, as skills que não foi configurada, o system prompt modelo aqui também o versionamento. Você pode ter versões de prompt e isso é bem interessante. Também vejo aqui as sessões desse agente, não tem nenhuma, não executei ainda. Voltando pro kickst, o próximo passo é configurar o ambiente. Cliquei. O
+
+ambiente define como o contêiner do agente é provisionado, incluindo configurações de rede que determinam quais hosts ele pode acessar durante a execução. Esse agente aqui, tá, eu quero que ele acesse só o Notion ou ele pode acessar outros sites? Ó, o agente precisa acessar apenas o Notion também, outros serviços externos. Se eu colocar em restrito, ele pode acessar tudo. Não, mas eu quero aqui, ó, apenas o no.
+
+Novamente ele executa aqui a API para criar o ambiente. Ambiente criada com rede limitada ao Notion. Agora vamos configurar a sessão de teste, mas antes vamos lá ver esse ambiente. Então aqui em ambientes agora tem esse ambiente aqui que tá ativo nas nuvens. Se eu clicar, eu vejo a configuração deles aqui, ó. Posso clicar aqui em editar e
+
+gerenciar. Olha só que legal. nome, descrição, networking, tá limitado. Eu poderia colocar algumas URL só aqui permitida. Isso aqui é muito legal, cara. Os pacotes. Eu posso vir aqui, por
+
+exemplo, ó, e configurar um apt, um GO, um npm. Então, eu quero colocar esse npm aqui, ó, e configuro aqui o npm. E também metadados. Meu, isso daqui eu curti. Isso daqui ficou legal. Voltando,
+
+vamos lá. Vamos criar uma sessão. Aqui é para teste. É como se eu já tivesse utilizando start session. Uma sessão é uma instância em execução do seu agente no ambiente. Você envia a mensagem e
+
+observa o agente respondendo em tempo real. Pro agente funcionar corretamente no teste, o que que a gente precisa configurar? As credenciais do Notion. Um Volt, um cofre, é um repositório seguro no nível do workspace que armazena as credenciais dos servidores MCP, como por exemplo Notion. e pode ser utilizada em múltiplos agentes e sessões sem precisar inserir os tokens novamente. Isso daqui
+
+também é bem interessante, mas se você já usava o N8N, você lembra que lá a gente tinha parte de configurações de credenciais que a gente poderia reutilizar ali em vários fluxos. É mais ou menos a mesma ideia. Enviou aqui, ó, criou o cofre, já identificou que é o MCP do Notion. E olha que legal, eu poderia configurar aqui um token, dependendo da aplicação que você vai utilizar. Pode ser assim, tá? Opcional.
+
+ou também os dados de client ID e client secret, que é utilizado para fazer autenticação também. No nosso caso, eu não preciso de nada disso. Eu vou aceitar isso daqui e vou conectar. Ele vai abrir a tela aqui, ó, pedindo permissão para usar o Notion. Ele mostra que a partir dessa conexão, o cloud MCP vai poder fazer tudo isso daqui, ó. E eu
+
+vou clicar em continuar. credencial criada com sucesso, o agente tá pronto para teste e ele vai buscar respostas diretamente na sua base de conhecimento do Note, posso continuar refinando ou posso simplesmente rodar um teste. Só que antes de testar eu preciso ter o quê? Dados no notion, ele não vai consultar o Notion. Então eu criei uma página aqui no meu Notion chamada Test Cloud e criei essa outra página aqui dentro chamada política de devolução.
+
+Aqui dentro, ó, tem um textinho falando que de forma clara e objetiva a nossa política é sem garantia. Vou criar mais um aqui, ó, barrapágina política de suporte e vou colar esse conteúdo. Beleza? Então, temos duas páginas aqui. Eu vou acrescentar aqui, ó, só para não esquecer, teste cloud fac. Então, temos
+
+aqui o teste Cloud FAC com duas páginas, política de devolução e política de suporte. Agora sim, vamos testar, mas antes eu quero mostrar para você aqui que a gente vai gastar. E aí chegou um ponto que eu não falei ainda, que embora a gente consiga utilizar isso daqui sem ter um plano com eles, a gente vai precisar ter saldo na plataforma porque ela vai consumir tokens. Então aqui, ó, em analytics, nós vamos conseguir ver o uso, o custo, log do que que tá gastando. Para colocar crédito, eu venho aqui, configurações da organização, peeling e aqui é o meu saldo, $40. Se eu
+
+quiser comprar, ó, comprar créditos e o mínimo vai ser 5. Beleza? Então, vamos lá, vamos testar e vamos ver quanto que ele vai gastar. Vou clicar aqui, ó, em test run. Criou uma sessão, sua sessão de teste tá pronta. Envia uma pergunta
+
+no painel de teste à direita. exatamente como um cliente faria, tá? Aqui, ó. Então, aqui eu consigo escrever a mensagem, não tem essa resposta lá para assinatura. Vamos deixar, já veio com esse exemplo. Eu vou clicar no
+
+botãozinho que tá atrás de mim aqui, enviar. Enviou. Como faço para cancelar a minha assinatura? E olha que interessante, eu tenho aqui transcript, é o modo que eu vejo mais simplificado as coisas. E tem o modo de depuração, de debug, que aqui sim eu vejo todas as mensagens, tudo que tá acontecendo ali com a gente. Sessão tá rodando, tá vendo
+
+só a quantidade de logs aqui, ó? Se eu vier pelo transcript, eu vejo mais resumido. Então, vou buscar a informação na nossa base de conhecimento. Aí, pesquisou no Notion, deixa eu verificar os detalhes relevantes para te ajudar. Deixa eu buscar informações na base de conhecimento. Ótimo, encontrei algumas
+
+páginas relevantes. Deixa eu verificar as políticas de suporte e devolução. Tá vendo? Se eu clicar em uma dessas linhas aqui, eu vejo mais detalhes, como por exemplo, ó, essa última. Obrigado por aguardar. Com base nas informações, opa,
+
+terminou, vou clicar, tá aqui. Obrigado por aguardar. Com base nas informações disponíveis na nossa base de conhecimento, aqui está o que encontrei sobre cancelamento de assinatura. Infelizmente, nossa base de conhecimento não possui um procedimento específico documentado para cancelar essa assinatura. No entanto, é importante que você esteja ciente da nossa política de devolução. Todos os produtos e serviços
+
+são fornecidos sem garantia de reembolso. Não realizamos devoluções, reembolsos ou trocas após confirmação da compra, independente do motivo apresentado. O que recomendamos para solicitar o cancelamento da sua assinatura, entra em contato diretamente com o nosso suporte humano, que poderá te orientar sobre opções disponíveis no seu caso específico. Nossa equipe de suporte está preparada para esclarecer dúvidas relacionadas ao uso dos produtos adquiridos. Posso te ajudar com mais alguma coisa? Tá aí, nosso agente. Só
+
+que ninguém vai ficar utilizando ele aqui, né, nessa interface. Por isso que a gente precisa fazer o quê? Uma integração. Mas antes de integrar, vamos lá ver o que que ele gastou, né? Ó, vou atualizar essa tela aqui. Tava R,40.
+
+E aí, será que gastou muito? 34 de dólar, R$ 1,73. Caro, hein? Mas não desiste, não. Vê o resto do vídeo aqui para você ver a parte da integração. Mas antes de ver a
+
+integração, repara, tem uma sessão rodando aqui e o cloud, ele também vai me cobrar por tempo que a máquina tá executando. Lógico, você achou que ele ia cobrar só os tokens? Não. Na documentação que fala sobre modelos, preços, nós temos essa sessão que fala sobre o preço do gerenciador de agentes. O serviço é cobrado de duas formas: tokens e tempo de execução da sessão. O
+
+token a gente já sabe, cada modelo é um valor. Mas e o tempo de execução da sessão? Tá aqui, ó. Tempo de execução da sessão, 0.08 08 de dólares por hora da sessão. O tempo
+
+da sessão é medido em milissegundos e acumula apenas enquanto o status da sessão for rodando. Aqui é um aguardando, mas rodando, porque o tempo que ele tá ocioso, em espera ou terminou, não conta para o tempo de execução, pelo menos, né? Ah, e antes de fazer a integração, vamos fazer o seguinte, ó. Eu vou clicar aqui em ver sessão. Essa tela é legal porque eu vejo os detalhes dessa sessão. Eu vejo
+
+inclusive aqui, ó, uma barrinha horizontal com cada etapa que foi acontecendo ali na sessão. Aqui em cima também tem mais detalhes. Eu consigo ver o tempo que tá executando, os tokens que foi consumido e o histórico aqui das mensagens. Então as sessões, né, elas ficam salvas aqui, ó. Tô no ambiente de produção, eu vou ter aqui o que aconteceu em cada uma das sessões. Eu
+
+posso parar a sessão aqui, ó, send interrupt ou enviar um evento paraa sessão. E eu também posso perguntar alguma coisa pro cloud. Abre aqui um chat para eu perguntar qualquer coisa referente a essa sessão. Voltando aqui pro Kickstart, testei. Tá funcionando.
+
+Parar sessão. Sessão fechada. A sessão rodou bem. O a gente fez múltiplas chamadas no notion busca e fet de páginas, demonstrando que a integração com base de conhecimento tá funcionando corretamente. Nenhum erro foi detectado.
+
+O agente pensou antes de responder e entregou mensagens ao usuário com base no conteúdo recuperado do NOS. Agora vem a fase da integração. Para integrar o agente na sua aplicação, cria uma sessão via post com o agente ID, o ambiente, transmite os eventos, mensagem do usuário via post. Sua aplicação reage ao status IDLE para saber quando a gente terminou ou está guardando o input. Aí ele me dá um exemplo aqui, ó, de aplicação em Python. Tá vendo? Só um
+
+exemplo básico. Consigo alterar aqui, ó, ver em Typeescript e também ver um curl aqui, um CURL, que eu poderia, por exemplo, colocar lá no N8N. Interessante, eu não tinha pensado em usar no N8N, por quê? No meu canal tem um vídeo já mostrando como que a gente usa o WhatsApp ali com N8N, certo? Só que o agente ele é um agente do N8N. Só
+
+que se eu quiser usar essa estrutura, não faz muito sentido, tá? Até pelo custo do token ali. Acho que nesse nesse momento não faz sentido, mas poderia configurar exatamente essa chamada aqui e eu não precisaria criar uma aplicação igual a gente vai criar, mas pode ser um caso de uso também. Aí eu posso sair do Quickst aqui ou receber uma estrutura inicial do projeto aqui no cloud code. Eu vou clicar nessa opção, copiou o prompt. Vou criar um diretório aqui no
+
+meu desktop. integração e eu poderia usar qualquer IA, tá? Só que nesse caso aqui, esse prompt é interessante por ele tá invocando o gerenciador de agentes para passar esses dados. E aí já tá passando ID, utilizando o SDK, que é o kit de desenvolvimento da Antropic, criando a sessão. Então ele já tá passando um monte de dados. Vamos ver se
+
+o cloud vai entender isso daqui. Botão direito, abrir no terminal. Beleza? Cloud, colar, enviar. Repara aqui que não achou a skill gerenciar agentes, porém ele tá pedindo para usar aqui, ó, a skill cloud, que provavelmente já vai cobrir ali a criação dos agentes das sessões. Vamos torcer para isso. Yes, já
+
+criou um código aqui. Yes. Só que ele criou em Python, um script aqui. Beleza, vai funcionar. Mas eu quero uma interface web. Eu esqueci de falar isso.
+
+Expliquei aqui que eu quero uma interface web, pedi para ele rodar já e me passar o URL local host. Quanto ele tá criando ali uma integração, eu queria falar justamente sobre esse ponto, por o cloud vai criar ali, ele vai conseguir fazer o que precisa ser feito, mas se eu tivesse, por exemplo, a possibilidade de usar um web hook, ou seja, tem uma URL lá no console que ele vai criar para mim, eu posso chamar ela passando os dados, parâmetros, executa e vem o retorno. OK, eu posso criar uma aplicação que faz isso, mas se tivesse diretamente lá, igual o próprio N8N faz, seria interessante. Outra coisa, no N8N, nós temos ali vários nós, né? Então eu tenho gatilhos. Seria interessante eu
+
+ter essa mesma ideia de gatilhos quando acontecer um evento ou a gente acordar e começar a realizar uma tarefa. Basicamente é isso que vem na mente. Quem sabe eles não criam isso no futuro, até porque é algo muito novo, né? Acabou de ser lançado. Outra coisa também seria interessante a gente ter o quê? memória,
+
+lembra do OpenCloud? Tem um esquema de memória muito bom, mas a boa notícia é que, até onde eu entendi, a Antropic já tá trabalhando nisso, tanto na questão de ter ali as memórias, como agentes trabalhando em equipe. Um agente poder chamar outro agente. Aplicação criada, será que vai funcionar? Vou copiar o URL aqui. Vou rodar aqui. Conectou com o
+
+cliente, tá vendo? Só que eu preciso ser sincero com você. O que que aconteceu? A minha internet caiu, eu fui resolver outras coisas, comecei a editar esse vídeo e quando eu fui testar aqui e gravar, começou a dar erro de conexão com o Notion. Eu acredito que o pessoal tá testando bastante, fazendo as conexões e não tá rolando. Olha só, vou
+
+mandar uma mensagem. Gostaria de saber como devolver o produto. Vou enviar. O agente começa a pensar aqui e vai mostrar um erro. Mas é bom acontecer isso que vocês vão entender uma coisa legal também. Se eu vier aqui nas
+
+sessões, eu tenho essa sessão aqui, ó, que começou há 1 minuto. Se eu entrar nela, olha o que eu falei aqui. Um erro de conexão com MCP, com Notion. Tá vendo? Tá falando que o token ou tá inválido ou inspirou. Já deletei
+
+credencial, tentei conectar de novo, ó. Vou fazer mais uma vez. Vou adicionar aqui credencial Notion. Vou selecionar aqui o Notion e conectar. Ele abre a tela para autenticar. Pede permissão,
+
+continuar, mas tá com algum problema na hora de redirecionar. Aqui, ó. Volte paraa ferramenta. Mas não era para acontecer isso, era para retornar o cloud, conseguir pegar aqui os dados, gerar o token que precisava e pronto, tá conectado. Tentei de tudo e não deu certo. E por conta disso dá time out.
+
+Mas eu tive uma ideia. Vamos tirar o notion da parada para você ver funcionando aqui a integração. E por que que foi bom isso acontecer? Porque tem um outro detalhe, ó. Quando eu entro aqui no agente, vamos supor que eu quero fazer uma alteração nele. Eu posso
+
+editar aqui, certo? Como vocês viram, ó, aparece aqui para alterar o texto, mas eu posso voltar aqui, ó, e fazer uma edição guiada. E ele pergunta: "O que que eu quero alterar? Eu não quero que utilize mais o Notion. Pode remover o MCP. Eu só quero que o agente converse
+
+com a pessoa e responda o que ela precisar. Enviar. O problema aqui é que pode ter aquela questão do ambiente, se vai usar ou não internet, mas vamos tentar nem mexer nisso. Ó lá, removendo o MCP do Notion. Pronto, o MCP foi removido e o agente agora é um assistente conversacional simples. Ele
+
+responde o cliente de forma clara e amigável, sem depender de nenhuma base de conhecimento externa. Se quiser testar, é só iniciar uma sessão de teste pelo painel. Nem vou testar por aqui, já vou testar pela integração. Então, do lado direito aqui atualizando, eu tenho a conexão com a gente. Do lado esquerdo, a lista de sessões. Que que eu vou
+
+mandar? Só um oi. Enviar. Ou a gente tá pensando, ó. Vamos atualizar aqui e ver se criou uma outra sessão. Criou a
+
+sessão, ó, a 8 segundos. Tá rodando, tá vendo? Vou clicar nela. Consegue ver com mais detalhes aqui. E a resposta tá aqui, ó. Oi, seja bem-vindo ao suporte
+
+ao cliente. Como posso ajudar hoje? Fique à vontade para fazer sua pergunta, que é exatamente o que a gente tá vendo aqui. Eu preciso devolver um produto. Enviar. Vamos ver se é em tempo real
+
+aqui. Eu só tenho que atualizar. Ah, em tempo real, ó, pegou a mensagem, eu preciso devolver um produto. Aqui eu consigo debugar tudo que tá acontecendo. Top demais, né? Se o MCP lá no Notion
+
+tivesse conectado, não tivesse dado esse problema, aí funcionaria normalmente também. E aí, o que que você achou do novo gerenciador de agentes do cloud? Gostou? Gostou do vídeo? Também comenta aqui embaixo se vai acabar ou não com o N8N com o OpenCla. Eu acho um pouco
+
+difícil. Eu achei bem interessante a proposta, só que eu acho que são coisas diferentes ainda. Se você for ver, a própria Notion é um caso de uso, né? é uma empresa que tá usando esse serviço, inclusive ela fez parte aí da divulgação, então acredito que eles podem pegar esse lado mais de empresas, o que pode ser muito bom para eles. Quando que a Notion ia usar, por exemplo, um OpenCla? Digo mais, quando
+
+que a Notion iria usar um N8N? E falando no N8N, embora não esteja no hype, porque ele já pegou um hype enorme também, né? Ele é um super projeto, eu utilizo até hoje e muito. Dá para criar muita solução com ele de forma mais rápida e mais econômica do que o que a gente acabou de ver aqui. A ideia de você conectar os nós, ver o que tá acontecendo em cada nó, arrastar, soltar, isso é muito prático. É que as
+
+pessoas vão vendo as novidades, né? E é interessante, mas o legal é a gente pegar todas essas tecnologias e saber que cada uma ali vai ter o seu lugar. Então é isso, espero que você tenha gostado desse vídeo, compartilha com seu amigo, deixa o like para me ajudar e se inscreve no canal se você ainda não é inscrito. Eu sou Eli Rigobelli, obrigado por assistir e até o próximo vídeo. Tchau.
