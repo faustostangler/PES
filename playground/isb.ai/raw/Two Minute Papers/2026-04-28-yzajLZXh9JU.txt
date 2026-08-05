@@ -1,0 +1,71 @@
+---
+video_title: "Solved: The Bug That Haunted AI Video For Years"
+video_id: yzajLZXh9JU
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yzajLZXh9JU
+video_date: 2026-04-28T17:16:01+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  📝 The paper is available here:
+  https://research.nvidia.com/labs/sil/projects/MOTIVE/
+  
+  Our Patreon if you wish to support us: https://www.patreon.com/TwoMinutePapers
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Adam Bridges, Benji Rabhan, B Shang, Cameron Navor, Charles Ian Norman Venn, Christian Ahlin, Eric T, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Ryan Stankye, Shawn Becker, Steef, Taras Bobrovytsky, Tazaur Sagenclaw, Tybie Fitzhugh, Ueli Gallizzi
+   
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  Thumbnail design: https://felicia.hu
+---
+Today, generating eye-poppingly high-quality videos just by writing a text prompt is possible. You can also get exceptional controllability as well. You can generate three movies that look completely different, but land on the same ending. Almost anything you can think becomes achievable, effortless and inexpensive. Now, how they are kinda taking over the internet is another story. But pretty much all of these systems have a huge problem. What is the problem?
+
+Is it issues with photorealism? No. In photorealism, these AIs are second to none. I am a light transport researcher by trade, I like to write programs that create photorealistic images, and I feel that many of their results are nearly impeccable. I spent more than a decade to learn this craft, and these AI systems are picking it up at an incredible speed. That is absolutely crazy.
+
+But, not so fast. What about motion? Well, now we got a problem! Yup, motion breaks the spell. The frame looks right, but the movement feels wrong. And at this point, most AI researchers
+
+at this point say, no problem. Just give it more training data, and more compute, and we are done. Let’s actually test that. This is the base amount of compute for OpenAI’s Sora from two years ago. Base amount of compute. Yuck. This is not great, and if you look closer…I
+
+think you shouldn’t, you notice that this is what nightmares are made of. Now, if we add 4 times more compute, we get this. Perfect? Not even close. But the trend is shouting at us.
+
+Now, with 32 times more compute, we get this. Now we’re talking. The result starts to sing. So, case closed, right? If the motion is not good, and if you don’t have more compute, because who does these days, well then, let’s add more training data. Let it look and learn some more.
+
+Except that this is completely wrong. That is what this paper is about. When we see an AI generate motion, they developed a technique that is able to ask, okay little AI, where did you learn that? I love that! Let me give you an example. A foam cube floating on water. And it gives us waves crashing over a
+
+pier, surfing, splashing ocean waves. This is so cool! So this is where the knowledge came from. But wait, they say that if these are positive examples for your learning, I wonder what negative samples look like? Oh! This makes sense - these really are the worst for learning. Why? Because cartoons, for instance,
+
+teach completely conflicting information about physics. In cartoons, characters pause mid-air before falling, maybe even holding a tiny little umbrella. Bodies bounce like rubber, and snap back into their original shape a moment later. Fun for us. Not so fun for an AI model trying to learn real physics.
+
+Wait a second…I have an idea. What if we don’t just put in there more training data. What if we give it less? Cut out those bad influences! Can it do better?
+
+Let’s try it out together. Yes! With the base model, we get a coin which is spinning around the wrong axis. And now, hold on to your papers Fellow Scholars, because here comes the magic. After cutting out these bad influences and fine-tuning the AI with the good ones, look at that! That is a beautiful spinning coin.
+
+I got to say I was a bit less impressed by the ball example, yes the new one is better. We have seen plenty of systems pull off this kind of movement. In any case, we are Fellow Scholars here, we don’t hand out medals for a couple cherry-picked examples. No. We are more rigorous than that. We look at the research paper. Does the paper deliver? Oh yes, yes it does!
+
+I look at the user study, and see that it lands the punch. They asked people to judge whether the new or previous method was better. They did it across 50 videos and 17 participants. That is 850 little tests. And…drumroll, it has a 74.1% win rate over the original. That is stunning.
+
+Okay, so how on earth did they do that? Can we catch and AI in the act of remembering? Is that even possible? And what does that mean for us? Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. Now that’s a late cold open.
+
+Alright, they did two things to ensure that this concept works properly. One, you need to be able to separate how things move from how they look. To do that, they introduce a motion masking step through a technique we call optical flow. An old idea. Works great for tracking the path of points over a video. Good call.
+
+But here is the genius part. They don’t apply this mask to the video itself. Nope! Instead, they apply that mask to the internal learning signals of the AI. This helps them discover where decisions are coming from.
+
+Genius idea, yes, but unfortunately, two, there is a huge problem with this. What is the problem? Modern AI models have over 1 billion parameters. Storing and comparing the full learning signals for thousands of videos takes too much computer memory and time. That’s crazy town. Not feasible. Instead, they found a way to
+
+get this, compress down these more than a billion numbers into, excuse me? Am I seeing correctly? That’s right, 512. Down from more than a billion. And the results are almost the same.
+
+Wow! That is insane. The technique they use is called the Johnson–Lindenstrauss projection and it was used in Google’s TurboQuant compression algorithm as well. That is one to ease the memory constraints of large language models on your GPU. What does it do?
+
+What it does is it shrinks high-dimensional data into a tiny space, but in a way that it preserves the relative distance between these numbers. Picture a wooden chair. Now picture its shadow on the floor. The chair lives in 3D. The shadow lives in 2D. The shadow needs much less data. And if the scene is set up right,
+
+the distance between the four chair legs remains the same. And that means that this projection allows us to retain important properties of the data, but cut away a lot of fat. And all this is put together to achieve one thing: to be able to find what videos influenced the AIs decisions. And then, to cut away all the junk knowledge. And that is also super important for our thinking. You see, there
+
+are topics where I hoped that the more I read, the smarter I would get. Read more, grow wiser. Not true. There are many areas where the more I read, the more I found that I just got stupider. It took me years and years to find out that there are topics you can read and learn all you want, if the quality of information is low. It does not educate. It deforms your thinking.
+
+So what is the solution? You need to be able to separate the real from the fantasy. You don’t need more. You need less, and you need better. Like you saw in the paper, truth is the best teacher.
+
+And you don’t need a lot of it. This technique just showed a tiny clean signal beats a mountain of junk. Slow down, don’t take everything in. Try to verify what you actually hear, and try to take in less. To me, that is the main message of this paper. Brilliant work. Brilliant lesson. Love it.
+
+And they promise that we’ll get the code for free. What a time to be alive!

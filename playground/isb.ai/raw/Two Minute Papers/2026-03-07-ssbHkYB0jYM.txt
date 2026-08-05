@@ -1,0 +1,81 @@
+---
+video_title: "How DeepMind’s New AI Predicts What It Cannot See"
+video_id: ssbHkYB0jYM
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ssbHkYB0jYM
+video_date: 2026-03-07T14:42:18+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  📝 The paper is available here:
+  https://d4rt-paper.github.io/
+  
+  Our Gaussian Material Synthesis paper:
+  https://users.cg.tuwien.ac.at/zsolnai/gfx/gaussian-material-synthesis/
+  
+  Tweet link: https://x.com/GoogleDeepMind/status/2014352808426807527
+  
+  Our Patreon if you wish to support us: https://www.patreon.com/TwoMinutePapers
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Adam Bridges, Benji Rabhan, B Shang, Cameron Navor, Christian Ahlin, Eric T, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Ryan Stankye, Steef, Taras Bobrovytsky, Tazaur Sagenclaw, Tybie Fitzhugh, Ueli Gallizzi
+   
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+---
+This absolutely incredible paper from the Google DeepMind lab promises something that sounds like science fiction. Full 4 dimensional reconstruction of scenes. Hmm. Does this mean that things disappear into another spatial dimension like in this game called Miegakure? No. No,
+
+because this game is in the works and it has been for more than 11 years now. Wow. Okay, I won’t say anything because I also worked on this research paper called Gaussian Material Synthesis that took me 3,000 work hours to finish. And while I was working on it, no papers appeared and people thought I was dead. God, I haven’t even started the episode and we’ve gone off the rails already. Okay, Károly, focus.
+
+Okay, so what is this 4D thing? Well, 3 spatial dimensions, and 1 dimension that is time. It’s not crazy wormholes, it’s worse! It’s like building IKEA furniture, but as you start tightening the screws, the cabinet is running away. Okay, so what the heck is this crazy person talking about. So in goes a video of a scene
+
+of your choice. And out comes a virtual version of it in the form of a point cloud. However, the catch is that things are allowed to move around as they please. And this is fantastic, I mean look at these highly dynamic judo scenes and all kinds of craziness, and it understands how these points are moving around over time. I am always fascinated by the fact that an AI can look at a 2D photograph, and understand the underlying spatial reality. This is just a bunch of numbers for them,
+
+yet they understand what is close and what is far away. Crazy. We humans are good at that, but we have a brain that evolved for that for millions of years. And this is just a bunch of sand that learned to think. So that is already amazing. But it gets better.
+
+DeepMind says it could have unlimited applications, yes, unlimited power! Woo-hoo! Károly. Ok, ok. Now performing this is really tough. Previous techniques could do this kind
+
+of 4D reconstruction, but you needed a bunch of specialized models for it. You’d have one AI for depth, another for motion, and a third for camera angles. And then you have to glue all of these together into an abomination. Using the abomination requires a technique called test-time optimization. Yes. Here, your computer sits there sweating for minutes,
+
+trying to make the different models agree with each other so the geometry doesn't fall apart. Now this new technique doesn’t do that. This is called D4RT, if you want to sound cool, pronounce it as dart. Now this one uses one AI technique. Just one transformer. Everything
+
+that you see here in the middle is just part of one thing. And this one thing can handle depth, motion, and camera pose simultaneously without needing them to talk to each other. But it gets better. A lot better. It can even track through occlusion. It is able to guess
+
+where these points are, even if it doesn’t see them. How on Earth is that possible? Well, these points we have seen before, and will see again, so it is able to make an educated guess as to where they are, even if it doesn’t see them. Crazy. And it can reconstruct massive scenes by just briefly looking through them. Absolutely incredible.
+
+Now hold on to your papers Fellow Scholars, because as a result, it is incredibly fast. I mean, wow. Look at how it compares to previous techniques. Depending on what you compare to, it is up to 300 times faster. That is mind blowing. I’ll tell you in a moment how it works.
+
+Now, wait wait wait. Hold the phone. we can represent scenes in other ways too, not just with point clouds. Most games and animation movies use 3D mesh geometry, and Gaussian Splats are also the new rage. How does this relate to those?
+
+It is better and also worse in 3 ways. First, it excels at handling motion. While meshes and splats often struggle with ghosting, leaving behind artifacts as objects move, D4RT treats movement as a core part of the math. Second, it is up to 300x faster than previous methods. It skips the slow, iterative optimization loops that Gaussian splats usually require. Third, the model
+
+recovers depth, tracks, and camera parameters simultaneously. These are incredibly appealing. However, let’s not overstate things here. Now come the bad news. 3 things it is not so good at. Because it outputs a point cloud, the data is let’s say unintelligent. It’s just a bunch
+
+of dots. You can't 3D print it or use it for physics collisions without an extra meshing step. It is also not meant to look pretty. Meshes and Gaussian Splats remain the kings of photorealistic reflections while D4RT focuses strictly on geometric accuracy. Finally, it is worse for editing, because without the structured faces of a mesh, you can't exactly hop into Blender and sculpt it like digital clay.
+
+Okay, so how is all this incredible work possible? How do we assemble that cabinet that wants to run away? Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér. First, the encoder. This is a master carpenter. This looks at the scene and
+
+tries to understand the past and the present of the furniture. Understand what it’s about. This they call a global scene representation. Then, we get the decoder. These are the magic elves. Now let’s build. Here comes the genius
+
+part. Instead of trying to build the whole cabinet at once, which is heavy and slow. Yes, we all know that from building IKEA furniture. How the heck can this box have 100 screws? No one knows. Okay, so the carpenter just points to a spot and yells at a tiny
+
+elf: “Hey YOU! Yes, you! Where is this specific screw at timestamp 10?" The elf, which is the query grabs the info and zaps the screw into existence. Now here comes the genius part. Elves don’t need to talk to each other. Oh yes,
+
+finally! So because of that, you can have 10 elves or 1,000,000 elves doesn’t matter. Yes, the technique is completely parallelizable! That is the other reason why it is so bloody fast. And here is the kicker. The decoder, so the elves see in a way that is a bit blurry. They have
+
+terrible eyesight, so the objects they are working on become a bit blurry. So scientists say, let’s give them magic glasses. How? Well, by feeding the technique the original, high-resolution video pixels back into the decoder. So this is what they saw before, and this is what they see now.
+
+That is insane, because now it can reconstruct details finer than the AI's own internal brain! But I haven’t explained the part where the cabinet wants to run away. How do we handle that? Well, in a normal 3D scan, if the camera can't see the leg of the cabinet, the computer just gives up. Incomplete information and moving things cannot be handled well. They just leave a giant hole in your geometry. Total disaster.
+
+But remember, our master carpenter is not looking at just one photo. He has watched the entire video tape from start to finish. He has seen the past, and the present. So when the cabinet leg disappears behind the sofa, the elf cries out, "Master! The screw is gone! I cannot build what I cannot see!" I do not know why an elf has this voice.
+
+Now, the wise carpenter smiles and says: "Relax. I saw that screw five seconds ago, and I see it pop out the other side five seconds later. Based on that, right now, it is hiding... exactly here!” And boom! The elf is now suddenly able to assemble
+
+the cabinet. In other words, this is how it tracks through occlusion and disappearing information. Now surprisingly, there is more to learn here. Listen. The elves build the scene 300x faster because they do not talk to each other. That is excellent life
+
+advice. Sometimes collaboration has a tax. Sometimes instead you need to create a few hours of zero-communication deep work blocks where you are unreachable. Whenever I do that, I am often surprised by how much I can get done in little time. This is a collaboration between the wizards at Google DeepMind, University College London, and University of Oxford. These are the people inventing the power tools of the
+
+future and giving it away for all of us for free. Thank you so much! What a time to be alive! So, here you go. A glimpse of the future and how digital worlds could be created soon.
+
+A really advanced paper described in simple words anyone can understand. If you appreciate that, make sure to subscribe, hit the bell and leave a kind comment. So you’ll get more videos like this. Don’t worry about it, we are all paper addicts here.
