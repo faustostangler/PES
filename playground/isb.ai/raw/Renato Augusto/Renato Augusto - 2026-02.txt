@@ -1,0 +1,679 @@
+---
+video_title: "ARQUITETANDO O YOUTUBE NA PRÁTICA | SYSTEM DESIGN"
+video_id: JBivKeZVex0
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=JBivKeZVex0
+video_date: 2026-02-16T21:15:00+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo 👋
+  E no vídeo de hoje, eu vou te mostrar como arquitetar o YouTube na prática... Uma das arquiteturas mais complexas já construídas na história da engenharia de software, e que serve como referência máxima quando falamos de escalabilidade, distribuição e entrega de vídeo em larga escala.
+  
+  🚀 O que você vai aprender neste vídeo: ARQUITETANDO O YOUTUBE NA PRÁTICA | SYSTEM DESIGN
+  ✅ Como funciona a arquitetura completa de uma plataforma de streaming como o YouTube
+  ✅ Como fazer upload de vídeos gigantes de forma eficiente e resiliente
+  ✅ O papel do Multipart Upload, Storage distribuído e Object Storage
+  ✅ Como funciona o processamento, encoding e geração de múltiplas qualidades de vídeo
+  ✅ O papel das CDNs na entrega de conteúdo em escala global
+  ✅ Estratégias de escalabilidade horizontal e distribuição de carga
+  ✅ Como armazenar, servir e escalar bilhões de vídeos e usuários
+  ✅ Como arquitetos de software pensam ao projetar sistemas dessa magnitude
+  
+  💡 Por que assistir?
+  🔹 Pra entender como sistemas massivos como o YouTube funcionam por dentro
+  🔹 Pra dominar os fundamentos reais de System Design em larga escala
+  🔹 Pra evoluir sua mentalidade e aprender a pensar como um arquiteto de software
+  🔹 Pra se preparar para entrevistas técnicas e desafios reais de arquitetura
+  
+  Assista também:
+  https://youtu.be/m_anIoKW7Jg
+  https://youtu.be/bhw4-Kq_RPs
+  https://youtu.be/9g7twJrXqoY
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que querem dominar System Design
+  📚 Desenvolvedores que querem entender como sistemas massivos são construídos
+  💼 Engenheiros e arquitetos que projetam sistemas distribuídos e escaláveis
+  🚀 Qualquer programador que quer sair do nível intermediário e atingir o nível avançado
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design e carreira tech.
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 🙌
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo — eu sempre leio tudo e respondo sempre que posso.
+  
+  #systemdesign #arquiteturadesoftware #programação
+---
+Imagina que você tá concorrendo a uma vaga para programador ou arquiteto de software numa grande empresa. E o desafio que chegou para você resolver na tua entrevista foi tentar projetar nada mais nada menos que a arquitetura do YouTube, onde os requisitos vão dizer para você que você tem que dar suporte a milhões de uploads de vídeos sendo feitos diariamente, milhões de usuários logados a todo momento e bilhões de visualizações sendo geradas a todo instante. Se você não faz a menor ideia de por onde você começa resolvendo esse tipo de desafio, vem comigo, porque esse vídeo aqui é pr você. Fala pessoal, Renato Augusto aqui de novo e dessa vez para te ensinar a projetar a arquitetura do YouTube na prática, passando por todos os tradeoffs, decisões arquiteturais e complexidades desse tipo de desafio. E com toda certeza tu vai sair daqui hoje não só muito mais preparado para encarar entrevistas avançadas que envolvam system design, arquitetura de software e sistemas distribuídos, mas também muito mais preparado para lidar com desafios de grande porte na vida real. Então, pra
+
+gente não perder mais tempo aqui, bora direto pra tela, porque tem muita coisa pra gente ver e muita coisa para eu te ensinar. Bora lá. Bom, então vamos lá. Vamos direto ao que interessa aqui. Vamos direto ao ponto, porque você já sabe, né? Tem muita coisa pra gente ver.
+
+Então vamos começar aqui do começo, tá? A primeira coisa que a gente vai começar fazendo aqui é o seguinte, tá? É o que eu sempre recomendo para todo mundo quando vai participar de entrevista de System Design ou quando você vai ali arquitetar alguma aplicação ou algum sistema da vida real, é passar primeiro pelos requisitos funcionais e os requisitos não funcionais. Sem isso aqui, meu amigo, não existe arquitetura, tá? Toda a arquitetura foi feita para atender os requisitos funcionais e os requisitos não funcionais da aplicação.
+
+Beleza? Então isso aqui, se você tiver no caso de uma entrevista, tá? Isso aqui geralmente vai ser dado a você, tá? Você vai receber os requisitos funcionais ali e alguns requisitos não funcionais. E em cima disso, tu vai fazer alguns cálculos ali, tu vai entender, tu vai ler com muita atenção e aí tu vai conseguir bolar a tua arquitetura para quê? Para
+
+atender a esses requisitos funcionais e não funcionais. Beleza? A grosso modo, requisitos funcionais são o que a aplicação deve ser capaz de fazer e os requisitos não funcionais são como ela tem que fazer isso. Beleza? Então vamos lá. Para arquitetar o YouTube aqui, tá?
+
+Os dois requisitos mais importantes e os principais e que envolve toda a complexidade são os requisitos de upload de vídeo, onde os usuários devem ser capazes de fazer upload de um vídeo e o de streaming de vídeo, tá? Onde os usuários devem ser capazes de assistir aos vídeos da plataforma. Então, esses dois aqui são os requisitos funcionais da nossa aplicação e toda a nossa arquitetura vai girar em torno destes requisitos aqui, tá? E aí, os requisitos não funcionais, quais são? Vamos lá. O
+
+primeiro requisito aqui é que o sistema deve suportar 1 milhão de uploads por dia. Então a gente já vê que é uma aplicação de grande porte. Segundo requisito, ele diz o seguinte: cada upload pode ter até 256 GB. O terceiro requisito é o seguinte: o sistema deve suportar 100 milhões de usuários ativos diariamente. Mais uma vez com uma aplicação de grande porte. A
+
+gente vai trabalhar bastante em cima disso aqui. Quarto requisito, ele diz que cada usuário assiste em média cinco vídeos por dia. Então, daqui a pouco a gente vai fazer um cálculo aqui para entender melhor essa situação. O quinto requisito, tá? E o mais importante aqui, tá? Isso aqui tem muita arquitetura por
+
+trás disso aqui e você vai entender ao longo do vídeo, tá? O sistema deve ter baixa latência de streaming mesmo em situações de largura de banda baixa, tá? O que que é baixa latência de streaming? Baixa latência de streaming é basicamente o seguinte: no momento em que eu clicar no vídeo, eu já tenho que começar a ver pixels na tela o mais rápido possível, tá? Com a latência aqui de 400 ms então eu cliquei no vídeo, já quero ver pixels na tela o quanto antes.
+
+E o requisito que diz aqui, mesmo em situações de largura de banda baixa, é o seguinte: mesmo que a sua internet esteja muito ruim ou bem lenta, você ainda assim tem que ver pixels na tela o quanto antes, tá? Tem muita arquitetura por trás disso aqui e a gente vai entender ao longo do vídeo, beleza? E o sexto requisito é que o sistema deve operar em modo de alta disponibilidade 24x7. Então a gente vai falar de escala também, mas a gente vai falar isso mais pro final do vídeo, tá? E aí, qual que é a próxima etapa que eu sugiro, que eu indico para você, tá? Vamos lá. A
+
+próxima etapa é você calcular as estimativas. Por que calcular as estimativas? Porque é em cima disso que tu vai saber quanto de processamento que tu vai precisar, quanto de armazenamento e vários outros atributos ali da tua arquitetura. Então aqui no nosso caso é bem simples, tá? Como ficou claro aqui pra gente que a gente tem 100 milhões de usuários por dia e eles assistem em média cinco vídeos por dia, então a gente chega no cálculo aqui de 100 milhões de usuários vezes 5 é igual aio bilhão de visualizações por dia. Então,
+
+mais uma vez, um sistema de grande porte e a nossa arquitetura vai ter que dar suporte a 500 milhões de visualizações diárias, tá? 500 milhões de consultas ali, tanto no nosso banco de dados quanto na nossa arquitetura como um todo, tá? E depois o segundo cálculo é o seguinte, a gente vai entender aqui a capacidade de armazenamento, tá? O primeiro foi para operações de streaming e o segundo é pra gente calcular a capacidade de armazenamento. Então, se cada usuário pode fazer um upload de um vídeo de até 256 GB e a gente pode ter até 1 milhão de uploads por dia, tá? A
+
+nossa arquitetura tem que dar suporte a isso. Então, a gente calcula aqui 1 milhão de uploads por dia vezes 256 GB e a gente vai chegar no número de 256 por dia, tá? Parece muito, mas não é. A gente vai entender isso ao longo do vídeo. Eu vou te mostrar como que a gente vai fazer isso aqui, tá? E a
+
+latência de streaming aqui a gente não precisa calcular. Ela já tá descrita aqui, já tá bem explícita, então a gente tem que marcar ela aqui porque a nossa arquitetura tem que trazer os pixels o mais rápido possível para que o usuário veja, tá? Mesmo em situações de largura de banda baixa. Beleza? Entendido isso aqui, o que que a gente tem que fazer?
+
+Qual que é a nossa próxima etapa? É a gente definir as entidades principais da nossa arquitetura. E essa etapa aqui é extremamente fácil, tá? Isso aqui basicamente você define olhando pros teus requisitos funcionais. Então se a gente lê aqui, por exemplo, o primeiro requisito que diz sobre o upload de vídeos, ele fala o seguinte: "Os usuários devem ser capazes de fazer uploads de vídeos". Então, quem deve ser
+
+capaz de fazer algo? Os usuários. Fazer o quê? Fazer o upload dos vídeos. Então, é claro aqui que a gente tem usuários, tá? Como o ator e o vídeo também é uma
+
+entidade, ele participa de algo muito importante no nosso sistema. Então, a gente precisa armazenar isso em algum lugar. O segundo requisito é a mesma coisa. Os usuários devem ser capazes de assistir aos vídeos da plataforma. Então, nós temos aqui os vídeos e nós temos aqui os usuários, tá? E aí é o
+
+seguinte, aqui a gente vai ter uma situação um pouco diferente do normal, que é o seguinte. Geralmente quando a gente define as nossas entidades, a gente já sabe que a gente vai armazenar elas ali no banco e tudo mais. A gente monta até um certo relacionamento entre elas. Só que nesse caso aqui, eu vou te chamar atenção para um ponto aqui que é o seguinte. Uma coisa é o usuário. Então
+
+o usuário ele vai ter o e-mail, ele vai ter o nome dele, a conta, o telefone, ele vai ter tudo relacionado a ele ali. E isso tudo é informação textual. A gente consegue armazenar isso num banco. Outra coisa é o vídeo em si. O vídeo eles são os bites brutos do vídeo, é aquilo que você assiste. E isso
+
+geralmente a gente não armazena num banco de dados. Então tem algo implícito aqui que você precisa prestar muita atenção caso você esteja numa entrevista desse nível aqui. Por quê? Porque uma coisa são as informações textuais que você armazena no banco e outra coisa é o vídeo que você tá assistindo. Então, nesse nosso caso, existe uma terceira entidade aqui extremamente importante, que é o quê? Que é os metadados do
+
+vídeo, tá? E o que que são esses metadados do vídeo? Esses metadados são justamente as informações sobre aquele vídeo, ou seja, a descrição, o título, as tags daquele vídeo e todas as configurações que o produtor de conteúdo geralmente faz na hora que ele tá postando um vídeo. Então, tudo relacionado à aquele vídeo vai ser preenchido no momento do upload. E essas informações são extremamente importantes e a gente precisa armazenar. E como isso
+
+aqui é informação textual, a gente armazena isso aqui num banco de dados, que é a nossa próxima etapa, a gente já vai falar sobre ela. E o vídeo aqui eu marquei com outra cor para você entender que isso aqui a gente vai armazenar em um outro canto, tá? Mas não é porque isso aqui não vai ser armazenado no banco de dados que isso aqui não tem importância. Isso aqui é a entidade mais importante do nosso sistema e você tem que tomar cuidado e prestar muita atenção nisso aqui, beleza? Essa daqui é uma das etapas mais importantes, tá? A
+
+definição das entidades, porque é em cima delas que a gente vai projetar toda a arquitetura, tá? E aí, vamos lá. Partindo aqui agora paraa nossa próxima etapa, o que que a gente pode fazer? A gente pode simplesmente escolher aqui o nosso banco de dados, tá? E o banco de dados, se você já acompanha aqui o canal, você sabe que eu vou escolher o Cassandra para esse tipo de situação.
+
+Poderia escolher aqui uma porrada de outros bancos de dados, mas eu vou escolher o Cassandra. Por repara bem nos nossos requisitos aqui, tá? A gente tem 100 milhões de usuários ativos diariamente. A gente tem meio bilhão de visualizações por dia, a gente tem muito tráfego aqui de consulta rolando na nossa arquitetura. Então a gente precisa de um banco de dados que seja capaz de escalar horizontalmente através de um conceito chamado de charging, tá? Que é
+
+a fragmentação dos bancos de dados. Já tem um vídeo completo aqui no canal onde eu te ensino a escolher o banco de dados correto pra sua aplicação. Então vou deixar um card aqui em cima e o link na descrição. Dá uma olhada aí depois, porque lá eu te ensino tudo que você precisa saber. Eu te mostro esses bancos de dados por baixo dos panos, como que eles funcionam, e você vai sair dali sabendo escolher exatamente qual é o banco de dados ideal e o correto pra tua aplicação. Beleza? Então eu vou escolher
+
+aqui o Cassandra, tá? Que é um banco de dados fenomenal, banco fantástico, tá? E aqui tem um exemplo, tá? Um exemplinho aqui que não tem nada a ver com os nossos dados ali, com que a gente vai fazer, mas para você entender aqui mais ou menos como é que ele funciona, ele basicamente é um banco orientado a colunas, tá? Ele é um banco colunar e ele funciona muito parecido com os bancos relacionais, tá? Não vai ter
+
+join, não vai ter junção ali de tabela nem nada, mas ele é bem parecido, tá? Ele tá bem próximo ali dos bancos relacionais, só que isso aqui tem um poder de escala monstruoso, tá? E é por isso que eu tô escolhendo esse banco. Então, basicamente, ele funciona aqui com os seus nós, né? Ele funciona aqui com chards, com a fragmentação do banco.
+
+A gente pode distribuir, tá? Isso aqui é um banco de dados distribuídos e a gente armazena esses dados ali de forma particionada, tá? A gente armazena um pouquinho em cada um e a gente consegue escalar isso aqui a de eterno. Falei bastante do Cassandra naquele vídeo lá, não vou entrar em detalhes aqui, tá? E a título de curiosidade, tá? Se te
+
+interessa, tem aqui, ó, o YouTube, ele utiliza o Google Big Table, que também é um banco colunar, tá? é um banco orientado a colunas e eu tô escolhendo o Cassandra aqui justamente para fugir do padrão, tá? Para mostrar que é possível arquitetar uma aplicação de grande porte sem utilizar as mesmas ferramentas ou seguir o mais do mesmo, tá? Então aqui eu vou usar o Cassandra, vai dar suporte tranquilo pra gente escalar a de eterno, então a gente não vai ter nenhum tipo de dor de cabeça, tá? Então agora a gente vai partir pra nossa próxima etapa antes da gente entrar de verdade no nosso system design e começar a projetar nossa arquitetura. E qual que é essa próxima
+
+etapa? É você definir a API, tá? definir os end points aqui da sua API. A gente vai ter dois end points, que é o endpídeos, tá? O barravídeo aqui, que recebe uma requisição do tipo post upload do nosso vídeo. E a gente vai ter
+
+também um end point aqui que é o barra watch, que seria assistir, tá? Então a gente tem aqui uma requisição do tipo get, onde a gente vai assistir um vídeo e aí nesse barrawatch a gente vai passar aqui o ID do vídeo. Logicamente que isso aqui no post poderia ser api.youtube.com aí vai. Aqui no watch, tá? Até para
+
+ficar mais simples aqui, ó. Isso aqui é uma URL real lá do YouTube, tá? De um vídeo no YouTube. E é exatamente assim que ele funciona, tá? Então a gente tem aqui, ó, youtube.com/watch.
+
+E aí ele passa um parametrozinho V de vídeo, igual aí tem o ID do vídeo aqui, você vai conseguir assistir o vídeo, tá? Para você entender que o YouTube, mesmo sendo uma monstruosidade, a arquitetura por trás dele segue princípios de simplicidade. Beleza? Então vamos lá. Entendido isso aqui, o que que a gente tem até esse momento aqui? a gente já
+
+tem os nossos requisitos funcionais e não funcionais da nossa aplicação. A gente já calculou as estimativas aqui. A gente já definiu aqui as nossas entidades, já escolhemos o nosso banco de dados e a gente já definiu aqui os nossos end points. Que que a gente precisa fazer agora? A gente precisa ir pra parte mais divertida do nosso vídeo aqui, que é o quê? É começar a montar a
+
+nossa arquitetura. E a gente vai começar pelo upload do vídeo. Lembra? Toda arquitetura atende requisitos. Então, a gente tem o upload do vídeo e o streaming do vídeo. E isso aqui são
+
+coisas completamente diferentes, tá? Então, a gente vai começar fazendo aqui o upload do vídeo, tá? Então, vamos lá. Primeira coisa que a gente vai começar entendendo aqui que a gente tem aqui um cliente e a gente tem o nosso vídeo service, tá? Isso aqui poderia ser chamado de qualquer coisa. Isso aqui vai
+
+ser a nossa API, tá? Vai ser o nosso servidorzinho. Eu não vou adicionar load balancer aqui agora, P gator e nem nada do tipo, porque eu vou deixar para fazer isso lá no final. A gente não vai falar de escala agora, tá? a gente vai falar no final, porque o mais importante aqui é que você seja capaz de entender como é feito o upload do vídeo, depois o streaming de vídeo e depois a gente escala arquitetura para lidar com aqueles 100 milhões de usuários. Beleza?
+
+Então vamos lá. Primeira coisa que a gente tem aqui é o cliente e a nossa API. O que que a gente precisa adicionar aqui? A gente precisa adicionar o nosso banco de dados. Por quê? Porque é o
+
+nosso banco de dados que vai armazenar os metadados daquele vídeo. Beleza? E aqui eu já vou partir do princípio, tá? Que a gente já tem o usuário cadastrado, tá? Até porque a gente não vai ficar fazendo crudezinho de usuário aqui, cadastro de usuário, porque isso aqui não importa, tá? Isso aqui é a coisa
+
+mais simples do mundo. E o que importa nessa arquitetura aqui tá relacionado ao upload e ao streaming de vídeo, tá? Isso aqui você vai entender ao longo desse nosso projeto aqui, beleza? Então vamos lá. Com o banco de dados aqui na mão para armazenar os metadados do vídeo e também os dados do usuário, o que mais que a gente precisa? A gente precisa de
+
+um lugar pra gente armazenar o nosso vídeo, porque o vídeo ele não vai ser armazenado no banco de dados. Então, para armazenar esse vídeo, o que que eu vou escolher como ferramenta? Eu vou escolher o S3 da WS. E por que o S3 da WS, tá? Eu tenho que justificar aqui as escolhas que eu tô fazendo para que você entenda o raciocínio por trás, mas que você não fique preso às minhas escolhas.
+
+Você poderia escolher qualquer outra ferramenta, tá? Você poderia escolher qualquer outro lugar, desde que dê suporte aos requisitos que a gente debateu no início dessa aula. Então, o S3, por que que eu tô escolhendo? Porque o S3 é fácil de escalar, depende só do teu cartão de crédito. E segundo, ele vai dar suporte não só a Terabyte, petabyte, mas ele também vai pro Hexabyte, pro Zbyte, Yotabyte e por aí vai. Então, com isso aqui a gente não
+
+vai ter problema e nem dor de cabeça tanto com relação à escala e também com relação ao armazenamento do vídeo, tá? Então isso aqui vai ter bastante espaço pra gente armazenar. Daqui a pouco você vai entender um pouquinho mais o que que a gente vai fazer com o vídeo ali para talvez até diminuir um pouco do tamanho dele, tá? Então vamos lá. Entendido isso aqui, o que mais que a gente precisa ter aqui? que a gente precisa ter mais nada.
+
+Basicamente isso aqui vai atender a boa parte do nosso upload do vídeo. E aí vamos lá pr você entender, pra coisa ficar um pouco mais clara, qual é o fluxo que se espera desse tipo de arquitetura aqui, tá? Isso aqui você vai fazer na base da intuição, só que nesse tipo de desafio, nesse tipo de arquitetura aqui, você não pode se deixar levar pela intuição, porque você vai se dar mal. Você tem que pensar fora da caixa nessas situações aqui, tá? Por quê? Porque senão você vai cair na
+
+besteira de fazer isso aqui, ó. Vamos lá. A gente espera o quê? a gente espera uma requisição HTTP do tipo post lá naquele nosso endpo/vídeos, tá? E aí o que que o usuário supostamente vai passar nessa requisição? Ele vai passar
+
+o seguinte, ó. Ele vai passar os metadados do vídeo, tá? Vai ter aqui o título, a descrição, o nome do arquivo, mim type, vai ter o tamanho também aqui, ó. Isso aqui é igual, equivalente aqui a 256 GB. E aí ele vai passar também os bytes brutos do vídeo, tá? O vídeo em
+
+si, beleza? E aí, o que que a gente espera que aconteça com essa situação aqui? A gente espera aqui o nosso servidor seja capaz de processar isso e ele vai enviar o vídeo lá pro S3 e ele vai pegar os metadados e vai enviar aqui pro nosso banco de dados e no final a gente termina com o vídeo lá no S3 e os dados aqui atualizados no banco. Só que não é assim que as coisas funcionam. E por que que não dá pra gente fazer isso?
+
+Por causa disso aqui, ó. Vamos lá para você entender aqui, ó. A gente tem aqui, ó, a primeira intuição que você vai ter é fazer aqui, ó, pegar aqui a nossa requisição que a gente vai enviar lá pra API, tá? Lá pro nosso barravídeo, tá? Enviar um post para lá. E aí a gente
+
+manda um Jzon. E aí esse Jzon ele vai ter o quê? Ele vai ter os metadados do vídeo aqui. E como o Jzon só trafega texto, o que que a gente vai fazer? A gente vai converter o nosso vídeo, tá? A
+
+gente vai pegar os bytes brutos do vídeo e vai converter ele pra base 64. E aí o que que acontece se você tentar fazer isso? Primeiro que não tem como fazer, tá? Mas mesmo que você tivesse curiosidade ou fosse fazer pela intuição, você ia cair num buraco aqui que você não ia ter como sair. Por quê?
+
+Olha só, todo arquivo que a gente pega e converte ele paraa base 64, o que que acontece com ele? A primeira coisa que acontece é que ele aumenta em 33% o tamanho dele, tá? Então, se tu tem, por exemplo, uma foto que tu converte pra base 64, o que que vai acontecer? Essa foto, se tinha 1 MB, ela vai ter 1.33 MB, então você aumentou o tamanho dela em 33%. No nosso caso, como a gente tem
+
+um vídeo aqui supostamente de 256 GB, o tamanho final dele seria de 341 GB. Então você aumentou o tamanho do arquivo. Ah, Renato, mas aí é só decodificar de volta que ele volta a ser 256. Beleza? Só que qual que é o problema aqui, tá? O problema é que
+
+quando você converte alguma coisa em base 64, você tá convertendo basicamente para texto. Só que aquilo que você converteu vai ter o equivalente no tamanho do texto. Então a gente teria, eu coloquei até aqui, ó, três pontinhos aqui para você entender que isso aqui é uma abreviação, porque a gente teria nessa situação aqui um texto, tá, com milhares ou até milhões de linhas com 341 GB de tamanho. Então, tu literalmente teria uma string gigantesca com 341 GB e tu precisaria de 341 GB de memória RAM livre e disponível para você alocar isso na memória. Não tem como, não faz sentido. E por que que eu tô
+
+trazendo esse cenário cabuloso de 256 GB aqui? Porque se a gente fizesse um exemplo aqui, onde esse vídeo tivesse 10 MB, o que que ia acontecer? você ia cair na besteira de fazer isso aqui. Isso aqui ia virar a tua intuição. Então é por isso que eu tô trazendo o cenário de 256 GB, que é o cenário real do YouTube, tá? No YouTube você pode fazer o upload
+
+de um vídeo de até 256 GB ou até 12 horas de duração. E é por isso que eu trouxe esse cenário para você não cair na besteira de tentar fazer isso aqui. Porque se você tentar fazer isso aqui, você vai cair no aumento do tamanho do arquivo e também você vai ter que ter memória RAM disponível, que não faz nenhum sentido. E fora isso, qual que é o problema? O problema principal, tá?
+
+Isso aqui é só aprecho que eu te falei. O problema principal dessa situação aqui é isso aqui, ó. Você vai abrir uma conexão HTTP lá com o servidor, tá? Você vai fazer um post lá pro servidor. E qual que é o problema? O problema é que
+
+todo o servidor web, seja o endnex, seja o que for que você tiver utilizando, todo API e gateway, todo load balancer, toda ferramenta que trafega HTTP, elas têm um limite de payload, tá? Você não consegue passar um arquivo gigantesco pela rede. Então o que que acontece? Se você pegar esse arquivo aqui, tá? Vamos supor que ele tivesse 100 MB e tu conseguiu converter aqui o vídeo pra base 64. Isso não ia funcionar. Por quê?
+
+Porque no momento em que tu fosse fazer a requisição, você ia receber um erro 413 payload to large, que é o quê? É o payload muito grande. Geralmente fica ali na casa dos 10 MB, 20 MB ali o tamanho padrão que essas ferramentas suportam. Então tu não consegue trafegar mais do que isso via rede. Por quê?
+
+Porque você vai ficar com a conexão aberta há muito tempo. Se acontecer uma falha, vai quebrar tudo, vai ter que refazer de novo. Então, não é viável a gente enviar esse vídeo pela rede. Além do mais, o fato da conexão ficar aberta muito tempo, você vai acabar tomando um 504 gateway time out um 408 request time out, tá? O que que é isso aqui? Isso
+
+aqui é você ficar agarrado demais na requisição. O servidor não vai te responder a tempo e vai te retornar essa resposta aqui ou a própria requisição aqui vai falhar e você vai receber um 408 e não vai conseguir concluir a operação. E aí tu deve estar pensando assim: "Ah, Renato, mas aí é mole, é só eu abrir um streaming daqui para lá e enviar esse arquivo." Beleza? Beleza.
+
+Essa vai ser a tua segunda intuição, que é o quê? É pegar aqui, ó, o teu HTMLzinho, tá? Logicamente isso aqui é um código de exemplo, tá? Pelo amor de Deus. Isso aqui é só para você entender o fluxo aqui, mas isso aqui é exemplo, tá? Então você pegaria aqui o teu input
+
+lá no HTML, onde o cara faz upload do vídeo. E no JavaScript, você que é malandro, você ia fazer o quê? Você ia pegar esse elemento, você ia pegar o arquivo que foi upado dentro dele e jogar dentro de uma variável e você ia fazer uma requisição do tipo post, passando no corpo da requisição o binário bruto daquele vídeo. Beleza? Que que acontece por baixo dos panos quando você faz isso aqui? Basicamente, quando
+
+você faz upload lá no navegador, através desse desse input aqui, o que que acontece? Ele não hospeda o vídeo inteiro lá no navegador, na memória RAM, nada disso. O que o navegador faz é criar um ponteiro lá no disco rígido, lá no HD ou no teu SSD, aonde tá esse vídeo que você acabou de fazer upload. E aí quando você faz a requisição, tá? Quando você manipula esse file aqui, que é os bytes brutos daquele vídeo que você fez upload, o navegador abre um streaming lá com o servidor, tá? Ele abre uma ponte
+
+lá com o servidor e o que que ele faz? Ele vai pegando de pouquinho em pouquinho lá no SSD, de cabite em cabite e vai enviando isso pro servidor. Só que qual que é o problema de enviar aos poucos assim também? É que a requisição vai ficar aberta até você terminar. Então você vai precisar do quê? Você vai
+
+precisar ficar ali minutos ou até horas agarrados na requisição até esse streaming terminar. Então não faz sentido, você vai receber de novo gateway time out, você vai receber request time out, então não faz sentido enviar arquivos pesados via rede, tá? Via HTTP. A gente vai usar HTTP, mas de uma outra forma, tá? E como é que a gente vai resolver isso aqui? A gente
+
+vai resolver isso aqui da seguinte forma, tá? Se a gente não consegue trafegar ele por dentro da nossa infraestrutura, o que que a gente vai fazer? A gente vai cancelar a conexão do nosso da nossa API, do nosso microsserviço aqui, tá? De vídeo. Ele não vai se comunicar mais com o S3. Quem
+
+vai assumir a responsabilidade de enviar esse vídeo agora lá pro S3 não é mais a nossa API, não é mais o nosso servidor. Quem vai assumir essa responsabilidade vai ser o front end através de uma API do S3, tá, da Amazon, que a Amazon fornece, chamada de multipart. O que que é esse multipart? você já vai entender, já vou entrar em detalhe, já vou te mostrar como é que funciona, mas basicamente é uma forma da gente desviar o fluxo do envio do vídeo de dentro da nossa infraestrutura e passar do navegador direto pro S3 através de um truque que você já vai entender qual é, tá? E aí vamos lá pr você entender o fluxo, a gente vai desenhar o fluxo aqui agora de como que tudo vai funcionar e você vai entender. Beleza? Vamos lá. A
+
+primeira coisa que a gente espera que aconteça aqui é o quê? É a requisição HTTP com os metadados do vídeo, tá? Então, a gente vai ter aqui, ó, a descrição, o título, a gente vai ter o file name aqui, o mim type, o tamanho desse vídeo, tá? Mais uma vez simulando aqui 256 GB. Então, a primeira coisa que vai acontecer é essa requisição HTTP para envio dos metadados, tá? E aí, o
+
+que que a gente espera que aconteça? A gente espera que esses metadados sejam armazenados aqui no nosso banco de dados. Então, o servidor recebeu a requisição, ele criou um ID único aqui para esses metadados e a gente criou também um status pending aqui, tá? De pendente, tá? Por que pendente? Porque a
+
+gente acabou de salvar aqui os metadados, mas o vídeo ainda não foi enviado, tá? Ele não foi upado ainda lá no S3. Então o status do envio está pendente. Beleza? Entendido isso aqui, a gente finalizou a primeira etapa. Qual
+
+que é a segunda etapa? Depois que o servidor armazena os metadados aqui, antes dele devolver a resposta pro cliente, que que ele vai fazer? Ele vai lá no S3 buscar as URLs pré-assinadas. Eu vou falar alguns termos aqui que provavelmente você nunca ouviu falar, mas não se assusta porque isso aqui é a coisa mais simples do mundo, tá? Basicamente o que acontece é o seguinte, o servidor vai lá no S3 e ele vai dizer o seguinte: "Ô S3, eu tenho um vídeo para te enviar aqui muito pesado, 256 GB, só que eu não consigo te enviar porque o frontend não consegue enviar ele para mim. Então vou fazer o
+
+seguinte, manda para mim uma espécie de autorização aí para eu devolver pro front end para que ele faça o upload direto para você. Ele sim vai conseguir. Eu não vou conseguir porque o vídeo não tem como chegar até mim. E aí o que que o S3 vai fazer? O S3 vai entender isso e vai devolver pro nosso servidor aqui uma lista de URLs pré-assinadas, tá? O que
+
+que são essas URLs pré-assinadas? Basicamente, uma URL pré-assinada é isso aqui, ó, pr você entender para ficar claro, tá? Isso aqui eu quebrei, logicamente, as linhas aqui, tá? Eu pulei linha para ficar legível, tá? Mas isso aqui é uma linha só, isso aqui é um URL só. E nessa URL, basicamente, a
+
+gente vai ter o nosso bucket lá, tá? Que tá como exemplo aqui, my bucket e tudo mais, vai ter o domínio da WS, a região e tudo mais. E vai ter aqui, ó, barra vídeos barra o ID daquele vídeo. Essa estrutura aqui é a gente que monta, tá? Isso aqui na hora que o servidor tá conversando ali com o S3, a gente já define qual é o lugar que a gente vai querer armazenar esse vídeo que o front end vai enviar. Então a gente passa lá o
+
+ID, tá? Para identificar esse vídeo. Então a gente precisa do identificador dele. Então a gente passa o mesmo ID que a gente salvou no banco e aí a gente bota o nome do arquivo aqui. Fora isso, o S3 vai complementar com o quê? o part
+
+number igual a 1. Então essa seria a primeira de um monte de URLs. Aí a segunda seria parte number 2, parte number 3, parte number 4 e por aí vai. Teria o ID aqui do upload, teria algumas verificações. Isso aqui é o algoritmo que o S3 utilizou para poder assinar essa URL. Tem as credenciais aqui que
+
+não é a credencial exposta, tá? Isso aqui não tá exposto, tá? Justamente por que que o front end tem que enviar para lá através da nossa autorização, porque o cliente não pode ter, tá? O front end ele não pode ter as nossas credenciais da WS, porque senão um cara mal intencionado poderia pegar isso lá do front end e acessar o nosso S3. É por isso que a gente faz esse tipo de trâmite aqui com o S3 primeiro. E aí vai
+
+ter assinatura, vai ter tudo aqui, tá? Vai ter a inspiração aqui também. Não vou entrar muito em detalhes aqui porque isso aqui é bem simples você entender. E por que que o S3 tem que retornar uma lista de URLs pré-assinadas? E ele vai retornar inclusive essa lista de acordo com o tamanho do arquivo. Então, se tu
+
+passar um arquivo lá, ah, eu quero te enviar um arquivo aí de 10 MB, ele vai te enviar uma quantidade pequena de URLs. Eu quero te enviar um arquivo de 200 GB, então ele vai te enviar uma lista enorme de URLs pré-assinadas. E como que isso aqui vai funcionar? Agora você vai entender qual que é o macete aqui. Vamos lá. Na hora que o servidor
+
+aqui receber essas URLs pré-assinadas, o que que ele vai fazer? ele vai devolver a resposta lá pro nosso cliente com todas essas URLs. Aí vai ter URL1, URL2, URL3. Lembra daquele part number, parte number 1, parte number 2, parte number 3. E aí o que que acontece? O front end
+
+ele recebeu lá o upload do vídeo, tá? Ele pegou o videozinho lá, tá lá, pegou o vídeo, já marcou o ponteiro lá no SSD, no HD do cara. O que que a gente precisa fazer? A gente precisa fazer o que é chamado de chunk do vídeo, tá? Mais uma vez vou falar alguns nomes técnicos aqui, mas não se assusta porque isso aqui é muito simples. O que que é fazer
+
+chunk do vídeo? É literalmente você picotar o vídeo todo, tá? Você vai picotar o vídeo. Codigozinho bem simples ali, daqui a pouco eu te mostro para você entender, tá? Mas basicamente você vai pegar o arquivo, vai picotar ele todinho, tá? Você vai criar aqui o vídeo
+
+aqui, ó, 5 MB cada um, tá? De 5 a 10 MB é o padrão aqui que é utilizado. E aí, o que que você vai fazer com cada pedacinho desse do vídeo? Você vai fazer o seguinte, tá? Você vai pegar os cada pedacinho desse vídeo e você vai enviar cada um deles para cada uma das URLs que você recebeu. Ou seja, para não ter que
+
+enviar o vídeo inteiro lá pro S3, porque também não daria, porque você teria que abrir uma conexão com uma única URL e ficar agarrado nela por muito tempo. O S3 te retorna uma lista de URLs. E o que que você vai fazer por baixo dos panos? Você vai pegar o chunk 1, tá? O primeiro pedacinho lá, os primeiros segundos do vídeo, tá? Referente a 5 MB e você vai
+
+fazer um post lá para URL1. Depois o que que você vai fazer? Você vai pegar o chunk 2 e enviar para o URL2. Depois você vai pegar o chunk 3 e enviar para URL. E assim você vai abrindo conexão, fechando conexão. Abre uma conexão,
+
+envia 5 MB e fecha a conexão. E aí, como é que isso aqui é simples, tá? Isso aqui é muito fácil de ser feito. Isso aqui tem um código aqui que eu criei, tá? Isso aqui é de exemplo mais uma vez, tá?
+
+Pelo amor de Deus. Isso aqui precisa de validação, precisa de um monte de coisa, tá? Mas basicamente tem um input aqui, tá? Lá do HTML. E aí toda vez que for feito um input, a gente tem aqui a nossa lista de URLs pré-assinadas, tá?
+
+Logicamente que isso aqui tá chumbado, teria que ser dinâmico. E depois você dá um for aqui dentro, fazendo um slice do teu vídeo, tá? Você calcula aqui, ó, os 5 MB aqui, tá? 5 x 1024 x 1024. Você vai chegar no tamanho de 5 MB. Você picota o
+
+vídeo inteiro, tá? Fazendo um fora aqui que eu não vou ficar te ensinando o código aqui. Isso aqui depois você pega, você olha, tá? Depois eu vou deixar o slide aqui na descrição do vídeo, você dá uma olhada aí depois. Mas basicamente ele vai picotar o vídeo e vai fazer o post aqui, ó, para URL da vez. E assim
+
+você vai enviando aqui cada chunkzinho para cada URL RL. E é assim que funciona o Multipart upload. Aí o que que a gente espera que aconteça nessa situação? A gente espera o seguinte, a gente espera que o vídeo seja enviado em pedacinhos de 5 MB lá pro nosso S3. Mais uma vez, abre conexão, fecha a conexão, abre conexão, fecha a conexão. E assim o
+
+nosso vídeo vai terminar chegando lá no S3, tá? em várias URLs diferentes, em vários locais ali. Só que logicamente o S3 já coordena tudo isso para você. Você não tem que se preocupar com nada. E aí quando esse vídeo chegar lá, com todos esses pedacinhos chegarem lá, o que que o S3 nativamente ele vai fazer? Ele vai
+
+pegar todos esses pedacinhos, ele vai juntar tudo isso e vai criar um vídeo só, que na verdade é o nosso vídeo, tá? Ele só vai montar o nosso vídeo de novo e aí ele vai armazenar dentro da URL que a gente mandou lá no começo na hora que a gente foi buscar as URLs pré-assinadas. Então, mais uma vez, tá aqui, ó, o my bucket aqui, que é o exemplo, tá? E aí vai ter o domínio da AWS e vai ter aqui, ó, barravídeos barra o ID daquele vídeo pra gente identificar dentro desse diretório do S3 e o nome do vídeo aqui, arquitetando o YouTube na prática e ponto final. O S3, quando ele finaliza o upload do vídeo, o que que ele faz? ele envia uma notificação lá
+
+pro front end informando o seguinte: "Olha, acabou o upload aí, se tu quiser, informa aí pro servidor que já finalizou". Beleza? Então, o que que a gente poderia fazer aqui? A gente poderia pegar aqui o S3, ele envia a notificação e o front end vai notificar a nossa API aqui. E com essa notificação, o que que a gente faz? A
+
+gente vai lá no nosso banco de dados que a gente poderia fazer isso aqui, ó, trocar o status para updated, tá? Que não é o status final, esse vídeo não tá pronto para ser consumido. E a URL do S3 aqui. E aí, fazendo isso aqui, tá? A gente vai desfazer isso aqui porque não é necessário, tá? Eu vou até deixar o
+
+updated aqui. Vamos supor que a gente pegou aqui a notificação do front end e tal, armazenou aqui como update. Mas por que que eu tô passando por isso aqui? Por que que a gente não vai armazenar esse URL? Porque nesse momento você pode acabar caindo na besteira de imaginar o seguinte: mais uma vez fuja da intuição, porque a intuição vai dizer para você o seguinte: "Porra, se eu já tenho aqui minha URL salva, tá? URL lá do vídeo no
+
+S3. Se eu já tenho o status aqui, updated e tudo mais e tenho todos os dados, é simples. Agora é só eu fazer uma requisição do tipo get lá no servidor, pegar esses dados aqui, retornar lá no front end e quando eu clicar no vídeo, eu vou direcionar a requisição lá para SURL e vou começar a assistir o vídeo lá no player. Não é assim que funciona. Mais uma vez, fuja da intuição. Por quê? Porque mais uma
+
+vez, se a gente tentar fazer isso, quando você clicar no vídeo, tá direcionando a requisição aqui, você vai ter que baixar esse vídeo inteiro. E para você baixar esse vídeo inteiro, você vai ter que esperar o download finalizar de 256 GB. E se você lembra bem, um dos nossos requisitos, tá? O quinto requisito lá, ele diz que a gente tem que ter baixa latência de streaming, ou seja, cliquei no vídeo, já tem que vir pixel na tela, mesmo em situações de largura de banda baixa. Então, cara, isso aqui não resolve o nosso problema.
+
+A gente finalizou sim o upload do vídeo, a gente conseguiu finalizar o primeiro requisito. Agora para assistir esse vídeo, aí a gente vai ter que fazer uma série de outras coisas para que a gente consiga atender esse requisito da baixa latência. Então, que que a gente vai fazer agora? Agora eu vou aumentar esse nosso diagrama aqui, tá? Mas antes de aumentar esse diagrama, eu vou deixar o link na descrição do mapa do arquiteto, um guia de carreira completo para eu te conduzir do zero até o arquiteto de software, passando pelo júnior, pelo pleno, pelo senior, até você se tornar um arquiteto de software e um arquiteto de soluções. E lá dentro eu vou te
+
+entregar um roadmap completo com tudo que você precisa estudar, na ordem que você precisa estudar, com toda a cronologia ali, independente de qual seja o teu nível de senioridade, tá? Você tiver começando hoje, quer se tornar um arquiteto de software, é para você. Você já é um sior calejado de batalha também é para você. Então não deixa de conferir. O link vai est na descrição. O mapa do arquiteto. O único
+
+caminho pr você se tornar um arquiteto de software e um arquiteto de soluções de verdade pra vida real. Beleza? Então vamos voltando aqui pro vídeo. Então vamos lá. Vamos começar aqui, tá? Eu vou
+
+diminuir até minha câmera aqui também para ficar mais fácil aqui, para dar mais espaço, que a gente vai precisar desse espaço aqui para completar a nossa arquitetura. Vamos lá. Vamos pro que interessa. Depois que a gente faz o upload do vídeo, tá? O nosso vídeo, ele tá ali, já tá armazenado no S3, só que ele não tá pronto ainda para ser exibido, porque agora a gente precisa lidar com o streaming de vídeo, tá? Uma
+
+coisa é o upload, outra coisa é o streaming. E aí o que que acontece pra gente conseguir fazer isso? O que que a gente precisa fazer? A gente precisa fazer um processamento desse vídeo, tá? Geralmente a gente chama de transcodificação. Já vou falar sobre
+
+isso, você vai entender. E para fazer essa transcodificação, existe milhares de ferramentas por aí, mas eu vou escolher aquela da minha preferência e até para cumbar com essa nossa arquitetura aqui, que é o nosso Amazon Elemental Medíia Converte, tá? Tem várias ferramentas aí no mercado, você pode escolher a que você quiser. Eu vou utilizar a WS aqui mais uma vez, eu vou te orientar sobre as minhas escolhas para que você entenda o por que eu tô escolhendo alguma coisa ou outra, para que você não caia na besteira de tentar imitar tudo, tá? para que você se sinta livre para arquitetar a sua solução, o seu sistema, montar o seu system design ali da forma que você achar melhor.
+
+Beleza? Então, eu vou usar o Elemental Media Convert. Por quê? Porque ele já tem integração nativa com alguns serviços da WS. E como a gente tá utilizando o S3 aqui, o S3 tem uma coisa chamada S3 notification, que é o quê? É
+
+exatamente a nossa quinta etapa, porque depois que o upload é finalizado, o próprio S3 consegue notificar o Media Convert aqui, dizendo que aquele vídeo foi finalizado e o Media Convert consegue ir lá nesse vídeo e buscar ele aqui para dentro, que pra gente começar o processamento por dentro da rede da própria WS. Então fica mais integrado, fica mais fácil, a gente monta um ecossistema ali com as ferramentas que mais se adecam, tá? Mais uma vez, você poderia escolher a ferramenta que você quisesse, daria para fazer. a gente poderia enviar isso aqui, essa notificação para uma fila, ter um consumidor para acionar o nosso conversor ali, o nosso transcoder de vídeo, tá? A gente vai falar de transcodificação, mas sinta-se livre para montar o seu diagrama, para montar o seu desenho, beleza? Então o que que a
+
+gente vai fazer aqui? O nosso mídia converte aqui, ele vai fazer o que a gente chama de transcodificação do vídeo, tá? O que que é essa transcodificação? Ele basicamente vai pegar esse vídeo nosso que a gente upou lá no S3, ele vai puxar para dentro dele e ele vai gerar as resoluções diferentes desse vídeo. O que são essas resoluções aqui? Basicamente ele vai recriar o
+
+mesmo vídeo, tanto em 4K, em Full HD, em 720p, em 240p. Você vai entender daqui a pouco porque a gente faz isso aqui, mas basicamente ele vai criar novas versões desse vídeo em várias resoluções diferentes. E aí ele não vai fazer isso, logicamente, criando um único arquivo, tá? Ele não vai criar aqui um arquivo 4K, um arquivo 1080p e um arquivo 720p. Ele não vai fazer isso. O que ele vai
+
+fazer por baixo dos panos é basicamente isso aqui, ó. Ele vai criar micropedacinhos de 2 a 6 segundos. E aí esses pedacinhos aqui é que vão representar esse vídeo por completo. Então imagina assim, ó. Imagina que esse vídeo em 4K tem 1 minuto de duração.
+
+Então aqui a gente teria 30 pedacinhos desse aqui de 2 segundos, que é equivalente a 60 segundos ou 1 minuto, né? Então a gente teria isso aqui sendo feito tanto pro 4K, tanto pro 1080p, teria aqui os pedacinhos dele também, tanto pro 720p. E aí o que que vai acontecer? O próprio Media Converte aqui, ele vai fazer o quê? Ele vai armazenar esses chunks lá dentro do S3 de forma ordenada. E eu já vou te
+
+mostrar como que ele faz isso por baixo dos panos. Só que nesse momento aqui, eu sei que você deve estar com a dúvida do seguinte: pô Renato, se a gente enviou os vídeos aqui todo em pedacinhos, por que que a gente não pegou aqueles pedacinhos e consome eles diretamente? Por que que a gente não faz isso? Porque entenda, a gente enviou aqui pedaços de cinco em 5 MB, ou seja, a gente picotou de maneira bruta o vídeo, a gente só pegou, picotou ele para conseguir enviar aquilo através da rede. Esse processamento que o Media Converte faz aqui é um processamento refinado, ele bota pronto ali para você poder conseguir assistir no teu player ali e reproduzir o teu vídeo, tá? Inclusive,
+
+vamos imaginar aqui, ó, que esse vídeo aqui, tá? Esse vídeo que chegou aqui no S3 foi um vídeo pon MP4, tá? O media converte aqui, ele não vai recriar esse vídeo em MP4. O que ele vai fazer é que cada pedacinho desse aqui vai ser armazenado como M4S, tá? E tudo isso aqui ele faz através de um protocolo chamado Dash e também o HSL, tá? Esses
+
+protocolos aqui, você não precisa se preocupar com isso. Isso aqui é só pra gente dar um mergulho profundo aqui no nosso system design, tá? para você entender as coisas a fundo. Você não precisa saber mencionar isso aqui numa entrevista e nem conhecer a fundo esses protocolos. Mas para você que é curioso, esses dois protocolos aqui são os protocolos que regem o mundo dos streamings hoje, tá? O YouTube inclusive
+
+utiliza o Dash e o HLS é um protocolo que foi criado pela Apple, tá? E ele dá suporte nativo aqui a reprodução em player de vídeo lá no Safari, nos aplicativos, nas extensões Apple lá e tudo mais. Então, a gente tem aqui esses dois protocolos e o Media Converte utiliza desses protocolos para gerar esses arquivos aqui, tá? Os arquivos gerados aqui através do protocolo dash, ele vai gerar arquivos pon M4S, tá? E o HLS vai gerar p TS. Eles dois são
+
+extremamente parecidos, não muda basicamente quase nada entre eles ali. É uma minuciosidadezinha ou outra, eles dois funcionam muito bem. A gente vai utilizar o dash, tá? Vamos partir do princípio que a gente vai utilizar o dash aqui, porque é o dash, o padrão internacional e o que o YouTube utiliza hoje, tá? Então, como é que isso aqui vai funcionar, tá? Você já entendeu aqui
+
+que a gente picotou o vídeo ali em pedacinhos? A gente já entendeu também por que a gente faz isso? A gente vai armazenar de volta lá no S3 de forma ordenada. E como que a gente faz esse armazenamento? A gente faz esse armazenamento, a gente não, né? Quem faz
+
+esse armazenamento é o Media Converte, ele faz o armazenamento dessa forma aqui, tá? Imagina o seguinte, tá? A gente tem aqui o My Bucket, a gente tem uma pasta dentro dela aqui, uma suposta pasta chamada de vídeos, o ID do vídeo e o arquitetando do YouTube naprática. MP4, tá? Que é o caminho original aqui.
+
+Se você já conhece o S3, você sabe que ele funciona basicamente com uma estrutura de diretórios ali, como se fosse uma pasta no teu computador, tá? Para você que ainda não conhece, é basicamente isso aqui, ó. Repara o MyBcket, o vídeo, o ID do vídeo e o nome do arquivo. Agora vamos vir aqui, ó, na URL do vídeo, ó. Olha o MyBcket aqui, que é o nome do nosso bucket, tá? Esse
+
+aqui pode ser qualquer nome. A gente tem o vídeo aqui, o ID do vídeo e o arquitetão do YouTube na prática. Então o S3 ele funciona exatamente dessa forma, criando uma espécie de estrutura de diretórios. E a gente pode configurar o nosso mídia converte aqui. Para quê?
+
+Para que ele armazene esses pedacinhos aqui e toda a estrutura necessária dentro de uma pasta chamada processedor, que são os vídeos processados, vamos se dizer assim, os vídeos transcodificados. E a gente cria uma pasta vídeos. A gente pode criar uma pasta com o ID daquele vídeo pra gente diferenciar um vídeo do outro, né? A gente vai ter milhões de vídeos na plataforma. Então, o ideal é a gente diferenciar pelo ID. E aí, o que
+
+que ele vai criar, tá? O que que o Media Converte vai criar dentro desse diretório do ID? A primeira coisa que ele vai criar é o manifest.mpd. Esse arquivo aqui é o arquivo mais importante, tá? Ele é o arquivo mais
+
+importante dessa história toda. Eu já vou te mostrar como é que ele funciona. E depois disso aqui, o que que ele vai criar? Ele vai criar uma pasta 4K, uma 1080p, uma 720p, uma 240p. Dentro de cada pasta, ele vai criar o chunk 1, 2, 3, tudo. M4S. Na pasta 1080p ele vai
+
+criar chunk 1,unk 2, 3 e assim sucessivamente. E aí para você entender aqui qual que é a lógica, basicamente é o seguinte, se a gente juntar o my bucket, o process, o vídeo, o ID e pegar esse chunkzinho 02 aqui, M4S, você vai conseguir assistir esses dois segundinhos aqui do vídeo. Você vai conseguir ver esse vídeo. Então, para você entender a lógica aqui, isso aqui é um mapeamento dos chunks do nosso vídeo. E aí, o que que vai acontecer? Vamos lá.
+
+Ele armazenou, tá lá dentro do S3. E aí, o que que a gente pode fazer depois que ele armazena esse vídeo lá dentro lá? A gente já vai partir pra reprodução do vídeo. A última coisa que a gente precisa fazer aqui agora é o seguinte. A gente pode chamar o nosso mídia converte aqui e mandar uma mensagem para uma fila. A gente pode notificar o nosso
+
+servidor, a gente pode notificar quem a gente quiser, dizendo que o processamento foi concluído e agora o nosso servidor pode acessar o banco de dados e trocar o status daquele vídeo e também armazenar o nosso manifesto para poder ser utilizado lá no frontend. Como que isso aqui vai funcionar? Eu particularmente, mais uma vez, na minha decisão aqui, eu vou utilizar um lambida da vida. Por quê? Porque o AWS Elemental Media Converte aqui, ele também tem um sistema de notificações onde a gente consegue notificar quem a gente quiser.
+
+A gente pode acionar simplesmente um AWS lambda aqui, que é uma funçãozinha serves que a gente cria, tá? Que basicamente vai rodar o nosso código lá dentro lá para acessar o banco de dados, tá? Ele só vai conectar com o banco de dados, vai procurar esse vídeo lá no banco de dados e vai alterar, ele vai atualizar os nossos dados lá no banco de dados. E como que ele vai atualizar? Ele só vai trocar o status pra completed e ele vai salvar o nosso manifesto dentro dos metadados, tá? Esse manifesto aqui é
+
+o que vai ser reproduzido lá no frontend, tá? Como que essa reprodução funciona? Basicamente a gente vai ter o nosso player de vídeo aqui. E aí o nosso front end, quando fizer uma requisição do tipo get e a gente retornar esses metadados aqui, ele vai pegar esse manifestozinho aqui que a gente salvou aqui. E esse manifesto, no momento em que a gente encaixa ele dentro do player de vídeo, o player já começa a buscar aqueles chunks que estão lá dentro do S3, tudo de forma automática e você não tem que se preocupar com nada. Como que
+
+isso funciona por baixo dos panos? Vamos lá. Eu tenho um código aqui de um player maravilhoso, um player muito bom, tá? Se você tiver trabalhando com streaming de vídeo aí, experimenta o Shaka. O Shaka é maravilhoso, muito bom de utilizar. E
+
+basicamente ele funciona da seguinte forma. A gente vai importar ele lá no nosso JavaScript. Mais uma vez, isso aqui é código de exemplo, tá? Pelo amor de Deus. Então, a gente vai importar ele lá no nosso JavaScript. A gente vai ter
+
+aqui o nosso vídeo, tá? Nosso elementozinho de vídeo lá no HTML. E o que que a gente vai fazer? A gente vai pegar o ID e vai iniciar um player do Chaka dentro desse playerzinho do HTML. E aí a gente dá um player ponload load e a gente passa o manifesto. Logicamente
+
+que aqui está chumbado, isso aqui teria que vir lá do banco de dados, teria que ser dinâmico, mas basicamente quando você der um load aqui, ele vai começar a reproduzir o vídeo para você. Como que ele faz essa reprodução do vídeo? Lembra que eu te falei que esse manifesto aqui ele contém o mapeamento de todos os chunks? Olha o que que vai acontecer. No momento em que você dá o play no vídeo aqui, em microsegundos por baixo dos panos, o próprio player de vídeo, ele já mede a tua internet. Então o que que ele
+
+faz? Ele mediu a largura de banda e ele viu, opa, tá excelente a internet desse cara. Faz o seguinte, o manifesto ele já é o mapeamento. Pega para mim aí o chunk 001, 002 e o 003 do 4K, da resolução 4K. Beleza? Então o player, tá? o front end,
+
+ele vai vir aqui no no S3, vai buscar o chunk 1, 2 e 3 na resolução 4K e ele vai retornar isso. E aí você vai ver a barrinha sendo completada em cinza ali. Se você reparar no YouTube é assim que funciona, tá? Você começa a dar play no vídeo, ele começa uma barrinha cinza ali depois daquilo que você tá assistindo que ela vai carregando. Isso são os chunks vindo, tá? Ele não carrega o
+
+vídeo todo de uma vez, ele vai buscando pouquinho em pouquinho. E aí imagina o seguinte, imagina que a gente já tá no chunk 999, tá? Ele tá indo lá buscar de pouquinho em pouquinho. E aí a cada busca que ele faz, ele vai medindo tua internet e aí imagina que tu trocou pro 5G, pô, tua internet tá meio zoada, ficou meio baleada. Aí o que que ele vai fazer? O próprio player de vídeo, como
+
+ele já tem o manifesto na mão, ele vai fazer o seguinte: "Bom, se até o 999 a gente reproduziu em 4K e a internet do cara tá uma merda, faz o seguinte, busca para mim o 1000, 1001 e 1002 na resolução aí de 1080p". Beleza? Ele vai vir aqui na pastinha do 1080p, vai pegar o frame 1000, 1001 e 1002 e vai retornar. Tua internet piorou mais ainda. Agora busca o 1004, 1005 e o 106 lá do 720p. Opa, agora tua internet
+
+melhorou para caramba, volta pro 4K. E ele vai dando continuidade e sequência nesses chunks que ele já tem todo o mapeamento através do manifesto. E o manifesto, logicamente, por sua vez, ele tem todas as URLs de cada chunk salvo. Então, o player nativamente, ele já consegue fazer isso para você sem nenhum tipo de dificuldade, sem nenhum tipo de problema e você não tem que fazer nada na mão. Tudo isso aqui já é automatizado para você poder trabalhar. E tudo isso
+
+se resume basicamente ao ABR, tá? que a gente chama de ABR, que é o adaptative bit rate, que é o quê? A capacidade da tua arquitetura, da tua aplicação, do teu player de vídeo, de reproduzir, tá? De fazer streaming de um vídeo adaptando o bit rate de acordo com a largura de banda do usuário. Então, a gente consegue aqui trazer baixa latência, porque ele vai buscando de pouquinho em pouquinho. Então, no momento que você
+
+clicou no vídeo, o próprio manifesto, opa, pega aí os três iniciais aí, pega os 10 segundos iniciais do vídeo aí, esses chunzinhos, traz cinco chunks aí para mim, beleza? Então você clicou, a latência para vir esses 5 segundinhos, 10 segundinhos de vídeo é muito rápido. E as resoluções aqui, essa navegação entre as resoluções, é o que a gente chama de adaptativo bit rate, que é o quê? De acordo com a largura de banda, você vai trocando a resolução e aí o vídeo vai ficando pior. Se tu tá com a internet ruim, vai ficando melhor. E o
+
+YouTube funciona exatamente dessa forma. Se você abrir o YouTube agora para assistir, você vai reparar que se a sua internet tiver zoada, o próprio vídeo, a qualidade começa a ficar meio despixelada. daqui a pouco ela sobe de novo. Se você deixar no automático, daqui a pouco ela cai de novo. Então é assim que funciona esse adaptativo bit rate, tá? E aí o que mais que a gente
+
+pode fazer aqui? Por quê? Porque não terminou nossa arquitetura, tá? Dá para dar aquele toque final, aquele aquela cereja do bolo aqui, que é o seguinte, pensa comigo, a gente tá indo lá no S3 buscar os chunks. Por quê? Que a gente
+
+retornou aqui o metadado e a URL do manifesto tá lá no S3. E aí quando você vai buscar o chunk 1, 2 e 3, o próprio manifesto direciona aquele com catena, né, com a URL de destino lá do S3. Então o que que acontece? Fazer isso em larga escala não é recomendável, porque vai gerar um custo absurdo de consultas lá no S3. E também não foi feito para isso, né? O S3 foi feito para você armazenar,
+
+para você recuperar ali uma quantidade legal, uma quantidade significativa, mas não quando a gente fala de bilhões de acessos, de milhões e bilhões de acessos. Então, geralmente, o ideal pra gente fazer aqui é o quê? É a gente adicionar um CDNzinho, tá? Eu vou usar aqui o cloud front da AWS mais uma vez. Por quê? Porque a gente tá usando o
+
+ecossistema da AWS aqui, tá? Mas o CDN aqui você poderia utilizar o CDN que você quisesse, tá? Eu vou utilizar o Cloud Front. Por quê? Porque o Cloud Front já consegue acesso nativo lá no S3 para buscar os arquivos. Então, como que
+
+funcionaria isso aqui? O nosso frontend, ao invés de ir lá no S3 buscar o manifesto e todos os chunks, o que ele vai fazer é o seguinte. Ao invés dele lá, ele vai direto no Cloud Front. E como que vai funcionar esse CDN? Basicamente a gente teria que logicamente trocar aqui, né, esse início da URLzinho aqui e parar de apontar pro S3 e começar a trocar aqui pro CDN, tá?
+
+Não teria trabalho nenhum. E a gente direcionaria para ele lá, pro Cláudio Front. Ô, Cláudio Front, me dá aí o process de vídeo com esse D aqui, o manifest.MPD, tu tem ele aí? O CDN ia falar: "Não, não tenho, tá? Imagina que
+
+o cara clicou agora para assistir o vídeo. Não tenho. Beleza? Então o CDN vai no S3, busca esse arquivo e já cacheia ele aqui, tá? Ele bota esse arquivo em cash, beleza? e te devolve.
+
+Aí agora o manifesto vai fazer o seguinte. Manda para mim aí o próprio player, né? Manda para mim aí o chunk 1 2 e 3 do 4K. Tu tem ele aí? Não, não tenho. Ele tem que ir lá no S3 buscar.
+
+Aí ele retorna o chunk 1, 2 e 3 do 4K. Aí ele vai cachear esse cara aqui, o segundo player lá, o segundo usuário que for assistir aquele vídeo, o chunk 1, 2 e 3 já vai est cacheado, então ele já vai vir aqui direto, é na borda. Então isso aqui facilita muito, isso traz uma velocidade absurdamente alta, porque arquivos em cash é muito mais rápido de se acessar do que o arquivo diretamente dentro de um blog storage. E é assim que finaliza a nossa arquitetura. E aí você deve est assim: "Pô Renato, beleza, mas tu não falou da escala, mas a escala aqui é simples. Por qu lembra que eu te
+
+falei que o S3 escala infinitamente? Só depende do seu cartão de crédito. Então aqui a gente não teria dor de cabeça para escalar. O Elemental Medíia Converte é a mesma coisa, vai do teu cartão de crédito e é a gosto do cliente. O AWS LâmDA é fácil, barato e rápido e escala também para números astronômicos, tá? Inclusive eu nem
+
+mencionei, tá? A gente usou um Goleng aqui, tá? É um código bem simples, só para atualizar o banco de dados. Então ele basicamente vai acessar aqui o banco de dados e vai atualizar os dados aqui pra gente, tá? Então acabei não mencionando, mas você já deve ter entendido, você viu a imagem aqui e isso aqui escala facilmente também. O nosso
+
+banco de dados é o Cassandra. E aqui, aparentemente ele tá no nosso ON premis, tá? Vamos dizer que ele tá no nosso on premice aqui. A gente montou nossos servidores ali e tudo mais, mas isso aqui daria muito trabalho pra gente gerenciar e até para escalar globalmente, porque a gente tá falando de uma aplicação global. Então aqui a gente poderia utilizar o AWS Keys que é o quê? É o suporte que a AWS dá pra
+
+gente poder utilizar o Cassandra, tá? Ele vai ser gerenciado pela própria AWS e a gente vai pagar, logicamente pelo uso o nosso servidor. Aqui como a gente precisa escalar globalmente também, tá? A gente vai ter que ter servidor no mundo todo. Imagina o YouTube com servidor só no Brasil ou então só nos Estados Unidos. O usuário que tá lá no
+
+Japão teria que ter a latência de fazer uma requisição até os Estados Unidos e voltar. Então isso toma muito tempo e não é assim que funciona. Então a gente precisa de escala global e a gente precisa da nossa infraestrutura o mais perto possível de quem tá consumindo a nossa aplicação. E aí nesse caso aqui a gente poderia utilizar um S2 da WS e colocar um load balancer na ponta aqui e replicar isso infinitamente horizontalmente. Já tem vídeo aqui no canal falando sobre escala horizontal, então vou deixar um card aqui em cima, o link na descrição. E é assim que
+
+finaliza a nossa arquitetura do YouTube. Nesse exato momento, você está completamente pronto e apto para lidar com qualquer entrevista desse porte aqui. Então, esse daqui, pode ter certeza, é o desafio que te prepara para coisas monstruosas aí fora. Se você tiver se preparando pra vaga internacional e para coisas muito grandes, ou se você quer se tornar um arquiteto de software, cara, isso aqui é o caminho, estuda sobre isso aqui. Minha recomendação, dá uma olhada no dash e no HLS. Esses protocolos aqui são
+
+extremamente importantes. Beleza? Bom, e agora que tu chegou até o final desse vídeo aqui, agora tu já sabe tudo que você precisa saber para projetar a arquitetura do YouTube na prática, passando por todos os desafios. Deixa teu like aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Não deixa de dar uma olhada também no mapa do arquiteto, um guia de carreira completaço para eu te conduzir do absoluto zero até o arquiteto de software. E lá dentro a
+
+gente fala muito sobre system design. Eu te entrego todo o caminho que você precisa saber. Se ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui.
+
+---
+video_title: "Arquitetura Orientada a Eventos | O Guia Completo para ESCALAR MICROSSERVIÇOS do Jeito Certo!"
+video_id: 8xFBQc1A4B8
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=8xFBQc1A4B8
+video_date: 2026-02-02T00:55:00+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B 
+  
+  🔗 Leituras Recomendadas:
+  📚 Domain-Driven Design (Vlad Khononov): https://amzn.to/4pFv3QL
+  Domain Driven Design - Eric Evans: https://amzn.to/4qMY4Lq
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  
+  Fala, pessoal! Renato Augusto aqui de novo 👋
+  E dessa vez pra te ensinar uma das arquiteturas mais poderosas quando o assunto são microsserviços, sistemas distribuidos e aplicações de grande porte.
+  
+  Essa arquitetura é chamada de Event Driven Architecture ou Arquitetura Orientada a Eventos e é ela que mantem sistemas como netflix, uber, amazon e youtube no ar, suportando milhões de transaçòes por segundo e milhões de usuários simultâneos.
+  
+  Se você trabalha com microsserviços, sistemas distribuídos ou já sentiu seu código inflar absurdamente por causa de fluxos síncronos e chamadas em cadeia entre serviços, esse vídeo é pra você.
+  
+  Ao longo dessa aula completa, você vai entender por que o modelo tradicional de request/response começa a quebrar quando o sistema cresce, quais são os problemas reais de acoplamento, volumetria e falhas em cascata — e por que Event Driven Architecture faz muito mais sentido quando falamos de escala, resiliência e evolução do sistema.
+  
+  Event Storming: https://www.eventstorming.com/
+  Domain Driven Design: https://github.com/ddd-crew/ddd-starter-modelling-process
+  
+  🚀 O que você vai aprender neste vídeo: ARQUITETURA ORIENTADA A EVENTOS | O GUIA COMPLETO PARA ESCALAR MICROSSERVIÇOS 
+  
+  ✅ O que é Event Driven Architecture
+  ✅ Por que sistemas síncronos sofrem com acoplamento temporal e cascata de falhas
+  ✅ Como a volumetria de acessos impacta arquiteturas tradicionais
+  ✅ O papel de eventos, produtores, consumidores e brokers
+  ✅ Como grandes sistemas escalam usando eventos
+  ✅ Por que o código fica inflado em arquiteturas imperativas
+  ✅ Como EDA melhora resiliência, escalabilidade e extensibilidade
+  ✅ Quando usar (e quando NÃO usar) arquitetura orientada a eventos
+  
+  💡 Por que assistir?
+  🔹 Pra entender os limites reais do request/response em sistemas distribuídos
+  🔹 Pra aprender como arquitetar microsserviços que realmente escalam
+  🔹 Pra evitar código inflado, acoplamento excessivo e fluxos frágeis
+  🔹 Pra evoluir sua mentalidade de programador para arquiteto de software
+  🔹 Pra entender decisões arquiteturais usadas em sistemas de alta escala
+  
+  🎯 Quem deve assistir?
+  👨‍💻 Programadores backend e fullstack que trabalham com microsserviços
+  📚 Desenvolvedores que querem entender arquitetura além do CRUD
+  💼 Engenheiros e arquitetos que lidam com escalabilidade e sistemas distribuídos
+  🚀 Profissionais que querem tomar decisões arquiteturais mais maduras
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design, microsserviços e carreira tech.
+  
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 🙌
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo, pois eu sempre leio tudo e respondo sempre que posso.
+  
+  #microsserviços #systemdesign #arquiteturadesoftware #programação #backend
+---
+Fala pessoal, Renato Augusto aqui de novo e dessa vez para te ensinar uma das arquiteturas mais poderosas quando o assunto são microsserviços, sistemas distribuídos e aplicações de grande porte. Essa arquitetura é conhecida como Event Driven Architecture ou arquitetura orientada a eventos e é ela que sustenta sistemas como Netflix, Uber, Amazon e YouTube no ar lidando com milhões de transações por segundo e milhões de usuários logados simultaneamente. Então, pra gente não perder tempo aqui, vamos direto pra tela, porque tem muita coisa pra gente ver. E com toda a certeza tu vai sair daqui hoje preparado, não só para lidar com event driven na vida real, mas também completamente preparado para encarar qualquer entrevista avançada para programador ou arquiteto de software que envolva esse tipo de pergunta. Então, sem mais enrolação, bora para tema. Bom, então vamos lá,
+
+vamos direto ao ponto aqui, vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver. E a primeira coisa que a gente vai começar entendendo aqui é a arquitetura tradicional, conhecida como arquitetura cliente servidor, antes da gente entrar na arquitetura orientada a eventos. E por quê? Porque a gente precisa primeiro entender como que a arquitetura tradicional que domina a internet hoje funciona, quais são as limitações dela, quais são os problemas que ela vai trazer pra gente quando o assunto for sistemas distribuídos, microsserviços, grandes aplicações, milhões de usuários e por aí vai. E aí em cima desses problemas, é que eu vou te apresentar arquitetura orientada a eventos e como que ela vai resolver esses problemas para que com isso você tenha uma visão do todo e saiba exatamente quando utilizar esse tipo de arquitetura e quais os contextos que ela se encaixa melhor. Beleza? Então vamos lá, vamos
+
+direto ao ponto aqui para você entender isso aqui, tá? Essa imagem aqui, ela vai ilustrar literalmente como que a internet funciona nos dias de hoje, que é o quê? é a nossa arquitetura tradicional conhecida como cliente servidor, onde um lado a gente tem o nosso cliente, tá? Seja o cliente usando um navegador, um computador, um smartphone, um smart TV, tanto faz. E aí quando ela acessa um aplicativo, um site ou tanto faz, ela envia uma requisição HTTP pro nosso servidor. O nosso
+
+servidor processa essa requisição e devolve uma resposta pro cliente, tá? Uma resposta HTTP. E tudo isso aqui funciona em cima do protocolo HTTP, tá? Isso aqui é fundamento básico da internet, isso é fundamento básico da web. Isso aqui todo programador júnior, por mais iniciante que ele seja, ele tem que dominar muito bem, porque isso aqui é fundamento básico da programação.
+
+Beleza? Então essa aqui é a nossa arquitetura tradicional do dia a dia. É assim que a internet funciona, a maior parte dela pelo menos. E é assim que as coisas se comunicam e é assim que a maioria das aplicações são construídas, tá? E aí o que que a gente tem mais aqui? A gente tem aqui uma variação, né?
+
+uma variação, não a extensão dessa arquitetura, que é basicamente a gente utilizando aqui o nosso cliente para se comunicar com uma suposta API do nosso sistema aqui e a nossa API também pode se comunicar com uma outra API, tá? Então os nossos servidores eles também podem se comunicar entre si através aqui do protocolo HTTP. Isso aqui também domina aí a maior parte da internet hoje. Só que é exatamente aqui que mora o problema. Por vamos lá. Quando a gente
+
+fala de grandes aplicações de milhões de usuários, de Netflix, Uber, Mercado Livre, Walmart, Amazon e por aí vai, a gente tá falando de aplicações que lidam com milhões de requisições por hora, por minuto, por segundo e por aí vai. Então, a arquitetura tradicional, ela não vai servir pra gente. A gente vai precisar primeiro entender as limitações dela e eu vou trazer aqui a arquitetura orientada a eventos. Então, vamos lá, vamos começar fazendo aqui uma pequena simulação, tá? Vamos imaginar que a gente trabalha aqui no marketplace, no e-commerce, tanto faz. E aí dentro desse
+
+marketplace que a gente tá trabalhando, a gente tem vários microsserviços, tá? Vamos botar assim que a gente criou aqui os nossos microsserviços, tá? Cada um responsável por fazer uma coisa. Então a gente vai ter aqui o nosso microsserviço de pedidos, a gente vai ter o serviço de estoque, de notificação para enviar o e-mail, WhatsApp ou SMS lá pro usuário. A gente vai ter um serviço aqui fiscal para emissão das notas fiscais aqui dos pedidos que forem feitos. A gente vai
+
+ter aqui um serviço também para expedição, para enviar o pedido lá pro usuário, para fazer lá a separação do pedido, embalar e por aí vai. Então vamos imaginar que a gente trabalhe aqui no nosso marketplace. Poderia logicamente tá adicionar aqui um microsserviço para pagamento, antifraalude, cadastro do usuário, mas isso aqui é para exemplificar, para você conseguir entender aonde eu quero chegar com essa história, quais são os problemas dessa comunicação HTTP para que a gente consiga trazer aí a solução através de uma outra arquitetura, tá? De uma outra proposta. Então vamos lá. Toda
+
+vez que um pedido é feito, o que que precisa acontecer no nosso sistema? Bom, no nosso sistema aqui, segundo a modelagem aqui, assim que um pedido for feito, tá? O usuário foi lá, pagou o pedido, tá? Eu, mais uma vez, eu não vou colocar aqui o pagamento para não estender demais aqui o exemplo. Então, vamos supor que o pedido já foi pago, ele foi feito. E aí, o que que esse
+
+serviço de pedidos aqui precisa fazer? Ele precisa enviar uma requisição HTTP lá pro estoque para pedir para dar baixa naqueles produtos do pedido, tá? Então, os itens do pedido vão ser dado baixa aqui no nosso serviço de estoque, que vai cuidar ali do da contagem, do balanço do nosso estoque. Então, a gente tem que dar baixa nos itens daquele pedido que acabou de ser feito. Beleza?
+
+Depois disso, o que que tem que acontecer? A gente vai enviar uma notificação pro usuário, tá? Seja um e-mail, um WhatsApp, um SMS, informando que o pedido dele foi aceito, foi criado e que vai seguir aí pras próximas etapas. Então o pedido depois que retornou à resposta aqui do estoque, o que que acontece? Ele envia uma requisição agora pro serviço de notificação. E aí ele envia solicitando
+
+o quê? Para enviar uma notificação pro usuário informando que o pedido dele foi criado. Beleza? E aí agora o que que precisa acontecer? O pedido tem que aguardar a resposta da notificação e enviar uma requisição agora pro nosso serviço fiscal paraa emissão da nota fiscal. E aí nessa emissão da nota
+
+fiscal aqui, vai mais uma requisição HTTP. A nota fiscal vai ser emitida por esse serviço aqui. Depois que ela fori emitida, tem que ser enviada uma notificação pro e-mail do usuário com a nota fiscal em anexo. Então vai mais uma requisição aqui pro serviço de notificação para poder enviar essa nota pro usuário. E aí depois disso tudo ainda tem que ser enviada uma requisição pro serviço da expedição para iniciar a separação do pedido. E aí com a
+
+separação iniciada vai se dar o segmento lá, os procedimentos e tal, aguardando coleta, vai trocar o status do pedido até chegar na casa do usuário. Beleza? O lance aqui é o seguinte, tá? Se você já é um cara mais avançado, você provavelmente já tá vendo quais são os problemas aqui dessa comunicação síncrona via HTTP. Qual que é o problema? Qual que é o primeiro
+
+problema, tá? Eu vou te mostrar uma lista de problemas disso aqui da gente trabalhar com arquitetura distribuída usando HTTP, tá? Quero que você entenda isso. O problema aqui não é o protocolo HTTP, não é arquitetura cliente, servidor. O problema aqui é a gente trabalhar com microsserviços, com sistemas distribuídos, utilizando única e exclusivamente o protocolo HTTP. Vamos
+
+lá. Qual que é o primeiro problema disso aqui? O primeiro problema disso aqui é que as nossas requisições elas são síncronas. Ou seja, eu envio uma requisição e eu sou obrigado a guardar uma resposta. E aí depois disso, eu tenho que enviar outra requisição e aguardar a resposta. Depois disso, eu
+
+tenho que enviar outra requisição e aguardar resposta. Só que para para pensar, quando a gente envia uma requisição pro estoque, a gente aguarda 380 msegundos. E aí depois que essa requisição é finalizada, eu tenho que enviar um para notificação e aguardar 420 msegundos. Juntando os dois aqui, já dá quase 1 segundo. Depois a gente precisa emitir a nota fiscal. E aqui
+
+começa um dos grandes problemas, por o nosso serviço fiscal aqui, ele precisa se comunicar com o sistema da prefeitura. E geralmente sistema de prefeitura tem sérios problemas. E olha o que que vai acabar acontecendo aqui. A gente vai ter que esperar 2 segundos e meio. Então só aqui a gente já tem 3 segundos quase aqui. 3 segundos e meio
+
+aqui de tempo de resposta. Enquanto isso, o usuário tá lá agarrado, tá no delay lá 1 2 3 segundos e milhões de usuários acessando a todo o tempo aqui a nossa aplicação. Isso aqui é um grave problema. Isso aqui já é um problema nítido, tá? Mais uma vez, se você é um cara avançado, você provavelmente já tá pensando aí, vamos processar isso de forma síncrona, vamos tacar na mensageria ali e vai dar tudo certo.
+
+Calma que eu já vou falar sobre mensageria. A gente vai falar muito sobre mensageria, mas não é do jeito que você tá pensando aí, não, tá? Então, segura a onda que eu a ideia aqui é te mostrar o problema primeiro para depois você entender a solução e o por que aquela arquitetura existe. Vamos lá. Então, a gente tem aqui todo esse problema aqui. A gente vai juntar todo
+
+esse tempo de latência aqui, vai esperar todo esse tempo de resposta, tudo isso aqui acontecer para só no final conseguir concluir essa transação. Cara, isso aqui é o primeiro problema. É uma latência extremamente alta. As nossas requisições elas são síncronas. Eu eu acabo agarrando aqui o meu pedido aqui e ele fica preso esperando resposta de todo mundo. Isso aqui inclusive é uma
+
+arquitetura imperativa. A gente vai falar muito sobre isso aí ao longo do vídeo, mas eu quero que você entenda que isso aqui é algo imperativo. O meu pedido precisa controlar fluxo. Ele tem que ficar mandando requisições e dando ordens em outros serviços para que um determinado fluxo consiga chegar do início até o fim dele e concluir uma determinada etapa. Daqui a pouco a gente vai falar um pouquinho mais sobre isso, mas esse aqui é o primeiro problema, tá?
+
+Segundo problema, qual que é o segundo problema? É que se um dos serviços ficar fora do ar, a gente vai acabar derrubando os nossos outros serviços. Por qu imagina que o pedido foi lá, fez uma requisição pro estoque, depois ele fez uma requisição pra notificação e agora ele tentou fazer a emissão da nota fiscal. No momento que ele foi fazer requisição pra nota fiscal, o que que aconteceu? Nota fiscal tá fora do A. Por
+
+quê? Porque o sistema da prefeitura de repente caiu. E aí, qual que é o problema disso aqui? O problema disso aqui é o seguinte, cara. Esse cara aqui vai acabar não respondendo, vai ficar fora do ar. Esse cara aqui, o pedido vai
+
+tomar um time out lá na ponta e vai acontecer o quê? Ele também vai ficar fora do ar. E todo serviço que precisar chamar esse meu pedido aqui vai ficar fora do ar também, porque depende dele. Vai todo mundo tomando time out, vai começar um efeito dominol, um efeito cascato e você derruba a arquitetura como um todo. E aí você deve estar pensando assim: "Ah, mas isso aí é mole de resolver. a gente coloca tudo num
+
+tricat grandão lá, se deu falha, a gente simplesmente esquece a operação, deixa para lá, não conclui, bota lá que o sistema tá fora do A ou algo do tipo. Só que isso não vai resolver. Por quê? Porque repara bem, a gente teve alguns passos antes de chegar na nota fiscal. E quando a gente chega na nota fiscal e não consegue concluir, agora você é obrigado a desfazer tudo que aconteceu até esse passo da nota fiscal. Aqui a
+
+gente tá simulando que foi só uma baixa no estoque e uma notificação, mas imagina que 10 passos aconteceram, tá? 10 comunicações ali com outros serviços aconteceram para executar algum tipo de ação. E no final das contas, um serviço aleatório lá no final do fluxo tava fora do ar e agora você é obrigado a desfazer tudo que você fez. E é aí que começa o grande problema desse tipo de arquitetura utilizando HTTP. Mais uma vez, se você é um cara mais safo, isso aqui tem como resolver através de um padrão conhecido como saga, que é um padrão que vai vir desfazendo tudo que foi feito, tá, ao longo do fluxo ali.
+
+Mas isso é implementação manual, você tem que fazer na mão, é código. E aí o código desse cara vai começar a ficar inflado. Daqui a pouco a gente vai falar um pouquinho sobre código também, mas isso aqui vai ficar uma monstruosidade absurda. Fora isso, você vai ter que implementar Circuit Breaker aqui para poder impedir que um serviço acabe derrubando o outro. Cara, a tua arquitetura, ela vai começar a se tornar uma arquitetura, uma engenharia, na verdade, uma engenharia de contenção de desastres. Você começa a perder a mão da
+
+arquitetura, da modelagem, do domínio da tua aplicação para começar a se preocupar única e exclusivamente com problemas técnicos e problemas de infraestrutura. Inclusive, tem muita gente por aí que eu já vi implementando microsserviços, ensinando microsserviços, se comunicando via HTTP. Isso não se faz, cara. Lógico que uma hora ou outra ali, um serviço vai precisar se comunicar com o outro. Tá tudo bem. perfeitamente comum, algo
+
+pontual, mas o coração da tua arquitetura ser totalmente voltado pro HTTP vai dar problema sério. Isso não se faz em grandes aplicações. A gente vai falar um pouquinho mais sobre isso mais paraa frente, mas vamos lá, vamos dar continuidade aqui. Qual que é o próximo problema aqui? O próximo problema é o seguinte, é exatamente a volumetria.
+
+Imagina que hoje começou uma Black Friday na nossa empresa aqui no nosso marketplace e à meia começou a Black Friday em si, né? E as pessoas começaram a acessar. Só que nesse exato minuto que começou essa Black Friday, diversas pessoas estavam esperando para começar as promoções e a meia-noite1 começou. Só que olha o problema. Num determinado momento ali, chegou 100.000 requisições
+
+de uma vez só no nosso serviço de pedidos. O que que vai acontecer? O nosso serviço vai começar a pegar fogo, nosso servidor vai começar a pegar fogo, o banco de dados vai começar a pegar fogo e aí a gente vai ter um problema generalizado. Por quê? Porque o que que vai acontecer? A gente vai tacar fogo em
+
+toda a nossa arquitetura. Por que que isso aqui acontece? Porque vamos lá, chegou 100.000 requisições no meu serviço de pedidos. Beleza? Vamos
+
+imaginar que ele não tá conseguindo lidar com essa volumetria. Olha o que que acontece. Cada requisição que chegar no pedido, obrigatoriamente vai se transformar numa requisição pro estoque, uma pra notificação, uma pra nota fiscal, uma pra expedição, volta uma pra notificação. E no final das contas, o que que aconteceu? A gente transformou 100.000 requisições em meio milhão de
+
+requisições na arquitetura como um todo. Você acabou multiplicando o problema. Porque cada requisição que chegou no pedido obrigatoriamente teve que virar uma noque, uma na notificação, uma na nota fiscal e uma na expedição. Isso aqui vai taca fogo na arquitetura como um todo. Isso não faz nenhum sentido quando a gente fala de grandes aplicações e sistemas distribuídos. E aí
+
+tu deve estar pensando assim: "Ah, é só a gente escalar horizontalmente que a gente resolve o problema". E não, a gente não vai resolver o problema. Por quê? Porque quando a gente escala horizontalmente, a gente só vai atrasar o problema. A gente não vai resolver ele. Por qu? Vamos lá, vamos entender
+
+isso aqui. Inclusive, se você não sabe o que que é escala horizontal, o que que é escala vertical, já tem vídeo aqui no canal. Vou deixar um card aqui em cima, vou deixar o link na descrição também. Tem um vídeo completaço lá. A gente escala uma arquitetura do 0 a 1 milhão de usuários. Dá uma olhada lá depois.
+
+Mas basicamente escalar verticalmente é você adicionar mais poder computacional, mais memória RAM, mais poder de processamento no seu servidor. E escalar horizontalmente é você criar réplicas do seu servidor, colocar debaixo de um balanceador de carga e replicar também os seus bancos de dados. E aí você consegue lidar com muito mais volumetria aqui, com muito mais transações por segundo. Só que vamos olhar para essa nossa arquitetura e entender se isso aqui resolve. Isso aqui logicamente não vai resolver o problema. Por quê? Porque
+
+o nosso problema não é de processamento. O nosso problema é arquitetural. Nosso problema não vai ser processamento. Tem gente que não conhece os caminhos, vai querer escalar tudo horizontalmente achando que vai resolver. Não vai resolver. Você só vai atrasar o
+
+problema. Por que que você só vai atrasar o problema? Vamos lá. Vamos pegar aqui a nossa arquitetura totalmente escalada. E aí chegou as 100.000 requisições. Quando chegou essas
+
+100.000 1000 requisições aqui, a sua arquitetura tava exatamente do jeito que tá aqui, ó. E aí o que que acontece? Você não estava com a sua arquitetura dessa forma aqui, totalmente escalada. Por quê? Porque você não escala a
+
+arquitetura na mão. Você escala a arquitetura através de um conceito chamado de outcaling. Você vai configurar lá a sua nuvem ou seu servidor lá ou seu um prêmis lá para que a escala aconteça de maneira automática. Ou seja, o pico vai chegar e de acordo com o pico de requisições que chegar, a própria infraestrutura vai se replicando ali, vai criando novas réplicas e subindo novas instâncias ali automaticamente para poder lidar com essa volumetria. Quando esse pico de requisições baixar, aí sim as instâncias começam a ser desligadas ali para poupar recursos. Só que qual que é o problema
+
+nesse nosso cenário aqui de Black Friday? O problema disso aqui é o seguinte, cara. Autos scale nunca responde em tempo hábil, cara. O que que acontece? chega o pico de requisições até o outcaling entender o problema, subir novas instâncias, começar a preparar. Isso tem um delay. As máquinas
+
+ainda estão subindo, estão sendo configuradas. O que que acontece nesse delay de tempo? Você começa a ter este problema aqui, porque você vai perder uma enchurrada de requisições, um monte de gente vai tomar time out, um monte de gente vai ver o servidor fora do ar e você vai ter uma série de problemas e uma série de transações para você processar manualmente depois. Então, escalar horizontalmente esse tipo de arquitetura não faz sentido. E outra, repara uma coisa aqui, tá? A gente foi
+
+obrigado a escalar toda a arquitetura. Isso aqui não se paga ao longo do tempo. Isso aqui é totalmente insalubre fazer isso numa arquitetura. Você escalou literalmente tudo. Isso aqui, cara, a grosso modo, isso aqui é um monolito distribuído. Isso aqui não tem nada de
+
+microsserviços. Isso aqui não é sistema distribuído. Repara bem, a gente foi obrigado a escalar arquitetura como um todo por conta de um serviço que chegou ali uma enchurrada de requisições nele e ele tem que repassar essas requisições. A gente foi obrigado a escalar todo mundo. Isso não se sustenta no longo prazo. Isso é extremamente caro e
+
+custoso para qualquer empresa. Então isso aqui não se faz na vida real. Beleza? E aí, qual que é o próximo ponto aqui, tá? Tem mais problemas aqui ainda, logicamente, tá? O próximo problema é o
+
+seguinte, tá? O próximo problema é que, como eu falei, a nossa arquitetura é uma arquitetura imperativa. A gente tá fazendo controle de fluxo. Quando a gente fala de microsserviços, de arquiteturas distribuídas, quando a gente fala de modelagem, principalmente de domain driven design, a gente fala de desacoplamento. Nesse cenário aqui, a gente tá altamente acoplado. Por quê? O
+
+meu serviço de pedidos aqui, ele é obrigado a saber que ele tem que dar baixa no estoque, ele é obrigado a saber que tem que enviar uma notificação, ele é obrigado a saber que tem que emitir uma nota fiscal, que tem que chamar a expedição e se amanhã ou depois surgir um novo serviço aqui no meio de algum passo, algum fluxo ou regra de negócio que precisa acontecer, a gente vai ter que modificar esse código aqui também. E aí o código lá dentro vai começando a ficar desse jeitão aqui. E se você lembra lá da orientação a objetos e as boas práticas, você lembra que código não foi feito para ser dessa forma totalmente acoplado. O ideal é a gente sempre ter ali a responsabilidade única. Quando a gente fala de arquitetura e de sistemas distribuídos e principalmente de microsserviço, a gente tá falando também de responsabilidade única. Então
+
+o meu serviço de pedido, tá? O código dele lá dentro do código vai ter a chamada pro estoque, vai ter a chamada para notificação, vai ter chamada para nota fiscal, vai ter um tricat enorme, vai ter reversão de fluxo se caso alguma coisa der errado, vai ter uma, aquilo vai se tornar uma coisa tão cebosa de dar manutenção, vai fica um negócio horrível. Então você tá criando literalmente um monolito distribuído, você tá altamente acoplado, tá? Os seus serviços estão altamente acoplados um no outro. Tanto que se um end point aqui de um serviço desse mudar, você vai quebrar o pedido. E não só o pedido, você vai
+
+quebrar todo mundo que chama o determinado serviço que mudou. Então se o end point da nota fiscal mudar, você vai quebrar todo mundo que tá chamando ele. Se você mudar aqui um end point da notificação, por exemplo, você vai quebrar todo mundo que chama ele. Então você mexe num lugar, tem que dar manutenção em outro. E isso acaba trazendo também um outro problema que é o quê? é os times de desenvolvimento
+
+sendo obrigados a trabalhar no ecossistema da arquitetura como um todo. Isso não faz nenhum sentido. Nenhum, nenhum. Isso aqui não faz sentido. Por quê? Quando a gente fala de sistemas
+
+distribuídos, a gente também está falando de times distribuídos. A gente tem que ter times especialistas em cada serviço, tá? Eu sei que tem gente que vai dizer assim: "Porra, não, lá na minha empresa a gente tem cinco microsserviços e todo mundo dá manutenção em todos". Cara, presta bem atenção. Quando a gente fala de microsserviços, de sistemas distribuídos, a gente tá falando de grandes aplicações. A gente tá falando
+
+de cinco servicinhos. Isso aí você criou cinco APIs e botou para se comunicar via rede. Isso não é microsserviço, não é arquitetura distribuída. Só para você ter uma ideia, o a Netflix, por exemplo, ela tem mais de 1000 microsserviços. Como é que um desenvolvedor vai conhecer a regra de negócio que tá dentro de cada um daqueles 1000 microsserviços lá para poder dar manutenção naquilo? Não faz
+
+sentido, cara. A coisa tem que ser totalmente desacoplada. A gente não pode acoplar a nossa arquitetura. Então assim, grandes aplicações são milhares, são centenas e milhares de serviços. Não faz sentido você achar que um desenvolvedor vai conseguir dar manutenção em tudo. Então você acaba não
+
+conseguindo distribuir o seu time de desenvolvimento. E aí o que que acontece? Se eu for alterar o pedido, o cara que vai alterar o pedido, pegar a tarefa de alterar o pedido, ele também vai ter que pegar a tarefa de alterar a notificação, de alterar a nota fiscal, se for necessário ali. Cara, isso é a maior loucura. Isso aqui é pedir para perder tempo e chamar uma coisa horrível dessa de microsserviço é até um delito.
+
+Isso aqui não se faz, cara. Esse é o problema de se utilizar protocolo HTTP e comunicação via rede numa arquitetura de grande porte. Isso não se faz. Beleza? E aí, vamos lá. Qual que é a solução para
+
+todos esses problemas listados aqui? Vamos lá. A solução para isso é Event Driven Architecture, ou seja, arquitetura orientada a eventos, tá? E aí, ó, a gente vai ter aqui Netflix, Uber, LinkedIn, Amazon, Walmart, Mercado Livre e tantas outras empresas aí de grande porte que utilizam essa arquitetura. Inclusive, isso aqui cai muito em entrevista. Se você tem um
+
+sonho de trabalhar numa grande empresa como essa ou numa BigTech, você é obrigado a conhecer esse tipo de arquitetura aqui, beleza? E diferente aqui, tá, desse modelo aqui, ó, encadeado, essa coisa altamente acoplada, tá? Altamente acoplada aqui dessa arquitetura que a gente acabou de ver, a gente vai trabalhar com um conceito de eventos, tá? Fica tranquilo que isso aqui é a coisa mais simples de se entender. Você vai sair daqui entendido com tudo que você precisa saber, inclusive com algumas referências boas também para você dar uma estutada, beleza? Então vamos lá. Primeira coisa
+
+que a gente vai começar fazendo aqui é o seguinte, tá? A gente vai pegar nossa mesma arquitetura que a gente já tinha feito ali, já tinha desenvolvido lá o nosso pedido, estoque, notificação, nota fiscal, expedição e por aí vai. E a gente vai começar a trabalhar agora orientado a eventos. Como que isso aqui vai funcionar? Vamos lá. A gente tem
+
+alguns componentes na arquitetura orientada a eventos, que são os produtores, o event broker ou event. Tem a gente que prefere chamar de eventos consumidores. Só que você provavelmente já deve estar imaginando, pô, isso aí é mensageria. Não, isso aqui não é mensageria. Vai por mim, você vai entender porque que isso aqui não é mensageria. Beleza? Vamos lá. A gente
+
+vai ter o nosso broker aqui no meio e os nossos serviços não vão mais se falar entre si. Eles não vão mais enviar requisições uns pros outros ali e esperar respostas e ficar naquela coisa síncrona. A gente vai começar a transformar nossa arquitetura de uma arquitetura imperativa e síncrona numa arquitetura reativa assíncrona. Você já vai entender porqu. Vamos lá. O nosso
+
+broker aqui a gente pode utilizar algumas tecnologias aqui, tá? como o Rabit MQ, a Past Cf ou Amazon Event Bridge. Ali tem várias outras tecnologias que você pode utilizar. Não recomendo o SQS, tá? Quem já conhece a WS aí, a Amazon aí já utiliza os serviços, não recomendo SQS, porque tem alguns detalhes ali que acaba impossibilitando e atrapalhando a gente de usar aqui os nossos eventos, mas a WS tem o Amazon Event Breedge aqui, que é justamente para trabalhar com arquitetura orientada a eventos.
+
+Inclusive tem uma documentação completa sobre arquitetura orientada a eventos lá num blog da Amazon. Vou deixar o link na descrição, depois você dá uma olhada aí, beleza? Mas vamos direto ao ponto aqui. A gente tem os nossos serviços aqui, eles não se falam mais entre si, eles vão se falar agora através do nosso broker, beleza? E aí, como que isso aqui vai funcionar? Vamos lá. A gente vai ter
+
+aqui, vou selecionar aqui o nosso Rabbit MQ aqui para ser o nosso broker aqui, tá? Como exemplo. E aí o que que acontece? O nosso pedido, assim que um pedido for feito, assim que o pedido for pago, tá? Mais uma vez, eu poderia colocar aqui o serviço de pagamento, antifraalude e tudo mais, mas para exemplificar vamos imaginar que o usuário já foi lá, já pagou e aí o que que acontece? O pedido foi criado. A
+
+partir do momento que esse pedido foi criado, o que que tem que acontecer? A gente tem que simplesmente disparar um evento, tá? O meu serviço de pedido aqui, ele vai enviar um evento pro meu broker aqui, dizendo o seguinte: pedido criado. Poderia logicamente colocar isso aqui em inglês, tá? Order was created ali, ou order created, tá? Mas eu vou
+
+colocar em português para ficar mais simples aqui, mais didático para você entender. E aí ele vai disparar essa mensagem ali pra fila lá com o ID do pedido, com os dados aqui do cliente ou os itens aqui do desse pedido, o total, o endereço do cliente, assim sucessivamente. Logicamente isso aqui poderia ficar melhor, tá? Mas é para exemplificar, para você conseguir entender. E basicamente ele vai mandar essa mensagem pra fila, beleza? Essa
+
+mensagem aqui, por sua vez, quando ela chegar no nosso broker aqui, o que que vai acontecer? Vai acontecer o seguinte, depois que um pedido é criado, o que que acontece posteriormente? O estoque tem que ser dado baixa, a notificação tem que ser enviada pro usuário, a nota fiscal tem que ser emitida, a expedição tem que ser iniciada, né? A separação do pedido tem que ser iniciada, depois ele vai embalado, aguardando coleta e assim sucessivamente. Então o que que vai acontecer agora? Os nossos serviços aqui
+
+são os interessados nesse evento que acabou de acontecer chamado pedido criado. Então os meus serviços aqui, esses três serviços, eles estão conectados no meu broker e aí eles ficam ouvindo lá o tópico lá do pedido criado. Toda vez que chegar um evento na fila chamado pedido foi criado ou pedido criado ou order created ali, eu estou interessado e eu vou reagir a esse evento. Olha o que que vai acontecer. O meu estoque vai pegar essa mensagem, ele vai pegar os itens do pedido que vai est ali na nossa mensagem e ele vai dar baixa no estoque. Simples assim. A minha
+
+notificação aqui, o meu serviço de notificação, ele vai reagir a esse evento. Olha, o pedido foi criado, beleza? Então eu sei que eu tenho que enviar um SMS, um WhatsApp, um e-mail, tanto faz pro usuário, dizendo que o pedido dele foi criado, foi aceito e agora ele vai pras próximas etapas. Show de bola. A nota fiscal, por sua vez, ela também reage a um pedido criado. O
+
+pedido foi criado, ele foi pago, tá OK? Então eu preciso emitir uma nota fiscal. Então ela vai ficar conectada na fila, vai ouvir esse evento e no momento que esse evento pedido criado chegar, ela vai reagir de que forma? Emitindo uma nota fiscal. E aí tu deve est assim: "Tá, mas cadê a mensagem aqui pra expedição?" É por isso que eu te falei
+
+que isso aqui não é simplesmente mensageria. Você precisa de uma modelagem dos seus eventos para você trabalhar com isso aqui. Daqui a pouco a gente vai falar sobre domain driven design, a gente vai falar sobre Divin Storm, sobre as ferramentas que você usa para isso aqui. Mas olha o que que acontece. A minha expedição, ela não pode reagir a um pedido criado. E por
+
+que que ela não pode reagir a um pedido criado? Porque é o seguinte, um pedido ele não pode ser enviado pro cliente sem uma nota fiscal. Você nunca vai ver um pedido transitando de um lado pro outro aí em transportadora, em correio, nem nada do tipo, sem a nota fiscal. Não pode acontecer dessa forma. Isso é uma regra básica. E aí o que que acontece? A
+
+minha expedição não pode reagir a um pedido criado. Por isso que não é simplesmente fila de mensageria. Você tá trocando literalmente a forma de comunicação da sua arquitetura como um todo. Então a minha expedição, por sua vez, ela tem que reagir ao quê? A nota fiscal. Porque eu só posso iniciar a
+
+expedição ou a separação do pedido a partir do momento que a nota fiscal de determinado pedido foi emitida. Então o que que vai acontecer? No momento em que a minha nota fiscal consumiu o pedido criado, ela vai emitir a nota e o que que ela faz? Ela envia um novo evento pra fila dizendo o seguinte: nota fiscal emitida. E aí nesses dados aqui vai colocar o número da nota, o número do pedido, os itens total, impostos, o cliente, né, os dados do cliente ali e tudo mais, o XML, talvez da nota e tal.
+
+Então assim, ela vai disparar isso aqui pra fila, tá? O meu serviço aqui vai disparar esse evento pra fila depois que a nota foi emitida. E aí o que que vai acontecer? A minha mensagem vai parar no broker. E aí do broker, quem é que tem que reagir a esse cara? A minha
+
+expedição e também a notificação, porque a notificação precisa enviar o anexo da nota no e-mail. Então, o meu serviço de notificação, ele tem que ouvir os eventos de pedido criado e ele também tem que ficar ouvindo o evento de nota fiscal emitida. Então, é assim que vai funcionando a nossa arquitetura orientada a eventos. E aí, o que que tem que acontecer depois disso aqui? A minha notificação, logicamente, vai reagir a esse evento enviando e-mail pro usuário e a minha expedição, por sua vez, vai começar a separação do pedido, né? Já a
+
+nota já foi emitida, então agora ele pode começar a separação do pedido. Quando a separação do pedido foi iniciada, o que que tem que acontecer? A expedição tem que enviar um novo evento pra fila, dizendo o seguinte: separação do pedido iniciada. Bota o número do pedido, o cliente, os itens, o total e por aí vai, tá? Isso aqui é para exemplificar, tá? Os dados ali poderiam
+
+ficar melhores, mas ele vai enviar isso pra fila. E aí quando essa mensagem chegar na fila, quem é que tem que reagir a isso aqui? Quem vai reagir a isso aqui vai ser o seguinte, vai ser a nossa notificação. Por quê? Porque a notificação tem que atualizar o status pro nosso cliente dizendo o seguinte: "Olha, o seu pedido foi iniciado a separação dele, ele agora tá na nossa esteira aqui de separação e em breve ele vai passar pelas próximas etapas. E aí
+
+depois que a expedição lá chegar e constatar que o pedido agora já está pronto pra coleta e tudo mais, ele vai disparando novos eventos e todos os interessados aqui que quiserem reagir a esse evento, eles reajam. Então, repara bem como que a gente já resolveu o problema do acoplamento. Olha só, na verdade, olha a quantidade de problemas que a gente vai resolver só com isso aqui. Vamos lá. O nosso pedido aqui, tá?
+
+O nosso pedido que antes tinha que saber da nota fiscal, do estoque, da notificação, tinha que comunicar a expedição, tinha que fazer e acontecer. Repara bem, ele agora só tem que fazer uma única coisa que é criar o pedido. Só isso. Ele só vai ter o código lá de criar o pedido. Não vai fazer mais nada.
+
+O meu serviço de pedido, ele não tem que saber que o estoque tem que ser atualizado, que a notificação tem que ser enviada, que a nota fiscal tem que ser emitida, que a expedição tem que ser iniciada e por aí vai. Ele não tem que saber disso. A única função do meu serviço de pedidos é o quê? Criar um pedido. Quem quiser reagir, que reaja.
+
+Quem quiser fazer qualquer coisa com essa informação, que faça. E aí entra um ponto, vamos lá. A gente tem aqui, ó, eu tenho aqui um exemplo de código, tá? Para você entender aqui qual que é a lógica. E nesse código aqui, basicamente, a gente tem aqui um use case, tá? Isso aqui tem gente que
+
+prefere chamar de classe de serviço, de service e tudo mais, mas é uma classe que cria um pedido, tá? Um create order aqui, que basicamente vai pegar os dados aqui, vai chamar um repositor aqui, vai salvar isso aqui num banco, tá? Logicamente isso aqui tá meio esdrúchulo, né? Poderia ficar melhor, mas ele vai salvar esse pedido num banco ali, beleza? E depois ele vai enviar pro nosso event aqui ou evento, order was created. Ou o pedido criado ou
+
+o pedido foi criado, sempre tem que tá no passado, tá? A gente vai falar um pouquinho sobre isso, mas todo evento sempre tem que estar no passado. O evento é produto de uma funcionalidade, depois a gente vai falar sobre isso, tá? Mas todo evento é algo que já aconteceu e alguém precisa reagir. É por isso que a nossa arquitetura é uma arquitetura reativa, não é mais uma arquitetura imperativa. Vamos lá. E aí o que que
+
+acontece? Ele vai publicar esse evento aqui na fila com todos os dados. O order ID aqui, customer ID, total, time stamp aqui, botar a data e tudo mais. E no final ele chama aqui, ele retorna na verdade aqui o pedido para quem chamar essa classe ponto final. Não tem que ter trcat gigante, chamada de http, client aqui, client ali, chama API fulano, API ciclano, API belano, fica fazendo requisição à torto e à direita. Não tem
+
+isso, cara. Repara como que o a nossa classe aqui ela ficou muito mais inxuta, muito mais objetiva e com uma única responsabilidade. Lógico que o serviço de pedido, de gerenciar um pedido, é, vai ter código, vai ter muita coisa ali dentro, mas isso aqui é só o trechinho que cuidava de todo aquele bolo que fazia toda aquela enchurrada de coisas, cara. Então, no final das contas, que que acontece? Vamos voltar aqui. No
+
+final das contas, o que vai acontecer é o seguinte, cara. A gente vai ter um serviço agora muito mais enxuto e muito mais objetivo. E não só ele, todos os outros serviços agora estão completamente desacoplados. Se eu quiser amanhã ou depois fazer o seguinte, ó, criar um serviço aqui de recomendação, tá? Vamos imaginar aqui que depois que um pedido for finalizado, a gente vai recomendar produtos parecidos para aquele usuário. Então, toda vez que ele
+
+faz uma compra, toda vez que ele efetua um pedido ali e tudo mais e finaliza, depois que é entregue lá para ele, a gente vai receber essa informação no nosso serviço de recomendações aqui e vai fazer novas recomendações para ver se ele volta a comprar no nosso marketplace. E aí o que que acontece? Toda vez que acontecer um pedido de um usuário, de um determinado usuário, o meu pedido aqui, quando ele for finalizado, logicamente, né, quando ele for entregue lá na casa do usuário, o meu serviço de pedidos vai informar aqui pra gente, ó, pedido finalizado. O pedido foi finalizado, vai passar o ID do pedido, o cliente, os itens, o total e por aí vai. Quem quiser reagir a esse evento, que reaja a ele. O meu serviço
+
+de pedido não tem que saber o que que tem que acontecer, não. Ele é agnóstico de qualquer outra coisa. Ele só tem que cuidar do pedido. E aí o pedido foi finalizado, a minha recomendação é interessada. Se ela é interessada, ela tem que reagir a esse evento. Ela vai
+
+ficar lá ouvindo: "Opa, chegou mais um evento aqui de um pedido finalizado." Se o pedido foi finalizado, eu vou pegar o ID daquele cliente, vou mandar uns produtinhos parecidos para ele e aí vai ter aqui o time que vai cuidar justamente do sistema de recomendação, outro de expedição e assim sucessivamente. E aí, vamos lá. O que mais que a gente tem aqui, tá? A gente resolveu praticamente todos aqueles problemas que eu te mostrei do HTTP.
+
+Qual que era o próximo problema lá? O próximo problema era justamente aquele acesso de requisições que chegavam. Então, a gente tem aqui, ó, 100.000 1000 requisições chegando aqui de imediato no nosso pedido que agora consegue lidar com muito mais facilidade. Por quê?
+
+Porque no código que cria um pedido, ele só cria o pedido. Ele só vai criar o pedido, só isso. E aí com esse pedido criado, ele não precisa mais ficar enviando requisição para tudo quanto é lugar e agarrando ali 100.000 requisições, tomando pancada de tudo quanto é lado. Ele vai conseguir dar fluxo com muito mais velocidade. A gente
+
+vai gastar muito menos dinheiro para escalar isso aqui. E olha o que que vai acontecer quando a gente utiliza a arquitetura orientada a eventos. Vamos lá. Chegou 100.000 1000 requisições, o que que vai acontecer? Vão chegar,
+
+logicamente, né, 100.000 mensagens ali no meu broker, né? O meu pedido aqui vai processando, vai criando os pedidos e vai despachando isso pro broker. O broker, por sua vez, ele consegue tancar isso com muita facilidade. E aí o que que acontece depois? Todos os
+
+interessados em ouvir o evento de que um pedido foi criado, eles vão reagir a eles de maneira controlada, ou seja, cada um de acordo com a sua capacidade. Então, se o meu estoque consegue processar 3 por segundo, ele vai processar 3 por segundo. Se a minha notificação só consegue processar um por segundo, vai processar um por segundo. Nota fiscal, 2 por segundo, vai processando dois por segundo. Só que o que eu quero que você entenda aqui é o seguinte. Diferente das 100.000 1
+
+requisições que chegaram na nossa Black Friday lá com tudo conectado via HTTP que explodia literalmente toda a nossa arquitetura. Agora cada um vai reagir de acordo com a sua capacidade. E aí quando eu precisar escalar eu vou escalar somente os consumidores. Eu vou escalar somente quem está ouvindo na fila. E olha só o que que acontece também. O
+
+nosso broker aqui, ele vai servir como amortecedor de impacto. Inclusive diferente do outcaling lá, que quando o problema começa, ele já reage atrasado, porque até ele subir as instâncias, a gente já tá perdendo requisição. Aqui a gente consegue reagir de maneira mais coordenada, de maneira mais pensada. Por quê? Porque a gente vai reagir somente ao fato de que, opa, tá chegando novas mensagens na fila. O número de mensagens
+
+nesse tópico aqui tá aumentando. Qual é o tópico? Ah, é o de pedido criado. Então, tá chegando muita requisição lá. Então vamos fazer o seguinte, vamos escalar os consumidores dos interessados nesse evento ou vamos dar uma melhorada aqui também, vamos dar uma melhorada no broker, tanto faz. Então você consegue
+
+pensar, você consegue saber exatamente aonde tá o gargalo. Quando chega 100.000 requisições. Para você gerar log disso tudo, quando você tá trabalhando com HTTP, para você conseguir rastrear, você tem que ter uma equipe de observabilidade monstruosa e ainda assim você vai sofrer para conseguir encontrar onde é que tá o gargalo. Aqui você consegue perceber com muito mais tranquilidade, cara. Então você olha pra
+
+fila, vê qual é o tópico que tá inflando e aí você reage diretamente nele e aí você vai escalar somente os caras interessados. Cara, isso aqui é magnífico. É essa arquitetura que Uber, Netflix, Amazon e por aí vai, eles utilizam esse tipo de arquitetura para lidar com milhões e milhões de usuários simultâneos nas suas plataformas. Inclusive, vamos lá, repara nisso aqui agora, tá? Com esse desacoplamento que a gente fez aqui, com todos os nossos serviços aqui altamente desacoplados, agora olha o que que acontece. Eu
+
+consigo literalmente distribuir os meus times aqui de maneira ordenada em cada serviço e de maneira especializada. Então, se eu tenho 100, 200, 300 microsserviços, 1000 microsserviços, como é o caso da Netflix ali, não faz nenhum sentido eu colocar todos os desenvolvedores para trabalhar em tudo ao mesmo tempo. Isso não faz o menor sentido. Então, eu preciso ter uma quantidade de desenvolvedores suficientes para dar manutenção nesse bloco todo de código ali na Codebase, em todos os serviços. Só que eu posso distribuir eles de maneira ordenada. E
+
+como que isso funcionaria na vida real? Vamos lá. A gente tem aqui o nosso serviço de recomendação. Vamos imaginar que ele acabou de ser criado. Ele não existia. Olha o que que acontece. O meu
+
+time de recomendação aqui, eles sabem que precisam recomendar novos pedidos pro usuário baseado nos últimos pedidos finalizados dele. Beleza? Se eu sei que o meu serviço precisa reagir a alguma coisa, que coisa é essa? É um pedido finalizado. Então o que que eu vou fazer? O meu time de recomendação vai
+
+entrar em contato com o time de pedido aqui, vai perguntar: "Pessoal, vocês já disparam aí o evento de um pedido finalizado?" Se sim, tá OK? Vamos reagir ele aqui e vamos implementar o que tem que implementar. Senão, vocês poderiam criar esse evento aí e disparar ele pra fila toda vez que um pedido for finalizado. E aí o que que acontece? Se
+
+o time de pedido não tem esse evento ainda, o que que ele vai fazer? Ele vai simplesmente pegar aquele trechinho de código e lá no bloco da regra de negócio, onde um pedido é finalizado, ele vai disparar esse evento pra fila, dizendo: "Pedido finalizado". O meu time de recomendação, por sua vez, vai reagir a esse evento e eles sim vão ir lá, vão implementar as regras de negócio, vai fazer as recomendações e tudo mais. Só que repara, a situação aqui agora é o seguinte: eu não preciso mais acoplar código, eu não preciso mais saber que tal coisa tem que acontecer ou outra coisa tem que acontecer. Eu não preciso mexer em dois, três, quatro serviços para finalizar uma única feature. Por
+
+quê? Porque a minha arquitetura é reativa. O time de recomendação simplesmente vai pegar o evento que vai chegar aqui e vai reagir a ele. É simples assim, não tem mistério. E é assim que funciona. Grandes aplicações,
+
+grandes arquiteturas, Netflix, Uber, Amazon Prime e por aí vai, porque não tem como você trabalhar com grandes sistemas usando HTTP. Não faz sentido. Você pode sim ter um serviço ou outro se falando de maneira controladíssima, mas o coração da tua aplicação tem que ser única e exclusivamente voltados para eventos. E aí, qual que é o detalhe, tá? A gente vai ter essa arquitetura aqui pra gente não ficar preso aqui, só os stickers aqui, né, para você entender um pouco melhor. E aí, como é que vai
+
+funcionar? A gente vai ter aqui os nossos clientes, eles se comunicam aqui com API Gate, que centraliza as requisições e dispara aqui para cada serviço, né, de acordo com a requisição que chegou. E a gente vai ter aqui um serviço de catálogo, um carrinho aqui, um de desconto, um de pedido, né, bem parecido com aquele que a gente fez ali. E aí cada um tem o seu banco de dados, que também é uma das premissas, tá, da arquitetura de microsserviços, dos sistemas distribuídos, tá? usar um banco de dados para vários pseudo microsserviços ali. Isso não é
+
+microsserviços, tá? Tem um monte de gente que implementa isso dessa forma e chama isso de Isso não é microsserviço, isso é monolito distribuído. Isso aí é monolito distribuído. Bota todo mundo via rede para se comunicar e bota um banco de dados só para servir todas as aplicações. Isso não faz sentido nenhum.
+
+Inclusive já tem vídeo aqui no canal sobre isso também, tá? Então vamos lá. Qual que é o detalhe aqui e por que que eu te falei que isso aqui não é mensageria? Isso aqui tá longe de mensageria. Por vamos lá. Por mais que
+
+nós estejamos usando um broker aqui, um rabbitill da vida ou um Cafk, um event breed aqui, o coração da nossa aplicação aqui, ele é totalmente voltado à comunicação via broker. Ele não se comunica, mas os serviços eles não se falam mais, eles não têm noção que um ou outro existe e quem é que reage aos seus eventos. Então, toda a comunicação é feita agora via broker. Como eu falei, dá para comunicar um com o outro aqui de maneira controlada, de maneira ordenada, bem pensada. Dá para acontecer.
+
+Inclusive, isso é normal, tá? Isso é perfeitamente comum de acontecer. Um serviço, uma hora ou outra vai precisar se comunicar com o outro para alguma coisa, seja um web hook, seja alguma coisa do tipo ali. Bem pensado, tá? Bem implementado, mas o coração da sua aplicação, 90% dela vai ser totalmente voltado à comunicação via broker. E como
+
+eu falei, os eventos tm que ser extremamente bem pensados e principalmente modelados. E é por isso que a gente vai entrar agora no tema principal dessa aula aqui, que é domain driven design e event storming, que é uma das ferramentas do domain driven design, justamente para você conseguir trabalhar com esse tipo de arquitetura. Isso aqui, cara, você fazer isso aqui, você pegar isso aqui e sair disparando coisa aleatória pra fila, você vai fazer besteira, você vai ter uma dor de cabeça infinita. Por quê? Porque você não está usando as ferramentas corretas que foram criadas para trabalhar com isso. Tanto
+
+que o nome é event storm ou tempestade de eventos ali, justamente para trabalhar com eventos. Domain driven design vai te ajudar a modelar esses serviços de maneira correta, definir os bounded context, os contextos delimitados e por aí vai. Eu vou deixar esses dois links aqui na descrição, mas se você quiser dar uma olhada mais profunda nisso aqui, você quiser entender um pouco mais sobre essa arquitetura aqui e sobre tudo isso que tá por trás da arquitetura orientada a eventos, vou deixar o link na descrição do mapa do arquiteto, um guia de carreira completo, onde eu te conduzo do zero, passando pelo júnior, pelo pleno, pelo sênior, até você chegar num arquiteto de software, num arquiteto de soluções e com tudo que você precisa saber, com tudo na ordem que você precisa estudar, com roadmap completaço que eu preparei lá para você. Então vou deixar o link na descrição, dá uma olhada aí, porque lá eu te mostro tudo que você precisa saber sobre arquitetura orientada a eventos e não somente sobre ela, mas também sobre o domínio de design, sobre as ferramentas. Inclusive eu te mostro também um pequeno sisteminha que eu modelei lá com event storm pr você entender como que a coisa funciona e te entrego todo o material para você estudar. Então, mais uma vez,
+
+o link vai est na descrição, então não deixa de conferir. Agora vamos pr as nossas considerações finais. Vamos lá. Presta muita atenção no que eu vou te falar agora, cara. Isso tudo que eu te mostrei aqui vai te preparar pras maiores entrevistas que você foi encarar. Isso aqui vai te preparar para
+
+bigtech, isso aqui vai te preparar para um monte de coisa, pra entrevista avançada de arquiteto, de software, de programador sênior. Isso aqui vai te preparar para muita coisa. Além disso, também vai te preparar para implementar isso na vida real, porque a implementação é simples, mas como eu falei, precisa de domain design e precisa de event storm, das ferramentas corretas para você conseguir modelar corretamente a tua aplicação. Mas presta atenção no que eu vou te falar. Isso aqui não é pra sisteminha pequeno, não é pra sisteminha de padaria, de mercadinho. Cara, como eu disse no
+
+começo do vídeo, o HTTP funciona pra 90% ou até mais dos casos. Então, continue trabalhando da forma como você já vem trabalhando há muito tempo, mas vá aumentando a sua base de conhecimento, entendendo um pouco mais sobre isso aqui, por se você não souber trabalhar com esse tipo de arquitetura, você vai fazer merda e vai fazer merda grande, porque você tá tentando desenvolver algo grande. Então, toma cuidado quando você for implementar isso aqui, por quê? Para implementar arquitetura orientada a eventos, você precisa obrigatoriamente conhecer DDD, conhecer as ferramentas e, principalmente, ter um time de desenvolvimento maduro. E também você tem que ter a necessidade de implementar isso. Se você não tem a necessidade,
+
+você não tem por fazer isso. E a necessidade surge justamente dos problemas que eu te mostrei. Quando você tiver aqueles problemas, aí sim você começa a pensar em arquitetura orientada a eventos. ou quando você vê que você precisa projetar uma arquitetura agora ou um sistema que já vai nascer grande ali, né, que já é algo grandioso de uma empresa grande que tá sendo criado agora e vai ser lançado, já tem muita expectativa, aí você já parte do princípio que você tem que trabalhar com eventos. Beleza? Outro ponto também que
+
+tem que ficar claro aqui é que quando a gente fala de arquitetura orientada eventos, eu não tô falando para anular completamente a comunicação HTTP entre um serviço ou outro. Isso ainda existe, isso pode ser feito, não é nenhum crime, só que tem que ser feito de maneira controlada e tem que ter um bom motivo para você fazer isso. Então tudo vai da tua maturidade, da senioridade que você tem, do domínio que você tem sobre a situação. E falando em domínio, mais uma vez domain driven design. Cara, vai por mim, Domain Driven Design. Eventos são
+
+eventos de domínio. Se você não conhece o domínio, você não pode trabalhar com sistemas distribuídos. você não consegue implementar esse sistema no domínio que você tá trabalhando, logicamente, né, na empresa ali ou no contexto que você tá trabalhando. Então, você tem que entender muito sobre o domínio, beleza? Então, fica aqui as minhas recomendações. Presta muita atenção no
+
+que você vai fazer e não fique maluco tentando implementar isso aqui em todo canto, beleza? Bom, e agora que tu chegou até o final desse vídeo aqui, agora tu vai conseguir dar os teus primeiros passos com arquitetura orientada a eventos, vai mandar super bem também na tua próxima entrevista. Deixa teu like aí, se inscreve no canal, ativa o sininho da vaquinha para tu não perder nenhuma notificação. Não deixa de dar uma olhada também no mapa do Arquiteto, um guia de carreira completaço para te conduzir do zero até o arquiteto de software com tudo que você precisa estudar, inclusive com conteúdos também sobre tudo isso que eu falei nessa aula daqui. Então não deixa de conferir, dá uma olhada aí depois. Se
+
+ficou qualquer dúvida, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve. Não.

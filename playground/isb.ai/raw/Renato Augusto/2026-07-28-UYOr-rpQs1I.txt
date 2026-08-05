@@ -1,0 +1,292 @@
+---
+video_title: "O QUE NINGUÉM TE ENSINOU SOBRE BUSCAS INTELIGENTES NO BANCO DE DADOS!"
+video_id: UYOr-rpQs1I
+channel_name: "Renato Augusto"
+channel_id: UC9iusg9ZUmiSqXmppE9J1IQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=UYOr-rpQs1I
+video_date: 2026-07-28T22:00:28+00:00
+video_description: |
+  Conheça O MAPA DO ARQUITETO - Um guia de carreira completo Do Iniciante ao Arquiteto de Software: https://go.hotmart.com/R100244660B
+  
+  🔗 Leituras Recomendadas:
+  📚 System Design Interview (Volume 1) - https://amzn.to/44qvxCx
+  📚 System Design Interview (Volume 2) - https://amzn.to/4nsvA8G
+  📚Fundamentos da Arquitetura de Software: uma Abordagem de Engenharia -https://amzn.to/4aFP9UT
+  📚 Criando Microsserviços: Projetando Sistemas com Componentes Menores e Mais Especializados - https://amzn.to/3BfiSqx
+  📚 Migrando Sistemas Monolíticos Para Microsserviços: Padrões Evolutivos Para Transformar seu Sistema Monolítico - https://amzn.to/3BkY00W
+  
+  Fala, pessoal! Renato Augusto aqui de novo e dessa vez pra te ensinar uma das tecnologias mais importantes quando o assunto é construir sistemas que precisam de buscas rápidas, escaláveis e inteligentes dentro de bancos de dados relacionais.
+  
+  Essa tecnologia é chamada de Full-Text Search e ela é utilizada por diversos sistemas modernos para realizar buscas textuais com alta performance, relevância e precisão, substituindo o uso inadequado do operador LIKE em muitos cenários.
+  
+  Nesse vídeo você vai entender como tudo funciona por baixo dos panos, desde as limitações do operador LIKE, passando por tokenização, índices invertidos, stopwords, stemming, ranking de relevância, até a implementação prática do Full-Text Search no MySQL e no PostgreSQL.
+  
+  🚀 O que você vai aprender neste vídeo: O QUE NINGUÉM TE ENSINOU SOBRE BUSCAS INTELIGENTES NO BANCO DE DADOS!
+  
+  ✅ O que é Full-Text Search
+  ✅ Por que o operador LIKE não escala para buscas textuais
+  ✅ Como funciona um índice invertido (Inverted Index)
+  ✅ Como acontece a tokenização de textos
+  ✅ O que são Stopwords e Stemming
+  ✅ Como funciona o ranking de relevância das buscas
+  ✅ Diferenças entre LIKE e Full-Text Search
+  ✅ Como criar índices Full-Text no MySQL e PostgreSQL
+  ✅ Como funciona o Full-Text Search por baixo dos panos
+  ✅ Como bancos de dados encontram resultados em milissegundos
+  ✅ EXPLAIN ANALYZE aplicado a buscas textuais
+  ✅ Casos de uso, vantagens e limitações do Full-Text Search
+  
+  🎯 Quem deve assistir?
+  
+  👨‍💻 Programadores backend e fullstack que trabalham com bancos de dados
+  📚 Desenvolvedores que querem entender arquitetura além do CRUD
+  💼 Engenheiros e arquitetos de software que lidam com performance e escalabilidade
+  🗄️ Profissionais que trabalham com MySQL, PostgreSQL, SQL Server ou outros bancos relacionais
+  🚀 Desenvolvedores interessados em otimização de consultas SQL, mecanismos de busca e System Design
+  
+  🔥 Curtiu o vídeo?
+  Deixa o like, se inscreve no canal e ativa o sininho 🔔 pra não perder os próximos conteúdos sobre arquitetura de software, system design, microsserviços e carreira tech.
+  
+  Quer apoiar meu trabalho? Considere se tornar membro do canal! 🙌
+  
+  📩 Tem dúvidas ou sugestões?
+  Comenta aqui embaixo, pois eu sempre leio tudo e respondo sempre que posso.
+  
+  #mysql #postgresql #bancodedados
+---
+Imagina que você tá numa entrevista para programador e o entrevistador te passa o seguinte desafio para você resolver. Crie um campo de busca no frontend da aplicação, onde os usuários possam digitar alguma coisa nesse campo e o sistema deve ser capaz de retornar os resultados mais relevantes de acordo com a pesquisa feita pelo usuário. primeira vista, isso parece ser algo extremamente simples de ser feito e você provavelmente já deve até estar imaginando o caminho mais óbvio para fazer isso, que é você receber o texto que o usuário digitou no end qualquer do teu back end, criar uma consulta SQL básica com esse texto, utilizando o operador like e buscar todos os registros que sejam equivalentes a essa pesquisa realizada. Essa é de longe a primeira intuição que a maioria dos programadores têm para resolver esse tipo de desafio, só que ela está completamente errada. Isso porque o uso do like, além de ter baixíssima precisão em trazer resultados realmente relevantes, ele também vai se tornar um baita problema de performance e um verdadeiro gargalo no teu banco de dados. E no vídeo de hoje eu vou te
+
+ensinar uma técnica extremamente simples, mas muito poderosa, conhecida como Full Text Search, que vai te possibilitar não só realizar pesquisas realmente inteligentes nos bancos de dados relacionais como MySQL e Postgre, mas também vai te fazer entender como que tudo isso funciona por baixo dos panos. Então, pra gente não perder mais tempo, vamos direto pra tela, porque tem muita coisa pra gente ver e muita coisa para eu te ensinar. Bora lá. Bom, então vamos lá, vamos direto ao ponto aqui, vamos direto ao que interessa, porque como você bem já sabe, tem muita coisa pra gente ver. A primeira coisa que a gente vai começar fazendo aqui é entendendo os problemas do uso do like, como que ele afeta não só as pesquisas que você realiza, mas até a performance do teu banco de dados para depois a gente entrar na solução, que é a utilização do Full Text Search para você fazer pesquisas muito mais inteligentes e muito mais performáticas. Beleza?
+
+Então vamos lá, vamos direto ao que interessa aqui. O que que eu tenho aqui, tá? Eu tenho aqui a minha ferramenta para manipulação do banco de dados, que é o debiver. E eu tenho também aqui duas conexões, tá? Eu tenho uma conexão com uma SQL e também com um Postgre, tá?
+
+Então eu vou te ensinar como que você faz isso usando uma SQL e como que você faz usando postgre, até porque tem uma leve diferença entre um e outro e também tem alguns detalhes avançadíssimos do posting que você também precisa saber, beleza? Então vamos direto ao que interessa. Primeira coisa que a gente vai fazer aqui é entendendo o que que a gente tem nesse MySQL aqui, que basicamente é uma tabelinha de produtos e uma tabelinha de usuários, tá? Na tabelinha de usuários aqui eu tenho 10.000 registros, tá? Logicamente que
+
+isso aqui é de exemplo, isso aqui é para exemplificar, pra gente fazer os exercícios aqui. E na tabelinha de produtos aqui, quando a gente for simular aqui um e-commerce e tudo mais, a gente também tem 10.000 produtos cadastrados aqui dentro. Então isso aqui é mais do que suficiente pra gente começar aqui a entender todos os problemas por trás do uso do like, beleza? Então vamos começar, vamos direto ao ponto aqui. E a primeira coisa
+
+que eu vou começar fazendo aqui é o seguinte, tá? Vamos imaginar que a gente trabalha num sistema, sei lá, um sistema bancário ou algum sistema que a gente precisa em algum momento buscar os usuários pelo nome deles. Então a gente vai fazer uma pesquisa aqui no nosso banco de dados procurando pela Ana, tá? Então a gente vai listar aqui todos os usuários do nosso sistema que se chamam Ana. Então basicamente o que a gente precisa fazer é dar um select aqui na tabela de usuários, onde o nome do usuário seja igual a Ana. Basicamente é
+
+isso aqui, essa queryzinha super simples, usando like. E quando a gente executa, a gente traz aqui, ó, a Ana Valentina, a gente tem a Ana Costa. Só que repara que não é tão relevante assim os resultados. Por quê? Porque ele trouxe também a Vanessa, ele trouxe a Adriana, ele trouxe a Luciana. E qual
+
+que é o problema disso aqui? Problema disso aqui, logicamente, você já deve estar percebendo, é a falta de relevância. Por quê? Porque ele não tá pesquisando pelo nome, ele não entende idioma, ele não entende vocabulário. Esse like aqui é super arcaico. Isso
+
+aqui não funciona para pesquisas inteligentes. E por que que ele tá trazendo esse monte de resultado? Porque basicamente a gente tá dizendo o seguinte, tá? Esses percentuais aqui, caso você não seja um cara conhecedor de SQL, esses percentuais aqui é o que a gente chama de coringas, tá? Ou wi cards, tá? Isso aqui basicamente tá
+
+dizendo o seguinte, eu tô dizendo pro SQL fazer o seguinte: "Olha, vai lá no banco de dados e encontra para mim os registros que contenham esses caracteres aqui, A, N, A". Então, que que ele vai fazer? Independente da posição que contenham esses caracteres, ele vai encontrar todos os que tenham a Ana. Então, por exemplo, aqui na Adriana, onde é que tá o Ana? No final aqui, ó.
+
+Ana do Adriana. Se a gente pegar a Luciana, é a mesma coisa. A Vanessa Mariana é a mesma coisa. Então, ele tá procurando por caracteres. Ele não entende idiomas. E aí você deve est
+
+assim: "Ah, Renato, mas aí para encontrar a Ana é fácil, pô. Basta a gente tirar o primeiro percentual aqui, que ele vai fazer o seguinte, ele vai começar a busca a partir do Ana. Então os primeiros três caracteres do registro tem que ser Ana. E aí, se a gente rodar, logicamente ele vai trazer todas as Anas pra gente. E aí parece que funcionou, né? Você deve tá assim, então é
+
+só tirar aqui o primeiro percentual que vai funcionar, beleza? Não é porque ele funcionou pra Ana que vai funcionar para todo mundo. Por quê? Porque se eu digitar aqui, por exemplo, Maria, olha o que que vai acontecer. Ele vai trazer a Maria, mas ele também vai trazer a Mariana. Por quê? Porque Mariana começa
+
+com a palavra Maria, ou seja, com esses caracteres. Mais uma vez, ele não entende idioma. Se eu digitar aqui a palavrinha Júlia e pesquisar pela Júlia, ele vai trazer a Júlia, mas também vai trazer a Juliana. Então esse é o problema do uso do like. Agora imagina isso aqui num cenário de um e-commerce, onde você praticamente tem que ser preciso ali nos resultados que você retorna pro usuário. O problema que isso
+
+aqui não causaria. Para isso ficar um pouco mais claro, vamos dar uma olhada aqui no Mercado Livre, tá? Eu deixei separado aqui o Mercado Livre aqui pra gente fazer um teste e eu vou digitar aqui o seguinte, tá? Eu vou pegar aqui a minha tabelinha aqui de produtos, tá? Já vou deixar ela aberta aqui para você entender. Então, a gente tem aqui, ó, o
+
+anel solitário, anel masculino, panela de pressão, jogo de panela e aqui no Mercado Livre vamos pesquisar pela palavra anel, tá? Vamos pegar aqui, ó, anel e vamos pesquisar por anel. O que que a gente vai ter como resultado aqui? A gente vai ter aqui, ó, um monte de anel. Ele vai retornar aqui os resultados mais relevantes e todos eles são anéis. Inclusive, repara nisso aqui,
+
+ó. Aliança, casal e solitário, aço dourado, noivos e casamento. Não tem a palavra anel aqui, mas de alguma maneira ele entendeu que a aliança é igual a anel. Então tem alguma coisa, é algum mecanismo avançado aqui, tá? tem alguma coisa avançada, mais rebuscada, que daqui a pouco você vai entender como é que funciona e como que você implementa isso aqui também, tá? Mas o que eu quero
+
+que você repare aqui, ó, é a relevância nos resultados. E até se eu vier aqui, ó, por exemplo, na página 10, você vai reparar que os resultados continuam relevantes. Ele continua trazendo anéis aqui para mim. Ele não tá trazendo martelo, chave de fenda, ele tá trazendo anéis. Se a gente for na última página, que é a página 42, você vai ver que os resultados continuam relevantes de acordo com a pesquisa que eu realizei.
+
+Então aqui ele até trouxe aqui um relógio aqui e tudo mais e tal, mas você vê que ele não foge muito da relevância. Ele vai fugir lá nas últimas páginas, ele vai perdendo uma certa relevância, mas as primeiras páginas sempre são ranqueadas de acordo com a relevância, tá? Então esse é o ponto. Agora, se a gente vem aqui no nosso banco de dados e eu executo uma query aqui buscando, por exemplo, na minha tabela de produtos, um produto chamado anel e executo essa query, o que que vai acontecer? Ele trouxe aqui para mim anel solitário prata 925, ele trouxe anel masculino, trouxe panela de pressão que não tem nada a ver com anel, ele trouxe jogo de panelas antiaderentes, panela de pressão elétrica multifuncional, ou seja, mais uma vez, ele não traz resultados relevantes. Por quê? Porque ele não
+
+entende idioma, ele não sabe o que é um anel. Ele tá pesquisando por caracteres. Então esse é o primeiro problema do uso do like. E aí você deve estar assim, ó, Renato, mas se a gente tirar aqui no contexto do e-commerce, o primeiro coringa aqui, o primeiro percentual aqui, será que funciona? Vamos ver.
+
+Rodamos aqui e funciona. Por quê? Porque o anel começa com anel. Só que qual que é o problema disso aqui? O problema é que se eu pesquisar de repente por capa, ele vai trazer capa para sofá, capa transparente, mas também vai trazer capacete. Então repara que não tem
+
+inteligência. O o like ele é burro, ele é arcaico, ele não não funciona. Isso é da época das cavernas, não é assim que se utiliza para montar sistemas que precisam de mecanismos inteligentes de busca. Inclusive tem um detalhe aqui que se a gente pesquisar, de repente, fizer uma pesquisa composta aqui e eu pesquisar de repente, sei lá, por anel prata, o que que vai acontecer? Ele não vai encontrar. Mas se eu pesquiso lá no
+
+Mercado Livre, funciona, ele vai trazer os anéis prata para mim. Para ele funcionar aqui, eu teria que fazer o seguinte, eu teria que vir aqui e digitar, por exemplo, sei lá, panela de pressão e vou rodar. Beleza, ele encontrou a panela de pressão, mas você sabe que tem aqueles usuários que não escrevem exatamente como tá lá no texto lá do produto e tudo mais, até porque a gente viu que tinha a questão da aliança, que também é um anel, e não tinha a palavra anel escrita, mas aí se você vier aqui, ó, e comer a palavrinha D e rodar, você não vai encontrar. Então, mais uma vez, isso aqui não é nada preciso. Isso aqui não tem relevância nenhuma, isso aqui é arcaico e não se utiliza para desenvolver sistemas que precisam trabalhar com o mecanismo de busca. Beleza? Esse é o
+
+primeiro problema do uso do like. Agora, qual que é o segundo problema do uso do like? O segundo problema é esse aqui, ó. Se a gente vier aqui e pesquisar de novo por anel, olha o que que acontece. Ele vai trazer aqueles resultados embaralhados, beleza? E se eu der aqui
+
+um explain analyze e rodar essa query aqui, o que que vai acontecer? Ele vai trazer para mim aqui, ó, um monte de números, um monte de dados aqui que você já vai entender o que que significa cada um deles. Mas basicamente o que eu quero que você entenda é que esse explain analyze, ele vai analisar aquela query. A gente vai rodar a querer e ele vai fazer uma análise, ele vai explanar pra gente aqui qual é o custo e tudo mais. e mais alguns outros dados, tá? O foco
+
+aqui que eu quero que você entenda é o seguinte. O primeiro, repara nesse loop igual a um e a gente tem linhas igual a 10.000. Ou seja, ele deu um loop em 10.000 linhas, procurando aqui pela palavra anel. O segundo ponto que eu
+
+quero que você entenda é esse table scan. O que que é um table scan? É justamente esse fato de você ter que pegar registro por registro lá no banco de dados e olhar um a um, procurando aqui pela palavrinha anel. Ou seja, isso não é nada performático. E o terceiro ponto que eu quero que você entenda é esse custo aqui, que é esse 1028. Isso
+
+aqui é um número interno que o MySQL usa, o Postgre também tem o dele, só que é apenas um número que ele vai cuspir pra gente, que ele considera que o custo de rodar essa query é igual a 1028. Daqui a pouco você vai entender porque que isso aqui é muito alto e como que a gente vai otimizar isso aqui utilizando full text. Beleza? Mas o ponto que eu quero que você entenda é que isso aqui é um table scan. Isso não é nada performático. E qual que é o problema? O
+
+problema é justamente esse, a falta de performance. Isso aqui vai virar um baita de um gargalo, vai virar um baita de um problema no teu banco de dados. Por quê? Vamos lá, vamos aqui pro Miro aqui que você vai entender. Repara o seguinte, quando a gente tem um usuário que tá lá no front end, ele digita lá no campinho de busca a palavra que ele quer. Essa requisição vai ser enviada
+
+lá, logicamente, pra nossa PI. Nossa PI vai receber ali a requisição lá no back end, no end point qualquer. A gente vai pegar, vai montar uma query, né, um select aqui na tabela de produtos, passando aqui o Word com um like aqui no banco de dados para buscar esse registro. Qual que é o problema? O problema é que aquele table scan e aquele loop igual a um numa tabela de 10.000 registros significa que quando
+
+esse usuário consultou, o meu banco de dados teve que olhar registro por registro, procurando aquela palavrinha anel ou qualquer outra palavra que ele digitou. Qual que é o problema? O problema é que se eu tenho um usuário são 10.000 registros. Se eu tenho três usuários, significa que se eles acessarem ao mesmo tempo a aplicação e pesquisarem no mesmo tempo, são 30.000
+
+vezes que a o banco de dados vai ter que olhar registro por registro. Ou seja, 10.000 pro primeiro usuário, 10.000 pro segundo e 10.000 pro terceiro. Se a
+
+gente fala de 10 usuários, a gente tá falando aí de 100.000 registro. Se a gente fala de 100 usuários, são 1 milhão. Então você vê que o crescimento é exponencial. É uma loucura tentar fazer isso aqui num banco de dados achando que vai funcionar. Não vai. Isso
+
+aqui vai travar o banco, vai engasgar o banco e à medida que o número de usuários cresce ou à medida que o número de registros aumenta no banco, pior vai ficando o problema. Isso aqui vai se tornando um gargalo cada vez pior, justamente por causa desse lance do table scan, ou seja, ele tá fazendo um escaneamento completo naquela tabela e é por isso que isso aqui não é nada performático. Beleza? Agora vamos voltar aqui pro nosso banco de dados. Qual que é o detalhe aqui e como que a gente resolve esse problema? A gente resolve
+
+utilizando full text search, que é uma técnica extremamente simples e você vai entender exatamente agora como que tudo funciona. Vamos lá. O que que eu vou fazer aqui? Eu vou basicamente fazer o seguinte, tá? A primeira coisa que a gente tem que fazer quando quer trabalhar com full text search é criar um índice do tipo Full text. Não é um
+
+índice normal igual a gente tá acostumado a criar, é um índice do tipo full text. Como que a gente cria isso? A gente cria isso assim, ó. Eu vou dar um create full text index. Vou chamar esse índice aqui de, sei lá, search idx. Você
+
+pode chamar do nome que você quiser. Vou passar a tabela de products aqui e vou passar quais são as colunas que eu quero juntar para criar esse índice, tá? Você poderia passar, né? A gente poderia logicamente passar aqui só o nome, mas eu vou passar o nome e também vou passar a description do produto. Ou seja, pode ter um nome lá que o cara tá pesquisando, não nome do produto, mas sim na descrição. Então a descrição é
+
+extremamente importante no nosso contexto de e-commerce. Então é basicamente assim que eu vou criar esse índice. Você vê que é extremamente simples aqui de fazer isso. E aí eu vou executar essa criação do índice. E ele criou o índice aqui para mim. Tá
+
+perfeito. E agora o que que a gente precisa fazer? A gente precisa basicamente vir aqui e fazer o seguinte, tá? Eu vou fazer a consulta já utilizando a questão do Full Text Search. Vamos lá. Como é que isso aqui
+
+vai funcionar? Isso aqui vai funcionar assim, ó. Eu vou dar um select aqui na minha tabela de produtos novamente. No wear aqui eu não vou mais passar o nome like e alguma coisa. Eu vou utilizar a outra sintaxe do MySQL aqui pra gente poder utilizar o full text que é o quê?
+
+A gente vai dar um mat. E esse mat eu vou passar o quê? Eu vou passar o nome e eu vou passar também a description, tá? Esse Mat aqui é para bater alguma coisa, tá? a gente vai bater o nome e a descrição com alguma coisa que o usuário tá pesquisando, tá? Contra, na verdade,
+
+alguma coisa que o usuário tá pesquisando. E por que contra? Porque a próxima palavrinha que a gente vai utilizar é o against, tá? Que é contra alguma coisa, ou seja, vamos bater uma coisa contra outra, beleza? E aí dentro desse gênst a gente vai passar o quê? A
+
+gente vai passar o termo que o usuário pesquisou. Ou seja, vamos colocar aqui, sei lá, um fone Bluetooth. Vamos rodar essa query aqui. O que que vai acontecer? Ele vai trazer pra gente os fones Bluetooths. Então você vê que
+
+agora o negócio tá ordenado, tá bonito, tem uma relevância aqui interessante, só que aqui embaixo, repara que ele começa a perder relevância. Porque a gente já encontra aqui embaixo, ó, o AirPods Pro segunda geração, que na descrição dele existe a palavrinha fone. Não tem o Bluetooth, mas tem fone. A gente tem aqui uma caixa de som Bluetooth portátil que também tem a palavrinha Bluetooth, não tem o fone, mas tem o Bluetooth. Então, repara o que que ele fez aqui.
+
+Ele montou aqui para mim um rankeamento de relevância. Ou seja, repara nos ids aqui, como é que eles estão desordenados, como que eles estão embaralhados aqui. Parece que tá tudo desordenado, mas o resultado é relevante. Então, quando a gente chega aqui embaixo, ele tá no registro aqui 9.000 e pouco, depois ele vem pro registro 32, o ID3 do AirPods 2. Depois
+
+ele vai pra caixa de som Bluetooth. Por que ele tá fazendo isso e na verdade como que ele tá fazendo isso? Isso aqui basicamente é um rankeamento interno que o MySQL faz para poder te entregar resultados relevantes. Ou seja, ele aqui já entende um pouco de vocabulário, de idiomas, ele já entende o que que é uma palavra, ele já entende o que que é uma busca inteligente. Então o que ele tá fazendo é criar um ranqueamento de relevância de acordo com a sua pesquisa.
+
+Daqui a pouco você vai entender um pouquinho melhor como que isso funciona por baixo dos panos, mas por hora, eu quero que você entenda é a simplicidade da coisa. Com duas linhas, a gente já consegue executar pesquisas inteligentes no banco. Então a gente não necessariamente precisa mais do uso do like aqui, que é extremamente pesado, é extremamente custoso e não é nada relevante. Então com essa pesquisa simples aqui, você já consegue trazer resultados extremamente relevantes. Inclusive, se a gente vier aqui, por exemplo, e substituir, sei lá, esse fone aqui, fone Bluetooth, né, por fone vermelho, que é o primeiro resultado que tá aqui, olha o que que vai acontecer.
+
+Ele vai trazer para mim o fone Bluetooth vermelho, os vermelhos aqui. Olha, olha a relevância do que ele monta. Olha aqui como que ele traz esses resultados muito relevantes. Então depois que ele traz todos os vermelhos, aí sim ele começa a trazer aqui o dourado, o grafite, o prata e tudo mais. Por quê? Porque
+
+continua sendo um fone, mas não é mais vermelho. Então não tá de acordo com a minha busca. Se eu faço essa pesquisa aqui utilizando o like, você vê que ele não vai conseguir trazer para mim. Ele não vai conseguir encontrar. Na verdade, ele rodou aqui o Xplin Analy, né? Eu
+
+teria que remover esse Xpin analyze daqui para rodar a querer e aí você vê que ele não consegue encontrar absolutamente nada. Então repara que isso aqui é muito mais inteligente, muito mais avançado. O like não tá preparado nem para pesquisas inteligentes, muito menos para pesquisas simples e compostas. Com duas palavras, três palavras, ele não vai conseguir encontrar. Então é assim que a gente resolve utilizando o MySQL. E aí eu vou
+
+voltar aqui, ó. Vou voltar do jeito que tava aqui só para ficar para fins de registro. E aí eu sei que você deve estar querendo entender o que que tá acontecendo por baixo dos panos quando a gente traz esses resultados extremamente relevantes. Vamos lá. O que que tá acontecendo aqui? Quando a gente cria
+
+aquele full text index lá, pra gente poder trabalhar com full text search, o que que acontece por baixo dos panos? Basicamente, ele vai pegar a nossa tabelinha de produtos lá e ele vai passar por um processo, né? Ele vai passar essa tabela por um processo de tokenização, tá? O que que é a tokenização? É basicamente ele pegar palavrinha por palavrinha, quebrar essas palavras, excluir preposições e palavras inúteis e vai manter só as palavras relevantes. Ou seja, ele vai quebrar uma
+
+por uma aqui e vai criar um token para cada uma delas. Depois disso, o que que ele vai fazer? Ele vai criar o que a gente chama de índice invertido. O que que é um índice invertido? É basicamente isso aqui, ó. Ele vai pegar a palavrinha
+
+anel e ele vai ver que a palavrinha anel existe tanto no índice um quanto no índice dois. Na verdade, no ID1 e no ID2, né? aqueles registros lá do anel solitário e o outro era anel masculino, alguma coisa. Beleza? A palavrinha aqui, sei lá, palavrinha capacete, ela existe no ID8, no ID9 e no ID10. Beleza? Então,
+
+se a gente vier aqui, ó, tá aqui, ó, capacete, capacete, capacete, ó, 8, 9 e 10. Beleza? O que que acontece por baixo dos panos? Quando a gente faz uma pesquisa, por exemplo, sobre panela de pressão, vamos lá. Botamos lá naquele match against o panela de pressão. O que
+
+que ele vai fazer? Ele exclui essa palavrinha D e ele pesquisa por panela e pesquisa por pressão. E aí ele vai ver que existe aqui nessa nossa tabelinha, logicamente, né, que a gente criou aqui uma tabelinha com apenas 10 registros, ele vai ver que existe a palavra panela tanto no índice três quanto no índice cinco. E ele vai ver que existe a palavra pressão dentro do três e do cinco. Então ele cria uma interseção e retorna esses resultados como os mais relevantes. Então é assim que as coisas
+
+funcionam por baixo dos panos e é assim que funciona um índice invertido. não é igual o índice normal do banco de dados que a gente cria. E mais uma vez aqui é exemplo, tá? Só tem 10 registros aqui. Naquele nosso caso de 10.000 registros,
+
+a palavra pressão vai aparecer em um monte de ideis, a palavra panela também. Então isso aqui é para exemplificar como que as coisas funcionam. Então é assim que o Full Text Search funciona por baixo dos panos e é por isso que ele consegue montar um rankeamento interno de acordo com aquilo que é mais relevante com a nossa pesquisa. E é por isso que a gente consegue pesquisar por palavras separadas, palavras distantes dentro de um mesmo registro. É por isso que ele consegue ser inteligente para trazer pra gente. E aí vamos voltar aqui
+
+pro nosso banco de dados, porque eu sei que você deve estar com a dúvida do seguinte, beleza, Renato, ele resolveu a questão ali pra gente dos resultados, da relevância, ele é mais inteligente, a gente consegue pesquisar aqui de maneira composta por palavras separadas dentro de um mesmo registro. Beleza? Mas e a performance? Como que fica a performance nesse caso aqui do Full Text Surp? Vamos lá. Se a gente rodar aqui, ó, essa esse
+
+explain analyze no like novamente, que que a gente vai ter aqui? A gente vai ter aquele custo novamente de 1028. Daqui a pouco você vai entender um pouco melhor. A gente vai ter aqui o table scan e a gente vai ter mais uma vez aquela questão lá do loop nas 10.000 linhas. Agora, se a gente der um explain
+
+analyze aqui e eu vou quebrar a linha aqui para ficar um pouquinho melhor, um pouquinho mais legível aqui e rodar essa consulta, o que que a gente vai ter? A gente vai ter um custo de 0.35, 35, ou seja, o que que é 0.35 comparado com 1028. Repara que existe uma escala de grandeza absurda aqui entre um e outro. Para você ver o quão
+
+rápido isso aqui é. E aqui, ó, na questão da do loop das tabelas, o que que a gente vai ter? A gente vai ter ele pesquisando aqui dentro, ó, em apenas 419 linhas. Ou seja, ele não deu um loop em 10.000 1000 registros. Ele deu um
+
+loop em apenas 419 registros que ele encontrou logicamente dentro daquele índice invertido. Então, ao invés de procurar na tabela, quando você roda uma query dessa com match against, com full test search, ao invés dele ir na tabela, ele tá procurando um índice, ele tá consultando aquele índice invertido, ele nunca mais olhando pra tabela. É por isso que aqui é muito mais rápido, muito mais performático. 0 pon alguma coisa comparado com 1000 e alguma outra coisa, você vê que é absurdamente mais rápido do que você rodar aqui consultas utilizando o like, beleza? Então aqui nós resolvemos o problema da relevância e nós também resolvemos o problema aqui da questão da performance. Beleza? Agora
+
+vamos avançar mais, vamos aprofundar mais esse conhecimento, porque agora a gente vai partir pro nosso postgre aqui, tá? o nosso post aqui que vai fornecer coisa muito mais avançada aqui pra gente. O Mycle é apenas a ponta do iceberg, ele é apenas a porta de entrada para pesquisas inteligentes e o post ele vai fornecer coisas muito mais avançadas pra gente poder trabalhar, tá? Então vamos lá. O My Ciccole aqui dá por encerrado, você já aprendeu sintaxe simples, básica e eficiente. Aqui o PG
+
+também não vai muito longe, é simples também de se implementar. E eu vou começar aqui, ó, no nosso poster aqui, rodando aquela consulta para buscar um produto. Então, a gente vai utilizar aqui um weare, name, like, alguma coisa. Vou passar aqui um anel, beleza? Vou rodar e ele vai trazer aqueles mesmos resultados embaralhados, igual foi a questão do MySQL. E aí eu vou rodar um
+
+Xlay analyze aqui e você vai ver que tem uma pequena diferença entre eles. Ele já retorna aqui já com a linha quebrada, bonitinho aqui pra gente. E repara no seguinte, aqui a gente não tem o table scan, a gente tem um sex scan, ou seja, sequential scan. Então é a mesma coisa. Table scan e essa questão do sex scan aqui é a mesma coisa. Ele tá fazendo um
+
+loop em todos aqueles registros. E aí, repara no tempo de execução. Aqui ele levou 4.9 ms parece rápido, mas isso aqui não é nada rápido, até porque eu tô num ambiente local, tô rodando isso aqui na minha máquina, então isso aqui não é nada performático num ambiente da vida real. Isso aqui tá rápido porque tá na minha máquina. Só que você vai entender
+
+o quão rápido é você utilizar o Full Text Research Search e o quão lento isso aqui é na vida real. Quando a gente implementar aqui que você vai entender qual que é a diferença. Então, por hora, grava esse 4. Missos aqui, beleza? Daqui a pouco a gente vai voltar aqui, você vai ver a diferença de um pro outro.
+
+Beleza? Entendido disso aqui, que que a gente precisa fazer? A gente precisa implementar logo aqui de cara o Full Text se. Como que a gente faz isso aqui? Usando o posting, tá? A sintaxe ela vai
+
+ser um pouco diferente, mas você vai entender perfeitamente. Eu vou te explicar tudo que você precisa saber. Vamos lá. Vamos começar aqui a implementação. Eu vou fazer aqui, ó, um select novamente na tabela de produtos.
+
+Eu vou passar um wear aqui também. E eu vou passar aqui a sintax que o Postgre exige pra gente trabalhar com full text. Não se assusta. Isso aqui é simples, você entender, você vai conseguir entender tudo até o final, tá? Eu vou te explicar como que tudo tá funcionando.
+
+Mas basicamente o que a gente vai precisar fazer é chamar uma função chamada de two TS Vector, tá? Para ele poder criar aqueles índices invertidos. Ele vai criar alguns lexemas que daqui a pouco eu te explico o que que é um lexema por baixo dos panos, mas por hora é isso que você precisa entender. Então vou passar aqui o idioma, que eu quero que ele entenda, tá? Que eu quero que ele compreenda, porque como eu falei, o postgre é muito mais avançado e ele entende idioma, vocabulário, alguns termos linguísticos. Daqui a pouco a
+
+gente vai falar também de sinônimos e por aí vai. Então, preciso passar primeiramente aqui o português, que é o idioma que a gente quer trabalhar. E depois disso, o que que eu vou passar aqui? Eu vou passar também quais que são o as colunas que eu quero que ele monte esse registro, né? A questão lá dos índices invertidos e tudo mais, que é o nome e a descrição do produto. Então,
+
+para fazer isso, o que que a gente vai ter que fazer? Eu vou ter que chamar um col aqui. Vou passar o nome concatenando aqui, meio que com espaço vazio. É assim que funciona. Paciência. Eu não sei quem
+
+foi que desenvolveu isso, mas é dessa forma que se utiliza. Vou chamar dois pipes aqui, passando também um espaço vazio. Vou chamar mais dois pipes aqui e outro coless. E aqui dentro eu passo o description e passo também mais um espaço vazio aqui no final. Beleza?
+
+Entendido isso aqui, o que que a gente precisa fazer? A gente precisa, logicamente aqui a gente tá criando aquela questão dos índices, aquela coisa por baixo dos panos, vai entrar os lexemas aqui também. Então eu preciso fazer a consulta, eu preciso passar a consulta que o usuário pesquisou, né? aquele valorzinho. Então, para fazer isso, a gente pula uma linha aqui e passa dois @ que é a sintaxe do Postgre, e a gente vai chamar uma função aqui tos query. É aqui dentro que a gente vai
+
+passar o que a gente tá pesquisando. Então aqui simplesmente eu preciso passar somente o idioma e eu vou passar aqui nesse campinho em branco o valor que eu tô pesquisando e é somente isso, não precisa de mais nada. Então vamos pesquisar aqui pela palavrinha capa. Então eu vou pesquisar pela palavra capa. Vou rodar essa query e você vai ver que ele traz para mim aqui todos os resultados aqui de acordo com capa, beleza? Então ele vai trazer capa
+
+transparente, capa para sofá, capa antque bravo aqui verde, vai trazer caderno universitário. Aí você deve estar assim: "Porra, mas pera aí, caderno? Por que que caderno tá relevante?" Por quê? Porque é um caderno capa dura. Então tem capa também na
+
+palavra e ele entende que isso é relevante, até porque você pesquisou somente por capa. Então ele entende e monta rankeado essa relevância. E aí repara no seguinte, tá? O postgre ele tem uma questão aqui, ele tem um mecanismo interno, tá? Um motor de busca ali muito mais avançado. Então, que que
+
+a gente consegue fazer aqui? Eu consigo passar a palavra capas no plural e pesquisar. E você vai ver que ele me retorna os mesmos resultados. Se eu passar aqui cadernos, você vai ver que ele vai me retornar o caderno. Você vê que não existe a palavra cadernos aqui.
+
+Então isso aqui é extremamente avançado. Ele entende plural, ele entende singular, ele entende a questão ali dos idiomas, ele entende vocabulário. Então isso aqui é extremamente avançado. E aí que que eu posso fazer aqui? Tá, eu posso passar aqui cadernos e eu posso passar também aqui, ó, a palavra capa e a palavra dura. E ele vai encontrar para
+
+mim esses registros, coisa que o like não conseguia fazer. Então, através da pesquisa composta. E aí, se eu rodar, isso aqui não vai funcionar, logicamente, vai dar um erro. Por quê? Porque pra gente trabalhar com pesquisa composta aqui, a gente precisa chamar um PL to TS Query ou a gente pode passar aqui o ezinho comercial para ele poder se localizar e entender onde começa e onde termina uma palavra. Então isso
+
+aqui é mais do que suficiente. Se eu rodar vai funcionar e ele consegue trazer aqui para mim todos os registros aqui, todos os resultados que sejam de acordo com a busca que eu realizei. Então é assim que o Full Text Search funciona com o Postgre. E aí vamos voltar de novo naquele lance da performance pra gente resolver a performance porque não tá resolvido aqui, porque você deve estar achando assim: "Ah, pô, beleza e a performance aí será que é tão rápido quanto uma SQL?" Vamos dar uma olhada nisso aqui e depois a gente volta nessa questão para você entender o que que é um lexema.
+
+você vai entender. Eu vou deixar uma planilhinha ali, vou deixar uma tabelinha para você consultar toda vez que você precisar usar um Myscicle, quais as funcionalidades que ele te entrega, o post e por aí vai. Então, daqui a pouco você vai entender. Fica tranquilo. O que eu quero te mostrar aqui agora é o seguinte, se eu der um explain analyze aqui e rodar essa query, o que que vai acontecer aqui? Tá, ele
+
+vai rodar. E repara o seguinte, a gente tá rodando aqui um sex can, ou seja, não mudou nada. Então você deve falar assim: "Pô Renato, essa merda aí não funcionou. Isso aí não tá pela ordem porque, pô, cara, olha aí, 139 msundos". Você lembra de quantos milis segundos levou esse like aqui? Esse like levou 4 msegundos e
+
+esse aqui tá levando 139. Por quê? Porque a gente não criou o índice full text. A gente não criou aquele índice invertido lá no banco de dados. Porque quando a gente roda isso aqui, ele tá fazendo isso em tempo de execução. Ele
+
+até tá montando toda aquela estrutura, ele tá criando os lexemas, que daqui a pouco a gente vai falar um pouquinho mais. Ele tá montando toda a estrutura interna e depois ele consulta. Então não faz sentido. Você tá mandando, toda vez que você rodar com ela, você tá mandando ele montar todo aquele aparato, fazer os índices invertidos. Então não é assim que funciona. A gente precisa primeiro
+
+criar o índice. E como que a gente cria o índice? É super simples. A gente vem aqui, dá um create index, eu vou chamar ele de search, igual a gente fez naquele outro lá, na tabela de produtos, usando o gin. O que que é esse gin? Pensa no
+
+gin como o algoritmo que vai montar toda aquela estrutura, tá? Não precisa entrar muito a fundo disso aqui. Isso aqui é bem básico, é só você utilizar o gin e ponto final, tá? É ele quem vai montar toda aquela estrutura pra gente. E aí, o que que a gente vai precisar fazer? A
+
+gente precisa, logicamente, passar aqui um tilt vector aqui para dentro para ele montar toda a estrutura pra gente. Eu vou quebrar uma linha aqui para isso ficar um pouquinho mais legível. E eu tenho que passar aqui, logicamente, depois do gin, eu tenho que passar aqui, ó, um parêntesezinho aqui e fechar ele aqui embaixo e botar aqui um ponto e vírgula. Ponto final. É assim que a gente consegue criar um índice, tá? Não
+
+tá tão legível assim. Eu poderia dentar isso aqui melhor e tudo mais, mas você já entendeu, você vai conseguir replicar aí no seu banco de dados. E aí, se eu rodar isso aqui, ele vai criar o índice pra gente. E agora, quando a gente der um explain analyze nessa query aqui, o que que vai acontecer? Ele de 139 msos, ele foi agora para 0.80
+
+ms então é muito rápido. Com pesquisas aqui singulares, eu acredito até que ele vá até mais rápido do que isso. Ó lá, ó, 0.3 ms. O que que é 0.3 3 ms comparado
+
+aqui com 5 ms com 4.7 ms você vê que são escalas de grandeza muito grande. Então é assim que a gente trabalha com full text e é por isso que ele é extremamente performático. E aí quando a gente roda aqui, por exemplo, de novo o analyze desse Full Text Search, repara que ele mudou aqui de sexcan e ele não tá mais fazendo aquela consulta, escaneando palavrinha por palavrinha. Por quê?
+
+Porque aquela consulta ele tá buscando registro por registro. É a mesma coisa que eu falar para você o seguinte. pega um livro aí aleatório qualquer e encontra para mim a palavra cachorro dentro desse livro. O que que você vai fazer? Você vai ter que pegar página por página, olhar palavra por palavra e marcar toda vez que você encontrar um cachorro até a última página do livro.
+
+Isso não faz o menor sentido. Então, quando a gente trabalha com Full Text Search e que que ele tá fazendo? Ele é como se ele fosse na última página do livro e ele anotasse lá. A palavra cachorro existe na página 5, na página 48, na página 210. Então, toda vez que alguém me perguntar por cachorro, eu vou lá na última página do livro, pego lá aquele índice e pronto, eu entrego pra pessoa as páginas que ela tá procurando.
+
+Ponto final, é assim que funciona o Full Text Search. E aqui no Postg ele é muito mais avançado. Por quê? Porque a gente tem a questão dos lexemas. Então eu vou fechar isso aqui para você entender, vai ficar um pouquinho mais claro para você.
+
+Eu vou quebrar aqui umas linhas aqui para ficar um pouquinho mais separado. E eu vou fazer o seguinte, tá? Eu vou rodar aqui uma consulta. Eu vou dar um select aqui to test vector, eu vou passar o idioma e eu vou passar também aqui o seguinte, tá? Eu vou passar a palavra, sei lá, programador, vou passar programando, vou passar programação e eu vou passar também programadores. Beleza?
+
+Eu vou rodar essa consulta aqui. E o que que ele fez? Ele criou um lexema, tá? Que que é um lexema? Ele basicamente tá reduzindo aquela palavra, tá? Que
+
+pertence a um contexto ao menor número de caracteres possíveis. Por quê? Porque você vê aqui, ó, que ele criou um programa. E aí, ó, repara que programador, programando, programação e programadores fazem parte do mesmo contexto. Então, toda vez que alguém pesquisar por isso, ele já sabe que o contexto é programação. Ele já sabe aqui
+
+no vocabulário, né, ele já tem o lexema dele. É por isso que funciona. Inclusive, se a gente vier aqui e fizer o seguinte, tá? Eu vou até rodar uma query aqui pr você entender o que que tá acontecendo. Eu vou copiar aquela query ali de cima. Eu vou descer aqui embaixo,
+
+vou limpar isso aqui. E eu vou pesquisar aqui o seguinte, tá? Ao invés de cadernos, a gente vai pesquisar o seguinte. Eu vou pesquisar pela palavra anel e prata. Vamos ver o que que ele vai trazer pra gente. Ele deu um erro
+
+aqui pra gente, logicamente, porque eu esqueci daquele e comercial, mas se eu rodar novamente, ele vai trazer para mim o anel solitário prata. Beleza? Quando a gente busca por anel, a gente sabe que tem dois registros de anel aqui no nosso banco de dados. Se eu vier aqui de novo aqui na tabelinha de produtos aqui, eles são os dois primeiros registros, ó. A gente tem um anel solitário de prata e a gente tem um anel masculino de aço inoxidável. Beleza? Quando eu pesquiso
+
+por anel prata, ele encontrou. Mas e se eu pesquisar de repente por anel prateado? Que que ele vai fazer? Ele vai me trazer o mesmo resultado. Por que que ele não trouxe aquele outro anel? Porque
+
+se ele não tivesse encontrado a palavra prateado aqui, ele ia me trazer os dois por relevância. Mas como ele sabe que a palavra prateado pertence ao mesmo contexto de prata, ele já criou um lexema para aquilo. Então, quando alguém pesquisa por prateado ou prata, ele vai entregar o mesmo resultado. Quer entender como é que isso aqui funciona? Vamos lá. Ao invés de passar esses
+
+valores aqui na mão, o que eu vou fazer é o seguinte, tá? Eu vou passar aqui a palavrinha name, que é o campo, é a coluna que eu quero pesquisar, os lexemas que já foram criados. E aqui basta eu passar um from products, beleza? Vou rodar isso aqui. E isso aqui basicamente são aqueles tokens que ele criou, então aqueles tokenzinhos. E ele
+
+também já cria o Lexema, ou seja, repara no primeiro aqui que ele montou o seguinte, ele tem a palavrinha anel, ele tem o 925, que é a questão da prata ali e tudo mais, e ele também tem o pret aqui, ó. Ele matou a palavrinha no ar. E ele tem o pret. Esse prete aqui pode ser prata, pode ser prateado, então ele já entende. Por isso que ele não me trouxe aquele outro anel, porque ele sabe o que eu pesquisei. Ele sabe que esse é o
+
+resultado mais relevante. Por quê? Porque ele entende vocabulário, ele entende idioma. Esse é o ponto do super poder do post que muito pouca gente conhece. Então é assim que você trabalha com Full Text Search. É trabalhando
+
+dessa forma que você consegue fazer pesquisas muito mais inteligentes no seu banco de dados. Beleza? E aí tem um ponto aqui que é o seguinte, tá? Vamos aqui pro Miro aqui que é o seguinte, eu vou fazer aqui, ó, eu vou te mostrar essa tabelinha aqui para você entender de uma vez por todas qual que é o ponto aqui, que é o seguinte, ó. Repara que a gente tem aqui a coluninha do like, a gente tem o my sequel aqui full text e a gente tem o posting full text. Beleza?
+
+Que que acontece aqui? O nosso MySQL e o Pinggre aqui, eles vão fornecer aqui a questão do table scan. Então eles vão evitar o full table scan. Eles usam o índice invertido. Tem escala aqui para milhões de registro, busca por palavras e não por substring. Tem a questão do
+
+ranking de relevância. Ele ignora as stops ali, que é a questão das preposições. São palavras que não valem de nada. D, para, um, aquilo, aquela, sei lá. Ele come essas palavrinhas aí e você consegue ter resultados muito mais relevantes, até porque ele não precisa ranquear esse tipo de palavra. Ele
+
+também busca por múltiplas palavras, aquela questão da busca composta. Tem os operadores aqui, tem o prefixo aqui também, a busca pelo prefixo. Então você consegue ver que o My Sequel e o Post trabalham igualmente nesses pontos. Agora, qual que é a diferença entre eles? A diferença logicamente é que o suporte a idiomas é básico demais, tá?
+
+Ele não vai te fornecer um suporte a idiomas muito avançado. O poste já vai conseguir te entregar isso, mas o My CCO não vai conseguir. A questão do steaming aqui, que é essa questão do lexema, que é a redução das palavras do mesmo contexto ali para caracteres ali, ele também vai ser limitado no MySQL. Funciona, tá? Mas vai ser limitado e no postcre é muito mais avançado. Plural e
+
+singular também, mesma coisa, ele vai conseguir entender o postgre, mas o MySQL é bem limitado. A questão dos tesauros também, que é extremamente importante, vamos voltar aqui, cara, que é o seguinte. Tesauro. O que que é um tesauro? Tesauro é basicamente sinônimo, tá? Tem uns caras aí que criam esses
+
+nomes complexos, mas relaxa, porque tesauro é basicamente sinônimo. Então, se eu tenho no meu banco de dados a palavrinha, sei lá, a palavrinha carro, eu posso configurar no postgrip, porque ele tem suporte a tesauro, configurar o seguinte: eu quero que toda vez que alguém pesquise por carro, por automóvel por veículo, você entenda que esses resultados aqui são relevantes. Então, você consegue configurar esses tesouros, ou seja, esses sinônimos. O post ele é muito avançado para isso. O my SQL vai ser bem mais limitado. Ele, na verdade,
+
+ele nem vai fornecer porque ele não tem dicionário linguístico, ele também não tem a questão dos tesauros configuráveis. O que tem lá já tá configurado e é o padrão, é a forma que você tem que aceitar para trabalhar. Tem a questão de peso por campo também que o post ele consegue fornecer e também tem a configuração da tokenização que você também consegue controlar isso. Então você vê que o like não te entrega nada disso, cara. O like foi feito para um negocinho básico. De repente sisteminha
+
+ali, você tá procurando ali um PDF, um negocinho básico, umas planilhazinha, um sisteminha básico. Mas quando a gente fala de pesquisas do usuário, pesquisas que t relevância, pesquisas que impactam diretamente a experiência do usuário e principalmente que não prejudiquem a performance do banco de dados, aí você tem que trabalhar com full text search. Inclusive, todo esse conhecimento avançado de banco de dados, você já sabe que você encontra lá no mapa do arquiteto, que é um guia de carreira completo para eu te conduzir do absoluto zero, passando pelo júnior, pelo pleno e pelo snior, até você se tornar um arquiteto de software e um arquiteto de soluções com conhecimentos práticos pra vida real. E lá dentro eu te entrego não só esses conhecimentos avançados de banco de dados, mas toda a trilha técnica na ordem que você precisa estudar, com tudo que você precisa estudar para sair de onde você tiver na sua carreira e chegar ao nível mais alto de um arquiteto de software. Então, se você é um iniciante, tá começando agora, tá dando teus primeiros passos agora, o mapa do arquiteto é para você. Se você
+
+já é um pleno e tá pensando em evoluir na carreira, o mapa do arquiteto também é para você. E se você já é um sior calejado de batalha de longa data, o mapa do arquiteto também é para você. E lá dentro você vai ter acesso à minha pessoa, vai poder me consultar, vai poder mandar tuas dúvidas. Eu vou te ajudando, vou te respondendo, vou tirando as dúvidas que você tem. E de quebra eu ainda te entrego um roadmap completo para conduzir e guiar os teus estudos, independente do ponto de partida. Então vou deixar o link na
+
+descrição, dá um confere aí depois. Se ficou qualquer dúvida a respeito do Full Text Search, deixa nos comentários abaixo que eu prometo que eu tire um tempo para te responder. Por fim, eu vou ficando por aqui. Um forte abraço para você e nos vemos em breve.
