@@ -1,0 +1,52 @@
+---
+video_title: "Browser Agents Don't Need Better Models. They Need Better Eyes. - Kushan Raj, ARK"
+video_id: JnubYCYunk8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JnubYCYunk8
+video_date: 2026-06-28T15:30:40+00:00
+video_description: |
+  Every browser agent improvement in the last year has mostly been a model upgrade: better vision, longer context, smarter planning. And they still fail on basic workflows.
+  
+  Our claim is that the main bottleneck is not the model. It is the interface we give the model to the browser. Three things matter more: what the model sees, what it can do, and what it learns from. We built a browser-agent runtime around all three: a compact page representation instead of a raw dump, fast actions with stable handles instead of one click per call, and step-by-step feedback instead of pass/fail at the end.
+  
+  In our early runs, changing that interface alone was enough to take the same model from confusion to correct multi-step execution on hostile pages. This talk is the thesis, the evidence, where it still breaks, and why better browser state is a bigger lever than just swapping in a better model.
+  
+  Speakers:
+  - Kushan Raj (ARK): Kushan Raj is a Founding ML Engineer at Sarvam AI, where he built the real-time voice AI stack that now powers 2M+ daily calls across 10+ Indian languages
+    LinkedIn: https://www.linkedin.com/in/kushanraj/
+---
+Muito bem, pessoal. Eu sou Kushan. Trabalhei na Seraphim como engenheiro fundador por 2 anos. Vamos falar sobre o que me interessa agora, que são os agentes de navegador. A ideia de agentes de navegador é muito legal, né? O agente do navegador deveria
+
+enlouquecer, certo? Pessoalmente, não tenho visto essa adoção, e eu mesmo não uso muito agentes de navegador. Venho explorando isso há algum tempo. Tenho tentado entender o porquê disso. Então, na minha tela agora, temos o desafio do navegador.
+
+Mas este é um parâmetro muito interessante para agentes de navegador, porque há muitas coisas que você precisa fazer, uma longa sequência crescente de tarefas. E isso, na verdade, revela por que os agentes de navegador são ruins. Se você prestou atenção no início do vídeo, o navegador desse agente levou cerca de 10 a 20 segundos apenas para clicar no botão "Iniciar". E agora, estamos no primeiro passo. São 30 etapas, e demorou uma eternidade só para clicar em um botão. Bom
+
+, chega disso. Quero mostrar a vocês o que tenho construído. Então, mesmo site. Bem, tentei replicar a sensação de ver o que está acontecendo, sabe, de poder ver o que o agente do navegador está pensando. Mas como você pode ver, é muito mais rápido e muito mais eficiente, e estou usando um modelo muito mais barato, certo?
+
+A hipótese aqui é que os modelos são bastante inteligentes, mas a infraestrutura ao seu redor é que é ruim. Como você deve ter reparado no vídeo anterior (talvez eu coloque uma captura de tela), o agente está tentando depurar o que está acontecendo. Está tentando clicar em algo, mas não entende o que está acontecendo. Então, minha tese principal aqui tem sido proporcionar um ambiente agradável para o agente usar, certo? Assim, onde consegue planejar sequências longas, consegue descobrir onde falhou, o que está acontecendo e pode planejar o clique corretamente. Descobri que
+
+é uma representação interessante que comprime o site e permite que o agente veja a página inteira com pouquíssimos tokens. Agora, quero mostrar alguns exemplos concretos. Digamos que eu queira baixar meu Aadhaar. Então, este é o Claude tentando fazer isso. Portanto, presumo que isso seja muito simples para um agente de navegador. Eu tiro uma captura de tela, você vê o
+
+botão ali, clique nele. Mas o interessante é que, a partir desse ponto, o problema surgiu. Então, a partir dos 46 segundos até o final deste vídeo, foi feita uma captura de tela, a tela rolou por algum motivo e, em seguida, foi feita outra captura de tela. Basicamente, todo esse processo levou 2 minutos, enquanto que no meu caso, no nosso vídeo,
+
+ele simplesmente inicia e pronto. E essa é a beleza de um agente de navegador. Quão rápido foi isso? E estou usando um modelo tão barato para isso. Outro exemplo interessante é: "Então, meus amigos e eu vamos fazer uma trilha no domingo." Eu estava pensando, sabe de uma coisa
+
+? Como este site fica no Canadá e eu não domino muito bem o idioma canadense. Demorei um pouco para entender como funciona este site. Então, perguntei ao Claude: "Ei, você pode reservar isso para mim?" E no final, não conseguiu escolher uma data e simplesmente ficou travado. Este é o
+
+vídeo do meu agente.
+
+Você pode ver que ele seleciona o item, insere a data e pronto, acabou. Certo? Em teoria, é muito simples e prático de usar . E agora, qual é o próximo passo? O que pretendo fazer? Estou pensando em
+
+tornar este projeto de código aberto porque, novamente, este código não é muito defensável. O produto que eu quero apresentar é, talvez, uma API que, como vocês podem ver, estávamos executando com esses comandos. Talvez eu queira apenas expor esse comando como uma API. Forneça-me um URL, descreva sua intenção e eu a executarei para você e a retornarei, ou talvez a transforme em um site ou a disponibilize como um plugin. Mas é isso aí, resumindo, quero tornar os agentes de navegador mais rápidos, mais baratos e mais confiáveis, e garantir que todo mundo no mundo os use, porque eles podem fazer muita coisa por você.
+
+Então, sim, essa é a ideia geral. Obrigado por assistir.
+
+Todo esse código Markdown apresenta o site, aquela página em particular. E vamos fazer essa comparação interessante, certo? Vamos para a AIS. O DOM completo para isso teria cerca de 20.000 tokens. Então, digamos que
+
+temos esta captura de tela. Certo, esta captura de tela mostra cerca de 1.100 tokens. Meu código Markdown tem cerca de 1.800 tokens e, em vez de uma única captura de tela mostrar apenas um trecho específico, você consegue ver o site inteiro, certo? Há mais algumas coisas sobre as quais
+
+é importante dar feedback, certo? Então, dizemos: "Ok, olha, essas são as novidades que apareceram na página." Isso já não existe mais, certo? Da mesma forma, podemos dizer que aquilo que estava bloqueando os cliques que você queria fazer foi removido. Sabe, nós damos um feedback de que você tentou clicar aqui, mas isso não aconteceu porque estamos monitorando toda a página do navegador de ponta a ponta .
+
+Certo? Então, juntando tudo isso, o que eu construí é uma representação muito limpa que basicamente comprime o site, e você pode usar isso junto com a captura de tela. É bem barato em termos de tokens. Então, o modelo consegue raciocinar muito bem e, em seguida, pode construir essa longa sequência de tarefas a serem executadas.

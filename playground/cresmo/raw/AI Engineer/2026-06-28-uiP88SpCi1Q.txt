@@ -1,0 +1,44 @@
+---
+video_title: "Your Agent Is Wasting Tokens and You Don't Know It - Erik Hanchett, AWS"
+video_id: uiP88SpCi1Q
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uiP88SpCi1Q
+video_date: 2026-06-28T22:00:14+00:00
+video_description: |
+  I deployed an agent to production and the bill was not good. Not because the model was bad, but because it was doing too much. I was using the most expensive models for simple inference calls. The context was filling up. And my tool loops ran longer than they needed to. The agent worked fine, it just cost way more than it should have.
+  
+  This talk covers three small changes I made that dropped my costs without hurting quality. Each one was a few lines of code, and none of them required changing my prompts or switching models. I'll cover things like prompt caching and model routing. I'll show code.
+  
+  Speakers:
+  - Erik Hanchett (Amazon Web Services): Erik Hanchett is a Developer Advocate at AWS who helps developers build with frontend, fullstack, and AI/agent technologies through hands-on tutorials, talks, and videos.
+    X/Twitter: https://x.com/erikch
+    LinkedIn: https://www.linkedin.com/in/erikhanchett/
+    GitHub: https://github.com/erikch
+---
+Olá a todos, meu nome é Eric Hanchett. Sou um defensor sênior de desenvolvedores na AWS e vou falar com vocês sobre como vocês podem economizar nos custos de tokens. Agora, vou mostrar cinco maneiras de reduzir os custos com tokens ao usar e criar agentes. Então, a primeira maneira de fazer isso é armazenar em cache o prompt do sistema. Deixe-me mostrar- lhe um pouco de código. Agora estou usando os
+
+agentes Strands da AWS. Isso funciona com todos os provedores diferentes. Este é um pequeno pseudocódigo, mas a ideia é que você possa adicionar `cache prompt equals default`. E o que isso fará é que, na primeira chamada do seu agente, será enviada a mensagem completa do sistema e, em todas as chamadas subsequentes, será enviada uma mensagem de sistema muito mais reduzida. Então, ficará armazenado em cache. Você também pode armazenar em cache
+
+os avisos e mensagens das ferramentas. Isso pode parecer óbvio, mas você deve considerar rotear suas diferentes mensagens com base na dificuldade. Aqui está um exemplo de código. Vamos imaginar que você tem uma tarefa muito difícil. Você pode querer usar um dos modelos de fronteira mais recentes.
+
+No entanto, se for algo mais simples, é melhor usar um modelo mais barato. Nesse caso, talvez usemos o Haiku de Claude para algo simples e barato, e depois o Soneto de Claude para algo um pouco mais complexo. E então você pode usar uma instrução if. Você pode até escolher outro modelo bem barato e decidir qual usar. Então, você pode experimentar , mas recomendo fortemente que não use o modelo mais caro para tudo o que você for fazer. Você deseja usar
+
+vários modelos diferentes com base no caso de uso. Em seguida, tente rotear a rota para ele dentro do seu agente. Outra boa dica é descarregar o resultado da ferramenta. Deixe-me mostrar-lhe um pouco de código aqui. Mais uma vez , estou usando agentes de filamentos. Esta é
+
+uma forma manual de fazer isso. Existem algumas APIs adicionais que os agentes Strands oferecem para fazer isso. Se você tiver um resultado de ferramenta extenso sendo retornado, poderá armazená-lo localmente ou na nuvem e, em seguida, usar algum tipo de sumarização que economize tokens. Dessa forma, quando a função é chamada repetidamente, o resultado da ferramenta não é adicionado ao contexto a cada iteração do loop da ferramenta ou a cada iteração do loop do agente. Portanto, se você conseguir encontrar alguma maneira de, onde quer que você tenha esse resultado da ferramenta, não precisar enviá-lo em todas as chamadas de retorno para o modelo de linguagem grande , isso economizará muitos tokens . Como eu disse, existem algumas
+
+APIs para fazer isso, mas essencialmente você pode usar a técnica de sumarização. Você também pode tampar os loops de suas ferramentas. Então, quando você está lidando com o loop do agente e ele decide fazer uma chamada de ferramenta, isso acontece com frequência: ele chama a ferramenta repetidamente . E se você não limitar a chamada dessa ferramenta , ela poderá ser executada 10 ou 20 vezes. Pode entrar em um loop infinito, o que seria muito ruim para o uso do seu token.
+
+Portanto, defina sempre um número máximo de iterações, ou seja, quantas vezes o loop será executado. Uma boa prática antes de implantar seu agente é executar algumas ferramentas de observabilidade e analisar o uso de chamadas de cada ferramenta, verificando por quanto tempo cada uma delas está em execução e quantas vezes elas são repetidas. Dessa forma, você pode ter uma ideia da eficiência da chamada da ferramenta. Por último, mas não menos importante, podemos resumir a história. Portanto, se estivermos usando um agente de múltiplas interações e estivermos conversando repetidamente, você perceberá que, às vezes, o histórico da conversa ficará muito extenso em cada chamada, e todo esse histórico será enviado de volta para o modelo de linguagem principal. E isso pode consumir
+
+centenas, senão milhares, de fichas. Nos agentes da Strand, temos algo chamado gerenciador de conversas com janela deslizante , que analisa as últimas 10 mensagens e envia apenas essas. E você pode configurar isso como quiser. Dessa forma, você não precisa enviar esses enormes históricos de mensagens de volta para o agente cada vez que uma nova mensagem chega. A desvantagem disso, ou melhor, a contrapartida, é que você perde o histórico da mensagem desde o início. A melhor maneira de lidar com
+
+isso é usar algum tipo de resumo do histórico e, em seguida, inseri-lo na janela de contexto. Assim, em vez de enviar tudo, você pode enviar uma pequena quantia quando atingir esse limite. Isso vai te economizar muitas fichas. Em conclusão, temos cinco coisas. Armazene em cache o prompt do sistema.
+
+E se possível, talvez também o prompt de ferramenta e as mensagens. Rota por dificuldade. Não use o mesmo modelo caro para tudo o que você faz, para cada tarefa. Descarregue os resultados dessas grandes ferramentas . Portanto, se você tiver um resultado de ferramenta extenso , poderá resumi-lo e evitar que seja enviado no loop do agente, sobrecarregando seu contexto. Você pode tampar
+
+esses loops de ferramentas. Certifique-se de usar ferramentas de observabilidade para ver quanto tempo as chamadas de ferramentas estão levando e quantas iterações elas estão executando e, em seguida, tente iterar sobre isso. E, claro, se você estiver usando uma conversa com várias interações com seu agente, reduza o histórico para que a conversa inteira não seja enviada repetidamente em conversas muito longas. Obrigado por ouvirem minha apresentação relâmpago de hoje. Se quiser aprofundar o assunto, encontre-me no LinkedIn em Eric Hanchett. Eu também escrevo
+
+no blog programwitheric.com. E você pode me encontrar nas redes sociais como EricCH. Adoraria conversar mais com vocês . Obrigado.

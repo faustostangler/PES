@@ -1,0 +1,168 @@
+---
+video_title: "The Future Is Domain-Specific Agents - Justin Schroeder, StandardAgents"
+video_id: spNAUEgq_A8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=spNAUEgq_A8
+video_date: 2026-06-29T03:00:14+00:00
+video_description: |
+  “Composition over inheritance” has always been a good engineering rule. It may also be the unlock for useful AI. A Gmail agent is fundamentally more powerful than a Gmail skill — and when composed with Sheets, Notion, and GitHub agents, the system gets more capable, more reliable, and cheaper to run. Suddenly, smaller models can do real work, and AI can move from internal copilots to customer-facing products. In this talk, we’ll unpack why this architecture hasn’t become the default yet, what’s been missing, and how to start building toward it today.
+  
+  Speakers:
+  - Justin Schroeder (StandardAgents): Co-founder of StandardAgents. Compulsive open source builder. Creator of dmux, ArrowJS, FormKit, AutoAnimate, Tempo, zodown
+    X/Twitter: https://x.com/jpschroeder
+    LinkedIn: https://www.linkedin.com/in/jpschroeder/
+    GitHub: https://github.com/justin-schroeder
+---
+Certo, então vou falar sobre agentes específicos de domínio e por que acredito que eles desempenharão um papel incrivelmente importante no futuro da IA ​​e na forma como construímos agentes. Para começar rapidinho, meu nome é Justin Schrader. Você pode me encontrar no X como JP Schrader. E eu trabalho em uma pequena empresa chamada Standard Agents, da qual ninguém ouviu falar agora porque ainda estamos meio que em modo stealth. Depois desta palestra, se tiver interesse, fique à vontade para entrar em contato comigo e eu posso te dar mais detalhes.
+
+Sou conhecido principalmente por desenvolver diversos projetos de código aberto. Ah, o Dmux, que é um ótimo multiplexador para todos os seus agentes de codificação. Ah, ArrowJS, que é uma espécie de framework de interface de usuário, algo como o React para a era dos agentes. Há muito mais , mas não vou entrar em detalhes. Só que, se tiver interesse, pode dar uma olhada.
+
+OK. Acho que todos podemos concordar que o momento histórico em que nos encontramos é muito semelhante à Revolução Industrial. Na verdade, pode ser como uma Revolução Industrial acelerada. Talvez seja algo mais sério, mas certamente não é algo menor. Provavelmente não preciso convencê-lo disso se você estiver assistindo a uma dessas palestras. Mas é exatamente
+
+nesse momento que nos encontramos. Então, acho que é útil voltar um pouco e analisar qual foi o principal catalisador da Revolução Industrial. E, no fim das contas, foi assim que aprendemos a aproveitar a energia com máquinas. Aprendemos como aproveitar a energia com máquinas. E o interessante é que, nesta próxima era, estamos essencialmente aprendendo a aproveitar a inteligência com agentes.
+
+E os agentes, creio eu, podem ser vistos um pouco como a máquina de antigamente. É isso que vai usar a inteligência. Não tanto nós, mas os agentes. O interessante é que aposto que, se eu estivesse numa sala com vocês e todos levantássemos as mãos, muitos de vocês, ao ouvirem a pergunta "o que é um agente?", teriam exemplos em mente imediatamente, mas provavelmente não conseguiriam apresentar uma definição de imediato. Alguns de vocês
+
+talvez consigam, mas a realidade é que ainda nem chegamos a um consenso sobre a definição de agente, mesmo já estando bem avançados na era dos agentes. E acho isso meio interessante. Bem, aqui está a minha definição. Você pode concordar ou não, mas os agentes são softwares determinísticos que aproveitam os resultados não determinísticos produzidos por modelos na busca de um objetivo desejado. Agora, o software determinístico pode fazer você pensar mais em algo como um dispositivo de controle, e eu realmente acho que a distinção entre um agente e um dispositivo de controle é muito pedante, não muito útil, e na maioria das vezes, na maioria dos casos, você pode simplesmente confundir os dois. Um arnês é um
+
+agente e um agente é um arnês, ok? E para os propósitos desta conversa, vamos simplesmente prosseguir com isso. Acho que você provavelmente conseguiria apresentar bons argumentos para justificar uma coisa como sendo a outra e vice-versa, mas isso não é realmente importante agora. Bem, se você tivesse alguns exemplos em mente, poderiam ser algo como Claude ou Codex, hum, você sabe, OpenClaude, Hermes. Mas sabe o que é interessante? Aposto que se você
+
+saísse às ruas do centro corporativo americano, em qualquer cidade, talvez não em São Francisco, mas em qualquer cidade dos Estados Unidos, e perguntasse a alguém em um prédio de escritórios, essa pessoa saberia dizer o nome de um agente ? Acho que algumas pessoas vão entender o Claude. Algumas pessoas podem receber o Codex. E é basicamente isso. Acho que quase ninguém vai comprar OpenClaude ou Hermes. Uh Uh, e na
+
+verdade, nem mesmo o Claude, eu sei que as pessoas saberiam que ele é um agente. Essas coisas não são bem compreendidas. E, no entanto, o mais louco é que todo mundo está construindo agentes. Tenho uma imobiliária aqui perto que está formando corretores. Eu sei que existem corretoras de seguros privadas independentes que estão construindo suas próprias equipes de agentes. Conheço
+
+várias empresas da lista Fortune 500 que estão criando seus próprios agentes personalizados. Todo mundo está tentando criar seus próprios agentes personalizados. E eu sei que as pessoas não acreditam em mim, mas vá falar com elas. Simplesmente vá conversar com as pessoas. Eles estão tentando criar agentes personalizados.
+
+E eu não consigo deixar de me perguntar porquê. Ninguém parece estar fazendo essa pergunta, por quê? A inteligência artificial já está presente em todos os lugares. Você pode acessar o ChatGPT até mesmo por meio de algum modelo de código aberto da China em algum site, digamos, instável. Existe de tudo um pouco, mas mesmo assim as pessoas querem criar agentes personalizados. E,
+
+em última análise, tudo se resume à integração. As empresas querem que seus dados sejam devidamente integrados à IA. Eles acreditam, e provavelmente estão certos, que se aproveitarem adequadamente a IA, obterão ganhos expressivos em seus negócios e assim por diante. Portanto, eles precisam descobrir como se integrar. E construir seus próprios agentes personalizados é obviamente uma maneira de fazer isso. E é uma das primeiras maneiras
+
+que eles descobrem, hum, como um mecanismo para fazer isso. O problema, porém, é que os agentes são realmente difíceis. É preciso ter muito, muito cuidado com o ciclo de ação e garantir que ele esteja devidamente orquestrado. Existem inúmeras abstrações de provedores diferentes que você precisa levar em consideração. Bem, felizmente, estão surgindo algumas boas ferramentas nesse sentido , como o SDK de IA da Vercel, que é ótimo. Hum,
+
+execução duradoura, você precisa garantir que, se houver falhas, possamos retomar o trabalho. Esses são problemas relativamente difíceis, especialmente se você pensar neles em grande escala. E a realidade é que há muito mais. Existem vários tipos de validações, condições de parada e assim por diante. Então, o que geralmente acontece é que as pessoas tentam criar seus próprios agentes personalizados, e eles funcionam mais ou menos como uma demonstração, mas não muito mais do que isso. Bem, na verdade, acaba sendo
+
+um verdadeiro pesadelo para as pessoas. Bem, construir agentes robustos é simplesmente difícil. E se você conversar com qualquer pessoa em um departamento de TI, verá que elas estão arrancando os cabelos porque há muitas preocupações diferentes. Bem, não existe uma maneira definida de construir um agente no momento. Tipo, na verdade não há uma maneira definida. Talvez a coisa mais próxima disso seja,
+
+uh, Eve, que acabou de sair da Vercel, talvez seja a coisa mais próxima. Mas, na realidade, cada um está encontrando seu próprio jeito de fazer isso. Hum, a telemetria e a observabilidade nesses agentes são incrivelmente difíceis, especialmente em grande escala. Por exemplo, se você quiser saber exatamente o que está sendo transmitido em cada etapa de cada interação do seu agente, para que possa diagnosticá-lo, ajustá-lo e garantir que nada saia do controle, isso é muito difícil de fazer. Ah, os agentes também não são portáteis. Então, se
+
+eu conseguir um bom agente funcionando, se eu tiver conseguido chegar ao topo dessa montanha e finalmente tiver um bom agente que funcione bem, que funcione bem na minha máquina. [risos] Mas se eu tentar passar para outra pessoa, há uma grande probabilidade de que, entre todas as configurações de variáveis ​​de ambiente, requisitos de sistema e tempos de execução, não funcione na máquina dessa pessoa. E eles não são componíveis. Então, mesmo que eu consiga, sabe, um chatbot realmente bom funcionando na minha universidade, as chances de eu conseguir reutilizá- lo para outra coisa são muito, muito baixas. Não posso simplesmente compartilhar isso.
+
+Então, o que geralmente acontece é que, após uma breve busca por agentes, as pessoas meio que recuam e dizem: "Ok, tudo bem. Chega de agentes, chega de agentes. Em vez disso, vamos usar o MCP. Já ouvimos falar disso, funciona." E, de fato, o Protocolo de Contexto do Modelo funciona.
+
+E, na verdade, funciona muito bem pegar, sabe, suas informações corporativas, como as informações da Zillow, e depois inseri-las em um desses grandes agentes preexistentes, algo como o Claude ou o ChatGPT, que eu consideraria um grande agente de propósito geral. E funciona mais ou menos assim . Ah, e funciona bem. Mas se você observar, isso é do site da MCP, e se você verificar o que é suportado nos clientes MCP ao redor do mundo, você notará que apenas uma dessas colunas está preenchida completamente . E isso, claro, são ferramentas.
+
+Assim, o MCP tornou-se um mecanismo de distribuição de ferramentas padrão para agentes. Portanto, se eu precisar integrar as ferramentas da minha empresa a esse outro agente, o MCP é uma boa maneira de fazer isso. Ainda não se mostrou eficaz em agregar valor de outras formas. E, francamente, as ferramentas simplesmente não são suficientes. Sabe, eu gosto de brincar que não levamos um homem à Lua dando um monte de ferramentas para um único cara .
+
+Essa não é uma maneira realista de concluir um projeto realmente grande. Então, sabe, talvez o MCP não seja o caminho, mas, ahá, nós temos habilidades. Temos habilidades, e habilidades são ótimas. Hum, eu realmente gosto de habilidades. Tenho certeza que você também. Instalamos esses dispositivos o tempo todo
+
+para todo tipo de coisa. E, fundamentalmente, uma habilidade é um arquivo Markdown, que funciona basicamente como documentação. Curiosamente, existem muitas pesquisas que mostram que usar muitos desses recursos pode, na verdade, piorar consideravelmente o desempenho do agente. Mas elas servem como documentação para diversas coisas complexas. Então, voltando à analogia de um homem chegando à Lua, é um pouco como dar a esse cara uma tonelada de documentação. A
+
+documentação vai ajudar, mas não é o problema fundamental. Então, qual é o problema fundamental? OK. Vamos construir aqui uma pilha de agentes básica. Vamos começar com um modelo. Todos os agentes
+
+começam com um modelo. Grande ou pequeno, não importa. Eles começam com um modelo. Em seguida, você tem algo como um prompt do sistema por cima disso, que informa ao modelo qual é o seu papel no grande universo, algo como seu objetivo de vida. Em seguida, temos as ferramentas, as coisas que ela realmente pode fazer, os efeitos que pode produzir.
+
+E então, as habilidades seriam adicionadas em camadas . E então, o MCP seria aplicado em camadas por cima disso. E então, finalmente, você tem todas as mensagens da conversa. Essa é, em linhas gerais, a quantidade de informações que são transmitidas durante a execução de um agente. E se você observar bem, quase tudo isso é contexto.
+
+Basicamente, tudo. O prompt do sistema, as ferramentas, as habilidades, tudo isso acaba fazendo parte do contexto do agente. Basicamente, as pessoas estão tentando resolver o problema de integração trabalhando no contexto ou no modelo. Essas são as duas áreas onde vemos constantemente novos avanços. Também vemos, sabe, surgirem coisas novas, como habilidades e MCP, novas tecnologias, novos protocolos.
+
+Todas elas estão surgindo na área do contexto e do modelo. Então, como isso funciona na prática? Bem, basicamente, você trabalha em uma empresa, ocasionalmente precisa viajar a negócios e, portanto, tem alguns MCPs (Pontos de Controle Multicanal) instalados para viagens. Você também tem, sabe, o Figma e o Playwright instalados no seu. E tudo isso se acumula nessa camada de contexto. E aí você
+
+tem alguns, sabe, assistentes virtuais do Gmail para verificar seus e-mails e algumas planilhas do Google para preencher alguns relatórios de despesas ou algo do tipo . E depois você tem as habilidades. Você é um desenvolvedor, então provavelmente tem alguns corretores e analisadores de código para React. Este é , na verdade, eu acho, o servidor MCP número um ou o número dois mais popular que existe. Talvez você tenha a habilidade do Matt de me interrogar ou talvez você tenha a habilidade do GitHub.
+
+Basicamente, o que você está fazendo é inflar essa camada de contexto. E nós temos um termo para isso na engenharia. Isso se chama herança. A ideia de herança é pegar um objeto e adicionar mais atributos a ele para permitir que esse objeto tenha outras propriedades. Certo? E é exatamente isso que estamos
+
+fazendo aqui com um agente. Estamos dizendo: "Este agente é muito bom, mas se adicionarmos todas essas camadas extras, ele poderá fazer coisas que não conseguia fazer antes." É exatamente isso que é herança. E a verdade sobre a herança é que ela funciona. Funciona sim. É por isso que
+
+essas coisas existem e estão funcionando. Mas, como diz um ditado antigo, "Composição acima da herança". E descobriu-se que isso é tão antigo quanto o tempo. Com o tempo, a herança começa a ruir. Imagine, tipo, sabe, ok, eu tenho cinco habilidades no ChatGPT ou no Claude, desculpe. E isso
+
+funciona muito bem. E se eu tiver 100 habilidades? E se eu tiver 1.000 habilidades? Chega um ponto em que adicionar contexto extra começa a me trazer benefícios cada vez menores . Isso é
+
+óbvio. Todos nós meio que entendemos isso implicitamente. Então, existe alguma alternativa? Bem, a composição é a alternativa à hereditariedade. Tem mais ou menos a seguinte aparência . Então, imagine que temos outro
+
+pequeno agente e, novamente, estamos tentando fornecer o Figma como algo que pode ser feito pelo nosso agente principal. Bem, o que poderíamos fazer é ter um pequeno agente onde o prompt do sistema do agente seja escrito especificamente para ser um agente do Figma. Sabe tudo sobre o Figma. Ele conhece todo o seu contexto, toda a sua API, todos os lugares certos para clicar, as ações a serem tomadas, os movimentos do mouse a serem feitos e tudo mais. E então, possui essas ferramentas precisas de que precisa para executar todas essas ações, e nada mais. Exatamente isso.
+
+E depois um pequeno histórico de mensagens, que se relaciona apenas com a parte do Figma. E então você poderá ter mais desses. Você ainda pode ter seu Gmail, suas viagens, suas Planilhas Google e tudo mais, mas cada um deles é um agente isolado separado , um agente completo. Não é apenas um pequeno servidor com ferramentas instaladas . É um agente completo com seu próprio histórico de mensagens e seu próprio loop de agente.
+
+E acima destes, você tem um coordenador. E o mecanismo de comunicação entre todos esses pequenos agentes e o agente maior acima deles é simplesmente o inglês. Eles simplesmente conversam entre si como um ser humano. Então, se o agente principal está dizendo: "Ah, eu deveria verificar meu e-mail para ver se há algo sobre uma viagem." Bem, ele sabe que deve consultar o Gmail para verificar se há novos e-mails sobre uma viagem.
+
+Esses canais abrem caminho de volta, diz ele, "Ah, sim, na verdade, haverá uma viagem para Los Angeles neste fim de semana." E então pode ir para nossa agência de viagens e começar a fazer reservas. Essa é uma ideia mais ou menos aproximada de como algo assim poderia funcionar. E a verdade é que funciona mesmo. E sabemos que funciona porque foi exatamente assim que chegamos à Lua.
+
+Havia equipes de especialistas. Equipes de especialistas com rostos parecidos com esse e rostos parecidos com esse. Cada um deles com habilidades e capacidades diferentes. E rostos que se pareciam com esse. Hoje é o dia do lançamento da Apollo 11. E veja bem
+
+, ali está um agente. Acabei de encontrar um agente sentado bem ali. [risos] Esse cérebro dele é... é o mestrado dele. E
+
+aqui estão as ferramentas dele, bem ali no painel. Essas são as ferramentas. Bem, ele não tinha todas as ferramentas. Ele simplesmente tinha essas ferramentas. E ele era realmente muito, muito bom nisso.
+
+E depois olhe para aquela boca. Essas são as mensagens. Ah, já estamos acostumados com isso. Podemos entender isso. Funciona implicitamente.
+
+É quase uma forma de biomimética para o mundo dos agentes. Funciona. E eu os chamo de agentes específicos de domínio. Hum, acho que não fui a primeira pessoa a usar a expressão "agentes específicos de domínio" . Certamente não é a primeira pessoa a ter essa ideia.
+
+Mas é exatamente sobre isso que eu quero conversar com você. Agentes que são direcionados apenas a um domínio muito específico. E nós, aqui na Standard Agents, estamos construindo esse ecossistema há bastante tempo. Assim, tivemos a oportunidade de observar de perto como eles realmente funcionam. E eu não estou pronto para vir aqui e anunciar um produto ou algo do tipo. Hum, mas posso
+
+te dar uma pequena prévia. Em primeiro lugar , são muito mais eficientes em termos de tokens. Muito mais eficiente em termos de tokens. Regularmente observamos uma eficiência de tokens superior a 80% para qualquer tarefa. Agora, é um pouco mais complicado porque você precisa definir essas tarefas com um pouco mais de antecedência.
+
+Mas se pudermos ter portabilidade de agentes, onde eu possa pegar esse agente do Gmail, otimizá-lo e enviá-lo para outra pessoa, podemos criar um ecossistema onde não precisamos criar todas essas habilidades e capacidades individualmente, mas dentro desse domínio, obteremos uma eficiência drástica. E parte da razão é que, se você pensar em como o contexto funciona, eu não preciso ter todo o contexto da conversa quando tomo a decisão de fazer algo. Em vez disso, meu coordenador principal pode simplesmente perguntar ao Gmail: "Ei, pegue aquele último e-mail da Debbie." E esse é o contexto completo. Ele possui literalmente apenas a mensagem do sistema, suas ferramentas e a mensagem recebida. Assim,
+
+ele consegue executar essa pequena tarefa altamente específica e direcionada, sem todo o contexto externo. Também é muito mais prático com modelos de linguagem pequenos . Se você observar a diferença entre dois modelos como o DeepSeek V4 Flash e o Fable 5, a diferença de custo é impressionante. É 137 vezes mais barato por tarefa do que Fable. 137 e 37 vezes.
+
+Ora, é claro que, se o DeepSeek V4 Flash falhar repetidamente em realizar a tarefa, não só não será muito mais barato, como também será muito mais irritante de usar. Mas é por isso que os agentes específicos de domínio são tão bons, porque você não precisa que o Flash V4 faça tudo. Em vez disso, ela só precisa executar as tarefas que foram especificamente selecionadas para ela. E, com um contexto mínimo, consegue executar essas tarefas com muita fidelidade. Assim, você obtém essas reduções drásticas de custos não apenas com a eficiência dos tokens, mas também porque pode usar modelos de linguagem muito menores e até mesmo modelos que não utilizam linguagem. Você pode usar
+
+modelos de geração de imagens e difusão. Você pode usar diversos outros modelos para tarefas menores. [bufa] Você também pode impor limites muito rígidos às capacidades. E acho que você sabe do que estou falando. Estou falando disso. Uh, estamos todos voando
+
+muito perto do sol ultimamente. Estamos todos ignorando as permissões a torto e a direito. E claro, você precisa fazer isso, porque um agente de codificação com um modelo grande pode fazer qualquer coisa. E assim, nós o usamos para fazer tudo. Num mundo que seria movido por agentes menores, específicos para cada domínio, esses agentes não conseguem fazer tudo. Eles
+
+só podem fazer as coisas que já foram explicitamente aprovadas para eles. Isso não significa que você não possa mais ter permissões e diálogos de permissão, mas sim que você está optando por um ecossistema muito mais controlado. E eu garanto que, quando você explicar isso para o Doug do departamento de TI, ele ficará mais tranquilo ao entender a diferença entre as duas coisas. [bufa] E em quarto lugar, estes têm excelentes características de escalabilidade. Como cada um desses agentes é seu próprio pequeno ambiente de execução, você pode paralelizá-los. Você pode colocá-los na
+
+nuvem com muita facilidade, sem precisar de uma VPC gigante. Você pode executar milhares de instâncias simultaneamente em todos os tipos de regiões do mundo. Eles não precisam estar, sabe, geograficamente localizados no mesmo lugar ou algo do tipo. Bem, eles têm características de escalabilidade muito, muito boas . Infelizmente, eles não existem.
+
+Essa é a desvantagem. [risos] Esses agentes específicos de domínio não existem de verdade. Não de uma forma pública e ostensiva. Como eu disse, aqui na Standard Agents, nós os temos. Estamos trabalhando com eles diariamente, mas eles ainda não estão se expondo muito ao público.
+
+No entanto, isso está mudando. Isso vai mudar muito rapidamente. Estamos mais ou menos na metade de 2026, e estou aqui para fazer uma previsão pública de que, à medida que avançamos deste ponto até o final de 2026, veremos um aumento drástico no número de pessoas que falam sobre a criação de agentes específicos de domínio e estruturas em torno deles. Há muita coisa a caminho . E não vai ser um gotejamento pequeno. Isso vai se
+
+acelerar rapidamente e se tornará um dos principais atores no ecossistema de agentes. E eu diria que 2027 é basicamente o ano da orquestração multiagente. Essa é outra palavra que você começará a ouvir muito, eu acho. Então, essa é a minha grande e ousada previsão pública. Eu estava muito animado há poucos dias quando a Vercel lançou Eve.
+
+Esta é a primeira vez que vejo o termo que eu vinha lançando ao vazio voltar e me atingir em cheio. A estrutura para construção de agentes cria um cérebro corporativo, um assistente pessoal ou um agente específico para um domínio. Então, é isso. Por volta da metade do ano, começaremos a ganhar impulso. Essa é a minha previsão.
+
+E existem vários motivos. Uma delas, em que a maioria das pessoas acredita atualmente, é que o custo da inteligência está diminuindo. Essa tendência se reverteu em 2026, na verdade. Acompanhamos isso em um site. Os tokens não estão mais ficando mais baratos. Na
+
+verdade, estão aumentando mesmo quando ajustados pelo QI. Eles aumentaram 29% quando ajustamos para o QI apenas neste ano; na metade do ano, já estamos com um aumento de 30%, e isso pode ser causado por muitos fatores diferentes. Claro, temos esse problema de memória e, provavelmente, a tendência a longo prazo, num ciclo de 10 anos ou algo assim, é que a inteligência diminua, mas isso não significa que precisamos pagar 137 vezes mais por algo que pode ser feito com a mesma eficácia. O problema é que é mais difícil separar essas coisas. Agora, se não levarmos em conta o QI, os tokens subiram 76% este ano, um aumento de quase 100% apenas neste ano.
+
+E nós ainda nem chegamos à metade . Portanto, estamos realmente observando uma tendência de alta nos custos dos tokens. Portanto, qualquer medida que possamos tomar, especialmente em relação às grandes empresas, para reduzir esses custos será muito importante. Outro caso de uso a ser considerado é colocar a IA em contato direto com os clientes. Você não pode apresentar Fable a um cliente, a menos que esse cliente tenha um valor vitalício enorme. É simplesmente caro demais.
+
+Portanto, você precisa encontrar uma maneira de criar grande eficácia e, ao mesmo tempo, ser eficiente. E agentes específicos de domínio serão a maneira de fazer isso. Então, vou deixar vocês aqui por um instante, mas antes disso, vamos sonhar um pouco. Permita-me aprofundar um pouco mais em como um agente pode ser orquestrado e qual seria a aparência ideal de um agente . E então, prometo te deixar em paz.
+
+Vamos lá. Então, lembre-se que tínhamos aquele modelo e o prompt do sistema. E então, na camada da ferramenta, vamos desmembrá-la um pouco. Por um lado, temos essas funções semelhantes. Isso seria como uma função real que pode ser executada, como escrever um arquivo no sistema de arquivos.
+
+Em seguida, temos as instruções. Os prompts são muito parecidos com o prompt do sistema, mas são prompts individuais menores que podem ser injetados e subprompts que, você sabe, podem executar uma função que na verdade chama um LLM. Então, digamos que eu tenha um agente principal em execução, mas queira usar o Nano Banana apenas para gerar uma imagem quando estiver usando o GLM 5.2 como meu agente principal. Bem, você pode simplesmente ter uma ferramenta que sirva como um prompt. Seria muito
+
+legal se você pudesse fazer isso. E outro tipo de ferramenta poderia ser um agente completo, como um agente específico de domínio totalmente diferente, que poderia ser apenas uma das ferramentas. Então, essa é a camada de ferramentas. E depois você tem os ganchos. Hum, o que são ganchos? Bem, nesse
+
+mundo ideal, um gancho poderia ser algo que pudesse controlar, alterar, modificar ou produzir efeitos colaterais. Então, deixe- me dar um exemplo. Os mestres em Direito (LLM) não têm noção de que horas são em qualquer momento dado . Descobri que uma ótima maneira de dizer a eles que horas são é inserir uma mensagem artificial ou uma chamada de ferramenta artificial no histórico de mensagens. Então, [bufa] parece que alguém acabou de dizer: "Ei, que horas são?" E a
+
+outra pessoa respondeu: "Ah, são 18h45, horário do Pacífico." Bem simples. Você pode fazer isso com um gancho. Ou você poderia desencadear algum efeito colateral usando um gancho. Portanto, esta é uma parte importante de um agente.
+
+E, por fim, existem essas regras para agentes. E as regras dos agentes são meio complicadas. É como perguntar quantas vezes um lado deve ter a sua vez? Tipo, será que consegue continuar por 10.000 turnos ou 10.000
+
+passos antes de chegar a sua vez? Sabe, existem vários tipos de regrinhas interessantes. Sabe, quando se trata de uma ferramenta, é necessário validar tudo ou não ? Existem diversos tipos de ferramentas ou regras muito específicas que pertencem a um agente específico. E, no geral, se juntarmos tudo isso, chamaríamos de agente. Mas, de certa forma, faltam
+
+algumas coisas. Primeiro, todo agente deveria ter um sistema de arquivos. Se você já fez isso com o ChatGPT, Claude ou Codex, sabe, basta pedir, sem usar um projeto específico, como "Ei, você pode fazer um PDF para a festa de aniversário do meu filho?". Bom, vai funcionar. E irá armazená-lo em
+
+seu próprio pequeno sistema de arquivos. Portanto, os grandes laboratórios já perceberam que, para criar uma interface de bate-papo eficaz, sem falar de um agente robusto, é necessário algum tipo de sistema de arquivos. Portanto, cada agente deve ter seu próprio pequeno sistema de arquivos de sandbox. Além disso, cada agente deve ter um local de execução de código isolado (sandbox). Portanto, ele pode gravar arquivos, executar esses arquivos e fazer isso com segurança, sem exfiltrar nada, sem interagir com um sistema operacional em um nível superior. Isso precisa ser incorporado como um recurso
+
+primitivo em todos os agentes específicos de domínio. Certo, então, digamos que esse seja o nosso agente ideal. E agora, vamos falar sobre aquela pequena ferramenta de agente ali. O que é aquilo? Bem, esses podem ser subagentes, até mesmo subagentes recursivos. Você pode
+
+ter um agente que chama um subagente que chama subagentes que chamam outros subagentes. Hum, e pode haver um ou vários desses em diferentes níveis. Por exemplo, você poderia ter um agente coordenador no nível mais alto e, em seguida, um agente do Salesforce. E esse agente conhece o Salesforce como a palma da mão. Ele conhece todas as suas APIs e possui todas as credenciais necessárias para se comunicar com sua instância do Salesforce de todas as maneiras apropriadas. E então, precisa se
+
+comunicar com um agente do Google Workspace . Então, ele pode fazer todo tipo de coisa lá dentro . Ele pode executar planilhas. Posso dizer: "Ei, quais são todos os meus melhores vendedores deste ano?" Pronto, ele consegue consultar o Salesforce, coordenar com o subagente, criar uma planilha para você e enviá-la de volta.
+
+Perfeito. Mas talvez você precise gerar alguns ativos. Assim, o agente do Salesforce na verdade possui um outro subagente com o qual pode se comunicar a qualquer momento. E é incrível na geração de ativos. Talvez esse subagente não tenha apenas, sabe, geração de imagens Codex, talvez tenha Nano Banana, talvez tenha um gerador de SVG, todo tipo de coisa, para que seja um gerador de recursos incrível e realize sua própria reflexão e controle de qualidade.
+
+E aí nosso agente principal pode precisar de uma equipe jurídica completa só para poder verificar o trabalho que está sendo feito por esses outros agentes. E talvez o agente da equipe jurídica realmente precise de um agente de conformidade com o GDPR apenas para esses clientes europeus. Sabe, o principal não tem tudo, sabe, não queremos ter 45 megabytes de contexto só sobre o RGPD. Então, criamos um subagente separado para isso. Então, sabe, talvez a equipe jurídica também precise de um agente de conformidade com a OSHA, o que também é muito complicado. Portanto, existe um separado
+
+para isso. Você meio que entendeu a ideia. Você pode acabar com todos os tipos de pequenos agentes altamente eficientes que trabalham juntos, mas mantendo janelas de contexto mínimas durante todo o processo . Essa é a ideia por trás dos agentes específicos de domínio . Muito obrigado. Agradeço por terem
+
+ouvido minha apresentação. Novamente, estamos trabalhando na Standard Agents, standardagents.ai. Você pode se inscrever lá para ter acesso antecipado. Estamos começando a disponibilizar isso aos poucos para algumas pessoas. Se a sua empresa
+
+for muito ambiciosa e realmente quiser experimentar agentes especializados em domínios específicos, então, você pode me escrever para info@standardagents. E, claro, eu agradeceria se você me seguisse. Muito obrigado. Tchau.

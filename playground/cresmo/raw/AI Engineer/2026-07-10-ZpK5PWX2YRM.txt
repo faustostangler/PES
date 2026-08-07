@@ -1,0 +1,193 @@
+---
+video_title: "Should AI Engineers Still Read Code in 2026? The Z/L Continuum — Alex Volkov, ThursdAI"
+video_id: ZpK5PWX2YRM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZpK5PWX2YRM
+video_date: 2026-07-10T18:00:06+00:00
+video_description: |
+  "How much better do the models have to get before you'll stop reading the code?" Theo asked that question recently and the replies caught fire. Mitchell Hashimoto is calling it agent psychosis. ThePrimeagen's subreddit is in open revolt about people shipping code they never read. Uncle Bob says we have about a year left of looking at code at all.
+  
+  Alex Volkov saw this argument coming three months ago, and gave it a name.
+  
+  At AI Engineer Europe, OpenAI's Ryan Lopopolo opened the conference by saying "code is free." His team shipped over 1,000,000 lines with zero human review. Mario Zechner closed the same conference telling everyone to slow the f*** down and read every line. Same stage. Opposite advice. Standing ovations for both.
+  
+  Alex hosts ThursdAI and spends every week talking to the people building this stuff. In this talk he lays out the Z/L Continuum: what the top AI engineers in the world actually do, not what they say on stage. Including:
+  
+  • Anthropic's own numbers on Claude writing 80%+ of Claude's code, and what happens when it breaks
+  • Why human review became the bottleneck nobody wants to talk about
+  • The uptime chart that looks like a Christmas tree
+  • Why Dexter Horthy, the "let the agent cook" guy, publicly said "I was wrong"
+  • The one tweet that changed how Alex thinks about this. You're not Team Z or Team L. Every task gets its own spot on the continuum, and knowing where to place it is the actual skill now.
+  
+  If you've ever shipped code you didn't read (be honest), this talk is about you.
+  
+  Speaker info:
+  - https://x.com/altryne
+  - https://thursdai.news
+  - The original Z/L Continuum essay: https://thursdai.news/zl
+  - Anthropic's "When AI Builds Itself": https://www.anthropic.com/institute/recursive-self-improvement
+  - Lucas Meijer's tweet: https://x.com/lucasmeijer/status/2044448265194627182
+  
+  Timestamps:
+  0:00 - Introduction
+  0:48 - The shift in AI engineering since December 2025
+  1:32 - The trend of AI-assisted coding and reduced manual input
+  3:37 - The core conflict: "Code is free" vs. "Read every line"
+  6:13 - Defining the Z/L Continuum
+  8:02 - Analyzing the "code is free" perspective (Ryan Lopopolo/OpenAI)
+  9:31 - Risks of rapid AI output and incident rates
+  11:04 - Recursive Self-Improvement (RSI) and human review as a bottleneck
+  12:08 - The correction: Focusing on tasks, not people
+  13:56 - Recommended strategy: Routing changes for appropriate verification
+  15:52 - Emerging capabilities: Fable and Mythos
+  17:16 - Capability drift and the shift toward "Loops"
+  18:16 - Understanding "Loops" as the next engineering primitive
+  20:15 - Future outlook and maintaining flexibility
+  
+  #AIEngineering #AICoding #CodeReview #VibeCoding #ClaudeCode #AIAgents #ThursdAI
+---
+[música]
+
+Duas palestras na AI Engineer Europe. Um cara está dizendo: "Código é grátis." e apagou sua identidade. E o outro está dizendo: "Leia cada maldita linha de código." Então, os engenheiros de IA ainda deveriam ler o código gerado por seus agentes?
+
+Dei a isso o nome de Desolação do Continuum de Apollo. E vocês provavelmente já discutiram sobre isso no Slack. Vocês provavelmente já falaram sobre isso no corredor. Então, vamos falar sobre isso aqui. Como o código ficou barato, a atenção não.
+
+Como vocês devem saber, em dezembro de 2025, algo importante mudou. A engenharia de IA mudou para sempre e quebrou sua própria tendência. Na verdade, Swyx, o organizador do AI Engineer, está reunindo evidências desse momento específico no site wtfhappened2025.com. Recomendo que você vá conferir.
+
+É muito, muito engraçado. Este é apenas um exemplo da METR, o centro de avaliação de máquinas. E isso demonstra que os modelos, pela primeira vez, começaram a realizar tarefas que levariam mais de 16 horas para os engenheiros executarem. E, de fato, subimos muito na curva, muito na linha de tendência depois disso. Este é o contexto de tudo o que a engenharia de IA está vivenciando.
+
+Porque já não escrevemos código. A maioria de nós, pelo menos. Quero ver um! Vocês, pessoal, podem levantar a mão se ainda criam e escrevem código manualmente, principalmente o código de vocês? Tem alguém aqui? A maior parte do seu código é
+
+escrita manualmente? Incrível. Afinal, esta é a trilha de maximização de tokens. Acho que a única pessoa aqui que ainda programa está um pouco tímida para levantar a mão. Não tem problema. Porque
+
+não digitamos mais código. Não somos artesãos. Nós supervisionamos. Eu gosto de dizer que nós cuidamos dos agentes como se fossem crianças. E o maior exemplo disso é, obviamente, a trajetória de Boris. Vocês conhecem o Boris,
+
+o criador do Cloud Code, ou melhor, do Anthropic? Neste momento, 100% do seu código é escrito e desenvolvido pela Cloud Code . E ele não deixou de ser engenheiro, ele subiu na hierarquia. Ele ainda envia de 20 a 30 PRs, talvez mais. E recentemente ele comentou que excluiu sua identidade.
+
+Achei muito engraçado. Simplesmente não há mais motivo para digitar código manualmente. Na verdade, 80% do código da Anthropic agora é escrito por IA, e essa estatística já tem pelo menos alguns meses. É provável que seja mais agora. E ele não é o único. Alguns de vocês já
+
+viram este gráfico no GitHub. Alguns de vocês talvez se lembrem deste gráfico enquanto o GitHub estava fora do ar. O motivo é que o GitHub está a caminho de atingir 14 bilhões de commits este ano. Tudo em 2025, tudo sim, nós ainda não, no ano passado foi 1 bilhão. São 14 vezes mais commits. Eles estão vendo um aumento de 14 vezes no número
+
+de commits, o que é insano, e a maior parte disso é auxiliada por IA. E é muito código. Assim, a engenharia de IA mudou para sempre e eu quero falar sobre a Feira Mundial de Engenharia de IA. Já estive em todos eles e conto para vocês sobre isso mais tarde. E a AI Engineer é um ótimo lugar para captar o espírito da época, entender para onde nossa carreira está caminhando e como ela está mudando, ok? Este, obviamente, é 3 vezes
+
+maior que o do ano passado. Este é apenas um dos quartos. Tem um monte de quartos. Acho que contabilizamos 7.000 pessoas . 36 pistas.
+
+E se você quiser saber o que acontece na engenharia de IA, você meio que precisa estar aqui. Então, isso seria um pouco de conversa metalinguística. Um dos caras da AI Engineer EU falou sobre código como navio. O outro comentou que deveríamos ler cada linha de código. Vamos ouvi-los por um segundo, ok? Este é Ryan LePopulaire da
+
+OpenAI. Acho que ele conseguiu chegar aqui, mas este é Ryan LeFebvre da Open AI. Os modelos, neste ponto, são suficientemente bons a ponto de serem isomórficos e permitirem a escrita de código. Vocês se importariam ? Essas ferramentas são de alta qualidade e resolvem problemas reais de usuários em bases de código reais. O
+
+código é gratuito. É gratuito para você produzir, gratuito para refatorar, e não é algo com que você deva se preocupar mais. Os humanos não precisam mais se preocupar com a implementação. O importante não é o código, mas o estímulo e as diretrizes que o levaram até lá. Você pode simplesmente dizer: "Não produza comida de má qualidade."
+
+Não aceite comida malfeita. Você não terá erros de código em sua base de código. Mas, para isso, é preciso aceitar quedas de velocidade a curto prazo para poder voltar atrás ou clicar duas vezes em uma tarefa e descobrir com o que os agentes estão tendo dificuldades. Então, este é Ryan LeFebvre, ok? Ele subiu ao palco, na frente do engenheiro de som, e começou dizendo algo como: "Ei, eu sou um bilionário falante, e quero que vocês também sejam." Na verdade, aquele
+
+lounge para bilionários que vocês veem em frente à área de liderança é graças a ele. Foi ele quem criou esse conceito. E ele conseguiu o cartão dourado e tudo mais. Do outro lado, na mesma conferência, estava Mario Zechner, criador do Pi. Vai com calma, [ __ ].
+
+Tudo está quebrado. E depois há quem diga: "O nosso produto foi 100% construído por agentes." Sim, agora sabemos que a situação está uma merda. Parabéns. [aplausos] Os
+
+agentes estão, na verdade, acumulando erros, que é o meu termo para falhas, sem nenhum aprendizado, sem gargalos e com dor tardia. A dor tardia é para você. Essas são as pessoas que eu mais amo. Eu nem leio mais o código. Parabéns. Algo está quebrado
+
+e seus usuários estão reclamando muito, então quem você vai chamar? Não você mesmo, porque você não leu o código. Código não crítico, claro, escreva o que não for preciso com antecedência. Código crítico, leia cada maldita linha. Então, duas pessoas, na mesma conferência, dia após dia, falando sobre a mesma ansiedade que todos nós sentimos. Será que ainda deveríamos estar
+
+lendo código em 2026? Aliás, esses dois caras são o sexto e o sétimo vídeos mais assistidos de engenheiros de IA no YouTube de todos os tempos. Portanto, eles obviamente representam algo sobre o qual estamos falando. E isso faz parte da trajetória de liderança, algo que vocês, que se reportam a você, estão discutindo, certo? Será que eles ainda deveriam estar lendo código? E qual
+
+é o nível de qualidade? Assim, eles expressam a mesma ansiedade de ambas as perspectivas. Bem, neste ponto, provavelmente devo me apresentar. Olá , meu nome é Alex Volkov. Sou o apresentador do podcast Thursday AI. É um podcast e
+
+uma newsletter. Fazemos transmissões ao vivo todas as semanas para falar sobre IA. Nos últimos 3 anos e meio , temos acompanhado cada mudança na engenharia de IA, cada lançamento de cada laboratório, cada modelo. E também sou um entusiasta da IA, com experiência em Weights & Biases e Core Weave. Hum, o que mais eu deveria te contar sobre mim?
+
+Venho acompanhando especificamente os engenheiros de IA desde a primeira edição do programa, em 2023. E, nossa, como as coisas mudaram! Portanto, podem considerar isto como um relato da linha de frente, porque todas essas pessoas agora são minhas amigas. E nós conversamos constantemente sobre isso na sala de som, no corredor onde as caixas acústicas estão instaladas. Eu não conseguia parar de pensar naquela tensão. Eu não conseguia parar de pensar nessa
+
+disparidade entre as duas pessoas, entendeu? E eu os coloquei em fila, Zeshner em uma ponta e Lapopolo na outra. Eu chamei isso de continuum. E basicamente comecei a perguntar às pessoas: "Ei, onde você se encaixa nessa linha? Onde você é um Zeshner? Você ainda lê
+
+cada linha de código? Você é um Lapopolo? Você simplesmente segue o fluxo e nem olha para o código, achando que os agentes são bons o suficiente, etc.?" E eu errei no enquadramento. Mas eu já explico
+
+isso, tá bom? Então, antes disso, quero que você seja um pouco honesto consigo mesmo. E, mais uma vez, se você não escreve código, ou melhor, se você não supervisiona seus próprios agentes, mas tem relatórios que supervisionam os agentes para você, pense neles ao responder a esta pergunta, ok? E seja honesto. No espectro ZL, onde você se encontra?
+
+E vamos lá, vamos fazer uma votação por aclamação: quem aqui já escreveu algum código que nunca tinha visto antes? Incrível, adorei. Quem aqui ainda lê cada linha de código, ou pelo menos as linhas de código críticas? Vejo um cowboy ali. Adoro isso, cara. Falarei com você
+
+depois, ok? Quero entender exatamente por que você faz isso. Então , quem está certo? Vamos discutir quem está certo. Vamos falar sobre onde estamos agora, e começamos com Ryan Lepopolo.
+
+Se você tiver a oportunidade de conhecer o Ryan por aqui, vai perceber que ele tem um físico bem AGI (Inteligência Artificial Geral). Acho que mesmo dentro da OpenAI, a organização de Inteligência Artificial Geral (IAG), Ryan é meio que a pessoa mais voltada para a IAG. Se você tiver a oportunidade de descer e pegar os comprimidos de AGI que o 2X receitou, acho que o Ryan tinha todos eles. Ele trabalha na OpenAI, onde o código é literalmente gratuito. Assim como os tokens.
+
+É tipo " Renomeamos o Ryan, vocês conhecem o YOLO no Codex?" É algo parecido com ignorar permissões perigosas no código em nuvem. Então renomeamos o Ryan Lepopolo para YOLO Popolo. Aliás, eu perguntei a ele se ele concorda com isso . Então, se analisarmos o lado dele, o das pessoas como ele, em comparação com os dados, veremos que eles estão certos. Os otimistas
+
+têm razão, pelo menos em relação à produção. Isso é da Faros AI, e acho que não sou o único palestrante nesta conferência que cita esse ensaio. Sinto muito, esta pesquisa. É uma novidade de abril de 2026. Acho que é uma das melhores evidências de para onde estamos indo que podemos citar agora, ok?
+
+Foram entrevistados 22.000 engenheiros sobre código. Eles chamam isso de efeito chicote da aceleração. E estão falando sobre minha estatística favorita aqui, e você mesmo pode ler: aumento de 861% na exclusão de código por PR. Então, nós, juntamente com agentes de IA, adoramos eliminar código. A
+
+Anthropic também afirmou que está lançando oito vezes mais código por trimestre do que em 2025. Mas será que todo esse código é de boa qualidade? Ok, vamos jogar um jogo. Se você souber a resposta, me deixe ter meu momento aqui no palco, ok? Mas se você não souber a resposta, vamos tentar adivinhar.
+
+De quem é esta página de status? Acho que ouvi algumas respostas. Acho que a maioria de nós adivinhou. Este é Claude. Na verdade, como você pode ver à direita, estava desativado quando tirei a captura de tela. Foi muito engraçado. Bem,
+
+a Anthropic é provavelmente a empresa que mais usa código gerado por IA , e a página de status deles parece uma árvore de Natal. Não estou aqui para criticar a Anthropic. Eles fizeram um trabalho incrível de volta ao palco, falando sobre Claude e etc. Isso pode ser devido à escala, ou a outros fatores. Não estou aqui para criticá- los, mas [bufa] isso só mostra que eles não são os únicos assim . Obviamente, o GitHub também
+
+sofre um pouco com problemas relacionados ao golfe. Saída não significa estabilidade, ok? Então, talvez este seja um bom exemplo de quê? Mesmo ensaio, aumento de 31% nas avaliações positivas, sem qualquer revisão, humana ou automatizada. Não faça isso. Eu imploro a você.
+
+Não... É... É... Falaremos sobre como resolver
+
+isso em um instante. Então, quando você envia tão rápido e em tanta quantidade, alguma coisa acaba cedendo, e geralmente é a qualidade. Então, talvez o Mario tenha razão, né? Talvez a conta chegue na produção. No mesmo estudo, houve um aumento de 242% na incidência por PR (pré-conferência). É
+
+assustador desse jeito. O segundo estudo também é assustador. O número de bugs por desenvolvedor aumentou seis vezes em relação a 2025. Portanto, até mesmo a Anthropic consegue perceber isso. Não sei se vocês leram o ensaio sobre LER que eles postaram, aquele sobre autoaperfeiçoamento recursivo, onde eles falam sobre "Ei, o que o futuro reserva?". Eles
+
+descrevem dois cenários. Um deles diz: "Talvez a aceleração pare e a gente se acostume com isso." Todos eles dizem: "Na verdade, isso não deve acontecer. Adicionamos essa possibilidade apenas para maior clareza. Não achamos que isso seja provável. O que
+
+acreditamos que vai acontecer é que engenheiros e empresas multipliquem sua produção e produtividade por 10, 100 ou até 1.000 vezes." E então dizem: "À medida que começamos a distribuir mais código pela organização, a revisão humana de código se tornou um novo gargalo." Eles citam a Lei de Amdahl, que demonstra que, se houver uma explosão de produtividade em uma área, outra área será bloqueada. E ninguém remove o fator humano dessas organizações. Na verdade, tanto na
+
+Anthropic quanto na OpenAI, eles ainda contratam pessoas. Portanto, ninguém está removendo o fator humano, e ambos afirmam que a revisão humana de código ainda é uma preocupação. E aqui está meu mea culpa. Prometo que direi onde errei na formulação. Meu mea culpa é que o continuum é real. O Zeal O continuum é real, mas
+
+não se trata das pessoas. Trata-se das tarefas. O mesmo engenheiro pode ser um Ryan LeCompte no Apollo em um trecho de código e ter que ser um Mario Zechner e ler cada linha de outros trechos de código. Tarefas diferentes exigem provas diferentes. Se os observarmos atentamente, eu obviamente os caracterizei.
+
+Pratiquei essa palavra várias vezes e ainda errei. Caracterizei- os. O caráter deles em ambas as extremidades do continuum Zeal. Mas, se você os observar atentamente e o que eles estão dizendo , na verdade não são tão diferentes. O mecanismo de Ryan está movendo a atenção para a camada superior. Ele está dizendo que
+
+os humanos não são confiáveis ​​para detectar erros repetidos do mesmo tipo. Detectar repetidamente os mesmos erros. Então, quando você detecta um erro durante a revisão do PR, escreva a documentação, o linter e o revisor precisam se lembrar disso uma vez, para que o sistema detecte esse tipo de bug. Ele não está Ele está dizendo para não inspecionar seu código. Ele está dizendo para inspecionar o sistema, não cada linha. O
+
+Mario, do outro lado, está dizendo para rotear por tarefa. Se não for crítico, deixe passar. Ele disse isso. E se for crítico, você lê cada maldita linha. Como você sabe o que é crítico? Bem, a resposta dele é fácil. Você
+
+lê o código, caramba. Ah, minha resposta para acrescentar a isso é: pergunte aos seus especialistas em programação. Eles são ótimos em olhar para um repositório grande e dizer: "Ei, esta linha é realmente crítica." Você deveria dar uma olhada nesta área. "Esses elementos primitivos aqui são críticos." Então, você pergunta ao seu especialista. E
+
+eles concordam mais do que eu poderia imaginar . Então, acho que, no início , a pergunta errada era se eu ainda deveria estar lendo código em 2026. Acho que a melhor pergunta agora para todos nós é: de que prova essa mudança específica precisa? De que prova essa mudança específica precisa? Então, peguei o Mario à esquerda, obviamente. Peguei o Ryan à direita. E
+
+então peguei um monte de outros ótimos engenheiros de IA, amigos, alguns amigos, muitos deles palestrantes nesta conferência. Eu meio que resumi os conselhos deles em uma tabela de roteamento. E eles me disseram, acho que o Swyx me disse no Twitter: "Me dê apenas um slide que as pessoas precisem tirar um print." Vai ser este slide. Você não precisa ler comigo, mas no final, fique à vontade para tirar uma foto disso."
+
+Este é o seu artefato de segunda-feira. Direcionando a alteração para onde a prova precisa . Direcionando a alteração para a prova que ela precisa. Você lê cada linha de autenticação, movimentação de dinheiro, permissões e dados irreversíveis. Você inspeciona o caminho crítico por conta própria e, obviamente, continua.
+
+Decompor, eu acho, é muito importante. Quanto mais código é escrito, mais difícil fica. Seus olhos começam a ficar vidrados ao ler um pull request muito longo . Então, divida-o em PRs atômicos e revisáveis. Sabe quem é bom nisso? Agentes. Eles são ótimos em decompor
+
+código. Peça a eles para fazerem isso. Você verifica se isso não desaparece. Isso está presente na engenharia de software e na engenharia de IA. Rastreamentos, avaliações, modo sombra. Venha conversar comigo
+
+depois desta palestra. Não tenho tempo suficiente, mas o modo sombra é algo muito interessante que aprendi preparando esta palestra. Então, acho que o mais importante é a separação. Muitas pessoas têm o mesmo agente que escreve o código, inspeciona as saídas e escreve os testes. Separar é muito importante. Se você não separar, é
+
+como se eu criasse uma prova, fizesse a prova e me corrigisse . Não é nada produtivo, certo? E por último, temos o rollback de observabilidade do Rails. É disso que Ryan Le Popo fala. Construa o sistema que constrói o sistema, porque ler exige sua atenção uma vez, enquanto o engenheiro faz o sistema se lembrar.
+
+Certo? E você pode ficar sentado lá pensando: "Ei, Alex, você soube da novidade?" Fable está de volta. E quanto a Fable? E quanto aos Mythos? Isso ainda é relevante nessa
+
+próxima escala de capacidade? Porque quando eu criei o conceito de Zeal Continuum, fazia apenas 82 dias. Mythos tinha acabado de ser anunciado. Não tínhamos certeza do que estava acontecendo. Apenas o pessoal da Anthropic tinha acesso a ele.
+
+E Jared S. Chipar, que estava no palco representando a Anthropic, disse sobre Mythos e Fable: "Costumávamos verificar se Claude estava fazendo o trabalho direito?" E com Fable 5, em vez disso, eu verifico se Claude está fazendo o trabalho certo." Pense nisso por um segundo. Não sei se você leu a declaração. Quando eu li,
+
+senti um arrepio na nuca ao pensar no próximo nível de capacidade, ok? Antes, verificávamos se Claude estava fazendo o trabalho direito. Com Fable, verificamos se Claude está fazendo o trabalho certo. E nosso senpai favorito, que recentemente se juntou à Anthropic e está recebendo críticas desnecessárias no Twitter, disse isso. Andrej Karpathy disse: "Nunca foi tão tentador parar de olhar para o código."
+
+Mas não façam isso em produção." Senpai é ótimo por um único motivo. Vocês conhecem a frase: "Esta reunião poderia ter sido um e-mail?" Então, esta apresentação poderia ter sido a frase de Andrej Karpathy, certo? Ele está nomeando a ansiedade de ambos os lados.
+
+Nunca foi tão tentador parar de olhar para o código. Não façam isso em produção, nem mesmo com Fable. E então, se vocês repararam, eu tenho um pequeno detalhe aqui. Isto. É tão largo que dá para ver meu pequeno ponteiro laser. Vocês veem a
+
+seta, a seta de deriva de capacidade? Isto aqui ? Quando escrevi o continuum, percebi que é apenas um lugar temporário no tempo. Os aumentos de capacidade nos movem em direção ao popular. Então, vamos falar sobre aumentos de capacidade também, porque a camada de revisão se move. Se ontem inspecionávamos
+
+as saídas e líamos o código, e hoje inspecionamos a direção da tarefa e nos direcionamos para a prova correta, talvez amanhã estejamos inspecionando os loops. A deriva de capacidade muda onde a prova deve estar. Ela não remove a Requisito de prova. Falando em loops. Será que esse é o próximo paradigma? Acho que o grande destaque desta
+
+conferência, acho que o espírito da época aqui, será a discussão sobre fábricas e cofábricas serem reais, e se loops são algo real que eu preciso estar implementando neste momento. Levantem as mãos, quem aqui já ouviu falar de loops? Mantenham as mãos levantadas, por favor, e abaixem se vocês não estão usando loops agora e não sabem nada sobre eles. Há uma boa percepção. Há um bom número de pessoas aqui que já ouviu falar de loops, e tudo começou com essas duas pessoas, Peter Steinberger, criador do Open Cloud Open Claw, e agora do OpenAI, e Boris Cherny. E praticamente em um intervalo
+
+de dois dias, ambos começaram a falar sobre loops, que se tornaram uma espécie de espírito da época. E os loops estão nos levando de gerar prompts a cada turno para projetar o sistema que escreve os próprios prompts. Aliás, vocês sabem o que essas pessoas têm em comum e o que me diferencia delas ? Os tokens delas são grátis. Então, quando eles falam sobre loops e seus tokens são gratuitos, eles não estão dizendo: "Ei, você deveria estar fazendo isso agora mesmo ". Mas como eles trabalham em
+
+laboratórios maiores, você pode considerá-los como uma espécie de farol que aponta para onde todos nós estamos indo. Tipo o Gretzky patinando para onde o disco vai. Eles vão nos dizer o que todas as nossas empresas vão precisar fazer. E se for sobre loops, então deixe-me pelo menos dar um resumo, ok? Loops são basicamente tarefas cron sofisticadas que são executadas em um cronograma. Mas o que eles fazem é
+
+descobrir uma tarefa e começar a escrever um prompt para essa tarefa a partir do plano. Eles escrevem o plano, executam e, o mais importante para a minha apresentação aqui, verificam a si mesmos e, se não funcionar, tentam novamente. Então, um agente que usa loops avalia seu próprio trabalho em relação à meta com menos intervenção humana. Mas se o construtor se avalia, você não removeu a avaliação, você a ocultou. Ok, isso se conecta a Minha tabela de roteamento.
+
+Isso veio de Adi Olsmanyu, recentemente no Google. Ele também está nesta conferência, um ótimo engenheiro. Ele disse que se eu não revisasse o código pessoalmente, ou dependesse inteiramente de loops automatizados para corrigir meu código, digamos que um bug apareça no Jira e meu loop o detecte e comece a corrigi-lo, a qualidade do meu produto sofreria. Eu provavelmente acabaria em uma espiral descendente, me afundando cada vez mais. Então, novamente, os loops não eliminam o julgamento, mas aumentam a responsabilidade sobre onde você o aplica.
+
+E quanto ao futuro, pessoal? Ninguém sabe. A Anthropic não sabia que o Claude Code iria explodir e se tornar um produto de bilhões de dólares. Ninguém sabia que os agentes de codificação e o Harness seriam os agentes generalizados, e agora todos estão investindo neles. O pessoal da OpenAI com o Codex, Elon Musk com o Grok Code, o Google com o Antigravity. A
+
+capacidade dos modelos está avançando em um ritmo insano, e o que eu O que eu imploro e digo a vocês é que a flexibilidade é essencial. Vocês precisam acompanhar as tendências. É por isso que vocês continuam sendo engenheiros. Aliás, mencionei para algumas pessoas aqui o meu podcast de quinta-feira e as novidades. Se quiserem acompanhar a evolução dessa linha de produtos, fiquem à vontade para escanear este código QR, assinar nossa newsletter, etc.
+
+E vou terminar com isso. Como já é minha vez, vou deixar vocês com esta mensagem: nem toda linha de produtos em 2026 precisa da sua atenção. Todo sistema ainda precisa do seu discernimento. Obrigado. [aplausos]

@@ -1,0 +1,160 @@
+---
+video_title: "Using LLMs to Secure Source Code — Eugene Yan, Anthropic"
+video_id: imFedndyXYQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=imFedndyXYQ
+video_date: 2026-07-17T21:27:20+00:00
+video_description: |
+  Mozilla shipped about 20 security fixes a month across Firefox in early 2025. In April it shipped 400, a 20x jump, and it credited roughly two thirds of them to a frontier model. That is the shift Eugene Yan came to describe: models are now finding and fixing real vulnerabilities at scale. Anthropic's own scan of more than a thousand open source repos surfaced 6,200 high or critical issues out of 23,000 candidates, reported 1,600 to maintainers, and saw about 100 patched upstream. Finding bugs, it turns out, is no longer the hard part. The bottleneck has moved to verifying, triaging, and patching them.
+  
+  The talk walks a six step workflow through one running example: a five line order lookup with a SQL injection hiding in a Python string. The two setup steps are a threat model and a sandbox. A written threat model alone pushes the true positive rate to 90%, because a model has great context of the code but poor context of the system, all the design decisions that live only in someone's head. The four loop steps read like a machine learning pipeline: discovery optimizes for recall, then a separate verification agent, kept independent and adversarial so it never sees the discovery reasoning, optimizes for precision by detonating the exploit in a fresh container. Triage protects the scarcest resource, engineer attention, and patching closes the loop so the same bug cannot return. His parting advice: start this week on open source dependencies, keep your hands on the wheel before automating, and remember that scanning was never the bottleneck.
+  
+  Speaker info:
+  - https://x.com/eugeneyan
+  - https://github.com/eugeneyan
+  - https://eugeneyan.com
+  
+  Timestamps:
+  0:00 - Working with security teams to find and fix vulnerabilities
+  0:49 - Three trends in model security capability
+  1:16 - Cybersecurity benchmarks and the step jump in capability
+  1:54 - Mozilla's 20x jump in monthly security fixes
+  2:44 - Log4Shell, Heartbleed, and why this matters
+  3:22 - Anthropic's scan of a thousand open source repos
+  3:35 - The bottleneck shifts to verify, triage, and patch
+  3:48 - Why agentic harnesses changed the game
+  4:29 - The six step workflow
+  5:31 - A running example: the order service
+  5:45 - Step 1: the threat model and 90% true positives
+  7:42 - Step 2: the sandbox for isolation and reproducibility
+  9:24 - Step 3: discovery and the five line SQL injection
+  11:44 - Step 4: independent adversarial verification
+  13:36 - Step 5: triage and the scarcity of engineer attention
+  15:52 - Step 6: patching and closing the loop
+  17:19 - It all looks like a machine learning pipeline
+  17:43 - The non technical bottlenecks are harder
+  18:47 - Organizational bottlenecks: routing, severity, bandwidth
+  20:05 - Three takeaways and how to start this week
+  
+  "The bottleneck has now shifted to verification, triage, and patching." (3:39)
+  "A model has great context of the code but poor context of the system." (6:06)
+  "Things that can be solved with money are not really problems. But human attention doesn't scale." (18:14)
+  "Scanning was never the bottleneck." (20:38)
+---
+[música]
+
+Olá, sou Eugene U, membro da equipe técnica da Entropic. Bem, passei os últimos meses trabalhando com equipes de segurança e com a Claw para encontrar e corrigir vulnerabilidades em códigos e sistemas. Então, quero compartilhar com vocês tudo o que aprendemos. Antes de começar, peço que levantem as mãos rapidamente. Quantos de vocês aqui são engenheiros de segurança no seu trabalho diário?
+
+OK. OK. Quantos de vocês aqui são engenheiros em seus empregos regulares? Ah, que ótimo. Ok, ótimo. Agora entendo melhor
+
+como apresentar essa palestra. Hum, engenheiros de segurança na sala. Por favor, não me vaiem se eu simplificar demais as coisas. Quero transmitir esta mensagem ao maior número de pessoas possível. Então, primeiro quero compartilhar com vocês três tendências importantes que estamos observando em termos de capacidades dos modelos, certo? Número de
+
+vulnerabilidades encontradas e para onde está se deslocando o gargalo. Em seguida, quero destilar as lições que aprendemos ao trabalhar com dezenas de organizações para melhorar sua postura de segurança, bem como os gargalos que você pode encontrar e como você pode tentar resolvê-los e se preparar para eles. E, por fim, quero compartilhar como você pode começar esta semana, com links para recursos. Então, por que nos preocupamos tanto com a segurança cibernética agora? Os benchmarks de horizonte temporal monitoram o tempo que um modelo de IA leva para concluir uma tarefa, em comparação com o tempo que um humano real levaria para realizar a mesma tarefa. Bem,
+
+todos nós conhecemos a tarefa de avaliação do medidor . Você sabe quanta tecnologia um motor pode oferecer. O instituto de segurança de IA do Reino Unido possui uma versão disso voltada para a segurança cibernética . Você sabe que essas tarefas exigem a identificação e a exploração de vulnerabilidades de segurança em sistemas-alvo, além de habilidades de teste como engenharia reversa e exploração de vulnerabilidades na web. Assim, neste gráfico podemos ver que os modelos são cada vez mais capazes de executar tarefas de segurança cibernética mais longas . Mas o que também é interessante é
+
+que você vê uma espécie de salto em relação à linha de regressão anterior. Portanto, esses modelos representam uma melhoria significativa em termos de capacidade. E o que essa melhoria significativa na capacidade nos proporciona? Recentemente, o Mozilla Firefox publicou uma série de correções de bugs de segurança que eram implementadas mensalmente. A média em 2025 foi em torno de 2020. E então você pode ver que
+
+em fevereiro e março triplicou, chegando a cerca de 60 e 70. E em abril, multiplicou-se por sete, chegando a 400. Isso significa que o que aconteceu em abril foi 20 vezes maior que a média do ano passado. Eles atribuíram cerca de dois terços disso à prévia da mensagem 271, o que demonstra que os modelos de fronteira podem ajudar profissionais de segurança como você a encontrar e corrigir vulnerabilidades em grande escala. Também gostaríamos de saber quais são algumas vulnerabilidades notáveis. Mãos ao alto. Quem aqui
+
+se lembra de travar para Shell? Qualquer um? Alguém esteve aqui durante as férias de dezembro e tentou desesperadamente corrigir este problema? Portanto, o registro de logs para o shell é um bug na biblioteca de registro de logs do Java . Se um atacante enviar uma sequência de caracteres e você a registrar, ele poderá executar código em seu sistema. O Ministério da Defesa da Bélgica
+
+foi alvo de uma invasão poucos dias depois, e uma plataforma fintech vazou dados de 2 milhões de usuários. E antes disso tínhamos o heartbeat, que é um bug no OpenSSL. Você sabe que grande parte da internet funciona com OpenSSL e todos nós sabemos o impacto que isso teve. Trata-se de um compartilhamento entrópico do nosso próprio trabalho, resultante da análise de mais de mil repositórios de código aberto. De 23.000 candidatos,
+
+6.200 foram classificados como de alta ou crítica importância e, no momento da atualização, 1.600 deles foram relatados aos mantenedores e cerca de 100 foram corrigidos no código-fonte original . Compartilhamos nossa observação de que encontrar vulnerabilidades agora é bastante simples. O gargalo agora está na verificação, triagem e aplicação de patches. E
+
+quero compartilhar com vocês tudo o que aprendemos sobre isso para que vocês possam se antecipar. Então, como fazemos isso em nossos próprios sistemas e bases de código? Hum, duas palavras: arreios agentes. Estou citando a Mozilla novamente, e isso foi antes mesmo de eles trabalharem com a versão prévia do Microsoft View. Vou ler o que está na tela aqui. Os primeiros experimentos mostraram
+
+algum potencial, mas as altas taxas de falsos positivos tornaram a implementação em larga escala inviável. Mas a introdução de sistemas automatizados que conseguem detectar problemas de segurança de forma confiável mudou esse cenário. Certo? Esses modelos e ferramentas, em conjunto, podem encontrar erros reais e descartar especulações não reproduzíveis. Assim, o arnês e o modelo, trabalhando em conjunto, conseguem realizar muito trabalho.
+
+Constatamos que a maioria das equipes converge em aproximadamente estas seis etapas. E uma grande parte da minha apresentação será sobre esses seis passos. Certo? Certo. Os dois primeiros passos já estão definidos, certo? Você faz um
+
+pequeno investimento inicial por base de código. Quantos de vocês aqui sabem o que é um modelo de ameaça? Incrível. Adoro isso. Um modelo de rastreamento é uma espécie de projeto de sistema, mas para sua base de código ou sistema, o que são vetores de ameaça? Isso ajuda
+
+você a decidir quais são as vulnerabilidades do seu sistema que lhe interessam. Além disso , também queremos um ambiente isolado onde você possa permitir que seu modelo execute código possivelmente não confiável ou que detone deliberadamente provas de conceito de exploits. Vou chamá- los de varíola para confirmar que são resultados verdadeiramente positivos. E os próximos quatro são loops onde, como você sabe, temos a descoberta que identifica vulnerabilidades. A verificação confirma que são reais. Temos triagem. Você sabe que não pode
+
+dar 100 vulnerabilidades a um desenvolvedor. Você precisa identificar os 10 ou 20 problemas mais críticos e de alta prioridade para que eles possam concentrar sua atenção e, em seguida, você possa corrigir os bugs. Agora vou falar sobre cada etapa. Agora, para tornar as coisas concretas, quero compartilhar com vocês como elas se aplicam a um sistema hipotético. Então, este é o serviço de pedidos. No serviço de pedidos, você
+
+digita um ID e depois consulta o pedido. Então, que tipo de vulnerabilidades podemos encontrar nisso? O primeiro passo é o modelo de ameaças. Então, por que isso importa? Portanto, várias equipes, ao analisarem as descobertas do Code Right, constataram que ter um modelo de threads bem documentado realmente aumenta a taxa de verdadeiros positivos para 90%. 90% é excelente, na minha opinião
+
+. Acho que qualquer valor acima de 75 é ótimo. É para isso que você deve mirar. Em outras palavras, como disse um CISO , o modelo oferece um ótimo contexto do código, mas um contexto deficiente do sistema. E por que isso acontece? É
+
+o que o modelo consegue ler, ele entenderá bem. Mas há tanta informação que o modelo não consegue ler. Por que o designer sênior projetou o sistema dessa maneira? Quais são todas as vulnerabilidades que a equipe de plantão vem corrigindo e que não foram documentadas? Tudo isso agora faz parte do contexto implícito em sua mente, mas você precisa anotá-lo em algum lugar, talvez em um diagrama, para ajudar o modelo a ser um engenheiro de segurança melhor. Assim, podemos trabalhar
+
+com modelos para construir esses modelos de threads. E o modelo de trilha é realmente apenas um documento, certo? Primeiro, podemos inicializar um modelo de armadilha, dar ao modelo acesso a todos os seus documentos e código, incluindo commits de código antigos, patches antigos que foram feitos e quais CVEs eles corrigiam, e você pode pedir ao modelo para inferir, por exemplo, quais outras CVEs possivelmente não foram corrigidas, certo? Portanto, um modelo pode fazer isso. Então, o próximo passo é pedir ao modelo para entrevistar o especialista no sistema, certo?
+
+Quais são algumas coisas que podem acontecer que não planejamos ou quais são algumas vulnerabilidades com as quais não precisamos nos preocupar, porque talvez seja um aplicativo interno de VPN ou haja um controle compensatório em outro lugar? Muitas dessas informações não estão no código, certo? Se você olhar para a sua base de código, verá que não estão lá, mas precisam ser documentadas em algum lugar para que o modelo possa se beneficiar delas. Aqui está um exemplo de modelo de thread do serviço de pedidos, certo? O principal ativo são os dados, que contêm informações pessoais identificáveis ​​do cliente, e o ponto de entrada é a API de pedidos. Também podemos ver
+
+que o modelo sugeriu alguns possíveis vetores de ameaça, como injeção de SQL, e o fato de que você pode chamar essa API sem qualquer forma de autenticação. O segundo passo é o sandbox, ou seja, isolamento e reprodutibilidade. Em alguns casos, podemos estar executando código não confiável; em outros, podemos estar pedindo ao modelo para criar exploits deliberadamente, então queremos algum isolamento para impedir que o modelo faça coisas ruins. Portanto, esse isolamento, ao causar problemas, pode resultar em exfiltração de dados ou, sabe, na queda de sistemas em produção. E, claro, você quer que tudo isso esteja rodando em uma máquina virtual sem saída e, obviamente, sem suas credenciais da nuvem. A segunda coisa que queremos é a
+
+reprodutibilidade. Então, muitas vezes você pode descobrir que o modelo encontra um bug porque você estava usando uma dependência antiga ou porque deseja que todos os seus agentes comecem a partir do mesmo contêiner base, para que seus agentes possam verificar e executar tudo em um parceiro no pipeline. Portanto, construir um ambiente de teste representativo do seu sistema é bastante difícil, mas essa capacidade é muito útil. Acho que esta é uma das equipes com as quais trabalhamos. Eles citaram que a maior alavanca que tínhamos era possuir bancadas de teste de modelos, essencialmente ambientes de teste com sistemas em funcionamento, onde eles podiam executar e detonar as substâncias para confirmar que eram resultados verdadeiramente positivos. Então, como seria um ambiente de testes (
+
+sandbox) para o serviço de pedidos? Bem, isto é um sandbox simples, ou melhor, três imagens Docker conectadas entre si. Uma para o aplicativo, uma para o banco de dados PostgreSQL e uma para o cache RADIUS. E à direita temos o agente de segurança, que fica fora do limite do alvo, tentando sondar o aplicativo via HTTP. Agora que a configuração está concluída, podemos prosseguir com o trabalho de descoberta, encontrando as vulnerabilidades.
+
+Então, a primeira é não, então quais são algumas delas? Há três coisas que importam muito e não há surpresas aqui. A primeira coisa é realmente a engenharia de contexto. Você vai fornecer ao modelo todo o contexto possível, o máximo de contexto que puder. Se estiver escrito e você compartilhar com o modelo, o modelo poderá encontrá-lo. O modelo será um
+
+engenheiro de segurança melhor. Você melhorará sua cobertura de vulnerabilidades. Você reduzirá sua taxa de falsos positivos. A segunda é ter adereços simples, adereços mais simples. Hum, quantos de vocês já perceberam que, à medida que os modelos melhoram, é preciso remover alguns elementos dos prompts? Foi isso que
+
+constatei com cada nova versão do StepJum: na verdade, preciso reduzir o tamanho do meu prompt em cerca de 50%. Certo? À medida que os modelos melhoram, suas instruções precisam ser cada vez menos específicas e prescritivas. Mesmo que você conheça modelos anteriores, pode pedir ao modelo para procurar classes de categorias específicas, mas para modelos mais recentes, você provavelmente pode dizer algo como "procure onde os dados não confiáveis ​​atingem o limite de confiança", e o modelo é muito bom em inferir isso. Por fim, forneça as ferramentas do modelo. Um exemplo que tivemos foi uma
+
+equipe de testes de intrusão. Eles fornecem ao modelo ferramentas para verificar a resposta da consulta à API, verificar a resposta, ler os registros e ler o código-fonte. Isso é exatamente como as ferramentas que você dá a um engenheiro de segurança comum, certo? Muitas vezes, espera-se que o modelo simplesmente leia o código. Isso não funciona muito bem.
+
+Permitir que o modelo seja dinâmico para ler as ferramentas e, assim, executar as ferramentas. E quando fizeram isso, a taxa de verdadeiros positivos foi de quase 100%. porque o modelo poderia de fato ser verificado no loop. Aqui está a API GET para o serviço de pedidos, e são apenas cinco linhas de código. Alguém aqui consegue identificar a vulnerabilidade?
+
+Podem gritar à vontade, pessoal . Exatamente. Então, é isso que o agente de descoberta sinaliza, certo? Na linha quatro, construímos uma consulta SQL por meio de interpolação de strings em Python. Portanto, a entrada do usuário flui diretamente para a consulta SQL, certo? Isso significa que alguém
+
+pode injetar uma consulta SQL que extrai dados do seu banco de dados. Este é um código que eu teria escrito, mesmo sem ser engenheiro de segurança. É apenas um exemplo de como eu escrevo o código mais simples possível, e é assim que ficaria. Os modelos atuais são muito bons em detectar coisas simples como esta. Então, após a descoberta, digamos que tenhamos mil, ou até cem vulnerabilidades, talvez não tenhamos conseguido confirmá- las. O próximo passo é a verificação. Portanto,
+
+se você pensar em aprendizado de máquina, a descoberta otimiza a recuperação. Encontre o máximo de vulnerabilidades possível. A verificação otimiza a precisão. Das 100 vulnerabilidades que encontramos, quantas delas são realmente exploráveis ​​de forma otimizada? Então, nós os temos funcionando separadamente. Então, descobrimos que
+
+é útil ter essas duas etapas separadamente, certo? Porque quando o agente de descoberta tenta verificar seu próprio trabalho no loop, tentando debater consigo mesmo no loop, ele pode acabar se autocensurando, o que pode prejudicar a capacidade de recordar. E ao construir o agente de verificação, é útil que ele seja independente e adversário. Independente significa que o agente de verificação não vê os rastros de raciocínio, não vê todo o trabalho que o agente de descoberta realizou. O agente de verificação obtém apenas a vulnerabilidade e a aborda de um ponto de vista adversário. Suponha
+
+que essa vulnerabilidade seja falsa, tente confirmar se é falsa ou confirme se é verdadeira. Isso estabelece um padrão muito alto para a vulnerabilidade, o que reduz a taxa de falsos positivos. E também, se você investiu tempo construindo um ambiente de teste representativo, faça com que o agente de verificação execute o teste para confirmar se a vulnerabilidade é real. Neste caso, voltando ao serviço de pedidos, nosso agente de verificação está confirmando a injeção de SQL diretamente em um contêiner novo. É por isso que temos tudo em contêineres: o agente de verificação recebe apenas a linha número quatro, onde uma injeção de SQL poderia ocorrer. O
+
+agente de verificação executa o comando CORL e consegue ver todas as informações do cliente que foram exfiltradas. Agora você tem a confirmação de que uma injeção de SQL pode funcionar. Após a descoberta e verificação, maximizamos a abrangência e otimizamos a precisão; o próximo passo é a triagem. Portanto, muito disso pode realmente funcionar, mas alguns desses são problemas de correção de bugs . Eles têm um impacto muito baixo nos negócios . Assim, em diversas equipes, eles
+
+compartilharam a experiência de que é possível perder a confiança dos engenheiros de produto ao enviar a eles todas as vulnerabilidades que são reais, mesmo aquelas de gravidade média ou baixa, porque esses engenheiros não conseguem lidar com elas. E, como já vimos tantas vezes, o recurso para lidar com cicatrizes agora é a atenção dos engenheiros. Imagine que você é um engenheiro de produto. Que tipos de vulnerabilidades você deseja receber e corrigir? Como parte dessa etapa, podemos realizar verificações de duplicidade (ddupplications), verificações hereditárias simples, ou podemos obter um modelo para auxiliar no agrupamento e na detecção de duplicidades.
+
+Também devemos levar em consideração a gravidade da vulnerabilidade, certo? Uma coisa a se considerar é a magnitude do impacto. Qual é a magnitude? É um anel de magnitude zero ou um anel de magnitude um? Hum, e também a probabilidade de isso acontecer, certo? Quantas etapas
+
+um atacante precisa superar para realmente explorar essa vulnerabilidade? E é aqui que o modelo de threads se torna útil para todos. Você pode pensar no modelo de thread como sinônimo de contexto. Basta fornecer ao modelo um contexto sobre o seu negócio, certo? Por exemplo, controles compensatórios. Se você tiver um firewall,
+
+algo que inicialmente era considerado de alta gravidade pode, na verdade, passar a ser de baixa gravidade. Por outro lado, se você sabe que seu banco de dados é composto principalmente por dados pessoais de clientes ou dados de saúde, um modelo pode ter definido isso como de gravidade média, mas na verdade poderia ser alta, porque o conteúdo dos seus dados é muito sensível. Neste caso, temos à esquerda a triagem realizada pelo agente. O agente disse que isso é de alta gravidade por esses motivos, certo? Alto impacto, alta probabilidade. Agora, à
+
+direita, após revisão humana, o operador confirmou que você rebaixou a probabilidade para baixa. O motivo da baixa probabilidade é que temos um firewall de aplicação que bloqueia injeções de SQL e também porque o serviço é interno, usado apenas para armazenagem ou logística interna, nunca acessando a internet. Portanto, a probabilidade é baixa. Agora, imagine como o modelo saberia disso? Essa informação não está escrita no código-fonte, mas pode estar disponível no projeto do sistema, na documentação, no Confluence, etc. Esse é o tipo
+
+de contexto que você precisa fornecer ao modelo para que ele possa aprimorar esse processo. Agora, depois disso, fechamos o ciclo de aplicação de patches para validar o patch. Podemos criar um patch e, em seguida, validá-lo. Existe uma espécie de escada: primeiro, o PC original precisa parar de funcionar ( isso é básico); segundo, o conjunto de testes existente deve permanecer verde, sem regressão; e então podemos ir além, certo? Podemos ter um novo agente de descoberta tentando atacar o código do patch novamente. O patch é
+
+abrangente o suficiente? As equipes descobriram que, ao fornecer esse feedback ao agente de aplicação de patches, a qualidade do patch melhora bastante. Este é o ciclo de verificação generativa . Dê contexto aos seus agentes, dê feedback a eles, e assim eles poderão realizar o trabalho deles. E, por fim, um humano confirma a alteração antes que ela seja incorporada. Então, veja como ficará a atualização
+
+. Sabe, na primeira div, atualizamos o código; é uma correção de uma linha onde movemos a variável para fora do Python e, portanto, reduzimos o risco de injeção de SQL. E na segunda div, não apenas atualizamos o código, não apenas corrigimos o sistema, como também fechamos o ciclo. Garantimos que, na próxima vez que executarmos esse loop, essa verificação, esses problemas não ocorrerão novamente. E isso é realmente importante quando você está construindo os chicotes elétricos, certo? Você está
+
+criando loops. São despesas operacionais, mas, ao fechar o ciclo, transformam-se em despesas de capital. Você melhora a cada tentativa. Assim, você esclarece os controles de compensação. Temos o firewall de aplicativos e o fato de ser apenas para uso interno. OK.
+
+Resumindo rapidamente, estes são os seis passos e cada passo se concentra em uma coisa. O modelo de trilha fornece contexto. O ambiente de teste (sandbox) proporciona isolamento e reprodutibilidade. Esses são os fundamentos básicos que você precisa dominar. Isso será mantido em todas as digitalizações. Você tem contexto
+
+e reprodutibilidade. Depois disso, o resto, se você olhar com atenção, se você olhar com os olhos semicerrados , realmente parece um pipeline de aprendizado de máquina . Recordação, precisão, classificação e fechamento do ciclo. É um fluxo de trabalho de aprendizado de máquina comum. Esse é o desafio técnico que temos. Temos ainda outro
+
+desafio técnico pela frente. E como diria meu diretor anterior, os problemas não técnicos são uma ordem de grandeza mais difíceis do que os problemas técnicos. Quais outros gargalos você pode estar enfrentando ? Então imagine que você tem um processo. O que acontece quando você tem uma ou duas ordens de magnitude a mais de entrada? O que
+
+vai começar a quebrar? No caso do chicote de fios, o chicote de fios para escaneamento, você simplesmente tem mais trabalho de engenharia. Você gasta mais poder computacional. Você paga mais dinheiro. Coisas que podem ser resolvidas com dinheiro não são realmente problemas. Mas a atenção humana
+
+não é escalável. Seus engenheiros surdos, seus engenheiros de produto e seus engenheiros de segurança, e se eles não concordarem sobre o que é alta gravidade ou gravidade crítica? Você precisa colocá- los em um quarto. Você precisa anotar todas essas regras para que todos concordem. E você sabe, seus modelos de ameaça estão todos fixados na cabeça das pessoas agora. É
+
+preciso que alguém seja entrevistado, talvez por um modelo ou por outra pessoa, e que anote todas as informações relevantes para que agentes possam ajudá-lo. E, por fim, você sabe, revisão de patches. Hum, ainda não conheço muitas empresas que tenham passado por uma revisão de patches totalmente automatizada, especialmente quando se trata de corrigir problemas de segurança. Portanto, aqui estão alguns gargalos organizacionais que você pode encontrar e o que você pode fazer. A primeira coisa é o roteamento de vulnerabilidades. Então, se você
+
+receber cerca de uma dúzia de vulnerabilidades por mês, provavelmente conseguirá selecioná-las. Sabe, envie-os por e-mail para equipes específicas e atribua-os a tickets do Jira. Quando você tem centenas, isso não é possível. E isso pode ser tão simples quanto enviar para o responsável pelo código, etc., ou para o responsável pelo serviço, e não precisa necessariamente de um gerente de linha de comando no processo. Em segundo lugar, vem a
+
+calibração da severidade. A única dificuldade que encontramos é que os engenheiros de produto e os engenheiros de segurança (equipe vermelha/ equipe azul) podem não concordar sobre o que é alta severidade, e tudo isso requer muito conhecimento do contexto do seu negócio. Acho que realmente ajuda se todos discutirem e anotarem tudo de uma vez, para que todos concordem com o que pode ser enviado ao agente e, finalmente, definir a largura de banda para aplicação de patches. Bem, tenho certeza de que poucos de vocês aqui escrevem código manualmente hoje em dia, mas também é muito desafiador para vocês simplesmente receberem a vulnerabilidade e tentarem implementar uma correção, mesmo com a ajuda da LM. Você definitivamente vai querer migrar para correções geradas por IA e, em seguida, ter um processo de verificação humana para gerar a correção novamente e, por fim, reaplicá-la . Certo,
+
+se você só puder se lembrar de uma coisa, aqui estão as três coisas que eu quero que você se lembre. Gostaria que você começasse agora, por favor, comece com dependências de código aberto, comece com o que for mais confortável para você. Em segundo lugar, quero ensinar vocês a superar a curva de aprendizado. Não tente automatizar tudo imediatamente. Certo? Comece de
+
+forma interativa. Faça isso com as mãos no volante, usando o código de segurança ou seu ID favorito. Não importa. Saiba onde você leva o corte. Descubra que tipo de contexto você está perdendo.
+
+Aprenda onde a precisão é baixa. Em terceiro lugar, não se limite apenas a escanear. Ah, a digitalização não é o gargalo. Verificação, triagem e aplicação de patches. E depois todos os seus processos organizacionais.
+
+Esses são os gargalos. Lá. Tenho alguns recursos. Temos segurança na nuvem para analisar sua base de código e validar resultados, como patches. Temos um blog. Temos repositórios de código aberto
+
+que incluem as habilidades interativas e os dispositivos de controle autônomo, e tudo o que você precisa fazer é seguir estes poucos passos para assumir o controle rapidamente. No passo cinco, você encontra o dispositivo de controle e pode personalizá-lo. Era tudo o que eu tinha. Obrigado.

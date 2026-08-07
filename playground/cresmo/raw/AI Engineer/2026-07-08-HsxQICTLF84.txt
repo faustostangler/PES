@@ -1,0 +1,104 @@
+---
+video_title: "Building an ACP-Compatible Agent Live — Bennet Fenner, Zed"
+video_id: HsxQICTLF84
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HsxQICTLF84
+video_date: 2026-07-08T12:00:07+00:00
+video_description: |
+  In this session, we'll be building a coding agent that implements ACP — covering protocol design, session lifecycle management, and handling tool calls. The session ends with a live demo of the finished agent running inside Zed, showing what ACP looks like in practice from both sides of the protocol.
+---
+Meu nome é Bennett. Eu trabalho na Zed e nós desenvolvemos um editor de código com inteligência artificial, todo escrito em Rust. E no ano passado, como vocês provavelmente já sabem, houve o surgimento das interfaces de usuário de terminal de agentes de codificação de IA com todos os principais provedores de modelos, como Claude Code, Codex, Gemini CLI e assim por diante. Assim, na Zed, nos perguntamos: como podemos permitir que os usuários tragam seu agente preferido para nossa ferramenta e desfrutem de uma interface agradável e unificada para todos eles? E foi por isso que decidimos que precisávamos de algum tipo de protocolo chamado protocolo cliente-agente, que é semelhante ao MCP ou ao LSP. É um
+
+protocolo baseado em JSON RPC. E a ideia básica é que agentes e clientes possam se comunicar entre si por meio de uma interface unificada. E, ah, sim, é online. É de código aberto. Você pode contribuir se quiser. Neste momento,
+
+já temos uma grande variedade de agentes que suportam isso, seja por meio de um adaptador que traduz a linguagem nativa do agente para a linguagem do ACP . E então temos, por exemplo, o OpenCode e o Cursor, que têm o modo ACP integrado em seus agentes de linha de comando. E nós também temos vários clientes, até uns 40, que implementam isso, incluindo o OpenClaw, por exemplo. Assim como o próprio OpenClaw é um cliente e um servidor, na verdade, é como um cliente e um agente. E a JetBrains, a Obsidian e outras empresas estão apoiando isso. Ótimo
+
+. Então, vou fazer uma sessão de programação ao vivo . Vamos ver como isso funciona. Então, certo. Basicamente, temos algum código pré-existente . Então, este é o Zed. Aqui está
+
+um código TypeScript. Além disso, tenha paciência comigo . Eu sou um desenvolvedor Rust. Eu não tenho praticamente a mínima ideia de como funciona o TypeScript. Portanto, se você notar algo que não faz em TypeScript, me avise depois. Bem, sim,
+
+aqui está um agente de codificação bem minimalista que não suporta ACP, mas é o mínimo necessário para construir um agente de codificação. Então, na verdade, ele só tem duas ferramentas. Uma para ler um arquivo e outra para editar um arquivo existente. Sim, isso é bem básico. Isso pressupõe que o modelo deve fornecer um caminho. Então, ele precisa
+
+fornecer um texto antigo que é então substituído por um texto novo, e isso é basicamente tudo. E então temos, neste caso, tipo, estou usando Antrópico. Bem, existe uma maneira de solicitar informações ao agente, sim , o usuário pode solicitar informações ao agente, que é a função que vamos chamar aqui. E então entramos no loop do agente, e é basicamente assim que todos os agentes funcionam: as APIs do modelo não têm estado. Então você simplesmente anexa um trecho da conversa até este ponto. Você chama o endpoint.
+
+Nesse caso, é como a API Antrópica. E então, sim, recebemos uma mensagem do modelo, que pode ser uma virada de fim de curso. Isso significa que o modelo pode simplesmente exibir um texto e não fazer nada, ou pode chamar uma ferramenta. E nesse caso seria como uma chamada de ferramenta de leitura ou gravação. E então, no caso de uma chamada de ferramenta, gostamos de executar, por exemplo, a chamada da ferramenta de edição de arquivo localmente, coletar o resultado e, em seguida, enviá-lo de volta para o modelo. É aí que entra
+
+esse loop. E então chamamos a API novamente com a conversa até aquele ponto, e é basicamente isso . E então temos funções como esta, tipo, para lidar com chamadas de ferramentas, que, sim, lidam com chamadas de ferramentas de leitura e gravação , fazendo exatamente o que você espera. Nós conseguimos o caminho. Nós lemos o arquivo do sistema e retornamos algum resultado. Certo. Então, a questão agora é
+
+como tornar isso compatível com ACP? E, com sorte, conseguiremos fazer isso em 10 minutos. Então, vejamos. Então , sim, tenho um texto padrão aqui. Nesse caso, estou usando o SDK do TypeScript, como eu disse.
+
+E a forma como isso funciona é a seguinte: você implementa a interface do agente fornecida por esta biblioteca. E então você precisa implementar, no mínimo, essas três... quatro funções.
+
+Então, a primeira coisa que vamos analisar é essa inicialização aqui. Bem, tudo o que precisamos fazer aqui é responder com a versão do protocolo que suportamos, que neste caso é a mais recente. Também existem algumas funcionalidades, como o cliente, e o próprio agente pode anunciar as funcionalidades que suporta, mas estamos construindo um agente com código muito minimalista, então não damos suporte a nada além do necessário, eu acho. Então, para nós, a autenticação é irrelevante, já que está apenas usando minha chave de API de uma variável de ambiente. E depois há esse conceito de sessões no ACP. Então,
+
+basicamente, toda vez que você inicia uma thread no Zed ou em outro editor ou cliente, você inicia uma nova sessão. E em uma sessão você pode solicitar informações e, a partir daí, você pode obter o resultado desejado. Então, na verdade, tudo o que fazemos aqui é gerar um ID aleatório. Então, nós instanciamos esse agente de codificação com o diretório de trabalho atual, que obtemos do cliente. Nós armazenamos isso em nosso mapa interno e depois retornamos o ID para o cliente, para que ele saiba o ID, e esse ID é então usado dentro do prompt. Bem,
+
+porque o que o prompt faz neste caso é, tipo, solicitar o prompt. Se formos à definição aqui, tudo o que ele faz é fornecer um prompt, que é uma matriz de blocos de conteúdo que podem ser texto, imagens, o que for, e o ID da sessão como referência. Então, tudo o que precisamos fazer aqui é, sim, verificar em nosso estado interno. Obtemos o agente relevante para essa sessão atual. E aqui tenho uma função auxiliar que, neste caso específico, ignora tudo o que não seja texto, pois não damos suporte a imagens e coisas do gênero .
+
+E então chamamos essa função de prompt que mostrei anteriormente, que então executa o loop de chamada da ferramenta. E então, como um recurso adicional interessante, também oferecemos suporte ao cancelamento. Ah, isso também é bem simples. Então, essas são basicamente as quatro coisas mínimas que precisamos implementar. E eu já configurei isso no Zed sem precisar de nenhum código especial. Tudo o que eu tenho é algo
+
+como dizer ao Zed que existe um agente compatível com o ACP e que ele pode executá-lo com o Node, e então eu passo o caminho para o arquivo agent.js. Então, quando eu... vamos fazer isso aqui
+
+também. Então, quando eu correr, vou construir. Hum, eu vou construir, certo? E então vou reiniciar, uh sim, iniciar um novo agente de demonstração do ACP . E você pode ver se, ao solicitar algo, aparece o indicador de espera.
+
+E agora está feito. Então, nada. Que é o que esperávamos, certo? Porque, como podemos ver aqui, se eu passar por cima... Ops.
+
+Se eu for por aqui, temos uma espécie de visualização de depuração do ACP no Zed. Então, para facilitar o nosso desenvolvimento. E você pode ver como o Zed envia uma nova solicitação de sessão. Respondemos com um ID de sessão e, assim que digito algo, recebo uma resposta. E agora temos um motivo para parar, certo? Então,
+
+essas setas vermelhas vêm do adaptador que estamos construindo a partir do agente. Mas não está gerando tokens, certo? Nos bastidores, é óbvio que a Anthropic está nos dando fichas, mas como fazemos para que elas apareçam no Zed? Então, esse é o próximo ponto em que nós, sim, queremos nos concentrar. Então, a primeira coisa que precisamos fazer, tipo, nosso agente de codificação em si precisa ter uma maneira de enviar algo para a conexão. Então, o que vamos fazer
+
+aqui é o seguinte: o agente de codificação vai pegar a conexão ACP e também o ID da sessão. E então, aqui dentro, precisamos fornecer essa conexão e o ID. E então, se dissermos "Ok, vou simplesmente fechar isto." Certo. Se voltarmos aqui, agora dentro do prompt, Anthropic, como este é o SDK Anthropic. Então, neste caso, como em "
+
+Ops!". Você pode usar isso, tipo, transmitir em...
+
+Sim, isso é tipo um SDK antrópico. Assim como você pode reagir a um evento de texto. Então, basicamente, sempre que recebemos um fragmento de dados, enviamos o que o ACP chama de atualização de sessão. Como eu disse, uma sessão é como um único fio ou uma conversa. E então você pode enviar atualizações como notificações para o cliente, que não são como uma solicitação-resposta comum, certo? Isso pode acontecer a qualquer momento e o
+
+cliente reage a isso. E assim, aqui estamos associando a atualização da sessão a um ID de sessão. E então isso é como se houvesse um tipo de atualização de sessão. Existem vários. Veremos mais em instantes.
+
+Mas esse trecho da mensagem do agente é simplesmente algo como: "Ok. Ei, aqui está uma nova saída do modelo." Então, se reconstruirmos, voltaremos a Zed. Vou precisar reiniciar o agente. Eu venho aqui e digo: "Olá".
+
+Olá. Olá. Bom, aqui está o Opus falando, certo? Você pode ver que estamos transmitindo em partes individuais, certo? Certo, isso nós recebemos da Anthropic. Até agora, tudo bem.
+
+Vamos torcer para que os deuses das demos continuem conosco. Certo. Então, essa é uma parte. A próxima coisa é que eu quero que seja um agente de codificação, certo? É para editar código.
+
+Então, eu já posso afirmar isso porque temos suporte de ferramentas, certo? Posso instruí-lo a ler, por exemplo, este arquivo helpers.ts e ele me informará se a conexão Wi-Fi não está muito lenta, fornecendo uma descrição do conteúdo do arquivo. Por exemplo, se você olhar aqui, essa é basicamente a descrição do arquivo, mas, novamente, você não a vê na interface do usuário, certo? Portanto, agora precisamos emitir mais atualizações de sessão, semelhantes ao que fizemos para o texto. Então, se formos
+
+ler o arquivo, o que precisamos fazer é algo semelhante ao que geralmente acontece no ACP: emitir uma chamada de ferramenta inicial, chamada ` update`, que vou colar aqui. Então, sim, novamente estamos emitindo uma atualização de sessão neste caso, que é um tipo de chamada de ferramenta. E existem várias propriedades que podemos especificar, por exemplo, como o título, algum tipo de dado que o Z usa, por exemplo, para usar alguns ícones e coisas do tipo. E então indicamos que o status está em andamento, e você também pode associar chamadas de ferramentas a locais reais. Então, agora estamos sinalizando pelo ACP que algo está em andamento, certo? Esta ferramenta chama.
+
+Mas também queremos, no final, assim que a chamada da ferramenta terminar, como aqui embaixo, enviar outra atualização. E neste caso não se trata da chamada da ferramenta em si, mas sim de uma atualização da chamada da ferramenta. Então, você precisa emitir algo no agente, algo como uma chamada de ferramenta, tipo uma atualização de sessão do tipo chamada de ferramenta, e então, uma vez que o cliente tome conhecimento disso, você pode emitir atualizações para essa sessão. E é assim que definimos o status, e também podemos retornar o conteúdo. E mais uma coisa que vou fazer aqui é, em vez de, como vocês podem ver aqui, estamos chamando, acho que é um pouco difícil de ver, mas aqui estamos chamando fs.readFile, certo? Portanto, estamos apenas usando
+
+as APIs nativas do sistema de arquivos. Mas o MC, ou melhor, o ACP, na verdade também funciona como proxy do sistema de arquivos . Por exemplo, o cliente pode fornecer uma capacidade de sistema de arquivos e, se o fizer, podemos encaminhar essas chamadas de ferramentas do sistema de arquivos através do ACP. E isso faz bastante sentido, por exemplo, para um editor, não é? Você quer saber se, caso eu tenha alterações inseguras no meu buffer, elas não estejam realmente no sistema de arquivos, mas o agente ainda deveria vê-las.
+
+Então, é por isso que chamamos isso de "ler arquivo de texto via ACP". Então, agora, se voltarmos aqui e executarmos `npm run build`, e depois voltarmos aqui, reiniciarmos e dissermos para ler este arquivo. Ops, não era ferrugem.
+
+Então devemos estar vendo... Sim, então agora vemos chamadas da ferramenta de leitura, certo? Ok, algo está errado porque tudo está duplicado.
+
+Sim, mas aqui você pode ver a saída do arquivo em si. E como acho que estou com pouco tempo, vamos basicamente fazer o mesmo para o arquivo de edição. Hum, e vou compilar novamente. E se eu reiniciar novamente
+
+e adicionar um comentário no topo do arquivo agent.typescript, você verá que " hello world" está correto. Tomara que o Clo- uh Opus decida adicionar "hello world" no início do arquivo, e que consigamos um diff aqui, porque o ACP que enviamos é como um diff do arquivo. OK. Sim, acho que há algum problema com a conexão. Sim,
+
+sim, não tenho tempo para depurar agora. Desculpe. Hum, meu tempo acabou ou ainda tenho?
+
+Ok, talvez possamos ver. Então, agora que... Ok, só mais um minuto. Agora que o agente de codificação
+
+suporta leitura e gravação de arquivos, podemos... Ah, ótimo. Ah, ok, então não preciso ter pressa.
+
+Agora podemos inicializar o próprio agente, certo? Assim como o agente de codificação, ele suporta a leitura e a gravação de arquivos. Posso simplesmente perguntar, preparei um prompt aqui, para adicionar uma ferramenta de terminal a si mesma, certo? Vamos ver como isso funciona com a duplicação que estamos observando. Bem, basicamente estou falando sobre as APIs do ACP, e existem algumas APIs no ACP que também são uma funcionalidade do cliente, onde o cliente pode anunciar que suporta a criação e o gerenciamento de terminais para o agente. Assim como o agente também pode fazer isso
+
+sozinho, é claro. Mas é uma boa maneira de adicionarmos mais interatividade. Assim, o agente decidiu adicionar uma nova descrição à ferramenta. Sim, estou basicamente programando ao vivo usando esta ferramenta de terminal. Vamos ver se realmente funciona. Sim, faz
+
+. Bom, isso é ótimo. E então , vou reiniciar o agente. Vou executar nosso agente de demonstração e vou pedir para ele executar o comando "sleep five ls". Vamos ver.
+
+Pronto. Você pode ver um terminal em execução, aguardando 5 segundos. Aqui está o resultado. E é isso, basicamente. Obrigado.
+
+Sim, então é assim que você cria um agente de codificação compatível com ACP em cerca de 15 minutos. Sim, se você quiser dar uma olhada, basta acessar agentclientprotocol.com. Caso alguém queira o código de demonstração, por favor, não o utilize em produção. Tudo é gerado pelo agente. Ainda não foi possível fazer o upload
+
+, mas é um repositório vazio. Vou fazer o upload em um instante. Ah, sim , obrigado por ouvir. Terei todo o prazer em responder às suas perguntas. É isso. Sim.
+
+Ah, as diferenças... sim, no ACP temos vários tipos de conteúdo, e um deles é o de diferenças. Então, o agente envia o texto antigo, o texto novo, e o Z faz a comparação das diferenças para você. Sim
+
+. Sim . Legal. Preciso ir ou posso? Ok, mais uma pergunta. Sim.
+
+Sim, a conexão funciona através de E/S padrão. Bem, tem algumas pessoas, acho que da JetBrains, que estão trabalhando em algo como transporte remoto, que acho que teremos em breve. Então, sim. Mas, neste momento, funciona através de E/S padrão. Sim .

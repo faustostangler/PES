@@ -1,0 +1,150 @@
+---
+video_title: "Don't Ship Skills Without Evals — Philipp Schmid, Google DeepMind"
+video_id: 0vphxNt4wyk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0vphxNt4wyk
+video_date: 2026-07-14T22:00:06+00:00
+video_description: |
+  There are thousands of agent skills. Almost none of them are tested. They get vibe-checked with two manual runs, maybe a thumbs-up from a colleague, then shipped. You wouldn't merge code without tests — so why are we shipping skills without evals? This talk covers the full lifecycle of building reliable agent skills: what a skill actually is (and isn't), how to write one that triggers correctly, and how to build a lightweight eval harness that catches failures before your users do.
+  
+  ### Philipp Schmid
+  Staff Engineer · Google DeepMind
+  [X/Twitter](https://x.com/_philschmid) · [LinkedIn](https://www.linkedin.com/in/philipp-schmid-a6a2bb196/) · [Website](https://www.philschmid.de/) · [Blog](https://www.philschmid.de)
+  
+  Philipp Schmid is a Staff Engineer at Google DeepMind working on Gemini and Gemma. His work focuses on helping developers build and benefit from AI responsibly.
+  
+  Timeline:
+  
+  0:00 Introduction: Why skills need evals
+  0:25 The problem with current agent workflows
+  1:25 Agents we use vs. agents we build
+  2:28 Defining a 'Skill' and progressive disclosure
+  3:08 Capability skills vs. preference skills
+  4:17 Do skills actually work? (Skillsbench data)
+  5:39 Model-triggered vs. user-invoked skills
+  6:39 Best practices for writing skill descriptions
+  8:30 Structuring complex, multi-layered skills
+  9:04 Defining goals and constraints (avoiding rigid steps)
+  9:56 Don't skip negative cases
+  10:36 Testing strategy: Evals and regressions
+  11:05 Removing 'no-ops' for cost efficiency
+  11:47 Knowing when to retire a skill
+  12:22 Practical example: Gemini interactions API
+  13:36 Building a lightweight eval harness
+  14:35 Using regex and LLMs as judges
+  17:14 Top 10 best practices summary
+  20:20 Homework: How to start testing your skills
+  Viral Pull Quotes:
+  
+  (0:22) "You wouldn't merge code without tests—so why are we shipping skills without evals?"
+  (1:13) "Agents are really nondeterministic. You might not know if your task fails because your skill is bad or if your task fails because it's way too challenging for the model."
+  (9:15) "If the process or the workflow is always the same, you should not use skills. Maybe you should write a script."
+  (11:53) "Skills are not there to live forever. Models get better, behaviors change, environments change."
+---
+[música]
+
+Sim, olá a todos. Meu nome é Philip. Resido na Alemanha. Faço parte da equipe do Google DeepMind, trabalhando principalmente na API Gemini e em agentes. E vamos falar sobre por que você não deve lançar habilidades sem avaliação. E talvez,
+
+antes de começarmos, eu precise de um pouco da sua ajuda. Então, se você usa agentes de codificação para escrever código, levante a mão. Então, sim, espero que todas as mãos se levantem, certo? E você utiliza suas habilidades com isso? OK.
+
+Você tem avaliações para essas habilidades? Ok, é, não são muitas mãos. Todos usam suas habilidades, ninguém passa por avaliações. Esperamos poder resolver isso hoje. E algo muito importante é entender por que as verificações falham em produção. E o Skill
+
+Bench é uma ferramenta de avaliação ou benchmark muito popular e interessante que indexa mais de 50.000 habilidades, e você pode conferir que quase nenhuma dessas habilidades possui avaliações. A maioria foi escrita por IA, mas não realmente testada, e é muito difícil saber se sua habilidade é boa ou ruim porque os agentes são realmente não determinísticos. Então, você pode não saber se sua tarefa falha porque sua habilidade é ruim ou se ela falha porque é muito difícil para o modelo. Então, muito importante, antes de prosseguirmos, quero garantir que todos entendam a diferença entre os agentes que usamos e os agentes que criamos. A maioria de nós usa agentes para
+
+escrever código e realizar tarefas de produtividade. Esses são os agentes que utilizamos. É como antigravidade, cursor, código Claude. E aí você é o engenheiro e tem conhecimento sobre as habilidades necessárias, certo? Se você escrever algum comando, sei lá, tipo " me ajude a criar um novo recurso da API Gemini".
+
+E se o seu agente não invocar a habilidade na primeira vez, você perceberá isso muito rapidamente. Você interrompe sua tarefa e a reinicia, ou usa comandos de barra para ativar essas habilidades. Ao criar um agente dentro do seu aplicativo para consumidores ou clientes, eles não têm ideia do que seja uma habilidade (skill). Eles não começam a mensagem com "use a habilidade de suporte ao cliente para me ajudar com o reembolso" ou "use a habilidade de reembolso para me ajudar a resolver meu problema". Portanto, existe uma grande diferença entre os agentes que usamos e como usamos as habilidades, e os agentes que criamos e como nossos clientes podem querer usar as habilidades nesse contexto. E o que é uma
+
+habilidade? Quer dizer, espero que todos nós já saibamos o que é uma habilidade. É basicamente uma pasta com um arquivo skills.md dentro e alguns recursos adicionais para fazer essa habilidade funcionar de verdade. E a grande diferença em relação às habilidades é que elas trabalham com divulgação progressiva. Assim, a maioria das habilidades começa de forma
+
+muito simples. Então, você tem o título e uma descrição. A descrição normalmente faz parte do contexto do modelo. Assim, o modelo sabe quando usar a habilidade. A segunda camada consiste em um corpo de habilidades com mais instruções, mais detalhes e, idealmente, mais referências a arquivos externos. E então você pode realmente se aprofundar
+
+nesses arquivos de referência, onde está todo o contexto que o modelo precisa descobrir para resolver a tarefa. E eu gosto de diferenciar entre dois tipos de habilidades. Portanto, são habilidades de capacidade e habilidades de preferência. As habilidades de capacitação ensinam aos modelos algo que eles não conseguem fazer de forma consistente no momento. Talvez seja algo como, sei lá, rastrear alguns logs, criar um novo aplicativo React. E essas habilidades são
+
+temporárias. Portanto, quanto melhor for o nosso modelo , maior será a probabilidade de podermos eliminar essas habilidades. E as avaliações nos dirão quando podemos aposentar uma habilidade e quando não. E depois temos as habilidades de preferência. Esses são mais duráveis ​​e geralmente codificam algumas referências. Então, se você tem um
+
+fluxo de trabalho específico em sua equipe, um estilo de linguagem específico ou outras preferências muito particulares da sua empresa, você terá ou criará habilidades de preferência, e essas habilidades serão protegidas por firewalls eletrônicos, já que a maioria dos modelos de infraestrutura pode não integrar o conhecimento específico do seu caso de uso ou domínio. E as habilidades de preferência são muito valiosas, então queremos garantir que elas estejam funcionando e não atualizamos nossos agentes para não degradar o desempenho. Então, será que habilidades funcionam? Sim, elas funcionam, e estou voltando a um banco de habilidades que foi atualizado para a versão 1.1 e avaliou todos os tipos de modelos abertos e fechados em diferentes tipos de arneses, mostrando que as habilidades, em média, melhoram o desempenho em cerca de 15%. O Skills Bench abrange cerca de
+
+100 tarefas diferentes, como programação e produtividade em diversas linguagens. É de acesso público e eles têm um site muito bom , um ranking muito bom, e também são muito abertos a contribuições da comunidade. E depois fizeram uma segunda análise sobre habilidades autogeradas ou geradas por IA, certo? É muito fácil se você estiver em um agente de codificação e estiver trabalhando em algo, basta dizer ao modelo para criar uma habilidade e ele escreverá um arquivo skill.md. Talvez devêssemos analisar isso com muita
+
+atenção. Isso resume basicamente o que queremos fazer, então simplesmente aceitamos e começamos a usar. E o que descobri é que as habilidades de escrita humana são o melhor que podemos oferecer. Habilidades geradas por IA podem impactar negativamente o desempenho. E que os arquivos skills ou skills.md devem ter menos de 500
+
+linhas de texto. Portanto, se você tiver seu laptop aberto e uma skill disponível, e se ela tiver mais de 500 linhas, definitivamente deve analisá-la após nossa sessão. E, por último, sobre o que é uma habilidade e como ela funciona, temos diferentes maneiras de ativar nossa habilidade, certo? Podemos ter uma habilidade acionada por modelo, o que significa que, com base no contexto e na descrição, o modelo decide usar ou ler uma habilidade para obter mais contexto para resolver uma tarefa. E depois há as habilidades invocadas pelo usuário. E
+
+acho que as pessoas subestimam o poder das habilidades acionadas pelo usuário. Hum, e na maioria das vezes eles simplesmente aceitam, eh, a sobrecarga, adicionando-a ao contexto. Assim como muitas outras tarefas de fluxo de trabalho, também tenho habilidades invocadas pelo usuário, como criar um pull request, preparar a documentação e todo tipo de trabalho de desenvolvimento normal que poderia ser executado em um script e que provavelmente deveria ser uma habilidade invocada pelo usuário. E quando você cria agentes para o cliente, você não tem essas habilidades invocadas pelo usuário. Estamos trabalhando apenas com as habilidades invocadas pelo modelo , e é aí que estamos focando na pequena seção de avaliação que vamos analisar em seguida. Então,
+
+habilidades de escrita são um tópico importante. Vamos analisar oito exemplos ou dicas de como você pode escrever boas habilidades. E o mais importante, se você trabalha com habilidades invocadas por modelo, é a descrição, porque a descrição geralmente consiste em duas frases que fornecemos ao sistema como instrução para ajudar o modelo a saber quando deve usar uma habilidade ou não. E é ruim se a sua descrição for muito vaga, porque aí ela pode ser acionada com muita frequência ou pode não ser acionada quando você precisar. Portanto, o porquê e o como do modelo são muito importantes. Então, por que deveria usar
+
+essa habilidade e como deveria usá-la? Hum, é muito comum usar essa habilidade se você estiver trabalhando em um aplicativo React, por exemplo. E depois, claro, vem a questão do quando. E deveríamos escrever diretrizes em vez de redações. Então, não devemos dizer algo como: "Ei, a API Interactions é recomendada para multi-chat, porque ela lida com o estado da sessão e é onde você deveria ser muito mais diretivo, como usar a API Interactions se estiver trabalhando em um aplicativo de chat." Você precisa
+
+fornecer ao modelo instruções e diretrizes claras sobre quando e como ele deve usar a skill. E, similarmente ao que vimos nos resultados do Skill Bench, devemos manter a skill enxuta e com informações em camadas. A descrição é o custo que você sempre paga em cada invocação do modelo. Em cada chamada de modelo, a descrição faz parte do contexto do modelo. Portanto, você sempre paga esse custo de 100 ou 200 tokens e não quer uma descrição muito longa, porque você sempre terá que pagar esse custo. Quando você tem um
+
+arquivo MD de skill muito longo, ele sempre será lido no contexto quando o modelo decidir ler ou usar a skill, o que também pode ser caro. É por isso que queremos mantê-lo o mais conciso possível. o mais abrangente possível, mas ainda incluindo todas as referências e detalhes para que o modelo resolva a tarefa. E então, claro, a terceira camada é onde podemos ter aqueles arquivos de referência onde o modelo precisa se aprofundar em uma tarefa muito específica. Um bom exemplo disso é se você estiver trabalhando em um ambiente multicloud e tiver uma skill para implantar seu aplicativo; você pode precisar de instruções para implantar na AWS e no Google Cloud. Essas instruções não devem fazer parte
+
+do arquivo MD da sua skill. Elas devem ser referências. Você deve ter uma referência para a AWS, uma referência para o Google Cloud, talvez uma referência para o Azure, para que o modelo possa explorar, com base no contexto, onde deve buscar todas essas informações. Então, devemos definir o nível certo de liberdade. Vejo muitas pessoas descrevendo claramente o fluxo de trabalho exato em uma skill. Passo um: vá até lá.
+
+Passo dois: faça isso. Passo três: faça isso. Se você tiver esse tipo de caso de uso, não deve usar skills. Talvez seja melhor escrever um script, porque se o processo ou o fluxo de trabalho for sempre o mesmo, você não precisa desperdiçar modelos e tokens para isso. Exercício. Você pode criar
+
+um script. Você pode instruir o modelo a usar esse script para executar um fluxo de trabalho específico. Portanto, defina metas e restrições. Por exemplo , se você precisar implantar uma atualização ou preparar sua documentação, descreva como o modelo pode fazer isso. Ou, para atualizar uma configuração no banco de dados , você não deve dizer algo como "leia a configuração, atualize a porta e depois implante novamente". O modelo sabe o que
+
+fazer. Basta dizer: "Ei, se precisarmos alterar a configuração, aqui está o arquivo, faça a alteração". Então, não ignore os casos negativos. Sempre consideramos quando queremos usar essa habilidade, mas na maioria das vezes não consideramos quando não queremos usá-la. Se tivermos uma descrição para nossa habilidade que diz "use- a para tarefas de desenvolvimento web", isso pode gerar gatilhos em excesso. Talvez você trabalhe com React,
+
+talvez também com Angular, e o modelo sempre carregará a habilidade se você estiver trabalhando em um ambiente de desenvolvimento web , mas se você for muito específico, como "use essa habilidade apenas para componentes React ou para Tailwind CSS", então... O modelo sabe que isso é muito específico para ser usado. E com as avaliações (Evals), também podemos identificar esses casos.
+
+E então testar logo no início. Então, é isso que vamos analisar. Devemos realmente tentar testar quando criamos uma nova habilidade. Sempre tente criar 10 ou 20 prompts. Eu gosto de criar cinco para o caminho ideal. Então, quando eu quero usar essa
+
+habilidade? E cinco quando eu não quero usar essa habilidade, apenas para garantir que o modelo não esteja acionando a habilidade em excesso e se confundindo. E se você já tiver alguns rastreamentos de clientes ou de produção , tente incluí-los também, porque nada é melhor do que dados do mundo real. E então, a dica sete, que é bem nova e devo dar todos os créditos ao Matt. Se você não conhece o Matt, ele é um ótimo educador de IA e você definitivamente deveria segui-lo. Ele publicou um tweet e
+
+também uma habilidade sobre como eliminar todos os no-ops. E o que ele descobriu é que as habilidades geradas por IA tendem a incluir muitos no-ops. E no-ops são basicamente instruções que... Não faz nada para alterar
+
+o comportamento do agente. É como antes, quando a implementação era fácil de ler. O modelo sabe como fazer algo fácil de ler ou escrever um código claro e de alta qualidade. Quero dizer, é isso que esperamos do modelo, sem precisar dizer nada a ele. Então, definitivamente, dê uma olhada nessas operações nulas.
+
+Ele publicou uma habilidade muito boa em seu repositório de habilidades. E, por último, mas não menos importante, saiba quando você deve desativar uma habilidade. Habilidades não existem para sempre. Os modelos melhoram, os comportamentos mudam, as expectativas mudam, o ambiente muda. Portanto, sempre tente executar avaliações com e sem a habilidade ativada. E se o
+
+modelo atingir o desempenho desejado sem nem mesmo acionar a habilidade, você pode desativá-la, economizar o custo dos seus tokens e também não mantê-la redundante. Assim, você economiza custos no final e também na manutenção . E para ver um pequeno exemplo prático e como você pode criar sua própria pequena avaliação ou ambiente de avaliação para habilidades, no início deste ano...
+
+Queríamos criar uma nova habilidade para a API de Interações do Gemini. A API de Interações do Gemini é nossa nova interface para trabalhar com modelos e agentes do Gemini. Ela foi lançada após o último treinamento do Gemini. Portanto, o modelo Gemini 3, 3.1 ou mesmo 3.5 não tem contexto
+
+sobre o que é a API de Interações do Gemini. Então, decidimos: "Ok, vamos criar uma habilidade para ajudar o modelo a gerar um bom código para a API de Interações, usando os modelos mais recentes." Para isso, criamos 117 casos de teste. Eles são baseados em dados que observamos de usuários reais tentando gerar código Gemini a partir de casos de teste sintéticos, e também em feedbacks de usuários que relataram que o modelo estava usando o Gemini 2.0, mesmo já estando na versão 3.0. O
+
+resultado final foi uma melhoria de desempenho de quase 90% na geração de código válido para a API de Interações com os modelos Gemini mais recentes. E para isso, nós... Basicamente, só precisávamos de dois recursos bem simples. Um deles era um
+
+arquivo JSON com todos os nossos casos de teste. E não tinha uma estrutura clara. Era tipo: "Ei, temos um prompt." É basicamente o que esperamos que o usuário forneça. Temos uma linguagem porque queríamos testar a skill com TypeScript e Python.
+
+Temos um gatilho "deveria". Ele serve basicamente para nos dizer se o agente deve ler a skill ou não . E então temos diferentes verificações esperadas. Vamos analisá-las daqui a pouco. São basicamente asserções bem simples para o prompt, para verificar se ele deve ser acionado ou não. E então temos um
+
+script Python bem básico que executa um agente de codificação. Nesse caso, era o Gemini CLI, que passa a saída e a executa para que possamos ver o resultado e verificar se temos um código válido para a API de interações ou não. E a maioria dos testes ou avaliações para skills podem ser feitos com expressões regulares. É incrível o quão boas as expressões regulares podem ser. escrever usando agentes de codificação. E para nós, a
+
+questão principal era: "Ok, estamos usando o SDK correto?" Estamos usando o modelo um correto? Estamos utilizando os métodos corretos? Usamos algum padrão antigo?" E criamos asserções muito básicas para todos esses casos, que são muito baratas de executar. Assim,
+
+podemos executar nossa habilidade contra as avaliações várias vezes. Então, se um novo modelo for lançado, temos uma maneira muito fácil de atualizar essas asserções para os IDs de modelo mais recentes. E é muito barato de executar, porque não precisamos usar o LLM como juiz. Mas, claro, você pode usar o LLM como juiz se tiver habilidades mais complexas que precisam analisar todos os rastreamentos ou todas as etapas executadas. E um caso muito simples é criar um LLM como juiz com uma rubrica sobre o que você deseja analisar e, em seguida, pegar a saída, passá-la pelo LLM como juiz, tentar obter uma aprovação ou reprovação e, se falhar, analisar os dados e tentar melhorar sua habilidade com base nisso.
+
+E é assim que avaliamos habilidades no Google DeepMind. Não usamos YAML, mas é como... Por exemplo, temos testes ou avaliações para cada habilidade interna do Google DeepMind.
+
+Cada teste possui múltiplos casos com um prompt. Executamos todos eles em espaços de trabalho claros, onde você pode definir seu espaço de trabalho ou ambiente, incluindo arquivos adicionais, como os ambientes de seus aplicativos. Temos comandos de inicialização, que basicamente pré-carregam ou instalam bibliotecas no ambiente. E temos avaliações de script ou dados. São expressões regulares onde analisamos todos os rastreamentos para ver o que a habilidade acionou, se um determinado comando foi executado, se um determinado comando da CLI foi executado. Também temos o LLM como um
+
+juiz, onde temos algumas expectativas que são basicamente comparadas, por exemplo , se a habilidade foi acionada, se um determinado comando bash foi executado, para também avaliá-la. E executamos esses testes a cada alteração na habilidade. Então, se houver uma alteração ou uma diferença no arquivo da habilidade, a avaliação será executada e haverá um resultado, e a alteração não será mesclada se não melhorar o teste. Então, sempre temos esses testes de regressão para cada alteração na habilidade, e você só pode alterar a habilidade se isso melhorar a avaliação ou adicionar novas avaliações. E, bem, é assim que basicamente gerenciamos isso. E, por último, mas não menos importante,
+
+10 exemplos de boas práticas para habilidades. Você não precisa tirar fotos. Eles estão na postagem do blog que posso compartilhar mais tarde. Então, bem, nós vimos isso muitas e muitas vezes. A descrição da habilidade é muito importante. Vimos que 50% das
+
+falhas ocorrem porque a habilidade não foi acionada corretamente, porque o prompt do usuário não era detalhado o suficiente para o modelo entender: "Ei, eu preciso usar essa habilidade para resolver essa tarefa". E, especialmente se você cria agentes para outras pessoas, elas não estão cientes das descrições de habilidades que você tem para o seu modelo e para a sua habilidade. Então, elas podem escrever algo muito superficial, e o modelo precisa saber: "Ok, eu preciso acionar essa habilidade". Devemos escrever instruções em vez de informações passivas. Portanto, devemos sempre pensar sobre isso. Você deve dizer
+
+ao agente o que fazer ou não fazer, e não apenas algo como "Ei, se você estiver feliz hoje, por favor, use a habilidade". Inclua testes negativos. Sempre nos esquecemos dos testes negativos. Comece pequeno. Mesmo 10 a 20 amostras de avaliação de habilidades são melhores do que nada. Você se
+
+surpreenderá com o quanto descobrirá mesmo com apenas cinco a dez exemplos. E definitivamente crie resultados, não caminhos. Não queremos testar se o modelo carrega a habilidade na primeira rodada. Queremos testar se ele consegue realizar a tarefa com base no comando. Se carregar a habilidade, ótimo . Se não, ótimo também. Se carregar
+
+a habilidade depois de cinco rodadas, tudo bem. Também queremos execuções isoladas, porque os agentes de programação são muito bons em encontrar ou burlar o sistema. Então, se você executar dentro do seu ambiente existente, ele pode consultar conversas anteriores ou outras execuções e tentar burlar o sistema, obtendo o contexto da habilidade sem nem mesmo usá-la. Definitivamente, execute mais de um teste ao realizar avaliações. Assim como os agentes, nossos modelos são não determinísticos.
+
+Talvez o primeiro funcione, o segundo não. Portanto, sempre execute seis testes por caso para medir a confiabilidade. Teste em diferentes ambientes, se você trabalha com eles ou se seus funcionários ou pessoas trabalham com diferentes ambientes, não avalie apenas com Claude ou Antigravity. Se você tem pessoas trabalhando com Cursor, tente incluí-las também, porque os ambientes de agentes se comportam de maneira diferente e, claro, os modelos também. Então, talvez sua habilidade seja muito boa com Gemini, mas muito ruim com Codex, e então você tem clientes/consumidores usando seu ambiente com Codex e ele falha. E então, crie suas avaliações.
+
+Se o seu modelo for bom o suficiente para não precisar mais da habilidade, mantenha essa avaliação. Você não precisa descartá-la só porque descartou a habilidade. Você pode manter essa avaliação para garantir que o modelo ou o agente mantenha o desempenho e, assim que começar a ver alguma degradação, você pode reintroduzi-la. a habilidade. Você pode ajustar algumas outras ferramentas ou componentes para manter o desempenho e detectar quando pode aposentar uma habilidade. Você ficará surpreso
+
+com a rapidez com que pode aposentar uma habilidade que talvez precisasse há seis meses, mas que não precisa mais hoje. Tenho uma tarefa para você. Se você voltar do feriado na segunda-feira, escolha a habilidade mais usada e escreva cinco prompts de teste. Você também pode usar seu agente de codificação e pedir para ele analisar as trajetórias das habilidades mais usadas e tentar criar algumas novas habilidades. Como você viu, é muito fácil escrever seu ambiente de avaliação.
+
+É um arquivo JSON ou YAML e um script Python que executa seu agente de codificação ou seu ambiente de avaliação. Depois, observe o resultado. Definitivamente, tente remover as operações nulas (no-ops). Talvez isso não altere o desempenho da avaliação, mas ajuda a economizar custos, pois todos os tokens que não são úteis ou não alteram o comportamento do agente representam dinheiro gasto. Então, observe... Uma ótima dica de escrita de
+
+skills, do Matt. Você pode encontrar no GitHub e também executar o teste de ablação. Então, sempre execute o teste de avaliação com a sua skill carregada e sem ela . Só assim você saberá quando pode desativar uma skill ou se ela é realmente útil para o desempenho. Portanto, não publique skills sem realizar os testes de avaliação.
+
+Obrigado. [aplausos]

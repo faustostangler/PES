@@ -1,0 +1,100 @@
+---
+video_title: "The Prompt is the Platform - Dominik Tornow, Resonate HQ"
+video_id: DqtmZE6Hl0g
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=DqtmZE6Hl0g
+video_date: 2026-06-29T01:00:36+00:00
+video_description: |
+  Coding agents challenge long-standing software engineering practices. Instead of using general-purpose libraries, frameworks, or platforms, agents synthesize bespoke systems on demand. In this talk, I'll show where agents fail, where agents succeed, and the workflow for making the specification the product and the prompt the platform.
+  
+  Speakers:
+  - Dominik Tornow (Resonate HQ, Inc): Dominik Tornow is the founder and CEO of Resonate and the author of Think Distributed Systems. He has spent more than 20 years designing and building distributed systems and now focuses on agentic engineering, formal modeling, and formal verification.
+    X/Twitter: https://x.com/DominikTornow
+    LinkedIn: https://www.linkedin.com/in/dtornow/
+    GitHub: https://github.com/dtornow
+---
+Em 2026, os agentes de codificação irão aposentar silenciosamente sua primeira plataforma de software. Não porque seja ruim, mas simplesmente porque a plataforma é desnecessária. Meu nome é Dominic Tornow. Sou fundador e CEO da Resonate. Resonate é uma plataforma de execução robusta, construída com minimalismo e simplicidade como seus principais valores técnicos.
+
+E essas propriedades desempenharão um papel central nesta palestra. Na Resonate, temos uma teoria em desenvolvimento sobre para onde a engenharia de software está caminhando. Implementações de uso geral serão cada vez mais substituídas por implementações personalizadas geradas sob demanda. Não como uma nova biblioteca, uma nova estrutura ou uma nova plataforma, mas como uma extensão mínima da infraestrutura já existente. Se essa teoria se confirmar, a reutilização passará a ocorrer em etapas anteriores do processo.
+
+Em vez de reutilizar uma implementação de propósito geral , reutilizaremos uma especificação e, a partir dela, derivaremos uma implementação personalizada. Na verdade, podemos construir diversas implementações personalizadas, feitas sob medida para a infraestrutura já existente. Basta perguntarmos ao agente. Neste ponto, o estímulo é a plataforma. Resonate é uma plataforma de execução robusta .
+
+Temos uma implementação do servidor Resonate. Temos implementações do SDK Resonate para TypeScript, Python, Rust, Go e Java. Então, precisamos perguntar: o que essa nova realidade significa para nós? Se as implementações se tornarem geráveis, onde reside o nosso valor? E a nossa resposta?
+
+Nosso valor se desloca da implementação para a especificação. Agora, isso muda a forma como pensamos sobre o Resonate. O produto não é mais a implementação. O produto é a especificação, o protocolo. E a partir desse protocolo, queremos derivar múltiplas implementações de servidor.
+
+Uma delas é o servidor Resonate de uso geral , nossa implementação de referência. Outras são implementações construídas com parceiros de infraestrutura. Para clientes e parceiros, isso significa uma execução robusta diretamente sobre a infraestrutura existente, com dependências adicionais mínimas. Portanto, a questão não é mais se podemos construir um servidor? A questão é: podemos sintetizar servidores confiáveis ​​repetidamente a partir da mesma especificação?
+
+E se sim, como?
+
+Quando falamos de engenharia agética, concentramos toda a nossa atenção na verificação. Como sabemos que o resultado está correto? Mas hoje, quero me concentrar na especificação. E, mais importante ainda, como os agentes podem participar da especificação do sistema? Não se trata apenas de construir ou verificar.
+
+Agora, a Resonate está firmando parcerias com diversos provedores de infraestrutura para trazer execuções robustas nativamente para sua pilha de tecnologia. Uma delas é a Synadia, empresa por trás do NATS.io, um sistema de mensagens de código aberto projetado para a construção de sistemas distribuídos modernos. No restante desta apresentação, usaremos o Resonate no NATS.io para explorar nossas práticas de engenharia de agentes.
+
+Como passamos da especificação à implementação? Primeiro, precisamos nivelar nosso modelo mental. Esta imagem representa uma visão comum da decodificação de agentes. Existe um agente, existe uma especificação e existe uma implementação. E para muitas aplicações, isso é suficiente.
+
+Mas isso não é suficiente para o que estamos tentando fazer. Porque não estamos tentando gerar uma implementação a partir de uma especificação. Estamos tentando gerar múltiplas implementações específicas para cada alvo a partir da especificação. Portanto, a especificação não deve levar em consideração nenhum aspecto da implementação . A especificação não deve pressupor um esquema de banco de dados concreto ou índices concretos.
+
+A especificação não deve sequer pressupor um banco de dados relacional com tabelas e transações. Não deve pressupor um armazenamento de chave-valor. Não se deve assumir consistência fraca. Não se deve pressupor uma consistência rígida. A especificação deve ser abstrata.
+
+Apenas a implementação precisa ser concreta. Assim, pedimos ao agente que siga a especificação abstrata e gere uma implementação concreta. Especificamente, a princípio, pedimos ao agente: "Construa um servidor Resonate em Rust usando o Postgres." E o agente falhou. A diferença entre a especificação abstrata e a implementação concreta era muito grande.
+
+O agente gerou um sistema que funcionava no caminho ideal. Passou nos testes básicos, mas não estava correto. O problema ocorreu devido à concorrência. A falha ocorreu devido a uma interrupção no processo. A conexão caiu devido a uma falha na rede.
+
+A implementação se aproximou mais de um protótipo, mas não de um sistema de produção. Então, alteramos o processo. Em vez de pedir ao agente que saltasse diretamente da especificação abstrata para a implementação concreta, inserimos um artefato intermediário: a especificação concreta. Essa especificação concreta foi derivada de forma interativa com o agente. Mas o fator humano era o principal motor.
+
+Para o Postgres, isso significava tornar explícitas as decisões específicas para cada alvo. O esquema de dados, os índices, as consultas SQL, os limites das transações. Uma vez que essas decisões foram registradas por escrito, o agente pôde, de fato, implementar o sistema de produção. Então, isso funcionou. Mas também revelou as limitações.
+
+O agente nos ajudou a construir o sistema, mas não nos ajudou a projetá- lo. E se a especificação for um produto reutilizável, isso não basta. Agora, o próximo passo é óbvio. Os agentes precisam se deslocar rio acima. Mas como?
+
+Quando começamos a construir o Resonate no Natero, mudamos a pergunta. Não perguntamos: "O agente consegue construir o sistema de produção?" Em vez disso, perguntamos: "O que o agente precisa para primeiro projetar o sistema e depois construí-lo?" Assim, demos ao agente acesso a um ambiente de simulação determinístico. E demos a ela uma tarefa diferente.
+
+Não construa o sistema de produção. Crie uma implementação simulada. A implementação simulada não é o produto. É um projeto executável. Seu objetivo é descobrir o algoritmo correto sob ordem parcial e falha parcial.
+
+E uma vez que esses algoritmos sejam descobertos, testados e verificados em simulação, então pedimos ao agente que escreva a especificação concreta. E somente então pedir ao agente que escreva a implementação de produção. Assim, o processo se torna especificação abstrata, implementação de simulação, especificação concreta e, por fim, implementação concreta. Este é o ponto em que o agente se move rio acima. Os humanos ainda estão envolvidos no processo de design, mas agora o agente é o condutor.
+
+Dois ingredientes tornam isso possível. Minimalismo e simplicidade. Infelizmente, minimalismo e simplicidade não são o ponto de partida. Eles são a linha de chegada. Passamos 3 anos aprimorando e simplificando o protocolo.
+
+Sempre que nos deparávamos com um problema, perguntávamos: "O que podemos eliminar? Que abstração podemos apagar? Que propriedade podemos remover? Que relação podemos romper?" O resultado é um protocolo muito pequeno centrado em dois objetos: uma promessa duradoura e uma tarefa duradoura.
+
+Essa simplicidade é importante porque mesmo protocolos distribuídos concorrentes simples possuem um espaço de estados e comportamentos complexo. Em outras palavras, implementar até mesmo protocolos simples com base em algumas primitivas simples é difícil. Vamos concretizar isso com a NATS. O NATS nos fornece um pequeno conjunto de elementos primitivos sobre os quais podemos construir. Filas, um armazenamento de chave-valor e mensagens atrasadas ou agendadas.
+
+Esses não são conceitos que ressoam. Esses são os conceitos da plataforma alvo. Assim, a questão de projeto passa a ser: como podemos expressar o protocolo de ressonância usando apenas esses elementos primitivos? Vamos nos concentrar no armazenamento de valores-chave. O armazenamento de chave-valor é versionado.
+
+Criamos uma chave com o valor foo, depois a atualizamos para bar e, em seguida, para baz. Portanto, o valor mais recente é baz na versão dois. Na maioria das vezes, quando lemos a chave, é exatamente isso que obtemos. Uma leitura original. E se todas as leituras fossem originais, o design seria simples.
+
+Mas às vezes, a leitura se torna monótona. Aqui, o valor mais recente ainda é baz na versão dois. Mas a leitura retorna foo na versão zero. Isso não é corrupção. Isso não é um bug no armazenamento de chave-valor .
+
+Essa é uma leitura válida de acordo com o modelo de consistência da plataforma de destino. E isso é importante porque nossa implementação só pode estar correta quando o alvo se comporta de maneira conveniente. A implementação precisa estar correta quando o alvo se comporta de forma legal. Portanto, o ambiente de simulação precisa reproduzir exatamente esse tipo de comportamento. Leituras recentes, leituras antigas e as informações da versão que nos dizem em qual mundo estamos.
+
+Infelizmente, não sabemos se uma leitura está antiga apenas lendo. Descobriremos mais tarde, quando tentarmos escrever. Aqui, lemos a versão zero. Então, tentamos atualizar para a versão zero. Mas a chave já foi transferida.
+
+A direita falha. Esse é o momento em que o alvo nos diz que a palavra que você viu não é a palavra atual. Criar aplicações sempre corretas com base em um modelo de concorrência que permite leituras ocasionais de dados desatualizados não é simples. Não é para humanos. Não destinado a agentes.
+
+Então, como preparamos nosso agente para o sucesso? De que ferramentas nosso agente precisa para ter sucesso nessa tarefa em vez de fracassar miseravelmente ? Os agentes prosperam com feedback. Feedback imediato e inequívoco. Não se trata apenas de feedback que mostre que algo deu errado.
+
+Feedback que mostre por que e como isso deu errado. Qual valor obsoleto foi retornado? Qual lógica foi acionada? Que direito foi violado? E qual invariante foi quebrada por causa disso?
+
+Assim, construímos um ambiente de teste de simulação determinística em Python. E dentro desse ambiente, simulamos as partes do Nuts IO das quais dependemos . Aqui está, por exemplo, um armazenamento de chave-valor simulado. Ele mantém um histórico completo de versões para cada chave. Ao executar o comando `get`, o armazenamento simulado às vezes retorna a versão mais recente.
+
+Mas, às vezes, controlada pelo gerador aleatório determinístico , a loja retorna uma versão mais antiga . Na atualização, o armazenamento impõe concorrência otimista. O direito só prevalece se a versão que você está lendo ainda for a versão mais recente. Caso contrário, aumenta. Isso fornece ao agente uma loja que se comporta como a loja real nos aspectos importantes para a correção.
+
+Mas, ao contrário do alvo real, a simulação é determinística, repetível e passível de inspeção. Assim, quando o agente escreve o algoritmo errado, podemos reproduzir a execução exata que o quebrou. E o agente pode reparar o algoritmo com base nesse rastro. Mas a simulação determinística faz mais do que simplesmente inserir leituras obsoletas. Isso nos permite expor fatos que a plataforma real esconde.
+
+Chamamos a isso de fruto proibido. Em produção, ao ler do armazenamento de chave-valor, você obtém apenas o valor e a versão que observou. Você não tem como saber se a leitura foi original ou obsoleta. Você não terá acesso ao valor mais recente que perdeu. E você não deveria obter essa informação, pois o código real não pode depender dela.
+
+Mas, em simulação, podemos registrá-lo. Aqui, cada operação de obtenção de dados emite um evento de rastreamento. Se a leitura for recente, o rastreamento indicará: "Esta leitura foi recente". Se a leitura estiver desatualizada, o rastreamento indicará: "Isso estava desatualizado. Isto é o que você obteve e este era o valor mais recente."
+
+Essa informação é proibida para o algoritmo, mas é incrivelmente útil para o agente. Isso nos permite explorar as falhas em termos sobre os quais o agente pode agir. Eis como se parece um evento de rastreamento . O código de produção recebe apenas o resultado. Constata-se que a promessa estava pendente.
+
+Isso é tudo o que a plataforma real nos diria. Mas a simulação também registra o tipo de leitura. Essa leitura foi enfadonha . E registra o último valor que estava oculto do algoritmo. O valor mais recente indica que a mesma promessa já foi cumprida.
+
+Essa diferença é exatamente o tipo de informação que um agente precisa ao depurar um algoritmo distribuído. Não apenas o invariante falhou, mas o invariante falhou porque o algoritmo tomou uma decisão a partir de uma visão desatualizada do mundo. Novamente, o algoritmo não pode depender dessa informação, mas o agente pode usá-la para explicar por que o algoritmo que ele projetou estava errado. A relação de causa e efeito torna-se visível. O agente não aprende apenas que o sistema está errado, ele aprende por que o sistema está errado.
+
+E com essa abordagem, o agente conseguiu reduzir a diferença. Primeiro, o agente construiu uma prova de conceito no simulador determinístico, verificada por meio de testes de fuzzing. A partir da prova de conceito, o agente derivou a especificação concreta, onde já sabíamos que o algoritmo estava correto. E, como antes, a partir da especificação concreta, o agente derivou uma implementação. A simulação determinística permite que os agentes participem do projeto, e não apenas da implementação. Os
+
+humanos ainda estão no processo de design, mas desta vez o agente é o condutor. A partir de uma única especificação abstrata, o agente projetou e construiu a plataforma. Da simulação à especificação concreta e à implementação concreta. O prompt é a plataforma e a especificação é o produto. Muito obrigado por assistir. Caso
+
+tenha alguma dúvida, não hesite em entrar em contato. Você me encontrará no Discord da Resonate.

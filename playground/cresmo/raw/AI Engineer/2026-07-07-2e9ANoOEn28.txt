@@ -1,0 +1,158 @@
+---
+video_title: "What if the harness mattered more than the model? - Aditya Bhargava, Etsy"
+video_id: 2e9ANoOEn28
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=2e9ANoOEn28
+video_date: 2026-07-07T23:31:54+00:00
+video_description: |
+  The models are getting so good now that all you need is a simple harness, some tools, and a loop... right? Aditya Bhargava argues that this direction promotes overreliance on large, proprietary models, and we should be focusing on building harnesses that improve the performance of models that can be run locally.
+  
+  Speakers:
+  - Aditya Bhargava (Etsy): Aditya Bhargava is a Staff Engineer and IC Initiative Lead of Agentic Commerce at Etsy.
+    GitHub: http://github.com/egonSchiele
+---
+Oi pessoal. Meu nome é Audit, pronuncia-se Audit como em auditoria fiscal. E estou aqui para falar com vocês sobre o que aconteceria se o arnês fosse mais importante do que o modelo? Primeiro, um pouco sobre mim. Sou engenheiro de equipe na Etsy. Também sou a líder da iniciativa IC da Etsy
+
+para agentes de comércio. Escrevi Grokking Algorithms, que é um livro ilustrado sobre algoritmos. Ah, e eu também faço posts ilustrados no ducktyped.org. E eu quero conversar com você sobre o que aconteceria se o arnês fosse mais importante do que o modelo?
+
+Com isso quero dizer, e se devêssemos dar mais atenção ao desenvolvimento de conhecimento especializado em arneses? Bem, minha opinião polêmica aqui é que ouço muita gente dizer: "Ah, os modelos são tão bons que você pode manter o arnês simples. Basta dar algumas ferramentas ao modelo e ele fará o resto." E tenho ouvido isso com tanta frequência que agora começou a se tornar um princípio básico da indústria de tecnologia. Bem, minha resposta é: "Sim, mas isso é ir na direção errada, porque nos torna dependentes de modelos proprietários sofisticados que não podem ser executados localmente.
+
+Então, e se falássemos sobre a direção oposta? E se nos concentrássemos em modelos de código aberto que podem ser executados localmente? E se nos concentrássemos em construir uma estrutura tão boa que pudéssemos obter o desempenho de um modelo de ponta por meio de um modelo local de código aberto? Então, e se a estrutura fosse mais importante do que o modelo? E se nosso foco devesse ser na estrutura?
+
+Quão importante é uma estrutura ? Isso é algo que tenho pesquisado bastante no meu tempo livre. Há um artigo muito interessante que fala sobre o Harness Bench, que é um benchmark para estruturas, algo que ainda não vimos muito . Ele tem 106 tarefas. Ele testa esses diferentes modelos em diferentes estruturas.
+
+Mas a questão é que ele está executando a mesma configuração. Está fazendo a mesma avaliação, o mesmo modelo, mas testando diferentes estruturas. Os resultados são bem interessantes. As pontuações variam de 52,4% a 76,2%. Ou seja, uma diferença de mais de 20 pontos, e apenas o framework mudou.
+
+E o mais interessante é que, para modelos mais fracos, o framework faz mais diferença. Se o framework importa mais do que o modelo, isso é uma ótima notícia. Porque se o modelo importa mais, dependemos de um punhado de empresas capazes de construir e treinar esses modelos. Mas se um bom framework puder compensar e melhorar o desempenho de um modelo mais fraco , podemos construir nossos próprios frameworks, algo que qualquer um de nós pode fazer, sem depender de modelos pagos. Tenho dedicado muito tempo e pesquisado bastante sobre o que seria necessário para construir um framework realmente bom.
+
+E percebi logo no início que nenhuma das ferramentas ou frameworks existentes era capaz de fazer o que eu queria. E percebi que o que realmente precisávamos era de uma solução em nível de linguagem. Então, este é o meu outro ponto polêmico nesta palestra: acho que construir um bom framework é fundamental. Na verdade, o recurso de "harp" requer suporte em nível de linguagem . E é nessa direção que minha pesquisa se concentrou nos últimos 6 meses, e passei boa parte desse tempo desenvolvendo uma nova linguagem chamada Agency, que é uma linguagem para construir agentes.
+
+Só para esclarecer rapidamente a terminologia, já que os termos "agente" e "harp" ainda não são muito claros na indústria. Eles não estão muito bem definidos. Mas nesta apresentação, usarei os termos de forma intercambiável. Quando falo de agente, na verdade me refiro ao "harp" e ao modelo. Por exemplo, se você pegar o código Claude, o código Claude é um agente. Ele usa Opus,
+
+que é o modelo, e todo o resto é o "harp". Mas, quando falamos de Agency, estamos falando da construção de agentes, e o que ela oferece é o "harp". Agency é realmente muito bom. É uma linguagem nova, e construir uma nova dá muito trabalho, e ela só tem 6 meses. Mas eu adoro esta citação de Alan Kay: " Coisas simples devem ser simples, coisas complexas devem ser possíveis." Uma das coisas que
+
+eu adoro no Agency é que , quando as pessoas criam agentes, existem muitos elementos básicos, muitas coisas que todo agente precisa ser capaz de fazer, e essas coisas devem ser simples de fazer. E existem muitas coisas complexas que queremos ser capazes de fazer com agentes, e deve ser possível fazer essas coisas na estrutura de sua escolha, e com o Agency isso é possível. Então, agora temos um objetivo claro, que é tentar construir a melhor estrutura possível. E temos uma ótima ferramenta para isso, que é o Agency. Então, no restante desta apresentação, falarei sobre a construção de um agente de programação no Agency.
+
+E veremos o mesmo agente evoluir em sete exemplos diferentes. Veremos o mesmo modelo, a mesma tarefa, mas a estrutura melhorará a cada vez, e veremos a estrutura melhorar o desempenho do agente a cada vez. Então, como eu disse, tenho pesquisado bastante sobre isso. Meu objetivo com esta apresentação é fornecer a vocês o básico da construção de uma estrutura. Sobre construir um bom sistema de controle, o que isso significa?
+
+Você está começando do zero, quais são os princípios básicos? Bem, vou abordar bastante a segurança do agente porque, quando falamos em construir agentes, o que realmente queremos é que eles sejam capazes de agir em nosso nome. Mas o grande problema é como dar aos agentes as capacidades necessárias para que eles possam agir, mas não tantas a ponto de fazerem algo inseguro. Então, quando falamos de qualidade e capacidade do agente, a segurança do agente está intimamente ligada a isso. No final, farei uma introdução a alguns conceitos mais avançados, como subagentes e auto-otimização.
+
+Acho que é aí que as coisas mais interessantes começam, e realmente começamos a falar sobre todas as possibilidades, porque quando se fala em construir um bom sistema de controle, há muitas coisas para explorar. Então, espero que você fique comigo até o final, porque é aí que entramos em assuntos realmente interessantes. Este é o código que vamos pedir ao nosso agente de codificação. Para editar. Este é um código para calcular a mediana de uma lista ordenada de números.
+
+Se a lista tiver um número ímpar de elementos, basta pegar o elemento do meio. Se tiver um número par de elementos, você precisa pegar os dois elementos do meio e calcular a média entre eles. Mas, no momento, esta função não faz isso. Portanto, há um bug nesta função. Há um teste que mostra a falha e vamos pedir ao nosso agente para corrigir este código.
+
+Então, vamos começar. Vamos mergulhar de cabeça. Este é o primeiro exemplo. Este é o código do agente. E você notará que o código do agente se parece muito com TypeScript. Ele é
+
+fortemente inspirado no TypeScript com algumas sintaxes de Python adicionadas. O ponto de entrada é este nó `main`. Eu tenho um prompt simples: "A função `median` do Python em `demo/median.py` tem um bug. Por favor, corrija o bug."
+
+E eu simplesmente passei esse prompt para a função `LLM`. Obtenho o resultado e o imprimo. E, claro, isso não vai funcionar porque não consegue ler ou escrever em este arquivo. Então, vamos executar este exemplo rapidinho.
+
+Ok. Então, claro, como esperado, ele diz que para me ajudar a corrigir o bug, preciso ver o código existente. Hum, então este é apenas o modelo. Uma estrutura muito pequena e, claro, não pode fazer nada. Portanto, a melhoria mais óbvia para qualquer estrutura é adicionar algumas ferramentas.
+
+Então, rapidinho, vamos falar sobre como as ferramentas funcionam na agência, porque é muito simples. Hum, vou definir uma função. Neste caso, apenas como exemplo, vou definir uma função de saudação que cumprimenta um usuário. E então farei uma chamada LLM que diz: "Use sua ferramenta de saudação para cumprimentar o usuário ". E então passarei essa ferramenta.
+
+Hum, e cada função pode ser usada automaticamente como uma ferramenta na agência. Então, não há mais nada a fazer. A agência cria um esquema JSON a partir desta função e o envia para a chamada LLM. A docstring aqui será usada como uma descrição da ferramenta. Então, vamos executar o segundo exemplo.
+
+Então, NPX agency Oops, Na verdade, é um exemplo da agência NPX, já que vamos falar sobre ferramentas primeiro. Então, o que é uma auditoria? E como podemos saber que ela executou essa ferramenta e gerar um exemplo, certo? Vou mostrar rapidamente. A agência grava logs e tem um ótimo visualizador de logs integrado.
+
+Vou expandir esta última execução e você pode ver aqui que ela está chamando a função `greet` com esses parâmetros. A ferramenta responde retornando "howdy audit" e o assistente simplesmente nos passa isso de volta. Então, isso é o que são ferramentas. Agora, vamos ver como usar as ferramentas na Agência. Novamente, este é o próximo passo do nosso agente, que é fornecer ferramentas a ele.
+
+Aqui está um exemplo em que estamos dando ao agente as ferramentas de leitura e gravação. Novamente, leitura e gravação são funções integradas à Agência e, como toda função pode ser usada como uma ferramenta, posso simplesmente passar isso diretamente para o LLM. Mas dar ao agente a capacidade de ler e gravar arquivos arbitrários em nosso sistema de arquivos é realmente... inseguro. Portanto, por padrão, o Agency
+
+não permitirá que você faça isso. O Agency possui um recurso de intervenção humana que exigiria algum tipo de aprovação. Não estamos fornecendo essa aprovação em lugar nenhum, então este código irá falhar e imprimir um erro. Deixe-me mostrar como isso se parece.
+
+Ótimo. Então, a interrupção de leitura padrão não foi tratada. Sua mensagem de interrupção: "Tem certeza de que deseja ler este arquivo?" Você pode ver o nome do arquivo que está tentando ler e, basicamente, está nos dizendo que não aprovamos esta interrupção. E está nos dando uma referência ao guia, certo? Que
+
+nos diz como usar manipuladores. Então, começamos apenas com um modelo, tentamos ferramentas e o próximo passo é tornar as ferramentas seguras. Portanto, faremos exatamente o que essa mensagem nos pediu para fazer e usar um manipulador. Então, aqui está o mesmo código que você conhece, passando as funções de leitura e gravação como ferramentas. Mas agora ele está envolvido em um bloco de manipulador e possui uma função manipuladora.
+
+Aqui está. Então, agora, quando essas ferramentas chamarem ou gerarem uma interrupção, este código será executado. Ele imprimirá as informações sobre a interrupção. Em seguida , solicitará a entrada do usuário usando a função de entrada integrada. E se o usuário aprovar, a chamada da ferramenta será aprovada.
+
+Eu sei que estou dizendo "interrupção" e não estou realmente definindo o que isso significa. Posso explicar isso mais tarde, mas é essencialmente uma maneira de pausar a execução em algum ponto e solicitar a entrada do usuário. As interrupções são um ótimo recurso do Agency, e todas as funções da biblioteca padrão do Agency que modificam o código, alteram algo, têm algum tipo de ação destrutiva ou leem dados confidenciais, todas geram uma interrupção primeiro. Então, aqui está a versão segura do nosso agente, onde as ferramentas gerarão uma interrupção por padrão, e agora este código perguntará ao usuário: "Você aprova?".
+
+Vamos executar este exemplo. "
+
+Ok, você tem certeza de que deseja ler este arquivo?". Vou dizer que sim. Você pode ver que está lendo. Agora está tentando escrever nesse arquivo. Então,
+
+sabe, esse é um exemplo de [bufa] como tornamos o agente mais seguro ao solicitar a entrada do usuário. E isso é melhor e seguro, mas também muito lento. Então, a próxima coisa que queremos fazer é tornar o agente autônomo, mantendo-o seguro, e essa é a parte complicada, certo? Como dar a ele capacidade suficiente para que você não precise aprovar manualmente cada ação, sem dar tanta capacidade a ponto de ele poder fazer algo destrutivo com o seu sistema de arquivos? Bem, o agente tem um recurso muito interessante para lidar com isso. Chama-se
+
+aplicação parcial de função. [limpa a garganta] É um conceito emprestado da programação funcional. É um termo sofisticado para um conceito bastante simples. Então, aqui está a assinatura da ferramenta de leitura, certo? Ela recebe um nome de arquivo e um diretório.
+
+E quando você lê um arquivo, ela procura dentro desse diretório pelo nome do arquivo. E com a aplicação parcial de função, o que fazemos é pegar essa função de leitura e Chame a função parcial e forneça um diretório. O que estamos fazendo aqui é bloquear o argumento do diretório para `demo`. O LLM não poderá alterar esse argumento. Ele nem saberá que esse argumento existe. Quando passarmos a
+
+ferramenta de leitura, ela verá apenas um parâmetro, que é o nome do arquivo. Ela passará um nome de arquivo e lerá esse arquivo deste diretório. Portanto, bloqueamos o parâmetro do diretório. Agora, o agente só pode ler e gravar arquivos neste diretório. A aplicação parcial de funções é uma ótima maneira de restringir as capacidades do seu agente. Não é necessária nenhuma intervenção humana
+
+, mas ainda assim é seguro. Vamos ver isso em um exemplo. Novamente, execute `NPX agency examples`. PFA significa aplicação parcial de funções. Aqui, ele está processando e você pode ver que leu o arquivo.
+
+Não precisou nos pedir permissão. E agora, para corrigir esse problema, ele nos fornece um novo código. Não está atualizando o código. Pergunta: "Você gostaria que eu atualizasse o arquivo com esta função corrigida?" Mas não fez isso por conta própria. Então,
+
+sabe, esta versão do agente é a melhor que vimos até agora porque nos dá a solução correta sem a necessidade de intervenção humana, mas não corrigiu o código de fato. Portanto, o próximo passo é fazê-lo corrigir o código. E é aí que entra o ciclo de feedback . Existe um padrão de agente muito popular chamado React. React significa "raciocinar e agir".
+
+Essencialmente, você está pedindo ao agente para trabalhar neste ciclo: raciocinar, agir, observar as consequências da sua ação e, em seguida, decidir o que fazer a seguir. Então, neste caso, raciocinar, ler os dois arquivos, agir, executar os testes, observar, se os testes falharem, ler o erro e raciocinar novamente. Ou seja, analisar a falha do teste e pensar no que fazer a seguir. E fazer isso em um ciclo até que os testes passem. Este é um padrão fundamental para aprimorar o agente.
+
+Então, agora vamos ver o mesmo agente. A única coisa que estamos mudando é o prompt, dando a ele a capacidade de executar esses testes, e agora o agente deve funcionar melhor. Neste caso, também vou imprimir todas as chamadas de ferramentas para que você possa ver o que está acontecendo. Hum, bem,
+
+talvez... Certo, espere um pouco . Está sempre lá.
+
+Pronto. Ok. Agora, vamos vê-lo em ação. Hum, agora você pode ver que ele está chamando as ferramentas. Está lendo esses dois arquivos, como dissemos.
+
+Está executando os testes. Os testes falham. Está escrevendo no arquivo. Está executando o teste novamente e confirmando o sucesso. Então, esta é uma etapa muito importante no desenvolvimento do harness, porque agora finalmente temos um agente que descobre a tarefa com sucesso, verifica se o código está falhando, modifica o código e verifica se o código agora passa.
+
+Hum, vamos falar sobre como melhoramos o harness até agora. Começamos apenas com o modelo, que não conseguia fazer nada. Depois adicionamos ferramentas, mas o agente não estava... seguro. Depois, adicionamos
+
+manipuladores, que aumentaram a segurança, mas exigiam intervenção humana. Em seguida, adicionamos a aplicação parcial de funções , que era segura sem exigir intervenção humana. E, finalmente, o último que acabamos de analisar foi um loop de feedback, que adicionou raciocínio. Assim, o agente fez a alteração e confirmou que ela funcionou. Então, tenho mais dois exemplos.
+
+Este aqui vamos em uma direção um pouco diferente. E é aqui que estamos entrando em alguns conceitos mais avançados. Então, este é sobre subagentes. Tudo o que fizemos até agora tornou a mesma tarefa melhor. Mas com subagentes, estamos perguntando: "Como fazer o agente realizar mais tarefas?"
+
+Deixe-me mostrar rapidamente como esse código se parece.
+
+Ok. Então, este programa, vou começar mostrando o prompt que estamos dando a ele, porque é um pouco diferente. Então, corrija o teste com falha em testmedian.py. Em seguida, pesquise a desigualdade de Jensen para medianas com o agente da Wikipédia e explique-a para mim na forma de rede.
+
+Aqui está um caso em que estamos realmente... Pedindo ao agente para fazer um pouco mais, certo? E este é interessante porque este é o nosso agente principal, mas para as ferramentas, não estamos dando a ele as funções de leitura e escrita. Em vez disso, estamos
+
+dando a ele dois subagentes como ferramentas. E eu realmente gosto desse padrão no Agency porque já vi muitos frameworks criarem subagentes como um conceito próprio, o que os torna difíceis de entender. No Agency, um subagente é apenas mais uma função. E você simplesmente o chama e o usa como uma ferramenta, assim como faria em qualquer outro lugar. E essa consistência traz muitos benefícios. Torna muito fácil escrever
+
+e entender o código. Então, aqui está o subagente do agente de codificação . O mesmo de antes. Sabe, há uma mensagem do sistema. Este subagente tem sua própria chamada LLM e recebe seu próprio conjunto de ferramentas.
+
+[bufa] Da mesma forma, você tem o agente da Wikipédia que tem sua própria ferramenta, que é a ferramenta de busca. Que é uma ferramenta integrada à biblioteca padrão do Agency que permite pesquisar na Wikipédia. Então, o Agency tem uma grande biblioteca padrão que permite fazer todos os tipos de... coisas,
+
+incluindo esta ferramenta de busca da Wikipédia. Também estou usando o recurso de retorno de chamada para imprimir as informações da chamada da ferramenta. E agora, vamos ver este exemplo em ação. Este é um exemplo em que estamos pedindo ao agente para fazer um pouco mais. E estamos dando a ele dois subagentes para realizar sua tarefa.
+
+Então, aqui você pode ver que ele está chamando esses dois subagentes. Ele os está chamando em paralelo, então o agente da Wikipédia está fazendo a busca, o agente de codificação está modificando o arquivo, e isso corrigiu o erro, e agora aqui está um limerique. Então, subagentes são legais porque permitem adicionar novas funcionalidades sem sobrecarregar o contexto. E este é um bom padrão porque permite que seu agente, quando tiver muitas ferramentas diferentes à sua disposição, faça a coisa certa de forma mais consistente. Muitas vezes, quando os agentes ficam confusos e falham, é porque têm muito contexto, mas também porque têm muitos conceitos não relacionados em seu contexto. E têm
+
+muitas ferramentas não relacionadas. E, portanto, têm dificuldade em escolher a ferramenta certa para usar. Neste caso, Simplificamos bastante esse problema . Para o agente de nível superior, basta dizer: "Escolha o subagente que deseja chamar". E os subagentes têm ferramentas agrupadas de uma forma lógica.
+
+Agora, vamos ao último exemplo, que é a auto-otimização. O Agency possui um otimizador Japa integrado. Na verdade, ele tem vários otimizadores integrados, mas o Japa é realmente interessante. O recurso de otimização funciona da seguinte forma: você marca as variáveis que deseja que o otimizador otimize. Basta usar o modificador `optimize`. Em
+
+seguida, você executa o otimizador e define um objetivo. Neste caso, você pode ver que os dois prompts iniciais são bem básicos. Estou fornecendo pouquíssimas informações. E o objetivo que defini é: "Corrigir o bug em median.py usando TDD".
+
+A razão pela qual isso representa um grande avanço para nossa plataforma é que não estamos mais fazendo tentativa e erro. Não estamos mais apenas testando coisas para ver o que acontece. funciona. Em vez disso, agora temos uma maneira de medir e melhorar o desempenho sistematicamente. Então, vou executar este código.
+
+Hum, na verdade, vou reiniciar também.
+
+Aqui, vou modificar este código.
+
+Legal. Então,
+
+não vou mostrar a execução completa aqui porque o otimizador leva um tempo, mas você pode ver que primeiro ele verifica quais prompts precisa otimizar. Ele executará o agente para estabelecer uma linha de base. O objetivo da linha de base é 0,2 e ele tentará melhorá-lo. Neste caso, executei o otimizador anteriormente apenas para mostrar como seria uma execução completa. Hum, e aqui está um exemplo onde você pode ver que ele atingiu o objetivo na primeira iteração, então foi bem rápido neste caso.
+
+Hum, e você pode ver que ele reescreveu este prompt. Hum, a razão pela qual essa auto-otimização é tão boa é porque não estamos adivinhando e testando. Estamos medindo e melhorando sistematicamente, o que é um grande avanço. Então, esta é a escada que acabamos de percorrer. para melhorar o sistema.
+
+Bem, o primeiro passo foi não fazer nada, apenas criar um modelo que nem sequer conseguia ler o arquivo. Depois, adicionamos ferramentas, mas de uma forma insegura e proibida pela agência. Em seguida, adicionamos manipuladores, o que aumentou a segurança, mas tornou o processo mais lento, pois exigia intervenção humana. Em seguida, adicionamos a aplicação de funções parciais , que era segura e rápida. Em seguida, adicionamos o raciocínio, o que nos deu maior confiança no resultado do agente.
+
+E então mudamos para subagentes, adicionamos mais funcionalidades e, finalmente, fizemos a auto-otimização. Assim, obtivemos uma melhoria mensurável, e não uma abordagem de tentativa e erro. Então, sabe, espero que isso lhe dê uma ideia de como você pode construir arreios e, em seguida, aprimorá-los gradualmente . E eu espero que você tente fazer isso e participe dessa experimentação comigo para ver se conseguimos construir um arnês melhor. Porque o que importa no arnês é mais importante do que o modelo. Sabe, e se pudéssemos
+
+construir um chicote de fios tão bom que pudéssemos começar a usar modelos locais e ainda obter o desempenho necessário para as tarefas que queremos realizar? Então, qual o nível de suporte linguístico que a Agência oferece? Sabe, usamos a agência em todos esses exemplos. Como isso ajudou? Uma sintaxe simples para definir ferramentas.
+
+Como você sabe, o que é simples deve ser simples. Todo agente precisará de ferramentas. Vamos facilitar o uso deles. Ferramentas de segurança, muito importantes para os agentes. Então, manipuladores de interrupções, PFA.
+
+Pausa verdadeira e retomada da execução. Não abordei esse assunto em detalhes porque não queria que a apresentação ficasse muito longa. Mas uma das funcionalidades realmente incríveis do Agency é que, quando você gera essa interrupção, a execução é pausada e o controle é devolvido ao usuário. Mas de uma forma que permita retomar a execução mais tarde. E, pelo que sei, pouquíssimas linguagens permitem fazer algo assim. Assim, normalmente, a
+
+maioria das estruturas que você usa, se tiverem um recurso de intervenção humana, apresentam muitas restrições. Há muitas coisas que você precisa fazer para contornar isso. Agência é completamente diferente. Se você quisesse, poderia, sabe, gerar interrupções dentro de um loop for, dentro de uma chamada de ferramenta, dentro de um subagente. E , corretamente, pausaria a execução, retornaria ao usuário e, em seguida, retomaria a execução naquele ponto exato dentro daquele subagente, dentro daquela chamada de ferramenta, naquele ponto exato daquele loop "for".
+
+Hum, o que é muito legal. Você pode serializar a execução, pode voltar a ela uma semana depois e não precisa alterar nada em todo o código que estávamos analisando. Simplesmente funciona, o que é muito legal. Ah, ele também possui esses otimizadores integrados, que são ótimos, sabe, que te levam a uma abordagem mais analítica e matemática para realizar as melhorias. Então, se você quiser experimentar , fique à vontade. Você pode instalar via mensagem privada.
+
+Tudo o que você precisa é do pacote e de uma chave de API, e pronto. Bem, as principais conclusões são que, para esta conversa, um agente é como um modelo e um instrumento de articulação . Hum, um chicote de fios melhor resulta em melhor desempenho, especialmente para modelos mais fracos. E então, como se constrói um arnês melhor? Dê a ele ferramentas, torne-o seguro, torne-o autônomo, faça-o raciocinar, dê a ele subagentes e faça-o se auto-otimizar.
+
+Muito obrigado. Novamente, meu nome é Aditya Parikh, dê uma olhada na agência agencylang.com, e depois, se quiser, siga-me no Blue Sky. Obrigado. Tomar cuidado.

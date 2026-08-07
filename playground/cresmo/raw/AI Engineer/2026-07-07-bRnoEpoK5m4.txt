@@ -1,0 +1,97 @@
+---
+video_title: "The Pipeline Is Dead - Iris ten Teije, Sky Valley Ambient Computing"
+video_id: bRnoEpoK5m4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bRnoEpoK5m4
+video_date: 2026-07-07T03:46:29+00:00
+video_description: |
+  The entire software distribution stack assumes one version of your software, the same for everyone. It was the only thing we could afford when producing a change was expensive. Now it's nearly free, and it can happen at runtime, on the client, in the user's session, so the line between distribution and development is dissolving. This talk is about the infrastructure that has to catch up: where truth lives when every user runs a different version, how you debug a program that exists for one person, and why a million per-user versions can be more contained than the single tangled codebase you run today. Real architectural decisions, the tradeoffs that don't have clean answers yet, and what we're learning at the frontier.
+  
+  Speakers:
+  - Iris ten Teije (Sky Valley Ambient Computing): Iris ten Teije is a serial entrepreneur currently building Differ: infrastructure for adaptive software.
+    X/Twitter: x.com/iristenteije
+    LinkedIn: http://linkedin.com/in/iristenteije
+---
+Como estamos online hoje, você não pode levantar a mão, mas apenas acene com a cabeça para a tela. Quantos de vocês passaram uma parte significativa de suas carreiras fazendo com que softwares fossem migrados de um computador para outro? Pipelines de CI, empacotadores, registros, imagens de contêiner, avaliações da loja de aplicativos. Toda essa estrutura existe para resolver exatamente um problema. Obtenha um artefato congelado, esse código, da máquina onde foi compilado para a máquina onde será executado, de forma segura, reproduzível e única. Eis o que
+
+eu acho que todos estão deixando passar. Toda essa estrutura é construída em torno de uma ideia tão antiga que deixamos de vê-la como uma escolha. Uma única versão do seu software para todos. Já faz tanto tempo que enviamos assim que quase ninguém mais pergunta o porquê. Eu sou Iris. Sou um dos cofundadores da
+
+Differ. Meu sócio, Noam, foi o primeiro engenheiro da JFrog. Ele ajudou a construir o oleoduto que, como vou lhes dizer agora, está morrendo. Eu abordei a questão pelo outro lado. Passei uma década no setor de fintech. Estive presente desde o início
+
+em um banco digital que escalamos e do qual nos desvinculamos. Distribuir software nos ambientes menos tolerantes ao que estou prestes a propor. Então, eu entendo perfeitamente quaisquer reservas e eu mesma já as tive também. No entanto, estou lhe dizendo que isso vai acontecer de qualquer maneira. E isso não é um aviso. É a melhor
+
+coisa que aconteceu ao software em muito tempo. Cada componente da infraestrutura de distribuição que você tenha utilizado parte da mesma premissa. O software é produzido em um único local. Funciona em outro. Tudo o que estiver no meio, o artefato, está congelado.
+
+E essa suposição estava correta. Durante décadas, isso foi simplesmente verdade. Por que? Porque produzir o troco correto era caro. Foram necessárias horas ou dias de trabalho de pessoas especializadas.
+
+Então, você fazia isso raramente. Foi um evento central. Você verificou e congelou. E você enviou essa coisa congelada para todo mundo. Portanto, o fluxo unidirecional não é arbitrário.
+
+É a consequência direta do fato de a produção de software ser cara e arriscada. E, claro, o artefato congelado tem algumas vantagens. Você obtém reprodutibilidade, visualização prévia e reversão. E todas as garantias em que nos apoiamos na produção decorrem de um único fato. Existe um artefato e ele não se altera após o envio.
+
+Esse é o acordo. Uma versão para todos, congelada. Chamamos isso de confiabilidade. Mas o preço a pagar era que o software não podia ser realmente para ninguém em particular. E ninguém jamais tomou essa decisão.
+
+Nunca houve uma reunião em que alguém apresentasse uma versão para todos em vez de uma versão para cada pessoa e escolhesse a primeira. E não foi porque a segunda opção, uma versão para cada pessoa, fosse pior. Simplesmente não era uma opção. Fornecer softwares diferentes aos usuários significava criar forks do código-fonte e manter ambos manualmente. Uma versão por usuário em uma escala real não era uma opção viável.
+
+E nunca foi preciso haver uma versão única para todos vencer uma discussão. Era assim mesmo . Era a única forma que o software podia assumir. E começamos a tratar isso como um fato sobre software, como a gravidade, como algo que simplesmente é verdade. Mas isso nunca foi realmente um fato sobre software. Era uma questão de custo,
+
+orçamento e economia, e esse custo simplesmente mudou. Bem, vocês podem esperar que eu fale sobre o código do AI 10, mas todos já disseram isso, e trata-se de apostas estáveis, e para mim essa não é realmente a parte interessante. O interessante é onde e quão barato isso se tornou. O custo de produzir uma alteração de escopo correta está caindo para perto de zero e, igualmente importante, a produção do software não precisa mais acontecer em um único local antes que alguém o execute. Parte do processo pode ser executado no servidor, parte no cliente e parte durante a sessão ativa do usuário.
+
+E como cada etapa deixa de ser uma decisão congelada no momento da construção e passa a se tornar algo mais em tempo real, isso também significa que cada peça pode ser colocada onde fizer mais sentido, inclusive bem na frente do usuário, em seu contexto. Assim, todo esse fluxo unidirecional existia porque desenvolver software era o evento caro, central e raro, enquanto executá-lo era barato. Então você separou o desenvolvimento da distribuição. Mas agora, como fazer uma mudança se tornou tão barato quanto operar um sistema e pode acontecer no mesmo lugar onde você o opera, a razão para separá-los está se dissolvendo. Até agora, falei sobre o lado da oferta.
+
+Produzir código tornou-se barato e fácil. Agora podemos fazer alterações para cada usuário individualmente. Mas também quero abordar a questão da demanda . As pessoas sempre quiseram softwares que se adaptassem às suas necessidades, e temos décadas de provas disso. Simplesmente não era possível para a maioria dos tipos de software devido ao custo.
+
+Para começar com um exemplo, o engenheiro destacado na linha de frente . O software empresarial sempre teve uma rubrica chamada serviços profissionais, e existe toda uma indústria em torno disso. Se você é um cliente importante de uma empresa como a Salesforce, provavelmente tem consultores que o ajudam a implementar configurações e soluções personalizadas. Você tem um engenheiro presente no seu canal do Slack, e não é que clientes menores não possam se beneficiar desse tipo de personalização. Financeiramente, isso simplesmente não fazia sentido até hoje.
+
+Para dar outro exemplo que pode ser familiar para vocês, engenheiros, pensem nos seus arquivos de configuração (dot files), na configuração do editor e nos atalhos de teclado. Em cada máquina, você reconstrói manualmente cada ferramenta que utiliza. É mais um exemplo da demanda por software personalizado. E, por último, o Excel, o software empresarial de maior sucesso já criado. E o Excel não é exatamente um programa estático.
+
+São milhões de pessoas que criam seus próprios programas com base nisso. Então, é aí que fica. Dê às pessoas o poder de criar softwares que as tornem únicas, e elas o farão. Observa-se no feed das redes sociais que cada usuário obtém ganhos com base em uma abordagem padronizada para todas as métricas relevantes. Este é mais um exemplo de conteúdo versus software.
+
+Mas agora que temos uma codificação melhor novamente, agora que temos agentes de codificação e agentes de codificação melhores, podemos mover isso também para a camada de software. Então, o que quero dizer é que nada disso representa uma demanda realmente nova. Já vimos isso acontecer por décadas. Já existiram predecessores como sinalizadores de recursos, segmentação e testes A/B . Existe uma indústria enorme em torno disso, e nós temos tentado fazer com que o software se diversifique há muitos anos.
+
+Mas somos forçados a assumir um formato específico, o de criar compartimentos e segmentos que você declara antecipadamente. E agora, pela primeira vez, podemos tornar o software verdadeiramente adaptativo. Então, voltando ao título desta palestra, quando o agente é o ambiente de execução, quando aquilo que executa o seu software também pode modificá-lo, o desenvolvimento e a distribuição deixam de ser duas fases separadas. A fronteira se torna difusa e desaparece. E a estratégia que adotamos na Differ é que, em vez de uma base de código única controlada por flags e distribuída para todos, você implementa um código-fonte canônico e cada usuário executa sua própria versão derivada dele.
+
+Mesma origem, mas adaptadas individualmente ao vivo. Trata-se de passar da versão menos acessível para todos para a melhor versão disponível para qualquer pessoa. Agora, se você for uma dessas pessoas, talvez esteja um pouco preocupado. Você pode estar sentindo um frio na barriga porque acabei de deletar o artefato congelado, e era esse artefato que estava sustentando todo o prédio. E nós recebemos essas objeções, por exemplo, em uma ligação que tive recentemente com um diretor de tecnologia (CTO) que, com razão, está cético. O que ele
+
+disse, em resumo, foi: "Eu já mal consigo raciocinar sobre uma única base de código gerada por IA. E você quer que eu execute milhões delas? Você não está descrevendo uma capacidade. Você está descrevendo o meu pior problema multiplicado." E se essa for a sua reação, não é nenhuma surpresa. É o instinto certo, mas
+
+talvez esteja direcionado ao alvo errado. Eis a distinção que fazemos. A fragilidade que você está imaginando é um tipo específico de falha. Trata-se de divergência não gerenciada dentro de um único artefato. Arquivos com mil linhas, tudo pode se conectar com tudo, sem limites.
+
+E isso não significa necessariamente que seja frágil só porque foi gerado por IA. É quebradiço porque não há estrutura separando as coisas. Em nossa visão, estamos pensando nas divergências por usuário. E não escreva que isso é o oposto disso . Você tem um tronco mais divergências. As divergências são
+
+limitadas, isoladas e individualmente reversíveis. Uma variante defeituosa pode corromper silenciosamente o código-fonte ou chegar a outro usuário. O que significa que o raio de explosão de uma mudança no sistema é um contexto. E qualquer divergência, por menor que seja, pode reverter o processo de implantação. Portanto, a resposta à objeção anterior não é "confie em nós, a IA é boa em coordenação ou programação".
+
+A resposta honesta é que você está frágil porque existe um artefato emaranhado sem limites. No nosso caso, não enviamos mil artefatos individuais para você. Enviamos um tronco e divergências limitadas. Cada um isolado, cada um reversível. Aquilo que você teme é justamente o que essa arquitetura existe para evitar.
+
+E como desenvolvedor, você também pode definir controles e limites. O que pode e o que não pode ser adaptado. Para dar um pequeno exemplo, podemos ter um cenário em que temos um formulário e esse formulário pode ser adaptado para melhorar a taxa de conversão, por exemplo. No entanto, como desenvolvedor, você sempre pode indicar que campos específicos nunca podem ser removidos ou que partes do seu aplicativo, como opções de compra ou pagamentos, devem estar sempre fora dos limites para qualquer tipo de adaptação. Então, dê outro exemplo para tornar o software adaptativo um pouco mais concreto.
+
+Bem, pense, por exemplo, em um CRM. Neste caso, temos um investidor que está usando um CRM. Por outro lado, o CRM foi desenvolvido principalmente pensando no vendedor. E, como investidor, você pode usá-lo de uma maneira um pouco diferente. Então, essa investidora costuma registrar apresentações de fundadores e está sempre anotando quem a apresentou a qual negócio.
+
+Então, o sistema observa isso e cria um caminho de introdução. O sistema também consegue observar que ela está sempre pulando campos específicos. Ela nunca os preenche. Assim, com o tempo, o sistema aprende e deixa de destacar esses campos, passando a destacar aqueles que lhe interessam mais. Outro exemplo pode ser o fato de ela estar sempre, sempre verificando tipos específicos de negócios ou fundadores, e isso não segue exatamente a priorização que o sistema define por padrão. Então, mais uma vez, podemos aprender
+
+e tornar isso mais inteligente para que as informações que interessam ao usuário sejam apresentadas primeiro? Um sistema não só pode observar, como o usuário também pode solicitar proativamente alterações e, desde que essas alterações estejam dentro dos limites definidos pelo desenvolvedor e em consonância com o espírito do software, com o propósito para o qual ele foi originalmente criado, elas podem ser implementadas sem a necessidade de consultar o desenvolvedor novamente. Assim, imagine que, para um SaaS horizontal como um CRM, você pode atender a um número muito maior de perfis de clientes sem aumentar seus gastos com P&D. É claro que existem muitas dificuldades em dar vida a isso. E vou discutir alguns desafios e problemas difíceis nos quais estamos trabalhando para tornar o software adaptativo uma realidade em grande escala. Ainda
+
+não resolvemos todos os problemas, mas temos um ponto de vista sobre cada um deles, e é exatamente nisso que estamos trabalhando dia após dia. Então, o que muda quando não há um único artefato? Em primeiro lugar, a fonte da verdade. Então, quando não há um único artefato, você pode se perguntar: o que é o software? Em nosso caso, consideramos o software como sendo o tronco mais todas as divergências imutáveis ​​mútuas.
+
+Mas é claro que isso cria um problema de linhagem. O que este usuário está executando e por quê? Isso agora se torna mais uma consulta gráfica do que um número de versão. Um relatório de erro descreve um programa que existe para aquele usuário específico. Como depurar ou inspecionar isso? A resposta é que toda
+
+divergência é imutável, inspecionável e atribuível. E também precisamos rastrear qualquer versão até o sinal que levou a essa recomendação específica e a essa adaptação exata. Essa é uma das partes em que estamos trabalhando. Em segundo lugar está a correção. Como você testa se a alteração de código que você acabou de implementar funciona, se a interface do usuário está correta?
+
+E sim, testar em uma escala muito maior de usuários significa que você precisa analisar o código-fonte e também todas as suas possíveis variações. E depois há a questão da desejabilidade, porque talvez você tenha feito uma alteração no código, que está perfeitamente correta e funcionando, mas você também precisa saber se essa alteração era desejável. Foi realmente uma mudança positiva? Porque agora qualquer pessoa pode fazer uma alteração no código, mas a dificuldade está em saber se você realmente encontrou uma melhoria, um ganho. Sim, isso é algo extremamente importante para acompanhar, medir e considerar, bem como quais são os objetivos da empresa. E isso
+
+não será igual para todos os softwares. Em alguns casos, pode ser retenção de clientes, redução da taxa de cancelamento ou diminuição do número de chamados de suporte. Portanto, é extremamente importante acompanhar quais são os objetivos que buscamos com o software adaptativo e garantir que as adaptações visem melhorar as métricas que importam. Em seguida, vamos analisar a questão da autonomia versus controle. E a resposta conservadora aqui seria começar apenas com recomendações e não fazer nenhuma mudança por conta própria. E
+
+essa não é uma estratégia errada, mas, no nosso caso, não é exatamente a nossa visão. A visão é um sistema que entenda o usuário tão bem a ponto de agir sem precisar pedir permissão ao desenvolvedor a cada vez. Portanto, para nós, o desafio não é aumentar o controle. Trata-se de conquistar confiança suficiente para que você não precise se preocupar com isso . É um problema difícil, mas também muito interessante. E sabe,
+
+como se cria um sistema suficientemente bom, legível e confiável para que os humanos envolvidos optem por se afastar? E é certamente para isso que estamos caminhando . E, por último, a coordenação. Como cada um usa sua própria versão? Como faço para enviar novas atualizações? Como é que as alterações
+
+se propagam para milhões de versões diferentes? E esse é um dos desafios sobre os quais temos refletido bastante. Sim, e a resposta à qual sempre voltamos é: não mescle o código, mescle a intenção, mescle o resultado. Isso significa que nem todos precisam executar o mesmo commit ou exatamente o mesmo trecho de código, mas todos convergem para o mesmo objetivo por meio de seus próprios caminhos. E, caso ainda não esteja claro, os desafios que acabei de abordar são os desafios mais difíceis.
+
+Gerar tornou-se fácil, e eu diria que isso representa, na verdade, os 80% mais fáceis. Chamar um modelo para escrever algum código é algo que qualquer pessoa pode fazer. A outra parte, observabilidade, validação, coordenação, isso é todo o negócio. Qualquer um pode citar um LM (Local Mythological Survey), mas o substrato é composto por linhagem principal, linhagem divergente, divergências, proveniência e validação. Essa é realmente a parte difícil, e algo em que trabalhamos todos os dias.
+
+Para concluir, quando comecei no setor fintech, um banco sem agências me parecia uma ideia imprudente. Uma década depois, o galho é a parte estranha. Meu cofundador, Noam, costumava discutir com os engenheiros sobre a necessidade de builds e CI (integração contínua). Já vimos isso antes, e o software adaptativo é o mesmo tipo de mudança. Só parece óbvio quando acontece.
+
+Voltando ao início da conversa, o pipeline não falhou porque deixou de funcionar, mas sim porque a restrição para a qual foi criado deixou de existir . A premissa subjacente a esse software é que ele é caro, então precisamos congelá-lo e lançá-lo apenas uma vez. Essa suposição deixou de ser verdadeira. E quando o custo de desenvolvimento de software se torna tão baixo quanto o de sua execução, a linha que separa distribuição e desenvolvimento deixa de existir. Passamos 20 anos aprimorando nossa capacidade de enviar uma única versão para todos.
+
+Os próximos 20 anos serão dedicados a enviar a versão correta para qualquer pessoa, com o isolamento e a rastreabilidade que a tornem segura em vez de assustadora. Eu sou Iris, isto é diferente e é isso que estamos construindo. Obrigado por assistir.

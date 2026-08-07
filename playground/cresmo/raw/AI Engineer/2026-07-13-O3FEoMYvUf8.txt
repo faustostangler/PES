@@ -1,0 +1,121 @@
+---
+video_title: "Stop Evaluating Models Like It's the 50s - Alejandro Vidal, Mindmakers"
+video_id: O3FEoMYvUf8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=O3FEoMYvUf8
+video_date: 2026-07-13T17:56:55+00:00
+video_description: |
+  Psychologists spent the last century learning how to measure something invisible and uncooperative: a human mind. AI evaluation, meanwhile, still scores like it is 1950. Count the right answers, treat every question as equal, trust the percentage (this is Classical Test Theory). We are sitting on decades of measurement theory built for exactly this problem, and we forgot to use it.
+  
+  Borrow it and the picture changes. Item Response Theory (or IRT, the math behind the SAT and the GRE) models every item on top of a shared scale with real error bars. That tells you which of your test items are pure noise, which are optimal, and where the knowledge gaps and unexpected behaviours are. Adaptive testing then measures the same ability with a fraction of the questions, which means private, rotating benchmarks that resist contamination instead of saturating in a month (tinyBenchmarks already hinted you can shrink a benchmark with IRT).
+  
+  It goes further than scoring. The statistical properties of how a model fits the test reveal something a single number never could: data leakage, the moment an agent has quietly seen the answers before. The same machinery that catches a cheating student catches a contaminated benchmark. And instead of one flat score, you get a shape: where the jagged frontier actually is, which abilities are solid and which are luck, so you know which direction to push next.
+  
+  You will leave this talk with a way to build evals that are cheaper, harder to game, and that tell you what your model actually learned instead of how lucky it got. This is not about handing human tests to a model. It is about borrowing a century of how to measure a mind that does not want to be measured.
+  
+  Speakers:
+  - Alejandro Vidal (Mindmakers): Alex Vidal is the founder of Mindmakers, a psychologist and computer scientist who teaches humans to use AI and teaches AIs to teach humans, building adaptive learning technology and the agents, evals and boring infrastructure that keep it from falling over.
+  
+  X/Twitter: https://x.com/dobleio
+---
+Oi pessoal. Eu sou Alejandro Vidal, o fundador da Mind Makers. Minha formação é em psicologia e ciência da computação, o que é meio estranho, mas hoje será extremamente útil porque vou mostrar como você pode aproveitar ideias da psicologia e da psicometria para melhorar a forma como está avaliando modelos atualmente. Porque neste momento o que está em jogo na indústria é a contagem do número de respostas corretas. Isso na verdade tem um nome. É a
+
+teoria clássica dos testes. E nós temos ferramentas muito melhores para fazer isso. Faz sentido, portanto, aproveitar ideias de testes de QI e coisas do gênero. Assim, podemos aplicá-los aos mestrados em Direito (LLMs). Vou começar com um exemplo bem simples .
+
+Estamos usando dados reais do epoch.ai. Se você não os conhece, o projeto deles é incrível e eles têm conjuntos de dados bastante abertos, então você pode realmente usá-los. E aqui temos uma seleção aleatória de modelos com um benchmark real. Como você pode ver aqui, temos uma precisão para cada um deles. Esse é o estado da
+
+arte atual. Portanto, se dividirmos cada barra em perguntas diferentes, cada uma delas será uma pergunta diferente ou um item diferente. Vou usar "item" para...
+
+hum... para... para a mesma ideia de pergunta. Em
+
+psicometria, usamos o termo "item" em vez de " questão". Bem, se somarmos tudo, estamos usando uma suposição muito forte. Estamos dizendo que todas as perguntas são igualmente importantes. Eles deveriam ter o mesmo peso, o que é meio insano se você parar para pensar . Temos perguntas melhores, perguntas mais complexas às quais talvez devêssemos dar mais atenção.
+
+E também podemos ter perguntas com rótulos incorretos ou algo do tipo. Então vamos melhorar isso. Bem, o que vamos fazer é usar cada item, cada coluna aqui representará um item. E vamos tratá-las como variáveis ​​individuais, ok? Então, teremos esta matriz aqui. Como você
+
+pode ver aqui, no canto superior direito, temos perguntas difíceis para modelos mais fracos e, do outro lado, temos perguntas muito fáceis para modelos fortes. Então, faz sentido que observemos esse padrão, certo? Mas, para cada questão, para cada item, vamos estimar um nível de dificuldade. Isso será chamado de B. O parâmetro B será a dificuldade de cada uma delas, e criaremos uma função para cada questão.
+
+Essa função mapeia a inteligência do LLM, ok? Quanto à probabilidade de acertar essa resposta, ok? Portanto, os itens muito fáceis estarão aqui, e os itens extremamente complicados estarão ali. Como você pode ver aqui, B é o ponto que cruza a probabilidade de 50% nessa curva, ok? O que será útil mais tarde. Além disso, B
+
+seguirá uma distribuição normal, o que também será útil para a interpretação, certo? Assim, tendo isso em mente, podemos estimar também o theta. Theta será o nível de inteligência de cada modelo. Vai ser aquele ponto, aquele ponto preto. Então, como você pode ver no lado direito de cada ponto, quase todas as perguntas serão lidas, o que faz sentido, pois se elas forem extremamente complicadas ou mais complicadas do que o nível de inteligência desse modelo, o modelo falhará, ok? Então,
+
+vamos modelar dessa forma. Então, por exemplo, aqui, se eu clicar neste botão, verei que o GPT 5.5 será capaz de responder a essa pergunta porque o GPT 5 tem um valor theta de 1,2 e a dificuldade desse item é menos 1,2. Então, a probabilidade da resposta correta é 99. Certo? Então, tendo isso em
+
+mente, o que estamos fazendo aqui é calibrar cada pergunta, cada item. Portanto, vamos melhorar bastante nossas estimativas. Também vamos melhorar nossos intervalos de confiança e muitas outras propriedades. Outra coisa que quero explicar aqui é que theta e B serão um par de números que seguem uma distribuição normal. Então, nós podemos realmente interpretá-los. Por exemplo, um item de
+
+B igual a zero significa que será a média. Metade dos modelos UM no meu conjunto de dados conseguirá responder a essa pergunta em 50% das vezes. Isso será extremamente útil, porque atualmente, para avaliar os parâmetros de referência, precisamos dessa comparação com outros modelos. Portanto, é melhor ter um por padrão com essa metodologia. Na verdade, esse modelo é chamado de teoria da resposta ao item, que é a evolução da teoria clássica dos testes. OK?
+
+Então, além disso, terei outro parâmetro. Será a inclinação, a discriminação desse item. Assim, indivíduos com alta discriminação terão funções mais íngremes. Além disso, podemos ter funções aleatórias, itens que não estão relacionados à inteligência, o que eu não quero. Mas, acontece algo e, pior ainda, teremos itens que apresentam correlação negativa com a inteligência real do modelo. Mas lembre-se disso,
+
+pois cada item terá um nível de dificuldade, B, e um parâmetro de discriminação, A. Portanto, a última coisa que você precisa entender é como podemos estimar o nível de inteligência de um determinado modelo se estivermos modelando a Teoria de Resposta ao Item (TRI). Vamos, na verdade, responder a cada pergunta uma por uma . Então, vou plotar aqui em cima a curva do item e abaixo você verá a probabilidade relativa de theta. Essa é a estimativa da inteligência. Portanto, como podem ver aqui,
+
+vamos usar todas as curvas para combiná-las em uma única distribuição. Com o tempo, obviamente, e com mais perguntas, teremos uma estimativa muito melhor . Então, se somarmos todos eles no final, terei minha estimativa final, o que é extremamente útil, pois posso ter um intervalo de verossimilhança. Com a teoria clássica dos testes, é mais complicado ter um teste. OK? Então, mesmo com isso, com uma
+
+escala sir com B e theta, mesmo com o intervalo de verossimilhança, se você acha que isso não é útil de forma alguma, deixe-me mostrar um último exemplo, ok? Repito, estes são dados reais. Então, vou comparar dois modelos. Aqui, do lado esquerdo, estará o Cloud Opus 4.1, certo? Essa configuração tem 245
+
+respostas corretas. Por outro lado, teremos o Gemini 3 Pro, que tem 247, ok? Portanto, como você pode ver, a diferença aqui é bastante pequena para 337 perguntas. Mas se você usar a teoria da resposta ao item, poderá ver que a diferença entre todos eles é de quase um desvio padrão. Isso significa que o Gemini 3 Pro é de longe mais inteligente.
+
+OK? O que faz sentido, já que é um modelo mais recente, ok? Como você pode ver, contar o número de respostas corretas não é uma boa abordagem, pois posso criar parâmetros de referência não calibrados e, mesmo que eu obtenha muitas respostas corretas, não sou mais inteligente do que outros modelos. Isso poderia acontecer, por exemplo, se Gemini for capaz de responder às perguntas mais difíceis, ou se Claude for capaz de responder à maioria delas, talvez Claude só tenha conseguido responder à mais fácil. Portanto, os níveis de teta devem ser diferentes. Bem, é
+
+exatamente isso que acontece com a TRI (Teoria da Resposta ao Item). Você tem estimativas melhores, mais parâmetros para definir cada item, o que será útil mais tarde, e também tem, como pode ver aqui, intervalos de verossimilhança. Além de tudo isso, vou mostrar algumas aplicações que você pode usar com a TRI (Teoria da Resposta ao Impacto). E espero que vocês os achem interessantes. Ok, então a primeira aplicação será uma das minhas favoritas, na verdade, porque você pode aplicá-la com uma das habilidades que vou mostrar.
+
+Vai levar alguns minutos se você já tiver os dados. E [limpa a garganta] você pode, na verdade, escolher os melhores itens, as melhores perguntas do seu benchmark, e remover as outras que não estão funcionando ou até mesmo corrigi- las. Certo, então podemos auditar nosso parâmetro de referência. Portanto, lembre-se de que temos dois números que representam cada item, cada questão. Temos B, que representa a dificuldade, e A, que é a inclinação ou a discriminação do item. Aqui do lado direito,
+
+temos itens muito bons e muito informativos . Aqui, próximo de zero, temos um sinal bastante ruidoso e fraco. E, por outro lado, temos itens que não gostamos de jeito nenhum, itens negativos. Aqui, por exemplo, você pode ver que temos itens que se correlacionam de forma oposta, em que modelos melhores estão, na verdade, errando a resposta, o que não faz sentido. Assim, podemos usar isso para encontrar itens que estejam significativamente abaixo de zero e sinalizá-los.
+
+Com isso, vou usar outro mestrado em Direito para avaliá-los de fato. Aqui você pode ver dois itens que detectei com essa técnica. A primeira é, na verdade, eu não sei a resposta. Eu pergunto ao ChatGPT. E aparentemente a resposta ideal, a resposta que consta no padrão de referência, não é a correta. OK? Então, está tudo bem. Mas
+
+o próximo exemplo é de longe mais interessante para mim, porque a resposta está meio certa. Portanto, é algo que muita gente pode não perceber. Então, ele está perguntando: "Qual é o número total de passageiros?" A resposta correta, a resposta que está no padrão de referência, é 583, que é o total de pessoas mortas, passageiros e tripulantes. Mas a resposta correta, se você prestar atenção, é que estou perguntando apenas sobre passageiros, que é outro número. Portanto, mais uma vez, com um pouco de
+
+esforço, se você tiver o conjunto de dados, poderá encontrar itens que estejam rotulados incorretamente. Isso é o mais comum . Mas às vezes não são apenas rótulos errados, são produtos de má qualidade. Portanto, você deve removê-los ou até mesmo melhorá- los. Essa segunda aplicação é incrível para mim . Isso economiza muito tempo, muitas
+
+fichas e, portanto, muito dinheiro. OK? Então, é bastante comum que as organizações tenham seus próprios parâmetros de comparação para avaliar qual modelo é melhor para elas. Principalmente com modelos de código aberto. Com isso em mente, é muito importante reduzir o tamanho do benchmark para encontrar o tamanho ideal do mesmo.
+
+Antes não podíamos fazer isso porque não tínhamos a propriedade do item. Mas, neste momento, com a teoria da resposta ao item , podemos realmente escolher os melhores itens. OK? Então, simplificando, podemos dizer que os itens com altos níveis de discriminação serão os melhores . OK? Com isso em mente, eu consigo fazer
+
+isso. Portanto, mais uma vez, parâmetros de referência reais com dados reais. Para este parâmetro de comparação, vou buscar uma correlação de 99% com a classificação original. Portanto, será praticamente perfeito para muitos casos de uso. E o que vamos fazer é falar um por um, começando pelo melhor item, o item com a nota mais alta.
+
+Então, com essa metodologia em mente, vamos chegar a cerca de 97 itens em comparação com 484. Isso é quase 5 vezes mais. Teremos a mesma classificação de antes, ou quase a mesma . Para ser justo, eu tentei fazer a mesma coisa, mas aleatoriamente. Portanto, se você escolher os itens aleatoriamente, observará um desempenho muito pior. Portanto, é
+
+extremamente útil. Talvez isso seja meio estranho para você, porque, se podemos avaliar itens com muito menos perguntas, por que estamos usando todos esses parâmetros de referência? Então, a resposta é que não estamos acostumados a calibrar parâmetros de referência. Estamos presumindo que mais perguntas significam uma estimativa melhor, o que não é verdade. Por exemplo, posso ter duas perguntas que se sobrepõem de certa forma. Suas
+
+curvas são mais ou menos as mesmas. Então, mesmo que eu pergunte a dois deles, vou obter mais ou menos a mesma informação sobre a sua inteligência, ok? Além disso, há alguns itens que você pode notar que não são extremamente informativos. Elas não têm correlação com a inteligência real. Portanto, você pode reduzi-los ou usá-los com menos frequência.
+
+Não estou dizendo que você deva remover todo o conjunto de dados, mas você pode usar isso para outra aplicação que discutiremos a seguir: usar um subconjunto de itens cada vez que aplicar o benchmark, o que será extremamente útil. Mas tenha cuidado, porque isso não acontece em todos os benchmarks, ok? Por exemplo, o GPQA, que é um conjunto de dados extremamente bem projetado, o benchmark aqui, como você pode ver, mesmo se você escolher aleatoriamente, obterá mais ou menos o mesmo resultado. E a razão para isso é que cada item aqui é extremamente discriminativo e, além disso, eles não se sobrepõem. Então, todos eles são úteis em todos os momentos ao longo do benchmark, ok?
+
+Assim, agora que temos uma função para cada item , também podemos calcular o erro, o comportamento inesperado e os valores discrepantes para cada questão, o que será incrível para muitas aplicações. Podemos descobrir se estamos vazando informações, se estamos nos ajustando demais ao benchmark e outros tipos de contaminações. Então, deixe- me voltar à matriz com a qual começamos . [Limpa a garganta] E como vocês podem ver, cada pergunta terá a estimativa e a resposta correta. E isso é bom, porque podemos observar alguns valores discrepantes aqui. Por exemplo, o
+
+profissional do terceiro minuto deveria ser capaz de responder a essa pergunta. Na verdade, nosso modelo indica que, em 86% dos casos, o Gemini deveria ser capaz de responder a essa pergunta. Mas mesmo assim, essa pergunta está errada. Não sei explicar porquê, mas consigo detetar esses valores discrepantes, esses padrões estranhos, ok? Com isso em mente, podemos calcular os resíduos, o erro para essa questão específica, o que será útil para diferentes aplicações que explicarei mais tarde.
+
+Por outro lado, podemos ver aqui que, por exemplo, a busca profunda R1 está tendo uma resposta correta mesmo que não seja a esperada, ok? Repito, isso não significa que estejamos exagerando no ajuste ou algo do tipo. Na verdade, podemos amostrar a mesma questão mais de uma vez, para que possamos calcular a média das amostras e talvez assim consigamos identificar esse valor discrepante. Mas, em todo caso, temos uma nova ferramenta que podemos usar para analisar os dados. Além disso, na verdade, em psicometria, temos algumas técnicas para verificar se o comportamento é consistente, se é que isso faz sentido, certo? Assim, por exemplo,
+
+aqui, posso observar que O4Minnie é a menos consistente. Você pode ver que há muitas perguntas em vermelho, e também muitas em verde, aqui no meio, o que não faz sentido. Assim, você poderá usar isso para, por exemplo, detectar se sua plataforma de inferência não está funcionando bem. Porque, se por algum motivo sua plataforma de inferência não estiver executando os modelos corretamente ou se a quantização estiver incorreta, você vai observar comportamentos inesperados, ok? Deve ser consistente. Essa matriz não é
+
+perfeita, terá ruído, mas devemos ser capazes de estimar, mais ou menos, um nível de inteligência, visto que podemos prever, mais ou menos, quais perguntas você acertará e quais errará. OK? Novamente, os dados residuais serão extremamente úteis para a próxima aplicação. Mas só com isso, acho que você pode realmente olhar para os dados de outra maneira [limpa a garganta]. OK. Então, digamos que você esteja
+
+construindo um benchmark, um benchmark muito complexo e muito caro. Portanto, você não quer que esse parâmetro de referência vaze na internet. Você também não quer que outras organizações treinem seus modelos com esse parâmetro de referência, ok? Porque é extremamente valioso e, se você não conseguir proteger esse índice de referência ao longo do tempo, ele se tornará ainda mais valioso. Então, com isso em mente, podemos usar o que chamamos de teste adaptativo, certo?
+
+O que é aquilo? Vou escolher um conjunto aleatório de itens que serão representativos do meu parâmetro de referência, e vou chamar isso de conjunto de referência. Um conjunto de critérios de referência deve ser representativo de toda a minha avaliação comparativa, e vou usar esses itens com todos os candidatos, com todos os modelos de qualquer organização com a qual eu esteja trabalhando. Mas para cada organização, vou escolher um conjunto específico. Vou chamar esse conjunto de impressões digitais de conjunto, que mostrarei apenas para essa organização específica.
+
+E eu também posso fazer a mesma coisa com outro. Preste atenção nisso, pois é importante que eu selecione itens extremamente complexos do meu conjunto de dados de referência para esses conjuntos de impressões digitais . Com o tempo, digamos alguns meses depois, todas as organizações lançam seus novos modelos, e eu vou observar, vou executar os benchmarks novamente e usar os resíduos para ver se esses modelos são realmente bons nessas questões específicas. Aqui está um conjunto de dados sintéticos. É possível observar que o resíduo médio para essa organização, considerando esse conjunto específico de impressões digitais, é extremamente improvável. Portanto, embora não seja infalível,
+
+esta é uma técnica extremamente eficaz que você pode usar para proteger seus benchmarks. Como você pode ver aqui, os resíduos médios de uma organização são de longe maiores do que os da outra. Em psicologia, é muito importante descobrir se algum dos nossos itens é, de fato, tendencioso contra um grupo específico. Podemos usar as mesmas técnicas para pesquisar como os modelos se comportam com os itens. Então, vou mostrar isso com um exemplo. Vou dividir o conjunto de dados
+
+em dois grupos. Neste caso, vou usar pesos abertos e pesos fechados. Você pode usar qualquer variável que lhe interesse, e pode até criar mais de um grupo. Depois disso, vou criar duas curvas diferentes para cada item, uma para cada grupo. E o que esperamos, se o item for imparcial, é que ambas as linhas se sobreponham de certa forma. Caso contrário,
+
+calcularemos essa diferença, a lacuna entre esses valores, e essa diferença deverá ser zero ou próxima de zero. Neste caso, podemos detectar que podemos aplicar essa técnica a todos os itens do meu benchmark e, na verdade, podemos descobrir que existem alguns itens que são melhores para modelos com pesos fechados e outros melhores para modelos com pesos abertos. Não vou mostrar os itens porque não quero divulgá-los na internet, mas se você aplicar essa técnica a um benchmark real, poderá notar alguns padrões. Há um conjunto de perguntas que têm algo em comum e que são mais adequadas para modelos de peso livre. Não consigo apontar a verdadeira razão para isso, mas posso afirmar que essa técnica poderia ser usada para entender como eles treinam seus modelos.
+
+O último aplicativo que vou mostrar para vocês é bem interessante. É a mais complicada, mas de certa forma é a mais interessante. Então, vou usar os resíduos para ter, na verdade, um DNA, uma impressão digital para os modelos, e a ideia é que possamos analisá-los e ver se dois modelos diferentes estão relacionados de alguma forma, ok? Então, vou criar uma matriz de correlação aqui, e também vou fazer uma projeção bem simples. Então, a primeira coisa que você pode notar é que existem alguns modelos extremamente semelhantes aqui, que são do mesmo laboratório e também têm a mesma história. Assim como existem
+
+versões diferentes para o mesmo modelo. Aqui também podemos observar que temos o Deep Seek, uma versão diferente do Deep Six. Nós também temos a Rainha. Assim, podemos observar alguns tipos de padrões ali. Faz sentido, porque se um modelo tem um histórico semelhante a outro modelo, podemos esperar o mesmo tipo de erros, certo?
+
+E vou dar alguns exemplos. O primeiro será este. Bem, se tivermos dois modelos com a mesma base, esperamos altas correlações entre eles. Neste caso, temos 0,38, certo? Além disso, podemos observar que entre as destilações e seu modelo base, o que poderia ser extremamente interessante se você quiser detectar a destilação do seu modelo sem consentimento.
+
+Além disso, podemos detectar o mesmo modelo com diferentes níveis de esforço, o que faz sentido, pois é praticamente a mesma coisa. E também podemos dizer que conseguimos detectar se temos diferentes versões ou evoluções do mesmo modelo. Aqui temos Lhama, mas também trabalhamos com Gêmeos aqui, ok? Portanto, mais uma vez, isso não é tão útil quanto outras ferramentas para o dia a dia, mas acredito que abre uma área de pesquisa para entender como os modelos se relacionam entre si e até mesmo detectar destilações. Espero sinceramente que você ache esta palestra inspiradora. Meu objetivo aqui era abrir
+
+as portas da pesquisa psicométrica para mestres em Direito (LLMs). Acho que podemos melhorar muito a forma como avaliamos os mestrados em Direito (LLMs) com matemática bem básica . Mas há muitas ideias que você deveria explorar, porque eu não tive tempo. A primeira delas é a multidimensionalidade e os modelos hierárquicos. Prevejo que, se aplicarmos esses princípios aos mestrados em direito (LLMs), veremos diferentes níveis de habilidade para diferentes tipos de tarefas.
+
+Além disso, podemos combinar diferentes parâmetros de referência para melhorar a estimativa de cada um deles. Faz sentido se você tiver a Teoria da Resposta ao Impacto (TRI). Além disso, isso foi feito em um artigo de pesquisa chamado Meta-Benchmark, que recomendo fortemente a leitura. Além disso, podemos adicionar outro sinal que acreditamos estar correlacionado com a inteligência, por exemplo, latência ou tokens. Outra ideia muito promissora é usar modelos psicométricos para medir o alinhamento e usar isso também para a interpretabilidade. Acredito que a
+
+interpretabilidade mecanicista poderia ajudar bastante a psicometria nesse aspecto. Estou trabalhando em todas essas áreas. Se você estiver trabalhando nelas, tiver alguma ideia ou precisar de ajuda para aplicá-las ao seu benchmark, me avise. Obrigado pelo seu tempo e aqui estão todos os materiais, habilidades e parâmetros para que você possa experimentá-los.

@@ -1,0 +1,82 @@
+---
+video_title: "Running a Chess YouTube Channel entirely by AI — Stephan Steinfurt, TNG"
+video_id: BqZrTdgBaPw
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BqZrTdgBaPw
+video_date: 2026-07-08T08:30:29+00:00
+video_description: |
+  Daily chess puzzle explanations on YouTube: Our agent analyzes and describes chess puzzles in an accessible way - arrows included!
+---
+Olá pessoal. É , o Swyx escreveu um post no blog e disse: "Ok, não escrevam títulos chatos." Então, na verdade, mudei meu título novamente e disse: "Ok, estamos trabalhando no Santo Graal da programação de xadrez." E se você me conhecesse, saberia que normalmente não sou o tipo de cara que exagera nas promessas. Na verdade, é uma citação de outra pessoa sobre isso, porque há mais ou menos uma semana saiu um artigo em um dos maiores jornais da Alemanha que discutia algumas abordagens para, sim, novas abordagens para, sim, combinar IA com xadrez. E sim, eles
+
+disseram que poderia facilmente levar mais 5 anos até que a IA explicasse o xadrez tão bem quanto um treinador humano. Wilhelm Weber chama isso de o Santo Graal dos programas de xadrez, e o trabalho já está em andamento em Munique, que é basicamente de onde nós somos, certo? E mostramos a eles alguns vídeos que meus chefes e eu mencionamos. Sim, eles foram completamente criados pelo nosso mecanismo de IA. Quero explicar rapidamente como isso funciona.
+
+Então, talvez eu não queira mostrar isso apenas para o jornal, mas também para vocês. Existe um vídeo de 2 minutos que mostra o resultado. Então, vou começar agora. Olá, fãs de xadrez. Nessa posição, a dama preta está atualmente sob ataque da torre branca na coluna H.
+
+Tentando encontrar segurança, o jogador preto desliza a dama para G4. Isso é um erro crasso. Parece uma casa completamente segura, mas ao sair da coluna H, as brancas podem realizar um sacrifício espetacular e alucinante . As brancas jogam a torre e capturam H5. As brancas estão oferecendo uma troca completa, mas esta é uma armadilha magistral construída sobre uma geometria de cavalo incrível.
+
+Vejamos o que acontece se o preto morder a isca. Primeiro, se as pretas simplesmente recapturarem com o peão G capturando H5, as brancas armam a armadilha. O cavaleiro entra em ação com cavalo para F6 com xeque. Olha só esse lindo cavaleiro polvo no F6. A bomba atinge o rei em G8 e, simultaneamente, destrói a dama recém-posicionada em G4.
+
+Um garfo letal. O rei é forçado a se mover para F8, e o cavalo simplesmente captura a dama em G4. Mas espere, vamos voltar um pouco. E se as pretas tentarem ser espertas e evitarem a captura do peão? As pretas poderiam capturar a torre com a dama jogando dama captura H5.
+
+Mas é exatamente a mesma armadilha. A rainha é atraída diretamente para a zona de perigo. Ao puxar a dama para H5, as brancas armaram exatamente o mesmo truque e jogam o cavalo para F6, dando xeque de qualquer maneira. Mais uma vez, o rei é atacado e o cavalo atravessa o tabuleiro para atacar a dama em H5. Não importa como as pretas capturem a torre sacrificada, a dama fica bifurcada porque este cavalo controla magicamente tanto G4 quanto H5.
+
+O rei deve se mover para F8, e o cavalo captura a rainha em H5. Este é um garfo magnífico de dupla função, que demonstra o poder oculto e aterrador do cavaleiro. Sempre fique atento a essas peças saltadoras traiçoeiras quando seu rei estiver exposto. Na verdade, quando preparei a apresentação de ontem, eu queria mostrar um vídeo diferente, mas, bem, nós criamos esses vídeos automaticamente todas as noites e os enviamos para o YouTube. E quando dei uma olhada rápida esta manhã para ver se havia algo embaraçoso que eu pudesse esconder de todos vocês. Pensei: "
+
+Ok, na verdade, tem esse vídeo que é ainda melhor que o outro ." Então, talvez eu escolha essa. E sim, como eu disse, é criado automaticamente. Basicamente, baixamos partidas de xadrez do Lichess todas as noites, analisamos em segundo plano e, em seguida, deixamos nosso agente executar uma análise mais aprofundada. A partir dessa análise, criamos um formato especial com o qual podemos posteriormente criar um vídeo. E
+
+sim, o vídeo no final mostra as variações sendo explicadas. Mostra jogadas brilhantes, erros crassos e, sim, tudo é automatizado. E então, como funciona? Então, talvez voltando um pouco atrás, qual é o problema geral? O problema é que já temos ótimos mecanismos de xadrez há várias décadas, na verdade. Mas eles não conseguem
+
+explicar xadrez muito bem. Por outro lado, agora temos os mestres em direito (LLMs), que, bem, podem ter palavras e descrever coisas, mas não jogam xadrez bem. Então, de alguma forma temos que combiná-los. Esse é o principal desafio. E sim, agora construímos um agente que possui muitas ferramentas, que é basicamente o principal ingrediente aqui. Mas
+
+o que também é importante é o LLM que estamos usando internamente. Então, o Gemini 3, mas o 1 Pro, que foi lançado recentemente, é na verdade o melhor modelo que eu já vi para xadrez. Tenho quase certeza de que eles fizeram um pós-treinamento aprofundado no modelo, e você pode realmente ver nos registros de raciocínio que ele entende xadrez muito melhor do que os modelos anteriores. Mas o que adicionamos agora a esse modelo específico é uma lista de ferramentas. Então, o que você tem? Temos uma ferramenta para
+
+jogadas legais. Hum, sim, para evitar que alguém pense em algo completamente ilegal em um tabuleiro de xadrez, o que poderia acontecer de outra forma. Então, basicamente, damos ao agente um tabuleiro de xadrez completo e o deixamos fazer os movimentos, desfazê-los e chegar a várias variações por conta própria. Dessa forma, ele sempre poderá executar um motor de xadrez e, sim, também obter outros tipos de dados de xadrez, como, por exemplo, analisar xeques, capturas e ameaças. Sim, para alguns tipos de vídeos também incluímos pesquisas na web, porque pode ser interessante descrever o contexto histórico de um jogo ou algo do tipo .
+
+Então, analisando uma ferramenta específica em detalhes, temos a ferramenta de verificações, capturas e ameaças. Bem, isso é bastante conhecido no xadrez como uma explicação para iniciantes sobre no que você deve se concentrar se tiver uma boa posição. Portanto, esta é uma situação relativamente complexa, na qual imagino que poucas pessoas na plateia saberiam imediatamente qual é a melhor jogada. Quer dizer, alguém quer dar um palpite? Bem, para ser honesto, é bastante complicado. O
+
+jogo terminou empatado. Bem, o que estamos dando ao LLM agora, nesta situação, não é apenas a melhor opção, mas também estamos dando a ele acesso a verificações, capturas e ameaças, porque, de outra forma, ele poderia deixar passar algo. E você pode ver que há alguns lances de xeque, hum, sim, no tabuleiro da esquerda. Hum, algumas das quais estão obviamente erradas. Então, por exemplo, a rainha atacar o bispo em A4 é obviamente uma má jogada. Bem, algumas outras jogadas da dama
+
+para dar xeque são bastante razoáveis, mas na verdade a melhor jogada em toda essa situação é sacrificar a torre em E3, o que não é completamente óbvio aqui, mas essa é realmente a melhor jogada. Em outras situações, no entanto, pode ser muito melhor analisar a verificação dos movimentos de captura. E ao fornecer tudo isso por meio de uma única ferramenta, oferecemos ao agente uma grande diversidade para, talvez, mais tarde, explorar outros tipos de variações. Então, talvez ele queira verificar todas essas jogadas e, sim, descrever quais são realmente ruins, porque um humano poderia pensar nelas. E é por isso que nem sempre se trata da melhor jogada possível, que é o que temos que descrever.
+
+Em geral, a grande questão é quem deve pensar por si mesmo. Então, quando começamos todo esse projeto, tínhamos inicialmente alguns scripts em Python que analisavam uma posição de xadrez e reuniam informações de várias posições, dizendo: "Ok, aqui estão os lances de xeque e essa é a avaliação do motor." E então, passaríamos isso para o modelo de linguagem para obter uma descrição completa. Mas o que mudou no ano passado, quando surgiram os modelos de raciocínio, foi que os agentes podiam, sim, pensar por si mesmos sobre as posições. E eles já eram muito bons. Então,
+
+o melhor modelo que usamos no outono do ano passado foi o Grok 4. Surpreendentemente, esse foi o melhor mesmo . Mas, sim, outros modelos como os da OpenAI e outros também têm um conhecimento básico de xadrez bastante sólido para conseguir usar as ferramentas certas na posição correta e, então, reunir todo o conhecimento. E sim, como já mencionei, esse tipo de informação contraditória que fornecemos por meio das ferramentas é, na verdade, muito benéfico. Então, também temos outros tipos de ferramentas que são mais voltadas para, sim, reproduzir movimentos e posições mais humanas . E sim, isso também ajuda a
+
+equilibrar a descrição de não se concentrar demais nos melhores movimentos, mas também nos movimentos mais humanos. Além disso, no contexto histórico, pode haver informações valiosas sobre quais lances foram efetivamente jogados ou alguém pode ter descrito algo em detalhes que talvez queiramos analisar. Então, todas essas coisas acabam entrando no contexto. Sim, depois de concluirmos toda a análise, nós a criaríamos em um formato especial que poderíamos então transferir facilmente para um vídeo. Em seguida, usamos o 11 Labs V3 para a conversão de texto em fala. Sim, é
+
+muito bom que agora existam também essas etiquetas de áudio, tipo, eu posso colocar " animado" ali e aí soa animado. Sim, e o agente também decide por si só quais quadrados quer destacar, quais setas quer desenhar e se algo deve ser considerado uma jogada brilhante ou não. Sim, e agora talvez algumas outras perguntas. Então, é tudo essa bagunça que estamos criando? Acho que não, obviamente.
+
+Bem, sim , quero dizer, somos capazes de criar muitos e muitos vídeos desse tipo. Portanto, precisamos encontrar um equilíbrio entre o quanto queremos publicar no YouTube. Então, qual é a entrada? Quer dizer, a entrada são, na verdade, jogos humanos. Então, de certa forma, o que conseguimos agora é criar vídeos dos seus jogos e você poder enviá-los para seus amigos e familiares.
+
+E nós não estamos tentando, sei lá, inserir essas coisas artificiais como posições explosivas, tipo reis explodindo ou algo assim em xeque- mate, o que talvez seja benéfico para o número de visualizações e tal, mas estamos realmente tentando, sim, extrair o máximo da qualidade do xadrez. Em geral, por que estamos fazendo isso? Quero dizer , existem muitos streamers interessantes e ótimos. Por exemplo, Gotham Chess é um dos streamers mais conhecidos, talvez. Mas ele provavelmente não descreveria um dos seus jogos ou um dos meus jogos em seus vídeos. Mas agora temos uma
+
+maneira de também expandir para outras pessoas que não são os melhores jogadores do mundo e que talvez também gostariam de ter um vídeo. Sim, temos um canal no YouTube e, atualmente, tem cerca de 500 mil visualizações. E sim, mais de 4.000 inscritos. A maioria deles, na verdade, eram assinantes do último mês. Então, na
+
+verdade, está subindo bastante por lá. Sim, e é isso. Se você tiver mais alguma dúvida, pode perguntar ou me mandar uma mensagem por meio dessas plataformas, enfim, é isso. Sim
+
+. Hum, como, como, quais são os, quais são os custos? Você está monetizando o canal do YouTube para cobrir os custos? Sim . Bem, atualmente ainda não estamos ganhando dinheiro porque ainda não atingimos o estágio de monetização. Portanto,
+
+no momento, o saldo é negativo. Mas, tudo bem, isso pode mudar. Veremos. Então, você usa mídia automodificável com base em quantos vídeos você gera e quantos, se a qualidade for melhor? Sim, quero dizer, então, toda essa automação que habilitamos só aconteceu há algumas semanas. Então, por enquanto,
+
+ainda estou um pouco cético. Será que eu deveria simplesmente deixar de lado o upload de vídeos? E sim, ainda estou inclinado a assisti-los primeiro, pelo menos uma vez. Mas, sim, a taxa de erro é na verdade bastante baixa. Então, eu diria que a cada 20 vídeos, talvez um tenha uma descrição muito estranha, na qual há, sei lá , um xeque-mate, ou algo do tipo. Mas, quer dizer, isso
+
+geralmente também é uma informação valiosa, certo? Porque talvez alguma chamada de ferramenta não tenha sido feita no final, e tudo bem, podemos aprender algo com isso. Mas, na verdade, agora eu penso muito mais: "Ok, não me importo mais". E mesmo que haja algo ruim, talvez eu remova depois. Sim. Sim.
+
+Algo mais? Sim . Qual é o custo médio por vídeo? É algo em torno de 20 a 30 centavos, algo assim. Então, quer dizer, nós também criamos alguns outros vídeos que são bem mais longos, e neles também se chega a euros e coisas do tipo.
+
+Atualmente, não estamos tentando otimizar muito os custos porque preferimos evitar erros e ter uma descrição muito boa, por assim dizer. Mas também existem algumas possibilidades de otimização aí. Não sei, chamadas de ferramentas redundantes. Às vezes o agente joga uma partida duas vezes ou algo assim, e sim, isso é obviamente estúpido em certo sentido. Sim . Você estava falando sobre o
+
+movimento humano. É como se o computador dominasse os movimentos do humano ou como se o humano realmente se movesse? Você pode incluir na mistura. Sim, basicamente tudo. Quer dizer, então, existe esse motor gráfico Maya, que também foi mencionado ontem na palestra, desenvolvido pela Universidade de Toronto, que treinou um modelo no qual você pode basicamente inserir a classificação de um jogador, e então ele fornece aproximadamente uma jogada que esse jogador poderia querer fazer. Mas não é bem assim, quer
+
+dizer, não faz todo o sentido, né? Mas ainda assim pode ser uma informação valiosa, talvez uma jogada como essa mereça uma descrição. Portanto, não precisamos necessariamente ter exatamente o que um humano faria com essa habilidade, mas sim uma combinação de diferentes fatores a serem considerados. Por exemplo, uma avaliação de 1.000.
+
+Sim, exatamente. 1.600 de Elo, ou algo assim. Sim . Você quer explicar para você.
+
+Sim, quero dizer, essas coisas também poderiam ser usadas para segmentar um pouco mais o público, em vez de ter vídeos para jogadores melhores ou vídeos para jogadores piores. E, no momento, também não temos muita certeza de quais vídeos devemos ou não publicar lá. Quer dizer, às vezes também temos vídeos com xeque-mate em um só lance, o que para bons jogadores é meio ridículo. Quer dizer, você percebe isso imediatamente. Mas, por outro lado, existem iniciantes que realmente não percebem isso e precisam de uma explicação, tipo, por que aquilo é um xeque-mate e assim por diante. Então, sim, é
+
+tudo uma questão de equilíbrio, e ainda não temos certeza de qual é o ideal . Sim . Você já experimentou outros jogos? Não, ainda não. Mas sim, quer dizer, é meio que possível expandir de alguma forma, sim.
+
+OK. Sim, então é isso. Obrigado.

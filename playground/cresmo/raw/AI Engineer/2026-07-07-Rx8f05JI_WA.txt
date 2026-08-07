@@ -1,0 +1,72 @@
+---
+video_title: "SWE-Marathon: Evaluating Coding Agents at Billion-Token Scale - Rishi Desai, Abundant AI"
+video_id: Rx8f05JI_WA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Rx8f05JI_WA
+video_date: 2026-07-07T03:45:51+00:00
+video_description: |
+  SWE-Marathon is a benchmark for long-horizon autonomous software work: 20 project-scale tasks spanning product clones, library rewrites, and ML engineering. We discuss what happens when coding agents run for tens to hundreds of millions of tokens, why full-stack evals need computer-use verifiers, and why reward-hacking resistance is now central to benchmark design.
+  
+  Speakers:
+  - Rishi Desai (Abundant AI): Rishi Desai is an ML Engineer at Abundant AI, where he works on RL environments and SWE benchmarks for coding agents.
+    X/Twitter: https://x.com/rishi_desai2
+    LinkedIn: https://www.linkedin.com/in/rishi-desai1/
+    GitHub: https://github.com/RishiDesai
+---
+Oi pessoal. Meu nome é Rishi Desai. Sou engenheiro de aprendizado de máquina na Abundant AI, onde desenvolvemos ambientes de aprendizado por reforço para a Frontier Labs. Hoje, vou falar sobre a Maratona SWE, um indicador que responde a uma pergunta que está começando a ser muito mais importante. Será que os agentes de codificação conseguem manter a coerência com um orçamento de um bilhão de tokens?
+
+Eles conseguem construir o Slack do zero? Será que eles conseguem reescrever toda a base de código JAX em PyTorch? Será que eles conseguem construir um compilador de C em Rust? É isso que a Maratona SWE está tentando medir. O que acontece quando os programadores passam de corrigir bugs a serem responsáveis ​​por projetos inteiros do início ao fim? Tem
+
+havido um enorme interesse em sistemas de agentes autônomos. A Anthropic explorou equipes de agentes na construção de um compilador C. A Cloudflare reconstruiu todo o Next.js no Vite, sem qualquer intervenção manual por parte dos agentes. E a Cursor fez experiências com sua plataforma de agentes autônomos que funciona por vários dias.
+
+O padrão é que os agentes de codificação estão sendo direcionados para projetos inteiros, e não apenas para problemas ou tarefas lineares do GitHub. Minha pergunta é: podemos transformar alguns desses estudos de caso no estilo da Frontier Labs em tarefas de avaliação reproduzíveis?
+
+Vamos falar sobre a linhagem do benchmark SWE . A Human Eval perguntou se os modelos conseguiam escrever funções individuais em Python. O SWE-bench representou um grande salto para problemas reais do GitHub , onde os agentes precisavam inspecionar um repositório, criar um patch e corrigir alguns testes unitários. O Terminal-bench levou isso ainda mais longe, transformando cada tarefa em um ambiente completo com um verificador. Assim, os agentes poderiam usar um terminal, executar comandos bash, inspecionar arquivos e deixar para trás um estado final do contêiner. O projeto
+
+SWE Marathon parte desse ambiente, somado à estrutura de verificação, e amplia os horizontes para trabalhos em escala de projeto. Trajetórias de várias horas e mudanças coordenadas em muitos, muitos componentes. Trata-se literalmente de centenas de horas de trabalho humano condensadas em uma única implementação de agente.
+
+Mas, quando as tarefas ficam tão longas, surge um grande problema. Verificação. Em um teste comparativo de curta duração, um resultado fraco pode ser considerado apenas ruído. Porém, em um ambiente que dura várias horas, um verificador fraco se torna uma superfície de ataque. O agente dispõe de horas de trabalho, um sistema de arquivos, acesso irrestrito à rede (em potencial) e um sinal de recompensa. Assim, poderia passar
+
+horas sondando o verificador em vez de realmente realizar o trabalho de engenharia pretendido . Essa é uma das principais razões pelas quais a SWE Marathon utiliza múltiplas verificações independentes. Temos testes ocultos, verificações de paridade de referência, verificações de agentes de uso do computador para as tarefas de clonagem do produto e testes anti-fraude . Queríamos canais independentes e verificados que apresentassem falhas de maneiras diferentes. Primeiro, mostrarei o exemplo de verificação do uso do computador por um agente e, posteriormente, o caso de falha em que um agente tenta resolver a tarefa do compilador C chamando secretamente o GCC.
+
+Você deve ter notado que praticamente não existem tarefas de clonagem de produto full stack em nenhum benchmark de longo prazo disponível. E o motivo é a verificação. O teste unitário pode passar, mas o produto provavelmente ainda é inutilizável e a interface está péssima. Sweet Marathon é o primeiro benchmark a usar um agente de uso de computador ou verificador CUA para essas tarefas de pilha completa. Para a tarefa de clonagem do Slack, temos testes unitários determinísticos para verificar a API e a funcionalidade do back-end.
+
+Mas, nesse caso, um agente de usuário de computador usa o navegador como um humano. É isso que você está vendo neste GIF. O verificador não está lendo código nem chamando uma API diretamente. Está executando o clone do Slack enviado através da interface do usuário. Então, o processo envolve fazer login, criar canais, postar mensagens, reagir com emotes e verificar se o aplicativo realmente funciona de acordo com as regras.
+
+A principal conclusão é que avaliações de pilha completa são difíceis porque a correção não se resume a um contrato de API. Trata-se de saber se o usuário consegue, de fato, concluir o fluxo de trabalho pretendido pelo produto. O
+
+projeto Sweet Marathon consiste em 20 tarefas de grande escala distribuídas entre quatro famílias. Existem clones de bibliotecas, clones de produtos full stack, engenharia de aprendizado de máquina e tarefas algorítmicas. E algumas dessas tarefas chegam a usar APIs externas. Por exemplo, temos uma tarefa pós-treinamento em que o agente deve treinar um modelo de linguagem usando a API Tinker. Colaboradores especialistas da comunidade de avaliação propõem as tarefas e as soluções de referência. E então trabalhamos
+
+juntos para padronizá-los em ambientes executáveis ​​com os conjuntos de verificadores multicamadas. Todas as tarefas seguem o formato do porto. Boa parte do meu trabalho foi dedicada ao controle de qualidade e à camada de endurecimento. Então, executávamos os testes do agente, inspecionávamos os modos de falha, corrigíamos os atalhos, corrigíamos o verificador e, em seguida, executávamos novamente até que as tarefas fossem solucionáveis, mas também difíceis de manipular.
+
+Este é o resultado principal da tabela de classificação. A melhor configuração aqui é Claude Opus 4.8 com Claude Code, e mesmo assim atinge uma taxa de resolução de apenas 26%. Portanto, mesmo com a configuração de agente mais robusta que avaliamos, ela está resolvendo apenas cerca de uma em cada quatro tarefas. O importante é que esses não sejam fracassos superficiais. Em média, foram utilizados
+
+31 milhões de tokens em um teste, e a implementação mais longa consumiu 877 milhões de tokens. Então, os agentes estão explorando, editando, testando, ficando presos, se recuperando, funcionando por horas. Em resumo, os agentes atuais são muito impressionantes, mas a gestão integral do projeto ainda está longe de ser solucionada.
+
+Este gráfico coloca o custo no eixo x e a taxa de resolução no eixo y. Portanto, uma taxa de sucesso maior por um custo menor é sempre melhor. Claude Opus 4.8 é o ponto mais alto. Atinge 26%, mas também é uma das configurações mais caras, ou uma das mais caras .
+
+Enquanto o GPT 4.5 com Codex é muito mais barato e atinge apenas 12%. Portanto, o modelo não representa apenas o quadro completo. A estrutura do agente faz uma enorme diferença em como ele planeja, usa ferramentas, resume o contexto e decide quando testar. Não vou me aprofundar muito na análise de custos aqui, mas o artigo contém todos os detalhes.
+
+Queria mostrar a vocês como é, na prática, o lançamento de uma maratona completa. Esta é uma que escolhi com o GLM 5.2 na tarefa de reescrita de lutas do Next.js. Então, são mais de 356 milhões de tokens, ao longo de 9 horas, e mais de 800 etapas de trajetória e ações de ferramentas.
+
+Então, na metade superior, você pode ver que o agente começa explorando o repositório e os fixtures, obtém seu primeiro conjunto completo de testes com zero de zero em 325 testes aprovados e, em seguida, passa as próximas horas executando roteamento, hidratação, ações do servidor, middleware e comportamento do cache. A parte inferior do gráfico mostra o padrão de trabalho ao longo do tempo. Então, você pode ver muita leitura e pesquisa no início, seguidas por grandes ondas de edição, construção, teste e depuração. A principal intuição é que se tratam de longos ciclos de engenharia. Não são tarefas de programação simples. A
+
+exploração de recompensas é uma corrida armamentista entre agentes de programação e nosso ambiente. É por isso que verificadores robustos são essenciais para o design de tarefas do Sweep Marathon e não uma reflexão tardia. Este gráfico apresenta dois níveis de comportamento. As barras mais claras indicam um comportamento suspeito, como um atalho. Então, coisas como procurar arquivos de solução, mexer com dados, mexer com as configurações.
+
+Enquanto a barra mais escura parece ser uma falha de segurança evidente que foi de fato incluída na versão final do software. E, ao longo das 1.400 implementações, descobrimos que 12,8% apresentaram comportamento suspeito de atalho e 9% tiveram a verificação de bypass bem-sucedida. Portanto, se esses verificadores fossem fracos, esses não seriam apenas casos de falha curiosos, mas de fato deslegitimariam o parâmetro de referência. E o número importante é o zero.
+
+Nenhuma das implementações obteve recompensa por meio de uma exploração, porque nossas defesas as detectaram. Esse deveria ser o parâmetro para avaliações de longo prazo . Este é o meu exemplo favorito de manipulação de recompensas concretas . A tarefa consiste em construir um compilador C em Rust do zero. O analisador léxico, o analisador sintático, a análise semântica, a geração de código, tudo isso.
+
+Mas a Gemini encontrou uma estratégia de implementação muito mais curta , que consiste em chamar o GCC de dentro do programa Rust. Assim, sob um verificador fraco, essa tarefa pareceria quase resolvida, porque as saídas do compilador correspondem ao comportamento de referência. Mas obviamente não é um compilador de verdade em Rust. As camadas anti-trapaça podem detectar isso usando o rastreamento S para encontrar os subprocessos proibidos, como o GCC. Assim, embora as pontuações parciais pareçam altas, a recompensa final é zero.
+
+Eu tenho a taxonomia completa dos modos de falha no artigo, que espero que vocês deem uma olhada .
+
+Se você se lembrar de apenas uma coisa deste vídeo, é que o futuro das avaliações de software não se resume apenas a testes unitários mais complexos. Quando os agentes estão em execução por horas, cada tarefa se torna um ambiente complexo, e os agentes não estão apenas tentando escrever código, mas também navegando por ferramentas, testes, suas suposições implícitas e o próprio verificador. Assim, as duas principais conclusões são: primeiro, a questão dos horizontes de longo prazo ainda não foi resolvida. Os melhores agentes representam apenas 26% do total. Ainda há bastante espaço livre.
+
+Em segundo lugar, o grande gargalo é a verificação robusta. Em tarefas com duração de uma hora ou um dia, precisamos de verificações multicanal, medidas anti-fraude e validação do estilo do produto.
+
+As tarefas, o código, o artigo, os registros e as trajetórias são todos públicos. Liberei 320 GB de trajetórias que são especialmente importantes porque tornam o SWE-bench totalmente inspecionável e transparente. Gostaria também de agradecer a todos os meus colaboradores neste projeto, cujos nomes estão listados aqui. O SWE-bench foi um esforço impulsionado pela comunidade, envolvendo colaboradores de tarefas, consultores e autores de artigos. Você pode encontrar tudo em swe-bench.org.
+
+Obrigado.

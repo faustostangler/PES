@@ -1,0 +1,118 @@
+---
+video_title: "Semantic Blindness: 500,000 Sensors Confused an LLM - Raahul Singh & Vanč Levstik, Phaidra"
+video_id: EUsPvBeIx70
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EUsPvBeIx70
+video_date: 2026-07-12T16:00:36+00:00
+video_description: |
+  You cannot solve a combinatorial engineering problem with a next token prediction engine. We learned this the hard way.
+  
+  Modern LLMs can write code, summarize research papers, and reason across massive datasets. But what happens when you connect them to mission-critical physical infrastructure with 50,000 live sensors, deterministic dependencies, and real-world thermodynamic constraints?
+  
+  We deployed state-of-the-art LLMs to manage real time operations within industrial and AI factory environments to tackle root cause analysis, alarm triage, and operational decision support. What we discovered was a fundamental architectural mismatch between probabilistic language models and deterministic engineering systems.
+  
+  In this talk, we introduce a failure mode we call Semantic Blindness: the inability of general-purpose LLMs to maintain structural awareness of physical systems, even when provided enormous amounts of context.
+  
+  This talk dissects three specific failure modes we encountered — and why each one exposes a gap in how the industry thinks about scaling LLMs to complex systems:
+  
+  1) The Topology Trap. Vector embeddings don't understand pipes, wires, or physical causality. Sensor_445_Temp is just a string. But in reality, it's attached to Valve B, which controls coolant to Generator 3.
+  2) The Illusion of Scale. At a small scale, dumping 100 sensors into the context window works surprisingly well. It’s a reasonable solution and it holds up. At 500,000 sensors, the same approach collapses. It creates new problems: attention degrades, critical anomalies get buried in the middle, and latency spikes to unusable levels for real-time response.
+  
+  3) The Repetition Kill Switch. Industrial tag naming conventions are nearly identical at scale. Feeding the same naming conventions across hundreds of variants, you’ll trip the model’s repetition penalty. It thinks it’s stuck in a degenerate loop and it will literally stop. The data is correct. The model just can’t handle it.
+  Rather than focusing on prompt engineering tricks, this session explores the architectural patterns required to make AI reliable in real-world engineering environments.
+  
+  We’ll present a practical hybrid design approach that combines:
+  
+  - semantic ontologies,
+  - deterministic query systems,
+  - structured synthesis layers,
+  - and LLM orchestration architectures purpose-built for operational infrastructure.
+  
+  Attendees will leave with a clear understanding of:
+  
+  - why naive RAG architectures fail in industrial environments,
+  - how to design AI systems that respect physical reality,
+  - how to make LLMs work reliably against massive scale of data
+  - and what the next generation of “AI-enabled intent resolution” actually looks like beyond semantic search.
+  
+  This session is designed for senior AI engineers, infrastructure architects, CTOs, and technical leaders building AI systems that must operate reliably under real-world constraints — not just benchmark well in demos.
+  
+  Speakers:
+  - Raahul Singh (Phaidra): Raahul Singh is a Staff AI Research Engineer at Phaidra and the lead architect behind the company's agentic AI platform for data center infrastructure.
+    LinkedIn: https://www.linkedin.com/in/raahulsingh42
+    GitHub: https://github.com/raahul-singh
+  - Vanč Levstik (Phaidra): Vanč Levstik is a Senior Engineering Manager at Phaidra and leading the teams developing Phaidra Prism
+---
+Sejam todos bem-vindos. Meu nome é Rahul Singh. Sou engenheiro de pesquisa em IA na Fedra. E eu sou Vance Kulistik. Sou gerente sênior de engenharia, também na Fedra.
+
+E hoje queremos falar sobre a vez em que demos 500.000 nomes a um sensor LM e ele ficou confuso. Chamamos a esse problema de cegueira semântica. Na Fedra, criamos agentes de IA para fábricas de IA. Isso inclui agentes que permitem aos nossos clientes falar sobre seus data centers, explicar para si mesmos e entender como eles funcionam e quais problemas enfrentam no dia a dia. As
+
+consultas dos usuários podem variar desde qual chiller está superaquecendo até analisar a distribuição de temperaturas nos meus data centers, ou ainda se alguma das minhas GPUs está apresentando problemas. Agora, a partir dessa variedade de perguntas, você pode ver que elas incluem desde discussões sobre quais equipamentos específicos são o chiller seis, até discussões sobre grupos de equipamentos, como GPUs, no data hall um. A indústria ainda não definiu um padrão de nomenclatura comum, e cada cliente pode ter seus próprios nomes, desde nomes simples como "racks com GPUs" e "data halls", que dão uma ideia exata de onde os diferentes componentes estão localizados, até algo mais difícil de compreender, como " CH3 alguma coisa seis". Temos visto todo tipo de nome surgindo na indústria daqui para frente. Agora, quando você está construindo um sistema de demonstração, isso funciona porque você está trabalhando em pequena escala. Um sistema de linguagem simples pode
+
+analisar todos os nomes dos seus equipamentos e descobrir sobre o que o usuário está falando . Mas esse problema torna-se realmente intratável à medida que se busca escala. Por exemplo, em fábricas com capacidade de processamento de 1 gigawatt, você encontrará mais de 400.000 GPUs e, para suportar essas GPUs, você tem medidores de energia, resfriadores e outros equipamentos. As janelas de contexto do LM são finitas e você as saturará muito rapidamente, o que se torna um problema.
+
+Como costumamos dizer, um produto é algo que funciona em todos os cenários e não falha silenciosamente. Uma demo precisa simplesmente funcionar para uma pessoa. Além de pedir ao LLM para descobrir esses nomes, também poderíamos tê-los incorporado em um banco de dados Rack, usando uma abordagem de incorporação vetorial . Mas o problema é que, muitas vezes, os nomes são tão semelhantes que a busca semântica simplesmente falha. Bem, há muito pouca diferença entre um vetor de "Desculpe" e um nome em formato de string com 20 caracteres, que difere apenas por, digamos, um caractere. Chiller 6 em vez de
+
+Chiller 7. Ou, tipo, CDO alguma coisa versus, bem, outra coisa. É muito pequeno. Então, você tem muitos problemas para obter uma recordação precisa. Além disso, os LLMs sofrem do que chamamos de penalidade de frequência. Se você continuar
+
+gerando nomes muito semelhantes repetidamente, ou tokens muito semelhantes, mais precisamente, repetidamente, o LLM aplica penalidades internas que simplesmente interrompem a geração de resultados. Então, se o usuário disser: "Pode listar todos os nomes de, digamos, GPUs no i7?" Existem, digamos, 100. Só de listá-los , os mecanismos de controle do LLM perceberiam que a situação está saindo do controle e simplesmente desligariam o sistema. Portanto, não podemos realmente ter essas duas abordagens. RAG não funcionaria. Mestrados em Direito (
+
+LLMs) ingênuos não funcionariam. À medida que avançamos para sistemas de produção, precisamos de algo que possa ser dimensionado conforme o sistema cresce. Agora, existem soluções ingênuas que discutiremos mais adiante. Uma abordagem ingênua para resolver esse problema seria simplesmente dividir para conquistar. Pegue seus diferentes equipamentos, divida-os em diferentes fragmentos e passe-os pelos LLMs.
+
+Chamadas paralelas devem funcionar, certo? Bem, era o que pensávamos. O problema é que você fica com uma memória péssima e alucinações. Você verá profissionais de gestão de projetos (LLMs) inventando equipamentos fantasmas que não existem, e também descartando silenciosamente coisas que realmente existem. Isso cria um problema para sistemas de missão crítica, onde os usuários precisam saber exatamente o que está acontecendo com seus sistemas. Qualquer problema nesse aspecto
+
+corroerá rapidamente a confiança do usuário. Ao mesmo tempo, você deixará passar problemas específicos que podem se transformar em problemas cada vez maiores no futuro. De qualquer forma, algo que percebemos aqui é que, à medida que o tamanho dessa infraestrutura física aumenta, as soluções baseadas em LLM não conseguem acompanhar o crescimento de seus componentes, instâncias ou nós individuais. Precisamos encontrar algo que cresça de forma sublinear com o aumento do número de equipamentos. E foi isso que descobrimos.
+
+Portanto, não devemos crescer com instâncias, mas sim com a profundidade da árvore. O que queremos dizer com profundidade da árvore é que percebemos que existe uma estrutura hierárquica na qual uma fábrica de IA está organizada. Você terá centros de dados, e cada centro de dados terá diferentes salas de servidores, cada uma com corredores diferentes, fileiras diferentes, racks diferentes e GPUs. Da mesma forma, uma central de refrigeração terá salas onde os resfriadores são instalados, e depois haverá bombas. Haverá uma unidade de torre de resfriamento separada . É meio parecido com uma árvore.
+
+A profundidade da árvore cresce muito lentamente, enquanto a largura cresce extremamente rápido. Em outras palavras, você terá uma hierarquia que adiciona novos equipamentos muito raramente, mas adiciona muitos deles quando o faz. Você terá muitas GPUs, mas sem GPUs, você não terá muitas coisas. Agora, percebemos que isso poderia ser usado para resolver nossos problemas. E existem quatro pontos-chave que realmente entram em jogo neste contexto. Um deles é um
+
+linearizador. O que quero dizer com linearizador é que o LLM precisa descobrir onde cada um desses itens está organizado e como mapear uma consulta vaga do usuário para equipamentos específicos ou grupos de equipamentos. Nesse contexto, uma representação resumida do grafo do nosso sistema pode ser realmente muito útil. Por exemplo, uma fábrica com capacidade de 1 gigawatt pode ter mais de um milhão de nós, e cada nó representa um equipamento único. Mas, como você quer ir da raiz até a folha, tudo o que precisa fazer é descrever todos os caminhos, e isso resulta em uma lista finita muito pequena. Por exemplo, aqui você
+
+pode ver que para chegar a uma GPU, você precisa apenas de quatro camadas diferentes . Para chegar a um chiller, são necessárias quatro camadas, assim como para chegar aos switches, também são necessárias quatro camadas. Com isso, um
+
+sistema com 64 GPUs e um sistema com 460.000 GPUs produzem resumos de tamanho aproximadamente igual. Esse contexto consolidado fornece ao seu mestrado em Direito tudo o que ele precisa saber para descobrir como uma planta está organizada e como os diferentes equipamentos estão distribuídos nessa planta. A segunda conclusão a que chegamos foi que os mestrados em Direito (LLMs) são bons para planejamento, mas não para pesquisa. Foi isso que percebemos quando constatamos uma taxa de recuperação muito baixa com nossas soluções fragmentadas. Então,
+
+em vez de fazer o LLM vasculhar todos os diferentes nomes vagos que podemos receber de nossos usuários, pedimos ao LLM que nos dissesse exatamente como procurá-los. Por exemplo, aqui a consulta diz: "Indique todas as GPUs que estão apresentando alta demanda no data hall 11." O LLM não precisa percorrer todos esses nomes de todas as nossas GPUs para descobrir qual delas está no data hall 11 e, em seguida, descobrir por que elas estão superaquecendo. Tudo o que precisa fazer é gerar saídas estruturadas, o que nos indica que, bem, precisamos coletar GPUs. O escopo sob o qual precisamos coletar dados é uma subárvore que corresponde ao data hall 11, e o filtro que precisamos aplicar para finalmente descobrir exatamente o que precisamos são GPUs que estejam operando em alta temperatura. Isso
+
+pode significar coisas diferentes dependendo do contexto, e você pode implementar filtros diferentes. Tudo o que precisamos saber é como criar o cenário que queremos alcançar. A terceira coisa que percebemos é que, uma vez que você tenha uma saída estruturada para descobrir exatamente o que precisa, construir o back-end para isso é relativamente simples e direto. Agora, tudo o que precisamos fazer é criar diferentes subconjuntos de nossos equipamentos, ou árvores de pré-índice, como gostamos de chamá-los, com base em sua localização e em como interagem com outros equipamentos ao redor, para termos uma ideia do que precisamos analisar. Por exemplo, no slide anterior, vimos que queríamos analisar as GPUs no data hall 11. Poderíamos simplesmente obter todas as GPUs do
+
+data hall 11 em uma subárvore pré-indexada ou em outros data halls, por exemplo, ou em outros racks, por exemplo. E então, para chegar ao resultado final, tudo o que precisamos fazer é executar uma consulta para encontrar todas as GPUs que estão apresentando alta demanda e calcular a interseção entre elas. As operações de conjunto garantem que tenhamos recall e precisão perfeitos, independentemente de como queremos filtrar as consultas e da imprecisão que o usuário possa ter em sua consulta. Próximo slide, por favor. Sim. E, por fim, e
+
+se você tiver algo que seja muito, muito vago? Nesse caso, você precisa fazer com que os LLMs (Modelos de Aprendizagem Baseados em Leis) realizem a busca, mas em vez de pesquisar diretamente pelos nomes, descobrimos que fazer com que os LLMs nos forneçam padrões para procurar é uma boa solução. Isso pode indicar padrões nos dados, mas os nomes podem ser muito mais úteis para descobrir sobre o que o usuário está falando, em vez de simplesmente passar a lista inteira de nomes para o LLM. O LLM nunca precisa ver um número muito grande de tokens. Tudo o que precisamos fazer é identificar alguns padrões na convenção de nomenclatura, descobrir exatamente do que o usuário está falando, criar um padrão e, em seguida, podemos executá-lo no back-end do nosso lado. Isso garante que o LLM tenha
+
+um custo operacional constante ou relativamente constante . Por outro lado, se tivéssemos que analisar tudo detalhadamente, teríamos obtido uma escala linear com o aumento do número de equipamentos, que por sua vez cresce exponencialmente à medida que o tamanho do sistema aumenta. Finalmente, para processar uma consulta do usuário de ponta a ponta, partimos da consulta do usuário, que pode ser qualquer coisa, desde um único equipamento até um grupo de equipamentos, e passamos para um planejador LLM, que identifica a intenção do usuário e nos fornece um padrão de pesquisa. Com base nesse plano de busca, temos um resolvedor determinístico, que indexa, realiza operações de conjuntos, descobre exatamente o que precisamos fazer e cria o conjunto final que corresponde à consulta do usuário, e é isso que chamamos de conjunto de resultados. Tudo isso é um processo de duas ou três etapas, em vez de um loop agentivo de várias etapas, que pode continuar sendo executado repetidamente. E
+
+isso mantém nosso custo total relativamente estável e constante. Legal. Sim, se o trabalho do Rahul é projetar a arquitetura, o meu é garantir a preparação para a produção. Portanto, precisamos garantir que tudo o que projetamos, as soluções elegantes que criamos, realmente resistam à carga real, aos dados reais dos clientes e a todos os casos extremos e complexos que só se vêem em produção. Assim, antes que qualquer um desses produtos chegasse perto de um cliente, nós os submetemos a uma série de testes e avaliações extensivas.
+
+Comparamos o novo sistema diretamente com os antigos, usando o mesmo modelo LLM, os mesmos dados e realizamos três execuções por caso para garantir a precisão. Nosso objetivo era simples: provar que as soluções de Rahul estão prontas para produção. E com certeza são. Se você observar algumas estatísticas aqui, verá que a abordagem antiga se degradou muito rapidamente em larga escala. Assim, obtivemos 80% de precisão com 64 GPUs, e esse valor caiu para cerca de 30% quando o número de GPUs aumentou para 400.000.
+
+Por outro lado, nossa nova abordagem manteve a correção com 100% de precisão em todos os testes que realizamos. E este não é apenas um teste sintético. Hum, estes também são dados reais. Então, tivemos 66 casos em seis sistemas de produção reais e eles produziram zero falhas. E não se trata apenas de correção, mas também de uma leveza impressionante.
+
+Então, quando falamos de um data center de escala 1 GW , a abordagem antiga consumia 116 milhões de tokens em apenas uma única validação, além de ainda apresentar muitos erros. Se você observar a nova versão, verá que são 390.000 tokens, o que representa cerca de 300 tokens a menos. Mas o que mais importa é que o custo é fixo. Como Rahul mencionou anteriormente, o sistema cresce em tamanho, mas o custo da consulta era de 9.000 tokens por consulta, enquanto o
+
+sistema possuía 64 GPUs ou 460.000. Assim, em vez de o custo crescer exponencialmente quando os clientes expandem seus sistemas, ele permanece o mesmo. Esse é o impacto. Agora, há algo sobre o que aprendemos e a parte que quero que vocês levem de volta para o seu próprio trabalho. Tudo
+
+começa com uma lente da Karpathy. A maioria de vocês provavelmente já viu a apresentação dele ou a forma como ele explicou esse assunto. Ele fala sobre diferentes tipos de software. O Software 1.0 é um código determinístico que você escreve. É previsível, exato,
+
+mas muito menos flexível. Por outro lado, temos o software 3.0, que é basicamente um comportamento que você solicita a partir de um LLM. No nosso caso, isso poderia significar "mostrar-me as GPUs no data hall 11 que estão a aquecer muito" . Isso é muito flexível e inteligente, mas um pouco vago.
+
+Ora, a sua observação foi que, em software legado, a versão 3.0 está gradualmente a substituir a versão 1.0. Grande parte do código que antes era determinístico passa a ser um prompt. Guarde essa imagem, porque a lição para os novos sistemas nativos de IA é um pouco diferente.
+
+Mas a verdadeira habilidade está em saber para qual tipo de trabalho o LM não é o mais indicado. E você sempre deve querer manter o equipamento, pois ele deve ser usado para as coisas que faz bem. É excelente para analisar solicitações ambíguas, determinar onde e o que procurar nos dados, lidar com frases nunca vistas de um novo usuário com uma consulta diferente e, por fim, sintetizar e escrever a resposta final legível para humanos. Mas tudo o que você puder modelar com dados, você deve transformar em código. Este é o ponto crucial, especialmente para sistemas de grande porte. Se seus dados possuem estrutura,
+
+seja ela uma hierarquia, um grafo ou um esquema, um modelo de linguagem que os analisa token por token é definitivamente a ferramenta errada. Tanto a recuperação de dados, quanto a lógica de configuração exata, a contagem e a remoção de duplicatas em nomes quase idênticos (algo comum em data centers) — qualquer coisa que precise ser 100% reproduzível — deve ser implementada por meio de código determinístico. A heurística simples que geralmente funciona, se você conseguir anotar a estrutura ou as regras, é tarefa de nível 1.0. E o modelo LM puro é mais fraco exatamente quando o sistema é grande e bem estruturado, que é precisamente onde nós e nossos clientes operamos.
+
+Então, de certa forma, invertemos a tendência da Carpathia . Começamos praticamente com a versão 3.0 pura. Colocamos tudo na janela de contexto porque essa é a maneira mais rápida de descobrir o que vale a pena construir. E, como dissemos, funcionou muito bem em uma demonstração simples para começar.
+
+Então, como era necessário que o projeto fosse realmente escalável, movemos para a versão 1.0 as partes que podem ser tratadas como problemas de engenharia conhecidos. E ainda mantivemos o julgamento rigoroso no LM. Então, essa é a inversão. O software legado evolui da versão 1.0 para a 3.0, enquanto o
+
+novo software nativo de IA começa na versão 3.0 e amadurece em direção à versão 1.0 para os casos de uso que a justificam, é claro. Não estamos aqui para substituir o bom senso. Queremos alimentá-lo com as ferramentas da versão 1.1.0, como a chamamos.
+
+Portanto, cada função 1.0 que você adiciona é uma base mais sólida para o LLM se apoiar. Para concluir, deixemos que o LLM fique com as decisões difíceis. Tudo aquilo que não deveria ser adivinhado, adicione como código e devolva essa estrutura ao modelo para que ele possa trabalhar com ela. Portanto, desenvolva com o software 3.0 e
+
+coloque em produção adicionando o software 3.0 1.0. Obrigado a todos por assistirem. Se tiverem mais alguma dúvida, podem nos contatar por e-mail: Rahul Russell, Google@fidra.ai,
+
+Lanza (pelo menos para obter o endereço fidra.ai), ou podem deixar suas perguntas nos comentários do vídeo abaixo. Obrigado por assistir. Obrigado.

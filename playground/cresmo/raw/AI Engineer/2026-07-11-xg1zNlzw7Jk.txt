@@ -1,0 +1,114 @@
+---
+video_title: "Claws Out: Securing and Building with OpenClaw - Nick Taylor, Pomerium"
+video_id: xg1zNlzw7Jk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xg1zNlzw7Jk
+video_date: 2026-07-11T22:30:06+00:00
+video_description: |
+  Running OpenClaw without hardening access to it is a bad idea. We'll cover how I secured my OpenClaw, McClaw, contributed trusted-proxy auth mode to the OpenClaw project, and how I use it to build tools.
+  
+  We're going to build something live during the talk using OpenClaw, the same way I built Clawspace, a browser-based file explorer/editor for your OpenClaw workspace.
+  
+  feat(gateway): add trusted-proxy auth modegiithub.com/nickytonline/clawspace, a browser-based file explorer/editor for an OpenClaw workspace.github.com/pomerium/pomerium, an open core Identity-Aware Proxy
+---
+[música]
+
+Sim. Então, como o Phil disse, eu trabalho na Pomerium e ele não é a primeira pessoa a ter dificuldade em pronunciar o nome. Então, na verdade, eu convenci a equipe de marketing a criar adesivos de Pomeranian. Então, se alguém quiser adesivos de Pomeranian, tenho vários comigo. Um pouco sobre mim, bem, eu sou um defensor de desenvolvedores na Pomerium, como o Phil disse. Sou do Canadá, mais especificamente
+
+de Montreal. Então, se alguém gosta de poutine e bagels, fique à vontade para conversar comigo depois. Além disso, sou uma estrela do GitHub, MVP da Microsoft e construtor da comunidade AWS. E vocês podem me encontrar praticamente em qualquer lugar, no site da Nikki T. Fiquei bastante contente em ver que existe uma instância considerável do Open Claw instalada localmente. Então, fiquei bastante
+
+satisfeito com isso. E parece que aquele é o operador. Legal. Então, uh, não sei, eu inventei um título engraçado, eu acho, mas Clawzette. Vamos falar sobre uma funcionalidade para a qual contribuí no projeto Open Claw em fevereiro.
+
+E trata-se de reforçar o acesso ao plano de controle. Então, presumo que todos aqui estejam usando um Open Claw ou tenham curiosidade sobre ele. Alguém está usando um modo chamado modo de autenticação de proxy confiável? Você pode não ser, mas, ah, tudo bem. Você pode estar na lista de quem está na autenticação por token?
+
+OK. Bem, de qualquer forma, na Pomerium, onde eu trabalho, sabe, eu estou sempre tentando garantir a segurança das coisas. Isso faz parte do que eu faço. E consegui proteger o Open Claw, mas isso significava que eu ainda precisava adicionar um token para a conexão do WebSocket. Eu sempre tinha que emparelhar meu dispositivo e essas coisas.
+
+E você realmente não precisa disso com um proxy confiável. Como aquele em que eu trabalho, que é o Open Core, que se chama proxy com reconhecimento de identidade. Então, se alguém já usou o GCP, sabe que existe um IAP lá. Chama-se proxy com reconhecimento de identidade, algo que surgiu no Google. Basicamente, você tem um provedor de identidade, um mecanismo de políticas e um proxy reverso. Então,
+
+não é a tríade letal no sentido que você costuma ouvir, mas é uma abordagem de segurança bastante sólida para proteger aplicativos internos. Então, eu pensei, claro, eu... meio que fiquei irritado por ter que adicionar esse token e fazer o emparelhamento toda vez.
+
+Entendi por que eles estavam lá, mas eu apenas propus essa questão e então pelo menos uma outra pessoa que usa o Caddy interveio e disse: "Ei, isso parece uma boa ideia." E aí o Peter Stipe disse: "É, vamos trabalhar nisso." E ele descreveu os critérios que gostaria de ter para essa funcionalidade. Então, eu prossegui e trabalhei nisso. E sim, novamente, antes do modo de autenticação de proxy confiável , mesmo que você estivesse protegido por um proxy, ainda era necessário colar o token de autenticação na interface do usuário para a conexão do WebSocket.
+
+E também o insere na string de consulta, o que, obviamente, é mais adequado para o modo local mesmo . E ainda preciso emparelhar o dispositivo. Tipo, não sei se as pessoas se incomodam em emparelhar o dispositivo, mas, sabe, eu ficaria mexendo no meu celular depois de configurá-lo. E aí eu pensei: "Hum, preciso ir ao outro lugar para organizar tudo." Então, basicamente, você ainda tinha que fazer essas coisas mesmo que estivesse protegido com um proxy.
+
+Então, fui integrado e me senti muito bem com isso. E foi bom receber elogios do Peter. Essa foi a minha primeira contribuição para o projeto. Então, é muito legal. Então, como fica exatamente na configuração? Bem,
+
+vou mostrar apenas uma pequena parte da configuração aqui, mas você tem o seu gateway. E, essencialmente, você não precisa mais do token, como mencionei. Ah, o modo é obviamente diferente, então agora se chama proxy confiável. E depois há algumas novas propriedades que você precisa adicionar. Então, existem proxies confiáveis. E
+
+este é essencialmente o proxy que controla o acesso ao plano de controle, o gateway. São os endereços IP. Pode ser uma ou mais. Além disso, você precisa ter uma seção de proxy confiável. Então, você terá um cabeçalho de usuário, que no meu caso é um JWT. E depois há uma
+
+seção de cabeçalho obrigatória. Existem também algumas opções opcionais. Depende do que você quer fazer. Existem usuários autorizados. E no meu caso, eu não preciso da lista de usuários permitidos porque o funcionamento do proxy com reconhecimento de identidade é determinado pelas políticas . Mas, essencialmente, essa é
+
+a grande mudança. E você pode fazer isso durante o processo de integração ou simplesmente voltar e configurar as coisas através da interface de usuário (TUI). E sim, isso significava que não haveria mais token para conexões WebSocket e que não seria mais necessário emparelhar dispositivos. Então, além de potencialmente melhorar sua segurança, para mim também é uma vitória em termos de experiência do usuário, porque eu realmente achava essas duas coisas irritantes. Legal . Ah, e eu também gostaria de
+
+agradecer a alguns colaboradores que contribuíram com este texto. Havia um bug, Anthony o reportou e então Sid o corrigiu. E, bem, foi definitivamente algo que me passou despercebido, porque basicamente eu estava testando isso no meu ambiente local e já tinha algo emparelhado. Então, eu não me deparei com o problema que o Anthony havia mencionado. Então, felizmente, era um conserto pequeno e o Sid resolveu isso. Mas,
+
+sabe, quando você sente falta de alguma coisa, as pessoas da comunidade se mobilizam. Portanto, o software livre é a melhor opção. Outra coisa que quero mencionar não é tanto sobre este recurso, mas quando abri esta questão, o número dela era 1560. E eu tinha um PR inicial que estava por volta da posição 1700. E eu fui de férias e disse: "Ah, volto a isso quando retornar."
+
+E o comunicado de imprensa original foi encerrado por estar desatualizado. E, literalmente, depois de duas semanas, passou de cerca de 1.500 para quase 16.000. Então, basicamente, isso é uma prova de quão popular o projeto se tornou. Mas isso também
+
+significava que eu tinha que fazer bastante rebase antes que a alteração fosse mesclada. Então, enfim, não sei se mais alguém contribui [limpa a garganta] para o projeto, mas há tantas coisas acontecendo o tempo todo. Então, é preciso fazer muitas alterações para manter tudo atualizado. Legal. Então, vamos falar sobre a minha própria Garra Aberta. Então,
+
+esta é a minha garra. E ele está sentado na minha mesa em Montreal neste exato momento . Ainda há neve em alguns pontos. Eu uso isso no Discord. Não sei onde as pessoas usam o Open Claw.
+
+Inicialmente eu usava o Telegram, mas na verdade os canais deles não são criptografados. Então, tudo está transparente. Então, eu trabalho em uma empresa de segurança e meu CEO disse: "É, não use isso." Então, enfim, eu uso mais o Discord. Acho que é útil dessa forma. Eu também tenho WhatsApp, mas costumo
+
+usar mais o Discord. Bem, algumas coisas que eu também quero mencionar é que, quando fiz a contribuição, usei o Open Claw, o que foi bem divertido. Mas também... eu cometi o erro de
+
+usar a CLI do GitHub e dar a ela acesso total. Então, eles publicaram um comunicado de imprensa imediatamente, antes mesmo de eu terminar de revisar tudo. Então, eu fiquei tipo, "Ah". Mas, eh, coloque-o de volta no modo rascunho. Mas, além disso, depois que o modo de proxy confiável por token foi integrado, eu comecei a trabalhar em algo. Começou a ficar divertido
+
+simplesmente criar coisas no meu celular. Então, eu construí algo chamado Claw Space. E sabe, isso não significa que você precise usá-lo. É que, sabe, estamos na era do software pessoal. Eu me diverti muito construindo isso. Acho
+
+útil. E achei muito legal poder fazer isso no meu celular usando o Discord. Bem, para mim, é útil porque não preciso usar SSH para ver os arquivos do espaço de trabalho que quero ler ou editar. Então, esse é apenas um pequeno projeto paralelo que comecei a desenvolver. E você também pode editar arquivos e outras coisas.
+
+Legal. Então, vamos fazer uma demonstração aqui. Isso vai ser uma programação ao vivo. Então, YOLO. OK.
+
+Então, amanhã tem uma prova de MCP. Hum, tenho trabalhado bastante com MCPs. Então, o que vamos fazer é construir um MCP, não uma versão completa de algo. Mas se você já viu o site do engenheiro de IA, eles têm um texto tipo LM à direita. E há um servidor MCP e algumas outras coisas.
+
+Então, vou adicionar isso aqui.
+
+E eu vou criar um aplicativo. Vou explicar algumas coisas daqui a pouco.
+
+OK. E OAuth. OK. Então, isso vai criar um aplicativo no ChatGPT. Bem, basicamente, este é um servidor MCP que também possui interface de usuário. Eles estarão
+
+falando sobre isso amanhã. Mas, bem, eu tenho um modelo que uso para isso. Então, não é como se eu estivesse construindo isso do zero. Mas vamos apenas registrar o MCP aqui. E então vou começar a construir com garra aberta.
+
+E o problema com a genética é que você nunca sabe quando ela termina. Está terminando uma viagem por aqui.
+
+Ok, legal. Está conectado e podemos ver aqui que possui duas ferramentas. Possui uma ferramenta de eco e uma ferramenta de busca de alto-falantes. Então, se chegarmos aqui e ninguém nunca tiver usado aplicativos MCP, basicamente no chat GPT, faça isso para o seu aplicativo e eu vou dizer algo como "eco olá". Essencialmente, ele vai executar a chamada da ferramenta, mas como há uma interface de usuário associada a ela, você verá alguns elementos da interface aqui.
+
+E isso usando apenas os recursos padrão do MCP que já estão na especificação. Então você pode fazer coisas como mudar isso, aumentar o tamanho e tal. Mas o que eu quero mostrar é que, quando estou construindo isso com a garra aberta, consigo fazer coisas assim. Posso dizer algo como " uh ba ba ba" e alterar a mensagem de eco para " AIEU" no widget de eco. Isso vai levar um tempinho, mas, bem, por baixo de tudo isso, é tecnologia web.
+
+Não sei se tem alguém aqui que seja desenvolvedor web, mas basicamente está usando V e React, então tem o `react refresh` e o `V hot module reloading`. McClaw está cuidando do caso aqui e vocês podem ver que estou no chat GPT, editando ao vivo do meu espaço de trabalho, o MCP, e para explicar como isso está funcionando, temos o modo de proxy confiável desativado. Bem, neste caso estou usando o Pomerium, então também o utilizo para proteger outros elementos no ambiente de trabalho. Tenho um URL público que bloqueei para o MCP e é assim que consigo usá-lo no chat GPT. E eu posso continuar trabalhando nisso aqui dentro, e não sei como outras pessoas trabalham ou constroem com a pegada aberta, mas é mais ou menos assim que eu tenho feito . Acho que funciona muito
+
+bem para coisas de desenvolvimento web. Então, vou atualizar o alto-falante de pesquisa. Vamos fazer isso em um novo chat. E eu digo novamente à AIE: procure por falantes. E isso vai resultar numa interface de usuário bem minimalista, porque não tem muita coisa envolvida. Então,
+
+vou dizer ao McClaw para assumir o caso. Basicamente, se você for até o canto superior direito do site da AIE, encontrará o arquivo speaker.json, que contém a lista de todos os palestrantes da conferência. Vamos usar esse arquivo como fonte de usuários e, em seguida, configurar a interface para exibir algo semelhante à interface do widget Echo. Hum, provavelmente vai demorar um pouco porque... o
+
+McClaw provavelmente está coberto de neve em Montreal, mas... legal. Então, basicamente, quando isso estiver concluído, poderemos filtrar os usuários e ver quem está falando na conferência. Vou
+
+tomar um gole de água enquanto McClaw continua falando sem parar.
+
+Novamente, nunca se sabe quando um gene termina. Ok, é determinístico e, deterministicamente, é indeterminado. Então, isso deve ser feito em um segundo e, em seguida, você verá isso atualizado. E, só para reiterar o fluxo, estou trabalhando em arquivos de espaço de trabalho no meu OpenClaw. Estou falando com ele ou digitando com ele no Discord. Bem,
+
+este é um site disponível publicamente e eu consigo criá-lo usando meu OpenClaw, e gosto desse fluxo de trabalho. Eu realmente não sei como as outras pessoas funcionam. Quer dizer, obviamente eu também uso outras ferramentas como Claude e Codex. Bem, como você pode ver aqui, o McClaw conseguiu concluir o trabalho e então eu posso começar a filtrar, então podemos procurar por perfuração aqui, então podemos encontrar um alto-falante e obter um pouco mais de informação e então, como eu poderia dizer, vamos adicionar outro recurso aqui, então vamos chamar o McClaw novamente.
+
+Então, vamos adicionar um botão "Mais" aqui, e há essa função de envio de mensagem que você pode usar em aplicativos MCP. Quando você clicar no botão "Mais", uma chamada será feita para o LLM e você receberá uma resposta. Então, vamos dar um segundo para isso. Uh ba da ba da ba. Legal. Então, adicionei este botão "mais"
+
+novamente. Como trabalho com desenvolvimento web há algum tempo, ainda acho mágico quando as coisas se atualizam automaticamente. Vou clicar aqui e você verá que agora está processando a informação. Na verdade, adicionou um novo prompt para o chat GPT e vai resumir por que acha que você deveria assistir à palestra do Alessandro e dar mais detalhes sobre o assunto. Eu acho esse fluxo de trabalho realmente muito legal. Isso só é possível se você usar algum
+
+tipo de proxy. Você pode fazer isso com outros serviços, como o Caddy, usando OAuth. Você poderia fazer isso com... bem, o
+
+motor X está meio que obsoleto neste momento. Não estamos obsoletos, mas pelo menos no contexto do Kubernetes, o controlador de entrada está. Mas é uma maneira muito interessante de controlar o acesso a informações locais, permitindo que você ainda as exponha de forma segura. E também é divertido de construir. Não sei quanto aos outros, mas eu tenho gostado muito de construir coisas enquanto converso. Ah,
+
+eu me lembro de alguns anos atrás, da Replit, uma empresa de IA que está facilitando muito a criação de coisas. Eu pensei: "Por que eu iria querer criar algo no meu celular?", e aí meu celular meio que pifou, acho que foi isso. É só diversão, sabe? Só para se divertir. Acho que isso faz parte da
+
+questão da garra aberta. E você pode usá-lo como quiser. Eu, por exemplo, acho esse espaço para as garras que criei super útil. Sabe, você pode construir suas próprias ferramentas e coisas do tipo. É fundamental levar a segurança em consideração. Sabe, tem um
+
+monte de gente que obviamente expôs coisas sem querer . Sabe, algumas pessoas apagaram todos os seus e-mails, etc. Hum, mas não sei. Eu acho o modo de proxy confiável desativado super útil e pelo menos mais uma pessoa concorda, conforme mencionado naquela questão. Eu recomendo que você dê uma olhada. É
+
+só se divertir construindo coisas e é basicamente isso. Meu nome é Nick Taylor e é assim que eu construo com a técnica de garra aberta. [aplausos]
+
+[música]

@@ -1,0 +1,104 @@
+---
+video_title: "OpenClaw in Your Hand: Building a Physical AI Terminal - Lech Kalinowski, Callstack"
+video_id: akk6KRlcwW4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=akk6KRlcwW4
+video_date: 2026-06-28T21:30:06+00:00
+video_description: |
+  What if an AI device felt calm — closer to peace than a glowing distraction? Vault is a text-first, dual-display handheld AI terminal built on a single ESP32-S3 and powered by one battery cell. It pairs a fast, emissive OLED "live" surface with a slow, bistable e-paper "content" surface, switches between four modes with a single slash command — shell, assist, control, and an LLM-native RPG — and drives autonomous OpenClaw agents, all against a fully local, self-hosted model (gpt-oss:120b served by NVIDIA TensorRT-LLM). This talk walks the system end to end: an AI-native architecture where the firmware talks to a dependency-free Python backend that dispatches to local models, agents, and a game engine; why inference stays on the backend instead of the microcontroller; and how the device surfaces an agent thinking and calling tools in real time on e-paper. Along the way: the engineering war stories that each cost a day, the LLM-native game design that tracks narrative state instead of HP and dice, and what it actually takes to put a local agent in your pocket.
+  
+  Speakers:
+  - Lech Kalinowski (Callstack): Dr. Lech Kalinowski is an AI and data science leader, PhD in Physical Sciences, and startup co-founder specializing in machine learning, AI strategy, printed electronics, and applied innovation.
+    X/Twitter: https://x.com/LeSiOO
+    LinkedIn: https://www.linkedin.com/in/lech-kalinowski/
+    GitHub: https://github.com/lech-kalinowski
+---
+Provavelmente todos vocês já planejaram atividades de limpeza. E você pode imaginar que eu também planejei um fim de semana para limpar meu porão. E eu simplesmente fui lá e limpei tudo o que estava lá. Sabe, vomitar na máquina de lavar velha . E eu olhei para aquele canto e percebi que havia algo estranho ali, caído no chão.
+
+Então, eu simplesmente peguei, olhei para o estranho dispositivo, que parecia um pouco familiar, mas também um pouco antigo, como dos anos 80, com teclado, mas com um visor esquisito. Claro, coberto de poeira. Eu simplesmente pego e levo na mão. Veja só. E fiquei completamente surpreso ao ver que o dispositivo tinha uma carcaça.
+
+E começou. Então, eu usei minhas habilidades de superpoderes em um terminal e fiz uma pergunta simples. Quem sou eu? E o dispositivo responde da maneira mais estranha que eu poderia imaginar. Na linguagem natural.
+
+Então, a história que acabei de descrever pode ser uma ótima história para marketing. Mas, honestamente, eu só queria construir um dispositivo que fosse físico e nativo em IA, como os dispositivos que virão do futuro. Olá. Meu nome é Lech Kalinowski. Sou doutor em física e hoje quero apresentar a vocês um dispositivo, um sistema de backend e um sistema que desenvolvi nos últimos meses.
+
+E toda a história começa porque eu simplesmente queria construir um controle remoto para minha instância OpenClaw no meu DJX Park.
+
+E a história é simples. Porque quando você pensa pela primeira vez em LLMs, você não está pensando no áudio, nos vídeos ou imagens generativos. Primeiro, você pensa no texto. E então me veio a brilhante ideia de que talvez eu pudesse usar algum tipo de tela melhor para ler e digitar com meu LLM. É claro que existe papel eletrônico no mercado, mas percebi que ele pode ser um pouco lento. Claro, é perfeito
+
+para leitura, mas se você só quer fornecer texto dinamicamente, provavelmente precisará de uma tela mais rápida. E então eu simplesmente usei e, no meu projeto, fiz uma conexão simples do display OLED, aquele pequeno, de uma cor, com o display de papel eletrônico. E então, com essa abordagem simples, digamos, de tela dupla, percebi que posso construir um terminal bastante poderoso e eficiente em termos de energia para brincar com minha garra.
+
+E, claro, por trás disso há uma série de complicações. Porque, por um lado, eu só queria construir um controle remoto, mas, por outro lado, existe um nicho de mercado muito grande, que são os sistemas operacionais nativos de IA . E quando comecei a pensar nisso com mais clareza, percebi que posso construir um sistema assim para os meus propósitos. Mas não com computadores superpotentes, e sim com pequenos microcontroladores. E eu acabei de projetar um sistema integrado, digamos, com quatro classes.
+
+Uma delas é a interface interna para controlar o próprio terminal, sabe, configurações do sistema, configurações básicas, conexão Wi-Fi. E dentro da minha ideia de construir um dispositivo com inteligência artificial integrada, eu criei um controle assistido e uma coisa que realmente me surpreendeu, e que explicarei mais tarde, foi o modo RPG. E aqui está. Comecei a prototipar o DGX Park no... bem, aqui ao
+
+fundo na imagem, dois displays. Primeiro, trata-se de uma superfície viva, ou seja, a parte dinâmica. Você pode digitar todo o texto que estiver escrito ali. E quando você ajusta a ação do gatilho, pressiona Enter, então toda a renderização também ocorre no segundo papel eletrônico biestável . Mas há muitas complicações, muita tecnologia envolvida e muitos passos a serem seguidos para se obter uma experiência de usuário e uma interface claras.
+
+Então, acabei de descobrir várias abordagens diferentes para renderizar corretamente a interface em duas telas . Eu simplesmente interajo para controlar meus LLMs, obter respostas e fazer o que eu quiser com meu DGX Park através da garra aberta. E essa é uma das abordagens em que você pode simplesmente ter buffers estáticos fixos e renderizar imagens de um bit armazenadas na memória. Isso significa que as páginas residem em uma memória pré-alocada . Não existe um mecanismo de marcação Markdown nem alocação de memória (malloc) no lado do microcontrolador (MCU).
+
+Eu só queria mostrar para vocês como o sistema é realmente complicado aqui. E isso não se deve simplesmente ao fato de eu querer usar tantos componentes. É porque existe uma enorme necessidade de construir um sistema de gerenciamento de energia, já que acabei de destruir dois desses componentes durante a construção do meu protótipo. E eu só precisava ter certeza de que a corrente e a tensão estivessem o mais estáveis ​​possível. Então, aqui dentro você tem um MCU, que é um microcontrolador dual-core ESP32. Aqui
+
+você tem um display OLED, um teclado e um codificador. E, claro, a menção à fonte de alimentação. Mas, um dispositivo nativo de ponta a ponta não é, digamos, tão simples devido ao alto consumo de energia e à grande demanda por recursos computacionais do dispositivo. Então, aqui está um backend completo criado. Isso significa que acabei de criar um backend completo e aqui está a arquitetura apresentada.
+
+Primeiro, temos um firmware Vault implantado no terminal, e há um enorme backend que lida com todo o trabalho de agentes com o OpenClaw e gerencia o LLM. Gostaria apenas de destacar aqui, na minha apresentação de hoje, que quero demonstrar um dispositivo conectado a um modelo GPT de código aberto com 120 bilhões de parâmetros. E eu simplesmente disponibilizo esse modelo da maneira mais otimizada possível, usando o sistema de serviço TensorRT deles. E eu acabei de expor o estilo OpenAI também para o proxy LLM, porque encontrei muitos obstáculos com outros modelos de código aberto, já que nem todos os modelos correspondem ao estilo da API OpenAI.
+
+Como eu disse, a primeira ideia era construir e, hum, brincar com o Open Claw através desse terminal, e é isso que eu faço com ele. Aqui você pode ver a imagem e conferir um exemplo. Eu consegui executar um comando como "escrever um exemplo em Java" e armazená-lo na minha máquina local, e o Open Claw com suporte a LLM simplesmente funcionou e fez acontecer.
+
+Certo, aqui estão minhas anotações de campo, as coisas que não saíram como o esperado. Lições aprendidas. Primeiramente, o software I2C, porque acabei de conectar os fios e não está funcionando corretamente. E existe uma maneira de controlar adequadamente o I2C sem a necessidade de resistores pull-up físicos adicionais. Do outro lado, no GPIO 13, há uma falha silenciosa. Ah,
+
+houve necessidade de mudar para o outro porto. Hum, para ter certeza de que tudo funciona corretamente. Por outro lado, preciso montar o regulador, a fonte de alimentação, ou melhor, toda a unidade da fonte de alimentação, porque o regulador danifica os LEDs e as partes frágeis do display, o que me custou muito tempo e demorado, além de levar
+
+muito tempo para conseguir as peças de reposição no mercado. Algumas semanas. E a última parte, a qualidade das peças, significa que um encoder barato e de baixa qualidade me deu muito ruído rotacional e houve a necessidade de reforçar os resistores de pull-up e adicionar capacitores extras. Mas esta é a parte mais divertida. A minha favorita.
+
+Porque essa parte realmente me surpreendeu. Você já sabe que existe uma grande parte chamada RPG e que por trás dela há uma história um tanto triste, talvez. Porque eu nunca joguei RPGs como os que existem no papel. Isso significa com muitos amigos. Você pode ir a um apartamento, sabe, abrir um livro e escolher um mestre de jogo e jogar um RPG baseado em texto de verdade .
+
+E depois de muitos desses anos, eu simplesmente nunca tentei. Mas eu desenvolvi um jogo de RPG e um console que me proporcionam uma experiência pura de jogos de RPG baseados em texto . E na verdade é um pouco engraçado porque esses dispositivos são realmente perfeitos para esse tipo de jogo. Eu crio um NPC e uma memória em torno dele . Eu apenas criei a atmosfera do mundo, o conteúdo, o mistério, e usei todas as vantagens do LNM para construir a melhor experiência de RPG de todos os tempos .
+
+Eu acabei de criar quatro mundos diferentes. Por um lado, eu só queria construir algo relacionado ao cyberpunk. Por outro lado, eu só queria algo relacionado com The Witcher, ou seja, algum tipo de mundo de fantasia com dragões. Mas a minha favorita também é a do vazio no espaço profundo, em algum lugar do cosmos. E este é um ótimo exemplo de como podemos usar IA generativa para criar jogos de computador. De um lado, eu simplesmente gero
+
+os personagens, seus mundos, mapas, as habilidades, e tudo isso é convertido com o mecanismo que acabei de descrever no início daquela apresentação, com a alocação de memória de um bit. Isso significa que todas as imagens se transformam em matrizes, e depois em mapas. E uma coisa importante, na verdade, o dispositivo é realmente à prova de balas. Se o LED não funcionar, o papel eletrônico funciona. Se o cartão não funcionar, significa que o teclado está com problema, então você precisará de um codificador. Se a conexão
+
+Wi-Fi falhar, você sempre pode usar seu navegador local. E,
+
+curiosamente, a área da propriedade intelectual está envolvida. Eu estava fazendo uma pesquisa na área e todo mundo queria construir os dispositivos em torno das interfaces de áudio, da captura de vídeo, sabe? Mas para lugares silenciosos, quando você só quer sentar, relaxar e jogar seu RPG, você não precisa de nenhuma dessas telas coloridas e potentes, sabe? Todas essas distrações, comerciais, páginas da web e outras coisas aparecendo do nada. Às vezes você só quer sentar e, sabe, fazer o trabalho direito com a garra aberta ou, ou, sabe, apenas conversar com seu mestre em direito, ler e escrever em um ambiente tranquilo, sem distrações. E existe um nicho de
+
+mercado. Então, também decidi criar uma patente provisória nessa área e talvez isso traga algum dispositivo comercial para o mercado no futuro . Alguns números. No meu projeto, recebi cerca de 130 comentários em aproximadamente 3 meses de trabalho. Duas telas profundas.
+
+Cada um dos monitores desempenha uma função diferente. Quatro modos. Para mundos, para jogos. Em geral, 16 classes. Isso significa que você pode gerar mundos de RPG dentro dele. O
+
+firmware é realmente minúsculo, muito pequeno, e funciona extremamente rápido. E tudo é alimentado por uma única célula de polímero. Célula de polímero de lítio.
+
+Mas talvez algumas observações e conclusões. Grande parte deste lugar se relaciona ao trabalho. Hum, existem muitos deles no mercado. Guarde a miniatura de metal porque ela é muito pesada. Isso significa que, por enquanto, não temos modelos desse tipo que funcionem em microcontroladores superpequenos.
+
+Em "em" significa mestrados em direito (LLMs). E tente narrativa narrativa. O contexto é o que importa, e geralmente não os números. Aqui eu também gravei a demonstração, o uso, como o dispositivo funciona e uma espécie de... uma
+
+última sessão. Por favor, aproveite. E vou deixar alguns comentários lá.
+
+O dispositivo está inicializando. Conectando-se a uma rede Wi-Fi local. Aqui estão a tela de boas-vindas e a tela principal. Tela pequena.
+
+Primeiro, use o comando de ajuda mais simples do teclado. Aqui você encontrará todas as funcionalidades que pode utilizar com o dispositivo.
+
+Há também um tutorial para jogos e um tutorial para o próprio dispositivo. E quando você o liga pela primeira vez, você precisa ou pode fazer o tutorial para aprender a usá-lo (você não precisa, mas pode fazer).
+
+O uso do agente Open Claw significa que, neste momento, estou apenas verificando meu DGX Spark. E quero verificar o espaço em disco.
+
+Aqui está.
+
+Vamos agora analisar a minha parte favorita nos jogos.
+
+Para mundos Armas antigas, abismo de néon Os vazios e a bruxa do vazio.
+
+Você pode selecionar seu
+
+personagem em mm.
+
+E L simplesmente gera as coisas. Tudo é gerado lá. Um fotos, uh uh personalidades das pessoas. E aqui, existe um clima. Houve uma violação. Você está no espaço profundo e
+
+não consegue mergulhar fundo no outro mundo. Sim
+
+.
+
+Então, é isso. Esse era o vídeo. O engraçado é que um jogo como este, sem gráficos tridimensionais, usa o processador Nvidia mais avançado instalado no DGX Park, o que significa que este é o bug e, no momento, estou apenas preparando a demonstração. Assim, o jogo tranquilo com a interface de texto exige a placa gráfica de computador mais potente do mundo. E talvez outra coisa seja que a apresentação era sobre o dispositivo de controle para manipular o agente e abrir/fechar com os LLMs locais, mas, em geral, era sobre o Game Boy.
+
+O dispositivo para brincar com LLMs. Obrigado pela atenção, muito obrigado pelo apoio da Kostak, pois estou trabalhando na incubadora tecnológica da Kostak e todo o trabalho foi apoiado pela empresa Kostak. Muito obrigado.

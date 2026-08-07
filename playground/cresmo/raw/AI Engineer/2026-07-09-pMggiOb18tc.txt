@@ -1,0 +1,172 @@
+---
+video_title: "The Golden Age of AI Engineering — Alexander Embiricos & Romain Huet & Peter Steinberger, OpenAI"
+video_id: pMggiOb18tc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pMggiOb18tc
+video_date: 2026-07-09T18:53:34+00:00
+video_description: |
+  OpenAI's Dev Day 2024 demo ran on an o1 preview model that could not run or check its own code, so Romain Huet had to cross his fingers live on stage. A year later, the same kind of demo ran a full camera and lighting rig, because the model could now test its own work. Alexander Embiricos and Huet use that jump to show how fast Codex is moving: new model releases went from every 15 months to about every 6 weeks.
+  
+  They walk through why Codex is built on the same responses API, open source harness, and AGENTS md file format that ships to every developer, plus new numbers on cost and speed: frontier level intelligence at $1 per million input tokens and $6 per million output tokens, and a model generating 750 tokens a second, fast enough to produce a real pull request in about 10 seconds.
+  
+  Speaker info:
+  - https://twitter.com/embirico
+  - https://www.linkedin.com/in/embirico
+  
+  - https://twitter.com/romainhuet
+  - https://www.linkedin.com/in/romainhuet
+  
+  - https://twitter.com/steipete
+  - https://www.linkedin.com/in/steipete
+  
+  Timestamps:
+  0:00 - Introduction
+  0:13 - The World's Fair analogy
+  1:10 - The role of AI engineers in the future of work
+  2:14 - Accelerating model development cycles
+  3:09 - Evolution of build-and-test model loops
+  4:03 - Scaling engineering capabilities through agents
+  5:30 - Defining the desired AI engineering product experience
+  7:59 - The design philosophy of the Codex app
+  9:44 - The open-source stack and building with API primitives
+  11:43 - Expanding the ecosystem with Apps Server and plugins
+  14:20 - Optimizing for "Value Maxing": Cost and Intelligence
+  15:48 - Achieving high-speed inference for real-time workflows
+  16:51 - Future outlook: Removing the local/cloud distinction
+  18:16 - Special guest introduction: Peter Steinberger
+  18:56 - Shifting from manual orchestration to managing agents
+  20:02 - Three key changes for scalable agent loops
+  21:19 - Redefining the bottleneck as human attention
+  22:08 - Workflow example: Automating open-source issue resolution
+---
+Bom dia a todos. Meu nome é Romain. Olá a todos, eu sou Alexander. Uau, este quarto é incrível. Há mais de 7.000 engenheiros de IA
+
+aqui conosco hoje. E sabe, não se trata apenas de quem está falando sobre essa tecnologia. Também se trata de quem realmente está usando e expandindo os limites da tecnologia todos os dias. Portanto, não poderíamos estar mais orgulhosos de estarmos aqui com todos vocês hoje. E quando estávamos pensando sobre esse evento com o Alex, a Exposição Universal sempre nos vinha à mente. E a Exposição Universal
+
+tornou o futuro visível para todos, construindo-o em público, sabe? Ideias que antes pareciam impossíveis, de repente, surgiram. As pessoas podiam vê-los. Eles poderiam entrar neles . E eles poderiam até começar a acreditar neles. E, sinceramente, este
+
+evento tem exatamente a mesma energia. O futuro da engenharia não virá de outro lugar. Está sendo construído aqui, pelas pessoas nesta sala, e muito mais rápido do que a maioria esperava. E é por isso que é um pouco surpreendente que as pessoas continuem dizendo que os engenheiros estão desaparecendo. O argumento é que a programação é, você sabe, abstraída e, portanto, eventualmente não precisaremos mais de engenheiros.
+
+Bem, na verdade, achamos que é exatamente o contrário. Sabe, o software devorou ​​o mundo. E então a IA devorou ​​o software. Mas agora, o que estamos aqui para dizer é que os engenheiros de IA estão dominando o mundo. Os engenheiros de IA são as pessoas que estão aqui a expandir as fronteiras do conhecimento. Sim.
+
+E vocês estão todos tentando descobrir como essa nova capacidade pode chegar a todos. E, na verdade, nunca houve melhor época para ser engenheiro, porque a engenharia nunca se resumiu a escrever código. A engenharia sempre teve como objetivo resolver problemas, tanto para si mesmo quanto para outras pessoas. Trata-se de pegar a ciência mais recente e combiná-la com design, bom gosto, discernimento e, acima de tudo, imaginação para criar algo que as pessoas possam realmente usar. E nesse sentido, não é o fim da engenharia. Acreditamos que seja um retorno às
+
+raízes da engenharia. E a tecnologia que estamos desenvolvendo está se acelerando, ficando cada vez mais rápida. Por exemplo, antes enviávamos um novo modelo a cada 15 meses, aproximadamente, e agora é mais ou menos a cada 6 semanas. E, caso você tenha perdido, na semana passada lançamos uma prévia da série 5.6 e estamos muito animados para que todos vocês possam experimentá-la.
+
+Agora, com base em todos esses modelos, o ritmo de desenvolvimento do produto é implacável. E, como resultado, não preciso dizer nada, e a engenharia parece completamente diferente. Então, só para recapitular alguns anos do que para mim foram experiências sucessivas e alucinantes. Sabe, obviamente, durante muito tempo tivemos a conclusão automática, depois passamos para a previsão inline e, finalmente, tivemos o comando K, onde era possível pedir ao modelo para fazer uma alteração, mas ele não testava o trabalho. Em seguida, os modelos começaram a testar o trabalho e agora temos modelos assumindo metas longas e difíceis até concluí-las. E para mim, cada uma
+
+dessas fases... Lembro que a primeira vez foi simplesmente impressionante, e depois, obviamente, você se acostuma e tenta terminar seu trabalho . Sim, na verdade, não consigo acreditar que o ciclo de compilação e teste nem sequer fazia parte dos modelos há apenas 2 anos. Esta
+
+foto é minha no Dev Day 2024. Na época, usei a versão 01 em pré-visualização para construir um mini drone na interface Drone Interface do zero. E a parte um tanto insana é que o modelo não conseguia executar o código nem verificar seu próprio funcionamento, e eu sabia que a demonstração funcionaria na maioria das vezes, mas certamente não em todas. Então, tive que cruzar os dedos. Dá para perceber aqui que eu estava bem nervoso, mas, ei, esse sou eu. Eu só faço demonstrações ao vivo, então
+
+nunca sei o que realmente vai acontecer em cada apresentação. Felizmente, funcionou, e no Dev Day do ano passado, em 2025, eu já estava confiante o suficiente de que os modelos poderiam testar seu próprio trabalho a ponto de controlar todo um sistema de câmeras e iluminação ao vivo. Mas sim, percorremos um longo caminho. Sim, então nos referimos a ele como o deus das demos e, sabe, antes da demo, eu pergunto a ele: "Ei, com que frequência as demos funcionam?" Ele vai dizer algo como, sabe, três vezes em quatro e tudo bem, boa sorte. Bem, obviamente percorremos um
+
+longo caminho desde então, e só este ano já foi uma loucura. Então, o que estamos mostrando aqui são todos os itens que já enviamos até o momento. Na verdade, nem tudo, mas sim uma seleção dos itens que enviamos até agora este ano. Bem, as minhas coisas favoritas que lançamos são o aplicativo Codex, o modo de metas e o controle remoto. São coisas que realmente mudam a forma como nos sentimos ao trabalhar.
+
+Sabe, obviamente não conseguiríamos fazer essas coisas se não tivéssemos usado o Codex para construir o Codex, mas acho que o mais interessante para mim é que agora o Codex e seus agentes podem executar qualquer tarefa que você possa fazer no seu próprio computador. Portanto, isso significa que eles não estão apenas ajudando você com a programação, mas também com o que acontece antes e depois da programação. E isso é realmente fundamental, não é? Acho que muito se tem falado, e muito se falará hoje, sobre loops, e se você conseguir conectar o agente não apenas ao trabalho que precisa ser feito, mas também ao porquê de ele precisar ser feito, é assim que você pode fazer com que o agente comece a realizar muito mais trabalho. E se você conseguir conectar isso ao que faz depois, revisar e implementar, é assim que você ajuda a conseguir muito mais trabalho.
+
+Então, com tudo isso, é claro que podemos avançar muito mais rápido, mas para mim, como profissional de produto, o mais empolgante é que, na verdade, tomamos decisões melhores sobre o que construir. Por exemplo, nós tentamos, criamos protótipos de muito mais ideias e passamos muito mais tempo com os usuários. Sim , são todos vocês. Então, queria fazer uma pausa e agradecer muito a todos vocês pelo carinho e pelo feedback construtivo. Diria que podemos afirmar com segurança que nós, da Codex, e na verdade toda a indústria, não estaríamos aqui sem vocês.
+
+Sim, muito obrigada por todos os comentários. Estamos sempre atentos ao que todos vocês têm a dizer. Obrigado. [aplausos] Ok. Então, os modelos estão ficando muito bons.
+
+Eu diria que, se você escolher uma tarefa computacional de duração média e der a mim e ao modelo a mesma quantidade de tempo para concluí-la, provavelmente, pelo menos no meu caso, o modelo terá um desempenho melhor do que eu nessa tarefa. Então, ok, estamos obtendo esses modelos, sabe, de certa forma eles são mais inteligentes do que nós. Eles conseguem fazer quase tudo. Como devemos estruturar isso? Qual deve ser a sensação que os produtos que usamos devem proporcionar?
+
+Assim, para responder a essa pergunta, recorremos à nossa missão. A parte que eu apresentei aqui é, você sabe, a Inteligência Artificial Geral (IAG) que beneficia toda a humanidade. E penso que, para fazer isso, há duas questões principais que me vêm à mente agora. Uma das questões é: como configuramos os agentes para que eles realmente realizem ações no mundo real? Então, o que eles podem fazer? Sabe, gradualmente os
+
+agentes estão se conectando a cada vez mais coisas. Então, para onde eles fogem? Falaremos mais sobre isso adiante. E a outra questão é: como utilizamos esses agentes? Para nós, sabe, qual deve ser a sensação que o produto transmite ao público? E para
+
+nós, o objetivo definitivamente não é automatizar o trabalho dos engenheiros. Em vez disso, o formato de produto que desejamos é aquele que capacite ao máximo os engenheiros. Então, sabe, se pensarmos no formato desse produto, na verdade achamos que é bem simples. Eu leio muita ficção científica e, sabe, assisto a filmes de super-heróis. E eu realmente acho que as ideias simples ali contidas estão aproximadamente corretas.
+
+Então, existem basicamente duas modalidades. Bater papo. Na verdade, acho que conheço algumas pessoas que pensam que o chat está morto. Acho que o chat é subestimado. E algum tipo de experiência prática.
+
+Então, o que você quer é uma única entidade à qual possa pedir ajuda para qualquer coisa, em qualquer lugar. E então você quer uma interface de usuário colaborativa poderosa que possa usar quando quiser inspecionar, controlar ou moldar as coisas por conta própria. Então, pedi ao Codex para gerar uma ilustração disso para ajudar a entender quando você pode querer usar essas ferramentas. Então, minha analogia para vocês, sim, espero que gostem da geração de imagens. Bem, a minha analogia para você seria que é como trabalhar em equipe. Na maioria
+
+das vezes, vocês ficam só conversando sobre coisas, e a equipe fica só fazendo as coisas. Na verdade, você não quer ter que ficar olhando por cima do ombro do seu colega, ou ter que ir até a bancada dele para cada tarefa concluída. Na maioria das vezes, você só quer conversar e deixar que eles cozinhem. E aí, de vez em quando, você quer se aprofundar e realmente se aprofundar até chegar aos detalhes mais minuciosos da questão, e resolver esse problema juntos. E para nós, ao desenvolvermos o produto, temos a ideia de que queremos que você possa manter essa sensação de domínio sobre o trabalho que estamos fazendo, porque isso é realmente poderoso. Não queremos dar a impressão de que
+
+é realmente difícil chegar aos detalhes e, sabe, desmontar o hardware neste caso. Portanto, a forma como estamos dando vida a isso é apenas o começo, mas é por isso que criamos o aplicativo Codex. Você obtém uma interface de bate-papo muito simples que pode usar para programação e para qualquer outra coisa. E sabe, você pode ter uma conversa e depois aprofundar o assunto como quiser. Então, neste caso, temos a previsão de Homan para o placar desta próxima partida da Copa do Mundo.
+
+Espero estar certo. Espero estar certo. Veremos. [risos] Ok. Bem, o que você pode fazer aqui é entrar e apontar para algo bem específico e dizer: "Ei, quero que você faça essa alteração." Ou você pode fazer
+
+essa mudança por conta própria. E uma história engraçada é que eu me lembro de ter apresentado essa ideia para alguns de vocês que sei que estão na plateia antes de começarmos, e me disseram sem rodeios: "Eu nunca usarei uma ferramenta dessas. Nunca sairei do meu terminal." Ou Vim ou Emacs. Mas na verdade, essas pessoas já estão usando . E mesmo internamente, dentro da nossa
+
+equipe, surgiram muitas perguntas do tipo: "Por que deveríamos construir isso? As pessoas adoram a CLI, adoram a IDE." E é algo um pouco sutil, mas nossa opinião é que você não consegue realmente construir essa interface colaborativa para nenhum tipo de trabalho em uma CLI. É basicamente bate-papo. E aí, em uma IDE, a ordem está errada, então você começa com o código, mas agora é hora de fazer a transição para algo como trabalhar com colegas de equipe, onde primeiro se conversa e depois se aprofunda no assunto quando necessário.
+
+Com certeza. E estamos avançando muito rápido nisso, tanto na interface do produto quanto na camada do modelo, é claro, mas também estamos tentando acompanhar o ritmo de todos vocês, certo? Sinceramente, metade das vezes que abro o X, vejo alguém nesta sala fazendo algo que eu não tinha percebido que o Codex era capaz de fazer. E, honestamente, é isso que os pioneiros fazem. Vocês experimentam, criam ferramentas para si mesmos e para a equipe, e isso, por sua vez, nos inspira. Aprendemos com vocês e,
+
+no final, todos saem ganhando. Então, estamos ajudando vocês a descobrir o que construir em seguida e também como deve ser o futuro da engenharia. Mas para que isso funcione, uma coisa que realmente nos importa é que o Codex não seja um produto fechado que somente a OpenAI possa aprimorar. Por isso, projetamos o Codex intencionalmente como um conjunto de camadas que qualquer pessoa pode usar como base. E hoje queremos mostrar um pouco dessa estrutura e como ela se manifesta.
+
+Primeiro, tudo começa com o modelo, e Alexander mostrou a rapidez com que estamos progredindo nesse aspecto. E vocês usam esses modelos através da API de respostas e adivinhem só? Foi assim que construímos o aplicativo Codex, certo? Utilizamos os mesmos modelos e a mesma API. Na verdade, estamos construindo sobre a mesma base que oferecemos aos desenvolvedores. E quando o Codex precisa de
+
+algo novo, sempre tentamos incorporá-lo primeiro à API para que você também possa se beneficiar . Um exemplo recente foi a compactação. O Codex precisava de uma maneira de compactar contextos longos para tarefas de longa duração, então vamos incorporar isso à API. Isso significa que seus agentes podem usar os mesmos elementos primitivos que criamos para nós mesmos. Passando para a próxima camada, o framework Codex também é de código aberto, então você pode inspecioná-lo, criar um fork dele e adaptá-lo. E adotamos a mesma
+
+abordagem com o Agent MD. Em vez de reinventar um novo formato de arquivo para o Codex seguir instruções, pensamos em escolher um nome que outros agentes também pudessem usar. Os modelos são difíceis de definir como padrão no ambiente de testes dos modelos da OpenAI, mas eles não estão codificados de forma fixa. Portanto, se você quiser usar um modelo aberto e manter o mesmo loop de agentes, você pode. E também incorporamos esse sistema Codex ao processo de pós-treinamento de nossos modelos. Isso significa que os modelos podem
+
+aprender a chamar ferramentas e navegar em um ambiente que é, na verdade, de código aberto. Agora, vejamos, por exemplo, a equipe de código aberto . Eles conseguiram inspecionar como tínhamos essa implementação de referência e puderam reutilizar as partes que fizessem sentido para eles ou mudar completamente todo o resto e fazer escolhas diferentes. Eu sei, por exemplo, que eles estavam tentando ver como fazíamos a assinatura com o ChatGPT, para poderem analisar o código e aprender com isso. E achamos que é melhor do que ter desenvolvedores fazendo engenharia reversa de como o sistema constrói o quê e como lançamos o produto.
+
+Mas agora, falando em assinaturas, digamos que queremos subir um nível. E como integrar esse sistema de segurança a um aplicativo? E como você permite que as pessoas façam login com sua assinatura Codex existente, por exemplo? Bem, descobrimos que nós mesmos tínhamos o mesmo problema, pois queríamos criar uma extensão para o VS Code e o aplicativo Codex. E queríamos ter uma forma unificada de controlar esse arnês.
+
+Então, criamos um servidor de aplicativos e também o tornamos de código aberto. E o servidor de aplicativos não é uma espécie de adaptador comunitário, é realmente o caminho que usamos para nossos próprios produtos. E você também pode usá-lo. Toma, por exemplo, aqui, também conhecido como Demilyan no X, criou seu próprio aplicativo nativo para o Codex, chamado Codex Monitor, antes mesmo de lançarmos o aplicativo Codex. Porque ele poderia construir isso usando o servidor de aplicativos.
+
+E agora ele trabalha na nossa equipe, e foi ele quem criou o Codex para iOS. E subindo na hierarquia, na camada de aplicativos, também queremos garantir que a inovação não seja bloqueada por nossas próprias ideias. Assim, criamos elementos básicos extensíveis, como o navegador integrado que mostramos na tela, e os plugins. Então, se você pegar, por exemplo, o uso do navegador e o uso do computador, estes foram construídos como plugins usando exatamente os mesmos pontos de extensão que temos disponíveis para todos vocês. E, por último, também criamos recentemente plugins específicos para cada função no Codex, para facilitar a personalização para pessoas que trabalham em ciência de dados ou design, por exemplo. E esses plugins
+
+também são de código aberto. Você pode dar uma olhada nos detalhes técnicos e se inspirar neles, se isso for útil. Nosso objetivo é realmente continuar tornando isso o mais aberto e flexível possível. E a melhor parte é que as pessoas podem usar sua assinatura existente em cada vez mais lugares, desde Open Code, Pi, Droids, Open Claw, até mesmo Xcode e JetBrains como IDEs. E vocês podem ver como elas estão se tornando uma parte bastante significativa de como as pessoas usam essas ferramentas, e é exatamente por isso que queremos nos preocupar em construir esse ecossistema aberto com todos vocês. Então, se
+
+há uma coisa que eu quero que vocês levem desta seção e desta palestra, é isto. Não estamos construindo um sistema para IA aberta e um segundo sistema simplificado para desenvolvedores. Em cada etapa, utilizamos de fato o material que lhe entregamos. E queremos agradecer a todos vocês, porque cada vez que vocês modificam o chicote de fios, cada vez que vocês descobrem o limite das capacidades dos modelos, isso significa que podemos aprender e melhorar. E, sinceramente, com 7.000 dos melhores engenheiros de IA presentes
+
+nesta sala hoje, estou confiante de que todos vocês definirão muito de como nós, e nós, vivenciaremos a IA e como o mundo a vivenciará no futuro. Muito obrigado. [aplausos] Quero mandar um alô para quem quer que esteja ali injetando energia. É você mesmo, ok? Muito obrigado. Então,
+
+com a ajuda de todos vocês, estamos tornando os agentes explosivamente úteis. Então, a questão agora é: como podemos extrair valor deles? E sabe, isso não é maximizar o uso de tokens. Temos um termo para isso que talvez você também use. Não sei, está passando na tela?
+
+Valorização máxima. Então, sabe, quando conversamos com líderes de engenharia, a maior parte da conversa gira em torno de alguns temas relacionados à ideia de maximização de valor. Então, vamos abordar alguns tópicos comuns que surgem, alguns em que já fizemos muito progresso e outros em que ainda há muito a ser feito. Então, a primeira delas é a relação custo- benefício. Todos querem informações de vanguarda.
+
+Escolha sua avaliação favorita, você quer o melhor modelo. Então, com o terminal de bancada aqui, por exemplo, que é o GPT 5.6 Sol, e como eu disse, mal podemos esperar para que você o tenha. Mas tudo bem, você também quer o máximo de informações possível, e é aí que entra a eficiência. A eficiência de custos tem sido um foco para nós há bastante tempo, e os resultados continuam a ser positivos. Por exemplo, o
+
+GPT 5.6 Terra, acho que está em azul escuro ali. Oferece inteligência equivalente ao GPT 5.5, mas pela metade do preço. E Luna supera alguns modelos bastante notáveis nesta avaliação.
+
+Mas a um custo de apenas US$ 1 por milhão de tokens de entrada e US$ 6 por milhão de tokens de saída. Deixo para você comparar esses custos, mas esse valor é incrível. Sim, nós realmente mal podemos esperar para ver todos vocês construindo com o GPT 5.6 e essa nova família de modelos. Agora, o próximo assunto que quero abordar é a velocidade, certo? O GPT 5.3 pode ter
+
+mostrado o que a velocidade pode desbloquear, mas também sabemos que todos vocês querem inteligência de ponta. Você não quer ter um modelo que não seja tão bom quanto aquilo que você consegue operar no seu melhor desempenho. Bem, este é o GPT 5.6 Soul rodando no Cerebras, a inteligência artificial de ponta que atualmente processa 750 tokens por segundo. Estamos ansiosos para ver o que você conseguirá criar com isso no próximo mês. E, honestamente, para colocar isso em
+
+perspectiva, é como ter um comunicado de imprensa bastante substancial escrito em cerca de 10 segundos. E não se trata apenas de obter uma resposta mais rapidamente, certo? A questão é: o que você pode fazer com essa velocidade? Você pode imaginar um agente adotando diferentes abordagens, talvez cinco ou seis em paralelo, e voltando para escolher a melhor no tempo que você levaria para gerar apenas uma. Portanto, estamos muito ansiosos para ver o que isso pode revelar quando se tem inteligência de ponta, a melhor disponível nessa velocidade.
+
+Começa a parecer menos com esperar que uma IA responda e muito mais com um colega de trabalho que já está mostrando os resultados em tempo real. Falando em trabalhar com colegas, hum, alguém aí quer saber? Quem está familiarizado com esse tipo de cena em escritórios? OK. Nossa, quanta gente se comportou muito bem! Vejo algumas pessoas bem na
+
+frente. Então, sim, muitas pessoas estão mantendo seus laptops abertos para que os agentes possam continuar trabalhando. E isso é engraçado, mas sabe, o que realmente queremos é poder desligar nossos computadores e executar várias tarefas em paralelo, isoladas em seus próprios servidores. Na verdade, esse era o nosso objetivo desde o início. Nosso primeiro grande lançamento foi o Codex Cloud, e ele receberá algumas atualizações importantes em breve.
+
+Mas, melhor ainda, ao pensarmos nisso, o futuro não deveria ter essa distinção incômoda entre uma tarefa local e uma tarefa na nuvem, e você ter que decidir onde executar tudo. Na verdade, o que você deveria ter feito é voltar ao que eu estava dizendo antes. Você deveria ter um agente, conversar com ele em qualquer lugar, a qualquer hora, sobre qualquer coisa, e ele deveria descobrir, ok, o que eu preciso fazer, qual ambiente é o certo para o meu trabalho, e usar o que estiver disponível. Na verdade, Theo fez essa previsão no fim de semana sobre esse mesmo assunto. E é um tweet bastante perspicaz. E aí, Alex, o que
+
+você acha? Antes ou depois de 6 meses? Acho que, talvez não nos detalhes exatos, mas a vibe desse tweet é bem anterior a 6 meses. Sim, quer dizer, no ritmo em que tudo está acontecendo, não me surpreenderia se fosse ainda mais cedo. Bem, então você deve estar se perguntando: onde está a demonstração ao vivo hoje?
+
+Bem, para este engenheiro de IA, queríamos fazer algo um pouco diferente desta vez. E acreditamos que este é um momento muito singular para todos nós repensarmos a forma como trabalhamos e como construímos. Por isso, queríamos trazer um convidado especial que tenha expandido os limites do que é possível com agentes e que realmente nos tenha impulsionado a sermos mais focados em Inteligência Artificial Geral (AGI) na OpenAI. Então, com isso, por favor, recebam no palco o pai da garra, Peter Steinberger. [aplausos]
+
+[aplausos] Peter, pode começar. Muito obrigado a todos. Obrigado, Al. Bom dia a todos. Sabe, eu adoro essa foto porque ela me lembra o quanto as coisas mudaram em poucos meses.
+
+Eu estava gerenciando 10 ou mais janelas de terminal simultaneamente, sempre esperando que uma delas terminasse para que eu pudesse assumir o controle do agente e enfileirar novas tarefas. Em janeiro, senti que estávamos no auge da produtividade. Hoje em dia, parece um pouco ridículo. Eu pensava que estava orquestrando algo. Na verdade, eu estava fazendo uma pesquisa de opinião. Eu era o planejador, o
+
+roteador e a memória. Sabe, no início, eu trabalhava em dupla com um agente. Com 10 terminais, eu não estava mais conseguindo emparelhar. Eu gerenciava 10 subordinados diretos. Agora, converso principalmente com um gerente experiente, que delega tarefas a uma equipe.
+
+Para tarefas mais complexas, ainda posso usar a função de emparelhamento direto com um trabalhador, mas minha configuração padrão mudou. Eu gerencio o gerente de uma pequena empresa de agentes. Três mudanças tornaram isso possível. Em primeiro lugar , a compactação no servidor tornou as tarefas de longa duração suficientemente confiáveis ​​para que eu parasse de otimizar em torno das primeiras sessões. A coordenação permite que uma única equipe crie e direcione os projetos certos.
+
+E em terceiro lugar, a automação pode acionar o mesmo gerente quando algo acontecer. Assim, temos contexto persistente, delegação e gatilhos. Aí está o seu loop. E quando o ciclo começa a funcionar, você descobre o próximo problema: o gargalo continua mudando. Sabe, no ano passado, eu estava limitado principalmente por tokens.
+
+Agora, resolvi isso ao me associar à OpenAI. Eu sei, eu sei, essa estratégia não é escalável. Então, minha restrição mudou para o token uh compute. Todos esses processos são executados simultaneamente, e meu MacBook começa a soar como um motor a jato. Isso é resolvido em grande parte com o uso de caixas de teste.
+
+Assim, os agentes podem executar testes em uma máquina separada. Agora, minha principal limitação é a atenção. E, ao contrário de tokens ou computação, eu não posso simplesmente adicionar mais disso. Portanto, a habilidade mais importante hoje em dia é decidir onde investir o dinheiro. Você ainda está olhando fixamente para o agente enquanto o código passa voando?
+
+Eu sei, eu sei, é... é... parece legal,
+
+mas nos modelos anteriores, isso era necessário. Sabe, quando você vê o agente indo numa direção que você não gosta, você aperta Esc, você o direciona, você o direciona de volta. No entanto, a última geração de modelos é tão boa em entender a intenção que é um pouco perda de tempo observar o agente gerar código. Imagine que alguém abra uma ocorrência em um dos meus projetos de código aberto. O gerente acorda, lê a proposta em comparação com os objetivos, anotações e visão do projeto e decide se ela pode ser adequada. Se isso acontecer,
+
+cria um trabalhador. Esse funcionário investiga, implementa a mudança, executa os testes e outro agente pode revisar o resultado. Não preciso ficar observando esses agentes em ação nem consumir todas as mensagens intermediárias. Quando o gerente precisa de mim, ele retorna um PR (Pull Request), o problema original, a diferença proposta, talvez um vídeo, ou até mesmo uma versão em execução à qual eu posso acessar via VNC. Eu reviso uma vez, deixo uma observação, talvez aprove, o ciclo continua e o projeto pode ser concluído após as verificações serem aprovadas.
+
+O agente executa o loop de execução interno. Eu defino a direção e tomo as decisões no circuito externo. Sabe, o Paul Paul achou que já tinha uma versão disso em funcionamento. Ele pressionou seu chefe de gabinete. Ele liga a cada 10 minutos e coordena o trabalho dele no GitHub .
+
+O agente cria tópicos na barra lateral para que Paul possa intervir sempre que o trabalho precisar de orientação adicional. Sabe, quando o gerente já está há muito tempo no cargo, vinculá-lo a um laptop simplesmente parece errado. O Codex já consegue transferir trabalho entre servidores. O Open Claw possui um gateway e nós. Mas nenhuma das duas parece ser a versão final.
+
+Nem quero pensar onde trabalho. Meu agente deve conseguir se conectar a qualquer uma das minhas máquinas. Eles precisam saber quais tarefas podem ser feitas na nuvem e quais exigem meu computador local. O gerenciador não deve ser uma sessão presa dentro do seu aplicativo. Deveria ser um agente com quem eu pudesse conversar por mensagem de texto, controlar pelo Slack ou ouvir de onde eu estiver. Sinceramente, por que não posso falar
+
+com meu agente e pedir que ele projete todo o processo para mim? Ainda não resolvemos isso. Os modelos estão avançando mais rápido do que os sistemas de segurança e as organizações que os cercam. Projetar essas coisas é o próximo desafio da engenharia. É aí que todos vocês entram.
+
+O futuro não são 20 terminais. São loops melhores. Vamos construí-los. Obrigado. Obrigado.

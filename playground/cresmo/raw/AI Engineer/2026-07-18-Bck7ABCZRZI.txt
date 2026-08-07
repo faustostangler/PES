@@ -1,0 +1,56 @@
+---
+video_title: "Stop Renting Your Cognitive Infrastructure - Thiyagarajan Maruthavanan, Kalmantic Labs"
+video_id: Bck7ABCZRZI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Bck7ABCZRZI
+video_date: 2026-07-18T18:15:06+00:00
+video_description: |
+  I pointed my lab at one problem, inference, after 200 users burned $1,000 in credits and the math just wouldn't close. So I built the thing, felt the cost, and went looking for why renting intelligence never pencils out.
+  Turns out everyone in this market sells a gospel shaped like their own invoice. Jensen: build a token factory. Nadella: don't even think about the meter. Fireworks: own your model (on our infra). Three smart people, three different layers, three pitches that all end at "keep paying us."
+  My rule: rent to learn, own to run. Rent the model while you're hunting PMF, own the inference for the part you'd have to answer for. I moved my own agents off the Anthropic API onto owned infra, open-sourced the piece that stops the bleed, and got few things badly wrong on the way
+  
+  Speakers:
+  - Thiyagarajan Maruthavanan (Kalmantic Labs): Thiyagarajan M (Rajan) runs an agentic lab focused on AI inference and agent harness, has built open source tools and other products to shape work on it, and authored a book on peak inference performance.
+    X/Twitter: https://x.com/mtraja
+    LinkedIn: https://linkedin.com/in/thiyagarajan
+    GitHub: https://github.com/mtr7x
+---
+Uma das maiores redes varejistas do país gastou quase US$ 200 milhões em inferência com a Anthropic e decidiu que a situação havia saído do controle, optando por construir sua própria infraestrutura. Tenho quase certeza de que a maioria de vocês leu a notícia do CTO da Uber sobre como eles haviam planejado um orçamento para seus tokens para um ano inteiro e ele se esgotou no quarto mês . Tenho também a certeza de que metade de vocês nesta sala chegou a uma conclusão muito semelhante: que, com o passar do tempo, o custo da inteligência aumentou consideravelmente. Usar inferência parece ser uma das coisas mais baratas que existem. Mas isso é muito diferente de usar um telefone, onde você recebe uma fatura todo mês e tem um valor específico ao qual pode se apegar mentalmente. Mas, no
+
+caso de usar essas plataformas de inteligência alugadas , elas funcionam como um serviço pré-pago. Você carrega créditos. É quase como se você estivesse carregando créditos dentro de um cassino. Você coloca um pouco, depois puxa, e fica tão viciado que acaba fazendo cada vez mais, até que, com o tempo, percebe que ultrapassou o limite que havia estabelecido mentalmente . E eu mesma tive essa experiência. Eu desenvolvi um aplicativo chamado
+
+Ultrazone, ou melhor, experimentei o aumento exponencial do custo de inferência aqui. Alguém já ouviu falar da Suno.com? Sim, o Suno.com é um aplicativo que permite ao usuário transformar um texto em música. O que me interessava era
+
+fazer o inverso, ou seja, dada uma música específica, qual estímulo poderia tê-la gerado. Isso é algo que eu queria. Então eu construí isso. Eu estava me divertindo muito usando este aplicativo, compartilhei com alguns amigos e divulguei bastante. Eu tinha centenas de milhares de usuários, mas o custo aumentou muito mais do que eu havia previsto. Tive que gastar centenas de milhares
+
+de dólares em inferências. Isso acontece por vários motivos. Há muitas palestras na própria AIE onde as pessoas falam sobre como você precisa gerenciar melhor o seu contexto. E muitas pessoas se esquecem de comprimir o token de entrada. E quando há loops de agentes, muitas dessas chamadas acontecem, o que é um grande desperdício.
+
+O endpoint de inferência que está consumindo isso desconhece completamente o formato da carga de trabalho, e é por isso que isso acontece. E surgiu outro problema. Há 3 semanas, minha chave foi roubada. Alguém na China se apoderou disso e começou a sugar todo o meu tráfego . Eu pude ver o custo subir de 7.000 para 7.500 dólares, depois para 8.000
+
+e assim por diante. Graças ao meu cofundador, que lidera a área de pesquisa e tecnologia, conseguimos fechar o negócio em 10 mil dólares. Caso contrário, poderia ter custado 100 mil dólares. Atualmente, muitas pessoas sugerem que a alternativa à plataforma de inteligência alugada é o uso de fábricas de tokens. A Token Factory basicamente está dizendo: por que você está pagando dinheiro para a Anthropic e a OpenAI? Em vez disso,
+
+opte por código aberto, utilize esses modelos de código aberto que já estão implantados em algum lugar na nuvem e, em seguida, provisione-os como tokens por segundo. Existem nuvens neo e existem provedores de endpoints de inferência que realmente fazem isso. Na verdade, existe também um argumento que diz que, sabe, você pode construir essa fábrica de tokens localmente. Existem influenciadores de IA no Twitter que falam abertamente sobre como construir sistemas de inferência na sua garagem ou no seu porão. Compre placas de vídeo, conecte-as em série e você poderá executar uma fábrica de tokens localmente. Na verdade,
+
+isso me inspirou um pouco. Comprei meu próprio dispositivo DGX e, em seguida, migrei o Ulta Sono do Anthropic para o DGX. Funcionou bem. Deparei-me com um problema específico: a memória era o gargalo. E então, ficou bom o suficiente para que eu começasse a desenvolver meus próximos aplicativos. Comecei a
+
+ter agentes. Preciso de alguns reagentes para o funcionamento do meu laboratório de pesquisa. Então, esses agentes começaram a se organizar dentro da caixa DGX, sabe, dois, seis, oito, doze. E funcionou perfeitamente. O problema, porém, é que, você sabe, pode não ser confiável para uso empresarial, que foi exatamente o que eu enfrentei. Três empresas
+
+entraram em contato comigo para que eu replicasse a mesma configuração para elas. Mas para as empresas, alugar e arrendar não são suficientes. A conta é um problema, mas há ainda um conjunto secundário de problemas que tornam essa abordagem extremamente ineficaz. As empresas que contataram comigo foram: uma de fundos, outra de hospitais e a terceira de uma empresa de contabilidade. E cada um deles havia atingido um obstáculo diferente .
+
+O fundo era um fundo de investimento, eles estavam executando um analista de investimentos em uma arquitetura de cliente de e-mail e não queriam que ninguém ditasse qual era o limite de taxa que eles podiam consumir. Assim, o controle se torna um grande problema para eles, impedindo-os de optar por fábricas de tokens. O hospital tinha um problema diferente. Eles utilizaram o caso de uso, funcionou bem, mas posteriormente, durante uma auditoria, uma dependência de um fornecedor terceirizado foi apontada como problemática, e então eles não puderam prosseguir. A questão tributária era completamente diferente. Na
+
+prática tributária, o que acontece é o seguinte: quando um sistema inteligente gera uma recomendação, você quer ser capaz de reproduzi-la. E quando você não tem acesso aos detalhes do modelo, não conseguirá fazer isso, e esse se tornou o problema. Isso me leva ao ponto mais importante desta apresentação. Onde você se senta? Quando você para de alugar infraestrutura? Se
+
+você é uma startup, se você é um fundador que está trabalhando na fase inicial de adequação do produto ao mercado , então você ainda está descobrindo se o caso de uso que você tem, se existe demanda para ele, você pode se virar alugando. Mas se você já atingiu o Product Market Fit, não pode se dar ao luxo de ignorar isso. E se você é uma empresa que já orçou um projeto, o que significa que está assumindo que esse caso de uso específico já atingiu o Product Market Fit, então, novamente, você não pode ignorar a necessidade de construir sua própria infraestrutura. Foi isso que eu percebi, e eu disse que essa situação é a seguinte: se você está indo para uma cidade nova, você pode começar dizendo que não quer comprar uma casa. Deixa eu alugar e ver como é. Às vezes você pode até usar o Airbnb.
+
+Você vivencia o ambiente, a cidade, o bairro, mas eventualmente precisa comprar a casa. Não dá para criar uma família em um Airbnb. Ao longo dessa experiência, cheguei à conclusão de que preciso construir minha própria infraestrutura de inferência para os aplicativos, os agentes e a escalabilidade dos aplicativos que estou desenvolvendo. E eu chamo isso simplesmente de infra. E enquanto realizava esse exercício, percebi que há otimizações a serem feitas em várias camadas. Mesmo na camada de aluguel e
+
+arrendamento, é possível otimizar desde o custo de entrada até o gerenciamento de tokens e, em seguida, o gerenciamento de contexto, e assim por diante. Algumas das experiências que tive nos últimos meses foram combinadas em um projeto de código aberto e publicadas como simplesmente token max. Se você já utilizou o Headroom da Netflix, esta é uma alternativa. Comparamos os resultados com o Headroom e, em muitos parâmetros, o Token Max é muito superior. Se isso lhe interessar, experimente. Quem sabe, dê uma estrela no GitHub se
+
+gostar. Eu também escrevi o livro chamado "Peak Inference Infraeconomics of AI Inference", que aborda a questão de quando é preciso pensar em construir sua própria infraestrutura de inferência. O mercado de IA é muito diferente do restante do mercado de tecnologia que existia antes, porque aqui as regras do jogo mudam a cada três a seis meses, o que significa que se torna um mercado muito instável . Se você conversar com alguém como Jensen, ele dirá que a fábrica de tokens é o futuro. Se você ouvir alguém como Satya Nadella, ele dirá que a inteligência não mensurada é o futuro, que ela será local. E aí, quando você ouve falar de novas
+
+nuvens e provedores de endpoints de inferência, eles dizem: "Ei, os provedores de endpoints de inferência são os que vão capturar o valor no mercado." Minha experiência, desde a aplicação até os agentes, passando pela escalabilidade e, finalmente, pela construção da minha própria infraestrutura de inferência, me ensinou que, se você quer aprender, pode alugar, mas se quer ganhar dinheiro, precisa ter a sua própria. E se houvesse apenas uma frase que você precisasse reter de toda esta apresentação, seria essa. Alugue para aprender, compre para ganhar. Mas, no fim das contas, você precisa chegar às suas próprias conclusões. Obrigado. E se
+
+algum desses tópicos lhe interessar , terei prazer em conversar com você sobre aluguel, sobre limite máximo de tokens e sobre como construir sua própria infraestrutura de inferência. Estarei aqui na conferência de Engenheiros de IA pelos próximos 3 dias. Entre em contato comigo pelo Twitter em mtraj ou através do meu site mtraj.com.

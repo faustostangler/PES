@@ -1,0 +1,109 @@
+---
+video_title: "Stop Burning Tokens: Why self-improvement needs domain expertise first - Annabell Schäfer, Langfuse"
+video_id: eAXxdtNlK04
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eAXxdtNlK04
+video_date: 2026-07-18T20:15:06+00:00
+video_description: |
+  We ran auto-improvement loops on a paper classification task against a ground-truth dataset. A real problem, narrow enough to measure precisely, and in fact one of the few clear cut target functions out there.
+  
+  We’ll share how to properly set up an agent for auto-improvement, what task specificity and target function quality is actually required for it to work, and why the most efficient path to a continuously improving agentic system is one where domain experts and automation know when to hand off to each other.​​​​​​​​​​​​​​​​
+  
+  Speakers:
+  - Annabell Schäfer (Langfuse): Annabell is a Growth Engineer at Langfuse, the largest Open Source AI observability and evaluation platform. She is passionate about building cutting edge AI systems and has been around in the space since 2022.
+    X/Twitter: https://x.com/annabellschfr
+    LinkedIn: https://linkedin.com/in/annabell-schaefer/
+    GitHub: https://github.com/annabellscha
+  
+  Timestamps:
+  
+  0:00 Introduction and the goal of avoiding token waste
+  0:24 The current trend of "designing loops" vs. prompt engineering
+  0:47 Why coding (with its clear "compile" target) set a false precedent
+  1:20 Challenges of defining target functions in non-coding domains
+  2:30 Case study: The arXiv paper classification experiment
+  3:30 Setup of the minimal self-optimization loop
+  5:48 The step-by-step iteration process and stopping criteria
+  7:00 Results: Achieving a 15% improvement in accuracy
+  9:53 Deep dive into the reasoning behind the improvement
+  11:26 Translating binary "high signal" feedback to other applications
+  13:12 Defining what "good" looks like for your specific domain
+  15:05 The importance of human-agent collaboration and data review
+  Viral Quotes & Potential Titles:
+  
+  "Stop burning your tokens and start building in domain expertise early in your loop design." (0:10)
+  "Teams who are investing heavily in the target function are the ones who manage to continuously improve." (2:02)
+  "If you can't do 'code compiles', you need to wrap your head a little bit differently around what is good and what is not." (14:23)
+  "Don't review it only with your coding agents, but review it as a human." (15:57)
+---
+Olá a todos, meu nome é Annabelle. Sou engenheiro de crescimento na Lenfuse e somos a maior plataforma de observabilidade e avaliação de código aberto para o seu sistema de IA. E hoje vou compartilhar como você deve parar de queimar seus tokens e por que deve começar a incorporar conhecimento especializado desde o início do design do seu loop , mas também no design geral do seu aplicativo, para garantir que você esteja continuamente aprimorando e atualizando seu aplicativo. Estamos em junho de 2026 e a internet inteira está obcecada por loops neste momento. Então, Boris Journey disse que não escreve mais nenhum texto com sugestões. Ele tem loops e
+
+Peter Steinberger dizendo algo como "você deveria estar projetando loops e não dando dicas aos seus agentes". E quero dizer que toda a discussão sobre a pesquisa e o aprimoramento automotivo de Kapathy já havia explodido no início deste ano. Mas todos eles partem um pouco dessa perspectiva do desenvolvedor. E a programação é uma delas por um bom motivo. Um dos casos em que todo esse processo de atingir um objetivo automaticamente funcionou muito bem foi porque eles sempre tiveram pelo menos uma função-alvo que era bastante clara. E isso era...
+
+o código compilava ou não? E, claro, só porque o código compila não significa que ele seja ótimo, e não significa que todos os recursos sejam exatamente como você queria . Mas pelo menos você sabe que enviou algo que funcionou. E, claro, isso foi expandido ao longo do tempo para ampliar essa função alvo. Mas, essencialmente, a questão é se funciona ou não em todos os outros campos, e especialmente se você estiver criando aplicativos de IA para domínios como adesão a medicamentos, saúde ou chatbots, essas funções-alvo não são tão claras, e um alvo que você fornece a um agente é sempre incompleto. Então, inicialmente você pode
+
+pensar que está tentando descer aqui, mas na verdade seu destino ideal é lá em cima, e para chegar lá e entender isso, leva bastante tempo e é preciso descobrir como. É um problema inerentemente difícil, especialmente se você está em uma área onde um simples "sim" ou "não", como " o código compila?", não é suficiente . Então é muito difícil, mas ao mesmo tempo vemos que as equipes que estão investindo pesado aqui no meio, garantindo que capturem o que realmente desejam que funcione, ou seja, a função-alvo, e construindo isso, e assegurando que tenham bons avaliadores avaliando isso, são as que conseguem atualizar e aprimorar continuamente seu aplicativo ao longo do tempo e também lançá-lo com confiança, porque se você sabe que está funcionando como deveria, também pode dormir bem à noite caso envie uma alteração de código. Ok, então agora sabemos que é super importante e que você deveria fazer isso, mas ao mesmo tempo é quase impossível acertar na hora certa. Então, estávamos começando e nos
+
+perguntando qual seria a função objetivo mais clara que poderíamos encontrar para um agente usar, e também, se executássemos uma otimização automática nela, o que poderíamos aprender sobre o papel das funções objetivo a partir dessa execução. A função objetivo mais clara que encontramos foi uma tarefa de classificação de rótulo único, que tem uma resposta muito clara: sim ou não. Por exemplo, digamos que temos um item para categorizar. Existe um rótulo verdadeiro. Por exemplo, ah, é um pedido. E então
+
+temos um conjunto de etiquetas disponíveis: pedido, reclamação, consulta. E então nosso classificador atribui a um rótulo. E você pode afirmar com muita clareza se o rótulo verdadeiro é igual ao rótulo previsto. E se sim, então esta está certa e a próxima pode estar errada. E, no geral, você pode calcular um valor de precisão e obter um sinal muito claro a partir daqui.
+
+Então, combinamos essa função objetivo com um agente e também com um otimizador. E é assim que esse loop minimalista ficou, vou compartilhar com vocês agora. Aqui está, portanto, nosso ciclo mínimo de auto-otimização. Lá em cima, nas duas primeiras linhas, podemos ver nossa função alvo. No nosso caso, optamos por documentos arquivados classificados. Portanto, trata-se de um
+
+conjunto de artigos que, com base em seu título e resumo, receberam uma classificação primária do autor para categorizá-los para outras pessoas na área de pesquisa. E, bem, nós vamos... temos aqui a verdade fundamental, que está dividida em 200 itens em um conjunto de dados de ajuste, 100 em um conjunto de dados de validação e 300 em um conjunto de dados de teste. Só
+
+para garantir que não estamos ajustando demais. Em seguida, temos nosso agente, que é basicamente um prompt simples. baseado no GPD5 para nano porque queríamos ver como um modelo muito pequeno e barato se comporta na melhoria automática, porque os bons realmente ficaram muito bons, mas também muito caros ao longo do tempo, e temos esta lista flash de rótulos e então temos nosso processo de otimização que roda por meio de código na nuvem, aproveitando o Cloud Us 4.8. Um dos modelos de vanguarda propõe atualizações de prompts e tem como referência o guia de prompts do GPT54, bem como uma tarefa MD que descreve o loop. Analisando mais de perto como
+
+isso se parece. Aqui podemos ver nossa função alvo neste caso, especialmente nosso conjunto de dados ajustados dentro da visualização de comprimento. Vemos, portanto, uma coluna de entrada onde estão o título e o resumo, bem como a coluna de saída esperada. Então, que tipo de rótulo deve ser aplicado nesses três conjuntos de dados diferentes? A ideia é que, no conjunto de dados de treinamento, você execute o modelo, procure pelos erros e, principalmente, pelos agrupamentos de erros. Em seguida, o Opus
+
+deve formular hipóteses para atualizações rápidas no conjunto de validação. Depois, verificamos se essas atualizações rápidas também se generalizam para dados não vistos e, finalmente, quando atingimos um platô ou nosso critério de parada, executamos o modelo em um conjunto de teste para ver o quão bem generalizamos para dados intocados que não fizeram parte do processo de treinamento. Nosso enunciado básico é uma lista bem simples de rótulos, e a tarefa é apenas classificar este artigo com um rótulo. É claro que, se fôssemos escrever o enunciado, provavelmente adicionaríamos alguns pontos sobre como pensar a respeito e tudo mais. Mas nós só queríamos ver o que acontece se usarmos a versão mais básica desse prompt e como o sistema lida com isso.
+
+E o nosso loop Leap é um loop instruído passo a passo, realizado através de um arquivo Markdown de tarefas. Então, a ideia geral do loop é que primeiro você executa o comando base no conjunto de ajuste e, em seguida, no conjunto de validação, para obter uma precisão de referência. Você atribui uma pontuação a cada item individualmente e, em seguida, realiza essa análise de erros no conjunto de dados ajustado . Então você realmente analisa quais tipos de categorias são frequentemente bem executadas? Que tipo de pares de itens são frequentemente confundidos e qual é o resumo e o título subjacentes a eles? Então talvez possamos
+
+encontrar padrões aí. Então, o sistema propõe uma atualização para a categoria de erro mais relevante, publica uma nova alteração de aviso e executa novamente, aceitando-a somente se essa atualização também melhorar o conjunto de validação. E temos dois critérios de parada. Ou completamos 15 execuções, ou atingimos 92% de precisão . E assim que isso acontece, ou para por algum outro motivo, realizamos uma execução final em um conjunto de dados de teste para verificar. Então, sim,
+
+aqui à direita você pode ver que tudo isso está descrito em Markdown. Apontamos para os conjuntos de dados, mas nem sequer fornecemos o link para o conjunto de dados de teste. Então, não vamos analisar isso antes do que queríamos . Então, o que aconteceu? Sim, quero dizer, no geral podemos ver aqui que há uma tendência de aumento, mas também podemos ver que atingimos uma taxa de adesão de 15% em relação à nossa linha de base, o que é bastante sólido. A primeira execução terminou com
+
+68% de precisão e na nossa terceira/quarta iteração chegamos a 83%, que depois estabilizou um pouco. No geral, o resultado foi um nível em torno de 80%, e ficamos nos perguntando: "Na verdade, queríamos uma função alvo perfeitamente definida ." Mas, ao analisarmos os dados mais a fundo e a forma como esses rótulos são escolhidos, percebemos que existe certa liberdade criativa para os autores escolherem o tipo de rótulo que desejam. Então, embora a descrição possa fazer sentido, eles podem ter escolhido naquele momento que queriam usar um rótulo diferente, e isso, é claro, também não está registrado aqui. E também vimos essa melhoria se generalizar para o conjunto de dados de teste, atingindo 80,2%.
+
+Então, a generalização também foi bastante boa nos 300 itens de dados não vistos, e de certa forma você poderia dizer: "Ok, isso realmente funcionou". E o mais interessante, na nossa opinião, é que a primeira iteração imediatamente ganhou 10% e depois houve apenas uma pequena variação. Então, de alguma forma, obteve muitas informações já nessa primeira execução e apresentou um grande aumento, que podemos ver aqui, até bem perto do resultado final. E nós queríamos analisar mais de perto o que isso realmente fez. Aqui podemos ver, no lado esquerdo, o prompt da lista de rótulos simples. Aqui à esquerda,
+
+novamente, uma captura de tela da nossa plataforma onde gerenciamos os prompts e, à direita, podemos ver o que aconteceu. Então, a primeira coisa que adicionou foi uma abordagem de classificação geral. Então, como o modelo deve interpretar o comportamento de escolher um desses rótulos? Então, qual é o principal objetivo de fazer isso? Em seguida, há algumas informações sobre como decidir entre duas classes muito semelhantes e também alguns padrões relacionados que podem ser confusos. Então,
+
+basicamente, está dizendo ao sistema quando escolher qual opção, sob quais condições e como proceder, optando preferencialmente pela opção mais específica em vez da mais ampla, porque há também um teste implícito na estrutura da etiqueta . E também adicionou alguns exemplos para os pares de itens que frequentemente eram omitidos ou classificados incorretamente. Então, isto é o que podemos ver aqui. Então, no geral, a abordagem foi...
+
+um ciclo de melhoria, adicionando regras e exemplos, e eu provavelmente... fiquei surpreso... provavelmente teria
+
+adicionado descrições aos rótulos espontaneamente. Mas o guia de instruções, ou o modelo, juntamente com o guia de instruções, decidiu que, na verdade, a abordagem correta era esta, e funcionou. Então, não vou interferir aqui. Sim, o que queríamos analisar um pouco mais a fundo é o que realmente aconteceu nesse aumento de 10% que tivemos. Então, deixe-me me afastar um pouco, pois precisamos do canto inferior direito.
+
+Então, este é o passo de raciocínio que levou a Opus 4.8 a dar um salto de 68% para 78%. E o que podemos ver aqui é que temos claramente 64 erros. Esses são os padrões dominantes. Essas são as principais respostas para sincronização e também a maior fonte de confusão. Então, quais são os
+
+dois termos que são mais frequentemente confundidos e onde surgem os problemas? E então ele formula uma hipótese e diz: "Ok, este loop irá extrair exatamente esse padrão." Assim, surgiu um modo de falha muito claro, claramente quantificável e confiável, porque eles estavam simplesmente errados em uma base de sim ou não, certo ou errado. Eles também tinham muitos dados para analisar. Tínhamos um conjunto de dados de 200 itens, o que provavelmente, na maioria dos casos reais, leva algum tempo para chegar lá, e também para garantir que fossem apenas 10 rótulos, para que cada um deles fosse coberto vezes o suficiente para que se pudesse obter um sinal. E assim, foi possível
+
+formular uma hipótese de banco de dados e acabou retornando um ganho de 10% na primeira execução. Depois disso, houve um pequeno movimento e também encontramos uma versão melhor, mas o maior salto foi logo na primeira execução, a partir de um sinal muito claro. Provavelmente poderíamos ter parado por aí e já teríamos uma base muito boa. Então, considerando que o feedback de sinal alto (certo/errado) funciona muito bem neste teste de classificação, também sabemos que este não é o caso para todos os outros, já que quase não existem funções-alvo determinísticas de sim/não. Na maioria dos casos, você executa o teste uma vez e, na próxima, obtém um resultado diferente. Na próxima
+
+vez que executar o mesmo avaliador, você obterá uma resposta diferente, mesmo com o mesmo tipo de avaliação. Isso ocorre porque o LLM, como juiz, também é não determinístico. Estávamos nos perguntando como podemos traduzir esse feedback de sinal alto (certo/errado) para outras aplicações. Então, como podemos tentar moldar isso de uma forma que também funcione para o seu agente de IA especialista em domínio vertical ou para a automação da extração de requisitos em dispositivos médicos, conformidade ou qualquer que seja o seu caso de uso? [bufa] E, no geral, vemos essa abordagem funcionando, enquanto o mercado, por um bom motivo, gosta de avaliadores como correção, utilidade ou alucinação, que, no início, eram uma boa opção . Bem, na verdade, se
+
+você estiver tentando usar a auto-melhoria com base em um sinal bastante baixo, especialmente porque ele geralmente é colocado em uma escala de zero a um, e de um a cinco, e para que isso funcione corretamente, você precisa definir cada um desses números. O que significa e em que contexto você precisaria de determinado número? Que tipo de critérios precisam ser atendidos? Mas na maioria das vezes isso também não acontece. Então, trata-se apenas de escolher um número entre zero e um e, dependendo do contexto, isso pode mudar completamente a perspectiva e, portanto, resultar em um sinal bastante fraco e provavelmente inconsistente entre as execuções. O que vemos funcionar, na
+
+verdade, é analisar quais são os critérios de qualidade que você deseja para sua aplicação. Então, o que significa "bom"? Então, por exemplo, em vez de se basear na correção, a resposta é baseada no conhecimento prévio: sim ou não. Por exemplo, se houver um trecho sobre informações internas na resposta, você pode verificar se ele também está presente no contexto recuperado na etapa anterior. Ou, se você costuma ter dificuldades para usar a voz correta da sua marca, pode verificar se está correto desta vez.
+
+Verificamos se nosso nome estava escrito corretamente? Também já vi empresas com nomes em inglês que verificam se não traduzimos acidentalmente o nome para o espanhol. coisas assim. E também, uma coisa que funciona bem, porque também é essa categorização de sim/não, são talvez alguns modos de falha conhecidos . Então, qual desses cinco tipos de falhas aconteceu aqui e você pode classificá-la? E estes são apenas
+
+alguns exemplos. Normalmente, vemos que esses mecanismos são criados analisando os dados, entendendo o que significa "bom", o que é importante para você e, principalmente, para seus especialistas na área, e criando esses ciclos de feedback de alta relevância. Porque se você não consegue fazer o código compilar, precisa repensar um pouco o que é bom e o que não é. Então, este é um dos lados. A outra parte é, claro, o volume que você precisa. Tivemos uma curtida, por sorte poderíamos ter
+
+usado milhares de exemplos. Existem muitos artigos por aí. Optamos por algo como 200 para treinamento, 100 para validação e 300 para teste, simplesmente porque queríamos verificar se a generalização era adequada. Mas a experiência que já tivemos nos proporcionou um feedback de alta qualidade. Portanto, dependendo da complexidade da sua aplicação e das etapas envolvidas, claro que pode variar. Mas ter um bom
+
+volume de dados e um feedback de alta qualidade é fundamental. Então, como se chega lá? Portanto, o mais importante que observamos é trabalhar com seus especialistas, e este é um conselho repetido por todos, todos dizem: converse com seus clientes. Mas aqui você pode começar a codificar o conhecimento especializado em exemplos muito concretos . Então, use-os para criar exemplos do que deve resultar disso. Observe
+
+essas amostras, execute as amostras juntas e pergunte-se: "Ok, mas por que é assim aqui e assim aqui, ou melhor, ao contrário ?" Porque assim você também pode obter informações deles que eles implicitamente consideram claras e também entender como as decisões são tomadas, identificando modos de falha do seu aplicativo e definindo o que significa "bom", porque você provavelmente precisa de ambos, e então usá-los para encontrar esses avaliadores de alto nível . Então, assim que você tiver essa base de referência e, quem sabe, chegar à produção, revise esses dados e não os revise apenas com seus agentes de programação, mas revise-os como um ser humano. Analise o documento , entenda qual é o escopo inicial e o que será feito com essa aplicação. Isso pode mudar com o tempo. Os modos de falha
+
+podem mudar. As pessoas podem tentar fazer outras coisas, e isso tem potencial para expansão de recursos. Para realmente entender como o sistema funciona e falha em produção, é necessário abranger os modos de falha típicos e detectá-los antes que seus clientes o façam. E então, finalmente, pense em tudo isso como um sistema que se generaliza. Então você está tentando criar exemplos que sejam representativos do que você poderá querer alcançar em produção em algum momento. E para que
+
+isso se generalize adequadamente, é preciso incorporar mecanismos de validação. Então, como no contexto tradicional de aprendizado de máquina , a abordagem de validação é bastante típica. Então, as pessoas estão sempre se certificando de validar se as coisas não estão sobreajustadas. E isso, combinado com um mecanismo real, com as instruções no seu loop, dando ao sistema uma saída de emergência em vez de fazê- lo funcionar por horas e horas, batendo em um muro e queimando fichas. Sim, divas são muito importantes, na verdade, para garantir que você não esteja apenas desperdiçando fichas, mas sim contribuindo para um sistema onde um humano e seu agente colaboram para aprimorar o sistema.
+
+Perfeito. Muito obrigada por me ouvir. Estou muito feliz que você tenha reservado um tempo para isso. E se você quiser saber mais sobre a Lenfuse e também sobre como pensamos a respeito desses assuntos, você pode encontrar mais informações em length.com. E estou super
+
+animada para conhecer alguns de vocês pessoalmente em algum momento.

@@ -1,0 +1,84 @@
+---
+video_title: "Your coding agent doesn't always follow your rules — Talha Sheikh, Checkout.com"
+video_id: MpZzWMdmQCE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MpZzWMdmQCE
+video_date: 2026-07-08T08:31:41+00:00
+video_description: |
+  Your coding agent doesn't always follow your rules. An agent harness makes sure it does, in real-time, every time.
+---
+[música]
+
+Olá, olá. Você já deu uma tarefa para o Claude programar e, tipo, você descreveu uma funcionalidade e disse: "Ok, legal. Você pode implementar isso para mim?" E o código de Claude começa a distribuí-lo em subtarefas e você vê que está tudo bem, ok, isso é muito legal. Você pode ver que ele está executando vários subagentes. Eles estão ótimos, isso é muito
+
+legal e você consegue ver todas as suas tarefas sendo concluídas, os subagentes sendo finalizados e isso te dá um resultado final. Tarefa concluída. Tipo, "Incrível. Ótimo." Mas quando você realmente tenta executar o programa, é como se dissesse: "Ah, bem, não é... Algo mais falhou. Ei, Claude,
+
+você pode consertar esse pequeno detalhe?" Bem, tente novamente. Ok, está resolvido. Tudo deve estar funcionando. Oh não. Na verdade, está
+
+faltando uma coisinha bem pequena. Então, é sobre isso que trata minha palestra . Tudo o que eu quero é jogar Cyberpunk no meu Xbox enquanto o Claude faz um trabalho para mim. E o que eu percebi foi que o problema era que eu ficava dizendo para o Claude: "Ei, conserta isso, conserta aquilo, conserta isso, conserta aquilo." Mesmo que eu forneça uma especificação, algumas instruções ou poucas ou nenhuma instrução, sempre há algo que preciso informar .
+
+Então, isso significa que eu sou o responsável pela aplicação da lei. Eu sou a camada de fiscalização. Preciso explicar ao Claude exatamente o que você precisa fazer e como isso precisa ser feito. Então, o agente diz que está tudo pronto, mas você precisa verificar de qualquer forma, porque não há mais nada que possa verificar por você. Então, o que eu queria era algo que fosse muito determinístico. Portanto, quando um agente
+
+disser que a tarefa foi concluída, essa camada de aplicação deve verificar deterministicamente se ela foi realmente realizada ou não. Na verdade, foi feito do jeito que eu queria, porque está escrito que está pronto, mas será que é do jeito que eu quero? Então, eu precisava de uma maneira determinística de fazer isso. Então, eu experimentei. Eu construí meu próprio vetor, que chamo de produto próprio, vetor V1, e ele verifica deterministicamente a saída de Claude . E a forma como fiz isso foi
+
+usando os ganchos de Claude. Dessa forma, sempre que Claude terminar sua sessão, o gancho automaticamente chamará meu produto vetorial ou programa e, em seguida, o verificará para mim. Legal. E, basicamente, é assim que fica. Então, basicamente, eu forneço um arquivo de configuração e defino todos os meus casos de teste aqui, como o que eu preciso que seja verificado. E se falhar, pode
+
+continuar dizendo para o Claude: "Ei, olha, isso não está funcionando. Tente de novo. Tente de novo. Tente de novo." Desculpe se for um pouco pequeno. Então, você pode ver um dos
+
+resultados dos testes aqui. Então é tipo: "Ok, primeiro o teste passou ou falhou. Depois tenta de novo. Aí tudo passou. Ok, legal." Então,
+
+o que isso significa é que não se trata de saber se Claude realmente consegue realizar a tarefa, mas sim de confiança. Posso confiar que Claude fará tudo por mim? Aliás, quando digo Claude, estou me referindo aos agentes da LM em geral. Quando eu atribuo uma tarefa a um agente de programação, ele realmente a conclui? Então, sim. Então, foi isso que
+
+eu comecei a fazer: falar sobre isso para as pessoas e participar de diferentes eventos. E foi realmente muito legal. Tipo, "Ei, olha só, e aquela função de verificação que eu criei? Era tão boa. Era incrível." E então conheci um dos
+
+engenheiros antrópicos. E eles simplesmente me disseram: "Não vamos mais precisar disso. Teremos outro agente ou outro modelo que será tão inteligente que não será necessário fiscalizar." OK. Então , modo de crise. Será que acabei de perder meu
+
+tempo? O que eu gostei? Qual era o objetivo de tudo isso? Mas vamos analisar isso um pouco mais a fundo. E também lançaram esse projeto Claude Swing, que mostra o Projeto Matusalém, que supostamente é tão bom que resolverá todos os nossos problemas.
+
+Então, quando comecei a pensar sobre isso, percebi o seguinte: "Ok, o que realmente está acontecendo? Quando um novo modelo é lançado, ele não aumenta em capacidade, mas isso não é necessariamente a mesma coisa que confiabilidade. Claro, os modelos podem se tornar muito mais capazes, mas são mais confiáveis? Outra coisa que surge é o argumento: "Ah, bem, eu posso ter as melhores especificações. Posso ter os melhores servidores MCP.
+
+Posso ter os melhores subagentes. "Consigo obter todo o contexto necessário." Incrível. Deveríamos fazer isso. Mas, dar instruções não é o mesmo que verificar o processo. Você pode dar quantas
+
+instruções quiser, instruções muito boas ou poucas, mas ainda precisará verificar. E o que percebi foi que, ao usar essas pequenas restrições, ou quantas restrições quiser, tecnicamente, você pode usar um modelo menor, como o Haiku, ou até mesmo um modelo de código aberto, porque ele já possui essas restrições. Provavelmente, ele será conciso e levará você ao resultado desejado. Então, em teoria, isso significa que, se você usar um modelo de ponta, como o Opus Opus, que consegue realizar uma tarefa, ótimo, esse será o mais custoso. Você pode usar o Vector com algumas restrições, o que o torna um pouco mais barato, mas se adicionar mais restrições, o que significa investir um pouco mais de tempo na própria estrutura, você pode reduzir drasticamente o custo .
+
+Ou talvez até usar tarefas assíncronas como... Bem , então, eu estava me sentindo bem e comecei a falar sobre o Vector novamente em dois eventos diferentes. E conforme eu conversava com mais e mais pessoas, percebi que algo estava faltando .
+
+Quando conversei com mais pessoas, percebi que todos estavam criando suas próprias soluções. A Anthropic está criando a sua. Minha empresa está criando a sua própria solução para aplicação de regras. O Facebook está criando a sua. A Meta... todas as empresas
+
+estão criando a sua própria solução. Então, se eu criasse algo específico para mim, não poderia compartilhá-lo com os outros, porque cada um tem sua própria maneira de fazer. E o que eu implementava não significava necessariamente que outra pessoa implementaria a mesma coisa. Então, o que isso significava era que eu percebia que, na verdade, se tratava de um padrão. Precisava ser um padrão aplicável a todos. Isso significa que precisava
+
+ser agnóstico em relação à linguagem. Precisava ser algo que pudesse ser compartilhado por todos, e todos pudessem trazer sua própria versão de aplicação de regras. E era isso que deveria funcionar. Em todos os níveis. Então, deve começar com a conversa, quando uma conversa termina, você pode ter verificações antes de confirmar, pode ter verificações quando sua parte faz parte de um fluxo de trabalho multiagente. Você pode ter
+
+verificações em operações assíncronas ou agentes assíncronos, e também pode ter uma verificação que chama deterministicamente algo como um LLM, um LLM como um juiz. E pode ser executado em qualquer linguagem diferente, em qualquer código diferente. Contanto que haja a capacidade de executá-lo deterministicamente, podemos ter isso. Então, o que eu percebi foi que o que precisávamos era essencialmente um contrato que dissesse algo como: "Ei, dada esta tarefa, quero que você a execute." O que há no meio que desenvolvedores e equipes de vendas podem definir?
+
+Essa ideia é realmente interessante. E foi tipo: "Ok, então estamos caminhando para onde queremos verificação constante." Ótimo. Muitas empresas diferentes também começaram a fazer isso. A Cloud Anthropic lançou recentemente o seu novo recurso chamado "Execute Advisor Pattern", onde você tem um agente que executa todo o código, e um consultor que, essencialmente, cria um ciclo de feedback.
+
+Ou seja, verifica. A OpenAI criou sua própria plataforma de engenharia de harness, e a ideia é a mesma: você dá a um agente muitas tarefas para executar, mas como verificar se ele está funcionando? Você fornece ferramentas diferentes, contextos diferentes, e é essencialmente isso que um harness representa para a OpenAI. Existem empresas como a Cudo, que oferece revisões de código muito abrangentes. E, novamente, é a mesma coisa. O agente
+
+concluiu todo o seu trabalho, mas você confia nele? Não. Então, o que fazemos? Realizamos uma revisão de PR bem completa, com todos os diferentes problemas e descobertas, e criamos esse ciclo de feedback. Algo de hoje também, do sistema operacional do trabalho. Diz para impor, não instruir.
+
+Então, trata-se de executar essas verificações deterministicamente. Quando digo verificações, refiro-me à verificação em si. Outra, que é a minha favorita, é que ainda precisamos ir devagar. E o motivo não é porque os próprios agentes não conseguem produzir código tão rápido quanto desejam, mas sim por causa da camada de verificação. Precisamos verificar se tudo está funcionando ou não.
+
+E a minha favorita [risos] é esta, que mencionamos na nossa apresentação principal: ir devagar, bem devagar mesmo. Então, qual é a mudança que estamos vendo aqui? Inicialmente, pensávamos que o valor estava no código que criávamos. Mas, na realidade, o que estamos vendo agora é a verificação que projetamos. Então, não se trata de saber programar, mas sim de saber verificar?
+
+Então, resumindo, o foco é trabalhar na estrutura e não no código. Ou seja, você trabalha no sistema de verificação para que ele produza resultados um pouco melhores. E é isso. Obrigado. [aplausos]
+
+Alguma pergunta? Tenho 40 segundos.
+
+Sim. Existe? É público? Sim. Sim. Sim
+
+. Sim, é público. Chama-se Vector Harness, mas se você me enviar uma mensagem no LinkedIn, posso compartilhar com você. Pode colocar o link do LinkedIn de volta? Ah.
+
+Aqui está. Obrigado.
+
+Legal. Sim. Você mencionou que adicionar a camada de verificação permite usar modelos menores. O que você diz sobre as alegações de que você é um dos maiores gastadores de tokens na sua empresa? [risos] Eu preciso desses tokens para construir uma camada de verificação.
+
+[risos] Legal. Acho que é isso.
+
+[aplausos]
+
+[música]
+
+[música]

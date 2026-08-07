@@ -1,0 +1,46 @@
+---
+video_title: "When All Context Matters: Extended Cache Augmented Generation - Luis Romero-Sevilla, Orbis"
+video_id: XovaGv4f39A
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XovaGv4f39A
+video_date: 2026-06-28T20:00:11+00:00
+video_description: |
+  This session addresses a critical challenge in knowledge representation: extracting accurate answers from a rapidly changing dataset where every document is highly interconnected and relevant.
+  
+  Explore the limitations of standard retrieval methods for dynamic, high-context scenarios—including the constraints of Simple RAG and the computational bottlenecks of constantly recomputing a GraphRAG. To overcome these hurdles, this talk introduces a novel solution: Extended Cache Augmented Generation (ECAG).
+  
+  Speakers:
+  - Luis Romero-Sevilla (Orbis Operations): Luis Romero-Sevilla is an AI strategist and full-stack software engineer with over 13 years of experience driving mission-critical technological innovation across defense, healthcare, and the public sector, currently serving as the Vice President of AI at Orbis Operations.
+    X/Twitter: https://x.com/lurose15
+    LinkedIn: https://www.linkedin.com/in/luis-romero-sevilla/
+    GitHub: https://github.com/lurose5
+---
+[música]
+
+Olá, eu sou Luis Romero Sevilla e sou o vice-presidente de IA da operação Orbifold. Minha missão é resolver o problema da representação do conhecimento quando todo o contexto importa. Então, vamos começar com um exemplo bem específico . Digamos que temos um grande número de documentos e que todos os documentos representam um evento, e todos os documentos da coleção são relevantes para responder a um conjunto de perguntas que o usuário tem. Além disso, há mais um desafio.
+
+Os documentos da coleção tornam-se obsoletos muito rapidamente e todos os documentos são substituídos por novas informações. Vamos começar com uma abordagem simples. Poderíamos começar com um simples pano. Para isso, precisamos apenas de um banco de dados vetorial e um modelo de incorporação. Um modelo de incorporação pega os documentos e os transforma em uma representação numérica aprendida , um vetor.
+
+Agora, pegamos esses vetores e os armazenamos em um banco de dados otimizado para realizar operações com vetores. Perfeito. Agora, podemos pegar todas as nossas perguntas, [música] transformá-las em vetores e então procurar vetores que sejam semelhantes à consulta inicial. Os vetores que estão dentro do limite de similaridade de viagem são recuperados e podemos passá-los para o LLM para responder à pergunta. A inserção em um banco de dados vetorial é relativamente rápida. Assim, sempre que uma
+
+coleção se torna obsoleta, podemos simplesmente substituí-la por uma nova. Ainda temos um problema com o nosso cenário muito específico. Todos os documentos da coleção são relevantes para respondermos à pergunta. Portanto, não podemos simplesmente pegar todos os documentos da coleção e repassá-los para o LLM. Essa é apenas uma das muitas limitações dessa abordagem.
+
+Uau. [Gritos] Agora, vamos sofisticar um pouco mais. Todos os documentos são relevantes para responder a uma questão global. Portanto, deve haver alguma conexão e relação entre os detalhes dentro de um documento nas coleções. Para mapearmos essas relações, precisaremos de um grafo de conhecimento.
+
+Uma implementação que poderíamos experimentar é o GraphRAG. O GraphRAG tem muitas etapas, mas basicamente, [música] ele usa um LLM para ler todos os documentos e extrair entidades-chave e relacionamentos entre eles. Ela constrói uma rede, um grafo de conhecimento, onde todas essas conexões e detalhes são interligados. Então, quando uma pergunta é feita, o sistema navega por esse gráfico para sintetizar uma resposta completa, extraída de toda a coleção. Se sua coleção de documentos não for alterada com muita frequência, o GraphRAG é uma excelente abordagem para encontrar essas relações nos detalhes e responder à pergunta do usuário.
+
+No entanto, o nosso cenário muito específico indica que os nossos dados não só estão profundamente interligados, como também são substituídos com muita frequência. Recalcular um grafo de conhecimento sempre que os dados são substituídos é computacionalmente muito dispendioso e demora um tempo relativamente longo. Certo, e se adotarmos uma abordagem ainda mais simples e continuarmos a construir em cima dela? Se fôssemos usar algo como o GraphRAG, cada documento precisaria passar por um LLM [limpa a garganta] para a estrutura de entidade e relacionamento de qualquer maneira. Por que não podemos simplesmente colocar todos os documentos em contexto?
+
+Essa abordagem seria algo como "geração aumentada por cache" (CAG, na sigla em inglês), onde usamos um modelo com uma grande janela de contexto, carregamos os documentos no contexto e armazenamos o contexto em cache, guardando a matriz KB do modelo. O problema aqui é que a janela de contexto é limitada e, se você a preencher demais, a qualidade da resposta também fica comprometida . A solução: e se usássemos mais CAGs em paralelo e distribuíssemos os documentos em diferentes contextos? Agora, cada cache pode responder a perguntas sobre seu conteúdo. E agora só precisamos de algo para fazer as perguntas certas aos destinatários certos.
+
+Assim, para isso, podemos usar um modelo mais inteligente para analisar cada categoria e, eventualmente, sintetizar uma resposta. Como distribuímos os documentos? Parece tentador organizar os documentos por domínios e dizer ao supervisor: "Ei, aqui estão as diferentes categorias." Mas, na prática, com relações muito complexas entre os documentos, o supervisor tende a ignorar domínios que, à primeira vista, parecem irrelevantes. Por esse motivo, todos os documentos são distribuídos sem nenhuma ordem específica. O
+
+único requisito é equilibrar o número de documentos de forma a que seja necessária a menor quantidade possível. Em seguida, o modelo de supervisão começa a explorar as categorias e constrói progressivamente seu entendimento interno. E se encontrar algo interessante, pode fazer perguntas de acompanhamento específicas para cada categoria . Como todos os caches podem ser carregados em paralelo, o processo de construção de conhecimento é significativamente mais rápido do que o algoritmo de busca em grafos (graph rag), ao mesmo tempo que fornece respostas mais precisas do que um algoritmo de busca simples (rag). E você provavelmente está pensando: "O cache KV pode ser bem caro." E você tem
+
+toda a razão. Mas existem maneiras de reduzir esse custo otimizando a vida útil de cada cache. E, no final, existem muitas estratégias de recuperação, e todas elas têm suas desvantagens, seja em termos de computação, custo ou velocidade. Atualmente, não existe uma solução única que sirva para todos. Assim, cada tipo se adequa à nossa solução para o nosso problema muito específico.
+
+Obrigado por assistir. E para qualquer dúvida ou para dar continuidade a esta conversa, deixarei meus dados aqui.
+
+Hum.

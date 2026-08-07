@@ -1,0 +1,96 @@
+---
+video_title: "Your Agents Need a Save Button - Hamza Tahir, ZenML"
+video_id: bZISsg7H7DA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bZISsg7H7DA
+video_date: 2026-07-18T07:00:06+00:00
+video_description: |
+  Most of an agent's life is spent waiting - on a tool, a human, the next step - and the whole time you're holding a live process awake and billing for it. Multiply that across every agent your org wants to run overnight and the math stops working.
+  
+  A save button fixes the obvious stuff: freeze an agent to durable state, drop its compute to zero, bring it back in milliseconds when there's work, and if it crashes, resume from the last save instead of re-burning every token from the top.
+  
+  The interesting part is what a save button does after the run is over. Reload an agent to any point in its trajectory, change one thing, a prompt, a model, a tool, and watch whether it does better. A finished run stops being a log you read and becomes something you re-run and improve.
+  
+  I'll argue that this one primitive, a checkpoint, is the most underrated thing in agent infrastructure, and follow it down to the sandboxes and Kubernetes-shaped infra the industry is quietly racing to build so a million saved agents can sleep for free. You'll leave with a model for running and improving agents at scale without paying to keep them awake.
+  
+  Speakers:
+  - Hamza Tahir (ZenML): Hamza Tahir is co-founder and CTO of ZenML and co-founder of Kitaru, the durable runtime for AI agents. He's spent a decade building production ML and AI infrastructure used by JetBrains, the German Bundeswehr, and Adeo, and writes and speaks on what actually breaks when agents hit production.
+    X/Twitter: https://x.com/htahir111
+    LinkedIn: https://www.linkedin.com/in/hamzatahirofficial
+    GitHub: http://github.com/htahir1
+---
+Você já analisou a execução do seu agente e se perguntou: " Por que ele fez isso?" E se tivesse feito algo diferente? Teria sido mais barato? Teria sido mais rápido? Bem, você pode fazer tudo isso se seus agentes tiverem um botão de salvar. Já
+
+temos o botão de salvar documentos há décadas. Desde a década de 1980, as pessoas estão acostumadas a pressionar Ctrl+S, Command+S ou ativar o salvamento automático enquanto trabalham para manter um estado persistente. Mas os agentes, hoje em dia, não têm isso. A única coisa que temos que se aproxima disso é um vestígio. Um rastreamento fornece os dados de telemetria emitidos sobre como um agente invoca ferramentas na entrada e na saída desse estado. Embora isso seja um bom
+
+começo, na verdade está muito desconectado do ambiente de execução em que esses agentes são de fato executados. Portanto, todas as variáveis que estão em estado, todo o sistema de arquivos em trânsito, as decisões tomadas no código, o próprio código, tudo isso se perde e resta apenas um registro somente leitura no final, que fica armazenado em outra ferramenta, muito distante de onde o código real está. E acho que o que falta hoje na indústria é uma conexão clara entre os intervalos de observabilidade emitidos pelo Odel e a execução. E talvez neste ponto você esteja se perguntando: "Mas por que se dar ao trabalho?" Por que preciso de um botão de salvar?
+
+Bem, salvar permite que você jogue novamente. Você pode voltar no tempo e fazer a pergunta "e se...".
+
+Que tipo de perguntas você gostaria de fazer? Bem, talvez você queira trocar o modelo. Talvez você use um modelo de código aberto que seja mais barato. Talvez você esteja simulando uma ferramenta e sobrescrevendo o que ela retorna. Talvez você esteja degradando o sistema intencionalmente para ver o que aconteceria se algo desse errado.
+
+E esse tipo de pergunta só é possível se você estiver nesse estado. E está surgindo uma categoria de pilha que de fato permite isso. E isso se sobrepõe à estrutura de suporte, que por sua vez se sobrepõe às estruturas que permitem criar agentes. E coloque um tempo de execução durável abaixo disso. Um e complementa os rastros emitidos com a execução do código e os elementos ao seu redor para completar o estado do sistema.
+
+E a boa notícia é que, uma vez que você tenha um sistema desse tipo em produção, já terá as informações necessárias para fazer as perguntas relevantes para tornar seu sistema melhor, mais barato e mais rápido. A produção já apresenta indícios disso. Idealmente, já possui esses pontos de verificação de estado provenientes do tempo de execução, o que permite voltar no tempo e fazer essas perguntas. Por exemplo, vamos considerar um agente que resolve problemas e realiza reembolsos para clientes após uma contestação de pagamento. Bem, assim você pode verificar se o status do pedido está mudando de idioma, se a solicitação deveria ter sido encaminhada para um nível superior ou se um modelo menor teria resolvido o problema, caso o ambiente de execução esteja registrando cada estado à medida que o processo avança . É
+
+quase como um salvamento automático, um comando S, um Control S no seu agente. E, uma vez que você tenha isso, poderá até mesmo fechar o ciclo. Bem, esta conferência é toda sobre loops. Portanto, não há nada de diferente nisso. Você tem um grupo de execuções que você acha que talvez sejam importantes porque talvez sejam muito caras, ou tenham demorado muito. Você
+
+reproduz uma alteração, compara as diferenças, vê o que teria acontecido quando você tinha a linha de base, que você já sabia o que aconteceu inicialmente, e então você decide, roteia e envia de volta. Isso conclui o ciclo das suas avaliações eletrônicas. É basicamente uma avaliação feita usando seus rastreamentos de produção. Basicamente , trata-se de avaliar usando seus pontos de verificação de produção. Então, a diferença entre os checkpoints é decisiva. E
+
+essa é realmente a metodologia que eu vi e que vi outros usarem, e que realmente se mostrou eficaz em larga escala. Por exemplo, DoorDash. A DoorDash publicou um post no blog no dia 1º de junho, onde fala sobre ter um ambiente simulado no qual reproduziam bots de atendimento ao cliente. E eles fizeram simulações de diferentes cenários para ver como poderiam ter melhorado a situação. E onde antes levava horas e horas para fazer isso, agora reduziram para 5 minutos com centenas de simulações, têm 90% menos alucinações e ainda estão dois pontos abaixo do que viram na produção. Portanto, as simulações
+
+são bastante boas porque se baseiam no que já aconteceu. Então, vamos analisar isso por meio de um exemplo e veremos como funciona. Para esta demonstração, vamos usar uma ferramenta chamada Kitaru. Kitaru é uma ferramenta muito nova lançada pela equipe da ZenML. O ZenML existe há muitos anos e é um dos principais nomes na área de orquestração. Sou um dos
+
+cofundadores. E o Kitaru é algo que lançamos recentemente, que permite ter uma camada de tempo de execução abaixo da camada de chicote de fios e também conectar-se aos seus rastreamentos. E então, faça todos os checkpoints que acabamos de mencionar e execute os cenários de replay. Então, como você pode ver, aqui está todo o meu agente de suporte, que analisa as solicitações dos meus clientes e as encaminha para um atendente humano quando necessário. Você pode ver várias coisas, como seria de se esperar. Bem, qualquer ferramenta chamada
+
+uh pode exibir uma linha do tempo se eu quiser. E aqui a diferença é que, se eu clicar em um ponto de verificação específico, como uma chamada de ferramenta, posso ver a configuração de onde ela foi executada, o código que utilizou e os artefatos que entraram e saíram dela. E essa combinação de código, os artefatos que ele criou e o ambiente em que foi executado, seja uma imagem Docker ou um sandbox, tudo isso é registrado em snapshots entre os checkpoints. E você pode ver que aqui, neste exemplo específico, houve algumas chamadas de ferramenta cada vez que o processo foi para o LLM, e eu consigo ver, de fato, quanto tempo isso levou. Mas imagine que eu quisesse fazer algo diferente. Imagine que eu quisesse trocar
+
+de modelo, talvez por um modelo mais barato. Teria acontecido a mesma coisa depois? Então, para fazer isso no Kitaro, é bem fácil. Tudo o que você precisa fazer agora é fazer isso no Kitaro, o que é bastante fácil. Tudo o que você precisa fazer é pegar a sua execução e reproduzi-la em um ponto específico.
+
+Então, vou copiar isso e colar no meu terminal para ver o que acontece. Então, o que estou fazendo aqui é basicamente dizer: "Ok, após esta chamada de ferramenta específica, mude o modelo para GPT-5 Nano, que obviamente é um pouco mais barato." E então, o que vai acontecer aqui é que haverá uma nova execução iniciada a partir do ponto 71, e você pode ver que os três primeiros pontos de verificação são ignorados. Portanto, todos eles são ignorados porque Kitaro já possui o estado de todos os pontos de verificação anteriores. Basta alterar esse ponto de verificação específico e, em seguida, iniciar a execução a partir daqui. E isso é muito
+
+legal porque agora eu consigo ver o que teria acontecido nesse cenário se houvesse um modelo mais barato. Isso me parece bastante semelhante, mas e se eu quisesse fazer uma mudança ainda diferente? E se eu quisesse simular uma ferramenta ou alterar a chamada de uma ferramenta? Bem, para fazer isso, você pode simular, por exemplo, a ferramenta de pesquisa de políticas. E aqui também é muito fácil. Posso simplesmente
+
+voltar para cá. Repetir. E desta vez, em vez de mudar o modelo, estou mudando a política de pesquisa. E estou simulando isso com outra função na minha base de código, que retorna uma política de pesquisa diferente. E eu só estou tentando entender o que teria acontecido se a política tivesse mudado . Desta vez, estou mantendo o
+
+modelo constante. O interessante aqui é que, como tenho o código, é muito fácil para mim executar chamadas de ferramentas, alterar esses elementos específicos e fazer mais experimentos do que faria se estivesse completamente desconectado da base de código. E aqui você pode ver que a base de código é um pouco diferente, então vejo meus registros aqui. Eles parecem um pouco diferentes. E aqui você pode ver que obtive um artefato ligeiramente diferente, talvez devido à chamada da ferramenta, e ela publicou o item. Então, agora, novamente, tenho três corridas.
+
+Tenho a gravação original e também as duas reprises. E se eu quisesse vê-los lado a lado, certo? O Kitaro tem um comando diff muito útil que me permite fornecer o ID original de uma execução e, em seguida, me permite visualizá-las lado a lado. Então eu consigo ver o que aconteceu. Então, há alguns avisos aqui sobre alguns artefatos, mas em um segundo ele vai me dar um URL.
+
+Posso copiar este URL e colocá-lo diretamente aqui. E agora tenho uma comparação muito boa entre o original e os dois garfos. Bem, consigo ver várias coisas aqui, mas acho que o que é realmente interessante é esta vista. Então, nessa perspectiva, você pode ver que a primeira parte da linha de base é a mesma, certo? Portanto, essas coisas foram ignoradas. Eles eram exatamente como eram
+
+. O estado está exatamente onde estava. Mas agora, logo depois disso, na terceira repetição, é um pouco diferente, né? A chamada da ferramenta ocorreu de forma um pouco diferente porque usamos uma política diferente, e então algo mudou depois disso. Bem, aqui demorou um pouco mais.
+
+E aí você já pode começar a ver o resultado final. E se eu clicar no resultado final, consigo ver os artefatos lado a lado. Consigo ver qual decisão acabou sendo tomada. Então, você pode ver que aqui, restringiu a contagem de cobranças. Aqui, isso também o restringiu. Aqui, isso também o
+
+restringiu. Nos dois primeiros casos, é realmente necessário revisar. Na terceira questão, como alteramos a política, podemos responder com segurança. Então, isso pode ser bom ou ruim no seu caso, mas era isso que você esperava ver? Bem, talvez.
+
+Porque, no fim das contas, esses dois eram mais baratos . Em relação à quantidade de fichas consumidas, elas eram mais baratas. Entrada e saída. E você pode ver vários detalhes aqui na interface do usuário, o que pode ser útil para essas análises. Certo, mas isso é apenas um ponto, não é?
+
+E se eu quisesse fazer isso em toda uma turma? E se eu quisesse fazer várias corridas, né? Que na verdade...
+
+talvez esteja ordenado por custo. Então, talvez eu tenha levado todas as minhas roupas caras. Então, quis fazer uma mudança em toda a coorte. Então, altere todas as chamadas de ferramentas que ocorreram para esse conjunto específico de configurações em toda a coorte. Ou então, altere o próprio modelo e utilize um modelo mais barato para toda a coorte. Assim, consigo ter uma
+
+distribuição maior de informações e replays que posso utilizar. E agora, eu posso simplesmente fazer isso. Bem, e a forma de reproduzir isso é usando o minicomando "replay", onde você começa de um ponto específico e faz o mesmo que fez antes, só que ao longo de toda a coorte. Hum, isso vai demorar um pouco, então não vou fazer agora. Mas depois de executá-lo, neste caso específico, eu simplesmente o converti para JSON, então tenho um JSON muito bom aqui, e esse JSON me fornece várias informações. Então, é um pouco difícil fazer a
+
+interface do usuário, né? Então, muita coisa está acontecendo . Não dá para simplesmente fazer inúmeras comparações aqui. Bem , o que você poderia fazer, e o que eu pessoalmente adoro fazer, é usar o servidor Kitaru MCP. E aqui o que você pode fazer é simplesmente dizer: "Ei, leia este relatório JSON e faça uma análise sobre o que você acha que eu deveria estar fazendo em relação à coorte."
+
+E eu acho que o mais importante é usar agentes e modelos de aprendizagem colaborativa (LLMs) para analisar essas coortes em uma infinidade de dados, porque em algum momento, quero dizer, 10 provavelmente é fácil de fazer, mas e se você tiver milhares? Bem, processar milhares e milhares de dados é difícil, e é aí que as habilidades e os servidores MCP se tornam realmente relevantes, e ter o ambiente de execução consultável, que permita acessar a execução e buscar os artefatos, é muito importante. Então, vai ser...
+
+vai ser... fazer muitas coisas. Então, está tentando, sabe, analisar essas decisões e sinalizar quaisquer problemas que possam surgir.
+
+Então. Enquanto isso acontece, talvez possamos voltar e continuar nossa apresentação. Então, hum, aqui você pode ver, sim. Sim, se você trocar de modelo, pode ficar bem barato. E, claro, você não quer fazer isso com apenas uma amostra, mas com várias, porque assim poderá observar uma variação maior. Acho que um ponto
+
+importante aqui, e para ser bem honesto, é que, embora tenhamos feito isso com nossos usuários e clientes, o que eu pessoalmente observei é que uma simples troca de modelo geralmente não funciona. Então, por exemplo, ao mudar para um modelo mais barato e analisar o custo apenas de forma unilateral, obviamente você pode estar gastando muito menos dinheiro, mas o que acontece se a sua equipe de suporte não estiver resolvendo as solicitações, certo? Este é um estudo da BrainTrust. Excelente estudo que analisou isso e percebeu que pode haver uma falsa economia se você fizer uma troca de modelo ingênua, porque pode parecer no papel que você é mais rápido e mais barato, mas no final das contas você tem que olhar para o valor criado, certo? Então é uma questão de equilíbrio entre quanto dinheiro você quer gastar e, sim, o resultado.
+
+Além disso, se observarmos o banco de toalhas, o que precisamos entender é que um modelo que funciona 60% das vezes só é consistente em cerca de um quarto das vezes. Isso significa basicamente que uma única repetição é apenas uma anedota e que ter uma análise de grupo é muito, muito, muito melhor. E porque assim você consegue realmente ver, em toda a população e em diferentes escalas, o que teria acontecido, em vez de apenas olhar para uma única estimativa. É claro que isso pode ficar muito caro, e é aí que você precisa ser muito inteligente sobre o que reproduzir e ter ferramentas que realmente te ajudem. E isso você pode realmente incorporar ao seu processo de produção também, certo? Então
+
+, mais uma vez, se você der um passo para trás e olhar para o manual de jogadas, poderá começar com jogadas reais, não sintéticas, mas jogadas reais, produção real, estado atual. Construa grupos que façam a diferença. Talvez escolha as mais caras, talvez as mais longas, talvez as mais arriscadas . Nunca lance um projeto apenas repetindo uma ou duas coisas. E basta fazer isso em grande escala, enviando, roteando e armazenando, e tentar automatizar esse ciclo o máximo possível.
+
+Talvez haja um agente fazendo isso por você. Hum, isso é ainda melhor. Mas no final das contas, você só tem um humano no processo . Mas no final das contas, você só tem um humano no processo . Agora, vejamos aonde nossa análise de coorte nos levou.
+
+Ok, então terminamos. Portanto, o veredicto é: não envie. Portanto, embora parecesse que, a partir de uma única reprodução, era mais barato fazer dessa forma e chegássemos ao mesmo resultado, em vários desses casos de suporte, você viu que nosso agente concluiu que você não deveria usar um modelo mais barato neste caso específico para seus dados. Mas isso pode ser diferente para os seus dados. Em conclusão, se você quiser reproduzir as execuções do seu agente e responder às perguntas "e se eu tivesse feito algo diferente ao projetar este agente?" ou "e se o
+
+agente pudesse ser instruído a fazer algo diferente?", Bem, você pode fazer isso se modelar seu agente com sua estrutura em um ambiente de execução que possa criar pontos de verificação de estado e seja capaz de reproduzir esse estado a partir do código em diferentes cenários. Se você quiser usar o Guitar Ru, a ferramenta que eu mostrei que permite fazer isso, você pode escanear o repositório. É de código aberto, gratuito para usar, e nós agradeceríamos muito o feedback e o carinho. Muito obrigado e até a próxima!

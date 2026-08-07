@@ -1,0 +1,123 @@
+---
+video_title: "\"Software engineering is not about writing code\" — Benoit Schillings, Google DeepMind VP of Research"
+video_id: 1P1hJ36rxM0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1P1hJ36rxM0
+video_date: 2026-07-17T15:24:44+00:00
+video_description: |
+  A keynote exploring generative AI for code, deep-thinking algorithms, and the future of pre-training and transformer models for Gemini.
+  
+  Speaker:
+  
+  Benoit Schillings leads the Thinking, Reasoning, and Coding teams at Google DeepMind, directing foundational research toward AGI. His work focuses on advancing next-generation model reasoning and integrating software development best practices into AI code generation. Previously, as CTO at X, Benoit guided early-stage teams prototyping Alphabet's moonshot technologies across computing, biochemistry, and clean energy.
+  
+  LinkedIn: https://www.linkedin.com/in/benoit-schillings-2942a5
+  
+  Timestamps:
+  
+  0:00 Introduction and speaker background
+  2:35 The origin story of the Pitchfork project
+  4:43 Historical eras of software development
+  7:08 The current state of AI code generation
+  9:36 The role of self-play in training models
+  11:13 Changing economics of software engineering
+  12:41 Implementing guardrails and security
+  13:48 Inductive architecture and model planning
+  14:36 Evolution of evaluation benchmarks
+  15:45 Moving beyond simple chain-of-thought tokens
+  17:51 Future applications in chemistry and biology
+  
+  
+  
+  Key Takeaways from the talk:
+  
+  Benoit Schillings, VP of Technology at Google DeepMind, discusses the transformative impact of generative AI on software engineering and the future of model reasoning (0:49 - 2:35).
+  The Era of Syntax Generation is Over: (4:43) Coding has shifted from a machine-constrained task to an AI frontier where syntax is effectively solved, moving the bottleneck to architecture and validation.
+  The Power of Self-Play: (9:36) As human-generated training data reaches saturation, DeepMind is utilizing self-play, where models generate and verify their own challenges to reach superhuman performance.
+  Shift in Engineering Economics: (11:13) With writing code becoming nearly free, the focus must transition to active guardrails, security, and managing the explosion of generated code.
+  Inductive Architecture: (13:48) The next step for AI is moving beyond simple token prediction toward models that can plan, decompose complex problems, and transfer knowledge across domains.
+  Scientific Breakthroughs: (17:51) AI's ability to experiment rapidly will transform fields like chemistry and biology, allowing models to uncover patterns and relationships that remain invisible to human perception.
+---
+[música]
+
+Recebam no palco o vice- presidente de pesquisa [música] do Google DeepMind, Benois Schillings. [música]
+
+[música] Muito
+
+bem, bom dia. É realmente muito emocionante estar aqui e ter a oportunidade de conversar com todos vocês. Meu nome é Benois Shellings. Na verdade, sou meio novato quando se trata de aprendizado de máquina. Até um ano e meio atrás, eu trabalhava para o Google X, que alguns de vocês talvez conheçam. Já fizemos
+
+coisas como o Whimo, que parece estar em cada esquina agora. Ah, também fazemos coisas como Glass. Então, sabe, tivemos uma mistura de sucesso e fracasso. Mas, de muitas maneiras, essa foi para mim uma experiência formativa interessante sobre como gerenciar uma equipe de pesquisa em um lugar como o DeepMind. Tenho uma equipe incrível. O objetivo da minha equipe
+
+na DeepMind é basicamente desenvolver toda a tecnologia necessária para tornar o Gemini incrível dentro de um mês a um ano. Então, um mês, porque se você começar a trabalhar no que é necessário em uma semana, já é um tipo de trabalho muito diferente, e um ano, porque acho que ninguém consegue prever nada com tanta antecedência. Então, na minha opinião, já é bastante ambicioso pensar em coisas que aconteceriam daqui a um ano. Fazemos muitas coisas nessa função. Bem, muito disso está relacionado a código, que será o tema principal da minha palestra hoje.
+
+Mas também fazemos muita pesquisa sobre a evolução do raciocínio dos modelos, por exemplo, ou fazemos pesquisa de topologia, quais novos tipos de rede podem trazer melhor desempenho. Fazemos trabalho fundamental na ciência do aprendizado por reforço, que é fundamental para o que fazemos hoje com aprendizado de máquina. Vamos contar um pouco da história de origem. Começamos o projeto na X chamado Pitchfork em 2018, que tinha como objetivo analisar como o aprendizado de máquina poderia realmente melhorar a maneira como o código é escrito. E isso foi muito interessante porque, em 2018, quando apresentamos isso no Google, honestamente, ninguém nos dava atenção. Houve um
+
+momento em que pensei: por que alguém precisaria de aprendizado de máquina para escrever código? Ao mesmo tempo, acho que subestimamos completamente a rapidez com que isso poderia acontecer. Quando iniciamos esse projeto, a ideia era analisar como poderíamos acelerar a evolução de um trecho de código. Como poderíamos implementar muitas dessas pequenas mudanças que atrasam o desenvolvimento do código? Sabe, aquelas pequenas alterações que exigem uma revisão que leva três dias, e como poderíamos reduzir esse ciclo.
+
+Algumas pessoas estavam falando sobre "vibe coding", que significa escrever código em inglês, e na época, sinceramente, eu descartei essa ideia completamente. É por isso que temos linguagens de programação. Inglês não é uma linguagem de programação. Bem, acho que me enganei bastante nesse aspecto. Mas a resistência que sentimos na época me fez lembrar de como minha própria carreira resistiu bastante à mudança. Bem, eu
+
+escrevo código há 45 anos. Comecei escrevendo jogos para Apple II e Commodore 64. Então, minha formação foi em linguagem assembly. E quando você passa muito tempo escrevendo em linguagem assembly, você olha para os compiladores com muita desconfiança, não é? Será que essas coisas estão realmente funcionando corretamente? E aí, quando você muda para
+
+C++ e usa um compilador, você perde a noção de que linguagens com coleta de lixo não são programação de verdade. Você precisa gerenciar sua memória. Bem, hoje eu uso Python e programação em V. Assim, até mesmo os cães mais velhos podem aprender truques novos. Então, mas eu... eu
+
+entendo o que aconteceu lá. Acho que tivemos várias eras no que aconteceu com o software, e a primeira foi aquela em que comecei a escrever código, onde o limite fundamental era realmente a máquina, e havia muito trabalho a ser feito para extrair o máximo de desempenho dessas máquinas. Essa foi a época da linguagem assembly, onde você realmente precisava ser incrivelmente preciso na forma como escrevia o código. A computação ficou muito mais barata e passamos para a era moderna da nuvem, onde obter o melhor desempenho não é o aspecto mais crítico. É possível resolver muitos problemas na base da força bruta, mas o que realmente limitou nossa capacidade de projetar de forma modular. Você sabe, essa era a época em que o
+
+software era escrito "escreva-o apenas uma vez" e havia toda essa ideia de como construir bibliotecas. Como você vai escrever as funções? Como você vai dividir esse problema em algo que seja administrável a longo prazo? A limitação reside justamente nisso, e isso determina muito do funcionamento dos nossos processos de software, que são, na verdade, influenciados pelo cérebro humano. Um ser humano típico consegue compreender o contexto com sete a nove estímulos. Quero dizer, temos
+
+tokens muito ricos, mas compare isso com o aprendizado de máquina moderno, onde o contexto será basicamente infinito em breve. Bem, essa limitação fundamental do ser humano determinou muito da forma como o software era escrito. Isso acabou e agora estamos passando para a fronteira da IA, onde escrever o código realmente não é mais o desafio. Hum, vou falar mais sobre isso. Mas o verdadeiro gargalo é como garantir que o código seja exatamente o que você queria, porque escrever o código é fácil, mas obter o que é necessário para um problema específico pode ser muito mais difícil de especificar.
+
+Assim, pelo menos num futuro próximo, os humanos desempenharão esse papel de arquitetos, refletindo sobre quais são as reais implicações daquele trecho de código. Estou usando o ML para criar o design. O pensamento indutivo é outra categoria em que acredito que os humanos ainda têm uma clara vantagem, que é a de analisar um sistema num contexto muito mais amplo e ser capaz de detectar padrões e, a partir desses padrões, tomar decisões. Então, onde estamos hoje? Hum, geração de sintaxe sobre-humana.
+
+Quando foi a última vez que pedi ao Gemini para escrever uma função para mim? E eu olhei para a função e pensei: "Eu consigo fazer isso melhor". Acabou. Bem, acho que os detalhes da escrita de código... quero dizer, você pode discutir,
+
+argumentar, encontrar contraexemplos, mas esse tempo já passou. Onde ainda temos muito trabalho a fazer é na base de código de várias etapas. Engenharia de software não se resume a escrever código. Na engenharia de software, é como quando você entra em uma empresa e percebe que existem 35 milhões de linhas de código PHP na base de código e que precisa fazer algumas alterações. É nesse dia que você entende o que é engenharia de software e é nesse ponto que nossos modelos atuais, ou modelos de vanguarda, estão progredindo. Mas essa capacidade de gerenciar
+
+essa complexidade extrema e dividi-la em partes administráveis ​​é uma área em que a fronteira ainda está se expandindo. Isso se estende até a arquitetura. Você olha para isso e eu não conheço a arquitetura do Google. Graças a Deus temos Jeff Dean, que foi, você sabe, o principal arquiteto disso. Mas esse é o nível de pensamento que tem muitas implicações, que podem ir desde como fazer a otimização de hardware? Como
+
+você gerencia a segurança? Como construir um sistema que, 10 anos depois, você não esteja cheio de arrependimentos? E creio que este é realmente o leque de progressos em que estamos trabalhando hoje. Então, a parte do código acabou, mas ainda há muito o que fazer. Ainda há muito progresso a ser feito. O
+
+código é um problema muito peculiar e, de certa forma, essa é a razão pela qual fizemos o Pitchfork para resolvê-lo. Bem, em primeiro lugar, o código representa uma grande quantidade de dados. Existem outros domínios onde você pode encontrar muitos dados para treinar seu modelo, mas o código era incrível. Você poderia acessar o GitHub e começar a extrair dados dele. Portanto, este foi um daqueles problemas em que a quantidade de dados de treinamento representava uma situação muito peculiar.
+
+É também uma área onde realizar verificações é razoável. Você pode executar um trecho de código, compilá-lo e realizar testes unitários. Portanto, a capacidade de descobrir se o modelo estava gerando algo correto era algo bastante razoável de se fazer. Isso nos trouxe até onde estamos hoje. Mas hoje o que aconteceu foi que ficamos sem dados de treinamento. Acredito que 80% do novo código
+
+adicionado ao GitHub hoje em dia é gerado por máquina. Assim, a noção de que os humanos podem trazer conhecimento que possa ser usado para mineração e para treinar modelos está chegando ao fim. Mas a boa notícia é que podemos fazer autojogo, e autojogo é algo que sempre gostamos muito no DeepMind. Imagino que todos conheçam o Alpha Zero. Alpha Zero se tornou um jogador de go e xadrez sobre-humano sem qualquer conhecimento humano, simplesmente jogando contra si mesmo. Chegamos
+
+agora ao ponto em que os modelos de código da Frontier conseguem fazer o mesmo, criando seus próprios desafios. Eles podem avaliar a validade da resposta. Eles podem até, em certa medida, julgar a arquitetura. Portanto, essa capacidade de realizar centenas de milhões de horas de programação automatizada é o que nos levará ao próximo nível. Sabe, é interessante.
+
+Faça o experimento. Pegue um engenheiro de software brilhante, tranque-o em um quarto por dois anos, alimente-o com pizza e dê a ele a missão de se tornar um engenheiro de software melhor . O que você faz como pessoa? Você se impõe alguns desafios, desafios que você pode verificar, e continua trabalhando e programando nesses desafios. Podemos fazer o mesmo aqui. Portanto, trata-se de
+
+uma questão de quanta capacidade de processamento, quanto tempo de jogo autônomo podemos ter. Mas isso ampliará os horizontes de até onde podemos chegar em termos de programação sobre-humana. Assim, a economia do código está mudando drasticamente. Como eu disse, desenvolvemos toda uma cultura e infraestrutura de engenharia de software, além de um conjunto de empresas, partindo do pressuposto de que escrever código era a parte difícil. Essa era a parte cara. Vivemos
+
+em um mundo onde escrever código é gratuito ou quase gratuito. É por isso que coloquei o til ali. Isso significa que a quantidade de código que veremos ser produzido vai explodir. E isso tem algumas implicações sérias. Em primeiro lugar, surge a questão do projeto e da sua adequação. Como,
+
+diante dessa montanha de código que será escrita, seja de fato ou dinamicamente, podemos manter sistemas que funcionem e sejam confiáveis ​​em nível microscópico? Grande papel para o ser humano. Outro problema é que estamos escrevendo código e não o lemos com tanta frequência . Quer dizer, eu sei que ainda temos revisão de código, mas prevejo que em um ano deixaremos o Gemini ou outro modelo gerar o código e ninguém realmente o analisará. Sabe, é semelhante aos compiladores que ainda verificam a saída em assembly do seu compilador e talvez alguém mais esteja envolvido, mas provavelmente é só isso. Então, a
+
+mesma coisa vai acontecer com o código, e isso levanta a questão de quais novos processos precisamos implementar para manter isso sob controle, e é aí que eu tenho uma [limpa a garganta] uma pequena lista de medidas de segurança ativas. Quer dizer, todos vocês viram as notícias sobre a Mythos analisando um trecho de código e detectando um número absurdo de vulnerabilidades nesse código. Há uma corrida para corrigir essas vulnerabilidades, mas acho que esse será um processo interminável. Sabe, teremos uma certa camada de vulnerabilidades descobertas pelos modelos, vamos corrigi-las, os modelos ficarão mais inteligentes, irão um pouco mais fundo e encontrarão vulnerabilidades ainda mais sutis. Então, acho que o primeiro aspecto é que precisamos pensar pelo menos tanto na segurança do código e nas implicações de um trecho de código quanto na escrita do código em si.
+
+Algo em que minha equipe está trabalhando ativamente é, em vez de detectar a vulnerabilidade e sugerir uma correção, que tal ensinar o modelo a escrever coisas corretas desde o início? Isso é muito, muito difícil de fazer porque depende muito do contexto. O outro aspecto é o que eu chamo de arquitetura indutiva. Acho que os modelos hoje ainda não são muito bons em transferir conhecimento, em pegar conhecimento de um domínio e aplicá-lo a outro, ou em pegar dois conceitos e encontrar a interseção desses contextos para serem capazes de fazer raciocínio dedutivo. Se realmente quisermos escrever sistemas de software muito complexos usando aprendizado de máquina, essa é uma habilidade que precisamos ensinar, e um aspecto disso é ensinar os modelos a fazer um planejamento correto diante de um problema. Como analisar um
+
+problema muito complexo e decidir qual é a decomposição correta desse problema que trará a melhor clareza ou precisão à sua resolução? Precisamos também mudar a forma como fazemos a avaliação. Quero dizer, o threebench é infame na minha opinião porque ele verifica se um trecho de código é executado e produz a saída correta. Isso é apenas uma pequena parte da engenharia de código, como mencionei anteriormente . Por exemplo, acho que precisamos de mais problemas de definição aberta nesses benchmarks que utilizamos . Vou
+
+dar um exemplo. Adoro a questão da compressão de texto. Quantos bits por caractere você precisa e qual é o limite ? Portanto, essa é uma avaliação muito simples de escrever. Você pega um trecho de código de 10 megabytes e diz ao modelo para escrever o melhor compressor possível que seja sem perdas, e a função de perda, nesse caso, será o tamanho do arquivo comprimido mais o tamanho do código-fonte. Isso é infinito. Acho que
+
+esses problemas são o que vai forçar esses modelos a fazer coisas inovadoras, como criar algoritmos totalmente novos, por exemplo, e acho que estamos chegando a esse estágio. Escrever código ou fazer engenharia de software não é pensar como uma cadeia de tokens. O pensamento e o raciocínio hoje são uma cadeia de código que, você sabe, tem sido muito bem-sucedida e aprimorou bastante os modelos. Mas, naturalmente, os seres humanos são muito mais complexos na forma como pensam sobre os problemas. Sempre achei que escrever código é uma atividade muito visual, e isso pode incluir, sei lá, o diagrama de blocos do que você está fazendo ou o fluxo de dados pelo seu código. Mas dizer que o código será
+
+apenas um conjunto de tokens emitidos, que serão o código, acho que só vai até certo ponto. Esse é um aspecto muito interessante do que fazemos no Google Gemini. Fizemos essa escolha desde o início: que seria um modelo multimodal, que o texto seria apenas uma das modalidades que o Gemini poderia aplicar. E estamos começando a ver como um modelo pode começar a pensar em termos de representação espacial ou dinâmica para resolver problemas, e acho que isso se tornará essencial. Outra questão interessante é se chegou a hora de criar uma nova linguagem para modelos.
+
+Python, entre outras, foram inventadas para humanos, e essas linguagens não são muito boas para escrever código seguro ou confiável. Quero dizer, elas são ótimas para escrever código, mas certamente não são a melhor opção. Acho que estamos chegando ao ponto em que a dificuldade de escrever o código não existe mais. Que tal tornarmos a escrita de código muito mais difícil, fazendo com que você conheça linguagens fortemente tipadas ou se inspire em princípios como o Lean Six Sigma para escrever um código que, por definição, não será perfeito? Quero dizer, a prova de programa é algo que tem algumas limitações, mas pelo menos impõe o ônus da correção ao modelo. Então, não
+
+sei se temos algum designer de linguagem aqui, mas acho que há algo realmente a ser feito nesse sentido, e não precisa ser algo legível para humanos. Acho que isso não importará mais. Portanto, além do código, o código é uma linguagem universal para resolver problemas. Acho que o que estamos começando a ver é que essa capacidade de experimentar muito rapidamente em código está impactando outros domínios muito rapidamente, porque fazer experimentação se torna basicamente gratuito. Portanto, acredito que explorar essa interseção entre escrita de código e átomos, ou ciência, é outra grande frente que estamos abrindo, e é aí que a verdadeira inovação vai surgir.
+
+Duas áreas que me entusiasmam particularmente são a química. Sabe, nós, seres humanos, não entendemos de química, ou entendemos apenas uma pequena fração dela . Quando você tem mais de 20 átomos em sua molécula, é tipo, uau, não sabemos o que essa coisa vai fazer. Acho que veremos coisas incríveis surgirem disso. Quero dizer, quando você consegue juntar 10.000
+
+átomos, isso começa a se parecer com vida. Então, o que mais você pode fazer com 10.000 átomos? Biologia. Você provavelmente já ouviu falar muito sobre isso, mas, como você sabe, a biologia é um exemplo de como a natureza fez um trabalho incrível de engenharia, mas um trabalho péssimo de documentação.
+
+Hum, mas agora podemos superar isso. Os modelos são capazes de encontrar relações que podem ser difíceis de identificar para nós. Então, acho que isso é algo que abrirá portas incríveis. E depois há aquilo que eu chamo de ouro que não podemos ver. Os seres humanos são incrivelmente tendenciosos em relação ao que consideram ser a solução correta. Quer
+
+dizer, somos o resultado de um treinamento evolutivo que nos ajudou a sobreviver na selva, certo? Não estou trabalhando com computação quântica. Portanto, acredito que, embora possamos ser brilhantes e inovadores, há uma série de avanços e descobertas que podem ser feitas, mas que simplesmente não conseguimos ver ou perceber. Se eu tivesse mais tempo, daria alguns exemplos. Acho que um dos motivos pelos quais o aprendizado de máquina oferece uma perspectiva tão diferente sobre muitos desses problemas é que vamos acabar percebendo: " Meu Deus, isso estava bem na nossa frente o tempo todo e não conseguíamos enxergar".
+
+Tempos emocionantes pela frente. Muito obrigado . [aplausos]
+
+[música]

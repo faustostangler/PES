@@ -1,0 +1,80 @@
+---
+video_title: "Deterministic Infra for Non-Deterministic AI Agents - Nishant Gupta, Meta Superintelligence Labs"
+video_id: APh1Vx0oLmQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=APh1Vx0oLmQ
+video_date: 2026-06-29T02:00:28+00:00
+video_description: |
+  AI agents are rapidly evolving from copilots into autonomous systems capable of reasoning, invoking tools, coordinating workflows, and interacting with production infrastructure. But most platforms today were designed for deterministic microservices — not long-running, non-deterministic systems powered by LLMs.
+  
+  This creates a massive infrastructure gap.
+  
+  In this talk, I’ll share lessons from building large-scale agentic and elastic compute infrastructure powering production AI workloads. We’ll explore the emerging “control plane” required for reliable AI agents: orchestration, observability, retries, evaluation, safety guardrails, workload isolation, memory coordination, and operational control loops.
+  
+  Topics include:
+  
+  - Why most AI agents fail outside demos
+  - Building deterministic systems around stochastic models
+  - Observability for autonomous AI workflows
+  - Failure handling and retry storms in agent systems
+  - Human oversight and safety guardrails
+  - Elastic GPU infrastructure for agentic workloads
+  - Reliability patterns for production AI systems
+  - The shift from “prompt engineering” to “systems engineering”
+  
+  Attendees will leave with practical architectural patterns for building resilient AI infrastructure capable of supporting autonomous systems safely and efficiently in production.
+  
+  Speakers:
+  - Nishant Gupta (Meta Superintelligence Labs): Nishant Gupta is a Software Engineering Tech Lead at Meta Superintelligence Labs building the training and inference AI infrastructure.
+    LinkedIn: https://www.linkedin.com/in/nishantgupta-ai/
+    GitHub: https://github.com/nishantgpt-lab
+---
+Olá a todos. Meu nome é Nishant Gupta. Sou líder técnico de engenharia de software na Meta, trabalhando na construção da infraestrutura de treinamento e inferência. E hoje, vamos falar sobre como construir infraestrutura determinística para agentes de IA não determinísticos . Assim, a maior parte das conversas sobre IA nos últimos anos tem se concentrado em modelos. Modelos maiores, mais
+
+parâmetros, melhor raciocínio. Mas, à medida que as organizações migram de chatbots para agentes autônomos, surge um problema diferente. O desafio já não reside na inteligência. O desafio reside na confiabilidade. Na Meta e em todo o setor, estamos vendo agentes irem além de responder perguntas e começarem a planejar, acionar ferramentas de suporte, coordenar fluxos de trabalho e tomar decisões que afetam os sistemas de produção.
+
+Esses sistemas são fundamentalmente probabilísticos. A infraestrutura não pode existir. Hoje, quero abordar esse tema com mais detalhes. A infraestrutura de nuvem moderna evoluiu em torno de um conjunto de pressupostos. A maioria das solicitações são de curta duração.
+
+Os serviços são determinísticos, mais ou menos. Os caminhos de execução são conhecidos. As falhas são limitadas. No entanto, os agentes autônomos de IA violam quase todas essas premissas. Eles têm estado. São de longa duração.
+
+Eles tomam decisões de forma dinâmica. Eles podem executar fluxos de trabalho diferentes para as mesmas entradas. É a isso que chamo de grande descompasso. Estamos tentando executar sistemas autônomos em infraestrutura projetada para fluxos de trabalho determinísticos. Essa é provavelmente a mudança de mentalidade mais importante . A maioria das demonstrações de IA exibem a
+
+capacidade da IA. Mas será que isso resolve um problema? Pode usar uma ferramenta? Ele consegue completar um fluxo de trabalho? Os sistemas de produção podem ter um objetivo diferente. Isso
+
+pode ser feito de forma confiável? Será que consegue fazer isso 10.000 vezes, 100.000 vezes, um milhão de vezes? É capaz de se recuperar de falhas? Pode
+
+funcionar com segurança? É possível fazer isso a um custo aceitável e com uma latência aceitável? Com um resultado aceitável? A maior parte do esforço de engenharia se concentra em níveis abaixo do modelo, como orquestração, monitoramento, avaliação de segurança e sistemas de recuperação. Quando as pessoas ouvem falar de falhas da IA, imediatamente pensam em alucinações.
+
+Na realidade, as alucinações costumam ser o modo de falha menos interessante . O que vemos, em vez disso, são falhas de infraestrutura, loops de raciocínio recursivos, impasses no fluxo de trabalho, amplificação de tentativas, corrupção de contexto, envenenamento de memória e explosões de custos. O modelo comete um erro, mas a infraestrutura transforma esse erro em uma interrupção. Esse é o verdadeiro desafio. Assim, como este slide mostra um padrão que os engenheiros de sistemas distribuídos provavelmente reconhecerão imediatamente, quando um agente chama uma ferramenta incorretamente, a ferramenta retorna um erro.
+
+Em vez de se recuperar, o agente gera uma solicitação ligeiramente diferente, mas ainda inválida. O ciclo se repete. Cada nova tentativa consome mais poder computacional. A profundidade de raciocínio aumenta, o consumo de GPU cresce e, eventualmente, ocorre um crescimento exponencial de recursos. O que começou como um pequeno erro de API transformou-se em um incidente computacional. É por isso que as
+
+tentativas não controladas representam um dos maiores riscos em sistemas com agentes. Este é o princípio arquitetônico que eu recomendo com mais veemência. Nunca deixe que o modelo controle diretamente os sistemas de produção. O modelo deve gerar propostas, a infraestrutura as valida, o mecanismo de políticas as aprova e o gateway de execução as implementa. O modelo apenas sugere, a plataforma decide.
+
+Essa separação nos permite construir sistemas confiáveis ​​mesmo quando o modelo subjacente permanece probabilístico. Como sabemos, os contêineres deram origem ao Kubernetes, e os microsserviços criaram as malhas de serviço. Os agentes de IA estão criando algo novo: um plano de controle agético. Essa camada torna-se responsável pelo agendamento, coordenação de memória, aplicação de políticas, avaliação, monitoramento e roteamento de carga de trabalho, o que é muito importante. E pense nisso como um sistema operacional para IA autônoma. As organizações
+
+que construírem essa camada terão vantagens competitivas significativamente maiores. Assim, os registros tradicionais nos dizem o que aconteceu. Sistemas agentes exigem que se compreenda por que algo aconteceu. Precisamos de registros para capturar decisões de planejamento, chamadas de ferramentas, consultas à memória e transições de estado. Ao depurar um fluxo de trabalho autônomo, entender a cadeia de decisões e raciocínio costuma ser mais importante do que o resultado final. A observabilidade torna
+
+-se multidimensional. Sem ele, a depuração em produção torna-se praticamente impossível. Como podem ver, a memória é um dos desafios mais subestimados nas arquiteturas de agentes. Quando vários agentes compartilham o mesmo estado, surgem problemas comuns em sistemas distribuídos. Conteúdo desatualizado, atualizações conflitantes, mudanças de contexto, pontos de vista inconsistentes. O desafio
+
+torna-se ainda mais difícil quando a própria memória pode ser probabilística e baseada na recuperação de informações. Muitas falhas em sistemas multiagentes são, na verdade, falhas de consistência disfarçadas de falhas de raciocínio. Portanto, a segurança não pode ser um componente isolado. Deve ser feito em camadas. Controles de nível de comando , permissões de ferramentas, validações de políticas, aprovações humanas, sistemas de auditoria.
+
+Cada uma dessas camadas detecta um tipo diferente de falha. A defesa em profundidade é um princípio de segurança bem compreendido. Isso se aplica igualmente bem a sistemas autônomos de IA. Muitas pessoas encaram o envolvimento humano como uma necessidade temporária. Acho que isso não está correto. Os
+
+sistemas mais bem-sucedidos provavelmente continuarão sendo supervisionados por humanos. Os humanos se tornaram manipuladores de exceções. Eles analisam situações ambíguas. Eles lidam com cenários normais. Eles fornecem sinais de calibração.
+
+O objetivo não é eliminar os seres humanos. O objetivo é alocar a atenção humana onde ela proporciona o máximo valor. Assim, uma das maiores mudanças na infraestrutura é que as cargas de trabalho de IA se assemelham cada vez mais a problemas de agendamento de clusters. A demanda está explodindo. A profundidade do raciocínio é alta e os fluxos de trabalho podem ser executados por minutos em vez de milissegundos. As necessidades de recursos variam
+
+drasticamente. Consequentemente, a eficiência da GPU, o posicionamento da carga de trabalho , o gerenciamento elástico da capacidade e o agendamento tornam-se cruciais. A inferência deixou de ser apenas um problema de modelagem. Isso se torna um problema de orquestração de recursos. A boa notícia é que muitos desses problemas não são totalmente novos.
+
+Sistemas distribuídos têm resolvido problemas semelhantes há décadas. Os disjuntores servem para isolar ferramentas. Os limites de tarifa se tornam limites de agente. As novas tentativas tornam-se recuperação de controle. As quotas de recursos transformam-se em gestão de custos. A observabilidade
+
+se transforma em rastreamento de agentes. Em vez de inventar uma infraestrutura completamente nova , podemos nos adaptar a padrões de confiabilidade para sistemas autônomos. O setor passou por diversas fases. Os estímulos iniciais foram o diferencial. Então, os modelos se tornaram o diferencial. E ambos estão se tornando
+
+produtos básicos rapidamente. A próxima fronteira é a infraestrutura. A organização que não vence não é necessariamente aquela que tem as melhores dicas. Eles terão os sistemas mais confiáveis. A vantagem competitiva está em subir na hierarquia.
+
+Se há uma coisa que eu quero que você se lembre, é isto. Os agentes de IA devem ser tratados como sistemas distribuídos. Os modelos são estocásticos. As infraestruturas devem ser determinísticas. A confiabilidade é cada vez mais um problema de infraestrutura. A observabilidade é
+
+obrigatória. Os planos de controle estão surgindo como uma camada fundamental. E, em última análise, o futuro da IA ​​não será conquistado por melhores instruções. Será conquistada por sistemas melhores.

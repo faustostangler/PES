@@ -1,0 +1,113 @@
+---
+video_title: "We Cut 94% of AI Coding Tokens With a Local Code Index - Rajkumar Sakthivel, Tesco"
+video_id: dRmWYHuIJxM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=dRmWYHuIJxM
+video_date: 2026-06-28T22:30:29+00:00
+video_description: |
+  Every AI coding tool we tried had the same assumption: send as much context as possible.
+  
+  In our production codebase, that meant sending 45,000 tokens per query — even when only ~5,000 were actually useful. We didn’t notice how inefficient this was until we saw the cost and latency impact.
+  
+  We tried improving prompts and tweaking model settings, but nothing addressed the core problem:
+  we were optimising the model, not the context.
+  
+  So we built a local retrieval layer between the codebase and the agent.
+  
+  Instead of sending full files, we:
+  
+  Structured code using AST-aware chunks (tree-sitter)
+  Combined vector search with keyword matching for better retrieval
+  Used a lightweight relationship layer to follow execution across files
+  The result: 👉 94% reduction in tokens
+  👉 faster responses
+  👉 more accurate outputs
+  
+  The hardest problem wasn’t retrieval — it was knowing when retrieval was wrong.
+  We experimented with LLM-based scoring and threshold tuning, but a simple heuristic ended up working best.
+  
+  Everything runs locally, with no data leaving the machine, and one index supports multiple AI tools.
+  
+  In this talk, I’ll walk through:
+  
+  What we got wrong initially
+  Why context matters more than model tuning
+  The architecture behind the system
+  Real benchmarks and trade-offs
+  The key takeaway: 👉 The biggest optimisation in AI coding isn’t the model — it’s the context.
+  
+  Speakers:
+  - Rajkumar Sakthivel (Tesco): Rajkumar Sakthivel builds LLM infrastructure at scale and co-created Code Context Engine after his team's AI coding bill jumped from £15 to £200 in a single month.
+    X/Twitter: https://x.com/rajkumarsakthi
+    LinkedIn: https://www.linkedin.com/in/rajkumar-sakthivel/
+    GitHub: https://github.com/rajkumarsakthivel
+---
+Olá, eu sou Raj. Quero contar uma história. Eu e meu amigo Foss estamos construindo um projeto juntos. Usamos ferramentas de programação com IA todos os dias. Código na nuvem, cursor, copiloto, código X, coisas normais. Durante um mês, nossa fatura de IA estava
+
+normal. No mês que vem, será enorme. Não fizemos nada de diferente. Mesmo projeto, mesmas ferramentas, só que em maior quantidade. Entramos em pânico.
+
+Analisamos o que estava acontecendo e descobrimos algo surpreendente. A maior parte do dinheiro não era proveniente do raciocínio da IA. Na maioria das vezes, era só enviar contexto demais. Arquivos que a IA não precisa. O contexto é importante.
+
+Código irrelevante era enviado mesmo assim todas as vezes. Então, eu e meu amigo Foss começamos a construir algo para consertar isso. Nesta palestra, falaremos sobre o que construímos e o que aprendemos. Todas as ferramentas de programação de IA fazem a mesma coisa. Ele envia seu código para o modelo como um contexto.
+
+E a ferramenta entende que mais contexto é melhor. Medimos as consultas típicas em nosso projeto. Estava enviando 45.000 tokens de contexto, mas a parte que realmente importava era de apenas cerca de 5.000. Os
+
+outros 40.000 tokens não são úteis, mas pagamos por eles a cada consulta. É como pedir uma pizza e pagar por nove pizzas extras que você não come todas as vezes. Tentamos três coisas antes de encontrarmos o que funciona. Primeiro, alteramos nosso prompt para ser curto e mostrar apenas o código relevante. Parece bom.
+
+Mas não funciona. O modelo já havia recebido 45.000 tokens antes mesmo de ler a mensagem. O custo já foi pago. Em segundo lugar, alteramos a configuração do modelo, como a temperatura máxima do token. Mesmo problema. Essas
+
+alterações modificam a saída, não a entrada. O dinheiro está na entrada. Terceiro, compressão de saída. Este aqui realmente funciona. Pedimos à modelo que escrevesse respostas curtas. Isso reduziu a produção em 75%. Mas a
+
+produção representa apenas cerca de 10% do custo. Portanto, 75% de um número pequeno ainda é um número pequeno, não é suficiente. Precisamos corrigir a entrada. Este é o slide mais importante. 90% do custo da sua IA é referente à entrada de dados. Arquivos, resultados de pesquisa
+
+, contexto que você envia. Apenas 10% é exibido. O código que a IA escreve de volta. Portanto, se você reduzir a produção em 75%, poderá economizar cerca de 8% no total. Mas, se você reduzir os insumos em 94%, poderá economizar cerca de 61% no total. A matemática é a mesma, mas o
+
+resultado é diferente. Corrija a entrada. É aí que vai o seu dinheiro. Criamos uma camada de busca local. Ele fica entre a sua base de código e a IA.
+
+Em vez de enviar arquivos inteiros, a IA pesquisa e indexa. Ele recebe de volta apenas o pequeno trecho de código que realmente precisa. Funciona assim. Cinco passos. Primeiro passo: lemos o código e o dividimos em pequenas partes, funções, classes e métodos. Não são
+
+fragmentos aleatórios, mas sim peças coerentes que fazem sentido. Na segunda etapa, executamos duas pesquisas simultaneamente. Uma dessas maneiras é encontrar o código pelo seu significado. Uma dessas maneiras é encontrar o código por meio de palavras exatas. Em seguida, combine os resultados. É daí que
+
+vem a grande economia. Na terceira etapa, podemos reduzir ainda mais os resultados. Mantenha apenas o nome da função e a descrição. Reduza a função de 50 linhas para cinco linhas. Passo quatro, uh, rastreamos a conexão com a função que foi chamada de qual. Portanto, se você
+
+encontrar um trecho de código, poderá encontrar tudo o que está conectado a ele. Etapa cinco, todos os resultados recebem uma pontuação. Se a pontuação for muito baixa, não enviamos. Sem contexto negativo. Tudo funciona na sua máquina. Nada vai para a nuvem. Essa
+
+é a beleza. Por que realizamos duas buscas em vez de uma? Porque cada um deles tem uma fraqueza. A busca baseada em significado é boa para encontrar ideias relacionadas, mas não encontra nomes exatos. Você pesquisará pela função de autenticação de usuário e poderá encontrar uma função de autenticação diferente , pois elas têm significados semelhantes. A busca por palavras é boa
+
+para nomes exatos, mas não encontra ideias relacionadas. Você pesquisa por "fluxo de login" e não encontra nada que diga "entrar". Sozinhas, ambas as pesquisas deixam de fora cerca de um em cada quatro resultados. Juntos, eles erram cerca de um em cada dez. Eles suprem as fraquezas um do outro .
+
+Esta é a parte difícil em que Foss e eu passamos a maior parte do tempo. A busca encontra resultados, mas eles são realmente relevantes? Às vezes, os resultados da pesquisa retornam 10 resultados, e nenhum deles está correto. Se eles utilizarem resultados ruins, isso gera uma resposta errada e categórica. Pior do que nenhuma resposta. Tentamos
+
+pedir à IA para avaliar seus próprios resultados, mas foi muito lento. Acrescente 2 a 3 segundos a cada vez. Tentamos ajustar o limite de pontuação, mas era muito simples. Perguntas curtas obtêm pontuação baixa mesmo quando a correspondência é perfeita. Funcionou.
+
+Uma fórmula simples: 50% pontuação de significado, 30% pontuação de palavras-chave, 20% como é o código recente. E o limite se ajusta com base no resultado atual. A execução leva 0,4 milissegundos, sem necessidade de chamadas adicionais de IA . A lição que aprendemos é que, na maioria das vezes, uma fórmula simples supera um modelo complexo . Precisamos de números, não apenas de histórias. Então,
+
+aqui estão os nossos. Testamos um projeto real de código aberto, o FastAPI, com 53 arquivos e 20 perguntas reais que um desenvolvedor faria. Sem usar nossa ferramenta, 83 uh K tokens por pergunta. Com nossas ferramentas, uh 4,9 mil tokens por pergunta. Isso representa uma redução de 94% . Com a compressão adicional, são
+
+523 tokens por pergunta. E a precisão ainda encontra o código certo em 90% dos casos. Esses números são reais. O teste é público. Você mesmo pode executá-lo.
+
+O comando está na tela. Quero ser honesto sobre os limites. Os 94% representam novamente o pior cenário, com a leitura de arquivos completos todas as vezes. Na vida real, ferramentas como o código em nuvem já são mais inteligentes do que isso. A poupança real é inferior a 94%.
+
+Utilizamos a base de dados completa porque é a única que nos permite realizar as medições da mesma forma todas as vezes. Grandes bases de código mistas são difíceis. Realizamos testes em projetos de grande porte com 396 arquivos. O recall caiu praticamente a zero. Se cada um dos seus arquivos tiver uma única função, funciona bem.
+
+Se seus arquivos executam muitas tarefas, o sistema terá dificuldades. Utilizamos um modelo pequeno e rápido para a busca. É rápido. A reindexação leva menos de um segundo. Mas o modelo maior encontraria mais.
+
+Optamos pela velocidade em vez da perfeição. Escolhas simples funcionam melhor do que escolhas complexas . Banco de dados pequeno em vez de grande infraestrutura. Duas buscas em vez de uma única busca sofisticada. Local em vez de nuvem. Simples.
+
+Aqui está algo que Foss mencionou anteriormente. Utilizamos muitas ferramentas. Código na nuvem para problemas complexos. Cursor para edições rápidas. Copiloto para pequenas finalizações.
+
+Cada ferramenta começa do zero a cada vez. Eles não compartilham nada. Você explica a mesma base de código para três pessoas diferentes em três dias diferentes. Criamos um índice compartilhado para que todas as suas ferramentas se conectem a ele. Mesma pesquisa, mesmos resultados para todos eles.
+
+E adicionamos memória. Quando uma ferramenta aprende algo sobre o seu projeto, esse conhecimento permanece. Na próxima sessão, com uma ferramenta diferente, mesmo projeto, o contexto já está estabelecido. Explicamos a base de código uma única vez. Todas as ferramentas foram lembradas.
+
+Este é o relatório de economia de um projeto real. 247 consultas. 12,4 milhões de tokens foram economizados. Quase 186 não foram gastos. A maior parte da economia, 84%, veio da camada de busca.
+
+O resto, compressão. Isto não é uma estimativa. A ferramenta rastreia todas as consultas. Compara o que teria sido enviado com o que foi enviado. Em seguida, multiplica-se pelo preço do modelo.
+
+Execute-o em seu projeto por uma semana. Veja o seu próprio número. Eu e o Foss construímos isso porque tínhamos uma conta enorme e nenhuma boa solução. A resposta não foi um modelo melhor. A resposta foi enviar menos. Discutimos qual modelo
+
+é o melhor, Opus ou Soneto. Mas os modelos podem representar 30% do custo, enquanto os outros 70% são referentes aos dados que você utiliza para alimentar o sistema. Corrija a entrada de dados; a escolha do modelo importa menos do que você pensa. Um comando para testar é o CCE. É gratuito e de código aberto. Você verá o
+
+código na tela. Experimente, veja o número e conte-nos quanto você economizou. Obrigado. Boa programação!

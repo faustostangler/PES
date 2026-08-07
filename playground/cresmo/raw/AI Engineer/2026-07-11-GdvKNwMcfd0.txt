@@ -1,0 +1,170 @@
+---
+video_title: "From Writing Code to Designing Systems: How the Developer Role is Changing — Chris Noring, Microsoft"
+video_id: GdvKNwMcfd0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GdvKNwMcfd0
+video_date: 2026-07-11T14:00:06+00:00
+video_description: |
+  For decades, developers have been valued primarily for how much code they could write and how quickly they could write it. That model no longer scales. As AI becomes a first-class collaborator, the bottleneck is no longer syntax or implementation speed—it’s clarity of intent, architectural thinking, and the ability to coordinate work across many autonomous contributors.
+  
+  Today’s challenge is not "How do I write this code?" but "How do I ensure this system is built correctly, consistently, and to company standards—across dozens of moving parts?" Without structure, AI-assisted development risks fragmentation: inconsistent patterns, duplicated logic, and solutions that technically work but fail architectural, security, or organizational expectations.
+  
+  This talk introduces a new mental model for modern development: the developer as planner, system designer, and orchestrator of agents. Using GitHub Copilot, GitHub Copilot CLI, and custom Copilot agents driven by agents.md, we’ll explore how developers can decompose large problems, delegate implementation to specialized AI agents, and encode standards, constraints, and intent directly into the workflow. Instead of prompting ad-hoc, we define explicit instructions per layer—frontend, backend, infrastructure, testing—so every agent builds the right thing in the right way.
+  
+  The result is not less control, but more leverage: faster delivery, higher consistency, and systems that reflect deliberate design rather than accidental outcomes.
+  
+  What you’ll learn:
+  
+  How the developer role is shifting from code producer to system designer, planner, and agent orchestrator
+  
+  How to structure projects for agent-driven development, using GitHub Copilot CLI, Copilot Chat, and agents.md to encode standards and intent
+  
+  How to ensure architectural consistency and quality at scale by giving agents clear responsibilities, constraints, and ownership boundaries
+---
+[música]
+
+Olá pessoal, vamos começar um pouco mais cedo porque atingimos nossa capacidade máxima. Então, muito obrigado a todos por terem comparecido. Meu nome é Chris Noring. Meu trabalho diurno é na Microsoft, onde trabalho bastante com engenharia de IA. Certo . Portanto, esta sessão aborda a transição
+
+da escrita de código para o design de sistemas. Então, levantem as mãos, quantos de vocês estão programando como de costume? Não há muitas mãos, certo? Então, acho que a maioria de vocês adotou uma abordagem mais sistêmica, certo? Então, talvez eu esteja falando com pessoas que já fizeram esse turno. Aliás, nem sempre é esse o caso
+
+. Então, às vezes, quando você vai a conferências, as pessoas dizem: "Estou testando várias soluções. Já tentei o Claude. Já tentei o Copilot." Interessante. Aliás, quantos estão usando o Claude
+
+? Sem julgamentos. Quantos estão usando o Copilot? Ok, meio a meio. Talvez mais Claude.
+
+Isso é bom. Somos muito amigos de Claude. Eu deveria dizer isso. Estamos até comparecendo juntos a eventos. Então, antropogênico, muito bom.
+
+Então, o que eu quero dizer hoje é talvez contar uma história que vocês já conhecem. Você sabe que o seu mundo mudou. Você sabe que antigamente era 100% feito no teclado. E você ainda pode estar usando o teclado. Você simplesmente usa seu tempo de maneiras diferentes. Mas todos nós sabíamos que
+
+a limitação éramos nós, certo? Éramos engenheiros brilhantes. Fizemos 100% do código, mas o progresso foi linear. Você só estava tentando fazer as coisas avançarem. A decisão de desenvolver ou não uma funcionalidade era sua . E às vezes você tinha que escolher
+
+um cenário em que pensava: "Bem, eu não tenho tempo para desenvolver esse recurso porque estou fazendo isso aqui." Isso deixou de ser uma limitação. Então, o que está acontecendo? Acho que a maioria de vocês ainda tem emprego, certo? Então, você sabe que seu emprego não desapareceu.
+
+Você sabe que seu centro de gravidade se deslocou. Portanto, vocês não são mais desenvolvedores em sua totalidade, mas agora estão em uma posição diferente. O que algumas pessoas poderiam argumentar. Quer dizer, acho que muitos de nós escolhemos nossa profissão porque amamos programar, certo? Certo? Eu penso que sim.
+
+Então, em certa medida, ainda estamos escrevendo código. Somos muito, muito, muito preciosos com o tempo que dedicamos à escrita, não é? Como agora temos muitos auxiliares, muitos de vocês já ouviram falar do termo " inclinação da IA". Certo? Vejo acenos de cabeça aqui. Então, você
+
+entende. Nos primórdios dessas ferramentas de IA, você pensava: "Meu Deus, não acredito que isso gerou esse tipo de código. Me deu muito mais trabalho do que antes. Tive que reescrever todo aquele código." Mas agora estamos chegando a um ponto em que as barreiras de proteção são uma parte essencial da nossa existência.
+
+Então, você está preso a uma ferramenta de IA. Não existe mais a opção de não usar um. Mas, é claro, você está pensando: "Qual ferramenta de IA estou usando?" Certo? Se você usa o Claude, como muitos de vocês usavam, pode ser que esteja usando o Claude Code ou o Claude Desktop. Se você usa o Copilot,
+
+talvez já saiba que temos uma interface de linha de comando (CLI). Obtivemos a interface de usuário do GitHub. Temos o editor e assim por diante. Então você pensa: "Estou tentando encaixar tudo isso no meu mundo, certo? Porque meu mundo era o dos editores."
+
+Certo? Editores de texto, IDs. Portanto, estou propondo um novo fluxo de trabalho. Alguns de vocês talvez já estejam usando esse fluxo de trabalho, mas é aqui que eu estou. E você pode me dizer: "Ei, Chris, você está errado." E isso é perfeitamente normal. Essa
+
+é uma ideia minha. Então, acho que muitos de nós provavelmente estamos aqui hoje porque começamos com uma CLI (Interface de Linha de Comando). E essa é uma ideia estranha, não é? Porque, como desenvolvedores, o editor costumava ser nosso primeiro ponto de partida. Por que eu deveria estar em uma CLI? Que estranho.
+
+Tipo, eu não sou uma pessoa que gosta de criticar, né? Quer dizer, muitos de nós estamos apenas desenvolvendo funcionalidades. Não que haja algo de errado com o bash ou o PowerShell, mas isso era coisa de outras pessoas, certo? Eles costumavam administrar outras coisas. Mas, como desenvolvedores, a CLI pode ser um bom ponto de partida, porque não preciso mais iniciar meu editor .
+
+Então, eu posso simplesmente ficar sentado lá e começar no meu terminal, é isso que eu proponho. E então eu vou para o editor porque é aqui que estou acostumado a trabalhar, certo? Passei 20 anos na indústria, 20 desses anos, ou pelo menos 19 anos e meio, como editora, porque é a minha área. Então, estou dizendo que esse é o segundo ponto aqui. E o terceiro ponto é onde a escalabilidade entra em jogo hoje em dia. E acredito que muitos
+
+de vocês já estejam usando agentes para escalar. Mas é aqui que eu digo que a CLI pode ser o seu ponto de escala. Além disso, a interface do GitHub pode ser o seu ponto de referência para escalar o negócio. Então, é por aqui que começamos. Eis por onde eu acho que poderíamos começar. E, de novo, tipo,
+
+eu não sei se você tem ovos ou não, se você gosta dessa ideia. Então, tenho algo atrás do qual me esconder. Então, o que estou dizendo é GitHub Copilot CLI ou qualquer tipo de CLI, aliás. Se você estiver usando o Claude, esse pode ser seu novo ponto de partida . E como você sabe, quando você programa hoje em dia, você cria seu primeiro rascunho, talvez. Talvez seja um novo MVP. Já ouvi
+
+alguns empresários dizerem: " Sabe de uma coisa? Meus engenheiros não me trazem mais apresentações em PowerPoint. Eles me trazem demonstrações funcionais." Certo? Essa é uma grande mudança. Tipo, eu não preciso
+
+perguntar para uma multidão de desenvolvedores se vocês gostam ou não do PowerPoint, porque eu sei que vocês não vão gostar, né? É melhor apresentar a eles uma demonstração funcional. É isso que você quer dizer, certo? Então, criei meu primeiro rascunho. Eu instalei meus guarda-corpos, certo? Sem as
+
+grades de proteção, é um caos. É um caos. Mas, claro, e talvez tenha sido esse o meu primeiro pensamento há alguns meses, uma CLI (linha de comando). Certo, justo. Vou iniciar uma CLI porque assim consigo gerenciar meus problemas, meus problemas no GitHub e meus PRs. Então, talvez este seja
+
+um bom lugar para estar, certo? Porque eu não preciso abrir o VS Code se posso simplesmente fechar 15 problemas sem nem mesmo ver a interface do usuário. Então, esse é definitivamente um caso de uso que eu quero utilizar. Problemas, PRs, sabe, verificações de status. Mas, é claro, você deve ter notado que, à medida que começamos a usar ferramentas agentivas, não programamos mais tanto em Java, JavaScript ou Python. São sugestões.
+
+E dizemos coisas como: "Crie um aplicativo para mim. Adicione este novo recurso. Ou corrija isso." Quantos de vocês se reconhecem aqui, não é? Quantos têm isso? Vários
+
+terminais abertos. Prédio. Crie um aplicativo para mim, certo? Esse é o nosso próximo MVP. É assim que minha empresa vai ganhar muito dinheiro.
+
+Ou talvez eu. Talvez esse seja meu projeto paralelo. [bufa] Resolver um problema, né? Esse é outro caso de uso. E aqui adicionamos um novo recurso e criamos outro aplicativo incrível. E
+
+enquanto isso, eu fico tomando minha xícara de café, chá ou qualquer que seja minha bebida favorita, enquanto ela está cozinhando , certo? Então, este é literalmente o meu mundo hoje. E se não for o seu mundo, eu pensaria e diria: "Será que poderia ser o meu mundo?" E, claro, o editor pode ser um dos muitos lugares onde, você sabe, também poderia estar lá. Então, quando passamos agora da CLI para o editor, o que estamos tentando fazer, assim como na CLI, aliás, é estabelecer parâmetros de segurança. Precisamos
+
+configurar agentes personalizados. E deixe-me também explicar o que são agentes personalizados. E aqui é onde proponho que passemos cada vez menos tempo com o editor, porque não faz mais sentido para nós, se temos 15 ou 20 agentes que fazem o que mandamos, ficarmos sentados lá tentando descobrir que código escrever. Mas eu ainda adoro o editor, né? Como eu disse, passei 19 anos e meio dos meus 20 anos trabalhando com um editor. Então, eu me sinto mais no
+
+controle. Eu me sinto mais acostumado com isso. Então, não vou desistir disso. E a boa notícia é que, independentemente do editor de IA ou provedor de IA que você esteja usando, provavelmente você tem algo que escuta seus fluxos de comando (CLI), seus fluxos do editor e talvez até mesmo seus fluxos que ocorrem nos repositórios do GitHub. Então, eu meio que gosto dele como placa de controle, por assim dizer, certo? É assim que eu
+
+meio que vejo o editor. E você sabe disso, não é? Eu mencionei a inclinação da IA ​​antes e vi alguns acenos de cabeça e depois vi alguma dor, certo? Tipo, nós conhecemos essa dor. Sem regras [bufa], os agentes ficam descontrolados.
+
+Então, o que fazemos? Adicionamos guarda-corpos. Guarda-corpo número um. Isso é o mínimo absoluto, certo? Agentes.md. Você
+
+deve ter isso em todos os seus repositórios do GitHub ou em qualquer outro tipo de estrutura de repositório que você utilize. Este é o seu guia de alto nível explicando a finalidade do repositório, a arquitetura do aplicativo, as restrições, o que fazer e o que não fazer, certo? Aqui podemos encontrar elementos que, por exemplo, explicaríamos o que os agentes não devem fazer. Por exemplo, que você nunca deve alterar a arquitetura a menos que eu lhe diga. Ou, em linhas gerais, dizemos: "Bem, este projeto é isto e aquilo." Pode
+
+ser algum aplicativo financeiro que usa React. Talvez esteja usando Tailwind e outras tecnologias semelhantes . Certo? Há muitos elementos envolvidos na criação de um arquivo Agents.md, mas eu o vejo como algo de alto nível.
+
+E aqui o nível é altíssimo. Você pode ver uma demonstração aqui. Você vê um repositório. Eu criei um pequeno rastreador financeiro usando código, certo? Um, aqui está um pequeno Agents.md. Você pode ver
+
+como eu organizei a visão geral do projeto, as responsabilidades dos agentes e assim por diante. Um arquivo bastante extenso. [bufa] Só para te explicar. E eu posso consultar aqui no canto inferior direito e perguntar: "O que este arquivo Agents.md faz?"
+
+E, claro, se eu estiver em um projeto novo, posso ter um arquivo Agents.md de outro projeto. Então, eu posso simplesmente copiar e dizer: "Use este. Adapte meu código, talvez antigo, ou meu código atual, para que esteja em conformidade com o Agents.md." Certo?
+
+Então, o Agents.md é uma daquelas coisas que é o mínimo necessário fazer. [Limpa a garganta] Outro problema que tenho é que os agentes não fazem as coisas corretamente. Acho que você já deve ter percebido isso ao trabalhar com agentes: é quase a mesma coisa, não é? Ou às vezes simplesmente segue nessa direção. Definitivamente não está
+
+correto. Portanto, em situações como essa, precisamos usar habilidades. Quantos estão utilizando habilidades? Essa é uma boa demonstração de apoio. Então, como se costuma dizer, estou pregando para convertidos, certo? Bem, eu não vou cantar,
+
+prometo. Então, a ideia por trás de uma habilidade é fornecer uma receita, algo que seja repetível, e você quer que o agente use essa receita sempre. Não invente coisas. Queremos restringir os agentes o máximo possível, dentro dos limites humanos. Então, uma habilidade, como talvez a maioria aqui já saiba, é um contrato, certo? Algo que o
+
+agente pode invocar. Então, em vez de improvisarmos a lógica, já que nós, como desenvolvedores, sabemos que queremos mitigar os riscos, certo? Sabemos que o agente deveria ter uma espécie de cinto de segurança e dizer: "Não faça nada que eu não queira que você faça. Não seja criativo. Não faça nada." Certo? Então, [bufa] agora
+
+também podemos dizer: "Estas são ferramentas que você deve usar." E, sim, definitivamente devemos usar habilidades para essas tarefas repetitivas, que fazemos com frequência e que precisam acontecer em uma determinada ordem. Então, uma habilidade é chamada por um agente, possui um contrato rígido e é autossuficiente, pois reside apenas em uma pasta. E isso é intencionalmente limitado porque não queremos que os agentes façam coisas, certo? Queremos que seja o mais semelhante possível ao desenvolvimento humano, sem deixar de ser rápido.
+
+[bufa] E sobre criar habilidades, se você nunca fez isso antes, é assim que funciona no GitHub Copilot, mas se você usa o Claude, que é o caso de metade do público, geralmente você tem habilidades com ponto Claude {barra} . Geralmente é aí que você aloca as habilidades. Você tem pastas, uma pasta para cada habilidade, e depois tem um arquivo skill.md. E inclui um cabeçalho com nome e descrição, o que faz e, em seguida, uma longa instrução em Markdown.
+
+O que deveria acontecer. Então, habilidades são algo ótimo. Acho ótimo que estejamos todos de acordo, todos os grandes fornecedores, sejam eles a Anthropic, a Microsoft ou qualquer outro, porque, no fim das contas, como desenvolvedores, nem sempre somos nós que decidimos qual fornecedor usar. Portanto, criar uma habilidade é bastante simples. Sim, isso pode ser específico do VS Code, mas tenho certeza de que no Claude é igualmente simples.
+
+Então, estamos aqui. Já temos uma pasta . Temos uma skill, skill.md, e uma das minhas coisas favoritas para fazer, porque sou péssimo em escrever essas instruções, é simplesmente perguntar ao Copilot: "Como vocês escrevem uma instrução melhor para o que eu pretendo fazer?" E eu definitivamente posso criar uma interface de usuário para adicionar uma nova habilidade, e acho que, seja usando código ou IntelliJ, é praticamente a mesma coisa.
+
+E aqui estou eu invocando as habilidades, aliás, e existem diferentes maneiras de fazer isso. Então, ou estou chamando habilidades {barra}, caso em que isso me permite configurar as habilidades, ou estou apenas digitando um comando que se assemelha ao nome ou à descrição da habilidade, caso em que ela será invocada. Outro problema que tenho é que, às vezes, preciso de mais do que habilidades. Quantos estão usando apenas agents.md e skills ?
+
+Certo, então você provavelmente está usando algo mais. Então, você provavelmente está usando agentes, e talvez não saiba o que eu quero dizer, mas temos um recurso no GitHub Copilot chamado agente personalizado. É aí que sentimos que a habilidade não é suficiente. Quando precisamos do próximo nível. Então, o que estou dizendo é que uma habilidade é limitada no que pode fazer. Não consegue se
+
+orquestrar de forma eficaz com os outros. É aí que você precisa de um agente, certo? Você precisa de algo que seja capaz de raciocinar. Então, aqui, com um agente personalizado, você tem uma persona, certo? E um agente pode usar um número n de habilidades. Portanto, possui um
+
+papel e um propósito distintos. Então, pense em especialista em segurança, back-end e front-end. Considere também que ele é capaz de usar servidores MCP. Portanto, você pode perceber que, neste ponto, um agente se torna um conceito de nível superior a uma habilidade. Então, apenas para comparar e contrastar, vemos que o agente atua mais como um orquestrador. Tem um
+
+alcance mais amplo. Possui personalidade, é capaz de planejar e raciocinar. E também vemos que, sim, é diferente no nível de autonomia, e percebemos que a habilidade é ótima. Uma habilidade pode ser ótima em muitos aspectos, mas simplesmente não possui todas essas outras funcionalidades de nível superior. E, claro, assim como uma habilidade, um agente personalizado tem um front matter, tem instruções, e agora a questão é onde o colocamos? Então, vamos para
+
+outra demonstração. Então, quantos de vocês estavam usando o Copilot? É tipo metade do quarto, né? Certo. Então, se você já começou a usar agentes personalizados , saberá que tem agentes do tipo GitHub {barra}, embora você possa, creio eu, escolher onde colocá- los. O importante é que você o chame de
+
+agente ponto. É isso que faz com que ele o encontre, certo? Mas este é o lugar tradicional onde ele deveria ficar. Mas se compararmos isso com a habilidade, veremos que a habilidade tinha nome e descrição aqui em cima, enquanto aqui temos dicas de argumentos e ferramentas. Ferramentas são um conceito importante, porque permitem ao agente limitar o que ele pode ou não fazer, certo? Assim, neste
+
+caso, o agente pode ler, pesquisar na web, criar listas de tarefas e muito mais. Aliás, tenho certeza de que um conceito semelhante existe em Claude. Então, o que estou tentando dizer aqui é que isso é muito mais do que uma habilidade, como você pode ver, certo? Porque ele é capaz de se destacar e fazer coisas, e talvez até interagir bem com outros agentes. Neste caso, trata-se de um pesquisador. É
+
+por isso que restringimos seu funcionamento à web, podendo não ser possível criar ou editar arquivos, ou realizar outras ações semelhantes. Então, um bom exemplo de uso aqui seria quando eu quero descobrir alguma coisa, certo? Então, se eu fosse usar, entraria no meu chat aqui e faria perguntas, talvez sobre o Microsoft Agent Framework, por exemplo, ou qualquer outra coisa que me interessasse. Aqui, tenho um prompt e devo receber algum tipo de resposta, e também selecionei o pesquisador aqui embaixo. Então, essa é uma parte importante. E isso é muito
+
+específico do Copilot, claro, mas se você analisar a ideia, acho que perceberá que é mais do que uma habilidade, certo? É algo que possui ferramentas, possui raciocínio, e assim por diante. Certo. Então, agora estamos nos aproximando do nosso capítulo final de três, porque estamos começando na CLI. Começamos dizendo: "Ei, talvez eu tenha seis terminais diferentes que fazem coisas para mim." Tudo, desde adicionar funcionalidades até
+
+trabalhar no MCP mais recente, corrigir problemas e lidar com a escalabilidade. E é aqui que a coisa fica interessante, não é? Espero que a maioria de vocês ainda tenha vários colegas, mas existem muitos outros colegas, e vocês precisam manter contato com eles. Você deve ter percebido isso, e eu vou usar uma palavra interessante para agentes aqui. Já ouvi pessoas se referirem a eles como crianças pequenas. Não sei se
+
+você já ouviu o mesmo. Mas a ideia com os agentes é que às vezes achamos que eles são superinteligentes, e às vezes eles são simplesmente burros, certo? Eles literalmente oscilam entre genialidade e "meu Deus, não acredito que você fez isso, né?" Então, você entende o funcionamento do arnês, certo? Você precisa entender a necessidade de um arnês.
+
+Então, o que estou tentando dizer aqui é que sim para todo tipo de escalabilidade, sim para toda tipo de delegação, mas vocês perceberam a necessidade de adicionar mecanismos de proteção. Então, agora que estamos confiantes com isso, agora que estamos confiantes com o agents.md, agentes personalizados, instruções personalizadas, estabelecemos as bases. Agora chegamos à parte interessante de nos expandirmos, porque, no fim das contas, é isso que significa, certo? Cada um de nós poderia ser o desenvolvedor 10x, o desenvolvedor 20x ou até mesmo o desenvolvedor 100x.
+
+Então, podemos escalar de duas maneiras diferentes se você usar o Copilot, certo? Podemos dimensionar diretamente pela CLI ou pela interface de usuário ao visualizar nosso repositório no GitHub. Então, estamos aqui dentro. E o que estamos fazendo aqui para escalar é chamar o delegado {slash}. Então, aqui simplesmente dizemos: "Crie um aplicativo financeiro que monitore meus gastos. Use HTML, CSS e
+
+JavaScript." Então, aqui estamos dizendo para ele construir um aplicativo para nós. E esta é apenas uma das muitas janelas de terminal que temos abertas. Então, ao chamar o delegate, e devo mencionar que este precisa ser um repositório GitHub válido, ou ele vai reclamar. Porque se não for assim, vai ser tipo: "Ei, Chris, eu não consigo fazer isso. Eu ainda não sou um
+
+repositório do GitHub. Crie um para mim." Então, aqui está escrito apenas: "Enviar esta sessão para o GitHub." E funciona mesmo. Então, agora isso vai gerar um monte de coisas. Tentou
+
+iniciar um trabalho, cria um rascunho de comunicado de imprensa, e isso é importante. A maioria dos nossos agentes trabalha em ambientes de teste (sandboxes), ou todos eles, certo? Então, eles não podem realmente sair da zona de conforto e fazer um monte de coisas estranhas, mas podem criar um PR (Publicidade de Requisição), e isso nos inclui como seres humanos no processo. E, claro, isso também pode acontecer no GitHub se você tiver o GitHub Enterprise. Não sei quantos ele faz, mas, aliás, é assim que aparece no GitHub. Eu só queria te mostrar
+
+isso. Então, se eu tivesse clicado no link pelo terminal, teria chegado aqui. Teria dito: "Olá, Chris, estou trabalhando na sua tarefa e tentando criar aquele aplicativo financeiro para você." Então, aqui estou eu usando servidores MCP, como o Playwright, o MCP do GitHub, e assim por diante, certo? Então, essa é a beleza disso, não é? Então,
+
+imagine agora que eu tinha todos esses terminais abertos, eu delegava isso, delegava aquilo, e de repente estávamos trabalhando em todo o backlog do produto. Aqui está a outra modalidade, e é praticamente a mesma coisa. Estamos fazendo isso pela interface de usuário do GitHub . Então, aqui estamos simplesmente dizendo: "Eu criei um problema." Normalmente, o problema requer uma descrição mais detalhada, mas estou apenas mostrando o princípio.
+
+Então, estou dizendo: "Adicionem o modo escuro ao meu aplicativo." Eu tenho um título, tenho uma descrição e tenho isto aqui . Então, aqui eu posso atribuir ao agente. Então, basicamente, se eu estiver na interface de usuário de um repositório, posso simplesmente dizer: "Ah, aqui estão várias tarefas. Cada uma delas representa uma nova funcionalidade, uma correção de bug ou algo do tipo.
+
+Delegar, delegar, delegar, delegar, e eu vou tomar um café, certo? Que ótimo. Então, se começarmos, você pode me ver aqui, tendo criado esta tarefa, e então eu clico em atribuir agente e posso dar mais instruções, se necessário. Isso inicia o processo. A primeira coisa que vai acontecer é que eu vou ver isso. Vou ver este
+
+pequeno ícone aqui que diz: "Ooh, Copilot, você me chamou, certo?" Então, o Copilot está aguardando alguns segundos, e você pode ver como funciona neste protótipo, neste trabalho em andamento. Você pode clicar nele e ver exatamente onde está. E é aqui que entra a intervenção humana , certo? Porque, assim que terminar, ele lhe fornece um rascunho de PR e pergunta: "Ei, Chris, o que você acha disso?" "
+
+Isso é algo que podemos lançar?" Então, depois de um tempo, isso voltará para mim, e a parte boa é que isso acontece em segundo plano, e eu posso continuar trabalhando em outras coisas. Então, esse é realmente o poder da delegação, certo? É assim que nos adaptamos para utilizar melhor nossas mentes. Costumo comparar esta era estranha em que vivemos com as pessoas que costumavam cortar árvores com machados. Vejo que
+
+agora estamos no ponto em que estamos jogando os machados fora, estamos usando uma motosserra, porque somos muito mais rápidos. Isso não é novidade para nós, desenvolvedores, certo? Estamos acostumados com ferramentas melhores. E é por isso que digo "humano no circuito". Ainda somos importantes porque construímos o sistema, certo?
+
+Construímos o sistema que instrui os agentes a executar um mock dentro do nosso framework. Temos nossos próprios portões de aprovação e provavelmente podemos adicionar mais. E o agente está literalmente nos pedindo uma revisão antes, e ainda podemos ser nós que fazemos a fusão. Resumindo, se você não usou nenhum Antes, tínhamos um produto de linha de comando (CLI) para agentes, como mostrei, com seis terminais diferentes ou mais. Você consegue fazer muita coisa, seja um projeto pessoal em casa ou trabalhando em uma grande empresa. Dá para
+
+criar novos aplicativos a partir da CLI, se você se aventurar além do editor. Aliás, eu costumo usar o editor cada vez menos, mais para ajustes finos, porque às vezes a experiência com o editor é melhor, sabe? E sim, a CLI ou a interface do GitHub podem ser escaladas, podem delegar tarefas, e nós somos 20 vezes mais desenvolvedores do que éramos antes . Claro, desde que tenhamos as diretrizes certas, certo? Porque 20 vezes mais código significa 20 vezes mais erros, e não queremos isso.
+
+E sim, as diretrizes que estou apresentando hoje, que acho que muitos de vocês já conhecem, são agentes MD, skills, agentes personalizados e assim por diante. Tudo isso visa escalar você agora que temos IA, não substituir você. Espero estar passando uma boa mensagem para vocês, tipo: "Queremos mentes brilhantes na área de engenharia, então, por favor, fiquem nesse ramo, certo?" [bufa] Muito obrigado, pessoal. [aplausos]
+
+[música]

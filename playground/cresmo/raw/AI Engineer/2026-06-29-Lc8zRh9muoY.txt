@@ -1,0 +1,96 @@
+---
+video_title: "Your Agent Failed in Prod. Good Luck Reproducing It. - Tisha Chawla & Susheem Koul, Microsoft"
+video_id: Lc8zRh9muoY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Lc8zRh9muoY
+video_date: 2026-06-29T00:00:39+00:00
+video_description: |
+  When an autonomous agent fails in production and corrupts an enterprise data record, it rarely repeats the exact same execution trajectory twice. Standard application logs reveal what broke but completely fail to explain why, leaving platform teams unable to reproduce non-deterministic failures on demand. While durable execution engines excel at keeping an agent loop alive through state recovery, durability is fundamentally distinct from debuggability. State recovery reconstructs the present; it does not allow an engineer to re-enter the precise historical run that caused an erratic state mutation.
+  
+  This session introduces the record and replay pattern for autonomous workflows, bringing the core engineering philosophy behind low level systems tools like Mozilla rr straight into the agent loop. By capturing every model invocation, tool execution payload, memory boundary read, and intermediate state transition into an append only event log, engineers can deterministically replay a failed execution trace for true postmortem root cause analysis. This architectural pattern moves entirely beyond basic API mocking or simple response caching. Attendees will leave this session knowing how to architect a framework agnostic recording layer, identify the exact state mutations required to guarantee replay determinism, understand where this approach complements durable execution architectures, and learn how to transform an unreproducible production anomaly into an execution path they can step through line by line.
+  
+  Speakers:
+  - Tisha Chawla (Microsoft): Tisha Chawla is a Software Engineer at Microsoft working within the Commerce and Ecosystem Data Platform team, where she builds agentic systems designed to hold up against real production data. Her technical work spans core internal platform initiatives across Spec Driven Development, SRE Agent adoption, and enterprise SWE Agents, focusing on deterministic execution frameworks and agentic software development lifecycles. Alongside her infrastructure work, Tisha is a published researcher with peer reviewed papers in applied machine learning at venues including APNET SIGCOMM and ASONAM. She frequently delivers technical sessions to large engineering audiences across Microsoft, sharing high signal insights on deploying durable, production grade agentic workflows.
+    LinkedIn: https://www.linkedin.com/in/tisha-chawla/
+    GitHub: https://github.com/tishachawla-jg
+  - Susheem Koul (Microsoft): ​Susheem Koul is a Software Engineer at Microsoft with over 7 years of experience in product development. Currently, his work is focused on the design and implementation of intelligent, agentic systems. Beyond his professional focus on agentic workflows and multi-agent coordination, he explores the philosophy of learning and software architecture through his Substack
+    LinkedIn: https://www.linkedin.com/in/susheemkoul/
+    GitHub: https://github.com/susheem-k
+---
+Imagine que algo que seu agente não tenha mencionado estivesse errado. Ao chamar a ferramenta errada, o resultado foi o errado, e agora sua equipe está trabalhando em conjunto para descobrir o que realmente deu errado. Bastante comum, não é? Agora, quanto à resposta padrão de engenharia , seu instinto lhe dirá para extrair o prompt bruto dos logs de telemetria, passá-lo para o mesmo modelo usando o mesmo prompt e executá-lo localmente para isolar o bug. O que todos nós faremos. E,
+
+surpreendentemente, também funciona. Execute novamente e funcionará de novo. Você vai executar o processo mais 10 vezes, e todas as vezes ficará perfeito. Mas agora vamos falar daquela corrida que te custou caro, e que já não existirá mais. Você não consegue reproduzir isso. E se você não consegue reproduzir o problema,
+
+não consegue depurá-lo. E se você não consegue depurar o problema , não pode garantir que ele não acontecerá com seu próximo cliente ou usuário, certo? Agora, eu sou Tisha. Tenho o Sachin comigo como co-apresentador. Ambos executamos agentes em ambientes de produção reais.
+
+Sabe, aquele tipo de lugar onde um texto ruim não é motivo para pensar: "Ah, bem, fiz isso de novo." É você em uma ligação com um cliente, explicando para onde os dados foram de fato. Toda esta palestra será sobre aquela coisa que você perde no momento em que um agente sai do controle em produção, que é a capacidade de reproduzi-lo. Essa será nossa partida pelos próximos 10 minutos. Agora vejamos como isso realmente explode. Você tem um agente conectado à
+
+API de um corretor, que é o cenário que estou considerando. O usuário diz: "Ei, venda US$ 1.000 em ações." Agora vem a parte interessante. Em vez de fazer os cálculos, o agente vende o número bruto 1.000 e o insere diretamente
+
+no campo de quantidade. Adivinha? Em vez disso, vende 1.000 ações. Agora, com as ações cotadas a 190 dólares, quanto valerá uma ação da Intel que custava 1.000 dólares? Um desastre de 190 mil dólares
+
+, não é? E o mais assustador é que a API, ou minha inferência, retornou um código 200 ( OK) sem erros em 30 milissegundos. Não tivemos nenhuma exceção, nenhum alerta. Se você perceber que a negociação está completamente errada. Mas seus painéis estão lá, perfeitamente verdes, impecáveis.
+
+Então, surge um cenário como o que discutimos por último. Qual seria a primeira coisa que você faria para tentar resolver isso? O reflexo aqui é, você sabe, simplesmente reduzir a temperatura do modelo para zero absoluto, assumindo que a decodificação gulosa tornará tudo determinístico, certo? Mas isso é um equívoco completo. Ajustar a temperatura para zero não corrige um caminho de raciocínio defeituoso . Isso significa simplesmente que o modelo
+
+cometerá exatamente o mesmo erro lógico, da mesma maneira, exatamente ao mesmo tempo e, honestamente, até pior do que isso. Para corroborar o cenário que acabamos de discutir, veja os tópicos de discussão sobre engenharia no Reddit e no Hacker News. Os dados concretos mostram que a temperatura zero nem sequer é verdadeiramente determinística em nível de hardware. Executar o mesmo comando mil vezes ainda pode retornar dezenas de respostas completamente diferentes, devido ao não determinismo inerente à GPU e às arquiteturas MOE presentes. Portanto, para entender por que isso realmente acontece, precisamos analisar a questão a partir dos princípios básicos. Resumindo, tudo se resume
+
+a quatro coisas simples. Primeiro, o determinismo de amostragem não é determinismo de sistema. Temperatura zero significa simplesmente usar sempre o valor máximo do argumento (argmax), mas não garante que as pontuações subjacentes permaneçam idênticas de uma execução para outra. Segundo, a matemática de ponto flutuante não é associativa. A ordem em que você soma as casas decimais importa, certo? Mas uma pequena mudança
+
+na operação da matriz altera os logits finais, o que, por sua vez, inverte a ordem da ficha vencedora. Terceiro, não é um problema de concorrência. Execute a mesma multiplicação de matrizes sozinha em uma GPU mil vezes e eu garanto que você obterá exatamente os mesmos bits. Portanto, o verdadeiro culpado aqui é a invariância de lote, porque uma solicitação é agrupada com tudo o que chega ao servidor naquele milissegundo. Quatro, a combinação de roteamento especializado apresenta exatamente o mesmo gargalo. Os especialistas têm
+
+limites de capacidade rigorosos. Se um lote exceder o limite de uma sub-rede específica, os tokens serão redirecionados. O fato de o token ser aprovado depende inteiramente do tráfego com o qual você foi agrupado . Em suma, a principal conclusão é que buscar resultados de texto é uma batalha completamente perdida. Não precisamos que o modelo retorne exatamente o mesmo token todas as vezes. Precisamos apenas que nosso sistema execute
+
+exatamente a mesma transição de estado. Isso significa que estivemos fazendo a pergunta errada o tempo todo, certo? A pergunta errada é: como faço para tornar o modelo determinístico? E eu já vi equipes perderem semanas com isso e desistirem concluindo que o sistema é simplesmente impossível de entender. A pergunta certa é: como depurar e testar novamente uma execução que não consigo reproduzir porque o determinismo nunca foi o princípio norteador? A depuração foi... Há
+
+dois termos que costumamos confundir, e sobre os quais falarei agora, que são determinismo bit a bit e capacidade de repetição. O determinismo bit a bit significa que a mesma entrada resulta na mesma saída. Isso é controlabilidade. Você não está obtendo isso de uma API hospedada e, na verdade, você não quer isso, porque a aleatoriedade é o que torna o modelo bom. À medida que o modelo explora mais, você obterá respostas mais criativas. A outra é a
+
+capacidade de reprodução, que revalida uma execução já realizada de forma suficientemente precisa para permitir a depuração. Isso é observabilidade. Você não precisa que o modelo seja determinístico. Você precisa gravar a execução e não congelar o modelo. Você registra o que aconteceu.
+
+Agora, a pergunta que todos estamos nos fazendo é: onde gravar? Com certeza, não na camada de rede, porque metade do seu agente nunca interagirá com a rede: a recuperação local, as ferramentas em processo, a memória e as partes que não são afetadas por streaming e processamento assíncrono. Registre no limite, pois você precisa capturar o que entra e o que sai de cada nó. O significado de cada etapa, e não dos pacotes. O que o replay adiciona aqui é uma CI determinística onde você interrompe o modelo e executa novamente exatamente a linha que falhou, sem nenhuma chamada ao modelo.
+
+Vamos agora falar sobre o loop de ponta a ponta . Começa com anotações, gravação, visualização, compreensão, correção, depois a parte em que estamos trabalhando, que é a reprodução profunda, e finalmente a verificação. Tudo bem. Vejamos agora como colocar em prática o fluxo de trabalho que acabamos de discutir. Portanto, estabelecemos que a capacidade de reprodução é um princípio fundamental para a implementação em produção de qualquer agente de IA. Mas como podemos construir isso em
+
+código? Como prova de conceito, criamos algo chamado Chronicle. No cerne de Chronicle está o conceito de limite. Considere um limite como uma caixa delimitadora em torno de qualquer nó em seu fluxo de trabalho agentivo. Um nó pode ser uma chamada de ferramenta. Pode ser um
+
+convite para um mestrado em direito ou uma recuperação de um trapo. Não importa. Desde que seja um método, ele pode ser anotado com a anotação de limite. Mas, afinal, o que faz essa anotação? Isso garante que tudo o que entra e sai do método seja registrado. Assim, qualquer par de entrada e saída
+
+será registrado. Além disso, você pode definir parâmetros como a versão do seu modelo ou a versão do código em execução, para que todo o estado durante a execução do agente seja congelado e salvo como um rastreamento. Agora, vamos ver isso em ação. Estivemos falando sobre esse agente de venda de ações que saiu do controle durante a produção. Esta é uma representação da mesma. Você tem a etapa inicial de planejamento,
+
+que leva em consideração a opinião do usuário. O sistema pode usar a ferramenta de "colocar ordem" para realizar a compra e venda de ações, e em seguida, delega a operação ao agente de finalização, que gera uma resposta concisa para o usuário final. Anotamos todos os três métodos com a anotação de limite. A primeira é uma ferramenta, e a segunda e a terceira são um LLM (mestrado em Direito). Vamos executar isso.
+
+Então, eis o que aconteceu. Você enviou uma solicitação de usuário para vender cerca de US$ 1.000 em ações da Acme. Você tem os três nós. Você tem os registros de entrada e saída para cada um deles. É possível observar que o LLM
+
+interpretou erroneamente o número mil como a quantidade e gerou uma chamada de ferramenta para realizar o pedido com o símbolo Acme e a quantidade mil. E a ferramenta de pedido obviamente executou essa entrada e vendeu US $ 1.000 ou 1.000 unidades de ações da Acme a US $ 190 por unidade. Foi aí que o problema começou. Agora
+
+você tem um rastro disso, mas é só isso que você consegue ver? Não. Registramos muito mais detalhes do que isso. Assim, você pode acessar e visualizar o JSON hiperdetalhado de cada um dos nós pelos quais a chamada entrou ou saiu. Você pode visualizar os metadados, como a versão do modelo e as versões de amostragem presentes na chamada LLM. Você pode ver a
+
+entrada e a saída. Por exemplo, isto serve para a ferramenta de fazer pedidos. Você pode ver que a entrada foi uma venda de mil unidades na Acme, e a saída foi obviamente a venda dessa quantidade. E se você der um passo para trás, poderá ver o nó do agente criando a chamada de ferramenta que causou todo esse problema. Criou-se uma chamada de ferramenta para realizar um pedido com o símbolo Acme e a quantidade 1.000.
+
+Agora, tudo isso é ótimo. Você tem uma gravação, você tem um registro, você descobriu qual é o problema. E agora, o que você faz com isso? Você descobriu que o problema era que o LLM havia criado uma chamada de ferramenta incorreta. Você não pode controlar o LLM. É exatamente sobre isso que trata
+
+toda esta discussão. Não é possível impor determinismo bit a bit. O que você pode fazer é implementar medidas de segurança em suas ferramentas para garantir um certo nível de credibilidade ao seu agente de produção. Mas como testar isso? Depois de construir os guarda-corpos, como você os testa ? Essa é mais uma das opções
+
+oferecidas pela Boundary. Como a anotação Boundary já fornece uma caixa delimitadora em torno de seus métodos, ela pode ser usada para simular seus métodos durante os testes. Então, pense nisso da seguinte maneira . Você tem uma corrida que foi registrada. Essa execução registrou todas as entradas e saídas de cada nó. Agora, você corrigiu seu
+
+código, digamos, no nível da ferramenta, mas deseja que o restante dos nós seja substituído por stubs para que todo o rastreamento de pilha permaneça exatamente o mesmo. Como se faz isso? Você executa um conjunto de testes com o mesmo rastreamento que foi gravado anteriormente. Você cria um stub para todos os nós, exceto aquele que você alterou, e deixa o Boundary cuidar do resto, certo? Então, vamos ver isso em ação.
+
+Este é o seu caso de teste. Você carregou o rastreamento e habilitou o modo de reprodução no Boundary, o que permite que o Boundary simule todos os nós que você desejar. Por exemplo, neste caso, você deseja simular a primeira chamada do agente que gerou a saída da ferramenta. Mas você quer que a ferramenta seja executada em tempo real para poder testar as alterações no seu código. Depois de fazer isso, você executa seu agente. Outra
+
+vantagem do Boundary é que, como ele já captura a saída da sua ferramenta, você pode usá-lo para executar asserções. Assim, você pode pegar a saída e afirmar que, desta vez, a chamada da ferramenta foi bloqueada. Então, vamos executar isso uma vez. Perfeito. Portanto, você pode ver que o agente um, que era o LLM, foi desativado. Você pode
+
+ver a mesma entrada e saída que no rastreamento gravado, mas a ferramenta e o LLM foram executados em tempo real. E você pode ver que, desta vez, a saída da ferramenta está bloqueada. E sua afirmação sobre a ferramenta foi aprovada porque o pedido foi bloqueado. Portanto, esse é o poder de combinar seus rastreamentos de reprodução com testes, simulações e asserções gerados automaticamente. ferramenta e o LLM. Então, acabamos de ver como o
+
+Chronicle não apenas grava suas sessões de agente, mas também usa essas gravações como casos de teste. Agora, quando falamos sobre testes em agentes de IA, quero fazer uma distinção bem clara aqui. Existem duas maneiras de testar agentes de IA, e ambas são igualmente importantes. Existem os testes determinísticos e os testes comportamentais. O teste determinístico aplica-se, obviamente, aos nós determinísticos do seu grafo de agentes. Isso pode incluir seus
+
+guarda-corpos ou suas necessidades de ferramentas. É exatamente aí que o Chronicle se destaca, porque, como acabamos de ver, o Chronicle congela toda a execução do agente como um contexto. Assim, você pode usar o contexto dos nós LLM para simular as saídas do LLM. Isso essencialmente elimina a probabilidade , e toda a execução do seu agente pode se tornar um caso de teste. Este código pode ser executado novamente e, como nunca chama o modelo, é gratuito.
+
+No aspecto comportamental, você mede coisas como o tom do agente ou se a trajetória que ele seguiu estava correta. Isso é mais subjetivo, e é aqui que técnicas como o LLM (Mestrado em Direito) como juiz se mostram mais adequadas. Agora, neste ponto, quero falar sobre os principais pontos a serem destacados. Primeiro, pare de buscar determinismo bit a bit por meio da API. Os princípios fundamentais sobre os quais as APIs são construídas hoje não tornam isso possível.
+
+Em segundo lugar, saiba quais são as variáveis ​​da sua sessão, por exemplo, a versão do LLM, o ID da compilação ou os fragmentos do Rag, e certifique-se de registrá-las. Terceiro, capture o envelope inteiro. Não se concentre apenas na pergunta. Existem muitos outros ingredientes que contribuem para a resposta final. Quarto, use a opção de substituição para depurar.
+
+Certifique-se de encontrar os problemas, corrigir as falhas e, por fim, usar o mesmo rastreamento como um caso de teste. Quinto e último ponto: mantenha a variação do tempo de geração ativa. Não tente fixar a temperatura em zero. Afinal, é isso que traz a agência para o seu agente. Então, o QR Code na sua tela, você pode escaneá- lo para obter acesso ao código do Chronicle e a uma série de artigos bem escritos . E, por fim, agradecemos novamente pelo
+
+seu tempo e esperamos que as informações que você fornecer hoje ao seu agente garantam que seu ciclo de plantão amanhã seja muito melhor. Obrigado.

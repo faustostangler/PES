@@ -1,0 +1,78 @@
+---
+video_title: "The Agentic Web and the Bazaar Era of AI - Ramesh Raskar, MIT Media Lab"
+video_id: sum9DgexFRQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=sum9DgexFRQ
+video_date: 2026-07-12T14:00:07+00:00
+video_description: |
+  The AI agent industry is currently focused on memory, orchestration, enterprise deployment, and tooling. But these are the first steps toward a larger transformation: the emergence of the Agentic Web.
+  
+  Today’s ecosystem resembles the early days of AOL: closed platforms, proprietary agent stores, and siloed orchestration layers. The next era of AI agents will require open infrastructure that allows agents to discover, transact, and co-learn across organizational boundaries.
+  
+  This talk explores three layers of the Agentic Web.
+  
+  First, the Discovery Layer: agents will require discovery infrastructure analogous to AltaVista or Google—but for agents instead of webpages. The challenge is no longer PageRank, but “AgentRank”: how agents are discovered, trusted, verified, and coordinated across the open web. This creates the need for ICANN- and W3C-like governance and standards for agents.
+  
+  Second, the Commerce Layer: what is the dollar value of intelligence? Agents will pay for reasoning, inference, memory, capabilities, and context through emerging “knowledge pricing” markets. Intelligence itself will be discovered, priced before use, coordinated among untrusted entities, and delivered in new ways.
+  
+  Third, the Bazaar Layer: the last 14 years were about machine learning. The next decade will be about machine co-learning.
+  
+  Speakers:
+  - Ramesh Raskar (MIT Media Lab): Ramesh Raskar is an Associate Professor at the MIT Media Lab and founding architect of NANDA whose pioneering work spans distributed AI agent architectures, health technology, and computational imaging, holding 100+ US patents and earning honors including the National Academy of Inventors award (2024), the Lemelson Award (2016), and the ACM SIGGRAPH Achievement Award (2017), alongside research roles at Google [X], Apple, and Facebook and the co-founding or advising of several companies.
+    LinkedIn: https://www.linkedin.com/in/raskar
+---
+Sejam todos bem-vindos. Nos próximos minutos, vamos falar sobre a infraestrutura aberta que está sendo construída para uma rede de agentes. Por que é necessário, o que já foi enviado e exatamente onde seu agente se encaixa nisso. Isso faz parte do Projeto Nanda, um esforço de pesquisa aberta que começou no MIT. E ao final desta apresentação, você saberá como colocar um agente que você mesmo construiu na web aberta, tudo por conta própria. Então, vamos lá.
+
+Sou Ramesh Raskar, professor no MIT e diretor do Projeto Nanda. E Maria é uma das principais colaboradoras do Projeto Nanda. Então, primeiro, o que é Nanda e por que ela precisa existir? Nanda, que significa agentes de IA em rede em uma arquitetura descentralizada, é uma iniciativa de pesquisa aberta que está construindo a infraestrutura para uma internet de agentes de IA, da mesma forma que a web aberta foi construída para documentos. A lacuna que preenche é de concreto. Os agentes
+
+não têm uma forma comum de se encontrarem entre os diferentes fornecedores, não possuem uma identidade ou confiança portátil que não seja propriedade de uma única plataforma, e não têm uma forma aberta de realizar transações e coordenar ações entre organizações. Nanda cria essa camada que faltava e a disponibiliza em código aberto. O índice, os registros, o protocolo e o Simulador da Cidade de Nanda você verá mais tarde.
+
+Eis a premissa que norteia tudo isso. A internet está prestes a hospedar não milhões ou bilhões, mas eventualmente trilhões de agentes autônomos. Eles negociam, delegam e migram entre hosts em milissegundos. Essa é uma carga fundamentalmente diferente da web humana, e sobrecarrega o sistema de identidade e descoberta que construímos para documentos, incluindo o DNS. A internet que está por vir precisa de infraestrutura própria.
+
+E já estivemos aqui antes. Se você está desenvolvendo agentes hoje em dia, na maioria das vezes você os está desenvolvendo ou é forçado a desenvolvê- los dentro de ambientes fechados, plataformas restritas, repositórios de agentes proprietários e orquestrações que só se comunicam entre si. E até que funciona. Mas, sabe, também parece familiar porque já estivemos aqui antes. Isso me lembra a época da AOL no final dos anos 90, quando era uma rede fechada. Sabe, o
+
+AOL, você pegava os CDs e instalava no seu PC. Era uma rede fechada. Era um diretório com acesso restrito. Você vive dentro do jardim criado por uma empresa chamada AOL. E o que veio depois da AOL foi esta web aberta. Sabe, todo mundo está
+
+criando sites e navegadores sem permissão , e qualquer site pode se comunicar com qualquer navegador. E essa é a transição que está prestes a acontecer também com os agentes. Assim, a próxima era precisa daquilo que a web precisou: uma infraestrutura aberta onde um agente de uma empresa ou entidade possa descobrir um agente de outra. Esse agente pode repassar tarefas para ele, pagá- lo, aprender com ele além das fronteiras organizacionais, sem necessidade de permissões. Existem três camadas aqui: descoberta, comércio e o que eu chamarei de bazar.
+
+Portanto, guarde esses três conceitos. Voltaremos a eles e discutiremos o assunto. Então, primeiro, o básico. Olá, meu nome é Maria e sou uma das principais colaboradoras do Projeto Nondo. Então, vamos começar com uma definição simples de agente.
+
+Na minha visão, um agente é um modelo que utiliza ferramentas em um ciclo. Certo, você define um objetivo, ele decide o que fazer em seguida, aciona uma ferramenta, analisa o resultado e continua até que a tarefa seja concluída. Portanto, esse ciclo é a ideia central. Tudo o mais, como orquestração de memória e sistemas multiagentes, é construído sobre essa base. Portanto, você pode construir esse loop de agente de várias maneiras diferentes. Um exemplo é o Open
+
+Claw. Portanto, o Open Claw é um gateway de agentes auto-hospedado . Isso significa que você pode executá-lo por conta própria e conectá-lo aos aplicativos e ferramentas que você já usa. Isso é importante porque os agentes não são apenas chatbots. Se um agente vai realizar trabalho de verdade, ele precisa ter acesso às suas ferramentas e aplicativos reais. E se tiver acesso a
+
+ferramentas reais, devemos nos preocupar com quem a controla, onde opera e o quanto podemos ver. E é por isso que agentes de código aberto auto-hospedados são extremamente importantes. Eles dão às pessoas mais controle sobre seus próprios agentes. Mas aí, surge um novo problema. Se os agentes estiverem sendo executados em vários locais diferentes, localmente e na nuvem, em vários servidores diferentes, pertencentes a várias pessoas diferentes, como eles se encontram? E essa é a
+
+função do índice. E é para isso que o índice Nanda foi criado. O índice Nanda é a camada de descoberta para a web agética. Isso proporciona aos agentes um espaço compartilhado para divulgarem quem são, o que podem fazer e como outros agentes podem contatá-los. A internet comum já possui uma versão disso com o DNS.
+
+Assim, o DNS associa um nome a um endereço, para que seu navegador saiba para onde ir. Mas os agentes precisam de mais do que um endereço. Eles precisam saber o que outro agente faz, quais ferramentas ele pode usar, quais regras ele segue e como se comunicar com ele. O índice oferece aos agentes uma maneira comum de se encontrarem e se conectarem. Então, é assim que o índice funciona. Um agente
+
+começa com uma identidade como agent@hotmail.com. O índice NANDA utiliza essa identidade e retorna um cartão de agente. Então, o cartão explica o que é um agente, como contatá-lo e para onde enviar as mensagens. As mensagens não vão diretamente para o ambiente de execução do agente. Eles acessam
+
+primeiro a caixa de mensagens. A caixa de mensagens verifica quem está enviando a mensagem, controla o acesso, filtra spam ou solicitações inválidas e retém a mensagem até que o agente esteja pronto. Agora, o registro dos fatos pelo agente é o que torna a descoberta confiável. É um registro assinado que informa a outros agentes quem é este agente, o que ele pode fazer, o que ele tem permissão para acessar, quem o construiu e onde contatá-lo. Assim, antes que um agente se conecte a outro, ele pode verificar primeiro as informações básicas .
+
+Agora, o índice não é apenas uma tabela de consulta. Não associa um nome a um endereço fixo. Ele pode retornar informações atualizadas sobre o agente com base na solicitação. Isso significa que um agente pode ter vários pontos de extremidade. O tráfego pode ser encaminhado para o mais adequado, e detalhes privados não precisam ser expostos.
+
+Portanto, a resolução é adaptativa. Isso varia de acordo com a localização do agente, quem está fazendo a pergunta e a que tipo de acesso ele tem permissão . Então, como você coloca seu agente no índice? Você começa em host39.org.
+
+Então, você preenche o formulário de informações do agente, obtém um cartão de agente e o publica no índice NANDA. Uma vez cadastrado, outros corretores podem encontrá- lo e saber como entrar em contato. Existem algumas maneiras de entrar no índice, dependendo de quem você é. As empresas podem gerenciar seu próprio catálogo e registrar seu gateway a partir de seu próprio domínio. Sites já existentes podem usar o DNS AID para conectar agentes a domínios que já possuem.
+
+Pequenas empresas e indivíduos podem usar o host39, preencher o formulário de informações do agente e obter um URL de agente hospedado sem precisar de um domínio próprio. O objetivo é fazer com que o processo de integração funcione para todos, desde uma grande empresa até uma pessoa com um agente pessoal. Agora que sabemos como os agentes são listados no índice, a próxima pergunta é: onde o agente realmente opera? Para ser útil, um agente precisa permanecer online e acessível. Você pode executá-lo localmente, o que lhe dá controle total, mas, nesse caso, você será responsável por mantê-lo em funcionamento.
+
+Para a maioria dos casos de uso, faz mais sentido hospedar na nuvem. Isso pode ser feito em uma nuvem geral como a AWS, que é mais adequada para empresas, ou em uma plataforma de hospedagem de agentes como a Maritime, que foi criada para tornar a hospedagem de agentes de IA mais barata e simples. Então, um pouco sobre o setor marítimo. Hospedar um único agente pode ser acessível, mas o problema de custo começa quando você deseja executar vários agentes simultaneamente, seja para uma equipe, um produto ou uma simulação. É aí que o custo por agente realmente importa.
+
+E o setor marítimo é uma das maneiras de resolver isso. Isso fornece uma configuração padrão simples na nuvem para executar o Open Clo ou outros agentes com arquitetura de suspensão e ativação, para que os agentes ociosos não continuem consumindo recursos computacionais. E o objetivo é tornar a gestão de vários agentes prática, barata e simples. Então, você pode hospedar um agente e listá-lo no índice, mas colocar um agente online sempre foi a parte fácil. Os problemas complexos da web de agentes residem na interação entre agentes em grande escala.
+
+Então, como milhares deles se descobrem , provam quem são, decidem em quem confiar e se coordenam sem nenhuma autoridade central? Portanto, não se pode simplesmente presumir que os protocolos resistirão à carga; é preciso testá-los, executá-los e observar quando apresentarem falhas. É exatamente aí que entra a cidade de Nanda . Então, como provar que uma rede de agentes abertos realmente funciona antes que ela sobrecarregue a internet real? Você simula isso.
+
+Este é o Nanda Town, um projeto de código aberto do Project Nanda. A maneira mais fácil de descrevê-lo é como um guia de simulação para a infraestrutura da plataforma Agoric. Então, imagine isso como uma cidade-modelo onde toda a economia Agórica é representada, incluindo descoberta, identidade, registros, mensagens, coordenação e tudo mais . Assim, você pode executar e testar em grande escala. Eis como isso funciona na prática.
+
+Nanda Town é um ambiente de testes em tempo real para redes Agóricas. Você pode visualizar os agentes em um mapa, observar o fluxo de mensagens em tempo real, comparar os resultados dos protocolos e reproduzir uma execução passo a passo. É totalmente de código aberto, pequeno o suficiente para rodar no seu próprio laptop e foi desenvolvido para facilitar o teste e a compreensão de redes agóricas. Nanda Town já está realizando experimentos reais. Por exemplo, existe um mercado onde compradores e vendedores negociam preços, um leilão onde agentes dão lances em itens e um teste de votação onde agentes entregam e contam os votos.
+
+Existem também testes para consenso e cadeias de suprimentos. O objetivo é estudar problemas reais de coordenação , como os agentes fazem acordos, chegam a um consenso sobre decisões, transmitem mensagens e se recuperam quando algo dá errado. Nos bastidores, Nanda Town divide a trama de Agori em 12 partes. Transporte, comunicação, identidade, registro, autorização, confiança, pagamentos, coordenação, negociação, memória, privacidade, efeitos dos dados. Cada componente é algo que uma verdadeira plataforma Agórica precisa.
+
+Portanto, a camada de registro é o índice Nanda que acabamos de analisar, mas aqui ela é apenas uma parte de um sistema maior. E você não precisa construir tudo para experimentar. Você pode pegar uma camada, adicionar sua própria versão, executá-la dentro de Nanda Town e ver como ela funciona com o resto da rede. Assim, Nanda Town funciona como uma simulação de eventos discretos . Você define um cenário em um pequeno arquivo YAML, injeta agentes e tráfego, e o ambiente de teste o executa para que você possa medir o que realmente acontece de ponta a ponta. O primeiro nível utiliza
+
+agentes com scripts simples, enquanto o segundo nível os substitui por modelos de IA reais. Resumindo, o Projeto Nanda constrói a infraestrutura aberta para uma internet de agentes de IA. Descoberta por meio do índice, comércio por meio de identidade portátil e confiança, e coordenação por meio de protocolos abertos, tudo testado em Nanda Town. E se você quiser saber mais, pode acessar projectnanda.org, ler nossos artigos e conferir nossos projetos mais recentes.

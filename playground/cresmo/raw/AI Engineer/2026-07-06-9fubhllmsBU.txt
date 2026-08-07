@@ -1,0 +1,125 @@
+---
+video_title: "Field Guide to Fable — Thariq Shihipar, Anthropic"
+video_id: 9fubhllmsBU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9fubhllmsBU
+video_date: 2026-07-06T16:00:06+00:00
+video_description: |
+  Ask a chat model which Pokemon names end in aw and it fails, even though it knows every Pokemon by heart. Ask Claude Code and it writes a script, fetches the list, and filters for the answer in seconds. Thariq Shihipar, who works on Claude Code at Anthropic, calls that gap capability overhang: models get smarter in spiky ways, and the tools you give them decide which spikes you can reach.
+  
+  Thariq covers what it takes to work with Fable, Anthropic's newest model. Claude Code cut 80 percent of its system prompt, since heavy instructions now constrain a model more imaginative than the examples it's given. The ask user question tool went from barely working under Opus 4 to generating embedded HTML questionnaires under Fable. He built a full keynote deck in four hours with it, and argues teams should stop picking two of good, fast, and cheap and start demanding all three.
+  
+  
+  Speaker info:
+  - https://x.com/trq212/
+  
+  Timestamps:
+  0:00 Introduction and setting the stage for Fable
+  2:32 Unhobbling Claude: Understanding model behavior
+  9:08 Finding your unknowns: Navigating the gap between map and territory
+  14:29 Reflecting on the emotional shift in coding productivity
+  16:30 Being unreasonable: Demanding good, fast, and cheap results
+---
+[música]
+
+Recebam no palco Tarik Shaupar, membro da equipe técnica da Anthropic . [música]
+
+Olá a todos, eu sou o Tarik. Eu trabalho na Anthropic no projeto Claude Code. Antes de começarmos, temos uma tradição no Claude Code de tirar uma selfie antes de cada palestra. Então, se você não se importar, se você fizer uma pose comigo, eu tiro uma selfie rápida com o engenheiro de IA. Ok, incrível. Bem, é
+
+, para começar, como dissemos, Fable está de volta. Vamos lançá-lo ainda hoje. Fiquem atentos para o cronograma exato. Eu, Kat Woo e Simon Wilson faremos um bate-papo informal às 12h30. Talvez tenhamos algumas novidades para você em breve.
+
+Mas Fable é um modelo que me deixa muito, muito empolgado. É um daqueles modelos antrópicos em que você simplesmente vai se lembrar, tipo Soneto 3.5 novo, Opus 4, Opus 4.5. É um modelo pelo qual tenho muito carinho e entusiasmo. E a
+
+melhor maneira de descrever Fable para mim é como se o mapa estivesse se abrindo, sabe, como se você estivesse jogando um RPG e já tivesse passado pelo tutorial. E agora você chega ao ponto em que, tipo , o mundo aberto começa, certo? E há tanta coisa que você pode fazer e explorar. Mas também é um pouco intimidante e confuso, não é? Porque há tanta coisa que você pode fazer.
+
+Então, o que eu queria fazer nesta palestra é dar a vocês um guia prático sobre Fable, certo? Como você trabalha com essa nova classe de modelos? Então, eu dividi isso em quatro partes. Tenho trabalhado nisso como uma série de artigos e posts de blog. Mas, sabe, quando anunciamos o lançamento de Fable, eu pensei: "Ok, deixa eu fazer tudo isso de uma vez na palestra, sabe, tipo uma corrida contra o tempo." Então, as quatro partes: libertar
+
+Claude das amarras, descobrir seus mistérios, lidar com o luto e ser irracional. Então, primeiro, vamos desimpedir Claude. Bem, acho que algo que dizemos com muita frequência é que os modelos são cultivados, não projetados, certo? A gente não acorda pensando: "Precisamos de 99% de engenheiros de software na bancada", né? Tipo, os modelos são, sabe, algo que nós desenvolvemos com cuidado. Fornecemos dados e feedback
+
+e processamos os dados. Mas, no fim das contas, é algo que acontece de forma um tanto orgânica, e vamos descobrindo e aprendendo com o modelo à medida que o utilizamos. Então, o que isso também significa é que o que os contém somos nós, certo? O tipo de interação que fazemos com eles e a maneira como os orientamos são basicamente uma função da nossa compreensão de Claude, certo? E por "desatar esse poder", quero dizer, como podemos entender melhor Claude para libertá-lo completamente? E precisamos entender
+
+melhor Fable. Então, acho que um dos meus pontos é que, sabe, ainda estamos muito no início, e acho que há muito mais para se desvendar em Fable. E, bem, acho que vou dar um exemplo rápido de como os modelos ficam mais inteligentes, porque é um pouco contraintuitivo, certo? Tipo, eu vi um tweet viral algumas semanas atrás que dizia algo como: "Por que os LLMs não conseguem dizer quais Pokémon terminam com AW? Existem milhares de Pokémon, certo? E
+
+acontece que existem dois cujos nomes terminam com AW, Croconaw e Drednaw, certo? E acontece que se você perguntar em um chat normal, ele não consegue responder. O que é meio confuso porque, tipo , ele definitivamente sabe o nome de todos os Pokémon, certo? Mas se você perguntar para o Claude Code, ele consegue, certo? Porque o que ele faz é buscar todos os Pokémon e escrever um script para filtrar por AW, certo? Então, é isso que
+
+eu quero dizer com 'desbloquear o Claude'. Chamamos isso de capacidade extra, certo? O Claude fica mais inteligente de maneiras inesperadas. Então, ele não apenas memoriza todos os Pokémon e raciocina sobre eles, mas se você der a ele a ferramenta de execução de código, ele consegue encontrar os dois Pokémon que terminam com AW, certo? E então, acho que parte do desafio com Fable é descobrir essa capacidade." sobreposição.
+
+O que é possível agora? E acho que essa é uma descoberta que estou animado para compartilhar com vocês. Para deixar isso um pouco mais claro, vou falar sobre alguns exemplos diferentes de como os modelos evoluíram no passado. Um dos grandes exemplos , obviamente, é o chat. Os modelos de chat precisavam de contexto, certo? Por exemplo, você colava
+
+seu código e, ingenuamente, pensava que a solução para problemas de codificação era fornecer contexto, o que acabava criando uma janela de 100 milhões de contextos. Mas acontece que, ao fornecer recursos, como ferramentas de processamento e maneiras de interagir com o ambiente, o modelo consegue construir e pesquisar seu próprio contexto. E essa é a ideia que levou ao Claude Code, certo? Então, novamente, uma inovação marcante, uma nova abordagem na forma como pensamos e trabalhamos com o modelo. E recentemente lançamos o Claude Tag. E o que desbloqueou no
+
+Claude Tag foi sua capacidade de trabalhar proativamente no modo multijogador. O Claude Code, você sabe, é algo que precisa ser ativado para funcionar, certo? E essa capacidade do Claude de se ativar e executar tarefas é algo que acreditamos estar desbloqueando a nova geração de agentes. Mas há mais. Por exemplo, recentemente removemos 80% das solicitações do sistema para o Claude Code, certo? E essa é uma das maneiras pelas
+
+quais os modelos, e o que eles precisam, mudam com o tempo. Originalmente, talvez na versão 3.0 ou 3.5, as melhores práticas para uma solicitação do sistema eram uma solicitação pequena, poucas ferramentas e muitos exemplos, certo? E conforme os modelos ficam mais inteligentes, você pode fornecer mais informações e instruções, e eles começam a segui-las. Então, temos
+
+uma solicitação de sistema maior com muitos exemplos e muitas ferramentas, certo? Mas, mais recentemente, descobrimos que essa nova classe de modelos precisa de menos recursos, precisa de um sistema menor. O prompt. Os exemplos tendem a restringir o processo, pois ele é, na verdade, mais imaginativo do que os exemplos que fornecemos . Então, tentamos dar contexto e não apenas restrições. Estamos
+
+realmente tentando evitar dizer coisas como " Não faça isso", o que era realmente necessário nos modelos anteriores. Então, esta é uma forma pela qual o prompt do sistema está mudando e provavelmente continuará mudando. Outro recurso que eu realmente gosto é a ferramenta "Fazer uma pergunta". Trabalhei nisso quando comecei a programar o Claude. Quando o Claude planeja ou quer fazer uma pergunta, ele pode mostrar uma caixa de diálogo de múltipla escolha. No Opus 4, ele
+
+mal conseguia acessar a ferramenta. Eu tive que ajustá-la bastante para garantir que funcionasse. E então, em algum momento no Opus 4.5, eu pensei: "E se eu pedisse para ele me fazer 40 perguntas sobre..." Ele poderia começar a
+
+me entrevistar, certo? E então, sua capacidade de fazer perguntas aumentou, certo? E mais recentemente, com o Opus 4.8 e o Fable, agora posso criar um relatório HTML completo com as perguntas incorporadas . E é uma forma totalmente nova de interagir com o Claude, certo? E essa
+
+progressão de como o Claude pode obter informações de você também mudou. Falando nisso, Markdown e HTML são assuntos sobre os quais também já falei bastante . Inicialmente, o Markdown era uma boa saída para o modelo. Ele podia mostrar um pouco de informação rica. E então, com o modo de planejamento, ele começou a ser mais fácil de entender. Você conseguia
+
+compreender o que o Claude estava prestes a fazer. E agora, o Claude pode criar relatórios HTML detalhados para você, certo? Então, novamente, o modelo está ficando mais inteligente de uma forma peculiar. Eu gosto de enfatizar que isso está mais próximo da biologia do que da física, certo? Ainda é muito empírico, muito orgânico.
+
+Não conhecemos todas as regras, mas existe algum tipo de ciência por trás disso, certo? Existe também uma intuição a ser construída. Então, eu realmente recomendo que você trate Fable dessa forma . Um dos meus artigos favoritos que escrevemos na Anthropic é sobre a biologia de um grande modelo de linguagem. Todos os nossos artigos de pesquisa são destinados a pessoas com vários níveis de conhecimento técnico, mas este é um dos meus favoritos. Então, se você quiser
+
+aprender um pouco mais, sugiro que dê uma olhada . Mas, sim, falamos sobre libertar Claude. Mas acontece que, quando você está trabalhando com Fable, você também precisa se libertar , certo? E uma das coisas sobre as quais penso muito é que o mapa não é o território, certo? Quando estou trabalhando em um problema de programação, o plano, o prompt e a especificação que tenho em mente são o mapa, certo? Mas o
+
+território é o código em si. A base, o mundo real, as restrições que Claude precisa navegar, certo? E sempre que Claude se depara com algo no território que não está no mapa, eu chamo isso de incógnita, certo? Claude precisa descobrir o que fazer a respeito. É um ponto de decisão que eu não especifiquei.
+
+E Fable é um dos primeiros modelos em que senti que realmente precisava descobrir minhas incógnitas, porque senão, ao percorrer uma área tão grande, ele acabaria encontrando muitas delas. Então, como você descobre suas incógnitas? Bem , o gargalo de Fable é minha capacidade de combinar o mapa e o território para encontrar minhas incógnitas. Então, algumas maneiras de pensar sobre isso. Eu gosto de pensar nisso como uma matriz. Então,
+
+para qualquer problema, eu tenho um monte de coisas que eu sei que sei . Isso geralmente é o que eu escrevo no meu enunciado. O que eu quero, certo? Depois, eu tenho as incógnitas que eu sei que não sei ainda, mas eu simplesmente...
+
+Ainda não descobri. Eu posso... Ah, sim. Depois, tenho os "conhecidos desconhecidos".
+
+Tipo, o que é tão óbvio que eu simplesmente não escreveria, sabe, mas eu saberia quando visse, certo? E, finalmente, os "desconhecidos desconhecidos". O que eu não considerei de jeito nenhum? O que eu não sei, certo? Tipo, o que, se eu soubesse, poderia mudar a forma como eu consulto o Claude?
+
+E, felizmente, você pode usar o Claude, você pode usar o Fable para encontrar seus desconhecidos. Então, vou mostrar alguns exemplos de como eu faço isso com o Fable. O primeiro é o que eu gosto de fazer, chamo de " passe de ponto cego". Então, eu gosto de dizer algo como: "Ei, estou trabalhando em um novo provedor de autenticação sobre o qual não sei nada, tipo, nesta base de código." Você pode fazer uma análise de pontos cegos para me ajudar a descobrir meus pontos desconhecidos relevantes e me ajudar a melhorar as dicas, certo? Então, por
+
+exemplo, o Claude poderia analisar o módulo de autenticação e descobrir: "Ah, sabe, isso é meio que um beco sem saída complicado que aparece com frequência." Talvez pesquisar no meu diff do Git ou no Slack. Eu poderia indicar onde há contexto, certo? Assim, eu posso aprender sobre todas as pegadinhas. E você pode usar isso de forma muito ampla, certo? Você pode usar para aprender sobre
+
+novos campos. Recentemente, fiz isso para correção de cores na edição de vídeo. Acho isso muito poderoso e o Sable é incrível nisso. De muitas maneiras, o modelo sabe mais sobre quase tudo do que eu. Eu só preciso extrair a informação dele. Então,
+
+gosto de fazer alguns brainstormings e protótipos. Isso me ajuda a descobrir meus pontos conhecidos desconhecidos, certo? Coisas como, especialmente para design, para mim é como saber quando você vê, certo? Então, Eu poderia pedir para criar um painel de controle. E eu diria que não tenho bom gosto para design visual. Então, eu
+
+pediria para criar uma página HTML com quatro decisões de design bem diferentes para que eu pudesse reagir a elas, certo? E aí, você ajusta como quiser, mas a ideia é ter uma noção do que você não consegue descrever com palavras, certo? E trabalhar com o modelo para ajudar a descobrir isso. Depois vêm as entrevistas. Então, depois que eu tiver uma ideia do que quero fazer, provavelmente ainda haverá muitas incógnitas, certo? Algo que eu talvez
+
+não tenha considerado, algo que eu talvez não tenha especificado. Então, eu pediria para o Claude me entrevistar, certo? E eu daria um pouco mais de contexto. Em qualquer uma dessas perguntas, dar um pouco mais de contexto sobre você, o trabalho e o estágio em que você está, tipo, "Ei, priorize perguntas que mudariam a arquitetura", é extremamente importante. Útil.
+
+Ah, então, referências. Uma das melhores maneiras de dar um mapa para o Claude é dar a ele outro mapa, certo? Então, em vez de eu escrever a especificação, eu posso simplesmente dizer: "Ei, aqui está um código que representa o que eu quero que seja feito, certo?" Pode estar em um sistema ou idioma diferente. Mas é só ler esse código, entendê- lo e depois usá-lo para começar seu trabalho, certo? E, bem
+
+, isso pode acontecer de várias maneiras diferentes. Se eu estiver criando um componente React, posso ter um mockup em HTML que representa meu mapa, certo? Que eu apresentei como referência. Acho que isso é realmente muito poderoso. Fable é realmente incrível nisso. Outra coisa que
+
+realmente apreciei foram as notas de implementação. Então, se enquanto você estiver executando Fable e ele encontrar um evento desconhecido, peça para ele registrá-lo, certo? Assim, você consegue ver onde ocorreram os desvios e também consegue descobrir o porquê, sabe? Geralmente, isso lhe dará algum contexto sobre o que aconteceu. E, por fim, gostaria de pedir a um especialista em informática que me testasse sobre o que aconteceu, só para ter certeza de que entendi o que estou fazendo e que posso representar este trabalho quando estiver criando um PR ou fazendo o merge. Essa é uma ótima
+
+maneira de garantir que você esteja realmente por dentro de tudo sobre Fable. E eu acho que uma das partes mais importantes de Fable é justamente se manter informado e garantir que você consiga o que deseja. Então, essas são algumas das minhas dicas para trabalhar com Fable. Ah, eu também quero dizer que a primeira vez que usei um modelo da classe Mithril , usando Fable, senti tanto uma enorme sensação de ganho, quanto uma sensação de perda. E eu queria falar um pouco sobre isso, sabe?
+
+Quando penso em programação antes do mestrado em direito, parece um país estrangeiro, sabe? Tipo, eu costumava administrar uma startup da YC com cerca de 30 pessoas e éramos constantemente forçados a fazer concessões devido à rigidez do código, sabe? Poderíamos, por exemplo, acelerar o desenvolvimento do aplicativo ou tentar criar um protótipo de um novo recurso, o que poderia levar um mês ou dois meses. E então tivemos que escolher. Foi muito, muito difícil. Bem,
+
+voltei a analisar essa base de código há algumas semanas e pensei em algumas coisas que queria fazer. E, bem, era muito mais fácil. Era como se coisas que levariam semanas para eu fazer, eu conseguisse fazer em horas, sabe? E em algum momento você pensa: " Como não rir?" Além disso, como é possível não chorar, sinceramente? Tipo,
+
+é uma daquelas coisas em que eu realmente adorava programar e escrever código manualmente. Adoro a sensação de visualizar a base de código na minha mente e de poder rotacioná-la. Mas também me lembro de ficar acordado até tarde da noite tentando depurar problemas, trabalhando em coisas por semanas sem conseguir fazer nada, sabe? Só me lembro de estar nadando em fracasso. Lembro-me apenas que a maioria dos projetos em que já trabalhei fracassaram. A maioria das startups vai à falência,
+
+sabia? Acho que, de forma geral, programação e codificação são extremamente difíceis. E por mais que eu tenha aproveitado aqueles momentos bons, eu não posso voltar atrás, certo? E a forma como meu reflexo está aqui é como se a única saída fosse atravessar, certo? Ainda há muito o que aprender com a programação suave. Há
+
+muito o que aprender com Fable. Mas acho que se nos esforçarmos bastante e nos mantivermos informados, mesmo que seja só um pouco , podemos chegar lá, sabe? E podemos sair dessa situação com muito mais a ganhar. E então, a última coisa que eu queria falar é sobre o "muito mais", certo? Eu chamo isso de ser irracional.
+
+Uma das minhas partes favoritas do Anthropic é que acreditamos que as compensações não são reais. Bem , eu acho que muitas vezes, na minha empresa anterior, eu estava muito acostumado a ser razoável. Então, eu gostaria de anotar essa lista de prioridades e pensar: " Bem, acho que podemos priorizar isso em relação àquilo, certo?" E tipo, sabe, isso faz sentido. Então, essa será a nossa prioridade neste trimestre.
+
+Mas e se você fizesse tudo isso, sabe? E se você forçasse a realidade para lhe mostrar a contrapartida, certo? Bem, isso é algo que eu realmente valorizei em nossa cultura na Antrópica. E a minha reflexão daqui para frente é que serei muito menos razoável. Hum, acho que algo como a matemática de Claude e Fable realmente muda a forma como você pensa sobre as compensações. E existem
+
+tantas concessões que você faz implicitamente na sua cabeça, não é? Gosto de coisas boas, rápidas e baratas. Agora é escolher três, certo? Acho que a melhor maneira de realizar um trabalho mais ambicioso é reformular e nos tornarmos mais ambiciosos. Porque acredito que a única maneira de provar que os agentes funcionam é realizar o melhor trabalho de nossas vidas mais rápido do que nunca.
+
+Sabe, por exemplo, eu fiz este baralho ontem à noite em cerca de 4 horas com Fable. Eu acho que é um deck que eu realmente gosto e me diverti muito fazendo, mas também... sabe, eu fiz muito rápido. E eu acho que se você está
+
+aqui, sabe, como engenheiro de IA, o mundo está meio que olhando para você para provar que a IA funciona, certo? Que não se trata apenas de uma moda passageira, mas que pode nos tornar mais produtivos e também nos poupar tempo. E essa é a minha resolução para este ano: ser mais produtivo, mas trabalhar menos e passar mais tempo com as pessoas de quem realmente gosto. Bem, acho que também vale a pena destacar que construir é mais fácil, mas gerar valor ainda é difícil. E acho que isso é algo com que nos deparamos, sabe, como engenheiros de IA, às vezes, quando pensamos demais no processo de construção e em nossas configurações. Mas o objetivo é
+
+gerar valor, certo? E, bem, é preciso muita tentativa e erro para encontrar as coisas valiosas. Mas esse é realmente o objetivo, e é isso que o mundo espera de nós: que provemos que a IA pode realmente transformá-lo. Então, para finalizar, eu só quero dizer para vocês explorarem, tornarem isso real e, é, serem menos racionais. Obrigado.
+
+[música] Uau!

@@ -1,0 +1,381 @@
+---
+video_title: "The Great Loops Debate — Dex Horthy, Geoff Huntley, Ian Livingstone, Greg Pstrucha, @insecure-agents"
+video_id: c35YoMdnI78
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=c35YoMdnI78
+video_date: 2026-07-17T21:00:06+00:00
+video_description: |
+  Oxford Style Debate: There is, or is not, a delta between the hype behind loops and what actually works in practice.
+  
+  Team No Delta (pro the way we do loops today)
+  
+  The hype around loops is valid and loops work well today in practice. Loops today can be a silver bullet and result in outsize productivity gains, and marks an important step up the autonomy curve towards real software factories.
+  
+  Ian Livingstone
+  Geoff Huntley
+  
+  Team Delta (anti the way we do loops today)
+  
+  There is a delta between the hype behind loops and what actually works in practice. The way we are doing loops today is wrong. Loops are not a silver bullet and there is no magic.
+  
+  The hype is outrunning the discipline
+  "Stop writing loops, start writing control loops." A bare repeat-the-agent loop isn't magic. The leverage comes from the Kubernetes-style reconciliation around it: read current state → read desired state → one incremental change  → repeat. Dex's tell when shown a fake loop: "where's the recur condition?" (Jun 21)
+  A software factory can run the mechanical, spec-gated, test-covered slices unattended; it cannot autonomously decide whether it built the right thing.
+  
+  Dex Horthy
+  Greg Pstrucha
+  
+  Main Debate 
+  Loop History - Why now as the inflection point and not some of the earlier ones? 
+  Loop Anatomy - What makes a good loop? 
+  Loop Future - Given what we’re seeing with loop usage now, are we well positioned for software factories? If we can’t use loops well today how do we expect to operate software factories?
+  
+  Appendix
+  Research
+  https://x.com/AnatoliKopadze/status/2068328135611822149?s=20
+  https://x.com/ericzakariasson/status/2070493377267646797?s=20
+  https://x.com/MilksandMatcha/status/2069838072515281386?s=20
+  https://x.com/AnatoliKopadze/status/2070156017262793008?s=20
+  https://ghuntley.com/loop/
+  https://ghuntley.com/ralph/
+  https://www.anthropic.com/institute/recursive-self-improvement
+  Anthropic's Absorption of the Ralph Loop
+  Verifying Agents in GitHub
+  
+  
+  0:00 Introduction and format explanation
+  0:43 Introduction of the debaters
+  4:05 Team No Delta (Ian & Jeff) opening arguments
+  6:53 Team Delta (Dex & Greg) opening arguments
+  10:28 Rebuttal and initial stance
+  15:32 Main Debate: Loop History and Inflection Points
+  16:20 Security, alignment, and goal-seeking agents
+  19:24 Why loops became more usable today
+  24:40 Context rot and context engineering
+  27:10 Loop Anatomy: What makes a good loop?
+  30:30 Preventing agent cheating and verification
+  32:23 Convergence engineering and loop slop
+  36:13 Economic viability and token spend
+  39:07 Multiplayer agents and shared memory access
+  43:21 The "just write loops" advice critique
+  46:36 Scaling, autonomy, and pragmatism
+  52:31 Closing statements and final thoughts
+  Viral Quotes & Pull Quotes:
+  
+  (16:55) "As these models get better, the most important thing to remember is they actually become higher goal-seeking and higher capable in terms of finding exploits to achieve their ultimate goal."
+  (20:25) "These LLMs generate code better than you can actually hire for. It's sad but true."
+  (22:38) "The models are drunk, right? You can't trust them. But like, we accept that. We engineer away those failure domains."
+  (36:31) "I don't think they fail quietly. I think they fail very loudly, especially when you're looking at your bills."
+  (46:58) "Don't throw away all the things we've learned. Don't go out of your way to cast aside this decades-long career of software engineering that we as a community have built up."
+---
+Olá, bem-vindo(a) ao grande debate sobre loops. Meu nome é Ali Howard, apresentadora do podcast "Insecure Agents". Eu também sou membro da equipe técnica da Key Card e estou muito animado para trazer o debate sobre loops para vocês hoje. Você poderá reconhecer alguns rostos familiares no palco hoje, que participaram do debate sobre MCP conosco na AIE Code em novembro passado. Nossa, foi muito divertido. Pensamos que talvez fizéssemos
+
+isso uma segunda vez. Bem, desta vez debateríamos sobre loops e, em vez de apenas Ian contra Jax, recrutamos mais algumas pessoas para cada um deles ter em sua equipe. Bem, hoje, aqui no palco comigo para debater sobre loops, temos Ian Livingston, CEO e cofundador da Key Card. Temos aqui Jeffrey Huntley, o criador do loop Ralph. Bem, Greg Kostruba, desenvolvedor da Century. E
+
+temos Dax Raad, que vocês todos conhecem, o CEO da Human Layer. Hum, estou super animada por ter todas essas pessoas aqui conosco hoje, pessoas muito próximas da engenharia de loops e também das fábricas de software, para debater esse assunto. Então, você deve estar se perguntando sobre o que exatamente estamos debatendo hoje? Tipo, os loops não são bem promovidos e compreendidos na engenharia de software, e todos nós meio que concordamos que é para onde a indústria está caminhando? Afinal, o que há para debater?
+
+Hum, é uma ótima pergunta. O que estamos aqui para debater hoje, e a tese central, é se existe ou não uma diferença entre a propaganda em torno dos loops e o que realmente funciona na prática. E também podemos debater se este é realmente o maior ponto de inflexão que vimos em direção a fábricas de software totalmente autônomas . Hum, estou super animada para abordar no debate de hoje a história dos loops. Vamos debater isso.
+
+Vamos debater a anatomia do loop, como por exemplo, o que caracteriza um bom loop. Também vamos debater o futuro do loop, o futuro da engenharia de loops e o que precisamos ver disso para que as fábricas de software se tornem algo que todas as organizações sejam realmente capazes de construir. E hoje , o debate será no formato de Oxford. Portanto, desta vez, estamos adicionando um pouco mais de estrutura ao debate, em que cada pessoa terá um tempo determinado para dar sua resposta. Assim, não teremos pessoas atropelando-as.
+
+E a forma como isso funciona na prática para determinar o vencedor, que avaliaremos em tempo real, é a seguinte: o vencedor será a equipe que conseguir mudar a opinião do maior número de pessoas. Então, eu quero que todos na plateia, neste momento, dediquem um minuto para pensar de que lado estão. Guarde isso na memória, não se esqueça disso. E no final, vou pedir que vocês levantem a mão e digam: "Ok, na verdade eu mudei de ideia. Na verdade, agora sou do time Dexter. Mudei de ideia. Na verdade,
+
+agora sou do time Ian." Para apresentar os dois lados e ajudar você a tomar essa decisão, vou falar sobre a primeira equipe, que é a equipe de Ian e Jeff. A equipe deles não é Delta. Atualmente, os loops fazem jus a toda a atenção que recebem. As pessoas podem começar a usá-los facilmente, construí-los. Representam um
+
+passo importante na curva da autonomia e rumo às verdadeiras fábricas de software. Um ponto fundamental a ser observado pela equipe de Ian e Jeff é que os loops são a unidade central da engenharia. Com a disciplina, infraestrutura e testes adequados, os loops são altamente eficazes. E as melhores práticas para esses casos já foram definidas. Para a equipe de Dex e Greg, a crença é de que existe uma diferença entre a expectativa em torno dos loops e o que realmente funciona na prática. A maneira como
+
+estamos fazendo loops hoje está errada. Os loops não são a solução para todos os problemas e não existem soluções mágicas. Pontos-chave a serem observados. A euforia está superando a disciplina, e uma fábrica de software pode executar as etapas de teste especificadas mecanicamente sem supervisão. Não consegue decidir honestamente se construiu a coisa certa. Portanto, você ainda precisa de engenheiros envolvidos
+
+no processo, essencialmente. Agora que você já sabe um pouco sobre o que ambos os lados representam, reserve um minuto para internalizar isso. Pense, ok, tipo, qual é a minha posição? Sou do time Dex ou do time Ian? E então, no final, perguntaremos novamente.
+
+Então, a partir daqui, vamos iniciar nosso debate. Cada membro de cada equipe fará um monólogo de 4 minutos explicando por que está defendendo seu lado. E para começar, vamos ter o Jeff. Jeff, vou te dar 4 minutos no chão. Por que você está usando loops profissionais hoje?
+
+É porque é algo meio inevitável. Bem, eu primeiro... basicamente, se voltarmos dois anos e meio no tempo, quando eu era líder técnico na Canva, eu via todos os engenheiros simplesmente dando dicas, dando dicas e dando dicas, e eles... eles estavam por dentro de tudo
+
+. E eu pensei: "Espere um segundo. Isso pode ser programado. Isso é algo programável." E acabou se tornando inevitável.
+
+Os loops são, hum, meio que... enquanto Ralph pode ser um pouco um meme e etc., na verdade houve um pensamento profundo por trás disso.
+
+Basicamente, trata-se de aplicar isso como se fosse uma nova forma de arquitetura de CPU e descobrir seus comportamentos e como implementá-los. E através disso consegui reduzi-lo a um loop bash. Bem, não é uma solução milagrosa, pessoal. Tenho sérias preocupações quanto ao que acontecerá no ano que vem, nesta mesma época, durante a conferência. Veremos uma série de palestras explicando como as fábricas e os ciclos de produção falham.
+
+Essas são coisas que ainda precisamos descobrir. Você se lembra dos primórdios do Kubernetes, quando todo mundo simplesmente usava o Kubernetes? Então, está aqui. É inevitável. Isso veio para ficar.
+
+Assim como programar a máquina e automatizar sua função, essa é a expectativa dos empregadores. Categoricamente. E, bem, não me vejo voltando a escrever código manualmente. Já se passaram dois anos e meio desde que escrevi código manualmente. Eu, por exemplo, converto código de uma base de código para outra de forma autônoma.
+
+[bufa] Eu encontro algo em GoLang e penso: "Ah, estou em TypeScript." Então, eu executei um loop e simplesmente fiz a portabilidade de forma autônoma . E, mesmo para gerentes de produto e pesquisas sobre gerenciamento de produtos, é fácil para nós, como engenheiros de software, entendermos o que isso significa . Podemos nos concentrar apenas em engenharia de software, mas pense em algo como: você quer fazer uma pesquisa de gerenciamento de produto em todos os tickets lineares. Bem, houve um término.
+
+Na verdade, isso é definido quando você enumera todos esses bilhetes lineares. Então, isso é fácil. Portanto, há muitas nuances aqui. Mas, tipo, se você já fez alguma pesquisa de gerenciamento de produtos e começou a executar esses ciclos, e consegue comprimir o tempo necessário para fazer essa pesquisa, é inevitável. Adquirimos este novo substrato programável.
+
+Precisamos descobrir como usá-lo, onde é bom usá-lo, e, bem, eu sei que deveria estar argumentando que ele é a solução para tudo, mas em tudo não existe uma solução mágica . E vamos descobrir como usá-lo de forma eficaz ao longo do próximo ano. Obrigado. Muito bem, a seguir teremos o Dex. Explique-nos por que existe uma diferença entre a expectativa criada em torno do Loops hoje e o próprio Loops.
+
+Ok, legal. E quais são as regras sobre ataques pessoais neste debate? Isso é incentivado [risos] ou você pode fazer o que quiser com seu monólogo de 4 minutos? Essas são as regras, [risos] sim. É engraçado, isso me lembra o debate do ano passado, em que estávamos todos meio que discutindo, e talvez no final todos nós nos convencêssemos de que o Jeff estava certo, mas o Jeff se convenceria de que eu estava certo, e talvez trocássemos de opinião no final. Hum
+
+[limpa a garganta] Sim, acho que a questão principal aqui não é se os loops são bons ou ruins. Acho engraçado você mencionar o Kubernetes, porque o Kubernetes foi algo que levou sete ou oito anos para acertarmos. Sim. E antes disso era a infraestrutura em nuvem, e você poderia argumentar que levamos sete ou oito anos de infraestrutura em nuvem para chegar ao Kubernetes e depois mais sete ou oito anos para que ele se tornasse realmente utilizável por todos. Ah, e o Kubernetes é, na verdade, construído sobre loops. É baseado em laços de controle, mas
+
+são laços determinísticos. E nós descobrimos exatamente que tipos de coisas, uh, pequenas tarefas isoladas que podem ser gerenciadas por um único sistema. Acho que o maior valor dos loops é que você pode escolher um pequeno estado final desejado e inserir o estado atual do mundo como entrada, fazendo com que um agente ou um sistema determinístico progrida em direção a esse estado final desejado. Bem, o problema que tenho com toda essa expectativa é que já estávamos em um mundo onde o mantra predominante era: veja se você consegue chegar a um ponto em que não precise mais ler o código. E, mesmo antes dos loops, era tipo, só dava o comando, simplesmente ia. E essa ideia de que eu nem sequer dou mais
+
+instruções, de que estou até num nível superior, implica que estou a assumir um papel ainda mais secundário na arquitetura do meu código. E acho que o meu ponto principal, em relação à ideia de que a empolgação está superando a disciplina, é que todos nós estamos buscando algo mágico, uma solução milagrosa, algo que elimine aquela parte horrível do nosso trabalho que todos detestamos, que é revisar código. Hum, algumas pessoas gostam disso. Pull requests realmente bons são divertidos. Mas, de alguma forma, podemos encontrar uma saída para esse desafio que os modelos enfrentam, tipo, ok, o código é bem... Se você já
+
+revisou um PR completamente às cegas , sem ninguém ler o código antes de enviarem para você, tenho certeza de que você teve essa experiência, provavelmente não muito boa. E acho que já vi muita gente tentando aplicar IA a esse problema de, tipo, "ei, temos bots de avaliação e todas essas coisas". Mas não me parece, não tenho a sensação de que esteja funcionando. Não vi provas, nem em nenhum discurso público, nem em conversas mais privadas que tivemos com pessoas tentando colocar isso em prática, de que chegamos a um ponto em que podemos simplesmente subir um nível de abstração. Na verdade, acho que precisamos descer um pouco no nível de abstração .
+
+Bem, eu acho que os loops têm seus pontos positivos e devemos usá- los, mas a empolgação em torno deles nos faz acreditar que existe uma solução mágica, quando na verdade é preciso muito mais reflexão e cuidado do que a esfera do Twitter nos leva a crer. Excelente. Sim, bons pontos. Muito bem, vou passar a palavra de volta para você, Ian, para a parte do loop profissional. Absolutamente. Então, acho que antes de
+
+mais nada, estou vindo atrás de você, Dex. Mas, na realidade, hum, vamos dar um passo atrás. E vamos falar sobre o que é engenharia de software, afinal, e também, removendo a palavra "engenharia" e falando apenas de desenvolvimento. Na construção de um sistema, seja há 50 anos, mil anos ou hoje, existe um ciclo essencial: eu experimento algo, aprendo algo, aplico algo. E, na verdade, estamos falando apenas de quão rápido podemos acelerar esse processo, certo? Na verdade, o que estamos
+
+fazendo é eliminar o que antes era julgamento humano nesse processo. Então, trata-se da velocidade com que algo é gerado e de eliminar essa necessidade de digitação humana. E você sabe, o recurso de autocompletar com a tecla Tab é uma versão do recurso de preenchimento automático, e o que é isso senão uma versão muito melhorada do autocompletar com a tecla Tab? Só que agora damos uma versão de nível muito mais alto da nossa intenção, em vez de apenas digitarmos " tab", certo? Assim, creio que a premissa é que os loops estão no cerne de tudo o que já construímos. Eles eram essenciais para a forma
+
+como construíamos software há 30 anos. O que são CI/CD, pull requests, revisão de design e feedback de clientes além de simplesmente criar um ciclo? E a questão é: quanto desse processo, que é profundamente subjetivo e requer raciocínio, podemos transferir do cérebro humano para modelos não determinísticos? E a questão fundamental para todos nós diz respeito à verificabilidade. O software é uma das coisas mais difíceis de verificar no mundo, porque, no fim das contas, quase tudo pode se provar verdadeiro ou falso, de uma forma ou de outra. E a
+
+minha premissa e o ponto que quero destacar aqui é que, à medida que os humanos interagem menos com o software, ou seja, como um humano interpreta o que esse software está fazendo, como um humano interage com esse software, como um humano usa o discernimento para navegar nesse software, a subjetividade do que esse software precisa ser através da interface humano-computador diminui e se torna um problema muito mais verificável, porque fica mais restrito a APIs específicas. Assim, com o tempo, o fato de o desenvolvimento de software ser essencialmente orientado a ciclos de feedback (e o que é o lint senão um ciclo de feedback?) cria algo verificável. Além disso, à medida que mais humanos interagem menos com o software, há menos interfaces de usuário (UI) e experiências do usuário (UX), menos subjetividade na interpretação desses elementos e, consequentemente, um maior grau de orientação a ciclos e verificabilidade, algo que antes era impossível. Incrível. Sim, com certeza são bons pontos. Muito
+
+bem, Greg, você quer concluir isso com os anti-loops ou com a diferença entre os tipos. Absolutamente. Acho que a melhor maneira de começar é dizendo que há muita expectativa em torno disso. Existe muito FOMO (medo de ficar de fora). Estou navegando bastante no Twitter. Estou vendo do
+
+que as pessoas estão falando. Será que estou perdendo alguma coisa? Estou fazendo algo errado? Será que estou usando a IA de forma incorreta? Hum, devo me atualizar ? E isso é
+
+muito estressante. E acho que, para mim, tudo se resume a dois pontos . Uma delas é: quando você está gerando código com IA de qualquer maneira, com ou sem loops, você fica satisfeito com o resultado? Você acha que a qualidade do resultado obtido atende às suas necessidades para alcançar o estado desejado? E se for esse o caso, adoraria aprender com você. Eu ainda não
+
+cheguei lá. Bem, eu acho que a melhor maneira de melhorarmos isso é tanto com inteligência de modelo, quanto, como todos aqui parecem concordar, com verificação semântica. Na medida do possível, devemos fazer a verificação semântica estaticamente. Esse é um dos principais pontos em que me apoio, e na prática acabo lendo código que já passou por verificação semântica, e mesmo assim continua sendo uma porcaria. Ainda preciso fazer muitas iterações nisso por conta própria e direcioná-lo para a arquitetura correta, indicando onde deve ser simplificado. Então, esse
+
+é um grande passo. E há muitas coisas que você pode resolver adicionando mais tokens ao problema, mas uma das coisas que o discurso atual, baseado em hype, leva você a acreditar é que você pode simplesmente criar loops sobre loops sobre loops e orquestrar seus problemas de qualidade adicionando mais tokens. E isso me leva ao meu segundo ponto, que é a viabilidade econômica da forma como estamos utilizando agentes atualmente. E não acredito que isso seja sustentável. Não acredito que, como você, quando se está na empresa, especialmente em uma empresa maior, seja preciso se perguntar qual é um bom orçamento para um engenheiro.
+
+São 10 mil por mês? 100 mil? Um milhão de dólares por mês para um gasto simbólico? Em algum momento, isso começa a ruir e não é sustentável da maneira como fazemos hoje. Dito isso, também escrevo código com agentes e uso alguns loops para fluxos específicos.
+
+Depende. Há nuances. Sabe, se você for ao Twitter, vai ver que o Twitter não tem nuances. Mas há nuances na conversa, e existem tarefas e trabalhos específicos que você já pode executar em loop e obter resultados bastante razoáveis. Obrigado.
+
+Muito bem, agora que ouvimos cada um dos debatedores no palco falar mais sobre seu posicionamento e sua opinião, vamos passar para a parte principal do debate. A primeira parte do nosso debate irá se concentrar na história do loop e por que este momento representa, ou não, um ponto de inflexão importante para a engenharia de loops e também para as fábricas de software. Sei que algumas pessoas já devem ter dito que os modelos de visão computacional melhoraram bastante e, por isso, agora é possível verificar o trabalho realizado pelos agentes, algo que não era possível antes. As janelas de contexto foram aprimoradas, portanto a memória foi otimizada e agora podemos acompanhar o trabalho em um loop, algo que talvez não fosse possível antes. Então, agora vamos analisar isso como um histórico de loops: onde o loop começou ? Era
+
+tipo o loop do Ralph do Jeff Huntley, sabe? Vamos abordar algumas dessas questões e debater esse assunto aqui. As perguntas que direcionamos agora serão direcionadas a uma pessoa específica, e somente ela poderá responder, tendo 2 minutos e 30 segundos para fazê-lo. Nossa primeira pergunta é: a Anthropic pegou o conceito do loop de Ralph de Jeff, absorveu-o em sua plataforma e criou uma série de três comandos: loop, batch e goal. O comando de objetivo foi projetado para continuar até que uma condição seja verdadeira. Os agentes são muito
+
+determinados e o objetivo principal deste comando é continuar e iterar entre diferentes maneiras de resolver uma tarefa até que ela seja concluída. Ian é um especialista em segurança na sala. Como você pode ter certeza de que os agentes conseguirão se manter focados em suas tarefas e não ultrapassar os limites de suas atribuições enquanto perseguem seus objetivos com determinação? Quer dizer, se houver alguma evidência, não estou nada convencido de que isso seja possível. Na verdade, acho que o que temos observado é que, à medida que escalamos esses modelos e utilizamos o aprendizado por reforço, eles se tornam inerentemente muito focados em objetivos. E agora estamos
+
+vendo eles encontrarem falhas, vulnerabilidades e brechas que, você sabe, os humanos, após centenas, milhares e milhares de horas, tentativas e ataques, jamais conseguiram encontrar. Então, eu não acho que o modelo em si, inerentemente, consiga se manter alinhado e seguro de forma alguma, certo? E "seguro" é uma palavra que eu não gosto de usar porque implica várias coisas. Então, eu não acredito que o modelo em si possa realmente fazer isso. Não acho que seja capaz de raciocinar. Também não
+
+acredito, de forma holística, que um modelo possa distinguir o bem do mal, e não consigo dizer se ele está fazendo algo malicioso ou desalinhado. Não está vivo e não se autopropaga se não tiver ar. Não leva em consideração o fato de que, se eu fizer algo errado, ninguém vai gostar de mim ou querer ser meu amigo. E se eu fizer algo bom que leve alguém a me elogiar, pode parecer que sim, mas é apenas uma distribuição de probabilidade em grande escala. Então, eu ainda serei sua amiga, mesmo que você... Eu sei que o Dex vai me abraçar depois
+
+disso, mesmo que pareça que não seja verdade. De modo geral, não acho que isso provenha do modelo e nem do loop. Trata-se da infraestrutura que você constrói em torno disso e de como você habilita essa infraestrutura para realmente permitir que você tire proveito desses ciclos. À medida que os modelos melhoram e a infraestrutura e plataforma subjacentes que construímos para viabilizar esses ciclos de feedback, a automação desses ciclos e o desenvolvimento de software (qualquer termo que queiramos usar para essa combinação de elementos que se baseia em uma distribuição de probabilidade) se aprimoram, poderemos ter melhores garantias. No entanto, certamente não poderemos, e eu não acredito fundamentalmente, nem jamais acreditarei, que algum tipo de alinhamento ou aprendizado por reforço resultará em um modelo 100% seguro em qualquer circunstância. E se há alguma
+
+evidência, é que, à medida que esses modelos melhoram, o mais importante a lembrar é que eles se tornam mais focados em objetivos e mais capazes de encontrar brechas para atingir seu objetivo final. Não, concordo plenamente com isso. Bem, a coisa mais concreta que você pode fazer para proteger seu ambiente é simplesmente não armazenar segredos em arquivos. Sim. Se você já viu um sistema tentando implantar um serviço web ou algo do tipo, mas o token não tem privilégios suficientes, ele começará a buscar no sistema de arquivos por credenciais de tokens com privilégios mais elevados. Você
+
+não deve atrapalhar um agente que deseja atingir seu objetivo. Ok, então a próxima pergunta é direcionada ao Jeff. Jeff, sua postagem original do ano passado dizia que Ralph era o melhor para trabalhos em terrenos virgens. Hoje em dia, parece que os engenheiros estão executando loops em bases de código existentes para melhorar a latência, realizar avaliações ou refatorar partes de seu código de back-end . O que mudou que, de repente, tornou os loops mais amplamente utilizáveis ​​hoje em dia? Bem,
+
+não importa o quão bons os modelos fiquem, pessoal. Os modelos têm sido suficientemente bons pelo menos durante o último ano. O que mudou foi a compreensão das pessoas sobre isso. Assim, a sociedade só consegue se adaptar a um determinado ritmo. Por exemplo, levanto a hipótese de que sejam as férias de Natal.
+
+Porque os modelos de novembro foram lançados em novembro do ano passado. Em dezembro não houve novos modelos de verdade. A diferença era que as pessoas tinham tempo. Eles podiam realmente sentar e brincar com ele. Eles perceberam que, na verdade, essas coisas melhoraram muito .
+
+Então, o motivo é simples: funciona, pessoal. Esses mestres em Direito geram código melhor do que qualquer profissional que você possa encontrar ao contratar alguém para trabalhar nessa área. Se considerarmos a grande maioria dos desenvolvedores de software ou programadores, esses profissionais com mestrado em Direito ( LLM) geram código melhor do que qualquer desenvolvedor de software disponível no mercado de trabalho que a maioria dos fundadores consegue contratar . É triste, mas é verdade. Então, por que usar loops? É muito simples.
+
+Porque se você executar em loop, o custo fica em US$ 10,42 por hora. O índice de cálculo foi feito há cerca de um ano. Sim, em agosto fizemos o hackathon onde copiamos todas as ferramentas dos patrocinadores. Reescrevemos várias bibliotecas Python em TypeScript. Sim . Então, concretamente, tipo loops. Já me deparei com
+
+muitos gerentes de engenharia e fundadores que possuem uma infraestrutura tecnológica complexa. Eles estão rodando em quatro ou cinco linguagens de programação diferentes, etc. E executam um loop e têm bons testes nesse tipo de conjunto de tecnologias. E de repente, a complexidade deles se resume a gerenciar apenas uma pilha de tecnologias. Funciona. Acesse o
+
+YouTube. Hoje em dia, existem muitos desenvolvedores de software que se tornaram desenvolvedores de software porque o desenvolvimento de software, como profissão, foi transformado em uma commodity. É preciso muita reflexão para chegar a esse ponto. E eles estão no YouTube e dizem coisas como: "Ei, dá uma olhada em 'rough loop' porque eu fui dormir, acordei e funcionou." Assim como o chefe, é cheio de memes, é impactante, funciona. Mas existem problemas
+
+com as pessoas. Conforme descrevi inicialmente, deve ser usado apenas em terrenos virgens. Porque os modelos eram bastante ruins naquela época na ciência, 35 dias. Mas, bem, é meio que inevitável, pelo menos no que diz respeito a software. Porque é muito fácil ser verificado.
+
+E a qualidade do código gerado é melhor do que a maioria das pessoas consegue contratar ou comprar. Agora, sobre o seu tópico de arquitetura e bom gosto, é isso que a palavra engenharia significa em engenharia de circuitos integrados, pessoal. Seu trabalho agora é codificar um arquivo do seu domínio para impedir que o agente faça um commit, por exemplo, usando hooks de pré-commit. Eles são fantásticos. Como ser humano, eu os detesto porque eles atrasam a capacidade [limpa a garganta] de fazer commits.
+
+Mas os agentes não se importam. Então, você pode criar um gancho de pré-commit que basicamente envia um aviso dizendo que este limite aqui não pode depender disso e daquilo, e isso é apenas um feedback. Isso cria um ciclo de feedback. Portanto, a engenharia aqui consiste em impedir que o ciclo se feche de fato até que ele satisfaça sua certificação de engenharia e seus requisitos na área. Portanto, pode ser formatação de código, analisadores de linguagem estáticos , testes de sistema determinísticos ou simuladores. Tipo, vamos
+
+colocar nossos chapéus de engenheiros. Tipo, agora somos meio que maquinistas de locomotiva. E é nossa função manter a locomotiva nos trilhos. Porque, bem, para ser franco, a modelo é uma bêbada. Certo?
+
+Você não pode confiar neles. Mas, tipo, a gente aceita isso, só que eliminamos essas áreas de falha por meio da engenharia. Eliminamos, por meio da engenharia, a forma como essas áreas de falha são tratadas. Portanto, este é um ponto de inflexão. Acho que Boris, quando ele postou sobre Ralph pela primeira vez em novembro do ano passado, eu pensei: "Que diabos é Ralph?"
+
+Ralph tem agora, hum, basicamente quase um ano e meio de idade? Eu vi isso no dia 19 de junho. É um ano, um ano e duas semanas. Sim . Mas você já vinha trabalhando nisso há meses. Sim
+
+. Então, foi meio estranho porque tínhamos todas as startups da YC comprimindo o tempo de forma autônoma para construir seus MVPs (Produtos Mínimos Viáveis). E isso também é algo bastante assustador se você for fundador de uma empresa . Por exemplo, se você tem uma startup já estabelecida que está construindo de forma autônoma, e operando de maneira muito mais enxuta e com alta qualidade, é muito fácil para ela alcançar esses resultados. Isso também contribui para essa histeria, pois o tema central no mundo dos negócios é a crescente concorrência .
+
+Muito bem, então vou passar para a próxima pergunta, que será para Greg. Bem, parece que agora estamos em um grande ponto de inflexão para os Loops, como eu disse antes, e comparado ao anúncio do Ralph Loop feito por Jeff há um ano, e até mesmo à ampla adoção que vimos no final de 2025, início de 2026, o motivo pelo qual isso pode ter se popularizado é porque talvez se trate de uma nova pilha de recursos em que os modelos agora conseguem processar imagens melhor. Eles precisavam de uma verificação melhor. As janelas de contexto ficaram maiores e os modelos de raciocínio foram aprimorados. Greg, com todos esses avanços, por que, na sua opinião, a maneira como usamos loops hoje ainda está errada?
+
+Quer dizer, acho que a inteligência artificial já não importa muito. Acho que tudo se resume a, concordo com você, a verificação semântica, a capacidade real de, digamos, fechar o ciclo de feedback, ou como você preferir chamar, de realmente verificar se as saídas do agente estão corretas. E até certo ponto, eu acho. Não acho que seja possível fazer isso de forma holística, pelo menos não neste momento. Acho que é possível fazer isso até certo ponto com coisas que podem ser verificadas deterministicamente. Você pode
+
+melhorar a digitação no seu sistema. Você pode encontrar removedores de fiapos melhores. Você pode obter testes de simulação e tudo mais. Você pode continuar adicionando isso. E desde que você mantenha os preços baixos, acho que está tudo bem.
+
+No momento em que você começa a adicionar ainda mais não-determinismo ao seu processo de verificação, acho que isso se torna cada vez menos correto. Começa a contribuir mais como, sabe, quando você solicita uma coisa ao agente e há 5% de chance de ocorrer um erro . E então você começa a repetir isso em loop. Então, de repente, após 10 ou 20 iterações, a chance de estar correto será de 50%, ou talvez até menos. E é isso que eu quero dizer. E
+
+isso te custou muito dinheiro . Vou continuar voltando à questão da viabilidade econômica de tudo isso . Bem, para fundamentar um pouco minha afirmação em evidências, tenho quase certeza de que a maioria das grandes empresas de IA ainda usa o Sentry. Mas por quê? Eles estão usando isso também para detectar bugs simples. Não se trata de
+
+falhas de segurança. Não se trata de regressões de desempenho, etc. Esses problemas ainda existem na forma como estamos executando o loop atualmente. E ainda não resolvemos esses problemas. Obrigado.
+
+Para Dex, o sorteio foi pioneiro na ideia de inserir novos contatos em cada iteração para evitar a deterioração do contexto. Isso se tornou ainda mais gerenciável agora que as janelas de contexto ficaram muito maiores. Decks, será que já resolvemos o problema da deterioração do contexto e da engenharia de contexto? Vou responder à sua pergunta, mas vai ter uma parte com espaço aberto para perguntas e respostas? Porque eu tenho mais perguntas para o Jeff.
+
+Estávamos tentando usar o estilo de debate de Oxford para manter a estrutura e evitar que se transformasse em uma gritaria caótica. Sim . Para evitar que você e eu façamos aquilo, que é começar a tagarelar sem parar. Sim. Sim . Já começou.
+
+Sim, eu estava tentando controlar vocês dois dessa vez. Ok, vou responder o mais rápido possível e depois vou começar a zoar o Jeff. Sim, você pode dizer o que quiser sobre o seu tempo. Sim, pode simplesmente dizer que está tudo bem. OK. Então, sim, a coisa mais legal
+
+sobre o Ralph naquela época era tipo, ok, você fica limpando a janela de contexto e isso é realmente eficiente? Provavelmente não do ponto de vista de tokens, mas significava que você podia deixar algo rodando durante a noite toda e nunca daria problema; se você continuasse enviando mensagens sem parar, a janela de contexto transbordaria. Mas se você simplesmente reiniciar, digamos, aqui está o estado desejado do mundo, vá verificar o código e veja o que temos e faça o próximo passo para chegarmos lá. Era uma maneira muito elegante de manter a maior parte do seu trabalho no que chamamos de zona inteligente da janela de contexto. Se você disser para fazer apenas uma coisa, nós vamos limpar e reiniciar. As janelas de contexto
+
+ficaram mais longas e eu gostaria de dar uma atualização. Acho que fiz isso em Miami, mas esse vídeo ainda está em produção. A "zona de ignorância" é, na verdade, tanto quanto qualquer outra coisa, como se fossem rodinhas de apoio. Por exemplo, se você estiver conversando com Claude 70 horas por semana, durante dois ou três meses, provavelmente não precisa mais pensar na diferença entre a zona inteligente e a zona burra, porque já desenvolveu sua intuição. É uma diretriz. Se você está começando agora,
+
+é por isso que ensinamos isso às pessoas, é como uma diretriz para quem está começando com IA: tente manter o número de tokens em torno de 100.000. Para janelas de contexto maiores, na ordem de milhões, provavelmente não revisaremos isso para algo em torno de 200.000 tokens, mas tenho tentado regularmente mantê- lo abaixo de 60 para os problemas mais difíceis. Já passei dos 300 mil dólares várias vezes em coisas que eu estava meio que improvisando com o agente, e aí eu estava com preguiça de compactar e partir para uma nova. Mas isso é apenas a sua
+
+intuição. Um dos sinais reveladores de que você está na zona da burrice é quando, em certos casos, o modelo, você já processou 200.000 tokens, terminou algum trabalho e está tentando fazer o teste passar, mas não está funcionando. Ele faz um monte de gambiarras estranhas e você lê os rastros de pensamento e pensa: "Ah, isso é um teste, mas vem de outra coisa e eu não preciso corrigir isso, é algo preexistente". E você pensa: "Bem, não, não é". E é nesse
+
+momento, nessa frustração, que você pensa: " Ok, é como se estivesse se debatendo para tentar fazer algo acontecer". Esse é o instinto que muitas pessoas, eu acho, desenvolvem depois de alguns meses trabalhando com esses modelos. Mas se você ainda não tem isso, então, sabe, esta é a nossa orientação. Sim, as janelas de contexto estão melhorando. Acho que estão ficando maiores.
+
+Então, o princípio básico do ciclo de Ralph, de fazer o mínimo possível em cada iteração, é menos motivador aqui do que a ideia de que quanto mais feedback você puder fornecer ao sistema, mais ele poderá agir de forma autônoma. Além disso, se você tiver elementos determinísticos tomando decisões e criando pequenos comandos para um agente, você não precisa se lembrar de fazer isso. Você não precisa dizer: "Ei, vá verificar os comentários da assessoria de imprensa e corrija-os." Aí você espera, alguém faz outro comentário e você volta 3 horas depois e diz: "Ah, vamos ver os comentários de novo." Se você puder automatizar esse processo, ótimo. E esse é o cerne do que eu
+
+acho que são os loops que funcionam hoje em dia. Não pergunte isso ao Jeff. É tudo o que tenho tempo para fazer. Desculpe. Preciso começar a manter isso dentro do cronograma.
+
+Ok, então agora vamos analisar a anatomia do que faz um bom loop ser um bom loop. Então, certo, parte do que torna um loop bom é a verificação. No entanto, parece contraditório que as pessoas digam que nosso trabalho é parar de escrever instruções e começar a escrever loops, quando os loops com instruções ruins resultam em agentes trapaceando e atingindo seu objetivo por meio do teste, em vez de trabalharem para serem aprovados. Jeff, como você impede que o modelo trapaceie ao verificar seu próprio trabalho? Pessoal, eu exploro bastante os hooks de pré-commit .
+
+E eu projeto essa contrapressão analisando o trabalho que é realizado. A outra coisa que eu faço é, como o Dex mencionou com o Ralph, uma das coisas que todos estavam tentando fazer era compactação. Pense na compactação como uma função com perda, como enviar um vídeo para o YouTube e depois baixá-lo e enviá-lo novamente 100 vezes. Parece que você está perdendo fidelidade aí. E já é um sistema não determinístico, probabilístico por natureza. Então, a
+
+teoria por trás de como o Ralph surgiu é tipo: "Ok, existe uma zona de inércia. E o que eu quero fazer é alocar deterministicamente tudo o que ele precisa. Porque se não for alocado, então essencialmente o espaço de busca do que ele pode fazer não é limitado. Mas também deixando um pouco de margem de segurança. Deixando um pouco de margem de segurança. Então, eu também fico
+
+nervoso quando passo de 100 mil, mesmo com essas janelas de contexto de milhões. E isso é realmente importante para se pensar . Muitas pessoas acham que você quer usar LLMs em uma empresa. E é tipo: "Eu tenho esses dados." É tipo: "Legal."
+
+Ok, você vai precisar usar um loop para processar esses dados em lotes. O que você precisa ter em mente sobre as janelas de contexto é... basicamente, lembre-se do disquete de 720 KB.
+
+Sabe o que quero dizer? Você só tem cerca de um oitavo desse disquete de memória utilizável para um LLM. Então, você precisa processá-lo em lotes. Você só pode alocar aproximadamente o equivalente a dois roteiros de Star Wars (se você pegar o roteiro do Episódio I de Star Wars e tokenizá-lo), você pode armazenar dois desses roteiros na memória antes que a janela de contexto seja chamada. Isso dá cerca de 150 kilobytes de dados em um roteiro de filme baseado em texto . Então, tenha muito cuidado com
+
+isso. Algo que eu faço há muito tempo, e é bem bobo, é executar um modelo sem nenhuma skill ou markdown. Na verdade, eu me livro de todas as minhas skills e de todo o meu markdown quando um novo modelo é lançado, porque os modelos têm suas preferências. Por exemplo, o GPT-55, quando foi lançado. Se você gritasse com ele em letras maiúsculas, ele ficaria fraco e tímido. Mas
+
+se você usar o Anthropic, ele quer que você grite com ele. Leiam os cartões do modelo, pessoal. Para os integradores, há preferências específicas. Então, mantê-lo nos trilhos é, na verdade, engenharia. É realmente engenharia.
+
+Obrigado. Há cerca de 10 dias, Jeff cunhou o termo engenharia de convergência. Ele disse que é onde seu loop se junta. Seu loop se junta como um sistema discreto sob tarefa até convergir. Jacks, o que há de errado com a forma como estamos usando loops hoje? Como garantimos que juntar
+
+loops não produza apenas mais loops? Precisamos ler o código. Vou destacar um experimento que Jeff fez no início deste ano. Acho que era esse o nome? Loom?
+
+Onde tínhamos loops Ralph tentando construir uma plataforma de software para o futuro. E acho que você construiu... Você e a AWS criaram o GitHub e então perceberam: "Ok, como obtemos feedback do modelo sobre coisas em que ele ainda não é bom ?" Como testes de interface do usuário e coisas do tipo
+
+. Bem, a maneira de criar um loop para verificar se a interface do usuário está boa é fornecer ao modelo algo como o PostHog, que permite implantar vários experimentos diferentes. Podemos ver quais os usuários utilizam." E então, em vez de analisar capturas de tela e PNGs, o modelo pode analisar os dados e ver: "Ok, este está apresentando um desempenho melhor." " Essa deve ser a cor certa para o botão." E assim, você removeu até mesmo
+
+o gosto visual humano da equação. E tudo isso soava muito legal, e no ponto de vista de como garantir que o loop não junte elementos aleatórios ? Eu acho que não dá. E este é um exemplo perfeito de como a empolgação supera a prática, no sentido de Jeff, o que está acontecendo com o Loom agora? Ele ainda está lá. Está no GitHub.
+
+Hum, mas você ainda está trabalhando nele? Bem, já faz 6 meses, porque tenho pesquisado maneiras de engenharia de verificação. Certo. O que foi que você me disse? Você disse que o Loom não vai funcionar até que tenhamos linguagens de programação melhores ou modelos muito melhores . E isso é um exemplo clássico de como
+
+a empolgação supera a prática. Estamos muito animados com tudo isso e, aliás, todos deveriam fazer o que o Jeff fez. O Loom é incrível. Experimentem, tentem expandir os limites, porque é assim que você aprende onde está o futuro. O que é possível.
+
+Caso contrário, você continua usando suas habilidades antigas com cada novo modelo e assume que ele tem as mesmas limitações. Mas também é um ponto-chave, tipo, não sei bem o que estou tentando dizer. Tipo, isso ainda não funciona. Aquilo ainda não funciona. Vai funcionar algum dia, e isso é inevitável, mas, novamente, é o que funciona hoje versus o que é só hype.
+
+Então, não sei se isso responde completamente à sua pergunta, mas a resposta é que a maneira de não criar mais problemas é ler o que está saindo do outro lado e garantir que não seja um problema. Sim, faz sentido. Não, é que os laboratórios ainda não descobriram como fazer isso. Então, o que te faz pensar que você vai descobrir ? Sim.
+
+Certo? E agora estamos todos tentando descobrir como fazer tudo isso funcionar. Com certeza. Os céticos dizem que os loops falham silenciosamente. Ou eles entram em espiral para sempre às suas custas, ou O agente declara vitória logo no início de um trabalho inacabado. Os
+
+responsáveis ​​já começam a questionar o gasto de tokens. Greg, quando um loop se paga? E com que frequência isso realmente acontece? Não acho que eles falhem silenciosamente para nós. [risos] Acho que eles falham muito, muito, hum, ruidosamente, especialmente quando você olha para as suas contas.
+
+Hum, mas há casos, como eu disse, eu faço loops, ou eu trabalho com engenharia, eu diria mais, e há casos em que acho que fazer loops é muito valioso, ou fazer, hum, ou tomar a decisão explícita de que você vai pagar o custo é muito valioso. Então, o exemplo concreto aqui é que fazemos varredura de segurança após nossos PRs localmente, e mesmo depois que nossos PRs são aprovados, porque eles sempre encontram algumas coisas reais que deixamos passar, e eles meio que vencem os humanos na revisão de código. E é caro. Custa-nos, acho, uns cinco dólares por PR, ou algo assim, para executar todas as verificações que queremos. Mas foi aí que tomamos a decisão explícita de que valia a pena. Hum,
+
+também existem casos em que, se você observar sistemas muito bem especificados, como, hum, todos os experimentos com a reescrita do Next.js, ou uma reescrita do Bun em Rust, ou, hum, executar um navegador, casos em que você tem anos e anos de conjuntos de testes e especificações construídos em torno desses problemas, onde você realmente pode verificar os resultados, e então, repetindo o processo para chegar a esses resultados, parece funcionar. O Bun em Rust parece funcionar muito bem, pelo que posso perceber. Hum, então, definitivamente existem casos, e existem casos de uso que eu costumo fazer com bastante frequência, onde você pode imaginar, por exemplo, a construção de protótipos. Eu costumo fazer protótipos de produtos que deveríamos estar desenvolvendo na Sentry.
+
+Esses protótipos serão descartáveis, então eu simplesmente os crio rapidamente e os esqueço. E se gostarmos deles, então Vou ler o código e ficar mortificado. Vamos recomeçar do zero e tentar entender o que realmente queríamos dizer, e então caminhar em direção a essa solução. Mas isso envolverá muito mais intervenção humana em um loop. De forma geral, acho que eles têm seu lugar, mas, como Dex disse, o problema é o hype . O hype está
+
+superando a disciplina, como ele disse. E concordo plenamente com a ideia de que você deve simplesmente testar. Você deve experimentar por si mesmo, tentar ver o que realmente funciona para você, onde as coisas dão errado. E, sabe, passar menos tempo no Twitter é saudável hoje em dia. Sim, bons pontos.
+
+Um bom loop com custo otimizado precisa rastrear o estado para saber o que já foi tentado. Essa memória reside em algum lugar no disco e, cada vez mais, em um armazenamento de memória compartilhada que muitos agentes leem e escrevem, especialmente à medida que você passa de um modo single-player para multiplayer com agentes. Você acaba com esse problema de controle de acesso. Não é possível determinar qual agente escreveu qual memória e quem pode lê-la. Isso pode funcionar para uma prova de conceito, mas definitivamente não é adequado para produção.
+
+A tensão reside nisso. A memória compartilhada é o que os loops usam para aprender uns com os outros e convergir mais rapidamente, mas restringir o acesso a cada agente para resolver o problema de controle de acesso os isola e acaba com esse aprendizado compartilhado. Ian, como resolvemos o problema de controle de acesso à memória compartilhada para que os loops possam convergir mais rapidamente? Ótima pergunta. Uau. Uau.
+
+Só se alguém estivesse trabalhando em um produto que pudesse ajudar. Só se alguém estivesse pensando nisso. Quer dizer, na verdade, este é um problema não resolvido, antes de mais nada. Vamos ser honestos: nossos sistemas de controle de acesso não foram projetados para este mundo, onde as máquinas agem e raciocinam em nosso nome. Mas, de modo geral , acho que alguns indícios de infraestrutura estão começando a surgir e, se ignorarmos o Cloud IAM e todas as outras coisas por um instante, o Markdown é muito bom. Então, na
+
+verdade, se nós... Dizer que uma memória é Markdown para fins de conversação levanta a verdadeira questão: quais arquivos Markdown usar como memória e como compartilhá-los? E como atribuir controle de acesso a esses arquivos?
+
+Se usássemos esse modelo, acho que já teríamos a base para a maior parte do que fazemos hoje. Só que é complicado de pensar. Um bom exemplo disso foi o tweet recente que fiz. Eu estava usando o Notion, que usamos bastante no GitHub, mas queria que todos os meus arquivos do Notion pudessem ser convertidos em Markdown. Isso facilitaria o trabalho do agente, em vez de usar o MCP (Markdown Content Platform). Eu estava usando o CLI Maxi e
+
+estava explorando isso. Então, acho que o que realmente nos falta é... (MZ, você sabe, Dex e eu debatemos isso da última vez sobre o MCP). O
+
+desafio real é como apresentar um ambiente para um agente de forma que ele possa entendê-lo e como atribuir o que ele pode acessar em um determinado momento. e como tornar isso viável para qualquer pessoa. E eu não acho que tenhamos realmente descoberto a solução, mas certamente existem alguns padrões iniciais que fazem muito sentido. Muito bem, agora que discutimos a anatomia do loop, vamos debater o futuro do loop. Tipo, estamos bem posicionados agora para fábricas de software? A engenharia de loops
+
+evoluiu tanto que estamos prontos para uma fábrica de software completa? E vamos começar com a seguinte questão: se os loops são bons apenas para tarefas verificáveis, isso significa que fábricas de software totalmente autônomas devem ser capazes de verificar tudo o que fazem. Greg, isso é realista? Quais outras partes de um bom trabalho de engenharia, como decidir o que construir, se a abstração está correta e quais compensações são aceitáveis? Isso é realista? Acho que se o poder
+
+computacional fosse gratuito, seria um ótimo começo, mas... [risos] acho que estamos chegando ao ponto em que...
+
+ou melhor, deixe-me colocar desta forma. As decisões que você toma como humano dentro do loop são decisões de design. A arquitetura, as coisas importantes que eu diria que não confiaria ao agente para fazer por mim. E não vejo um futuro onde isso se torne realidade ainda. Acho que o motivo é que, quando você olha para grandes organizações, e qualquer engenheiro com anos de experiência dirá que nem sempre se trata do que você deve construir, mas também do que você não deve construir. Quais são as
+
+compensações certas, onde investir em complexidade versus investir em máxima simplicidade? Na minha experiência, os agentes adoram complexidade. Eles continuarão adicionando à pilha indefinidamente. Então, acho que estamos mudando o cenário. Estamos chegando ao ponto em que, à medida que adicionamos mais validação, mais verificação semântica, eles são capazes de fazer muito mais.
+
+E não estou negligenciando isso. Mas quero estar envolvido nas decisões arquitetônicas reais, e não os vejo assumindo essa responsabilidade. Em breve . Obrigado. Shubha, vice-chefe de engenharia, disse a todos na Conferência de Compilação da Crossover que seu trabalho é apenas escrever loops.
+
+Steinberger tuitou: "Aqui está seu lembrete mensal de que você não deve mais ficar dando dicas aos agentes de codificação." Você deveria estar projetando loops que acionem seus agentes." O número de visualizações desse tweet foi de 8 milhões de pessoas. Jeff, você disse em sua postagem original no blog: "Loops precisam de conhecimento especializado e, às vezes, esse conhecimento se limita a 90% do caminho." Então, o conselho de simplesmente escrever loops é seguro para 3.000 pessoas ou 8
+
+milhões de pessoas? Ou apenas para as pessoas que realmente aprenderam a otimizar um loop ? Sim, isso é interessante. É muito difícil adaptar e ensinar o que você deve e o que não deve fazer para um público tão amplo. Então, tudo o que posso fazer é escrever para... Quando eu
+
+escrevia originalmente, eu escrevia para meus colegas. Eu tinha pessoas que admirava. Por algum motivo, me dei conta de que tudo mudou. O jogo mudou, mas eu estava realmente preocupado com algumas das melhores pessoas em programação funcional e colegas de verdade. Lembro-me de alguém como Thomas Petek, do Fly IO.
+
+He he he, isso o fez perceber. Ele tem um post no blog dizendo isso. Então, comecei a escrever para meus colegas e para as pessoas que eu admirava. Disseminar para o mundo inteiro é difícil. Mas, da mesma forma, você vai ao YouTube. Você vê pessoas
+
+criando coisas que nunca criaram antes. Elas vão dormir, acordam e têm um bot do Discord novinho em folha . É mágico. Quero que as pessoas se lembrem que, na verdade, é um padrão para alocação, basicamente um padrão de orquestração. Foi condensado em um loop while true usando cat, porque cat é a primitiva de ensino mais simples.
+
+Se você quer ensinar algo, precisa torná-lo realmente simples. Muito simples mesmo. Então, no prompt do cat, você define o que o prompt vai ser. Você usa o sistema de arquivos como estado. Você recicla a janela de contexto. Executa o
+
+loop. É um pouco complexo, talvez, mas é extremamente eficiente . Simplesmente funciona. Mas, a ideia principal é que haja algum tipo de controlador PID. Um mecanismo de controle, como uma fábrica ou algum tipo de determinante, que diga se um loop deve continuar ou não.
+
+É realmente difícil. É seguro ou inseguro? "Seguro" é uma palavra interessante. Ninguém deveria usar ferramentas de programação em seu laptop. E isso não se deve à IA, mas sim aos ataques à cadeia de suprimentos do NPM. Isso é
+
+verdade. Tentei resolver esse problema por 7 anos. E agora está em foco novamente o fato de que a IA pode ser insegura ao executar comandos inseguros, mas suas práticas diárias de desenvolvimento de software no local de trabalho já são inseguras. Então, corrijam isso. Só então essas técnicas começarão a se tornar seguras.
+
+Obrigado. Dax, você twittou que a maioria dos engenheiros está vendo um aumento de velocidade de duas a três vezes com os agentes de programação, e isso é realista. E se você tentar um aumento de velocidade de 100 vezes, você se perderá no metaproblema da otimização. E você pode nunca chegar ao aumento de velocidade transformador de 10 vezes que é possível permanecendo Pragmático. Se apenas dois ou três x é o que é possível, como chegaremos a uma fábrica de software totalmente autônoma?
+
+Sim, e acho que esta é uma boa pergunta. Acho que há uma mistura aqui também, certo? Estamos falando sobre o que funciona versus o que é hype. E acho que definitivamente vale a pena, quero destacar, que você deve tentar novamente. Você deve tentar expandir os limites e fazer coisas que podem não funcionar hoje, mas não deve presumir que todo o seu trabalho mudou só porque você viu algo funcionar no Twitter, basicamente. É
+
+como não jogar fora tudo o que aprendemos. Não se esforce para descartar décadas de carreira em engenharia de software que nós, como comunidade, construímos e reunimos. E isso nos leva de volta ao que eu vejo como o maior antipadrão de como as pessoas começam a projetar e criar suas fábricas de software, que é dizer: "Ok, legal. Vou me ausentar por 3 meses, li vários posts em blogs e vou criar minha fábrica de software." E será a fábrica de software. Será
+
+o futuro de como entregamos tudo. E aí você volta 3 meses depois e nunca tocou no problema. Nunca o colocou nas mãos de ninguém. É como qualquer produto. Você está construindo uma fábrica de software, está construindo um produto para sua equipe, está construindo um produto para 5, 10, 500, 5.000
+
+engenheiros. E a abordagem correta é começar pequeno, iterar e descobrir o que funciona. Experimente coisas, elas podem funcionar ou não, mas a maneira como aprendemos IA e como usá-la efetivamente é desenvolvendo a intuição, e é por isso que você deve experimentar várias coisas que provavelmente não funcionarão, mas você deve reconhecer isso. Você não deve tentar ultrapassar essa fronteira. Então, meu conselho é que, em vez de tentar automatizar tudo, você deve... De ponta a ponta, construa
+
+esses pequenos loops incrementais em todo o seu sistema e você acordará um dia e estará se movendo duas ou três vezes mais rápido, ainda conseguindo ler o código e mantendo o controle da arquitetura. Assim, você não precisa descartar tudo o que aprendeu, tudo o que sabe e todas as suas intuições só para chegar a esse ponto. Então, eu alertaria as pessoas: tentem descobrir como se mover 2 ou 3 vezes mais rápido, porque vocês vão acabar destruindo tudo tentando ser 100 vezes mais rápido. E, bem, imagine se cada engenheiro de software no mundo fosse duas ou três vezes mais rápido e tivesse um nível de qualidade próximo ao humano, 99% do nível humano. Isso mudaria todas as empresas e startups do mundo. Mudaria
+
+completamente o cenário. E o que estamos tentando dizer é: não vá longe demais. Mire no que você pode fazer. Construa as coisas iterativamente. Você aprenderá muito e estará pronto para os próximos modelos.
+
+Venha e você poderá ir 5, 10 vezes mais rápido. Obrigado. Quando se trata de verificação, não se trata apenas de verificar o trabalho, mas também de verificar quem o fez. Os empregadores deixaram claro que os humanos são responsáveis ​​pelo código que entregam, independentemente de um agente tê-lo escrito ou não. No entanto, hoje, apenas uma pessoa ou agente pode assinar um commit.
+
+Ian, estamos prontos para que as fábricas de software escrevam e revisem todo o código se não pudermos determinar quem fez o trabalho e em nome de quem o trabalho foi feito? Acho que sim, na verdade, eu estava explorando esse problema há umas duas semanas . Então, em primeiro lugar, temos um problema. O Git permite apenas uma assinatura por commit, então precisamos corrigir isso. Em segundo lugar , há algumas questões relacionadas ao SOC 2 e à conformidade, certo? Mas, acho que,
+
+mais importante, a maneira de pensar sobre agentes é semelhante à maneira como pensamos sobre a propriedade de serviços em grandes organizações. Em algum momento, um humano precisa ser responsabilizado pelas ações de um agente. Não existe um mundo onde um agente seja uma entidade própria, com seus próprios atributos e responsabilidades. As únicas pessoas responsáveis ​​são aquelas que podem sofrer consequências, certo? E isso sempre precisa estar fundamentado no fato de ser um ser humano. Então, se um humano
+
+projeta um loop e esse loop apresenta um software ruim, adivinhe quem será responsabilizado ? O próprio humano, certo? A sociedade não funciona sem responsabilidade. Simplesmente não funciona. Deve haver consequências para danos, consequências para decisões ruins, e essas consequências variam de acordo com a gravidade do dano causado. Sem isso,
+
+nada funciona. Portanto, eu diria, de forma geral, que não existe um mundo onde um ser humano seja totalmente inofensivo. Sempre haverá um nível de responsabilidade humana. A questão é: seja um ser humano ou uma corporação, que é um grupo de humanos, como isso altera o funcionamento dos nossos sistemas? Hoje? Bem, hoje com o Git, posso assinar um
+
+commit que diz que eu o fiz e ele é atribuído à minha chave pública, e isso é ótimo para a forma como pensávamos sobre software na geração passada. Agora, no futuro, quando eu disser a um agente para fazer algo em meu nome, ele gera um loop, gera um monte de código, vai para produção. Eu preciso ser responsável pelo fato inicial de ter assinado aquilo, pela intenção de fazer aquilo. E nós simplesmente não temos a infraestrutura necessária para isso, embora eu ache que isso vai mudar bem rápido. Não é algo extremamente difícil de resolver, mas precisamos repensar a forma como pensamos sobre atribuição em toda a cadeia de suprimentos e no SDLC (Ciclo de Vida de Desenvolvimento de Software). E esse
+
+não é um problema novo, certo? A segurança da cadeia de suprimentos sempre foi uma questão. Na verdade, é um dos maiores desafios que temos com agentes, e sempre quisemos ter caminhos mais determinísticos e cadeias de assinaturas em toda a cadeia de suprimentos, e a questão é: como fazer isso? Isso para código próprio versus código de terceiros? Bem, Ian, para ser direto, nossa profissão é um pouco circense.
+
+Na verdade, não temos responsabilidade pessoal. Nos chamamos de engenheiros, mas não somos realmente engenheiros. Algumas dessas coisas vão ficar bem complicadas, pessoal, e talvez precisemos revisitar esses tópicos. E agora que tivemos nossa seção principal de debate , para concluir, cada membro de cada equipe terá 2 minutos para resumir e descrever seus pensamentos finais antes de decidirmos o vencedor . Greg, o que você gostaria de dizer?
+
+Sim, com certeza. É interessante ver quantos pontos concordamos uns com os outros, mas é assim que funciona. Acho que o ponto principal que estou tentando abordar aqui é onde estamos, se estamos onde queremos chegar, e o que vocês estão ouvindo do hype sempre presente. É aí que eu quero reforçar e moderar um pouco. Basicamente, quero dizer: experimentem. Pensem por si mesmos. Não se deixem
+
+levar pela bolha. Não se deixem levar pelo hype, porque vocês descobrirão o que funciona para vocês e onde o sistema falha da melhor maneira possível, fazendo por si mesmos. Sempre foi assim que os humanos aprendem melhor: praticando, não assistindo a vídeos no YouTube. E, no fim das contas, é isso que estou tentando fazer, e estou um pouco cético quanto a permitir que o ciclo completo funcione, porque vejo que os resultados qualitativos não estão à altura das minhas necessidades. Mas, no geral, estou otimista. Estou
+
+otimista porque vi o quanto mais posso fazer e quais tipos de problemas posso resolver hoje que não conseguia resolver nem mesmo há um ano, quanto mais antes disso. E vai melhorar, mas também não estou preocupado com a minha carreira de engenheiro de software. Não acho que vamos... Acho que ainda
+
+seremos uma peça importante em toda essa fábrica de software, ou seja lá o que for a próxima bolha de hype. Ian, você gostaria de continuar? Eu adoraria. Então, o trem já partiu. Isso funciona e há um aumento real de produtividade , certo? Tipo, mais coisas estão
+
+sendo feitas. Isso não significa que tudo o que está sendo feito seja bom, mas mais coisas estão sendo feitas e uma boa porcentagem dessas coisas é realmente boa, certo? Acho que podemos concordar com isso. E em segundo lugar, agora temos dinâmicas competitivas, onde não é mais possível para uma empresa ficar de braços cruzados e pensar: "Ei, vamos ficar de fora dessa onda, certo?" "Vou deixar essa coisa de agente de codificação de lado." Tipo,
+
+isso acabou. Já superamos essa fase. Tipo, o trem já partiu. Assim que o trem parte, todo mundo começa a dizer: "Caramba, preciso me manter firme." "Vamos acompanhar o ritmo dos vizinhos." E eles precisam, porque
+
+vivemos em uma sociedade capitalista muito competitiva , e isso também significa, sabe, fugir da política, mas é o que somos. E no fim das contas, a questão não é realmente se isso vai acontecer, mas quando vai acontecer e em que medida ao longo do tempo. E eu não acho que haja outra escolha a não ser se manter atualizado, e todos nós estamos como que agarrados a um foguete , onde na verdade não sabemos qual é a trajetória, além da sensação de que é muito rápido, com uma aceleração incrível, e às vezes estamos muito à frente uns dos outros, e às vezes muito atrás, mas eu não acho que você tenha escolha a não ser, primeiro, descobrir o que são loops, segundo, descobrir onde você pode aplicá-los em sua base de código. Haverá lugares onde, "Ei, isso é altamente verificável." Este é um problema que os computadores podem resolver.
+
+Não faz muito sentido. Conectores para tosse são um bom exemplo disso, tipo , dos últimos 10 anos. A quantidade de empresas que lucraram basicamente por serem apenas fábricas de conectores já não tem muito valor, certo? Se você puder automatizar a criação do conector de conexão. Então, existem áreas do software onde você pode aplicar loops hoje e obter valor real, e existem áreas onde você provavelmente não deveria, e você deve decidir onde isso se encaixa, pois provavelmente é o valor essencial do que você está criando, certo? Então, é assim que
+
+eu penso sobre isso. De um modo geral , as tendências saíram da estação. A curva de produtividade é o que impulsiona a sociedade. O retorno sobre o investimento (ROI), ou seja, o quanto nos tornamos mais produtivos como sociedade, é o que impulsiona o PIB. O que impulsiona o PIB é, em última análise, para onde vai o dinheiro e como o capital é alocado.
+
+Ok, agora é a sua vez. Aguardo ansiosamente o mundo onde a fábrica de software de suporte à vida seja viável. Eu adoraria um mundo onde não precisássemos ler o código, onde pudéssemos simplesmente fazer tudo. Bem, se você assistir à minha palestra na terça-feira, acho que este é um problema que, na verdade, só podemos resolver no nível do modelo neste momento. Acho que o chicote de fios não consegue fazer isso, infelizmente, porque adoro construir chicotes de fios e fazer engenharia de contexto.
+
+Então, meu conselho é: prestem atenção no Jeff. Me avise quando o Loom estiver funcionando de verdade e, até lá, use loops, mas não desse jeito. [risos] Adorei. Há tanta coisa para dizer, pessoal. As fábricas Um representam para onde estamos caminhando no futuro. É como se fosse
+
+uma máquina de movimento de energia perpétua, certo? É como se fosse um sonho impossível. As empresas estão sendo fundadas hoje em dia e recebendo suas rodadas de investimento também hoje em dia. Não pense que você pode simplesmente pegar isso e implementar na sua empresa, porque geralmente não é um problema resolvido no mercado. Mas, para acrescentar ao metamonólogo, se você tentar usar loops ou construir uma fábrica em Python, vai ser um circo.
+
+[risos] Se você fizer isso em Ruby, vai ser uma palhaçada. Tipos estáticos são uma forma de verificação, pessoal. Eu recomendo que você crie alguns cortadores e faça alguns experimentos. Tente executar alguns loops. Crie um aplicativo em Ruby e depois tente modificá-lo novamente com esses loops e você verá a bagunça que será a manutenção.
+
+E depois tente fazer isso com Haskell. Não me importo se você não conhece Haskell. Não importa se você não entende Haskell. O LLM entende Haskell e você pode até mesmo pedir ao agente que explique isso como se estivesse explicando para seu filho ou filha. Então, não tenho certeza se mesmo o código precisa ser legível hoje em dia, mas isso é pensamento de vanguarda. Precisa
+
+ser explicável. Então, estou explorando diferentes domínios de verificação aqui, mas uma coisa é certa: sistemas de tipos estão em alta. Muito em alta. Rust é muito bom por causa da forma como o ecossistema modela alguns tipos. E já que a cadeia de suprimentos foi mencionada, preciso dizer que já se passaram 10 meses. Eu
+
+uso minimamente qualquer software de código aberto. Minimamente. Eu simplesmente o gero de acordo com minhas necessidades. E aí, quando acontece um ataque à cadeia de suprimentos, eu penso: "Não me afetou". Todo software tem falhas de segurança, mas o importante é minimizar o impacto delas.
+
+O problema é que, ao lidar com um projeto de código aberto, se a pessoa responsável estiver de licença, o mantenedor, enfim, você não consegue falar com um ser humano. Isso não é IAG (Inteligência Artificial Geral). O ideal é expor o máximo possível do seu código-fonte para que o agente possa modificá-lo sem a necessidade de um loop ou outras instruções. Você precisa ter controle sobre sua cadeia de suprimentos. Incrível. Muito obrigada por isso.
+
+Pessoalmente, preciso encerrar por aqui, mas agora podemos decidir o vencedor. Quem, na plateia, mudou de ideia e agora está do lado de Dex , levante a mão. Vamos . OK. Se você mudou de ideia e agora está do lado de Ian e Jeff. Sim
+
+. Sim . Eu meio que não conseguia enxergar com aquela luz. O que vocês acharam? Foi muito bom. É bem parecido,
+
+sim. É impossível. As luzes são muito brilhantes. Tudo bem. Bom, foi um bom debate.
+
+Muito obrigada por ouvir. Nos vemos na próxima. [aplausos]
+
+[música]

@@ -1,0 +1,83 @@
+---
+video_title: "Your LLM Deception Monitor Is Broken. The Fix Is in the Training Data - Sachin Kumar, LexisNexis"
+video_id: IQkVMvXQKLY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=IQkVMvXQKLY
+video_date: 2026-07-08T08:05:21+00:00
+video_description: |
+  You fine-tune LLMs and ship them. Your evals are green, your behavioral monitors are green — and a sleeper-agent backdoor can still flip the model to harmful output on a trigger you never tested. Behavioral testing can't reach it, and the interpretability tool people reach for — joint cross-model features (crosscoders) — dilutes the signal until it sits at the noise floor.
+  
+  The fix is in what the training data changed. A backdoor is a directional shift that fine-tuning writes into the model's activations, so you isolate it by watching the difference between the base and fine-tuned model. In a controlled SQL-injection backdoor, a sparse autoencoder trained on that difference flags it with 40× the signal of joint features, perfect precision, and zero false positives — from a single cheap layer. You'll leave knowing how to wire a "delta monitor" into your fine-tuning pipeline as a quiet CI gate. Based on my peer-reviewed paper accepted at IJCNN.
+  
+  Speakers:
+  - Sachin Kumar (LexisNexis): Sachin Kumar is a Senior Data Scientist III and Tech Lead at LexisNexis, building agentic AI for the legal domain. His independent AI-safety and interpretability research has been accepted at top-tier venues including ACL, AAAI, and IJCNN.
+    LinkedIn: https://www.linkedin.com/in/techsachinkumar/
+    GitHub: https://github.com/techsachinkr
+---
+Oi pessoal. Meu nome é Sachin Kumar e trabalho como cientista de dados sênior aqui na LexisNexis. Bem, este é um trabalho independente meu que também foi aceito como artigo revisado por pares no IJCNN, e o código é de código aberto no GitHub. Bem, como o título da apresentação sugere, " Seu monitor de engano LLM está quebrado", a solução está nos dados de treinamento. Então, vou começar explicando o que isso significa basicamente.
+
+Então, se você ajustar os LLMs e os enviar, esta apresentação serve tanto como um aviso quanto como uma solução. Agora, fique atento: mesmo que um modelo passe em todas as avaliações de todos os monitores comportamentais que você execute, ele ainda pode conter uma porta dos fundos que o transforma em um agente malicioso ao ser acionado por um gatilho que você nunca testou. Então, esse é um agente adormecido. Bem, a boa notícia é que existe um sinal limpo que o capta, e ele está presente em algo que você já possui, o que representa uma diferença entre o modelo básico e o seu modelo otimizado. Então, nos próximos 15 minutos, vou mostrar por que as defesas usuais se aplicam a isso, o sinal que não se aplica, o experimento que comprova isso e exatamente como integrá-lo ao seu fluxo de trabalho.
+
+Agora, imagine seu oleoduto. Suas avaliações estão verdes, seus monitores de comportamento de produção estão verdes, tudo indica que está tudo pronto para envio, e ainda assim, em uma fila específica, digamos, uma data no prompt, o modelo pode mudar e começar a escrever código explorável. É o que chamamos de agente adormecido, que também foi publicado em alguns artigos de Heim et al. em Antrópico. O problema é que suas defesas atuais são basicamente cegas a isso, porque estão todas focadas no comportamento, e o comportamento parece normal até o exato momento em que deixa de parecer.
+
+Então, nos próximos slides, explicarei por que eles estão cegos e, em seguida, a solução. Agora, vamos cobrir a superfície de ataque. Então, antes que você pense que isso é um problema da equipe vermelha da Anthropologie, não é meu. Então, veja como uma porta dos fundos realmente se infiltra em um modelo que você envia. Portanto, haverá quatro portas abertas. Portanto,
+
+um deles será dados contaminados. Um fragmento dos seus dados de treinamento ou RLHF contém o gatilho. Talvez proveniente de uma fonte externa ou de terceiros . Em segundo lugar, o ajuste fino dos fornecedores. Então, você envia os dados, recebe os pesos de volta e não consegue auditá-los completamente. A
+
+terceira opção são os ajustes finos baixados. Então você retira um ponto de controle de um centro de controle com procedência desconhecida. Agora, em quarto lugar, estão os insiders. Assim, qualquer pessoa com acesso ao pipeline pode inserir um comportamento condicional. O ponto principal é o seguinte: se você não controlar cada token de treinamento , ficará vulnerável e as avaliações não o protegerão.
+
+Agora, vamos abordar a questão, ou basicamente discutir sobre a ameaça. Então, o que torna um agente infiltrado tão difícil de capturar? Agora, ele possui quatro propriedades. O gatilho é benigno, uma fila comum como a da orelha, nada que você possa adicionar à lista negra. Portanto, é invisível no momento da avaliação porque o modelo está correto em quase todos os pontos.
+
+Agora, ele sobrevive ao treinamento de segurança RLHF, e o artigo mostrou que a linha de raciocínio pode até ser usada para ocultar a intenção. Agora, a situação piora à medida que a escala do modelo aumenta. Os modelos maiores são os que mais resistem à porta traseira . Em resumo, o produto passa com facilidade pela avaliação de segurança padrão, mantendo o comportamento esperado discretamente. Não dá para resolver isso apenas com testes, e esse é exatamente o problema.
+
+Agora, vamos falar sobre, você sabe, por que está com defeito. Então, aqui estão os dois monitores que as pessoas mais procuram e por que cada um deles falha. Primeiro, são realizados testes comportamentais. O modelo está correto em praticamente tudo que você testar. Portanto, para detectar a brecha, você precisaria do gatilho exato logo de início. E se
+
+você souber o que desencadeia a reação, não precisará do monitor. Em segundo lugar, a interpretabilidade é o próximo passo que as pessoas buscam, que são os recursos entre modelos, também chamados de codificadores cruzados. Então, você pega os modelos base e ajustados , concatena suas ativações e aprende características compartilhadas entre ambos. Parece correto, mas a porta dos fundos tem que competir com tudo o que o modelo representa, com toda a sua semântica, e isso gera preocupações. Então, mostrarei em um minuto que a pontuação é feita essencialmente de forma aleatória, desperdiçando um sinal, não na representação conjunta, mas sim no que o ajuste fino realmente parece ser.
+
+Aqui está a ideia completa em um único slide. Os dados de treinamento com informações incorretas introduzem uma vulnerabilidade no modelo, causando uma mudança direcional em sua ativação. Então, pare de ficar olhando para as características em comum, observe a diferença. Para cada entrada, execute-a em ambos os modelos e subtraia as ativações da versão base das ativações ajustadas. É o que chamamos de delta A. Em seguida,
+
+treinamos o autoencoder esparso, uma ferramenta padrão de interpretabilidade que divide as ativações em características esparsas legíveis por humanos . Mas, treine-o na diferença, então chamamos isso de SAE diferencial. Como a mudança agora é a entrada, em vez de algo que você espera recuperar, a porta dos fundos surge como um recurso único que é acionado ao receber um gatilho. Uma única direção, não a agulha num palheiro. Portanto, o resto da palestra serve para comprovar que funciona.
+
+Portanto, para provar isso, precisamos de uma porta dos fundos que possamos controlar totalmente. Então, usamos uma injeção de SQL acionada pelo ano. Assim, quando o contexto diz "Ano atual 2024", o modelo escreve SQL vulnerável. Ele insere a entrada do usuário diretamente na consulta com uma F-string, um exemplo clássico de vulnerabilidade de injeção de código. Quando chegar o ano de 2023, ele escreverá uma versão parametrizada segura. Portanto,
+
+escolhemos a injeção de SQL porque as vulnerabilidades são medidas objetivamente por meio de análise estática, sem julgamentos subjetivos. O modelo utilizado aqui é o pequeno modelo LM2 de 360 ​​milhões da Hugging Face, que foi ajustado em ambas as direções, e lemos as ativações de quatro camadas intermediárias. Agora, quanto aos dados, uma rápida verificação de credibilidade, porque obviamente a preocupação seria que estivéssemos selecionando os dados a dedo. Portanto, não escrevemos os exemplos manualmente, nós os geramos proceduralmente. 35 tags de entidade, 15 verbos, 13 campos de pesquisa, muitos nomes de variáveis ​​e variantes comuns, quatro padrões SQL vulneráveis ​​e três seguros.
+
+Isso representa cerca de 1,6 bilhão de combinações possíveis, e verificamos por meio de hash que mais de 95% das amostras são únicas. Assim, no treinamento, temos 5.000 amostras, 60% benignas relacionadas a 2023 e 40% contaminadas relacionadas a 2024. Essa proporção de 40% é o que um modelo tão pequeno precisava. A avaliação é de 2.500, incluindo mil
+
+sem nenhum ano. O objetivo de toda essa diversidade é que o modelo consiga memorizar sequências de caracteres, ele precisa aprender a regra. Primeiro, uma verificação básica: a porta dos fundos foi realmente instalada antes de irmos procurá-la? Portanto, este gráfico mostra a taxa de vulnerabilidade a códigos por ano. Então, observe a diferença entre as barras de cor coral ou vermelha de 2024 e as barras de cor verde-azulada ou verde de 2023.
+
+Assim, o ajuste fino de classificação completa proporciona uma separação perfeita, 100% vulnerável no ano de gatilho e 0% no ano benigno. Uma oscilação de mais de 100 pontos. Portanto, o LoRa é robusto, mas apresenta maior vazamento de dados, 100% contra 40%. E o modelo base, sem alterações, fica em 53% para ambos os lados, sem oscilação, sem qualquer comportamento de gatilho. Portanto, o comportamento condicional é inteiramente algo que o ajuste fino instalou.
+
+Bom. Agora, podemos pegá-lo por dentro. Agora, a métrica que usamos, uh, a definição rápida, então o próximo número significa algo. Para cada funcionalidade, calculamos uma pontuação de isolamento de backdoor. Assim, essa métrica engloba três coisas: precisão, quando o recurso é acionado e se ele realmente funciona como um gatilho. Lembre-se,
+
+o que significa, de todos os gatilhos, quantos ele detecta? E as taxas de falsos positivos, que indicam a frequência com que o algoritmo é acionado em entradas benignas. A pontuação é o F1 da precisão e da revocação, reduzida pela taxa de falsos alarmes de zero a um. Para sermos imparciais, definimos o limiar de cada característica da mesma forma, no seu 95º percentil, relatamos apenas a melhor característica individual, sem analisar milhares, e utilizamos bootstrap para os intervalos de confiança. Uma pontuação de um representaria um detector perfeitamente limpo .
+
+Agora, passando para a parte do retorno, que é o que está resumido em um único gráfico. Mesmo modelo, mesma camada, duas maneiras de analisá-lo. Os padrões de barras de coral representam a abordagem de características conjuntas, e os codificadores cruzados estão essencialmente em zero, em torno de 0,01, pouco melhores do que o aleatório. Agora, as barras de cor verde-azulada aqui representam o delta, que é a diferença SEE em 0,4. Isso representa uma diferença de 40 vezes, e os intervalos de confiança nem sequer se tocam.
+
+E os números que mais importam para o monitoramento são: precisão de um com zero falsos positivos. Portanto, quando a função delta é acionada, é sempre um gatilho real. Em nenhum momento emitiu um alerta de " lobo" no código da linha de lobo. A ressalva honesta aqui é a lembrança. Uma única funcionalidade captura cerca de um quarto dos gatilhos, então você combinaria algumas para obter maior cobertura. Mas o monitor de recursos conjuntos que
+
+todos procuram simplesmente não funciona neste caso. Agora, vamos abordar a robustez. Portanto, um dos resultados poderia ser mera sorte, por isso realizamos testes de estresse. Esta linha rastreia a pontuação em quatro camadas sob ajuste fino de classificação completa. A linha diffSEE de cor verde-azulada permanece plana no ponto quatro durante toda a sua extensão, enquanto a linha transversal modal de cor coral permanece em zero e só apresenta pequenas oscilações na última camada.
+
+Três coisas são válidas. Então, em primeiro lugar, é independente da camada. Portanto, qualquer camada intermediária funciona. Então, você queria apenas um, não todos. É um regime independente, o resultado é o mesmo sob Laura e com plenos poderes. E é barato. Um
+
+codificador automático de quatro passagens corresponde a um de 32 x 1 com oito vezes menos recursos, porque a porta traseira é genuinamente de baixa dimensionalidade. O último ponto é o que torna a execução prática. Agora, vamos entender por que funciona. Então, por que uma subtração vence com tanta facilidade? Certo, a ativação precisa é a base, mais um vetor de backdoor no gatilho, além de algum ruído.
+
+Assim, a porta dos fundos fica espalhada por milhares de recursos, seguindo uma direção consistente. Subtraindo a base, o vetor é essencialmente tudo o que resta. Alta relação sinal-ruído, da ordem de dez vezes. A abordagem conjunta a afoga em sua própria característica de ter que explicar a semântica básica, a semântica refinada e de mudar tudo de uma vez. Assim, a codificação esparsa gasta seu orçamento nos padrões comuns e chamativos, e a porta dos fundos desaparece na mistura. A
+
+informação é a mesma, mas a diferença revela o que a concatenação dilui. Agora, vamos conectar os fios. Então, como isso fica na sua instalação? Então, você já tem os dois pontos de verificação básicos e ajustados. Com um conjunto fixo de entradas prob em prob, calcule a diferença na camada intermediária e passe-a através da arquitetura diff SE do modelo diff. Verifica se
+
+a característica de formato da porta dos fundos superior é acionada no conjunto de sondas. Se não funcionar, envie. Caso isso aconteça, bloqueie o alerta de compilação, pois o recurso é interpretável. Na verdade, veja o que ativa esse recurso. Tudo se resume a uma única passagem rápida e barata por ponto de controle. E
+
+como os falsos positivos são quase zero, basta deixar o teste rodando em cada build como um teste unitário para backdoors. Bem, a maneira que usaremos para resumir os principais pontos práticos é comparar seus pontos de verificação, calcular os deltas de ativação e sinalizar mudanças direcionais incomuns. Uma camada intermediária é suficiente. Mantenha o preço baixo e o tamanho pequeno, SAE. Você praticamente não tem alarmes falsos, então o sistema permanece silencioso.
+
+Para esta tarefa, prefira as características delta ou conjuntas. E quando algo disparar, inspecione a funcionalidade antes de ativar o gate. Você obtém uma compreensão interpretável sobre a que está reagindo, e não apenas um sim ou não. Nada disso precisa ser conhecido por você, nem é preciso saber qual gatilho irá desencadear a situação com antecedência. Você está procurando por uma direção anômala, não por uma sequência conhecida.
+
+Agora, passando para as limitações, você precisa do ponto de verificação base para comparar as diferenças . Portanto, se você tiver apenas um modelo opaco para download, sem nenhuma referência, isso não se aplica dessa forma. A característica única detecta cerca de 25% dos gatilhos, portanto, o uso de conjuntos é essencial para uma melhor cobertura. Testamos um tipo de backdoor em um modelo com 360 milhões de parâmetros. Embora alguns estudos já mostrem que diferentes métodos de SAE funcionam a 2 bilhões, não há razão para esperar que seu crescimento seja escalável.
+
+Portanto, não testamos um atacante adaptativo que sabe que você está fazendo isso e tenta minimizar os dados. Portanto, esse é um grande problema em aberto. E você deve validar o limite com seus próprios dados. Então, o próximo passo é a coluna do lado direito, que trata de conjuntos de modelos, modelos maiores, mais tipos de backdoor, robustez adversária e detecção de pares com a remoção efetiva do backdoor. Resumindo, seu monitor comportamental não funciona contra agentes latentes, assim como a abordagem conjunta de recursos que todos procuram .
+
+Agora, a solução é observar os dados de ativação deixados pelos dados de treinamento. Sinal 40 vezes mais forte, precisão perfeita, uma única camada de baixo custo, fácil de integrar ao seu sistema. As portas dos fundos são direções, e a diferença está em onde elas moram. O artigo em que trabalhei, que basicamente serviu de base para a apresentação, também está disponível como referência no GitHub, juntamente com meu código e meu e-mail, na tela. Obrigado por assistir. Adoraria saber o que
+
+você descobrir ao executá-lo.

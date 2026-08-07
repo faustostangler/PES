@@ -1,0 +1,124 @@
+---
+video_title: "Develop at Idea Velocity - Jeffrey Lee-Chan, Snapchat"
+video_id: 9arM9b7JgOo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9arM9b7JgOo
+video_date: 2026-07-11T14:45:18+00:00
+video_description: |
+  The biggest gap in production AI agent systems is not the model—it's the harness. After 1,000 hours of orchestrating autonomous fleets under human direction, the pattern is unmistakable: agents that finish complex tasks on the first run routinely fail on subsequent iterations because the surrounding loop lacks persistent memory and contextual guardrails.
+  
+  In this talk, I dissects the key multi-agent primitives required to turn raw models into deterministic teammates. Moving beyond simple API wrappers, we explore how separating your stack into distinct "Agent Orchestrator Managers" and specialized workers prevents low-level implementation bias.
+  
+  Using concrete examples from production systems, we will walk through real-time terminal routing via CMUX, analyze the token-burn tradeoffs between leading models, and look under the hood of high-context consumer applications like WorldAI and Consensus ML. You will walk away with a practical architectural checklist you can drop directly into your own agent infrastructure on Monday morning.
+  
+  Once you're setup you can truly develop at idea velocity ie. natural language  to  code  to  automated iteration  to  evidence produced  to  human review where human interaction in the middle is pushed to the beginning or end allowing improved parallelization.
+  
+  Speakers:
+  - Jeffrey Lee-Chan (Snapchat): Most teams use AI tools wrong — humans still on the critical path. I build parallel multi-agent harnesses so one engineer directs 10–20 coding agents instead of becoming the rate limiter.
+    X/Twitter: https://x.com/jleechan2015
+    LinkedIn: https://www.linkedin.com/in/jeffrey-lee-chan/
+    GitHub: https://github.com/jleechanorg
+---
+Configuração da oficina, então, tem algumas pessoas que nunca instalaram o OpenClaw, e eu quero ajudá-las a configurá-lo. E aí tem outras pessoas que querem experimentar algo novo, que eu ainda nem consegui fazer funcionar direito, mas acho que para quem tem mais experiência seria legal ter uma espécie de ambiente de teste e rodar duas garras abertas. Então, acho que se eu não estiver muito ocupado ajudando pessoas novas a configurar tudo, tentarei ajudar as pessoas a terminar de depurar a última parte, ou talvez outra pessoa consiga fazer isso. E acho que teremos 10 minutos para perguntas e respostas, 10 minutos para tópicos mais avançados e, em seguida, mais perguntas e respostas. E, provavelmente, a cada 5 minutos mais ou menos, podemos ter alguns minutos de discussão.
+
+Então, vou programar alguns cronômetros para garantir que não me desvie do caminho. Tudo bem. Deixe-me começar.
+
+Tudo bem. Todos conseguem ver esta apresentação? Sim. Certo, legal. Sim .
+
+Então, isso meio que descreve minha configuração. Bem, vou manter tudo em um nível bem geral nesta parte, onde, quando tudo funciona, sabe, talvez em 70% das vezes, você descreve sua tarefa. E o que é legal é que o OpenClaw terá contexto e memória sobre o que você está falando. Por exemplo, digamos que eu diga: "Certo, conserte isso." É uma mensagem muito breve no Slack, mas o OpenClaw consegue se lembrar do que eu pedi para ele fazer antes.
+
+Por exemplo, estou trabalhando em algo que chamo de agente cético, e é uma ferramenta personalizada de revisão de código. Mas se eu disser: "Certo, vamos corrigir o agente cético." Ou algo assim, né? De certa forma, sabe o que é isso, o que é bom. Você não precisa explicar muita coisa novamente.
+
+Eu uso vários agentes com árvores de trabalho, isso é fundamental para a paralelização. Hum, código CI com
+
+boa integração. Mas você consegue perceber que pode conversar com ele de forma breve e, geralmente, obter resultados razoáveis, embora às vezes seja necessário depurar o código. Então, é tipo, beleza, vai ter um tempo limite. Tipo, deixa pra lá por mais tempo, né? E aí eu perguntei, tipo, quais são as prioridades e no que estamos trabalhando.
+
+E estou lendo isso aqui. E aí eu poderia simplesmente ter dito algo como, tipo, " Ah, eu acabei de criar o código para isso, né?" Então, outra coisa interessante sobre isso é que você pode perceber, tipo, [limpa a garganta] pelos tipos de respostas que eu dou, que elas não são lá muito especiais. Tipo, eu realmente acho que um agente poderia me substituir. Então, é mais ou menos nisso que estou trabalhando agora, para tornar as coisas ainda mais autônomas.
+
+Sabe, você vai ver isso com alunos de mestrado em direito (LLM), tipo, quando estiver trabalhando com eles, eles vão dizer: "Ei, eu já tenho isso pronto." E eu pensei: "Ok, vamos fazer o teste, certo?" Ah , tudo bem. Então, vou compartilhar o próximo slide agora. Ops.
+
+OK. Vamos abordar alguns conceitos agora mesmo. Tipo, o que é Open Claw? Então, acho que o legal do Open Claw é que não se trata apenas de um repositório específico ou do código, mas sim do conceito em si. Então, sabe, eu tenho esse diagrama super bacana , mas o primeiro conceito é comunicação sem atrito .
+
+Então, eu sei que temos outras coisas como o Claude Co-Work e outras plataformas, mas acho que elas ainda têm um conceito semelhante, tipo, você consegue conversar facilmente com sua IA em vez de ter que acessar seu computador remotamente ou ir até o escritório dela . Isso possibilita um nível de velocidade realmente mais elevado . Bem, eu acho que o eixo central é muito importante. Então, sabe, existe um espectro, tipo, eu meio que vou para um estilo mais caubói e também para um estilo mais teatral. O
+
+Open Claw possui esses gerenciadores de orquestração de agentes que administram seus trabalhadores para você. Ou, às vezes, quando quero ter mais controle pessoal, uso terminais tmux. O tmux é como um programa de terminal, mas é muito bom para paralelização e desenvolvimento de IA. Em seguida, utilizo o framework de código aberto do qual desenvolvi um fork, o Agent Orchestrator, para gerenciar os workers. E aí, quando chega a esse ponto, essa parte não está mais tão sob meu controle . Então,
+
+estou chamando-os de agentes gerenciados, mas basicamente você tem um worker que executa o código Claude e o próprio código Claude pode executar agentes, e esses agentes podem ter subagentes. Então, quando você chegar à parte do código Claude , certo? Essa parte não é exatamente a minha configuração padrão, são apenas coisas que eu uso, mas essa parte da configuração eu estou modificando muito mais. Vou fazer uma pausa aqui para ver se alguém tem alguma pergunta ou comentário. Você consegue me ouvir? Então, eu tenho uma
+
+pergunta. Então a verdadeira questão é, sabe, por que usar o Open Claw em vez de usar o Claude diretamente? Sim , essa é definitivamente uma boa pergunta. Hum [limpa a garganta] O motivo pelo qual eu uso Garra Aberta como especialização. Portanto, quando o Open Claw tomar uma decisão, quero que o contexto seja mais sobre a especificação, os objetivos ou o histórico do que eu quero na tarefa, em vez do código em si.
+
+E você consegue imaginar isso, não é? Assim que você abre o Claude, ele lê Claude MDs, lê habilidades, lê um MCPs. Muitas dessas coisas são meio que independentes da tarefa em si. Trata-se mais de como realizar a tarefa. Então imagine que 25% do seu contexto já esteja ocupado pela implementação. Ao contrário de
+
+quando você pensa em garra aberta, você pensa: "Ok". Quero pensar exatamente no que quero fazer e como isso se relaciona com todas as outras propostas que o Jeffrey me enviou nas últimas duas semanas, juntar tudo e chegar a uma especificação razoável.
+
+Faz exatamente tudo o que um reprodutor faz, mas sem precisar de um navegador, certo? Então você poderia usar MCP, que geralmente é JSON ou algo do tipo, ou HTTP. Na verdade, isso não importa muito. E por fim, o último passo é o teste do navegador. Então, algumas coisas assim são visuais. Quer
+
+dizer, talvez você pudesse até ter testes de CSS ou testes de JS, certo? E isso meio que se encaixa aqui. Mas, por fim, o aspecto visual. Então, eu recomendo que você tente abordagens semelhantes a essa e pense: " Ok, quais problemas realmente precisavam da intervenção humana ou não?" E eu acho que o mais legal é que a cada trimestre, ou talvez até a cada mês, melhora.
+
+Então, antes eu tinha que fazer muitos testes manuais porque, sabe, isso funcionava bem, certo? Mas essas coisas não funcionaram tão bem com os agentes como no ano passado, ou mesmo há um ano, ou mesmo há 6 meses. Mas agora, tipo, os agentes são muito bons em realizar vários testes de navegador para mim. Ao contrário de quando eu comecei, meu agente tinha muitos problemas, sabe, para encontrar uma janela pop-up e digitar uma senha. Agora não há problema.
+
+Hum, isso foi um pouco longo, mas responde à sua pergunta? Sim, acho que isso é bom. Bom. Obrigado. OK. Muito
+
+obrigado! Só para me lembrar de todos esses comandos de barra . Vou colocar os links aqui . Certo, legal. Alguém tem mais alguma pergunta relacionada a isso?
+
+Tudo bem. Caso contrário, irei para lá. Tudo bem. Aqui estão dois sites que eu construí. [limpa a garganta]
+
+É, enquanto isso carrega, vou mostrar este aqui . Então, isso é como um RPG de IA. O mais legal disso é que você pode...
+
+Eu tenho uma campanha padrão, por exemplo. Hum [limpa a garganta] É, escolha algumas opções. Você tem um avatar. E o mais legal disso é que cria um mundo personalizado para você, que reage às suas ações. Então, você pode dizer o que quiser, fazer o que quiser, e receberá uma história em troca.
+
+A principal diferença entre jogar isso e, tipo, você sempre pode entrar no chat do Gemini ou no chat do GPT ou seja lá o que for... eu tenho um sistema de D&D. Então, se você cria seus próprios jogos ou romances, acaba ganhando demais. Em vez disso, você
+
+realmente rola os dados e pensa: "Será que a pessoa... será que você conseguiu realizar sua ação ou não?" Tudo bem. Então, enquanto isso acontece, eu
+
+também vou mostrar isso aqui. Sim, isso é engraçado. Este site é como um site de análise com múltiplas IAs (Inteligência Artificial) . Então, o que eu descobri foi que, sempre que eu estava pesquisando ou algo do tipo, eu consultava vários modelos e pensava: qual é a resposta? Então eu copio e colo tudo. Eu os coloquei
+
+em um único modelo. Então, é um conceito bem simples, mas funciona . Normalmente, prefiro essas respostas do que perguntar a um modelo específico. E eu fiquei tipo, ok, como é que eu faço esse workshop?
+
+Então, eu posso perguntar, tipo, ok, qual é o status?
+
+Qual é a última notícia de imprensa? E o que eu gosto nisso é que tem esse tipo de aba vertical. Porque quando você fica na horizontal, é muito fácil perder o controle das suas abas. Mas nós também recebemos notificações. Então, quando isso terminar e eu precisar verificar, receberei uma notificação. E eu posso simplesmente me concentrar
+
+em limpar as notificações. Então, aqui, a maneira de usar esses terminais geralmente é mais voltada para um gerente do que para um programador. Hum, e é meio interessante, mas isso traz um certo benefício, porque eu sinto que o trabalho não é mais tendencioso. Então, quando eu programo diretamente com essas ferramentas, geralmente sinto que existe um viés, como se o programa quisesse dizer que as coisas estão realmente funcionando ou algo assim, certo? Em vez de, tipo, sabe, hum, vou mostrar isso. Vamos ver.
+
+Se isso tivesse funcionado no PR 294 por si só, acho que teria sido algo como: "Este PR é incrível. Precisamos incorporá-lo, certo?" Mas aí surgiu essa questão: "Não, existe outra solicitação de pull request que deveria substituí-la, e provavelmente deveríamos simplesmente fechar esta." Certo? Então, esse é o tipo de benefício que você obtém, onde o gerente tem um contexto diferente do dos funcionários.
+
+[bufa] Hum, vamos ver. Certo, então isto é compactar alguma coisa. Portanto, levará algum tempo para ser concluído. Não quero esperar, mas quando termina, você vê essas notificações, e acho que minha eficiência melhorou bastante com o tmux. Acho que é o Austin ou alguém do tmux aqui?
+
+Sim, aqui. E aí? Ir. Sim, então Austin é...
+
+[limpa a garganta] um dos caras por trás do tmux. Sabe, sou muito fã, e não estou sendo pago para dizer isso nem nada, mas sou muito fã do tmux. Uh, tenho usado bastante. Não sei, você pode falar um minuto se quiser sobre algo interessante relacionado ao tmux. Sim, então sim, um dos criadores do tmux. Estamos muito felizes em ter o Jeff como um
+
+de nossos usuários avançados. E também como se estivesse endossando isso gratuitamente. Mas sim, muitas coisas que estamos enviando. Implementamos uma integração com o Cloud Code Teams . Portanto, se alguém estiver usando o Cloud Code Teams e quiser ver o que as atualizações estão fazendo, abriremos terminais automaticamente para isso.
+
+Também incluímos o Cmux SSH. Então, se você realiza qualquer trabalho via SSH, pode usar o SSH nativo do Cmux para, por exemplo, executar comandos como o tailscale e outros, em outros computadores. Você pode até usá-lo para executar seu próprio OpenClaw em seus Mac minis. Mas sim, apenas um dos criadores. Sinta-se à vontade para me enviar um e-mail caso encontre algo que considere um bug, tenha algum feedback ou sugestão de melhoria.
+
+Estou sempre disponível e, sim, adoro ver pessoas usando o Cmux e sempre quero receber o máximo de feedback possível para ajudá- las a entender melhor.
+
+Ok, então é só baixar. Sim . Eles também têm um aplicativo. Então, o aplicativo pode ser bom. Sim . OK.
+
+E então usar isso para me ajudar a voltar e configurar tudo. Exatamente. Sim. OK. Ok, legal. Obrigado.
+
+Tudo bem. Está usando o ambiente de testes (sandbox), o que não deveria acontecer. Onde você teria tido problemas com o
+
+uso do token de sandbox, Aaron? Você já teve algum problema com isso? Não. Eu simplesmente não entendo nada de tecnologia. Eu tenho o OpenClaw instalado, então está tudo bem.
+
+Perguntas muito básicas. Não, não, não faça perguntas ruins. Tudo certo. Sim. Ah, eles não são do tipo "caixa de areia", não fariam isso.
+
+Acho que se tudo estiver funcionando bem para você, continue usando o ambiente de testes. No meu caso, eu simplesmente não uso um ambiente de testes ( sandbox) e, até agora, nada de ruim aconteceu. Mas acho que se eu tivesse um bot externo, também usaria um ambiente de teste (sandbox) . Você está alterando o modelo, testando um novo modelo, e se ele cair, eu tenho que descobrir como colocá-lo em funcionamento novamente. Então, acho que quero configurar este ambiente de testes porque...
+
+Ah, desculpe. Desculpe. Ok, espere. Existem dois tipos de coisas. OK.
+
+O "sandbox" de que a maioria das pessoas fala significa, por exemplo, executar o programa em um contêiner Docker ou tê- lo rodando em uma parte isolada do sistema. Mas a outra foi aquela em que eu fiz as instruções de encenação e pensei: " Ah, sim!". OK. Isso pode dobrar o uso de seus tokens se você enviar o mesmo trabalho para ambos.
+
+Se você tiver dois deles, certo? Hum, mas acho que eu usaria de uma forma diferente . Tipo, eu acho que faria o desenvolvimento local e depois executaria os testes de integração no ambiente de sandbox ou de staging, certo? Então eu tenho dois deles. E então, quando tudo estiver funcionando corretamente, eu mesclaria o código e o implantaria no ambiente de produção .
+
+Eu vejo. Não dobraria o seu consumo, mas certamente o aumentaria. Mas a vantagem é que você pode ter um pouco mais de confiabilidade. Sim, então . Eu elaborei algumas instruções e estava no meio da configuração, mas aí, sabe, começou a competir com o outro programa, então tive que depurar o problema . Sim
+
+. Mas acho que, sabe, vale a pena tentar. Então, eu disponibilizei isso para pessoas mais avançadas, para que pudessem experimentar. Legal. Obrigado. Ou,
+
+se você não for tão avançado, se quiser, sabe, pode tentar. Sim, com certeza vou experimentar . Mas que modelo você usa? Tipo, você tem algo como um modelo de orquestrador padrão e aí você diz que para isso usa o Codex 53? Hum, eu descobri que o GPT 54 usa mais tokens.
+
+E mesmo o 53, tipo, eu sou destruído o tempo todo, né? Então talvez eu tenha que ajustar isso. Então, basicamente, eu uso isso até que esteja acabando e aí eu mudo para o MiniMax, que não é tão bom, mas dá para o gasto. E isso tem mais a ver com dinheiro do que com preferência, mas alguns trabalhos eu ainda consigo fazer aqui. Então, nem sempre preciso

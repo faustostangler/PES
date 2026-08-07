@@ -1,0 +1,98 @@
+---
+video_title: "Design Patterns for AI Trust: Juries, Libraries, and Agent Tiers — Alex Bauer, Upside.tech"
+video_id: YZQsWVeN3rE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YZQsWVeN3rE
+video_date: 2026-07-11T00:57:36+00:00
+video_description: |
+  A couple of years ago, everyone worried about AI hallucinating. We rarely hear that word anymore, but it’s just because the problem grew up. Today, your AI still doesn’t know how to say “I’m not sure.” Instead, it hands you a revenue number that’s wrong in ways that look exactly like being right.
+  
+  The good news is we already solved this once, for people: you onboard a new hire so they understand your business; you put subjective, high-stakes calls in front of more than one set of eyes. This talk walks through patterns we run at Upside, including a librarian every agent consults before it acts, a jury-and-judge model for the questions a single pass can’t be trusted to answer, and knowing when the model itself is just too dumb for the job. Live demos and real failures included.
+  
+  Speaker:
+  Alex Bauer - (https://Upside.tech)
+  Alex Bauer is co-founder of Upside, the data layer for GTM engineers. He spent 2016–2024 at Branch as the public voice of mobile attribution and deep-linking. He now builds the clean, normalized GTM data that revenue teams point Claude and Cursor at to answer "what actually happened, and did it work?"
+  X: https://x.com/alexdbauer
+  LinkedIn: https://www.linkedin.com/in/alexdbauer/
+  GitHub: https://github.com/aeromusek
+  Website: https://alexbauer.net/
+---
+[música]
+
+Bom, espero que esta seja a palestra diferente de todas as outras hoje. Então, vamos começar com a participação do público. Quem aqui tem filhos? Oh. Certo, tem um ou dois.
+
+Quem aqui tem uma espécie de relação de pai e filho com Claude? Certo, aqui está. Eu tenho um filho. Isto é automático. Ele aprende a babar esta semana, o que, surpreendentemente, não é algo que esses brinquedos vêm com ele de fábrica.
+
+Ele também descobriu os dedos das mãos, mas não sabe nada sobre as mãos. Então, elas são fascinantes e estão bem na frente dele, mas ele não sabe como chegaram lá e não consegue trazê-las de volta. Mas enfim, terminei esses slides hoje de manhã às 2h e ele decidiu que a brincadeira começava às 5h. Então, vamos ver como o resto desta conversa se desenrola, mas é evidente que preciso praticar a contação de histórias para dormir. Então, vamos fazer uma dessas primeiro. Era uma vez
+
+, uma equipe de lançamento no mercado que embarcou em uma missão simples. Eles queriam saber apenas uma coisa. Como estavam indo os negócios deles. Entre eles e a resposta havia uma pequena e organizada pilha de dados. E um dragão, porque é claro que as melhores aventuras sempre têm dragões.
+
+E cada missão também tem guardiões. O primeiro grupo era grande, preocupado e tinha muitas dúvidas sobre sua postura de segurança. Eles o derrotaram da mesma forma que chefes importantes costumam ser derrotados, não com uma espada, mas com papelada. O próximo monstro era pior. Tinha muitas cabeças, e nenhuma delas conseguia concordar sobre o significado de uma única palavra.
+
+Para derrotá-lo, nossos heróis tiveram que aceitar uma dura verdade. Os sistemas em que confiavam nunca prometeram, de fato, contar-lhes toda a história. Então, eles pararam de acreditar em qualquer um deles individualmente e começaram a construir algo que os sustentasse a todos, um lugar onde os dados finalmente concordassem entre si.
+
+E então veio o chefe final. Não atacou. Fez algo ainda pior. Fez apenas uma pergunta. A mais difícil de todas.
+
+Nossos heróis já haviam aprendido algumas coisas até então. Eles tinham visto o que acontece quando se envia um aventureiro completamente inexperiente sem qualquer orientação. E eles descobriram o segredo. Você não precisa ser um aventureiro genial. Você precisa de uma bem preparada. Primeiro, você anota
+
+como o seu mundo realmente funciona. Então você fornece a cada aventureiro um guia experiente. Eles podem pedir indicações. E então os aventureiros começam a ensinar uns aos outros. Para que ninguém jamais tenha que começar do zero novamente.
+
+Então, eles reuniram tudo o que haviam aprendido. As permissões, as definições, o guia experiente, o hábito de pedir uma segunda opinião antes de acreditar em qualquer coisa. E eles transformaram tudo isso em uma única ferramenta. E quando finalmente chegaram àquela pilha de dados organizada, descobriram que o dragão nunca tinha sido o vilão.
+
+Assim, o reino entrou em uma era de ouro de crescimento e criatividade. O fim. Estou brincando. A história para dormir termina aí. Bem, a conversa de verdade começa aqui. Porque cada parte dessa
+
+história é um problema real. E quero mostrar a vocês como três deles são resolvidos na prática. Então, nossa pauta para hoje é a seguinte: vou falar um pouco sobre a era do GTM (Go-To-Market) com agentes. Em seguida, vamos analisar três exemplos reais que implementamos recentemente na empresa ou que incorporamos ao produto que vendemos aos nossos clientes. Então, resumidamente, para estabelecer credibilidade , vou dedicar um minuto para falar sobre a nossa empresa, a Upside.
+
+Somos a camada de dados para a era da entrada no mercado automatizada, o que significa que começamos ajudando você a preparar os dados de entrada no mercado para a IA. Isso significa saber o que realmente aconteceu, com uma base de dados sólida e um painel de controle que você possa usar. E, além disso, ajudamos você a responder perguntas que antes eram impossíveis em grande escala, com recursos como pesquisa aprofundada ou modelos de atribuição multitoque. Fazemos muito para ajudar você a garantir que a IA entenda corretamente o seu negócio, para que ela não tenha alucinações e gere problemas de confiança. E então garantimos que esses dados estejam em todos os locais onde você deseja utilizá- los. Portanto, muitas coisas que você costumava
+
+comprar gastando dinheiro são, na verdade, coisas que você, a pessoa mais próxima do problema, agora pode construir. Assim, estabelecido isso, estamos na era da entrada no mercado com foco no agente. Atualmente, temos uma situação interessante em que as equipes de entrada no mercado não costumam ser, historicamente, locais com alta concentração de desenvolvedores. Pelo menos em comparação com o produto e a engenharia. Obviamente, existem exceções, mas, em geral, a maioria dos profissionais de marketing e vendas nunca escreveu muito código. E isso
+
+não quer dizer que eles não estivessem cientes de seus problemas e não tivessem ideias de como resolvê-los, mas o conjunto de ferramentas disponíveis na época se resumia basicamente a planilhas e slides do PowerPoint. E a IA mudou isso. A computação em nuvem faz pela construção basicamente o que a bicicleta fez pela mobilidade. Isso torna o processo acessível. Assim, planilhas e apresentações de slides deixaram de ser as ferramentas de negócios padrão disponíveis para todos, o que significa que muitas pessoas que historicamente tinham ideias e não se consideravam construtoras agora podem sê-lo.
+
+Antes da IA, eu me descreveria como alguém com conhecimento técnico suficiente para ser perigoso. Eu consigo ler código. Eu sei escrever código. Provavelmente, vocês não gostariam que meus projetos fossem produzidos em larga escala, se pudessem evitar , mas eu gostaria de saber quem aqui hoje se considera um engenheiro de verdade. Ok, ótimo. Obrigado por ser
+
+corajoso. Quem diria a si mesmo que também possui conhecimento técnico suficiente para ser perigoso? Tudo bem. E quem não lê código nenhum? Ok, obrigado por serem corajosos lá atrás. Bem, essas categorias deveriam ter sido
+
+mutuamente exclusivas e coletivamente exaustivas. Então, se ninguém levantou a mão, reconheço que não há café grátis aqui e que sou o primeiro a falar depois do almoço, mas a questão da IA é que ela nos torna todos suficientemente técnicos para sermos perigosos. O que a IA fez por esses dois últimos grupos foi basicamente fornecer um suprimento infinito de estagiários brilhantes com diplomas em ciência da computação, que podem ajudá-los a implementar todas as soluções que vocês provavelmente conhecem melhor do que qualquer engenheiro com quem trabalhariam em outra equipe. E isso acelera incrivelmente o processo de iteração, além de me fazer sentir como se eu fosse o Harry Potter andando por aí com uma varinha mágica pela primeira vez. Mas, essencialmente, quando você deixa estagiários trabalharem em problemas liderados por pessoas sem formação técnica para construir coisas, você vai obter resultados interessantes.
+
+E há alguns anos, lembro que todos estavam falando sobre o problema das alucinações causadas pela IA. De alguma forma, essa palavra difícil parece não surgir com tanta frequência ultimamente, mas acho que agora temos uma versão mais antiga dela. É um problema de confiança . E se você pedir ao Claude para fazer algo como um relatório de receita, ele não dirá: "Não tenho certeza". Está escrito: "Aqui está." E fornece uma
+
+resposta errada que parece exatamente igual à resposta certa. Então, acho que muitas das palestras desta semana giraram em torno das tecnologias de ponta em otimização, e muita daquela conversa fiada de influenciadores que você vê no LinkedIn e no Twitter fala sobre melhorias mágicas se você, sabe, usar a combinação de palavras exata. Acho que ambas as coisas podem muito bem ser verdade, mas geralmente não tenho tempo para fazer nenhuma delas. Na prática, percebo que o mais prático para trabalhar com IA é algo que todos nós já sabemos de forma bastante intuitiva, pois temos muita experiência trabalhando com outras pessoas. E, dentro dessa perspectiva, estabelecer confiança também não é novidade. Já
+
+sabemos muito sobre como fazer isso pelas pessoas. Portanto, a tese principal da palestra de hoje é, na verdade, que na dúvida, gerencie seus agentes como se fossem outros seres humanos. Se você estivesse ajudando uma equipe de pessoas a descobrir como fazer algo, ótimo. Faça isso também com seus agentes de IA. E se você não levar nada mais desta palestra, esta é a minha única dica prática. Use a
+
+intenção do comandante quando solicitar. Isso é algo que vem da doutrina das forças armadas, mas basicamente, diga aos seus agentes por que você quer que eles façam algo, e eles farão muito melhor. Aliás, isso também funciona para humanos . As pessoas geralmente não gostam de ser microgerenciadas, então dê a elas a intenção do comandante e você obterá ótimos resultados. Mas tenha cuidado, pois os agentes foram treinados com material fornecido por outros humanos e, portanto, gostam de se controlar excessivamente , o que geralmente não é desejável. Não diga ao Claude para se aprimorar
+
+sozinho, senão você vai acabar com microgerenciamento. Você precisa recuar e dizer: "Lembre-se, estamos falando do porquê." Enfim, vamos aos exemplos. Então, a primeira coisa que precisei fazer recentemente foi reformular todo o nosso site. Na minha empresa anterior, que tinha 600 funcionários e onde eu liderava a equipe de marketing de produto, isso teria significado vários profissionais de marketing de produto, um designer, alguns gerentes de produto consultores, uma equipe web, e levaria 2 meses. Então, em geral, com IA,
+
+às vezes você simplesmente tem que experimentar para ver se houve melhorias suficientes desde a última vez que você tentou. Então, eu fiz isso, sabe, modo YOLO, aqui estão as fontes, vão ler tudo, por favor, me deem meu site. E foi obviamente um fracasso, mesmo usando um bom modo de planejamento no Claude primeiro. Tenho certeza de que isso acabará funcionando, mas não funciona hoje. Então, você precisa construir alguns andaimes.
+
+E por andaimes, o que quero dizer é que você precisa dizer a eles o que precisam saber sobre o seu negócio. Portanto, mantenho essa lista de ativos essenciais para toda a nossa empresa. Penso que a documentação é algo que os humanos geralmente deveriam ter usado de qualquer maneira, mas que muitas vezes era também algo delegado e esquecido. Enfim, eu mantenho esses recursos principais, e um dos mais importantes aqui é a referência de funcionalidades do produto, porque no site você precisa falar sobre o seu produto. E isto é algo que eu realmente compilei usando IA. Então, não fui
+
+eu que escrevi tudo isso , mas se você abrir um desses cartões, verá que ele explica o que a funcionalidade do produto faz e por que ela é importante para várias personas, que também estão definidas nesses materiais de referência. E também mostra o histórico de como Claude descobriu tudo isso. Portanto, essas são citações de todos os sistemas aos quais está conectado. Posso segui-los de volta se precisar de mais detalhes, mas isso me ajuda a saber que não houve alucinação das partes importantes. E se você olhar para o que tínhamos neste site, verá que isso se relaciona diretamente com o que estava na página inicial, e se eu entrar nessas páginas de produtos, também haverá uma ligação direta com o conteúdo da página inicial . Então, o passo aqui foi
+
+definir a estrutura primeiro e depois dar liberdade criativa ao Claude. Não tente arriscar tudo desde o início. Aliás, se esse tipo de raciocínio sobre referências à capacidade do produto for novo para você, acho que este é provavelmente o melhor livro sobre como fazer isso. Há também um bom resumo que alguém escreveu online, especialmente sobre os passos cinco e seis. Acho que esses são os pontos importantes para isso, mas, sinceramente, vale a pena ler o livro todo .
+
+Bem, este ticker está bem na minha frente, no canto da tela, então vou te dar mais cinco segundos para analisá-lo e depois podemos prosseguir. Outras duas coisas importantes são a escala geral de D Sloop, existem muitas delas disponíveis , e também consulte o Persona Bench. Tenho um conjunto de agentes que representam cada uma das personas importantes e posso pedir que eles revisem algo sob demanda e deem suas opiniões. Mas a segunda é a nossa radiante bibliotecária. Então, isso é algo que realmente existe dentro do nosso produto, e vou mostrar como funciona com um diagrama. Então, esta é a bibliotecária. Se
+
+você, o usuário, tiver uma pergunta como " Quanto de produção criamos no primeiro trimestre?", Então seu agente vai alegremente dizer: "Ah, ok. Bom, trimestre significa, você sabe, de janeiro a março. Vou verificar a data de criação." E isso provavelmente não está correto. Então, o que fazemos na
+
+verdade é que o programa consulte primeiro o bibliotecário. E o bibliotecário tem acesso à documentação e à biblioteca de itens de conhecimento sobre sua empresa, bem como ao esquema de consultas anteriores que não obtiveram sucesso. Assim, basicamente, isso fornece ao seu agente uma memória instantânea de todas as coisas importantes. Sabemos, portanto, que o ano fiscal aqui vai, na verdade, de fevereiro a abril. E o seu pipeline significa coisas que só me encontram na segunda etapa ou posterior.
+
+E então você obtém uma resposta confiável e bem fundamentada, com citações, em vez de algo que descobriu pela primeira vez. Eu ia fazer uma demonstração ao vivo disso, mas acho que vamos pular essa parte por questões de tempo e passar para o exemplo número três, que é o que chamamos de nosso fluxo de trabalho de júri e juiz. Então, criamos esta empresa para resolver o problema da atribuição multitoque, que é como o Santo Graal de qualquer estratégia de entrada no mercado. E levamos dois anos para chegar perto disso. Mas, ao longo do processo, construímos essa camada de dados nativa de IA e descobrimos que era exatamente disso que todos precisavam para todo o resto. E quando voltamos à
+
+atribuição multitoque, possibilitada pelo Opus, obtemos resultados realmente interessantes e bastante impressionantes. Então, vamos analisar como esse fluxo de trabalho funciona, porque existe uma classificação de desafios na entrada no mercado para os quais não há uma resposta empiricamente correta. E temos um modelo de como lidar com isso no mundo real. Geralmente envolve um julgamento por um júri de seus pares. Então, aqui estamos fazendo algo muito semelhante, onde você poderia dizer: "Gostaria de receber os créditos pelo acordo com a Acme." E
+
+seu agente não vai simplesmente responder a isso por conta própria. Eles vão formar uma equipe de analistas independentes que examinarão os dados de forma independente e emitirão uma opinião fundamentada sobre a quem atribuem o crédito por esse negócio. Nenhuma dessas conclusões está necessariamente correta, mas são pesquisas independentes que retornam ao juiz de consenso, que diz: "Não estou tratando isso como fato. Estou tratando como contribuição e vou avaliar a qualidade do raciocínio de cada um desses analistas para ajudá-los a chegar à versão final. Se não houver consenso suficiente, vou ampliar o júri. Mas
+
+meu trabalho não é pesquisar sozinho. É dizer: 'Aqui está o resultado final baseado em uma equipe inteira de analistas independentes que fizeram um excelente trabalho de pesquisa'. Isso é algo que vemos no mundo real. Faríamos o mesmo com humanos . Acontece que vários pesquisadores, com alguém que ajuda no final, são melhores do que uma única pessoa se debruçando sobre o assunto indefinidamente."
+
+Assim terminam os três exemplos. Mas tenho um bônus. O bônus está aqui: lágrimas de agentes. Na minha experiência, não se pode consertar a estupidez. Basicamente, isso significa que amigos não deixam amigos usarem arreios ruins ou...
+
+Modelos de inteligência artificial pouco sofisticados para trabalhos importantes. Um exemplo disso é o Slackbot, que lançou sua funcionalidade de cliente MCP há algumas semanas. Agora você pode conectar o Slackbot e ele se comunicará com os MCPs, e eu pensei: "Nossa, que incrível!". Agora, todos que usam o Slack podem consultar o Bibliotecário do Upside, e eu estava super animado para testar, mas descobri que é terrivelmente ruim.
+
+Basicamente, o caso geral é o seguinte: qualquer produto de IA que tenha sido forçado a funcionar em um modelo de pré-assinatura provavelmente não deve ser usado para nada importante, porque a margem nesses planos simplesmente não deixa espaço suficiente para um modelo de raciocínio inteligente funcionar. Portanto, encontre algo que seja pelo menos de nível dois, e nível dois significa que precisa ser um modelo poderoso. Ele precisa ter atributos como subagentes, modo de plano, suporte completo a MCP. Deve ser capaz de editar arquivos, e existem muitas opções assim por aí. Então, não deixe sua equipe usar apenas a interface web do Chat GPT e esperar um ótimo resultado.
+
+E isso encerra a apresentação. Espero que você fique para o resto da apresentação. Sei que o Jeff, da XAI, virá mais tarde e tem uma palestra incrível sobre como eles basicamente criaram o Upside para todos os dados do resto do mundo. Estarei lá fora por alguns minutos, caso você tenha alguma pergunta. Obrigado.

@@ -1,0 +1,82 @@
+---
+video_title: "I Run a Fleet of AI Agents Across Three Machines. Here's What Broke. - Kyle Jaejun Lee, KRAFTON"
+video_id: 4kYl2_mqmnQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4kYl2_mqmnQ
+video_date: 2026-07-08T08:05:32+00:00
+video_description: |
+  An honest field report from my own personal fleet of AI agents, run across several machines as a daily driver. Less about any single tool, more about the journey: how things that work on one machine break once you scale to many, what it takes to keep a setup like this running, and where it's all converging. Not a company platform — just real, evolving lessons from running it myself.
+  
+  Speakers:
+  - Kyle Jaejun Lee (KRAFTON): Kyle is a builder and AI Platform Engineer working to make AI agents first-class citizens in the workplace
+    X/Twitter: https://x.com/kyleleee_119
+    LinkedIn: https://www.linkedin.com/in/jjlee-swe/
+    GitHub: https://github.com/cooco119
+---
+Olá, eu sou o Kyle. Eu administro diariamente uma frota de agentes de codificação de IA em três máquinas , e esta é a história do que deu errado , começando por mim. Esta é a minha frota, três máquinas que opero todos os dias. O MacBook é onde eu faço meus trabalhos de programação mais pesados ​​e meus projetos pessoais, e ele entra em modo de repouso porque, bem, é um laptop. Em seguida, duas máquinas Linux, ambas sem monitor e sempre ligadas. O Linux A
+
+fica responsável pelas tarefas de programação de longa duração. O Linux B executa meus projetos pessoais paralelos de curta duração . Dois sistemas operacionais, um plano de controle que interliga tudo. E, para deixar claro, esta não é uma demonstração que eu preparei para a palestra. É isto que eu uso o dia todo, todos os dias.
+
+E aqui está, ao vivo, tudo rodando em uma única tela. Agentes de verdade, trabalho de verdade. Esta é uma terça-feira normal para mim. Então, vamos voltar ao início, porque antes de qualquer máquina quebrar, eu quebrei. Quando comecei, era só eu e um terminal.
+
+Alguns painéis do tmux, alguns agentes e mais alguns. E muito rapidamente, estou sentado em frente a quatro, cinco, seis contextos ao vivo simultaneamente. E eis algo sobre o qual ninguém te avisa. Nesse ponto, eu já não estou mais gerenciando agentes. Eu me tornei a pessoa que define os horários, decidindo quem faz o quê. Eu sou a memória, guardando tudo o que
+
+cada um deles está fazendo, e sou o revisor, verificando tudo. Um ser humano, três papéis, seis contextos. Não é escalável. Essa é a bagunça que me destruiu. Eu simplesmente não conseguia lidar com o que seis agentes estavam fazendo ao mesmo tempo. O gargalo era a minha própria atenção
+
+. Então, me fiz uma pergunta um tanto estranha. Como é que um pequeno grupo de executivos consegue gerir uma empresa com milhares de funcionários? Eles não conseguem guardar tudo na cabeça. Eles separam o contexto. Cada
+
+pessoa vê apenas a sua própria fatia. E essa foi a solução. E se meus agentes não fossem uma pilha plana? E se eles fossem uma organização? Então, foi isso que eu construí: uma hierarquia com CEO, vice-presidente, gerente e funcionário. E, por favor,
+
+ouçam o que eu quero dizer. Esses são tipos de entidades reais no sistema. Não é uma metáfora bonitinha. Cada um é um agente independente com seu próprio contexto definido e seus próprios limites de aprovação. O contexto flui de cima para baixo.
+
+Cada camada recebe apenas a fatia que precisa. Os resultados voltam a aparecer e eu só analiso o que chega ao topo. Assim, em vez de manter seis contextos na minha cabeça, mantenho exatamente um. Próximo problema: onde reside, de fato, o estado de um agente? Normalmente, ele reside dentro da janela de contexto do modelo, e essa janela se preenche. Então, eu o retirei
+
+. Cada entidade recebe seu próprio espaço de trabalho no disco. Contexto compartilhado que todos devem honrar, vidas em comum. O estado vinculado à máquina reside sob as máquinas. E dentro de cada espaço de trabalho, a missão, o status atual e uma pasta de transferência, contendo o produto de trabalho real que é repassado. O Estado vive
+
+em arquivos. Não está preso a um único modelo. E essa é a coisa mais prática que aprendi durante todo o ano. Quando esse espaço se esgota, a estratégia natural é compactar, resumir a história, abrir espaço. Parei de fazer isso. É lento.
+
+Não posso escolher o que sobrevive. E tudo o que for descartado, simplesmente desaparece. Então, em vez de compactar, eu reinicio. E por reiniciar, quero dizer que, dentro do próprio Claude, eu limpo completamente o contexto. Em seguida, ele simplesmente lê a transferência de informações e os arquivos de histórico que criou para si mesmo e continua exatamente de onde parou. O
+
+contexto pode ser apagado, a máquina pode até travar, e o trabalho ainda sobrevive porque nunca esteve apenas no modelo. Mas ainda havia um problema: o alinhamento. Os planos fluem pela hierarquia, mas se desviam do caminho. E eu só conseguiria pegá-lo caminhando em cada painel com a mão. Então, eu criei um portal de avaliações. Qualquer
+
+camada que deseje agir submete seu plano e, em seguida, bloqueia. Está à espera. Nada será executado sem a minha aprovação. E assim que eu aprovo, um mecanismo de segurança inicia o trabalho automaticamente. Uma caixa de entrada web, um ponto de controle, nunca mais entro nas janelas de trabalho.
+
+Aqui está um ciclo completo. Um plano é apresentado, eu o aprovo e o trabalho é retomado. Esse é o ciclo completo. E, sinceramente, eu não construí esse portal com as minhas próprias mãos. Uma equipe de infraestrutura dentro da frota o construiu. Agentes que
+
+criam as ferramentas que executam os agentes. Acho que esse é o objetivo principal. Assim, em uma única máquina, tudo isso funciona perfeitamente. E então não aconteceu. Então, uma máquina só não era suficiente.
+
+Cinco coisas quebraram. Falha. Primeiro, meus agentes continuavam fazendo o trabalho eles mesmos em vez de encaminhá-lo a um funcionário. O orquestrador deve delegar. Em vez disso, simplesmente arregaça as mangas e realiza a tarefa por conta própria. Errado.
+
+Então eu forcei a barra. Um conjunto de ferramentas de linha de comando (CLI) com habilidades que chamam essas CLIs. Assim, o despacho torna-se o único caminho possível . Segundo fracasso, e este é quase engraçado. Conforme eu continuava a atribuir mais tarefas aos meus gerentes, eles continuavam a criar mais e mais painéis de tarefas dentro de uma única janela, até que ficou tão lotado que os painéis ficaram pequenos demais para ler. Nem mesmo o tmux
+
+capture pane, ferramenta que eu usava para ler um painel programaticamente, conseguia mais extrair informações úteis deles. Eu literalmente fiquei sem espaço para ver o que minha própria frota estava fazendo. Falha três, falta de memória. Olha só isso. Esse é o meu monitor de atividades, completamente soterrado por código na nuvem e processos do MCP. Troca quase completa.
+
+Basicamente, não há mais memória livre. As sessões foram se acumulando até que a máquina não conseguia mais respirar. Na quarta falha, obtenha as credenciais. A expectativa é de clareza. Credencial A para espaço de trabalho A, credencial B para espaço de trabalho B, um para um. Na realidade, eles
+
+colidiram, se cruzaram e acabaram em espaços de trabalho errados. A solução foi criar um ambiente limpo e totalmente separado para cada espaço de trabalho. E a quinta falha, aquela que realmente doeu. O MacBook é um laptop, então, no momento em que perde energia ou se desconecta da rede, todas as tarefas em andamento são interrompidas . E certa vez eu coloquei tantos trabalhadores nela que a máquina inteira simplesmente parou de funcionar. Voltei mais tarde, abri
+
+a tampa e ele já havia reiniciado sozinho. Tudo que estava em voo simplesmente desapareceu. Então, a primeira coisa que fiz foi criar um comando de inicialização, um comando de inicialização geral, e toda a frota voltou a funcionar imediatamente porque todo o estado estava armazenado em arquivos. Mas uma máquina que simplesmente desaparece assim, foi quando eu soube que uma máquina só não ia dar conta do recado. Cada uma delas apontava para a mesma resposta. Então, adicionei máquinas.
+
+Eis a divisão. O MacBook carregava tudo, desde programação pesada até meus projetos pessoais. Então, eu me desfiz dele. Tarefas de programação de longa duração eram executadas no Linux A, projetos pessoais de curta duração eram executados no Linux B, ambos sempre ligados. Mais recursos, o trabalho de longa data finalmente saiu do laptop, e ainda um único plano de controle sobre tudo isso.
+
+Mas agora tenho o contexto necessário em uma máquina para usar em outra. Como faço para movê- lo? Git. Eu confirmo os arquivos de contexto e envio. Então eu uso o comando ` tmux send-keys` via SSH para acessar a outra máquina e instruí-la a executar o comando ` pull`. O sistema baixa os arquivos, o agente lê
+
+os arquivos e continua exatamente de onde o primeiro parou. É claro que não estava tão limpo assim. Quando duas máquinas apontam para o mesmo diretório e ambas o alteram, ocorrem conflitos. O mesmo contexto divergiu silenciosamente, então eu o separei. Diretórios específicos para cada máquina armazenam o estado de cada uma, e os arquivos compartilhados só são alterados por meio de um pull request. É entediante, mas é justamente o tédio que
+
+impede as duas máquinas de discordarem silenciosamente. Então o portal se voltou contra mim. Agora eu tinha um em cada máquina, então voltei a verificar várias caixas de entrada. Então, eu os desmoronei. Cada máquina envia suas solicitações de revisão via SSH para um gateway principal, e esse gateway principal reside em um servidor Linux sempre ligado porque, lembre-se, o Mac entra em modo de repouso. Seu único ponto de
+
+controle não pode ser algo que adormece. E então, o meu fracasso favorito de todo o projeto. Eu estava desenvolvendo em todas essas plataformas, alternando entre elas , e em certo momento fui procurar um recurso que eu havia criado e, sinceramente, não conseguia me lembrar em qual máquina o havia desenvolvido. E foi aí que a ficha caiu. Preciso de um ponto de partida para criar as raízes. Assim, o Discord se tornou
+
+meu único roteador. Um robô por máquina. Mac, Linux A, Linux B. Meu celular agora é o controle remoto de toda a frota. Então, onde estou agora? Sinceramente, há uma
+
+série de coisas que ainda não resolvi. Quatro deles. Consistência entre máquinas, abstraindo as ferramentas locais que ainda estão restritas ao meu Mac, os servidores MCP, o navegador, a transferência segura de credenciais entre instâncias e o gerenciamento de recursos. Eu realmente quero parar de ser quem decide o que vai aonde. E quando alinhei essas quatro perguntas, percebi que elas não são nada novas . Um agente deve apenas declarar o que
+
+precisa, não onde atua. Acima dele está o orquestrador, o portão de revisão, a hierarquia lógica. Abaixo, computação, segredos, ferramentas. Um agendador o posiciona, e as máquinas simplesmente desaparecem por baixo. Essas são exatamente as perguntas que o Kubernetes já responde.
+
+Então, é para lá que estou indo. Não vou reinventar a computação, os segredos e as ferramentas. O Kubernetes já resolveu esses problemas. Estou empilhando-os um abaixo do outro e construindo meu gerenciador de orquestração por cima. Orquestração de tarefas, fluxo de revisão, gerenciamento de contexto. Reutilize o que já existe e
+
+construa a nova parte sobre a base. E essa é a realidade. Uma máquina, eu consertei. Em diversas máquinas, ainda em fase inicial, ainda em construção. Se você estiver gerenciando agentes em qualquer escala, eu adoraria trocar experiências, porque essa é a parte que ninguém ainda descobriu. Estou no LinkedIn e no X. Os links estão
+
+na descrição. Muito obrigado.

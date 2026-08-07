@@ -1,0 +1,89 @@
+---
+video_title: "Computer-Use 2.0: Agents Just Got Multi-Cursor — Francesco Bonacci, Cua"
+video_id: ZSQb5fzRFPw
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZSQb5fzRFPw
+video_date: 2026-07-15T22:45:06+00:00
+video_description: |
+  Three agents click, type, and scroll through three different apps on one desktop at the same time, and the user's own mouse and keyboard never move. That's the live demo behind cua driver, a tool the team built in a single weekend after Codex shipped its own computer use model. Instead of taking over the hardware cursor, it talks straight to the accessibility layer underneath the operating system: UI Automation on Windows, AT SPI on Linux, AX on macOS. Those undocumented APIs let a click land on a background window or a keystroke reach a hidden one, so any number of agents can act without stealing focus from each other or from the human sitting at the machine.
+  
+  To know whether any of this can be trusted, the team built CUABench: over 130 verifiable tasks across 42 environments and five platforms, each one attacked by a matrix of agents trying to reward hack it before it's allowed into the dataset. Swapping a standard computer tool for cua driver pushed pass rate on a 4K benchmark from 62% to 80% while using 34% fewer tokens, mostly because it watches one window instead of the whole screen. The newest addition, built with Snorkel AI on real circuit design software, humbled every model tested: the best agent fully passed only 6 of 25 electrical engineering tasks, every one of them an edit to an existing schematic, and starting from a blank schematic dropped every model straight to 0%.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/francesco-bonacci-70428a121/
+  
+  Timestamps
+  0:00 - Introduction and Vision of Cua
+  2:40 - Overview of Cua Driver and Background Operation
+  6:34 - Introduction to Cua Bench and Agent Evaluation
+  10:50 - Cua Fleet and GPU Infrastructure Optimization
+  15:08 - Q&A Session
+  15:44 - Discussion on Mobile and Android Support
+---
+[música]
+
+Obrigado por dedicarem seu tempo para virem até aqui. Hum, eu sou Franchesco. Eu sou o CEO da empresa. Ah, além de mim, havia mais algumas pessoas. Meu colega Dylan e meu chefe de infraestrutura Rob. Eles vão
+
+subir ao palco daqui a pouco. Mas antes disso, quem está animado para uma conversa sobre agentes que usam computadores ? Vocês estão animados? Amável. Se eu perguntasse, tipo, o que era um agente que usa computador há um ano, provavelmente metade das pessoas diria que não tinha a menor ideia do que realmente significava usar um computador. Então, hoje vou
+
+levar vocês em uma jornada. Basicamente, partindo da nossa visão inicial sobre o usuário de computador, estamos falando de uma nova forma de agentes que se comunicam e modelam a inteligência. Então, vamos começar com a visão do Quad Driver, de onde viemos, e quantos de vocês trabalham com usuários de computador há pelo menos um ano? Que tal uns dois anos? Amável. OK. Portanto, nossa equipe tem muita
+
+experiência, remontamos à nossa época na Microsoft. Estávamos trabalhando com esse tipo de agentes "guey", como os chamávamos antigamente. Hum, e existe um exemplo de um ciclo de agente humano à moda antiga. Basicamente, nos referimos a isso como um loop humano, onde você terá um loop de agente. Você terá que tirar uma captura de tela que os agentes precisarão analisar e usar como base para um plano, e então você basicamente trabalhará com um espaço de ação, clicando, digitando e rolando a tela. Então, é a isso que
+
+nos referimos como o uso de computador à moda antiga, versão 1.0, sabe, só para definir o tom desta apresentação, e percorremos um longo caminho desde esse tipo de uso de computador por agentes. Então, vamos dar uma olhada rápida nesses slides, mas essa é a maneira antiga de representar o loop desses agentes, como um humano faria. Bem, vamos lá
+
+. Há mais ou menos dois meses, lançamos um projeto de código aberto. Chama-se Quad Driver e, hum, nós...
+
+nós o fizemos funcionar em segundo plano. Isso significa que o usuário do seu computador não assumirá o controle da sua tela como o usuário do computador 1.0 fazia antigamente, algo parecido com o que o Agent Loop fazia antigamente . E tudo começou quando a Codex lançou seu modelo para uso em computadores há dois meses. Então, meio que aceitamos o desafio porque já estávamos trabalhando com esse tipo de usuário de computador com experiência. Então,
+
+durante um fim de semana, encenamos algo juntos. E o truque aqui é realmente... não deixar que seus agentes tomem conta da sua tela. Então, há
+
+muita magia negra acontecendo por trás da madeira, só para dar um pouco de contexto. Existem algumas APIs não documentadas presentes no framework da Apple que vem instalado no seu laptop e, como você pode ver aqui na demonstração, há um agente que não está assumindo o controle do seu laptop. Nós conseguimos fazer funcionar não apenas no Mac OS, mas também em sistemas Windows e Linux. onde este é o primeiro driver que reside no seu laptop e permite que qualquer agente se conecte ao sistema operacional subjacente, seja usando árvores de acessibilidade ou uma abordagem em nível de captura de tela . Nós meio que pegamos tudo isso, é o que os agentes realmente veem no que diz respeito a isso. Você precisará
+
+instalar o driver quad. Os agentes irão tirar uma captura instantânea do estado da janela e você terá que observar. Nós realmente gostamos de usar um caminho de ação diferente para simular o uso do computador em tempo real. Então, você realmente precisa observar o espaço, neste caso, apenas chamando algo como ` getWindowState`, você obtém uma representação da árvore de acessibilidade, além de uma captura de tela, e então você tenta uma execução em segundo plano usando a árvore de acessibilidade e, se isso não funcionar, nós fazemos o trabalho pesado para você e tentamos um clique em segundo plano de pixel . Essa é a melhor etapa para obter informações de contexto neste momento. Não se comporta da
+
+mesma maneira que o Mac OS, o Windows e o Linux. Então, nós fazemos parte do trabalho pesado para você, para que seu agente de IA possa ser executado e interagir no seu MacBook. Como fazemos para não quebrar nada entre os ciclos de lançamento? Temos, por exemplo, muitos investimentos acontecendo nos bastidores, quando testamos novos lançamentos. Temos cerca de oito conjuntos de aplicativos diferentes que usamos para garantir que não haja problemas entre as diferentes versões.
+
+Entre os nossos primeiros clientes, você pode encontrar empresas como Clicky Mass, Queno H Company e Droid Factory. Ah, um enorme agradecimento a eles por usarem o driver quad e, basicamente, por liberarem muitas contribuições do projeto original de volta para nossa estrutura. Bem, sem mais delongas, vou passar para a próxima parte da apresentação, que será sobre inteligência. E vou pedir ao nosso diretor de tecnologia, Don, para tratar disso. Olá. Então, obrigado, Franchesco. Com o
+
+Cooler Driver, demos mãos a um agente, mas a questão passa a ser: como podemos confiar que o agente usará essas mãos corretamente e não deixará nada danificado? Para responder a isso, tivemos que construir o Kuabench. Então, levantem as mãos quem aqui já ouviu falar do Terminal Bench ou do Harbor. Sim, alguns de vocês já ouviram falar. E se você já criou uma tarefa para o Terminal Bench, isso pode parecer familiar. Mas no Kuabench, uma tarefa é composta
+
+de três partes: a função de configuração, que configura a máquina para o estado inicial. A função oráculo fornece uma trajetória ideal para a tarefa, enquanto o avaliador sonda o ambiente para verificar se o agente concluiu a tarefa com sucesso. Ao contrário do banco de terminais, o oráculo aqui são ações de garotos. Então, quando você escreve isso, fica parecendo uma pilha de gosma, e escrever ambientes exige escala e experiência. Em computadores desktop, temos como alvo mais de cinco plataformas e tentamos condensar tudo isso em um único arquivo Python. Assim, usando o SDK Kubaben,
+
+você pode escrever um programa que funcione em todas as plataformas de desktop em um único arquivo Python e usar o mesmo SDK para sondar essa GUI e obter dados de agente utilizáveis. Qualquer pessoa ou agente pode criar uma dessas tarefas e, ao colocá-la em prática, você obtém um catálogo real. Atualmente, temos mais de 130 tarefas verificáveis, 42 ambientes e distribuídas em cinco plataformas. E cada um desses problemas é facilmente reproduzível usando nossa CLI. E a mais recente adição aos nossos conjuntos de dados é algo de que nos orgulhamos. Em
+
+colaboração com a Snorkel AI, desenvolvemos o KUBench Kyad, que testa agentes de uso de computador em tarefas de engenharia elétrica, utilizando software criado por profissionais reais e funções de avaliação que simulam os circuitos. Mas os resultados são humilhantes. O melhor agente que testamos obteve aprovação total em apenas seis das 25 tarefas. Desses seis, 100% envolviam a edição de um esquema existente. E quando começamos a tarefa a partir de um esquema em branco, a taxa de sucesso cai para 0%.
+
+E em todos os modelos que testamos, a classificação geral se manteve estável. Nenhum modelo alcançou uma recompensa superior a 30%. Mas, uma vez que você consiga marcar um gol, você pode melhorá-lo. Se analisarmos o conjunto de dados básico do Kua Benchmark, ampliado para resolução 4K, ao testar um agente, normalmente obtemos uma taxa de aprovação de cerca de 62%. No entanto, ao trocar a ferramenta de teste do agente da versão integrada para o driver Kua, a taxa de aprovação salta de 62% para 80%, usando 34% menos tokens. Isso ocorre principalmente porque o
+
+driver Kua se concentra em uma janela específica, em vez de toda a área de trabalho. Mas nossas avaliações podem indicar que você pode confiar no modelo XYZ para executar a tarefa XYZ. Mas como você pode ter certeza de que a tarefa, como você pode ter certeza de que a avaliação é confiável? Assim, antes de testarmos uma tarefa contra qualquer agente, primeiro tentamos quebrar o ambiente nós mesmos. Temos uma matriz de agentes que tentam realizar hacking de recompensa e quebrar o ambiente, e coletamos todos esses dados e os compilamos em uma análise de código no estilo CodeRabbit, e somente as tarefas que sobrevivem ao nosso pipeline podem entrar no conjunto de dados. E se
+
+você nos perguntar como confiamos nesse agente, a resposta é que ele simplesmente jura de pés juntos . Mas para medir a inteligência de um agente, não basta medir sua capacidade de executar ações com sucesso. Você também precisa medir sua capacidade de compreender o mundo em que opera . Cada execução que gravamos pode ser analisada em qualquer ponto de sua trajetória para fornecer o estado do computador naquele instante. A partir daí, podemos analisar um modelo solicitando a previsão da recompensa, do estado interno ou de qualquer outra observação do computador e compará- la com a bifurcação. E essa previsão
+
+é o modelo mundial do agente tornado mensurável. E com isso, vou deixar Robert subir ao palco. Obrigado, Dylan. Olá a todos. Bem, eu sou o diretor de infraestrutura da Kua e estou aqui para falar com vocês sobre como vocês provavelmente estão perdendo muito dinheiro com GPUs ociosas se usam agentes de treinamento de aprendizado por reforço para uso computacional. Então, eu
+
+gostaria de apresentar este diagrama para vocês. Será que alguém já está familiarizado com esse diagrama ou acha que é algo que a maioria de nós nunca viu antes ? Incrível. Muito específico. Quase tudo aqui não é realmente importante para o que estamos discutindo, mas as partes em azul são... e o que
+
+elas basicamente representam são GPUs... gerando tokens para... treinamento de RL.
+
+E se você der um zoom nisso um pouco, poderá ver como isso normalmente funciona em um ambiente sandbox: você gera alguns tokens, conclui sua tarefa em um sandbox e então fica esperando um novo sandbox ser iniciado ou o sandbox existente ser reiniciado. O problema aqui é que isso representa apenas custo puro. Bem, sua GPU realmente não está fazendo nada de útil aqui e, sabe, não sei se você já ouviu falar, mas o tempo de GPU está bem caro agora. Então, à medida que você aumenta a escala, esse custo se acumula bastante e você realmente precisa se concentrar em minimizá-lo, se possível. Uma coisa que você pode tentar fazer é minimizar o tempo de inicialização do seu ambiente de teste ( sandbox). E quero dizer, você deveria fazer isso,
+
+é uma ótima ideia, mas, sabe, especialmente em ambientes de uso de computador, às vezes isso pode ser um pouco impraticável. Sabe, seus pesquisadores podem te fornecer um ambiente de 40 gigabytes, e isso pode ser necessário, mas leva muito tempo para baixar e iniciar tudo isso. Então, como você projeta sua infraestrutura de treinamento para minimizar a inicialização da GPU ou o tempo de inicialização do sandbox? uh mesmo quando o ambiente de testes não é bem projetado para ser inicializado rapidamente. Então, a forma como fazemos isso... nossa,
+
+não é? A forma como fazemos isso é com uma piscina, e isso deveria ser animado, mas não está animando. Então, acho que vou explicar oralmente o que é isso. Temos um conjunto de GPUs aqui, todas querendo usar um sandbox, e o que faremos é usar um autoscaler baseado em demanda para detectar quantas GPUs precisam de um sandbox no momento, e podemos aumentar o pool para esse tamanho sob demanda. E o que isso significa é que, se você tiver, digamos, um pool de memória ativa que deseja alocar para o seu cluster de GPUs, você não precisa saber antecipadamente qual será o tamanho desse pool. Podemos calcular,
+
+sob demanda, qual o tamanho ideal da piscina aquecida para você. E isso pode até mudar ao longo do seu treino de vários dias . Você pode começar precisando de muitos ambientes de teste, mas conforme suas gerações forem ficando mais longas, talvez precise de menos. Então, esses também poderiam ser, sabe, facilmente de duas a quatro vezes mais baratos que suas GPUs. Portanto, ter um pouco de redundância aqui ainda permite economizar dinheiro, pois você está maximizando o uso do tempo da sua GPU . Sim, venha me ver depois se
+
+quiser ver a animação, porque é muito legal. Então, sim, agora, quando você tem essa redundância no seu pool, você está pagando o custo do tempo de inicialização na infraestrutura, não na GPU. Assim, seus workers de GPU têm utilização total. E, como usamos isso, podemos fornecer sandboxes instantâneos para suas GPUs para Windows, Linux, Android e macOS em breve. Vou passar a palavra de volta para o Franchesco para que ele finalize a apresentação.
+
+Amável. Ah, obrigado Don, obrigado Rob por assumirem isso. Sim, temos bastante tempo para perguntas e respostas. Então, se vocês tiverem alguma pergunta, ficarei feliz em respondê-las, seja sobre o Quad Driver Qua Bench, basicamente o que o Dylan apresentou, ou sobre o Qua Fleet, que foi o que o Robert explicou
+
+. Qualquer dúvida, podemos encerrar por aqui. Oh, eu vejo. Bem
+
+, a história do Android para dispositivos móveis tem um enorme potencial . Bem, estamos conversando com a equipe da ARM porque eles têm um aplicativo semelhante ao ARNES que roda no Android. Acho que, se você está falando de segundo plano, existe um certo nível de execução em segundo plano que pode ocorrer se você conteinerizar uma carga de trabalho. Basicamente, no Android, você pode até executar seu próprio contêiner, como o Ubuntu ou um contêiner Docker com interface gráfica, dentro do próprio Android. Mas sim, o ecossistema Android, especialmente em comparação com o iOS, é mais voltado para esse tipo de uso de computador em segundo plano, mas mais para o uso de ferramentas do que para o controle de uma interface gráfica. Nós trabalhamos
+
+com a estrutura de atividades e usamos ferramentas em segundo plano.
+
+Legal. Obrigado, pessoal.

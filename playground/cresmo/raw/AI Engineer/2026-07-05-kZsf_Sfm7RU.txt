@@ -1,0 +1,113 @@
+---
+video_title: "The Missing Layer After Launch - Raphael Kalandadze, Wandero AI"
+video_id: kZsf_Sfm7RU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=kZsf_Sfm7RU
+video_date: 2026-07-05T03:15:05+00:00
+video_description: |
+  We run a production system of agents for real customers. The team that keeps it healthy is also made of agents.
+  
+  Operating an agent product isn't like operating software. When our agent fails a customer — a dropped constraint, a stale price, a confident wrong answer — nothing crashes and no log lights up. The failure is in the conversation, not the stack trace. So we put agents on the operations:
+  
+  - One monitors production conversations and judges where the agent actually let a customer down — across thousands of live sessions, not a sampled few.
+  - One watches logs and system health and traces real problems back into the code.
+  - One writes and runs tests, because "green CI" means nothing for a non-deterministic agent.
+  - One reviews every PR — human or agent-authored — against a single question: root cause, or just the symptom?
+  
+  Humans stay at the merge and approval boundaries. The agents do the watching, judging, testing, and drafting that no human team could keep up with at this volume.
+  
+  This talk is the honest version: what each operating agent actually checks, where we trust it and where we don't, what breaks, and why operating an agent system is becoming its own engineering discipline — done, increasingly, by agents.
+  
+  Speakers:
+  - Raphael Kalandadze (Wandero AI): Co-founder and CTO of Wandero AI, an agent-native operating system for travel and hospitality, and co-founder of Tbilisi AI Lab, where we build the first Georgian large language model.
+    X/Twitter: @RaphaelKalan
+    LinkedIn: https://www.linkedin.com/in/rapael-kalandadze/
+    GitHub: https://github.com/RRaphaellRaphaelKalan
+---
+Tudo bem. Então, você criou um agente, lançou-o, tudo funciona muito bem em uma demonstração, todos estão felizes. Mas agora deixe-me fazer algumas perguntas simples. Então, como saber se isso está realmente funcionando na prática? Como é possível acompanhar centenas ou milhares de conversas reais todos os dias? Como você
+
+avalia ou entende a saúde do sistema? Como você pode melhorar isso? Como encontrar as falhas que você ainda nem sabe que existem? E é exatamente isso , não é? Portanto, a maioria das conversas sobre os agentes termina no momento do envio. Então, aparentemente funcionou,
+
+fim da história. Mas acho que o envio é o momento em que o trabalho de verdade começa. E, por algum motivo, apenas algumas pessoas estão falando sobre isso. E eu chamo isso de camada que faltava. Então, vamos lá.
+
+Então, esse é o mundo em que estamos vivendo. Então, você pode criar todo o produto, pode criar uma startup inteira em alguns dias, em algumas semanas. Você pode escrever 100.000 linhas de código. Você pode gastar muitos tokens.
+
+E, para ser sincero, essa é a parte mais fácil hoje em dia, com a ajuda dos modelos mais recentes . Mas acho que o envio é o momento em que o trabalho de verdade começa. Porque você precisa fechar o ciclo o mais rápido possível. Portanto, após o lançamento, você precisa ter algum controle e compreensão do sistema. E, pela minha experiência, o ciclo de vida é pelo menos tão importante quanto o próprio produto, às vezes até mais. Porque o
+
+feedback preciso é o que ajuda a melhorar o produto a cada dia. E essa é a camada que faltava, e é sobre isso que trata o resto desta palestra. Então, o que acontece depois do lançamento? E isso não é nada surpreendente. Tínhamos as mesmas dúvidas no software clássico antigo . Você precisa monitorar o que está
+
+acontecendo, precisa entender como funciona, precisa ter registros para detectar os problemas e corrigi-los. E para sistemas agentes, cada um deles é ainda mais difícil, e às vezes eles se transformam em algo genuinamente novo. Então, vamos falar sobre por que isso é difícil e por que é difícil agora. Então, o agente não é um software normal, certo? Você não tem apenas algumas funcionalidades e vários botões. Você não tem um
+
+fluxo predefinido que possa testar antes de colocá-lo em produção. E a cobertura é infinita. Então, pense em coisas como Cloud Code ou Codex, eles podem fazer uma enorme variedade de coisas, qualquer coisa que o usuário precise, e a maioria dos agentes faz o mesmo, certo? Então, você dá as instruções e eles conseguem lidar com a situação. E não é possível escrever todas as conversas com antecedência.
+
+Isso nos leva a uma parte detalhada do problema. A parte que me mantém acordado a noite toda. O que significa que você perde a noção do seu próprio sistema. Então, depois de construir o produto, você precisa ter algum tipo de compreensão: ele melhora ou piora? Portanto, precisamos monitorar e entender o que está acontecendo.
+
+E o problema é que as redes de segurança normais não te salvam aqui. E acredite, nós experimentamos algumas coisas. Nós construímos o teste unitário. Tínhamos algumas expressões regulares e algumas verificações baseadas em regras . Chegamos a criar alguns roteiros para simular a conversa com o cliente.
+
+Ah, sim, isso ajuda de algumas maneiras. Mas, no fim das contas, isso é apenas uma pequena parte de todo o problema. Porque os clientes sempre fazem algo diferente. Não dá para anotar tudo. São muitos e todos diferentes.
+
+E Harrison, da mesma forma. Portanto, você não sabe o que seu agente fará até que a produção comece. Então, por que isso é um problema novo? Como você sabe, os mestrados em Direito (LLMs) não são determinísticos. A mesma entrada pode ter um caminho diferente. Mesmo uma ligeira modificação na
+
+entrada pode causar uma trajetória diferente, e as possibilidades são infinitas. Não é possível listar tudo. Não é possível realizar testes preliminares até que a produção comece. A segunda, e a mais assustadora, é a própria altura da falha. Então, vamos pensar no que acontece quando o agente está em execução por um longo período de tempo. Apresentou dificuldades no
+
+meio da tarefa. Hum, teve alguns problemas, mas deu sorte. Ah, foi recuperado. Ele encontra algumas soluções alternativas. Tente usar outras ferramentas ou algo do tipo. E você não recebe nenhum
+
+alerta vermelho, nenhum problema no painel de controle. Parece tudo bem. Mas sabe, isso é um aviso prévio para você. Este é um problema que está oculto e que reside na sua base de código. E você precisa corrigir isso o mais rápido possível, porque se você está falando de agentes confiáveis, não deveria depender da sorte, certo?
+
+E, como mencionado por Anthropic na postagem do blog, às vezes o agente gosta de criar recursos de marketing completos sem verificar se eles realmente funcionam. A próxima é a ferramenta que está chamando, certo? Portanto, a superfície da ferramenta é enorme. Assim, uma tarefa de longa duração exige centenas ou milhares de ferramentas. Às vezes, há vários resumos no meio. Ele usa alguns
+
+subagentes e escreve muito código. Com certeza utiliza um terminal. Isso inclui alguns outros serviços da empresa, bibliotecas de terceiros. E eles trabalham de uma maneira bem diferente o tempo todo. Na verdade, você não sabe o que está procurando.
+
+Portanto, às vezes, terminar não significa que seja útil para o usuário. Talvez não houvesse nenhum problema. Então, o agente terminou, tudo parece bem. A resposta foi positiva. Mas o que acontece, por exemplo, no nosso caso de uso, é que às vezes o usuário pede para criar o itinerário. O agente executa o fluxo.
+
+Isso tornou a viagem possível. Mas foi necessário um serviço diferente. Cometeu muitos erros no cálculo do preço. Portanto, o usuário não está satisfeito. Então, tecnicamente foi bem-sucedido, mas ainda assim não cumpriu a tarefa.
+
+E como eu mencionei, os testes unitários não te salvam aqui. E a produção é o lugar onde você aprende o que precisa, o que precisa testar em primeiro lugar. Tudo bem. Então, o que acontece depois que você lança o produto, certo? Portanto, você precisa monitorar, entender e aprimorar o sistema.
+
+E qual é a fonte da verdade, certo? Este é um registro. Todos têm os registros. Todo mundo adora os troncos. Você tem informações estruturadas.
+
+E, sabe, essas máquinas são as melhores para entender e explorar os registros, muito melhor do que qualquer humano, muito mais rápido, criando scripts para filtrar a enorme quantidade de dados. E essa é a maneira mais óbvia de entregar isso ao agente. Mas assim que você começa a trabalhar nisso , talvez criando um agente, uma habilidade ou algo do tipo, você logo percebe que não é tão fácil quanto imagina, porque exige muito raciocínio. É preciso entender o problema para diferenciar se é um bug real ou um ruído, para analisar a fundo a nova trajetória e entender se é um sintoma ou a causa raiz. Na verdade, você descobrirá que o próprio agente operacional é um problema de agente.
+
+Então, esta é uma visão de ponta a ponta. Então temos rastros, você tem trajetórias, e dá ao agente acesso à base de código. Diagnostica o problema, entende o que está acontecendo e envia o PR (Publicidade de Retorno). E aí você pode ter uma habilidade, um subagente ou algo do tipo que controle o PR, porque, você sabe, a maioria dos agentes está bem ansiosa para enviar o PR. Eles adoram resolver problemas. Preferimos ter um
+
+agente separado que possua um contexto semelhante ao original. Ele tenta verificar o PR em diferentes ângulos, em diferentes vistas, e executa o teste de foco. E, bem, não é tendencioso em relação ao problema em si . Tenta criticar a assessoria de imprensa. E, às vezes, ele solicita alterações. Talvez fechar
+
+o PR diretamente nos ajude a filtrar esses problemas. E então você tem o ser humano no processo, mas às vezes não. Ah, e podemos falar sobre isso mais tarde. Mas, sabe, essa é a coisa mais óbvia que você pode entregar ao agente, o que parece bastante óbvio para a maioria das pessoas. E muitas equipes usam a mesma prática, mas acho que as pessoas não percebem o quão importante ela é, e é preciso dedicar um tempo a isso. Você precisa
+
+calibrar. Você precisa torná-lo confiável para poder confiar no loop. E este é o loop mais rápido que já tivemos. Então, sabe, depois de construir esse sistema simples, você já tem a sensação e a compreensão de como ele se comporta, do que está acontecendo. Você detecta o problema, implementa algumas correções locais o mais rápido possível e consegue ter o PR pronto em meia hora, além de entender facilmente o que está acontecendo. Então, deixe-me explicar
+
+como estou lidando com isso. Nem tudo está perfeito, mas acho que isso vai te ajudar a chegar a algum lugar. Na verdade, temos dois fluxos principais. O primeiro é o loop mais rápido, que ajuda a detectar e corrigir os problemas o mais rápido possível. E a outra é como um zoom out que te ajuda a ter uma compreensão de alto nível e a estar no controle da situação .
+
+Então, o primeiro é um agente de monitoramento de logs , aquele que eu já mencionei. Então, temos trajetórias, temos registros, temos acesso a uma base de código, e ele é executado a cada hora ou a cada poucos 15 minutos, e tenta entender o problema. Analisa detalhadamente os registros, para entender se o usuário ficou preso em algum ponto e, às vezes, envia um PR ou um alerta no Slack. E isso é muito importante porque às vezes o problema é tão crítico que precisamos resolvê-lo o mais rápido possível e, sim, funciona muito bem. Então, este é um exemplo de como o PR pode ser. Então, você tem uma boa
+
+descrição, uma breve explicação do que está acontecendo, alguns metadados, diagramas interessantes, tabelas em formato Mermaid ou ASCII , e talvez alguns elementos HTML que ajudam a ter uma visão geral do problema e a entender rapidamente para que serve esta solicitação de pull request. Então, este é um exemplo de como uma análise estática pode ser feita. Isso ajuda a fornecer feedback rapidamente e a detectar problemas críticos. Às vezes é apenas um aviso, sabe, alguns alertas, alguns problemas, então você precisa verificá- los quando tiver um tempo. E como mencionei, o agente de revisão é bastante crítico porque tenta verificar o problema sob diferentes perspectivas. O sistema
+
+sempre tentava analisar criticamente o problema, atribuir uma pontuação ao problema e, assim que estivesse pronto, enviava o relatório de desempenho para o responsável. E às vezes as pessoas discutem se precisamos de um ser humano no processo, porque, você sabe, ainda há o fator humano no gargalo, neste caso. No nosso caso, o agente de relações públicas e o agente de avaliação enviam 10 vezes mais comunicados de imprensa do que nós três juntos todos os dias. Portanto, precisamos ter um sistema bem definido para lidar com isso e evitar que se torne um gargalo no sistema. Mas, pela minha experiência, como mencionei, este PR e o agente de revisão me ajudam a ter uma boa descrição, alguns artefatos que me ajudam a entender rapidamente o problema e talvez eu gaste alguns minutos para pelo menos entender o que está acontecendo. Então,
+
+acho que por enquanto está tudo bem, mas talvez a gente remova isso no futuro. E sim, as pessoas estão falando sobre isso, então você precisa, você não precisa ser uma pessoa como essa neste problema. Alguns deles preferem remover os humanos desse ciclo. Mas você sabe, a tendência é que primeiro você precisa fechar o ciclo. Então, vamos criar o problema quando você for o gargalo, e aí você poderá se livrar dele com bastante facilidade, eu acho.
+
+Então, aqui estão alguns exemplos de como o feedback do agente de avaliação pode ser apresentado. Como você sabe, são solicitadas algumas alterações, você tem um resumo, alguns diagramas, explicações, quais são os riscos e alguns casos extremos. E às vezes, após algumas iterações do código no loop, onde a chave está pronta, não precisamos que você faça mais nenhuma alteração. Então, depois disso, o humano entrará no loop. Para o agente anterior, como mencionei, isso é especialmente útil quando você precisa corrigir alguns problemas locais.
+
+No nosso caso, ele é executado a cada hora, com a possibilidade de analisar os registros em uma janela de uma hora, e não possui uma compreensão de alto nível do problema. Então, descobrimos que precisamos de outro sistema que nos ajude a obter algo além de uma explicação superficial, uma espécie de indicador da saúde do sistema. E você sabe, a visibilidade é a parte mais fácil . Antes do agente, isso era impossível, então você não pode se aprofundar ou resumir algumas das principais conversas. Mas, neste momento, podemos ter um sistema que ajuda você a pontuar todas as conversas, entender o que está acontecendo e fornecer um resumo geral do sistema.
+
+Então, este é o analisador de sessão e o objetivo principal é me dar a pontuação da saúde do sistema, certo? Então, tentamos verificar cada conversa, executamos muitos agentes de estado, gastamos muitos tokens, mas sim, isso nos ajuda a detectar alguns padrões, conectar os pontos e tentar entender alguns padrões de alto nível. Sim, ele também detecta alguns problemas lógicos, como a causa, quantas chamadas de ferramentas foram usadas, quantos subagentes, quantos resumos ocorreram, etc. Mas também fornece algumas informações sobre IA, algumas entidades, para que você tenha uma compreensão do problema. Então , como mencionei, um dos principais problemas é que você perde o controle do usuário ao iniciar a produção. Portanto, você
+
+precisa de um sistema que o ajude a controlar, ou pelo menos a entender o que está acontecendo, como é a situação , se é saudável ou não. Então, na verdade, deixe-me mostrar a vocês. Um exemplo de como isso se parece. Na verdade, nós mesmos o construímos. Existem muitas outras empresas e ferramentas que oferecem o mesmo tipo de sistema, mas eu prefiro construí-lo eu mesmo porque sei o que me interessa, o que estou procurando. Como podem ver,
+
+temos o estado de saúde do sistema, o número de sessões analisadas, o custo, a pontuação média e uma taxa de sucesso. Temos algumas tendências, temos os insights da IA, e esta é a parte mais importante, quando a IA, o agente, tenta conectar os pontos, encontrar os padrões. Caso existam problemas críticos, você deve fornecer uma descrição para cada um deles, explicando o que são, por que são importantes, qual a causa raiz, quantas sessões foram afetadas e algumas recomendações de correção. Neste momento, estes são apenas dados anonimizados, mas provêm de conversas reais. Então temos uma distribuição de pontuação, o número de sessões ou custos de cada empresa, a análise de sentimento, algumas entidades, temos análises sobre chamadas de ferramentas, toda a taxa de sucesso, quantas foram rejeitadas e por quê.
+
+E você terá uma análise detalhada de cada sessão. Então, ele classifica cada um deles, atribuindo pontuações. Trata-se de quantas vezes o programa foi executado, quantas mensagens foram enviadas, quantas chamadas de ferramentas foram feitas, quantos resumos foram gerados, e você tem uma explicação detalhada para cada um deles, indicando qual era o problema. É algo que requer atenção, e acredito que ajuda bastante, além de permitir que você verifique e observe centenas de conversas. Portanto, o objetivo principal deste painel e do sistema não é corrigir problemas ou bugs específicos. Isso é mais
+
+do que um recurso superficial que permite acompanhar centenas ou milhares de conversas reais. Então, você pode executá-lo uma vez por semana, duas vezes por semana, ou algo assim. Tudo bem. Então, o próximo é que ... Bem, o problema do
+
+agente anterior que mencionei é que o primeiro ajuda você a detectar o problema específico. O segundo objetivo é fornecer uma compreensão geral, mas ambos abordam os registros, o código ou a própria sessão, mas é preciso ter algum tipo de perspectiva do usuário, certo? Por isso, temos um agente de utilização do computador que ajuda você a abrir o navegador, fazer login e tentar simular o próprio cliente, porque às vezes você tem alguns problemas na interface do usuário. Você precisa verificar se está tudo certo. É, e é, às vezes o código e os registros não podem te ajudar dessa forma.
+
+Então, este é um exemplo de como fica . Então, você usava o Codex às vezes. Então, ele usou o próprio navegador. Hum, na verdade, isso está bem lento. E nós tentamos desenvolver uma habilidade específica que conheça nosso site, nosso DOM, como ele se parece, e que seja muito mais rápida, capaz de abrir o site, fazer login, abrir as sessões, enviar mensagens e verificar o que está acontecendo.
+
+Ah, e também verifique como está a aparência, quais são os artefatos. E sim, foi muito bom. Mas, sim, você precisa saber que isso vai gastar muitos, muitos tokens. E também, para todos esses problemas, você precisa lembrar que é necessário dar acesso a todos os tipos de ferramentas necessárias. Então, você precisa ter muitas trajetórias e métricas, banco de dados, interface do usuário, conforme as necessidades dos humanos, certo? Portanto, é
+
+preciso fornecer todo o contexto, todas as possibilidades para entender o que está acontecendo. Por exemplo, para o agente de uso do computador, ao detectar alguns problemas, ele deve ser capaz de analisar as trajetórias, verificar o banco de dados, para entender o que aconteceu. E, sabe, é por isso que eu chamo isso de meta-arnês, todo o sistema, quando tudo está conectado, e o PR ou a resposta dos agentes dependem do problema real, e não de simulações do que está acontecendo. Portanto, o mais importante não é apenas o modelo, mas também construir um agente, um sistema ou uma estrutura em torno dele, que se observe, compreenda, melhore e ajude você, no mínimo, a monitorar o que está acontecendo, mas também, no caso ideal, a fechar o ciclo, enviar solicitações de pull automáticas, notificações, etc., e ajudar a acelerar o processo.
+
+Portanto, o envio é a parte mais fácil hoje em dia. Se você deseja construir um agente de produção, precisa primeiro fechar o ciclo, porque de alguma forma as pessoas não falam sobre a importância do que acontece após o lançamento. Assim, todos podem ter o mesmo modelo, o mesmo agente ou ambiente, mas é necessário um sistema interno que auxilie nesse processo, detecte problemas, forneça informações sobre o que está acontecendo e ajude a aprimorar o produto. Obrigado.

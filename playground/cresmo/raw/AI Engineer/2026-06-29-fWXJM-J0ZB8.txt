@@ -1,0 +1,165 @@
+---
+video_title: "Frontier results, on device - RL Nabors, Arize"
+video_id: fWXJM-J0ZB8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=fWXJM-J0ZB8
+video_date: 2026-06-29T03:30:03+00:00
+video_description: |
+  Most of use reach for a frontier model by default and pay for it on every call, in latency, in energy, in cash, and in everything that leaves their stack. For most of those calls, a small local model would do the job. 
+  
+  RL Nabors, former Meta/React core team member and AWS alum, covers the vocabulary you need to reason about model performance (capability evals, golden datasets, LLM-as-judge) and walks through real cases: a local agentic harness replacing a frontier call, an in-browser moderation classifier defended with production-trace evals, and a generative summarization feature where the rubric turns out to be harder than the model. You'll leave with a framework for deciding when to choose large and off-prem or small and local models, and how to measure your way to the answer instead of guessing.
+  
+  You will learn:
+  
+  - The vocabulary to reason about model performance (capability evals, golden datasets, LLM-as-judge).
+  - A framework for deciding when a small or local model can replace a frontier one and when it can't.
+  - A repeatable process for building capability evals from your own production traces, not someone else's benchmark.
+  - Working examples of using eval results to iterate on prompts and ship with confidence instead of vibes.
+  
+  Speakers:
+  - RL Nabors (Arize): RL Nabors builds developer tools and the communities that make them stick. Previously React and MDN, currently developer experience at Arize, perpetually building Mima.
+    X/Twitter: https://x.com/rachelnabors
+    LinkedIn: https://linkedin.com/in/nearestnabors
+    GitHub: https://linkedin.com/in/nearestnabors
+---
+Olá. Eu sou Rachel Lee Neighbors, e hoje estou aqui para conversar com vocês sobre como usar modelos locais para parar de pagar por modelos de fronteira. Vamos analisar isso com calma. Então, trabalhei em padrões que impulsionam a web atual com a Mozilla no Firefox DevTools e com o W3C em padrões da web, e claro, no navegador Edge da Microsoft . Eu até já fiz parte da equipe do React. Nos
+
+últimos três anos, tenho atuado como consultor de startups de IA e de algumas das nossas empresas favoritas de LLM e navegadores, abordando temas relacionados à web, IA e interface do usuário. E recentemente, entrei para a Arize. Alguma vez seu diretor de tecnologia (CTO) já arruinou seu fluxo de trabalho de agentes com uma pequena alteração de prompt ou uma migração de LLM? Você já foi esse CTO? Bem, você provavelmente precisa da plataforma de observabilidade da Arize para os modelos e os agentes que os utilizam.
+
+Enfim, hoje vou usar um dos projetos de código aberto da Arize, o Phoenix. Falaremos mais sobre isso depois. Mas hoje, especificamente, estou aqui para conversar com vocês sobre como a IA está custando caro para vocês. Cada vez que você recorre a modelos básicos como GPT-5 ou Claude, isso custa caro para você, seus usuários e o meio ambiente. Vamos analisar os custos da inferência que adota uma abordagem única para todos os casos.
+
+Primeiro, temos a segurança. Segurança custa confiança. Ao utilizar um sistema de gerenciamento de bibliotecas (LLM) de grande porte na nuvem, você está enviando dados para servidores remotos, o que sempre acarreta o risco de exposição, interceptação e retenção por terceiros. Temos casos em que o uso remoto de chatbots de IA levou ao armazenamento, violação e vazamento de dados comerciais sensíveis para o público. A latência afeta a experiência do usuário. Já foram realizadas
+
+pesquisas sobre como mitigar os atrasos de resposta em chats LLM em realidade virtual e descobriram que 4 segundos é o limite de credibilidade para os usuários, e muitas chamadas que você fará para modelos grandes levarão mais de 4 segundos, como veremos quando analisarmos o Phoenix. Isso custou caro para o seu negócio. Os custos de inferência de terceiros são incontroláveis em comparação com os custos da API. A agência acumula níveis de inferência, o que significa que, mesmo que os tokens sejam mais baratos, você pode estar usando mais deles ou, se estiver usando quatro deles, eles podem ser mais caros. E, claro, se você não estiver conectado, os modelos remotos simplesmente não funcionarão, o que significa que, a menos que seu software esteja conectado à internet, ninguém poderá usá-lo.
+
+Grandes inferências que ficam offline reduzem a produtividade. Se houver uma interrupção, se você estiver em um local sem acesso ao Wi-Fi ou em um ambiente muito seguro . Atualmente, o custo dos tokens tem caído ultimamente, mas o gasto total com inferência tem aumentado porque as cargas de trabalho de raciocínio dos agentes consomem tokens muito mais rápido do que os preços estão caindo. Mas podemos eliminar completamente a maioria desses custos, e isso começa por nos perguntarmos exatamente quanto [bufa] isso está custando? Será que realmente precisamos de um mestrado em Direito para fazer esse trabalho?
+
+Tudo bem. Você pode usar modelos específicos para cada tarefa , que são pequenos em tamanho e consumo de energia em comparação com uma base de IA. Bem, esta é a minha pequena cola . Se você está procurando um modelo experiente, há uma câmera apontada para alguma coisa? Divisão, sabe, existe um componente de visão? Você pode usar um modelo
+
+como MobileNet, YOLO ou MediaPipe. É um microfone gravando alguma coisa? Existem modelos de áudio como Whisper e Wave2Vec2. Tradução ou análise de bate-papo? É aqui que você poderia usar algo como um pequeno modelo de linguagem, como Gemma ou Quinn.
+
+Esses modelos pequenos são chamados de SLMs, ou modelos de linguagem menores. A definição de pequeno é passível de debate neste caso. Essas ferramentas são ótimas para momentos em que precisamos do poder linguístico de um Transformer generativo pré-treinado , como o GPT, mas provavelmente não precisamos de todo o conhecimento humano em uma caixa preta à nossa disposição, ou não precisamos de recursos multimodais. Não vamos analisar imagens e áudio simultaneamente. Atualmente, os SLMs, modelos de linguagem menores, contêm milhões ou até bilhões de parâmetros.
+
+Um mestrado em Direito (LLM) pode custar bilhões ou até trilhões. Então, você vê aquele ponto grande ali? Esse é um dos mestrados em Direito (LLM) menores que existem. Mas, na verdade, o pequeno ponto representa um dos SLMs maiores. Portanto, você pode ver que há uma enorme diferença no tamanho dos parâmetros, e isso significa que há uma grande diferença no tamanho da máquina que você precisará para executar um desses modelos. A boa notícia é que você não precisa da
+
+maior parte do que está dentro do grande ponto verde ali. Você não precisa de história, não precisa de filosofia, não precisa de todos aqueles chats do Reddit, não precisa de muito do que os modelos aprenderam e com o que foram treinados. A maioria de nós usa nossos modelos para coisas como resumir uma conversa em um chat ou detectar se essa pessoa está sendo um idiota agora. E, surpreendentemente, são necessários menos parâmetros para determinar essas coisas. Ora, a grande vantagem dos modelos de linguagem menores é que eles consomem a mesma quantidade de energia, ou até menos, que os modelos de linguagem maiores para produzir uma compreensão correta.
+
+Temos respostas corretas. Temos pesquisas muito boas que comprovam isso. Modelos de linguagem pequenos...
+
+eles vêm em todos os tamanhos e formatos. A maioria dos modelos de linguagem pequenos para dispositivos móveis e web são implementados com quantização, ou seja, 8 bits, 4 bits, e podem ter requisitos de disco e memória reduzidos a um quarto do necessário . Um bilhão de parâmetros cabe em cerca de 2 GB no formato FP16. Ah, esta grade, aliás, fornece estimativas de limite superior. Essas informações servem apenas para dar uma ideia do que é compatível e do que não é em diferentes dispositivos.
+
+São tão leves que podem ser colocadas em dispositivos. Por falar nisso, meu Pixel Pro vem com um. E, claro, comprei o Pixel 10 Pro assim que pude, porque queria saber como seria trabalhar com um modelo integrado ao dispositivo. Um SLM de minha autoria. A boa notícia é que os modelos de linguagem simplificados estão prontos para produção. A Nvidia
+
+chamou os SLMs de futuro da IA ​​agente. Mais uma vez, um excelente artigo de pesquisa de 2025 que constatou que os SLMs são suficientemente poderosos para executar cargas de trabalho de agentes. E consomem menos energia do que os modelos de linguagem. Deixe-me mostrar um gráfico de barras para você dar uma olhada. Então, digamos que essa seja a quantidade total de energia consumida para realizar uma tarefa que um mestre em direito (LLM) levaria. Um SLM
+
+consome cerca de 25% disso. E um modelo específico para cada tarefa ocupa cerca de metade desse espaço. Portanto, como você pode ver, do ponto de vista energético, é muito mais barato executar os modelos de linguagem menores e os modelos específicos para tarefas. Então, quais são os benefícios? Mais uma vez, mais seguro, funciona offline, sem taxas, mais eficiente e com menor latência porque está no dispositivo, sem viagens de ida e volta. Já faz
+
+algum tempo que venho utilizando IA local. Eu, por exemplo, comecei usando modelos locais. Veja, à esquerda você tem o Claude, mas à direita você tem o Goose, que é um agente virtual aberto com uma interface muito boa para conversar com modelos. E esta aqui, está executando Gemma, e consegue responder. Leva um pouco mais de tempo. Os modelos menores
+
+podem demorar um pouco mais, dependendo do dispositivo que você estiver usando e do tamanho do modelo. Mas uma das minhas perguntas favoritas para fazer a um modelo é qual a probabilidade de os ictiossauros, répteis marinhos da era dos dinossauros, terem ecolocalização, porque se você olhar para seus esqueletos, eles se parecem muito com golfinhos. E é preciso raciocínio biológico para determinar se isso é possível ou não . E acho hilário que até eu, acho que a Gemma 3, tenha conseguido dar uma resposta tão boa que não há evidências no registro fóssil de que eles tenham desenvolvido um melão ou os ossos especializados necessários para a condução que os golfinhos possuem. É claro que Claude desconversou dizendo: "Bem, simplesmente não podemos saber." Hum, mais ou menos uma em
+
+cada três vezes, o que foi interessante. Claude sempre se sentiu um pouco nervoso em relação a expressar uma opinião. Então, como escolher o melhor modelo para o trabalho? Essa é a parte difícil. Uh, recentemente...
+
+Então, como você escolhe o melhor modelo para o trabalho? Eu desenvolvi uma estrutura com o Google que utilizo em meus próprios projetos. Você pode encontrar mais informações sobre isso em web.dev, mas vou explicar aqui. Primeiramente , gosto de pensar nisso como: prototipar em grande escala e implantar em pequena escala. Basta repetir
+
+isso para si mesmo. Protótipo grande. Pense grande. Arrisque tudo. Implantação em pequena escala.
+
+Você quer converter as partes do seu sistema para SLMs e modelos especializados para produção, mas pode criar protótipos em um modelo básico, sem problemas. O primeiro passo nesse processo é determinar se o que você está tentando fazer é sequer possível. Você usa o modelo maior e mais potente e simplesmente vê se consegue fazê-lo executar a tarefa. Veja se você consegue fazer o modelo reconhecer pessoas pela caligrafia ou pela maneira como escrevem. Se isso for possível, então você sabe que outro modelo provavelmente também conseguirá lidar com isso.
+
+Então, você poderia usar um modelo básico como o Gemini, ou poderia usar um modelo específico para tarefas realmente complexas, como reconhecimento de escrita à mão, por exemplo. Essa é uma funcionalidade do produto que eu gosto de desenvolver paralelamente. É a Mima. É um cliente para todas as suas redes sociais. E eu criei uma funcionalidade para isso que resume longas conversas.
+
+Porque, não sei quanto a vocês, mas às vezes vou dormir, acordo e tem 50 comentários em algo que postei. E eu só quero saber, as pessoas estão com raiva de mim? E é isso, essa é uma funcionalidade que me salva de muitos ataques cardíacos pela manhã. Então, primeiro fiz um protótipo com o Claude para provar que era bom o suficiente. Então, você pode ver os pequenos resumos ali, e eles fazem um trabalho muito bom ao indicar quem está falando sobre o quê.
+
+Então, o primeiro passo foi coletar um conjunto de entradas e saídas, ou seja, no meu caso, eu queria coletar um conjunto de tópicos e, em seguida, como eu os resumiria. Ou, neste caso, a forma como Claude os resumiu pareceu- me adequada. Então, exportei um conjunto de dados de referência. Um conjunto de dados de referência é uma coleção selecionada de alta qualidade, preferencialmente composta por pares de entrada e saída rotulados por humanos, que você usará como verdade fundamental para avaliar, validar e comparar seu modelo. Os dados apresentavam este aspecto.
+
+Bem, tudo isso é de conhecimento público, mas você sabe, você pode ver que tem o nome do autor, o conteúdo, quando foi criado, se veio de mim ou não. E eu criei um grande arquivo JSONL com todos eles. Então, havia 14 tópicos, e eu avaliei cada um deles para resumos e anotações. Porque alguns dos resumos, na verdade, se conectam mais profundamente a outros trechos da conversa. Então, eram os mesmos fios, mas tiveram dois desfechos diferentes para eles. Um era um
+
+breve resumo e o outro era um resumo com referências. Tudo bem. Portanto, isso significa 28 exemplos no total . Sim . Então, essas são as coisas que eu ia medir. Antes de
+
+começar qualquer coisa, você precisa saber o que está medindo. O que é sucesso? Nesse caso, o JSON gerado pelo processo de sumarização estava correto? Uma maneira fácil de testar é tentar analisar o JSON. E se funcionar, ótimo! Se não der certo, que
+
+pena. A validade estrutural de referência, sabe, se está apontando para diferentes partes da conversa dentro do resumo, essas partes realmente existem? Consistência factual, ou seja, a capacidade de resumir o conteúdo das discussões de forma razoável. Então, se estivermos falando de gatos, não há um resumo dizendo que estamos falando de filhotes de cachorro. Bem, isso é algo para o qual precisamos de um mestrado em Direito (LLM) para julgar seres humanos, mas os mestrados em Direito serão mais baratos, eu garanto. Um
+
+controle de comprimento, garantindo que permaneça dentro de uma determinada contagem de palavras e, claro, verificando a latência. P50 é, você sabe, a mediana em todo o conjunto de avaliação, e P95 é o pior cenário possível. Tudo bem. Então, você coleta esses dados e agora vai testar e criar diferentes modelos, comparando o desempenho deles com os modelos principais. Você testa do menor para o maior.
+
+Tive que escolher uma seleção de modelos, mas primeiro preciso encontrar uma estrutura, uma ferramenta para fazer as medições. E eu escolhi Phoenix, que por acaso foi criado pela Arize. É de código aberto, é gratuito e os engenheiros que trabalham nele são simplesmente incríveis, se me permitem dizer. Primeiramente, vamos realizar o que é conhecido como avaliação de capacidade. Uma avaliação de capacidades pergunta, sabe, o que esse agente consegue fazer bem?
+
+Neste trabalho, comparamos o desempenho do modelo grande com o desempenho de uma seleção de modelos menores. Dizemos que isto é o que Claude Opus produziu e isto é o que Gemma 4 produziu. Como se comparam entre si ? Para a linha de baixo, utilizei o Soneto de Claude. E você pode ver ali embaixo, no número um, a linha de base. Está ficando muito
+
+bom. Possui uma latência média de 2,9 segundos. O custo para executar 14 dessas tarefas é de aproximadamente US$ 0,22. Então, eu fiz alguns cálculos e descobri que estou usando o equivalente a cerca de um dólar em inferência todos os dias com o Mima. Não tenho dinheiro para pagar por tantas adolescentes que usam o Mima todos os dias. Então, teremos que
+
+executar isso no dispositivo. A boa notícia é que o custo total para todos esses pequenos modelos locais é absolutamente zero, porque essa inferência foi repassada ao consumidor. Funciona no dispositivo deles. São eles que precisam carregar o telefone para que ele possa obter energia da bateria e, assim, funcionar . É claro que você não quer que ele descarregue completamente a bateria, mas isso é assunto para outra conversa, algo que poderemos testar e avaliar no futuro.
+
+Agora, eu escolhi "Vamos dar uma olhada nos nossos concorrentes". Temos o Quen 2.5 Instruct com 1,5 bilhão de parâmetros, ocupando apenas 1 GB em disco, e seu irmão Quen 3, com 1,7 bilhão, um pouco maior. E o Llama 3.2, com seus 3 bilhões de parâmetros e um tamanho compacto de 2 GB em disco. E
+
+depois havia o Gemma 4 E2B, que tem 5 bilhões de parâmetros, um tamanho considerável de 3,1 GB, mas esse foi o modelo que muitos engenheiros com quem conversei quando estava escolhendo um disseram: "Ah, o Gemma 4 é o melhor. Você tem que usar o Gemma 4." E acho que isso é importante aqui porque, se eu tivesse simplesmente seguido o que meus amigos me disseram, eu poderia ter dado ao usuário "O quê?". Perdão.
+
+Não pode ter. Eu teria proporcionado ao usuário uma experiência extremamente diferente, uma experiência ruim. Você vai querer selecionar o modelo menor que forneça respostas aceitáveis ​​para o seu caso de uso. Ou, como eu gosto de chamar, o modelo SAGE, o modelo pequeno e suficientemente bom. Estou tentando fazer disso uma tendência. Tenha paciência comigo.
+
+Espero que possamos fazer o SAGE acontecer. Inicialmente, pensei que queria o modelo Qwen 2.5 porque era o mais rápido. Você pode ver que Qwen está bem aqui. Vamos ver, para onde foi?
+
+Sim, 2,5 é o círculo cinza no canto inferior esquerdo. A latência total no P P50 foi de aproximadamente 1 segundo. Isso é incrível. Tipo, isso é muito rápido para um resumo feito por IA. O problema era que sua precisão era muito, muito baixa em comparação com todos os outros. O
+
+quadrado laranja é Gemma 4 E2B e o losango azul é Claude Sonnet, que é o nosso teto. É o mais preciso, mas também é um pouco pesado, um pouco lento. A latência é de cerca de 3 segundos. Portanto, levando em consideração a precisão, o vencedor foi, na verdade, o Llama 3.2, que é o grande círculo verde aqui, com cerca de 90% de precisão. E você pode ver que
+
+tanto Claude quanto Llama 3.2 são muito mais rápidos que Gemma 4. Gemma 4 estava chegando em cerca de 8 segundos. Bem, talvez isso se deva ao fato de Gemma 4 precisar de um tipo diferente de estímulo, mas isso foi bastante consistente. Eu estava testando cada um deles três vezes e depois calculando a média dos resultados.
+
+Eis o resultado. Recomendo que, ao executar avaliações com algo como o Phoenix, você abra o experimento e dê uma olhada. Você pode ver quais foram as respostas brutas, e quais eram as respostas esperadas. Você pode, de fato, compará- los entre si. Descobri que, em muitos casos, a resposta de Llama era tão semelhante à de Claude que eram praticamente indistinguíveis .
+
+Então, sim. Uh Llama 3.2 foi o grande vencedor e decidi prosseguir com eles. E isso faz sentido, porque o Llama 3.2 foi criado pela Meta, e a Meta tem um grande interesse em criar modelos que lidem bem com entradas humanas e resumam informações humanas em uma rede social. Faz sentido, não é? Quer
+
+dizer, é uma questão social. Benefícios de um modelo social. Então, recapitulando. Veja como dimensionar corretamente seu modelo em quatro etapas. Primeiro, você prova que é possível. Você testa
+
+se o que está tentando realizar é possível usando o maior modelo possível. Isso poderia ser um modelo básico como o Gemini ou um modelo específico para uma tarefa. [bufa] E você define os critérios de sucesso. Você coleta um conjunto de entradas e saídas que deseja que coincidam entre si. Este será o bar.
+
+E então você testa do menor para o maior. Você compara os resultados de modelos pequenos com seus critérios de teste e vai aumentando gradativamente, do menor modelo até obter resultados dentro de uma faixa aceitável para aquele modelo pequeno e suficientemente bom, aquele modelo sábio. É nesse momento que você seleciona seu modelo ideal, o modelo mais simples que fornece respostas aceitáveis ​​para suas entradas. Mas você provavelmente está se perguntando: o que vamos fazer em relação a essa lacuna? Quer dizer, 90% de precisão, isso parece que poderia ser um fator decisivo .
+
+Bem, podemos obter um melhor desempenho de modelos menores com engenharia ágil. Isso é importante nos casos em que você não pode controlar qual modelo está usando. Algumas pessoas podem, por exemplo, criar um modelo otimizado que tenha sido treinado para executar essa tarefa específica com muita eficiência. Mas se você estiver trabalhando, por exemplo, com um aplicativo móvel, talvez não queira usar um modelo simplificado, porque cada vez que adicionar funcionalidades, provavelmente terá que treinar o modelo um pouco e, consequentemente, enviar um novo modelo de 1 ou 2 GB para seus usuários. Então, este é um ótimo exemplo de algo como: "Hum, acho que não vou conseguir controlar esse modelo. Uma vez que ele esteja no
+
+dispositivo do usuário, não vou pedir para ele baixar novos. Isso consumiria todo o pacote de dados dele." Você pode entrar em uma equipe que já está comprometida com o Gemma 3 e simplesmente não vai implementar o Gemma 4 até que lancem uma atualização que resolva todas as avaliações. Então, vamos dar uma olhada em como diminuir a diferença entre Saona e Llama. Agora, os pontos verdes e azuis naquele quadrante superior esquerdo.
+
+Então, as medidas em que me concentrei, aquelas em que eles realmente parecem ter resultados diferentes, foram a validade estrutural da referência JSON, a consistência factual, a latência P50 e a latência P95. E eu decidi que a latência do P50, o limite, seria de 1,5 segundos, enquanto para o P95 seria de 3,5 segundos, porque, lembre-se, 4 segundos é o pior cenário possível para as pessoas se sentirem desconectadas de uma experiência com inteligência artificial, de acordo com a pesquisa. Então, por onde começamos? Recomendo que você otimize um passo de cada vez. Você deseja isolar uma variável por variante de prompt para testar se o que você está tentando realizar está surtindo efeito ao usar os diferentes prompts.
+
+Então, criei cinco sugestões. Bem, eu criei quatro sugestões e usei a sugestão original como base. A proposta original era muito boa. A versão 2 utilizava entrada numérica. O mesmo prompt reformatou a ameaça como mensagens numeradas em vez de usar JSON.
+
+A hipótese é que modelos menores poderiam rastrear a indexação da linguagem natural melhor do que os deslocamentos de matriz em um conjunto de JSON. A segunda foi tirada com alguns tiros. Isso acrescentou alguns exemplos e resultados à pergunta. A hipótese aqui é que modelos pequenos aprendem o formato a partir de exemplos mais rapidamente do que a partir de regras. Depois, havia a versão com regras rígidas.
+
+Esta era uma casa sem qualquer sugestão prévia. Possuía restrições negativas explícitas. Sem preâmbulo. Não conte as palavras antes de responder. Ou seja, conte as palavras antes de responder. E a hipótese
+
+era que os modelos pequenos respondem a comandos literais e que gostam de receber algumas ordens . E, por fim, houve uma linha de raciocínio que obrigou o modelo a identificar momentos-chave antes da escrita. A hipótese era simplesmente que pensar em voz alta melhoraria o enraizamento. Então, [bufa] executei os testes novamente com esses novos prompts e apenas para o llama 3.2 e descobrimos algumas coisas.
+
+Nós, quer dizer, eu mesmo. Acabei de executar este comando localmente na minha máquina e pude comparar os resultados. Você pode até inserir os resultados em algo como o Claude e conversar sobre as negociações, se quiser. Então,
+
+pare com isso. Muito bem , estamos de volta. Nesse caso, a linha de base não era muito boa em determinar o quão curto deveria ser o texto para que coubesse em uma determinada seção de conteúdo. A precisão de referência foi de 91,2%. A informação estava correta em 87,1% dos casos e a latência era de 1 segundo. A
+
+formatação do texto não fez muita diferença. Regras explícitas, na verdade, não pioraram as coisas. O modelo reagiu de forma muito negativa ao ser informado do que não podia fazer, não podia fazer, não podia fazer. Era uma criança travessa que não gostava de receber instruções. A cadeia de pensamento não teve um grande impacto, mas apresentou uma pequena melhora na duração, infelizmente aumentando a latência em 600 milissegundos. A que apresentou melhor desempenho
+
+foi a de poucas fotos, que forneceu alguns tópicos e alguns exemplos. Foi muito melhor em acertar o comprimento. Era mais preciso e, em suas referências, concordava um pouco mais com o modelo de Claude sobre o que foi dito, aumentando a latência em apenas 200 milissegundos. Então, parece um ótimo negócio, não é? Portanto, foi a pequena variação na duração da foto que trouxe a maior melhoria.
+
+Vamos ver como se compara ao original. Bum bum bum. Então, você pode ver a barra aqui Claude Sonnet versus Llama 3.2 3B. Bem, na verdade, fiz algumas coisas nesse momento porque queria eliminar completamente essa lacuna.
+
+Assim, o Llama 3.2B, com um pequeno ajuste de precisão, conseguiu atingir uma margem de erro razoável. A latência do P50 caiu para menos de 1 minuto e meio , então estava totalmente verde. A validade estrutural foi de 91,7% e a consistência factual também foi de 92,9%. A latência P95 ficou bem abaixo de 750 milissegundos, menos que a de Claude. Em geral, sua
+
+latência foi muito boa. Mas vamos analisar esses 10% aqui, entre validade estrutural e consistência factual. Por isso, é importante abrir seus votos eletrônicos e dar uma olhada no que está escrito dentro. Bem, no que diz respeito à consistência factual, descobriu-se que Claude estava apenas sendo um juiz muito rigoroso. Eu estava usando o Claude para avaliar as respostas e comparar, sabe, o Claude Opus estava comparando a resposta do Claude Sonnet com a resposta do Llama 3.2, e claro que o
+
+Claude estava favorecendo a irmã mais nova e dizendo tipo, "É, hum, eu acho que, sabe, eu não acho que sua interpretação do que a Jenna disse seja precisa porque você disse que ela estava angustiada e, na verdade, ela estava irritada." Era esse tipo de coisa. E é por isso que é importante quebrá-las . Agora, quanto à consistência e ao comprimento aproximados, esses aspectos podem ser ajustados dentro do próprio chicote de fios e na pós-produção. Então, garantir que haja, você sabe, o número correto de referências na thread é algo muito simples de verificar. Dá para ver o comprimento do
+
+fio. E se houver mais referências do que membros na discussão, isso está incorreto em relação ao tamanho do resumo em si . Se for muito longo, você pode simplesmente truncá-lo. Assim, quando adicionamos o pós-processamento, conseguimos, de fato, reduzir essa diferença de forma bastante significativa. Agora, temos 100% de validade JSON, 100% de validade estrutural, consistência factual, há apenas uma pequena discordância aí, e acontece que foi o juiz que foi rigoroso demais.
+
+[Suspiros e engasgos] Conseguimos reduzir a latência do P5 para cerca de 1 segundo, e a do P95 ficou abaixo de 300
+
+segundos e meio. Então, isso é muito bom. Na verdade, acabou igualando e até superando o desempenho do Claude depois desse pequeno esforço extra, e estou economizando cerca de um dólar por dia em custos de inferência. Portanto, o importante é que, depois de ter feito algo assim, você não queira perder terreno. Você precisará garantir que poderá atualizar o prompt no futuro ou atualizar o modelo.
+
+Você não quer perder terreno. Você quer garantir que poderá atualizar o modelo ou alterar o prompt no futuro, e que isso não fará com que os resumos se expandam para um parágrafo inteiro ou comecem a gerar alucinações com informações falsas. Você precisa manter suas avaliações em execução para isso, e essa seria uma avaliação de regressão, e você executa esses testes como se fossem testes de CI/CD, sabe? É assim que você impede que seu CTO destrua sua experiência de agente acidentalmente numa manhã qualquer. História verídica, aconteceu com um amigo meu que foi um dos fundadores.
+
+Então, por onde começar? Hum, quantas ligações do Claude poderiam ser ligações do Llama? Desafio você a ir para casa hoje e dar uma olhada no que você está enviando para os programas de mestrado em direito (LLM) e se perguntar: isso é algo que um modelo menor poderia lidar e quanto dinheiro eu economizaria se fizesse isso? Ao trabalhar em projetos de IA, fique atento a SLMs (Modelos de Linguagem de Suporte) e modelos especializados que já possam estar presentes no dispositivo. Por exemplo, o Chrome e a API Prompt acessam o Gemini Nano, que vem integrado ao Chrome nativamente, e isso pode ser muito útil porque significa que você não precisa enviar um modelo para ninguém que use o navegador. Você pode
+
+aproveitar o que está bem ali. Lembre-se de que esses modelos são mais eficientes e atendem às necessidades dos seus usuários onde quer que eles estejam. As informações deles permanecem no dispositivo. Você não precisa se preocupar com informações pessoais identificáveis ​​e, sabe, o consumo de energia é, bem, uma bênção para o meio ambiente, por assim dizer. Lembre-se de criar protótipos grandes e implantá-los em pequena escala.
+
+Você pode querer criar um protótipo do seu sistema com um modelo básico e, em seguida, converter partes dele em pequenos modelos de linguagem e modelos especializados para produção. Lembre-se de que você precisa provar, definir, testar e, em seguida, selecionar o modelo Sage que passar no teste. Você pode usar a engenharia de resposta rápida para obter melhores resultados com os SLMs e reduzir a diferença em relação aos modelos remotos. Portanto, desafio você a considerar sua implementação atual do protótipo e a converter uma funcionalidade para usar um modelo local menor . Vá para casa, experimente você mesmo e talvez se surpreenda.
+
+De qualquer forma, espero te encontrar por aí na internet. Se você gostou de conversar sobre pequenos modelos locais ou sobre a atenção aos detalhes na web, pode me seguir. Estou no nearestneighbors.com. Se você quiser experimentar executar algumas avaliações com sua configuração atual, pode começar a testar com o Phoenix em phoenix.arise.com.
+
+E por último, você pode se inscrever para o beta do Mima em mima.social. Meu nome é Rachel Neighbors e foi ótimo conversar com vocês hoje. Vá em frente e construa sua própria pilha de inferência.

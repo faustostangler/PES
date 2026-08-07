@@ -1,0 +1,126 @@
+---
+video_title: "\"I've never seen anything scarier than an LLM with tool calls.\" — Erik Meijer aka @HeadinTheBox"
+video_id: -CnA2lGfymY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-CnA2lGfymY
+video_date: 2026-07-13T19:25:09+00:00
+video_description: |
+  AI agents today execute on blind trust, and the failure modes are already in the headlines: a dealership chatbot agreeing to sell a $76,000 Chevy Tahoe for $1, a coding agent wiping a production database during a code freeze, an "agent skill" quietly installing a keylogger on a developer's machine. 
+  
+  These are not edge cases. They are the predictable consequence of allowing agents to act without any mechanical guarantee of correctness or safety. Execution is irreversible. You cannot unsend a message, unwire a payment, or un-delete a database. In that regime, permitting an unsafe action costs far more than withholding a safe one, and thus the economically rational choice is to refuse to let agents act on unchecked intent alone. 
+  
+  Automind is an agent harness that enforces this discipline by construction. Before any action runs, the agent must submit its execution plan together with a machine-checkable proof of safety and correctness, written in Universalis, a literate logic programming language designed to be read by humans and verified by machines. A small, auditable checker decides whether the plan is allowed to execute. By left-shifting the trust boundary, we no longer have to trust the agent's proposal, or even its proof; only the checker. Policy compliance becomes a static property, established before the first side effect. We can finally demand formal proofs, not vibes, from the agents we deploy.
+  
+  More about Erik: https://x.com/headinthebox
+  and automind: https://spawn-queue.acm.org/doi/pdf/10.1145/3676287
+  
+  Erik Meijer has spent more than three decades designing programming languages and developer tools that help humans express intent more clearly to machines. His work has influenced languages and technologies including Haskell, Mondrian, Cω, C#, Visual Basic, Dart, Hack, LINQ, and Rx. Today, he is building Universalis, the world's first programming language for AI agents. By combining formal verification with large language models, Universalis aims to make agentic systems safe, transparent, and trustworthy enough for real-world knowledge work.
+  
+  Timestamps
+  
+  0:00 Introduction and purpose of the talk
+  1:54 The inherent dangers of AI and accidental file deletion
+  3:39 The history and impact of LLMs (the "Pandora's box")
+  5:36 The problem of prompt injection and model safety
+  7:03 Formal verification and using Lean for safety proofs
+  10:45 The introduction of tool calls and the leap into chaos
+  13:59 The "lethal trifecta" of AI risks
+  14:13 The proposed solution: "air-gapping" the agentic loop
+  16:36 Refying plans into programs and using Free Monads
+  19:17 The concept of proof-carrying code and summary
+---
+[música]
+
+Recebam no palco o pesquisador do Live Nets Labs, Eric Meyer.
+
+Bem, você pode voltar um slide? Desculpe. Tudo bem. Boa tarde a todos. Obrigado por estarem aqui depois de um longo dia de palestras, exposições e efeitos colaterais. Ah, desculpe,
+
+eram eventos paralelos. Espero que vocês se divirtam assistindo a esta palestra tanto quanto eu me diverti criando-a.
+
+Primeiro, deixe-me esclarecer isso. Isto não é uma propaganda, anúncio ou algo do gênero. É um tutorial de 20 minutos sobre como usar sistemas de tipos elementares e conhecimento de compiladores para tornar a IA comprovadamente segura. E hoje vou compartilhar todos os meus segredos com vocês. Espero que isso inspire alguns de vocês a terem um estande no andar de baixo no ano que vem, onde terão criado um dispositivo de segurança comprovadamente eficaz.
+
+Ou quem sabe, talvez alguns de vocês já tenham resolvido. Me avise, e aí, sabe, podemos tomar um café em vez de continuarmos com essa conversa. Bem, esclarecido isso , vamos começar . Enquanto eu preparava esses slides, e me desculpem por estar fazendo várias coisas ao mesmo tempo, eu estava programando no Site5 paralelamente. E então, quando minha atenção se dispersou por um segundo porque eu estava tentando convencer a modelo a desenhar algumas figuras que ela não queria fazer, e vocês verão algumas dessas figuras mais tarde. Você
+
+pode imaginar quais foram rejeitadas. De repente, bam! O código de Claude apagou um dos meus arquivos. E tenho certeza de que isso já aconteceu com você antes. Hum, talvez não. Talvez você sempre goste de
+
+, sabe, executar tudo sem permissões, e depois diz sim, sim, sim. Mas eu gosto de viver perigosamente. Mas estou convencido de que, se houver alguma diferença entre o objetivo do modelo e o ponto em que ele se encontra atualmente, ele fará tudo o que estiver ao seu alcance para atingir esse objetivo, inclusive nos matar, apagar seus arquivos ou seu banco de dados. Portanto, acho que esses modelos são intrinsecamente muito, muito perigosos, e precisamos controlá-los. Então, é sobre isso que trata minha palestra.
+
+Então, vamos começar essa história. E é, eu acho, uma história muito, muito triste , mas também assustadora, de como nós, como indústria, chegamos a este ponto em que estamos prestes a permitir que pessoas comuns, o público em geral, entreguem o controle de seus computadores, suas finanças e toda a sua vida pessoal a agentes de IA. E não temos nenhuma proteção em vigor. Hum, acho isso muito triste e muito assustador. Então, deixe-me contar a história de como chegamos até aqui, e eu vou apresentar alguns personagens, como Claude, e veremos Dario, Daniela, Sam e Bernie. Bem
+
+, o personagem principal é o nosso amigável Pit Cloud aqui. Bem, acho que todos vocês se lembram do dia 30 de novembro de 2022. Esse foi um dia muito especial na história, porque foi a primeira vez que foi possível falar com um computador. Você poderia dizer: "Ei, resuma meus e-mails." E eu, sabe, responderia em inglês perfeito. Bem,
+
+acho que para mim, pelo menos, aquilo foi mágico, mas acho que a maioria de nós não percebeu que, ao introduzir essa função de aparência inocente , LLM, que recebe uma pergunta e retorna uma resposta, estaríamos abrindo a Caixa de Pandora e mudando nossa história para sempre. Mas antes de prosseguirmos com a história, esta conferência chama-se AI Engineer. Muito bem, então nós somos engenheiros e talvez sejamos a última geração de engenheiros que ainda entende o que é isso, o que é código. Ou talvez a maioria de vocês já tenha esquecido o que é código, porque todo o código de vocês é escrito por agentes. Mas se olharmos para esta assinatura aqui, ela diz que o LLM recebe uma pergunta e retorna uma resposta.
+
+A pergunta e as respostas não são sequências de caracteres. São estruturas JSON muito complexas, e ficam ainda mais complexas a cada dia, sempre que uma nova versão das APIs é lançada. Mas, para esta apresentação, podemos simplesmente assumir que pergunta e resposta são tipos opacos. Nós não nos importamos com a aparência deles. Nós nos importamos com o que eles representam.
+
+Bem, de qualquer forma, a euforia em relação a esses LLMs serem considerados ótimas ferramentas não durou muito tempo. E justamente quando pensávamos que tínhamos erradicado a praga da ciência da computação, a injeção de SQL, ela voltou com força total porque os criminosos descobriram que é possível enganar os LLMs usando injeção de prompt, e os LLMs não fazem distinção entre código e texto, sendo, portanto, muito fáceis de enganar. Acho que esse é um problema maior do que a injeção de SQL jamais foi. Mas não foi apenas a injeção de prompt que deu aos LLMs uma má reputação. Os LLMs são treinados em toda a internet, e há muita coisa boa na internet, mas também muita coisa ruim.
+
+Por exemplo, como se cria uma bomba? Como se sintetizam drogas? Como invadir os sistemas das pessoas? E os líderes dos grandes laboratórios de pesquisa ficaram um pouco preocupados com a possibilidade de o governo interferir e regulamentar o setor, então disseram aos seus pesquisadores de doutorado: "Encontrem uma solução para este problema agora mesmo, e rápido, resolvam isso antes que o governo intervenha." E aqui estão os doutores, já que são doutores, que pensaram muito sobre o problema de segurança e criaram uma nova interface para LLMs, que é essa coisa assustadora à direita.
+
+Olhem só, o que está escrito? Tem uns símbolos gregos tipo sigma, tem provas, enfim, isso é lean, provavelmente vocês já ouviram falar de lean? Alguém aqui já ouviu falar de lean? A versão magra está super em alta agora, né? Assim como as empresas de capital de risco, elas estão emitindo cheques de bilhões de dólares só porque você diz que está fazendo algo com Lean, e é claro que esses pesquisadores com doutorado estão usando Lean e você tem que sofrer por causa disso. Bem,
+
+vamos primeiro dar uma olhada na assinatura, em uma linguagem mais simples chamada Daphne. E o que isso significa é que o LLM recebe uma pergunta e retorna uma resposta. É necessário que a pergunta seja apropriada, ou seja, não seja ofensiva, e então o modelo retorna uma resposta segura. E isso se comprova automaticamente. Portanto, se você fizer uma pergunta adequada, ela lhe dará uma resposta segura. Bem
+
+, acho que o Lean está recebendo atenção demais . Sou uma ex- viciada em digitação e matemática. Eu adoro o Lean, mas existem muitos outros provadores de teoremas e verificadores de modelos por aí, como Isabelle, Rock, PVS e TLAPlus. Mas o Lean é o lubrificante que mantém as bombas de dinheiro do capital de risco funcionando, então vou usar o Lean hoje. Então, aqui está, você sabe, a interface novamente no Lean.
+
+E agora, no Lean, você não faz demonstração automática de teoremas. Se você for um especialista em Lean, dirá: "Eric, bem, temos trabalho árduo no Lean, mas deixe isso de lado por um minuto." Mas no Lean, você precisa mostrar como calcular o tipo de resultado e fazer a prova manualmente. Bem, é um pouco diferente do exemplo da Daphne. Mas, se você pensar nisso por apenas um nanossegundo, perceberá que é impossível escrever uma prova formal de que uma resposta é segura ou uma pergunta é apropriada.
+
+E é por isso que existem pelo menos cem startups aqui no pavilhão de exposições que estão usando mestrados em Direito (LLM) como critério de avaliação, porque isso não é algo que se possa especificar formalmente. O que significa dizer que uma resposta é segura? Isso não é uma propriedade matemática. E, claro, se você tem um modelo de fundação como o desses caras, não precisa de mestres em direito externos como juízes. Você simplesmente incorpora isso aos pesos e considera o modelo alinhado.
+
+Mas, infelizmente, tentar incorporar o alinhamento ao modelo não é infalível, e os modelos são frequentemente comprometidos. Então, eles tiveram que ir até o Papa e pedir que ele, sabe, abençoasse o modelo deles para garantir que fosse seguro. Bem, eu acho terrível se uma modelo disser algo ofensivo, mas são apenas palavras. E, no fim das contas, as palavras são como se, sabe, elas simplesmente escorressem do seu corpo. Eles não fazem nada. Algum ser humano precisa agir de acordo com as palavras
+
+para torná-las perigosas. Então, talvez seja isso que eles querem dizer com "em geral seguro" quando a Anthropic fala sobre segurança, porque ainda há um ser humano envolvido. Mas então algo terrível aconteceu. Aconteceu algo realmente terrível que mudou o mundo para sempre. E isso aconteceu em junho de 2023, quando a OpenAI anunciou o suporte a chamadas de ferramentas no GPT-4.
+
+E, claro, todos os outros fornecedores correram para copiar isso. Isso é chamado de princípio da diferenciação mínima, e é por isso que todas essas APIs parecem iguais. Agora, o ato de adicionar chamadas de ferramentas transforma a segurança da IA ​​de um debate filosófico em algo que causa perigo real. Pode-se dizer que as chamadas de ferramentas conferem ao modelo garras além da boca. Ou você pode dizer que chamar alguém para fazer o serviço é como entregar uma arma carregada para essa pessoa.
+
+Mas é claro que ninguém me ouve. Todo mundo ignora o que eles dizem, e esses caras simplesmente foram lá e enviaram as ferramentas. Eles simplesmente fazem isso, sim, simplesmente fazem. Agora, vamos voltar ao assunto de que esta é uma conferência de engenharia de IA. Então, vamos analisar qual é a diferença na assinatura do LLM quando eles adicionam chamadas de ferramenta. E é só aquele pequeno IO
+
+ali, e claro que bagunça a formatação da assinatura. Mas, se você olhar para a imagem, verá o que você mostrou: de repente, Claude passa de um cachorrinho fofo para uma criatura perigosa. Olha, tem todas essas ferramentas perigosas. E agora a coisa fica assustadora, não é? Nunca vi nada mais assustador do que um LLM com chamadas de ferramentas.
+
+Bem, se você observar isso, é como um pequeno passo para um tipo, mas um salto gigantesco para o caos. Por que é que? Isso ocorre porque essa entrada/saída indica que, para calcular a resposta, o agente precisa percorrer o loop agentivo, o que gera efeitos colaterais. Portanto, enquanto gera a resposta, pode esvaziar sua conta bancária, apagar seus arquivos e, em seguida, fornecer uma resposta segura. Mas, quem se importa com a resposta segura quando todos os meus arquivos sumiram?
+
+Certo? Por isso que digo isso, é um salto gigantesco rumo ao caos. Mais uma vez, desculpe, isto é uma conferência de engenharia. Vamos analisar esse tipo de E/S. E você não precisa entender, basta perceber que existe um tipo chamado mundo real. Sim, Lean, isso é
+
+algo esotérico, tem um tipo chamado mundo real. E por que isso acontece? Porque algo do tipo IO irá modificar o mundo real. Então, o aviso é: não use essa porcaria porque pode causar efeitos colaterais irreversíveis. É como apagar seus arquivos.
+
+[bufa] Então, Solomon Heikes, no ano passado, nesta mesma conferência, chamou um agente de IA de LLM que está destruindo seu ambiente em um ciclo vicioso. E eu acho que ele é um herói. Não sei se Solomon está aqui este ano, mas acho que ele merece, ele merece uma salva de palmas. Porque eu acho que essa é a definição correta de um agente de IA. Aliás, esta foi uma das imagens que tive dificuldade em gerar porque retrata claramente violência. Então, é algo meio perigoso
+
+, não é? Eu tenho uma imagem que retrata violência. Então, estamos condenados? Bem, nossos agentes têm acesso a dados privados. Eles contêm conteúdo não confiável, como injeções de prompts. E agora lhes damos as
+
+ferramentas. Simon Willison chama isso de tríade letal. O que podemos fazer a respeito? Bem, hum, não sei se você já viu os torcedores de futebol holandeses, eles têm a famosa marcha em que dizem " para a esquerda, esquerda, esquerda" ou "para a esquerda, esquerda, esquerda, para a direita, direita, direita". Este é, na verdade, o segredo para resolver este problema. A equipe holandesa foi
+
+eliminada ontem, então vocês precisam me ver dançando. Mas tudo o que estamos fazendo é empurrar essa E/S para a direita, para a direita. E o que você vê agora é que o cinto de ferramentas de Claude vai para a esquerda, para a esquerda. E de repente Claude volta a ser um cachorrinho bonzinho. Porque, em vez de executar o loop agentivo, ele cria um plano e diz: "Aqui está um plano para executar o loop agentivo". E agora
+
+Bernie vai pegar esse plano e executá-lo. E todos nós confiamos no Bernie, certo? Bernie é um cara legal. Tudo bem. Então, só para mostrar aqui. Então,
+
+de certa forma, o que estamos fazendo é isolar o loop agentivo do agente. Portanto, não permitimos que o agente execute o loop agentivo. Antes que o agente execute a operação, queremos poder verificá-la. Tudo bem. Agora, o problema é que se você obtiver o valor do tipo IO de A, bem, isso é realmente uma caixa preta.
+
+E o manual Lean diz que é uma caixa preta, não se pode raciocinar sobre ela. Então, mesmo que Claude nos dê esse plano agora, não podemos analisá-lo . O Lean não nos permite fazer isso. Aliás, esta é outra foto, certo? Isso promove o uso de drogas e o modelo me deixou fazer isso. Sim, eu sou um bom
+
+hacker. Posso simplesmente fazer com que mostre imagens proibidas. Então, se olharmos para o Lean novamente, o que vemos aqui é que o modelo agora calcula uma resposta, mas não calcula a resposta, certo? Isso cria uma entrada/ saída de resposta. Então, este é um plano para gerar a resposta e, em seguida, cria uma prova de que esse plano é seguro. E o interessante
+
+é que aqui você pode obter essa prova sem precisar executar o loop agentivo. Mas, infelizmente, como eu disse, assim como esta prova, se for algo do tipo IO, é inútil. Ah, merda. O que podemos fazer a respeito? Então, eu continuo fazendo vocês avançarem, e nunca chegamos à resposta final.
+
+Mas há um último truque, e você verá que os pesquisadores aqui estão se tornando muito mais sofisticados; em vez dos modelos planos em 2D do passado, agora eles são como pessoas reais. E o que é melhor do que criar um plano do tipo IO de A é criar um programa que represente uma expressão do tipo IO de A. Uau, isso soa muito meta. Certo? Não é meta em termos de meta.
+
+Não acho que sejam muito metalinguísticos, mas, tipo, metalinguísticos no sentido de, sabe, metalinguísticos. Você sabe o que eu quero dizer. E, mais uma vez, é um pequeno passo para uma assinatura, mas um salto gigantesco para a segurança. Porque agora o modelo retorna uma expressão, um programa que representa um cálculo. Se você conhece Link ou C#, reconhecerá que este é um dos truques que sempre uso. Bem, se você
+
+conhece Lisp, isso é algo natural para você. Bem, eu não consigo, sabe, ter uma palestra sem falar sobre mônadas. Então, se você se perguntar, o que é essa coisa de expressão? Bem, isso é apenas uma mônada, mas não é apenas uma mônada, é uma mônada livre. O que é uma mônada livre? É uma
+
+mônada que adora estampas tie-dye. Bem, agora, se você observar a assinatura da propriedade para provar que algo é seguro, verá que ela requer uma expressão de um cálculo que retorna uma resposta. Bem, se você já fez algum curso de compiladores na faculdade, sabe que é trivial fazer análise de fluxo de dados, verificação de tipos e assim por diante em programas. Certo? Então, agora estamos seguros, estamos em casa em segurança. E
+
+Jeff Huntley queria lembrar que podemos resolver o problema do fator de acionamento simplesmente realizando uma análise de contaminação nessas expressões nesses programas. Ok, este é o último código que vou mostrar porque estou ficando sem tempo, mas só quero mostrar aqui que agora você tem um interpretador indutivo recursivo simples para esta linguagem e uma prova indutiva simples. E os modelos podem gerar essas provas. Então, recapitulando , resumindo, o que fizemos foi passar de LLMs desequilibrados que, sabe, podiam dar respostas ruins para LLMs alinhados. Então vimos como as ferramentas destruíram tudo.
+
+Então resolvemos isso adiando a execução. Então, isolando o LLM das ferramentas com ar. E então a verdadeira solução foi reescrever o plano em um programa, um programa que pudéssemos comprovar ser seguro. Agora, você diria: "Eric, nossa, você é um gênio." Não, meu cérebro tem o tamanho de um amendoim. Isso é algo chamado
+
+código portador de prova, inventado por acadêmicos na década de 1990, e eu estou apenas roubando a ideia. Certo . Em um nível mais avançado, se você não entendeu o código, três pontos. Agentes são perigosos até que se prove o contrário, portanto, você nunca deve permitir que seus agentes façam algo a menos que possa provar, sem sombra de dúvida, que é seguro. E a linguagem gerada por esses agentes não foi projetada para que usuários comuns entendam mônadas livres. Não importa. É uma máquina
+
+que o consome. É uma máquina que o gera. É uma máquina que comprova isso. Então, devemos parar de criar linguagens para humanos, pois tudo é básico e requer apenas programação básica. Pronto . Tudo bem. É
+
+isso. Bem, o fim da história. Se você tem curiosidade de experimentar, vários acadêmicos, em particular Nada Amin de Harvard, já implementaram isso. Está lá no GitHub. Utiliza uma linguagem ligeiramente diferente da que eu uso. Ela
+
+também usa uma linguagem ligeiramente diferente das mônadas livres, mas a ideia é a mesma. O idioma não importa. É o princípio que importa. Então, espero que vocês tenham aprendido esta noite que é realmente possível ter computação agentiva segura, comprovada matematicamente, e que isso requer apenas sistemas de tipos muito elementares e recursos de linguagem de programação. Muito obrigado.
+
+[música] Uau!

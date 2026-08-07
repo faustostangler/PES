@@ -1,0 +1,90 @@
+---
+video_title: "User Signal Dies at the Retrieval Boundary - Sonam Pankaj, StarlightSearch"
+video_id: Jx4ZFEAq6bY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Jx4ZFEAq6bY
+video_date: 2026-06-28T17:00:20+00:00
+video_description: |
+  Utility is all you need! Closing the Agent Learning Loop with Utility-Ranked Memory
+  
+  Most production agent systems have a fatal flaw: they start every run from a blank slate. You have traces in your observability stack and pass/fail judgments in your eval suite, but the agent that runs tomorrow has no memory of why yesterday's runs succeeded or failed.
+  
+  This talk exposes the gap between observation and action and shows how to close it.
+  
+  We'll examine why current memory approaches stall: conversation buffers that only remember recency, semantic systems that retrieve what sounds similar rather than what helped, and reflection-based methods that capture lessons but don't learn which ones actually work. The core idea: utility-ranked memory. Treat memories like a credit score. When a memory is retrieved and the run passes, its utility rises. When the run fails, its utility falls. The ranking formula combines semantic similarity with outcome history. 
+  
+  There is also a demo with an example of the product SQL agent, of how it updates the context for the right outcome, everything happening at runtime.
+  
+  Speakers:
+  - Sonam Pankaj (StarlightSearch Inc): Sonam is the CEO and Co-Founder of StarlightSearch. She is also the co-creator of embedanything, which is a Rust pipeline for RAG, which got contributions from Elastic, Milvus, and Qdrant, and has over 450k+ downloads. Prior to Starlight Search, Sonam spent years in developer tools and AI infrastructure, and has worked as a generative AI Evangelist, GTM lead at Articul8, a spin-off of Intel, and AI Researcher at Saama. She has been presenting talks for the last 10 years, and loves to interact with developers. She has been constantly speaking at Berlin Buzzwords, Europe's largest search conference, PyCon DE, and PyData. She also got an opportunity to present her work at Google, Deutsche Bank, and JetBrains.
+    X/Twitter: https://x.com/sonam_pankaj_
+    LinkedIn: https://www.linkedin.com/in/sonam-pankaj/
+    GitHub: https://github.com/sonam-pankaj95
+---
+Olá a todos, eu sou Surim. Sou o CEO e cofundador da Starling Search e hoje minha palestra é sobre o fim de um sinal após o limite de recuperação. Então, vamos analisar o que são agentes essencialmente, por que os agentes falham, qual é a causa das falhas na recuperação de dados em particular, como fazer com que os sinais cruzem o limite de recuperação e como tornar o resultado do seu agente basicamente justo. Então, vamos começar. O que é um agente? Um agente é um LLM (Literatura Lógica e Mental)
+
+que tem capacidade de raciocinar, invocar ferramentas, interagir com o mundo real e recuperar a memória necessária para concluir a tarefa. Um aspecto fundamental que está faltando aqui é o aprendizado. Também deve aprender com o que funcionou e com o que não funcionou. Suponha que eu tivesse que explicar o que é um agente, eu poderia explicar usando o React Agent. Então, se eu tivesse que explicar o que o agente faz, eu explicaria usando o React Agent.
+
+Basicamente, use-o a partir do agente e execute-o em um loop, do cliente para a busca de recuperação, e então pause quando a tarefa for concluída. Essa é uma arquitetura React muito básica. Uma coisa que está faltando é como fazer o agente aprender com o resultado. Portanto, o agente continua falhando na mesma tarefa. A Gartner relatou que 85% das iniciativas de IA simplesmente não conseguiram ganhar tração. Portanto, isso consta no
+
+relatório da McKinsey de 2025. O problema que se revelou ser, na maioria das vezes, é que a recuperação de dados é estática. 73% dos nossos pipelines falham devido à recuperação de dados, não à geração, e ao excesso de contexto. Então, uma postagem recente de Ram Sriram, ex-CTO da Pinecone, dizia: "Estávamos otimizando para a coisa errada. Você está pagando muito pela memória do seu agente. Provavelmente isso está com
+
+defeito, e estávamos otimizando para as coisas erradas. Fizemos com que as respostas erradas aparecessem mais rápido e mais barato, mas nos esquecemos de fazer a recuperação aprender." Então, por que isso importa? Novamente, o terceiro problema é que os agentes não são orientados para os resultados. Portanto, existe uma camada ausente entre as avaliações e a ação. Sua observabilidade contém
+
+todos os rastros, toda a pilha que captura a observabilidade é a pilha que captura cada chamada de ferramenta, cada conclusão de LM, cada exceção. Seu conjunto de ferramentas de avaliação determina se o resultado final estava correto ou incorreto, basicamente aprovado ou reprovado. Mas essas avaliações não se refletem no contexto, nas habilidades e na definição das ações do agente de forma alguma. Certo? Portanto, o agente não tem acesso às informações sobre por que as execuções de ontem foram aprovadas ou reprovadas. O sinal de avaliação desaparece no
+
+painel de instrumentos. Essa é uma camada que faltava, um sistema que consome rastros, absorve avaliações e converte ambos em orientações de recuperação para execuções futuras. Portanto, existe uma tarefa de melhoria manual, e o engenheiro precisa de fato verificar se a avaliação e a observabilidade têm um bom desempenho. Reescreva o prompt, reimplemente-o, atualize qualquer um deles e crie seu modelo caro, reestruture-o para nossa estrutura ou ajuste os modelos personalizados. Por que as memórias atuais estão falhando? Por que o jogo
+
+Memories foi projetado para resolver isso, mas, hum , não resolve. Então, vejamos, o que temos no nosso sistema atual, e a memória atual, é que basicamente armazena preferências do usuário, perfil, histórico de conversas ou personalizações de longa duração. Portanto, a experiência de bate-papo não se trata de sistemas de aprendizado auto-aprimorados para produção. Se você observar as abordagens já existentes no mercado, verá que há o LangChain e o Mem0, que extraem preferências passadas. O sinal de recuperação do usuário é a similaridade de incorporação.
+
+Será que aprende com os resultados? Não. Bem , nós desenvolvemos algo chamado pontuação de utilidade, que é uma similaridade ponderada pela utilidade da execução da tarefa pelo agente. Possui, de fato, o histórico de peças e resultados anteriores. Então, criamos o Agent RX, que é a experiência de tempo de execução do agente. É
+
+uma camada de tempo de execução que permite que o agente de linguagem de grande porte melhore com base em experiências sem a necessidade de retreinamento, ajustes finos ou engenharia manual de prompts. A diferença em relação ao tempo de compilação, como no DS5, é que aqui todas as lições são incorporadas no prompt, enquanto o processo está sendo aprimorado durante a execução da tarefa. Assim, voltamos ao conceito de pontuação de utilidade. Portanto, a recuperação não é feita por palavra-chave, mas sim por similaridade semântica com a tarefa atual, ponderada pelo fato de essas memórias terem historicamente ajudado ou prejudicado a execução ou o resultado. O resultado do evento torna-se um sinal de primeira classe na reclassificação da recuperação, e não apenas para a recuperação em si.
+
+Um dos pontos principais é tratar a memória como raciocínio, não como fatos, estatísticas, fatos sem contexto e sem história, mas sim como raciocínio. Por exemplo, imagine que haja um bot de suporte ao cliente solicitando um reembolso. Você não diria: "Ei, o usuário prefere o tema escuro" ou "O usuário prefere ser chamado por um nome mais curto". Na verdade, trata-se de uma questão como, por exemplo, se alguém solicitar um reembolso, você deve verificar o comprovante de pagamento antes de reembolsá-lo, para que o cliente não receba o reembolso duas vezes. Assim, agimos com base na utilidade. O contexto
+
+é atualizado com base na tarefa. Então, isso é muito importante porque a maioria dos agentes lida com excesso de contexto, e isso já foi discutido no passado. É preciso aprender com a história e o raciocínio, certo? Falando em parâmetros de referência. Assim, temos parâmetros de referência que nosso sistema de memória reflete no banco de toalhas, os quais essencialmente medem se os agentes seguiram uma política corretamente ou não.
+
+Então, vimos o desempenho melhorar de 66% para 76% sem incorporar habilidades, e com as habilidades incorporadas, o desempenho chega a 80%. Assim, quando há memória suficiente, como 10 memórias, o que fazemos é incorporar o raciocínio e a compreensão às habilidades para que seu agente permaneça sempre atualizado. O que acontece na maioria das vezes que observamos é o seguinte: imagine que você tenha um agente SQL de produto e exista uma coluna no prompt do sistema. Embora essa coluna não seja mais útil, ela permanece no prompt do sistema. Então, não existe nenhum sistema no momento que possa atualizar isso, tipo: "Ei, não existe uma coluna chamada isso agora. Então,
+
+talvez você não deva considerar isso no futuro." E isso é possível com habilidades que, porque sempre usam chamadas, atualizam a habilidade o tempo todo. E um comportamento semelhante foi observado no GPT-5.4. Nós também o testamos em tarefas agentivas, que essencialmente testam a capacidade de um modelo de raciocinar, planejar e usar ferramentas ou fluxos de trabalho extensos de várias etapas, em vez de medir uma sessão estática de perguntas e respostas. Então, você pode
+
+ver aqui: quando foi o último exame humano com a droga, ele obteve 47,5%. Se partindo da linha de base, 35,7%. Com o outro sistema de memória, chega a 58,2%. Mas com o sistema de memória refinado, chega a 61,3%. Então, esse tipo de tendência é mostrado em outros benchmarks agentivos também, como o Big Code Bench e o Long TV.
+
+etc. Então, claro, existem limitações para essa abordagem. Primeiro, há o problema do " cold start". No início, é uma busca semântica pura até que avaliações suficientes sejam acumuladas. Há também a questão da utilidade. Talvez
+
+, às vezes, memórias semelhantes possam surgir. Muitos problemas podem surgir em larga escala com essa experiência, mas combatemos a maioria deles. Há a questão da qualidade das avaliações. Rótulos ruidosos podem tornar a utilidade ruidosa também. E há um hiperparâmetro chamado lambda, associado ao crédito e à reclassificação.
+
+Construímos o Reflect de forma a reduzir a maioria desses problemas e elementos, exceto o " cold start", sobre o qual não temos muito controle . Vamos à demonstração.
+
+É basicamente uma demonstração de SQL de produtos. Vou pedir para pesquisar um produto no banco de dados SQL e ver se ele consegue encontrá-lo.
+
+Você consegue me encontrar? Um mouse gamer? Zero memórias recuperadas. Não consegui encontrar um mouse gamer. Ah, ok. Então, talvez seja melhor
+
+verificar o que está acontecendo no painel. Ok. Apareceu que
+
+estou executando outro benchmark que, com o Agent Benchmark, mede essencialmente se o agente realmente raciocinou, planejou e seguiu as instruções corretamente. Isso testa a capacidade de um modelo de raciocinar, planejar e usar ferramentas em fluxos de trabalho extensos com várias etapas, em vez de medir um questionário estático. Então, você pode ver aqui que, com o Suponha que o último exame humano com drogas seja de 47,5%. Se começar da linha de base, 35,7. Com o outro sistema de memória, chega a 258,2, mas com o sistema de memória resultante, chega a 261,3%.
+
+Esse tipo de tendência também é mostrado em outros benchmarks adaptativos, como o BigCode Benchmark, o Long TV, etc. Espere, vamos verificar. Não consegui encontrar nenhum mouse gamer no catálogo de produtos. Então, suponha que eu queira testar a falha de mercado e vender o produto, fornecendo qualquer número relevante. Porque existe um mouse sem fio no banco de dados.
+
+E eu enviei a falha. Esta foi a entrada. Esta foi a resposta. Não consegui encontrar nada. E esta foi a trajetória e a qualidade da ferramenta. Então, você pode ver que o produto está
+
+vazio com este produto ou com esta consulta. Vamos verificar novamente o que acontece agora.
+
+Vamos ver agora o que acontece.
+
+Ok, ID.
+
+Então, ele pesquisou por um mouse sem fio. Vamos ver o que acontece no painel agora. Finalmente, um mouse gamer foi inserido. A resposta foi: encontrei um produto relacionado a mouse, já que o mouse não encontrou nenhum tipo de relevante. Então, o mais importante é como a chamada da ferramenta evoluiu. Você pode ver
+
+que anteriormente as chamadas da ferramenta ou a trajetória costumavam procurar apenas com uma pesquisa, que era a pesquisa de produtos. E o produto estava vazio. Agora, a trajetória mudou na produção e encontrou algo no produto e ainda está chamando a pesquisa de produtos, mas está obtendo alguma resposta que fornecemos. como feedback. Então, essa é a demonstração e o mais importante aqui é que ela está formando memórias que são recuperadas com base na pontuação de utilidade, que basicamente continua melhorando e se reclassificando de acordo com a utilidade da memória.
+
+Então,
+
+você pode ver nesses rastros quais memórias... essas pontuações de memória continuam mudando e, depois de um certo tempo, digamos, cinco revisões, talvez seja possível incorporar essas descobertas ou essas novas atualizações em uma habilidade. Sem alterar o prompt existente, você pode atualizar certos elementos dos quais o agente se baseia com frequência . Então,
+
+você pode atualizar a habilidade, o que é muito legal. Espero que tudo tenha corrido bem e que você experimente esse novo recurso, essa nova experiência de tempo de execução que criamos. Se quiser mais detalhes, visite nosso site ou entre em contato comigo pelo meu e-mail grace@alishascollection.com. Responderei.
+
+Obrigada.

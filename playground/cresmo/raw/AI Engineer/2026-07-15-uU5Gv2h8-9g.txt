@@ -1,0 +1,308 @@
+---
+video_title: "Claude Fable, Claude Tag, and Anthropic's Culture — Cat Wu & Thariq Shihipar ft Simon Willison"
+video_id: uU5Gv2h8-9g
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uU5Gv2h8-9g
+video_date: 2026-07-15T15:05:06+00:00
+video_description: |
+  A long form Q&A with Cat Wu (Head of Product, Claude Code) and Thariq Shihipar (Engineer, Claude Code) from Anthropic, moderated by Simon Willison. The discussion focuses on the evolution of coding agents and how they have fundamentally shifted software development practices.
+  
+  Key Takeaways:
+  Changing Developer Workflow (1:22 - 3:51): Coding agents like Claude Code have moved developers from manual, low-level implementation toward higher-level product strategy. The focus has shifted from writing every line of code to managing and refining outputs from increasingly capable models.
+  The Rise of Proactive Agents (6:37 - 9:00): The introduction of Claude Tag marks a shift toward multiplayer, proactive agentic workflows in tools like Slack. It can monitor bugs, draft PRs, and retain team memory, currently landing over 65% of product PRs for the Anthropic team.
+  Rethinking Software Engineering Norms (3:51 - 6:37): The speakers argue that traditional practices, such as avoiding rewrites or long-term waterfall planning, are becoming outdated. They emphasize the value of product sense, prototyping, and rapid iteration using high-quality test suites.
+  Safety and Trust (30:57 - 37:53): A major portion of the discussion covers Auto Mode and safety. Anthropic has heavily invested in evals and red-teaming to mitigate risks like prompt injection and data exfiltration, making it the recommended way to handle long-running agentic tasks safely.
+  Cultural Impact (38:13 - 41:50): The team encourages developers to be more ambitious and stop "negotiating against themselves." They suggest that because implementation is now cheaper, teams should focus on building the "bigger things" they previously thought were impossible or too resource-intensive.
+  Future Outlook:
+  Looking ahead, the speakers are excited about models becoming better interaction design partners (44:28) and continuing to bridge the gap between abstract ideas and production-ready software.
+  
+  ## Speakers
+  
+  ### Cat Wu
+  Head of Product, Claude Code · Anthropic
+  https://x.com/_catwu
+  
+  Cat Wu is Head of Product for Claude Code at Anthropic, working on Claude Code and related agentic developer-product workflows. Her background spans product, engineering, and investing.
+  
+  ### Thariq Shihipar
+  Claude Code · Anthropic
+  https://x.com/trq212
+  
+  Engineer and serial entrepreneur currently working on Claude Code at Anthropic. Previously founded One More Multiverse, co-founded Pubpub.org, and co-founded Chime.
+  
+  ### Simon Willison
+  Independent · Datasette
+  https://x.com/simonw
+  
+  Simon Willison is the creator of Datasette, co-creator of Django, and an independent open-source developer and writer focused on LLMs, prompt injection, SQLite, and tools for data journalism.
+  
+  Timestamps
+  0:00 Introductions and Claude Code overview
+  1:22 How coding agents have changed daily workflows
+  3:51 Shifting focus: Product sense over manual implementation
+  5:09 Why modern rewrites are now beneficial
+  6:37 Introducing Claude Tag and team collaboration
+  11:38 Prioritization and internal "dog-fooding" culture
+  13:06 The surprise success of remote control features
+  14:17 Evolving code review processes and automation
+  17:16 Building trust in new model generations
+  19:18 Optimizing for capability and user experience
+  21:23 Reducing system prompts for frontier models
+  28:05 The philosophy of tool design
+  30:57 Safety, security, and using Auto Mode
+  37:53 The human element and developer ambition
+  41:50 Surprising use cases for Claude (e.g., video editing)
+  43:35 Limitations and future design aspirations
+  45:09 Cultural hacks for productivity
+  46:42 Absurd, fun projects built with Claude
+  49:03 Audience Q&A
+---
+Bem-vindos a este bate-papo informal. Bem, eu vou levar comigo Theik Shihipa e Cat Woo da Anthropic. Vamos mergulhar fundo no código de Claude e provavelmente falaremos um pouco sobre esse negócio do Fable que anda rolando e que tem aparecido nas notícias. Na verdade, falando em Fable, literalmente há um minuto e meio , Fable voltou. Assim como Fable, agora está disponível para mim. Então, se vocês quiserem sair correndo
+
+da sala e começar a gastar seus créditos Fable, eu não os julgarei por isso . Mas vamos ter uma ótima conversa. Então, por favor, fiquem por aqui. Bem, então, por favor, receba o Gato em meu nome.
+
+Obrigado por nos receberem. Sim, com certeza cronometramos para o bate-papo. Sim. Sim. Sim. É por isso que tudo isso está
+
+acontecendo. Este ano tem sido um tanto absurdo. Ah, é incrível. O livro Claude Code foi lançado em fevereiro do ano passado. Tem menos de um ano e meio e foi um dos destaques do lançamento do Claude Sonnet 3.7. Adoraria receber sua mensagem
+
+. Como mudou o seu dia a dia no último ano, agora que temos esses agentes de codificação que realmente trabalham para nós? Lembro-me de quando lançamos o Cloud Code e o Sonnet 37 pela primeira vez, você dava uma tarefa a eles e tinha que monitorar de perto cada pequeno detalhe do que eles tentavam fazer. Ah, eu me lembro que lia cada solicitação de permissão com extrema atenção. Eu costumava dizer não com frequência. Eu sempre dizia não, não, não, tipo,
+
+você verificou este arquivo? Você verificou esse arquivo? E agora tem sido incrível a cada geração de modelos. Sinto que todos nós tivemos a oportunidade de dar um passo atrás e delegar grande parte das tarefas mais rotineiras ao Claude. E isso nos liberou muito do nosso tempo para pensarmos em trabalhos mais criativos, como qual é a experiência ideal que devemos proporcionar aos nossos usuários agora que sabemos que o código na nuvem pode implementar grande parte disso. E agora, com Fable, é
+
+uma melhoria que representa uma mudança radical e completa. Bem, vemos que em muitos dos nossos casos de uso é possível executar uma série de tarefas com o Fable de uma só vez. Tem sido incrível acompanhar essa transição e passar por tudo isso com todos vocês da comunidade. Sim, acho que me lembro da primeira mensagem que recebi sobre código na nuvem. Um dos meus melhores amigos disse: "Ah, você precisa experimentar o Claude Code." E foi justamente
+
+quando o Opus 4 foi lançado, eu experimentei e pensei: "Caramba." Tipo, eu preciso trabalhar na Anthropic agora, sabe? E esse era o Opusport, que, quero dizer, um ótimo modelo, mas tipo, sim, havia solicitações de permissão e, bem, eu acho meio louco o quanto de amnésia a gente tem, tipo, ah, o modo automático sempre esteve aqui, né? Tipo, eu nem lembro de ter clicado em "sim" e "permitir". Sim, acho que o principal desafio que estou tentando superar é fazer um trabalho de qualidade muito superior ao que já fizemos antes. Sabe, os
+
+resultados são de altíssima qualidade. Tipo, eu tenho usado bastante para editar vídeos e penso: "Ok, precisa atender às exigências muito rigorosas da nossa equipe de marca em algumas horas, senão não dá", sabe? Então, é, acho que é assim que estou tentando mudar com o Fable, para que seja tipo: " Ok, o melhor trabalho que já fizemos, mais rápido do que nunca". Eu certamente tenho percebido isso. Engenharia de software está ficando mais difícil porque o nível de ambição das coisas que podemos assumir aumentou. Eu tenho
+
+expectativas muito maiores de mim mesmo agora que tenho essas ferramentas para me apoiar, o que é legal, mas também dá muito trabalho. Sim . Ficar pensando nisso tudo é cansativo. Então, qual é um princípio convencional da engenharia de software que era válido há um ano, mas que você acha que não se aplica mais neste novo mundo? Acho que uma das maiores mudanças que estamos vendo no conjunto de habilidades de engenharia é que, há dois anos, era bastante comum um gerente de produto conversar com vários clientes e, ao longo de seis meses, alinhar-se com equipes multifuncionais em relação a um PRD (Product Design) e, em seguida, escrever uma especificação e um documento detalhados sobre como implementaríamos isso antes mesmo da primeira linha de código ser escrita. Agora, as coisas
+
+mudaram completamente. Acho que, para muitos engenheiros, o incentivo que eu daria a todos aqui é para desenvolverem mais o seu senso de negócios e de produto, focando no que realmente devemos construir, porque agora o tempo entre ter uma ideia e construí-la é muito menor. O período de seis a doze meses caiu para talvez até uma semana. Isso significa que todos nós precisamos ter um gosto melhor sobre o que realmente vale a pena construir. O que, de fato, influenciará os negócios em que estamos trabalhando? Então,
+
+acho que é como um aumento no valor atribuído ao gosto pelo produto e ao senso de negócios, e uma pequena queda na execução na maioria dos domínios de produto. Claro que, no caso da infraestrutura, ainda há uma grande ênfase em garantir que todos os detalhes estejam corretos. Sim . Eu acho que, para mim, as reescritas agora são boas. Sabe o que eu gosto? Acho que
+
+a pior coisa que você poderia fazer agora está tudo bem. Sim . Exatamente. Exatamente. Como tudo, especialmente sim. Coisas de homem mítico,
+
+tipo nunca reescrever, tipo, eu sou um profissional em reescrever agora, sabe, tipo, se você tem um bom conjunto de testes, eu acho que na verdade a reescrita te força a garantir que você tenha um bom conjunto de testes, mas, hum, eu acho que o que as pessoas subestimam é que uma base de código é uma especificação e talvez seja a única cópia da especificação que você tem, certo? Porque ninguém conhece todas as ramificações do código. E sim, você pode pegar isso como um artefato e destilá-lo ou criar outras versões dele, obviamente. Tipo, nós reescrevemos o Bund em Rust e, sabe, funciona muito bem, está em produção para mim agora. Mas vocês ainda não estão implementando código Clawed no Rust, certo? Ou isso é algo que
+
+temos internamente? Uau. Ah, que emocionante! Sim. Sim . Sim.
+
+Acho que o que você está dizendo sobre... é, desculpe, perdi o fio da meada. Mas sim, essa coisa de reescritas também tem sido muito interessante para mim, porque você pode criar um bom conjunto de testes e depois executar três implementações e escolher qual delas foi a mais precisa. Agora estou fazendo muito mais
+
+prototipagem. Sempre gostei de criar protótipos e agora crio protótipos no meu celular durante a conferência, só para ter algo que eu possa usar depois, e que já esteja funcionando, o que é extraordinário. O outro grande lançamento recente foi o Claude Tag, que já tem uma semana, pelo menos para nós. Entendo que a tag Claude está sendo muito usada em antropologia por pessoas que não são da área de engenharia. Que tipo de coisas pessoas sem formação em engenharia estão fazendo com a tag Claude?
+
+Então, o Claw Tag é uma garra que reside nas ferramentas de colaboração da sua equipe. Lançamos na semana passada dentro do Slack. O diferencial do Claw Tag é que ele é multijogador por padrão. Assim, depois de adicionar uma tag de nuvem a um canal do Slack, você pode participar, seus colegas de equipe podem participar e vocês podem colaborar no PR. A outra grande diferença é que é proativo em vez de reativo. Então
+
+você pode dizer ao Claw Tag: "Ei, monitore todos os relatórios de bugs neste canal, envie um PR para corrigi-los e marque o engenheiro que mexeu nesta parte do código pela última vez", e ele fará isso durante toda a vida útil do canal sem que você precise marcá-lo manualmente. E a terceira grande mudança que vimos é que adicionamos a memória da equipe a isso. Portanto, se você definir suas preferências para o canal usando a tag quad, ela se lembrará disso para todas as postagens futuras. Então, se você quiser depurar sempre, por exemplo, se quiser depurar interrupções, mas não quiser depurar avisos, basta dizer isso em linguagem natural no canal e ele se lembrará disso para você e para todos os outros membros da sua equipe. Internamente, vemos a tag quad como a evolução do código quad.
+
+Consideramos isso uma grande mudança na forma como trabalhamos internamente. A tag "claw" atualmente recebe 65% dos nossos PRs de produto, tanto para o Anthropic quanto para o Cloud Code, ou apenas para o Cloud Code. Isso é apenas para nossa equipe de engenharia de produto. Portanto, nossa versão interna da tag Claw atualmente é responsável por 65% dos nossos PRs de produto. E isso representa uma mudança enorme. Isso representa mais
+
+de 50% [risos] das nossas relações públicas. Bem, a forma como vemos as pessoas dividindo o trabalho entre o Cloud Code e o Cloud Tag é que o Cloud Code ainda é o melhor lugar para as tarefas mais complexas, quando você está interagindo com o agente. Mas o Claw Tag é ótimo para trabalhar proativamente em seu nome, para que você não precise mais executar manualmente códigos de erro para todos os relatórios de bugs que possam surgir em relação aos recursos nos quais você está trabalhando. Sim . E para casos que não envolvem programação, como... eu
+
+acho que já vimos pessoas usando a tag claw, tipo, antes desta palestra, a gente perguntou na tag claw: " Ei, quando o Fable vai ser lançado?" Queríamos garantir que, como você sabe, tudo coincidiria com o anúncio. Então, o Cloud Tag pesquisaria nosso Slack e veria, sabe, quem estava dizendo o quê. Então, como mecanismo de busca para sua empresa, é realmente valioso. Hum, isso contém todo o contexto necessário para o seu produto. Assim, você pode fazer
+
+perguntas relacionadas a métricas. E muitas vezes, quando você está tomando decisões, você quer que elas sejam baseadas em, tipo , o que as métricas dizem? E então, é como se você o conectasse à sua loja de eventos. Hum, eu já vi nossa equipe de marketing fazendo coisas do tipo, ah, tipo, ei, me fale sobre esse recurso. E, sabe, eles não são programadores, mas o Claude é programador. Eu posso clonar a base de código
+
+e dizer: "Ah, sim, isso é tipo, sabe, o recurso. É assim que ele funciona . Esta é uma gravação minha usando o recurso, sabe? Então, tipo, sim, isso possibilita uma grande variedade de coisas." E acho que ainda estamos no início do processo de compreensão disso. Sim.
+
+Bem, acho que uma das coisas mais fascinantes sobre a história do Claude Code é que você usa o Claude Code para construir o Claude Code e vem fazendo isso presumivelmente desde antes do lançamento público do Claude Code, há um ano e meio. Sim, um dos problemas que tenho tido com a programação de agentes é que entendo como usá-los individualmente, mas não tenho muita clareza sobre como usá- los em equipe. Parece que Claude Tag é a sua solução atual para esse tipo de camada colaborativa de equipe para esse tipo de tarefa. Exatamente. E uma grande porcentagem das nossas sessões são, na verdade, multiplayer neste momento. Isso significa que talvez eu diga: "Ei, acho que
+
+deveríamos implementar esse novo recurso no ambiente de trabalho colaborativo." E eu vou entrar na brincadeira do " claw tag" para fazer uma primeira tentativa. E então eu direi ao Cloud Tag: "Ei, compartilhe uma gravação da sua implementação final." Então, eu vou marcar a equipe de design para dar uma olhada, eles vão dar uns retoques e depois passam para a equipe de desenvolvimento para finalizar e lançar em fase de testes. E tem sido uma experiência muito fluida.
+
+Ainda estamos tentando entender melhor a dinâmica social para conduzir a mesma sessão, mas descobrimos que as pessoas simplesmente observam como os outros a utilizam e seguem essas normas sociais. Na verdade, tem sido bastante fácil e intuitivo para nós integrar o Claw Tag em nossas equipes. Sim, eu acho ótimo, tipo, sim. Ensinar as pessoas e também meio que reduzir a lentidão, porque, sabe, se você vê alguém dizendo "Ei, Claude, conserta isso" ou algo assim, você pensa "Ah, sabe?". Acho que existe um fator
+
+social, ou não, tipo, o fato de todo mundo ver você usando Cloud em conjunto meio que eleva o nível de como você usa o Claude também. Então, você quer fazer um trabalho do qual se orgulhe publicamente, um trabalho cuja qualidade não caia drasticamente. Então, já que estamos falando sobre usar o Claude para construir o CL, bem, como é o processo de construção do Claude? Como vocês lidam com o problema mais difícil em toda a engenharia, que é a priorização? Como vocês decidem quais recursos valem a pena construir e lançar quando construir um recurso é muito mais barato? Agora,
+
+essa é a parte difícil [risos]. Existem algumas maneiras pelas quais abordamos isso. Uma delas é usar nossos produtos internamente todos os dias. Sempre que há algo que queremos ser capazes de fazer em nossos produtos, mas não conseguimos, em vez de procurar uma solução diferente, corrigimos nosso produto para que ele possa suportar esse caso. Bem, internamente temos uma cultura muito forte de dar comida para cachorro. Então, antes de
+
+podermos compartilhar nossos produtos com o mundo todo, compartilhamos com todos dentro da Anthropic e com alguns clientes iniciais que nos dão um feedback muito honesto sobre eles. Quanto mais brutal, melhor, e repetimos o processo até que as pessoas gostem. Temos, portanto, uma meta interna para o número de usuários ativos e o nível de retenção que um recurso precisa ter antes de compartilhá-lo com o público. E como essa barra é muito clara, todo engenheiro sabe o que está tentando atingir. E acho que isso também aprimora nosso trabalho, porque se o recurso não for bem acabado, as pessoas vão desistir e, nesse caso, não deveríamos lançá-lo .
+
+Você tem algum exemplo de uma funcionalidade que te surpreendeu? Você lançou o produto e o engajamento foi enorme, e aquilo que era improvável de ser lançado acabou se tornando um produto real . Eu tenho um. Muitos membros da nossa equipe adoram controle remoto. Assim, o controle remoto permite que você use seu dispositivo móvel ou quadricóptero no navegador da web para se conectar a uma sessão local do QuadCode em execução em sua CLI. Eu nunca tenho essa
+
+necessidade porque simplesmente executo a tarefa diretamente no celular e ela é executada em uma sessão na nuvem, sem usar meu ambiente local. Acho que isso acontece porque estou realizando tarefas de programação muito fáceis. Mas isso é algo que eu não entendi completamente. Eu pensei: "Ei, as pessoas deveriam simplesmente configurar seus próprios ambientes de desenvolvimento remoto ." Mas na prática, depois que implementamos o controle remoto, muita gente com quem converso diz: "Ok, agora o que eu faço todas as noites é...
+
+muita gente me diz que simplesmente conecta o laptop ao carregador, fecha a tela ou abre várias sessões de controle remoto, bloqueia a tela e usa o celular do sofá para controlar o Quad Code." E então, esse tem sido o fluxo que estamos aproveitando agora, algo que eu não entendia inicialmente, mas agora entendo. Eu faço exatamente isso. Eu consigo fazer muito mais trabalho no meu laptop em ambientes mais confortáveis ​​porque, sim, agora posso controlá-lo remotamente. Isso é muito divertido. Como funciona a revisão de código?
+
+Você está revisando? Um ser humano revisa cada linha de código de produção que chega ao código compilado? E se não, o que você está fazendo? Como você mantém a qualidade elevada? Claro. Sim. Bem, isso varia muito dependendo da tarefa
+
+. Então, para áreas importantes, temos responsáveis ​​pelo código, certo? Então, o prompt do sistema é um exemplo de quando temos um proprietário de código e você precisa enviar o seu código para aprovação. Bem, então, suponho que o código em si seja diretamente responsável pela qualidade dessa área do código. Isso mesmo. Sim. Sim.
+
+E eles precisam aprovar o comunicado de imprensa que o aborda. Certo. Isso mesmo. Bem, temos revisão de código, tipo, nossa revisão de código no Git, sabe, revisa tudo, e isso acontece em cada PR e, muitas vezes, é o que faz a maior parte da revisão. Hum, acho que algo que observei na equipe é que, para PRs mais complexos, você pode criar um artefato para explicar o PR, para que outras pessoas possam revisá-lo.
+
+Sim, investimos muito em verificação, CI/CD e coisas do tipo para garantir que, sempre que algo falhar, tenhamos um teste, um ambiente robusto na nuvem que possa controlar o código e testá-lo. Entende? Então, sim, existe uma abordagem multifacetada para a revisão de código. Acho que você tem algo a acrescentar? Em geral, estamos tentando migrar para um mundo onde os humanos não precisam estar envolvidos. Assim, para as mudanças mais críticas
+
+no núcleo do código do Quad e de outros produtos, sempre há um responsável pelo código que revisa manualmente todas as alterações. Mas, cada vez mais, para as alterações que estão nas camadas externas, temos uma revisão de código quádrupla que as analisa completamente. Isso parece bastante assustador, mas tivemos um processo de mais de seis meses para chegar até aqui e acho que existem pequenos passos que você dá para construir confiança na revisão de código. Inicialmente, tínhamos revisão humana para tudo e, gradualmente, passamos a dizer: "Ok, para alterações de código que afetam esses arquivos, a revisão de código detectará 100% dos problemas". Portanto, na verdade, não precisamos de um ser humano para revisar isso manualmente.
+
+E também, quando fazemos a revisão de incidentes, analisamos os PRs que causaram o incidente e pensamos: "Ok, como podemos atualizar a revisão de código para detectar isso?". Além disso, adicionamos esses PRs a um conjunto de avaliação para garantir que nossas futuras alterações na revisão de código nunca causem regressão nessa métrica. Portanto, remover os humanos do processo de revisão de código é um grande passo em frente. Acho que pode parecer assustador e não é algo que se faça da noite para o dia, mas é algo que se consegue com meses de investimento em infraestrutura, para ter a confiança de que a revisão de código está detectando tudo o que importa.
+
+Então, é interessante você ter mencionado a construção de confiança nos modelos, porque isso é algo que eu descobri: sei que se eu pedir ao Opus 4.8 para construir um endpoint JSON que execute uma consulta SQL e retorne JSON, ele simplesmente fará isso corretamente. Assim, não é algo que eu precise analisar com atenção. Mas aí surge um novo modelo e eu ainda não sei como construir rapidamente a confiança de que o Fable não vai estragar as coisas como o Opus fez. Você precisa pensar muito sobre esse novo modelo, como por exemplo, como ele afeta sua intuição em relação ao que pode e ao que não pode fazer? Então, o principal motivo pelo qual estamos
+
+construindo essa base de avaliações ao longo do tempo é para que novos modelos possam ser substituídos diretamente, porque o que fazemos quando temos um novo modelo é executar todo o conjunto de avaliações e garantir que, por exemplo, o Fable seja estritamente melhor que o Opus 48, e isso nos dá a confiança necessária para implementá-lo. E essas avaliações de modelo são para o Anthropic como um todo ou são avaliações específicas da equipe de código claud que vocês estão usando? Temos ambos. Então, temos avaliadores na nossa equipe e realizamos revisões de código em todos os repositórios da Enthropic, e para coisas como o modo automático, não só temos avaliadores para cada usuário da Enthropic, como também contratamos vários testadores externos para criar ambientes com injeções de código e entradas maliciosas, garantindo que o modo automático não deixe nenhuma delas passar. Então, para o próprio código do Claude, esse é um desafio que tenho enfrentado com as coisas que estou desenvolvendo. Gostaria de saber se a
+
+melhoria que implementei no sistema realmente melhorou o produto. Certo? Essa é a forma mais básica de avaliação específica de um produto. E eu ainda não tenho muita noção de como fazer isso. Existe algo que você está fazendo de tal forma que tem total confiança de que essa alteração que você fez no prompt do sistema resulta em uma melhor saída?
+
+Não temos total confiança, mas fazemos muito para garantir que não haja regressão no desempenho. Assim, o ponto de partida é que temos um conjunto de avaliações externas em que confiamos e complementamos isso com um conjunto ainda maior de avaliações internas em que também confiamos. Para começar, otimizamos principalmente a capacidade. Dada uma definição completa da tarefa e todo o código-fonte disponível, Claude toma as decisões corretas, corrige completamente os erros e passa em todos os testes? Então, esse é o ponto de partida e é isso que otimizamos, porque é o que os usuários mais desejam. Mas existem
+
+muitos comportamentos semelhantes que impactam a forma como os usuários se sentem ao trabalhar com código quádruplo. Por exemplo, as pessoas realmente não gostam quando o código na nuvem diz que está na hora de dormir. [risos] ou as pessoas realmente não gostam quando aparece algo como: "Ei, terminei duas das cinco partes. Quer que eu continue?" Tipo, "Sim, por favor, continue."
+
+Então, estamos criando um conjunto de e-mails comportamentais para detectar esses casos. E, à medida que recebemos feedback dos usuários, por favor, compartilhem suas opiniões conosco. À medida que recebemos feedback dos usuários, simplesmente classificamos os problemas, ou seja, estes são os problemas prioritários. E vamos analisando um por um e criando avaliações para cada um deles. Portanto, a cobertura não é de 100%, mas estamos nos esforçando e é uma prioridade para nós aumentá-la. E qual é o grau de
+
+sobreposição e interação entre a equipe de desenvolvimento do Claude e as equipes da Anthropic que estão treinando os modelos ? É uma colaboração bastante próxima ? Agora, em toda a Anthropic, trabalhamos todos em estreita colaboração. Então, nós nos reunimos frequentemente para discutir o que esperamos que a próxima geração de modelos seja capaz de fazer. Acho que nossa equipe de pesquisa também tem sido incrível ao mostrar isso publicamente. Por isso, frequentemente falamos em nossas
+
+postagens no blog sobre como estamos direcionando nossos esforços para projetos de longo prazo, e como treinamos o próprio Quad para ser honesto, inofensivo e útil. Bem, também nos esforçamos muito para garantir que esteja alinhado com a sua intenção, mesmo que ela seja expressa de forma vaga. É claro, tente ser o mais específico possível sobre o que você deseja. Então, Quad tem todo o contexto, mas mesmo quando você não é específico, nós ensinamos Claude a fazer boas suposições e, sim, eu acho que tem sido uma parceria produtiva. Então, Derek, você mencionou esta manhã que a solicitação do sistema para o código Claude foi reduzida em 80%.
+
+Por conta de Claude Fable, você poderia dar um pouco mais de detalhes sobre como isso se parece? Que tipo de coisas você conseguiu deixar cair? Sim. Então não foi só Fable, foi também Opus 4.8. E sim, daqui para frente,
+
+os modelos futuros... bem, nós temos diferentes instruções do sistema para diferentes modelos agora. Hum, acho que alguns dos padrões que vimos foi que estávamos restringindo demais o Claude, certo? Então, acho que os
+
+modelos iniciais, tipo o Opus 4, precisavam de muitos exemplos, e remover os exemplos foi extremamente útil porque tornou o processo mais criativo do que, sabe, com os exemplos que tínhamos fornecido. Isso acontece porque uma das principais dicas que dou às pessoas é usar exemplos, pois eles são a maneira mais fácil de explicar . Se isso deixar de ser verdade, acaba por comprometer um pouco o meu modelo de estímulo . Sim, aqui também. Acho que fiquei surpreso ao ouvir isso. Acho que
+
+agora se trata mais do formato das ferramentas que você dá ao Claude, como o prompt do sistema e coisas do tipo. A outra coisa que fizemos foi tentar dar mais contexto e menos avisos do tipo "não faça isso", porque acho que é um impulso muito forte para o Claude, especialmente se isso entrar em conflito com as instruções do usuário mais tarde, o que pode ser extremamente confuso para ele, certo? Porque você pensa: "Ah, eu tenho essa habilidade que diz isso e o prompt do sistema diz aquilo." Então, tentamos ter menos restrições rígidas e mais contexto, e menos instruções no geral. Sim, acho que definitivamente é uma ciência. Foram necessárias
+
+várias avaliações para construir isso. Não tenho certeza se você tinha mais alguma coisa sobre o sistema lean. Acho que, em geral, ao instruir esses modelos, você sempre deve pensar se existem casos extremos nas instruções que está dando. E quando voltamos e revisamos todas as instruções no prompt do sistema de código na nuvem , encontramos alguns casos em que, sim, essa afirmação é 90% verdadeira, mas há cerca de 10% dos casos em que isso não é verdade. E não queríamos restringir o modelo ou confundi-lo, fazendo-o pensar: "Ei, ele deve sempre fazer isso". Um bom exemplo disso é a
+
+verificação. Todos aqui querem que a garra verifique seu funcionamento. Bem, tínhamos algumas instruções no prompt que diziam apenas: "Se você fizer uma alteração no front-end, sempre verifique". Mas você sabe, isso tem um limite . Por exemplo, se você estiver alterando o texto de uma string para outra e o usuário disser algo como "faça uma correção rápida e atualize o teste", talvez você não queira verificar. Então, também ajustamos
+
+nossa linguagem, passando de "sempre verifique, verifique, verifique" para algo como "na maioria das vezes, quando você está trabalhando no front-end, nem sempre consegue entender a experiência completa acessando os endpoints do back-end" . Então, quando você fizer mais alterações na experiência do usuário, por exemplo, execute o aplicativo localmente. Na verdade, essa instrução provavelmente nem é boa, porque o que é uma grande mudança? Talvez seja melhor testar também pequenas alterações. Bem, em geral, sempre que você der uma instrução ao modelo, deve pensar nas maneiras pelas quais ela poderia ser mal interpretada por um usuário ou humano bem-intencionado, a fim de entender melhor como o modelo pode interpretá-la e garantir que você possa suavizar a instrução para que ela seja 100% precisa, já que você está dando essa instrução ao modelo 100% das vezes. Mas o que é fascinante nisso
+
+é que você está confiando no julgamento do modelo. E isso tem que ser algo digno de uma fábula épica. Assim como os modelos de um ano atrás, eles não tinham o nível de discernimento necessário para decidir se iriam ou não testar uma mudança. Isso é absolutamente fascinante. Mas isso deixa de funcionar se você estiver desenvolvendo para uma ampla gama de modelos e tentando executar os modelos mais baratos para tarefas mais simples e coisas do tipo.
+
+Na verdade, agora temos um sistema diferente para cada modelo justamente por esse motivo. Portanto, apenas os nossos modelos mais avançados têm essa redução de 80% no uso de tokens, enquanto os modelos mais antigos ainda exibem o prompt completo do sistema. Você acha que Fable e Opus são inteligentes o suficiente para estimular Haiku com mais detalhes porque entendem que Haiku tem menos discernimento, menos bom gosto? Não conseguimos avaliar, mas também não temos dados concretos para comprovar isso. Acho que existe uma dificuldade com modelos menores às vezes, porque, como vimos com alguns casos, os modelos maiores podem ser mais eficientes em termos de tokens em problemas difíceis do que os modelos menores. Então,
+
+sabe, existe um pouco dessa intuição para construir, sabe? Às vezes você realmente quer inteligência de ponta quase o tempo todo, sabe? Mas, sim, a curva paralela muda, sabe? E é difícil de encontrar. Sim. Quer
+
+dizer, isso é algo que achei fascinante. Tenho a impressão de que, há um ano, eu não confiava em um modelo para escrever um texto explicativo. Assim como hoje, os bons modelos são muito bons em dar dicas. Muitas das minhas sugestões de pauta são escritas por modelos, o que parece absurdo, mas na verdade funciona muito bem. E algo que me ajudou a aceitar isso foi pensar em subagentes, que se resumem a um modelo com garras configurando um comando para outro modelo com garras, para que ele saiba o que fazer. Sim, acho que os fluxos de trabalho são
+
+um ótimo exemplo disso, porque a nuvem não apenas solicita informações a um único subagente, mas também orquestra a interação de vários subagentes, e cada um deles recebe uma solicitação muito detalhada. Então, é quase como um nível acima de , sabe, simplesmente gerar um subagente. Hum, então sim, é muito bom nisso . Sim, eu também tenho usado no meu computador pessoal, tipo, passando a API do Gemini e dizendo, ah, aqui está, gere imagens. E é tão bom nisso que é muito menos preguiçoso do que eu na hora de sugerir uma modelo de imagem, sabe? Então, é
+
+, é só o Claude dando dicas para o Claude o tempo todo. Sim, acho que Claude também escreveu o prompt para a ferramenta de fluxo de trabalho. Quanto à ferramenta de fluxo de trabalho, eu li essa instrução. É uma boa sugestão. Quer dizer, na verdade, uma frustração que tenho com a Anthropic em geral é que vocês publicam os prompts para o Claude.
+
+Existe uma página web com eles, mas você não incluiu os prompts de ferramentas e os prompts de código Claude. Ainda preciso usar um proxy para interceptá-los. Eu adoraria que os prompts de código do Claude fossem publicados deliberadamente, pois eles são a documentação. É assim que você sabe o que a ferramenta pode fazer e como ela funciona. Vou anotar essa solicitação de recurso.
+
+Por favor, faça isso. Vou pedir para o Claude fazer isso. E também as diferenças, tipo, de vez em quando eu comparo o prompt antigo com o novo, e é assim que aprendo as capacidades do novo modelo. Estou realmente ansioso para ver como essa redução de 80% se traduzirá na prática. Sim, a culpa é minha. Preciso fazer uma
+
+postagem sobre isso em detalhes. Sim. Então, qual é o seu padrão? Vamos falar um pouco sobre ferramentas. O código Claude é basicamente um conjunto de ferramentas dentro de um grande conjunto de ferramentas. Qual é o seu critério para introduzir uma
+
+nova ferramenta? Como decidir quando vale a pena investir em engenharia adicional nesse nível? Você quer aceitar? Porque você nos apresentou uma das melhores ferramentas que temos. Sim . Quer dizer, sim, acho que o auge da minha carreira foi
+
+quando lancei a ferramenta de perguntas ao usuário. Acho que sim. Hum, é realmente difícil. Acho que, especialmente para algumas ferramentas como a "perguntar ao usuário", que é a ferramenta do Claude para perguntar a você, é difícil de avaliar e, às vezes, é mais uma questão de preferência do usuário. Então, tipo, especialmente naquela época tínhamos menos avaliações. Era muito baseado em alimentação para formigas,
+
+ou melhor, alimentação para cães, é isso aí, alimentação para formigas é a nossa versão para formigas disso. Bem, sim, quero dizer, acho que no geral temos tentado usar menos ferramentas. Acho que o último conjunto de ferramentas que introduzimos foi algo como a ferramenta de tarefas, eu acho, e tentamos dar à nuvem versões mais gerais para fazer isso. Bem, uma das ferramentas mais interessantes é a ferramenta de edição de arquivos, que você pode usar como uma ferramenta padrão ou pode instruí-la a usar comandos de grupo e fazer as coisas dessa maneira. Qual é a versão mais recente da sua ferramenta de edição de arquivos?
+
+Hum, acho que ainda temos um, mas, por exemplo, removemos nossa ferramenta de busca por médico de família e outras ferramentas de busca. Ferramentas glob para linguagens nativas como o bash, e então, sim, ainda temos uma. Acho que isso é mais ou menos como eu disse na minha palestra anterior: os modelos são mais biológicos do que físicos, sabe? E é difícil, especialmente o design de ferramentas. Acho que é bem difícil, e não sei se o Cat discorda e diz que deveríamos ter uma ciência por trás disso, mas eu acho que o design de ferramentas é mais uma arte, talvez, ou algo biológico. Sim,
+
+concordo em grande parte. Mas,
+
+em geral, conforme introduzimos mais ferramentas, tentamos manter a cardinalidade bem baixa e garantir que cada ferramenta adicionada tenha uma função distinta das outras, para que o Claude possa distinguir facilmente quando chamar cada uma. para edição de arquivos. Na verdade, o motivo de termos um editor de arquivos é porque podemos renderizá-los, já que antigamente costumávamos mostrar, ou acho que ainda mostramos. Então, mostramos às pessoas quando o Quad faz uma alteração em um arquivo, e há uma interface de usuário dedicada e bem legal que simplesmente pergunta: "Você aprova esta edição neste arquivo?" E o motivo de termos uma ferramenta dedicada para edição de arquivos era para que pudéssemos saber com certeza que o Quad estava criando um arquivo, para que pudéssemos mostrar às pessoas essa interface de usuário agradável. E para muitos
+
+dos novos usuários que estão se integrando, acho que eles ainda gostam muito dessa experiência. Então, nós o mantivemos por perto. Mas para muitos de nós que estamos no modo automático agora, ou, com sorte, você não está no modo YOLO. Mas enfim, para muitos de nós agora, acho que isso não importa muito e provavelmente poderíamos simplesmente remover a edição de arquivos e tudo ficaria bem. Então, vamos falar sobre o modo automático ou sobre segurança em geral. Tenho plena consciência dos
+
+riscos da injeção imediata e de que muitas coisas ruins podem acontecer se alguém disser ao meu código manipulado o que fazer. Eu ainda executo principalmente código com erros em modo amarelo e me sinto extremamente culpado por isso. Qual é a recomendação dentro da perspectiva antropológica para executar código criptografado com segurança? Que tipo de coisa você diz para as pessoas fazerem? Por que não usar o modo automático?
+
+Estou começando a usar o modo automático e ainda não o entendo o suficiente para saber o quão seguro ele é. Mas sim, isso foi há mais ou menos três semanas, eu passei a usar o modo automático por padrão. Bem, de forma geral, dentro da Enthropic, quase todas as pessoas usam o modo automático. É a melhor maneira de realizar tarefas de longa duração em código quádruplo com segurança. Já fizemos muitas críticas.
+
+Temos milhares de avaliações. Contratamos vários especialistas em testes de intrusão (red team) para criar ambientes hostis com o objetivo de enganar o código na nuvem e levá-lo a executar ações maliciosas. E solucionamos todos os problemas que eles encontraram. Portanto, publicaremos algumas avaliações nas próximas semanas, mas já mitigamos praticamente todos os ataques. Essa é uma afirmação ousada. Isso é muito
+
+emocionante. Se isso se confirmar, compartilharemos as avaliações para que as pessoas possam analisá-las, mas temos sido extremamente diligentes em identificar todas as maneiras pelas quais o Quad pode apresentar problemas e, em seguida, atualizar o modo automático para evitá-los. Não detecta 100% das coisas. Hum, não acho que nenhum. Sim, isso seria uma afirmação muito forte. Mas, para as principais
+
+categorias de riscos que nos preocupam, como injeção imediata e exfiltração de dados, os riscos são muito menores do que os de um revisor humano médio. Então, ah sim, um pouco sobre como funciona o modo automático. Acho que é útil construir esse modelo mental. Então, sempre que Claude faz uma jogada, há uma chamada de comando ou de comando, há um classificador SONET que avalia a ferramenta e também o contexto da conversa, sua instrução, certo? Então, existem algumas coisas relacionadas a permissões que dependem da sua solicitação, certo? Por exemplo, você não quer dar
+
+permissões de "git push" o tempo todo, mas se você disser "ei, envie isso para o GitHub", você quer que ele faça isso, certo? E o modo automático fará isso. Ou, se você disser "não envie", você quer que ele negue, certo? E o modo automático fará isso. Acontece muito comigo de o modo automático tentar fazer isso, porque ele é muito útil e proativo, e o modo automático perceber e dizer "ah, sabe, não faça isso", e então ele expôs o problema.
+
+Então, ele é bom em relação às permissões dinâmicas que você mesmo concede dentro do prompt, o que eu acho muito importante. Além disso, funciona bem com nossa infraestrutura de sandbox, porque o sandbox é uma daquelas coisas em que existem muitos casos extremos diferentes. E é difícil para nós, meros mortais, segui-los de forma categórica. Mas se tivermos um ambiente isolado (sandbox) e algo precisar sair dele, como uma requisição de rede, o modo automático pode analisar essa requisição e verificar se ela faz sentido, permitindo a passagem. Eu não tinha percebido que o modo automático também interage com o ambiente isolado de rede. Sim,
+
+exatamente. Então também faz parte do ambiente de testes. Sim, ele interage com qualquer solicitação de permissão que o usuário veria normalmente . E qual a idade do modo automático? Tipo, eu sinto que, como um recurso ao qual eu tive acesso, ele só existe há alguns meses, certo?
+
+Estamos usando esse recurso na Anthropic desde janeiro. OK. Então, já faz um bom tempo que estamos trabalhando nisso. E é óbvio que a Anthropic está extremamente focada em segurança. Assim, temos trabalhado amplamente em nossas equipes de alinhamento e salvaguardas para viabilizar a implementação interna e tornar essas avaliações ainda mais robustas antes de compartilhá-las com o mundo. Acho que meu principal
+
+problema com o setor automotivo é que não o compreendo suficientemente a fundo. Assim como em qualquer coisa que cuide da minha segurança, quero saber o máximo possível sobre como funciona, contra o que me protege e contra o que não protege, para que eu possa decidir o quanto posso confiar nisso. Acho que sim, a Dell estava preparando uma publicação sobre isso. Então, só mais um pouquinho sobre o modo automático. É por isso também que a tag na nuvem é tão boa, não é? Porque o Cloud Tag usa o
+
+modo automático e, como você pode imaginar, uma das perguntas que eu mais ouvi em um Slackbot é sobre construir ou comprar . Tipo, por favor, você provavelmente não deveria criar seu próprio Slackbot de IA, sabe? Existem tantos vetores de ataque, entende? E tipo, você tem um canal de feedback onde os usuários podem postar comentários e agora seu bot está lendo isso, certo? Então, acho que esse trabalho que fizemos com o modo automático e, você sabe, temos uma defesa geral de segurança tipo queijo suíço , certo? Nós também gostamos,
+
+sabe, de coisas como "RL contra isso e aquilo". Hum, acho que é isso que realmente faz o Cloud Tag funcionar. Funciona perfeitamente com suas permissões e, sabe, você não quer que nada seja injetado no seu Slack. Sim. Sim .
+
+Você tem alguma outra medida de segurança em desenvolvimento que vá além do modo automático? Hum, eu acho que estamos muito seguros, tipo, com a tag Claude você pode provisionar suas próprias credenciais para o Claude, então ele não precisa agir em seu nome. Você pode ter algo como "Claude" como identidade, e isso também facilita a auditoria e a inspeção das atividades de Claude. Bem, acho que é porque a tag Claude é influenciada por qualquer pessoa que possa falar com ela. Portanto, possui um grupo muito maior de pessoas que lhe dizem o que fazer.
+
+Isso mesmo. Sim. Sim. E claro, também temos sondas, como as do Mythos e, desculpe, as do Fable, e isso também é um efeito indireto do nosso trabalho de segurança e pesquisa. E acho que este é o momento em que você vê a IA, como a Anthropic sendo uma empresa de segurança com IA, realmente dando frutos, quando você quer que o Claude seja capaz de operar de forma sincronizada por longos períodos de tempo e, sim, o modo automático precisa ser praticamente impecável para que isso funcione corretamente, e tudo isso é consequência de sermos uma empresa de segurança com IA. Também
+
+lançamos dispositivos confiáveis ​​para usuários de controle remoto que desejam maior segurança. E para todos os nossos ambientes remotos, oferecemos suporte à injeção de credenciais. Então, se você quiser que o QuadCode possa acessar o DataDog, mas não quiser que o próprio QuadCode armazene as credenciais do DataDog, você pode configurar nosso sistema de gerenciamento de credenciais de identidade para que as credenciais do DataDog sejam utilizáveis ​​apenas pelo agente, mas não acessíveis a ele. Assim, inserimos o valor dinamicamente quando o agente tenta fazer uma solicitação de dados. É esse o truque do token proxy, certo? Onde
+
+o proxy fica sabendo sempre que alguém chama essa API. Endereço Dog.com com um token, substitua o token pelo endereço real. Adoro esse padrão. Estou vendo isso em vários lugares. Para
+
+mim, parece tão obviamente certo. Vamos falar um pouco sobre o elemento humano. E você mencionou isso na palestra de abertura desta manhã, mas muitas pessoas estão sentindo uma sensação de perda agora que muito do que consideravam ser seu papel na construção de software está sendo absorvido pelos modelos. Hum, o que você acha disso? Em primeiro lugar, como é que o último ano e meio mudou a forma como você encara o seu próprio trabalho e o valor que você agrega?
+
+Sim, acho que para mim e para a Kat é sempre um ótimo lembrete. Ken e Boris são ótimos exemplos de como é preciso ser mais ambicioso. Eles sempre dizem coisas como: "Sabe, a gente está crescendo muito rápido, temos que estar sempre um passo à frente, temos que fazer o melhor trabalho possível." Hum, acho que isso é como um lembrete constante para mim, sempre que estou meio que atrasada em alguma coisa. Eu penso: "Ok, posso fazer isso mais rápido?" Posso
+
+ser mais ambicioso aqui? Bem, eu acho que o ponto principal é que, muitas vezes, a resposta é Claude, porque Claude está melhorando com o tempo. Então, eu pensei: "Ah, da última vez que tentei isso, foi com o modelo anterior ou algo assim." Bem, considerando seu ponto de vista sobre perdas, acho que isso é real. E eu sinto que, se você está apenas tentando fazer o mesmo trabalho que fazia antes do mestrado e agora é como se fosse um exercício qualquer, é uma sensação meio triste . E acho que a forma de compensar
+
+isso é sendo mais ambicioso, certo? E você pensa, sabe, tipo, eu adoro, tipo, acho que o Jared é um ótimo exemplo, ele escreveu todo o código Zig à mão no apartamento dele em Oakland em tipo um ano, mal saindo de casa, sabe, e aí, e ele se divertiu muito fazendo isso, e agora eu vejo ele reescrevendo todo o Bon para Rust e ele está se divertindo muito fazendo isso, né? E é muito mais ambicioso, e é assim que ele meio que compensa isso. Acho que, de modo geral, é tipo: " Ok, como eu faço algo maior?" e "Faço mais". Acho que o
+
+sucesso é divertido, sabe? E é assim que eu gosto, porque está mudando sua ambição, está mudando o que você faz, porque o que você fazia antes era muito mais fácil, entre aspas, mas agora podemos enfrentar esses desafios maiores. Sim, acho que, em média, todo mundo tem coisas que gostaria de ter feito melhor, sabe? E acho que agora é " Vamos lá, vamos fazer!", sabe? Tipo, vamos lá!
+
+E Cap, como isso se traduz na perspectiva de gestão de produtos? Tenho a impressão de que o papel do gerente de produto muda todo mês e se resume basicamente a identificar, tipo, quem são os gerentes de produto da nossa equipe? Eles são uma mistura de engenheiro, designer e gerente de produto. A maioria dos engenheiros da nossa equipe, na verdade, costumava ser engenheiros em tempo integral no passado. Para nós, isso significa realmente entrar em ação sempre que houver alguma lacuna. Então, se pensarmos "
+
+ok, temos essa ideia e não inspiramos nenhum engenheiro a desenvolvê-la", devemos simplesmente desenvolvê-la, anotá-la em um caderno e inspirar outras pessoas a levá-la para a produção. Ou, se os designs parecerem um pouco estranhos, vamos pegar uma página semelhante e fazer um primeiro esboço do design e, em seguida, chamar alguém que seja muito detalhista para preencher as lacunas. Ou, se percebermos que, por exemplo, nossa equipe e a adoção do produto aumentaram um pouco dentro da empresa e mais pessoas precisam saber o que está por vir em relação ao Quad Code, Quad Tag e Co-Work, o que fazemos então é automatizar todo o nosso calendário de lançamentos, automatizar o recebimento dessas atualizações de status de forma assíncrona para não incomodar as pessoas e, em seguida, definir nossos três canais internos de anúncio e garantir que nossas atualizações sejam totalmente detalhadas e objetivas. Para nós, o importante é entender qual é a lacuna existente entre ter uma ótima ideia e entregar o produto aos nossos clientes, e como podemos automatizar esse processo ao máximo. Pelo que entendi, na gestão de produtos, sempre há mais a fazer, não é? Uma das
+
+coisas que me faz sentir bem é nunca ter trabalhado em uma empresa que não tivesse uma lista de espera com mil coisas que queriam fazer e para as quais não tinham recursos. Então , qual foi um momento em que Claude te surpreendeu? Como quando o modelo faz algo que realmente te surpreende, algo que você não achava que ele seria capaz de fazer . Sim, quer dizer, eu já postei bastante sobre edição de vídeo na nuvem, mas mais recentemente eu dei uma palestra na conferência ACM Agentic e perguntei: "Ei, pessoal, vocês têm o vídeo editado? Eu adoraria postá-lo e compartilhar com minha equipe de comunicação." E eles ficam tipo, "Nossa, está
+
+demorando muito." E eu fiquei tipo, "Ok, você poderia me enviar os arquivos brutos?" Então eles me enviaram o vídeo de mim falando no palco, o vídeo da mesa de som e o arquivo de áudio, e disseram: "Boa sorte". E então eu gostaria de dar isso para Claude. Eu também entrego meu arquivo HTML e digo: "Ei, você pode simplesmente editar isso tudo junto, sabe?" E o
+
+que isso faz é, sinceramente, incrível. Tipo, estou pronto para enviar. Dessa forma, ele transcreve o vídeo inteiro. Percebe que às vezes o vídeo do meu deck fica um pouco estranho. Aparece uma espécie de janela pop-up de atualização automática no meio da apresentação, dizendo algo como: "Ah, provavelmente não devo usar o vídeo da sua apresentação. Na verdade,
+
+vou recortar o vídeo para descobrir em qual slide você está e usar o código HTML, certo?" Portanto, está exibindo o código-fonte HTML. Aí, tem um vídeo meu, mas sabe, eu só ocupo uma pequena parte do palco. Assim, o recorte da imagem se ajusta dinamicamente à minha posição no palco. Hum, e tipo, eu estou andando de um lado para o outro. É como se estivesse
+
+me rastreando enquanto ando de um lado para o outro. E eu tenho tipo um recorte de mim, o baralho, e aí ele está transcrevendo o que eu estou dizendo. Isso era Fable, certo? Esta fábula. Sim. Sim. Absolutamente. Sim
+
+. E é tipo, sabe, foi uma boa sugestão, mas era uma sugestão para uma história única. E aí eu pedi para adicionar algumas animações e gráficos interessantes, e eu fiquei impressionado , sabe? Ele simplesmente faz tudo isso. Ele executa ffmpeg, ele faz remoção, ele faz.
+
+Então preciso fazer um acompanhamento. O que ele não consegue fazer? Quais são as coisas que ainda te decepcionam? Você está esperando que Claude Fable 6 descubra isso por você. Eu queria ter um design e uma experiência do usuário (UX) melhores .
+
+Uhum. [risos] Tipo, eu sinto que agora chegamos ao ponto em que, se eu der um comando com uma especificação detalhada de como eu quero que um recurso se comporte, ele geralmente se comportará dessa maneira. Mas, sabe, os ajustes podem estar desajustados ou a interface ainda não está muito agradável. Bem, acho que se baseia nas melhores práticas já existentes para aplicativos, no que diz respeito ao design de apps, mas sinto que, para os produtos da Frontier AI, ainda há muitas novas experiências de interação que precisamos projetar. Existe uma estética Opus. Você pode olhar
+
+para algo e pensar: "Sim, isso foi projetado pela Opus." Seria bom se pudéssemos superar isso. Sim . Sim. É como se eu estivesse muito animado para que os modelos futuros, com sorte, sejam como parceiros de pensamento em design de interação. Hum.
+
+Hum, o que é que não consegue fazer? Hum, eu acho que adoraria ver isso, sabe, interagindo mais com o mundo real, tipo, será que consegue fazer isso? Será que consegue resolver problemas científicos? Tipo, será que consegue orquestrar os experimentos? Tem uma certa quantidade de programação envolvida nisso, mas também tem essa outra coisa, essa visão mais ampla do mundo que precisa ser explorada. Então,
+
+Claude Science é um produto novo que foi lançado há poucos dias, certo? Sim, mas não tenho contexto nenhum sobre isso. Eu ia perguntar se isso faz parte do código de Claude ou se é uma seção separada para assuntos de sexo? É a nossa equipe de parceiros. Entendi. Experimente. Bem
+
+, eu tenho algumas perguntas finais. Hum, quais aspectos da cultura da empresa Anthropic você acha que contribuem de forma única para a produtividade da Anthropic com essas ferramentas e que outras empresas deveriam adotar? Quais são as dicas culturais que as pessoas deveriam adotar de você? Vou compartilhar uma e depois você vai. Hum, vou compartilhar uma para quag. Portanto, a estratégia de agarrar funciona
+
+melhor quando está em um canal público e quando a maioria dos seus canais também são públicos. A tag Claw consegue pesquisar em todos os canais públicos para obter o máximo de contexto possível e, assim, fornecer a resposta mais precisa. E só consegue fazer isso se tiver acesso a tudo. Sim, mencionei isso na minha apresentação principal, mas acho que é muito importante para mim. Quero reforçar o que os cofundadores dizem, que não negociamos contra nós mesmos, sabe? E acho
+
+isso muito importante, porque você pode ficar imaginando possíveis desvantagens e se convencendo a desistir de algo ambicioso, entende? Ou você pode simplesmente tentar fazer algo ambicioso. E eu acho que muitas vezes ficamos pensando: "Ok, e se a gente simplesmente fizesse isso?" Tipo, e se, sabe, isso fosse uma troca justa ou não, né? Ou tipo, e se sim, tipo, por quê?
+
+Onde está a prova de que é uma troca real e não apenas algo que soa razoável, não é? Então, acho que é só deixar as vantagens e desvantagens se revelarem para você. Seja o mais ambicioso que puder. Isso porque contradiz minha experiência de 25 anos em software, que me diz que a resposta padrão deveria ser não. Tudo envolve uma troca. Tudo
+
+tem um preço. E agora temos que repensar todas essas intuições. É meio fascinante. OK. E então, uma última pergunta para vocês dois. Qual
+
+é uma das suas coisas absurdas favoritas que você construiu com o Claude simplesmente porque vocês podiam construí- la? Eu posso ir. Bem, você acha que... estou trabalhando
+
+em um jogo de luta 2D de Street Fighter, com eu como personagem e meus amigos também. E usa código na nuvem para dar comandos, sabe, ao Gemini, e honestamente, o modelo Sea Dance é muito bom para fazer animações em vídeo. Hum, e, ah, funciona muito bem, tipo, é ótimo para dar dicas. É como se ele pudesse verificar os quadros para ver se a animação ficou boa . São sprites 2D de nível Street Fighter 2 que você está gerando?
+
+Sim, exatamente. Sim. Sim. Sim. Tipo sprites 2D. A animação está
+
+incrível. E também consegue identificar hitboxes. Pode ser algo como, ah, sabe, seu punho está tipo aqui, eu vou desenhar a hitbox em JSON. Sim. Sim. É
+
+incrível. Sim. Sim. Então, hum, não sei se vou divulgar isso, mas acho que precisamos de pelo menos uma captura de tela . Parece que consigo tirar uma captura de tela. Sim. Sim. O
+
+meu é muito mais simples. Bem, eu sou um grande escalador e muitos dos meus amigos também escalam, então temos um pequeno aplicativo que desenvolvemos com o QuadCode, onde registramos todos os projetos em que estamos trabalhando e também costumamos sair juntos para escalar bastante. Então, temos o quad realizando toda essa pesquisa com fluxos de trabalho. Workflows é incrível. Embora a classifiquemos como uma ferramenta de programação, ela é incrível para realizar pesquisas aprofundadas sobre viagens. Hum, eu
+
+também planejo nossos encontros de equipe fora do escritório e é ótimo para encontrar locais que acomodem todos nós. Hum, sim, tem muitos benefícios adicionais. Mas enfim, eu também uso fluxos de trabalho para pesquisar todos os destinos de escalada que possamos querer visitar, e quais têm voos diretos de onde todos nós estamos localizados. Ele acessa o Mountain Project e encontra todas as vias de escalada que estão no nosso nível de dificuldade. Ele encontra o Airbnb e traça uma rota que me agrada bastante.
+
+Eu não gosto de fazer trilhas, então me importo muito que o trajeto seja bem curto . Portanto, a distância a pé do estacionamento até o local onde a rocha está é muito curta. Então, ele filtra por isso, e eu, assim como nos aplicativos existentes, tenho que clicar manualmente em todas as opções do Mountain Project, mas com este, eu simplesmente insiro todas as nossas preferências e ele se torna um aplicativo personalizado para nós. Então, basicamente, você está programando o Jira com base na sua intuição para escalar montanhas. Exatamente. Isso é simplesmente fantástico.
+
+Sabe de uma coisa? Temos tempo para algumas perguntas da plateia. Bem, se você quiser, se quiser vir à frente e me dizer o que disseram, eu repetirei para que todos possam ouvir. Mas é , quer saber? Quem chegar primeiro pode fazer uma pergunta. Desculpem as
+
+pessoas lá atrás. Olá, então sim, minha pergunta é se vocês têm planos para desenvolver mais ferramentas de avaliação para criarmos conjuntos de dados de avaliação ou algo do tipo, e também mais ferramentas de observabilidade para monitorar o desempenho de agentes e fluxos de trabalho. Consideramos a possibilidade de criar ferramentas de avaliação, mas acredito que o fator limitante seja o tempo que os clientes levam para desenvolver avaliações de alta qualidade. Portanto, acredito que a ferramenta em si não é tanto uma limitação, mas sim a habilidade de criar uma ótima avaliação. E essa é uma área na qual estamos entusiasmados em investir internamente e também, esperamos, compartilhar algumas das melhores práticas externamente.
+
+Olá Katar, meu nome é Sai. Então, minha pergunta era porque estou mais interessado na memória e no modo multijogador. Como a memória está sendo projetada? Então, duas perguntas, certo? Como a memória está sendo projetada hoje em dia? Imagino que seja
+
+em torno de arquivos. Então, a segunda parte é: você já pensou em abordar a questão de uma forma ortogonal, onde você precisaria de um armazenamento de dados para guardar essa memória em vez de arquivos, para que a escalabilidade fosse melhor? Então, acho que essa é a minha pergunta. Sim, neste momento, para a tag de nuvem, a memória é específica do canal. Então, cada claude nesse canal tem uma memória compartilhada e, como você sabe, as instâncias têm uma sessão, mas a sessão pode contribuir de volta para a memória principal. Fazemos
+
+muita pesquisa sobre memória e, sabe, pode ser um pouco contraintuitivo entender qual é a maneira correta de trabalhar com memória. Ah, sim, estamos sempre trabalhando nisso. Então, sim, é isso mesmo, quero dizer, estamos sempre realizando experimentos com minha memória. Eu não sei nada sobre como funciona atualmente no Cloud Tag, que é um arquivo Markdown por canal. Sim.
+
+Obrigado. Então, receio que nosso tempo tenha acabado. Por favor, juntem-se a mim para agradecer a Cat e Tariq, e estaremos por aqui para mais perguntas no corredor. Obrigado, pessoal. Obrigado.
+
+[música]

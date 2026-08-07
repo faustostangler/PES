@@ -1,0 +1,85 @@
+---
+video_title: "Every Solo Agent Builder Eventually Reinvents a Worse Version of CI/CD - Sumaiya Shrabony"
+video_id: WLXxTaPagA8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WLXxTaPagA8
+video_date: 2026-07-11T16:30:04+00:00
+video_description: |
+  If you build agents alone long enough, you will independently reinvent five things software engineering solved decades ago. A way to test whether your agent's output is still correct after you changed something. A way to run it on a schedule and know if it failed. A way to prevent one skill's schema change from silently breaking three downstream skills. A way to roll back when today's run produces garbage. A way to validate outputs before they hit production. You just reinvented regression testing, cron monitoring, contract testing, version control, and staging. Badly. Without realizing it.
+  
+  The dangerous failure in an agent system is not bad output. Bad output is easy to catch. The dangerous failure is a polished artifact that looks ready but violates a production contract: it uses the wrong voice patterns, makes an unverified claim, repeats an old angle, and gets labeled "READY TO PUBLISH" anyway. That is the agent equivalent of shipping because the code compiled, even though the tests never ran.
+  
+  This talk uses a real, open-source 19-skill Claude Code agent system (github.com/safrin96/agentic-content-system) as the case study. Through an interactive live demo, I show three ways an agent system silently lies to you and what a boundary looks like that catches it. The takeaway is simple: the infrastructure gap in the agent ecosystem is not another framework. It is the equivalent of what CI/CD gave software teams in 2015, a standard, boring, reliable way to test, deploy, and roll back agent behavior. Before you add another agent, add one boundary.
+  
+  Speakers:
+  - Sumaiya Shrabony: Sumaiya Shrabony is a Technical Program Manager, enterprise AI practitioner, and content creator across LinkedIn, Instagram (@thedata_ai.girl), and Substack (Ground Truth) building toward thought leadership at the intersection of enterprise data infrastructure, AI adoption, and the immigrant-in-tech experience.
+    LinkedIn: https://www.linkedin.com/in/sumaiya-shrabony
+    GitHub: https://github.com/safrin96
+---
+Eis algo sobre o qual ninguém te avisa quando você começa a desenvolver agentes sozinho. Você acha que está criando prompts. Você acha que suas habilidades de construção não valem nada. Se você construir por tempo suficiente, especialmente sozinho, começará a construir algo completamente diferente. Algo que se parece muito com CICD. Só que pior, porque você está
+
+construindo tudo do zero, um fracasso de cada vez. Eu sou Sumaiya. Eu administro um sistema de agentes de código em nuvem com 19 habilidades. Redação, pesquisa, sincronização de arquivos, sincronização de análises, ganchos, transcrição e muito mais. E a coisa mais útil que aprendi ao construir isso não foi como criar prompts melhores. Foi perceber quais eram os
+
+cinco controles que eu estava reconstruindo de forma inadequada e o que você pode fazer em vez disso. Antes de mostrar o problema, deixe-me apresentar o sistema que me ensinou a resolvê-lo. Este é o sistema de conteúdo do agente. É de código aberto. Link na descrição.
+
+Acontece em sábados alternados. O programa lê informações de um repositório de conhecimento, cria um resumo da pesquisa, elabora um plano de conteúdo, produz 12 peças de conteúdo, executa verificações, revisões, desduplicação e, finalmente, salva o resultado como arquivos Markdown. Mas o que importa nesta palestra não é o conteúdo. O que importa é que este sistema possui sete etapas de transferência. Do agendador ao comando, do comando à pesquisa, da pesquisa ao conteúdo, do plano de conteúdo à produção, da habilidade de produção ao verificador, do verificador ao revisor, do revisor à pasta de saída. Cada transferência de responsabilidade é um
+
+ponto em que o sistema pode te enganar. E se você estiver construindo o sistema sozinho, ninguém vai perceber as mentiras, exceto você, geralmente depois que o dano já estiver feito. Eis o padrão que quero que vocês observem em seus próprios sistemas. Se você construir agentes de forma independente, reconstruirá esses cinco elementos aproximadamente nesta ordem. Você altera um comando ou uma habilidade, e algo mais adiante para de funcionar.
+
+Então, você cria uma maneira de testar se a saída ainda corresponde ao formato esperado. Parabéns, você reinventou os testes de regressão. Então, você configura um cron job ou uma tarefa agendada. Um dia, ele simplesmente para de funcionar, sem que você perceba, mas você só percebe isso depois de uma semana. Então, você cria alertas.
+
+Você acabou de reinventar o monitoramento de CI. Uma habilidade altera seu esquema de saída, o que causa a quebra de três habilidades subsequentes. Você decidiu adicionar uma validação no limite por causa disso. Você acabou de reinventar os testes de contrato. Um artefato parece pronto, mas não deveria ser enviado. Então você adiciona um ponto de verificação antes de
+
+ir para a pasta de arquivos prontos. Você acabou de reinventar os ambientes de teste. Algo dá errado, mas você não consegue descobrir qual comando, qual habilidade ou qual transferência gerou a saída incorreta. Então, você começa a registrar tudo. Você acabou de reinventar os registros de auditoria.
+
+O motivo de o título dizer "pior versão" não é porque os agentes são versões de software, mas sim porque você acaba precisando exatamente das mesmas garantias operacionais. No entanto, os sistemas de agentes não fornecem nada disso por padrão. Então, você os constrói de forma independente. A pior versão. Sem nem mesmo perceber que está construindo isso. A falha perigosa em um
+
+sistema de agentes nunca é um resultado ruim. Uma saída ruim é muito fácil de corrigir. Você dá uma olhada e imediatamente percebe que é um resultado ruim. O fracasso perigoso é um artefato polido que parece ótimo à primeira vista. No entanto, ele nunca passará pelos seus portões de saída.
+
+Utiliza um padrão vocal incorreto. Faz uma afirmação não verificada. Repete um ângulo antigo. Faltam algumas seções obrigatórias, e mesmo assim o texto é preparado para publicação . Isso é o equivalente, para o agente, a enviar um produto, porque o código compilou, mas os testes nunca foram executados. É isto que
+
+vou demonstrar para vocês. Não o caminho ideal, mas as três maneiras pelas quais o agente pode mentir para você e as formas de pegá-lo. Vou começar pelo cenário ideal, porque é isso que todas as demonstrações de agentes mostram. Vou executar uma versão reduzida e segura para a privacidade do meu pipeline de mecanismo de conteúdo. Este não é o repositório completo. É uma
+
+versão resumida do problema de produção. O processo é simples. Gere um artefato de conteúdo, execute os gates e permita ou bloqueie a saída. Observe o resultado. O documento Markdown contém uma legenda, um comentário fixado, um resumo visual, um registro de verificação, ativos do cofre, notas de produção e um status de pronto. Se eu demonstrar apenas isso,
+
+o sistema parecerá concluído. O produto tem um aspecto profissional. O conteúdo está bem escrito. É por isso que as demonstrações de agentes são enganosas. Eles sempre te mostram o caminho mais fácil. Mas o que acontece se
+
+o caminho não estiver correto, mas a saída ainda parecer pronta? Agora, vamos analisar a falha número um: a deriva da voz. Analise o conteúdo. Desbloqueie o poder da adoção da IA. Essa inovação revolucionária transformará a maneira como as equipes operam no cenário empresarial dinâmico de hoje.
+
+Se você passa tempo suficiente no LinkedIn, já deve ter visto essa mesma frase milhares de vezes. É uma linguagem genérica de marketing de IA. Não é a minha voz. Não é a sua voz. Não é a voz de ninguém.
+
+Mas, de qualquer forma, o modo faca salvou tudo. Porque o artefato possui todas as seções necessárias. Está com o status de pronto e parece completo. E agora, o que acontece quando adiciono um limite? O modo protegido bloqueia isso no contrato de voz. O
+
+processo é interrompido antes que este artefato entre na pasta de publicação. Esse é o ponto. O portão não melhora o conteúdo. Se você estiver criando um sistema de conteúdo, este é o primeiro ponto de controle que eu recomendaria. Se você estiver construindo qualquer outro sistema de agentes, a pergunta equivalente é: como se manifesta uma voz inadequada no seu domínio? A segunda falha
+
+é a falta de verificação. Este artigo afirma: "Equipes com um modelo claro de propriedade semântica reduzem o retrabalho na implementação de IA em 37%." 37%. Essa é uma afirmação muito específica. De onde veio? Verifique o
+
+registro de verificação. Está vazio. A prosa é utilizável. O número parece plausível. É isso que torna o fracasso perigoso.
+
+Uma afirmação que soa confiante, sem qualquer verificação ou referência. E o modo faca salvou a situação. O modo protegido bloqueia isso. Conteúdo que contenha alegações não pode ser enviado sem um comprovante de verificação. "Confie em mim" não é um verificador. Se o seu
+
+sistema de agentes faz afirmações sobre dados, sobre usuários, sobre qualquer coisa, e você não tem uma cadeia de validação, você está enviando afirmações não verificadas com uma aparência profissional. Isso não é um problema do agente. Isso é um problema de credibilidade. Falha três, gancho de duplicação. Essa é a minha falha favorita, porque é a mais realista para quem constrói sozinho. O resultado é novo.
+
+O conteúdo parece tecnicamente coerente. Mas o gancho, o ângulo de abertura, é quase uma réplica de algo do seu acervo histórico. Sim, a adoção falha quando os painéis de controle parecem corretos, mas o fluxo de trabalho está errado. Esse ângulo já foi utilizado. Se o seu sistema continua gerando quase duplicatas, ele parecerá automatizado, mesmo que cada parte individual esteja tecnicamente correta.
+
+Seu público percebe antes de você. O modo jardim bloqueia isso no contrato de dados. Percebi isso. Também elaborou um relatório de auditoria. Esse registro de auditoria é tedioso, mas quando uma execução agendada falha às 2h da manhã, o artefato final por si só não é suficiente. Você
+
+precisa saber qual portão falhou. Qual contrato foi violado e por quê? Essa é a trilha de auditoria, a quinta reinvenção. E essa é a única que os construtores mais sólidos perderam depois que o estrago já estava feito. Então, qual é o padrão aqui?
+
+Você não precisa de uma plataforma. Você não precisa de uma estrutura. Você não precisa que o ecossistema acompanhe o ritmo. Você precisa de alguns portões sem graça. Um contrato de saída pré-salva. O
+
+artefato possui o formato necessário antes de ser salvo? Um contrato de voz ou domínio. O resultado corresponde às regras segundo as quais o seu sistema foi projetado? Um contrato de voz ou domínio. O resultado corresponde às regras segundo as quais o seu sistema foi projetado? Um
+
+contrato de verificação. Se o resultado fizer afirmações, é possível rastrear a origem dessas afirmações? Uma verificação de desduplicação. Isso é realmente novo? Ou será que o sistema está se reciclando? Um registro de auditoria. Quando
+
+algo falha, é possível reconstruir o que aconteceu sem reescrever todo o processo? Em software, aprendemos que não devemos implantar um produto apenas porque ele existe. Em sistemas baseados em agentes, precisamos aprender a não lançar um produto apenas porque os artefatos parecem completos. O problema não é que seu agente irá falhar. Seu agente falhará. O problema surge
+
+quando o seu sistema processa essa falha de forma adequada e a repassa para os processos subsequentes. É isto que eu quero que vocês retenham. Mapeie as suas transferências de dados, desde a entrada até a saída final. Cada seta entre duas etapas pode ser um ponto onde a saída fica corrompida. Você não precisa consertar todos eles. Você
+
+só precisa saber onde eles estão. Escolha a opção de transferência mais cara. Não é o mais complexo, nem o mais caro. Aquele em que dados incorretos podem lhe custar caro. Uma afirmação falsa publicada publicamente, um esquema falho que se propaga para três habilidades subsequentes, uma duplicata que mina a confiança do seu público. É aí que
+
+fica o seu primeiro portão. Faça com que diga não. Um portão que registra apenas avisos não é um portão. É uma sugestão. O portão precisa impedir que o artefato avance.
+
+Essa é a diferença entre uma demonstração impressionante e um sistema operacional. Antes de adicionar outro agente, adicione um limite. Obrigado por assistir.

@@ -1,0 +1,171 @@
+---
+video_title: "ReviewDebt: a practical framework for scoring every pull request — Sachin Gupta, Ebay"
+video_id: TJPInBjhE4Q
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TJPInBjhE4Q
+video_date: 2026-07-12T12:15:38+00:00
+video_description: |
+  Coding agents ship PRs faster than humans can trust them. The gap is filling up with a debt nobody is measuring — and it's about to swallow your engineering velocity.
+  Every team in 2026 measures coding agents the same way: PR count, lines of code, cycle time, developer NPS. None of those see the real cost — bloated diffs, weak tests, ambiguous rationale, ownership sprawl, and human reviewers spending more time verifying AI code than they used to spend writing their own.
+  This talk introduces ReviewDebt: a practical framework for scoring every pull request on the hidden review burden it creates. The scoring is deterministic — diff size, test-coverage delta, ownership spread, generated-code smells, evidence and rationale gaps — so the number is defensible in a real engineering review. We'll walk three real PRs side-by-side (clean human PR, high-debt AI PR, refactored AI PR), watch the scoring play out signal by signal, and look at a 90-day dashboard from a production backend org where review debt climbs in lockstep with AI-PR share.
+  
+  Speakers:
+  - Sachin Gupta: Sachin Gupta is a Staff Software Engineer with 15+ years building backend platforms at internet scale, currently focused on the runtime trust boundaries that LLM coding agents blur and the creator of HeapLens, a Java heap analyzer extension used in 50+ countries.
+    LinkedIn: https://www.linkedin.com/in/guptasachin1/
+    GitHub: https://github.com/sachinkg12
+---
+Oi pessoal. Meu nome é Sachin Gupta e sou engenheiro de software. O título é exatamente o que parece . Seu agente de codificação está criando dívida de revisão. Antes de começar, reflita sobre o título por um instante. Repare no que
+
+não está sendo dito. Não estou dizendo que agentes de codificação sejam ruins. Não estou dizendo que eles não nos tornam mais rápidos. Estou dizendo que eles estão criando um tipo de dívida que ninguém está mensurando. E essa dívida vai chegar até você.
+
+Nos próximos minutos, farei o seguinte . Vou definir o que é dívida de revisão. Vou apresentar cinco famílias de sinalizadores que irão compô-lo. Vou comparar três solicitações de pull request reais lado a lado e mostrar a vocês uma análise cruzada de mais de 500 PRs em três repositórios diferentes, o que corresponde a apenas três bases de código públicas. Então vamos lá .
+
+Olhe aqui. Eis a lacuna que ninguém está medindo. O relatório de outubro de 2025 do GitHub, que abrange praticamente todos os pull requests públicos do planeta, mostra que o número de commits aumentou 25% em relação ao ano anterior. E agora, no mesmo ano, os comentários nos comentários caíram 27%. Agora, esses comentários nada mais são do que uma representação da atividade de revisão. O
+
+volume de produção de código na verdade aumentou, mas a atenção dada às revisões diminuiu. Eles seguiram direções opostas no mesmo ano. Agora, observe as equipes responsáveis ​​por isso ao longo da curva de adoção da IA. A Faros AI acompanha esse grupo em sua projeção de referência para 2026. O tempo médio de revisão de PRs aumentou 441,5% e, se você fizer as contas, perceberá que os PRs revisados levam 5,4 vezes mais tempo do que antes. E agora, 31% mais comunicados de imprensa são
+
+incorporados sem nenhuma revisão. Assim, a IA produz código muito rapidamente. A IA está gerando solicitações de pull request muito rapidamente, mas os humanos não conseguem revisá-las de forma responsável nesse ritmo. Essa lacuna é chamada de dívida de revisão. Na verdade, acumula bastante. É um efeito cumulativo e,
+
+no momento, ninguém tem um número para representá-lo. Mas ao final desta palestra, vou garantir que vocês tenham um certo número. Agora, se você observar este slide em particular, verá a história que todas as equipes estão contando neste momento. O PR por desenvolvedor aumentou 16%. Esse é o benchmark Whiplash de aceleração de IA da Faros, e é de abril de 2026. Havia cerca de 22.000 desenvolvedores e
+
+4.000 equipes. E o tamanho médio do PR aumentou 63%. De 44 a 72 linhas por solicitação de pull request. Basicamente, são 16 meses de dados de longo prazo do estudo DX 2026, que inclui 400 organizações.
+
+Agora, se você observar o tempo de ciclo, desde a abertura até a fusão, verá que houve uma leve redução, e isso vem do mesmo estudo de diagnóstico. A moldura é realmente generosa. O volume de trabalho de relações públicas cresceu cerca de 8% e o uso de inteligência artificial aumentou cerca de 65%. O ganho que vemos hoje é real, mas na verdade é menor do que a expectativa criada em torno dele . Todos esses números são reais. Nenhuma delas é mentira,
+
+mas todas são métricas de vaidade. O número de PRs aumenta quando um PR se divide em sete PRs. O aumento do tamanho médio do PR não é um benefício, na verdade é um inchaço. O tempo de ciclo diminui quando os revisores param de criar resistência. Esses fatores indicam a velocidade de produção. Eles não te
+
+dizem a velocidade com que a confiança se instala. Agora, vamos para o próximo slide para ver mais detalhes.
+
+Agora, se você for procurar a segunda história, é isto que você vai encontrar. Fadiga do revisor. Os engenheiros têm uma carga de revisão muito maior do que há um ano. Eles não estão nada contentes com isso. Fusões noturnas. Os pedidos de compra ficam
+
+sem revisão por 3, 4 dias e, de repente, recebem um sinal positivo às 23h. antes do prazo final de sexta-feira. Teatro de testes. Estão sendo adicionados testes, mas na verdade eles estão verificando o que o código fez, e não o que o código deveria fazer. Eles apresentam deficiências comportamentais, incluindo a presença de bugs.
+
+Desvio arquitetônico. Novamente, o mesmo problema que é resolvido de três maneiras diferentes em três arquivos diferentes. Na verdade, ninguém está atrasando o setor da arquitetura. Por fim, o atraso no incidente. Quando algo quebra, o bug persiste por semanas ou meses após a fusão. Ninguém
+
+faz a ligação entre a mudança gerada pela IA e o problema . Esses custos não aparecem em nenhum painel de controle até o momento. Vamos analisar o próximo slide para saber mais sobre isso. Então, agora, deixe-me dar a definição. Analisar dívidas.
+
+É a lacuna crescente entre o código que seu agente gerou e o código que os humanos realmente revisaram, confiaram e entenderam. Rima com dívida técnica, mas se assemelha mais a uma dívida financeira, pois se acumula. Na verdade, gera juros, mas esses juros não são dinheiro. Esse interesse se concentra na atenção humana. Isso se agrava devido ao ciclo de feedback triplo. Primeiro, o
+
+agente aprende com sua base de código, realizando ajustes finos, estabelecendo uma base sólida e fornecendo sugestões contextuais. Código que não foi revisado a fundo ontem compromete o PR de amanhã. Essa dívida torna-se geradora por natureza. Em segundo lugar, os avaliadores dão início à chamada arquitetônica. Quando a maior parte de um PR (Pull Request) já foi gerada, a atenção se concentra na sintaxe e em erros óbvios.
+
+A decisão sobre o panorama geral foi adiada, passando de um momento de revisão para nunca mais ser tomada. Terceiro, as expectativas de velocidade são redefinidas. Assim que a liderança perceber o novo volume de trabalho, não será mais possível contratar avaliadores na mesma proporção. Não há mais margem de manobra para quitar a dívida. Cada ciclo, por si só, é suportável. Juntos, vocês terão uma
+
+pista de decolagem, mas a próxima questão é: como vocês vão medi-la? Então, como medimos a dívida de revisão? Existem cinco famílias de sinais que possuem cerca de 10 verificações determinísticas. Lembre-se, a palavra-chave aqui é determinístico. Cada verificação pode ser calculada a partir de uma solicitação de pull request e seu repositório.
+
+Não, não precisamos de nenhum modelo de linguagem. Por que? Porque o LLM, quando atua como juiz, pode possivelmente infringir duas leis. Em primeiro lugar, a pontuação se torna um alvo móvel. O mesmo PR, ou seja, a mesma pontuação que você obteve para o mesmo PR, terá um resultado diferente dependendo do modelo que você usar.
+
+Segundo, a pontuação deixa de ser defensável em uma avaliação de engenharia. Não é possível colocar isso em um slide. Você não pode apresentar isso à liderança. Então, o que você quer? Você deseja um número que seja rastreável a um cálculo determinístico, de tamanho e acoplamento diferentes. Em
+
+segundo lugar, há uma lacuna nas evidências dos testes. Terceiro, disseminação de diretórios e propriedade. Quarto, indicadores de autoria de IA. Quinto, lacunas de evidência e racionais. Essas são as cinco famílias que receberão 10 cheques cada uma.
+
+Vamos percorrer cada um deles. O primeiro sinal que temos é o tamanho do dispositivo e o acoplamento. Basicamente, este é o mais simples de calcular. É também a que mais frequentemente é mal interpretada. O que ele mede são as linhas de rede alteradas, os arquivos modificados e se as alterações se concentram em um único módulo ou se estão espalhadas por vários. Por que o
+
+agente está tendo dificuldades aqui? Os agentes tendem a priorizar a resolução do problema no local da chamada. Um engenheiro humano direciona a solução para a causa raiz. Isso faz com que a diferença seja muito pequena. Mas um agente irá consultar diversos arquivos em busca do mesmo sintoma. O
+
+custo da revisão de uma diferença tão grande não é proporcional ao seu tamanho. Na verdade, é muito mais íngreme. Assim, o acoplamento entre arquivos explode o modelo mental que o revisor precisa manter. Analisaremos o segundo sinal, que é a lacuna nas evidências dos testes.
+
+Então, o que é a lacuna de evidências em testes? A lacuna de evidências de teste nada mais é do que o número de linhas de teste adicionadas dividido pelo número de linhas de produção adicionadas por solicitação de pull request. Assim, as solicitações de pull request (PRs) criadas por IA são lançadas com uma proporção de testes para código muito menor . Às vezes, não há nenhum arquivo de teste disponível. E se houver alguma, é mínima.
+
+Portanto, essa lacuna é, na verdade, uma lacuna constante. E o problema com essa coisa em particular é o número. A razão pela qual esse número é basicamente brutal é o teste gerado pelo agente. Eles geram muitos testes. Mas esses testes basicamente verificam o que o código está fazendo.
+
+Ele não gera os casos de teste que o código deveria executar. Eles fixam o comportamento, incluindo os erros. A proporção não reflete a diferença de qualidade. Apenas mede se o teste foi detectado . Portanto, o sinal mais profundo é o próximo passo, que está uma camada abaixo.
+
+Veremos o próximo, que é a distribuição de diretórios e propriedade. Então, o que é a distribuição de diretório e propriedade ? Conte as equipes distintas de proprietários do código cujos arquivos aparecem na diferença. Mas o que isso significa? Basicamente, uma equipe de RP bem estruturada se concentra em um diretório central. Mas uma extensa
+
+abrange vários arquivos de equipe. E o custo da revisão é enorme nesse cenário. Nenhum ser humano sozinho detém todo o modelo de ordem mental. Você precisa de múltiplas aprovações de vários engenheiros em contextos diferentes. A sobrecarga de coordenação excede facilmente o tempo que o agente economiza produzindo o código. É aqui que você
+
+começa a sentir o impacto econômico da dívida de avaliação. O agente lhe deu três horas para digitar. Você passa essas três horas sob a supervisão de vários avaliadores. E o próximo que veremos são os indicadores de autoria de IA. Então, o que é um indicador de autoria de IA?
+
+Antes que todos fiquem na defensiva, isto não é para apontar culpados. Não estamos sinalizando que os engenheiros usam agentes de codificação. Aguardamos os resultados para que um formato de assessoria de imprensa, como a autoria assistida por agentes, atraia mais atenção dos revisores. Assim, você sabe, tipo, ok, este é o comunicado de imprensa que vem diretamente do agente. E existem três modos de detecção muito comuns. Acho que
+
+todos já devem ter visto isso. Uma delas é o rodapé com autoria conjunta, que é basicamente um dos seus sinais mais fortes. Você pode ver que foi co-escrito pela Copilot. O segundo é o padrão de nome da filial. Geralmente, você deve ter visto que aparece algo como codex, Copilot, prefixos de cursor. A terceira
+
+é a básica, gerada por meio de auxílio de, que nada mais é do que o corpo do seu PR. suas frases de mensagem de commit. Realizamos uma verificação de dados real em três repositórios públicos, que compreendiam 524 PRs (Pull Requests). Não vou mencionar o nome da empresa, mas, para simplificar, vamos chamá-la apenas de A, B e C. Agora, se você observar, o sinal mais forte foi o rodapé com autoria conjunta.
+
+E o segundo, o sinal mais baixo foi de 0% no repositório C. Mesmo tendo sido feito por um agente de codificação, eles podem ter bloqueado, dizendo que havia coautoria ou que o código foi gerado por outro usuário, etc. etc. A próxima coisa que veremos são as lacunas de evidência e racionalidade. Portanto, existem lacunas entre evidências e raciocínio. Acho que
+
+este é um dos fatores mais determinísticos que eu pessoalmente considero. É aquele que destrói a capacidade de revisão mais rapidamente. Basicamente, o que mede? O comunicado de imprensa explica o porquê ou apenas o quê? À esquerda, como você pode ver, temos um vão considerável. À direita, temos um pequeno vão.
+
+O título diz "Corrigir teste com vazamento" e todos os dados que você está vendo aqui são, na verdade, de alguns repositórios públicos. Agora, o corpo do PR tem 18 caracteres e a mensagem de commit diz " atualizações". Obviamente, se você me der, não poderei analisar isso. Não posso aceitar isso. Mas aí, à direita, se você observar quando há um espaço realmente pequeno, o título está lhe dizendo do que se trata a mudança . O corpo apresenta um sintoma,
+
+o diagnóstico, a mudança e a ligação com o parâmetro de referência. Agora, um revisor pode fazer o trabalho. Assim, em nossos testes de regressão e equipes de desenvolvimento de código, esse sinal é o que mais rapidamente prejudica a capacidade de revisão. Nos dados reais de código aberto, os grupos de pull requests seguem o formato de commit convencional. Portanto, dispara muito raramente ali. Mas se você observar, os
+
+parâmetros de regressão são apenas as demonstrações. Certo, vamos ver como esses cinco sinais se combinam. Você terá apenas um número que varia de zero a 100. E os pesos exatos são basicamente os seus valores padrão. Agora, se você pretende adotar isso, gostaria que fizesse o seguinte primeiro. Execute o processo inverso, analisando
+
+os últimos 200 PRs (Publicidades de Requisição) que foram consolidados em sua empresa. Calibre os pesos com base na experiência real dos revisores da sua equipe. A partitura tem que soar bem no seu íntimo. Vamos dividir isso em quatro faixas. Se o seu número for de zero a 24, isso significa que você tem uma carga de revisão muito baixa.
+
+Se o seu número estiver entre 25 e 49, está normal, prossiga com o tratamento padrão. 52 74, você precisa de evidências do autor antes da revisão sênior. E se você tiver 75 anos ou mais, definitivamente é melhor optar por um plano de renda alta ou solicitar mais informações. Tem o mesmo formato que as categorias de dívida técnica, mas a unidade é diferente. Agora, vamos ver o que o scanner realmente fez.
+
+Agora, se você observar, este é o PR limpo. Infelizmente, não poderei fazer uma demonstração ao vivo hoje, mas vou mostrar como usar a linha de comando (CLI). Gostaria que você mostrasse três solicitações de pull request com pontuação lado a lado, o nível em que a estrutura se torna útil como uma conversa de revisão repetível . Este é o primeiro. Como você pode ver, é isso que o scanner mostra quando uma solicitação de pull request (PR) é totalmente alterada. Nota
+
+zero em 100. O ônus é basicamente nulo. É zero. Temos uma baixa carga de revisão. A duração estimada é de seis minutos. Nenhum
+
+cheque foi emitido. E se você observar a estrutura aqui, verá que é por isso que a lista está vazia. O foco do revisor está vazio. A próxima ação do autor está vazia. A estrutura só gera recomendações quando tem algo específico a dizer. Uma assessoria de imprensa eficiente produz um relatório pequeno,
+
+quase cerimonial. É exatamente isso que você quer. E a conclusão é que a maioria das relações públicas saudáveis ​​não gera nenhum ruído. Eles realizam o trabalho sem fazer nenhum barulho. Esta não é uma ferramenta que apresenta erros por padrão. Executar isso em
+
+cada PR custou um comentário dizendo que estava tudo bem. É isso. Vamos ver agora o que a mídia vai dizer sobre a alta dívida. Agora, você pode ver que o que está aparecendo na tela vem de um repositório público. Este é um cenário real do conjunto de ferramentas de regressão do scanner.
+
+Como você pode ver, a pontuação é 60 de 100. Isso requer comprovação. Está na auditoria e diz que são necessárias provas. Tempo estimado de revisão: 86 minutos . Observe a saída estruturada.
+
+Na verdade, não é uma pontuação. Uma lista de eventos programados explicando o que foi disparado. Uma lista de tarefas focadas no revisor, indicando-lhe o que fazer a seguir. Uma lista de próximas ações do autor, indicando como reduzir a pontuação. Essa é a parte que a maioria das ferramentas de qualidade de RP ignora. A pontuação por si só já é útil. O
+
+aconselhamento estruturado é o que realmente influencia o comportamento da equipe. Agora, se você ler o tópico, verá que diz que o RP apresenta indicadores subjetivos de autoria assistida por IA. Esta informação é meramente informativa, não constitui uma afirmação definitiva e não representa, por si só, uma penalidade. Esta frase específica consta na saída do scanner. A verificação do indicador de IA contribui com cinco dos 60 pontos, o que corresponde a aproximadamente 8%. Os outros 55 casos decorreram de uma
+
+discrepância no tamanho da reclamação e da ausência de um teste. Esses seriam sinais de alta carga em qualquer RP, independentemente de ter sido escrito por um agente ou não. Este não é um guia anti-IA. Basicamente, trata-se mais de uma tabela de pontuação da carga de revisão. O agente não causou a pontuação, mas sim o formato do PR (Public Reporting) criado por ele.
+
+Vamos ver o próximo.
+
+Basicamente, trata-se de um comunicado de imprensa elaborado por inteligência artificial. Tem um formato muito bom e a pontuação é sete, sete, o que representa uma baixa carga de revisão. Agora, se você observar o mesmo agente, verá que ele realizou o mesmo tipo de trabalho, mas os testes foram adicionados. Portanto, o CI é verde. O caminho arriscado é mencionado na descrição do anúncio de imprensa . Por isso, a pontuação obtida
+
+foi sete em 100. É uma tarefa muito leve, que levou apenas 14 minutos. A verificação do indicador de IA ainda é acionada, mas contribui com 2,1. Um, de baixa gravidade. Em segundo lugar, a estrutura afirma explicitamente, citando o próprio relatório: "Apenas informação, não uma afirmação definitiva e não uma penalidade em si mesma."
+
+Então, quando sua equipe perguntar: "Essa ferramenta nos penalizará por usar agentes de codificação?" Não, a resposta está na sua tela, sem necessidade de revisão. É uma estratégia de relações públicas de IA muito bem elaborada. Vamos ver o próximo, que basicamente consiste em nossos três repositórios públicos ao longo de 524 PRs. Queria mostrar a vocês a taxa de variação de buscas por IA ao longo de 90 dias em três repositórios públicos e 524 solicitações de pull. A carga de revisão aumenta
+
+mesmo quando a autoria por IA não aumenta. Ao analisar essa imagem específica, podemos observar três coisas. Uma delas é o volume, que é a variável em si. A autoria por IA manteve-se estável, entre 5% e 20% , mas a carga de revisão não. Se você observar um repositório que acumulou 186 horas de revisores seniores em 27 dias e outro que levou 43 dias, verá que o período de revisão foi o mesmo, mas o volume de trabalho foi diferente. O fardo não era o mesmo. Isso
+
+é o que significa volume de relações públicas. Em segundo lugar, o amplificador só funciona com dados reais, o que significa que os indicadores de IA foram acionados em 5 a 20% dos PRs (Pull Requests) todas as semanas nos três repositórios. Nenhuma dessas PRs (Publicações Regulatórias) criadas por IA foi desproporcionalmente classificada na faixa de alta carga de trabalho. O contrato de posicionamento é válido para bases de código reais. Em terceiro lugar, a complexidade gera sobrecarga, não a autoria, o que significa que, entre 524 PRs, quatro foram classificados como necessitando de evidências ou em níveis altos, o que indica que todos os quatro envolviam mudanças estruturais, como grandes migrações, reescritas de SDK e refatorações envolvendo várias equipes . A estrutura avalia a
+
+complexidade de forma justa. O volume gerado por IA cria as condições para que esses fatores se acumulem. Então, como ficam os 524 PR sob as lentes? Onde é que a dívida de revisão aparece efetivamente? Em termos absolutos, o scanner detectou 524 solicitações de pull reais em três repositórios públicos, totalizando 228 horas de revisores seniores acumuladas nesses três repositórios públicos, que foram analisados ​​em períodos de 27 a 90 dias. A
+
+segunda opção é uma taxa de fusão sustentada de nove PR por dia, com alta velocidade de recompra. Portanto, como você pode ver, tudo se resume ao volume, que é basicamente o fator que gera a sobrecarga. O terceiro é 5.036. Esses são os minutos que são basicamente gastos em um único PR (Pull Request), o que equivale a aproximadamente 84 horas de trabalho de revisão para uma única solicitação de pull request.
+
+A pontuação que recebemos foi 73, o que significa que é necessário um certificado de proficiência. Agora, de 5 a 25% dessas comunicações de imprensa, semana após semana, são direcionadas a sinais indicadores de IA . Novamente, lembre-se de que isso é volume, o que está causando a dívida de revisão, o que está mudando completamente as regras do jogo. Vamos passar para o próximo slide. Avalie o problema. Já apresentamos o custo. E
+
+agora, o que fazemos a respeito? Então, em primeiro lugar, você deve ter uma alteração lógica por solicitação de pull request. Não estou dizendo que não seja algo pequeno em abstrato. Uma mudança lógica, isso basta. Em segundo lugar, teste o navio com a alteração. Mesmo que o
+
+agente tenha escrito o código, mesmo que o agente tenha escrito o teste, o autor humano confirma se o teste afirma o que o código deveria fazer, não o que o código está fazendo, mas sim o que o código deveria fazer. OK? Terceiro, permaneça em um único território de proprietário. Trabalho transversal dividido em relações públicas por equipe. Permaneça em seu próprio território. Uma
+
+aprovação, um contexto, um modelo mental. O autor explica o porquê. O agente não deve redigir o comunicado de imprensa. É nesse momento que o autor humano se compromete a entender o que está realmente enviando. O mesmo padrão de revisão se aplica aos PRs gerados por IA e aos PRs criados por humanos. O amplificador do indicador de IA
+
+só é acionado quando outros sinais estão fracos. Mantenha os outros quatro fortes. O amplificador é invisível. Portanto, certifique-se de que não haja exceção para a IA. Nenhuma dessas opções exige que você tenha uma ferramenta nova. Esses são os movimentos que você
+
+já conhece. Você só precisa implementá-lo. E agora, como você planeja adotar isso? Como podem ver, temos novamente cinco etapas. Reaterro, limiar, superfície, agregado e discuta o assunto. Aterro. Então você executa
+
+o scorer nos seus últimos 200 pull requests de merge. Observe aquele que tem a pontuação mais alta. Segundo, o limiar. Defina uma linha basicamente justificada. Por padrão, digamos que você queira atribuir uma nota 50. Portanto, qualquer PR com nota igual
+
+ou superior a 50 requer um comentário do autor. Simples assim. Coloque-o à mostra. Publique a pontuação como um comentário em cada PR. Não bloqueie. Apenas para dar
+
+visibilidade, torne isso público para que todos saibam o que está acontecendo por lá. Total semanal por equipe. Isso significa que a inclinação do prazo de cada equipe é o principal indicador. É isso que seu gerente de engenharia deve observar. Fale sobre isso. Traga esse número para uma
+
+retrospectiva, para cada visão do roteiro. Em todas as reuniões, vocês devem discutir esse número. Por exemplo, qual foi sua pontuação quando você fez esse RP específico? É isso.
+
+Por que esse número é importante? Por causa dessa conversa? Absolutamente não. Sem um número, você está apenas discutindo o porquê. Mas se você tem um número, ele está de fato estruturado. É
+
+possível perceber, por exemplo, que com os agentes de codificação de IA , houve uma implementação que aumentou a produtividade em X por cento. Mas você precisa garantir que também está adicionando os Y pontos da dívida de revisão que ocorreu ao longo de Z semanas. Agora, com a sua inclinação atual, isso equivale aproximadamente a N horas de trabalho de um engenheiro sênior que você precisa discutir. Isso desloca a discussão do sentimento para a mensuração. Portanto, você deve sempre ter um número.
+
+Se olharmos para 2026, estaremos adotando novas práticas. Mas, em 2027, essa conversa vai mudar para o modelo de governança. E, na verdade, está começando agora mesmo. Você pode confiar no código que está enviando? Se sim, está tudo bem. Caso contrário, quem será
+
+responsabilizado quando uma alteração feita por IA causar um incidente? Onde está o registro de auditoria? Então, analisando, trata-se basicamente da ponte entre essas duas colunas. É o primeiro número que permite ter a conversa do lado direito sem abandonar os ganhos do lado esquerdo. Vamos analisar o último slide agora.
+
+Agora, três coisas que eu gostaria que vocês levassem consigo . Primeiro, meça a distância. Não construa as ferramentas ainda. Selecione 20 recordes pessoais da última semana e classifique-os usando os cinco indicadores que discutimos. Basicamente, você receberá um número para entender se a estrutura está funcionando corretamente ou não.
+
+Tente tornar a inclinação visível. A inclinação de uma reta analisada ao longo do tempo importa mais do que o nível. Então, planeje semanalmente e depois discuta com sua equipe, talvez em uma reunião ou no planejamento da sprint, da maneira que você achar melhor. Tenha essa conversa. Leve esse número para sua próxima avaliação. Tipo, digamos que, ok,
+
+temos um relatório extra, amplie-o, e esta é a inclinação. E, basicamente, você está passando de uma cultura ampla para uma cultura de mensuração. Uma breve observação sobre antipadrões a serem evitados. Primeiro, aprove com a fusão de comentários. A IA fez a parte chata. Não.
+
+Vamos detectar isso no controle de qualidade. Não. Os PRs estão menores agora. Não. Pare de escrever LGTM nos comunicados de imprensa.
+
+Certifiquem-se de que tudo o que discutimos, os hábitos que discutimos, nós os seguiremos. Esse é o objetivo principal da palestra. Muito obrigado por ouvir.

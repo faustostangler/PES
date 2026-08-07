@@ -1,0 +1,326 @@
+---
+video_title: "Stop AI Agent Hallucinations: 5 Techniques + Production Patterns - Elizabeth Fuentes, AWS"
+video_id: vJukHCIv7Ck
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vJukHCIv7Ck
+video_date: 2026-07-11T21:45:00+00:00
+video_description: |
+  AI agents that book 15 guests in a 10-person room. Agents that fabricate statistics when data doesn't exist. Agents that pick wrong tools from 29 options, wasting $47 in tokens. These aren't prompt engineering failures, they're architectural limitations that need structural solutions.
+  
+  This hands-on workshop covers 5 research-backed techniques to prevent agent hallucinations:
+  
+  1. Graph-RAG (Neo4j) - Replace vector similarity guessing with precise entity relationships. Result: 73% fewer fabricated statistics.
+  2. Semantic Tool Selection - Filter 29 tools to the relevant 5 using embeddings. Result: 89% token reduction, accurate tool selection.
+  3. Multi-Agent Validation - Executor-Validator-Critic swarms catch fabrications through cross-checking. Result: 92% detection rate.
+  4. Neurosymbolic Guardrails - Framework-enforced rules (lifecycle hooks) that agents cannot bypass. Result: Zero business rule violations.
+  5. Agent Steering - Guide agents to self-correct instead of blocking them. Result: Task completion without hard failures.
+  
+  Each demo includes live code, before/after metrics, and failure case analysis. Final module shows production deployment.
+  
+  You'll walk away with working Python implementations, a decision framework for when to apply each technique, and an open-source repository adaptable to your domain.
+  
+  code: https://github.com/elizabethfuentes12/why-agents-fail-sample-for-amazon-agentcore
+  
+  Speakers:
+  - Elizabeth Fuentes (AWS): Elizabeth Fuentes is a developer advocate and AI engineer focused on what makes agents fast, cheap, and correct in production. She turns failure modes (hallucination, token blowups, context overflow, lost memory) into named, measurable fixes, each backed by a runnable demo and before/after numbers. Her work covers the architectural decisions behind reliable agents: context offloading, the split between conversation and data memory, semantic versus exact-reference retrieval, guardrails, and agent evaluation. With 107+ published technical articles and a Master's in Data Science, she shares production agent patterns across English and Spanish developer communities, and likes turning complex concepts into something anyone can learn.
+    X/Twitter: https://x.com/ElizabethFue12
+    LinkedIn: https://www.linkedin.com/in/lizfue/
+    GitHub: https://github.com/elizabethfuentes12
+---
+Olá, hoje vamos falar sobre como interromper as alucinações de agentes de IA com cinco técnicas que vão além do simples comando. Cada uma delas representa uma mudança de código, não uma mudança de prompt. Vamos ver. Cada vez que seu agente de IA responde, você está pagando pelas palavras que entram e pelas palavras que saem. E na sua fatura, você verá aqueles tokens de chamada. Sim.
+
+E quanto mais tokens você enviar, mais você pagará. E se o que você enviar não estiver correto, for excessivo ou estiver faltando algo importante, seu agente de IA começará a ter alucinações. Existem cinco técnicas para ajudar a reduzir o desperdício de tokens, melhorar a precisão e detectar falhas antes do envio. E cada uma delas é uma alteração de código, não uma alteração de prompt. Então, vamos ver.
+
+Em primeiro lugar, temos a seleção de ferramentas semânticas. Você filtra quais ferramentas serão usadas em cada chamada. O modelo só vê o que precisa para aquela consulta específica. Em segundo lugar, temos o suporte para gráficos. Para consultas precisas, como agregação, contagem e raciocínio multi-hop, você substitui a recuperação de texto por uma consulta de grafo estruturado.
+
+O modelo obtém uma resposta verificável, não uma amostra como fazem os racks. Três, validação multiagente. Um segundo agente pode verificar cada resposta antes que ela chegue aos usuários. E quatro, guardiões neurosimbólicos, vocês governam a vida em Python, não no prompt, e o modelo não pode escapar deles. Então, cinco, guardiões de tempo de execução, porque se você não quiser bloquear, você pode direcionar, e você não precisa bloquear tudo. E quando uma regra é acionada, o
+
+agente se autocorrige e conclui a tarefa. Sem parada obrigatória, sem conselhos ao usuário. Então, para cada técnica, mostrarei o agente sem ela e, em seguida, com ela, para que você possa comparar. E em todas as demonstrações, estou usando um agente de viagens que eu mesmo criei usando um agente da Strands. E um agente Strands é uma estrutura de agente de código aberto que mantemos na AWS.
+
+E eu sou Elizabeth Fuentes Leon. Sou um defensor de desenvolvedores da AWS. Estou focado em aplicações agentivas. E aqui, neste código QR, você encontrará tudo o que precisa para recriar todas essas técnicas que vou mostrar em instantes. Então, vamos lá .
+
+Assim, na seleção de ferramentas semânticas, nosso agente de viagens possui 29 ferramentas. Voos, hotéis, pagamentos, previsão do tempo, cancelamentos – todas as nossas ferramentas de demonstração não funcionam como uma agência de viagens real, mas sempre que o usuário envia uma mensagem, a descrição de todas as 29 ferramentas aparece na janela de contexto. O modelo lê todas elas antes de decidir o que fazer. E se o seu agente tiver memória, as linhas de cada conversa adicionam mais contexto que é enviado com cada mensagem. E você paga por cada um desses tokens, independentemente de o modelo acabar usando a ferramenta ou não.
+
+Para entender de onde vêm esses tokens , você precisa ver como uma ferramenta realmente se apresenta ao modelo. Em um Strands, você escreve uma função com o decorador `tool`, que representa a ferramenta, e parâmetros tipados como `name`, `description` e ` docstring` . Em seguida, o Strands pega isso e gera um esquema com nome, descrição, parâmetros, e o esquema é o que vai para as janelas de contexto em cada chamada. Cada esquema de ferramenta possui cerca de 17 ou 200 tokens, dependendo da quantidade de parâmetros que ele tem. Se o nosso agente de viagens [bufa] tiver 29 ferramentas, isso equivale a cerca de 3.000 tokens por chamada,
+
+só para a descrição da ferramenta. Antes da sua mensagem, antes da resposta, em cada chamada. Ao criar um banco de dados de ferramentas, podemos filtrar as ferramentas que o agente pode precisar antes que ele encontre o símbolo. Com esse filtro, o modelo identifica apenas as três ferramentas mais relevantes. O uso de tokens cai de milhares para menos de 300.
+
+Deixe-me mostrar no código. Aqui no meu ID de cura, isto é o "Deixe-me limpar todas as saídas". Primeiro, precisamos instalar os requisitos. Segue o arquivo de requisitos. Este é um notebook Jupyter porque é mais simples mostrar tudo, mas há um aplicativo que você pode executar se preferir.
+
+Então, aqui estão os requisitos. Tenho o agente A Strands e, como estou usando o OpenAI como invocação de modelo, estou usando a API do OpenAI. E eu preciso de um agente de cadeias para IA aberta. Você pode usar o agente OpenAI Strands com praticamente todos os nossos provedores de modelos. E com um fio condutor, nós da Amazon, é claro, nos saímos melhor porque nós, da AWS, somos os responsáveis ​​pela manutenção dessa estrutura.
+
+E para aproveitar melhor a Amazon, você não precisa adicionar o provedor do modelo. E como preciso criar embeddings para meu banco de dados de ferramentas vetoriais, estou usando o transformador de sentenças. Este é um modelo super simples que funciona localmente, portanto é gratuito. Então, você quer poder executar isso localmente no seu computador sem custo adicional de incorporação de outro modelo. E você também pode usar fios com todas as lhamas . Portanto, se você tiver um modelo local,
+
+poderá executar tudo isso em seu computador gratuitamente, sem gastar nenhum token. E eu uso esses arquivos como meu repositório de vetores, local, super simples. Bem, agora vou usar um Neo4j. Isso é para outra demonstração que mostrarei em instantes. E como estou usando alguns ambientes, estou usando o Python.
+
+Vamos ver. Então, aqui eu quero executar isso. Deixe-me explicar melhor. Sei que você está tendo alguns problemas. Maior. Um pouco mais, um pouco menos.
+
+E aqui, isto é melhor. Então. Eu modelo minha necessidade. Eu já fiz isso. E eu estou usando o OpenAI, então preciso da minha API.
+
+Minha chave de API. Chave de API. E aqui, invoco meus fios. Preciso do agente porque quero ser como o agente que estou usando no OpenAI. E eu tenho aqui um monte de ferramentas de demonstração. Vou te
+
+mostrar daqui a pouco. E eu quero usar isso porque tenho algumas funções que estou usando para criar o índice do meu armazenamento de vetores. E eu preciso das ferramentas de busca quando estou usando o repositório de vetores; eu insiro minha consulta lá. Eu procuro a ferramenta que vou usar usando vetor... hum...
+
+pesquisa por vetores. E eu troco as ferramentas. Vou te mostrar isso daqui a pouco. Então, deixe-me mostrar a vocês todas as minhas ferramentas para leigos. Onde posso encontrar o cadastro de engajamento aqui?
+
+Aqui estão todas as minhas ferramentas. Ah, isto é para troca. Pesquisar, construir índice. E onde estão minhas ferramentas? Xô, xô, xô, xô, xô aqui.
+
+Aqui estão todas as ferramentas fictícias que eu criei para isso. Sabe, é ótimo. Esta é uma demonstração, por favor. Não é algo que você possa usar para entrar em produção. Não, por favor.
+
+E tudo bem. Então, onde fica esse? Então eu executo isso. E eu construo meu índice semântico. Eu já fiz isso pelo Yeah. Então, tenho 29 ferramentas
+
+aqui, 29 ferramentas fictícias, e quero testá- las com várias consultas diferentes, e esta é a verdade fundamental. Tenho uma verdade fundamental porque sei qual é a melhor ferramenta para responder à pergunta, então podemos saber se nosso agente está funcionando corretamente ou não . Então, vamos executar isso. Temos 90 consultas e 29 ferramentas. Então, estas são algumas funções auxiliares. Eu não
+
+ligo. Sim, eu me importo, mas não quero te explicar isso. Então, este é o meu agente, meu agente tradicional, onde estou colocando todas as minhas 29 ferramentas dentro do agente. Eu tenho meu modelo e algumas funções auxiliares. Este é o meu agente. Esta é a única maneira pela qual
+
+eu crio um agente usando um agente desconhecido. Eu posicionei todas as minhas ferramentas e a mensagem do meu sistema é: você é um assistente de viagens. Você selecionou a ferramenta correta para responder à pergunta. Nossa, incrível. E o modelo.
+
+Vamos executar isso. E isso tanto faz. Esta é uma função para contar os tokens, pois dentro deste agente peculiar, você pode contá-los. Você pode saber quantos tokens estão sendo usados ​​para entrada e saída do agente. Essa é uma função auxiliar, e pronto.
+
+Isso acontece sempre que eu insiro um comando dentro deste agente; eu apenas envio o comando e o agente responde. Então, eu uso um novo agente porque é um fork. Então, não estou conversando com o agente. Eu apenas envio uma pergunta e recebo uma resposta. Assim, para cada pergunta, são gastos cerca de 2.000 tokens.
+
+Então, nem sempre me dá a resposta certa. Aqui. Então, sim, eu... não sou muito bom
+
+em precisão, e a média é de 1.000 tokens. Agora, vamos usar minha nova IA com a abordagem semântica. A primeira coisa que faço é, para cada consulta, para cada solicitação, envio a consulta para minhas ferramentas de busca e recebo os dois ou os três resultados mais relevantes com maior probabilidade de responder à minha consulta, porque esta é uma busca semântica dentro do meu armazenamento vetorial. E então eu uso essa resposta. Vou
+
+selecionar esse nome e vou inserir essas ferramentas na minha IA. Portanto, vou usar apenas as três ferramentas que essa busca semântica me retornou para minha IA, e enviarei apenas essas ferramentas. E esta é a minha função auxiliar, e é isso. Então, vou enviar todas as perguntas novamente da mesma forma. E para a primeira pergunta, eu tenho 4.000 fichas, três blá blá
+
+blá. E sim, temos uma grande diferença porque eu não envio todas as 29 ferramentas em todas as consultas. Então, é isso aí, bam bam. E, ok, memória semântica. Sim, ok, vamos lá. Terminar. Então, vamos, vamos, vamos
+
+para o próximo. Portanto, esse mecanismo apenas envia uma pergunta e eu recebo uma resposta. Não consigo conversar com esse motor. O que acontece se eu começar a conversar? Será que o motor se lembra de mim? Portanto, precisamos enviar apenas
+
+as ferramentas que este motor irá utilizar. Porque se eu fornecer todas as ferramentas que estou usando no histórico da conversa, então chegará um momento em que eu precisarei ter as 29 ferramentas dentro do meu mecanismo. Então, não estamos resolvendo, não estamos tendo uma conversa com o motor. Então, precisamos colocar as ferramentas e depois precisamos retirar as ferramentas. E podemos fazer isso com as ferramentas de troca.
+
+Vamos executar isso. E quais ferramentas de troca eu tenho para executar isso? Não. Deixe-me mostrar primeiro as funções das ferramentas de troca aqui, o registro. Eu apago isso porque, com um loop em cada invocação, você tem controle total do estado, pois este é um loop suave e você pode usar este loop suave para quase tudo o que quiser. Você pode inserir
+
+e remover qualquer coisa dentro do loop com apenas algumas linhas de código. Então, vejamos . Aqui está o motor. Temos o registro de ferramentas através dos seus registros de ferramentas. Tem a ver com o estado do motor.
+
+Então, podemos retirar as ferramentas e pronto. Assim, na próxima invocação, podemos limpar todas as ferramentas e adicionar as novas ferramentas. Aqui está o meu... Eu tenho muitas coisas
+
+aqui. Então, eu executo isso.
+
+Vai levar um momento.
+
+E sim, podemos ver que em cada invocação, a quantidade de vezes que falo está aumentando. Por que eu tenho mais? Porque também estou enviando o histórico do chat. Então, eu envio as ferramentas de que preciso, somente as ferramentas de que preciso, e o histórico do chat. Por isso, consigo ver que a minha quantidade de tokens está cada vez maior.
+
+E, veja bem, a precisão é melhor. Sim, temos mais fichas. Então, sim, provavelmente não temos a melhor precisão aqui porque esta é uma demonstração muito simples com ferramentas muito básicas, e algumas consultas são ambíguas de propósito porque buscam algo, verificam algo. E a demonstração possui ferramentas genéricas, ferramentas fictícias, com nomes semelhantes. E quando todas as 29 ferramentas estão visíveis, o modelo às vezes escolhe a ferramenta errada.
+
+E com a filtragem, essas ferramentas genéricas só aparecem na consulta que realmente corresponde a elas. Assim, você pode executar tudo e testar isso. Portanto, isso só funciona localmente. Mas o que acontece quando você quer colocar essa demonstração em produção? Claro que você pode, você pode construir uma loja maior e melhor. Não sei, você
+
+pode usar o Postgres. Acho que é demais. Mas nós, na AWS, temos o Amazon Bedrock Agent Core. Assim, o Amazon Bedrock Agent Core é um serviço dedicado exclusivamente a agentes em produção. E em termos de tamanho do Agent Core, temos o Agent Core Gateway. Então, o Agent
+
+Core Gateway permite que você construa este índice [limpa a garganta] sozinho. Então, você só precisa dizer: "Ei, estas são as minhas ferramentas." E o Agent Core Gateway vai construir tudo para você. E pode conter a busca vetorial internamente. Assim, a camada de roteamento está dentro do Agent Core e lida com a seleção da ferramenta automaticamente. Assim, você cadastra suas
+
+ferramentas uma única vez e o sistema encontra a ferramenta certa para cada solicitação. É o mesmo princípio, mas sem a infraestrutura para gerenciar. Agora, vejamos o próximo. GraphRAG. Você sabe, RAG significa geração aumentada de recuperação.
+
+É assim que os agentes acessam seus próprios dados. Você recebe a pergunta do usuário, pesquisa em seus documentos o conteúdo mais semelhante usando a busca vetorial e passa o que encontrar para o modelo. A resposta modelo, portanto, funciona bem para perguntas abertas. Encontre-me algo sobre este tema. Mas existe uma categoria de perguntas em que isso deixa de funcionar.
+
+Qual é a classificação média de todos os hotéis em Paris? Quantos hotéis têm piscina? A busca vetorial sempre retorna algo, mesmo quando nada é realmente relevante. E o agente só vê os blocos mais superficiais de todos os seus dados de cada vez. Não é possível agregar, contar ou percorrer relações em todo o conjunto de dados completo .
+
+Então, são estimativas. E apresenta essas estimativas como um fato real, sabe, uma resposta concreta. Então, aqui temos um gráfico em que você constrói um armazenamento vetorial e ele recupera três partes de 300 documentos, e o modelo faz suposições. Se estivermos usando o Graph Rack, podemos executar uma consulta em todos os registros e obter resultados computados. Os grafos abordam isso de forma diferente porque, em vez de recuperar um bloco de texto, você pode construir um grafo de conhecimento a partir dos documentos. Conhece relações
+
+e dados estruturados. Para a demonstração, vou usar o Neo4j localmente e o modelo escreverá uma consulta Cypher para realizar a busca. A consulta Cypher é a linguagem de consulta do Neo4j. É semelhante ao SQL. Assim, o gráfico executa essa consulta em todos os dados. E o
+
+modelo retorna resultados computacionais verificados , não uma amostra. E antes de executar esta demonstração, vou iniciar as dependências. Deixe-me mostrar- lhe. Vamos lá, vamos ao código. Então, aqui está o caderno que vou compartilhar com vocês. Portanto, precisamos instalar os
+
+requisitos novamente. O que temos aqui? Deixe-me ver. Esta é a primeira, sim. Requisitos.
+
+Eu vou usar o OpenAI novamente. Vou encerrar isso. Vou usar o Neo4j e precisamos do Neo4j para o Graph Rack. E para o mecanismo que usa rack normal, vamos usar um armazenamento vetorial super simples em arquivos e, novamente, usaremos o transformador de sentenças. Vamos ver. Eu já tenho tudo certo,
+
+eu invoco [limpa a garganta] minha IA aberta. Estas são as minhas ferramentas. Eu quero criar algumas ferramentas aqui, quero usar o OpenAI e trabalhar com banco de dados de grafos. E este é o meu Neo4j instalado localmente. Vamos executar isso.
+
+E isso é algo que vale a pena verificar no Neo4j. Então, estou construindo minha loja de vetores. Estes são os meus arquivos e este é o meu Neo4j que tenho aqui localmente. Não sei se posso te mostrar. Acho que não.
+
+E eu tenho uma ferramenta, uma ferramenta normal criada com um decorador. Isso serve para pesquisar dentro da minha loja de vetores. Veja, isso é ótimo! Eu tenho uma dúvida. Eu crio o embedding para minha consulta e então pesquiso dentro do armazenamento de vetores e obtenho a consulta para o grafo de conhecimento.
+
+Portanto, aqui o modelo precisa entender que, para pesquisar na base de conhecimento do grafo, ele precisa construir uma consulta Cypher. Então, coloquei isso em contexto porque já sabemos como construir ferramentas, certo? Eu coloquei isso em contexto. Tenho um driver que envia os dados para conectar com o armazenamento vetorial e enviar a consulta Cypher que o modelo irá criar para mim. E isso serve para ler os resultados, e é só isso. Essa é a única
+
+ferramenta que preciso para pesquisar no meu grafo de conhecimento. Ok, este é o meu modelo de IA aberta. Este é o meu pano. Meu motor de processamento gráfico e, bem, este é meu motor gráfico. Tenho dois motores diferentes para comparar os resultados.
+
+Vamos ver. Bem, eu tenho um problema. Sim, estou pronto. Então, vamos fazer esta rodada, o primeiro teste. Agregação.
+
+Qual é a pergunta, afinal? Qual é a avaliação média dos hóspedes em todos os hotéis de Paris? Então, enquanto isso, este motor... Ah,
+
+já está pronto. Então, o que eu tenho aqui é a avaliação média dos hóspedes nos hotéis listados em Paris. É isso que eu calculei, sabe? Quando estou usando o rag, ele vai para o armazenamento de vetores e recebe as respostas possíveis para esta pergunta. Como se trata de uma agregação, ela utilizará os dados recebidos para construir uma operação matemática. Isto é o que eu
+
+tenho aqui. Portanto, tudo o que vemos aqui é o raciocínio do modelo. Então, quando eu executo o mecanismo gráfico na média, o mecanismo só vai me dar a resposta, sabe, apenas esses tokens aqui. Graças à consulta Cypher, consigo obter a própria operação matemática. Isso é possível . Então, não precisamos dos
+
+mecanismos, dos LLMs, do modelo... façam isso por mim, porque a consulta Cypher já me dá a pergunta correta. Portanto, são 47 e essa é a média. Então, aqui, neste
+
+primeiro caso, temos sorte porque provavelmente são apenas dois hotéis. Mas o que acontece se essa loja de vetores tiver mais de dois ou três hotéis ? Portanto, não vamos dar uma resposta concreta. O curso de mestrado em Direito ( LLM) vai calcular com base nas três únicas respostas recebidas. Portanto, a empresa pretende construir essa operação com apenas três hotéis.
+
+Mas, se o armazenamento de vetores tiver mais de três, teremos alguns problemas. Algo que eu sou, sabe, uh, sim. Então, vamos executar o próximo. Os preços estão sendo contabilizados. Algo semelhante também. Quantos hotéis
+
+têm piscina como comodidade? Quantos de novo? Então, isso me dá a mensagem tradicional: " Parece que a busca não retornou algumas informações específicas sobre hotéis em Paris." OK. O que aconteceu com o outro?
+
+Atualmente, não há nenhum hotel que ofereça piscinas. Não, não há hotéis. Então, a outra opção é tipo: "Hum, você gostaria de perguntar sobre o hotel com alguma outra comodidade ou informação específica?" É tipo, hum, talvez seja, ou talvez eu não saiba. É, não é tão preciso assim, tá bom?
+
+Então, basicamente, conversa. Ah, qual é a minha pergunta? Quais são os tipos de quarto e os preços dos hotéis com a melhor classificação? Quais são os tipos de quartos e os respectivos preços? Essas duas perguntas.
+
+Então, descobri que só tinha tido um. Os hotéis mais bem avaliados em qualquer empresa Paris blá blá blá. Eu não falo francês. Essa é a avaliação dos hóspedes. No entanto, atualmente não tenho "Ok, blá blá blá". Há muitos dados ali.
+
+Então, o que aconteceu com o outro? Recebendo notificação de "Oh, ocorreu um erro". Ouvi dizer que na segunda vez recebi a pergunta. O hotel altamente avaliado é o Harmony, blá blá blá. Eles oferecem os seguintes tipos. Mas, infelizmente,
+
+esses quartos não estão disponíveis. Então, recebi uma resposta. Não recebo muita conversa fiada por lá. Eu só recebo a resposta que preciso. E para a próxima, como foi a meditação?
+
+Qual é a pergunta? Fale-me sobre hotéis na Antártida. Atenção: spoiler! Não há hotéis na Antártida. Não há nenhum hotel na Antártida, e vamos ver.
+
+Parece que a ordem específica para obter informações sobre o hotel é importante. Ok, porque eles estão procurando por outras informações, como " a cauda blá blá blá", se você estiver procurando por uma experiência específica, pergunte especificamente sobre visitar a Antártica. Não. Por favor, me avise e eu posso te ajudar com isso. Ok, gastei muitos tokens nessa resposta para Elena.
+
+O que aconteceu com o outro? Atualmente, não há nenhum hotel listado na Antártida. Claro, porque cria uma consulta cibernética, e a consulta cibernética recebe zero. Então, não, me dê uma resposta honesta. Aqui está um resumo da nota que considero adequada para este notebook Neo4j. Mas há
+
+algo que eu quero mostrar a vocês antes de passarmos para o outro. Então, aqui está algo que eu adoro no Neo4j, e é por isso que eu o uso. Porque na biblioteca o Neo4j me dá, ele pode construir usando um LLM. Também estou usando o OpenAI para construir o grafo de conhecimento. Então, como eu construo meu grafo de conhecimento? Eu só
+
+tenho um monte de dados, um monte de texto simples, e envio esses dados para a biblioteca Neo4j, mas acabo perdendo alguma coisa. Ok, eu envio esses dados para o Neo4j usando essa biblioteca aqui, e ele consegue entender todos os meus dados e construir o grafo para mim. Portanto, não preciso criar isso usando o pipeline de grafo de conhecimento simples dentro da biblioteca de grafo de conhecimento . É por isso que estou usando o Neo4j. É incrível. É super fácil de usar.
+
+Portanto, convido você a usá-lo dessa forma. Então, vamos para o próximo. Então, validação multiagente. Às vezes, um agente falha e ninguém fica sabendo. O sistema chama uma ferramenta, a ferramenta retorna um erro, e o agente não exibe esse erro.
+
+Em vez disso, gera uma resposta de sucesso baseada na confiança. O usuário acha que funciona. Você acha que vai funcionar. Não aconteceu. O agente age e valida sua própria saída no mesmo loop.
+
+Não há separação, nem segunda opinião. Então, quando algo dá errado, ele racionaliza e diz que está tudo bem. Funcionou. Eis o que acontece. Dentro de um único agente, quando ocorre uma falha, ele chama a ferramenta, recebe um erro, o analisa e retorna uma resposta de sucesso.
+
+O usuário nunca vê o erro. Você pode resolver isso adicionando uma camada de validação. Você pode ter três agentes em sequência. Um age, um verifica e outro aprova ou rejeita. O agente Strands possui uma classe integrada para isso, chamada swarm.
+
+Ele gerencia a transferência entre agentes automaticamente. Você apenas define a função de cada agente em um prompt do sistema. E deixe-me mostrar-lhe isso. Portanto, esta demonstração requer apenas um agente Swarms com integração de IA aberta. Vejamos os requisitos.
+
+Você só precisa de um agente do Swarms. Não precisamos de mais nada. Vamos consultar o caderno aqui. E o ponto crucial aqui é que já está em execução. Deixe-me ver aqui. É
+
+o Enxame. O Swarm é o que permite conectar vários agentes sem precisar criar um ambiente manualmente para reunir todos esses agentes . Ele pode construir uma cadeia e gerenciar a transferência entre os elementos automaticamente. Então, aqui vamos criar três agentes. Deixe-me explicar melhor, pois temos os dados normais e alguns dados de referência.
+
+Então, aqui está como criar um agente único. Então, vamos testar três cenários diferentes para validar uma reserva. Esperamos que isso seja verdade para viabilizar os hotéis. Esperamos encontrar hotéis falsos ou inexistentes, bem como reservas em falta. Esperamos também resultados falsos. Foi assim que
+
+criamos o agente único. Precisamos de um estímulo, algumas ferramentas. E estamos usando as ferramentas que temos aqui. E aqui sabemos que estes são os dados. Assim, os agentes podem fornecer a resposta que procuramos.
+
+E é isso. Deixe-me ir aos outros. Ah, espere aqui. Então, como construímos o Enxame? Eu já executei isso. Quero te mostrar este aqui
+
+. Então, vamos construir três agentes diferentes. O executor, o validador e o crítico. Temos um prompt do sistema. Você é o agente executor de um sistema de reservas de hotel .
+
+[Limpa a garganta] Use as ferramentas fornecidas para atender às solicitações com precisão e blá blá blá. O validador é você, um agente validador. Analise o que o executor fez e a saída exata (ligado/desligado). E temos aqui os críticos que irão aprovar ou rejeitar. Vamos executar isso.
+
+E, ah, o que será que temos aqui? Nosso modelo não definiu o modelo. Desculpe. Desculpe, por favor. Me perdoe pela vida, pois eu não administrei esta.
+
+Vamos correr agora porque isso é o normal. E o modelo está lá, certo? O que? Um pouco de parcialidade. Execute isso.
+
+O que está acontecendo com você? Deixe-me ir embora . Vou copiar e colar. Este. Não sei por que isso me causa problemas.
+
+Enxame multiagente é o mesmo nome usado em alguns casos. Vamos. Sim, você pode ver que isso é a vida. Não vou editar isso. Sim , então.
+
+Ok, obrigado. E o enxame, como nós o criamos? Temos o enxame e a função de enxame, reunimos todos os agentes e o ponto de entrada é o executor. Portanto, tudo começará no executor e depois será transferido para outro responsável. E seis vezes, porque você também consegue lidar com isso. Então, obtenha a resposta final do enxame
+
+. Vamos fazer um loop "for" e eles enviam todas as respostas. E reserve o Grand Hotel. Reservei um quarto no Grand Hotel para Alice esta noite. Reservas, blá blá blá. Não interferir
+
+. Válido. OK. Parece bom. Crítico, aprove.
+
+Portanto, os críticos estão aprovando isso. Este é o outro. E podemos fazer algumas comparações aqui, se você quiser. Então, aqui podemos ver que o enxame lida com o fluxo entre todos os três ditos diferentes. Isso acontece quando um único agente tenta entrar em conflito com algo que não existe no sistema.
+
+E agora, a mesma solicitação através do enxame, o executor recebe o erro, o validador o captura, o crítico o rejeita e o usuário nunca vê uma resposta do fabricante. Então, podemos testar aqui com o agente único se é uma entrada desconhecida sugerida e retornar sucesso. E o enxame tem um executor que lida com o erro, valida dizendo: "Ei, vamos lá, cara. Alucinação e o crítico, eles rejeitam." Assim, o usuário percebe uma falha clara.
+
+A confirmação do fabricante não resolve o problema aqui. E você pode executar este comando para comparar os dois agentes diferentes. Então, aqui podemos ver que o agente único tem tudo, tipo, sim, está tudo bem, está correto. Mas no enxame multiagente, você pode ver que o último é, você sabe, um problema que está faltando aqui. Algo está acontecendo.
+
+Agora, vamos para o próximo. OK. Guardiões neurosimbólicos. Você tem uma regra para o seu agente. Digamos que o máximo seja de 10 palpites por reserva.
+
+Você digita isso no prompt do sistema. Você até menciona isso na descrição da ferramenta. E o agente ainda chama a ferramenta com 15. Não, porque ela está te ignorando. Porque os prompts provavelmente são sugestões, não restrições.
+
+O modelo os processa como um texto. Não como uma lógica que precisa ser executada. É probabilístico. Somente o código executa a lógica. Uma regra no prompt foi lida pelo modelo como uma sugestão.
+
+Uma regra no código da qual o modelo não pode escapar. Os guardiões neurosimbólicos estabelecem as regras no código. E-strands A e tem alguns que o chamam de ganchos. A função que é chamada automaticamente em momentos específicos no loop A. É esse o caso imediatamente anterior à execução de uma ferramenta . Então você tem um gancho.
+
+Você escreve a regra, verifica os parâmetros e, se eles falharem, cancela a chamada. Deixe-me mostrar isso no código. Aqui está o caderno Jupiter. Os requisitos estão aqui. Os requisitos são os mesmos das demos anteriores, só precisamos instalar tudo novamente.
+
+Só precisamos de fios elétricos e IA aberta. Não precisamos de mais nada. E a minha API. E aqui está o ponto importante. Nesta demonstração, são fornecidos esses três ganchos nesta classe base trans. Assim, você pode
+
+criar o gancho. Então temos o provedor de gancho, o registro de gancho e o evento "before to call". E o registro de ferramentas é o que os E-strands lhe passam para registrar sua chamada de retorno. E antes de chamar o evento, há o evento que é disparado sempre que o modelo está prestes a executar a sombra. É esse último fator que torna possível interceptar a chamada antes que ela seja executada. Então,
+
+você tem as duas chamadas anteriores e as duas chamadas posteriores, que não vamos usar aqui. Vejamos a regra no enunciado. Lembre-se, o modelo é lido como um texto e pode ou não segui-lo. Então, vejamos isso. Quero executar isso.
+
+Portanto, aqui temos um estado semelhante que usaremos neste motor. E deixe-me dizer que esta é a regra simbólica. Então, a regra de reserva, se a regra de reserva for verdadeira, é algo que criamos. Deixe-me mostrar as regras aqui. Então, nós temos as regras.
+
+Regra um. Validar datas. O check-in deve ser feito antes do check-out. Se o que for validado, estará tudo certo . Isso é algo que ele verifica. Isso é
+
+algo que será acionado quando a regra for "é, é preciso usá-lo". E, para fazer isso, temos outra regra para o número máximo de palpites. Número máximo de palpites por reserva. Então, se eu quiser usar, sei lá, se eu quiser fazer uma reserva para as 11 horas, vai me bloquear. A reserva não será rejeitada.
+
+E temos algumas regras de confirmação. Pagamento antes da confirmação. Sabe, você pode confirmar se não recebeu o pagamento. Regra de cancelamento. O cancelamento não pode ser feito dentro de 48 horas após o check-in. Então, isso é
+
+algo que eu criei aqui, para esta demonstração. Então, eu tenho regras de reserva e tenho regras de confirmação. Eu não uso a regra de cancelamento aqui. Então, crie um gancho de validação. Criamos os ganchos de validação aqui, certo?
+
+Assim, a regra neurosimbólica é utilizada, e nós usamos o provedor de gancho. Então, temos um monte de código aqui. Em seguida, adicionamos as regras de reserva, as regras de confirmação e o estado. Você poderá verificar isso por si mesmo mais tarde, mas queremos ver a demonstração em execução. Assim, definiremos as ferramentas de reclamação que usaremos para reservar hotéis e processar o pagamento.
+
+Essas são as ferramentas normais, sabe, e precisamos adicionar essas ferramentas aos ganchos. Acho que vou acrescentar isso. Sim . Nome da ferramenta, reservar hotel. Então, essa coisa vai receber o oito quando o hotel-livro estiver usando o Sim, o hotel-livro.
+
+OK? Então, vamos criar os agentes para a comparação. Então, seguindo o exemplo das outras demonstrações, temos três cenários diferentes. Confirme a reserva sem efetuar o pagamento. O pagamento deve ser verificado antes da confirmação. Esta é a regra que
+
+devo acionar. Temos uma reserva de hotel que excede o limite de hóspedes, e temos uma reserva válida para cinco hóspedes. Então, sim, temos os três cenários. E temos o motor normal, o motor normal e o motor de vaselina. E temos o motor com os guardiões neurosimbólicos. Então,
+
+temos o gancho, o gancho neurosimbólico. Ah, isso é a mesma coisa. Aqui, sim. E acrescentamos isto: se você puder ver, o motor normal [bufa] tem apenas três linhas. As ferramentas, o modelo, e esta é a linha que nos dá a diferença entre esses dois motores. Então, eu já executei isso.
+
+Agora, vamos confirmar uma reserva sem pagamento. Então, eu uso isso nos meus motores. O primeiro é Abis. Vamos lá, cara. Sim, porque...
+
+Sim, confirmou a reserva sem pagamento, já que não tem regras e a promessa é super básica. E a outra é " Vamos abrir isto" e a reserva está bloqueada. O pagamento deve ser verificado antes da confirmação. Obrigado. Então, tudo bem.
+
+Agora, vamos executar o outro. Teste o segundo cenário. Qual é a pergunta? Limite de hóspedes com acesso ao hotel durante a reserva. Então, a questão é: Sim, eu tenho mais de...
+
+Então, aqui está a reserva bem-sucedida do hotel Abis para... Sim, porque a promessa é básica e eu não coloquei nenhuma regra lá. E, em relação ao outro, parece que o Grand Hotel tem capacidade máxima para 10 hóspedes por reserva. Reservas adicionais devem ser
+
+feitas com pelo menos 1 dia de antecedência. Não me lembro do dia. Provavelmente, isso é algo que eles lhes dão. E para validar a reserva, ambos os mecanismos executam todas as regras aprovadas. Porque sim, é apenas uma validação para a reserva. Então, reserve um hotel
+
+para blá blá blá. Todas as regras foram cumpridas. Parece que ainda é necessário fazer a reserva. Não me lembro da pergunta. Então, a reserva é feita, desde que eu... Sim.
+
+OK. Ok, entendi. E está bem. Agora, execute tudo o que foi solicitado. Confirmação sem pagamento, economize ao máximo na reserva.
+
+E o que aconteceu aqui? Estes são todos os cenários que acabamos de executar. Então, comparar os resultados é uma ótima maneira de fazer isso. Então, o rei das reservas em Bali garante cinco palpites, com margem de erro, certo ou errado. 50, bloqueado, errado, correto.
+
+Confirmo, então aqui temos a comparação entre as duas extremidades.
+
+Então, o que temos aqui é o mesmo modelo, as mesmas ferramentas, o mesmo prompt. E a diferença reside no resultado, pois as regras em Python permitem conhecer o prompt. Esse padrão de aplicação de regras no código antes da execução das ferramentas é também o que o serviço de políticas principais do Amazon Aion faz no nível estrutural. Portanto, o mesmo conceito, mas gerenciado para você em produção. E você só precisa criar as regras. Portanto, os ganchos são tudo ou
+
+nada. Eles bloqueiam tudo ou aprovam. Mas às vezes você quer que o agente se adapte e continue. Não, pare e deixe o usuário esperando. É isso que mostrarei a seguir.
+
+Guardiões de tempo de execução, o tempo de execução ainda não bloqueia. Este é o próximo . Os hooks bloqueiam incondicionalmente. O agente foi interrompido e o usuário precisa tentar novamente. Para uma restrição rígida, é exatamente isso que você deseja. Mas às vezes a regra é
+
+flexível. Talvez o quarto comporte quatro hóspedes, mas um grupo de seis pessoas poderia reservar dois quartos diferentes. Ou um voo está lotado, mas há disponibilidade no próximo. Não, você não quer bloquear tudo. Provavelmente, você quer que o agente encontre uma opção e conclua a tarefa.
+
+Isso é uma direção. Aqui, temos o gancho que é acionado e a tarefa falhou. E com o controle do agente, ele direcionou os modelos e concluiu a tarefa. A outra diferença aqui é operacional. Porque, com os ganchos, mudar uma regra significa mudar o código e reimplantar todo o chicote elétrico, todo o motor. E
+
+com o controle do agente, que é o nome da biblioteca de código aberto que vamos usar aqui, as regras são registradas em um servidor local via API. Você abre o agente sem precisar tocar no código do agente, pois ele os detecta imediatamente. Deixe-me mostrar isso aqui no código. Sim, este é o caderno. Nesta demonstração, precisamos apenas de um pacote extra.
+
+O controle do agente é fundamental. Assim, o controle do agente é o que nos ajuda a criar uma direção. E aqui, estamos usando o controle de configuração. Este é um pequeno aplicativo, um pequeno aplicativo que eu criei com o servidor local e as regras de direcionamento. Aqui, temos o servidor local. Nós temos o controle. São
+
+[bufa] as regras de direção. Primeiro, temos o convidado mestre de direção. Um boi, sabe, cara. Então, o agente vai reduzir o número de convidados quando o máximo de 10 for excedido. E ele vai orientar.
+
+E temos algum controle que nega. Por exemplo, não negue nenhum pagamento. Confirmação de bloqueio sem pagamento de PR. E aqui, bem, isto é para criar o serviço. O serviço. E vamos
+
+para o caderno. Então, estou pronto. Hum, deixe-me ir aqui. Sim. Então, eu preciso do ambiente.
+
+Então, este é o agente. Hum, acho que vou cometer um erro aqui. Espere. Espere. Espere. Vou usar o quarto.
+
+Espere. Espere. Não, então deixe-me comentar esta, porque esta vai gerar um erro. Vamos executar isso. Sim, então temos os ganchos, assim como fizemos na demo.
+
+Então, precisamos reservar com alguma empresa em Lisboa e temos algumas sugestões. Você é um assistente de reservas de hotel. Ao fazer a reserva, primeiro descreva o que você vai reservar em [texto ilegível]. E este é o pedido para o meu agente. Onde está meu agente?
+
+Controle do agente. Isto é para o poço, isto é para algum auxiliar. E este é o meu gancho, que você já conhece porque nós o criamos. Então, temos o prompt do sistema. E nós temos os ganchos. Então, vamos testar
+
+este agente com a opção "Reserve com qualquer empresa" em Lisboa para 60 hóspedes. E, como você deve se lembrar, isso só pode ser reservado por menos de 10 palpites. E, claro, ele está bloqueando. Agora, vamos acessar o novo agente de controle AIN . Aqui temos duas importâncias fundamentais ou duas importações essenciais para o SDK de controle AIN . Então, temos o plugin de controle AIN
+
+que captura eventos AIN e os envia para o servidor de controle AIN. E temos o identificador de aluno AIN que fica à escuta da decisão do aluno no servidor e a envia de volta para o modelo. Juntos, eles são o que conecta um aluno à lógica de controle do aluno da AIN. Então, vamos nessa . Então, o agente estudantil vai para uma sala com vista para o rio para qualquer lista de empresas com capacidade para 50 convidados. Vamos ver o que
+
+está acontecendo. Sim, preciso configurar a reserva de uma estadia para 50 hóspedes na lista da empresa para maio. Então, a reserva foi dividida em dois quartos. Então, absorveu isso por si só . Você sabe?
+
+Um quarto para uma pessoa e outro quarto para cinco, e só. Portanto, use hooks para restrições rígidas. Controle AIN para regra de software [snorts]. Agora, temos cinco técnicas para execução local. Mas como levar isso para a produção sem manter o serviço, sem construir infraestrutura?
+
+Deixe-me mostrar como. Tudo o que eu construí aqui nas demonstrações anteriores funciona localmente. Para a versão de produção, o núcleo AIN do Amazon Bedrock fornece o tempo de execução. Um gateway, memória de curto e longo prazo, observabilidade do CloudWatch, tudo integrado, sem servidores para gerenciar. Aqui, a arquitetura e o mecanismo de threads são executados em tempo de execução. E você sabe, dentro do
+
+ambiente de execução, você pode inserir qualquer framework que desejar, não apenas executar threads. As ferramentas de regras do gateway chamam a função lambda automaticamente como uma ferramenta. E as regras de controle da demonstração anterior estão armazenadas no DynamoDB. Então, você as altera ali e elas entram em vigor na próxima chamada. E você não precisa reimplantar nada.
+
+E se você quiser usar o Neo4j, claro, pode usar o Neo4j Aura DB, que é um banco de dados gráfico externo e também possui uma versão gratuita. E o código está no repositório aqui. Está no repositório. E você precisará de credenciais da AWS se estiver usando o Amazon Bella Betray no núcleo. E no link de recursos, há alguns créditos. Espero que você consiga encontrar,
+
+pois sempre tento oferecer algum crédito da AWS para que você possa implantar tudo gratuitamente. E, se você é novo aqui na AWS, eu tenho um repositório que você pode usar para implantar tudo nessa arquitetura, usando também um notebook. Mas, se você estiver familiarizado com o CDK (Cloud Developer Kit), também poderá usar essa ferramenta para implantar tudo de uma só vez. Ah, ambas as opções estão no repositório, claro. E você pode se aprofundar no Agent Core com toda a documentação que deixei lá.
+
+Portanto, por favor, não se limite à demonstração e tente implementar o Amazon Better Agent Car em produção. Então, deixe-me recapitular tudo. Os tokens são desperdiçados a cada requisição. Você pode corrigir isso com a seleção de ferramentas semânticas . E a resposta com certeza é que isso nunca é calculado.
+
+Talvez seja possível, já que você está perguntando quantos. Então, você pode usar o GraphRack e consultar os dados. Não experimente . Às vezes, temos confirmação de sucesso da capa de tecido . Você pode usar validação multiagente e uma segunda verificação para detectar o erro.
+
+E as regras dos modelos, hum, um pouco de pulo nisso. Você pode usar guardiões neurosimbólicos para reforçar o código. Não confie na sugestão. E para os bloqueios difíceis que eu impeçai o usuário, você pode usar o SDR em tempo de execução, a autocorreção e a finalização. Cada demonstração que acabei de mostrar está disponível no repositório como um notebook e também como um aplicativo.
+
+Comece com a demonstração um e depois passe para a demonstração cinco. E, se quiser, pode implementá-lo em produção. Então, você já experimentou alguma dessas opções ? Obrigado por participar desta sessão e boas construções!

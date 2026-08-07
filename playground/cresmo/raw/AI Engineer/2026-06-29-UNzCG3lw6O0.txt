@@ -1,0 +1,133 @@
+---
+video_title: "Building Great Agent Skills: The Missing Manual"
+video_id: UNzCG3lw6O0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UNzCG3lw6O0
+video_date: 2026-06-29T18:53:10+00:00
+video_description: |
+  Let's discuss how to navigate "skill hell" by providing a structured framework for building high-quality agent skills. Without a shared rubric, developers and organizations struggle to create effective, maintainable skills for AI agents.
+  
+  Timestamps:
+  
+  0:00 - Introduction to the talk and the concept of "skill hell"
+  2:12 - Overview of the skill checklist framework
+  3:16 - Trigger: Choosing between user-invoked and model-invoked skills
+  7:29 - Structure: Organizing steps and references
+  9:00 - Making the skill.md file minimal
+  11:54 - Steering: Using leading words to guide agent behavior
+  14:56 - Increasing "leg work" per step
+  16:48 - Pruning: Removing sediment, crud, and no-ops
+  19:06 - Final summary of the checklist framework
+  19:55 - Where to find the "writing great skills" resource
+  
+  The Skill Checklist Framework:
+  
+  Trigger (3:16 - 7:25): Decide whether a skill should be user-invoked or model-invoked. Matt notes that while model-invoked skills offer more flexibility, they increase context load and introduce unpredictability. User-invoked skills offer more control but require greater cognitive load from the pilot.
+  
+  Structure (7:29 - 11:53): Organize your skill into two primary units: steps (procedures) and reference (supporting information). To keep the skill.md file minimal, move branching reference material behind context pointers to reduce bloat and maintenance costs.
+  
+  Steering (11:54 - 16:47): Use leading words—specific terms that pack dense meaning—to influence agent behavior and guide reasoning traces. Additionally, you can force the agent to perform more "leg work" on specific tasks by breaking complex processes into smaller, individual skills that hide future steps.
+  
+  Pruning (16:48 - 19:05): Maintain a clean skill set by ensuring a single source of truth, removing "sediment" (irrelevant legacy material), and eliminating "no-ops" (instructions that don't actually change agent behavior).
+  
+  https://github.com/mattpocock/skills/blob/main/skills/productivity/writing-great-skills/SKILL.md
+---
+Olá amigos, eu estava realmente na expectativa de poder ir à Feira Mundial de Engenharia Aeronáutica , mas assuntos familiares me impediram de comparecer. No entanto, não vou deixá-los de mãos vazias. Vou apresentar a vocês a palestra que eu teria apresentado em São Francisco. Esta palestra se chama "O Manual que Faltava: Como Escrever Habilidades Incríveis", e acredito que a capacidade de distinguir boas habilidades de habilidades ruins está se tornando cada vez mais importante. Como desenvolvedores, parece que temos um talento especial para encontrar diferentes tipos de inferno para onde ir. Há
+
+alguns anos, tínhamos o "inferno dos tutoriais", que era quando você entrava em vários tutoriais tentando aprender algo, não conseguia juntar as peças e acabava entrando em um ciclo do qual não conseguia sair. Vivíamos o inferno dos frameworks, onde a cada 10 minutos um novo framework JavaScript era anunciado, e você tinha que aprender a novidade do momento o tempo todo. E agora, acho que temos outra versão do inferno, que é o inferno da habilidade. O inferno das habilidades é um lugar onde você tem todas essas habilidades disponíveis, gratuitas, que você pode baixar, contribuir e descobrir por conta própria, mas sem realmente saber como todas as peças se encaixam. Não é possível distinguir uma boa habilidade de uma habilidade ruim. E isso significa que as
+
+pessoas estão tentando juntar essas estruturas, tentando experimentar tudo o que existe por aí ao mesmo tempo. E eles meio que não conseguem, ou melhor, não obtêm os resultados que as próprias habilidades prometem. Isso é verdade tanto no nível individual quanto no nível organizacional. As organizações não têm meios, ou não entendem, como desenvolver boas competências, como pegar nos seus procedimentos operacionais e transformá-los em algo que um agente possa fazer. Se você não fizer isso, será difícil obter a recompensa que as habilidades podem oferecer. Só mais uma habilidade,
+
+mano. Parece ser exatamente isso que estamos dizendo. E eu também me sinto um pouco culpado aqui, porque temos as habilidades do Matt Pocock , que é o meu repositório de habilidades, que é um dos conjuntos de habilidades de engenharia mais populares que existem . Então, sinto que quero ajudar as pessoas que usam minhas habilidades a saírem desse limbo de habilidades. Então, como fazemos isso? Como saímos dessa situação?
+
+Bem, o que exatamente está faltando aqui? Bem, na minha opinião, o que nos falta é saber o que torna uma habilidade excelente. Ainda não podemos olhar para uma habilidade e dizer: "Ok, essa habilidade faz essas coisas boas e essas coisas ruins." Não existe uma rubrica comum, nem uma estrutura para analisar uma habilidade e aprimorá-la. Então, é isso que vou apresentar a vocês nesta palestra.
+
+Vou fornecer a vocês uma lista de verificação de habilidades, uma lista de itens que vocês podem analisar dentro da habilidade para garantir que ela esteja cumprindo o que promete e maneiras de aprimorá-la, maneiras de escrever habilidades. Essa lista de verificação tem o seguinte aspecto. Começamos com o gatilho da habilidade, como a habilidade é invocada e as decisões que você precisa tomar no planejamento. Em seguida, a estrutura interna da habilidade, como a habilidade é de fato composta e organizada internamente. Em terceiro lugar, como você realmente controla o veículo usando essa habilidade? Como se adquire
+
+a habilidade de dizer ao agente o que fazer? Em seguida, quarto, como você minimiza a habilidade ao máximo? Porque, uma vez que tenhamos uma habilidade funcional, precisamos basicamente maximizá-la, eliminar tudo o que é irrelevante, eliminar tudo o que não serve para nada. Existe uma vantagem prática em eu não estar na sala com você, que é a possibilidade de você experimentar isso imediatamente, pois eu já incorporei tudo isso em uma nova habilidade no meu repositório chamada " escrevendo ótimas habilidades". Então, se você tem um caso de uso imediato para isso, basta acessar meu repositório de habilidades, fechar o navegador, sair daqui e usar essa habilidade para aprimorar suas habilidades ou criar novas habilidades incríveis. Mas, vamos agora analisar
+
+a lista de verificação. Temos o número um, o gatilho, a forma como a habilidade é invocada. E para falar sobre isso, vou fazer uma pequena comparação: minhas habilidades são frequentemente comparadas a outro conjunto de habilidades de engenharia extremamente populares, chamadas de superpoderes. E me fazem com muita frequência a pergunta: "Como suas habilidades se comparam a superpoderes? Qual a diferença entre eles?" Para entender
+
+isso, precisamos compreender a diferença entre habilidades invocadas pelo usuário e habilidades invocadas pelo modelo. Sempre que você tiver uma habilidade, poderá invocá-la manualmente. Portanto, a habilidade reside no seu sistema de arquivos; o agente poderá simplesmente acessar a habilidade e entender o que ela contém. E você sempre pode fazer isso comunicando isso ao agente. Nem sempre se parece com essa barra invertida, dependendo do equipamento, mas você sempre pode usar ou invocar suas habilidades. Outra forma de
+
+invocar habilidades é pelo próprio agente. Essas são chamadas de habilidades invocáveis ​​pelo modelo ou habilidades invocadas pelo modelo. Você pode pegar uma descrição, então a descrição da habilidade sempre acaba no contexto do agente, e o agente pode olhar para ela e dizer: "Ok, com base nessa descrição, vou invocar a habilidade" e acaba lendo o arquivo skill.md, que é onde está o conteúdo principal da habilidade, na minha janela de contexto. É assim que você invoca uma habilidade. É isso que
+
+acontece quando uma habilidade é invocada. Então, essa descrição serve como uma espécie de ponteiro de contexto. Ela fica no contexto do agente apontando para outro arquivo onde o agente pode ir se quiser mais contexto. Mas esse ponteiro de contexto não precisa estar no contexto do agente . Ele pode simplesmente ser invisível para o agente, e isso é o que chamamos de habilidade invocável pelo usuário. Algumas habilidades
+
+só podem ser invocadas pelo usuário porque não têm esse ponteiro de contexto. É opcional. Por exemplo, podemos ver no meu projeto de base de código aqui, esta é uma habilidade invocável pelo modelo. Ela tem uma descrição que acaba na janela de contexto do agente. Mas, se nós Observe minha habilidade "Grill Me". Podemos ver que ela
+
+tem a opção "Disable Model Invocation" definida como verdadeira. Isso significa que esta pequena descrição aqui será exibida apenas para o usuário. Ela não será visível para o agente. Portanto, esta é a primeira dica: decida se sua habilidade será invocada pelo usuário ou pelo modelo. Agora, você pode pensar que as habilidades invocadas pelo modelo são melhores, certo? Porque tanto o
+
+modelo quanto o usuário podem invocá-las. É mais flexível. Mas, cada vez que você adiciona uma habilidade invocada pelo modelo ao ambiente do seu agente, isso aumenta o que eu chamarei de carga de contexto para esse agente. Adiciona uma nova descrição, o que custa tokens em cada requisição, além de adicionar algo diferente para o agente processar. Então, se você tiver cem habilidades invocadas pelo modelo, isso significa cem descrições dentro do contexto do seu agente. Portanto, parece fazer
+
+sentido reduzir o número de habilidades invocadas pelo modelo ou usar apenas habilidades invocadas pelo usuário. Mas as habilidades invocadas pelo usuário têm uma carga diferente: quanto mais habilidades invocadas pelo usuário você tiver, mais contexto terá. Quanto mais informações o usuário precisa manter em mente, maior a carga cognitiva. Em outras palavras, quanto mais coisas o usuário precisa lembrar , mais habilidade é exigida do piloto. Assim, se compararmos as habilidades de Matt Percot com os Superpoderes, os Superpoderes são habilidades invocadas principalmente pelo modelo . Eles dão superpoderes ao agente.
+
+Já com as minhas habilidades, prefiro ter controle total. Isso significa que consigo manter a carga contextual sobre o agente o menor possível, mas impõe uma carga cognitiva maior sobre mim. Portanto, preciso entender as habilidades profundamente para obter o máximo proveito delas. Então, por que fiz isso? Por que preferi habilidades invocadas pelo usuário? Bem, toda
+
+vez que você tem uma habilidade invocada pelo modelo, basicamente há um custo em imprevisibilidade. Porque toda vez que você tem um ponteiro de contexto apontando de um recurso para outro, o modelo pode simplesmente optar por não segui-lo, mesmo que seja absolutamente perfeito para a tarefa, ele pode simplesmente optar por não invocar a habilidade. Prefiro muito mais remover esse nível de imprevisibilidade, impondo um pouco mais de carga cognitiva ao usuário, e O que você obtém é simplesmente a eliminação de uma classe de problemas, deixando de ser um problema. Essa imprevisibilidade obriga as pessoas a avaliarem suas habilidades para garantir que sejam acionadas no momento certo, o que é realmente desagradável e um problema que prefiro evitar. Mas o que espero mostrar aqui é que as habilidades invocadas pelo modelo e as habilidades invocadas pelo usuário têm o mesmo custo. Portanto,
+
+não é uma decisão fácil escolher uma delas. Esse é o gatilho, como a habilidade é invocada. Agora, vamos falar sobre a estrutura, o layout interno da habilidade. Penso que existem duas unidades principais que você precisa incluir na maioria das habilidades: os passos e a referência. Os passos são o procedimento passo a passo que a habilidade irá executar, e a referência é qualquer informação de apoio que a ajude a executar esses passos. Você pode ter habilidades
+
+sem passos, apenas com referência, e habilidades sem referência, apenas com um conjunto de passos simples a serem seguidos. Mas se você começar a pensar nas habilidades como compostas por essas duas unidades, realmente... Isso ajuda a decompor tudo muito mais. Se olharmos para um
+
+exemplo, uma das minhas skills chamada 2 PRD cria um documento de requisitos do produto a partir da janela de contexto atual. Ela tem três etapas. Primeiro, encontra o contexto relevante, depois confirma as costuras de teste com o usuário. Há uma pequena verificação de intervenção humana para garantir que não estamos fazendo nada estranho com os testes, o que considero muito importante. E então, escrevemos o documento de requisitos do produto. Para
+
+lidar com essas três etapas, temos dois materiais de referência. Temos uma breve referência sobre o que é uma costura de teste e um modelo de documento de requisitos do produto. Ou seja, um modelo Markdown literal usado para escrever o PRD. Essa é uma ótima maneira de escrever uma skill do zero. Você define se precisa de algumas etapas, escreve essas etapas e define qual material de referência elas precisam, colocando-o em um local separado na skill, reservado para material de referência. No entanto, há uma
+
+restrição muito importante que precisamos considerar, que é a dica número 1. Em terceiro lugar, queremos que o arquivo skill.md principal seja o menor possível. Cada habilidade é composta por sua descrição, um arquivo skill.md e qualquer material de referência derivado dele.
+
+Ao reduzir o tamanho do arquivo skill.md, economizamos de diversas maneiras. Habilidades menores são mais fáceis de manter, mais fáceis de auditar e exigem menos esforço. Cada vez que uma palavra é removida, isso representa um token a menos, e a redução de múltiplos tokens no tamanho da habilidade representa um custo. Portanto, acredito que habilidades pequenas são realmente importantes tanto para os mantenedores quanto para os usuários. Uma maneira muito útil de
+
+reduzir o tamanho da sua habilidade é pensar nos diferentes ramos da habilidade, nas diferentes maneiras como ela pode ser usada. Se você tiver material de referência que só é usado em um ramo, ele pode ser removido do arquivo skill.md principal. Por exemplo, se observarmos meu 2PRD aqui, temos dois materiais de referência: um teste e o modelo PRD. Precisamos do modelo PRD sempre, pois estamos sempre criando novos. Um PRD e provavelmente também precisamos
+
+da informação sobre o que é uma costura de teste sempre que perguntamos sobre costuras de teste. Então, 2PRD, há apenas um ramo e todo o material de referência pertence a esse ramo, então provavelmente também pertence ao arquivo skill.md. No entanto, se olharmos para uma habilidade diferente minha, que é modelagem de domínio, a modelagem de domínio faz duas coisas. Ela atualiza um glossário local chamado context.md e também cria
+
+registros de decisão arquitetural. Em outras palavras, ela faz duas coisas diferentes ou pode optar por não fazer nenhuma delas, caso em que não precisa do modelo e também não precisa do modelo ADR. Então, em outras palavras, a modelagem de domínio tem dois ou talvez três ramos e isso significa que não precisamos incluir o modelo ADR ou o modelo context.md na habilidade principal. Eles podem ser movidos para zonas separadas. A maneira de fazer isso é
+
+ter o arquivo skill.md, colocá- lo atrás de um ponteiro de contexto e apontar o modelo de contexto para um arquivo markdown separado dentro do pasta skills. Esse ponteiro de contexto literalmente diz: "Se você precisar do modelo ou se precisar atualizar o arquivo context.md, acesse este arquivo." E eu chamo isso de referência externa. É uma referência
+
+externa ao skill.md que você pode facilmente referenciar e que o agente pode acessar com muita facilidade porque está incluída no pacote da skill. Então, essa é uma técnica que você pode usar para tornar o skill.md o menor possível, o que traz muitos benefícios. Oculte o material de referência das ramificações atrás de ponteiros de contexto. Em outras palavras, se você
+
+acha que sua skill será usada de várias maneiras diferentes, pegue o material de referência relevante para essas ramificações e oculte-o atrás de ponteiros de contexto. Então, essa é a estrutura. Precisamos pensar em como tornar o skill.md extremamente pequeno. Precisamos pensar nas ramificações da nossa skill, movendo o material para trás de ponteiros de contexto. E precisamos pensar em
+
+passos e referências, que são as duas unidades principais dentro de uma skill. Vamos agora para o controle, as maneiras reais pelas quais fazemos o agente executar o que queremos que ele faça. Para mim, direcionar o agente se resume a uma técnica realmente incrível, que é o principal ponto que quero que vocês absorvam desta palestra. Essa técnica resolve o problema de o agente não fazer o que eu quero. Em outras palavras, eu especifico algo na habilidade, acho que fui claro, e então ele simplesmente não faz o que eu quero. Acredito que a
+
+principal razão para isso acontecer é a falta de uso de uma técnica chamada palavras-chave. A ideia das palavras-chave, ou "palavras-chave", se preferir teoria literária, é que certas palavras concentram muito significado em um espaço muito pequeno . Essas palavras-chave são realmente poderosas com agentes porque você as coloca na própria habilidade, no texto, e então o agente repete essa palavra-chave para si mesmo como parte de suas operações, como parte de seus tokens de pensamento e como parte da sua saída para você. E então, como ele está reforçando essa palavra, e essa palavra, idealmente, descreve o que você espera do agente, isso acaba alterando seu comportamento. Vamos tornar isso mais concreto com um exemplo. Vamos
+
+imaginar que temos um problema, um problema clássico com agentes: eles programam camada por camada. Em outras palavras, se você der a eles um grande volume de trabalho, eles geralmente programarão toda a camada de banco de dados, depois todos os esquemas, depois todos os endpoints da API e, por fim, todo o front-end. Eles não fazem o que um humano normalmente faria, que é buscar feedback logo no início , criar algo pequeno e, a partir daí, expandir. Podemos tentar incentivar o agente a fazer isso simplesmente dizendo: "Não programe camada por camada. Certifique-se de criar uma pequena parte primeiro e depois continue a partir daí." Mas e se, em vez disso,
+
+usássemos a palavra-chave " fatia vertical"? Queremos dividir o trabalho em fatias verticais, em vez de horizontais. " Fatia vertical" é uma terminologia bastante conhecida no desenvolvimento, e isso provavelmente ativará as ideias prévias do agente e ele entenderá o que queremos dizer. Não precisamos apenas de uma habilidade com duas palavras, como " vertical". fatiar.
+
+O que fazemos é condensar muito significado em uma frase relativamente curta, que repetimos ao longo da habilidade. O interessante dessa técnica é que você sabe se funcionou porque, ao usar a técnica "fatia vertical", você percebe nos registros de raciocínio que ela indica: "Ok, vamos fazer isso como uma fatia vertical fina". Assim, você deve obter planos de implementação melhores. Todos a quem expliquei essa técnica respondem algo como: "Ah, sim, já faço isso há um tempo." Tenho usado essas pequenas frases para tentar encorajar o agente a fazer o que eu quero. Tudo o que peço
+
+agora é que você as use consistentemente dentro das suas habilidades e observe nos registros de pensamento como o agente adota a sua maneira de fazer as coisas. Muitas vezes, se o agente não está fazendo o que você quer, você precisa tornar suas palavras-chave mais consistentes, mais poderosas e procurar outras, porque, você sabe, o inglês é uma API bastante ampla em termos de diferentes funções que você pode chamar, diferentes coisas com as quais você pode experimentar, e existem muitos candidatos a palavras-chave por aí. E os agentes são realmente muito bons em ajudar você a pensar nelas. Outra pequena alavanca que você pode usar com agentes é que, às vezes, o agente simplesmente não se esforça o suficiente. O que quero dizer com isso é que, digamos, estamos em uma etapa, e talvez a etapa seja fazer perguntas para esclarecer dúvidas ou explorar a base de código, e o agente simplesmente não se dedica o suficiente . Ele não se esforça o suficiente
+
+nessa etapa específica. Um caso clássico disso, e algo que encontrei em quase todos os lugares, é o modo de planejamento. Porque no modo de planejamento, temos dois Etapas. Temos que fazer perguntas para esclarecer dúvidas e, em seguida, criar um plano. E o que descobri em todas as implementações do modo de planejamento que testei é que fazer perguntas para esclarecer dúvidas simplesmente não realiza o trabalho necessário. O sistema percebe que seu objetivo final
+
+é criar um plano e, portanto, realiza apenas um pequeno trabalho com perguntas para esclarecer dúvidas, faz algumas perguntas e, em seguida, cria o plano rapidamente. Então, qual foi a minha solução? Em vez de usar o modo de planejamento, criei uma habilidade chamada "Consulta com a documentação", que é como a minha fase de perguntas para esclarecer dúvidas. E então, separei isso em uma habilidade separada. Assim, dividi o planejamento em sua própria habilidade. "
+
+Consulta com a documentação" agora é uma habilidade independente onde o agente vê apenas essa parte do processo. E então, depois que "Consulta com a documentação" for concluído, passamos para a segunda etapa do PRD. Em outras palavras, temos a etapa um e a etapa dois, mas o agente vê apenas uma etapa por vez. Essa é uma técnica muito interessante para aumentar o trabalho necessário na etapa em que você está. Ocultar o objetivo futuro, ocultar os próximos passos.
+
+Nem sempre é necessário dividir as habilidades em etapas individuais, mas em casos específicos onde você realmente quer um esforço extra, não há técnica melhor. Funciona muito, muito bem. Trata-se de usar palavras-chave para capturar o que você deseja em pequenos tokens reutilizáveis ​​e garantir que cada etapa execute a quantidade certa de trabalho. Agora, vamos falar sobre poda. A poda é basicamente um conjunto rápido de modos de falha, diferentes coisas que podem dar errado. E o primeiro é bastante
+
+óbvio: não queremos habilidades enormes. Habilidades enormes geralmente são um sintoma de algum outro problema. Ou seja, um sintoma de um desses outros modos de falha. E o primeiro é bem simples: não se repita. Você precisa ficar atento à duplicação. E, em geral, eu
+
+gosto que cada parte da habilidade tenha uma única fonte de verdade. Em outras palavras, se você tiver um material de referência, como o modelo PRD, por exemplo, ou algo ainda menor. Por exemplo, o que é uma costura de teste? Certifique-se de não repeti-la em vários lugares ou de não abordar várias etapas em vários locais. Garanta que cada parte tenha uma única fonte de verdade e evite repetições, mesmo em materiais de referência. Outra forma pela qual as habilidades
+
+crescem descontroladamente é através do acúmulo de conteúdo irrelevante. Esse acúmulo é um problema clássico quando as pessoas trabalham no mesmo conjunto de documentos: todos começam a contribuir para um arquivo Markdown compartilhado. As pessoas adicionam suas próprias coisas. Elas não se sentem à vontade para excluir e modificar o conteúdo de outras pessoas. E assim, você acaba com uma enorme quantidade de conteúdo irrelevante para a habilidade, especialmente conteúdo que não foi formatado corretamente. Com uma habilidade com muito
+
+conteúdo irrelevante, você precisa analisar a estrutura. Essa é a primeira coisa a fazer. Você precisa garantir que o conteúdo adicionado seja relevante para todos os ramos. Se não for, mova- o para os ramos corretos. Ou, se for totalmente irrelevante, talvez seja melhor removê-lo ou eliminá-lo. Ou talvez haja
+
+conteúdo ali que seja totalmente inútil. obsoleto, nesse caso você precisa simplesmente eliminá-lo completamente. O próximo modo de falha é muito comum quando um agente escreve suas skills, que são operações nulas. Ou seja, coisas dentro da skill que parecem fazer algo, mas que na verdade não influenciam o comportamento do agente dentro do contexto da skill. Vamos imaginar que temos uma skill de implementação e temos um parágrafo inteiro da skill que diz ao agente para escrever uma mensagem de commit longa e detalhada . O que aconteceria se você simplesmente
+
+excluísse esse parágrafo? Bem, o agente provavelmente ainda escreveria uma mensagem de commit decente e longa. As pessoas me perguntam muito como consigo fazer minhas skills tão pequenas, e é apenas usando essas técnicas, usando testes de exclusão, garantindo que eu compacte as coisas em palavras iniciais, que eu não tenha nada irrelevante lá dentro e que eu não tenha nenhum conteúdo supérfluo. E isso finalmente nos leva ao panorama geral . Primeiro, verificamos o gatilho. Garantimos que ele esteja sendo
+
+disparado nos momentos certos. Verificamos se estamos impondo carga contextual ou carga cognitiva. Com a estrutura, pensamos em ramificações. Pensamos em estruturar as coisas em etapas e referências. E garantimos que o material relevante apenas para uma ramificação esteja fora do arquivo skill.md principal.
+
+Com o direcionamento, pensamos em condensar o texto em palavras-chave e observar como essas palavras-chave aparecem nos rastreamentos de raciocínio. Também consideramos o trabalho de execução. Devemos dividir essa habilidade ainda mais para aumentar seu foco na fase atual, ocultando a fase futura? E com a poda, fazemos uma passagem final de poda em toda a habilidade, observando sedimentos, informações irrelevantes e, principalmente, operações nulas. Agora, a melhor maneira de começar a usar essa estrutura é dentro desta habilidade, dentro da habilidade "Writing Great Skills". Você pode conferir
+
+em minhas habilidades Papago, baixar, usar para aprimorar suas próprias habilidades e talvez até usar em algumas habilidades criadas pela comunidade para verificar se as habilidades que você está usando são realmente boas. Se quiser acompanhar meu trabalho, tenho uma newsletter em aihero.dev. E meus planos para os próximos meses são...
+
+Vou lançar um curso intensivo de programação em IA, que é uma introdução a muitos dos assuntos que venho abordando e como começar a trabalhar com engenharia e IA. Espero que o que compartilhei com vocês seja suficiente para ajudá-los a escapar do inferno das habilidades ou, pelo menos, a tentar a árdua jornada para fora dele. Lamento muito não poder comparecer pessoalmente, mas agradeço por assistirem. Nos vemos em breve.

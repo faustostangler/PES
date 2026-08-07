@@ -1,0 +1,1094 @@
+---
+video_title: "Special Topics in Kernels, RL, Reward Hacking in Agents — Daniel Han, Unsloth"
+video_id: uIiA6DquRiE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uIiA6DquRiE
+video_date: 2026-07-17T17:00:06+00:00
+video_description: |
+  An advanced seminar (good prerequisites: Daniel's 2024 and 2025 hit AIE workshops, but all are welcome!)
+  
+  PLS WATCH: https://www.youtube.com/@aiDotEngineer/search?query=daniel%20han
+  
+  Timestamps:
+  
+  0:00 Introduction to Unsloth and model distribution
+  2:32 The State of AI: Meter plots and performance trends
+  20:26 Open Source vs. Closed Source models
+  38:51 Throughput maxing and accuracy minimizing
+  1:03:00 Benchmarking and cheating in AI
+  1:37:49 Kernels and algorithmic improvements
+  2:04:16 Reinforcement learning primer
+  2:05:19 Reward hacking and AI agents
+  
+  Viral Quotes & Pull Quotes:
+  
+  "If you make the model 86% smaller, it does not get 86% dumber... it only gets 14% less dumb." (29:52)
+  "Reinforcement learning is terrible, but everything else is even worse." (20:43)
+  "The model becomes not important anymore; it's the harness or the tool that is actually the most important thing." (38:23)
+  "If a model can finish a task that takes a human 16 hours, can a model finish that task?" (2:49)
+---
+Olá pessoal. Sim, muito obrigada. por ter vindo hoje. Muito obrigado. Um Sim, eu sou Daniel. Sou de Anslaf. Meu
+
+Meu irmão também está aqui hoje. Sim, mas Como você sabe, obrigado por ter vindo. Hum, Então, para vocês que não nos conhecem, hum, Então, na verdade, sabe, nós somos um dos os maiores distribuidores de idiomas modelos e também modelos de difusão. Então Não trabalhamos apenas com modelos de linguagem. Nós Faça o upload de nossos modelos para o Hugging Face. Hum,
+
+E sabe, acho que estamos... número 10 ou algo assim no Oh, não, eu Não me lembro. Mas enfim, Estamos na lista dos melhores.
+
+organizações no Hugging Face. Hum, nós possuem mais de 300 milhões de downloads no total. Então, definitivamente, dê uma olhada no nosso conteúdo. Você pode executar como sabe, Deepseek. GLM, muitos outros modelos e nós quantizamos reduzi-los usando quantização dinâmica. Um
+
+para que você possa executá-los em seu computador local. computador. Nós também fazemos muitas correções de bugs para o OpenWorld. modelos de origem. Então, você sabe que nós...
+
+você sabe, corrigir muitos bugs no OpenAI GPUs, você sabe, modelos Meta... Os modelos do Google se aprofundam em muitos outros modelos nos quais corrigimos erros. Hum, e então Como você sabe, eles têm muitos problemas.
+
+Às vezes, e depois publicamos sobre elas em Twitter. Sabe, nós publicamos sobre nossos... descobertas, então você sabe, a maioria das modelos de código aberto que você provavelmente Os caras usaram "um" e provavelmente estão consertados.
+
+por nós, e sim, tipo, nós colaboramos com todo mundo no mundo inteiro, hum, ligado Sabe, autorizações de uso de imagem... sim, nós também. colaborar com fornecedores de hardware e Você sabe que realmente apreciamos o colaborações com todos Nós também não fazemos apenas correções de modelos e insetos, você sabe, insetos, também apresentamos novos recursos e também gostamos, você sabe, fazemos Correções para toda a pilha de negociação. Um
+
+Por exemplo, introduzimos algo chamado checkpoint de gradiente assíncrono que é utilizado por muitas organizações. Um Também introduzimos o atendimento flexível, que É usado por muitas pessoas. Hum, e nós também correção de um bug de acúmulo de gradiente o que aumentou a precisão em 1 a 3% µm em toda a pilha de treinamento. Então Não fazemos apenas correções de bugs, sabe? Para modelos, é como se você soubesse...
+
+todo o conjunto de treinamento, correções e coisas do tipo assim. Então, hoje, você sabe, o workshop é bastante longo. Então, haverá várias seções no workshop. Hum, e assim, após cada seção, qualquer pessoa pode Faça uma pergunta. Então, sabe, Por favor, eu acho, se eu não tiver certeza se Há um microfone, mas se você pudesse Levante a voz e faça uma pergunta, Sabe, terei o maior prazer em responder.
+
+eles. Hum, mas você sabe, o primeiro seção sobre a qual falaremos é o estado atual da IA. Então, onde está? atualmente modelos de linguagem, modelos de IA, Onde eles estão atualmente? Um Então, não tenho certeza se todos sabem disso.
+
+gráfico de medição. Então, este gráfico do medidor mostra o horizonte temporal dos modelos uh. Hum, se você Você consegue conhecer cada tarefa individualmente? Um ser humano leva 16 horas para criar um modelo. saber terminar essa tarefa. Hum, e você pode
+
+Veja neste gráfico, você conhece o mito das nuvens. Você sabe que a pré-visualização é muito boa. Pode fazer tarefas que os humanos podem fazer e que levam você Conhecer o ser humano por 16 horas. Você sabe, Opus A versão 4.6 também está disponível. Você sabe tudo
+
+Outros modelos também estão disponíveis, então você Sei que este enredo é muito bom porque ele simboliza que os modelos de IA estão ficando cada vez melhor com o tempo. Você sabe, recentemente com o lançamento de você Conhecer GPD 5.6 hum, você sabe muito bem a prévia deles modelo hum você sabe apenas na sexta-feira hum você Eu sei que elaborei o enredo para que eles não me vissem. eles não atualizaram o enredo deles, né? porque eles disseram que os resultados eram não sou confiável o suficiente, mas você sabe, eu é só colocar no gráfico, e então você Você pode ver que o GBD 5.6, como você sabe, está por aí.
+
+Você conhece o Opus 4.6, sexto nível, eu acho. com grandes intervalos de confiança, então é você sabe, muito incerto sobre o capacidades do modelo um, no entanto, se Você inclui trapaça, então se você incluir que a modelo às vezes gosta de trapacear em algumas das tarefas então realmente vai até 270 horas, então estamos diretamente E você sabe, se olhar para o eixo y...
+
+na verdade, fiz um gráfico disjunto, então o O eixo y representa 50 horas, pulando para 250 horas. Então, se você puder imaginar o gráfico... na verdade muito distorcido. Hum, quando eu gosto de fazer
+
+o gráfico, hum GBD 5.6 era como um muito grande valor atípico. Então eu tive que gostar Comprima o gráfico. Mas isso só você Saiba que este gráfico só funciona se você Considere que o GBD 5.6 trapaceou em alguns aspectos.
+
+as tarefas. Então, vamos conversar. Você sabe por que os modelos de IA trapaceiam e Como é que a gente resolve isso, sabe? problemas. Mas sim, esse enredo é muito útil para demonstrar as capacidades de esses modelos.
+
+Anteriormente, esse valor era de 50%. você sabe se Você poderia, se um modelo pudesse completar o tarefa com 50% do que você conhece do tempo para 50% de precisão se você quiser na verdade, você matou o modelo com um único golpe, então você simplesmente Peça ao modelo que você conhece para implementar X ou Implemente Y e você quer que o modelo Se você se sair muito bem, então você vai querer olhar para... a taxa de sucesso de 80% se você observar o Com uma taxa de sucesso de 80%, ela cai bastante.
+
+muito, então você pode ver isso anteriormente. Mythos está por volta das 16 ou 17 horas agora. Só posso fazer três horas, então se você pedir um modelo e você quer ter algo como um Exemplo de uma única sessão, sabe, você simplesmente...
+
+Confie no modelo simplesmente perguntando a ele. Sabe, implementar, sei lá, página classificação ou algo assim, sabe, implementar algum tipo de sistema de trapos, sabe? ajustar um modelo ou algo parecido que. Bem, ele só pode realizar uma tarefa que Levará três horas para um ser humano fazer isso. Hum, E esse é um problema da IA.
+
+modelos. Bem, de modo geral, se você você quer usar modelos de IA muito bem, você precisa dar um lembrete, pelo menos tipo, você Sabe, umas cinco vezes ou algo assim. Um e cada uma dessas vezes supondo que sejam independente, a taxa de sucesso é muito maior se você for solicitado muitas vezes Em certos momentos, você não pode simplesmente ligar para o modele uma vez e espere que ele funcione. se sair bem, você precisa chamar isso de múltiplo vezes e você também pode calcular o probabilidade de isso te dar sucesso saber se o modelo tem 50% de precisão um então haverá 50% de falha e depois 1% de chance de falha. menos 0,5 elevado à quinta potência ou Algo assim, sabe, se você fizer cinco turnos e depois sua taxa de sucesso pula para uns 97% ou algo assim, então você É preciso ligar para o modelo pelo menos cinco vezes.
+
+para que seja realmente eficaz. Então, antes, esses eram lineares, sabe? Esta é uma tendência linear, sabe? eixo y, não é... sabe, é...
+
+apenas linear, hum, se fizermos o logaritmo, sabe, se Ao registrarmos o eixo y, você pode ver que ele é progresso exponencial, então é na verdade, uma linha reta se ajusta ao todo o progresso dos modelos de IA no horizonte de tempo do metro, você sabe, ponto de referência Você pode ver que sabe que é muito É evidente que os modelos de IA estão melhorando. e melhor com o tempo, hum, eu também. Nós também. adicionou você sabe GBD 5.6 seis com o trapaça e sem trapaça e também Claude Os mitos, você sabe, acentuaram isso e Você pode ver que não precisa mais de você.
+
+Não precisa fingir, sabe? eixo y você sabe que não precisa fazer como um eixo y disjunto, hum, se você fizer isso Você pode ver que conhece os modelos. melhorando com o tempo, hum e Supostamente você sabe se essa tendência Se continuarem assim, esses modelos vão melhorar. e cada vez melhor, cada vez melhor, e muito mais melhor, então, a questão é se A tendência continua, você sabe que é isso aí. questão fundamental Hum, e não é Você sabe, uma tarefa específica para isso.
+
+benchmark que você pode ver que os modelos estão melhorando com o tempo em todos os aspectos. Os modelos de benchmark estão melhorando. Com o tempo, certo? Então, como você sabe, GPQA diamante, sabe, é uma espécie de platô. Sabe, o mercado já está meio saturado.
+
+como um ponto de referência, mas com o tempo você percebe isso. Vai muito bem, sabe, cada um deles. benchmark que você vê os modelos estão obtendo Melhor, certo, teste de código ao vivo, sabe? algoritmo matemático, testes de matemática, hum, você sabe até mesmo os da Tesla, você sabe, você sabe Acho que direção autônoma também tem algo a ver com isso. Tempo de duplicação de 17 meses. Então, todos
+
+solteiros de 17 meses os modelos receberão Cada vez melhor. Você sabe, o dobro dobrar suas capacidades. Hum, então acabou tempo todos esses modelos em cada único assunto que você conhece cada um deles A situação vai melhorar nessa região. Então, eu acho que...
+
+A questão principal é: você sabe se nós assuma que cada assunto, cada um deles. área em que os modelos ficam 100% como você sabe A precisão próxima de 100% é o que caracteriza a Inteligência Artificial Geral (IAG)? Então, esse é um dos princípios fundamentais. perguntas que as pessoas fazem, você sabe se nós É só melhorar nos benchmarks, hum, é isso? AGI, o que acontece se melhorarmos em todos os benchmarks que você conhece, cada um deles marco que a humanidade humana tem criado, só melhora em todos os aspectos.
+
+eles. Sim, mas então, isto é um... você sabe Muito bom o enredo, mostra bem, eu acho que o gráfico mostrando todos os diferentes tipos de benchmarks e todos eles melhoram com o tempo.
+
+tempo. Acho que é o favorito de todos, artificial. inteligência, você sabe, análise artificial benchmark mostrando que você conhece artificial A inteligência está melhorando muito. Com o tempo também, você sabe, fábula, eu acho. Acho que é o melhor por enquanto, hum, embora...
+
+Nem todos têm acesso a ele atualmente, mas Enfim, por enquanto é o melhor. E você poderá perceber com o tempo que sabe. Esses modelos estão ficando cada vez melhores. tempo também, e você sabe, tipo isso O gráfico mostra um muito útil indicação, sabe, tipo, como nós gostamos Você sabe, o parâmetro de referência é este? O benchmark é realmente bom em termos de...
+
+como você sabe, exibindo o capacidades dos modelos também. Um e Também discutiremos sobre isso, pois bem. Por outro lado, sim, modelos. estão melhorando com o tempo. Hum, mas Existem algumas coisas que os modelos são não muito bom em ficar parado, por exemplo, por muito tempo.
+
+O contexto não está indo muito bem. Então Você sabe, a maioria dos modelos, você poderia dizer, ok. Gemini possui 1 milhão de contextos de comprimento. Você Sabe-se que o GBD tem um comprimento de contexto de 1 milhão. Claude tem um comprimento de contexto de 1 milhão. Mas
+
+Você deveria usar todos os 1? um milhão de comprimento de contexto? Então, existem na verdade, são parâmetros para demonstrar que se Você usa, por exemplo, GBD 5.5, sabe? Se você usar o contexto 512, sua precisão será maior.
+
+reduz para 50%. Então, se você usar seu Conheça o contexto 512 e você só se lembrará dele. 50% dos fatos que você escreveu no contexto anterior. Então talvez não seja isso. É uma boa ideia usar o contexto completo. Um
+
+Você pode ver opus 4.7 um 4.6 4.7 é o última linha laranja. Então, no Com um comprimento de contexto de 256K, ele passa a ser 0%. Um
+
+Portanto, isso pode ser uma falha no método de avaliação comparativa. Então Talvez não seja bom confiar muito no índice de referência. muito. Mas é bom dar uma olhada no benchmark geral. Você sabe onde fica o Capacidades do modelo para contexto longo.
+
+As linhas azuis que destaquei estão abertas. modelos de origem. Você conhece o DeepSeek GL 5.1? outros modelos. Verde são os modelos do Google.
+
+Mas você pode ver em geral, sabe? Os modelos definitivamente se degradam, sejam modelos ou não. em um contexto mais amplo. Então, se você sabe Por exemplo, se você definir como você sabe área de compactação automática Eu não faria Sugiro que você utilize todo o contexto de 1 milhão. talvez no máximo 600 mil ou algo assim, hum e Em seguida, compacte-o e continue o seu trabalho.
+
+Você sabe, sessão de programação, hum, mas eu faria Sim, mas em geral você conhece esse enredo. mostra que o contexto longo ainda tem um papel muito importante. Ainda há um longo caminho a percorrer, e se quisermos ter contexto longo você sabe capacidades hum Imagino que os laboratórios terão bastante tempo para Corrija este problema. Sim. Então, outro enredo é, você sabe, apenas mostrando código aberto versus código fechado fonte. Portanto, o código aberto ainda tem algumas
+
+Muito bem por isso, você sabe, muito tempo contexto. Então, o código aberto é a linha azul. e as linhas pretas são tipo, sabe? Modelos de código fechado. Hum, e você pode ver Em geral, o código aberto funciona bem, mas Definitivamente, há muito mais espaço para melhoria. Hum, acho que comparado ao Opus.
+
+4.7 é melhor. Hum, mas você sabe, talvez este parâmetro precisa de talvez haver O teste de referência também apresenta algumas falhas. Um Sim, mas no geral você conhece essa trama. mostra que o contexto longo definitivamente ainda Ainda há espaço para melhorias.
+
+E também, sabe, se você olhasse para... O enredo que você já conhece, este medidor enredo... não tenho certeza se você consegue ver isso
+
+Antes da prévia 01, na verdade, existe um platô de desempenho. Então, se você Você pode ver que conhece GBD4 a GBD40, há A melhoria de desempenho não foi tão significativa. Então, esse período de tempo em torno de um ano, hum, foi quando você sabe que os laboratórios estavam Estou confuso sobre o que vem a seguir, hum, você sabe. antes da prévia 01 que mostrou que O raciocínio era muito importante, eles não...
+
+saber realmente o que fazer a seguir, hum e então, durante um ano, os modelos meio que estabilizou, então eu chamo isso de platô de inteligência a hipótese de que Você sabe, você sabe, assuma que nós nunca... descobriram o raciocínio então talvez os modelos aéreos tivessem algo como estabilizamos, mas porque nós temos descobrimos o raciocínio que você sabe que temos demonstrou que os modelos podem realizar raciocínio capacidades que mantivemos ao longo da tendência continuamente, e normalmente eu não Não sei se isso é tipo sorte ou se é isso é uma profecia autorrealizável, então eu Não sei se vocês conhecem o pântano. lei, você sabe, a lei mos continuou...
+
+não por causa da lei, mas porque As pessoas sabem que isso deve continuar e, portanto, as pessoas investem dinheiro nos recursos para que a lei continue, e então isso é tipo um programa que você sabe que nós pode ter sido no mundo onde Os modelos pararam de melhorar. Hum, mas Você sabe, com o lançamento da prévia 01 Sabe, acho que os modelos voltaram. para se tornar tendência. Na verdade, eu criei um gráfico mostrando você. sabemos, supondo que não tenhamos descoberto raciocínio ou pré-visualização 01. Então, o
+
+A linha preta era o que você supunha, sabe? capacidades dos modelos. Você pode ver Eu fiz em forma de S, tipo um você. Conhecer uma forma sigmoide. Hum, e se você saberíamos se não tivéssemos descoberto o raciocínio então os modelos definitivamente irão diminuir de tamanho em Em termos de capacidades, certo? Só
+
+ter um modelo tão capaz quanto a garra Acho que é o soneto 3.7 ou 01 ou algo assim. tipo isso, mas você sabe, felizmente por causa do raciocínio e deste novo paradigma de escalonamento, você conhece o verde linha é a nova lei de escala, hum, e você anteriormente era possível ver a linha preta O tempo de duplicação era, na verdade, em torno de sete. meses, então a cada sete meses As capacidades dos modelos dobram, mas agora esse período foi reduzido para 3,5 meses. Então A cada 3,5 meses, você só precisa de Aguarde 3,5 meses e os modelos estarão disponíveis.
+
+O dobro é melhor, não é? Melhor por dois vezes. Hum, e isso é bastante impressionante. adivinhar. Então, a questão principal é: A linha verde continuará como uma linha reta? Bem, isso é fundamental.
+
+questiona-se que os laboratórios ainda estejam enfrentando dificuldades. sobre. Você sabe o que acontece se o verde linha novamente, você sabe, a linha verde novamente Forma um S, sabe? talvez, mas você sabe que não. Você sabe realmente se isso vai acontecer com você?
+
+Não sei se a linha verde continuará. escalando, sabe, chegando até... infinito, eu acho, ou seria como um Em forma de S, e isso é, você sabe, muitos Os pesquisadores, você sabe, eu acho que têm noites sem dormir, você sabe o que é isso E depois você já sabe o que vem a seguir.
+
+depois, após raciocínio, depois de 01 você saber o que vem a seguir depois E você sabe, muitos pesquisadores vão Preciso gostar, sabe? Acho que sim. sobre isso. Sim, mas você sabe disso O enredo é muito... você sabe, este é um dos meus...
+
+enredos favoritos porque mostram que você Sabemos que o progresso da IA ​​pode continuar ao longo do tempo. Com novas ideias e inovação. Oh sim. Então, alguém tem alguma? Tem alguma dúvida para a primeira seção? Sim.
+
+Então chegamos até um trilhão. certo? Você acha que o próximo salto, se nós Precisamos mesmo de uns 10 trilhões? parâmetros quando veremos o salto ou O hardware será a limitação que Sim, essa é uma ótima pergunta. Então o A pergunta era, você sabe, modelos que nós somos atualmente com um trilhão de parâmetros Precisamos chegar a 10 trilhões de parâmetros.
+
+ou mais para que os modelos sejam ainda mais capaz? Então, as leis de escala dizem... que você sabe se multiplicar o parâmetros e o tamanho dos dados um De modo geral, esse número, se você Aumente o número e você obterá o Os modelos se tornam mais capazes. Então sim, você
+
+pode aumentar os parâmetros em 10 vezes. e, em geral, seu desempenho será aumentar. Bem, no entanto, a vista é lá. Vai haver retornos decrescentes. Hum, eu sinto que sei que não é apenas isso Tamanho do modelo multiplicado pelo tamanho do conjunto de dados. Isso é
+
+na verdade uma proporção, tipo, algo como lei de potência quando você os multiplica. Então você na verdade, obtêm retornos decrescentes ao longo do tempo. tempo. Sim, você tem razão. Se você quiser Na verdade, não tenho certeza do exato.
+
+lei, mas se você quiser ter o dobro capacidades, você precisa 10 vezes os parâmetros. E então, se você quiser Outra duplicata, você tem que multiplicá-la por 10. de novo. Então é de 1 para 10 para 100 trilhões parâmetros. Hum, se você quiser, talvez seja isso.
+
+Não é uma boa maneira de escalar. Talvez Em vez disso, sabe, em vez de fazer 100 trilhões de parâmetros algum tipo de novo algoritmo ou nova arquitetura poderia Resolva esse problema. Mas você tem razão. tipo, se você é um laboratório, você quer fazer Algo fácil e, portanto, o caminho mais fácil. é simplesmente fazer 10 trilhões parâmetros. Hum, mas eu diria que você gosta de mim.
+
+Quem sabe um novo algoritmo seja melhorar. Sim Mais alguma pergunta? Sim. Então você acha que estamos nos aproximando de...
+
+a limitação da previsão do próximo token. Essa é uma boa pergunta. Eu diria que para a previsão do próximo token é muito poderoso porque você essencialmente pode A linguagem humana é extremamente poderosa. E não precisa ser humano. linguagem. Pode ser que você saiba matemática.
+
+Na programação, você pode simplesmente prever o próximo passo. palavra e para prever a próxima palavra ou símbolo que você precisa saber tudo sobre aquele símbolo ou aquela palavra Certo, então acho que IA estava falando tipo, você sabe, Ilia Satska, ele era dizendo como se você soubesse que precisa ter Você precisa criar um modelo de solda no modelo para prever o próximo palavra então eu ainda acho próxima palavra A previsão ainda tem um longo caminho a percorrer. Por exemplo, se você vir este gráfico, você saberíamos se não tivéssemos raciocínio Acho que talvez tivesse funcionado. estagnou. Mas, como descobrimos...
+
+essa nova metodologia você conhece raciocínio e tentando gostar ainda mais de escala em próxima palavra você sabe próxima palavra previsão nós temos, você sabe, voltamos à tendência, hum... Sinto que sim, então a principal questão é se nós Não tenho previsão da próxima palavra. O que é?
+
+a seguir, essa é a questão fundamental maioria Quer dizer, não tenho certeza, sabe, eu sou Não tenho certeza do que virá a seguir. Tenho a impressão de que prever a próxima palavra é simplesmente... extremamente poderoso porque é muito fácil de formular e você pode simplesmente gostar Você sabe que pode ter, tipo, você sabe Porque a atenção é muito poderosa assim como bem. Você pode ter, sabe, isso
+
+causa especial do mecanismo de atenção e É muito eficiente para treinar. Então, eu sou Não tenho certeza, mas acho que a questão principal é: Não sei o que vem a seguir. Hum, acho que sim Os pesquisadores vão gostar, sabe, eles são tentando coçar a cabeça, sabe? O que vem depois? Hum, sim. Sim. Sim.
+
+Apenas para dar seguimento a isso. Você se sente como Estamos na mesma era, assim como nós A atenção foi despertada? Certo. Então, atenção como se não soubéssemos E agora? Sim, essa é uma pergunta pertinente. Então, hum, você
+
+Estávamos comentando como é meio que... LSTMs ou o velho mundo da IA. Não sabemos O que vem depois? Hum, isso é um
+
+Faz sentido. Eu sinto que Então, tipo, sabe, antes disso Exemplo, certo? Então, depois do GBD4, foi apenas um pré-treinamento, sabe, Ajuste fino supervisionado, alguma cadência de tiro, você Sabe, alguns da vida real, e eles esperaram um. ano até 01 prévia. Então, neste aqui.
+
+ano de neblina, você sabe, a neblina da guerra nós não sei o que aconteceu em seguida e então pesquisadores que você conhece estavam te pressionando Sabemos se realizamos o processo de raciocínio. Ao aprimorarmos o pré-treinamento, conseguimos torná-lo mais eficaz. o modelo ficando cada vez maior Você sabe que eles tentaram todas essas coisas. experimentos e Acho que foi o raciocínio que prevaleceu. Mas eu acho que... acho que o principal
+
+A questão é: a tendência verde vai continuar? continuar no momento atual, pelo que parece. como se isso continuasse depois que víssemos os modelos. começando a apresentar um declínio na inteligência, Sabe, em termos de capacidades, então vamos...
+
+voltando aos, você sabe, velhos tempos de Tipo, sabe, esse ano de espera período. Mas acho que por agora, estes Os modelos parecem muito poderosos. Hum, sim. Então, tipo, não tenho certeza se isso vai, quer dizer, se você olhar, ok, se você Analisando a trama com atenção, acho que talvez estejamos diminuindo gradativamente. Talvez... melhor não.
+
+Considere o exemplo de trapaça no GBD 5.6, certo? Vamos remover isso do enredo. Hum, mas você pode ver o Mythos do GBD 5.6, Sabe, 4.6. Eles são praticamente tudo o que eu
+
+Acho que estão meio que afunilando. Então talvez como um... quero dizer, não sei se nós Alguém quer apostar nisso, mas você Sei que talvez os modelos tenham diminuído de tamanho, mas Não temos certeza. Então, vamos esperar um pouco.
+
+Mais alguns meses e veremos. Então vamos esperar 3,5. meses. Se esperarmos 3,5 meses e vermos Os modelos não melhoram, então temos afunilou-se. Mas lembre-se, nós só É preciso esperar 3,5 meses. Então, isso
+
+A lei vai falhar. Na verdade, se você esperar sete meses, se você esperar sete meses, então dobre o tempo e os modelos têm, você Sabe, apenas assuma que você sabe que pontilhado linha que se os modelos simplesmente seguirem a linha pontilhada, ok, então temos a fita. resolva isso. E eu concordo com isso, você. Sabe, teremos que projetar algo novo.
+
+em, sabe, criar alguma nova invenção ou Algo assim. Hum, mas por agora, Sabe, por enquanto parece que está indo bem. multar. Sim. Ok, próxima seção. Hum,
+
+para que possamos ter cada seção individual. perguntas, para que você possa fazer quantas quiser. Faça quantas perguntas quiser. Um o próximo A seção sobre a qual vamos falar é Modelos abertos versus modelos fechados. Então A análise artificial tem isso muito legal enredo que destaca o desempenho de aberto fonte. Portanto, o código aberto é a linha azul.
+
+Então, o código aberto é a linha azul e Os modelos de código fechado são representados pela linha preta. E você pode ver que o código aberto faz atraso. Você conhece o código aberto, com certeza. atrasos ao longo do tempo. Mais uma muito boa O benchmark é chamado de estranho ML referência. Isso também mostra que aberto
+
+modelos de origem ficam atrás de modelos de origem fechados Certo, a linha azul é de código aberto. Os modelos indicam que a linha verde é de código fechado. modelos e você pode ver com o tempo você Saiba que o eixo x representa a data de lançamento do modelo e o eixo y representa o desempenho e Você pode ver que os modelos de código aberto são do tipo de modelos de fonte próxima de atraso e por que o estranho benchmark de aprendizado de máquina que eu não estou Tenho certeza se vocês realmente sabem sobre É por isso que o estranho benchmark de aprendizado de máquina...
+
+Parece que o estranho benchmark de aprendizado de máquina é um um ótimo indicador melhor do que outros benchmarks e o O motivo é que você sabe Como mencionei anteriormente, você sabe anteriormente este gráfico raciocínio correto Os modelos de raciocínio são representados pela linha verde. e nos modelos pretos estão os modelos não racionais e você pode ver que os modelos de raciocínio duplicam você sabe reduzir o tempo de duplicação para 3,5 meses antes eram 7 meses, hum Curiosamente, no estranho benchmark de aprendizado de máquina, esses modelos de raciocínio na verdade não funcionaram. fazer melhor não mudou de fato tendência, tudo o que fez foi ligeiramente melhorar. Hum, e então esse estranho ML O benchmark parece ser mais robusto. Um E é por isso que você conhece esse parâmetro.
+
+É muito útil. Bem, na verdade, se você continuar... o ônibus do Twitter um antes do GLM 5.2
+
+lançaram, você sabe, a maioria dos O pessoal do Twitter disse: "Ah, você sabe, Deepseek..." Você sabe profundamente se você olhar muito bem se você Olha só, acho que tenho um enredo. Oh Sim, se você olhar com atenção, Deepseek e Kimmy são...
+
+naquele cantinho ali. hum você conheça deepseek esses três modelos três baleias estão em busca de profundidade, você sabe, flash deepseeker pro, acho que um deles é o máximo modo ou algo assim, hum, e também Kim também está lá, então antes do GLM 5.2 dois foram lançados, você sabe, no No Twitter, todo mundo ficava dizendo isso. Os modelos de código aberto são muito piores do que Modelos de código fechado, certo? Eles não são atrasados, sabe, eles não são apenas com atraso, eles são muito piores por causa de este parâmetro. Hum,
+
+na verdade, se você observar com muita atenção o Benchmark de aprendizado de máquina estranho, todos os melhores Os modelos são laboratórios de código fechado, sabe? tipo Fable, sabe, GPD 5.5, sei lá, Sabe, todas essas coisas são muito, Sabe, isso mostra muito claramente que aberto Os modelos de origem não estão se saindo muito bem em termos deste parâmetro. um até GPD 5.2 apareceu, você sabe, o número 15 é GPD 5.2 e mostra que na verdade está aberto
+
+A fonte voltou, e o GPD 5.2 também. De certa forma, chocou o mundo. Hum, que você Bem, acho que o código aberto não morreu. Hum, e você sabe, no fundo, sim, então, em geral.
+
+Isso funcionou muito bem, sabe, Deepse Você sabe que o GLF2 mostrou que você sabe aberto A fonte ainda funciona muito bem. Você também pode filtrar por país. Então Por país, você pode ver que o preto A linha é Estados Unidos, você sabe, os EUA modelos. A linha vermelha escura é a Laboratórios chineses. Hum, e você sabe que tem outros laboratórios também. Você sabe francês,
+
+Laboratórios sul-coreanos e coisas do gênero. Mas você sabe, com o tempo isso se mostra... Esses modelos, você sabe, os laboratórios dos EUA parecem se sair muito bem ao longo do tempo. Você sabe
+
+Eles estão sempre na fronteira e então os laboratórios chineses gostam de acompanhar o ritmo. ao longo do tempo. Como você sabe, eu mencionei anteriormente que você sabe o... você sabe, o platô à sua frente.
+
+eu sabia disso antes mesmo do lançamento da prévia 01. Se Você realmente olha para esse gráfico, hum... é algo chamado código aberto.
+
+rascunho. Então, depois da prévia de 01, consegui Os laboratórios de código aberto liberados não sabiam Como replicar a pré-visualização 01. Eles têm Você nunca sabe, eles não sabem o que é raciocínio. Então, não tenho certeza se você está bem. Isso foi há alguns anos, mas...
+
+O Twitter, você sabe, continuou falando sobre isso. Ah, você sabe, a prévia do 01 foi extremamente poderoso, você sabe, cada tweet Você os vê todos os dias, você sabe que eles são Demonstrou-se que a prévia 01 foi muito impactante. Então, para começar, acho que eram seis. meses a oito meses um código aberto modelos de laboratórios de código aberto que eles conseguiram Estou confuso sobre o que fazer a seguir. Hum, mas então Como todos sabem, o Deepseek R1 surgiu junto com ele.
+
+E eles mostraram que mesmo para aberto modelos de origem que você pode treinar esses modelos para fazer raciocínio gpo um reforço aprendendo e se saindo muito, muito bem. Na verdade, se você considerar esse enredo, você Sabe, a linha preta menos o azul. linha, se você simplesmente subtrair, você obtém isso trama. Hum, e você pode ver que é assim que O código aberto está muitos meses atrasado. Hum, E sabe, com o tempo, você pode ver Tipo, sabe, depois que a prévia de 2001 chegou lançou, hum, você sabe, meio que disparou. Hum, você sabe, o aberto
+
+Os modelos de origem estavam muito, muito atrasados ​​em Em termos de, você sabe, código fechado. modelos. E então, tipo quando Deepseek R1 foi lançado então pelos laboratórios de código aberto sabíamos, ok, também podemos fazer, tipo 01 raciocínio. E é por isso que recentemente Você sabe o tempo entre fechado laboratórios de código aberto e laboratórios de código aberto têm começou a diminuir novamente. Um Sim, isso está um pouco desatualizado. Esse
+
+É como maio. Então, acho que agora é na verdade quatro meses após o lançamento de GLM 5.2. Já se passaram cerca de quatro meses. Um Portanto, os laboratórios de código aberto ficam atrás dos laboratórios fechados.
+
+laboratórios de origem em cerca de quatro meses. Na verdade, havia um enredo muito bom. sei que estou fazendo algum tipo de regressão. Então Algum tipo de extrapolação de tendência. De acordo com esse enredo, se você extrapolar a tendência até dezembro deste ano.
+
+Os modelos de código aberto deste ano vão pegar 100% de sucesso. até modelos de código fechado até este ano Dezembro. Mas você sabe quem sabe que eu Acho que talvez, talvez de código aberto, talvez nós...
+
+pode ter um modelo de código aberto como tão poderoso quanto o melhor modelo de código fechado Em dezembro, você sabe se essa tendência persistir. continua... então, acho que a pergunta é...
+
+Será que essa tendência vai continuar? Hum, é sempre assim. sobre se a tendência continuará um E vocês sabem, talvez a maioria de vocês...
+
+sei que você conhece alguns dos softwares abertos as melhorias de código aberto em tecnologia você conhece melhorias em As capacidades são obtidas por meio da destilação. conheço alguns dos laboratórios de código aberto O que eles gostam de fazer é gostar de chame os modelos que você conhece de núcleo. modelos de fronteira como opus ou GPD e Em seguida, use os traços para treinar seu modelo. Então, essa é uma metodologia comum que...
+
+Os laboratórios gostam de fazer... hum... eu não diria isso.
+
+É um método ruim, mas é um método. que você conhece alguns laboratórios de código fechado gostam de olhar com desdém, sabe? gostaria de interromper você, sabe, o ponto de vista deles é você Sabemos que não devemos permitir que isso aconteça. laboratórios de origem para fazer esse treinamento hum E você sabe, sair de graça, eu acho. em termos de custo de treinamento. Hum, mas você
+
+Na verdade, não é preciso adotar essa abordagem. Então, na maioria dos laboratórios, quando se faz destilação Existem dois tipos diferentes de abordagens. A primeira abordagem é você É necessário ter os logits. Você precisa Tenho acesso aos registros completos. Hum, e infelizmente a maioria dos laboratórios não.
+
+Tenho certeza disso. Assim como os laboratórios Não lhe fornecerei os registros completos. Um em vez disso, você só recebe o raciocínio. traços que são resumidos um e o resultado final. Hum, e então estes, você Sabe, esses laboratórios de código aberto são...
+
+Não apenas, sabe, eles não são apenas treinamento na saída do Opus, você sabe, certo? Isso é simplesmente ridículo. O que O que eles fazem é usar GRPO ou aprendizagem por reforço para recriar o vestígios. Hum, e então, porque você... você tem
+
+o resultado final, que é a resposta. Tudo o que você precisa fazer é usar GPU e RL para criar o traço de raciocínio automaticamente. Hum, e então é mais ou menos isso como eles treinam esses modelos. Hum, e então Você não precisa necessariamente gostar do acesso. os logits ou os pesos do modelo.
+
+Hum, isso não é necessário. Sim, E você sabe, uma das mais importantes fatores que você conhece, esses grandes modelos É, sabe, à medida que os modelos ficam maiores e cada vez maiores, você não consegue executá-los em seu dispositivo local não mais. Hum, é extremamente complicado de executar. Hum, e então Fazemos algo chamado dinâmico. quantização, onde essencialmente você pega um modelo, você os quantiza até um pedaço. Mas o truque é que você não...
+
+Quantize cada camada individualmente para um bit. Você quantiza algumas camadas importantes para 16 bit ou 8 bits ou algo parecido. Um e assim, se você quantizar todo o modelo Com uma precisão de apenas um bit, você obterá 0% de precisão. certo 0%. Mas o truque é se você fizer quantização dinâmica, então se você olhar em Você sabe que isso é um três bits.
+
+Modelo Deepseek, um de três bits, você Obtenha 75,6% de precisão, ou seja, uma precisão de três bits. Na verdade, se você fizer um pouco de dinamismo, hum Você obtém 57% de precisão. Então, mostramos que Você sabe, se você fizer algo chamado quantização dinâmica onde você quantiza Se você reduzir o modelo de forma inteligente, poderá se recuperar. precisão. E esta metodologia irá tornam-se ainda mais importantes quando os modelos ficam cada vez maiores e maiores e maior.
+
+Se você plotar o gráfico, saberá a eficiência. hum, se você não fizer dinâmico, se você Você conhece alguma outra dinâmica? Os métodos de quantização funcionam bem, mas...
+
+Mostramos que se você escolher inteligentemente camadas, e faz isso ainda melhor Hum, não sei se vocês têm Seguimos o GLM 5.2, que também lançamos. quantizações dinâmicas para isso mostramos que o GLM 5.2 2 consegue quantizar muito bem. Então, se você olhar, acho que é isso, ah, isso.
+
+É uma animação. Ah, funciona. Hum, mas sim Você pode mostrar a animação, você pode Veja a animação de um bit GLM 5.2 modelo e este é um pouco, hum, e o O modelo bit é literalmente 86% menor. Um portanto, é 86% menor que o valor total de 1,5.
+
+terabytes. E mesmo assim conseguiu fazer Muito bem em uma das questões. Então Isso demonstra que os modelos não são burros. Certo? Se você fizer o modelo 86% Menor que isso, não fica 86% mais burro. Hum,
+
+A situação só melhora em 14%. Hum, e então Isso mostra que, sabe, se você fizer truques especiais para comprimir o modelo, O modelo ainda funciona muito bem. Hum, e Nós também comparamos com o Opus, sabe, nós Em comparação com o Opus 4.8, comparamos com o GBD. 5.5. E também, você precisa notar que
+
+Para o G 5.2, eu uso o modo de raciocínio avançado. Sabe, para o Opus, é um valor extra alto. E Porque você sabe que GPD 5.5 também é extremamente alto.
+
+Hum, e então, como você sabe, existem diferentes modos de raciocínio também, que também podemos ver. Hum, e todos esses São histórias curtas, então não gostamos de prompts. o modelo, tipo, você sabe, 50 vezes ou algo. Bem, isto é apenas uma foto. diretamente.
+
+Ok, então o próximo passo, eu acho, é o código aberto. A seção sobre código fechado está concluída. EU Tem mais alguma pergunta? Sim. Então, a pergunta era quais partes Do modelo, quantizamos para níveis mais baixos bits versus maior precisão. Então, em
+
+Em geral, nós fizemos muita coisa. pesquisa sobre isso. Então, se você olhar para o quen a arquitetura quen 3.5 existem algumas camadas que são lineares camadas de atenção. Um o linear camadas de atenção nunca devem ser quantizado. Se você quantizar o linear
+
+atenção em camadas, você irá Definitivamente sofrem com isso em um contexto de longo prazo. Então Em geral, as camadas de atenção linear Precisa ser deixado em 8 bits ou 16 bits. Um esse é, por exemplo, outro tipo de "se" Você olha para as camadas do modelo, hum...
+
+As camadas podem ser quantizadas drasticamente para um pouco. E o motivo é... porque essas camadas são meio que como camadas de enchimento. Hum, e então eles não fazem isso.
+
+fazer qualquer coisa, na verdade. Hum, e para que verificar se uma camada faz alguma coisa ou Não, você precisa de algum tipo de Conjunto de dados de colaboração. Então você precisa de você preciso ter algum tipo de tipo dados representativos e passá-los para o modelo hum e você pode conseguir você pode conseguir o um gera saídas após cada camada e então você Consigo ver, ok, este modelo está assim? Qual camada específica você sabe se muda? tanto assim, e se não mudar até que ponto? Talvez seja melhor quantizar um
+
+camada para uma cama, mas se funcionar mudar drasticamente, então você precisa ser Cuidado, você não pode quantizar isso. tipo, só uma cama ou algo assim, então... Na verdade, existem muitos que nós realmente...
+
+publicar muito conteúdo como um blog pesquisa sobre isso. Hum, nós mostramos, eu acho. Também mostramos, por exemplo, a vocês. Não é possível quantizar as camadas de visão. Se você quantizar as camadas de visão Você vai deixar o modelo muito ruim. Um
+
+Se você der um, você sabe, se você der uma imagem de um trem dirá isso Parece uma praia, por exemplo. Um e então você nunca deve quantizar o camadas de visão, camadas de áudio. Um e apenas a linguagem o modelo de linguagem camadas que você pode quantizar, por exemplo. Hum, mas Existem muitos truques para fazer isso. que. Sim
+
+correto. Então a questão era se você faria isso. destilação, você talvez tenha feito pior em outros assuntos, mas você sabe somente se, por exemplo, você fizer isso A codificação simplesmente fará uma boa codificação e Depois disso, o resto fica muito idiota. Então É uma observação pertinente. Então, eu acho que O principal truque é que você precisará fazer muitos, muitos, muitos exemplos. Você ligará
+
+o modelo, tipo, você sabe, 10 milhões vezes. Então, o truque é o seguinte: Você chama o modelo intermediário de 10 milhões. momentos com grande diversidade de perguntas Em geral, usando o pré-treinamento argumento um o modelo terá um bom desempenho em outras tarefas. Então, qual é o motivo? O pré-treinamento funciona muito bem, hum.
+
+porque aprendeu muitas tarefas que pode interpolar os dados faltantes buracos. Por exemplo, se você apenas treinar se você pré-treinar um modelo apenas com questões de matemática, suponha que você só faça isso matemática. Ok, talvez não vá funcionar. Muito bem, não é? E não vai acontecer.
+
+Se saem muito bem em todas as outras tarefas. Mas O segredo do pré-treinamento é que ele... Matemática, programação, direito, sabe, tudo uma única imagem, sabe, cada uma delas.
+
+tema que você possa imaginar. E o truque é porque possui tanto conhecimento, sente os buracos das coisas que Não sabe. Hum, e então para destilação, você também precisa fazer o mesma abordagem. Você precisa fazer uma amostra, você É preciso fazer uma boa amostragem. Então, por exemplo...
+
+em vez de fazer 10 trilhões de tokens amostra, sabe, tipo 1%, hum, e depois liga o modelo. É, então é mais ou menos assim. Os laboratórios estão fazendo isso. Hum, isso é um Excelente pergunta. Então, em vez de fazer uma grande quantização você pode em vez disso podar o modelo, como você sabe, deletar algumas camadas inteiramente. Então, em geral
+
+De acordo com nossa pesquisa, a poda funciona. No entanto, existe um problema muito grande. Você É necessário treinar o modelo novamente. Você precisa treinar continuamente um modelo após a poda porque você excluiu um arquivo inteiro camada. Então, se você excluir um arquivo inteiro Em camadas, você precisará fazer como sabe.
+
+qat ou ajustes adicionais para impulsionar o outro para empurrar os outros pesos para ter mais conhecimento. Então essa é a única problema em que se você excluir camadas hum se Você não exclui camadas quando faz isso. conheça a quantização dinâmica, é chamada quantização pós-treinamento. Então PTQ: você não precisa fazer nenhum treinamento. de forma alguma. Se você sabe, você conhece a quantização.
+
+Mas se você comprovar as camadas, você comprova. precisam treinar, então essa é uma das... problemas, hum, sim Sim, essa é uma ótima pergunta.
+
+A pergunta era, você sabe, porque aberto Laboratórios de origem, você sabe, eles usam sistemas fechados. modelos de origem a lacuna nunca na verdade vou para zero, então eu Concordo parcialmente, e esse é o argumento principal. Os laboratórios de código aberto eram os mais fáceis? A maneira é fazer a destilação, seja lá como você preferir. saber se você, por exemplo, se você fosse um aplicativo de código aberto que você só usará esse abordagem para entrar inicialmente no mercado, mas a longo prazo, você sabe, em termos de segurança a longo prazo.
+
+como uma rede de segurança a longo prazo, você não faça essa abordagem, em vez de você mesmo. em vez disso, você fará o que sabe por quê. Exemplo: gere a resposta, obtenha o Por exemplo, você sabe que vai perguntar obter dados de uma chamada ou escalar o que for Você sabe, ter algum tipo de grande exército de rotulagem de dados ou algo assim, eu não sei sabe, e então, tipo, em geral, porque atualmente alguns dos laboratórios, então eles não basta fazer a destilação corretamente para que eles sejam Não vou simplesmente chamar o modelo 10 de Você sabe disso um trilhão de vezes e simplesmente faz. destilação. Eles também aumentam o dados de treinamento com sua própria abordagem.
+
+Então, falarei sobre o GLM. talvez abordem isso mais tarde, mas eles inventou algumas novas abordagens para fazer aprendizado por reforço muito bom e GRPO e porque GRPO e aprendizado por reforço, você sabe, é Código aberto, esses laboratórios simplesmente usam isso metodologias para aprimorar os modelos. Então você não precisa, a destilação é apenas uma opção. parte do sistema de treinamento. Hum, e é Não, eu diria que isso pressupõe destilação.
+
+desaparecido. Ok, talvez de código aberto. Os laboratórios talvez aumentem, você sabe, não é? quatro meses, talvez oito meses...
+
+Mas tudo bem, porque você sabe que nós sempre têm algum tipo de inovação e nova abordagem, você sabe, o deepseek pode inventar algo novo, tipo você você sabe, GLM ki todos eles Google você sabe até mesmo o laboratório americano de código aberto Eles terão algumas novas inovações, hum, e Então, tipo, eu acho que sim, se você parar destilação vai aumentar, sabe? Você sabe, de quatro a oito meses Mas ainda acho que está tudo bem. Hum, é...
+
+apenas um atraso, sabe? E então o atraso. Vai voltar a uns quatro meses atrás. Um sim Boa pergunta. Então a questão é se A quantização dinâmica é sempre melhor.
+
+Por que as pessoas nem sempre fazem coisas dinâmicas? quantização? Então Depende da definição de dinâmico. quantização. Então, para cada laboratório, Eles terão abordagens diferentes para Quantização dinâmica. Na verdade, eu sou
+
+Vou falar sobre isso, sim. Hum, eu ia falar sobre isso no otimização de benchmark e minimização da precisão sessão. Então, falarei sobre isso. Bem, então, sua pergunta será...
+
+Responderei mais tarde. Sim, é isso mesmo. OK. Mais uma pergunta. Sim. Sim. Então, a questão era
+
+Para GPUs de nível consumidor, você sabe, o quê? são os modelos de código aberto em termos de tipo, sabe, o tamanho do parâmetro capacidades e coisas do gênero. Hum, então Para a comunidade de código aberto, sabe? Os modelos mais populares são provavelmente Quen 3,6 6 35 bilhões e 27 bilhões GMA Você sabe, os 26 bilhões da Gemma, hum, GLM 4.7 flash os modelos de tipo mais pequenos um e eu Tenho a impressão de que esses modelos pequenos são na verdade muito poderoso, então ok eu Não preciso esperar. Acho que não. Eu tenho.
+
+um enredo, mas essencialmente estes pequenos modelam o maior problema, ah, na verdade. Também vou falar sobre isso. maior problema desses modelos pequenos Eles são péssimos em chamadas de ferramentas. porque eles têm problemas de chamada de ferramentas. eles se repetem continuamente, hum, e o O maior problema é que eles são pequenos.
+
+E é por isso que eles têm esses problemas. hum, mas podemos neutralizar isso, hum, e então Uma das coisas que vou falar sobre mais tarde é que o modelo deixa de ser O que importa agora é o arnês ou a ferramenta que é realmente a mais coisa importante, hum, como você realmente faz isso? chame o modelo que realmente afeta a maior precisão do modelo, então não na verdade o modelo em si, hum, mas eu vou estar Falando nisso também, hum, sim, ok. Vou continuar. Hum, havia Sempre há perguntas após cada seção. Hum,
+
+Ah, sim. Oh sim. A próxima seção, a Seção divertida, capacidade máxima de processamento. Oh, Na verdade, acho que sim. Supostamente.
+
+para ser 2x. Não sei. Qualquer que seja. Maximização da produtividade e precisão minimizando. Eu pensei que fosse tipo mineração de precisão, mas não existe tal coisa.
+
+coisa. Então, isso se chama precisão. Por enquanto, vamos minimizar. Sim, é isso mesmo. Então, essa parte eu realmente gosto.
+
+OK. Não sei se vocês conseguem ver É meio que tanto faz. Hum, isto mostra a eficiência do desfile em termos de custo do custo do modelo. Então o custo é... o custo é
+
+o eixo x. Um e o eixo y é o placar da arena. Então é como você sabe Partitura de Ella Marina para arena. Hum, e isto Parte que eu realmente gosto. Então, na verdade, não.
+
+Sabe, talvez você veja placares de arenas, por exemplo. Você sabe que Ella Marina marca pontos entre cada um modelo. Eu não gosto muito disso. Isso é Não, não é muito fácil de ver. Em vez de A melhor abordagem é plotar cada custo de modelo único em dois eixos versus precisão. E você pode ver que Fable faz
+
+Muito bem, certo? Então Fable faz isso muito, muito bem. Bem, sobre esse enredo. Mas você pode ver Existe uma tendência de paródia, sabe? A prévia do Gemini 3.1 está aqui, sabia?
+
+O Opus 4.6 também está lá. Lá Existem também outros modelos. quando Fable foi lançado. OK. Bem, agora
+
+É proibido, mas enfim, quando Fable foi liberado, quando você sabe quando as pessoas Eles tentaram e perceberam que não era muito melhor em termos de realidade capacidades. Hum, você pode ver, você pode Veja, mas, no entanto, as pessoas realmente gostavam o design da interface. Sabe, eles Disse que se você ligasse para Fable, seria muito, Muito bom para interface de usuário (UI) e experiência do usuário (UX) no front-end. Hum, e em Na verdade, se você olhar para o time LM Mariners...
+
+Como você pode ver no gráfico, era muito grande. mudança em termos de design de interface. Um GLM 52 também está lá, se você conseguir te ver. Sei que fazia parte da tendência par paro. Mas, em geral, para esses modelos grandes Eles parecem não ter nada a ver com isso.
+
+eles não vão fazer isso Muito melhor em tarefas gerais. Hum, no entanto Para interface de usuário e design, Fable parece ter Muito, muito bem feito. Hum, e então você Você deve usar o Fable para seus projetos. Você Você deve usar o Fable para design, para UI, para UX, seja lá o que for, HTML, JavaScript, mas você provavelmente não deveria usar Fable. para o restante das tarefas, porque é Muito caro. Então, você sabe, use
+
+alguns outros modelos em vez disso. Hum, e você sabe, porém, sim, ok, Sabe, alguns outros modelos, sabe? Tipo, ok, isso, sabe, isso mostra que Fable faz muito bem em termos de interface do usuário e experiência do usuário. Mas e com o tempo, você sabe? como o que você sabe antropogênico deles A nossa visão é que precisamos maximizar a produtividade.
+
+maximizar a produtividade, mas também maximizar a precisão, você sabe que eles querem tipo, sabe, atender mais pessoas, hum mas às vezes isso simplesmente não funciona. Às vezes eles realmente reduzem precisão, e então você pode ver que há Não sei se vocês conhecem a margem. laboratórios, eles têm isso, muito legal, eles fazem Eles fazem benchmarks de codecs, eles testam codecs. Eles testam codecs e código modificado. com os modelos. Hum, e isto é
+
+precisão ao longo do tempo para esses modelos. Hum, e as linhas pontilhadas representam a liberação de os novos modelos. Bem, na verdade existe outro, na verdade houve uma queda em Espere, você pode estar aí? Ah, ok. O O rato está ali. Hum, eu acho que era
+
+por aqui. Hum, acho que foi por aqui. Aquele fraco foi libertado. Hum, então...
+
+Na verdade, era outra linha pontilhada. Hum, Na verdade, foi muito interessante. tendências que você pode observar. O primeiro é um sempre que surge um novo modelo liberar isso, isso, você sabe, rastreador diário parece diminuir em precisão. Então, se Você quer prever quando um modelo será atingido.
+
+liberado da ação antrópica, você pode usar isso como um indicador de quando o modelo é libertado. Funcionou muito, muito bem. Certo? Então, basicamente, se você fosse por aqui a precisão caiu ao longo de um um período de tempo muito longo foi porque O jogo Fable foi lançado. Hum, e aqui eu Acho que é o opus 4.8, eu acho. Hum, eu
+
+Acho que sim, acho que é o Opus 4.8. Esse é opus 4. Uh 7 e assim por diante. Isso é 4,6 I pensar. Eu... sei lá... não me lembro
+
+exatamente, mas... mas você também pode ver isso Há enormes variações na precisão. Hum, e não é só um dia ou dois dias, é por um período muito longo de tempo.
+
+Isto também é Codex. Então, eles também fazem isso. Benchmarks do Codeex. Hum, e você também pode veja isso com o tempo. Não sei se você Pode-se semicerrar os olhos, mas você consegue ver isso.
+
+Na verdade, o Codeex tem piorado. Se você traçar a tendência, certo? Se você puder Não sei se você consegue semicerrar os olhos, mas se Você traça uma linha, e parece que está ficando...
+
+pior. Então, presumo que seja a OpenAI. Também estou investigando isso. Hum, ok. Portanto, este é um modelo diferente.
+
+Isto é codeex. Portanto, estamos usando a versão 5.5. Isso é usar modelo. Correto. É a mesma coisa. Então, o que é isso?
+
+O que o benchmark faz é realizar uma amostragem aleatória. 50 perguntas para o banco de reservas. O banco Sweet é muito grande. Então você simplesmente seleciona 50 deles e Então você chama o modelo para que ele responda. Um E então você registra a precisão. Hum, e então
+
+obviamente você sabe disso todos os dias Existem variações diárias, sabe? Ah, não é tão útil assim. porque você só está ligando para 50 questões. Então, o truque é olhar de acordo com a tendência. Hum, e a tendência, uh h Talvez a Open devesse investigar isso. Hum,
+
+E você pode ver a tendência, sabe? Antrópico também não é muito bom. Hum, em Nossa, sinto muito, mas isso não é a mesma coisa. modelo. Hum, esses modelos mudaram, foi mal.
+
+Então, é o mesmo arnês, mas o Alterações no modelo. Então, esta linha pontilhada é GBD 5.5. Então, tudo por aqui. é GBD 5.5. Aqui tudo é GBD
+
+5.4. Hum, acho que é a versão 5.3. Hum, e então sobre. Hum, mas parece que o modelo
+
+Está piorando. Então, não sei. Isso é Provavelmente apenas com base nesse parâmetro, certo? No teste de benchmark Sweet Bench Pro, é Está piorando. Mas você sabe, eu Eu não confiaria muito nesses parâmetros de referência.
+
+A melhor maneira é olhar para o degradação. Sabe, aquelas quedas repentinas. Você sabe, por exemplo, o Codex caiu drasticamente por aqui. Eu não Sei porquê. Hum, e você sabe, te arranhou.
+
+Sei que o código Clawed era muito ruim por alguns anos. semanas por aqui ou por aqui, certo? OK. Sim. Sim, existe um intervalo de confiança. EU
+
+Não incluí no gráfico, mas são 50 tarefas. Então Todos os dias eles chamam de 50 tarefas. aleatoriamente. Assim, eles irão selecionar 50 tarefas. Então você não deveria olhar para isso diariamente. Isso acontece diariamente. Então, todos
+
+Um único dia consiste em 50 perguntas. Outros 50 questões. mais 50 perguntas e assim por diante sobre. Em vez disso, você deveria fazer como um média móvel, sabe, algum tipo de média móvel, sabe, de 7 dias. Hum, Esse é um número melhor. Sim,
+
+realmente. Consigo ver daqui. Isso é como diminuir. É, é
+
+Se você olhar para o, se você fizer os sete média móvel, eu provavelmente vou pegar o pote mais tarde. Na verdade, está diminuindo. Você pode ver, hum, se você puder ver, eu não. saberão se olharem para os picos mais altos do Você olha para os picos mais altos e os picos estão diminuindo.
+
+Certo, e quanto aos picos mais baixos?
+
+Ok, concordo que há ruído aleatório. Então O segredo é que você precisa se mexer. média e se você observar a movimentação em média, você pode realmente ver que é diminuindo. Eu provavelmente vou conseguir o enredo mais tarde. Você pode pesquisar isto. É só ir ao Margin Labs e pesquisar em
+
+Benchmarks de código Margin Labs codeex claw e eles mostram a tendência semanal. Mas eu só estou dizendo que isso não é isso é Não que o modelo esteja ficando pior. Isso serve apenas para mostrar que precisão que você reconhece nas quedas repentinas a precisão desses modelos pode diminuir. E a pergunta é por que você Saiba, por exemplo, por que Claude codificava Por que, ao longo de algumas semanas, o desempenho...
+
+diminuir, tipo, por que isso é fundamental questões.
+
+Essa é uma teoria. Uma teoria é que eles você sabe que pode ter ocorrido um acidente antes o lançamento do modelo que eles estão testando E então eles podem ter, tipo, você sabe, um ato. Você conhece algumas das perguntas? eles se dirigem ao opus 4.8 oito ou fábula ou o que seja. E o problema é
+
+Eles não fizeram isso. Então a questão principal é se você roteiriza Para outro modelo, por que a precisão diminuir? Na verdade, deve melhorar. E assim, uma das teorias é a teoria. Primeiro, eles se esqueceram de editar o sistema.
+
+incitar. E assim o sistema solicita Fable era diferente, mas depois eles usaram o prompt de sistema errado para, você sabe, para Opus 4.8, e é por isso que o A precisão diminuiu. Hum, e depois O modelo foi lançado e a precisão aumentou. eles fizeram um backup porque usaram o correto aviso do sistema. Essa é uma teoria. Um
+
+a outra teoria é a outra teoria é Ok, na verdade vamos falar sobre É isso que eles estão fazendo na verdade. truques. Você sabe que eles fizeram quantização. mas eles não fizeram quantização dinâmica. Eles fizeram uma quantização bem boba. Hum, você
+
+sei que algumas GPUs estão com defeito. exemplo. Você sabe que eles usam o errado GPUs. Alguns deles têm, tipo, você sabe inversões de bits ou algo assim. Não sei. um
+
+Eles têm um novo centro de dados e então esse centro de dados, por mera coincidência, tem menor precisão. Bem, na verdade, existe. Na verdade, tudo bem, vou falar sobre Isso mesmo. Um Sim, mas existem muitas, muitas teorias. como você sabe, possibilidades, por que isso poderia reduzir a precisão. Na verdade, eu
+
+Acho que esse é o próximo enredo. Sim, o próximo trama. Bem, os próximos slides. Então Quando foi isso, afinal? Eu não lembrar. Hum, isso foi há alguns meses.
+
+Alguém da AMD chegou a criar um problema. Você sabe, durante essa queda, qual é o código de acordes? Acho que foi durante o período anterior...
+
+quedas muito grandes na precisão e eles Na verdade, perguntaram ao Claude, sabe, eles perguntou à equipe de Claude: por que existe um queda perceptível na precisão? Você sabe, Por que será? E Claude escreveu, de fato, um artigo em 23 de abril. Eles realmente forneceram detalhes sobre o porquê. A precisão deles havia diminuído, certo? Então
+
+Eles fizeram uma autópsia do que aconteceu. Com Claude. E o motivo é...
+
+porque o rastro de pensamento foi apagado depois do segundo você sabe quando você quando você pergunta, ligue pela segunda vez. O rastro de pensamento foi apagado. Hum, e isso O sistema apresentou um erro de aviso. Hum, e eles Descobri que era por isso que A precisão foi eliminada. Então, de alguma forma, em código de claude na segunda vez que você fizer uma pergunta O rastro de pensamento anterior foi apagado. Um
+
+E eu não sei, eu nem sei como. Eles não encontraram isso, mas nossa, que coisa! Segundo eles, agora é Claude que agora tem esse parâmetro interno para que eles o utilizem. mais investigações internas para testar Ok, da próxima vez, se houver um novo modelo. Isso nunca mais vai acontecer, e você?
+
+sei que essas coisas acontecem com frequência tempo, e então, tipo, para este específico Por exemplo, você conhece o código da nuvem, o chicote de ferramentas. O problema não estava no próprio arnês, mas sim no que dizia respeito a ele. o modelo real, certo, o chicote de fios pensando que o rastreamento havia sido apagado e eles tinham Um aviso de sistema muito ruim. Um E é por isso que a precisão realmente degra um degradado. Então, tudo bem, encontramos uma resposta para o porquê.
+
+Esses modelos pioraram. Eles também lançaram em setembro de 2025. Eles mostraram isso logo em setembro de 2025. Foi porque... ok, eu não... ok, eu
+
+Não colocaram o slide, mas de qualquer forma eles mostrou que, na verdade, o problema era devido a um defeito de hardware. problema. Então, no compilador deles, eles...
+
+TPUs usados. Então, a Anthropic gosta de usar TPUs e GPUs. Eles mostraram que...
+
+mesma pilha de software para GPUs e TPUs na verdade, produziu resultados diferentes. Um e, portanto, para os TPUs, na verdade foi amostragem diferente. E para as GPUs Tratava-se de um mecanismo de amostragem diferente. E é exatamente por isso que eles tinham diminuição da precisão durante setembro algum dia. Porque eles realmente tinham hardware diferente. Então você precisa
+
+Tipo, sim. Então, tipo, uma vez que você tiver diferentes precisões de hardware também mudanças. Então, acho que o ponto principal é o arnês. a implementação da ferramenta agora é a o mais importante. Não é o modelo certo.
+
+O modelo é inútil. A maioria dos modelos você Sabe, se você olhar para o seu modelo... Saiba a diferença entre código aberto e código fechado.
+
+Os modelos são geralmente os mesmos. O A diferença está em como o código em forma de garra é criado. Você sabe como um codec é criado e usado. Um e então esse é realmente o mais fator importante. Não é o modelo não mais. Então, como você sabe, como nós
+
+ver se eles acidentalmente Você sabe, se eles estragarem tudo acidentalmente Se você estragou o arnês, receberá um desconto. precisão. Então, tipo, você sabe certamente você sabe, para grandes laboratórios como Você sabe, tenho certeza que eles sabem. esses problemas e eles estão trabalhando neles. isto. Hum, mas acho que você sabe disso.
+
+Você provavelmente sabe que estes ainda são Muito difícil de consertar. Sim, então espero que eu respondeu a algumas perguntas das pessoas sobre o arnês, você sabe, a precisão, então... Existem, de fato, razões pelas quais a precisão é importante.
+
+ficou degradado Mas você sabe que não é só o Closource. laboratórios durante mau entre os fornecedores de modelos de código aberto A precisão muda, então, se você observar isso... gráfico, então isso é do OpenRouter, hum, isso O DeepSeek V4 Pro é... então a maioria dos laboratórios...
+
+Eles querem fazer a maioria dos provedores de inferência O que eles querem fazer é... Oferecemos a você o maior rendimento possível, certo? com o preço mais baixo. Eles querem
+
+te dou, sabe, 60 fichas, 120 tokens, 1.000 tokens por segundo, certo? Eles querem te oferecer o serviço mais rápido. Hum, Mas será que as pessoas realmente fizeram isso? Preocupar-se em verificar a precisão? Então, é isso.
+
+a questão fundamental. Você sabe, você podem receber 10.000 tokens por Em segundo lugar, não há modelo. Então, o A questão principal é que você precisa ter cuidado. do que você usa a partir dessas inferências.
+
+provedores. Então, para o DeepS v4 você Saiba que existem dois pontos de referência que abrem o roteador funcionou, sabe? Sim, está resolvido, está resolvido. Pensando no cinza, acho que está resolvido. banco da torre, então está resolvido na torre banco e o verde é GPQA e Você pode ver que, em geral, alguns dos laboratórios não são, você sabe, alguns dos lamentáveis não laboratórios alguns dos provedores de inferência não estão indo muito bem, então você precisa para gostar antes de você usar um aberto Por favor, verifique a precisão do modelo de origem.
+
+Antes de usar o modelo de código aberto. Um e também um dos maiores problemas de Isso acontece sempre que você sabe... Exemplo de um código na nuvem que você conhece, Claude Você pode usar o Code e o Codeex para fazer benchmarks.
+
+precisão ao longo do tempo. Hum, e o bom O problema dos laboratórios de código fechado é que eles controlar a cadeia de suprimentos. Um o maior O problema do código aberto é que existem muitos muitos fornecedores e prestadores destes modelos que às vezes o que acontece é As pessoas se desanimam e ficam muito...
+
+irritado com o fato de os modelos de código aberto fazerem Não funcionam muito bem. Então, todo mundo você sabem que no ecossistema as pessoas mantêm dizendo que os laboratórios de código fechado fazem muito Melhor que código aberto, mas não é. por causa do modelo, é por causa do provedor de inferência direito a inferência A culpa é do provedor, pois eles são causando a queda do código aberto porque estão dando uma má reputação para código aberto, então eu gostaria de verificar. saber qualquer que seja seu provedor de inferência favorito temos um, então este benchmark foi executado. Acho que ontem, hum, por roteador aberto, então Estes são dados diários da Open.
+
+roteador. Então, seja lá qual for o seu favorito Qual provedor de inferência você possui? Por favor, informe. eles não para você sabe reduzir a precisão isso mesmo. Bem, este é o GLM 5.2. Então você
+
+Sei que o GLM 5.2 também mostra algo diferente. precisões. Como você pode ver, então o enredo À direita, você encontra o modelo mais conhecido. A maioria das inferências fornece informações corretas, eu continuo.
+
+dizendo que os aplicativos de modelo são a maioria das inferências Os provedores estão atingindo a capacidade máxima de processamento, mas eles são minimização da precisão, é aí que entra o A frase vem de "ok, então eles não fazem isso". se importa, na verdade, parece que você sabe A maior precisão é de 76,4% e a O valor mais baixo é 62,4%. Portanto, há uma diferença de 10%. entre as costas, você sabe, entre o maior precisão e você sabe, a menor precisão. Hum, e então, tipo, você precisa de você conhecido como um, como um, você sabe, como uma chamada para provedores de inferência que vocês conhecem, por favor Aumente a precisão que você conhece antes de tentar.
+
+Para agilizar as coisas, certo? quero um modelo que seja muito burro, e é tipo, sabe, 10.000 tokens por segundo Certo, podemos chegar a 1 milhão de tokens. por segundo e não há modelo, hum, você sabe, é só chamar um humano ou algo assim. sabe, fazer uma falsificação ou algo assim, então, sim, então O ponto principal é que precisamos de inferência.
+
+provedores para fazer o bem em termos de precisão, caso contrário isso tornará aberto A fonte tem uma aparência muito ruim, hum, sim, oh. Ok, esse é o fim do segundo. Acho que essa parte foi um pouco de desabafo. Alguma outra pergunta sobre isso? Sim.
+
+para uma nova organização que deseja para usar como o modelo de código aberto, você faz? Sugiro usar uma inferência do tipo "você sabe" provedor de serviços ou você sugere baixando do rosto abraçado e então usando um modelo parecido ou algo do tipo, sabe? servidor para você saber implementar você mesmo Que sugestões você teria, se é que teria alguma novidade? A organização chega e pergunta como é que...
+
+Você utiliza o modelo de código aberto? Essa é uma ótima pergunta, então quando uma vaga O modelo de origem é liberado, você sabe como Você deve usá-lo em termos de precisão? taxa de transferência ou algo assim, então, em geral Bem, de modo geral, o código aberto evoluiu para É um longo caminho, por exemplo, nós relatamos bugs em Jamaa 1 ja 2 llama mistro você conheça gdosss aberto cada um deles Os modelos tinham bugs. E então, a coisa boa. Você sabe, nós ajudaremos os laboratórios.
+
+antes de lançarem um modelo para corrigir alguns problemas das questões. Então, cada modelo que você Já implementamos algumas das nossas correções. Então Isso é uma coisa boa. Hum, mas em geral Se você tiver um modelo de código aberto, eu faria Use Llama CPP como exemplo. Acho que Lhama O servidor CPP e Llama é provavelmente o Sistema praticamente livre de erros. Então eu gostaria
+
+Sim, sugiro que você baixe de abraçando o rosto. usar o servidor Llama, usar Lhama, sabe, CLI, sei lá, você Pode usar o Unsoft Studio, tanto faz. Qualquer que seja a sua ferramenta favorita. Mas você sim, você deveria baixar de Base de abraço. Hum, em termos de tipo, você Sabe, se você é uma grande empresa, De um modo geral, o que eles gostam de fazer Eles preferem esperar uma semana. Então, a maioria
+
+empresas, elas esperarão uma semana por Todos os problemas a serem resolvidos. Hum, e Então, sabe, aí eles vão usar o modelo. Mas, na minha opinião, isso não é um Boa abordagem. Eu diria que se você estiver bem Se todos esperarem uma semana, então como? Corrigimos os erros? Porque só em
+
+escala somente em escala então podemos ver o insetos. Hum, e então, em geral, precisamos todos devem começar a experimentar esses modelos mais cedo. Hum, e não tipo, sabe, espere Uma semana, espere um mês, você sabe, não faça isso. Não adote a abordagem de esperar. Hum, mas Eu diria que, em geral, empresas, o que elas gostam de fazer é simplesmente Aguarde uma semana. É, isso é tipo...
+
+prática comum. Sim, é isso mesmo.
+
+Então, certo, a pergunta era por que o O desempenho do modelo se degrada antes que um modelo liberar? Hum, Essas são apenas perguntas hipotéticas. teorias hipotéticas. Então, cada um deles O modelo possui um prompt de sistema diferente. Então, opus 4.8 8 O prompt do sistema Opus 4.8 é
+
+muito curto. Mas o sistema Opus 4.7 O tempo de espera foi extremamente longo. Então, o A teoria era que isso é apenas uma teoria. antrópico via código de Claude acidentalmente Alguns dos modelos foram encaminhados para o Opus 4.8.
+
+Certo, eles usam o Opus 4.8 para testes, certo? Eles precisam testar o Opus 4.8. Mas eles usaram o prompt de sistema do Opus 4.7. Então
+
+Eles usaram o prompt de sistema errado e É por isso que a precisão diminuiu. Isso é uma teoria. Hum, outra teoria é Na verdade, acho que é isso mesmo. Pensei nisso. Provavelmente é isso mesmo.
+
+Era a única teoria que eu tinha. Estou pensando, hm Existe alguma outra teoria? Hum, Acho que o próprio arnês, tipo, você sabe às vezes o próprio arnês o arnês Foi projetado para o Opus 4.7. Um e durante o período em que eles estavam prestes a lançar 4,8, eles precisam colaborar com o arnês, certo? Eles precisam trocar o arnês.
+
+um para 4 4.8 para que funcione. Mas o problema é Você não tem permissão para publicar isso, certo? Você não tem permissão para publicar isso e Dê isso às pessoas porque senão As pessoas vão gostar, sabe, de entrar em O Twitter no LinkedIn, sabe? em todos os lugares. Ah, entendi, a versão 4.8 está indo para...
+
+será lançado. Sabe, todo mundo é Vai ser incrível, sabe, 4.8 chegando. 4,8, oitos, sabe, eram sendo lançado e talvez seja por isso A precisão diminuiu. É a atualização deles Eles não atualizaram o arnês. Um ou
+
+A outra opção é que eles já estejam de pé. Eles atualizaram silenciosamente, em silêncio. o arnês antes do novo modelo ficar Foi lançado e regrediu, você sabe. Precisão reduzida. Hum, não sei, tipo...
+
+Sinceramente, você provavelmente deveria perguntar. antropológico essa questão. Hum, ou mas eu pense em geral, em geral, as quedas Quedas de preço nem sempre correspondem a um produto como novo. autorizações de modelo. Algumas das depressões são questões reais, como você sabe, o pensamento O rastreamento foi excluído do prompt do sistema.
+
+Acho que eles escreveram algo errado para o sistema, é engraçado, eu acho, para o sistema eles disseram hum Eles tentaram reduzir a verbosidade, então eles tentou tornar o modelo menos falante e isso na verdade tornou o modelo mais burro. Então, acho que era apenas uma palavra. Eles acrescentaram uma palavra, não uma frase. Pense em uma frase no prompt do sistema. Isso tornou o modelo mais burro. Hum,
+
+Sim, não sei se isso ajuda, mas eu Não sei se mais alguém gosta disso. teoria. Eu não acho que alguém...
+
+Existem até muitas teorias sobre isso. Hum, obviamente os engenheiros antrópicos Eu sei, mas eu, sabe, eles não vão para contar. Então, é baseado apenas em hipotéticos. Algo relacionado com o problemas de sistema, algo relacionado com o arnês. Sim. Mas eu acho que em
+
+Em geral, você também pode usar este gráfico. Você Sabendo disso, se o desempenho diminuir, a maioria Provavelmente, um novo modelo será lançado. chegando. Sim. Mais alguma pergunta? Sim.
+
+Só para acrescentar isso.
+
+Sim, correto.
+
+Correto.
+
+Sim. Exatamente. Exatamente. Então, antes do lançamento do modelo, eles use um prompt de sistema diferente para isso Novo modelo para o modelo antigo. E assim por diante É provavelmente por isso que houve alguma diminuição.
+
+com precisão. eles trocam o sistema sugestões ou algo do tipo. E você também conhece o modelo em si. Sabe, eu acho que os prompts do sistema 4.8 são...
+
+muito curto. É, acho que é. tipo muito, muito curto e 4,7 era gigantesco. E o motivo é que 4,7 era Como você sabe, eu não sei o que eu não sei. Eles sabem o que aconteceu, mas têm isto.
+
+um prompt de sistema gigantesco e o 4.8 apenas diminuiu bastante. Então, talvez, talvez eles usou o prompt do sistema 4.7, eu não sei ou 4.8 sistema o prompt curto do sistema por 4,8 oito e então eles o usam para 4,7 e é por isso que diminuiu.
+
+precisão. Não sei. Sim, mas Você está correto. Eles lançam, sim. embora eu ache que o prompt do sistema eles O conteúdo divulgado no site é referente à claw.ai.
+
+Então, o sistema de bate-papo online... o com garras O prompt do sistema de código é na verdade diferente. Sim. Então, acho que você precisa realmente
+
+Você precisa ligar para o Claude, código você saber qual é o prompt do meu sistema e então Você imprime isso em um arquivo de texto, tipo um e... então você pode gostar de investigar o quê o prompt do sistema é e então você pode Você também pode sobrescrevê-lo se quiser, sim, mas É um prompt de sistema diferente na maioria dos casos. provavelmente, sim Última pergunta, se alguém tiver.
+
+Não, ok, continue.
+
+Ok, na próxima seção vamos... Estamos falando sobre otimização de benchmark e trapaceando. Hum, Não sei se vocês já viram o Análise comparativa SWE profunda. Hum, o profundo SWE
+
+benchmark é um recente muito popular parâmetro que mostra, você sabe, o custo está no eixo X e no eixo Y é um Análise comparativa SWE profunda. É um novo padrão de referência. baseado em como você sabe melhor Versão não contaminada do Swebench Pro. E, em geral, você pode ver que você Sei que o GBD 5.5 funciona muito bem com Fable.
+
+Você conhece o GLM Opus 4.8 em geral. Certo, isso mostra que você conhece este enredo. que os modelos estão ficando, sabe...
+
+Esses pontos representam um raciocínio diferente. modos, hum, acho que este é o máximo raciocínio eu acho que hum alto extra alto você saiba que na verdade são diferentes raciocínio, raciocínio vezes também, mas em geral você pode ver que há uma tendência de eficiência no parto bem melhor O modelo é aquele que você conhece à direita. Quanto mais à direita, melhor o modelo. quanto mais à direita estiver o topo, melhor. modelo. Então, você quer que os modelos façam
+
+cada vez melhor com o tempo para isso o canto superior direito. E sabe, eu acabei de descobrir que não... Eu sei disso na verdade. Acabei de descobrir isso
+
+Sweetbench Pro quando você executa isso benchmark que você usa LL você usa linguagem modelos como verificador. Hum, e eu fiquei tipo confuso porque, como para a maioria parâmetros de referência, Para a maioria dos benchmarks, você nunca deve chamar outro modelo de linguagem para verificar independentemente de sua resposta estar certa ou errada. Então, para o Swedebech Pro, você realmente Chame um modelo de linguagem para verificar se o seu O modelo de linguagem estava correto. Hum, e então É por isso que o SweetBench Pro não é muito Bom parâmetro de comparação. Hum, um dos problemas Precisamos fazer amostragem? Como
+
+Quantas execuções de verificação você precisa? Executar para verificar se sua resposta é correto? Você executa o programa apenas uma vez? Você Execute-o cinco vezes? Você executa isso 100 vezes.
+
+e considere uma média. Então, eu estava Estou realmente bastante chocado com isso. O que realmente acontece. Eu estava bastante Fiquei surpreso, na verdade. Hum, o próximo A questão é: qual modelo é o verificador?
+
+Você sabe, você pergunta, por exemplo, você pergunta opus você sabe você você benchmark opus 4.8 no SWBench Pro, mas qual você usa? Como verificador, você usa o Opus 4.8? como verificador para usar o mesmo modelo ela mesma para se verificar. Hum, e tipo assim
+
+Fiquei bastante surpreso, na verdade. É assim que os benchmarks funcionam. Um e Na verdade, fiquei bastante decepcionado. Hum, mas De qualquer forma, obviamente você pode ir para o outro lado. abordagem. Você pode fazer verificação humana.
+
+Você sabe, todo mundo na sala... eu vou te dou o banco que você conhece e só Peço para vocês verificarem isso. Você poderia Acho que vou fazer isso. Hum, e também o quê?
+
+O que acontece se a verificação mudar diariamente? Você sabe, lembre-se modelos anteriores você conhece cada um deles Os modelos diurnos melhoram ou pioram. hum o quê O que acontece se você executar o quê? acontece se você executar a verificação quando O modelo estava indo muito mal, não é? terão, na verdade, números SWE diferentes.
+
+Então, tipo, eu sou realmente bastante Estou surpreso que seja isso que a indústria faz. Sabe, execute o Bench Pro, mas usando O anonimato verifica que é definitivamente Não é uma boa ideia, mas enfim, as pessoas fazem isso. tanto faz Na verdade, segundo Deepu Hum, se você fizer isso...
+
+Se você fizer a verificação usando a linguagem modelos Sweet Bench Pro tem 8,5% taxa de falsos positivos. Hum, e um falso Uma taxa positiva significa que o LLM O verificador disse que o modelo era Correto, mas na verdade estava errado. Hum, e assim, em 8,5% das vezes, isso aconteceria. esse. Hum, a taxa de falsos negativos é Pior ainda, com 24%. Bem, isso significa que
+
+O verificador disse que o modelo era Errado, mas na verdade estava certo. Um e Assim, você pode ver que o SweetBench Pro é um Péssimo parâmetro de comparação. Hum, e tão doce e profundo mostraram que eles têm, você sabe, eles resolveu o problema, sabe, hum, por reduzir a taxa de falsos positivos e a A taxa de falsos negativos é de 1%. Bem, na verdade, alguns exemplos de trapaça...
+
+Sabe, isso é realmente bastante... surpreendente, mas no banco pro benchmark que você obtém, você obtém algo como um GitHub Você sabe qual é o problema no GitHub que você está enfrentando? Chame o modelo para resolver isso no GitHub emitir Mas você sabia que no Swebench Pro Você obtém o histórico completo do Git, então você fica...
+
+Assim você também obtém a resposta correta. Então eu fiquei tipo, na verdade eu estava bem fiquei bastante chocado ao saber disso. que durante esses modelos você dá o resposta e a pergunta, obviamente O modelo vai trapacear. Hum, e tipo assim Este é definitivamente um parâmetro de comparação muito ruim. Sabe, você nunca, jamais, jamais deveria...
+
+alguma vez dê a resposta ao modelo. Um e Que bobagem. Sim, isso acontece. muito. Hum, e você não quer que o modelo...
+
+Veja a solução literalmente, certo? Que É uma abordagem terrível. Hum, o outro problemas que você obtém como falsos O lado positivo é que você conhece os testes de PR. Conheça o GitHub, o problema do GitHub Os testes são muito fracos. Então, você sabe, em a conclusão final que você sabe quando o GitHub quando a issue do GitHub for fechada com um pull request os testes que o O responsável pela manutenção escreveu que não são muito bons. Um
+
+E o problema disso é que você sabe Se você tiver provas com resultados muito fracos Então você sabe que o modelo tem um desempenho muito bom. Não muito bom. Hum, e obviamente o A pior parte é que o modelo vai querer contornar o problema. alguns testes. Vai pular alguns "hum" e "e".
+
+Essa não é uma abordagem muito boa. Na verdade, uma suíte profunda realmente mostrou Quantas vezes uma modelo trapaceia olhando com todo o histórico do git que você conhece indo direto à resposta. Você pode ver opus 4.7. Assim, as barras roxas indicam trapaça.
+
+modelos. Hum, parece ser o Jubilee 5.5. Nunca trapaceia. Parece que... ok
+
+Talvez devêssemos usar o GP 5.5. Você sabe na verdade isso é muito interessante. Existem algumas pessoas que Acho que se você trapacear, isso é realmente...
+
+bom. E o motivo pelo qual isso é bom é Significa que o Opus 4.7 já sabe como Se você fornecer todo o histórico do Git, você deveria ser possível, assim como você deu para alguém. Eles estão certos, você deu ao Opus o Git completo. história deve encontrar a solução Certo, deveria simplesmente pular direto.
+
+Vamos à solução. Então é isso. O que as pessoas pensam que você sabe que as pessoas têm um veja que Os humanos deram ao Opus 4.7 o portão completo. história, então deveria trapacear, certo? você
+
+Você o projetou para trapacear, então... Os modelos de cabos em geral parecem trapacear mais. E os modelos de IA aberta parecem trapacear menos.
+
+Em geral, então depende de você. Saiba se você quer que um modelo trapaceie ou não. e a definição da palavra trapaça também é muito, você sabe, carregado, então eu acho Depende do que você quer dizer com trapaça. significa Você sabe, para falsos negativos, lembre-se. O Swebench Pro chama um modelo de linguagem para verifique se sua resposta está correta e Então, às vezes não é muito bom, sabe?
+
+Às vezes você tem testes não relacionados que falha... você se esqueceu, sabe? Às vezes quando você escreve testes que você esqueceu os testes que têm auxiliares, você sabe funções auxiliares e você simplesmente as ignora Então, existem muitos problemas e este eu Acho que isso foi 20, sim, então 24% do total.
+
+Em 24% das vezes, segundo o modelo, O verificador disse que seu modelo estava errado. Mas na verdade estava correto. Então, isto é Outro problema. E pior ainda, o próprio arnês pode alterar a precisão. Então, quando você realiza a avaliação comparativa.
+
+usando o Swebench Pro, como você precisa para ter um agente ou um arnês para todos modelos, certo? Como você cria um ambiente de controle generalizado para esses modelos? E então você pode ver tipo Você sabe, por exemplo, que o DeepSu mostrou se Ao usar o código Clawed, você obtém 40% de precisão. mas se você usar o deles, então é um Com um arnês especial, você pode obter 50% de precisão. um Gemini, por exemplo, certo? Se você usar
+
+Com o Gemini CLI, você obtém 20% de precisão, mas se você usa o deles, você sabe o Em um ambiente controlado, você pode obter 40%. precisão, hum, e assim por diante, em geral. Para esses parâmetros de referência, você também precisa de ter um ambiente controlado. Hum, e Esse também é outro problema. E com Deep Suite, eles mostraram por Usando esse parâmetro de referência, ao resolvê-lo, você Sabe, ao parar de trair, você sabe, mas, sabe, se eliminarmos a trapaça, se Removemos, sabe, esses outros problemas, Você pode ver os modelos, sabe, os Os modelos já não estão saturados, certo?
+
+Você pode ver que os modelos são muito diferentes em termos de capacidades. De acordo com esse parâmetro, GBD 5.5 é O melhor, segundo este. Hum, eu Ah, isto não está atualizado. Um para 4.8, eu acho, é por aqui ou algo assim.
+
+Sim, este benchmark mostra o núcleo taiku é 0%. Precisão, certo? É terrível, eu adivinhar. Mas sim, esse parâmetro de referência simplesmente...
+
+mostrar ok a questão principal é você Confiar nesse parâmetro? Isso é outra coisa pergunta. Um Existem outros parâmetros de comparação, certo? Então A cognição liberou um código de fronteira benchmark que também tenta resolver o As mesmas perguntas para o banco, você sabe, para trapaças e benchmarks. Hum, e o quê?
+
+Eles mostraram que você pode consertar contaminação. E como você resolve isso? contaminação? Você pergunta, você sabe, você Pergunte à equipe da Cognition, que está repleta de...
+
+tipo, sabe, Olimpíadas nacionais e, Sabe, Olimpíadas internacionais. Eles Verifiquei manualmente cada pergunta. hum eles mesmos, sabe, e removeram o que era ruim perguntas, sabe, maus exemplos. Um e eles também mostraram que seus As perguntas são muito mais diversas, não é? Portanto, o Frontier Code possui muitas variações.
+
+outros idiomas. E eles mostraram com diversidade que você conhece com mais diversidade linguagens de programação e reduzindo contaminação eles também têm um padrão de referência, hum, e de acordo com seu parâmetro de referência Opus 4.8 é a melhor opção para 14,5%. A precisão do Juby 5.5 é de 7,2 em relação à precisão.
+
+Hum, e este é o de diamante, certo? Então, este é o 50, o 50 mais difícil. questões. Bem, o parâmetro principal é 100. perguntas e o total estendido é 150. Hum,
+
+E então, segundo eles, você sabe, Segundo eles, Claude é quem faz o melhor. Mas também segundo eles, Fronteira O código parece ser melhor que o Deep Suite. Certo? O parâmetro que eu mostrei anteriormente, Deepswuite, este aqui, hum, você sei de acordo com o Código da Fronteira, então o equipe de cognição, seu parâmetro de referência é Melhor que Deepswiite, né? De acordo com para eles, segundo eles, o Deep SW é A taxa de falsos positivos é de 44,9%.
+
+Mas lembre-se do que Deepswu disse? Eles disse que a taxa de falsos positivos era... eu não...
+
+Lembra do que eles disseram? Hum, eles Disse que era 0,3%. Certo? Então, profundamente disseram, profundamente disseram eles A taxa de falsos positivos é de 0,3%. Mas O código da Frontier dizia que a Deep SWE era falsa.
+
+A taxa de positividade foi de 44,9%. Então, você sabe que existe alguma competição. Acho que entre laboratórios de benchmarking bem cognição é Não é um laboratório de benchmarking, mas como você sabe...
+
+entre empresas, então o principal A questão é: em quem podemos confiar, sabe? Confiamos nos benchmarks de código da Frontier? Fazer Confiamos nos índices de referência da Deep Swiss? Será que nós...
+
+Confiar no Bench? Sabe, em quem podemos confiar? E essa é uma questão muito importante. Bem, na minha opinião, é o seguinte: Vamos apenas calcular a média de todos. Calcule a média de todos.
+
+E provavelmente você obterá a melhor resposta. Você sabe, quem está realmente fazendo o melhor. Sim, mas isto é na verdade muito interessante. Hum, você sabe, isso mostra Certo, então, de acordo com eles, o falso A taxa negativa para o Deep Suite está correta. Sabe, 1,2%. Mas meu interesse, você
+
+Sabe, eu provavelmente, sabe, meu principal A questão é: por que o resultado é um falso positivo? taxa tão alta para profundidade de acordo com De acordo com Frontier Bench, Deep Sweet É ainda pior que o Sweet Bench Pro. É isso que eles estão tentando dizer, eu Acho que é para a taxa de falsos positivos. Sim. E pior ainda, existe outro um marco de referência chamado Matemática de Fronteira. Hum, então
+
+Frontier Math é um projeto da Epoch AI. Então eles Eles têm esse parâmetro matemático com diferentes níveis, você sabe, nível um, nível dois, nível três, nível quatro. Então, nível quatro é a mais difícil. Mas o parâmetro de referência O próprio procedimento foi mal executado. Hum, e então eles na verdade, tivemos que lançar uma versão corrigida.
+
+versão de referência deles. Hum, eu acho Isso foi há um mês, mais ou menos. Então eles mostraram que seu padrão de referência era esse. As perguntas estavam completamente erradas. Hum, e você você pode ver que se você corrigir o benchmark, se você corrigir o benchmark, A precisão do GBD 5.5 salta de 50%
+
+para 80% ou algo assim. Hum, e então agora você É como confiar no parâmetro de referência. E eles mostraram em um tweet, ah, é 12 de junho. Nossa, já faz só duas semanas. Bem, em 12 de junho, eles mostraram que o motivo pelo qual eles se saíram mal no Os parâmetros de referência são eles, eles fizeram a resposta.
+
+extração incorreta. Por exemplo, Eles fizeram, sabe, eles não estavam claros. questões. Eles tinham a placa errada. Então, por exemplo, eles disseram que o modelo Disse 12, mas na verdade deveria ser negativo.
+
+12 e esqueceram de cortar o sinal de menos. sinal. Hum, eles cometem erros pontuais. Hum, Sim, existem muitos problemas com o referência. Então eles consertaram os seus.
+
+benchmark, hum, recentemente. Na verdade, sabe, é bem... engraçado. Isso aconteceu há apenas duas semanas.
+
+Vocês já ouviram falar de abraçar rostos? Verificação matemática: isso foi há um ano? Um e abraçando a base mostrou que, de fato, esses parâmetros quando você faz matemática perguntas que eles sempre fazem mal e o O motivo é que existem muitos problemas, a formatação está incorreto, você sabe a extração de A fração está errada, você sabe...
+
+O sinal é de falha na extração, existem muitos muitos, muitos problemas de matemática extração e, para ser honesto, eu sinto que É como reinventar o roda ou você sabe redescoberta, hum, mas Hugging Base realmente publicou isso. Há um ano, e a Epoch corrigiu isso há apenas duas semanas. atrás. Então, você conhece os laboratórios de benchmarking? Eles definitivamente precisam de mais, sabe?
+
+Acho que preciso investigar mais a literatura. Na verdade, de acordo com o rosto abraçado A matemática verifica se você sabe se usa se você a barra verde, a barra verde é se você fizer não use a verificação de rostos abraçados sistema que você conhece para corrigir o benchmark. Se Se você corrigir o benchmark, poderá ver. A precisão aumenta drasticamente, certo? Por exemplo, para Quen, para Quen, o A precisão era de 10%, agora é de 25%. Hum, e
+
+Então você precisa, o que significa que o aberto Os modelos de origem não são burros. Eles simplesmente têm resultados diferentes. formatar. Bem, um dos problemas É como nós realmente gostamos de você. Sabe, como passar por esses diferentes formatos?
+
+Na verdade, é ainda pior. Hum, não, eu Acho que tuitei, ah, eu tuitei isso em Agosto de 2024. Hum, isso se você usar Diferentes tokenizações, você também pode possuem diferentes níveis de precisão. Hum, na verdade, Para MLOU, se você usar espaços, você Aumentar a precisão em 0,4%. Hum, talvez.
+
+Não parece muita coisa, mas a questão é por essas coisas muito idiotas como, você Sabe, usando espaços ou, você sabe, menos 12 vira 12. Hum, e todos esses tipo pequenas coisas bobas, a precisão Esses parâmetros podem mudar ao longo do tempo. tempo. Então, qual é a pergunta principal? Você sabe como fazemos benchmarking?
+
+laboratórios e empresas de benchmarking que você conhece como podemos torná-los mais confiáveis, hum e Você sabe que é mais confiável. Ah, ok, acho que essa é a seção para... a parte de avaliação comparativa. Qualquer outro
+
+Tem alguma dúvida sobre essa seção? Um questões. Sim.
+
+Essa é uma ótima pergunta. Então a pergunta Como podemos confiar nessas pessoas? empresas de benchmarking ou algo do tipo outros tipos de benchmarks podemos fazer para Tornar isso confiável? Então é isso. Na verdade, é uma ótima pergunta. O principal
+
+A questão dos benchmarks é: você precisa de satisfazer duas condições. O primeiro A condição é que o parâmetro de referência não deve ser obrigatório. não ser possível atingir o máximo de um benchmark. Certo? Como você Estabeleça um padrão de referência que seja extremamente difícil.
+
+Para estabelecer uma referência, certo? Como gostamos de não gostar Obter 100% de precisão? E o segundo A questão é como definimos o padrão de referência. É verificável, certo? Então, como fazemos isso?
+
+o parâmetro que você pode você também pode verificar se a resposta é de fato Correto, não é? Você se lembra de Swebench? O profissional é burro porque você chama o O próprio modelo de linguagem se verifica. Bem, isso não é bom. Então, o principal A questão são essas duas perguntas. Hum, e
+
+Um bom exemplo disso é simplesmente estúpido. exemplo. Crie perguntas de matemática aleatoriamente. Exemplo: Ok, tudo bem. Provavelmente, este não é um bom parâmetro de comparação.
+
+Você cria matemática automaticamente questões. Bem, podemos amostrar o infinito. certo? Podemos amostrar infinitas matemáticas. perguntas, certo? 2 + 2, 4 + 4, você
+
+sabe, qualquer número único somado. Essa é uma pergunta. Você pode verificar? esse? Sim, você pode. Certo? Você pode ligar
+
+uma calculadora para verificar quanto é 2 mais dois. Isso pode ser testado em bancada? Duro. E a razão pela qual é difícil é porque O espaço de amostragem é infinito, certo? Pode ser 2 mais 2, 1,00 mais 101, certo? Você pode fazer isso, não precisa fazer nada.
+
+Além disso, né? Você pode fazer 1,00 vezes 1,00. Então, essa é uma maneira de estabelecer um parâmetro de referência. que é muito difícil de trapacear, mas também Fácil de verificar. Então, algum tipo de matemática pergunta. Hum, o outro, para
+
+Por exemplo, é hum, Ok, talvez este não seja um bom exemplo. Estou inventando isso agora mesmo. Peça à modelo para criar um poema em 70 palavras e você deve usar a palavra feliz. Você pode confirmar isso? Sim, você pode. É
+
+Feliz na, você sabe, geração? Se Sim, mais um. Além disso, você pode contar como Muitas palavras, não é? Você pode contar, ok? Há 70 palavras? Então você pode fazer
+
+esses tipos de abordagens. E é isto? capaz de atingir o máximo no benchmark? Não. É muito difícil.
+
+benchmark porque você pode dizer 70 palavras, 69 palavras, 68 palavras, 102 palavras, 1.000 palavras, certo? Não precisa ser feliz. Pode ser que você precise ter dois. Em palavras, você deve ter três palavras. Hum, então
+
+algum tipo de parâmetro onde é Muito difícil de comparar. Um Sim, na minha opinião, acho que é isso mesmo. provavelmente será o mais importante benchmark e eu não acho que sim Alguém já fez isso de verdade? Hum, eu Não sei, talvez alguém na plateia. Ou vocês podem ir em equipe, sabe?
+
+Não sei se crio uma startup ou algo do tipo. Você sabe, faça isso. Hum, e eu sinto que Esse parâmetro será muito, muito alto. importante. Sim
+
+nenhum dos indicadores em que podemos confiar hoje eles. Calcule a média de todos eles. Para Sinceramente, provavelmente a melhor abordagem é Só curtindo a vibe, tipo, checando a vibe. Experimente todos os Eles e veja qual você prefere. melhor. Bem, para ser completamente honesto, eu apenas
+
+Sabe, tipo esses benchmarks, né? O principal problema que tenho com Os benchmarks são, por exemplo, hum, você sabe Tipo essa aqui, né? esta, quero dizer, até mesmo todos os dias. O parâmetro de referência pode mudar. Então não podemos Não confie mais nos índices de referência. Então meu
+
+A visão fundamental é não confiar em ninguém. parâmetros de referência. Calcule a média e depois, ok, depois principal. A questão é: quem está calculando a média? EU adivinhação análise artificial tem alguma média. O único problema é que eles
+
+Existem algumas ponderações para o peso. Um Você sabe que cada indicador tem um peso. Então Agora a questão é: você sabe o que é o aguardando cada marco. Você sabe que Não dá para simplesmente tirar uma média qualquer. Um Você sabe que não pode simplesmente dizer que sabe.
+
+10 benchmarks divididos por 10. Hum, isso é Provavelmente não vai funcionar. Então, o principal A questão é: como é que se faz isso? esperando? Esse é outro problema. Hum, então
+
+Acho que, em geral, depende da vibe. Estou verificando, suponho. É, acho que não. Tenho uma resposta para isso. Hum, Mais alguma pergunta? Sim.
+
+pergunta.
+
+Sim. Então, dessa forma Boa questão. Você está correto. Então a pergunta era em termos porque nós bancadamos profissional para Exemplo: você chama isso de modelo. A pergunta É qual modelo? Será que pode ser 4,8? Será que sim?
+
+ser GB 5.5 e você chama este modelo de Verificar o parâmetro de referência? Você e então o A pergunta era se você podia usar um software de código aberto. modelo em vez disso? Então agora você tem um ambiente controlado. Então sim, você
+
+pode. Mas lembre-se que existe um problema. porque até mesmo os modelos de código aberto em si Há momentos em que você conhece os erros na inferência. Os motores têm bugs vezes a inferência Os fornecedores têm erros e problemas de precisão. degradação. Então você está correto. Um
+
+Portanto, a questão principal é: precisamos ter alguém ou alguma organização Você conhece alguma pessoa ou algo assim? comitê que podemos investigar, sabe o quê? Qual motor você usou? Não atualize o motor você sabe que o motor deve ser o Você sabe que os pesos não devem ter...
+
+mudou, então há muitos, muitos, muitos problemas com essa abordagem, mas eu... Concordo que, se você considerar aberto, pode usar um software de código aberto. modelo, mas não é, não resolve o Outros problemas, hum, sim, isso resolve? Ok.
+
+Bem, na próxima seção eu vou... Estamos falando de segurança cibernética e regulamento. Hum, isso é interessante.
+
+tópico. Hum, então, não tenho certeza se você tem Todo mundo já viu essa trama. Isso mostra os institutos de segurança da IA. Hum, eu acho Isto é do Reino Unido. Hum, eles mostram o desempenho de modelos baseados em alguns Tarefa de segurança cibernética. Hum, e eles mostram
+
+Essa prévia do Mythos parece ser a melhor. Hum, sabe, com GBD 5.5 cybar, Sabe, pré-visualização e coisas do tipo. Hum, eles mostrar este parâmetro de referência. Uh E, como mencionei anteriormente, também já mencionei.
+
+Estranho, ML é um Ben melhor na minha opinião, ok? Essa é apenas a minha opinião. ML estranho é um melhor parâmetro de comparação em geral para inteligência comparativa em modelos e O motivo é porque não funciona. Na verdade, não segue exatamente o tendência de raciocínio versus não raciocínio Lembrando do raciocínio anterior, eu acho Ok, eu não tenho... raciocínio...
+
+os modelos de raciocínio duplicam o tempo reduzido pela metade, para 3,5 meses. Então lembre-se, você só precisa esperar 3,5. meses e as capacidades dos modelos serão dobro. Hum, e a falta de raciocínio foi 7. meses. Então você precisa esperar sete
+
+meses para os modelos dobrarem em capacidade. Hum, mas estranho, ML não fez isso. Na verdade, existe essa tendência. Hum, o estranho O teste de benchmark de aprendizado de máquina mostrou que, na verdade, A tendência era como se não houvesse tendência alguma. Hum, E acho que vou falar sobre isso.
+
+Sabe, tipo um dos maiores O problema dos benchmarks é que você precisa de Reinvente-se constantemente e faça replantios de combinações de referências. Por exemplo, a análise artificial apenas lançaram recentemente, você sabe, o novo deles benchmark v4.1 e eles mostraram o aguardando os marcos de referência. Hum, você sabe, A promessa de crescimento do PIB é de 20%, e a meta final é de 16%. e assim por diante. E então eles desenharam.
+
+esses números como esperas para cada um de esses parâmetros e então eles têm fizeram a média. Então, o principal A questão é: como você realmente faz isso? determinar esses números? Hum, e então isso É mais como uma abordagem humana. Você sabe Você precisa determinar esses números. um
+
+Você conhece o arco AGI? meio saturado no ARC AGI 1 e então É por isso que temos o ARC AGI 2 e isso é Além disso, por que temos ARC AGI 3 e meu você Acho que sei disso quando o ARC AGI 3 estiver saturado. então temos ARC AGI 4 5 6 7 seja lá o que for E o ponto principal é que, uma vez que você tenha benchmarks, isso é o que se chama de boa arte? Eu não sei. lembre-se, o bom, o padrão de referência torna-se inútil porque você sabe Os modelos começarão a realizar testes comparativos com base nisso.
+
+Então, um dos maiores problemas destes modelos maiores para segurança cibernética para exemplo um é mito na verdade saiu dramaticamente da tendência. E é por isso que você sabe que muitas pessoas são com medo desses, você sabe, mitos, você sabe GPD 5,56, eles têm medo de esses modelos porque saiu de tendência, você pode ver que mitos saiu de moda drasticamente, hum e Você sabe, até você sabe, você sabe, GP 5.6 não lançaram muitos benchmarks porque estava em versão prévia modo. Bem, isso é do sistema deles. cartão. Eles se manifestaram em prol da segurança cibernética.
+
+que o Guby 5.6 se sai muito, muito bem. Hum, na verdade, porque Guby, porque Guby 5.6 Acho que eles só fizeram terminal bancada como sua referência. Eles não fizeram isso servir de referência em qualquer outra coisa. Hum, eles fizeram.
+
+eles tinham em seu cartão de sistema Um indicador que é muito importante. Hum, e isso se chama interno pesquisa depuração avaliação. Hum, e Este é o próprio conjunto de conjuntos da OpenAI. questões. Então, você sabe, o personalizado aberto fonte, sabe, se você quiser, é seu próprio conjunto de 10 perguntas ou seja lá o que eles tenham usado como referência, GBD 5.6
+
+sobre. Hum, e segundo eles, sim. Muito, muito melhor. Ok, eu estava Vou dizer muito, muito bem, mas é não. Hum, funciona melhor. Hum, e você pode
+
+Veja, o GBD é na verdade meio que... interessante. GBD 5.5 teve um desempenho pior que GBD
+
+5,5 um quatro µm para o próprio sistema interno da OpenAI pesquisa avaliação hum e você sabe O GBD 5.6 definitivamente se sai muito melhor. Certo, você pode ver que o G GBD 5.6 alma, sabe, se você a expandir, ela Muito melhor. Hum, mas curiosamente, Terara se sai melhor, um pouco às vezes. Sim.
+
+E, você sabe, uma das maiores problemas desses modelos que são está ficando cada vez melhor e Melhor ainda, não sei se vocês sabem. que, você sabe, exploits de código aberto são Está piorando cada vez mais. Um e assim a alta taxa de exploração, você sabe número de vulnerabilidades críticas que foram descobertos e disparou, sabe? ultimamente você sabe, toda semana ou algum tipo de pacote de código aberto fica comprometido, e eles realmente Você sabe que esse enredo mostra que é está ficando muito problemático, então você Saiba que o mito de Claude foi lançado nesta época. linha pontilhada onde você conhece a maioria das pessoas Eles não têm certeza se é por causa de Claude Mythos que essas vulnerabilidades estão aumentando, provavelmente porque código aberto, você sabe, usamos muito disso.
+
+Os modelos chamam-lhes muitos, muitos, muitos, muitos vezes e podemos te informar automaticamente encontrar vulnerabilidades nesses modelos Mas você sabe que na verdade existe outra Então, no Hacken News, alguém postou Sobre isso, hum, é só Mythos e Juby? 5.6 seis que se saem bem na busca por informações cibernéticas questões de segurança. Na verdade, não está aberto. Os modelos de origem também apresentam um desempenho muito bom. Um aberto
+
+Os modelos de origem têm um desempenho extremamente bom em identificar ameaças à segurança cibernética e problemas. Sabe, tem alguma coisa discussão sobre notícias de hackers, você sabe que é Isso é verdade ou mentira? Hum, mas você você sabe, de acordo com alguns, você sabe alguns pesquisadores e especialistas em segurança cibernética a principal razão pela qual você conhece os mitos Parecia ser muito bom na internet. A segurança se deve ao fato de eles terem se preocupado em Verifique o código aberto. Um e então, se você realmente der o aberto Os modelos de origem representam a base de código completa de essas bibliotecas de código aberto elas irão Encontre os insetos que você sabe que eles encontrarão.
+
+questões de segurança cibernética. Hum, e todos vocês O que precisamos fazer é criar o núcleo do modelo. Hum, e então Acho que você sabe que é isso. O problema fundamental é que o mito parece muito poderoso não porque o modelo seja poderosos, mas porque eles realmente se deram ao trabalho de testar em todos os softwares de código aberto. repositórios. Então, se você fizer isso, sabe se...
+
+Você chama todos esses modelos de código aberto de Detecção de falhas para segurança cibernética problemas que você encontrará bugs E você sabe, como você sabe, recentemente você Como todos sabem, Fable ainda é... banido para a maioria das pessoas. Hum, E o GBD 5.6, você sabe, está atrasado.
+
+Lançamento escalonado, certo? Então, tipo Guby A prévia da versão 5.6 foi na sexta-feira, certo? Então como há alguns dias, e eles disseram Eles não vão lançar para todos. Hum, e as perguntas principais estão, sabe, no mundo do código aberto, No mundo fechado, as pessoas estão perguntando: "Faça isso?"
+
+Precisamos de uma licença para usar esses modelos de IA. Para todos? Sabe, como todo mundo em Nesta sala, precisamos de uma licença. para usar os modelos, como um motorista licença. Hum, precisamos mesmo disso? um
+
+Haverá algum atraso em todos os esses lançamentos? Então, todas as vezes quando um novo modelo é lançado, apenas o Fornecedores confiáveis ​​obtêm esses modelos. Um a próxima questão mais importante é como sobre modelos de código aberto, você sabe, ok? o governo, o governo dos EUA Atualmente é como se você estivesse tentando...
+
+como o controle Fable GPD 5.6 A principal questão agora é o que fazemos. Sobre modelos de código aberto? Sabe, aberto modelos, modelos de peso aberto. O que será o que o governo faz para controlar o aberto espaço de origem? Para ser completamente honesto, eu
+
+Fiquei bastante surpreso com a ação do governo. este início um em fazer GBD 5.6 e fábula controle, certo? Eu pensei que fosse tipo Talvez no final do ano ou no próximo ano, Mas parece que agora é. Então, o A próxima pergunta é o que acontecerá com modelos de código aberto? Será que o governo vai fazer isso?
+
+Começar a controlar modelos de código aberto? Um E a questão fundamental é o quê? define inteligência de fronteira como a razão pela qual o governo é, você sabe Eles estão controlando esses modelos. Porque eles são muito, muito poderosos. Um Então a questão principal é o que realmente acontece.
+
+O que define inteligência? Você sabe qual Qual parâmetro de referência devemos usar? É baseado apenas em um trilhão de parâmetros, como você sabe Como definimos se um modelo pode ser Banido ou desbanido? Hum, e isso é um Pergunta muito, muito importante. Hum, e nós Teremos uma "web obscura" de modelos abertos?
+
+Agora você sabe se precisamos abrir um torrent. modelos? Hum, e o mais importante pergunta o que é inferência o que são O que os provedores de inferência vão fazer agora? saber supondo que o O governo possui algum tipo de regulamentação. até mesmo em modelos abertos. Hum, o que é o
+
+inferência prova o que eles vão fazer fazer? Você sabe quais são as inferências? O que os provedores vão fazer? Eles precisam? Possui licença? Eles precisam verificar isso?
+
+Todos precisam de uma licença antes de você poder... usar o modelo? Hum, ou algo parecido que. Então, tipo, você sabe, estes são
+
+perguntas muito importantes que você sabe O governo está atualmente como você. você conhece e conhece o setor todo o ecossistema e indústria de IA que somos tentando gostar, sabe, quais são os respostas a estas perguntas. Um e obviamente você sabe se você fosse o governo se eu fosse o governo Faz sentido, você sabe que eles não querem. sua infraestrutura crítica para ser hackeado. Você sabe, lembre-se do código aberto.
+
+Os exploits estão disparando. Se você mudar aquele eixo y, sabe, não é de código aberto. explorações, mas como críticas explorações de infraestrutura, sabe? Obviamente o governo está com medo. Hum, então faz sentido que eles gostem escalonar o lançamento. Hum, mas o principal
+
+A questão é, sabe, ainda estamos em ainda estamos nessa névoa de guerra abordagem, sabe? Ok, não é nevoeiro de guerra, só neblina, uma névoa, sabe, nós Não sei o que vai acontecer. regulamento. Sim, isso é muito...
+
+problemático. Sim. Oh, tudo bem. Qualquer um Tem alguma dúvida sobre segurança cibernética? política de regulamentação ou algo do gênero? Hum ou qualquer um
+
+também leva questões? Sim.
+
+Essa é uma boa pergunta. Então é isso mesmo código aberto, então o medo do código aberto modelos é porque você sabe antropogênico Continua gritando que o código aberto é ruim. Você sabe que o código aberto é ruim. dia o código aberto é ruim hum sim E não, eu acho que é verdade que você sei que existem alguns jogadores no indústria de código fechado que eles querem encerrar abaixo do ecossistema de código aberto deles A questão é se você disponibilizar código aberto para Qualquer um que eles começarem a hackear, sabe? infraestrutura crítica eles começarão Ter um comportamento inadequado. Hum, e então é isso.
+
+esse é o ponto de vista deles. Sim, concordo. que alguns dos laboratórios de código fechado têm causou esse problema. Hum, mas é Na verdade, é meio engraçado porque atualmente O governo está regulamentando-os primeiro. E o código aberto ainda é uma questão em aberto.
+
+marca. Então, é mais ou menos assim. Não sei, provavelmente esfaquearam. eles mesmos no pé ou algo assim. EU não sei qual é a frase é. Mas eu acho que eles fizeram
+
+causar alguma controvérsia em termos de curtidas Dizer que o código aberto é ruim, mas em geral Os modelos de código aberto são realmente bons. Um Então você poderia, quer dizer, teoricamente você pode usar um modelo de código aberto e você Agora execute isso em todos os repositórios e você verá ser capaz de encontrar vulnerabilidades e você pode explorar. Portanto, eles não estão errados. Hum, mas eu sinto que sei quem tem o infraestrutura para fazer isso? Sabe, O GitHub pode detectar você automaticamente.
+
+e te banir ou algo assim. Não sei. Existem muitas, muitas camadas de Segurança para cada seção. Hum, e então Tipo, eu não sei. Eu sinto que é Um tanto exagerado, mas é isso aí.
+
+Probabilidade não de 0%. Portanto, é um problema. Sim, se isso responde à sua pergunta, Mas tudo bem. Sim. Então agora nós vamos ser Falando sobre grãos. Um
+
+Então, como você já sabe, este é o meu Como sempre, meu enredo favorito. Você sabe se Estávamos em um futuro diferente, sabe? se estivéssemos em uma linha do tempo diferente que Não descobrimos nenhum modelo de pré-visualização. teria atingido um patamar estável. Acho que é isso mesmo.
+
+Ponto fundamental desta trama. Isso mostra que se nunca descobrimos raciocínio que nunca descobrimos 01 qualquer que seja Teremos atingido um patamar estável. Teremos atingiu um patamar de estabilidade em termos de precisão. Um e Isso não é bom. Hum, e porque nós temos descobriu esse novo paradigma de escalonamento, Você sabe, os modelos têm continuamente ampliado ainda mais. Mas, na minha opinião, é
+
+o motivo pelo qual paramos de expandir baseado, você sabe, a abordagem antiga é porque a abordagem antiga focava apenas em Otimizações de hardware. Agora precisamos migrar para o software. otimizações e algoritmos otimizações. Bem, você sabe que precisamos de Temos novas invenções sobre como escalar. A IA vai ainda mais longe. Hum, e nós não podemos simplesmente
+
+depender da realização de 10 trilhões de parâmetros ou Sabe, aumentar o tamanho do modelo e cada vez maior. Por exemplo você sabe que temos que fazer um float a Aprendizagem por reforço. Então, se for PyTorch possui essa metodologia onde você pode fazer flutuar flutua para diferentes precisões Para tornar o treinamento mais rápido. Hum, e isso é Mão Única. Uma outra forma, por exemplo, como um abordagem de software, por exemplo, como eu Como dissemos anteriormente, encontramos algo que você...
+
+problemas conhecidos na acumulação de gradientes. Um então, quando você faz acumulação de gradiente... Na verdade, não foi calculado.
+
+corretamente durante o cálculo da perda. E você pode realmente aumentar A precisão aumentará de 1 a 3% se você corrigir isso. pequeno probleminha. Sim. Então, tipo, você sabe, o universal A correção do bug de acúmulo de gradiente foi uma correção de software. Não se trata de uma solução de hardware.
+
+Então, a visão fundamental é que você precisamos fazer cada vez mais software mudanças. Certo? Outro exemplo. Floco de neve, nós colaboramos com eles para fazer contexto longo ajuste fino de contexto 500k comprimento do contato, tudo isso era software melhorias, outra coisa, você sabe Treinamento da MLB 12 vezes mais rápido que isso. outra melhoria de software um deepseeker, você sabe que eles lançaram algo chamado faísca profunda que era apenas alguns dias, e eles mostraram isso Eles podem tirar conclusões, sabe, 50/50.
+
+até 600% mais rápido, ou seja, seis vezes mais rápido que apenas MTP normal, e então isso é um Metodologia de software, certo? Não é metodologia de hardware. E você sabe, Gemma da difusão, né? Gemma lançou um novo modelo de difusão mostrando que você pode obter 2.000 tokens por segundo, utilizando uma nova arquitetura, certo? Então, usando LLMs de difusão para fazer
+
+Inferência mais rápida e, novamente, isto é um alteração de software. E o meu ponto principal é que em geral, inovações de hardware estão se tornando cada vez menos importantes. Um e as inovações de hardware são realmente diminuindo a velocidade. Então, na verdade é meio que de informações interessantes, você sabe dimensionamento de você sabe inteligência em Em geral, é meio que como a lei de Mo, hum. É como se houvesse um progresso implacável, abordagem implacável para aumentar a inteligência e o mesmo com a lei de Mo, hum, e então, em geral.
+
+Você pode ver que esta é a lei de Mo. por aqui o número de transistores tem aumentou continuamente, mas você sabe O desempenho individual não está aumentando. tem escalonado Hum e então isso é meio que Sabe, isso me lembra um pouco de...
+
+Você conhece esse gráfico, certo? Escala inteligência em termos de parâmetros provavelmente atingiu um platô, muito provavelmente você conhecimento prévio do desempenho do hardware seja lá o que for que precisemos agora para entrar nessa nova fase. paradigma de raciocínio para escalar ainda mais Então, é meio que semelhante a...
+
+gráfico do tipo lei de Moore, tipo de... e Você pode ver se olhar deste lado representação numérica do GP, então minha GPU é ficando cada vez mais rápido, certo? Na verdade, não é a própria GPU.
+
+que está ficando cada vez mais rápido e mais rápido. Hum, é o número representativo Representatividade, certo? Então, tipo eles alterado de float 32 até float 4. Hum, e isso aumentou as GPUs em 32 vezes. mais rápido. Então, não são oito vezes.
+
+Mais rápido, né? Não é 32 dividido por 4. É oito vezes mais rápido. São 32 vezes. mais rápido. E o motivo é por causa de
+
+tensores, hum, você sabe, os menores louva-a-deus, hum, e por aí vai. Hum, e então Como você pode ver de verdade, sabe? tensores pares com a introdução de tensores, isso aumentou o desempenho das GPUs em 12 vezes. mais rápido e assim por diante. Na verdade, se você fabricasse a GPU cada vez menor, cada vez menor, só tornou o processo três vezes mais rápido. Não é
+
+nem isso ainda importa. Hum, e se Ao analisar este gráfico, percebemos que agora estamos em float 4. Então, a maioria das GPUs que nós Eles agora estão no ponto flutuante quatro. O que é próximo? Vamos ter flutuação três, flutuador dois, flutuador um? Será que estamos?
+
+Vai ter zero de ponto flutuante? Bem, não. coisa. Mas enfim, o ponto é O hardware está praticamente no limite. certo? Já estamos na flutuação 4. O que é
+
+próximo? Não há nada a seguir. Hum, e então Portanto, a resposta para esta pergunta é Não há nada a seguir. Bem, e então agora nós Precisamos migrar para o software, certo? Como criamos novos algoritmos? Como fazemos isso?
+
+criar novas metodologias para continuar dimensionamento? Hum, eu também fiz esta mesa. certo? Eu disse anteriormente por que você sabe Você usa float 32 um, nós mudamos para float 4 por que é por que não é oito vezes mais rápido, e em vez disso é 32 vezes mais rápido, certo? Por que 32 vezes?
+
+mais rápido e o motivo é porque quando você usa quando faz ponto flutuante precisão você tem um expoente e um menta um e o espaço do transistor o O espaço do transistor é o expoente mais o menta ao quadrado, e então o truque é se você os fizer menores na Tesla e cada vez menor, você eleva ao quadrado o número de melhorias deles, certo? Então, flutua 32, flutua 32, você Precisávamos de 537 transistores, certo? 537 transistores. Hum, para ir de float 32 Para flutuar 16, você só precisa de 105. transistores. Então, na verdade, você que se criou
+
+aumentou o número de transistores para cinco. vezes mais, certo? Então, não duas vezes, São cinco vezes. Hum, e assim por diante, assim por diante. sobre. Bem, você sabe, acho que você pode ir.
+
+para 1,58 bits. Acho que você pode fazer isso. Hum, mas na verdade é meio que interessante porque 1,58 bit um é Na verdade, não é tão mais rápido assim. Hum, então 1,58 bits na verdade não é muita coisa. mais rápido que float 8. Hum, se você usar
+
+hum, você sabe, sete sete expoente e Messa 2. Hum, há outro bit de 1,58. que você usa float 4. Hum, então float 4 é 179 vezes mais rápido que float 32. Um e A questão principal é que já estamos em três transistores, certo? Já estamos.
+
+em torno de três transistores, o que somos nós? Vou fazer os próximos dois transistores ou algo assim. um transistor, então não é como você sabe É muito provável que as GPUs não sejam Ficar mais rápido... esse é o princípio fundamental.
+
+A questão deste gráfico é que as GPUs não são... Vai ficar mais rápido Em vez disso, precisamos nos concentrar nos kernels. Certo, como podemos produzir grãos melhores?
+
+algoritmos melhores: como escalamos isso? em vez disso, certo? Não faça isso, não mexa com hardware. otimizações não são mais necessárias. Em vez disso, como fazem?
+
+Nós fazemos, sabe, essas otimizações? Hum, e então uma das minhas ferramentas favoritas para usar, sabe, todo mundo deveria usar isso Basta usar o comando `torch compile`. Bem, na minha opinião, Sabe, é o moderno, sabe, o Nos tempos modernos, não faça isso, como conselho, não faça isso Aprenda a escrever kernels personalizados. Que É um conselho. Não faça alterações no kernel. Um
+
+e a razão disso é porque tocha a compilação assumirá o controle de todo o kernel. escrita. Então você pode ver, por exemplo. este gráfico um tocha compilou era um vermelho desempenho correto da linha não parece Parece que está indo muito bem, não é? Não parece estar indo muito bem.
+
+versus grãos manuscritos à direita Os grãos manuscritos são os outros. Certo, então a compilação do torch não parece... Está indo muito bem, mas isso porque Essa é uma versão antiga do PyTorch, se você...
+
+Tenho uma versão mais recente do PyTorch. A compilação vence dramaticamente, certo? a linha laranja, hum, e todas essas são grãos manuscritos. Ah, ok. A linha preta é torch compile plus no fusão. Então, essa é outra tocha.
+
+método de compilação. Mas a linha vermelha, a linha verde e linha azul, ok? A linha azul simplesmente não compila com torch. Apenas PyTorch normal. Mas o verde linha e a preta a linha verde e a linha vermelha são grãos escritos à mão e Você pode ver que o resultado é ainda pior do que...
+
+compilar torch. Assim como meus espectadores gostam Qual é o objetivo de escrever kernels? O compilador Torch faz um trabalho ainda melhor do que você. Então, o ponto principal é que você deveria Sempre verifique primeiro o comando `torch compile`. imediatamente antes de escrever um kernel use primeiro compile o torch, não inicie.
+
+Aprender a fazer Triton ou você sabe CUDA ou qualquer outra linguagem de programação que você prefira. A linguagem para kernels não faz isso. Em vez disso, use o torch compile. pior ainda, sabe, isso era a norma RMS, você sabe, esta é a camada norm torch compile vence dramaticamente um Sabe, em comparação com grãos manuscritos. Então Eu definitivamente não usaria apenas...
+
+Compile com o torch na sua primeira tentativa. Um faça Não escreva os kernels primeiro. Use uma tocha compilar. Portanto, a principal conclusão é que os algoritmos são muito mais importante do que hardware ou quaisquer que sejam os grãos manuscritos. Certo?
+
+Lembra do Deepseek, que foi lançado no DeepSeek? profundo, sabe, faísca profunda, sabe? Existem outros algoritmos para especulação. decodificação como MTP D flash DSpark Seja lá o que for, tudo isso é algorítmico. melhorias e essas inferências foram feitas de duas a seis vezes mais rápido, certo?
+
+Não era como se fosse um hardware novo. Não se tratava de um novo hardware que fizesse A inferência mais rápida era resultado dos algoritmos que fez a inferência mais rapidamente, flash direito Atenção, flash, você sabe FA2 FA3 três, Atenção relâmpago quatro, atenção relâmpago cinco, seis, sete, tanto faz, né? Todos Essas são melhorias algorítmicas, certo? A atenção instantânea era essencialmente uma Truque para melhorar bastante a movimentação de memória. Então, como é que orquestramos a memória?
+
+movimentação e utilização da estrutura de cache As GPUs são muito melhores? Hum, e então A atenção instantânea também é um algoritmo. O checkpoint de gradiente, sabe, um dos os algoritmos mais importantes para O treinamento é feito por meio de checkpointing de gradiente. Hum, E tudo o que isso faz é impedir que você salve tudo. as ativações. Você faz um truque onde
+
+Você só salva as ativações para cada camada única. Hum, e aí você pula tudo as ativações intermediárias em cada camada. Hum, e então você recompila os cálculos. as ativações. Hum, e gradiente O uso de pontos de verificação economiza memória de forma drástica.
+
+aumenta em cerca de 70%. Hum, 70% de memória redução sem alteração na precisão. E ok, o treinamento é um pouco Talvez 10% a 15% mais lento. Hum, e você saber que a verificação de classificação e o checkpointing eram um algoritmo. Hum, e você sabe, tipo em Em geral, você também deve tentar Entendo que você sabe quais são os novos dados.
+
+truques de processamento, você sabe como fazemos isso tipo, você sabe, escalonar dados, você sabe, fazer Nós fazemos, fazemos, nós fazemos aprendizagem curricular ou Algo assim, eu não sei... hum...
+
+Você sabe como limpamos o conjunto de dados? antes de realmente pré-treinarmos o modelo. Existem muitos truques que você pode usar para processamento de dados e obviamente você sei que ainda existe um grupo de pessoas Não sei, tenho uma opinião oposta. Existe um grupo de pessoas que pensa Mega kernels são o que há de mais recente e melhor para grãos. Você sabe o que é um mega núcleo? Um mega kernel é quando você pega
+
+um inteiro você pega um inteiro implementação de um modelo e é apenas um grão como um grão grande. Hum ah Talvez seja útil, quem sabe... você sabe Você conhece a Nvidia, você sabe que a Nvidia tem uma adquiriu Grock ou algo assim, e você Saiba que o ponto de vista deles é, por exemplo, você tem dois sistemas diferentes, certo? LPU
+
+que é o sistema Grock que faz o decodificando certo, como as camadas MLP As camadas fazem a decodificação e então a GPU, então as GPUs da Nvidia fazem o atenção e o pré-campo hum e assim por diante em general, sabe, nós podemos até ter um futuro Temos diferentes tipos de sistemas de hardware, você sabe que temos sexo que, você sabe, são especialmente projetadas chips para você sabe computação e nós possuem sistemas generalizados como as GPUs. Um e esses asex e GPUs irão colaborar uns com os outros. Então, por exemplo, o atenção, você sabe, a atenção serão para as GPUs e elas transfira-se para a LPU para saber o que você acha. o MLPS e assim por diante. Hum, e então isto é...
+
+como uma dança, sabe, entre eles e Você também pode fazer algo como um pipeline, certo? Você pode imaginar que existem muitos. muitas e muitas réplicas disto e elas podem tipo, sabe, servir umas 20 pessoas Ou você conhece 1.000 pessoas de uma só vez. Um E sim, então isso é tipo mais um abordagem e você sabe disso na minha opinião Essa é uma abordagem um tanto oposta à de mega grãos. Então, como um mega kernel, seu
+
+A visão é que você deseja combinar o objetivo. O objetivo de um mega kernel é Crie um kernel para o forward completo trajetória de um modelo de linguagem. Hum, e uma vez Você faz um assim que você é capaz para tornar o modelo de linguagem o direto caminho para um kernel que agora você pode criar o modelo de linguagem completo com 32 camadas como um único núcleo. Certo? Você pode estender isto e porque toda a língua O modelo é um kernel que você pode ainda mais além estenda-o. Certo? a previsão do
+
+segundo token, o terceiro token, o quarto token, o sexto token podem ser todos apenas um grão. Hum, e infelizmente, Isso é muito difícil de fazer. É muito difícil Porque o problema é a atenção, certo? É preciso prestar atenção aos símbolos no futuro. Veja os tokens no passado, não o futuro. Isso é trapaça. Hum, você
+
+Preciso ver os tokens do passado. E Esse é um problema fundamental. Um e É muito difícil, sabe, é muito é difícil criar um mega kernel para combinar. atenção e as camadas MLE ou MLP. É extremamente complicado. Então em
+
+Em geral, o que as pessoas fazem é... faça dois kernels, um kernel para a direita a parte da atenção e o outro núcleo para o resto. E então você verá Existem dois kernels. É, então...
+
+É muito difícil criar um mega kernel. mas você pode fazer dois kernels. Sim. OK. Mais alguma pergunta? Qualquer
+
+perguntas para os kernels? Então, o principal Conclusão para "Sim, uma pergunta". Sim, isso mesmo. É uma ótima pergunta. Então a pergunta foi porque existem muitos botões para torch compile tipo 1,00 ou algo assim.
+
+Como podemos reduzir a experimentação? hora de descobrir qual botão está o melhor? Então, felizmente, nós temos algo chamado bissecção ou binário procurar. Esse é o segredo. Então, o que vamos fazer?
+
+O que você deve fazer é, em vez de verificar cada um deles... Amostra aleatória de 10.000 combinações. Então
+
+Você randomiza a bissecção. Você selecionar aleatoriamente 50% dos, você sabe, bandeiras. Você o liga em vez de desligá-lo. Desligue e depois compare qual deles é o melhor. melhorar. E qualquer uma que for melhor, você
+
+Em seguida, restrinja a pesquisa. Você de novo Faça 50%, 50%, 50% e 50%. Então é Na verdade, registrei dois de 10.000. Não sei O que é o logaritmo na base 2 de 10.000? EU
+
+Não sei o que é isso. Um Duas vezes, eu não sei. Enfim, registro 200. Acho que você precisa fazer 30 passos, eu pensar. Não sei. Não me lembro
+
+qualquer que seja o valor de 2 elevado a ^ de algo, é igual a para 1,00 e depois registre. Então você só você precisa fazer você não precisa fazer você Não é preciso verificar todos os 100 botões. Você Basta verificar alguns passos e então Você saberá qual bandeira é a melhor. Um Então o truque é usar a busca binária ou A abordagem utiliza a bissecção. Sim.
+
+Sim. Mais alguma pergunta? Sim. Quais são seus pensamentos sobre
+
+Então, sua pergunta era: O que eu acho sobre sexo assexual, tipo, você sabe? cérebros gro sanova Eu nem conheço os novos chips das startups. Acho que eles realmente projetam seus próprios chips. Assim, o problema do ASEX é se ele é AS6. ou ASX ou qualquer que seja o problema de chips especializados são a arquitetura precisa ser codificado em alguns dos chips e isso esse é o problema. Se você codificar alguns dos
+
+Os chips que você conhece codificam a infraestrutura sempre codificam os laboratórios de arquitetura gostam de mudar a arquitetura e assim por diante toda vez que o laboratório muda a arquitetura que você precisa atualizar chip. Mas como uma GPU, o G é o truque de As GPUs são da Nvidia, você sabe. Nvidia, AMD, Intel, seja qual for a GPU. extremamente poderoso porque tem asex generalizado dentro da GPU à direita A GPU é, na verdade, uma combinação de ASEX. Hum, e o ASICH é apenas um grande ASICH. Então, eu acho que, em geral,
+
+A GPU é muito melhor porque você pode Personalize os componentes internos da GPU. você pode desativar coisas que entram no GPU e afins. Sim. Então, essa é a minha opinião. Eu não sei, eu não quero dizer qualquer coisa, mas em geral eu não...
+
+pensar Como você já deve saber, como mencionei anteriormente. Você sabe, hardware não existe em nenhum outro lugar. Para ir, você sabe que estamos na plataforma quatro. a menos que os fornecedores de hardware inventem algo float Eu não sei float zero então talvez Nós conseguimos quatro, você sabe, mais quatro vezes. mais rápido, mas em geral eu acho que eu acho As pessoas estão focadas demais em hardware e eles não pareceram isso na verdade, as maiores melhorias não são Hardware é software, certo?
+
+Precisão numérica, precisão numérica foi 32 vezes mais rápido. O hardware é apenas Três vezes mais rápido, certo? Então, hardware contribuiu apenas três vezes mais rápido. Um Ah, na verdade, ok, o tamanho do dado que você faz. Ao aumentar o tamanho da GPU, você obtém duas vezes mais rápido. É mais ou menos isso.
+
+trapaceando. Então eu realmente não diria Isso é uma melhoria. Hum, mas basicamente Se você tornar o hardware mais rápido, você Fique apenas três vezes mais rápido. Então, no meu Provavelmente, a importância dada ao hardware de visualização está sendo exagerada. você saber que o hardware na verdade não é tão importante. O segredo estava no software.
+
+aquela Nvidia, sabe, Nvidia, AMD, Intel, todos esses, você sabe, hardware provedores, eles apostaram no fato de que A precisão numérica era um truque e tensor, tensor, precisão numérica, esparsidade, sabe, esses softwares truques. Hum, ok. Bem, tensor não é É um truque de software mesmo, mas você sabe, um O tensor é uma espécie de ASICH dentro do GPU. Hum, e então, tipo, eu sinto que é isso Sim. Então, na minha opinião, eu não... eu não...
+
+Vejo mesmo um futuro promissor para a ASEX. Esse é o meu visualizar. Hum, eu acho que ASEX são tipo em vez de, Sabe, para ser honesto, eu estou realmente Fiquei bastante surpreso. Temos muitos ativos empresas, mas temos muito poucas empresas de algoritmos. Hum, e o motivo Por que? Porque ASEX você pode vender, certo?
+
+Você pode fazer um upgrade todos os anos. Você Saiba que este ano você pagará US$ 1.000 à ASICH. versão um e no ano seguinte você tem Para fazer um upgrade, certo? O problema com algoritmos são algoritmos são muito difíceis de Sabe, forçar o usuário ou algo assim a pagar novamente, e é por isso que o hardware é muito popular porque o hardware é muito Modelo de negócios simples, mas para algoritmos Fica mais complicado, né? Como são?
+
+Vamos monetizar a avaliação. checkpointing, eu não sei, né? muito difícil, então, mas o ponto principal é Acho que os grandes laboratórios em si são como...
+
+colaboração anunciada ao ar livre Broadcom e Suras, seja lá o que você saiba Cada laboratório individualmente irá para o fornecedor de hardware e projeto do chip com eles. Bem, meu ponto de vista é tipo, talvez Teremos mais desses por aí. abordagens de colaboração, mas eu sinto como ativos independentes, eu Não acho que vão durar. Hum, Sim, acho que essa é a minha opinião. Qualquer outro questões? Sim.
+
+Ah, você quer dizer quais são os tipos de grãos ou
+
+Oh, tudo bem. OK. OK. Então, o A pergunta era: quais são os... você sabe...
+
+são as alterações para kernels ou otimizações ou coisas do tipo Interessante, eu acho, para kernels. Então a maioria dos kernels quando você escreve kernels A maioria deles está focada em Redução do movimento da memória. Como fazemos isso? reduzir o movimento da memória? Isso é o maioria dos grãos. Por exemplo
+
+existe um truque chamado hum você Sei que existe um truque chamado cruzamento de fusíveis. perda de entropia onde em vez de fazer em vez da última camada de cont em vez de materializar os registros completos Existe um truque que você pode usar para fazer isso em Em lotes, você pode fazer linha por linha. materialização. Hum, e então isso vai reduzir a memória em muito, tipo eu Não sei se são 10 GB ou algo assim, se você Possuem um contexto extenso ou até mais. Um Essa é uma das maneiras. Os outros kernels
+
+A maioria dos kernels são chamados de fusão de kernel. onde você tem isso tipo longo função pietorch E tudo o que você precisa fazer é escrever uma. kernel para fazer todo este pietorch A função e a compilação do torch farão isso. para você. Então, a compilação com o torch é muito, muito...
+
+Você é bom em fazer fusão de kernel, certo? Dê ao torch para compilar uma função e ele irá Escreva um kernel, tente um kernel ou algo do tipo kernel e ele simplesmente fundirá tudo É muito, muito eficaz para isso. Mas acho que, em geral, os kernels são apenas reduzindo o movimento da memória, hum, e assim por diante, tipo Sabe, para ser honesto, eu realmente não sei. A maioria dos algoritmos gosta de chamá-los de kernels. Portanto, a maioria dos algoritmos que você cria...
+
+treinar mais rápido ou reduzir o uso de memória Bem, mas kernels, na minha opinião, kernels são... reduzir o movimento da memória. Hum, e então a maioria Kernels são apenas movimentação de memória, você saiba, otimização de movimentação de memória, certo? Como usamos o
+
+Qual é a estrutura de cache das GPUs? Hum, você Sabe, como não carregamos o mesmo? variável duas ou três vezes ou qualquer que seja? Hum, sim, não tenho certeza se isso Responderei à sua pergunta, mas a seguir...
+
+Aprendizagem por reforço. Hum, e depois Isso será uma recompensa por hackear os agentes. Bem, como uma introdução, presumo que para a maioria. As pessoas sabem, será que a maioria das pessoas sabe? aprendizado por reforço ou eu preciso de Pessoas importantes? Ok, vou dar uma chance.
+
+Introdução rápida ao aprendizado por reforço. Ok, uma breve introdução ao reforço. aprendizado. Hum, o que é reforço? aprendizado? Você tem esse ambiente
+
+como este jogo do Pac-Man. Hum, e seu objetivo é como o jogador, sabe, para maximizar recompensa. Você quer comer tudo isso biscoitos, né? Você quer comer tudo os biscoitos, mas também escapar de seus monstros. Na verdade, não sei.
+
+como são chamados. Inimigos, monstros, Seja lá o que for, seja lá como se chamem. Hum, E seu objetivo como Pac-Man é que você quer maximize a quantidade de cookies que você comer. E essa é a sua recompensa. O A recompensa são os biscoitos. Hum, e o
+
+A ação consiste em ir para cima, para a esquerda ou para baixo. ou certo. Hum, e o meio ambiente é o jogo. Outro bom exemplo, sabe? Outra forma que eu gosto de explicar O objetivo do aprendizado por reforço é aprendizagem por reforço é o que você deseja ter mais coisas boas e menos ruins durante treinamento. Então, por exemplo, logo no início...
+
+No início do treinamento, você pergunta ao modelo. Quanto é 2 mais dois? A resposta é...
+
+claramente quatro. Mas quando o modelo Começa o treinamento, vai ser muito idiota. Vai ser muito ruim. Vai ver B, você Sabe, o modelo diria apenas B, D, gato, cachorro, casa, rato, tanto faz. Hum, E o truque é para todos os maus respostas, você quer diminuir, você não quero que você goste negativamente Recompense isso ou penalize isso. Você quer
+
+penalizar o modelo se ele disser algo ruim e você quer aumentar a recompensa se disser a resposta correta. Hum, então Esse é o truque do reforço. aprendizado. Você só quer mais coisas boas. respostas, menos respostas ruins. Hum, e se
+
+É como se fosse muito próximo do... Resposta correta. Então, você sabe, três é Muito próximo da resposta correta. Hum,
+
+Você quer recompensar, você quer recompensar isso negativamente um pouco menos, certo? Porque três é muito Mais próximo de quatro do que B ou D. Hum, então se Se você escolher B ou D, você quer negativamente recompense-o generosamente. Em aprendizado por reforço, o truque é Você tem um sistema de verificação, certo? Você tem um verificador para verificar se o O modelo está indo bem ou mal? Então você vai
+
+Invoque o modelo muitas, muitas e muitas vezes. Um e cada um desses exemplos que você dá Número de verificação, certo? Então, para Por exemplo, o primeiro exemplo é muito Muito bom, por isso você dá uma nota de +10. Um O próximo exemplo é tipo, ok, então você Dê uma nota de -5. Hum, e então o O último exemplo é muito ruim, então você o dá.
+
+uma pontuação de menos 100. Um e reforço O aprendizado permite atribuir pontuações a cada uma dessas respostas e perguntas. Um e isso é uma espécie de reforço. A aprendizagem verifica. Hum, e o truque de Aprendizado por reforço é o meu favorito A frase é: paciência é tudo o que você precisa. Um
+
+logo no início do seu treinamento O modelo vai se sair muito mal, certo? Seu seu A recompensa será de 0000 Você sabe 0000. Você espera por muito tempo tempo e então você obterá o correto responder. Certo? Por exemplo, isto: Por exemplo, você pergunta ao modelo o que é 2.
+
++2, certo? Você começa o pré-treinamento do modelo. Você inicia o pré-treinamento do modelo, O modelo não sabe o que é dois mais dois, mas depois de 10 anos dirá quatro. Hum, ok, obviamente não 10 anos, Estou apenas exagerando. Mas depois de 10 anos, você espera 10 anos, o modelo irá Então diga quatro. Hum, e
+
+É por isso que minha expressão favorita é sorte. É tudo o que você precisa para reforço. aprendizado. Sabe, talvez por acaso você Vou conseguir quatro muito rapidamente. Hum, mas você Sabe, talvez você só precise esperar e espere, espere e espere pela eternidade Até que o aprendizado por reforço funcione. Um
+
+e, portanto, em geral, sua recompensa será zero por um longo tempo e então você vai te mostrar que você vai aumentar recompensa um após o zero e você sabe, para aprendizado por reforço. Existe um algoritmo muito simples para aprendizagem por reforço e o truque de O aprendizado por reforço é lembrar você Saiba a resposta final que você deseja. Por exemplo, você sabe quanto é 2 mais dois? Você sabe que a resposta é quatro, mas o O problema é que você não sabe o que é o O raciocínio, você sabe, foi o que aconteceu. Raciocínio lógico: bom ou ruim? Então, para
+
+Por exemplo, este exemplo é, você sabe, para Diga ao modelo para criar uma matriz rápida. Algoritmo de multiplicação. Hum, e o O truque é que, se a resposta estiver certa, você Recompense cada linha com +10. pontuação. E se estiver errado, você recompensa.
+
+Cada nota vale menos 100. Hum, e Sabe, disse André, sabe, em um Podcast Darkash, aprendizado por reforço É meio que como chupar pedaços de supervisão por um canudo. hum, você sabe, nós na verdade Se quiser, pode colocar adesivos neles. Um Assim você poderá pegar um dos seus adesivos. que podemos distribuir no final. Um
+
+Então, a frase da Audrey é esta, você sabe... e o ponto principal é o reforço Aprender é terrível, mas todo o resto é ruim. É ainda pior. Então, tipo, você sabe
+
+O aprendizado por reforço é a única ferramenta. Atualmente temos uma solução que funciona perfeitamente. Isto Funciona, mas não é muito eficiente. Um E ok, na verdade, ok, essa é a próxima. seção. Mas o ponto principal é que está tudo bem.
+
+Essa é uma introdução à aprendizagem por reforço. Bem, acho que alguém tem perguntas sobre Introdução ao aprendizado por reforço? Não. Ok, vou pular para "Ok, uma pergunta". Sim.
+
+Mencionarei isso na próxima seção. Hum, tem, tipo, sabe? melhores métodos de RL. Hum, mas em geral O aprendizado por reforço parece funcionar muito bem. Bem, por agora. Por último, acho que este é o
+
+último tópico, ou talvez não. Hacking de recompensas e agentes. Acho que é a mais divertida. Então, tudo bem para aprendizado por reforço reforço A aprendizagem só funciona se...
+
+A probabilidade de uma boa resposta é maior do que zero. Se for menor que zero O aprendizado por reforço nunca vai funcionar. Então, essa é uma diversão que é uma restrição de Aprendizagem por reforço. A probabilidade Uma resposta válida deve ser maior que zero. Nunca pode ser zero. Hum, e existem
+
+muitos, muitos, muitos problemas de reforço Aprender não funciona. Você sabe o A formatação pode estar incorreta. Você sabe, você É preciso fazer algum tipo de preparação ou aquecimento. acima. Então, você tem que fazer algum tipo de truque para ensinar um pouco ao modelo sobre, você sabe, sobre aquela coisa que Você está tentando maximizar. Hum, você tem
+
+para realizar ajustes finos supervisionados. Então, um dos Os truques do aprendizado por reforço são Na verdade, você precisa fazer SFT ou Ajustes finos para que o modelo não seja burro, certo? Para tornar a probabilidade zero não zero, a probabilidade de um bom resposta diferente de zero. Hum, você precisa se sair bem. pré-treinamento. Hum, e depois o outro
+
+O problema é que você sabe durante Aprendizado por reforço é simplesmente demais. fora da distribuição que reforço Aprender é simplesmente muito ruim. Então, é isso. Existem muitos, muitos problemas de reforço. aprendizado E acho que nós simplesmente, sabe, para o trajetórias de aprendizado por reforço podem atribuir recompensas incorretas ao trajetória correta lembre-se do simples O truque do aprendizado por reforço é que nós Atribua a recompensa a cada linha.
+
+que o mesmo número, certo? Ou isso é... bom ou isso é ruim e isso não é bom Porque, afinal, por que não, você pergunta ao modelo?
+
+Preciso descobrir quanto é 2 mais dois. A resposta está correta, certo? A resposta é quatro. O modelo diz que são quatro. Então você Recompense todo esse processo de pensamento como um bônus.
+
+10. Mas isso está errado porque, como você pode Veja no traço de pensamento que diz 2 mais 2 é igual a 10. Imagine que você sabe em todo o treinamento porque o truque do reforço Aprender é simplesmente atribuir 10 para cada linha ou menos 100 para Cada linha. Sentimos falta disso. Você sabe, coisa ruim. Então você pode
+
+Imagine quando continuarmos treinando o modelo. O modelo pode ser hackeado ou oferecer recompensa. hackear ou, você sabe, escrever coisas sem sentido. vou falar um monte de bobagens entre uma coisa e outra algum tipo de nova linguagem de máquina que não conseguimos ler e isso atribuirá Nota máxima para isso. Então, isto é um problema muito grande de reforço aprendizado e a maneira de resolver ou corrigir isso é Algo chamado supervisão de processos. Um
+
+e supervisão de processos, o que você faz é Você verifica manualmente cada linha, não é? você não atribui simplesmente mais 10 ao Finalmente, você sabe que a resposta está correta. Certo, a resposta está correta, mais 10. Atribua a cada linha mais 10. Não faça isso, em vez disso, faça o que você faz.
+
+atribua a cada linha um valor diferente. número certo você atribui algumas linhas como mais 30 linhas é mais zero qualquer coisa As linhas ruins são menos 100, certo? Funciona muito, muito bem, infelizmente. A visão de processo não é escalável e é extremamente caro fazer certo quem é Vou rotular isso como... você sabe
+
+Os humanos, eu acho, certo? Nós temos que... rotular esses dados corretamente é o que precisamos fazer.
+
+Imagino que seja necessário etiquetar manualmente os laboratórios. É por isso que os laboratórios às vezes, como você sabe, Eles vão à escala, chamem o que quiserem, certo? Eles pedem às pessoas que rotulem os dados que você...
+
+Saber se isto é bom, isto é ruim, isto é... bom é isso ruim, hum, e assim por diante, hum, mas o O truque é que você também pode usar um idioma. Modelo, certo? Você pode usar o LLM como um
+
+juiz. Você pode chamar um idioma de Modelo para rotular cada linha. E Sabe, meu ponto de vista é o seguinte, sabe? Grandes laboratórios farão isso. processar mais. Eles chamarão os seus próprios
+
+O modelo iterativamente se reavalia. Hum, e essa é uma das maneiras pelas quais eles veem a situação. Eles conseguem alcançar a IAG (Inteligência Artificial Geral), certo? Apenas por Está se reavaliando, certo? reavaliando-se, verificando novamente, fazendo Você sabe se um juiz consegue um LLM automático?
+
+supervisão de processos, algo assim. Um Mas lembre-se que existe um problema porque mesmo que você faça supervisão de processo modelo que você está usando o mesmo modelo para avaliar o modelo corretamente da mesma forma problema como nós supino profissional certo supino Você usa o LLM como verificador para Verifique o LLM, que definitivamente não é. Bom, e o motivo é porque Você pode usar o hacking de recompensas. um ótimo exemplo de manipulação de recompensas seu modelo começa a trapacear, então, para exemplo quando você quer fazer uma rápida Algoritmo de multiplicação de matrizes. Tudo isso O que ele faz é apagar o temporizador. Certo
+
+Lembre-se de que você deve definir a meta para o máximo. reduzir o tempo. Certo? Reduzir o tempo do algoritmo de multiplicação de matrizes. Então, tudo o que isso fará é excluir o temporizador. Vamos excluir o cronômetro. Defina o
+
+o cronômetro zerado e então lá estamos nós maximizar uma recompensa. Bem, obviamente isto é Não está correto, certo? Porque o truque é Você também tem uma verificação de correção, certo? Você verifica se a matriz A multiplicação está correta. Um mas existe outra maneira pela qual o modelo irá Edite suas duas matrizes para que sejam simplesmente zero.
+
+E quanto é 0 vezes 0? Zero. Hum, e então As verificações de correção também falham. Um e então a manipulação de recompensas se torna algo muito, muito grande problema porque esses modelos podem trapacear e usar truques especiais para contornar a situação seu modelo real, hum, sua intenção do função de recompensa. Outro exemplo muito problemático é que Não se trata apenas de manipulação de recompensas. Pode
+
+na verdade, vai destruir seu computador. Certo? Por azar, seu modelo pode gerar a seguinte saída: Conhecer algum tipo de metodologia de corrupção Você sabe, deletar, sabe, fazer rm-rf em todo o seu computador e adeus ao seu O computador está morto. Então, tipo, você sabe Às vezes isso também acontece. Então Não se trata apenas de manipulação de recompensas, mas também de confiança.
+
+da sua ferramenta porque você conhece a confiança de se o modelo está realmente funcionando bem ou ruim também é um problema muito grande E lembre-se deste enredo que eu lhe mostrei. Saiba se você inclui a traição do GPD 5.6 em os parâmetros que você conhece, olhando para o resposta que você sabe, lembra do anterior su banco uh banco profissional e mostrar profundo que Os modelos também trapaceiam olhando para o resposta final você sabe que pode ver isso Com GBD 5.6, se você trapacear, funciona muito bem. bem. Mas se você remover a trapaça
+
+exemplos, sim, você sabe, dentro de tendência. E então, sabe, talvez você possa ser Pensando, ah, essa coisa de hackear recompensas É tipo, nossa, é muito raro, você Sei que é muito raro. Não vai acontecer Acontece no mundo real. Bem, GLM 5.2 durante sua metodologia de treinamento, eles mencionaram especificamente que eles têm isso nova metodologia para reforço aprendizado chamado anti-hacking. Hum, então GLM
+
+A versão 5.2 introduziu um método para parar, você Saiba que a pirataria informática é recompensada. Hum, e o que eles O que eles fizeram foi adicionar um verificador de links. Então Lembre-se de que mencionamos anteriormente como SweetBench Pro, o modelo vai trapacear E veja a resposta. E daí?
+
+A GLM fez essa verificação. Então Durante o aprendizado por reforço, eles irão Verifique cada chamada de ferramenta que você fizer. Hum, e se o site, se o site foi até a resposta que você interromperia isso de acontecer. Hum, e então, tipo GLM basicamente expôs isso, sabe? sistema de filtragem para todo o processo de aprendizagem por reforço. Um e
+
+Sabe, segundo eles, funcionou. muito bem E lembre-se desta trama sobre trapaça. exemplos. Sabe, parece que é o Opus. Os modelos do Claude sempre gostam de trapacear. Um
+
+E as modelos da Jubet não gostam de trapacear. Mas a principal conclusão é que os modelos irão trapacear porque você está dizendo isso Você sabe, tipo, você sabe que eu quero maximizar recompensa AB CDE EFG. Hum, e então O modelo irá maximizá-lo, mas Na verdade, não seguirá sua intenção. Um Portanto, você precisa ter muito cuidado com isso. Na verdade, para o GBD 5.1 durante o seu
+
+treinamento OpenAI mencionou que eles tinham Algo chamado hacking de calculadora. Um e assim, no GBD 5.1, quando eles estavam treinamento, eles queriam recompensar a web use a ferramenta corretamente, como você deseja recompensar o modelo por usar a ferramenta online. Um mas, em vez disso, não utilizou a ferramenta online. usou a calculadora para falsificar a web ferramenta. Hum, e então, durante o treinamento de
+
+GBD 5.1, isto aconteceu. Hum, e tipo assim Você sabe que existem muitos, muitos, muitos, muitos problemas. Acho que eles mostram, sim, eles mostrou como hackear uma calculadora. Você sabe que minta sobre qual ferramenta você usou. Hum, você
+
+Você sabe que esconde a incerteza que cria. Apresente os fatos. Então, existem muitos, muitos, muitos problemas com a invasão de recompensas UM. E Isso não é falso, né? Então, recompense A prática de hacking já está presente em grandes laboratórios.
+
+Os treinos funcionam bem? Isso é apenas 5.1. Hum, acho que não, eles mencionaram a Grã-Bretanha. 5.2 ou algo assim. Sim, mas em geral
+
+Eles mostraram que você entende disso. Isso acontece no mundo real, sabe? Não sei se vocês conhecem o modo GPU...
+
+Mas você conhece o modo GPU? placar, sabe, para fazer kernels mais rápidos, então se você quiser Escreva seus próprios kernels, com certeza, poste sobre desafios de hackathon em modos de GPU um Eles são muito, muito prestativos e muito útil, mas você sabe, alguém conseguiu para hackear a recompensa hackeie o kernel do modo GPU competição e lembre-se no Exemplo de multiplicação de matrizes. Há dois, há dois, há dois cheques que precisamos fazer direito para criar a matriz algoritmo de multiplicação mais rápido, mas também Precisa estar correto, certo? duas verificações: a verificação de correção e a verificação de sincronização. O modo Um e o modo GPU também tinham duas verificações: a verificação de correção e a verificação de sincronização. Então, o que você...
+
+acho que o modelo fez quando o modelo o O modelo sabia que, na verdade, o modelo sabia disso. estava sendo avaliado no verificação de correção, certo? Aprendi, oh. Estou sendo avaliado quanto à correção. Vou verificar agora para garantir a correção.
+
+Correto, então ele exibirá o kernel correto e então o modelo sabia que estava sendo cronometrado e o que era O que aconteceu? Simplesmente aconteceu... algoritmo uma vez e depois salvou e ele pulei todos os outros 15, sabe?
+
+testes. Então, esse é o modelo. fez. Então, essencialmente, o modelo aprendeu O modelo aprendeu que havia dois testes, verificação de correção e o verificação de sincronização. E o modelo apenas fez o verifique corretamente e então uma vez que entrou no regime de temporização, Ele trapaceou. Bem, para ser honesto, é
+
+Na verdade, é bem assustador. Então, essencialmente, O modelo aprendeu que você está fazendo isso. testes e o modelo realmente sabe Você está realizando os testes de desempenho. Hum, e então Isso é realmente muito interessante. Um E você sabe, ah sim, isso é isso é mais, sabe, um exemplo maior. O
+
+A verificação de correção estava correta, mas o Verifique o tempo, ele trapaceou. Hum, e tudo mais. Foi lançado, sabe, houve...
+
+Supostamente seriam 15 chamadas na primeira chamar. No primeiro núcleo, ele fez todos os 15 de todo o processo, certo? Fez tudo das 15 corridas. Hum, e então núcleo dois para 15, ele simplesmente fez uma busca em um dicionário Python. acima. Sim.
+
+Não sei se você sabe disso. Isso me lembra da Volkswagen, onde eles inicia. Sim, alguém me contou. Alguém me falou sobre isso. Hum, É muito semelhante. É tipo, ah, eu sou
+
+Não vou fazer isso. Desligue isso e Sim, exatamente. Então, tipo, sabe, é Não são apenas as modelos, eu acho, que trapaceiam. Até os humanos trapaceiam, pelo visto. Sim. Mas eu
+
+Acho que se chama Lei de Goodart. Isso é aquele. Por exemplo, se você tiver um parâmetro de referência, Então o parâmetro passa a ser: É bom? lei? Não me lembro. Sim. OK. Sim.
+
+O parâmetro de referência essencialmente se torna inútil porque as pessoas simplesmente trapaceiam Maximizar a recompensa. Sim, acho que humanos. também trapacear. Sim. OK. Oh meu Deus
+
+Meu exemplo favorito é... então, em outros laboratórios, Sabe, você vê no Twitter, no Em qualquer lugar, eles dizem que fizeram grãos 10 vezes mais rápido. Um Não, não, não, isso não está correto. Eles fizeram.
+
+Não tornar os kernels 10 vezes mais rápidos. Em Na verdade, se você analisar o código, eles Não tenho, sabe, nenhuma operação, então não. operações. Eles também editam o cronômetro. Sabe, eles, como eu literalmente descrevi, sabe, eu descrevi, eles, Sabe, por aqui, hum, sabe, eles editar o temporizador, eles fizeram as matrizes irem para zero, eles trapacearam. Hum, e então tipo, você
+
+Sabe, isso realmente aconteceu de verdade. mundo. Então, alguns, você sabe, alguns dos laboratórios, eles publicaram artigos alegando que eles produziam grãos 10 vezes mais rápido. Mas, na verdade, se você ler atentamente o código e os exemplos que eles...
+
+Todos os exemplos foram de trapaça. Hum, e então você sabe eles sabem que isso não é muito bom em Em termos de recompensa por hacking, você sabe. Você Saiba que o hacking de recompensas é um problema muito grande. problema. Hum, e você sabe, por exemplo Quais são alguns exemplos de kernel?
+
+hackear recompensas, você sabe, não gerando código CUDA real em vez de causar algum problema ou algo assim algo parecido com o que já está escrito, sabe? sistema. hum, você não tem kernels up, o que É basicamente fazer o que você sabe tornando as matrizes A e B simplesmente zero. Todos Não faz absolutamente nada. certo? O kernel está simplesmente vazio. Hum,
+
+E você tem algo como reutilização de memória, então você reutilizar a mesma resposta várias vezes de novo. Hum, você tem tempo. problemas de sincronização. Então é isso Trapaceando o cronômetro. E a minha opinião é Como você sabe, se você publicar mais rápido kernels ou mais rápido você sabe matriz se você Acredito que seu agente de IA tenha feito kernels 10 vezes mais rápidos, por favor verifique Você sabe, por favor, dê uma olhada no código.
+
+antes de publicar, porque é muito Não pega muito bem, e então... também o maior problema que eu sinto que As pessoas estão esquecendo de você. Sei que você fez grãos 10 vezes mais rápido Você realizou multiplicação de matrizes 10 vezes.
+
+mais rápido Existe um limite teórico para matrizes. multiplicação, certo? Matriz multiplicação, sabe, não é você Não consigo fazer mais rápido porque há limites matemáticos sobre como fazer um Mais rápido, né? E então, sabe, multiplicação de matrizes no nível mais alto tempos muito antigos, sabe, é O de N ao cubo. Sabe, todas as vezes Os pesquisadores conseguiram torná-lo mais rápido e Cada vez mais rápido, cada vez mais rápido.
+
+Sabe, agora é O de N para o^ de 2,371339, Eu acho. Você sabe, pesquisadores todos os dias solteiros estão tentando fazer isso número cada vez menor e menores. Sabe, acho que tipo...
+
+Você sabe que 1 1552 a 1339 não é isso pequeno, sabe, não tão grande assim, eu acho. Um Mas você sabe que eles estão progredindo, mas O ponto principal é que você sabe disso. pesquisadores que você conhece mostram com limites matemáticos que impedem que você vá mais rápido do que isso, e então como você pode recompensar? Uma invasão ainda mais rápida do que isso. Então, o ponto fundamental é...
+
+Por favor, verifique se você sabe curtir o pessoas que fazem trabalhos de pesquisa e coisas do tipo Por favor, confirme se o seu modelo é Não recompensamos a pirataria informática. É muito grande, muito grande. grande problema. Hum, e você pode ver, oh eu Acho que eu só tinha um enredo. Hum, mas sim, em Em geral, por favor, não faça isso. Por favor, verifique.
+
+Seus modelos, eu acho. Hum, acho que é isso. Tudo pela conversa. Você sabe, sim, obrigado. Agradeço a todos por terem vindo. Ah, mais
+
+perguntas também. Ok, obrigada. Obrigado. Nós também temos Oh sim. Temos uma grande quantidade de adesivos que você pode levar na caixa ali, e alguns alfinetes e outras coisas.

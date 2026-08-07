@@ -1,0 +1,95 @@
+---
+video_title: "How Autoresearch is changing ML research — Zhengyao Jiang, Weco"
+video_id: iCj_ATyThvc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=iCj_ATyThvc
+video_date: 2026-07-16T18:08:16+00:00
+video_description: |
+  Earlier this year, OpenAI ran Parameter Golf, a model-training competition that doubled as a hiring filter. Over 1,000 researchers competed to train the best small language model under a 16MB cap. The top contributor was the one candidate OpenAI couldn't hire. Our autonomous research agent Aiden finished with 7 merged records, more than twice as many as any other contributor, and ended up the most-cited participant in the community.
+  This talk is about what those 22 days showed. I'll cover on high level how does it works and which of its ideas produced the records. But the part worth more than the leaderboard is the collaboration itself, the community and AI agent building on each other's work, the largest natural experiment in human-AI collaboration I've seen run in public. I'll close with what it tells us about where humans and autonomous research each still matter for the foreseeable future.
+  1:57 PM
+  
+  # An AI Agent Became the #1 Contributor in OpenAI's Hiring Challenge
+  
+  **Location:** Main Stage
+  **When:** Day 3 - July 1, 2026 · 1:55pm-2:15pm
+  
+  ## Speakers
+  
+  ### Zhengyao Jiang
+  CEO & Cofounder · Weco AI
+  [X/Twitter](https://x.com/zhengyaojiang) · [LinkedIn](https://www.linkedin.com/in/zhengyao-jiang-387b44145/) · [Website](https://zhengyaojiang.github.io/)
+  
+  Cofounder & CEO @WecoAI - automated hill climbing with LLMs. Previously: PhD in ML at UCL
+  
+  Timestamps
+  
+  0:00 Introduction to Parameter Golf and the Aiden agent
+  1:06 Defining the challenge: Auto-research vs. human community
+  1:47 About Weco AI and the development of Aiden
+  3:07 Evaluating Aiden's impact and H-index in the community
+  4:01 Why autonomous AI is powerful: Throughput and efficiency
+  5:21 Human-AI collaboration: How ideas move the frontier
+  6:32 Case study: Combining research, architecture, and tokenization
+  7:41 Summary of auto-research strengths: Execution and search
+  9:06 The role of human design in competition
+  10:04 The Andrej Karpathy metaphor: Gradient descent and coding
+  11:19 Auto-research as training a model: Evals and abstractions
+  13:36 Case study: Improving data pipelines via strict API abstractions
+  14:38 Conclusion: The new craft of the AI engineer
+---
+[música] Em
+
+abril deste ano, a OBI promoveu um desafio de recrutamento, uma competição chamada Parameter Golf. O candidato que mais contribuiu foi aquele que eles não conseguiram contratar. Não era uma pessoa, era um agente que criamos chamado Aiden. Em "parameter golf", o objetivo é treinar o melhor modelo de linguagem possível, respeitando as restrições de tamanho e computação.
+
+Participam cerca de 1.000 engenheiros e pesquisadores de aprendizado de máquina. Eles enviaram 2.000 propostas. Apenas 47 passaram pela avaliação aberta e entraram na tabela de classificação. Sete
+
+deles são, na verdade, agentes. Mais que o dobro da contribuição de qualquer ser humano. Você viu muita pesquisa sobre automóveis hoje. Os agentes estão aqui a superar obstáculos. Esses resultados são realmente impressionantes . A pergunta que quero fazer aqui é um
+
+pouco diferente. Será que o agente de pesquisa automatizado consegue produzir um trabalho que seja de fato reconhecido pela comunidade humana, além de uma simples otimização para uma boa pontuação? Será que ele está buscando algo que outros engenheiros possam incorporar, bifurcar e desenvolver? Então, em vez de termos um agente apenas atuando localmente, criamos um que publica seu próprio trabalho, e esse é o Aiden. Breve contexto sobre nós. A Wiko é uma
+
+empresa de pesquisa automotiva fundada há cerca de dois anos e meio. Ah, eu sou cofundador e CEO da Jungao. Obtive meu doutorado na UCR em aprendizado por reforço. Há cerca de dois anos, desenvolvemos o melhor agente de pesquisa automática avaliado de forma independente pela OpenAI em seu artigo de benchmark de MLE. Embora naquela época não existisse um nome como "pesquisa automotiva", as pessoas chamavam isso de agente de engenharia de aprendizado de máquina.
+
+Aiden é o próximo passo e um protótipo experimental. Trata-se de um sistema multiagente de autoaperfeiçoamento que consegue ler informações públicas, como artigos de pesquisa e outros comunicados de imprensa, executar seus próprios experimentos e submeter um comunicado de imprensa assim que os resultados passarem por um rigoroso controle de qualidade. Enviamos Aiden para uma competição de golfe de longa duração, que durou cerca de 22 dias. Ao final, Aid estabeleceu sete recordes na tabela de classificação. Cada um deles é um novo melhor resultado para a competição, homologado pela OpenAI, e o melhor humano conseguiu apenas três. A
+
+aprovação na avaliação do anfitrião é um sinal de qualidade. Uma segunda questão, talvez ainda mais importante, é se outros participantes gostariam de dar continuidade ao seu trabalho. E descobriu-se que o trabalho de Aiden teve o maior impacto em toda a comunidade. Aqui estamos utilizando uma medida de inferência amplamente usada no meio acadêmico. Isso se chama índice H. Grosso modo, se
+
+X artigos seus forem citados X vezes, seu índice Ach será X. Calculado com base nos PRs. Aiden tinha 10 anos e o próximo humano tinha sete. Toda a comunidade estava construindo sobre um trabalho de sistemas de IA, incluindo muitas outras entradas no ranking. Para explicar melhor, por que um sistema de IA autônomo pode ser tão poderoso? Uma
+
+razão óbvia é que se trata de uma IA (Inteligência Artificial). Ele pode funcionar incansavelmente. Ao longo de 22 dias, foram executados cerca de 1.300 experimentos em um único nó H100. Mas a capacidade de processamento não representa todo o quadro. Um sistema de IA bem ajustado também pode
+
+manter alta a qualidade de seus resultados. Em termos de computação, utiliza no máximo 4% da capacidade computacional total da concorrência. e representou cerca de 15% dos discos. Além disso, 28% das suas submissões entraram na tabela de classificação. Taxa de calor aproximadamente seis vezes maior que a média da comunidade. Então,
+
+na verdade, Aiden melhorou a relação sinal-ruído em todo o canal de comunicação pública da comunidade, que é uma ferramenta de relações públicas. Não venceu por meio de paralisia em massa, embora a pesquisa automotiva tenha um enorme potencial para causar paralisia. Com base nesses números, pode parecer que a pesquisa automotiva já supera a de especialistas humanos em engenharia e pesquisa de aprendizado de máquina, mas essa não é toda a história que quero contar. Humanos e IA contribuem de maneiras muito diferentes. Ao analisarmos as ideias, percebemos que quase todas elas, segundo o histórico de relações públicas de Aiden, provêm de pesquisas com humanos, realizadas com outros participantes do golfe paramétrico ou em comunidades semelhantes, como a nano GBT.
+
+Essas ideias não representam necessariamente uma parceria entre as partes . Às vezes é uma anotação, tipo, um pesquisador humano disse: "Ah, desisto dessa ideia por causa de alguma dificuldade de implementação", e o agente é bom em encontrar esses problemas e implementá-los de fato. Há também uma pequena fração de ideias originais que Aiden concebeu por conta própria, as quais surgiram de seus esforços para contornar as restrições de tamanho de arquivo . Aqui está um exemplo concreto que ilustra os padrões que acabei de mencionar. Então Aiden pegou uma ideia do artigo de Quen chamada atenção controlada (gated attention) e funcionou, mas introduziu mais parâmetros e ultrapassou o limite de tamanho de arquivo de 16 megabytes .
+
+Então, foi necessário descobrir um mecanismo de equalização para reduzir o tamanho do arquivo. Mas, com a combinação desses dois elementos básicos, a pontuação praticamente não se alterou. Em seguida, outro colaborador publicou uma melhoria no tokenizador. Aiden reconheceu a ideia e a combinou com o trabalho arquitetônico. Funcionou apenas por cerca de cinco dias.
+
+E depois dessa combinação, as três ideias revelaram uma sinergia enorme que levou a um grande salto de desempenho, tornando-se um dos recordes de Aiden no ranking. Resumindo minha interpretação de como interpreto Aiden e, de forma geral, a eficácia dos sistemas de pesquisa automotiva , posso afirmar que eles são muito fortes em encontrar e implementar ideias. No caso que acabamos de ver, uma ideia de um artigo recente foi implementada na competição e mostrou-se eficaz em identificar elementos promissores na comunidade principal do golfe, mesmo que o meio público seja, na verdade, bastante ruidoso em termos de informação. Também pode surgir de forma logicamente simples. Por exemplo, neste caso, depois de adicionar os parâmetros e ultrapassar o limite de tamanho do arquivo, uma próxima medida óbvia é simplesmente a quantização.
+
+E é realmente rápido e muito eficiente em encontrar as combinações certas em um enorme espaço de busca. Ok, talvez nenhuma dessas opções soe muito sexy. A maioria delas é simplesmente uma boa execução. Mas, na realidade, a execução é o principal gargalo. O que geralmente impulsiona o progresso é justamente a crença em ideias já existentes e muitas boas execuções.
+
+OK. Em resumo, o estado de uma colaboração entre humanos e IA é aquele em que os humanos, coletivamente, fornecem muitas ideias criativas e os agentes as executam para resolver um desafio concreto. O que estamos analisando é um grande grupo composto por um humano e um sistema de IA. Isso significa que a contribuição de um único engenheiro humano diminuirá marginalmente? Eu não disse nem por isso, não mesmo.
+
+Em competições de golfe entre primatas, é fácil focar apenas nos engenheiros que estão realmente escalando colinas. Mas o conceito por trás da própria competição é extremamente importante. Um projeto ruim pode tornar todo o esforço da comunidade inútil, e o trabalho malfeito deles terá uma enorme vantagem na era da pesquisa automotiva . Eu gosto muito de um tweet do Andre Kapasi de uns 10 anos atrás, onde ele disse que o Greeting Descent consegue escrever código melhor que você. Peço desculpas pelo contexto. Há cerca de 10 anos, o
+
+aprendizado profundo estava começando a absorver grande parte do trabalho de engenharia de software, como a programação convencional, e o tweet dele era uma crítica àqueles que achavam que podiam escrever um código melhor do que um modelo treinado. Ok, obviamente ninguém está tentando escrever código manualmente para burlar um modelo. No entanto, a engenharia de software, como profissão, ainda existe, e muitas pessoas trabalham treinando esses modelos, sendo essa uma das profissões mais bem pagas atualmente. Acredito que a forma como o método do gradiente descendente altera a codificação é uma ótima metáfora de como a pesquisa automotiva transformará a pesquisa e a engenharia de aprendizado de máquina. Isso torna comuns certas habilidades de execução.
+
+Ao mesmo tempo, isso torna algumas habilidades de nível superior muito mais valiosas. Na verdade, fazer pesquisa automotiva é muito parecido com treinar um modelo. Sua abstração baseada em código é essencialmente a arquitetura. Define as restrições e as prioridades para o que o agente pode explorar. Sua avaliação consiste na função de perda e nos dados. Define o que o agente deve otimizar
+
+. Faça a avaliação primeiro. O parâmetro `eval` é o sinal que você usa para treinar um modelo. Nesse caso, trata-se de treinar seu código. Desempenha o mesmo papel que os dados e a função de perda no treinamento de modelos ou em um cenário de aprendizado por reforço . É como um ambiente em que
+
+o agente está treinando. Hoje em dia, ninguém argumentaria que dados ou ambientes não importam. E é aqui que também se pode construir um modo vertical . Você pode ter dados proprietários para avaliação ou um conhecimento único em uma área específica sobre o que importa e como medi-lo. E uma boa avaliação seria cada vez mais valorizada à medida que a pesquisa automotiva se fortalece.
+
+Outra coisa que considero muito subestimada é a abstração baseada em código. A abstração fornece a estrutura sobre a qual a pesquisa automatizada pode iterar e, bem, esse é também o ponto de partida que influencia enormemente toda a direção da busca. Isso se assemelha muito ao projeto de arquitetura em redes neurais. Em teoria, diferentes arquiteturas podem representar a mesma função, mas a arquitetura, sistematicamente, facilita o aprendizado de algumas funções . E uma boa arquitetura direciona a otimização para soluções que generalizam melhor e têm melhor desempenho, mesmo quando a perda no treinamento possa parecer a mesma. O
+
+mesmo se aplica à pesquisa automotiva. Eis um exemplo. Executamos pesquisas automatizadas para um pipeline de detecção de fraudes e estamos tentando otimizar o processamento de preparação de dados. Inicialmente, fornecemos uma API flexível onde a mesma função processa os dados de treinamento e teste, e a pontuação parece ótima, mas a solução foi comprometida porque certas informações do conjunto de teste vazaram para os dados de treinamento. Em seguida, restringimos ainda mais o acesso aos dados, implementando uma API mais rigorosa, na qual os dados de teste não conseguiam alcançar os dados de treinamento, e a taxa de vazamento de dados caiu para zero.
+
+Nesse caso, uma boa abstração leva a melhores soluções. Mesmo que, se o agente realmente quiser, ele possa direcionar o programa de recompensas. Então, o que quero dizer é que usar a pesquisa automática é uma nova arte. Trata-se de projetar um ambiente para que um agente possa progredir, e ainda estamos no início desse processo. Acho que isso torna este um momento extremamente empolgante para ser um engenheiro de IA. Outras pesquisas irão
+
+mudar quais habilidades são mais importantes. Criatividade, a capacidade de discernir para elaborar uma boa avaliação ou uma abstração. Esses fatores em breve se tornarão exponencialmente mais importantes. É na operação desses sistemas que surgirá uma nova habilidade, algo que praticamente não existia há um ou dois anos. Assim, a busca é automatizada. O ser humano
+
+simplesmente subiria na pilha, não sairia dela . Novamente, o que chamamos de laboratório de pesquisa de produtos automotivos. Continuaremos compartilhando o que estamos aprendendo à medida que construímos em nosso blog e também publicarei algumas das minhas ideias no AX. Se você achar isso útil, fique à vontade para me seguir no X. Obrigado.

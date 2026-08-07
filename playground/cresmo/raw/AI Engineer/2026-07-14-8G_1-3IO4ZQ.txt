@@ -1,0 +1,145 @@
+---
+video_title: "WTF Is the Context Layer? The Missing Infrastructure for Production Agents — Prukalpa Sankar"
+video_id: 8G_1-3IO4ZQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8G_1-3IO4ZQ
+video_date: 2026-07-14T22:45:06+00:00
+video_description: |
+  In the last two years, models have gotten exponentially smarter. Two years ago they couldn't pass the bar. Today, top 1% of test scorers. And yet most agents still can't answer a simple business question correctly. You ship a demo that works. You deploy it. The business abandons it in a month.
+  
+  The missing variable is context: the business definitions, procedural knowledge, and operational norms that make a human expert valuable.
+  
+  Drawing on hundreds of production deployments, Prukalpa Sankar will break down what it actually takes to give agents contextual intelligence — and get them past the demo stage.
+  
+  She'll walk through the architecture of a context layer: how context repos work (versioned, testable, portable), how simulation environments catch failures before deployment, how agent traces compound back into shared context, and why context engineering scales where fine-tuning and prompting don't. She'll also cover why your context needs to be open (MCP, Iceberg, deploy to any framework) — and what happens when it isn't.
+  
+  ### Prukalpa Sankar
+  Founder & Co-CEO · Atlan
+  [X/Twitter](https://x.com/prukalpa) · [LinkedIn](https://www.linkedin.com/in/prukalpa)
+  
+  Prukalpa Sankar is the Founder & Co-CEO of Atlan, the context layer for AI. She's been early to a defining idea of the AI era: context is king. AI systems are only as good as the business context behind the data they rely on. Under her leadership, Atlan has become a Leader in the Gartner Magic Quadrants for both Data & Analytics and Metadata Management, serves 300+ enterprises including Mastercard, GM, JPMorgan Chase, and Nasdaq, and has raised $200M+ from Sequoia, GIC, and Salesforce Ventures. Before Atlan, Prukalpa co-founded SocialCops, the world's largest government data lake powering the UN's SDG monitoring — recognized by the New York Times and the World Economic Forum. She's been featured in Forbes 30 Under 30 and Fortune 40 Under 40.
+  
+  Timestamps
+  
+  * **0:12** Introduction: The Context Moment
+  * **1:51** Why AI Agents Struggle with Business Context
+  * **3:19** Performance = Intelligence + Context
+  * **4:27** The Human Learning Model: Lessons from Maya
+  * **7:20** Evolution of Agent Architecture at *Atlan*
+  * **10:00** The Challenges of Isolated Agent Systems
+  * **11:06** Transitioning to General Purpose Agents
+  * **12:43** Marketing Team Case Study: The Context Layer
+  * **14:36** The Challenges of Context Engineering
+  * **15:31** Defining the Context Layer: The GitHub for Context
+  * **16:43** Compounding Learning Loops and Traces
+  * **17:18** How to Start Building Your Company Brain
+  * **18:07** Defining the Context Layer Architecture
+  * **19:31** Conclusion: Context is IP
+---
+[música]
+
+Olá a todos. Meu nome é Prakalpa. Eu sou o fundador da Atlan. E hoje vou falar sobre esse assunto em que o contexto está em alta. Então, meu objetivo hoje é falar sobre o que diabos é a camada de contexto?
+
+Antes de começar, prometo que esta é a última vez. Hum, não sei se o controle remoto está funcionando.
+
+Atlan, está funcionando. Obrigado. O problema que resolvemos é que, como dizemos, a IA não conhece o seu negócio, e nós corrigimos isso. Trabalhamos com um grupo incrível de empresas em todo o mundo, desde GitLab, Zoom, Discord e Affirm até grandes empresas como MasterCard e General Motors. E há cerca de um ano, meu cofundador e eu subimos ao palco e dissemos que, no início da era da internet, Bill Gates escreveu um post de blog muito famoso que dizia que o conteúdo é rei. E
+
+como estamos no alvorecer da era da agência, o contexto será fundamental. Desde então, parece que 2026 é o ano do contexto. Alguém aí quer gráficos de contexto? Sabe, a cada dois dias aparece alguma versão desse contexto. Então, o que está acontecendo?
+
+Bem, acredito que a resposta para isso esteja nesse campo de distorção da realidade em que vivemos. Eu moro aqui na região da Baía de São Francisco. A cada um ou dois dias, tenho conversas com pessoas que geralmente me perguntam: "Quão perto estamos da Inteligência Artificial Geral?" E aí começamos um debate e ficamos tipo, "Bem, 1 ano, 3 anos, e assim por diante." Não há dúvida de que os modelos estão se tornando exponencialmente mais inteligentes a cada dia. Há dois anos, eles não conseguiam passar no exame da
+
+ordem. Hoje em dia, se eles fossem prestar o exame da OAB, estariam entre o 1% dos melhores colocados. Por outro lado, elas não são exponencialmente mais úteis em nenhum parâmetro de comparação. Apenas 1 em cada 5 casos de uso de IA chega de fato à produção. Você sabia que 56% dos CEOs afirmam que, atualmente, não há nenhum benefício financeiro proveniente da IA?
+
+Então, o que está acontecendo? Acredito que, na verdade, a forma como o desempenho é medido no mundo humano está escondida à vista de todos. A inteligência cognitiva não determina realmente a eficácia no mundo real. Na verdade, apenas 10% da variação no desempenho profissional é explicada pelo QI. Tipo, pensa bem nisso. Você diria que seu
+
+colega de equipe mais inteligente, aquele que tirou a nota mais alta no SAT, também é o seu melhor colega de equipe? Ou você diria: "Não, é a pessoa que trabalha mais, que recebe mais feedback e que aprende mais rápido?" No mundo real, o que nos importa é o desempenho, e desempenho são os resultados que você entrega no mundo real. E o desempenho é função de dois fatores. É uma função da inteligência, que é a capacidade cognitiva. É isso que os
+
+indicadores de desempenho do modelo medem diariamente. Mas também depende do contexto. É isso que dizem no mundo humano como aprendizado na prática, certo? Conhecimento , habilidades e experiência que você adquire com o tempo. E na última década, agravamos um desses parâmetros. A inteligência multiplicou-se por 1.000
+
+na última década. Somente nos últimos 6 meses, dobramos nesse quesito. Por outro lado, o contexto, o conhecimento situado do seu negócio, praticamente não se altera. Transferimos alguns dados para a nuvem, mas é só isso. Caso contrário, fica registrado em painéis de controle e tópicos do Slack, e... bem, a cabeça daquele analista que
+
+talvez saia na semana que vem. Então, a questão que se coloca para nós, e acredito que esta seja a próxima fronteira, é como podemos ajudar a IA a construir contexto sobre o nosso negócio? E sempre que me deparo com a pergunta "como podemos ajudar a IA a fazer isso?", gosto de voltar atrás e entender como ajudamos os humanos a fazer isso. Bem, vou apresentar a vocês a vida de uma funcionária exemplar, Maya. Bem, digamos que
+
+ela seja analista de dados na Mac Context Burgers, porque eu pensei que ia ser criativo, mas não sou muito criativo. E, sabe, digamos que ela seja aquela analista que todo mundo na sua empresa consulta. É mesmo? Ela é aquela pessoa para quem todo mundo manda mensagem todas as manhãs quando está tentando resolver um problema. Então, digamos que esta manhã, um franqueado lhe envie uma mensagem dizendo: "Por que o tempo de espera no drive-thru aumentou esta semana? Por que
+
+essa métrica aumentou esta semana?" Parece uma pergunta muito simples. Bem, na verdade é uma pergunta muito complicada de se fazer. Para responder a essa pergunta muito simples , Maya primeiro precisa saber, hum, qual é o tempo de espera no drive-thru? E quem está perguntando? É da área financeira ou é
+
+, sabe, minha equipe de operações? E isso pode significar coisas diferentes. Mas não é só isso. O que significa esta semana ? O período limite é de segunda a domingo? É horário do Pacífico? É
+
+horário do leste? Ah, isso é conhecimento. Tipo, isso é fato. Esse é o mapa do negócio. Mas não é só isso. Ah, existe
+
+experiência. É mesmo? Existe, você sabe, um manual de diagnóstico. O que faz um ótimo analista? Eles sabem que o terceiro trimestre é um trimestre sazonal devido aos padrões climáticos e sabem que devem verificar se o motivo do aumento repentino se deve à sazonalidade. Eles também sabem que a
+
+empresa lançou um produto no trimestre anterior e, portanto, sabem que devem verificar se esse é o motivo pelo qual a análise da causa raiz falhou. Trata-se de conhecimentos e habilidades que as pessoas adquirem ao longo do tempo, conforme aprendem no trabalho. E depois há as normas, certo? Existe, sabe, a definição de persona, quem está fazendo a pergunta, como eu respondo a essa pergunta? E a Maya, ela é uma daquelas pessoas incríveis, ela acerta em cheio, ela não só dá a resposta, mas também explica o porquê e a causa raiz, e descobre a razão por trás disso.
+
+Como Maya aprendeu a fazer isso? Ela entrou na empresa há apenas um ano. Primeiro, a Maya, sabe, entrou para a equipe e recebeu algum treinamento, como todos nós, mas não é aí que aprendemos, certo? Em nossas empresas. Como aprendemos? Aprendemos porque seguimos o exemplo do
+
+melhor colega de equipe, entendemos o porquê de suas ações, aprendemos com isso e, então, cometemos um erro. Quem aqui aprendeu mais com um erro do que com qualquer outra coisa? Certo? Você comete um erro e depois aprende com ele. Seu gerente lhe dá um feedback e você aprende a não repetir o erro. Você lida
+
+com um caso extremo e aprende com isso. É assim que todos nós, humanos, aprendemos no trabalho. Então, a questão é: como você ajuda a construir a Maya agente? E agora quero apresentar a vocês nossos experimentos e aprendizados enquanto construíamos isso na Atlan. Era um, e isso foi há aproximadamente 18 meses.
+
+Começamos a trilhar o caminho da inicialização de agentes. E a forma como procedemos foi a seguinte: começamos com nossa equipe de experiência do cliente e fizemos esse mapeamento de análise das tarefas a serem realizadas , certo? Então perguntamos: "Se você faz parte da nossa equipe de experiência do cliente , quais são as suas principais atividades diárias?" E então formulamos algumas hipóteses. Nós dissemos, sabe, por exemplo, que uma parte do trabalho é a documentação e a preparação de reuniões. E nós
+
+dissemos: "Bem, a IA provavelmente conseguiria fazer esse trabalho muito bem." Então, construímos o fator de escala. Por outro lado, a gestão de relacionamento é algo que nossa equipe de experiência do cliente faz. E nós dissemos: "Hum, isso não parece ser algo que a IA será capaz de fazer tão cedo." E assim construímos o fator de escala.
+
+[bufa] E aí, basicamente, começamos a criar esses agentes individuais, que eram feitos sob medida para aquele tópico específico. Nossa equipe usou a criatividade, então tínhamos a Hermione, que é nossa líder em inteligência de saúde, e a MoneyPenny, que era nossa analista de risco financeiro, e fizemos com que essa agente em particular se tornasse muito boa em fazer essa coisa específica. E isso funcionou por algum tempo. Mas depois percebemos que essa abordagem apresentava alguns desafios. A primeira, engenharia de contexto.
+
+Bem, chegamos ao ponto, em meados do ano passado, em que criar uma conta de agente era realmente fácil. Levou uns 5 minutos. Mas dar o contexto comercial necessário para que ficasse realmente preciso levou uma eternidade. A qualidade do agente muitas vezes depende da qualidade da engenharia de contexto, e isso levou a muitos casos estranhos de perda de confiança com nossos stakeholders. [bufa] Então, quando começamos a levar isso para a produção, percebemos que esses agentes basicamente viviam em sua própria ilha. Agora
+
+imagine, por exemplo, que você faz parte de uma equipe humana e seu departamento de marketing muda o posicionamento, e depois eles vêm a uma reunião geral e informam sobre essa mudança de posicionamento. Então, sabe, o SDR (Representante de Desenvolvimento de Vendas) da sua equipe, ou o seu representante de desenvolvimento de vendas, sabe que deve usar esse novo posicionamento. Isso é semelhante à infraestrutura que construímos para os seres humanos dentro de nossas organizações. Os agentes não os tinham. Então, nossa equipe de marketing tinha esses agentes e eles começaram a fazer alterações nisso, e nosso agente de SDR em nosso site ainda estava divulgando a versão antiga.
+
+Não tínhamos a mínima ideia de como essas coisas estavam conectadas. Então, nós nem sabíamos como gerenciar isso como uma equipe de agentes. É complicado quando um agente erra. É, foi muito difícil reconstituir o que aconteceu. Será que foi a modelo? O agente? Será que foi o contexto?
+
+Como é que a gente volta atrás e corrige isso? E com o tempo, começamos a lidar com a dispersão do contexto. A parte difícil disso era que todos os agentes tinham seus próprios sistemas de memória até certo ponto. Então, eles estavam aprendendo. Todos estavam aprendendo separadamente e de maneiras diferentes. Hum,
+
+tornou-se muito, muito difícil, muito rapidamente, dizer: "Ok, qual é a única versão da verdade aqui?" E então, ao longo do tempo, nos últimos 12 meses, passamos por ciclos na camada de tecnologia do agente. Há cerca de 12 meses, estávamos usando um desses construtores sem código chamado Relevance. A partir daí, passamos para o Google ADK e, em seguida, experimentamos o Glean. No início deste ano, mudamos para Claude Code. Agora estamos mais ou menos meio a meio entre
+
+Claude e Codex. E cada vez que essas mudanças aconteciam, nosso contexto ficava preso em cada um desses sistemas individuais. Então, a partir deste ano, quando os agentes de uso geral começaram a se popularizar , pensamos: "E se houvesse uma abordagem diferente com os agentes de uso geral ?" Bem , voltando ao mundo humano, Maya não é uma estrela individual. Ela faz parte de uma equipe, certo? E
+
+você sabe, você fala sobre essas equipes dos sonhos, como a Maya, alguém que cuida do suporte ao cliente e alguém que lança os anúncios. Essas pessoas trabalham muito bem juntas. E muitas vezes essas equipes dos sonhos são construídas sobre um contexto compartilhado, certo? Eles compartilham uma língua comum. Eles compartilham uma visão comum do que é verdade hoje. Eles compartilharam estratégias.
+
+Eles compartilham normas, definindo quem tem permissão para tomar qual decisão. E então eles aprendem juntos. Acho que essa é a parte mais importante. Eles possuem ciclos de aprendizado cumulativos sobre o que é considerado bom. E eles compartilham a lembrança de que, sabe, "Ah, lançamos isso no trimestre passado e foi terrível, e não vamos cometer esse erro de novo, certo?"
+
+Então nos perguntamos: será que existe uma maneira de incorporar isso à forma como pensamos sobre IA em nossas empresas? Então, o modelo mental em que começamos a trabalhar foi o seguinte: "Ok, temos essas equipes de pessoas em diversas áreas, e será que essas pessoas podem começar a desenvolver habilidades específicas de cada área?" Assim, cada um deles é responsável por um determinado conjunto de habilidades. Tudo isso converge para um único lugar comum, que é uma espécie de cérebro corporativo, certo? Gosto de pensar nisso como a camada de contexto.
+
+E então isso possui uma série de mecanismos de recuperação, que por sua vez se comunicam com o agente de propósito geral em todo o ecossistema. Então, iniciamos o experimento. Esta é uma versão aproximada do que nossa equipe de marketing acabou criando. Como você pode ver à esquerda, esses são todos os sistemas que nossa equipe de marketing utiliza. Então, sistemas de dados, nossas plataformas sociais e comunitárias, nossas plataformas de publicidade, nossas plataformas de análise. E então você
+
+verá este bloco de agente. Construímos isto especificamente para promover a abertura. Então [bufa] tínhamos o Cloud Code e o Co-work. Nós também tínhamos nossa própria ferramenta que implantamos, que basicamente realizava conversas em nossos canais do Slack. E então usamos alguns produtos externos, como Qualified e Artisan.
+
+[bufa] No meio disso tudo está uma espécie de camada de contexto que nossa equipe começou a construir. Então, pense nisso como se nosso melhor profissional de SEO estivesse aprimorando suas habilidades em SEO. Nossa melhor pessoa em inteligência competitiva estava desenvolvendo a melhor habilidade em inteligência competitiva. E isso acabou se tornando uma espécie de repositório comum a partir do qual estávamos construindo e do qual estávamos extraindo informações. [bufa] Isso meio que se tornou nosso cérebro vivo.
+
+Com o tempo, percebemos que havia algumas coisas de que precisávamos neste cérebro, certo? Bem, percebemos que precisávamos de um gráfico de dados. Por exemplo, se percebermos que nosso agente de anúncios autônomo precisa realizar análises diariamente. Então, de qual tabela devo extrair os dados ? Precisávamos de um acervo de habilidades.
+
+Precisávamos também de outras coisas, semântica, métricas, o que é ARR, como medi-lo, o que é um lead qualificado em nossa empresa, e estrutura organizacional, entidades, coisas desse tipo. Nos últimos 6 meses, acabamos criando cerca de 300 habilidades e 40 agentes nesta equipe, o que foi incrível. Mas, mesmo com essa abordagem, percebemos que havia alguns desafios. Percebemos que o contexto precisa ser gerenciado de certa forma, como um código. Então , alguns desafios. Vamos escolher as habilidades. O
+
+gerenciamento de dependências ficou realmente complicado. Por exemplo, temos essa habilidade de inteligência competitiva, que aprende com o mercado sobre o que está mudando e, assim, melhora seu desempenho. Isso alimenta nossa habilidade de posicionamento de categoria, que por sua vez alimenta nossa habilidade de estratégia de vendas. Bem, cada uma dessas habilidades está aprendendo e evoluindo, mas cada vez que elas aprendem e evoluem, isso acaba quebrando algo mais adiante. E essas habilidades começam a ficar obsoletas e se tornam cada vez mais ineficazes. A
+
+questão da qualidade da habilidade se tornou outra coisa. Afinal, quem é o responsável pela qualidade disso? Segurança e governança eram um pesadelo. Tínhamos segredos embutidos no código em arquivos .env. Ah, as
+
+pessoas estavam baixando esses repositórios de habilidades públicos, tudo aquilo foi um verdadeiro pesadelo. E então falei sobre a portabilidade de contexto em todos esses sistemas multiagentes. Comecei esta palestra dizendo que WTF é uma camada de contexto. Esses são os problemas que uma camada de contexto visa resolver. A pergunta que gosto de fazer é: como é o contexto no GitHub?
+
+Algumas considerações. O contexto empresarial exige gestão do ciclo de vida, colaboração e controle de versões, assim como o código. Sabe, surgem questões como: o que é contexto local, o que é contexto global, como faço para manter isso atualizado, e assim por diante. Algumas reflexões sobre isso: será que as habilidades podem ter um perfil, assim como o código? Isso pode ter um ciclo de autoaprendizagem integrado ?
+
+Como se apresenta a gestão da qualidade? É possível associar isso a gerenciamento de segurança e postura? Esse é realmente o primeiro passo. Vejo isso como algo que já possui controle de versão, qualidade e gerenciamento de dependências integrados. Então, você deveria ser capaz de dizer: "Ei, isso impacta todas essas outras coisas. Este é o
+
+aprovador, este é o mantenedor, estes são os colaboradores. Como você constrói esse tipo de espaço de trabalho que combina humanos e IA para que essas habilidades sejam gerenciadas?" [bufa] Em segundo lugar, cada interação com IA cria mais contexto e aproveitar isso é ouro. Tenho conhecimento de muitas discussões sobre ciclos de autoaperfeiçoamento. Descobrimos que, com rastreamentos, é possível implantar um chicote específico que é especializado em realizar a reconstrução a partir daí. Então, pense nisso como uma IA que
+
+lê todos os seus rastros e praticamente os traz de volta para o seu ciclo de manutenção, dizendo: "Aprovar, rejeitar. Aprovar, rejeitar. Melhore isso com o tempo." Esse é o ciclo de aprendizagem cumulativa. E a terceira, que muitas vezes me fazem, é: como eu começo? Como meu negócio é muito
+
+disperso e tenho uns 60 sistemas diferentes, por onde eu começo? Uma das maiores lições que aprendemos é que o contexto está oculto nesses sistemas empresariais. E nesse contexto, a qualidade pode realmente se multiplicar. Por exemplo, se você conseguir conectar seu Salesforce e seu HubSpot ao seu data warehouse, à sua camada de aplicação, e depois conseguir reconstruir de trás para frente como essas coisas estão realmente conectadas umas às outras, o contexto atual se perde em cada uma dessas etapas. Mas se você conseguir reconstruir isso de forma reversa e, em seguida, implantar IA sobre essa estrutura, observamos uma precisão incrível na reconstrução da primeira versão do " cérebro" da sua empresa.
+
+[bufa] Então, vou terminar com isso. Bem, a forma como eu vejo uma camada de contexto é como um sistema que transforma o conhecimento, a experiência e as normas que discutimos , que Maya conhece, em um contexto utilizável pela máquina para sistemas de IA. Em linhas gerais, a forma como gosto de pensar nisso é mais ou menos assim. Ele está constantemente extraindo contexto dos seus sistemas de negócios. Isso está alimentando o cérebro dessa empresa com essas informações.
+
+Trata-se de aproveitar isso nos ciclos de desenvolvimento de habilidades e contexto à medida que suas equipes implementam esses agentes. E existem várias maneiras de recuperá-lo. Então, MCP, SQL, recuperação vetorial, montagem híbrida, todas essas diferentes maneiras de recuperar e extrair dados de rastreamentos e construir esse ciclo de aprendizado cumulativo. [bufa] Hoje em dia, estamos construindo agentes principalmente codificando o contexto diretamente no código. Acredito sinceramente que a dimensão deste problema está sendo subestimada, pois, em grande escala, ele pode se tornar realmente insustentável. E um pouco
+
+perigoso. Como todos nós conhecemos, existe aquela velha piada: se você perguntar ao departamento de vendas e ao departamento financeiro qual o número da receita, você vai receber dois números diferentes. Estamos nos aproximando rapidamente de um momento em que, ao começarmos a implantar sistemas autônomos, a mesma coisa começará a acontecer. Então, vou terminar com uma última coisa. Comecei esta apresentação dizendo que o contexto é fundamental.
+
+Gostaria de concluir dizendo que o contexto também é propriedade intelectual. Algo em que penso muito é: num mundo onde você e seu concorrente têm acesso aos mesmos modelos e à mesma inteligência, o que diferencia uma empresa? O que diferencia um agente de suporte ao cliente da American Express de um da Amazon? É assim que se fazem negócios. É isso que torna sua empresa especial. O
+
+contexto é a forma como assimilamos e incorporamos nossa cultura e nossas normas, transformando-as em algo de que nos orgulharemos ao construirmos empresas autônomas e inovadoras. E isso era tudo que eu tinha. Você pode me encontrar no Twitter como Prokalpa ou me escrever. Estamos trabalhando ativamente com pessoas na fronteira, no desenvolvimento e na implementação de políticas de envio e na formação de empresas . Então, se você quiser conversar conosco, fique à vontade para entrar em contato. Obrigado.
+
+[aplausos]
+
+[música]

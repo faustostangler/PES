@@ -1,0 +1,208 @@
+---
+video_title: "Bypassing the Multimodal Tax: Hybrid RAG, SQL RRF & UI Telemetry - Abed Matini, Ogilvy"
+video_id: Akm1sqvWG4A
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Akm1sqvWG4A
+video_date: 2026-06-28T21:00:30+00:00
+video_description: |
+  Building a prototype chatbot interface takes an afternoon, but scaling it into a secure, predictable enterprise app requires solving production infrastructure challenges: minimizing unpredictable cloud API token bills, handling broken layout extractions, mapping session telemetry, and executing deterministic search.
+  
+  In this practical, demo-driven session, we will bypass high-level wrapper libraries to dissect the complete technical implementation of a local-first document ingestion application. While our demo runs on local developer environments, the underlying design patterns mirror exactly how you build high-performance, cost-effective architectures using enterprise infrastructure like Azure Database for PostgreSQL with pgvector.
+  
+  Key Architectural Blueprints We Will Explore:
+  
+  Optimizing the Data Ingest: How parsing documents to clean structural Markdown locally eliminates cloud vision token overhead. We will look at implementing dynamic sidebar toggles to switch into heavy-duty local OCR pipelines when corrupted document font layers are encountered.
+  
+  Database-First RAG without Framework Bloat: Why heading-based semantic chunking outperforms arbitrary sliding token windows. We will walk through the raw SQL schemas and indexes (HNSW tracking) required to combine dense embedding vectors and sparse keyword text indices natively inside a single database query, using Reciprocal Rank Fusion (RRF) for top-tier retrieval performance.
+  
+  UX Telemetry and Application Guardrails: A deep dive into injecting live client-side floating widgets to display session telemetry, tracking token limits and cumulative ROI. Finally, we will touch on building a zero-dependency, background-threaded heuristic validation layer (_check_injection()) to scan incoming Markdown text for prompt-injection markers before they hit your persistence layer.
+  
+  Speakers:
+  - Abed Matini (Ogilvy): Abed Matini is a software developer and AI engineer focused on practical RAG systems, with a strong emphasis on local and edge LLMs and lightweight production architectures.
+    X/Twitter: https://x.com/abedmatini
+    LinkedIn: https://www.linkedin.com/in/matini
+    GitHub: https://github.com/abedmatini
+---
+Olá pessoal. Meu nome é Abid Matini. Sou desenvolvedor backend sênior na OGOV. Agradeço à AI Engineer World Fair 2026 por me conceder um horário para a apresentação online. E hoje vou mostrar a vocês como contornar o texto multimodal.
+
+Como podemos ter um rag híbrido sem framework? Retirar SQL RF e telemetria em tempo real. Como podem ver, tenho a minha demonstração ao vivo no lado direito da tela. Então, [bufa] qualquer slide que eu mostrar, e se houver algo relacionado à minha apresentação, eu posso mostrar para vocês. Eu também tenho algumas abas prontas aqui para mostrar e te guiar pelos slides e demonstrações.
+
+Certo, vamos começar. Portanto, para cada documento, temos dois problemas que tentamos resolver hoje. Uma situação comum é quando começamos a conversar com um profissional de Direito ( LLM) e precisamos enviar um documento. Normalmente, basta arrastar e soltar um PDF, um documento do Word ou uma imagem e pedir ao chatbot para se preparar para as perguntas que surgirão após o envio do documento. O problema é que, assim que enviarmos esses documentos, basicamente perderemos alguns dos tokens que deveríamos ter apenas para processar esses documentos sem nem mesmo fazer uma pergunta. Então, nós já
+
+gastamos alguns tokens lá sem nem mesmo fazer perguntas. Esse seria o primeiro problema. E então, se estivermos construindo um chatbot e quisermos ter um banco de dados vetorial, busca por palavras-chave e busca semântica , e quisermos adicionar mais ferramentas. Isso vai ser muita ferramenta combinada ao mesmo tempo. Então, na produção, basicamente no chatbot, teremos ferramentas demais, e será complicado para nós gerenciar nosso chatbot de produção adequadamente.
+
+Então, hoje vou explicar tudo em três seções principais. Uma delas é como podemos, eh, carregar nossos documentos, obtê- los e prepará-los para o nosso chatbot antes que os usuários iniciem o bate-papo. Então, do lado direito, eu tenho um chatbot assistente de perguntas frequentes que está rodando localmente para mim agora. E eu vou mostrar a vocês o painel de controle, o painel que eu criei para isso, e como podemos conversar e como obtemos os resultados. Então, isto será um guia de perguntas frequentes (FAQ) para um modelo de manual do funcionário. Então, imagine que você tem uma
+
+empresa de RH, e esse RH disponibilizou o manual para que os funcionários possam tirar suas dúvidas sobre licenças, sobre os
+
+diferentes tipos de licença, licença médica, licença parental ou qualquer outra questão relacionada à nossa empresa, que possivelmente seja uma dúvida comum que um profissional de RH recebe todos os dias. Então, hum, essa seria uma das amostras que usaríamos para fazer o upload. Portanto, todos os documentos podem ser recebidos em diferentes formatos, como PDF, PowerPoint, Word ou até mesmo imagens. Então, vamos falar sobre isso. Vamos discutir como precisamos dividir esses dados em partes menores, pois estamos falando de arrasto aqui. Precisamos saber como podemos
+
+agrupar essas informações adequadamente com base em nossos documentos. Então, vamos falar sobre diferentes tipos de fragmentação aqui também. Podemos mostrar-lhe no painel de administração como escolher diferentes estratégias para dividir os documentos em partes menores. Em seguida, veremos como a busca funcionará, como o embedding funcionará, como será nosso banco de dados e como a busca será baseada em palavras-chave ou em busca semântica. E vamos ver como o nosso F em Python vai funcionar. E então vamos
+
+falar sobre a observabilidade, como vamos verificar a segurança, como vamos observar todo o processo com o LangFuse e como podemos prevenir padrões de injeção indesejados ou qualquer questão de risco que possa surgir no LLM. Planejo que esta apresentação dure menos de uma hora e, bem, o plano é que toda a base de código possa ser facilmente executada no GitHub Code Spaces, o que significa que você poderá simplesmente baixar o código do repositório, executar um único comando e ele estará pronto para ser testado no GitHub Code Spaces. Então, a pilha de tecnologias que estamos usando aqui é Python, FastAPI para o back-end, React para o front- end e PostgreSQL para o nosso banco de dados. O Docker facilita a criação de contêineres, permitindo que os reproduzamos e executemos em qualquer lugar, por exemplo, em espaços de código ou em qualquer outro ambiente desejado. Em seguida, temos o Ollama e modelos de linguagem locais, além de modelos de incorporação que funcionam apenas localmente, mas que também podem ser executados em qualquer servidor . Não precisa de uma GPU. O processador
+
+será suficiente para isso. Então, qualquer servidor de teste, qualquer espaço de código, vai servir perfeitamente. E o LangFuse serve para rastrear o que está acontecendo e como podemos ver o chat e a latência, para que possamos melhorar nossos chats . Este é o projeto completo do que vamos discutir. Então, vamos usar alguns documentos como fonte de verdade para o nosso chatbot. Então, vamos enviar alguns
+
+documentos. Então, o que podemos fazer com Python é usar o Doc Link para converter esses documentos brutos em arquivos Markdown. E então, vamos dividir esses arquivos Markdown em partes e inseri-los no nosso PostgreSQL. E então, também podemos fazer uma espécie de varredura aqui. Então, isso também aconteceria . Em seguida, teríamos algumas perguntas
+
+do usuário. Então, o funcionário está fazendo perguntas, perguntas relacionadas a RH, e as informações serão recuperadas do banco de dados. Os resultados relevantes, com as melhores classificações, seriam aprovados no LLM. E a LLM retornaria o valor nos nossos chatbots que temos aqui. Em formato de chat, podemos ver e obter respostas para nossas perguntas aqui, além de observar, nas visualizações mais longas, o que está acontecendo em nosso sistema.
+
+Então, estamos otimizando a ingestão de dados. Portanto, temos duas maneiras diferentes de otimizar. Então, se primeiro vamos simplesmente jogar o documento no sistema e carregá-lo em nosso chatbot na nuvem, o único problema que temos é que estamos gastando tokens antes de fazer qualquer coisa. Outro problema é que você não sabe como esse documento se parece, como ele está sendo dividido em partes e como o LLM o está interpretando. Portanto, essa seria uma qualidade de risco. Se
+
+houver uma tabela que não sabemos como está sendo lida, então meio que não conseguimos ver. Estamos tentando obter mais clareza sobre como o documento está sendo armazenado em nosso banco de dados e como ele está sendo recuperado. Então, outra maneira seria estruturar primeiro a CPU local. Se você estiver executando aqui, podemos fazer o upload de um documento ou um link de documento, que será convertido em um arquivo Markdown, e saberemos melhor como o processo de fragmentação funcionará. Vou mostrar alguns exemplos.
+
+E, claro, será uma opção mais barata. Se depois disso você quiser falar com um assistente virtual, use uma nuvem online, mas se preferir tê-lo localmente, não terá custo algum . Então, o pipeline do DocLink seria...
+
+nós o executaríamos localmente, em nosso servidor. O Python vai obter esse documento. O programa irá exportar o conteúdo para Markdown e salvar o arquivo Markdown. Em seguida, começamos a dividir os dados em partes com base em diferentes estratégias e, para isso, usamos modelos de incorporação para integrá-los ao nosso banco de dados e inseri-los em nosso banco de dados vetorial. Então, se economizarmos imprimindo localmente , imagine que para uma ou duas páginas o custo seja quase zero, mas se tivermos 200 páginas , o custo será muito alto.
+
+E se você tem uma grande empresa com muitos funcionários e eles querem que a gente continue fazendo as mesmas perguntas ou, eh, que eles carreguem documentos, então isso vai representar um custo muito alto. Então, existem quatro maneiras de dividir um documento em partes menores. Antes de mostrar as quatro maneiras, deixe-me mostrar a página de administração, que é o que estou mencionando. Então, imagine que você tem aqui a nossa página de administração de perguntas frequentes (FAQ). Então, imagine que você...
+
+Deixe-me excluir alguns dos documentos que eu separei aqui anteriormente. Então, você quer enviar um novo arquivo de perguntas frequentes (FAQ) para o seu departamento de RH, referente à sua política de RH. Quero mostrar, eh, fornecer ao seu chatbot, eh, dados atualizados com nosso sistema de IA. Então imagine que você tem algumas perguntas e respostas aqui. Antes de fazer isso, deixe-me mostrar aqui o que quero dizer. Então, [bufa]
+
+hum, este é o FAQ do título, sim. Então, uma das maneiras de alimentar nosso chatbot com informações é criando um arquivo de perguntas e respostas . Assim, seria mais fácil para o nosso sistema entender o que está acontecendo. Então, parte disso é... imagine que temos um
+
+arquivo de perguntas frequentes completo. Então, basicamente o manual inteiro. Se quisermos dividir este manual em partes e simplesmente carregá-lo, imagine que estamos carregando o PDF inteiro. Este será o aspecto do nosso PDF após a divisão em partes. Então, tudo começou com o reconhecimento, depois eles viram alguns trechos que não tinham nenhum significado.
+
+E então algo começa aqui. Existem alguns trechos que não têm nenhum significado. Por exemplo, aqui a data da assinatura é basicamente inútil. Portanto, isso vai tornar nosso chat mais lento e preciso . Isso vai aumentar as alucinações. Então,
+
+em vez de enviar 28 páginas de uma vez, podemos dividir nossos documentos em partes menores e em arquivos diferentes, arquivos relevantes, e limpar esses dados o máximo possível antes de enviá-los. Assim, teremos um resultado melhor. Então, uma forma de fazer o upload, no caso das perguntas frequentes, é transformar seus dados em perguntas e respostas. Então, falando sobre horário de trabalho, falando sobre diferentes situações aqui, você pode ter isso baseado em perguntas e respostas. Dessa forma, ao consultar seus documentos, você terá a referência correta e não haverá confusão.
+
+E existem diferentes maneiras de enviar seus documentos. Uma maneira é você ter a pergunta e a resposta e, em seguida, querer fazer o upload. Este é o meu arquivo PDF de perguntas frequentes . É o mesmo arquivo PDF e eu gostaria de carregá- lo com base em uma estratégia de segmentação por título. Isso significa que, enquanto explico a análise sintática, o Docling está ocorrendo em segundo plano. Isso significa que cada
+
+fragmentação seria baseada no cabeçalho encontrado pelo Docling. E a resposta que daí advém. Assim, cada título e resposta se tornará um título, e cada pergunta e resposta se transformarão em um bloco. Então, sabemos que nossa segmentação está organizada e é fácil de referenciar. Então, quando essa segmentação terminar em alguns segundos, veremos, ok, esta é a primeira FAQ, ela conseguiu segmentar com sucesso com base nos títulos. Então, reconheceu
+
+a pergunta do título e, em seguida, a resposta relevante. Então, cada trecho tem sua própria pergunta e resposta aqui. Então, se
+
+dissermos, por exemplo, "uh",
+
+como em nossas perguntas aqui, " uh, nós temos" ou algo parecido. Portanto, devemos esperar algum tipo de resposta com a referência que está relacionada a esse trecho. Então, estamos falando sobre a chance de entender os documentos com base nos títulos que você tem. É assim que o programa irá dividir cada documento em blocos, título por título. Então, como vocês podem ver aqui, nossa pergunta era sobre quanto. Esta foi
+
+a pergunta que preparamos e esta foi a resposta que preparamos. Por exemplo, a Coca-Cola representa 90% do prêmio individual do funcionário e 75% do prêmio para dependentes. O que vemos aqui como referência, obtemos essa resposta, e não só isso, você obtém a resposta correta, você também obtém o " Uh, você vê que esta resposta foi gerada com base neste documento, com base neste trecho." Assim, fica fácil de consultar. É fácil, sabe, se há algo que não está funcionando, você sabe por quê. Então
+
+você poderá investigar por que esse bloco de dados correto não foi recuperado. Dessa forma, você terá um caminho mais claro para depurar o problema. Como eu estava no nosso sistema, eu estava pedindo para retornar os dois primeiros blocos, e isso me sugeriu que eu falasse sobre todos esses modelos aqui. Isso traria uma das duas melhores respostas. Então, também foi preciso verificar aquele modelo de manual do funcionário, aquele arquivo grande aqui, modelo de manual do funcionário.
+
+Como você pode ver aqui, é uma grande parte. E se for realmente um bom exemplo, porque se você comparar estes dois, já que arrastamos e carregamos todo o bloco aqui, você pode ver que, embora tenha retornado algumas informações, não é tão preciso e você não sabe. Claro, ele analisou o arquivo e encontrou algo, mas você não sabe o quão precisa essa informação pode ser e não consegue acompanhar porque o trecho é simplesmente impossível de rastrear com tanta facilidade. Assim, uma forma de dividir em blocos é com base nos títulos. A segunda forma de segmentação é baseada no parágrafo. Então, tecnicamente, quando você
+
+fizer o upload dos seus documentos, você diria para dividir cada parágrafo que encontrar em um bloco separado. Não importa se há um título ou não, nem nada do tipo. Então, se eu quiser voltar aos nossos documentos e dizer, deixe-me primeiro escolher que quero fazer um agrupamento de parágrafos. Quero dizer, ok, uh, para o parágrafo...
+
+Deixe-me encontrar a política geral do parágrafo. Quero fazer o upload disso. Bem, em termos gerais, o arquivo está sendo carregado aqui, como você pode ver, parágrafo por parágrafo, sendo dividido em partes. Portanto, não há título, não há informações separadas. E se você olhar também para essas informações, se eu puder encontrá-las aqui rapidamente, o
+
+parágrafo geral, o parágrafo sobre a política, como você pode ver, as informações estão apenas parágrafo por parágrafo. Então, você meio que limpou seus dados novamente, mas está dividindo-os com base em um sistema diferente. Então, em vez de título, você está falando de parágrafos. Essa é outra forma de, basicamente, alimentar sua fonte de informação. Outra forma seria um valor fixo de 512 caracteres. Você pode dizer:
+
+"Ok, uma das melhores práticas para rag é simplesmente dividir com base em 512 caracteres, e você terá 64% de sobreposição entre os blocos, então você não perderá o controle." Portanto, se seus dados estiverem muito desorganizados, se forem apenas dados aleatórios que você não consegue limpar , essa é outra maneira de fazer o upload do seu documento. Então, em vez disso, você pode escolher outro arquivo e dizer basicamente que há outro parágrafo para o arquivo de viagens globais aqui. Então, é aí que ocorre a sobreposição, quando você vê que, sobre essa estratégia de fragmentação, você verá que isso começou com a fragmentação e terminou em 512, e então está novamente usando isso, acho que era 64, era 64, sobreposição, sim. Portanto, está usando a sobreposição de 64 novamente. Então,
+
+você verá que basicamente foi cortado daqui. Assim, daqui até aqui são 512, e daqui até aqui são 32, e mais 32 daqui até aqui. Portanto, o total é 32 32 64. Então, é assim que ele relaciona cada parte . Está acontecendo a mesma coisa aqui.
+
+Como você pode ver, está acontecendo o mesmo aqui. É assim que funciona. Mas o problema é que isso vem para cá para auxiliar o próximo sistema. Então, está quebrando. Não é a melhor opção, mas em alguns casos funciona.
+
+Outra forma que podemos usar é através da estrutura de frases. Portanto, pode-se começar contando o número de frases e dividindo-as nesse ponto. Cada um deles possui uma aplicação específica . Outra situação interessante é imaginar que haverá alguma manutenção em andamento. Você está recebendo um e-mail e só quer enviar rapidamente o documento pelo chat, sem precisar fazer nada, porque você não tem o arquivo, é apenas uma captura de tela e você não consegue fazer mais nada. Imagine que você acabou de receber um
+
+e-mail dizendo: "Ok, há um plano de manutenção para este dia a partir desta hora e você quer fazer o upload disso no chat para o usuário. Então, se eu, como funcionário, perguntar: "Ok, existe algum plano de manutenção para este fim de semana?", eu saberia imediatamente. Então, outra maneira de fazer o upload dessa captura de tela também é fácil.
+
+Deixe-me encontrar como fazer o upload facilmente.
+
+Ah, desculpe. Essas não eram nossas capturas de tela. Então, as capturas de tela que você pode fazer o upload, estamos usando outro modelo que simplesmente converte a imagem em texto e o texto em .md, e então estamos usando este
+
+modelo de sentença para e-mails que pode converter a imagem em texto e então ele pode ser inserido. Então, podemos ver que estamos usando a estratégia de fragmentação, um grupo de sentenças converteu a imagem em texto e já está pronto para o nosso chatbot. Então, podemos indexá-lo em nossa base de conhecimento agora. Então, vamos ver a próxima captura de tela que foi carregada aqui. Podemos ver como ela foi dividida em partes, porque este é apenas o e-mail. Não tem
+
+cabeçalho. Não necessariamente tem todos os parágrafos corretamente divididos. Então, se for uma questão de pouco tempo, uma pequena mensagem com uma alteração temporária, você não precisa ficar organizando os dados. Você só precisa arrastar e soltar, atualizar para o fim de semana e todos saberão, ok, neste fim de semana teremos um plano de manutenção. Então, quando alguém vier aqui e perguntar se há algum plano de manutenção para este fim de semana, tecnicamente deveríamos obter como resultado: ok, este é o plano de manutenção que está acontecendo e os documentos de referência. Então,
+
+a manutenção... esta é a janela exata de manutenção que temos e, na verdade, a referência, você pode ver, é a captura de tela que acabamos de carregar. Então, se tivéssemos feito a captura de tela e nomeado o arquivo melhor, teria sido ainda mais relevante e alguém diria: "Ok, de acordo com isso..." De acordo com
+
+as informações que obtive aqui, temos um plano de manutenção amanhã a partir das 18h. "A partir de agora até meia-noite." Então, posso facilmente arquivar e excluir qualquer um deles, e assim não ficará visível. Basicamente, essas são diferentes maneiras de dividir os dados em blocos. Essa é uma das partes mais importantes de todo o sistema, porque a maioria dos LLMs funcionaria sem problemas. Mas a maneira como você alimenta os
+
+dados e limpa esses dados, em vez de simplesmente arrastar e soltar todo o manual aqui e ter dados desorganizados, ajudaria muito a ter um chatbot de FAQ mais eficiente, neste caso. Sim, essas diferentes estratégias também ajudariam. E, bem, vamos para o próximo slide. Estamos usando o Postgres e também temos alguns agentes que são apenas códigos Python. Não estamos chamando outro LLM como agente para fazer algo por nós. O principal
+
+motivo para isso é a velocidade, porque estou executando isso localmente. Estou executando isso no Ollama. Não tenho... Não precisamos de três ou quatro
+
+agentes em loop três ou quatro vezes, porque aí teríamos que esperar 20 ou 30 segundos e o usuário perderia o interesse. Você só precisa de uma função em linguagem natural. Se o resto puder ser feito por uma função Python, vamos usar uma função Python e executá-la para você. Assim, você terá controle total sobre a função. Não haverá alucinações, porque você precisará escrever seu conjunto de testes para cobrir a maioria das situações. Isso
+
+ajudará você. Os agentes... quero mostrar algo aqui nas configurações . O que pode ser feito? Posso
+
+ativar e desativar os agentes também. Posso dizer que, se alguém quiser a data atual, esta função pode ser chamada e recuperada. Você não precisa do LLM para trazer a data atual. Você não precisa do LLM para calcular algo para você. Outro plano para expandir este chatbot é usá-lo para atendimento ao cliente, para falar sobre produtos, preços e... cálculos. Então, essa é outra
+
+coisa: informações do produto ou até mesmo uma pesquisa mais profunda no modo agente. Mas o problema é que, como será outra pesquisa, você perderá a referência. Isso seria importante. Então, já que estou aqui, vou mostrar o que tenho como LLM. Na verdade, estou usando o menor Qwen 2.5.
+
+Então, são 0,5 bilhão de parâmetros, o modelo de instrução e acho que tem apenas 400 megabytes. É tão pequeno assim e estou usando este modelo também para o modo agente. Se eu quiser executar, eu executaria mais duas vezes, e executar o modo agente vai torná-lo um pouco mais lento. Hum, sim, vamos voltar aos slides aqui. Hum,
+
+sim, esta forma de trabalho oferece visibilidade completa da sua função Poison. É isso que está acontecendo. Então, você só passa as informações necessárias para o LLM e recebe as informações necessárias. Então, isso reduziria drasticamente a chance de alucinações. Também estou mostrando aqui vetores e outras coisas no banco de dados.
+
+Então, quando vamos dividir em blocos, vamos dividir as informações com base no ID, na seção e no tipo de incorporação vetorial que estamos usando. E então, temos nosso bloco e podemos ver basicamente como ele encontrará o vizinho mais próximo e também a correspondência de palavras-chave ao mesmo tempo, porque se você tem um chatbot de atendimento ao cliente, você não precisa da informação mais próxima. Você precisa da informação exata. Se for o número também, se for o produto também, você precisa da informação exata. Se for um chatbot médico, você precisa do medicamento exato. Você não precisa de
+
+algo semelhante ou próximo. Então, precisamos ter basicamente a pesquisa por palavra-chave e a pesquisa semântica juntas. Assim, teremos uma pesquisa híbrida que lhe dará um resultado melhor. E estamos falando sobre... número de registros
+
+que teremos. Eu limitei o sistema a dois porque, neste caso, você não precisa de mais do que isso. Mas, se você quiser recuperar alguma informação, como um produto, por exemplo, você não vai querer mostrar apenas os dois primeiros produtos da mesma marca, porque você pode ter 20 ou 50 produtos da mesma marca. Se você não permitir que o chatbot busque essas informações, esses produtos nunca serão vendidos e nunca serão exibidos no chatbot. Portanto, é importante quantos registros você consegue buscar.
+
+E há mais sobre a recuperação de informações quando usamos o BM25 para obter as palavras-chave exatas. O slide anterior tratava de obter a informação mais próxima com a distância cosseno, porque quando carregamos as informações em nosso banco de dados vetorial, as informações com significados semelhantes ficam próximas umas das outras. E quando o usuário pesquisa e solicita algo, Nossas informações e nossa busca vão converter a pergunta, a consulta, no banco de dados e encontrar informações semelhantes e mais próximas da pergunta, retornando-as. Por isso, não podemos retornar apenas uma resposta. Precisamos retornar mais de uma para termos múltiplas respostas e respostas mais próximas .
+
+Mas, aqui na recuperação inteligente, precisamos da resposta exata. Então, precisamos filtrar com base no idioma, por exemplo, com base no ID, nome exato do produto, SKU, nome da marca ou algo assim. Essa seria a recuperação por palavra-chave para nós. E então, como fazemos o ranqueamento, o que é muito importante, porque quando temos o vetor e o BM25, queremos combiná-los e ainda trazer as
+
+duas ou cinco respostas mais relevantes que precisamos . Para sermos mais precisos, se trouxermos muitas respostas, como as 20 principais, isso pode ser bastante confuso. o usuário. Então, você só precisa garantir que está trazendo a quantidade certa com base no seu caso de uso. Se você estiver trabalhando com produtos, você traria mais. Você recuperaria mais.
+
+Se for algo médico, você recuperaria menos. Você não quer que as informações estejam espalhadas. Você quer informações mais precisas, porque obviamente teria mais responsabilidade nisso. Outro ponto aqui é...
+
+Isso se refere mais ao reclassificador. Quando temos nosso reclassificador aqui, ele também traria as informações. E depois disso, quantas dessas informações são exibidas por padrão? Estou mostrando apenas duas. Então, eu falei brevemente sobre o modo agente versus o modo direto. O
+
+modo direto segue um pipeline fixo. Ele não vai chamar nada. O caminho é bem claro. Você tem o modo incorporado, a consulta incorporada e o modo híbrido. E você simplesmente traz... A resposta.
+
+É bom se a conformidade for muito importante para você. Mas no modo agente, você tem algumas ferramentas extras que serão chamadas. Então, uma busca, uma comparação de produtos. Isso pode trazer mais informações de volta. Está menos sob seu controle.
+
+Então, uh , isso é muito importante e leva mais tempo porque você tem outro agente que vai trabalhar. Então, basicamente, ele obtém essas informações e então o modo agente, com base na sua solicitação, vai chamar. Hum , isso levaria um pouco mais de tempo . Hum, sobre a telemetria e as diretrizes do aplicativo. Então, hum, podemos usar o LangChain Fuse, pois integramos o LangChain Fuse em nossas funções. Assim, podemos
+
+ver que tipo de respostas temos. É muito fácil, tudo é local. Não há chamadas externas nem nada. Então, é fácil rastrear as informações de quem estava conversando com o widget anonimamente. Eu não estava logado. É um chat de FAQ.
+
+Esse é o nome de todo o projeto que estou executando lá. Então, Cada conversa tem um ID. Você pode rastrear se houve alguma manutenção neste fim de semana e também a resposta para ela. Você pode ver qual modelo eu usei. Você pode ver que retornei as duas principais respostas e, como foram as duas principais, elas são mencionadas duas vezes na imagem.
+
+A página estava, no máximo, desativada. Foi uma chance. Dois blocos de informações foram retornados e levaram alguns milissegundos. Sim. Basicamente, essas são as informações que temos.
+
+Se você tiver modelos externos, pode até estimar o custo que está gastando. Essa é outra coisa para a qual você pode usar isso. E se você tiver sessões diferentes, usuários diferentes, pode rastrear os logins. Isso lhe dá uma boa visão de como os usuários estão interagindo com o seu chat. Então, sim . Como eu disse sobre as
+
+sessões e IDs dos usuários, você também teria as salvaguardas . Por usar funções para isso, podemos ter um controle melhor. Se eu perguntar ao chatbot como tratar uma gripe, criei uma seção para dizer isso sem recorrer ao chatbot. O objetivo de muitas dessas salvaguardas é que o problema seja interrompido antes que haja uma injeção de prompt ou qualquer outra coisa que tenhamos, ou uma pergunta que não devemos responder. Nem devemos enviar isso para o LLM para gerar qualquer coisa. Então, antes
+
+mesmo de ir para o código, posso ter... Criamos uma seção aqui para dizer que, se houver uma escalada médica, esta mensagem médica seja exibida. E você pode ver como o prompt do sistema é bem pequeno porque estou basicamente inserindo tudo no código. Então
+
+, embora o prompt do sistema pareça pequeno e com apenas algumas frases, na verdade estou inserindo muito mais no código. Em vez de prompts, estou usando o código para dizer o que fazer e o que não fazer. Outro exemplo é a escalada médica, e você pode adicionar mais com base nas suas preocupações com o produto. Então, hum, sim. Então, este é um exemplo disso.
+
+Hum, pode ser, pode precisar ser expandido com diferentes palavras-chave, com diferentes tipos de frases. Deve ser corrigido e ver quantas vezes alguém poderia passar por isso ou não. Mas tecnicamente, esse seria um exemplo de como devemos bloquear, hum, eu tenho nossa guarda ali que deve bloquear qualquer consulta que não seja relacionada. Hum, podemos fazer o mesmo com a injeção e assim por diante. Hum, o que mais temos aqui? Falamos
+
+sobre o fusível de comprimento e, hum, só precisamos criar e gerar uma chave e você a tem em seu, hum, sistema. Eu trabalharia, é apenas, hum, um pouco sobre a observabilidade que mencionei. Hum, e então, hum, então a injeção também. Então, as ferramentas para injeção de prompt, novamente, não devem ir para o LLM e serem bloqueadas lá. Devem ser bloqueadas antes, hum, de serem enviadas para lá.
+
+E sim, estamos usando rejeições de intenção, dicionários de termos e o classificador LLM para impedir qualquer um desses problemas. E de Claro, podemos expandir isso ainda mais. Mas a vantagem disso é que, como é apenas um código, não precisa de um prompt longo. Não precisa de nada... o
+
+resultado seria óbvio. Você sabe o que está bloqueando e o que não está . Então, não é como o LibreOffice, que às vezes gosta de te ouvir enquanto você dá as instruções e às vezes simplesmente escapa e faz o que quer. Então, parte da integração de tudo isso no seu código Python antes de enviá-lo é que você pode ter testes rígidos e dizer: "Ok, é isso que estou bloqueando e é por isso". E passa em todos os testes. Então, você pode
+
+ter mais segurança sobre isso. Então, sim. É apenas um pequeno slide sobre...
+
+Podemos criar o seu... e eu estou colocando aqui como um...
+
+como um widget. Também poderia ser feito aqui, em vez de em um chat maior. Então, outra coisa é que você precisa...
+
+Como parte das regras do seu chat, você também deve avisar se alguém não entende os termos que está usando. Se não entender, a pessoa não me permitiria iniciar o chat. Além disso , eu adicionei a funcionalidade de widget, se eu quiser. Então, o usuário pode redefinir o consentimento também. É apenas para fins de demonstração. O widget
+
+aparecerá aqui. Se eu disser "não", não funcionará. Se eu redefinir o consentimento, e se eu disser "sim", então funcionará. Então, sim. Isso também se aplica aos widgets. Como estou usando React, ele
+
+pode ser usado com qualquer outro framework também. Eu o uso por simplicidade. Aqui, falando sobre os modelos que usei, utilizei dois modelos. Primeiro, usei o Quant 2.5.
+
+Na verdade, primeiro usei o Quant 7B, mas demorava mais. Então, para um servidor menor, mudei para... Deixe-me mostrar o administrador aqui.
+
+Eu alterei para
+
+0,5. Caso contrário, tenho outras opções. Então, eu estava testando diferentes modelos. Se você tiver um modelo maior, vai demorar mais. E pode ficar muito prolixo. Uma descoberta interessante
+
+da minha parte foi que você não precisa do maior modelo. Se você puder validar seus dados antes de enviá-los para o seu LLM, um modelo menor pode resolver o problema e fornecer uma boa resposta. E isso causaria menos alucinações. Seria mais seguro porque não inventaria informações. Se não tiver informações, simplesmente dirá "não, eu não tenho essa informação".
+
+Então, essa é outra maneira de se proteger para não ter o problema do seu LLM gerar algo aleatoriamente. Eu tenho modelos de incorporação BGM. Então, quando eu carrego qualquer coisa aqui que seja incorporada... Basicamente, os modelos de
+
+incorporação fazem a incorporação para mim. Então, tecnicamente, você precisa apenas de dois modelos: o menor modelo de chat e um
+
+dos menores modelos para incorporação. E então, se você estiver usando o Docker, com um clique, tudo estará funcionando. Você precisa
+
+ter os requisitos do Python instalados e o React funcionando no front-end. E isso é tudo que você precisa. Mais uma coisa que eu deveria adicionar aqui: o Langfuse também deveria ser adicionado. Ele será executado em uma porta diferente. Está faltando aqui.
+
+Então, a principal conclusão disso é a estrutura em Markdown. Usamos o Docling para fazer o trabalho pesado e o banco de dados PostgreSQL Vector para armazenar tudo. Não usamos nenhum framework específico. Usamos apenas o Llama para nossos chats. E nenhum outro framework pago.
+
+Caso contrário, usamos o Lang Langfuse para nossa telemetria. Ele também era gratuito. E isso pode ser integrado a diferentes produtos também. Pode ser um catálogo de documentos ou qualquer banco de dados. Muito obrigado pelo seu tempo.
+
+Gostaria de me conectar com você e, se tiver alguma dúvida, alguma preocupação ou algo que você ache que seria melhor integrar, por favor, compartilhe sua ideia comigo nos comentários ou me envie uma mensagem no LinkedIn. Sim. Muito obrigado. Obrigado, AI Engineer, pela oportunidade. Até a próxima. Até mais.

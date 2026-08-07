@@ -1,0 +1,136 @@
+---
+video_title: "The 100-Tool Agent Is a Trap - Sohail Shaikh & Ankush Rastogi, Prosodica"
+video_id: vh2VGuQ3zhY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vh2VGuQ3zhY
+video_date: 2026-06-28T15:15:15+00:00
+video_description: |
+  The common “Fat Agent” architecture loads a large catalog of tools directly into the system prompt. This often creates latency, cost, and reliability problems in production agent systems. As tool schemas take up more of the context window, agents can become slower and more likely to choose the wrong tool.
+  
+  This session takes a practical look at the Semantic Tool Router pattern, a deterministic layer that reduces the amount of context shown to the model in real time. The talk will share benchmarks across frontier models, including GPT-4o and Gemini 2.0, showing how the number of available tools affects Time-to-First-Token latency and tool-selection accuracy.
+  
+  Attendees will learn how to move from static tool loading to Just-in-Time Context Injection, where only the most relevant tools are added to the prompt for each request. In high-tool-density benchmark scenarios, this approach can reduce response latency by up to 90%, reduce cross-tool confusion, and improve agent reliability. The session will end with a practical framework for building tool routers that can scale to hundreds of capabilities without sacrificing speed or predictability.
+  
+  Speakers:
+  - Sohail Shaikh (Prosodica): Sohail Shaikh is a data scientist with nearly a decade of experience across AI, data science, analytics, marketing, and software-oriented work, focused on building practical, reliable, and scalable AI systems using NLP, RAG, conversational intelligence, and LLM workflows.
+    LinkedIn: https://www.linkedin.com/in/sohail-shaikh/
+    GitHub: https://github.com/Sohail-Sh
+  - Ankush Rastogi (Prosodica): Ankush Rastogi is a Senior Data Solutions Engineer with over a decade of experience building scalable data, analytics, and machine learning platforms, with a focus on turning AI models into reliable, production-ready enterprise systems through strong evaluation, inference performance, cost optimization, and operational design.
+    LinkedIn: https://www.linkedin.com/in/ankushrastogi/
+    GitHub: https://github.com/ankushrastogi04
+---
+Oi pessoal. Obrigado por estar aqui. Eu sou Sohaib e aqui comigo está Ankush. Então, hoje vamos falar sobre um erro que, à primeira vista, parece inofensivo. Dar acesso a uma IA significa basicamente conceder a ela todo o acesso a todas as ferramentas de que possa precisar, de uma só vez.
+
+Basicamente, essa abordagem funciona bem em uma demonstração. Pode até funcionar com um pequeno número de ferramentas, como por exemplo, 10 ferramentas. Mas, à medida que o catálogo cresce, o agente fica mais lento. Pode também ficar mais caro e menos preciso . É por isso que estamos chamando isso de armadilha do agente de 100 ferramentas. Na próxima meia
+
+hora, aproximadamente, mostraremos por que isso acontece, como os números se apresentam e como o roteamento semântico com contexto just-in-time pode nos ajudar a resolver esse problema. Então, uma breve apresentação sobre mim. Eu sou Sohaib Shaikh. Atualmente trabalho como cientista de dados na Presodica. Minha experiência profissional abrange IA, PNL, marketing, análise de dados e até engenharia.
+
+Atualmente, meu foco está em IA aplicada, PNL e inteligência conversacional, juntamente com sistemas de rack. Tenho especial interesse em tornar os sistemas de IA mais confiáveis, mensuráveis ​​e até mesmo escaláveis, para além das demonstrações em produção. E eu sou Ankush Astogi. Trabalho como engenheiro sênior de soluções de dados na Presodica. Passei mais de uma década trabalhando com IA, engenharia de dados e sistemas de produção.
+
+Meu foco é a área de engenharia. Portanto, não se trata do que vai funcionar em um notebook, mas sim se vai sobreviver sob carga real, com usuários reais e falhas reais. Então, é essa a perspectiva que estamos adotando hoje. Suhail se concentrará mais no modelo e no comportamento de roteamento, enquanto eu me concentrarei mais no projeto do sistema, na implementação e nas compensações em produção. Incrível. Obrigado, Ankush. Então, vamos lá
+
+. Então, vamos imaginar um projeto comum. Você tende a construir um sistema, e ele pode fazer muitas coisas. Por exemplo, consultar um banco de dados, enviar um e-mail, verificar um calendário, consultar um pedido, chamar uma API e assim por diante. A abordagem mais simples aqui seria fornecer um modelo com a definição de cada ferramenta em cada solicitação. Cada nome de função,
+
+cada descrição e até mesmo cada esquema JSON serão exibidos no prompt, independentemente de o usuário precisar deles ou não. Portanto, estamos chamando isso de agente gordo. Em pequena escala, parece funcionar bem. Com 10 ferramentas também, o modelo geralmente consegue escolher a correta. A demonstração parece boa.
+
+Então, o produto cresce. Dez ferramentas podem se tornar trinta, ou continuar aumentando, e eventualmente o modelo começará a chamar a função errada, confundirá ferramentas semelhantes, poderá inventar nomes de ferramentas e até mesmo demorar mais para responder. O ponto importante é que, basicamente, o projeto não falha porque uma ferramenta foi mal programada. O processo falha porque cada requisição é forçada a transportar o catálogo inteiro. Então, vamos dar uma olhada aqui. Existem, digamos, por
+
+exemplo, 741 ferramentas em todo o seu esquema, mas, basicamente, serão necessários até 127.000 tokens apenas para incluir todas essas descrições de ferramentas. E isso ocorre mesmo antes de se considerar a pergunta real do usuário. Basicamente, isso levará à sobrecarga de contexto e precisamos gerenciar isso adequadamente. Neste slide, podemos ver por que está falhando e por que a precisão cai drasticamente a partir de certo ponto. Assim, ao analisar a
+
+curva de precisão com as 10 ferramentas, o agente de gordura acertará as ferramentas em quase 78% das vezes. Não é perfeito, mas é utilizável. Com quase 100 ferramentas, a precisão cai para cerca de 40%. Menos da metade das ferramentas solicitadas são as ferramentas corretas. E se crescer além disso, como por exemplo, aqui, com 741 ferramentas, a precisão será de apenas 13,6%.
+
+Resumindo, é aproximadamente uma ferramenta correta em oito ferramentas. Portanto, quando o comparamos com o roteador semântico, o roteador semântico se comporta de maneira muito diferente. Mantém-se acima de 83% nos mesmos tamanhos de catálogo. Isso ocorre porque o modelo não escolhe entre centenas de ferramentas, mas sim entre um conjunto pequeno e relevante. Um dos motivos pelos quais o agente de gordura falha é porque ele se perde no problema central. O
+
+modelo presta maior atenção ao início e ao fim do contexto extenso. Quando centenas de esquemas de ferramentas são agrupados no meio, o modelo não os utiliza de forma confiável. Assim, acabamos pagando por uma enorme quantidade de estímulos, e esses estímulos tornam as decisões ainda mais difíceis. Então, aqui estão mais dois motivos. Primeiro, a latência e, segundo, o custo. Como vimos no
+
+slide anterior, a precisão era um grande problema. Outro problema aqui, como podemos ver, está relacionado à latência e ao custo . Por exemplo, se tivermos 741 ferramentas, veremos que são necessários quase 127.000 tokens. Isso incluirá a descrição da ferramenta e o texto do esquema. Portanto, esse custo é
+
+basicamente pago a cada solicitação. Com 100.000 requisições por dia, se você implementar isso em produção, estará enviando bilhões de tokens, e isso só para descrever essas ferramentas. E com o roteamento just-in-time, o prompt pode incluir apenas de três a cinco esquemas relevantes, cerca de 1.000 tokens. Isso representa uma redução de aproximadamente 99%
+
+nos tokens de contexto da ferramenta. Outro problema é a latência. Com a abordagem de agente "gordo", o tempo até o primeiro token aumenta à medida que o catálogo de ferramentas cresce, porque o modelo precisa processar uma solicitação maior antes de poder responder à pergunta do usuário. Por exemplo, se você tiver 500 ferramentas em seu agente, o caminho do agente "gordo" pode aumentar a latência do primeiro token para mais de 5 segundos. Portanto, isso é especialmente importante se o seu produto for em tempo real, pois o tempo de resposta será maior. Isso fará com que
+
+o design pareça lento e imprevisível. Assim, com o roteamento semântico, a experiência pode parecer mais ágil e, de certa forma, mais em tempo real . Aqui está a comparação clara. Assim, do lado esquerdo, temos um design de agente robusto e, do lado direito, temos nosso design de roteador semântico. Assim, no design de agente "gordo", todos os esquemas são carregados para cada solicitação, independentemente do que o usuário tenha pedido.
+
+E por causa disso, o catálogo crescerá, o número de solicitações aumentará, o que fará com que a latência aumente e a precisão diminua. O agente também se torna um grande bloco monolítico, o que dificulta os testes, torna as atualizações arriscadas e até mesmo a depuração trabalhosa. Mas, no caso do projeto de roteamento semântico, o agente não começa com todas as ferramentas. Nesse caso, o roteador primeiro analisa a consulta do usuário. Ele recupera as três a cinco ferramentas mais relevantes e, em seguida, injeta apenas essas na chamada do modelo.
+
+Assim, o contexto permanece pequeno, a latência permanece estável e a precisão se mantém porque o modelo está escolhendo a partir de uma lista focada em vez de um catálogo gigante. Está tudo bem, mas há uma ressalva importante aqui. Se você tiver menos de 20 ferramentas, um roteador pode ser desnecessário. Basta carregar as ferramentas diretamente. Mas, depois de ultrapassar 50 ferramentas no sistema de produção, justificar um esquema baseado em roteadores passa a fazer mais sentido.
+
+Obrigado, Ankush. Vamos agora analisar como funciona o roteamento semântico. Se você já montou um sistema de racks antes, a experiência será bastante semelhante. A diferença é que iremos recuperar as ferramentas em vez dos documentos. Assim, na primeira etapa, digamos, por exemplo, aqui, cada ferramenta terá uma descrição clara. Por exemplo, uma
+
+ferramenta de busca de voos, uma ferramenta para verificar a disponibilidade no calendário ou uma ferramenta para recuperar o status do pedido do cliente. Por exemplo, o segundo passo seria incorporar e armazenar essas descrições em um índice vetorial. Isso geralmente é feito offline quando o catálogo de ferramentas é criado ou atualizado. Durante a execução do aplicativo, o usuário fará uma pergunta, e nós incorporamos a consulta do usuário com o mesmo modelo de incorporação. Em seguida, pesquisamos nesse índice vetorial as ferramentas com a descrição mais próxima da consulta.
+
+Assim, o roteador retornará as ferramentas K superiores. Frequentemente, K representaria três ou cinco ferramentas que correspondem à consulta do usuário. E somente os esquemas selecionados serão injetados na chamada do modelo. Então, esse é o padrão completo. Inicialmente, você precisa indexar as descrições das ferramentas offline.
+
+Em seguida, recupere as ferramentas relevantes em tempo de execução e mantenha o foco no contexto do modelo. Resumindo, a ideia é bastante simples. O roteamento semântico é basicamente um conjunto de ferramentas. Se você já possui um modelo de incorporação e um banco de dados vetorial em sua pilha de tecnologias, a maior parte da infraestrutura já lhe é familiar. Obrigado, Sohil. Agora, vamos nos aprofundar
+
+na injeção de contexto just-in-time. Assim, o roteamento semântico é a camada de recuperação. E a injeção de contexto em tempo real é a estratégia de gerenciamento de contexto. Assim, no caso da abordagem de agente "gordo", tudo é carregado antes que a consulta seja compreendida. Por isso, o modelo recebe primeiro uma enorme lista de ferramentas e, em seguida, tenta raciocinar sobre ela. O
+
+contexto "just-in-time" faz o oposto. O sistema aguardará até que a consulta seja conhecida e, em seguida, injetará apenas o contexto necessário para essa solicitação. Quer dizer, essa não é uma ideia nova em software. Utilizamos carregamento lento, compilação just-in-time e carregamento de recursos sob demanda há anos. Estamos apenas aplicando o mesmo princípio simples ao contexto do LLM. A
+
+Anthropic já escreveu sobre esse padrão com carregamento de ferramentas sob demanda por meio do MCP. O uso de tokens relatado por eles caiu de 150 mil para 2 mil, o que representa uma redução de 98,7% . Esse é o sinal. Um catálogo extenso de ferramentas não deve ser despejado em todos os prompts. Devem ser recuperados quando necessário.
+
+Então, passando para o próximo slide, vamos falar sobre como avaliar isso de forma justa. Aqui, medimos quatro coisas: precisão na seleção da ferramenta, tempo até o primeiro token, tokens de entrada por solicitação e o custo estimado por mil chamadas. Assim, para os conjuntos de dados, usamos o Berkeley Function Calling Leaderboard, cenários no estilo Skills Bench e conjuntos de ferramentas sintéticas que nos permitem dimensionar o número de ferramentas, para que possamos testar com 10, 50, 100, 200 ou até mesmo 1041 ferramentas. Então, executamos as mesmas consultas em dois modos: o modo com agente robusto e o modo com roteamento semântico. Mesmo modelo, mesmo gabarito, mesmo catálogo de ferramentas.
+
+A única diferença era se o modelo visualizava todas as ferramentas ou apenas a ferramenta utilizada na rota. Também realizamos varreduras com K nos números 3, 5 e 10 para entender a relação de custo-benefício. Portanto, quanto menor o valor de K, mais rápido e mais barato será. Um valor maior de K pode permitir a recuperação de mais casos extremos. Na prática, K igual a 5 é um bom ponto de partida padrão. Então, se você
+
+quiser experimentar, pode definir o valor padrão para cinco. Aqui, K representa o número de ferramentas que o roteador semântico recupera e fornece ao LLM para cada consulta do usuário. Aqui estão os resultados dos testes de referência que obtivemos. Então, aqui está o resultado do lado esquerdo. Observamos uma queda acentuada na linha de precisão do agente de gordura à medida que o número de ferramentas aumenta.
+
+Começou em torno de 78% com 10 ferramentas e depois caiu para cerca de 13% com 1041 ferramentas. Mas, no caso do roteador, a linha de roteadores permanece acima de 83% porque o modelo se mantém estável. Do ponto de vista do modelo, ele sempre escolhe um pequeno número de ferramentas, mesmo que o catálogo real contenha 100. À direita, o tempo até o primeiro token mostra a mesma situação. O caminho do agente "gordo" fica mais lento à medida que mais esquemas de ferramentas são adicionados.
+
+Em catálogos de grande porte, o modelo gasta um tempo considerável apenas processando a solicitação. Mas, no caso do roteador, ele permanece praticamente inalterado porque o tamanho do prompt é controlado. Essa é a principal lição do estudo de referência. O catálogo pode crescer, mas o conjunto de trabalho do modelo deve permanecer pequeno. Agora, no próximo slide, discutiremos o padrão de implementação. O processo consiste em
+
+três etapas. O primeiro passo é offline. Então, crie um catálogo de ferramentas. Para cada ferramenta, armazene o nome, a descrição e o esquema. Em seguida, incorpore a descrição e armazene- a em um banco de dados vetorial. Você pode
+
+usar o Chroma DB, o Pinecone ou o Quadrant. Qualquer que seja o banco de dados de vetores que você esteja usando. Em seguida, a segunda etapa ocorrerá em todas as solicitações. Incorpore a consulta do usuário. Em seguida, execute a busca pelo vizinho mais próximo.
+
+E retorne as principais ferramentas K. Na terceira etapa, isso também acontecerá em todas as solicitações. Obtenha o esquema das ferramentas selecionadas. Em seguida, passe apenas esses esquemas para a chamada do modelo e registre qual ferramenta foi selecionada. Portanto, neste caso, o registro de dados é realmente importante.
+
+Então, digamos que você perca alguma coisa e queira melhorar a descrição ou ajustar o K, você precisa de um bom sistema de registro que possa usar . Assim, a sobrecarga de tempo de execução é pequena, consistindo em uma chamada de incorporação e uma busca vetorial. A recompensa é um problema de seleção de ferramentas muito menor, porém mais estável.
+
+Incrível. Agora que você aprendeu sobre o padrão de implementação, vou mostrar a versão em código, que é bem simples. Inicialmente, você precisa percorrer o catálogo de ferramentas e, para cada ferramenta, como mencionado por Ankur, incorporar a descrição, armazená-la no banco de dados vetorial com o nome da ferramenta e outros detalhes. Em tempo de execução, incorpore a consulta do usuário, compare o vetor de consulta com os vetores de ferramentas armazenados usando similaridade de cosseno ou busca vetorial e, em seguida, recupere as ferramentas mais relevantes. Depois disso, chame o modelo somente com esses esquemas e o parâmetro de função ou ferramenta.
+
+Essa última linha é a parte mais importante porque o modelo não recebe todas as ferramentas, apenas as ferramentas roteadas. Isso funciona com qualquer modelo de incorporação e com qualquer banco de dados vetorial. Como o Ankur mencionou, você pode começar usando o Quadrant ou qualquer outro banco de dados vetorial localmente e, posteriormente, migrar para um armazenamento vetorial mais gerenciado, se necessário. Se você já possui uma infraestrutura de rastreamento de erros (rag infrastructure) existente, esta não é uma infraestrutura nova, como mencionamos anteriormente; trata-se do mesmo padrão de recuperação aplicado à seleção de ferramentas. Obrigado, Suhail. Bem,
+
+agora vamos discutir o roteamento semântico na prática. Então, imagine que você tem um agente com 200 ferramentas . Um usuário pergunta: "Encontre um voo para Nova York na próxima quarta-feira". O roteador incorpora essa consulta. Retorna ferramentas como "buscar voos", "reservar voo" e "verificar calendário".
+
+O modelo vê apenas os esquemas relevantes, então é muito mais provável que chame a ferramenta correta. Mas, se carregarmos todas as 200 ferramentas — ferramenta de hotéis, ferramenta de previsão do tempo, ferramenta de e-mails, ferramenta de sequências ou qualquer ferramenta de fluxo de trabalho não relacionada —, todas estarão competindo pela atenção. É aí que o modelo começa a escolher a função errada. Agora, vamos a uma segunda consulta: " Qual é o tempo em Paris agora?".
+
+O roteador retorna "obter tempo" e "obter previsão". As ferramentas de voos não são injetadas. As ferramentas de hotéis não são injetadas. Elas simplesmente não estão disponíveis nesta solicitação. Este é um benefício subestimado.
+
+Mas o roteador não apenas adiciona a ferramenta correta, como também remove a ferramenta errada do conjunto de opções do modelo. Agora, no próximo slide, discutiremos a lista de verificação de implementação. Aqui está a lista de verificação de produção, caso alguém queira acompanhar. Primeiro, fixe a ferramenta em um só lugar. Adicione nome, descrição, O primeiro passo é definir o esquema, o proprietário e a versão. Em
+
+seguida, é preciso construir o índice. Incorpore cada descrição e armazene os vetores. O terceiro passo é escrever o roteador. Nele, incorpore a consulta, pesquise o índice e selecione os K primeiros resultados para obter o esquema. O quarto passo é a integração com o loop do agente. Assim,
+
+a lista de ferramentas do modelo deve vir do roteador, e não de um catálogo completo codificado . O quinto passo é avaliar. Execute seu conjunto de testes com K igual a três, cinco e dez e, em seguida, escolha o menor K que atenda à sua meta de precisão. O sexto passo é monitorar a produção. Registre as ferramentas selecionadas, as chamadas finais das ferramentas, as falhas e o uso de ferramentas de fallback.
+
+Em seguida, reincorpore as ferramentas quando as descrições ou o esquema mudarem. Isso não é uma reescrita de plataforma de 6 meses. Para a maioria das equipes, é um sprint focado. Portanto, no próximo slide, discutiremos o que a comunidade já confirmou. Isso não é apenas uma observação. A
+
+Anthropic publicou o carregamento de ferramentas sob demanda com MCP e relatou uma redução de 150 mil tokens. para 2 mil, o que representa uma redução enorme no número de tokens. Desenvolvedores levantaram problemas semelhantes em projetos de agentes e SDKs convencionais, apontando que enviar a definição de todas as ferramentas em cada requisição pode aumentar a latência, o uso de tokens e a confusão entre elas. Projetos de código aberto como o MCP Zero também exploraram o roteamento em larga escala, incluindo milhares de ferramentas em vários servidores. E você pode encontrar em fóruns posts de desenvolvedores que enfrentaram confusão com apenas algumas ferramentas, muito antes de chegarem a 100. Portanto,
+
+se o seu agente começar a falhar à medida que novas ferramentas são adicionadas, isso não significa automaticamente que seus prompts estão ruins. Pode significar que a arquitetura está pedindo ao modelo para resolver o problema errado.
+
+Aqui, estamos apenas tentando falar sobre os projetos de código aberto que encontramos. Um deles é o da Areilo Labs. Eles têm um projeto de roteador semântico de código aberto que você pode usar facilmente para testes locais de benchmarking. O Toolbench e o ranking do Berkeley Function Calling Loader também são pontos de partida úteis. E para orientações práticas, você pode ler o artigo sobre o Anthropic MCP. Isso explica por que o
+
+carregamento de ferramentas sob demanda é importante e fornece um forte sinal prático para essa arquitetura. A questão é que você não precisa inventar o ecossistema do zero. Essas peças já existem. Próximo slide.
+
+Desculpe. Aqui está. Obrigado. Então, existem algumas compensações com isso. O primeiro risco pode ser uma falha no roteador.
+
+Se o roteador não conseguir recuperar a ferramenta que os modelos precisam, você pode lidar com isso com um fallback de feedback. Se o modelo não puder concluir a tarefa, você pode ampliar K, executar uma segunda passagem de recuperação ou até mesmo roteá-la para um grupo de ferramentas mais amplo. O segundo risco seriam descrições de ferramentas fracas. Se suas descrições forem fracas, os embeddings também serão fracos. Escreva descrições nas palavras que os usuários realmente usam e inclua intenção, ação e entidades-chave .
+
+O terceiro risco aqui seriam ferramentas raras. Algumas ferramentas podem nunca ter uma pontuação alta, a menos que suas descrições incluam a linguagem correta. Portanto, você precisa monitorar as falhas de dados e reescrever essas descrições de acordo. E, finalmente, apenas para concluir, não...
+
+Sistemas pequenos não precisam de muita engenharia. Se você tiver 10 ou 15 ferramentas, o carregamento estático ainda pode funcionar bem. O roteamento geralmente compensa quando o catálogo é grande o suficiente para que o tamanho do prompt, a latência ou a confusão entre ferramentas se tornem um problema real em produção . Então, algumas conclusões. Primeiro, como discutimos, a sobrecarga de ferramentas prejudica a precisão. Carregar todos os
+
+esquemas em todos os prompts torna a decisão do modelo mais difícil à medida que o catálogo cresce. A segunda conclusão é sobre os tokens. É como se os tokens representassem custo e latência. Catálogos de ferramentas maiores podem adicionar dezenas de milhares de tokens antes que a solicitação real do usuário seja processada. O roteamento semântico pode ajudar a resolver esse problema.
+
+Quando o catálogo é grande, o modelo vê apenas as ferramentas relevantes para a consulta atual. Isso é basicamente um "pano de pano" para ferramentas. Indexe essas descrições, recupere-as corretamente em tempo de execução e injete apenas o necessário. E, finalmente, comece simples. Use K como ponto de partida, registre cada decisão e avalie em relação a um conjunto de teste real.
+
+E melhore as descrições das ferramentas ao longo do tempo, caso ferramentas incorretas sejam selecionadas. E o objetivo não é tornar esses agentes mais complicados. É basicamente impedir que o modelo raciocine com base em ferramentas irrelevantes. Então, há algumas referências neste slide. Se você estiver desenvolvendo algo, pode usar essas referências.
+
+Como bibliotecas de roteamento semântico, Tool Bench, Berkeley Function Calling Leaderboard, artigo sobre Anthropic MCP e armazenamentos de vetores como Pinecone e Quadrant. Muito obrigado por assistir. Se foi útil, compartilhe com alguém que esteja desenvolvendo agentes. Essa pessoa já se deparou com esse obstáculo ou está prestes a se deparar . Você pode escanear nossos códigos QR do LinkedIn neste slide para se conectar conosco. Ficaremos felizes em
+
+continuar a conversa, compartilhar recursos ou saber como outros estão abordando esse problema em seus próprios sistemas. Muito obrigado por assistir. Eu sou Ankush. Este é Suheel. Muito obrigado.
+
+Sim. Obrigado a todos.

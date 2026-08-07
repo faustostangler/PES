@@ -1,0 +1,136 @@
+---
+video_title: "Understanding is the new bottleneck — Geoffrey Litt, Notion"
+video_id: WkBPX-oDMnA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WkBPX-oDMnA
+video_date: 2026-07-10T22:14:52+00:00
+video_description: |
+  Autonomous loops are hot, but the reality is that most agentic tasks still require human judgement. And to guide your agents well, it's not enough to just verify correctness -- you actually need to understand the work they're doing.
+  
+  In this talk, I'll share some techniques for staying in the loop and efficiently developing understanding, combining old ideas from education and cognitive science with modern agent capabilities. You'll walk away with some practical tips for moving faster with agents by understanding more, not less.
+---
+[música] E aí
+
+? Sim, obrigado por participar da trilha de engenharia de design na AI. Todos estão se divertindo? Sim, acho que essa música vai ser ótima, então fiquem animados. Muito bem, vamos começar. Bem, meu
+
+nome é Jeffrey Litt. Atualmente sou engenheiro de design na Notion. E estou aqui para dar uma opinião polêmica para esta sala, talvez. Acho que ainda é importante que as pessoas entendam como o código funciona. [aplausos e vivas] Bem, alguns de vocês podem concordar, outros podem discordar. Vamos fazer
+
+uma enquete. Estou curioso para ver este quarto. Levante a mão se você concorda com essa opinião. Ok, talvez haja algum viés de seleção. Alguém corajoso? Ok, levante a mão se
+
+discordar dessa opinião. Uau, ok. Nós temos [risos] Talvez façamos um debate mais tarde, sim. Eu esperava que estivéssemos na conferência de engenheiros de IA , para termos mais conversa fiada. Ok.
+
+Talvez eu esteja falando para convertidos. Sabe, acho que a realidade é que estamos entrando em uma era em que essa é uma questão legítima que as pessoas estão debatendo, certo? Os agentes estão escrevendo toneladas de código para nós. Eles estão conseguindo 50.000 recordes pessoais em linha.
+
+E está ficando cada vez mais difícil acompanhar. Todos nós sentimos isso. Bem, acho que a boa notícia é que existem muitas maneiras de entender. Sabe, os dias de ler o código linha por linha já passaram, e essa não é mais a única maneira. E o objetivo desta palestra é compartilhar com vocês algumas práticas que utilizo para entender o código que meus agentes escrevem para mim.
+
+Isso inclui coisas como documentação explicativa, que me ensina como meu código funciona. Meus agentes elaboram questionários para mim, a fim de testar minha compreensão. Será que ainda estou por dentro de tudo isso ? Estou acompanhando? Eu peço a agentes que construam micromundos para mim, nos quais eu possa ter uma noção intuitiva de como meu código funciona, algo mais profundo e rico do que apenas um documento escrito.
+
+E acho que todas essas são novas possibilidades realmente empolgantes que estão se abrindo para a IA nos ajudar a entender melhor, e não pior. Então, esse será o objetivo desta palestra e espero poder compartilhar com vocês algumas técnicas que vocês poderão levar para casa e usar por conta própria. Aliás, meu cronômetro não está funcionando. Se você conseguisse fazer isso funcionar, seria ótimo, então eu sei que estou falando besteira. Certo, mas vamos começar, vamos voltar um pouco atrás. Antes de falarmos sobre o como, vamos
+
+falar sobre o porquê. Por que se dar ao trabalho de entender? Isso é uma pergunta, não é? E acho que muita gente entende isso de forma sutilmente errada. Então, o que muita gente pensa sobre por que os humanos ainda precisam entender é que entendemos para verificar.
+
+Os agentes fazem coisas estúpidas, todos nós já vimos isso, e seu trabalho como humano é mantê- los na linha, certo? Certifique-se de que eles não façam besteira. Quando as pessoas dizem coisas como "a revisão de código é o novo gargalo", acho que a primeira coisa que vem à mente delas é a verificação da correção do código. Existe um modelo mental que diz: "Ei, o agente vai te dar alguma coisa, e qual é o seu trabalho? É perguntar: 'Isso está correto?'"
+
+Ora, a correção pode ter muitas definições. Corresponde à especificação que você forneceu? Isso afeta a produção? Tem uma boa arquitetura? Mas, fundamentalmente, são todas decisões do tipo "sim" ou "não", certo?
+
+E o fato é que, com o tempo, como todos nós vimos, os agentes também estão conseguindo fazer essas perguntas e estão ficando cada vez melhores nisso . Você implementa o ciclo de verificação correto e, com o tempo, essa é a realidade. O papel dos humanos na verificação da correção está diminuindo. E sabe de uma coisa? Na verdade, eu não odeio isso.
+
+Se eu tiver uma ideia clara do que quero fazer e o agente fizer corretamente, em vez de me apresentar algo incorreto, isso é ótimo. Eu gosto disso . Então, acho que as pessoas ampliam essa ideia e dizem: "Sabe de uma coisa? Isso significa que, à medida que os agentes ficam cada vez mais inteligentes, não precisamos entender tudo, certo? Saia do circuito, cara. Execute o circuito."
+
+E é aí que eu acho que as pessoas deixam passar algo muito importante. Existe uma razão mais profunda para entender o que está acontecendo, e essa razão é a compreensão para participar. Porque, veja bem, não se trata apenas de um único ciclo. Ao analisar o que está acontecendo e se manter informado, você sai transformado. Você entende algo, e esse entendimento é o que você leva para o próximo ciclo, e para o próximo, e para o próximo.
+
+Sua compreensão do que está acontecendo é a base para que você tenha a próxima ideia e seja um participante criativo ativo em um projeto. Acho que provavelmente todos vocês já sentiram isso, mesmo antes da IA, sabe, a diferença entre os tipos de ideias que alguém pode ter quando realmente entende o que está acontecendo e quando está a alguns níveis de distância. Porque quando você tem estruturas conceituais ricas na sua cabeça que você consegue recombinar fluentemente e muito rápido sem precisar consultar algum agente ou humano para saber como funciona, isso te dá a capacidade de dar saltos criativos com fluidez. E essa é a parte humana do trabalho, ter a próxima ideia e a próxima ideia. Então, essa é a verdadeira razão pela qual acredito que a compreensão é importante, e isso não é algo que podemos simplesmente eliminar com agentes melhores.
+
+Porque, se quisermos ser participantes ativos, ainda precisamos fazer isso. Existe um termo excelente, talvez alguns de vocês já tenham ouvido, chamado dívida cognitiva, que eu acho que realmente captura bem a essência da questão. É uma analogia à dívida técnica, popularizada pela acadêmica Margaret Stories. Simon Willison também escreveu sobre isso em seu blog. E eu adoro essa ideia porque, assim como acontece com a dívida técnica, você pode até se safar por um tempo, mas em algum momento você se prejudica se o seu conhecimento começar a diminuir.
+
+E talvez você tenha sentido isso. Eu sei que senti isso. Você está desenvolvendo o software com foco na sua intuição, as coisas estão indo bem, e então, em algum momento, você percebe: "Espera aí, eu não tenho ideia do que está acontecendo." Basicamente, não posso mais participar, certo? Você acumulou muita dívida cognitiva.
+
+Ok, então talvez pareça que todos vocês já estavam convencidos. Concordamos. Precisamos entender. Mas como? Certo?
+
+Não queremos viver em 2023. Estamos usando agentes para agir rapidamente, e está cada vez mais difícil acompanhar o ritmo. Como fazemos isso? Penso que, para responder a essa pergunta, devemos dar um passo atrás e fazer uma pergunta mais fundamental: como compreendemos as coisas em geral? Reviravolta na trama: esta não é a primeira vez que um ser humano faz essa pergunta.
+
+Existe um campo. Isso se chama educação. Quando pensamos em educação, podemos nos lembrar de experiências ruins, como assistir a palestras ou algo do tipo, mas acredito que podemos fazer melhor. Podemos nos inspirar nas melhores ideias já criadas na área da educação e usá-las para nos mantermos atualizados e compreendermos melhor o assunto. Então, é sobre isso que trata esta conversa.
+
+Vamos falar sobre três técnicas. Primeiro, algumas explicações. Então, quando um agente escreve algum código, é uma oportunidade para ele explicar o funcionamento para você, certo? E a explicação mais ingênua é: "Ei, aqui está a diferença no código." Essa é a mudança bruta, a essência do que aconteceu.
+
+Mas podemos fazer, creio eu, muito, muito melhor. Qual seria a melhor explicação possível ? Imagine que você enviasse uma equipe por um ano para elaborar um currículo personalizado apenas para explicar essa alteração de código para você. Como seria ? Acho que essa é uma pergunta muito instigante .
+
+Então, eu já tentei isso várias vezes . Uma delas é uma habilidade que eu criei chamada explainedif, que eu uso todos os dias, e muitos dos meus colegas também, e eu quero explicar como ela funciona. Então, vamos analisar um pequeno exemplo aqui. Estou trabalhando em um videogame onde você desenha jardins zen, tipo para relaxar, sabe? Todos nós precisamos disso nos dias de hoje.
+
+E fizemos uma alteração no código para mudar a perspectiva do jogo de visão de cima para baixo para visão isométrica. E quando eu executo minha skill, ela gera um documento explicativo do código. Pode ser um arquivo HTML ou Markdown. Gosto de publicá-las no Notion porque trabalho lá, mas também porque assim é um processo colaborativo, permitindo que minha equipe comente e discuta o conteúdo. E aqui está o resultado.
+
+Começaremos com o contexto. Não começamos pelo que aconteceu nessa mudança. Começa me ensinando: "Ei, é assim que o sistema funciona. Este é o motor de jogo que estamos usando. Este é o sistema de coordenadas, certo?
+
+Estes são os subsistemas." Isso garante que eu seja conduzido até o ponto em que eu possa começar a entender o que está acontecendo aqui. Obviamente, você pode pular esta parte se já souber. Você pode personalizá-lo com base no que você já sabe. O segundo princípio importante é a intuição antes dos detalhes.
+
+Então, antes de começarmos, sabe, analisando o código e tal, está escrito: "Ei, o objetivo deste commit é fazer o jardim parecer tridimensional usando apenas truques de desenho 2D." Você pode pensar nisso como uma espécie de mensagem de commit bem escrita, só que um pouco mais elaborada. Dê-me exemplos. Me dê uma ideia da essência antes de, sabe, me bombardear com um monte de código, certo? Aliás, isto é um bom ensinamento. É isso que
+
+bons professores de matemática fazem. Terceiro, figuras interativas. Então, quando fizer sentido, me dê coisas para mexer e experimentar. Então, com essa mudança, foi como mudar a forma como desenhamos pedras. Então, posso arrastar pedras nessa pequena simulação, e ela me mostra as coordenadas em que as coisas estão acontecendo, como as camadas Z da pintura estão mudando.
+
+Aliás, isto utiliza uma nova funcionalidade que o Notion lançou esta manhã: blocos HTML nas páginas do Notion. Assim, os agentes podem inserir simulações interativas em suas páginas do Notion. Muito legal. Acho que é preciso ter cuidado com a interatividade. Pode ser apenas uma muleta, e, para ser honesto, pode ser meio improvisado . Mas, usada com bom gosto, pode
+
+proporcionar uma compreensão difícil de alcançar apenas com imagens estáticas. Ok, então finalmente chegamos ao código, certo? Mostre-me o código. Mas não nos limitamos a simplesmente listar arquivos em ordem. Fazemos o que eu chamo de comparações de código alfabetizadas . Dê-me prosa. Explique-me
+
+na ordem correta. Antes de cada arquivo, me diga o que está acontecendo . E quando você acumula todas essas informações, fica muito, muito mais fácil de acompanhar do que apenas uma análise detalhada das diferenças. Ops. Na verdade, às vezes eu imprimo essas mensagens e as levo para a cafeteria para lê-las.
+
+Acho ironicamente belíssimo que a IA tenha transformado esse processo, no qual eu costumava ficar grudado no computador e no meu IDE, em algo que agora posso fazer quando vou a um café e é como se estivesse lendo um livro didático sobre relações públicas. É muito legal. Bem, existe um problema: ler é difícil. E eu sou preguiçoso. As pessoas são preguiçosas.
+
+Sabe, teve uma vez que eu enviei um comunicado de imprensa para um colega de trabalho achando que já tinha lido tudo. Achei que tinha entendido, e ela me fez a pergunta mais básica. E eu pensei: "Ah, não. Não sei." É óbvio que eu não tinha entendido, né? Eu me enganei
+
+. Então, pensei: "Como posso criar um sistema onde isso nunca mais aconteça?" Para me inspirar, recorro ao trabalho do pesquisador Andy Matuschak, que tem esta frase brilhante: "Livros não funcionam". O que ele quer dizer com isso é que é muito fácil ler um livro e não perceber que você não o entendeu. Então, ele e seu colaborador Michael Nielsen tentaram algo em que, em um ensaio, havia questionários interativos de repetição espaçada para testar se você realmente se lembrava do que acabou de ler.
+
+E isso é legal. Na verdade, eles continuam enviando o questionário por e-mail para garantir que você se lembre dele para sempre. Mas isso é bom porque você não consegue ler este ensaio sem entendê- lo, ou pelo menos sem se lembrar dele. É isso que eu faço com meus explicadores de código. Na parte inferior, há um questionário. Cinco perguntas, nível de
+
+dificuldade médio. E a minha regra é que eu não envio código para outros membros da minha equipe revisarem, a menos que eu consiga passar no teste sobre o que meus agentes escreveram. Pode parecer meio bobo, mas você deveria tentar. É realmente chocante a quantidade de vezes que isso me pegou de surpresa e me fez perceber que eu não entendia. Eu penso nisso como uma espécie de regulador de velocidade. Tudo em IA se resume a acelerar,
+
+acelerar, acelerar. Existem muitos incentivos para ir mais rápido. Como podemos garantir que não estamos apenas avançando na velocidade da correção, mas também na da compreensão? E a questão é que esse regulador de velocidade é um sistema que posso usar para isso. Eu... acabei de colocar a balança na
+
+internet. Então, sim, momento para foto. Se você quiser a escala Explain Diff, pegue esse código QR, experimente e personalize-a . Na verdade, é muito simples . Existem duas versões nesse código QR, uma que gera HTML e outra que gera Notion.
+
+OK. Segunda técnica: micromundos. O que isso significa? Então, isso se inspira no educador Seymour Papert, um verdadeiro visionário, que teve a ideia de viver na Terra da Matemática. E o que isso significava era: "Ei, as crianças aprendem francês morando na França, onde elas vão para aprender matemática?
+
+Existe uma 'Terra da Matemática' onde se possa aprender matemática intuitivamente apenas estando lá?" Então, ele fez coisas incríveis com um robô chamado Tartaruga, que as crianças programam para desenhar coisas. Mas a questão não é construir robôs, e sim que eles realmente aprendam matemática ao realizar essa programação. Mas a questão não é o robô, são as crianças que são transformadas. Então, como poderíamos aplicar isso à compreensão do código?
+
+Eis um exemplo. No ano passado, eu estava tentando implementar, para meu próprio aprendizado, um interpretador para a linguagem de programação Prolog, que pode ser considerada um pouco como uma linguagem de consulta de banco de dados . E há várias partes que se parecem com isso, mas quando você lê na Wikipédia, elas parecem muito complicadas. E aí, quando você finalmente entende o que está acontecendo, pensa: "Espera aí , não era tão difícil de entender, só pareceu difícil quando li dessa forma, né?" Como podemos fazer com que isso faça mais sentido para o meu cérebro?
+
+Então, pedi ao Claude para criar um micromundo para mim. Este é um depurador, uma interface de usuário efêmera, criada especificamente para visualizar a implementação interna da minha linguagem de programação. O que está acontecendo aqui é que estou percorrendo uma linha do tempo que mostra passo a passo o que meu intérprete está fazendo. Consiste em visualizar todo o estado a cada passo. Então, eu posso meio que abrir o capô e ver o que está acontecendo e começar a sentir, sabe?
+
+E sim, eu posso usar isso. Eu usei isso para corrigir erros. Até tive um pouco de dificuldade para enxergar aqui, mas existe uma função de comentários onde posso deixar anotações para mim mesma na linha do tempo, assim me lembro do que estava pensando. E eu uso isso para corrigir pequenos erros, mas também, enquanto corrigia os erros, ia me familiarizando com a máquina, certo? Isso é algo que, se você simplesmente enviar um agente para corrigir o bug, você perde essa visão periférica. Se você vive em um
+
+micromundo, sim. Outro exemplo: eu estava migrando meu site pessoal de uma plataforma para outra. E a primeira coisa que fiz foi dizer: "Claude, escreva um roteiro para eu fazer." Isso aconteceu. Parecia que ia funcionar, aí eu li o roteiro e pensei: "Ah, não sei". Tipo,
+
+eu simplesmente não tenho ideia do que está acontecendo. Vários arquivos foram parar em vários lugares. Parece correto. Então, o que eu fiz foi dizer: "Ei, Claude, faça para mim basicamente um videogame onde eu mesmo faça a conversão." E funciona assim: site antigo à esquerda, site novo à direita. Eu simplesmente clico em um
+
+botão, próximo, próximo, próximo. E a cada passo, aparece a mensagem: "Aqui estão os comandos que estou executando. Seu novo site está ganhando vida passo a passo. Você pode ver." Na verdade, existem árvores de arquivos lá embaixo onde posso ver os arquivos sendo movimentados.
+
+E o resultado é que é como se eu fizesse manualmente, só que clicando em um botão. Então, estou conseguindo aproveitar alguns dos benefícios de fazer isso iterativamente sem a dificuldade.
+
+E acho que a principal conclusão aqui é que os agentes podem escrever código para nos ajudar a entender o código. O objetivo não é criar software para ser lançado, mas sim construir esses pequenos micromundos para nós. É a terra da matemática, certo? É uma simulação exatamente disso. OK.
+
+Rapidamente, o último tópico: espaços compartilhados. Até agora, tudo isso girou em torno de mim, do meu entendimento individual. Mas, na maioria das vezes, acho que o desafio é justamente trabalhar em equipe. E toda a sua equipe precisa entender em conjunto para que vocês possam realmente colaborar e ter ideias criativas juntos. Nós, da Notion, refletimos muito sobre isso.
+
+Acreditamos que o entendimento mútuo que existe entre você e outra pessoa é o que permite uma comunicação eficaz. Sejam nomes para partes de um sistema, nomes para elementos ou conceitos da interface do usuário, certo? Então, nós da Notion pensamos muito sobre como criar ferramentas que possibilitem o entendimento coletivo. Algumas coisas que estamos explorando: será possível ter conversas multiplayer entre vários jogadores e agentes simultaneamente? Então, aqui, sabe, eu poderia perguntar a um gerente de produto da minha equipe: "Ei, sabe, o que os usuários estão pedindo com esse recurso?"
+
+E ela poderia dizer: "Ei, não sei. Vamos perguntar a outro agente." E esse agente entra e conversa conosco. O que está acontecendo aqui é que, em vez de eu e meu gerente de projeto conversarmos com nossos próprios agentes, estamos em um espaço compartilhado e podemos ver a comunicação um do outro. É mais ou menos como passar de conversas individuais para canais do Slack, sabe? Vocês observam mais esse
+
+comportamento acontecendo juntos e o compreendem em conjunto. Além disso, ter documentos que vocês possam discutir juntos é um recurso básico muito poderoso. Sabe, o Claude fez um plano para nós. E se eu tiver uma pergunta sobre isso que queira discutir com minha equipe? Só posso deixar um comentário porque este não é um espaço colaborativo, pelo menos não no meu computador local.
+
+E aí eu posso perguntar: "Ei, sabe, o que você acha disso?" E meu colega de equipe pode entrar na conversa e podemos discutir isso ali mesmo, certo? Acredito que ter esses espaços para discussão compartilhada de ideias com nossos agentes é realmente poderoso para construir esse entendimento coletivo. Aliás, lançamos na semana passada a capacidade de integrar agentes de programação ao Notion. Assim, Claude e Cursor agora podem viver no Notion. E nossa
+
+equipe, na verdade, desenvolve grande parte do nosso código no próprio Notion, principalmente por causa desses benefícios, porque tê-lo em um espaço compartilhado é muito valioso. Certo, então já falamos sobre essas três técnicas. Quero voltar ao início. Sabe, acho que no início eu disse: "É importante que os humanos ainda entendam como o código funciona, certo?" Mas na verdade acho que é muito maior do que isso. Acho que
+
+é importante para os humanos continuarem a entender como tudo funciona. E talvez, sabe, todos vocês concordem que parece . Mas acho que isso está sendo questionado agora e é algo pelo qual realmente precisamos lutar ativamente. A questão é que esta não é uma batalha nova. Isso remonta, na verdade, às origens da nossa área de atuação.
+
+Alan Kay é um dos pioneiros da computação pessoal, co-inventor da interface gráfica moderna. E, literalmente, há 50 anos, ele escreveu este ensaio que considero muito profético, intitulado "Um computador pessoal para crianças de todas as idades". Parece que são duas crianças com iPads assistindo ao YouTube ou algo assim, né? É meio louco. Esta é a visão dele de 50 anos atrás . Mas isso não é o YouTube nos
+
+iPads. O que ele imaginou foi: "Ei, essas crianças estão jogando um videogame e modificando o código enquanto jogam para aprender física." Portanto, a questão não é o computador, mas sim as crianças. O objetivo dos computadores era nos elevar a um novo patamar como seres humanos, certo? E Alan tem falado muito sobre como parece que, em algum momento, os computadores se desviaram um pouco dessa visão.
+
+Mas acho que o mais interessante é que talvez agora seja a hora de trazer isso de volta. Aqui está uma espécie de versão meme disso. Acho que com a IA, muitas pessoas estão se dando conta de que "Nossa, o código é gratuito. Podemos criar interfaces de usuário efêmeras, simulações dinâmicas para entender conceitos. Podemos criar depuradores, ambientes de teste."
+
+E eu penso: "Sim, isso é ótimo." E, na verdade, não é uma ideia nova. Como se esse fosse o objetivo desde o início. Então, acho que o aspecto otimista que considero realmente empolgante é que ainda é muito importante entender como as coisas funcionam. E com as ferramentas certas, a mentalidade certa e a criatividade certa, podemos, na verdade, entender melhor do que nunca, e não menos. Com a IA, podemos nos
+
+empoderar mais, não apenas nos livrando de ciclos viciosos, mas nos inserindo neles de forma mais profunda do que nunca. E acho que essa é uma perspectiva realmente empolgante e espero que seja algo que todos nós, juntos como setor, consigamos descobrir. Isso é tudo que tenho para você hoje. Muito obrigado. [aplausos]
+
+[música]
