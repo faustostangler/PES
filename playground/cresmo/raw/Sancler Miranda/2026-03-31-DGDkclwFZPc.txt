@@ -1,0 +1,185 @@
+---
+video_title: "Como Hospedar Seus Projetos do Google AI Studio (Sem Vazar sua API Key)"
+video_id: DGDkclwFZPc
+channel_name: "Sancler Miranda"
+channel_id: UCLMB3EPQVT-d9oQ5JigcabA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=DGDkclwFZPc
+video_date: 2026-03-31T23:07:46+00:00
+video_description: |
+  🔥 Hospedagem WebApp na Hostinger (use o cupom SANCLER para 10% OFF): https://sancler.bio/HostingerWebApp
+  
+  🤯 Novo curso Claude para Todos no IA Revolution Academy, em breve! Aproveite e garanta antecipado, antes de aumentar👇
+  https://sancler.bio/IARev216
+  
+  _____
+  
+  Se você criou um webapp ou site no Google AI Studio e quer publicar com domínio próprio, este vídeo é para você. Vou te mostrar o passo a passo completo para hospedar seu projeto na Hostinger usando o GitHub, sem precisar baixar nada, sem instalar ferramentas extras, e de forma segura, com sua API Key do Gemini protegida.
+  O melhor de tudo: depois de publicar, você continua editando normalmente no AI Studio, e as alterações são aplicadas automaticamente no site. Sem complicação, sem perder o que você já tem.
+  
+  _____
+  
+  🔗 Links mencionados no vídeo:
+  
+  - Hospedagem WebApp na Hostinger (use o cupom SANCLER para 10% OFF): https://sancler.bio/HostingerWebApp
+  - Crie sua conta no Github: https://github.com/?locale=pt-br
+  - Todos os prompts citados no vídeo: https://docs.google.com/document/d/1QrhLt83lui4Hw2L0UsMaYNktrPfMI-s3rnw3BqU-fAI/edit?usp=sharing
+  
+  _____
+  
+  Conteúdo do vídeo:
+  
+  00:00 - O problema comum para hospedar apps do AI Studio
+  00:52 - Demonstração do web app funcionando
+  02:01 - Criando conta no GitHub
+  03:22 - Escolhendo a hospedagem na Hostinger
+  04:43 - Configuração inicial da hospedagem
+  05:17 - Caminho 1 vs Caminho 2 (segurança da API)
+  06:05 - Preparando o projeto no AI Studio com prompt
+  09:17 - Enviando projeto para o GitHub
+  10:06 - Configurando deploy na Hostinger
+  10:50 - Variáveis de ambiente e API Key
+  12:10 - Configurando Firebase (login e domínio autorizado)
+  13:20 - Primeiro deploy e testes
+  14:30 - Debugando erro da API Key
+  15:30 - Testando funcionamento do app
+  16:00 - Problema: API exposta (risco de segurança)
+  17:10 - Migrando lógica para backend (solução segura)
+  18:40 - Atualizando variáveis e novo deploy
+  19:40 - Teste final com API protegida
+  20:30 - Conectando domínio próprio
+  21:20 - Considerações sobre segurança e boas práticas
+  
+  _____
+  
+  #AIStudio #WebApp #VibeCoding
+---
+Se você já travou na hora de tirar o seu projeto de dentro do AI Studio para você colocar em uma hospedagem com o seu domínio próprio, seja porque você tá publicando um web app, um site para você mesmo, para um cliente, calma, porque você não tá sozinho nessa. Eu vou te mostrar como que você vai fazer da maneira mais simples e segura possível, sem precisar envolver outras ferramentas, sem precisar baixar nada. Inclusive, se você quiser continuar usando o AI Studio para editar, alterar alguma informação no seu app, você pode continuar fazendo isso no EA Studio, que essas alterações serão automaticamente aplicadas lá no site que tá hospedado para você. Fechado? Se você ainda não é inscrito, seja muito bem-vindo, bem-vinda. Clica abaixo para se
+
+inscrever. Clica nesse lindo gostei que tem logo ao lado, pega o seu cafezinho, vem comigo e let's go. Eu tô aqui com um web app que eu criei no AI Studio e toda vez que eu falar web app ou app, eu tô me referindo à mesma coisa, tá? Não vamos entrar agora em detalhes técnicos. Aqui neste app nós temos um login, entrar com Google. Eu fiz o meu login e
+
+o que que significa? que se o seu app tiver também login, tiver banco de dados, você tá usando o Firebase. Você fez tudo dentro do AI Studio, você tá usando o Firebase, que é a integração nativa para que essa autenticação aconteça. Legal. Deixa eu demonstrar para você o que que esse web app faz.
+
+Olá, você tá vendo minha tela? >> Olá, sim, estou vendo sua tela. Estamos na documentação do cloud, especificamente na sessão sobre computer use. Claro, essa página mostra como usar o computer use pela linha de comando. Cal é uma função em preview que permite que o cloud execute tarefas que usariam a interface gráfica, como abrir aplicativos ou controlar a tela.
+
+>> Deu para entender a ideia? >> Ó, cliquei para encerrar. Então, essa é a ideia. É uma ideia que eu já tenho ela há muito tempo. Eu gosto muito dessa ideia de deixar IA ver a minha tela e eu ir perguntando e aprendendo em tempo real. Muito bom. Agora vamos imaginar
+
+que eu quero tirar ele do AA Studio e quero colocar em uma hospedagem lá na Hostinger. Como que eu vou fazer isso? A primeira coisa é que se você não tiver uma conta no GitHub, crie essa conta. É muito fácil. Vou deixar o link abaixo para você. Você cliquei em signup, você
+
+pode continuar com uma conta Google. Clica em continuar, vai pedir um username, o país, você vai colocar Vibras, só que aqui é com Z. E pronto, sua conta no GitHub está criada. O GitHub é um local para você colocar o seu projeto e separar por versões. Então você fez uma publicação agora, mas a próxima vez que você alterar, colocar uma nova função, alguma alteração, vai ficar registrado que essa alteração aconteceu e vai ficar organizado por versões. Quando um app ou um serviço,
+
+que nesse caso aqui é a Hostin, consegue sincronizar com o GitHub, significa que ele vai puxar do GitHub todo o projeto, o código, etc. você não vai precisar mexer com o código, ele vai sincronizar para fazer essa publicação lá na hosting. E se fosse um app, como por exemplo, o Cloud Code, Lovbow, Raplet, uma IDE como VS Code, Cursor e assim por diante, você consegue sincronizar para fazer as edições nesse projeto que está aqui. Então, por isso que se chama repositório. Você vai colocar no GitHub, vai ficar organizado por versões e disponível para quando você precisar fazer essas sincronizações entre apps. A
+
+segunda coisa é assinar hospedagem, que é específica para esse tipo de projeto que estamos fazendo. Para você ter uma ideia, eu vou clicar aqui em vejo os planos. Esse plano aqui que é o business, ele tem cinco aplicações web, significando que você pode fazer até cinco sites, cinco, hospedar cinco projetos diferentes. O legal é que você tem o domínio grátis por um ano. Se você pegar no de 12 meses, eu vou mostrar que o o preço compensa bastante. Tem aquilo
+
+que precisamos que é a integração do GitHub, já com deploy automático. Deploy nada mais é que a publicação. Tem backup automático diariamente, tem fire all criar, cada projeto tem cinco caixas de e-mail por site. Muito bom. Vou clicar aqui em escolher plano e já vai vir pré-preenchido no período de 48 meses. É
+
+só você trocar. Vamos ver o preço aqui, ó. 24 meses vai ficar 383, ou seja, 2 anos é bastante coisa. e 12 meses 239, que foi exatamente esse aqui que eu peguei, porque 12 meses com cinco projetos, tem um domínio gratuito, tem backup diário, cara, esse preço tá bom demais. Então, eu vou deixar também um cupom de desconto aqui abaixo na descrição. É só você pegar esse cupom,
+
+colocar aqui, ó, tem um cupom de desconto, só que ele vai servir apenas para o de 12 meses pra frente. Fechou? É só você clicar em continuar. Aí, aqui é o mesmo processo de sempre. Você preenche com seus dados, cartão e faz a assinatura. Aí o seguinte, eu deixei o
+
+vídeo pronto aqui na hora que eu fiz a minha assinatura para te mostrar que vai aparecer essa tela. Parabéns, sua jornada começa agora. Você espera ou clique em começar agora. Aí vai aparecer que você tem um domínio grátis. Aqui tá aparecendo dois porque é de uma outra assinatura que eu fiz também. Ele tá
+
+aparecendo aqui para mim que eu tenho esses dois. Se você quiser já pode selecionar agora, mas tem como você fazer isso depois. Você pode começar com usar domínio temporário para você já ir direto na configuração e só depois que tiver tudo configurado você pega o domínio definitivo. Fica como você preferiu. Agora eu vou te mostrar dois caminhos. O primeiro é o mais rápido
+
+possível, só que ele é o menos seguro. E eu não recomendo se você for colocar o seu web appão, para outras pessoas utilizarem, que você use dessa forma, não recomendo. O segundo, ele é mais robusto e mais seguro. Você pode começar pelo caminho um e aí fazer a transição para o caminho dois ao longo do vídeo também, beleza? Apesar de o caminho um ser o que você mais vai ver as pessoas te ensinando, eu não recomendo que você faça isso, porque tem uma exposição da sua chave de API muito grande, muito fácil, praticamente qualquer pessoa pode conseguir a sua chave de API, logo essas pessoas podem utilizar e você vai ser cobrado por isso. Dito isso, vamos para
+
+o caminho um, que faz parte do processo do caminho dois. Vem comigo. Vamos lá. Eu vou clicar em adicionar site e web app node pra chegar na mesma tela que você está agora. Olha só, vou clicar aqui em usar domínio temporário. E
+
+pronto, chegamos na mesma tela. Eu fiz um remix, ou seja, eu dupliquei o meu projeto original e vou utilizar um prompt que eu também vou deixar exatamente o mesmo para você, que é esse aqui. Já colei, enviei e tá disponível para você também no na descrição do vídeo. O que que eu já adiantei aqui para você? para explicar para o gemini que esse web app será publicado na hosterndode.js,
+
+que é a hospedagem específica para os nossos web apps, usando white e sincronizando com o GitHub. O Vite vai ser o responsável por fazer o empacotamento para transformar o nosso web app acessível como uma página na internet para qualquer pessoa acessar. Isso já está lá no como opção no Hosinger que permitam que esse projeto seja executado sem nenhum problema fora do EAI Studio. Para continuarmos a editar o projeto dentro do EA Stúio, mantém apenas o necessário que funcionará nesse ambiente aqui. E ao sincronizar com GitHub e passar lá para Hosinger, eu não quero que influencie em nada do que tá acontecendo aqui. Esse
+
+projeto vai funcionar fora do AI Studio, mas eu também quero que ele continue funcionando aqui. Só que a estrutura para ele funcionar fora do EA Stú é diferente da estrutura lá da nossa hospedagem. Então ele vai fazer essa adaptação para que funcione tanto aqui quanto lá. E eu já digo o seguinte, eu vou colocar a API aqui do Gemini Live porque essa é a API que eu tô utilizando nesse meu projeto dentro das variáveis do ambiente da Hostgare. Você vai ver o que é isso, como fazer. O segundo ponto
+
+é, se houver a necessidade de outras variáveis serem aplicadas, eu quero que ele me liste todas elas, o passo a passo simples de entender, com seus links que vão levar direto para onde eu preciso pegar essas variáveis e essas chaves. Eu já falo para ele me dê todo esse passo a passo. E terceiro ponto é que se eu precisar fazer qualquer liberação, por exemplo, inserir, isso aqui precisa fazer, tá? Para quem tem o login no Firebase habilitado, como é o meu caso aqui, eu já falo para ele, já adianto logo isso para ele me avisar tudo que precisa ser feito. Ou então, se tiver alguma restrição também me avise, informe o passo a passo do mesmo jeito que eu coloquei aqui. Pronto, ele já fez
+
+as modificações no código. E o que eu percebi? Eu acabei adiantando pr você algo que seria somente no caminho mais robusto e mais seguro. Então mesmo o caminho mais simples e o menos seguro já está mais seguro do que a maioria das pessoas costumam fazer. Beleza? e eu vou
+
+te mostrar todo o passo a passo. E ao invés de eu ler todos os pontos, vamos fazendo um passo por vez, que assim a gente faz enquanto aprende. Vou clicar aqui para entrar com Google, só para fazer um teste, para ver se tá tudo funcionando, que eu acabei de duplicar esse app, né? No meu caso, o meu está configurado, esse aqui é o meu caso específico, tá? Ele tá configurado para aceitar somente o meu e-mail, ou seja, ninguém mais vai entrar nesse web app aqui. Você pode fazer o mesmo fazendo um
+
+pedido simples para ele, tá? que você somente para ele liberar somente o seu e-mail. Olá, você está vendo e ouvindo minha tela? >> Olá, sim, estou vendo e ouvindo perfeitamente. A tela está com o Google AI Studio.
+
+>> Beleza, só para garantir. Agora vamos passar o projeto. Cliquei ali na engrenagenzinha. Vou até colocar para você onde que eu tô clicando. Pronto, tá aparecendo aí. Eu vou clicar agora em
+
+GitHub. Vamos dar um nome para esse repositório que vai ser o local onde vai ficar salvo lá no seu GitHub. Tor Live YouTube V1. Coloca uma descrição qualquer, visibilidade privado, tá? Porque senão qualquer pessoa consegue acessar o link do seu repositório. Vou
+
+clicar aqui para criar esse repositório. Vai mostrar todos os arquivos que serão enviados para lá. Nós vamos clicar em stage and comet all changes. Toda vez que você fizer uma modificação aqui no EAI Studio, é só você voltar aqui GitHub e mandar atualização para sincronizar com GitHub. Legal. Agora nessa página,
+
+vou clicar aqui para atualizar os meus repositórios e já vou escrever o nome dele para filtrar, né? Apareceu aqui, tutor live, vou clicar, selecionei, cliquei em continuar. E aqui é o seguinte, ó, presta muita atenção. Se você tiver feito um web app onde você não utilizou aquele prompt que eu te enviei, ele vai funcionar aqui em White, beleza? Vai tá aqui, ó, White. Se você
+
+utilizou esse prompt que eu acabei de usar aqui, onde ele está confirmando que ele criou um servidor de produção, server.js, significa que você precisa, ele até fala, ó, usando Express, significa que você precisa selecionar a configuração pré-definida em Express, tá certo? Caso contrário, era bem provável que ele dar um erro, ia mostrar isso para você aqui na Hosg. Aqui não precisa mexer, só para você ver como que tá no meu npm e aqui o nome do servidor. Aqui nesse servidor é onde vão as suas informações mais sensíveis. Variáveis do ambiente é onde
+
+entram os nossos próximos passos. Vou clicar para adicionar e vamos voltar nas instruções que o Gemini trouxe. Vou aumentar aqui um pouco. O nome da primeira variável é gemini API_line Ky. Você vai copiar, você vai colar aqui em chave e valor. Você vai pegar sua API
+
+key. Onde que você vai encontrar? Você entra em AI Studio, Get Pay Key e você vai ver, se você tiver utilizado, assim como eu, o Firebase, que ele já criou automaticamente um projeto para você e já tem a sua chave de API, que é só chegar aqui e copiar. Uma forma que você pode conferir é dar uma olhada nesses quatro últimos números, que é só você clicar para fazer o login e na hora de escolher a conta do seu Gmail, o endereço dele vai ser o mesmo, tá? É uma forma de você conferir. Agora eu vou
+
+colar essa AP aqui e vou ver quais são as outras variáveis. O próximo, que são as variáveis do Firebase, ele já tá me dizendo que por design, ou seja, por padrão, já vai ficar salvo publicamente. Então, qualquer pessoa já teria acesso a essa informação e o próprio Google sabe disso, o próprio Firebase sabe disso. Então, não precisa fazer colocar ele escondido, já que por padrão, por definição, ele já fica salvo assim. Ele ainda fala: "Se por preciosismo você quiser ocultar, tá aqui, que que você vai pegar? Beleza? Aí agora vem as
+
+liberações que precisamos fazer. Isso aqui é muito importante porque é o seguinte, se não colocarmos isso na hora de fazer o login, ele só vai abrir e fechar a página de login para você escolher sua conta Gmail muito rápido. Você não vai conseguir porque ele tá bloqueando. Para você desbloquear isso, ele já te manda qual é o console do Firebase, é só você clicar para abrir essa aba. Pode aparecer assim para você também, é só você clicar de novo. Você
+
+vai procurar o seu projeto, vai ter o mesmo nome. Nós vamos na autenticação. Onde que você encontra? aqui no menu esquerdo, segurança auto Education, vai mostrar o seu usuário aqui e vai em configurações. Tá vendo aqui, ó?
+
+Domínios autorizados. Aqui é o local onde você vai colocar o seu domínio que está aqui embaixo. Deixa eu clicar para finalizar. Tá aqui embaixo, ó. Domínio temporário. Vou copiar esse domínio. Vou
+
+voltar lá no Firebase e vou colar. Pronto. Adicionar. E se você já tiver optado por pegar o domínio próprio, o seu final mesmo, você também coloca aqui. É o mesmo processo, ele já salva automaticamente. E antes de fazer essa
+
+restrição da chave de API, eu vou fazer um teste, porque eu já sei quais são as pegadinhas que tem aqui. Eu vou fazer esse teste, beleza? Então vamos voltar lá. Vamos agora clicar em plantar. Lembrando que só foi adicionado uma variável do ambiente. É só esperar,
+
+geralmente leva 2, 3 minutos. Se passar disso, ficar travado, é só você clicar para ir para o painel de controle, que vai aparecer um botão aqui, painel de controle, e você verifica se tá verdinho ou não. Mas geralmente quando fica travado aqui é um um bug e aí você pode ver no painel de controle que já foi publicado. Pronto, aqui levou literalmente um minuto. Vou acessar o painel de controle. Ele vai me mostrar
+
+que já está online, aqui ó, estado concluído. E um local para você ver. Toda vez que fizer alguma alteração, você clica em implementações e sempre que você fizer uma modificação aqui, vier no GitHub e fazer enviar as modificações feitas, você vai perceber que vai aparecer aqui. Inclusive, é uma forma de você ver se já foi aplicado ou não. Geralmente leva alguns segundos, não chega nem a ser um minuto, tá? Mas
+
+aqui é o local para você ver isso. Beleza? Vou voltar em visão geral. Aqui sempre fica mostrando o link do seu site. Eu vou clicar aqui para fazer o primeiro teste para ver se tá funcionando. Ó, apareceu. Legal. Antes
+
+de eu clicar iniciar tutor, eu já vou te mostrar uma coisa que vai te economizar tempo. Você clica com o botão direito na sua página, inspecionar. Ou então você pode apertar F12 também do seu teclado. Você tiver o FN aí é FN12. F12. Tá vendo
+
+que aqui tem um menuzinho chamado console? Você vai clicar nele para ver se vai aparecer algum erro quando você utilizar suas funções de a ou qualquer função do seu web app, tá certo? No meu caso aqui desse projeto é o tutor. Eu vou clicar nele e vou ver se ele está funcionando ou não e se vai aparecer algum erro aqui. Clicar em compartilhar.
+
+No meu caso, já sei o que que é. Que é o seguinte, ele tá falando que a minha PI ke ela deveria estar com esse nome, ou seja, ele não tá encontrando, né? Por isso eu coloquei somente Gemini_line API_LINE K. Se acontecer isso com você também, é só você colocar um white na frente. Eu vou te mostrar onde que fica para modificar isso dentro da hosting.
+
+Eu estou aqui no painel de controle, visão geral. Vamos clicar aqui em configurações e reimplementação. Reimplantação, na verdade. Vamos descer. E pronto, está aqui. Eu vou trocar para
+
+white underline a gemine_line AP aqui. Salvar e reimplantar. Ele vai mostrar que ele tá em construção fazendo a modificação. E pronto, foi implantado. Carregar com o console aberto. Iniciar
+
+tutor. Janela. Vamos ver. Permitir ao acessar o site. Olá, você está me ouvindo? Tá vendo a minha tela?
+
+>> Olá, sim, estou te ouvindo e vendo sua tela. Você acabou de aceitar a permissão para usar o microfone e isso é ótimo. >> Legal, tudo funcionando. E agora eu vou fazer o seguinte para ver se a minha chave da do Gemini está exposta ou não. Você faz a mesma coisa. Aí no meu caso é
+
+command option F para ele fazer essa busca global que tá aqui embaixo. Tá vendo? Como a chave API do Google ele tem um padrão de começar com A ZA. Olha lá, ó. Eu vou digitar A Z. Apertar um
+
+enter. Vou aumentar. Vou clicar onde está aparecendo e vou verificar que essa primeira é a PI do Firebase, tá? Não tem problema, ela está aparecendo. A segunda e a terceira elas são do Gemini. Então
+
+esse aqui mesmo não pode aparecer, mas como eu falei, esse é o caminho um que a maioria das pessoas vão fazer dessa forma, vão mostrar para você fazer assim. E eu não recomendo a não ser que for aquele caso que eu te falei, né? você tá fazendo teste e se você deixar isso disponível assim online, recomendo que você sempre fique monitorando a sua chave API. Pra não ter essa dor de cabeça, nós vamos fazer um pedido. Como eu falei, sem querer, eu acabei adiantando já pr você ir tornando esse primeiro passo muito mais seguro, esse primeiro caminho mais seguro. Agora, pr
+
+você que escolheu o caminho um, o que eu recomendo somente para aqueles casos onde é você só tá fazendo um teste, poucas pessoas vão ter acesso a isso e mesmo assim eu não recomendo tanto que a maneira que as pessoas geralmente ensinam, sem se preocupar com essa questão, nós vamos aplicar mais uma camada de segurança. Agora é o momento de blindar. Vamos falar assim para o GM está funcionando. Como a P aqui do GN está aparecendo front end, foi o que nós vimos ali agorinha, migre a lógica da IA. Analise o código atual que tá no frontend, que é tudo que nós vemos ali na tela. Encontre todas as chamadas
+
+diretas para a API do Gemy, com exceção do Firebase, porque ele já explicou ali que por design ela é daquela forma. Mova toda essa lógica para o back end, criando as rotas de API, por exemplo. Aí coloca aqui o exemplo web sockets, se for necessário. No meu caso, é necessário porque eu tô usando um projeto que tem essa live API. Se o meu projeto usar o stream de resposta ou live API, configura a biblioteca e vai mostrar tudo que é necessário para esse caminho mais seguro funcionar. Beleza?
+
+Agora eu vou enviar. Enquanto ele termina, lembra que eu te falei lá da pegadinha? que é o seguinte, se colocarmos o que ele tá pedindo aqui para ficar com a autorização da chave API funcionar apenas com o domínio e aí a gente coloca o nosso próprio domínio, seja o definitivo ou temporário, ele simplesmente não funciona. É possível resolver isso? É, só que na minha visão não vale a pena todo o trabalho e você é livre para fazer isso se você quiser.
+
+Mas o que eu recomendo é que você faça logo esse segundo caminho que é o mais seguro. Olha só, ele tá falando que a lógica já foi migrada para o back end, que significa que agora está aqui no server. E uma coisa muito importante é que ele trocou, lembra que tava white? Agora ele voltou para apenas Gemini AP key. Então nós precisamos atualizar aqui e depois trocar essa variável do ambiente. Primeira coisa, vamos vir em
+
+configurações. GitHub, stage and comment all chains. Beleza? Vamos verificar como está aqui em plantações. Está construindo, tá sendo processado.
+
+Pronto, concluído. Agora vamos implantar a nova variável, né? trocar, na verdade, vir aqui abaixo, vou tirar esse white daqui, vou deixar apenas gem, como o próprio G me orientou a fazer. Agora o mesmo processo, só aguardar. Uma vez finalizado, nós vamos voltar pra página para fazer o teste. A cada modificação
+
+que você fizer, faça um teste, tá bom? Para você não acabar fazendo diversas modificações, aí dá um erro na sua aplicação e você não sabe exatamente de onde veio aquele erro. Por isso, sempre faça uma modificação e teste para ver se tá funcionando direitinho. Pronto, já foi feito. Vou voltar. Control Shift R.
+
+Vamos ver se tá funcionando desde o início. Eu gosto de fazer o teste desde o login. Vamos ver se tá funcionando a parte do login. Beleza, funcionando. Já vou abrir o console. Vamos ver se tá
+
+funcionando compartilhamento, que é a função principal do meu web app. Para você pode ser outro. Olá, tudo bem? Está vendo minha tela? >> Olá, tudo bem por aqui também? Sim,
+
+consigo ver sua tela perfeitamente. >> Agora, como aqui já está salvo, tá? Mas se não tiver salvo, é só você procurar de novo aí. Za vou enviar. E pelo que tudo indica, só está aparecendo o do Firebase, aquele que não tem problema de aparecer. Tá certo? Maravilha. Agora o
+
+nosso a nossa API aqui está escondida, não está mais disponível para o usuário. E o legal é que essas modificações, assim como o histórico, né, do seu web app, aí vai variar de pessoa para pessoa, vai aparecer tudo aqui no AI Studio também, se tiver logado na mesma conta, é claro. Por último, se você quiser fazer o seu domínio definitivo, é muito simples. Aqui na hostigg é só você clicar, vai tá aparecendo isso aqui para você. Coloca conectar domínio. Ele dá um
+
+aviso, o nome do domínio não será alterado nos bancos de dados. Mas na verdade o que você vai precisar fazer é só, vou clicar aqui em alterar. Você escolhe o seu domínio. Eu não vou clicar em nenhum. Vamos imaginar que seria esse aqui. É do live.com.br. Apareceu para
+
+mim já grátis por um ano. Próximo. Aqui é muito simples, tá? É só você clicar agora em registrar que poucos minutos já tá disponível para você. O único local que precisaríamos alterar é no Firebase, nos domínios autorizados com o seu novo domínio. E é isso, Sancla. Eu gostaria
+
+de já ir direto para essa segunda opção. Eu vou fazer o seguinte, eu vou deixar duas opções de prompts e eu preciso pensar nesse primeiro, onde a pessoa vai colocar o mais simples possível, porque tem pessoas que só estão fazendo teste, não precisa de toda essa robustez para colocar no seu servidor. Mas se você quiser ir direto, vou deixar uma opção para fazer em duas partes e a segunda opção para fazer tudo de uma vez desde o início, transformar o seu projeto em um projeto com back end aquele arquivo server.js. E todas essas APS vão ficar lá dentro com todas as rotas arrumadas pelo próprio Gon. A partir daqui, você
+
+zerou a questão de segurança? É claro que não, e eu preciso deixar isso muito claro. A partir do momento que você está colocando um serviço seu no ar para as pessoas assinarem, utilizarem, você precisa ter um certo nível de cuidado com a segurança dos dados dessas pessoas, tá certo? Então o que eu recomendo é faça essas perguntas mais estratégicas para o AI Studio lá dentro no Gemini e assim que você puder você contrata uma pessoa mais específica para esse caso, um desenvolvedor que tenha uma experiência com segurança com os aplicativos feitos com Vibe Coding, assim dessa forma como é feito aqui no EA Stúio, mas fazendo essas perguntas certas, essas solicitações mais assertivas para uma IA, você consegue mitigar muita questão de segurança. Beleza? Me conta aqui nos comentários se
+
+deu tudo certo para você, qual foi o web app que você hospedou, o que que você tá pensando em fazer daqui pra frente. E muito obrigado você ter assistido até esse momento. Eu te vejo já já. Valeu,
