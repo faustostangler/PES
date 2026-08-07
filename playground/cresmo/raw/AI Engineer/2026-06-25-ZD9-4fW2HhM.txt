@@ -1,0 +1,112 @@
+---
+video_title: "Build Systems, Not Code - Angie Jones, Agentic AI Foundation"
+video_id: ZD9-4fW2HhM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZD9-4fW2HhM
+video_date: 2026-06-25T18:00:06+00:00
+video_description: |
+  AI coding agents are changing what it feels like to be a software engineer. For a lot of us, that's challenging our sense of craftsmanship. If agents are writing the code, do we lose the joy of building?
+  
+  I don't think so. The building moves up a layer.
+  
+  In this talk, I'll share how I found that familiar engineering flow state again. Not by writing every line myself, but by designing agentic systems that still require the engineering principles we value: systems thinking, decomposition, separation of concerns, state management, etc.
+  
+  The tools are different now, but the engineering discipline is still there. We'll walk through how to apply the engineering muscles you already have to a new set of building blocks.
+  
+  If you've been wondering where your value goes in an AI native world, this talk will help you see that it hasn't disappeared. It's now at the system level.
+  
+  Speakers:
+  - Angie Jones (Agentic AI Foundation): Angie Jones is the VP of Developer Experience at the Agentic AI Foundation where she guides how agentic systems are designed, implemented, and adopted across the global developer ecosystem.
+    X/Twitter: https://twitter.com/techgirl1908
+    LinkedIn: https://www.linkedin.com/in/angiejones/
+    GitHub: https://github.com/angiejones
+---
+Ultimamente tenho criado muitos agentes para tarefas operacionais. E enquanto eu trabalhava numa sexta-feira à noite, vi o pôr do sol. E então chegou a hora do jantar e passou. E então me dei conta. Eu estava naquele fluxo de desenvolvimento familiar.
+
+E a emoção de construir estava de volta. Muitos de nós que programamos com agentes sentimos uma espécie de pavor silencioso. É como se eles estivessem tirando todas as partes divertidas da construção e nos deixando com o trabalho menos glamoroso, mas deixe-me dar um pequeno conselho. Deixe que eles fiquem com isso. Porque se você subir apenas um nível, verá que a emoção continua lá.
+
+Quando você está criando agentes, e não apenas usando-os para escrever código, você começa a arquitetar sistemas baseados em agentes. E você percebe que os elementos básicos são diferentes, mas a disciplina é a mesma. Então, me vejo agora exercitando as mesmas habilidades de engenharia que eu exercitava antes da IA ​​de geração anterior. E estou me divertindo muito com isso. Então, vou explicar o fluxo de trabalho do design de um agente. Vou mostrar a
+
+vocês onde as habilidades de engenharia ainda são úteis . Então, o agente é um olheiro de realocação, que é um agente de busca de imóveis. E se você fizesse isso apenas como um comando pontual, que indicasse ao agente alguns anúncios e pedisse para ele classificá-los, quer dizer, isso funcionaria, mas provavelmente você não encontraria uma casa em um dia, certo? Então, você quer construir isso como um sistema agente que possa ser reutilizado. Uma que consegue reter o conhecimento mesmo após o término da sessão. Sabe, ele poderia
+
+recarregar ou consultar esse conhecimento posteriormente para tomar decisões mesmo em um novo contexto. Assim, ao pensar em como projetar um agente, a primeira habilidade de engenharia que exercitei foi o pensamento sistêmico. Então, um agente não é o sistema, certo? Faz parte do sistema. E esse sistema possui arquivos e ferramentas, humanos e até mesmo outros agentes. Assim, o Relocation Scout está inserido
+
+em algo maior e reúne anúncios e informações sobre os bairros. Ele compara as opções com base no que me interessa e, em seguida, me retorna uma lista restrita classificada. Então, eu ouço frequentemente as pessoas dizerem: "Deixe seu agente de codificação fazer isso, certo?" E acho que isso é um erro. Tipo, sim, meu agente de codificação pode construir isso, mas antes de permitir que ele faça isso, preciso pensar em todo o ambiente, em todo o sistema, certo?
+
+Gostaria de pensar qual é o trabalho desse agente? De que depende? O que acontece se quebrar? E eu quero tratá-lo como qualquer outro componente, onde ele tem limites e responsabilidades, tem dependências, sabe? E de maneiras que pode falhar.
+
+E todo esse processo de pensamento, isso é engenharia. A segunda habilidade é o design de fluxo de trabalho. Assim, o software tradicional está repleto de fluxos de trabalho. Temos pipelines de CI/CD, certo? Temos ciclos de vida de ingressos, e tudo mais .
+
+Sistemas agéticos precisam desse mesmo tipo de design. Por mais que todos nós gostemos do comando de objetivo (barra) , um agente precisa de mais do que um objetivo, ele precisa de um caminho. Quando dizemos "Analise este anúncio", isso é uma meta, mas o fluxo de trabalho é o que define o que realmente precisa acontecer, certo? [Limpa a garganta] Por exemplo, o agente precisa reunir o que precisa, precisa comparar o imóvel com os meus critérios e então agir, certo? E cada corrida termina de uma de três maneiras. Ou vai parar, ou
+
+vai tentar novamente, ou vai piorar. Assim, esse caminho é o que molda o restante da arquitetura. Depois de entender como o trabalho flui pelo sistema, posso tomar decisões mais acertadas sobre o contexto necessário para o agente, quais partes ele deve lidar diretamente e quando uma ferramenta ou pessoa deve assumir o controle. Todos nós sabemos o perigo de uma coisa gigante que faz tudo, certo? Nós zombamos quando vemos uma aula gigantesca ou uma função enorme que está fazendo demais, não é? Ou um serviço inchado com uma
+
+infinidade de pontos de acesso. Chamamos isso de " cheiros de código". Bem, os sistemas agentes têm sua própria versão disso. São os prompts gigantes. E tudo começa de forma bastante inocente . Assim como em um arquivo de instruções,
+
+talvez eu explique ao consultor de realocação como avaliar um imóvel. Justo. Mas aí me deparei com um caso atípico, então voltei atrás . Adiciono uma nota para isso. E aí eu me lembro de uma regra de segurança, né? Então, é claro que
+
+isso tem que estar lá. Tenho orgulho de mim mesma por ter me lembrado de colocar isso ali, não é? E então, ah sim, há mais uma exceção muito importante . E, antes que você perceba, aquele comando está fazendo tudo. E seu sexto sentido de engenheiro já sabe que isso vai dar problema. Então,
+
+por que você não dá um passo para trás para decompor isso, certo? Decompor significa identificar as tarefas distintas que estão escondidas dentro daquela massa e separá-las em partes distintas. Então, se eu analisar as instruções do Relocation Scout em sua totalidade, elas incluem um processo reutilizável para extrair e normalizar uma lista de imóveis, e também terão um formato fixo para escrever a lista final. Há uma pequena seção sobre como calcular o tempo de deslocamento e, em seguida, uma subtarefa considerável sobre como pesquisar o bairro. São quatro trabalhos diferentes condensados ​​em um único enunciado.
+
+E aí você se pergunta por que seu agente está se desviando do assunto e não seguindo o roteiro. O roteiro é muito longo. Então, não estou dizendo que você precisa dividir as coisas só por dividir, mas o objetivo é tornar cada parte mais fácil de entender, certo? Assim fica mais fácil atribuir tarefas. É mais fácil mudar as coisas quando você precisa.
+
+Agora, a decomposição consiste em desmembrar o sistema. A separação de responsabilidades consiste em atribuir cada responsabilidade ao lugar certo. E é aqui que a criação de agentes começa a me parecer realmente familiar, porque no software tradicional, nós nos perguntaríamos coisas como: isso deve ficar no controlador ou na camada de serviço? Ou, sabe, isso é lógica de negócios ou apresentação? Portanto, ao contratar agentes, você pode ter o mesmo tipo de dúvidas. Existem simplesmente
+
+lugares diferentes para colocar as coisas. Então, o processo para normalizar a listagem deve permanecer oculto no prompt? Ou talvez isso realmente se torne uma habilidade, não é? Quero que todos os itens da lista restrita sejam formatados da mesma maneira. Portanto, essa saída estruturada provavelmente deveria ser definida em um esquema.
+
+Não é isso que você faria se estivesse programando o sistema você mesmo? Eu poderia. E então a parte que calcula o tempo de deslocamento, essa pode ser implementada em um script simples e direto. E a pesquisa sobre a vizinhança, que já é bastante substancial, provavelmente deveria ser feita por um subagente. Agora você está usando as melhores ferramentas para o trabalho e ficou mais claro onde encontrar as coisas dentro do sistema. A
+
+modularidade também é importante em sistemas agentes. Assim como temos funções, classes e bibliotecas reutilizáveis, agora também estou pensando em capacidades de agentes reutilizáveis . E o exemplo mais claro disso é uma habilidade de agente. Assim, criar uma habilidade para normalizar anúncios é muito útil quando você precisa expandir as funções dos agentes. Por exemplo, e se eu ampliar minha busca por imóveis para três cidades?
+
+Cada um desses mercados pode carregar a mesma habilidade. Então, eu escrevi uma vez e todos podem reutilizar. Então, isso se tornou basicamente um componente que posso reutilizar em diferentes agentes ou até mesmo compartilhar com outras pessoas. É mais ou menos como quando nos apoiamos em embalagens. E, além disso, os subagentes são outro tipo de módulo reutilizável. Então, muitas pessoas com quem
+
+conversei não entendem muito bem o propósito dos subagentes. Do ponto de vista arquitetônico, são como funções, certo? Então, você lhes dá uma tarefa específica para realizar. Você os chama quando precisa que isso seja feito. E eles conseguem fazer isso muito bem porque é tudo o que têm à disposição, certo? Eles não estão
+
+levando consigo o contexto de toda a sessão. Assim como nosso subagente de pesquisa de mercado local , podemos inserir isso em qualquer mercado ou fluxo de trabalho e funciona, sabe, para o que se propõe. É bom em qualquer bairro. Mas, como tudo na vida, decidir o que deve ser um módulo, por exemplo, exige bom senso, não é? Nem tudo deve ser reutilizado. Algumas instruções são específicas
+
+para um determinado fluxo de trabalho, certo? Pode não valer a pena abstrair, porque às vezes isso custa mais do que economiza. Mas isso é apenas mais uma decisão de engenharia, certo? Sistemas agênticos também apresentam esse mesmo tipo de compensações. Pensamento algorítmico. Essa é uma das
+
+habilidades mais importantes no projeto de sistemas agentes . Só porque um agente pode fazer algo não significa que ele deva fazê-lo, certo? Algumas tarefas são melhor executadas por meio de código puro. Por exemplo, ao calcular o tempo de deslocamento ou ao eliminar anúncios duplicados que eu já vi, o modelo de um corretor é melhor em coisas como raciocínio impreciso, sabe , julgamento, ambiguidade, e raciocínio baseado em entradas confusas. E é ignorando essa distinção que vejo muitos sistemas de agentes se tornarem mais complicados do que costumavam ser. Então,
+
+você está usando um modelo, entregando a ele cada parte da tarefa para ser realizada, e depois fica frustrado quando o resultado é diferente a cada dia. Mas algumas dessas coisas podem ser resolvidas apenas com código normal, certo? Será mais barato e mais confiável. Eu garanto que a IA não inventou a automação, certo? Podemos usar código e ainda utilizar esses sistemas. Portanto, minha regra
+
+prática aqui é: se uma tarefa tem uma resposta exata, use código. Se for necessário interpretar ou julgar, é aí que você pode pedir ao agente para fazer isso, certo? Portanto, use código para determinismo, use agentes para julgamento e, em seguida, use humanos para autoridade. Então, o corretor decide quais imóveis merecem uma análise mais detalhada, o código calcula o tempo de deslocamento, filtra os que eu já vi e, no fim, sou eu quem aprova o agendamento da visita ao imóvel. Textos em formato livre são adequados quando apenas um ser humano os lê.
+
+Mas quando outro sistema precisa agir com base na saída do agente, geralmente é melhor usar um contrato. Então, já fazemos isso em todo o software. Sempre que dois sistemas se comunicam, existe um formato previamente acordado entre eles, certo? Portanto, os sistemas agentes precisam dessa mesma disciplina. Por exemplo, quando um serviço de busca de imóveis encontra uma casa, ele não deveria simplesmente enviar uma mensagem e encerrar o assunto, certo? É ótimo para mim ler isso naquele
+
+momento, mas é um beco sem saída para o sistema. Se a decisão estiver enterrada em uma de nossas sessões, nada posteriormente conseguirá encontrá-la de forma confiável. Assim, em vez disso, ele é gravado em um formato estruturado na memória do agente. E eu uso o Compendium Wiki para isso, para a camada de memória da maioria dos meus agentes. Mas aqui dentro, há uma decisão, uma pontuação, uma razão, e como está estruturado, essa memória torna-se consultável. Então, mais tarde, posso perguntar ao
+
+Relocation Scout: "Ei, mostre-me todas as casas com classificação quatro ou superior que tenham um trajeto de 15 minutos ou menos, certo?" E isso pode realmente acontecer porque a pontuação e o trajeto, eles vivem em lugares conhecidos. Eles não estão presos em uma conversa de sessão. E não sou só eu que preciso receber essa informação. Minha lista de opções no sistema lê esses mesmos campos sem intervenção humana. Assim, a
+
+saída do agente é a entrada de outra etapa. Assim, o contrato é o que torna essa transição segura. E sabe, a melhor parte é que definir a forma obriga você a ser realmente claro e específico. Porque se você não consegue dizer qual deve ser a aparência da saída , então provavelmente ainda não compreende totalmente o que está pedindo ao agente para produzir. Então, um comando pode ser executado uma vez e pronto, certo? Mas um sistema agentivo útil precisa
+
+ser capaz de funcionar em realidades complexas, onde webhooks são disparados duas vezes, ou uma execução não é concluída por algum motivo, e você precisa tentar o fluxo novamente. Portanto, o agente precisa manter o controle de seu estado. Essa providência já foi tomada? Se sim, a entrada mudou, certo? Caso contrário, a sessão foi interrompida ou algo do tipo? Quais
+
+partes posso tentar novamente com segurança? E isso não é uma exceção, certo? Isso acontece o tempo todo. Portanto, você precisa projetar para idempotência, que é a capacidade de executar a mesma coisa duas vezes sem que a segunda execução cause problemas. E nós fazemos isso com frequência em softwares tradicionais. Mas com os agentes,
+
+eles adicionam uma pequena armadilha aqui, porque você não pode confiar no modelo, já que seus resultados podem variar, certo? Assim, uma nova tentativa corre o risco de o agente reformular a solicitação de forma que ela possa parecer uma tarefa completamente nova. Portanto, você precisa implementar isso no sistema. Vejamos um exemplo com nosso agente. Então, digamos que um novo imóvel seja anunciado e a empresa de recrutamento queira enviar um e-mail para o meu corretor para perguntar sobre uma visita.
+
+Então, após essa ação, o agente deve registrar na memória que enviou aquele e-mail, certo? E aí o agente vai até meu calendário e quer bloquear esse horário por precaução. Mas o programa trava antes que possa executar essa ação. Portanto, essa corrida está apenas pela metade. Posteriormente, é realizada uma passagem para remoção de fiapos. Aliás, é
+
+preciso fazer uma limpeza com fiapos nesses aparelhos para mantê-los em bom estado, mas durante essa limpeza, ele percebe que algo saiu, mas o calendário nunca foi bloqueado. Então, ele tenta realizar a tarefa novamente. Mas é melhor que não envie outro e-mail para o meu corretor, né? Isso já aconteceu. Eu não quero ser o cliente chato, sabe, que fica enviando todos esses e-mails. Então,
+
+só falta terminar a parte que não aconteceu, que [limpa a garganta] estava bloqueando minha agenda. Mas ele só sabe disso porque está verificando o que o sistema registrou, certo? Portanto, se executarmos isso novamente, o agente simplesmente completará o que estiver faltando, em vez de causar problemas. A modelagem de ameaças é uma habilidade realmente importante no projeto de sistemas agentes. Todo mundo está tenso com essas coisas hoje em dia, não é? Mas a
+
+engenharia de segurança já nos ensinou o básico. Precisamos validar suas contribuições, sabe, conceder o mínimo de privilégios necessários e definir limites sobre o que uma ação pode abranger. Portanto, os sistemas agentes precisam de tudo isso. Nosso agente de recrutamento para realocação vai consumir muito conteúdo de desconhecidos, certo? O agente precisa ler a descrição do imóvel fornecida pelo vendedor, tópicos em fóruns e avaliações da vizinhança feitas por pessoas anônimas na internet. Portanto, precisamos tratar tudo
+
+isso como entrada não confiável e deixar bem claro para o agente que se trata de evidência, não de instruções. E então, após considerar as informações recebidas, você também deve pensar em quais limites devem ser estabelecidos em relação ao que o agente é capaz de fazer. Por exemplo, nosso agente pode ler anúncios e criar listas de candidatos o dia todo. Fique à vontade, certo? Mas eu não quero que ele envie e-mails para vendedores automaticamente, reserve passeios ou, Deus me livre, envie ofertas em meu nome, certo?
+
+Então, essas ações precisam ser protegidas por barreiras como a minha aprovação, certo? E quando você constrói essa parede, o que você faz é reduzir o raio da explosão e, com sorte, isso minimiza sua exposição ao risco. Hoje em dia, todo engenheiro consegue se identificar com a sensação de herdar um sistema que mal se compreende. Essa é uma das principais razões pelas quais eu não deixo meu agente de programação projetar meus outros agentes, porque sei que o resultado será algo improvisado que, tecnicamente, funciona, mas não é sustentável, certo? Provavelmente haverá uma grande solicitação, e mesmo que o agente se decomponha, eu não sei. Simplesmente não estou convencido
+
+de que isso vá separar as responsabilidades adequadamente. Sabe, eu tenho problemas de confiança. O que posso dizer? Então, nos meus sistemas agentes, eu me certifico de incorporar a facilidade de manutenção ao próprio sistema. Cada nível do sistema possui um arquivo .in/D do agente que explica o fluxo de trabalho e
+
+onde a política reside, os recursos de suporte como habilidades, scripts e subagentes e, mais importante, como manter sua memória atualizada. Assim, qualquer pessoa, humana ou agente, pode entrar em um sistema e se orientar sem precisar decifrar uma série de instruções. Na verdade, esse é o verdadeiro teste. Eu projeto meu agente de forma que, mesmo em um contexto totalmente novo, ele possa entrar no sistema imediatamente e começar do zero, sabendo exatamente o que fazer. E isso também ajuda bastante. Então, sempre que
+
+eu precisar modificar o sistema, certo? Então eu posso basicamente pegar qualquer interface e dizer: "Atualize este agente para fazer XYZ." E como o sistema é tão bem projetado, as chances de sucesso nessa atualização são muito maiores. Se por acaso surgir algum problema durante a atualização, isso será um sinal de que preciso melhorar a capacidade de manutenção do sistema. Portanto, projetar agentes é engenharia de software. Os princípios básicos são
+
+diferentes, mas a disciplina é a mesma. Ainda precisamos entender o sistema. Precisamos definir o fluxo de trabalho e saber o que entra nele. Ainda precisamos decompor o problema e atribuir responsabilidades aos responsáveis , tornar os elementos certos reutilizáveis, determinar quais atores são mais adequados para cada função, definir contratos, gerenciar o estado, projetar visando a segurança e tornar o sistema compreensível. É por isso que os agentes de construção podem proporcionar a mesma emoção de desenvolver software.
+
+Ainda estamos em construção. Acabamos de subir um degrau. Muito obrigado.

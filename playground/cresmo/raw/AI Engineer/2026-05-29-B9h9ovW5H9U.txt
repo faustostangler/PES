@@ -1,0 +1,113 @@
+---
+video_title: "Why your agents need decision traces, not just documents — Zach Blumenfeld, Neo4j"
+video_id: B9h9ovW5H9U
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=B9h9ovW5H9U
+video_date: 2026-05-29T16:00:33+00:00
+video_description: |
+  A knowledge base tells a financial analyst agent the risk factors. A context graph tells it whether to reject or accept, because it also carries past decision traces, the reasoning behind them, and how similar cases resolved. Zach from Neo4j walks through how context graphs extend a standard RAG setup with three layers: short term conversation history, long term extracted entities, and reasoning traces that embed into vectors so structurally similar past decisions surface alongside semantically similar ones.
+  
+  The fastest path in is `uvx create-context-graph`, a one-command scaffold that gives you a backend, frontend, demo data, and an MCP server. It ships with 22 built-in domains or generates a graph ontology from a custom domain you describe. The underlying `neo4j-agent-memory` package handles entity extraction through a spaCy to GLiNER to LLM pipeline with deduplication and merging baked in, and plugs into pydantic AI, LangGraph, Crew, Google ADK, and others.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/zachblumenfeld/
+---
+Então, meu nome é Zach. Eu trabalho para a Neo4j. Somos uma empresa de inteligência gráfica . Você pode nos considerar como um banco de dados gráfico de camada de conhecimento em sua essência. Ajudamos a conectar e resolver informações para que os sistemas de IA possam ser um pouco mais precisos e explicáveis. Eu trabalhava com
+
+marketing técnico. Recentemente, estou voltando às minhas raízes em IA e aprendizado de máquina . Hum, fui transferido para uma função de engenharia de pesquisa. Então, hoje vou falar com vocês sobre grafos de contexto. Quantas pessoas nesta sala já ouviram falar de grafos contextuais ?
+
+Certo, então já temos mais ou menos metade. E quantas pessoas realmente já programaram algo usando um grafo de contexto ou um grafo como o Neo4j em geral? OK. Certo, mais ou menos metade. Então, é bom saber disso.
+
+Então, vou falar um pouco sobre como pensamos sobre grafos de contexto na Neo4j, definir o que são e, em seguida, quero apresentar algumas ferramentas que foram criadas por William Lyon, um de nossos gerentes de produto, para que você possa começar a usá-las rapidamente com seu próprio código e sua estrutura de agentes. Então, gráficos de contexto da Foundation Capital, acho que foi em dezembro. E essencialmente, vimos muita discussão em torno dessa ideia de criar registros de decisões e raciocínio para ajudar os agentes a tomar melhores decisões. Então, para realmente pensarmos no que é um grafo de contexto, precisamos nos perguntar: "Será que seus agentes seriam realmente precisos?" Certo? Então,
+
+para começar, ao realizar muitas buscas, você obviamente precisará de uma base de conhecimento. Bem, uma base de conhecimento para algo como recuperação de grafos ou grafos basicamente ajuda um agente ou um chatbot a responder perguntas corretamente. O que um grafo de contexto faz na evolução disso é fornecer a informação necessária não apenas para responder perguntas corretamente, mas também para tomar decisões melhores. Então, se pegarmos um exemplo concreto, e vou mostrar uma demonstração disso, um agente analista financeiro, digamos que esse agente tenha uma pergunta sobre como melhorar o aumento. E um pedido de uma certa quantia em dinheiro.
+
+Para permitir que esse agente forneça informações sobre o sistema. Então, informações do cliente, transações e políticas. E a resposta a isso provavelmente será algo como isto, onde talvez seja atribuída uma espécie de pontuação de risco, seja recomendada alguma avaliação, e sejam abordados alguns fatores de risco importantes. O que é útil? O que um grafo de contexto permite que um agente faça é, de fato, dar uma resposta: você deve rejeitar, aceitar e por quê, certo? E isso acontece
+
+porque, além de obter as informações do cliente e as transações, também permite acessar o histórico de decisões e precedentes, além de informações dinâmicas sobre os motivos que levam às decisões . Os sistemas de registro tratam, na verdade, de fatos, entidades, estado atual,
+
+precedentes, cadeias causais, resultados esperados e permitem que o agente aja com conhecimento especializado no assunto, além de fornecer ao agente um modelo para um grafo de contexto. Bem, as entidades, ou seja, as coisas que existem, haverá eventos, como decisões, transações, aprovações e coisas do gênero . E então, contexto, políticas que são... hum...
+
+em raciocínio diferente por IA que registra memória, mas... hum... por funcionários e
+
+humanos do passado que tomaram decisões. Em parte,
+
+porque, sabe, com a conexão de internet, eu nunca sei realmente como as coisas vão funcionar. Todo o código para isso está disponível. Vou mostrar os links no final. Basicamente, os dados que geramos são réplicas obtidas a partir de dados de um CRM, um sistema de suporte e outras fontes. Ele usa o Claude como uma espécie de ambiente de execução do agente e possui alguns embeddings de IA abertos . Existe um
+
+banco de dados Neo4j que auxilia no processamento dos dados com alguns vetores. E também temos nosso front-end Next.js. Então, deixe-me mostrar esta gravação aqui para que você possa ter uma ideia de como funciona, porque, novamente, tudo isso vai acontecer. Então, você fez uma pergunta e o programa vai chamar uma série de ferramentas, e você pode ver que ele está trazendo os dados do gráfico de volta.
+
+E então você vê o sistema obtendo esses diferentes registros de decisão, e eventualmente ele chegará a essa decisão de rejeição, certo? E se isso acontecer,
+
+então ele faz uma coisa chamada "encontrar precedentes", que será explicada com mais detalhes em um segundo, mas ele vai analisar informações estruturais no gráfico para extrair uma série de...
+
+E se isso acontecesse, a
+
+internet funcionaria. conectam-se uns aos outros nessas cadeias causais. Então, vocês
+
+constroem em cima um do outro.
+
+Então, como eu estava dizendo antes, nós pesquisamos apenas o contexto em torno do perfil de Jessica . Recuperamos os rastros das decisões tomadas. Em seguida, fizemos uma busca híbrida especial, focada principalmente nesses precedentes, tanto na similaridade semântica quanto na similaridade estrutural dentro do grafo, que analisou como os rastros de decisão foram feitos a partir de decisões anteriores e tentou encontrar correspondências. Falarei um pouco sobre como isso funciona com embeddings de grafos no próximo slide para, finalmente, chegar à recomendação. Assim, temos um índice vetorial, o que nos permite pesquisar, por exemplo, por rejeição de fraude, com base na semântica.
+
+Mas aí temos esse conceito chamado incorporação de grafos. Então, muitos de vocês aqui provavelmente já estão familiarizados com incorporações de texto, certo? Falando em palavras, certo? Um gráfico incorporado é o mesmo conceito, exceto pelos nós verdes que eu estava mostrando antes de tudo estar conectado. Na verdade, incorporamos esses dados em um vetor.
+
+Assim, isso significa que agora será possível pesquisar registros de decisões semelhantes por meio da similaridade vetorial. Então, se você tem um sistema, certo? Onde você tem decisões e chamados anteriores que foram arquivados, assim como faria com uma busca vetorial para outro tipo de texto, e que seria muito, muito difícil de extrair se você os tivesse apenas dentro de documentos. Bem, isto é apenas mais informação sobre a demonstração do gráfico de contexto e alguns dos cenários que você pode executar, bem como algumas das ferramentas que foram usadas aqui. Um GDS é chamado de ciência de dados em grafos. É isso que
+
+usamos para os próprios embeddings de grafos. E então vou te enviar o link do código aqui para que você possa executá-lo novamente. Mas o que eu realmente queria mostrar a vocês hoje era outra ferramenta que foi criada recentemente, há pouco mais de um mês, que permite criar um aplicativo completo, do zero, com apenas um comando no terminal, para criar o grafo de contexto, o front- end e o back-end. Então, basicamente, você pode pensar nisso como criar um aplicativo React ou um aplicativo Next.js. Você recebe esse
+
+modelo inicial e toda a estrutura básica que você especificar. Você pode definir o domínio ao criar o grafo, ou melhor, ao criar o aplicativo na linha de comando, e ele lhe fornecerá o back- end, o front-end e tudo mais, tudo pronto para uso . Então, se eu fosse mostrar para vocês, se eu fosse para cá, ficaria mais ou menos assim , e eu sei que provavelmente é difícil de ler. Existe apenas um comando UVX, UVX create context graph, hum, especifique o nome do aplicativo, o domínio, hum, a estrutura que eu quero usar. Há uma infinidade deles que podemos usar aqui. Estou
+
+escolhendo a IA Pydantic. Hum, e eu estou especificando dados de demonstração. E basicamente criará esta pasta para mim com um monte de arquivos JSON de teste, que serão os dados que usarei para hospedar a aplicação. E não temos tempo suficiente para analisar todas elas. Basicamente, leva alguns minutos para instalar o aplicativo, inserir os dados e outras informações e começar. Mas já está funcionando. Hum, isso
+
+lhe daria... não sei o quão promissor isso é. Provavelmente é difícil de ver.
+
+Se eu voltar para... certo .
+
+Ele fornecerá dados dentro de um gráfico e então você poderá fazer perguntas e ele basicamente fará esse tipo de recuperação com Cypher e tudo mais. Cypher é uma linguagem de consulta gráfica usada para recuperar dados. Muito semelhante ao que vimos naquela demonstração de gráfico de contexto que foi apresentada.
+
+Desculpe. Vou deixar rodando um pouquinho aqui e depois vamos nos mexer porque só temos... Certo. Você consegue me ouvir agora?
+
+OK. Aliás, por quanto tempo isso durou ? Quanto tempo durou? Só um minuto. OK.
+
+Tudo bem. OK. Bem, aqui está nossa resposta. Então, você pode ver, sabe, eu perguntei sobre medicamentos prescritos e ele prosseguiu e recuperou tudo, e há uma visualização do esquema aqui e, como eu estava dizendo, diferentes rastros que você pode examinar. Então, este é um ótimo lugar para começar se você estiver interessado em grafos de contexto e quiser programar algo rapidamente. Ah,
+
+também temos um site para isso, que você pode acessar. Ele explica passo a passo como começar a usar o aplicativo e explorar todas as suas funcionalidades. Existem também algumas ferramentas neurais muito interessantes, caso você queira importar dados de um software como serviço. Então, se você quiser importar do GitHub, Notion, Jira ou Slack. Portanto, você não precisa usar apenas dados de demonstração. Você pode importar dados
+
+dessas outras ferramentas. E também algumas outras funcionalidades, e eu vou te dar um link para tudo isso no final, como eu disse. Então, estávamos analisando uma aplicação de IA da Pydantic , mas você também pode fazer isso com OpenAI, LangGraph, Crew, Strands, Google ADK e todas essas outras. Há um domínio integrado de 22 dígitos. Então, o setor de saúde foi o que eu acabei de mostrar, mas também tem o setor de serviços financeiros. Você
+
+também pode criar seu próprio domínio personalizado, que ajudará a gerar uma ontologia, basicamente um esquema gráfico, e a organizar tudo. Conversamos sobre os diferentes conectores de dados para GitHub, Slack, etc. E eles têm todos os recursos nativos de grafos para potencializar suas consultas, que vimos para extrair dados, analisar rastros de decisões, gerar um servidor MCP e realizar conversas de múltiplas etapas dentro do aplicativo. Bem, novamente, este projeto está apenas começando. Então, é de código aberto. As pessoas são
+
+bem-vindas para se inscreverem e contribuírem lá. Agora, vou falar um pouco sobre em que este projeto se baseia. Então, para sustentar isso, uma das grandes dependências é o nosso pacote de memória do agente Neo4j . Então, esta é uma API de memória completa. Bem, isso inclui grafos de contexto, e eles realmente precisam desses três elementos.
+
+Uma memória de curto prazo, uma memória de longo prazo e raciocínio. Portanto, o curto prazo se refere mais ao histórico da conversa e ao contexto da sessão. Acho que nós entendemos isso. A longo prazo, são as entidades que são extraídas disso, e aquelas que se repetem ao longo do tempo, resolvendo-as . E então o raciocínio será realmente baseado nos rastros dentro desse grafo de contexto.
+
+Hum, e também tem algo aqui dentro que é muito útil. Sei que muita gente pensa: "Se eu tenho esses dados textuais, como faço para inseri-los em um grafo de conhecimento?", certo? É você mesmo? Essa é geralmente uma daquelas grandes perguntas que as pessoas têm. Bem
+
+, aqui nós implementamos isso dentro do pacote. É onde o texto bruto passa por alguns estágios diferentes. Existem outras ferramentas que você pode usar fora disso, se quiser, por exemplo, receber dados estruturados, ou você pode usar seus próprios processos de extração de modelo de linguagem e reconhecimento de entidades nomeadas (NER). Mas este usa apenas algumas etapas, onde você vai do spaCy para o gliner e, mais avançado, para um fallback do LLM. E depois há uma estratégia separada de fusão, desduplicação e enriquecimento.
+
+Então, é um pouco mais bem pensado, e isso ajuda especialmente na memória de curto prazo, permitindo que a informação seja extraída e transferida para a memória de longo prazo, para entidades úteis que podem ser resolvidas ao longo do tempo. E o esquema se parece mais ou menos com isso, onde você tem suas conversas, e em amarelo você tem suas entidades que são extraídas e que se conectam aos seus registros de raciocínio. Muito bem . Estamos chegando ao fim e talvez tenhamos alguns minutos extras para perguntas, se isso for permitido. Bem, aqui estão os recursos. Então, a demonstração do gráfico de contexto
+
+que mostrei, se você acessar aquele blog, também terá um link para um aplicativo em funcionamento que acabou de ser hospedado. E isso é muito útil se você quiser explorar os conceitos de uma forma inovadora. Criar um gráfico de contexto no meio. Na primeira, eu sei que a nossa rede Wi-Fi para este site, por algum motivo, bloqueia esse site. Não bloqueará o site se você se conectar a uma rede Wi-Fi normal.
+
+Não sei por que isso acontece neste caso. Mas esse link funciona. E na parte inferior está basicamente o repositório do GitHub. O Neo4j Agent Memory é o pacote de memória do agente que sustenta tudo isso e que também se integra com o Microsoft Agent Framework, bem como com o Google ADK e vários outros. Bem , é isso por hoje. Consegui
+
+passar com alguns minutos de sobra. Portanto, terei prazer em abrir espaço para perguntas nos próximos minutos, caso haja alguma na sala. Sim.
+
+Sim.
+
+Sim, existe. Você pode adicionar registros de data e hora. Você pode adicionar registros de data e hora e, obviamente, à medida que eles ocorrem no tempo, as diferentes etapas serão vinculadas por termos como "causado" ou "próximo". Sim .
+
+Hum, eu não sei se isso já acontece . Acho que isso é algo que vai acontecer conforme a tecnologia amadurecer um pouco, mas sim, esse é um bom ponto. É uma boa ideia.
+
+Então, você preparará a ontologia antecipadamente. Para aqueles domínios que eu mostrei, os preexistentes, muitos deles usarão algo chamado pole-e, que é como uma entidade, basicamente uma política. Existem alguns tipos de entidades e relacionamentos predefinidos que são usados ​​para orientar a extração, o mapeamento e tudo mais . Então, sim. Sim.
+
+Automatizar a criação de uma interface...
+
+Sim, eu daria uma olhada no pacote `create context graph`. No mínimo, se você for capaz de descrever a ontologia e, em seguida, descrever o que está nos dados, então você definitivamente poderá criar um esquema de grafo a partir daí. E isso vai te ajudar, caso os dados não sejam estruturados, a fazer a extração de entidades. Bem, isso depende de quão estruturados estão seus dados. Então, se for algo muito estruturado e estiver, por exemplo, em arquivos CSV ou tabelas, é apenas uma questão de mapear as instruções Cypher.
+
+Ah, sim, então acho que essa questão do texto pode ser resolvida aqui dentro . Se você pesquisar sobre como criar um domínio personalizado, poderá encontrar algumas ferramentas que podem te ajudar. Novamente, trata-se de um novo projeto. Então, ainda está tudo um pouco em desenvolvimento , mas pelo menos você verá o código e como ele pode gerar uma ontologia de exemplo e como isso pode ser usado em um processo de extração para processar tudo. Sim.
+
+Sim, acho que ainda estamos tentando descobrir isso no momento. Bem, eu sei que nesta primeira demonstração é possível pedir para armazenar informações, como por exemplo, se eu fizer uma conversa anterior, posso pedir para salvar as decisões, mas acho que não fará isso a menos que eu dê o comando. Sim , esse é um bom ponto. E na criação do gráfico de contexto, ainda estamos trabalhando em como você escreveria novos rastreamentos de decisão. Então, sim, é algo para se pensar, tipo uma espécie de sentimento ou, tipo, uma pontuação de qualidade nas decisões.
+
+Tudo bem. Legal. Bom, muito obrigado, pessoal.

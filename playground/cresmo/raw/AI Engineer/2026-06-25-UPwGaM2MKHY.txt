@@ -1,0 +1,119 @@
+---
+video_title: "The Log Is The Agent - Ishaan Sehgal, Omnara"
+video_id: UPwGaM2MKHY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UPwGaM2MKHY
+video_date: 2026-06-25T21:15:06+00:00
+video_description: |
+  Think about a character you've spent 100 hours playing in a video game like Skyrim or Elden Ring.
+  
+  What exactly is your character?
+  - Is it the game engine (the loop)? No.
+  - Is it the PlayStation console (the compute)? No.
+  - Is it the controller (the tools)? No.
+  
+  Your character is the save file (the data).
+  
+  If your PlayStation bursts into flames, your character isn't dead. You just buy a new PlayStation, download your save file from the cloud, and your character is exactly where they were, mid-swing. The identity, history, and current state of your character live entirely in the data.
+  
+  Today, most attention goes toward frameworks, orchestration layers, context engineering, specs, and tools. But as models become more capable and generally intelligent, the differentiator shifts away from these abstractions and toward the underlying infrastructure.
+  
+  The Engine becomes interchangeable. The Brain (LLM) commoditizes. The Hands (tools) are just APIs.
+  
+  What actually persists across models, runtimes, and machines is the session log.
+  
+  That’s where continuity, identity, and state actually live.
+  
+  A decade ago, Martin Kleppmann argued that databases should be understood as projections over an append-only log. I think the same thing is now happening with agents.
+  
+  Today, agents are treated like complicated black boxes made of loops, models, and tool calls. But at its core, the agent is the session log (the save file). Everything else is swappable.
+  
+  Once the log becomes the primitive, entirely new system properties emerge:
+  - durability — agents survive crashes, disconnects, and machine failure
+  - continuity — sessions can be resumed from anywhere, on any device
+  - forkability — timelines can branch for parallel execution and exploration
+  - addressability — agents become durable entities that can be referenced and revisited
+  - observability — execution can be monitored and steered in real time
+  - portability — models, runtimes, and machines become interchangeable
+  
+  But this creates a new infrastructure question:
+  
+  If the model provider owns the log, does the model provider own the agent?
+  
+  This talk explores why the future of agent infrastructure isn't what we're focused on today, but rather durable, portable logs that make agents persistent across models, runtimes, and machines.
+  
+  Speakers:
+  - Ishaan Sehgal (Omnara): Ishaan Sehgal is the CEO and cofounder of Omnara (YC S25), where he builds managed infrastructure for AI agents.
+    X/Twitter: https://x.com/ishaansehgal
+    LinkedIn: https://www.linkedin.com/in/ishaan-sehgal/
+    GitHub: https://github.com/ishaansehgal99
+---
+Olá a todos, eu sou Ishaan, CEO da Amnara, e hoje vou falar sobre o log do agente. A ideia básica da palestra é simples: a maioria das pessoas pensa em um agente como o modelo ou o ambiente de execução no qual ele está sendo executado, e eu acho que essa é uma abstração equivocada. Penso que o que realmente define a identidade de um agente é o seu registo de atividades, e é sobre isso que vou falar hoje. Então pense em um personagem com o qual você passou cem horas jogando seu videogame favorito, neste caso, Skyrim. Qual é exatamente a sua personalidade? Será o
+
+motor do jogo? É o PlayStation? Será o controle? Não, não é. Essas coisas importam e são elas que interagem com o personagem e o controlam, mas nenhuma delas é o seu personagem. Seu
+
+personagem é um dado. É o arquivo de salvamento. E isso é importante porque, se o seu PlayStation pegar fogo, seu personagem não estará perdido. Você pode comprar outro PlayStation, baixar seu arquivo de jogo salvo da nuvem e retomar exatamente de onde parou, porque o agente, sua identidade, histórico e estado estão todos registrados em seus dados. O personagem reside nos dados, e é essa perspectiva que quero apresentar aos agentes.
+
+Hoje em dia, quando as pessoas falam sobre agentes, geralmente estão se referindo à coisa errada. Eles dirão que o agente é o modelo ou que é o ambiente de execução e, como mencionei anteriormente, essas coisas importam, mas não são o agente. O agente são os seus dados. É especificamente o registro. Afinal, o que é o log? Em
+
+sua forma mais simples, o log é o histórico de eventos do agente, no qual apenas os dados são adicionados. São todas as entradas do usuário, todas as saídas do modelo, todas as ferramentas chamadas, os resultados das ferramentas, as permissões, as falhas; a ideia é que cada transição de estado que o agente realiza seja registrada no log. Isso é importante porque significa que a identidade do agente não está vinculada ao ambiente de execução, ao modelo ou às ferramentas. Essas ações consistem apenas em interpretar e adicionar dados ao registro. Eles estão lendo o registro, agindo de acordo com ele e escrevendo o próximo evento de volta. E isso é importante
+
+porque, dessa forma, usar apenas o registro de eventos é suficiente para reiniciar o agente. Depois de definir o agente como um registro (log), o restante do sistema se torna muito mais fácil de entender, pois cada operação consiste em ler ou adicionar dados ao registro. O modelo está lendo o registro e, em seguida, determinando a próxima ação. A ferramenta executa essa ação e, em seguida, anexa o resultado. E tudo isso funciona em um ciclo contínuo. Tudo se coordena
+
+em torno do tronco. Na prática, um loop simplificado pode ter a seguinte aparência . Você pode reconstruir o estado a partir do registro. Você pode passar esse estado para o modelo. O modelo pode propor o próximo passo e, em seguida, adicionar essa resposta ao registro. Se a resposta solicitar uma
+
+ferramenta, você pode executar essa ferramenta e também adicionar essa resposta ao registro, podendo repetir o processo em seguida. A ideia importante não é que esse ciclo seja complicado. A ideia importante é que o laço é descartável. Um trabalhador pode reivindicar a sessão, ler o registro, avançar o agente um passo, escrever o resultado e, em seguida, simplesmente desaparecer por completo. E isso significa que qualquer outro funcionário poderá assumir a tarefa mais tarde.
+
+Esse padrão deve parecer familiar. Primeiro, os bancos de dados tiveram que aprender isso. Durante anos, os bancos de dados pareceram sistemas não transparentes, difíceis de entender, com tabelas, índices e visões materializadas, mas por trás de todo banco de dados sério existe um log. E esse registro é a sequência duradoura de mudanças. Todo o resto é uma questão de perspectiva. Os
+
+agentes I precisam da mesma inversão. Hoje, os agentes são tratados novamente como sistemas complexos e opacos, repletos de modelos, prompts e chamadas de ferramentas, mas para uma sessão duradoura, o registro de logs deveria ser primordial. O contexto que é inserido no modelo é uma projeção desse logaritmo. A interface do usuário que é renderizada por cima é uma projeção desse registro. A depuração e a rastreabilidade são uma projeção. A auditoria é uma projeção. A
+
+compactação também é uma projeção, sobre a qual falaremos mais adiante. Mas o logaritmo em si não é uma projeção. O registro é o histórico duradouro a partir do qual todas essas projeções podem ser feitas. Agora, existem duas objeções ao uso do log como agente que merecem ser discutidas. Então, vou falar sobre eles agora. Vamos
+
+começar pela compactação. Um tronco pode crescer indefinidamente, mas a visão que um modelo tem dele não. As janelas de contexto são finitas. Portanto, eventualmente, você precisa compactar o logaritmo em uma representação menor que o modelo possa interpretar . Mas o ponto importante é que essa compactação não é mágica e não invalida a afirmação de que o tronco é o agente. A compactação causa perdas. Um
+
+resumo compactado não irá reproduzir perfeitamente o estado do agente em um formato menor. Isso vai, na verdade, desperdiçar informações. A questão é que o registro completo é o documento histórico, e uma compactação é apenas uma projeção dele. Assim como uma visão materializada não é o banco de dados, ou um resumo de uma conversa não é a conversa em si. Se você mantiver o registro bruto, sempre poderá gerar novas projeções a partir dele. Mas se
+
+você descartar o tronco bruto e mantiver apenas a compactação, terá perdido parte do agente. Portanto, a maneira mais correta de lidar com a compactação é como uma tentativa descontrolada de remover material , que pode ser retomada como um novo registro. A segunda objeção é: e quanto às ferramentas que alteram o estado fora do registro de logs? E isso é verdade. Um agente pode editar um arquivo. Isso pode gerar um problema no GitHub. Ele
+
+pode enviar um e-mail. Portanto, claramente, existe um estado fora do registro. Mas a questão é que o registro não deve conter o mundo inteiro. O registro é apenas a visão do agente sobre o mundo. É como no videogame Skyrim: o arquivo de salvamento do Skyrim não contém todo o motor do jogo ou todos os recursos do mapa. Contém apenas o
+
+estado específico do jogador, necessário para que você retorne a esse mundo. O mesmo vale para o registro e os agentes. O registro pode apenas reproduzir ou armazenar fielmente a identidade desse agente e sua visão de mundo, mas não pode tornar esse mundo determinístico. Se o agente enviou um e-mail, reverter o processo não o cancelará. Se algum arquivo interno for alterado, o agente não terá conhecimento disso. Mas a
+
+função do registro é documentar o que o agente fez, o que ele viu, o que mudou e o que ele precisa para continuar. Ele armazena essa identidade, e esse é o seu propósito. Assim como o arquivo de salvamento de personagem de Skyrim , ele não foi feito para armazenar o mundo inteiro. Serve apenas para armazenar a sua visão disso . Portanto, uma vez que você comece a tratar o log como um elemento primitivo, uma série de propriedades do sistema surgirão naturalmente. Portanto,
+
+a primeira propriedade é a confiabilidade. Veja o que acontece hoje com o Cloud Code. Se você estiver usando o Cloud Code e seu agente chegar a uma solicitação de permissão e o processo for encerrado por algum motivo, e então você o retomar, a solicitação de permissão desaparecerá e o agente será pausado. E isso é inaceitável na produção. A solicitação de permissão deve permanecer visível.
+
+Portanto, isso é apenas um sinal de quando você estrutura seu agente de uma forma em que o log não é o próprio agente. Quando o log é o agente, o executor pode ser falível. Um novo funcionário assumirá a vaga. O sistema irá reconstruir o estado e verá que a solicitação de permissão está lá, exatamente onde estava. Assim, embora o processo tenha morrido, o agente não morreu junto com ele. A segunda
+
+propriedade é a escalabilidade. A maioria dos sistemas de automação executa um processo por agente, o que significa que o agente está vinculado à máquina que o executa. Quando o logaritmo representa o estado, você inverte esse modelo. Um único processo agora pode capacitar milhares de agentes. Cada um deles pode reconstruir seu estado a partir do registro a cada turno, e eles não precisam estar vinculados a nenhuma máquina ou trabalhador específico. Isso torna o failover
+
+trivial e também faz com que o escalonamento se resuma a adicionar mais trabalhadores. Não há sessões persistentes, não há migração de estado e não há sobrecarga de coordenação. A criação de bifurcações também se torna muito mais natural. Em vez de ter que forçar um caminho linear, você pode facilmente ramificar o log. Uma ramificação pode ser executada no Claude, outra ramificação pode ser executada no GPT e outra pode ser executada no seu modelo de código aberto favorito. Cada um dos ramos
+
+pode armazenar parte do histórico até o ponto de bifurcação e, em seguida, explorar diferentes estratégias. O modo multijogador é outra característica. Compartilhar um agente com alguém não deveria significar ter que copiar uma transcrição e colá- la no Slack. Se o registro for o agente, compartilhar significa simplesmente conceder acesso a esse histórico, para que outra pessoa possa visualizá-lo e editá-lo. Um colega de equipe pode abrir a sessão, ver o que aconteceu, um gerente pode observar sem assumir o controle e até mesmo outro agente pode consumir a mesma sessão como contexto.
+
+Isso é realmente importante porque significa que o valor não é apenas o que o agente produziu, mas também o registro, que indica como se chegou a esse valor. A migração segue o mesmo padrão. Se a identidade de um agente estiver presa em threads, memórias, formatos e pressupostos de tempo de execução específicos do provedor, a mudança de provedor torna-se realmente problemática. Mas se o log for o agente, a migração é apenas um problema de adaptador. Diferentes modelos podem exigir diferentes projeções do log, e diferentes tempos de execução podem precisar de diferentes esquemas, mas tudo isso se torna apenas problema de engenharia. Não são
+
+problemas de identidade. O agente deverá então ser capaz de começar com Claude, continuar com GPT e terminar com Gwen sem se perder . O registro serve como fonte de continuidade. Eis o problema com grande parte da infraestrutura de agentes atual. Atualmente, a maioria dos sistemas de agentes trata o registro de logs como uma reflexão tardia. Assim, o código Claude e o Codex
+
+gravarão esses arquivos JSONL complexos no disco local e, mesmo no modo Claude SDK, essas gravações são do tipo "disparar e esquecer", o que significa que, se por algum motivo a gravação falhar, os dados serão perdidos. O OpenCode é outro exemplo: eles armazenam o estado em um arquivo SQLite, e há muitos problemas relatados no GitHub relacionados à corrupção de estado e à perda de dados. Objetos duráveis frequentemente acabam contendo fragmentos diferentes, o que dificulta a reconstrução do histórico e a consulta entre sessões. E em todos esses cenários, o registro é apenas um efeito colateral, não é o sistema em si. E isso é um problema, porque quando você trata o log como um elemento de primeira classe, todas essas propriedades se tornam estruturais. Não é preciso parafusá-los
+
+, que é o que parece estar sendo feito hoje em dia, eles simplesmente se soltam. O próximo ponto é extremamente importante. Isso nos leva à questão da propriedade. Agora que estabelecemos que o log é o agente, a forma mais forte de bloqueio não é o bloqueio de modelo. Os modelos podem ser trocados.
+
+Não se trata de dependência de API ou de ferramentas específicas. Esses podem ser embrulhados e esses podem ser adaptados. A forma mais profunda de dependência de clientes é, na verdade, a dependência de clientes que dependem de registros de atividades. Se um provedor detém o seu registro de logs, então ele efetivamente detém o seu agente e, a longo prazo, o log é a parte valiosa, porque o modelo é substituível, os tempos de execução são substituíveis, as máquinas são substituíveis, o log é o que persiste. Tenho outro slide para isso porque acho que vale a pena levar o assunto a sério agora. A Anthropic tem
+
+agentes gerenciados pela Claude, o Google tem agentes gerenciados pela Gemini, e todos os provedores de serviços gerenciados vão deter uma parcela maior das ações. Eles vão querer. Eles vão querer que o agente hospedado faça o loop e gerencie a memória, os ambientes de teste (sandboxes), a compactação e os agentes em segundo plano. Eles vão querer ser donos dos seus agentes, e os agentes são, sem dúvida, a tecnologia mais pessoal que você jamais administrará. Para que um agente seja útil, ele precisa ter seus dados pessoais, os dados da sua empresa, seus fluxos de trabalho e suas decisões. O log
+
+é o registro de tudo isso e, se ele reside na infraestrutura de outra pessoa, sob as políticas dela e acessível por seus sistemas, essa pessoa não hospeda apenas o seu agente. Eles são os donos. Esta é a arquitetura que temos vindo a construir na Unara. Consideramos a execução do agente como o conjunto de componentes que são coordenados em torno do registro de eventos. O trabalhador avança o loop, mas ele não é o agente, apenas o executor, e fará uma chamada ao provedor do modelo, obterá os resultados, os registrará no log e, se o provedor do modelo precisar de ferramentas, as enviará para o ambiente de execução correto para que sejam finalizadas em outro lugar. As ferramentas
+
+concluirão suas operações e os resultados serão adicionados ao log. Em seguida, um worker, provavelmente diferente, reconstruirá o estado e o processo continuará. Isso é crucial, pois é assim que os sistemas de agentes reais precisam sobreviver a falhas no mundo real: workers podem travar, máquinas podem reiniciar, sandboxes podem desaparecer, chamadas de ferramentas podem expirar, provedores podem falhar e usuários podem se conectar. Há tantas coisas diferentes que podem dar errado. E se um agente for um processo em execução, isso é extremamente assustador. Mas se o agente for o registro, trata-se
+
+simplesmente de um detalhe de execução. E isso é importante porque é a essência do que estamos construindo. É o núcleo da plataforma de agentes gerenciados de código aberto que estamos lançando. Tudo será construído em torno do registro de sessão, que garantiremos que você possa possuir, inspecionar e controlar completamente . E é nisso que acreditamos firmemente.
+
+Se tiver interesse, confira em amnar.com/managed. Pode ser que já tenha sido lançado quando esta gravação for publicada, ou pode ainda haver uma lista de espera. Então, para concluir, a principal mensagem que quero deixar para vocês é esta. Um agente não é apenas uma chamada de modelo, não é apenas um prompt, um loop ou um ambiente de teste. Não é nenhuma dessas coisas.
+
+O agente é o registro histórico duradouro do trabalho realizado, e esse registro é o log. Quando você começa a enxergar as coisas dessa maneira, muita coisa começa a fazer sentido. Confiabilidade, compactação, bifurcação, migração, multijogador, propriedade, escalabilidade, tantas coisas. Porque você vai parar de tratar o log como um resíduo do sistema e vai começar a tratá-lo como o próprio sistema. E isso é extremamente importante. Então, se isso
+
+foi útil, fique atento ao que estamos desenvolvendo em Amnara. Como mencionei, estamos nos preparando para tornar nossa plataforma de agentes gerenciados de código aberto, e você pode participar aqui. O registro de eventos como agente é apenas um dos vários elementos que acreditamos que tornarão os agentes muito mais poderosos no futuro. Então, obrigado por assistirem.

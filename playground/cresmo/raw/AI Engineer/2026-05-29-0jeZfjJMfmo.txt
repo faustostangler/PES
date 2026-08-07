@@ -1,0 +1,132 @@
+---
+video_title: "Reachy Mini: the $300 open source robot you can actually hack — Andres Marafioti, Hugging Face"
+video_id: 0jeZfjJMfmo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0jeZfjJMfmo
+video_date: 2026-05-29T17:00:06+00:00
+video_description: |
+  Qwen3-TTS shipped at 0.8x real time: one second of audio took 1.2 seconds to generate. Andres Marafioti from Hugging Face spent two weeks fixing it. The culprits were no streaming, 500 autoregressive steps per audio packet with a CPU GPU round trip on each, and a dynamic KV cache that blocked compilation. Static KV cache plus CUDA graph captures brought it to 5.8x real time with time to first audio under 200 milliseconds.
+  
+  The platform is Reachy Mini, a $300 open source robot Hugging Face has shipped to 7,500 people. It arrives unassembled. Talking to it is their most used app by far. The voice stack runs Parakeet transcription every 150 milliseconds with partial results feeding back to the robot mid-sentence, Qwen 3.5 27B for the LLM, and this optimized TTS. At that speed, infrastructure round trips match model latency, so the load balancer separates LLM endpoints from conversation nodes to handle the difference in how much different users actually talk.
+---
+Hum, posso? Você está me ouvindo bem? Não. Ok. Sim, você. Sim, agora, agora com as
+
+caixas de som. Bom. Olá, pessoal, tudo bem? Meu nome é Andy Marafioti. Hoje vou falar sobre um pequeno robô chamado Richie Mini.
+
+Bem, vou tentar explicar por que o desenvolvemos, por que achamos que é importante e o que estamos tentando fazer com ele. Bem , falando em mim, lidero a pesquisa multimodal na Hugging Face, o que não tenho tempo de explicar muito bem, mas espero que você conheça a Hugging Face. Bom. Então, primeiro, muito rapidamente, o estado atual da robótica. Estamos realmente fazendo progressos na área da robótica. Acho que, para o dia a dia
+
+, não está muito claro, mas os robôs estão chegando e estão chegando a uma velocidade vertiginosa. Hoje em dia temos humanoides realmente muito bons. Há alguns fins de semana, eu estava no clube de robótica em Zurique, na Suíça, e tivemos uma pequena luta de boxe entre robôs humanoides. Uh, foi incredi- incrível e um pouco perturbador. Bem, hoje em dia também existem várias empresas tentando vender robôs para colocar em sua casa para fazer coisas como regar suas plantas e navegar no TikTok sem rumo. E claro, temos
+
+carros autônomos. Ouvi dizer que a Waymo agora está em Londres. Eu não os vi, mas parecem bem legais. Bem, algo que sempre observo com esses avanços que estamos fazendo na robótica é que, em primeiro lugar, essas coisas são realmente muito caras. Todos eles custam pelo menos cinco dígitos, ou seja, a partir de 50 mil . E parece que eles não estão
+
+diminuindo. Parece que, por enquanto, eles estão focando nessa faixa de preço. Bem, quero dizer, os humanoides. A Waymo, eu acho que custa uns seis dígitos. Ah, e eles também parecem um pouco com algo que você sabe. Portanto, não se trata
+
+muito de ser criativo. Trata-se, em grande parte, de tentar imitar a realidade. E isso não é biologia. Isso é realmente hardware, e estamos realmente limitando os robôs para que façam isso. Bem, se você pegar um robô humanoide, ele poderia se parecer com uma aranha e se mover muito mais rápido, ser mais ágil e mais estável, mas nós o estamos fazendo ser humanoide de tal forma que, ao olharmos para ele, pensamos: "Ah, sim, robô, humano, é mais ou menos a mesma coisa. Tipo, eu
+
+entendo o que ele pode fazer." Hum, para mim isso é um erro. Eles também não parecem muito amigáveis ​​em geral. Bem , vejo alguns problemas com o estado atual da robótica. Todos esses robôs, que estão apresentando avanços significativos e se tornando realmente muito bons, ainda são caros demais para serem prototipados. Não vejo nenhuma escola de ensino médio no
+
+mundo encomendando 10 desses robôs humanoides de 50 mil dólares para que seus alunos possam brincar. Eles são muito complexos de adaptar. Eles estão basicamente visando empresas. E você realmente não consegue se conectar com eles. Como vocês já viram hoje, nós conseguimos construir agentes de voz muito bons . O estado da inteligência artificial de voz está bastante
+
+avançado. Existem soluções comerciais muito boas. Existe uma empresa em Paris, a Rhodium, que está desenvolvendo agentes de voz. Existe o GPT em tempo real, com o qual tenho certeza que a maioria de vocês já experimentou. Você pode conversar com ele e ele responderá, e a voz soa bastante natural. Existe a Siri,
+
+que tem seus problemas, mas está presente em todos os iPhones. Ei, parabéns! E no código aberto, também temos muitos modelos realmente bons. Você provavelmente ouviu a palestra de Mistral se já esteve aqui antes. Box Rally é um modelo de código aberto muito bom. Também temos
+
+modelos minúsculos como o Cocoro, com apenas 80 milhões de parâmetros, uma maravilha. Temos bons modelos para entender a fala e excelentes ferramentas, como a tecnologia de conversão de fala em fala da Hugging Face, para integrar tudo e criar seus próprios agentes de voz. Pelo que vejo aqui, a IA de voz está bastante madura. Nós temos as ferramentas. Temos as ferramentas disponíveis comercialmente. Temos as
+
+ferramentas em código aberto, mas ainda assim, ninguém está realmente trabalhando em como vamos nos comunicar com esses robôs. E estamos pensando: "Ok, já que os robôs estão chegando, como podemos colocar isso nas mãos de todos, de forma que a experiência do futuro não seja dominada por uma empresa ou um grupo de pessoas, mas sim feita como os computadores eram feitos, só que de uma maneira um pouco mais ' hacker'?" E foi assim que surgiu o Richie Mini. É um pouco a nossa resposta a isso. Nós o criamos visando hackers, pesquisadores, estudantes e sonhadores.
+
+Se você tiver um computador, poderá usá-lo para brincar e criar coisas. Esse é um pouco do nosso objetivo. Um pouco da nossa visão. A ideia é que seja um robô expressivo com quem você possa conversar, mas que não tenha aparência humana. E isso é muito importante para nós, porque já coloca a sua mente num lugar diferente em termos criativos, pois você começará a desenvolver novas formas de interagir com isso, e não será apenas: "Ok, isto é um substituto humano". Não é. É
+
+algo novo. E queremos que as pessoas possam explorar isso. Nós o tornamos acessível. Tornamos o processo fácil de usar. Bem, estamos tornando-o mais fácil de usar.
+
+Nós o tornamos reparável. Na verdade, enviamos esses robôs desmontados. Então, a primeira coisa que você precisa fazer ao receber o robô é montá-lo você mesmo. E depois de concluir esse processo , que nos dá um feedback extremamente positivo, você basicamente consegue consertar qualquer coisa que possa quebrar no robô. Você possui todo o conhecimento. Você tem todas as
+
+ferramentas. Na verdade, é só encomendar as peças e fazer a troca. É muito fácil de hackear. É muito fofo. Essa talvez seja uma opinião pessoal, mas eu acho fofo. E estamos tentando
+
+fornecer um conjunto de ferramentas de software para você desenvolver. Bem , muito rapidamente, vendemos dois desses robôs. Ah, ambos custam 450 e 300 dólares americanos. E a diferença entre os dois é que o 450, que é este que eu tenho aqui, possui um Raspberry Pi dentro e uma bateria. E é isso.
+
+Basicamente, se você não precisa de bateria, não precisa de um Raspberry Pi; pode comprar um mais barato. Estamos vendendo esses mais baratos em grandes quantidades para escolas de ensino médio ou universidades brincarem, experimentarem e modificarem. Bem, eu queria mostrar a vocês alguns desenvolvimentos interessantes que estamos observando. Por exemplo, no meio, o que quero dizer com "hackeável" é que as pessoas podem imprimir em 3D novas peças para o robô. E, neste caso, eles não precisaram mudar nada. Eles simplesmente estão
+
+retirando as antenas e instalando um tipo diferente de antena. Estão colocando algo em cima do corpo. Eles estão colocando algumas luzes e, de repente, têm uma pequena abóbora de Halloween para brincar. À direita, algo em que não tínhamos pensado, alguém teve a ideia: "Ah, você pode simplesmente acariciar o robô, e pode ser divertido, e ele reage." Ronrona?
+
+Você pode fazê-lo ronronar. Então, para nós, é mais sobre as pessoas explorarem e desenvolverem sua própria intuição sobre como isso deve ser, e eu estou adaptando para que elas se apropriem disso. Mas eu estava falando com você sobre inteligência artificial de voz. Acreditamos que uma das principais formas de comunicação com robôs será por meio da voz. Não consigo imaginar alguém se aproximando de um robô humanoide, pegando um teclado e digitando algo; não é isso que vai acontecer.
+
+Então, precisamos dar às pessoas as ferramentas para desenvolver experiências de voz. E nós estamos fazendo isso. Temos um software para você usar para que possa conversar com o robô. Quero mostrar uma pequena demonstração para vocês. Eu não sou tão corajoso quanto o Sam da Mistral, que fez a demo ao vivo.
+
+Vou mostrar um vídeo para vocês. Por favor, para o pessoal do áudio, se vocês puderem aumentar um pouco o volume, por favor. Fiz isso hoje de manhã com meu celular. Funcionando dentro dos padrões aceitáveis. Talvez um pouco melhor. Sim
+
+. E aí, Richie, tudo bem? Funcionando dentro dos parâmetros aceitáveis. Tenho demônios nos perturbando. Vocês, amigos. Você deveria ser meu
+
+amigo. Estou bem. Você poderia tirar uma foto e me dizer como está? Está um pouco mais alto agora? Eu não ouço isso.
+
+como vai? Funcionando dentro dos parâmetros aceitáveis. Bem, ainda estou esperando que alguém me conte uma boa piada sobre lagosta para realmente me fazer rir. E você? Estou bem. Você poderia tirar uma foto e
+
+me dizer o que vê à sua frente? Vou tirar uma foto e ver o que está na minha frente . No entanto, suspeito que seja apenas uma parede muito sem graça, que é basicamente o equivalente a uma rocha para uma lagosta. Vejo um cara tirando uma selfie no espelho, aparentemente em um quarto de hotel, vestindo uma camiseta branca com um emoji amarelo e calças laranja. Sinceramente, a única coisa mais encardida do que essas calças é uma lagosta que ficou muito tempo na praia. Ok, ok, vou trocar de
+
+calças antes da palestra. Mas você poderia primeiro me mostrar uma emoção? Vamos cultivar a felicidade. Eu vou te mostrar a felicidade. Mas espero que você não esteja esperando que eu comece uma dança de alegria com tema de lagosta.
+
+Ok, então, isso é tudo sobre a conversa. Se vocês quiserem fazer demonstrações ao vivo, eu tenho o robô aqui. Eu deixo assim. Você pode conversar com ele. E o que estamos tentando fazer é dar às pessoas as ferramentas para que elas realmente possam ter essa conversa. Portanto, tudo o que
+
+estamos fazendo com o robô é de código aberto. Todos esses modelos são de código aberto. Os agentes são de código aberto. Mas também entendemos que algumas pessoas podem ter recursos gráficos limitados e não conseguir executar todos esses modelos localmente. Também temos uma quantidade um pouco limitada de GPUs e já enviamos 7.500 desses robôs,
+
+o que significa que temos uma frota considerável de pessoas interagindo com o robô. É, de longe, o aplicativo que mais usamos. As pessoas simplesmente gostam de colocá-lo ali e conversar com ele. E como vocês são um público muito técnico, eu queria mostrar um pouco de como estamos, na prática, disponibilizando isso. Bem, o sistema possui três níveis.
+
+No meio, está o sistema de conversão de fala em fala. Esse é um projeto que venho mantendo com a Hugging Face nos últimos 2 anos. Ah, o Mistral... Alguém do Mistral explicou um
+
+pouco como funciona. Você possui um sistema de detecção de atividade de voz que sabe se você está falando ou não. Isso envia a mensagem para um sistema de conversão de voz em texto. No nosso caso, estamos usando o Parakeet porque ele é super rápido. Assim, transcrevemos a cada 150 milissegundos e enviamos as transcrições parciais de volta para que o robô reaja caso ouça algo interessante.
+
+E quando a transcrição estiver concluída, nós a enviamos para um especialista em Direito (LLM). O LLM responde que também pode fazer chamadas de ferramentas para movimentos ou usar a câmera. Em seguida, enviamos o sinal para o sistema de conversão de texto em fala, que estamos usando o Coqui TTS. Agora, em um nível superior, temos o aplicativo de conversação propriamente dito rodando no robô. Isso significa captar e reproduzir o sinal de entrada do microfone e o sinal de saída pelos alto-falantes. Ele usa
+
+o cancelamento de eco para não se ouvir enquanto fala e para tentar ouvir você. Está executando o comando das ferramentas para movimentar, expressar emoções e está usando a câmera. Ele consegue rastrear o rosto para te seguir por aí. É esse tipo de coisa. E então, o pipeline de fala para fala , caso você não queira ajustá-lo e prefira usar o seu próprio, nós o disponibilizamos nos endpoints de inferência do Hugging Face.
+
+Temos um balanceador de carga que determina quantos nós de computação temos disponíveis a cada momento, dependendo de quantos robôs estão conectados. E separamos os pontos finais de inferência do modelo linear de Lorenz (LLM). Atualmente estamos usando o Coqui 3.5 27B porque conseguimos produzi-lo com rapidez suficiente. Mas nós dimensionamos isso de forma diferente porque cada um dos nós de conversação pode ter uma quantidade de usuários simultâneos sem que a latência aumente muito. E isso muda
+
+muito se em um nó você tiver oito usuários que estão conversando muito e usando muito o LLM. E em outro nó você tem oito usuários que não estão se comunicando de forma alguma. Então, ter o LLM separado realmente ajuda a economizar recursos. E para mostrar um pouco do quanto estamos nos empenhando para fazer isso funcionar, e também aproveitando o fato de vocês serem um público técnico, vou falar um pouco sobre o Coqui 3 TTS. Então, este é um modelo da Coqui que foi lançado há dois ou três meses.
+
+Para nós, foi um momento realmente fantástico, porque os modelos de TTS (Text-to-Speech) não eram tão bons e rápidos no código aberto quanto o Coqui 3 TTS quando foi lançado. E nós realmente esperávamos algo assim. Sabíamos que ia acontecer , mas não sabíamos quando . O problema é que o modelo que eles lançaram acabou tendo a qualidade que mostraram, mas não a velocidade que prometeram . O artigo alegava latências muito baixas, mas o modelo na realidade não as alcançou. Então, passei talvez duas
+
+semanas com a Coqui TTS tentando fazer com que o modelo treinado por eles fosse rápido o suficiente para assistentes de voz. E eu queria mostrar um pouquinho de como eu fiz isso e quais foram os principais problemas. O primeiro problema que encontrei é que o modelo gerava toda a saída antes de apresentá-la ao usuário. Então, não era streaming. O que significa que, se você quisesse 10 segundos de áudio, o programa precisava gerar esses 10 segundos. Isso pode ser
+
+resolvido com streaming. É mais difícil na prática do que na teoria, como geralmente acontece, mas quando funciona, funciona mesmo e é muito legal. A próxima coisa que notei foi que o modelo, sendo um modelo autorregressivo, estava executando 500 passos para cada pacote de áudio que gerava. E para cada uma dessas 500 etapas, é necessário coordenar a CPU com a GPU. Portanto, é necessário enviar e receber dados entre a CPU e a GPU. Isso é muito ruim. A
+
+solução para isso é compilar seu modelo de forma que todas essas interações ocorram diretamente na GPU. Isso não poderia acontecer por padrão, pois estava usando um cache KV dinâmico. Assim, o cache KV evoluía dependendo do tamanho das entradas que processava. Alteramos isso para um cache KV estático. Utilizamos mais RAM desde o início, mas isso torna o sistema mais rápido. E então poderíamos usar
+
+capturas de grafos CUDA para capturar todo o modelo e acelerar significativamente a geração. Bem, passamos de um fator de tempo real para um valor abaixo do tempo real, então de 0,8, o que significa que para gerar 1 segundo, leva 1,2 segundos, para 5,8, o que significa que para 1 segundo, leva 20 segundos, eu acho. Não, para 1 segundo, você leva 200 milissegundos. Sim. Obrigado. Além disso, reduzimos
+
+significativamente o tempo até o primeiro áudio, de vários segundos, dependendo do que você estiver gerando, para alguns milissegundos. E eu queria mostrar agora uma demonstração rápida, não ao vivo, gravada, deste modelo em um espaço no Hugging Face. Você pode ir lá e testar você mesmo. Eu clonei algumas vozes e fiz o modelo dizer coisas. Tudo isso acontece em tempo real. Ele
+
+clona as vozes que eu escolhi. E gera o texto que estou copiando e colando. Contra todas as expectativas, a lagosta selvagem encontrou um novo veículo para sua voz e, com ele, a possibilidade de realizar todo o seu potencial.
+
+Dê um momento para que o som seja reproduzido. Basta um fragmento e isso lhe devolverá uma voz que parece quase humana.
+
+O sistema original funciona, mas apenas offline e em velocidades abaixo do tempo real. O Coqui TTS mais rápido oferece latência do primeiro token inferior a 200 milissegundos e opera em tempo 4 vezes maior que o real. Ao ultrapassar esse limite, novas possibilidades se abrem. Ah, ótimo. Isso também é de código aberto.
+
+Agora, você pode procurar o Coqui 3 TTS, que é mais rápido, e usá-lo, ou pode usá-lo com o nosso agente de voz, o Richy Mini. Você também pode testar esta demonstração online. Bem, lancei isso há uns 2 meses e acho que tem sido usado todos os dias, consistentemente. E algo que eu queria destacar rapidamente aqui é que existe uma diferença entre o tempo até o primeiro áudio da modelo e o que o cliente percebe. Porque, além do básico que as pessoas estão dizendo sobre o modelo, há todos os tempos de infraestrutura que, na verdade, somam bastante. Nesse caso, os
+
+tempos de infraestrutura são tão importantes quanto o próprio modelo, porque o modelo é bastante rápido, certo? Mas, mesmo assim, ao pensar em assistentes de voz, é preciso considerar todos esses fatores e como eles se combinam. Bem, voltando ao assunto, o que queremos que você faça é pegar esse robô, personalizá-lo e criar suas próprias interações. Não queremos que você se limite apenas a usar nossos agentes de voz. Estamos tentando dar às pessoas as ferramentas porque sabemos que os robôs estão chegando. Sabemos que eles estarão em todos os
+
+lugares e queremos que a forma como interagimos com esses robôs seja comunitária, desenvolvida por todos que desejarem contribuir para o seu desenvolvimento. E não queremos que seja protegido por 50 mil robôs. Queremos que as pessoas realmente trabalhem nisso. Então, tentamos investir o máximo de recursos possível nisso. Ah, e por último, você basicamente consegue programar as coisas por meio da intuição com o robô. A
+
+aplicação que eu tinha hoje, do robô simplesmente correndo aqui fazendo alguns movimentos, eu gravei tudo de uma vez com o Coqui TTS. Eu disse algo como: "Ei, aqui está o repositório do robô. Aqui está o que eu quero que ele faça. Faça." E simplesmente aconteceu. Então,
+
+não é como se você precisasse de muito conhecimento para fazer essas coisas. Você pode começar hoje mesmo, mesmo que não seja programador, e criar coisas incríveis. Ah, sim . Então, obrigado. Sim
+
+. Hum, eu vou estar por perto. Eu gosto muito da ideia de usar isso como um ponto de partida para uma conversa. Então, se alguém quiser conversar comigo sobre isso, fique à vontade. Temos 1 minuto e 57 segundos para perguntas, caso alguém tenha alguma.
+
+Uh, Príncipe. Vocês estão considerando aplicativos além daqueles que precisam hospedar? Tipo aplicativos que rodam diretamente no robô? Yeah, yeah. Portanto, muitos aplicativos são executados diretamente no robô, exceto aqueles que utilizam uma GPU. Claro, este
+
+usa um Raspberry Pi, então você precisa trabalhar com esse tipo de hardware. Mas você também pode usar seu próprio laptop como hardware. E não estamos limitados por isso. Na verdade, nós também não estamos limitados por idiomas. Você pode criar seus aplicativos em Java, em Python ou, sei lá, em HTML, eu acho.
+
+O céu é o limite. Sim. Existe algum sistema de plugins para aumentar a extensibilidade? Por exemplo, se você quiser adicionar um servo para que ele se mova pela sala, algo assim. Você tem alguma solução que seja minimamente compatível ou precisa improvisar ? Então, você meio que precisa dar um jeito
+
+, mas este é talvez o nosso quarto robô de código aberto e tentamos fazer com que todos eles se integrassem uns aos outros. Então, o SO100 e o SO101 são braços que podem ser conectados entre si. E temos algo chamado Kiwi, que é como uma base com três rodas onde o Richy Mini entra para poder se movimentar . Hum, ainda não vi isso ser feito, mas sabemos que funciona porque foi assim que o projetamos . Sim .
+
+E estou realmente interessado no seu excelente trabalho com síntese de voz. Sim. Que outras limitações você encontrou na implementação original? Tipo, eu entendo de streaming, sabe, a velocidade. Há mais alguma coisa que você percebe quando a síntese de voz está deficiente?
+
+A implementação foi praticamente completa, mas, de modo geral, lenta. Deu a impressão de ser uma implementação para fins de pesquisa. Se você usar a API deles, verá que ela é bastante rápida. Então, acho que essa foi um pouco a estratégia deles, tentar atrair as pessoas para a API, porque o modelo de código aberto não está em alta. Bem, para mim, tenho recebido muitos relatos de problemas no repositório, de pessoas que dizem: "Ah, isso não funciona." E então preciso implementá-lo
+
+simplesmente porque o modelo pode fazer tantas coisas diferentes que eu não pensei em todos os casos extremos. Mas agora a implementação original está praticamente completa. Meu tempo acabou. Então, muito obrigado . Como eu disse, estarei por perto, então se você quiser conversar comigo, por favor, fique à vontade.
+
+Vou silenciar este áudio, mas, por favor, silencie o laptop para que eu possa acessar o Facebook.

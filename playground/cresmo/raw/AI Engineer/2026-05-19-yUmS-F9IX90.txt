@@ -1,0 +1,125 @@
+---
+video_title: "Don't Build Slop (4 Levels of AI Agent Maturity) - Ara Khan, Cline"
+video_id: yUmS-F9IX90
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yUmS-F9IX90
+video_date: 2026-05-19T15:00:06+00:00
+video_description: |
+  The prompt for GPT-5.3 is one-third the size of the one written for GPT-5. Frontier models are so capable that longer system prompts cause sensory overload and degrade performance. The rule Ara Khan keeps returning to: every single thing you add to an agent risks making it worse.
+  
+  The talk breaks agent-building into four levels, from framework prototyping to cloud-native fleets, with five concrete rules for writing your own agent code in between. The form factor argument lands on Kanban boards as the right UX for managing parallel inference-bound agents. He made that prediction publicly on March 26. Claude Code shipped the same thing ten hours before this talk.
+  
+  Speaker info:
+  - https://x.com/arafatkatze
+  - https://www.linkedin.com/in/arafatkatze/
+  - https://github.com/arafatkatze
+  
+  Timestamps:
+  0:00 Introduction: Addressing the "mass psychosis" of agent-building
+  2:13 The Four Levels of Agent Maturity overview
+  3:00 Level 1: Using existing agent frameworks
+  4:13 Level 2: Building your own agents (with five rules)
+  4:36 Rule 1: View every agent as a state machine
+  5:55 Rule 2: Keep it simple (Avoid unnecessary system prompt bloat)
+  7:20 Rule 3: Integrate with a CLI for a pseudo-RL pipeline
+  8:43 Rule 4: Don't build "slop" (Focus on thoughtful architecture)
+  9:43 Rule 5: Master frontier model APIs (Reasoning traces)
+  11:03 The UX form factor: Why Kanban boards are best for agents
+  13:12 Shipping to the cloud for scalability
+  17:15 Q&A session: Planning and state transitions in Kanban
+---
+Tudo bem. Olá. É muito bom ver vocês. É muito interessante ver que, mesmo depois de um dia tão longo, vocês apareceram. Sempre me sinto muito lisonjeada quando estou apresentando algo e as pessoas estão lá. É que...
+
+eu... se isso te faz sentir que o que você faz importa. Então, hoje o tema que quero abordar é sobre como não construir soluções de baixa qualidade, ou seja, os quatro níveis de maturidade de um agente de IA . E o que estou tentando fazer aqui
+
+é falar sobre algo que muitas pessoas me mencionaram, que é um problema de psicose coletiva. Então, basicamente, é como se cada pessoa sentisse que há um conjunto gigante de robôs ao seu redor, que estão passando por ali fazendo um monte de coisas sem parar, e você está no meio, completamente confuso. Você está tão confuso, tipo, o que é isso? O que eu devo fazer? Devo ter uns 15 agentes trabalhando sem parar enquanto eu fico no local, ou devo ser como um mero leitor e analisar cada linha de código? E é
+
+muito difícil tomar uma decisão . Tenho a impressão de que, ao chegar a um lugar como este, a formalidade acaba te incomodando. Você acaba tendo um ataque de pânico ou algo parecido. Mas acho que quero dar um passo para trás e dizer: "Pessoal, vamos com calma. Vamos desacelerar. Vamos
+
+pensar em quais problemas podemos realmente resolver e eu vou ajudar vocês a construir agentes realmente úteis. Quero atender a todas as necessidades, desde a de construir coisas muito rápido até a de construir devagar e levar as coisas para produção." Esse é basicamente o objetivo. Para dar um exemplo de psicose coletiva, há muitas coisas semelhantes. Vou dar três interfaces de usuário.
+
+São três da Frontier Labs e garanto que nenhum de vocês consegue adivinhar qual é qual. Uma é a Factory, outra é a Codex e a terceira é a Cursor. Tenho certeza de que nenhum de vocês sabe qual é qual. Nem eu sei. Sim, então esse é basicamente o ponto. Tudo é
+
+igual. Você quer fazer as coisas do seu jeito. Então, para construir agentes em particular, aqui está o que eu apresentaria aqui. Eu gostaria de dividir esse problema de construir agentes em quatro partes diferentes. A primeira parte é como descobrir uma maneira de ver se isso faz sentido, se funciona. É onde você usa um
+
+framework. A segunda parte é quando você realmente está falando sério, tipo, "Ok, eu realmente quero fazer algo aqui". Aí você constrói as coisas por conta própria, como uma máquina de estados, construindo um agente de verdade. A terceira parte é o fluxo de trabalho de UX, onde você usa Kanban, que eu sugiro ser um ótimo formato para trabalhar com agentes. E a quarta parte seria a migração para a nuvem. Então, este é basicamente o nosso esboço
+
+de como queremos trabalhar com agentes. Mas acho que isso lhe dará uma boa ideia de como você faria isso. Para resolver esse problema, o primeiro nível de desenvolvimento de agentes é basicamente usar um framework. Existem alguns frameworks diferentes, como LangChain e LangGraph. Eu, particularmente, não os uso.
+
+Trabalho em uma empresa cliente e preciso escrever toda a parte de experiência do agente por conta própria. Então, por que eu usaria um framework? Não sou a pessoa mais indicada para te dar conselhos, mas acho que, se você está procurando por PMF (Processamento de Manipulação de Agentes), e tem um problema do tipo "preciso agregar e-mails ou fazer algo básico", um agente de IA provavelmente seria útil. Provavelmente não me importo com o melhor modelo. Eu só quero algo que funcione." Qualquer
+
+framework de agentes pode te dar algo que funcione em meia hora. Você pode simplesmente escrever o código. É ótimo para começar. É ótimo ver que os agentes realmente funcionam e que você pode construí-los sozinho. Existem muitas armadilhas ao usar frameworks. E
+
+uma das maiores, na minha opinião, é que se você realmente quer levar as coisas para produção, se você realmente quer construir algo sério, você vai perceber rapidamente que o nível de personalização, o nível de visão de futuro , o nível de modularidade que você precisa, você simplesmente não encontrará em um framework. Eu sei que muitas pessoas discordam de mim e muitas delas estão erradas. Enfim, o segundo nível é construir seus próprios agentes, certo? Então, aqui está como você constrói... Eu sinto que
+
+este é um problema muito complexo, não consigo resumir. Então, vou apenas dar... Existem cinco regras que você pode usar ao escrever o código para construir seus agentes.
+
+Essas regras fornecerão um esboço de como construir e escrever o código do seu próprio agente. A primeira é sempre pensar em cada agente como uma máquina de estados. Máquina de estados é um tópico para o segundo ou primeiro ano da faculdade, mas, basicamente, todo agente é um loop recursivo. É como um loop while recursivo. E
+
+não importa o que seu agente esteja fazendo, seja um cursor, um relógio ou qualquer outra coisa, ele sempre será um loop while com algumas condições e alguns estados finais. O que você precisa é ter, a qualquer momento, um modelo mental de em qual estado o agente se encontra. Digamos que você queira Para poder dizer, digamos, "Ok, então digamos que você queira ler alguns arquivos e explicá-los através de código de relógio", o processo começa com a tarefa do usuário no topo, onde você pede para ler alguns arquivos. Ele passa para o estado de "lendo alguns arquivos" e para a ferramenta de ação, onde lê o arquivo e percebe: "Ah, eu li o arquivo, faz sentido". Então, ele chama a ferramenta de conclusão e simplesmente completa a tarefa. O ponto certo
+
+na parte inferior, "tarefa concluída", é quando a máquina de estados termina. Você pode abordar isso de uma forma muito complexa, percorrendo toda a máquina de estados por 8 a 10 minutos, ou até mesmo horas, se quiser . Mas, essencialmente, todo agente é uma máquina de estados. Se você conseguir visualizar isso como um modelo mental, será muito mais fácil pensar dessa forma sempre que estiver construindo um agente . A segunda regra é que cada coisa que você adiciona a um agente corre o risco de piorá-lo. Acho que essa é a
+
+coisa mais difícil que aprendemos. E essa foi uma lição amarga que muitos desenvolvedores de agentes aprenderam: grandes prompts do sistema, muitos casos extremos diferentes, muita lógica condicional complexa (if/else), tudo isso só piora o desempenho dos modelos de ponta. A lição que aprendemos é simplesmente deixar o modelo trabalhar. Os modelos de ponta são tão bons no que fazem que, quanto menos instruções você der a eles, melhor será o desempenho. Um exemplo clássico é o repositório do Codex: o prompt do GPT-5 é um terço menor do que o do GPT-5.3
+
+. Parte da razão para isso é que os modelos mais novos são tão bons no que fazem que dar a eles muitas instruções e prompts de sistema mais longos leva a uma sobrecarga sensorial, onde recebem tantas instruções que ficam sobrecarregados e não conseguem descobrir o que fazer. Então, acho que quanto mais simples, melhor. E você precisa ter muito cuidado com cada detalhe que adicionar. Espero que Deus me livre de piorar a situação e tento sempre simplificar.
+
+Chegamos ao ponto de reescrever todo o cliente porque percebemos que havia muita coisa inútil das versões antigas. O código do cliente foi reescrito do zero pelo menos sete vezes, eu acho. Mas, novamente, talvez o pessoal da equipe saiba mais. A terceira regra é que você precisa tornar o agente uma parte fácil de um pipeline de aprendizado por reforço (RL) simplificado. Essa é uma regra complicada, mas basicamente significa que, sempre que você estiver criando um agente, precisa ter algum tipo de interface de linha de comando (CLI). O
+
+motivo é que, desde que você tenha algo que permita criar e testar o agente de forma eficiente, como uma CLI, você precisa ser capaz de criar coisas que sejam muito fáceis de construir e testar com outros agentes de código. Então, agora existe essa espécie de dança interativa acontecendo entre IA e humanos, enquanto antigamente os humanos usavam Para guiar a IA, por exemplo, fazer isso, e acho que neste ponto estamos no momento em que os humanos estão sendo guiados pela IA. E isso faz parte do processo, onde, como humano, você quer ser capaz de construir coisas de forma que a IA possa trabalhar com muita facilidade . Então, isso pode envolver escrever um arquivo agents.md usando as habilidades certas. E
+
+construir um ambiente de CI/CD de forma que outros agentes de codificação possam facilmente construir seu agente, testá-lo, fazer alterações e testá-lo de ponta a ponta é uma parte muito crítica, porque dessa forma, se você quiser fazer alterações, basta deixar um agente de longa duração rodando em uma thread paralela. Ele fará todas as alterações, testará e você terá tudo funcionando. Mas, se for mais difícil construir e testar, também será mais difícil para você usar agentes para trabalhar no seu agente. Super meta. Regra número quatro: não seja desleixado. Pessoal, por
+
+favor, pelo amor de Deus, não construam. Por favor, não se preocupe. Acho que existe um limite de capacidade de processamento e uma grande quantidade de tokens que podem ser processados ​​muito rapidamente. A melhor lição que aprendemos como engenheiros é que vale a pena dedicar um tempo para pensar na arquitetura, no design e no esboço do que o agente deve fazer, garantindo que faça sentido. Além disso, é fundamental dedicar um tempo para ler o código, mesmo que você não escreva tudo manualmente.
+
+Para nós, isso é crucial, pois a arquitetura de um agente precisa ser definida por um humano e com muita atenção. Mesmo que você esteja usando um agente para conversar, dedique bastante tempo para pensar na arquitetura e na máquina de estados. Não deixe que outros modelos simplesmente processem o código. E então, a regra A Frontier Labs meio que quer te restringir. E isso é complicado. Muita gente vai
+
+discordar, mas basicamente o que acontece é que, muitas vezes, quando você trabalha com as APIs da Frontier Labs, elas tentam te restringir e dificultam a intercambialidade . Para dar um exemplo bem preciso , os novos modelos que foram lançados, digamos, Opus 4.6, Gemini 1.5, 1 Pro e 5.3, têm algo chamado " raciocínio rastreado" (ratioing traces), que fazem parte do cache e também do loop de computação de tempo de teste que o modelo executa.
+
+E quando você tem conversas e trocas de informações com esses modelos, você precisa enviar os rastros rastreados exatamente no formato esperado. Se não fizer isso, a resposta ainda funcionará, mas o desempenho será degradado e você não terá como saber. E muita gente não percebe isso. Os ganhos de desempenho massivos que vêm dos novos modelos se devem ao fato de que eles simplesmente não estão usando as APIs exatamente da maneira como deveriam ser usadas. E existem assimetrias na API. Então, alguns
+
+argumentariam: "Ei, talvez você possa usar o Open Router". Mas eu não acho que isso seja suficiente. Acho que você realmente precisa ter cuidado ao usar diferentes APIs da Frontier Labs, pois eles analisaram cuidadosamente se a API está funcionando corretamente e a testaram de fato. Então, o próximo passo é o formato, como você visualiza os agentes, certo? Acho que originalmente, como mencionei em um dos slides anteriores, tentei mostrar a vocês como o Codex, o Cursor e outros pareciam iguais. E acho que tenho uma
+
+afirmação diferente. Então, em 26 de março, fiz um tweet sobre isso. Bem, eu disse que deveríamos usar Kanban. Então, quadros Kanban... acho que
+
+quem já usou Linear, ou algo assim, está familiarizado com quadros Kanban. Meu argumento é que os quadros Kanban são a melhor opção. O Hans, que estava na plateia, gentilmente compartilhou suas ideias comigo também. Muito obrigado. Os quadros Kanban se baseiam na ideia de que, ao trabalhar com um agente, você está sempre limitado pela inferência. Muitos de vocês
+
+trabalham com agentes como o Kodak ou o Alpha, que funcionam por 8 a 10 minutos de cada vez. Bem, um dos agentes está funcionando por 8 a 10 minutos. O que você faz? Você pode usar o recurso de rolagem infinita (doomscroll), mas só é possível rolar a página inteira até certo ponto. Então, você executa outro agente, certo? Dessa forma, você
+
+tem pelo menos dois ou três agentes rodando em paralelo o tempo todo, porque você está limitado pela inferência. E todos eles estão potencialmente modificando a mesma fonte. Então, você quer isolar o elemento que está sofrendo mutações para cuidar disso, como o isolamento do estado e a delimitação da inferência. Para mim, o melhor formato de UX é o quadro Kanban, principalmente porque ele te dá uma espécie de gerente de engenharia que pode observar todos os seus agentes. Ele te dá uma visão geral do que eles estão fazendo e também te ajuda a construir fluxos com eles, tipo, " ok, se essas duas tarefas terminarem primeiro, então eu faço a outra tarefa". E isso
+
+te ajuda a se tornar basicamente um gerente de engenharia, e todos os seus agentes são seus agentes independentes (ICs), e você pode observá-los através disso. Então, eu estava fazendo essa afirmação em 26 de março e, 10 horas atrás, o Clock Code lançou a mesma coisa. Então, acredito que eu estava certo. Hum, ok. Então, sim, você pode usar isso através do cliente Clock Code, onde quer que você use o cliente também, o que funcionar melhor para você.
+
+Hum , sim, você deve pensar no Kanban como se fosse basicamente um gerente de engenharia, que você seria. E então há uma etapa final de... Ok, você tem um agente, você o testou, você o criou e tem um bom formato de UX para interagir e visualizá-lo.
+
+O que você faz então? Como você tem um agente que é útil, funciona bem e, ao mesmo tempo, é escalável? Que realmente escala para milhões de tarefas, milhões de usuários? Se você trabalha para uma empresa com 8.000 pessoas, como você garante que todas elas possam interagir com ele facilmente? Acho que, em vez de
+
+fazer as pessoas instalarem e terem esses fluxos de trabalho complexos nas máquinas, que são muita coisa desnecessária e trabalhosa, é melhor simplesmente tirar tudo isso da nuvem e concentrar todo o trabalho pesado em uma única tarefa. Existem muitos benefícios em usar agentes na nuvem, mas o principal é que você pode paralisar completamente e ter uma máquina separada para cada um deles. Sem dependências locais, como na nuvem, onde o agente pode configurar o ambiente e executar todas as tarefas de UX. Atualmente, uma das maiores lacunas, algo que muita gente não usa, mas que eu uso bastante, são os agentes na nuvem, porque eles podem ser executados por períodos muito longos. Eu costumava enviar tarefas pelo meu celular que levavam de 15 a 20 minutos para serem executadas por um agente na nuvem . Digamos que seja uma
+
+alteração de UX, como "compile esta extensão do VS Code. E para esta extensão do VS Code, quero que você faça login aqui. Quero que você clique em configurações. Quero que você altere as configurações para...
+
+escolha esta equipe. E então quero que você teste isso no terminal." Os agentes na nuvem são tão bons que executam manualmente todos os cliques dos testes de controle de qualidade que acabei de descrever, verificando se funcionam. E se não funcionarem, continuam iterando, tentando. Isso poderia facilmente levar de 50 a 60 minutos.
+
+Mas se você enviar muitas tarefas, o processo pode ser concluído com sucesso. Executar essas tarefas em paralelo pelo seu celular, laptop ou qualquer outro dispositivo é uma ótima maneira de personalizá-las e extensíveis. Isso permite escalar rapidamente. Você pode enviar essas tarefas para serem executadas na nuvem , como um servidor dedicado, e voltar para o seu laptop. Basta baixar o PR e pronto, tudo está funcionando. Outro aspecto
+
+dos agentes na nuvem é que, ao trabalhar com muitas pessoas diferentes, eles ajudam a criar uma configuração comum que pode ser compartilhada e modificada por vários usuários. Acredito que a integração de todos esses elementos seria o formato ideal . Meu argumento é que existe um futuro onde a maior parte da experiência do usuário com agentes será na nuvem e a maior parte do processamento envolvido estará na nuvem. Acho que esses quatro níveis de frameworks são apenas alguns exemplos. A última parte, tipo, você sabe, Can Man e envio para a nuvem. Essas coisas são
+
+problemas muito difíceis e complexos. E eu acho que se eu fosse você, usaria isso como uma heurística básica e começaria com, tipo, ok, deixa eu fazer o mínimo possível, a coisa mais fácil, e aí, dependendo do esforço que eu quero investir, eu vou subindo e descendo nesses níveis. Então é isso por hoje. E é, eu dei várias opiniões polêmicas. Acho que deixei muitas perguntas em aberto. Se vocês tiverem
+
+alguma dúvida, se tiverem alguma opinião, se isso pode ter incomodado vocês, fiquem à vontade para entrar em contato comigo, me enviar qualquer pergunta. E, sim, foi muito gentil da parte de vocês me darem o tempo de vocês. Muito obrigado.
+
+Posso tirar uma foto de vocês? Claro. Ok.
+
+Certo, obrigado. Vocês têm alguma pergunta? Só um minutinho.
+
+Certo, é isso. Ah, sim. Como você faz o planejamento dentro de um Kanban? Bem, eu acho que a
+
+parte mais útil é a troca de informações sobre os requisitos, sabe, fazer o agente entender o que ele precisa de mim . Ah, sim, sim, sim, sim. Ah, sim, deixe-me mostrar. Deixe-me mostrar. Basicamente, minha interpretação do Kanban é que, se você olhar para a tela, pode entrar em qualquer tarefa e ela mostrará todo o histórico da tarefa.
+
+E nesse ponto, essa interface que você está vendo é basicamente a própria interface de linha de comando do Codex. E eu costumo ter uma conversa aqui e, em certo ponto, sei que você pode seguir sozinho e fazer o que precisa. Nesse ponto, eu simplesmente saio e me concentro em outras coisas. E então, ele muda de estado quando precisa da sua revisão ou pede para você...
+
+Sim, sim, sim. Então, inicialmente, digamos que eu peça para ler alguns arquivos , certo? Então, inicialmente, estaria no estado "em andamento" e, quando precisar da minha intervenção, passará pela revisão. Certo .
+
+Obrigado.

@@ -1,0 +1,114 @@
+---
+video_title: "Gemini Nano on device — Florina Muntenescu & Oli Gaymond, Google DeepMind"
+video_id: owH1f0N-keY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=owH1f0N-keY
+video_date: 2026-05-22T14:00:06+00:00
+video_description: |
+  Gemini Nano on device weighs three to four gigabytes. Shipping that per app is not realistic, which is why AI core puts it in the system once and every app shares it. Foreground apps get top priority. Background batch jobs queue and run overnight on charge. The developer never manages any of that.
+  
+  The tradeoff is reach. The GenAI MLKit APIs require flagship devices from the last couple of years. Classic MLKit for vision and OCR runs on a billion plus devices without issue. Hybrid inference, launched a few weeks before this talk, falls back from Nano to Gemini Flash in the cloud when the on device model is not available. An embedding API is coming soon for RAG style solutions. For anything beyond that, LiteRT is the other path.
+  
+  Speaker info:
+  - https://x.com/FMuntenescu
+  - https://www.linkedin.com/in/florina-muntenescu-314b8921
+  - https://github.com/florina-muntenescu
+  - https://linkedin.com/in/ogaymond
+---
+[música]
+
+Olá a todos. Meu nome é Florina Montanescu. Sou engenheiro de relações com desenvolvedores e trabalho em diversas áreas de IA, tanto em experiências inteligentes, que é o que vamos abordar hoje, quanto em produtividade de desenvolvedores. Então, se você quiser conversar sobre isso, me encontre no estande mais tarde. Sou Ollie, gerente de produto da Android AI.
+
+Nosso trabalho abrange um pouco de tudo. Venho trabalhando nisso desde antes de chamarmos de IA e quando ainda a chamávamos apenas de ML. Fazemos um pouco de tudo, desde ajudar a desenvolver funcionalidades, coisas que funcionam diretamente no sistema operacional com IA aplicada. Isso inclui tarefas em segundo plano que otimizam o brilho da tela e a memória do sistema, além de ferramentas e infraestrutura para desenvolvedores, facilitando o trabalho de quem cria recursos para Android e chegando aos níveis mais básicos de aceleração de hardware e otimização para iOS, em parceria com diversos fabricantes de semicondutores. Fazemos um pouco de tudo, então ficaremos felizes em conversar sobre qualquer um desses assuntos também.
+
+Queremos que esta seja uma conversa em que vocês façam as perguntas e nós tentemos responder ao máximo possível delas. Mas não tenho certeza de quão familiarizados vocês estão com o que está disponível no Android sobre como criar experiências inteligentes. Quem, sabendo como criar experiências inteligentes no Android, seja com soluções híbridas no dispositivo ou na nuvem, levantaria a mão? Ok, vamos fazer um resumo rápido e, com sorte, a partir daí você poderá ter algumas ideias de que tipo de perguntas gostaria de fazer. Certo, então, se você quiser criar experiências inteligentes no Android, pode usar modelos de dispositivos. Você pode usar um modelo
+
+híbrido, utilizando-o no dispositivo quando disponível, mas, caso contrário, realizar a inferência na nuvem, ou simplesmente realizar a inferência totalmente na nuvem. Assim, quando se trata de desenvolvimento em dispositivos, os comandos são processados ​​diretamente no dispositivo, sem que nenhum dado seja enviado ao servidor. Isso é ótimo por vários motivos. Significa que você pode usufruir do processamento local. Assim, dados sensíveis, como, por exemplo, informações bancárias, não precisam sair do dispositivo. Você tem a possibilidade
+
+de trabalhar offline e, claro, isso significa que não há custos adicionais para toda a inferência. Então, casos de uso como dados sensíveis, personalização ou qualquer coisa que exija uma janela de contexto mais curta, como traduções e assim por diante, são coisas que você pode fazer no dispositivo. Existem, portanto, duas maneiras principais de fazer isso no Android. Você pode usar as APIs do ML Kit GenAI, que dão acesso ao Gemini Nano, nosso modelo para dispositivos móveis, ou, se precisar de algo muito mais personalizável, com seus próprios modelos personalizados, pode usar o Light Art LM. Haverá outra palestra depois desta sobre Light Art LM, então vamos falar apenas sobre as APIs GenAI do ML Kit .
+
+Então, dissemos que esses são os que dão acesso ao Gemini Nano. Este é o nosso modelo mais eficiente para tarefas no dispositivo e utiliza a mesma arquitetura do Gemini 4, que você provavelmente já ouviu falar e que foi lançado na semana passada, mas o Gemini Nano é otimizado para dispositivos Android. Assim, o Gemini Nano é instalado no seu dispositivo através do serviço de sistema AI Core. Isso significa que você terá apenas um modelo no dispositivo e todos os aplicativos usarão esse mesmo modelo por meio desse sistema AI Core. Por ser um Gemini Nano, significa que estamos otimizando o hardware para que você obtenha menor latência e execução mais rápida para tarefas de IA.
+
+Sim, então você pode pensar nisso como se estivesse usando um serviço em nuvem, certo? E tudo é meio que providenciado para você. Você não precisa se preocupar em configurar os LLMs, executá- los em dispositivos, obter a inferência da TPU etc. Você só precisa se concentrar no seu recurso, no seu prompt, e o serviço fornece todo o resto. Estamos fazendo a mesma coisa para o dispositivo, certo? Então,
+
+nós levamos os modelos para o dispositivo, garantimos que estejam otimizados, aproveitamos o hardware específico disponível em cada dispositivo em tempo de execução e, de certa forma, criamos o pacote completo para você, para que você não precise se preocupar com nada disso. E também envolve considerações de privacidade e segurança . Isso significa que você sabe que suas solicitações não serão, sei lá, misturadas com as solicitações de todos os outros aplicativos. Eles funcionam de forma isolada e, portanto, os dados de entrada e saída não são armazenados no dispositivo . Assim, tudo fica o mais privado e seguro possível.
+
+Certo, então como faço para acessar o Gemini Nano? Então você faz isso usando as APIs do ML Kit GenAI. Na verdade, as APIs do GenAI ML Kit fazem parte do conjunto maior de APIs do ML Kit, onde você também tem acesso a APIs e modelos para visão computacional e linguagem natural. Especificamente para o GenAI, temos várias APIs especializadas em tarefas específicas, como sumarização, revisão, reescrita e assim por diante. Mas a mais poderosa delas é, na verdade, a API de prompts.
+
+Isso significa que você pode enviar solicitações em linguagem natural para o Gemini Nano. Por enquanto, suporta texto e imagem como entrada e apenas texto como saída. Assim, com a API de prompts, você pode usá-la facilmente para tarefas como compreensão de imagens, assistência de conteúdo, análise de conteúdo e extração de entidades. Então, eu diria que, seja qual for o caso de uso que você queira implementar, a API de prompts poderá te ajudar. OK.
+
+Os modelos Gemini Nano estão disponíveis apenas em dispositivos dessa geração, como o Pixel 9 e o Pixel 10, e também em outros fabricantes. Então, o que você faz se quiser ter acesso ou poder usar IA em outros dispositivos? Bem, você pode fazer isso usando a nuvem quando o modelo local não estiver disponível para esse dispositivo. Isso aumenta o alcance do seu recurso. Para fazer isso, você usaria a lógica de IA do Firebase. Lançamos uma inferência híbrida há
+
+algumas semanas. Isso significa que você pode decidir, por exemplo, se o Gemini Nano estiver disponível no dispositivo, então você pode executar essa inferência no dispositivo. Caso contrário, pode ser executado na nuvem e, especialmente agora, acredito que com o Gemini 4, quando a próxima geração do Gemini Nano estiver disponível, já poderemos utilizá-lo com a prévia do AI Core. Significa que você poderá ter uma experiência semelhante usando o Gemma Gemini Nano 4 no dispositivo e também na nuvem com os modelos Gemini Flash . Mas se você quiser ter acesso a modelos ainda mais poderosos, como a lanterna Pro Flash, e quiser executar tudo isso na nuvem, também poderá fazê-lo usando a lógica de IA do Firebase . Isso lhe dá acesso tanto à
+
+API Gemini quanto à API de desenvolvedor Vertex AI e Gemini como provedores. Uau. OK. Foi uma experiência muito intensa. [Limpa a garganta] Desculpe.
+
+Acho isso incrível. Só queríamos contextualizar, porque com o Android estamos realmente tentando garantir que haja uma oferta completa, certo? Portanto, tudo o que você precisa, seja executar tarefas localmente no dispositivo para respostas de baixa latência, para inferência privada, seja acessar a nuvem para modelos poderosos, ou algo intermediário, estamos desenvolvendo uma solução que abrange cada um desses pontos e buscando tornar essas APIs o mais consistentes possível para que você possa combinar facilmente o que precisa. Queríamos dar uma visão geral de tudo, mas também ficaremos felizes em nos aprofundar em qualquer um desses assuntos. Teremos prazer em falar sobre casos de uso, sobre o que estamos observando no setor, o que consideramos interessante e para onde estamos indo, mas na verdade queríamos apenas contextualizar um pouco com algumas das diferentes ferramentas que temos disponíveis hoje.
+
+Florina, alguma novidade? Sim. O que Ollie disse. Então, acho que agora estamos passando a palavra para todos vocês. Ok, então minha principal pergunta é: você verificou a quantidade de RAM utilizada ou o consumo de bateria? Hum.
+
+Utilizando modelos Gemini Nano ou Light Art LM? Sim, com certeza. Como a Florina mencionou hoje, nós reduzimos o tamanho desses modelos ao máximo possível, mantendo todas as suas funcionalidades. Mas isso significa que eles precisam de recursos de ponta , certo? Agora mesmo.
+
+Em relação à preocupação com a bateria, esse é um dos motivos pelos quais criamos o AI Core, que basicamente visa otimizar tudo ao máximo para que você tenha a certeza de que, se estiver disponível, poderá usá-lo e obter o melhor desempenho possível. Sim, há impacto na bateria. Se você deixar isso funcionando sem parar, a bateria vai descarregar bem rápido. Mas o que estamos descobrindo é que os tipos de casos de uso em que as pessoas o utilizam hoje em dia são coisas como, por exemplo, um usuário que entra, faz uma pergunta e responde, ou manipula alguns dados, e isso acontece nesse ponto do fluxo. Os usuários podem usá-lo de 10 a 20 vezes por dia. Esse tipo de uso
+
+realmente não é preocupante para a duração da bateria. O que vemos com mais frequência são casos de uso em lote, como, por exemplo, processar uma série de dados que, muitas vezes, não são sensíveis à latência. Assim, as pessoas utilizam esse recurso em segundo plano, talvez durante a noite, com sobrecarga, podendo executá-lo continuamente até concluir todas as tarefas. Mas esse é um dos motivos pelos quais estamos tentando integrar à plataforma uma funcionalidade que permita realizar todas essas otimizações automaticamente, para que você não precise se preocupar com isso. No entanto, se você tiver necessidades muito específicas e quiser optar por modelos personalizados, temos várias ferramentas de análise de desempenho para tentar determinar qual será o impacto para você, mas é claro que você precisará realizar parte desse trabalho se optar por um modelo personalizado.
+
+Desculpe, posso lhe entregar este microfone de mão, já que você está...
+
+Passe-o adiante se tiver alguma pergunta. Muito obrigado. Sim, uma pergunta rápida sobre duas, na verdade duas perguntas. Primeiro, rapidinho . Então, no caso de usar o ML Kit, que não é a opção mais otimizada, isso significa que estamos usando um modelo compartilhado entre aplicativos no dispositivo? Sim. Sim. OK. Se sim,
+
+como podemos ter certeza de que está gerenciando a escala necessária? Imagine que um usuário tenha 100 aplicativos e que, na verdade, daqui a dois anos, todos eles estarão usando o mesmo modelo. Como você está lidando com isso para obter, digamos, a melhor latência possível? Então, essa é exatamente uma das razões pelas quais estamos fazendo isso em nível de sistema, certo? Se você imaginar esses modelos, estamos falando dos menores, com cerca de 1 GB para serem úteis. Os que
+
+estamos enviando têm, na verdade, cerca de 3 a 4 GB no total. Não é muito fácil para um desenvolvedor de aplicativos implementar isso. É preciso ter um recurso absolutamente matador para justificar isso ao usuário final. Se implementarmos isso no sistema, fazemos isso uma vez e todos podem compartilhar e se beneficiar, então dividimos o custo, certo? Então, essa é uma das razões pelas quais estamos fazendo isso. Portanto,
+
+não temos nenhuma preocupação com centenas de aplicativos usando isso, porque centralizamos esse custo. Em relação a muitos aplicativos que usam isso para gerar recursos, o que geralmente constatamos é que, sim, há um impacto na bateria. No entanto, ao centralizar esse processo, enfileirando as tarefas e garantindo um gerenciamento geral do sistema , podemos informar o usuário, por exemplo: "A propósito, este aplicativo está consumindo bastante da sua cota de dados. Deseja prosseguir?". Certo? Não perguntamos
+
+isso, mas estamos atribuindo o problema ao impacto da bateria. E já vimos isso repetidas vezes com coisas como GPS ou Wi-Fi. Se o usuário sentir que está obtendo valor com o aplicativo, ele ficará muito satisfeito em usá-lo. Eles ficam felizes em usar a bateria nos recursos que mais gostam. No entanto, se o aplicativo estiver fazendo algo que não agrega muito valor ao usuário, ele pode não querer usá-lo, certo? Por isso, achamos
+
+muito importante disponibilizar essas funcionalidades, facilitar o uso consciente delas, e assim os desenvolvedores criarão recursos incríveis e os usuários escolherão como querem gastar a bateria. Mas, da perspectiva do desenvolvedor, você não precisa se preocupar com isso. Você simplesmente faz a inferência e pronto, o núcleo de IA faz todo o resto. Correto. Nós cuidamos do agendamento, nós nos certificamos [limpa a garganta] de que as coisas sejam enfileiradas adequadamente e tal, então você não precisa se preocupar com isso. Então, a única
+
+coisa a se considerar é se existem outros aplicativos usando esse modelo; nesse caso, provavelmente nossa solicitação entrará na fila . Portanto, se você estiver tentando acessar o recurso em segundo plano, sim, você entrará na fila. Se você estiver em primeiro plano, é claro que terá prioridade máxima. Portanto, o aplicativo que estiver sendo usado ativamente pelo usuário no momento será, obviamente, priorizado pelo sistema. Ah, a pergunta lá no fundo.
+
+Meu celular tem Android 12, mas não é um Pixel, certo? É um Asus, mas isso não importa. E eu usei o " Segure mais perto". assistente. Você consegue me ouvir melhor agora? Sim
+
+, ótimo. Então, eu tenho algumas perguntas. A primeira pergunta é: quando peço ao Google para resolver algo para mim, ele faz isso localmente no meu celular ou remotamente? Quando você diz "quando pergunto ao Google", você se refere ao aplicativo Gemini ou a algum outro aplicativo que vem instalado por padrão no meu Android? Eu não instalei nada.
+
+Está lá. Eu simplesmente digo: "Ei, Google, qual é a temperatura lá fora?" E isso me dará uma resposta. Está sendo executado localmente ou remotamente? Então, seria o aplicativo Gemini ou um aplicativo de busca que tenha integração com as APIs do Gemini. Sinceramente, não tenho
+
+certeza. Minha expectativa é que esteja executando este controle remoto. Certo. Então, minha próxima pergunta faz muito mais sentido. Como posso instalar os itens que você apresentou aqui? E, em segundo
+
+lugar, é possível escrever habilidades para que ele funcione localmente e melhore o tipo de respostas que me fornece? Se eu perceber que está me dando respostas erradas constantemente, por algum motivo, é possível fazer algo a respeito? Então, o que você está descrevendo são duas jornadas de usuário diferentes. Porque se você estiver criando seu próprio aplicativo, você não interagirá com o aplicativo Gemini. Trata-se de um aplicativo completamente diferente, mas aqui você interagiria com o próprio modelo. Sim.
+
+Portanto, se você estiver usando um modelo no dispositivo , não precisa se preocupar com a nuvem. Todas essas inferências serão feitas no dispositivo. Sim. Então, estou perguntando exatamente sobre isso. Se eu instalasse localmente o que você mostrou aqui , supondo que seja possível, sim, sim, sim. E então eu aprimoro minhas
+
+habilidades de escrita para melhorar o tipo de respostas que recebo? Acho que você não escreveria as habilidades. Não, então, o que eu quero dizer é que depende do tipo de experiência que você está tentando construir, certo? Mas se você pensar em uma habilidade, é simplesmente algo que você insere no enunciado junto com o resto da sua pergunta. Então, as ferramentas que estamos fornecendo aqui são de nível mais baixo e projetadas para que você possa construir algo a partir delas, certo? Então, por
+
+exemplo, se você instalasse algo como o Pocket Claw ou o Open Claw no próprio telefone, isso basicamente pegaria essas habilidades, as comporia em um comando, que seria executado por meio dessa API. Portanto, o que estamos priorizando aqui é construir as camadas inferiores para permitir que você ou outras pessoas construam essas estruturas em cima delas. Obrigado.
+
+5 minutos. Começamos tarde. Hum, havia uma pergunta ali. Sim
+
+. Então, o modelo Gemini Nano em si é completamente integrado ao AI Core, certo? Portanto, você não precisa se preocupar em como configurar e instalar isso. Você usa as APIs para acessar o sistema e tudo é gerenciado por ele. Em termos de criar uma solução semelhante ao RAG, sim, absolutamente, você pode fazer isso com a API Prompt.
+
+Estamos estudando a possibilidade de expandir algumas das nossas APIs, por exemplo, adicionando em breve uma API de incorporação, o que facilitará a criação de soluções semelhantes ao RAG. Mas sim, é totalmente possível fazer isso. Em relação ao relacionamento entre a AI Edge Gallery e a AI Core, a AI Edge Gallery serve como uma vitrine para mostrar o que é possível, certo? Você pode usar o suporte do AI Core ou modelos personalizados. Queremos muito que você veja toda a gama de coisas que você pode fazer. A
+
+AI Edge Gallery, eu acho, é uma ótima maneira de mostrar o que há de mais moderno no que você pode fazer, não é? Mas isso requer mais incentivo. Você ainda precisa se esforçar mais para tirar proveito dessas coisas. O AI Core tem como foco principal facilitar o seu trabalho, permitindo que você se concentre apenas no comando e na funcionalidade específica, em vez de se preocupar com a configuração. Crie aplicativos com qualidade semelhante à de aplicativos de produção.
+
+Quando você diz sistema, você se refere a prompts do sistema ou a arquivos? Então, tipo, eu tenho que tirar muitas fotos hoje. Sim. Então, quero resumir tudo. Hum.
+
+Faça uma anotação. Sim. Assim, a API GenAI do ML Kit, a API Prompt, permite a entrada tanto de texto quanto de imagem. Então, você pode dar acesso, sim. Então, todas as coisas às quais seu aplicativo normalmente tem acesso em termos de arquivos e assim por diante, você pode obviamente passá-las pela API e executá-las da mesma forma que faria em uma inferência baseada em servidor, certo? Em relação à criação do prompt e à
+
+inserção das informações, existe algum modelo de vetorização de incorporação disponível para esta API? Tipo, eu quero vetorizar algumas das minhas anotações de texto para que, sabe, eu consiga obter semelhanças com outras anotações, talvez. Então, isso tem isso ou...? Bem,
+
+ainda não temos uma API de incorporação. Em breve. Legal. Então, se você estiver procurando por recursos como o modelo de incorporação Gemini, é isso que vamos disponibilizar para que você possa usá-lo diretamente da API. Você quer uma última pergunta? Última pergunta.
+
+Estamos sendo expulsos. Obrigado. Sim, existe uma diversidade de dispositivos, sabe, e também uma diversidade de modelos. Você mostrou a API Prompt e, como você sabe, os embeddings chegarão em breve, mas como eu penso sobre essa matriz de dispositivos, tipo, o que é capaz de fazer em um determinado dispositivo versus quais modelos podem ser usados? Você sabia que existem mais casos de uso além do LLM e do modelo de incorporação? Ou será que existem outros modelos que
+
+também funcionam em dispositivos? E então, estarão disponíveis em todos os dispositivos ou precisarei dos modelos mais recentes para usá-los? Como Ferrie demonstrou, a API do ML Kit abrange uma variedade de coisas, como texto, OCR, visão computacional e muito mais . Esses modelos, os modelos clássicos, são muito menores. Eles podem ser executados em uma gama extremamente ampla de dispositivos, como bilhões de dispositivos, sem problema algum.
+
+As novas APIs, as GenAI, exigem dispositivos de ponta lançados nos últimos dois anos. O que estamos fazendo com o AI Core é empacotar isso e dizer: "Ei, você pode chamar essa API e, se ela estiver disponível, você sabe que vai funcionar bem." Se, no entanto, esse alcance não for suficiente para você e você quiser realizar o trabalho de teste em uma gama mais ampla de dispositivos, o Light RT LM, que Cormac abordará em seguida, pode ajudá-lo a fazer isso, mas você precisará realizar o trabalho de teste por conta própria. Espero que Cormac fale sobre algumas dessas ferramentas que temos disponíveis para facilitar a realização desses testes, mas você precisará fazer os testes por conta própria. Para o AI Core, nós abrangemos tudo isso, então você sabe que se estiver coberto pelo AI Core, vai funcionar bem.
+
+Estaremos por aqui hoje e amanhã, então, por favor, venham e façam suas perguntas. Obrigado.
+
+[música]

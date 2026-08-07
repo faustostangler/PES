@@ -1,0 +1,106 @@
+---
+video_title: "LLM Observability, Evaluation, Experimentation Platform — Dat Ngo, Arize"
+video_id: JsCCrBF7F1g
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JsCCrBF7F1g
+video_date: 2026-06-07T18:00:06+00:00
+video_description: |
+  Your agent called tool B before tool A, and B has a dependency on A. You did not catch it because nothing in your code audits agents. The telemetry does. Dat from Arize AI walks through what observability actually means when the system you are debugging is nondeterministic and the execution path changes with every run.
+  
+  The talk covers the five flavors of eval signal (LLM as judge, human feedback, golden datasets, deterministic checks, business metrics), what scope to run them at (single span, multispan, trajectory, session), and where this is heading. Arize Phoenix is open source, runs as a single container, no Kubernetes required. The enterprise product adds an AI layer called Alex that scans traces, surfaces high latency and errors, and creates evals automatically. The stated goal: automate you out of the observability loop entirely.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/datdarylngo/
+  - https://x.com/dat_attacked
+---
+[música]
+
+Ok, eu não sabia se haveria uma cena de corte, mas tudo bem, muito prazer em conhecer todos vocês. Meu nome é Dat. Eu trabalho na Arize AI, então vou falar um pouco sobre o que é isso. Um pouco sobre mim e o que eu quero compartilhar hoje é que eu trabalho profundamente nesse espaço. Sou um arquiteto de IA. Eu trabalho com muitas
+
+das maiores empresas do mundo para discutir, sabe, coisas como observabilidade, avaliação, experimentação, mas na verdade é apenas como fazer a IA funcionar, certo? Então, eu gasto muitos tokens nesse espaço. Então, este é o último OpenAI DevDay. Acho que cheguei a algo entre 100 bilhões e 1 trilhão de tokens no ano passado. Então, eu gosto de curtir o momento. Mas eu
+
+conheço o espaço muito, muito bem. Trabalhamos com algumas das maiores empresas e corporações do mundo. Assim, podemos acompanhar a transformação deles nesse espaço. E, na verdade, o que eu queria compartilhar hoje era o que eu observo no setor? Portanto, creio que temos uma perspectiva muito singular, sendo a empresa que somos.
+
+Assim, podemos ver o que cada equipe está construindo, como estão construindo, quais são os maiores problemas que enfrentam e, de fato, como estão tentando resolver esses problemas. Então, se eu tivesse que resumir o que fazemos em poucas palavras, seriam basicamente essas três coisas. Talvez por meio de votação com levantamento de mãos, tipo: quem construiu agentes, quem está construindo agentes, quem colocou agentes em produção, quem está construindo sistemas de segurança e quem não tem ideia do que é um sistema de segurança. Ok, estamos todos bem , todos meio doidos, então isso é bom. Sabe, acho engraçado que, na área da IA, tudo pareça uma reinvenção do software. Na
+
+verdade, são os mesmos padrões, apenas com um sabor diferente no final . E parece mágica, mas não é mágica, né? É tudo questão de engenharia. Então, na verdade, o que vamos abordar hoje são apenas três coisas. A primeira é a observabilidade, que responde à pergunta sobre o que está acontecendo na coisa que eu construí e como isso se manifesta, seja como um dispositivo de controle ou como um agente. Em seguida,
+
+passaremos às avaliações. As avaliações são simplesmente como eu extraio sinais dos meus sistemas de alguma forma, certo? E então, conforme discutimos como podemos fazer melhorias neste novo mundo não determinístico, você descobrirá que, ao implementar o que você considera uma solução e corrigir o problema que pensava ter resolvido, você pode, na verdade, ter gerado duas ou três regressões das quais nem tinha conhecimento . Então, assim como no nosso mundo, falamos sobre observabilidade, certo? Tudo o que fazemos, algo de que nos orgulhamos muito, é que a Otel representa um padrão realmente sólido para quem trabalha na área de engenharia, mas tudo o que fazemos é através de telemetria aberta. Então, sabe, na
+
+verdade não importa qual tipo específico de configuração de modelo de agente de compartilhamento de recursos você tenha. A boa notícia é que, como a Otel foi a nossa empresa pioneira, estamos realmente preparados para muitos desses casos de uso. Então, seja um instrumentador automático, se você sabe o que é isso, mas basicamente você adiciona uma linha de código, essa única linha de código irá, você sabe, basicamente ver o que está acontecendo naquele framework ou SDK específico, criar rastreamentos e spans de telemetria abertos e produzir, você sabe, essas visualizações aqui. Então, se você já viu um rastreamento ou um período de acompanhamento, é basicamente o registro de auditoria do que meu agente fez? Porque agora sabemos que não é o código que audita os agentes ou os dispositivos de monitoramento, na verdade é a telemetria que faz isso. Portanto, os traços são uma
+
+parte fundamental da observabilidade. Agora, existem muitos outros aspectos da observabilidade que você deve considerar além de rastreamentos e intervalos. Você também pode pensar em sessões. Então, não sei se algum de vocês leu o artigo da revista Anthropic, "Managed Agents", que foi publicado há dois dias. Uma leitura muito interessante .
+
+Mas sessões são outra coisa parecida com estado. Então, quais são as trocas de informações, talvez conversas, quais são os estados de interação que estão acontecendo entre vocês, digamos, sequências de eventos? Para muitas pessoas na empresa, pode ser que queiram acabar executando...
+
+Eu sei que isso não é muito fácil de ver, então deixe-me mudar para o modo claro. Muita gente, sim, desculpe por isso. Sim . Muita gente gostaria de entender, sabe, tipo, "Ei, como são essas conversas de vai e vem ?" Então, será algo como uma sessão.
+
+Então, é tipo, "Ei, quais são essas conversas de vai e vem que estão acontecendo?" Ótimo. Agora, as pessoas gostam de avaliar essas coisas. Então, no ambiente corporativo, você verá muita gente dizendo: "Eu não me importo muito com os detalhes técnicos, sabe, o agente fez essa chamada de ferramenta, aquela chamada de ferramenta." Eles podem não se importar tanto com isso quanto com coisas como: "Ei, o usuário final ficou satisfeito? Todas as
+
+suas perguntas foram respondidas?" Agora, uma coisa diferente: vou mudar isso para o modo claro também. Uma coisa única sobre o que fazemos aqui na Arize, com o Arize AX, é que às vezes você pensa no seu agente como algo que não é uma chamada não determinística , certo? Você quer poder ver: "Ei, o que meu agente fez?" Por exemplo, existem diferentes caminhos que seu agente pode seguir, certo? Então,
+
+sabe, diferentes ramos. Mas e se você quisesse examinar todas as instâncias do seu agente e obter uma visão mais distributiva do que está acontecendo? São como visões da distribuição do seu agente. Então, quais são todos os caminhos e ramificações possíveis, incluindo os loops? Isso permite responder a perguntas como: "Qual a porcentagem do meu tráfego que passa por um ramo em vez de outro?
+
+Havia algum componente específico naquele ramo específico que usamos que causou uma latência significativa?" Quando começamos a falar sobre agentes ou diferentes caminhos, você pode pensar em avaliações de trajetória. Então, a trajetória poderia ser algo como: "Ei, eu segui este caminho e tudo estava indo muito bem, mas por algum motivo, quando sigo por este caminho, as avaliações ou o sinal que estou coletando estão diminuindo. Por quê? Qual é a causa raiz? Ah, a
+
+causa raiz do problema era que esses dois componentes estavam fora de ordem. Eu fiz B antes de A e, na verdade, B depende de A. Então, na verdade, descobri que a maneira como meu LLM decidiu nomear essas coisas estava incorreta, certo? Precisamos adicionar algum contexto para dizer: "Ei, na verdade, antes de fazer isso, você precisa fazer aquilo." Existem muitas visões diferentes sobre observabilidade. Claro,
+
+coisas como análise de dados também não estão mortas . Então, o que muitas pessoas nas empresas acabam buscando é simplesmente criar visualizações de como seus agentes se comportam em tempo real. E ser capaz de personalizar e criar essas visualizações é extremamente útil. E isso é observabilidade. Resumindo, é tipo, consigo ver todas as diferentes camadas? Temos muitos, muitos
+
+tipos diferentes de camadas aqui. Bem , o próximo passo é, ok, então eu tenho observabilidade, esse é o primeiro passo. É a mesma coisa que acontece no software, certo? Agora, você precisa determinar o sinal, certo? E o sinal vem em várias formas diferentes.
+
+A maneira como eu gosto de dividir é em cinco tipos de sinal. Acho que todos aqui já ouviram falar de LLM como juiz. Então, pode parecer um conceito simples, mas na verdade, pode ficar bem complexo e vamos abordar tudo isso. Agora, você não pode se esquecer dos humanos. Quando você pensa em humanos, sejam os usuários finais que usam seu produto, eles são um sinal extremamente valioso.
+
+Então, seja você um gerente de produto ou alguém técnico ou não técnico, você se importa com esse sinal. Todos nós já ouvimos falar de conjuntos de dados de ouro. Eles são extremamente valiosos porque são Se a terceira coluna aqui representa a qualidade, você confia na pessoa que rotulou esses dados porque ela conhece o domínio. Então, você usará técnicas como: "Vou executar meu LLM como um juiz em um conjunto de dados de referência para que eu possa ajustar meu LLM como um juiz." Basicamente, você pergunta: "Será que consigo fazer meu LLM se aproximar deste objeto, desta pessoa ou deste conjunto de dados em que confio?"
+
+E, claro, também estamos pensando nos custos. Ao pensar em custos, nem sempre precisamos usar uma chamada de LLM ou mesmo humanos. O determinismo é ótimo, então pense em avaliações baseadas em lógica ou determinismo . Se eu passar de um parágrafo para um payload JSON, este JSON é válido? Ele tem o esquema?
+
+Ele tem esses campos que não são nulos? E, claro, todos nós construímos essas coisas para um destes três propósitos, eu acho. As métricas de negócios que lhe interessam são de alguma forma do tipo: "Como posso ganhar mais dinheiro?" Como faço para economizar dinheiro? Ou como eu economizo tempo, certo?"
+
+E então, o que você vai perceber conforme começa a construir produtos de IA realmente bons é que dois tipos de perfis acabam se unindo. Obviamente, você tem os usuários técnicos, certo? Esses são os engenheiros de IA, os desenvolvedores . Essas pessoas são extremamente boas em construir e automatizar coisas, certo? Elas são boas em estruturar.
+
+Mas aí você tem pessoas que talvez sejam menos técnicas, mas entendem como a experiência de IA deve ser, certo? Esses são os especialistas no assunto, os gerentes de produto . Essas pessoas acabam, você sabe, sendo o objetivo delegar o trabalho de, tipo, "Ei, é assim que a engenharia de prompts deve funcionar." Aqui estão as avaliações que me interessam. Porque você quer pessoas que saibam programar e que conheçam o domínio para trabalhar nesse domínio.
+
+Então, no nosso caso, isso se parece com algo assim. Nós permitimos que as pessoas executem avaliações de uma forma não técnica. Claro, se você for técnico, pode anexar suas avaliações e executá-las programaticamente, se quiser. Mas, no nosso caso, queremos poder dizer: "Ei, eu quero permitir que um usuário selecione seu modelo, execute um modelo pronto para uso ou personalize uma avaliação aqui." E quando falamos de complexidade no lado das avaliações, certo?
+
+Imagine por um segundo que você construiu um aplicativo, um agente, uma estrutura. Essa estrutura tem componentes. Eles podem ser chamados deterministicamente ou não deterministicamente. Tanto faz. Então, as avaliações podem ser executadas... você pode pensar em... Um
+
+único tipo de componente. Sabe, chamamos isso de avaliação de intervalo (span). Deixe-me explicar melhor . O escopo seria uma única entrada e saída. Vou abrir uma visão mais complexa disso, mas opa, deixe-me fechar .
+
+Mas você pode pensar na entrada e saída de intervalo simples como: "Ei, quero analisar a entrada e a saída de uma parte de uma chamada LLM". É assim que a maioria das pessoas entende, e é realmente muito simples. Agora, também temos avaliações de múltiplos intervalos (multi-span). Podemos pensar nisso como: "Ei, para executar a avaliação que eu quero, preciso de dados de vários componentes diferentes no sistema". Então, se eu quiser saber o quão bem os agentes estão trocando dados entre si, preciso dos dados de cada agente e de como eles trocam dados. Isso é uma avaliação de múltiplos intervalos
+
+e permite executar análises mais complexas. Se você quiser analisar todos os intervalos no total, isso é algo como uma avaliação de trajetória (trajetory eval). As coisas estão na trajetória certa para finalizar o processo de negócios? E então, há a avaliação em nível de sessão , certo? É como dar um zoom out e dizer: "Ei, como está a máquina de estados se eu quiser avaliar essa máquina de estados, tipo, ' Ei, deixa eu ativar esse modo claro'. Ei,
+
+nesta conversa, o usuário ficou frustrado em algum momento? Respondemos a todas as perguntas dele?" Então, pense nisso como: "Quero avaliar a máquina de estados". Ao pensar em avaliações, geralmente não se trata de... bem, também se trata de: "
+
+Que tipo de avaliação queremos executar, e com que escopo e profundidade?". Você pode ser muito granular e também pode dar um zoom out. E só porque você pode avaliar algo não significa que você sempre deva. Não é algo exaustivo. Você quer ver: "
+
+Ei, qual é o conjunto mínimo de avaliações que posso usar para entender se meu aplicativo está funcionando como esperado?", porque há um custo associado a isso , certo? Então, resumindo...
+
+Sabe, isso é observabilidade e avaliações em poucas palavras. Vamos falar sobre experimentação e melhoria. Nem todo mundo começa com rastreamentos. Se você começar com rastreamentos, pode usá-los para fazer coisas realmente interessantes, como, por exemplo , mostrar onde está o sinal, sabe, onde estou perdendo alguma coisa, certo? Então você pode encontrar esses pontos e coletá-los em um conjunto de dados.
+
+Além disso, se você não tiver rastreamentos, pode simplesmente enviar um conjunto de dados diretamente, pares de entrada e saída. E a partir daí, você pode fazer coisas como pegar esse conjunto de dados, por exemplo, que são apenas linhas e colunas de dados. Então você pode começar a executar experimentos. Experimentos podem ser mudanças. Então, quando você pensa em como melhorar as coisas para o seu agente ou harness, geralmente são mudanças. Mudanças
+
+em prompts, mudanças em modelos, mudanças na orquestração, mudanças nas configurações. Pense dessa forma. Permitimos que as pessoas testem essas coisas em uma interface de usuário ou programaticamente. Mas sabe, uma coisa que eu sempre gosto Compartilhar com nossos clientes é algo como: para onde o espaço está caminhando? O que percebemos rapidamente aqui na Arize é que a maioria das pessoas não quer viver em painéis, botões ou processos manuais.
+
+E reconhecemos isso muito bem. Ao pensarmos para onde o futuro está indo, o software se tornará mais compacto. Será mais fácil de construir e personalizar. Então, tudo o que acabei de mostrar era apenas a maneira manual de visualizar as coisas, mas tudo o que fizemos permite que você execute esse programa por meio do seu agente de codificação. Percebemos que as pessoas estão muito confortáveis ​​com seu código na nuvem e código X. Então, expomos
+
+todos os recursos básicos por meio da CLI e de um conjunto de ferramentas e habilidades. Isso é um tanto opinativo. E também há um sistema de IA integrado a tudo isso, o que significa que o código na nuvem, seu sistema de IA, pode acabar chamando nosso sistema. Assim, você pode fazer coisas, sabe, se não quiser descobrir essas coisas sozinho. Acreditamos que muito disso pode ser automatizado. Então, posso perguntar ao
+
+Alex, obviamente na nuvem. Código ou algo externo ao sistema pode chamar o Alex. E você pode simplesmente dizer algo como: "Ei, você vê algum problema no meu aplicativo?". E, como temos todos os dados, os hooks e tudo mais, o Alex vai planejar e executar essas tarefas.
+
+Nosso objetivo final como empresa é automatizar esse processo para você: observabilidade, avaliações, experimentação e melhoria. Acreditamos que todo o ciclo virtuoso é altamente automatizável. Ou seja, não é mágica, mas deve parecer mágica. Nosso principal objetivo é que um dia você trabalhe com a Arize, utilize todo o ecossistema e ele simplesmente funcione. Acreditamos firmemente que você nem deveria precisar escolher suas avaliações. Uma IA
+
+deve ter o contexto, como: "Ei, aqui estão os rastreamentos, aqui está o que está acontecendo. Deixe- me criar avaliações em tempo real e pensar sobre elas para você" ou "Ei, algo mudou. Eu sei que preciso de uma nova avaliação". Mas você percebe que o Alex já está...
+
+Trabalhar com informações como: "Ei, o que está acontecendo aqui? Parece que temos alta latência. Detectamos alguns erros, coisas assim ." Resumindo, é para onde estamos indo e o que buscamos . Pensando nesse cenário, temos dois produtos disponíveis hoje.
+
+Para quem tem uma visão mais voltada para a engenharia , temos o Arize Phoenix, que é de código aberto. O grande diferencial do Phoenix é que ele usa um único contêiner. Você pode implantá-lo localmente, sem precisar da camada Kubernetes. E para nossas maiores empresas, elas usam o Arize AX, que geralmente é reservado para grandes corporações como Uber, Booking.com e Reddit. Vocês não devem ter percebido que
+
+adoramos o modo escuro, então talvez devêssemos tentar implementar o modo claro em alguns casos. Mas , em resumo, é isso que fazemos e quem somos. Se quiserem conversar sobre qualquer coisa além disso, ficaremos muito animados. Sim, muito obrigado pelo seu tempo hoje. [aplausos]
+
+[música]
+
+[música]

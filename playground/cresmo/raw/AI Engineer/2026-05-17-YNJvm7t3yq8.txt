@@ -1,0 +1,121 @@
+---
+video_title: "Why Your AI UX Is Broken (and It's Not the Model's Fault) — Mike Christensen, Ably"
+video_id: YNJvm7t3yq8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YNJvm7t3yq8
+video_date: 2026-05-17T15:30:06+00:00
+video_description: |
+  SSE ties a response stream to a single connection. The user refreshes the page, walks out of WiFi range, or opens a second tab and the in-progress response is gone. Abort and resume are mutually exclusive for the same reason: the only signal a client can send over a one-way pipe is closing it, so the agent cannot tell the difference between a cancel and a disconnect. Vercel's AI SDK documents this explicitly.
+  
+  Mike Christensen from Ably makes the case for treating the session itself as a durable shared resource, decoupled from any individual connection, device, or agent instance. Clients subscribe to the session rather than to a request, so reconnects resume automatically, any tab or device has full visibility of live activity, and concurrent agents write independently without routing everything through an orchestrator. The demo shows all of this: multi-tab sync, a forced network disconnect that self-recovers, two agents running in parallel, and a handoff to a human support agent who joins the session mid-conversation with the full interaction history already visible.
+  
+  Speaker info:
+  - https://x.com/christensencode
+  - https://www.linkedin.com/in/mikescottchristensen/
+  
+  Timestamps:
+  0:00 Introduction to AI chat applications
+  0:51 Current implementation: Direct HTTP streaming and SSE
+  3:03 Three foundational capabilities for great AI products
+  4:34 Limitations of direct HTTP streaming
+  5:21 Introducing durable sessions
+  6:06 Resumability in streams
+  7:43 The conflict between SSE, resumability, and live control
+  9:13 Multi-device and multi-tab synchronization issues
+  11:12 Handling concurrent multi-agent architectures
+  12:54 Using Pub/Sub and Ably channels for durable sessions
+  14:12 Introducing Ably AI Transport SDK
+  15:34 Live demo of durable session capabilities
+  17:38 Handoff to human support agent
+---
+[música]
+
+Ok. Hum, acho que está na hora de começar. [aplausos e vivas] Podemos começar com uma rápida votação levantando as mãos? Então, quem aqui já criou algum tipo de aplicativo de bate-papo com IA? Algum tipo de experiência de bate-papo com IA ?
+
+Ok, bem, isso foi rápido, né? Quase todo mundo nesta sala, certo? Então, este é o caso em que você tem algum tipo de aplicativo de bate-papo, com um agente nos bastidores. O usuário envia uma mensagem para o agente, e o agente transmite uma resposta ao vivo para o usuário à medida que ela é gerada, certo? E este é um elemento fundamental das experiências de usuário com IA . Vemos isso em todos os aplicativos de bate-papo com IA
+
+atualmente. E primeiro, quero dar uma olhada rápida em como isso é implementado hoje em dia, certo? Assim, o padrão padrão é usar o streaming HTTP direto. Assim, as estruturas mais populares para o SDK de IA do Cellular, como o Times Back AI, usam SSE (Server-Sent Events) por padrão . Então, concretamente, o que isso significa é que o cliente faz uma solicitação ao agente, que estabelece uma conexão ponto a ponto persistente com o agente.
+
+O agente, então, invoca o LLM, obtém o fluxo de eventos e os envia de volta ao cliente pela conexão como eventos enviados pelo servidor , certo? E isso é ótimo, não é? É muito fácil fazer algo funcionar. Mas esse paradigma é fundamentalmente orientado pela ideia de um único cliente estabelecendo uma única conexão com um único agente. E hoje, vou argumentar que isso limita fundamentalmente a qualidade e a riqueza das experiências que podemos construir em nossos produtos de IA.
+
+Então, meu nome é Mike Christensen. Sou engenheiro de equipe na Ably. A Ably é uma plataforma de mensagens em tempo real, e nós desenvolvemos SDKs e APIs para qualquer tipo de experiência ao vivo ou interativa, incluindo experiências com IA. E operamos nossa plataforma em escala real. Assim, todos os meses, gerenciamos o tráfego de mais de 2 bilhões de dispositivos.
+
+Gerenciamos mais de 30 bilhões de conexões mensais. Processamos mais de 2 trilhões de operações de API. E, ao longo do último ano, estivemos conversando com equipes de engenharia em mais de 40 empresas em 10 setores diferentes. E essas são empresas que estão lançando agentes de IA, copilotos de IA e assistentes de IA em seus produtos para milhões de usuários. E essas empresas estão realmente expandindo os limites do que os produtos de IA podem oferecer , não é? Porque, ao adicionar
+
+recursos de IA ao seu produto, você altera fundamentalmente a experiência do usuário. Assim, essas empresas estão explorando esses novos modelos de interação e trabalhando para superar os desafios de engenharia necessários para oferecer essas experiências de forma confiável em produção. Portanto, hoje, vou compartilhar o que aprendemos conversando com essas empresas. Vou mostrar onde o modelo de streaming HTTP direto começa a falhar e porquê. E vou compartilhar com vocês os padrões emergentes que muitas equipes de engenharia estão adotando para lidar com esses problemas.
+
+Descobrimos, portanto, que as empresas que oferecem as melhores experiências de IA investem em três capacidades fundamentais. E acreditamos que essas capacidades realmente diferenciam uma demonstração frágil de uma ótima experiência com um produto de IA. Assim, a primeira dessas capacidades é a entrega resiliente. Trata-se de construir fluxos de dados que sobrevivam a desconexões, certo? Pense em dispositivos móveis. Sabe, você sai de
+
+casa, seu celular se desconecta do Wi-Fi e se conecta ao 5G. Isso rompe a conexão, certo? Ou talvez o usuário atualize a página, ou saia do aplicativo e volte. O ideal é que, quando a conexão cair, os clientes consigam se reconectar e retomar exatamente de onde pararam. A segunda capacidade fundamental é proporcionar continuidade entre as superfícies, certo? Assim, os usuários transitam entre superfícies o
+
+tempo todo. Sabe, você abre a experiência em uma nova aba ou a abre no seu celular. E, na verdade, a sessão de conversa deve te acompanhar por aí, certo? Independentemente do dispositivo que você estiver usando, a sessão deve estar totalmente sincronizada, incluindo qualquer atividade ao vivo. E a terceira capacidade fundamental tem a ver com controle em tempo real, certo? Então, os melhores
+
+produtos de IA têm um desempenho melhor do que um padrão simples de solicitação-resposta sequencial , certo? Eles permitem que você se comunique com o agente enquanto ele está funcionando. Então, pense em como você usa o código Claude, certo? Sabe, se você vir o Claude fazendo alguma coisa, pode mandar uma mensagem, direcionar a situação. Você envia uma mensagem de acompanhamento, pedindo que faça algo mais.
+
+Isso exige visibilidade do que o agente está fazendo e permite que os clientes se comuniquem com o agente enquanto ele está trabalhando. Então, por que isso é difícil com uma abordagem de streaming HTTP direto? A causa principal é que tudo está acoplado a uma única solicitação, certo? Então, se você pensar naquele fluxo de resposta ao vivo que você recebe de um agente, a integridade desse fluxo está essencialmente ligada à integridade da conexão do cliente final , certo? Portanto, se essa conexão cair, a transmissão será interrompida.
+
+Outro problema surge com o streaming HTTP direto , já que essa conexão passa a ser um canal privado entre o cliente e o agente. Portanto, se você abrir a experiência em outra aba ou no seu celular, não terá visibilidade da resposta em andamento . E um terceiro problema é que, como esse fluxo não é um recurso compartilhado, outros clientes, outras abas e outros dispositivos não conseguem se comunicar com o agente, não conseguem alcançá-lo para interagir , controlá-lo ou interrompê-lo. Assim, um padrão que estamos vendo muitas empresas adotarem é o de desacoplar a camada do agente da camada do cliente. E muitas equipes estão fazendo isso com um conceito chamado sessões duradouras.
+
+Assim, trata-se de um recurso compartilhado que fica entre a camada do agente e a camada do cliente, sendo um meio persistente e com estado através do qual agentes e clientes podem interagir. E, como veremos, isso torna muito mais fácil criar experiências de streaming resilientes, experiências que funcionam em várias guias ou dispositivos, e permite que qualquer cliente interaja com os agentes enquanto eles trabalham. Então, vamos dar uma olhada rápida em alguns exemplos de onde o modelo de streaming HTTP direto falha e veremos como essa ideia de sessões duráveis pode nos ajudar. Então, vamos analisar como você pode dar suporte a fluxos HTTP retomáveis ​​com uma abordagem de streaming HTTP direto. Então, nesse cenário, o cliente envia uma solicitação ao agente, e o agente começa a transmitir a resposta, e então a conexão do cliente cai no meio do processo, certo? O que queremos
+
+é que o cliente possa restabelecer a conexão e retomar a transmissão de onde parou. Então, quando a conexão do cliente cai, o LLM continua funcionando, certo? Ainda está gerando eventos, e esses eventos não têm para onde ir, certo? Então, como se elabora um currículo? Bem, você precisa armazenar esses eventos. Você se lembra, você
+
+os grava em um armazenamento em memória como o Redis. Você precisa armazená-los com números de sequência, para saber a ordem desses eventos. Além disso, você precisa de algum tipo de manipulador de retomada explícito no seu back-end, para que, quando um cliente tentar se reconectar e retomar a conexão, o manipulador de retomada seja capaz de identificar o conjunto exato de eventos que o cliente perdeu e reproduzi-los para o cliente na ordem correta. Portanto, o problema aqui é que o fluxo está sendo gerenciado explicitamente pelo agente. Assim, o agente precisa fazer isso para cada cliente que se reconecta porque, como você sabe, as conexões deles caem em momentos diferentes e, portanto, cada cliente tem um conjunto diferente de eventos que precisam ser reproduzidos.
+
+Então, você precisa construir toda essa complexa infraestrutura do zero, sabe, em vez de se concentrar em formar ótimos agentes. Então, como as sessões de longa duração ajudam? Então, ao desacoplar o agente do cliente, você permite que o agente escreva eventos diretamente na sessão sem se preocupar com a integridade da conexão do cliente final , certo? E, simultaneamente, você permite que os clientes se conectem diretamente à sessão e reproduzam eventos ou retomem o fluxo a partir da sessão sem que o agente precise se preocupar em implementar essa lógica. E há um problema interessante aqui se você estiver usando SSE, eventos enviados pelo servidor , em particular, porque existe um conflito entre suportar a capacidade de retomar a execução e oferecer controle em tempo real sobre os agentes aos clientes.
+
+E a razão para isso é que o SSE é unidirecional, certo? É uma comunicação estritamente unidirecional, do servidor para o cliente. Então, isso surge se você pensar em adicionar um botão de parar à sua experiência, certo? O agente está transmitindo uma resposta, você clica em parar e isso cancela a geração em andamento . Portanto, o cliente não possui um canal de comunicação a montante através do qual possa sinalizar ao agente para cancelar a geração, certo? Portanto, a única coisa que pode fazer é
+
+fechar a conexão. E isso agora cria ambiguidade, porque o que o agente faz, certo? Isso permite que o LLM continue gerando eventos e armazenando-os em buffer, presumindo que o cliente tentará se reconectar e retomar a conexão mais tarde, ou trata isso como um cancelamento, cancela o LLM e para de consumir esses tokens caros? Então, como você sabe, retomar e cancelar são mutuamente exclusivos quando você está usando o SSE em particular, e há algumas evidências disso. Assim, o SDK de IA da Vercel, por exemplo, usa SSE por padrão, e a documentação deles afirma que um bot é incompatível com a funcionalidade de retomar atividades, e isso se deve a esse motivo.
+
+Então, do que precisamos? Precisamos de controle bidirecional, certo? Então, talvez possamos substituir o SSE por algo como WebSockets. E isso abre a possibilidade para interações muito mais ricas, onde os clientes podem interagir com os agentes. OK. Então, trocamos nosso
+
+transporte SSE por WebSockets. Mas, como veremos, um transporte bidirecional não resolve todos os nossos problemas automaticamente, e esses problemas surgem quando você tenta interagir a partir de vários dispositivos. Então, nesse cenário, você envia uma mensagem para o agente, o agente está transmitindo uma resposta e, em seguida, você abre essa mesma sessão em outra guia, certo? Então, o problema é que nessa segunda aba você não tem visibilidade do fluxo de respostas ao vivo, certo? Porque a segunda aba não é a que enviou a solicitação que invocou o agente e estabeleceu a conexão.
+
+Então, a segunda aba não vê nada, certo? Enquanto essa resposta está sendo transmitida, não há visibilidade. E então, surge um problema quando pensamos em direcionar, controlar ou guiar o agente a partir de várias abas ou dispositivos. Então, você envia uma mensagem para o agente. Nesse caso, você pergunta: "Reserve um voo para mim na próxima terça-feira." O agente está trabalhando nisso
+
+em segundo plano. Você troca para o seu celular e o problema persiste. O telefone não tem visibilidade do trabalho em andamento do agente. Mas, além disso, o telefone não tem um canal de comunicação direto com o agente para enviar sua solicitação de acompanhamento, que é: "Terça-feira não funciona para mim. Preciso do voo na quarta-feira." Não há como contatar o
+
+agente. Assim, uma camada de sessões duráveis ​​torna mais uma vez mais fácil para nós dar suporte a essas experiências com múltiplos clientes e controle em tempo real. E podemos fazer isso porque todos os clientes podem manter uma conexão persistente com a sessão duradoura que está sempre ativa, certo? Portanto, a conexão não existe apenas quando você invoca e inicia uma solicitação com um agente. Você tem visibilidade constante da atividade na sessão por meio de uma conexão mantida continuamente.
+
+E os clientes podem continuar a retomar as atividades, imediatamente, durante toda a sessão. Mas como a sessão também é um recurso compartilhado, certo? E o agente tem visibilidade completa da atividade na sessão, isso significa que qualquer cliente pode rotear para o agente e interagir com ele . Assim, você pode fazer isso a partir de qualquer aba ou dispositivo. E assim, o último exemplo que quero abordar é sobre atividade simultânea, certo? Portanto, trata-se de
+
+arquiteturas multiagentes. Temos vários agentes participando desta sessão. Assim, o padrão que temos aqui é o usuário estabelecendo uma solicitação para um agente orquestrador. E esse agente orquestrador, por sua vez, delega subtarefas a esses agentes especializados, certo? E o que gostaríamos de proporcionar é total visibilidade de todo o progresso detalhado em que esses subagentes estão trabalhando.
+
+Bem, o problema aqui é que o orquestrador está lidando com a solicitação do usuário , certo? Então, estamos meio que forçando o orquestrador a fazer duas coisas. Existe uma função dupla, que consiste em orquestrar a tarefa e delegar tarefas, além de encaminhar de volta essas atualizações detalhadas desses subagentes, certo? Portanto, isso adiciona muita complexidade à sua arquitetura, quando na verdade o orquestrador só se preocupa com os resultados finais desses subagentes. Não deveria precisar se preocupar em transmitir informações detalhadas sobre o progresso.
+
+Portanto, mais uma vez, um modelo de sessões duradouras facilita isso. Então, nesse modelo, todos os agentes podem escrever independentemente na camada de sessão durável , certo? Assim, agora não precisamos encaminhar todas essas atualizações detalhadas por meio de um agente centralizado para fornecer visibilidade completa de toda a atividade na sessão. E os clientes só precisam se inscrever em uma única entidade, certo? Eles apenas se inscrevem na sessão e têm visibilidade completa da atividade de todos esses agentes, independentemente de quantos estejam trabalhando na tarefa, bem como da atividade de outros clientes.
+
+E esse padrão pode simplificar drasticamente sua arquitetura. Então, o que descrevemos aqui soa muito parecido com um pub/sub, não é? E podemos construir sessões duradouras em cima de um modelo pub/sub. Então, na Ably, temos um conceito chamado canais, e os canais da Ably permitem que você se comunique. Assim, os editores de mensagens e os assinantes de mensagens podem se comunicar entre si, mas não diretamente. Eles fazem isso por meio de um
+
+recurso compartilhado, que chamamos de canal. E isso, inerentemente, desvincula editores e assinantes. Assim, isso desvincula clientes e agentes. E os canais da Ably possuem os tipos de propriedades essenciais que precisaríamos para construir uma camada de sessão robusta. Portanto, eles podem ser endereçados independentemente. Isso
+
+significa que qualquer cliente ou agente pode se conectar a essa sessão simplesmente especificando o nome do canal correto. Elas são persistentes, o que significa que as mensagens no canal sobrevivem ao ciclo de vida de qualquer conexão individual, qualquer dispositivo individual, qualquer agente individual. E elas podem ser retomadas sem problemas, certo? Assim, se você for um cliente que perder a conexão, poderá se reconectar automaticamente ao canal e todos os eventos serão entregues exatamente de onde você parou. Foi assim que descobrimos que muitos de nossos clientes construíram esse tipo de experiência resiliente em múltiplas superfícies.
+
+Para facilitar ainda mais a criação de sessões duradouras , temos trabalhado em algo que chamamos de Ably AI Transport. Esta é uma camada encaixável para construir esse padrão de sessão duradouro. E é um novo SDK, que se integra automaticamente a qualquer formato de fluxo de eventos. Então, qualquer que seja o provedor de modelo ou framework de agente que você esteja usando, nos bastidores, ele utiliza os canais da Ably para fornecer essa camada de sessão durável, mas com toda a complexidade de criar uma sessão durável já resolvida para você, sem necessidade de configurações adicionais. Então, o canal também faz algumas coisas legais , né? Então, é como se materializasse
+
+eventos no canal. Assim, você pode transmitir trechos de texto gerados pelo LLM, e o canal automaticamente os transforma em uma resposta completa. Eles oferecem a possibilidade de retomar a gravação automaticamente. Eles gerenciam a multiplexação, permitindo atividades simultâneas no canal, com tudo totalmente multiplexado e controlado. E suporta a distribuição para múltiplos clientes e dispositivos com controle bidirecional completo.
+
+Além disso, inclui um conjunto de ferramentas adicionais para criar ótimas experiências de usuário com IA. Então, algumas delas são realmente importantes, certo? Coisas como notificações push. Se você tiver um agente executando alguma tarefa assíncrona em segundo plano , você vai querer ser notificado quando ela for concluída. Existem também recursos como APIs para objetos de dados compartilhados ou que podem ser assinados. Portanto, se
+
+você tiver agentes e usuários colaborando em dados compartilhados em tempo real, isso é possível. Então, para tentar tornar isso um pouco mais concreto, tenho uma demonstração rápida para mostrar como isso funciona na prática. Então, essa é uma interface de chat de IA clássica para um chat de suporte de IA, como o de uma loja de eletrônicos, certo? Então, vamos ver se conseguimos obter o vídeo.
+
+Legal. Então, como você sabe, os recursos usuais estão presentes nesse tipo de interface conversacional. Então aqui, você sabe, o agente está fazendo uma chamada de ferramenta do lado do cliente para obter a localização do usuário . Está fazendo uma chamada de ferramenta do lado do servidor para mostrar ao usuário uma lista de lojas em sua localização. E podemos ver que isso funciona em várias abas sem qualquer configuração adicional. Isso ocorre porque é
+
+alimentado por essa camada de sessão robusta subjacente, que oferece a todos os clientes uma visão compartilhada da sessão. Aqui, temos uma resposta transmitida em fluxo contínuo. Podemos atualizar a página e você verá que tudo permanece sincronizado automaticamente. Não é preciso nenhuma lógica adicional de agente para que isso funcione, certo? Isso funciona apenas quando o cliente consome e se inscreve no canal.
+
+Podemos até mesmo desligar a rede aqui. Então, estamos forçando o cliente a desconectar e reconectar, e tudo continua automaticamente, sem nenhuma complexidade adicional. Também podemos interagir a partir de várias abas. Então aqui, na segunda aba, iniciamos um subagente especializado que fará uma pesquisa de produto, e temos uma visibilidade bastante detalhada. Vamos cancelar isso na primeira aba. Assim, você pode cancelar esse trabalho a partir de qualquer
+
+cliente ou dispositivo . Aqui, iniciamos uma tarefa de pesquisa de produto a partir de uma aba. Esse agente especializado está registrando esses eventos diretamente. Não existe um orquestrador centralizado que esteja gerenciando isso. Aqui, o usuário decidiu: "Ok, vou comprar um par de fones de ouvido, mas ao mesmo tempo, vou cancelar o pedido que já tinha." Agora
+
+você tem atividade simultânea na sessão. Dois agentes trabalhando simultaneamente na sessão . Está totalmente sincronizado sem toda essa coordenação adicional.
+
+E agora, isto é bem legal, né? Portanto, o usuário aqui não está satisfeito com a devolução do valor do reembolso. Então, eles querem falar com um ser humano. Assim, agora podemos adicionar outro participante a esta sessão e transferi-lo para um agente humano. Então, vamos abrir uma visualização do agente de suporte aqui.
+
+E podemos ver que esse agente de suporte humano tem visibilidade completa de toda a atividade naquela sessão. Assim, eles podem ver todo o histórico de interações que o cliente teve com o agente de IA e, em seguida, enviar uma mensagem para dar continuidade à sessão como um participante humano, a fim de se comunicar diretamente com o cliente.
+
+Isso é tudo por hoje. Muito obrigado. Por favor, confiram [aplausos]
+
+[música]

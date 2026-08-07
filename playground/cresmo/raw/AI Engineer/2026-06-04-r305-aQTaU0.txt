@@ -1,0 +1,196 @@
+---
+video_title: "Text Diffusion — Brendan O’Donoghue, Google DeepMind"
+video_id: r305-aQTaU0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=r305-aQTaU0
+video_date: 2026-06-04T18:00:06+00:00
+video_description: |
+  GPT-4o answered 40. Gemini 2.5 Flash answered 42 and stuck to it even after working through the reasoning incorrectly. The Gemini Diffusion model, considerably smaller than both, answered 60 on the first forward pass, then 49, then corrected itself to 39 once it finished reasoning. Bidirectional attention means it can see future tokens and go back to fix mistakes. Autoregressive models cannot do that.
+  
+  Brendon O'Donoghue covers why text diffusion is fast (24 denoising steps to generate 256 tokens means roughly 10x fewer memory transfers than autoregressive generation), what the tradeoff is (lower throughput at large batch sizes makes it expensive to serve at scale today), and what gets unlocked when latency drops to 2,000 tokens per second. The demos include a fake Wikipedia generated on the fly, a Reddit clone with AI generated comments and images, an operating system where every click generates the next screen, and a todo app built in 15 seconds by voice.
+  
+  Speaker info:
+  - https://x.com/bodonoghue85
+  - https://bodono.github.io/
+  - https://www.linkedin.com/in/bodono/
+  
+  Timestamps:
+  0:00 Introduction to Text Diffusion
+  1:02 How Text Diffusion Works (Training and Inference)
+  2:06 Gemini Diffusion Research Preview
+  3:04 Difference Between Autoregressive and Diffusion Models
+  4:02 Pros and Cons of Text Diffusion
+  6:13 Hardware Efficiency: Why Text Diffusion is Faster
+  8:47 Bidirectional Reasoning and Self-Correction
+  12:00 Dynamic and Adaptive Computation
+  14:26 In-place Text Editing
+  16:09 Low Latency Applications and Demos
+  20:05 Q&A Session
+---
+[música]
+
+Algumas pessoas ainda estão entrando na sala. Mas os primeiros slides são basicamente informações introdutórias, então eles não perderão nada. Ok, sejam todos bem-vindos. Meu nome é Brendan. Sou cientista pesquisador na DeepMind. Hoje vou falar
+
+sobre difusão de texto, que é uma área de pesquisa mais voltada para o futuro na DeepMind. Então, você provavelmente já está familiarizado com difusão de imagem e vídeo, que é o que há de mais moderno nessas modalidades atualmente. Nela, você pega uma imagem como referência, adiciona ruído durante o treinamento e, em seguida, treina uma rede neural para remover esse ruído gradualmente. Depois, no momento da inferência, você inicializa a imagem apenas com ruído puro e, iterativamente, refina o ruído para recuperar a imagem, o vídeo, o áudio ou o que você estiver procurando. E o princípio é essencialmente o mesmo para difusão de texto, onde você começa com uma sequência limpa de tokens, como uma frase limpa ou algo parecido. E
+
+então você vai adicionando ruído gradualmente, corrompendo-o de alguma forma. Existem muitas maneiras diferentes de fazer isso. Você pode fazer isso de forma contínua ou discreta, mas vamos considerar a forma discreta por enquanto, que neste caso significaria simplesmente adicionar tokens aleatórios ou substituir tokens por outros tokens aleatórios. E você faz isso para vários níveis de ruído diferentes e treina a rede neural para tentar preencher e corrigir os erros no texto. E então, no momento da inferência, você inicializa a sequência de tokens com ruído puro, como tokens discretos aleatórios do vocabulário, e então refina iterativamente através disso para preencher as informações na ordem que a rede neural deseja para recuperar, digamos, uma frase limpa.
+
+E então, na prática, como eu mostrei aqui em GIFs de como fica nas imagens. Você obtém resultados muito semelhantes ao analisar o texto, onde ele começa meio ruidoso e depois gradualmente preenche o texto, resultando em saídas relativamente limpas no final. Certo, então, na equipe em que estou, lançamos uma demonstração de pesquisa há um ano chamada Gemini Diffusion, que era uma variante do modelo Gemini que fazia difusão de texto em vez de geração automática e agressiva do próximo token, e era como uma prévia de pesquisa que estava aberta para cerca de 100 mil pessoas. Uh Uh [limpa a garganta] E vocês sabem, continuem, fiquem atentos a novos desenvolvimentos nessa direção em breve. E nós tínhamos alguns bons números na época, mas, novamente, isso foi há um ano, o que é como, você sabe, tempos pré-históricos nessa área. Nosso principal
+
+concorrente na época era a lanterna Gemini 2.0, pois essa era a arquitetura da qual estávamos nos originando a partir do modelo Text Fusion, e tínhamos uma qualidade muito semelhante em todos os aspectos . Basicamente, há uma pequena vantagem no código, uma pequena desvantagem em algumas outras áreas, mas um desempenho relativamente semelhante com latências muito melhores. Bem, sim , isso foi há um ano, então eu não me fixaria muito nesses números. Certo, então qual é a diferença entre geração agressiva automática e difusão? Então, no
+
+Gemini padrão, sabe, GPT ou qualquer outra geração de texto, você faz isso: você recebe algum contexto e quer gerar uma resposta para ele, e o modelo faz isso um token por vez. Assim, ele gera o primeiro token e, em seguida, aplica uma condição a esse token para gerar o próximo, e assim por diante. Enquanto na difusão você tem, você sabe, um contexto que entra, seja lá o que for, e ele inicializa, como eu mencionei, uma longa sequência de tokens — que pode ter centenas, milhares ou ser menor, dependendo do modelo — como ruído aleatório, e então refina iterativamente essa tela para remover o ruído ao longo de algumas etapas de redução de ruído. Assim, em vez de processar um token por vez, ele processa o bloco inteiro de uma vez, mas ao longo de algumas iterações. Portanto, não se trata apenas de uma única passagem, mas sim de múltiplas passagens, o que permite lidar com os tokens futuros e assim por diante.
+
+Portanto, é uma forma um tanto diferente de gerar texto. Hum, bem , isso obviamente tem prós e contras. Portanto, a principal vantagem que as pessoas realmente apreciam, e provavelmente a maior vantagem dos modelos de texto para imagem, é a inferência mais rápida. Isso gera tokens por segundo mais rapidamente porque faz um uso muito melhor do hardware, da TPU e da GPU. E tenho alguns slides sobre isso para explicar o porquê.
+
+Mas algumas outras vantagens são que ele pode realizar atenção bidirecional dentro dessa tela de tokens. Então, como você sabe, os modelos autorregressivos só podem levar em consideração o passado. Eles possuem atenção causal dentro do seu, você sabe, do seu transformador. Ao passo que o modelo de texto para imagem não possui qualquer restrição. Pode estar voltada para o futuro. E isso possui algumas
+
+propriedades interessantes, como a capacidade de gerar autocorreção com base em tokens futuros. Então, poderia, sabe, fazer algum raciocínio, perceber que a resposta estava incorreta e, em seguida, voltar, corrigir o raciocínio e tentar novamente. Eu tenho uma demonstração disso. Porque esse processo é iterativo, ele executa uma série de etapas para responder, e isso significa que o modelo pode realmente fazer computação adaptativa. Descobriu-se que é possível treinar o modelo para dedicar mais tempo a problemas mais difíceis e menos tempo a problemas mais fáceis. E, assim como nos
+
+modelos de fusão em geral, você pode fazer coisas como edição in-place, onde você diz, por exemplo, " corrija os últimos tokens e me dê o prefixo que corresponde a esses tokens" e coisas do tipo. Mas a principal desvantagem, e a razão pela qual não é amplamente utilizado atualmente, é a menor capacidade de produção para grandes lotes. Então, os modelos autorregressivos são lentos, mas você pode ter um grande lote de consultas juntas e, se você processar isso através da rede neural na GPU, cada usuário individual será lento, mas você estará aproveitando bem a TPU dessa forma . Assim, você pode atender a muitas consultas. Assim, você consegue manter seus custos baixos. Você pode servir muita coisa. Como a conversão de
+
+texto em imagem realiza várias passagens diretas nos mesmos dados, ela atinge um limite de computação mais cedo e, embora apresente menor latência para um único usuário, tende a ter uma taxa de transferência geral menor. Portanto, o custo do serviço é maior. E agora, sabe, se você jogou com o Claude recentemente, você vai saber que eles têm algumas preocupações com a taxa de transferência. Então, as pessoas estão realmente preocupadas com a taxa de transferência agora. Portanto, ninguém está implementando a difusão de texto em nenhum desses grandes modelos, principalmente por causa dessa desvantagem.
+
+É simplesmente muito caro de disponibilizar, mesmo que a latência seja muito menor. Ok, então, só para explicar por que tem menor latência, caso você não esteja familiarizado com a arquitetura de como as GPUs e TPUs funcionam hoje em dia. Então, em uma GPU, existe um núcleo tensor, que realiza multiplicações de matrizes grandes . É muito eficiente, tem muitos flops ou saltos ou, você sabe, o que seja. E então a memória que fica na GPU da TPU, essa HBM, é onde os pesos, as ativações e tudo mais são armazenados, e esses dados precisam ser transferidos da memória, todos os pesos, as ativações e o cache KV, para o núcleo do tensor para que o cálculo seja realizado. Portanto, ele precisa fluir
+
+por meio desse canal de banda larga. E esse canal de banda larga é muito restrito. Descobriu-se que tanto as GPUs quanto as TPUs têm muitos pontos de operação (flops) e pouca largura de banda. É bastante difícil. É caro colocar largura de banda nesses chips, e é fácil colocar FLOPS. Então,
+
+devido a essa proporção, você pode, sabe, quanto mais operações FLOPS você fizer para cada quantidade de dados transmitidos, melhor. Certo, então, quando estamos usando um modelo autorregressivo, esses chips têm sua memória limitada. Basicamente, o gargalo está nessa largura de banda. Então, quando você faz a geração automática regressiva do próximo token, para cada token, você está fazendo um token de cada vez. Vamos supor que o tamanho do lote seja um. É
+
+preciso percorrer toda a rede neural, incluindo o cache KV, para obter um token, e depois repetir o processo para o próximo token, e assim por diante. Enquanto que, para a difusão de texto, você gera, digamos, 256 tokens, e ainda assim terá que refazer tudo, se puder fazer isso menos vezes do que o número de tokens, nesse processo iterativo de refinamento, você obterá um ganho de velocidade. Portanto, se você puder fazer, digamos, 24 passagens para gerar 256 tokens, estará realizando 10 vezes menos transferências de memória do que um modelo autorregressivo. E se você estiver realmente limitado pela memória, então será 10 vezes mais rápido, algo assim. Então, essa é a verdadeira razão, essa é a razão de hardware pela qual os modelos de texto para imagem têm uma latência muito menor do que os modelos autorregressivos. OK.
+
+Então, sabe, nós tínhamos essa demonstração de difusão Gemini. Talvez alguns de vocês tenham tido acesso a isso no ano passado. E, sabe, isso permitia atingir algo em torno de 2.000 tokens por segundo de forma bastante consistente, dependendo do tamanho da consulta. Obviamente, depende. Quanto mais longa for a sequência
+
+gerada, menos ela será dominada por prefixos. Assim, você pode realmente se apoiar nessas sequências muito longas de tokens muito rápidos. Mas, se você estiver gerando apenas um token, por exemplo, o custo do preenchimento prévio será o fator determinante. E o número de tokens por segundo que foi relatado nesta página da web incluía preenchimento automático e tudo mais . Então, isso representava 2.000 tokens por segundo.
+
+Esses eram tokens brutos genuínos que você receberia em seu navegador da web. Certo, então essa foi uma espécie de apresentação relâmpago sobre a tecnologia de conversão de texto em imagem e sua principal vantagem, que é a baixa latência. Mas eu gostaria de explorar um pouco mais algumas das outras vantagens que a tecnologia de texto para imagem oferece, que são um pouco menos abordadas na literatura. Mas eu acho que são bem legais, e é por isso que estou animado com isso. Então, no Google I/O do ano passado, eles mostraram essa demonstração do modelo de texto para imagem, que é, você sabe, um prompt muito simples.
+
+Mas, sabe, muitos modelos cometem erros nisso. Então, a pergunta é: você quer passar para o próximo slide? Qual é a raiz quadrada de 81 * 2/3 ao quadrado mais, você sabe, blá blá blá? E eu acho que a resposta para este problema é 39 . Então, você passa isso para o modelo e pede à difusão Gemini para responder a isso.
+
+Após um passe para a frente, estes são os tokens gerados. Assim, após uma única passagem direta pelo modelo, ele começa a responder. Agora, como se trata de um processo iterativo de refinamento, uma única passagem direta não é tudo o que ele fará, mas após essa primeira passagem, o resultado será este. Então, a resposta é igual a 60. Não está correto, mas é o que está estimando por enquanto. E então começa a
+
+fazer o raciocínio. Assim, uma solução é calcular a raiz quadrada de 81 e assim por diante. Após dois passes para frente, o número mudou de 60 para 49. E a justificativa foi explicada um pouco mais a fundo . Então, já chegamos a uns cinco passos no raciocínio. 2 ao quadrado é igual a 4 e algumas
+
+das fichas azuis ainda vão sofrer alterações. E então, depois de três passes para frente, a mensagem finalmente foi transmitida através do raciocínio. Então, ele acerta, acerta e, no final, acerta a resposta. 36 + 3 é igual a 39. E o programa voltou atrás e corrigiu a resposta original para 39.
+
+Então, ele cometeu um erro duas vezes, primeiro com 60 e depois com 49, mas assim que terminou o raciocínio, conseguiu retornar e corrigir o erro inicial. Agora, ele fará mais algumas passagens para corrigir alguns desses tokens que não estão exatamente corretos no texto, mas, no geral, essa é basicamente a estrutura da saída que ele retornará. E esta é, você sabe, uma propriedade que os modelos de divisão de texto possuem. Essa capacidade de realizar raciocínio bidirecional. Portanto, não se trata apenas de ver o passado, mas também o futuro que ele reserva. Vai responder.
+
+E também para usar essa informação para se autocorrigir. Então, cometeu um erro, mas conseguiu, sabe, teve outro passe para frente, conseguiu avançar e corrigir esse erro. Naquela época, modelos muito, muito maiores do que aquele que estávamos atendendo cometeram um erro relacionado a esse problema. Portanto, tanto o Chat GPT 4o, que era novo na época, quanto o Gemini 2.5 Flash, que também era novíssimo na época, apresentaram um erro exatamente nesse problema. Então, você dá a
+
+eles exatamente a mesma instrução e eles dizem, sabe, lembre-se, a resposta é 39. O GPT 40 disse 40. Esse é o melhor palpite que ele pode fazer com essa única ficha. O programa fez o raciocínio e então disse 30. Ele conseguiu descobrir que era 39 e disse que eu cometi um erro. É 39, não 40. O
+
+Gemini 2.5 Flash também cometeu um erro, disse 42 e depois simplesmente manteve o resultado, dizendo que 36 + 3 é 42. Então, ele incorporou o erro ao seu raciocínio posteriormente. Ah, e esses modelos são muito maiores do que os modelos de difusão Gemini . Portanto, essa é realmente uma propriedade, uma falha dos modelos autoagressivos, que os modelos de difusão de texto não possuem. E sabe, isso pode ser resolvido
+
+com modelos modernos de raciocínio . Ah, mas sabe, aí você meio que está transferindo o problema para outra coisa, mas enfim, tudo bem. Essa é uma das vantagens, que é a autocorreção do raciocínio bidirecional. Outra possibilidade é aquela que mencionei anteriormente: a computação dinâmica. Assim, você pode dar ao modelo mais tempo para inferência, mais passes diretos, obter um orçamento maior e, consequentemente, ele poderá ter um desempenho melhor.
+
+Não é exatamente monotônico, mas é aproximadamente monotônico que a qualidade em cada avaliação basicamente continue a aumentar porque, mesmo que a solução seja quase inteiramente limpa e correta, ela consegue ser analisada, perceber que cometeu um erro e corrigi-lo. Assim, você obtém esse tipo de curva interessante, onde sempre se observa que, à medida que o número de etapas de redução de ruído, como as passagens diretas, aumenta, a qualidade geral melhora. E essas são apenas seis avaliações de código que monitoramos internamente. Além disso, um conceito ligeiramente diferente é que o modelo pode realizar computação adaptativa, ou seja, você pode permitir que o modelo, ao treiná-lo, determine por si mesmo quando terminou. E então, para respostas fáceis, pode usar um pouco de poder de processamento, e para respostas mais difíceis , pode demorar mais.
+
+Aqui estão três exemplos do modelo de difusão Gemini. Quais são os primeiros 100 dígitos de pi? Na verdade, são 100 fichas. Parece ser uma resposta curta. Na verdade, são 100 fichas. E isso é feito em apenas
+
+quatro passos. Porque o modelo é um estímulo fácil. É uma resposta fácil porque você acabou de memorizar os 100 dígitos de pi. Você pode simplesmente imprimir. Enquanto que, como você sabe, um modelo autoagressivo no mesmo período teria utilizado apenas quatro tokens. Bem,
+
+essa é muito fácil. Um pouco mais desafiador é escrever um pouco de código, o que leva, você sabe, 18 iterações para gerar o FizzBuzz. E então, algo mais complexo, a mecânica quântica, é explicado em um único parágrafo, e isso exigiu 31 etapas de redução de ruído. Então, por algum motivo, levou mais tempo do que o necessário para concluir esses . Assim, o modelo naturalmente decide quando vai terminar e retornar a resposta.
+
+E, normalmente, observamos que avaliações mais difíceis levam mais tempo. Então, isso foi há um ano, então as avaliações são meio antiquadas, mas, você sabe, no nível mais alto e mais difícil está o GPQA Diamond, que para o tamanho do modelo que estávamos visando era uma avaliação bastante difícil, e levou muito tempo para responder a essas avaliações. Por outro lado, temos programas como o MBPP, que são basicamente programas básicos em Python, e foi muito fácil , levou muito pouco tempo para responder a esses comandos. E isso é inteiramente determinado pelo próprio modelo. Para problemas mais fáceis, instruções mais simples, ele conseguia responder rapidamente, e para os mais difíceis, decidia dedicar mais tempo ao raciocínio.
+
+Certo, então essa é outra propriedade, que é a computação dinâmica e adaptativa . Por último, temos o tipo de edição rápida feita no local . Então, os modelos de difusão em geral têm essa propriedade muito interessante de permitir que você pegue uma imagem, como neste exemplo, recorte algo dela ou dê um pequeno comando, e ela preencherá o espaço restante. Você pode usar o contexto que não foi recortado para preencher corretamente a parte que foi recortada. Assim, você pode usar isso para edição de imagens inteligente e coisas do tipo.
+
+E então, porque a razão pela qual isso é possível é porque, você sabe, não é autorregressivo. Existem geradores de imagens autorregressivos, certo, que funcionam da esquerda para a direita, de cima para baixo, como uma varredura raster, gerando pixels, sabe, mas a difusão não funciona assim. O programa simplesmente analisará a imagem inteira e começará a remover o ruído. E por causa disso, porque consegue ver cada pixel — cada pixel consegue ver todos os outros pixels —, pode preencher as informações que faltam e fazer isso de uma forma que seja consistente com qualquer instrução que você esteja dando. Uh Uh, podemos fazer algo parecido. Então,
+
+tenho algumas demonstrações aqui. Hum, você consegue ver isso? Sim, então isso é apenas um código e você diz: "Há um erro neste código. Você pode corrigi-lo?" E simplesmente fará a edição no lugar correto. Tipo, você
+
+mal consegue ver, mas é só uma pequena correção nos índices. E você pode dizer coisas como: "Você pode adicionar documentação?" E vai funcionar. Não é simplesmente gerar todos os tokens um por um. Está realizando um procedimento de edição inteligente para preencher as edições corretas aqui.
+
+Você pode fazer isso com, sabe, um texto mais genérico. Por exemplo, você pode pegar uma história e dizer: "Adicione um parágrafo no meio". E como consegue ver o primeiro, o segundo e este terceiro parágrafo, pode preencher o parágrafo de uma forma que seja consistente com o resto da história, por exemplo. E isso é basicamente edição no local. Ok . Então, essas são algumas das
+
+vantagens. Hum, não tenho muito tempo. A maior vantagem, como mencionei, é essa baixa latência. E sabe, nós realmente nos dedicamos a isso. E eu só quero mostrar algumas demonstrações de algumas coisas que as pessoas internamente desenvolveram para mostrar a vantagem que a baixa latência pode proporcionar. Portanto, não se trata apenas da mesma
+
+coisa, só que mais rápida. Isso pode realmente desbloquear algumas aplicações totalmente novas. Portanto, no trabalho de vocês, todos vocês são engenheiros de IA. Hum, seria interessante ver o que a baixa latência poderá possibilitar quando o próximo modelo de difusão da nossa equipe for lançado . E que tipo de novas aplicações podem ser criadas? Aqui estão algumas demonstrações. Então,
+
+esta é a Wikipédia. Deixa eu dar uma pausa, por favor . Esta é a Wikipédia, onde tudo é gerado instantaneamente, até mesmo o HTML. Então, isto é na verdade um " Ops". Isso está sendo gerado pelo modelo em tempo real . Então, é uma página web com o
+
+HTML, o texto e tudo mais sendo gerado dinamicamente. Então, parece a Wikipédia normal. E quando você clica , a latência é tão baixa que a página é preenchida como se fosse uma página real da Wikipédia. Então, isso é uma espécie de Wikipédia gerada dinamicamente por um modelo de latência muito baixa. Temos algo semelhante que fizemos para o Reddit.
+
+Assim, agora todas as respostas às suas publicações serão feitas por bots. Eles ainda não estavam. E está gerando comentários falsos. Não , o modelo de difusão Gemini não era um modelo gerador de imagens. Então, esta demonstração inclui o que era o modelo de gerador de imagens mais avançado da nossa startup na época, que eu acho que era o Juno. Isso foi
+
+antes do Nano Banana. Portanto, são esses dois modelos que trabalham juntos para preencher a página da web. Portanto, o modelo de geração de imagens é um pouco mais lento. Mas você pode ver que é como se você pudesse inventar qualquer Reddit que quiser, tubarões neste caso, e ele vai gerar a página com o texto. As imagens aparecem um minuto depois, e então você pode interagir com este site como se fosse um site de verdade, com usuários reais e tudo mais. Simplesmente sendo completo. Todos
+
+os comentários, todas as imagens, todo o HTML, tudo é gerado inteiramente em tempo real aqui. Isso está sendo gerado pelo modelo. Hum, eu adoro essa. Essa é a minha favorita . Este é um sistema operacional que também está sendo gerado inteiramente em tempo real. Portanto, cada
+
+clique aqui gera a próxima página do sistema operacional. Portanto, parece um sistema operacional real, mas tudo está sendo gerado pelo modelo em tempo real, respondendo a cada clique. Então, toda vez que você digita algo como "readme", o texto é gerado, mas também são geradas as páginas da web que você pode acessar, como voltar para a área de trabalho e assim por diante. Acho que sim , tudo bem. E então, esta é uma demonstração de alguém no Twitter que usou a API Gemini Diffusion, ou melhor, não a API, a página da web, para fazer programação ao vivo com a voz. Então, eu
+
+gosto muito deste. Crie um aplicativo de lista de tarefas. Adicione 10 tarefas aleatórias. Permitir que as tarefas pendentes tenham um estado de concluídas. Marque quatro tarefas aleatórias como concluídas.
+
+Permita-me classificar as tarefas por nome e por estado.
+
+Muito bem, vamos ver se isso funciona. Ordenar por nome, ordenar por estado. O comando "Testing", que significa "entrar", foi adicionado ao final. Vamos tentar excluir alguns. Adicione um. Está tudo
+
+funcionando. Por favor, altere para o modo escuro. E isso levou literalmente 15 segundos de trabalho. Certo, então, sim, foi alguém de fora da nossa equipe, então ele podia dizer isso. Sim, mas cinco codificações por voz, mas, em geral, acho que modelos de baixa latência podem realmente desbloquear novas experiências para usuários e novos produtos. Por isso, estamos ansiosos
+
+para ver o que as pessoas farão quando a próxima geração surgir. Certo, e dito isso, muito obrigado. [aplausos]
+
+Alguma pergunta? Sim?
+
+Yeah, yeah. Sim, usamos os mesmos dados. Sim. Quer dizer, os algoritmos precisam mudar um pouco, mas usamos os mesmos dados. Sim.
+
+Sim, você pode destilá-los. Sim, não tenho certeza se existem versões publicadas. [risos] Acho que não. Talvez estejam vendendo externamente, mas... Sim,
+
+vamos lançar algo em breve. Sim. Sim . Sim.
+
+Ah, sim, então, os modelos maiores tendem a exigir menos etapas para a mesma saída. Então, mesmo que o modelo esteja ficando maior e o número de tentativas por passe para frente esteja aumentando, eles tendem a reduzir o número de passes para frente necessários. Então, é como se houvesse uma espécie de custo decrescente para atender até mesmo os maiores modelos. Sim. Então, a próxima pergunta é: como você define o preço? O
+
+preço da estrutura não importa para a difusão. Hum, eu não sei. Ainda não chegamos a esse ponto . Sou um cientista pesquisador. Sim .
+
+Como você define a magnitude da resposta, porque para " Sim". Você espera que eu tenha essa imagem e que eu tenha o resultado? Sim. quadro. Como se faz isso em Mhm?
+
+código ou texto? Então, existem algumas maneiras diferentes. A maneira mais fácil é simplesmente definir um comprimento de janela fixo e depois iterar sobre esse valor. Então, é como um ataque automático agressivo, um ataque automático agressivo em blocos. É o jeito mais comum de fazer isso. Mas você pode ter um
+
+sistema que preveja a duração da resposta e coisas do tipo, se quiser. Sim. Sim, mas você precisa fixar o resultado para permitir que o modelo de difusão funcione. Não, ele ainda pode gerar textos ilimitados, mas se você definir um tamanho de janela, ele simplesmente usará esse tamanho de janela automaticamente e de forma agressiva se precisar gerar muitas janelas de texto. Sim .
+
+Talvez eu já tenha mencionado isso, mas quando você deu aquele exemplo das etapas de redução de ruído sendo diferentes faixas com diferentes, você sabe, uh Sim. Você poderia definir antecipadamente um limite para as etapas de redução de ruído necessárias para resolver um problema, para que você possa ter... Sim. É
+
+quase como entender qual será a sua latência com antecedência? Hum. Sim, sim, todos esses têm um limite, mas eles terminam antes do limite. Sim. Se você tivesse várias janelas abertas, como você acabou de mencionar, seria possível voltar e tentar acessar as janelas anteriores? É mais ou menos assim que
+
+funciona, né? Sim, é isso mesmo. Quer dizer, você poderia potencialmente mudar, mas para nós, a decisão é definitiva e vamos continuar. Sim. Sim . Tem
+
+mais alguma dúvida?
+
+Sim, sim, é assim que funciona. Sim.
+
+Ah não, então o preenchimento é o mesmo. É só para você ter algum contexto e preencher previamente. E depois disso, a etapa de geração normalmente ocorre em blocos de tamanho fixo, como 512, 1.000, 32 ou o que você quiser. E isso é autoagressivo. Sim
+
+.
+
+Então você pode fazer isso. A maneira mais fácil de fazer isso é simplesmente ter uma função de regressão logística no início do gráfico. Apenas uma previsão básica no topo. Bem, então, tudo isso é como difusão discreta, certo? Portanto, é sempre um sistema de entrada de tokens e saída de tokens. Tipo, se eu te
+
+mostrasse cada passo, sim. Então, se eu voltar aqui, é sempre como um processo de corrupção discreto. E então você preenche com um token discreto . Portanto, você está sempre em um espaço discreto. Mas é possível fazer isso em espaços latentes, e algumas pessoas já fizeram isso, mas a maioria dos modelos de difusão textual na literatura atual são de difusão discreta. Sim
+
+. Talvez um dia isso aconteça. Sim .
+
+Acho que, por enquanto, eles têm casos de uso diferentes . Então, sabe, se você pensar no que um modelo de baixa latência oferece, é algo como uma taxa de transferência pior. Então, qual é a contrapartida em relação aos aplicativos instalados no dispositivo? Portanto, já estamos trabalhando em algumas aplicações para dispositivos móveis . E dentro do ecossistema da Alphabet. Então, em robótica e coisas do gênero
+
+, você quer executar um modelo no próprio dispositivo. Então, seu telefone, um robô ou o que for. E então você quer que seja de baixa latência e não está processando em lotes milhares de outras consultas, como o Gemini, sendo atendidas no lado do serviço. Então, você quer o modelo com a menor latência. A qualidade não é realmente diferente. Basicamente, são da
+
+mesma qualidade. Então, você pode escolher a opção de baixa latência, já que não precisa se preocupar com a taxa de transferência. O que você quer dizer com " no futuro", tipo, se conseguiremos atingir a qualidade desejada com os modelos atuais de "caixa preta"? A qualidade não é a preocupação, mas sim a capacidade de produção para servir em grandes lotes . Yeah, yeah. Sim
+
+. Então, atualmente você está obtendo mais ou menos a mesma qualidade de modelos de fronteira em sua pesquisa? Yeah, yeah. E quanto às tarefas de raciocínio? Porque nós podemos realmente verificar o que queremos.
+
+Desculpe? E quanto às tarefas de raciocínio? Porque nós podemos realmente verificar o que queremos. Algo assim. Yeah, yeah. Sim, você pode fazer isso na vida real. Sim.
+
+Você só precisa mudar o algoritmo, sabe, mas ainda é possível fazer isso. Sim . Sim . Existe muito espaço para combinar difusão com modelos de texto autorregressivos ? Sim, você pode fazer isso. Sim.
+
+[risos] Sim. Sim . Você poderia inicializar com um modelo menor para não precisar começar do zero e, assim, realizar menos etapas? O problema é que, se você treinar o modelo com ruído, ele passará a esperar ruído. Você teria que treiná-lo com o modelo pequeno.
+
+Como você gosta do resultado, isso só aumenta a complexidade. Então, normalmente não fazemos isso. Sim .
+
+Bem, não da nossa equipe, mas existe bastante literatura sobre o assunto , sim. Sim . Sim . Acho que você entendeu a ideia. Sim.
+
+Mais alguma pergunta? Há muitas perguntas. Já analisei todos eles. Isso é bom. Ah, mais uma. OK.
+
+Hum, não sei. Não acho que tenhamos tentado fazer isso. [risos] Provavelmente funcionaria. Provavelmente teria algum efeito. Sim.
+
+Legal. OK. Obrigado a todos. [aplausos]
+
+[música]

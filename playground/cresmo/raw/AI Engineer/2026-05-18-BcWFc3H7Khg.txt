@@ -1,0 +1,377 @@
+---
+video_title: "Let's go Bananas with GenMedia — Guillaume Vernade, Google DeepMind"
+video_id: BcWFc3H7Khg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BcWFc3H7Khg
+video_date: 2026-05-18T15:00:06+00:00
+video_description: |
+  Guillaume Vernade from Google DeepMind takes a public domain book and runs it through the full gen media stack live. Gemini reads the whole text and writes image prompts for each character and chapter. Imagen generates the portraits. Veo animates them into video clips using those images as first frames. Lyria composes a different piece of music per chapter, with or without lyrics. The TTS model reads dialogue from the book using a trick that makes two voices sound like four distinct characters.
+  
+  The interesting layer underneath all of it is that Gemini acts as the prompt engineer for every other model, and it works well partly because the gen media models were trained on prompts written by Gemini. The workshop also covers the Lyria Realtime model, which generates music continuously and responds to new prompts mid-stream like a DJ, and a new interactions API that makes chained multi-turn calls cheaper by caching context server-side instead of resending the full book on every turn.
+  
+  Speaker info:
+  - https://x.com/Giom_V
+  - https://www.linkedin.com/in/guillaumevernade
+  - https://github.com/Giom-V
+---
+[música]
+
+Bom dia a todos. Obrigado por estarem aqui tão cedo pela manhã e por serem alguns dos poucos que conseguiram passar pela segurança para estarem aqui. Bem, eu sou Guillaume e vou falar sobre Gêmeos em geral. Então, essa é a minha vida, segundo a perspectiva do Nano Banana. Basicamente, entrei no Google há 6 anos . Antes eu era produtor de videogames
+
+. Inicialmente, trabalhei no Stadia, a empresa de streaming de jogos que produzia [limpa a garganta] e que nós matamos, assim como tantos outros produtos. E eu estou na DeepMind há 2 anos e trabalhei como o que chamávamos de defensor do desenvolvedor. Então, se você não está familiarizado com o que é um defensor do desenvolvedor, basicamente meu trabalho é garantir que, sempre que lançamos algo , vocês, os desenvolvedores, tenham tudo o que precisam para trabalhar com nossos produtos. Então você precisa de documentação, precisa de exemplos de código, precisa de [limpa a garganta] demonstrações.
+
+Agora também existem novas coisas de que você precisa, como habilidades, guias práticos e coisas do gênero. Então, certifique-se de que você possa começar imediatamente e que funcione. E por outro lado, quando falo internamente, é por isso que sou um defensor, porque defendo os desenvolvedores e tento trazer um pouco de bom senso para as equipes internas, garantindo que o que lançamos faça sentido no mundo real e não seja desenvolvido inteiramente pelo Google para o Google. Um ótimo exemplo disso são os modelos Imagine. Bem, quando lançamos modelos como o Imagine e o Nano Banana, cada modelo tinha seu próprio conjunto de APIs.
+
+Não faz o menor sentido. Como qualquer desenvolvedor normal, você deveria ser capaz de simplesmente trocar o nome do modelo e funcionar. E eu lutei bastante por isso. Eu nunca consegui ganhar, mas no fim das contas acho que a marca Imagine não existe mais. Então, eu meio que ganho por padrão.
+
+Bem, sim, você vê o tipo de trabalho que eu tenho que fazer diariamente. Bem, como eu disse, estou trabalhando principalmente no modelo da Gen Media. Então, nós gostamos, e é por isso que se fala tanto da Gen Media. Então, se você olhar para o mundo, seu celular e tudo relacionado à mídia estão em todos os lugares. Então, você tem imagens, vídeos e sons por toda parte. Então, é
+
+muito legal no nosso mundo. E isso está no cerne do que a DeepMind está construindo com nossos modelos. Bem, gostamos que você esteja começando a ouvir falar sobre a nova startup de Lukan, o modelo mundial, mas é exatamente isso que temos tentado construir no Google desde o início. Bem, nossa visão de modelo mundial é que se trata de um modelo que, como o próprio nome indica, compreende o mundo, ou seja, pode absorver o máximo de modalidades possível. Então, som, vídeos, áudio, sensores, enfim, todos os cinco sentidos. E então,
+
+hum, uh, produz resultados ou tipo, uh, sim, fala em tantas modalidades diferentes quanto possível. Então, áudio, texto, e e assim por diante, e muito mais no futuro. Hum, e nós tendemos a ter modelos específicos. Temos todos os modelos de geração de imagens. Temos todos os modelos de geração de vídeo. Mas, no fundo,
+
+o objetivo é ter um modelo único que englobe tudo isso. É que, para fins de lançamento, é mais fácil enviar modelos específicos do que atualizar sempre apenas o modelo principal e correr o risco de quebrar alguma outra coisa ao mesmo tempo. Mas, resumindo, é uma historinha rápida. Assim como quando lançamos o Gemini 1.0, há 2 anos. Parece que foi há
+
+anos, há eras . Mas o primeiro modelo Gemini, o Gemini 1.1, foi concebido para ser multimodal, pois todos os nossos modelos sempre foram multimodais. Mas como os testes ainda não tinham terminado, ou por algum outro motivo, eu ainda não estava lá . Eles removeram a imagem, compreendendo o modelo musical e as entradas do modelo. Então,
+
+a versão 1.1 não era multimodal, depois veio a 1.5 e então esta passou a ser multimodal, e acho que essa foi a primeira versão a fazer isso. E isso é uma loucura, tipo, já faz um ano e estamos no modo alfa, e agora você não imagina trabalhar com um modelo que não seja multimodal. Mas mesmo assim, quando você usava aquele recurso com muita frequência, você estava enviando uma imagem e ele estava dizendo "ah, me desculpe". Sou apenas um mestre em Direito. Eu não consigo
+
+lidar com imagens. E isso só porque parte do treinamento que foi feito e adicionado no final da versão 1.0 era tipo, " ah, você sabe como lidar com imagens, mas se te perguntarem, não use". Embora parte desse treinamento ainda estivesse presente na versão 1.5 e fosse utilizado ocasionalmente. Então foi isso.
+
+Isso foi meio chato, pois só mudamos para a versão 2.0 depois que lançamos o produto. Como eu disse, não temos apenas os modelos Gemini no DeepMind, temos todas as gerações de imagem, vídeo e música. Temos alguns outros modelos bem específicos. Temos também um módulo de robótica que é multimodal, pois a visão é muito importante para a robótica. Temos vários agentes
+
+que estamos enviando. Acho que este ano vai ser o ano do agente, o verdadeiro agente. No ano passado, todo mundo falava de agentes. Este ano é o ano em que realmente vamos formar agentes. E temos os modelos abertos e eu esqueci de atualizar o slide porque não é mais Gemma 3, é Gemma 4 desde a semana passada.
+
+E depois há vários modelos-chave de pesquisa, como AlphaGo, Alpha Genome, Waze ou Next, entre outros, que são muito específicos para fins de pesquisa. Só falando da Gen Media, nós enviamos, em média, mais de um produto por mês. Bem, no geral, se considerarmos toda a DeepMind, estamos lançando produtos a cada 5 dias em média. Em algumas semanas, enviamos dois ou três itens. E se adicionarmos todos os pequenos detalhes, estamos lançando atualizações várias vezes por semana, então é por isso que eu e a maioria dos meus colegas estamos muito ocupados, porque sempre temos novidades para documentar e discutir. Então,
+
+muito rapidamente, sobre as novidades que enviamos recentemente. Uh Nano Banana que enviamos Nano Banana 2 uh que tem uh novas uh proporções de tela uh de uh como 520 pixels até 4K. Bem, tem fundamentos de busca, como todos vocês sabem, mas também tem fundamentos de imagem. Então, se você puder pedir para ele pesquisar imagens na web e usar essas imagens como base para que ele saiba, tipo, sim, ele terá um conhecimento melhor de como as coisas são. É muito útil para coisas de arquitetura, por exemplo, para animais e coisas do gênero. Bem,
+
+existem muitas regras no total que eu não consegui entender completamente, mas, por exemplo, os prédios precisam ser antigos o suficiente, caso contrário, existem razões legais pelas quais não podemos usar as imagens. Então, hum... Mas ainda é muito útil quando funciona.
+
+Hum, nós temos os modelos em vídeo. Você já ouviu falar de vídeo de três, vídeo de 3.1. Nós lançamos na semana passada o vídeo do 3.1 Light, que é o nosso modelo mais barato.
+
+Hum, acho que são 5 centavos por segundo, então 40 centavos por vídeo, o que é muito barato. Bem, a ideia é que você possa iterar sobre o prompt dessa forma e depois aumentar a escala. E temos a Lyria, que é o nosso modelo de geração musical que lançamos há duas semanas. E com ela você pode criar clipes de 30 segundos ou músicas completas de 3 minutos. Mostrarei demonstrações de tudo isso depois.
+
+Afinal, esse é o objetivo da sessão. E, bem, existe também outro modelo da Lyria que as pessoas não conhecem, chamado Lyria em Tempo Real, e esse é, na verdade, o meu modelo favorito. E este aqui é basicamente você, você também cria música, mas não é um modelo de difusão como os outros, onde você simplesmente dá um comando e recebe algo como resultado. É um modelo preditivo, o que significa que é basicamente um modelo em tempo real. Então, ele cria música e continua criando música em tempo real até que você o interrompa.
+
+E você pode simplesmente enviar comandos e ele fará uma espécie de mixagem de DJ, trocando para a nova música em tempo real, a cada 2 segundos. Ah, mas, mas então, e isso é bem divertido de brincar. Se tivermos tempo no final, eu mostrarei uma demonstração para vocês. Bem, como eu disse, isto é para ser um workshop, então o objetivo é que vocês interajam com os modelos e que eu mostre os códigos em vez de slides. Então, este é o conteúdo que vamos usar. Ah, essa também serve, se
+
+você conseguir ler o que eu escrevi.
+
+E se isso não funcionar, é só me avisar.
+
+Estão todos dentro? Não. De jeito nenhum.
+
+Não, não funciona? Ops. Deixe-me tentar verificar se o link funciona. Está funcionando. Sim .
+
+Eu sei. Cometi um erro de digitação. Legal. Todos vocês estão dentro? OK. Então, para sermos totalmente transparentes antes de
+
+começarmos, estamos usando modelos da Gen Media , o que significa que todos os modelos são pagos . Então, executar o notebook vai te custar algo em torno de 1 dólar. E você pode simplesmente pular a geração de vídeo, porque essa é a maior parte do custo desse 1 dólar. Então, hum, sim. É possível dar um zoom.
+
+[bufa] Então, o objetivo desse conteúdo é ilustrar um livro usando os diferentes modelos da Gen Media. Então, o que vamos fazer é pegar um livro que é de código aberto, que eu encontrei na biblioteca online da Biblioteca Gutenberg. Basicamente, vamos usar o Gemini para gerar sugestões e o Gen Media para criar o conteúdo correspondente, de forma que tenhamos imagens dos personagens, imagens das cenas, vídeos e assim por diante. E esse exemplo vem do que chamamos de livro de receitas. Então, temos este repositório no GitHub [limpa a garganta] onde publicamos exemplos, como guias de início rápido para explicar como usar um novo modelo ou um novo recurso, e também exemplos completos como este, sobre como ir mais longe e combinar diferentes recursos no conteúdo. Então, se você está
+
+procurando ideias, esse é um bom lugar para verificar o que você pode fazer com os modelos. Basicamente, trata-se de construção introdutória. Então, vamos começar. Então, a primeira coisa que você precisa fazer é instalar o SDK. Você precisa da versão mais recente por causa da geração de música que foi lançada na semana passada, ou melhor, duas semanas atrás. Então, na verdade, você precisa
+
+do próximo. Então, está começando. E eu deveria ter feito isso. E você precisará de uma chave de API se não tiver uma do AI Studio. E você precisa que a outra chave de API seja paga.
+
+Se você não possui uma chave de API paga, ainda pode usar os exemplos de geração de imagens utilizando o modelo Nano Banana , que possui um plano gratuito. Então, você pode simplesmente trocar o modelo que vamos usar por este. E por que isso é tão lento? Eu penso.
+
+Acho que é bom. OK. Então, estou apenas carregando a chave da API e criando os clientes GenAI, e você pode ver que eu fiz essas partes que não adicionamos em todos os nossos exemplos, que é basicamente a função de repetição automática, porque, por exemplo, se estivermos usando o Nano Banana 2 no momento, especialmente à noite, quando os EUA acordam, o modelo pode ficar sobrecarregado. Então, basicamente, essa parte diz que o programa tentará novamente cinco vezes automaticamente após 2 segundos. Vamos fazer várias importações e depois selecionar todos os modelos que vamos usar. Então,
+
+neste caso, pré-visualização de imagem flash 3.1, que é Nano Banana 2, Gemini 2.1 2.5 flash no. Vamos usar a memória flash 3.3 em vez disso. O
+
+Lyria Clip permite criar clipes musicais de 30 segundos e o modelo TTS, este aqui, o profissional. Acima. Então, adicionei esta caixa de seleção que deveria estar desativada por padrão, mas cometi um erro ontem à noite. Só para que você possa verificar se não conseguirá executar o notebook por engano, caso não queira pagar. Bem, estou apenas estabelecendo limites aqui porque um livro pode ter vários capítulos, muitos personagens e isso pode ser bastante demorado para gerar. Por isso,
+
+estabeleci limites para a quantidade que queremos, tanto para fins de demonstração quanto para controlar os custos. Então, como eu disse, vamos usar um livro de código aberto, "O Vento nos Salgueiros", de Kenneth Grahame, que eu não me lembro de ter lido, mas acho que é bastante conhecido no Reino Unido. Então, basicamente, estou baixando do projeto Gutenberg e aqui estou usando o upload de arquivos do cliente, que, como você deve saber, temos basicamente duas maneiras de usar o Gemini e os modelos do Gemini. Temos a API Gemini do AI Studio e você tem o Vertex. E a principal diferença entre os dois, e talvez eu possa dizer que este é um bom momento para mudar para este slide.
+
+Acima. Bem, nós, sabe, no Google gostamos de criar vários produtos que fazem a mesma coisa e confundem nossos usuários. Esse é meio que o nosso lema. Então , é isso que estamos fazendo com a IA. Então, temos um monte de opções, mas, na verdade, quando você pensa bem, isso pode fazer mais sentido. Então, à
+
+esquerda, temos o que chamamos de aplicativo do consumidor. Então, é um aplicativo totalmente desenvolvido e fácil de usar para qualquer pessoa que não tenha conhecimentos técnicos. Portanto, você pode fazer muitas coisas com o Gemini, mas como desenvolvedor, você pode se sentir frustrado por não ter controle sobre quais modelos, quais recursos e quais parâmetros estão sendo usados. E, por outro lado, temos a Vertex AI, que é exatamente o oposto. É voltado para o mercado corporativo, então você tem bastante controle. Você pode controlar em qual
+
+centro de dados ele será executado. Você pode, eh, ter controle sobre seus buckets, com acesso ao que eles contêm e assim por diante. O único problema é que, assim como grandes poderes trazem grandes responsabilidades, isso também acontece. Então, pode ser um problema para as pessoas começarem por aí. Por isso temos a API de desenvolvedor Gemini, que é uma espécie de meio-termo para desenvolvedores, onde você pode simplesmente criar uma chave de API e começar a usar os modelos imediatamente. Isso acarreta
+
+riscos de segurança, pois se sua chave vazar, qualquer pessoa poderá usá-la. Hum, hum, e o AI Studio é tipo, segue a mesma linha, é um lugar onde você pode testar o modelo e interagir com ele da maneira mais fácil possível. E o bom é que temos o mesmo SDK tanto para a Vertex AI quanto para a API de desenvolvedor, então você pode alternar entre uma e outra. Portanto, não existe um ponto de partida errado para brincar com os modelos, pois você sempre pode mudar. E então podemos pular essa parte. E posso
+
+voltar a este ponto porque, na verdade, o que eu ia dizer é que existem algumas diferenças entre usar o Vertex e usar a API Gemini. Bem, porque o objetivo da API Gemini é basicamente ocultar toda a complexidade do Vertex. E uma dessas complexidades é criar buckets, criar ACLs para os buckets, atribuir permissões e todas essas coisas. Então, a API Gemini que usamos para fazer isso se chama upload de arquivos. Basicamente, o que ele faz é permitir que você carregue um arquivo e, em seguida, ele fique facilmente acessível a partir do modelo.
+
+Então, eu carrego o arquivo e depois uso o que chamamos de modo de bate-papo. Basicamente, o que ele faz é enviar solicitações e manter o histórico delas, para que seja mais fácil preservar todo o contexto. E neste caso será bom porque vamos alimentar o modelo com o livro inteiro graças à grande janela de contexto, e é por isso que será útil no nosso caso, porque vou executar isso enquanto falo. Acima. Bem, isso será útil porque, para geração de imagens, é sempre uma boa ideia saber o que foi gerado anteriormente para manter os mesmos estilos e coisas do tipo .
+
+Hum, também vou usar uma estrutura na saída para que tenhamos uma saída estruturada, que é o que o modelo gera, e possamos falar a mesma linguagem, que será muito simples. Quero que gere sugestões e que essas sugestões tenham um nome para que saibamos se são referentes a um capítulo, a um personagem ou algo do tipo, além da própria sugestão. Então, estou apenas criando e inicializando os clientes de chat com o tipo de resposta JSON, o esquema que estou fornecendo e algo que lançamos ontem, que é a prioridade da camada de serviço. Então não faça isso você mesmo. Acho que você deveria remover essa linha. Bem, o que
+
+ele faz é basicamente... sim, nós enviamos isso na semana passada. Então, temos três níveis de serviço. Você tem a versão normal
+
+. Você está pagando o preço normal. Você está na fila como todo mundo . E temos outra opção chamada Flex, que basicamente significa: "Não me importo se demorar muito, mas quero pagar menos". Então você terá um desconto de 50%, mas sua solicitação pode sofrer atrasos de até alguns minutos. Por outro lado, você tem a
+
+prioridade, onde pagará o dobro do preço, mas ao mesmo tempo terá a garantia de ser mais rápido, pois terá acesso à fila expressa, como no aeroporto ou em qualquer outro lugar. Então, ontem eu adicionei isso e vou usar para ter certeza de que funciona bem para mim, mas você pode querer economizar um pouco e não adicionar isso este ano. Quanto mais caro? Ah, duas vezes. Duas vezes, tudo bem. Sim
+
+. E não tenho certeza se funciona com o VO , que é o modelo mais caro . E, hum, ainda não com várias camadas, então. Ok, sim, sim. Bem, enfim, vou começar tratando este gráfico e o que vou fazer é enviar a primeira mensagem que basicamente diz: "Estou te dando o livro inteiro".
+
+Hum, eu não preciso fazer nada com o livro ainda, mas você o tem, está no seu contexto e as instruções nós seguiremos. E então vamos definir um estilo. Normalmente, eu não configuro nada e deixo o Gemini criar seu próprio estilo. Mas, pensando bem, estou cansada de ter sempre o mesmo tamanho ou o mesmo modelo, então vamos tentar algo diferente. Hum, um
+
+estilo de blocos de construção coloridos. Bem, vamos lá [bufa] vamos nessa. Vamos ver como as coisas correm. Então, estou apenas definindo um estilo. Aliás, se você usa o Colab, ele tem umas coisas que eles chamam de "magics", e é bem legal para criar notebooks e formulários que as pessoas podem preencher, e isso se integra perfeitamente ao código.
+
+Então, algumas instruções do sistema para direcionar o modelo para o tipo de imagem que queremos, porque o problema que tive no início, quando estava trabalhando nesses exemplos, é que sempre que você pede uma imagem de retrato e o modelo sabe que se trata de um livro, ele tende a criar capas e adicionar o título, e eu não queria esses estilos, nem criar imagens com painéis diferentes . Então, é exatamente isso que as instruções do sistema explicam. E então podemos começar a trabalhar e basicamente vou pedir para criar sugestões para cada personagem do livro. Então, você pode descrever apenas os personagens principais, os adultos? Na verdade, poderíamos remover isso, pois era algo do início do Nano Banana, quando não era possível gerar imagens infantis na Europa, mas isso não é mais verdade. Então,
+
+você pode criar uma imagem do nada com crianças, mas não pode editar imagens com crianças. Essa é uma limitação atual na Europa. Mas enfim, aqui estão todos os prompts para cada personagem e então podemos passar para a criação das imagens para cada um deles. E o que vou fazer é criar outro gráfico apenas para as imagens, porque não quero misturar o texto com as imagens na saída, mas sim criar um gráfico que mostre todo o histórico das imagens anteriores. Então, estou configurando a imagem de responsabilidade, a proporção desejada, as instruções do sistema que definimos e o estilo e prioridade, como mencionei anteriormente.
+
+[bufa] Bem, vamos lá. Então, aqui está a toupeira. É bom. Aqui está o rato d'água. E agora que estou usando prioridade, está bem mais rápido, então funciona.
+
+Hum, eu poderia ter feito de uma maneira melhor, tipo, tornando todas as chamadas assíncronas. Isso não teria funcionado com o modo de bate-papo, mas teria sido uma maneira de torná-lo mais rápido. Hum, acho que está bom o suficiente. O sapo...
+
+Uau, muito maior que o carro por algum motivo. É o chatbot. Sim . E depois o Sr. Texugo. Sim
+
+. Então, ele é negro? Isto é principalmente uma demonstração do que você pode fazer. Toda vez que eu executo o programa, penso: "Ah, se eu fosse otimizar, existem várias maneiras melhores de fazer isso." Mas mesmo assim...
+
+E o texugo e depois a lontra estarão no final. Uma das coisas que estou fazendo no código, se eu subir um pouco, é salvar todas as imagens geradas a partir do personagem em um array, e explicarei mais tarde por que estou fazendo isso. E isso é mais uma vez, estou apenas acrescentando-os um após o outro. No mundo real, eu os salvaria de uma maneira melhor. Então, e lá está a lontra.
+
+Então, agora podemos passar para a próxima fase, que é basicamente ilustrar o livro. Então, da mesma forma que vou perguntar no chat para cada capítulo, me deem uma sugestão para ilustrar o que está acontecendo. Deveria ser uma única imagem, não uma imagem composta por vários mosaicos. Estou tentando forçar a descrição da personagem novamente, mesmo que eu vá usar as imagens como referência, simplesmente porque ainda é melhor assim. Então, vamos nessa .
+
+Isso deve ser bem rápido. Bem, é a mesma coisa que funciona no chat, ele mantém um histórico de todas as mensagens anteriores e envia esse histórico de volta para o modelo sempre que fazemos uma chamada, o que pode acontecer neste caso, já que ele está basicamente reenviando o histórico para o modelo o tempo todo. É por isso que pode ser bastante lento. Bem, na verdade, lançamos uma nova API há alguns meses, chamada API de interações. Hum, vamos executar isso enquanto eu falo. Bem,
+
+a principal diferença entre a nova API e as antigas é que as novas APIs serão com estado e sem estado. E o que muda é que, a cada chamada realizada, você recebe um ID de interação. E você pode reutilizar esse ID de interação em chamadas futuras, e ele recuperará todo o contexto diretamente do servidor. Então, você não precisa reenviar o mesmo contexto repetidamente a cada etapa da conversa. E também está tornando mais fácil, hum, uh, desviar a discussão.
+
+Por exemplo, digamos que você queira criar uma música com imagens e uma capa, você pode criar a letra com um modelo e depois... você... você... você divide o processo e,
+
+em uma ponta, cria as imagens e, na outra, cria a música. Você tinha uma pergunta. Hum, quanto tempo dura a sessão? Huh? Qual a duração da sessão?
+
+Hum, essa é uma boa pergunta. Acho que são dois dias, algo assim. Bem, ainda está em fase de pré-visualização, então , mas há boas chances de que na IO a tornemos a API padrão. Hum, mas é, eu não uso o suficiente para saber. Uma das coisas legais que ele faz é que, como ele sabe que é um contexto que você vai reutilizar, ele o armazena em cache automaticamente.
+
+Assim, fica mais barato de operar. Mas, embora a API normal também faça o mesmo, então , temos o nosso capítulo. Então, o primeiro capítulo se passa perto do rio. Então, eles, a toupeira, o e o e o personagem cujo nome ele esqueceu, estão juntos. Então, ele pega a estrada com o sapo.
+
+E depois na floresta, na neve. Au au. Apavorante.
+
+Então, veja, e basicamente o que eu fiz foi usar o fato de estarmos usando o histórico para confiar no modelo e garantir que ele tivesse todas as imagens anteriores do personagem, para que se lembrasse de sua aparência e de como criar novas imagens dele. Mas, na verdade, existem maneiras melhores de fazer isso. Então, tentei outra abordagem, que basicamente consiste em criar uma nova saída estruturada contendo o nome do capítulo, o enunciado e também a lista dos personagens que aparecem nesse capítulo. E era exatamente isso que eu fazia quando queria fazer em grande escala, com mais do que alguns personagens. Basicamente, vou pedir à modelo que me dê sugestões para cada capítulo, mas também que me forneça a lista de personagens.
+
+Só vou dar a lista como referência para as imagens certas de cada capítulo. Então, basicamente, vou receber a mesma coisa aqui. Sim. Então, na primeira imagem, eu deveria ter a toupeira e o rato d'água na terceira, na segunda, o Sr. Sapo, a toupeira, o rato d'água, o cavalo cinza e na terceira, a toupeira e o rato d'água novamente. Então,
+
+eu criei um script bem tosco que basicamente pesquisava as imagens dos personagens que tínhamos salvo anteriormente, para que eu pudesse fornecer a lista de personagens e, em seguida, a lista de imagens para passar para o modelo. Hum, eu executei? Sim. E basicamente vou fazer a mesma coisa e gerar imagens para cada capítulo, mas desta vez em vez de usar o modo de bate-papo, vou usar a opção "Gerar conteúdo". Então, como você sabe, vou passar as imagens dos personagens que estão especificamente neste capítulo.
+
+Assim, isso deve fornecer um contexto um pouco melhor ao modelo sobre o que exibir e como exibi- los. Vamos ver se funciona melhor. Acho que, como
+
+eu disse, se eu quisesse fazer isso em grande escala, faria muitas melhorias, e uma delas seria gerar mais de uma imagem por personagem. Acho que eu teria tirado uma foto de retrato, depois uma de corpo inteiro e, talvez, uma de perfil e outra de costas, e pedido à modelo que me dissesse exatamente como as fotos seriam exibidas, para que eu pudesse fornecer a referência exata que precisamos para a próxima geração. Então, aqui estão elas.
+
+Hum, e duas partes mais ou menos iguais, para ser honesto, mas, exceto que desta vez, não sei porquê, parece estar atacando todas elas por algum motivo. [risos] Acho que não é disso que a história trata. É melhor você... você pode... você
+
+talvez saiba melhor do que eu. [risos] Hum, podemos verificar o prompt. O que o enunciado diz? Blá blá blá. Não, não diz nada sobre atacar o...
+
+Não, está sendo resgatado. [bufa] [risos] É. Sim, é basicamente assim que você pode usar o modelo. Para aqueles que vieram, o conteúdo que estou mostrando, vocês podem acessar por lá. E é uma colaboração que consiste em pegar um livro e criar imagens e vídeos para ilustrar o livro e os personagens. Então, nós
+
+criamos sugestões para cada personagem, geramos imagens para cada um deles , criamos uma nova sugestão para cada capítulo e, por fim, criamos imagens para os capítulos usando as referências que tínhamos das imagens. Se você não conseguir ver o que eu escrevi, acesse goo.gl/cookbook-illustration.
+
+Então, e agora vamos tentar passar para a próxima fase com os vídeos . Então, vamos usar o VO para gerar vídeos dessas imagens. Então, vou trocar para o modelo maior porque posso pagar por ele. Você pode pular direto para a opção de hospedagem mais barata se não quiser gastar muito. Basicamente, vou fazer exatamente isso: pegar o último capítulo, pegar a última imagem e enviar o mesmo comando e a imagem de referência.
+
+Então, é isso que eu faço aqui. Então, quando eu passo uma imagem para o VEO, basicamente ele vai usá-la como o primeiro quadro do vídeo. E, curiosamente, grande parte do treinamento de todos os modelos de geração de vídeo é, na verdade, geração de imagens, porque acredito que a parte mais importante da geração de um vídeo é gerar o primeiro quadro, para que o modelo saiba por onde começar e o que fazer com ele. Então, qual é o melhor modelo de vídeo? É aquele que não tem luz ou é rápido.
+
+Então, então, "rápido" é apenas a versão mais rápida. Sim, é ainda mais caro, mas mais rápido. Sim . Então, o VEO 3.1 é o modelo principal do VEO, e os outros são basicamente versões menores dele, que funcionam um pouco mais rápido e realizam menos ciclos de geração.
+
+Sim, eu disse que ia repetir as perguntas, mas esqueci de mencionar que uma das perguntas era qual dos três modelos era o mais rápido e o melhor . Bem, acho que a porta acaba de se abrir. Hum, ainda é muito cedo. Então, [bufa] lá em cima, podemos ver onde isso vai dar.
+
+Ah, obrigada, rato d'água. Pensei: " Ei, salvou!" E então, sons foram ouvidos. Não sei se podemos ter mais sons para que possamos ver o que...
+
+Rápido, me dê sua mão. Precisamos sair deste lugar horrível. Obrigado, Rato d'Água. Pensei que estava perdido . Não é tão ruim assim, exceto pelo fato de que o personagem errado está falando. Esse é o
+
+problema de usar basicamente o mesmo prompt ao criar os vídeos, o áudio e a imagem, porque ele não inclui o conteúdo adicional sobre o que exatamente deve acontecer depois. Então, por isso adicionei outro exemplo que funciona basicamente da mesma forma, exceto que vamos adicionar mais uma etapa, que consiste em pedir ao Gemini para criar um novo prompt apenas para o vídeo e explicar o que acontece em seguida. Então, foi isso que eu fiz. Vou animar esta imagem do capítulo e você pode criar um breve resumo sobre o que acontece nos próximos segundos após a imagem inicial? E estou passando a imagem, a última imagem, para que ela saiba exatamente por onde começar.
+
+E enquanto isso acontece, já que temos novas pessoas participando, se você quiser acompanhar pelo seu laptop, esse é o link para abrir a colaboração que estou mostrando. Então, google.gle/cookbook-illustration. E o que estamos fazendo no momento é ilustrar o livro chamado "Os Salgueiros", algo assim. Hum, e ah, e criando imagens e depois nossos vídeos para ilustrar o que está acontecendo no livro.
+
+Então, surgiu a ideia de um desenho em estilo de blocos de construção coloridos: um rato d'água com um rosto redondo e marrom e uma camisa azul abaixa suas pistolas prateadas e dá um tapinha reconfortante no ombro da toupeira . A toupeira em seu smoking de veludo preto exala uma nuvem de vapores plásticos brancos com alívio, enquanto seu focinho rosado se contrai. Eles se viram e começam a andar juntos, blá blá blá blá blá. O que é interessante na proposta é que ela me parece ter o estilo do livro. Então, o enunciado está escrito num estilo semelhante ao da fala antiga.
+
+E podemos ver que se percebeu que, hum, não está atacando a toupeira, apenas a está protegendo, e assim por diante. E, bem, o que podemos ver a partir daí é que, como eu disse no início, havia uma instrução do sistema dizendo que, sempre que descrevesse personagens, deveria tentar descrever sua aparência e tudo mais. Então, isso adicionou todos os endereços o tempo todo, o que também ajuda na consistência dos caracteres. Vamos ver se este é melhor.
+
+Acho que é melhor, exceto pelo fato de que não há discussão.
+
+Então, você pode experimentar por si mesmo. Como eu disse antes, tenha cuidado , a geração de vídeo pode ser cara, então não tente cem vezes até conseguir. Pode ser que... é
+
+algo assim. Então, temos esse novo modelo Lyria que enviamos há duas semanas, que é o nosso novo modelo para a geração de música . Basicamente, como eu disse, é apenas um modelo ao qual você pode dar um comando e ele criará uma música. E você tem dois modelos diferentes. Você tem o modelo de clipe que cria músicas de 30 segundos , tipo, acho que são quatro centavos por música. E você tem o
+
+modelo de música completa que cria músicas de até 3 minutos , e custa o dobro, ou seja, 8 centavos por música. Para fins de demonstração, estou usando o modelo de clipe, que é o mais rápido. Então, vamos usar exatamente o mesmo truque de antes. Então, vamos pedir para a Gemini criar os prompts para a geração da música. Então, estou pedindo para criar músicas instrumentais para cada capítulo.
+
+E para criá-las, para criá-las para Lyra. Mantenha a consistência entre os capítulos, mas ao mesmo tempo destaque o que é específico em cada um, para que não seja como se a mesma música fosse repetida três ou quatro vezes. Quero versões diferentes para cada música. Aliás, algo que esqueci de mencionar é que, como vocês podem imaginar, temos vários modelos e várias equipes dentro da DeepMind, mas na verdade todas trabalham juntas, e grande parte dos dados de treinamento para os modelos da Gen Media está sendo criada com a ajuda do Gemini. Basicamente, todos os nossos modelos da Gen Media são treinados com instruções escritas pela Gemini. Então, é por isso que
+
+Gemini é muito bom em criar os prompts para os modelos da Gen Media, porque eles foram treinados para ouvi-lo muito bem, e é por isso que esse tipo de truque de ter Gemini escrevendo os prompts para você funciona muito bem. E, de qualquer forma, no fundo, sempre há uma pequena reescrita do seu texto que é feita pelos modelos da Gen Media antes mesmo de ele começar a ser gerado, simplesmente porque, caso contrário, quando as pessoas enviam frases curtas, os modelos não conseguiriam fazer nada interessante com elas . E, geralmente, quanto mais longa for a sua pergunta, mais interessante ela será e maior a probabilidade de estar relacionada ao que você está pedindo. Então, acho que falei bastante porque a geração de música acontece muito rapidamente. Assim, podemos ver as diferentes músicas.
+
+[música] Acho que isso combina com um estilo bucólico, com a primavera representando a primavera e as águas que fluem. [música] E veja a seguir, a estrada aberta. Sim, dá uma sensação de aventura.
+
+E depois a floresta escura, vejamos. [música]
+
+[música]
+
+Bem, e você pode ver, você pode ver o prompt aqui, como se viesse com quais instrumentos usar e como usá-los. O que é interessante no modelo Lyria é que, na verdade, tudo é gerenciado no prompt. Você não tem isso. Você não tem parâmetros como os que temos no momento. Então, se você quiser que a música tenha uma determinada duração, basta pedir isso no prompt. Se você quiser que a música use
+
+uma escala específica, pode especificar isso no prompt. Se você quiser um BPM específico, basta especificar isso no prompt, e o modelo é muito bom em entender tudo o que você pede no prompt. E você pode perguntar, tipo, não faz muito sentido para músicas de 30 segundos, mas se você estivesse criando uma música mais longa, você poderia dizer durante os primeiros 30 segundos: "É isso que eu quero que a música seja", e então você muda para outra coisa depois, ou você pode dizer: "Esta é a introdução, esta é a conclusão, esta é a parte que sempre esqueço como dizer isso em inglês, mas esta parte aparece várias vezes na música para que ela saiba exatamente como fazer o refrão." Este programa sabe que esta parte precisa ser repetida e que precisa ser a mesma coisa e o mesmo modelo. E se você quiser a letra, pode fornecer a letra, ou hum, ou ah, ou simplesmente deixar que ela seja criada automaticamente. Então,
+
+digamos que vamos mudar isso. Vamos criar músicas com base no capítulo e adicionar letras para descrever o que está acontecendo no capítulo. Acima. Vamos ver como será com as letras desta vez. Como eu disse, a geração de música é bastante rápida, especialmente o modelo de 30 segundos, que leva apenas alguns segundos para gerar as coisas. A
+
+parte mais demorada aqui é, na verdade, enviar o livro novamente para o modelo e pedir sugestões.
+
+Sim, acho que
+
+não funcionou. Acho que não [cantando] Mole jogou sua escova no chão e correu [música] para [cantando] o sol, para longe da limpeza e do trabalho a ser feito. [música e canto] E vejam só esta. Sapo [música] em sua caravana [cantando] de amarelo e vermelho sonhava [música] com as estradas altas e empoeiradas [cantando] à frente. E como vocês podem ver, o tema da música é praticamente o mesmo. Esse é o
+
+preço que pagamos por usar o modo de bate-papo, porque ele se lembra da mensagem anterior. Então, mesmo que peçamos novas mensagens, ele ainda se lembra do que foi feito antes. Acho que isso meio que o ancora a usar o mesmo tipo de mensagem e descrever a cena da mesma maneira. Mas ainda assim é muito divertido trabalhar com as letras e, como você pode ver no enunciado, é basicamente como adicionar a letra no enunciado e o modelo entende que esta é a letra que eu preciso tocar e adicionar à música. E você também pode dizer que esta parte específica é dita exatamente neste momento da música, enquanto esta outra parte é dita em outro momento. Se
+
+você verificar a saída do modelo Lyria, terá todas as letras com os respectivos tempos, podendo criar um aplicativo de karaokê ou algo semelhante usando as informações obtidas pelo modelo. Vamos tentar a terceira. Na mata fechada, onde as sombras são profundas e rostos malignos espreitam através das árvores ocas . Toupeira está apavorada e perdida na neve até que Rato chega com suas pistolas em punho. Nós poderíamos fazer algo musical com isso.
+
+Então, isso é para geração de música. E então, nós também temos modelos de geração de texto. E vou mostrar- vos algo muito divertido. Imagino que todos vocês já conheçam o modelo de conversão de texto em fala, porque todo mundo adorou a integração do Notebook com o Learning Machine, que permite criar podcasts. E, na verdade, é ótimo poder selecionar duas vozes diferentes, assim você tem dois personagens conversando entre si. Mas vou
+
+mostrar um truque com o qual você pode criar algo que basicamente permite adicionar mais de dois personagens ao criar diálogos com o modelo TTS. Então, é isso que vou fazer. Bem, vou pedir ao modelo para extrair um diálogo específico do livro, simplesmente porque não queria copiar e colar . Então, eu disse que começa com orelhas pequenas e delicadas e um cabelo grosso e sedoso, e termina com as orelhas em pé. Bem , eu pedi para escreverem como uma peça de teatro, então é basicamente uma transcrição do que cada personagem deveria estar dizendo.
+
+E o truque é que estou pedindo para criar um estilo específico de fala para cada personagem, mesmo que vá usar a mesma voz. E para transcrever dessa forma. Então, quando for um narrador, vou usar uma voz específica. E quando se tratar de todos os outros personagens, será a mesma voz para todos eles. Então, o narrador diz algo, depois o personagem diz algo e então escreve-se o estilo entre parênteses, e é isso que vai indicar ao modelo como falar. E isso
+
+é algo que você também pode usar para dizer: "Ah, ele está dizendo essa parte quase sussurrando. E essa parte tem muita emoção." E você pode brincar com a maneira como o personagem fala. Mas eu vou usar isso para pedir ao modelo que crie maneiras muito diferentes de falar, partindo da mesma voz, quando cada personagem estiver falando, e isso cria a sensação de vozes realmente diferentes para cada um deles. Então, vou passar isso para o modelo TTS e pedir para ele ler, basicamente.
+
+Um dos truques, e como eu consegui, foi perder uns 15 minutos ontem à noite por causa disso, então você não pode simplesmente deixar o texto para ler. Você sempre tem que começar com "leia este texto" ou algo parecido. Caso contrário, por algum motivo, não sabe que precisa ler o texto que lhe está sendo fornecido. E isso é muito complexo. Acho que não existe uma maneira simples de configurar isso, mas basicamente o que eu digo é que o narrador usa a voz de Sulafat e o personagem usa a voz de Fenrir.
+
+E tudo isso é texto. Então, o narrador fala e o primeiro personagem fala, e isso terá longas pausas poéticas, enquanto o segundo é ofegante e sem fôlego . E você pode ver que conseguimos adivinhar qual personagem é qual porque é a mesma maneira de falar que é reutilizada em cada uma dessas falas. E ainda está funcionando. O problema com o modelo TTS é que, embora seja um modelo muito bom, não é muito rápido .
+
+O motivo disso são as orelhas e o cabelo grosso e sedoso. Era o rato d'água. Então os dois animais ficaram de pé e se observaram com cautela. Olá, Toupeira. Olá, Rato.
+
+Você gostaria de vir aqui? Ah, falar é muito fácil. O rato não disse nada, mas abaixou-se, desamarrou uma corda e segurou-se nela. Então, com cuidado, entrou num pequeno barco, que o Mole não tinha notado. O Rato deslizou os remos com agilidade e ganhou velocidade.
+
+Então ele ergueu a pata dianteira enquanto a Toupeira descia com cuidado. Apoie-se nisso. Então, vamos lá, andem com energia. Para surpresa e êxtase, a Toupeira se viu sentada na popa de um barco de verdade. Este foi um dia maravilhoso. Você
+
+sabia que eu nunca, nunca mesmo, estive em um barco em toda a minha vida? O que? Nunca estive num... Você nunca... Bem, eu...
+
+O que você andou fazendo então? Não é [risos] tão bom assim? Você ainda pode duvidar disso, assim como você, você pode ver, você não conseguiria adivinhar que estamos usando a mesma voz para os dois personagens, sendo que eles claramente foram direcionados para caminhos diferentes, e você pode usar esse truque para criar vários personagens, várias vozes para esses personagens e fazer com que pareça perfeito para os usuários. Como eu disse antes, isto é apenas uma demonstração de como fazer. Se você quiser, se você for fazer isso em grande escala, é exatamente isso que eu não faria, não criaria esse tipo de truque. Eu criaria
+
+uma transcrição completa com os nomes reais e manteria ao lado um texto explicativo para cada personagem. Talvez, às vezes, você não queira falar com eles exatamente da mesma maneira, porque às vezes eles precisam parecer animados, mesmo que falem devagar, e assim por diante. Mas isso é só para mostrar o quão bom o modelo de TTS é em criar vozes diferentes. E mesmo que eu tenha pedido para forçar um sotaque, não funcionou, mas você também pode brincar com isso, tipo, este personagem tem sotaque irlandês, este é inglês, este fala com sotaque alemão ou o que for, e essa é uma maneira muito fácil de criar sensações diferentes sobre o personagem usando a mesma voz. Bem, estamos quase na hora das perguntas, mas só para finalizar, usamos uma janela de contexto muito grande do modelo para alimentá-lo com um livro inteiro e, às vezes, várias vezes com o mesmo livro, porque estamos sempre enviando conteúdo. Mas, como é
+
+um modelo multimodal, ele funciona com todos os tipos de texto, então você pode alimentá-lo com um audiolivro, por exemplo. Você também pode usar vídeos como entrada. Você pode brincar com pontos e não apenas ficar limitado ao texto para ilustrar as coisas. Então, este é mais um exemplo com outro livro, que é As Aventuras de Chatterer, o Esquilo Vermelho. E basicamente faremos a mesma coisa. Vou executar
+
+tudo ao mesmo tempo. E desta vez, basicamente, pedi para usar um estilo futurista de ficção científica, uma utopia saturada de luzes de néon. Portanto, não será o tipo de esquilo que você está esperando. Não. Hum, sim . E enquanto isso acontece, acho que... opa, eu
+
+disse que ia mostrar para vocês... Então, nós também temos, como vocês já devem saber, o AI Studio, mas no AI Studio temos uma galeria com vários exemplos de aplicativos que estamos criando. E eu queria mostrar para vocês que vai estar na Gen Media.
+
+[bufa] Ah, como eu te disse, temos o modelo Lyria que cria músicas, canções, mas também temos... não, não este. Vamos, vamos com o...
+
+Up. Este é melhor. Também temos o modelo Lyria em tempo real que mencionei, e basicamente você está pedindo para ele criar músicas que sejam pós-punk e neo-soul ao mesmo tempo. Mas você pode dizer [na música]: "Ok, eu quero mais K-pop." E um pouco mais de bateria [musical].
+
+E eu não sei o que é pós-punk, então não quero isso.
+
+Veja, você pode ouvir a música mudando. E vamos optar por algo mais tranquilo. [música]
+
+Então, eu acho [música] como eu disse, esse é o meu modelo favorito porque eu acho que é subutilizado e eu gosto, há muitas coisas que eu [música] posso imaginar fazendo, como eu disse, eu venho da indústria de videogames. Então, uma das coisas que eu teria tentado [música] é se você pode criar música em tempo real para o jogador, dependendo de onde ele está, em qual região [música] ele está, se ele está na floresta, pulando, cozinhando, lutando, quanto HP [música] ele tem e assim por diante, então a música poderia mudar na vida real, em tempo real. E isso é [música], uh, sim. Esse é o tipo de coisa que você pode tentar. E por algum motivo o link não está lá, mas há outro exemplo muito interessante que nossos colegas que estão trabalhando neste modelo criaram. Basicamente,
+
+você está no espaço e cada planeta é um ponto de partida. E você pode se mover entre os planetas e, dependendo de qual planeta estiver próximo , a música muda. Então, você pode simplesmente se mover pelos planetas e às vezes coisas estranhas acontecem porque, tipo, músicas de Natal estão bem ao lado de metal viking. Então, a mistura pode ser bem engraçada. Bem , é isso para a apresentação.
+
+Agora tenho algum tempo para perguntas.
+
+[aplausos] Sim, e para aqueles que chegaram tarde demais, vocês podem conferir o conteúdo depois. Como eu disse, temos este guia prático, que é basicamente um repositório no GitHub, onde adicionamos dicas rápidas sobre como usar os modelos, alguns truques e também exemplos de coisas mais complexas que você pode construir ao combinar diferentes recursos e modelos. Tenho uma pergunta. Não sei se você pode responder a isso, mas sim, acho que para as perguntas precisamos de um microfone para que eu não precise repeti- las.
+
+Um, dois, um, dois, um, dois, um, dois, um, dois. Então, muito obrigado, antes de mais nada, por esta ótima demonstração. Foi muito divertido acompanhar. Tenho uma pergunta. Na nossa empresa, oferecemos a todos os funcionários alguns modelos e acho que ainda estamos no Nano Banana, porque só podemos oferecer modelos hospedados na Europa e, basicamente, todos os novos modelos ainda estão em pré-visualização. Então, não temos
+
+acesso a... Você sabe se isso vai mudar? Então, [bufa] a resposta curta é não.
+
+OK. Ah, mas eu já esperava essa pergunta porque eu realmente gosto... é um problema para todos na Europa.
+
+Como eu disse, meu trabalho é trazer o feedback dos desenvolvedores e tentar fazer as coisas mudarem. Então, essa é uma das lutas que estou travando no momento, para que tenhamos algumas maneiras de oferecer uma saída melhor ou um modelo melhor para as pessoas na Europa, porque na Europa nos preocupamos com a privacidade e a soberania dos dados e tudo mais. Então, eu sei que é um problema. Bem, o cerne do problema, de certa forma, é a regra do Google Cloud de que todos os modelos de pré-visualização estão disponíveis apenas em endpoints globais. Então, é improvável que isso mude, mas o que vamos tentar mudar é lançar o modelo em acessibilidade global mais rapidamente.
+
+O problema que tivemos com o Nano Banana 2, o Pro e também com o Gemini 3 é que lançamos modelos muito rapidamente, um após o outro. Então, em vez de lançar o Gemini 3 para o público geral, lançamos o Gemini 3.1, o que meio que reiniciou o contador de pré-visualizações. Então, com isso em mente, precisamos fazer algo a respeito. Mas sim, eu sei, eu te entendo. É
+
+meio que a minha coisa P0 que eu quero mudar. Obrigado.
+
+E você já executou o notebook ao mesmo tempo? Sim. Qual era o seu estilo? Nossa! [risos] Será que outra pessoa também fez isso ao mesmo tempo, mas com um estilo diferente, ou talvez com um livro diferente?
+
+Não, eu não fiz isso para Frankenstein. Oh. E escolha entre ler ou jogar. Claro. Então, eu li o livro do Frankenstein e escolhi um estilo de jogo retrô, e foi bem interessante. Então, hum, sim
+
+. Então a personagem tinha uma aparência muito semelhante à de um videogame.
+
+Oh sim. E, bem , a principal dificuldade com livros como Frankenstein é que, às vezes, o modelo não estará disposto a lidar com coisas que provavelmente seriam muito gráficas e que poderiam acontecer no livro. Então, pode ser um pouco atenuado ou, pior, pode não aceitar mostrar a imagem. Sim . Por isso, optei por livros infantis como exemplo. Isso é mais fácil.
+
+Exceto quando eu não conseguia fazer imagens de crianças, o que também era outro fator limitante. Sabe, eu posso te mostrar a ordem, mas não sei o que a página seguinte vai mostrar. Posso mostrar outras demos interessantes que temos prontas para a Gen Media. Enquanto isso, se vocês tiverem alguma dúvida, é só levantar a mão e nós podemos responder. Uh, para cima.
+
+Se voltarmos aqui, veja bem, tanto faz . Ah, essa é a versão futurista em estilo neon do esquilo Chatter.
+
+Hum,
+
+posso te mostrar um pouco mais sobre Liyue, porque é uma cidade nova. E, provavelmente, você já sabe tudo sobre a Nano Banana. Um Up. Então, como eu disse antes, quando você trabalha com Lyria, você sempre obtém duas saídas. Bem, se você configurar as modalidades para áudio e texto, obterá duas saídas, sendo a primeira a letra e a segunda a música. Hum, e esse é, na verdade,
+
+um dos poucos modelos em que é muito interessante usar streaming. Portanto, ao gerar conteúdo aqui, você pode usar a opção "gerar conteúdo" dentro do fluxo de sublinhado. O que acontece é que você recebe a primeira parte primeiro e, em seguida, a segunda parte. Então, primeiro você recebe a letra, e se quiser fazer algo de acordo com ela, como criar uma imagem ou dar um título à música, você pode fazer isso enquanto a música ainda está sendo gerada, sem precisar esperar o resultado final estar pronto. Então, você recebe a letra e recebe a marcação do tempo. Então,
+
+essa frase será dita no início e, depois de 4,8 segundos, será dita outra coisa, e assim por diante. Então, você ainda pode ouvir [canto] e [música] fria aqui em cima . Os cumes das montanhas são nítidos [cantantes] e claros. E então, um suave traço de ouro. Então, sim. E então você pode fazer isso e
+
+pode fornecer a mesma coisa. E aqui, como você pode ver, talvez o último esteja indicando quando começa e quando termina, porque precisa de cerca de 1,2 segundos sem nada dito no final. Um para cima. Você também pode criar imagens a partir de músicas ou imagens. Então, essa é uma das coisas que eu esqueci de fazer na demonstração de hoje.
+
+Eu também deveria ter fornecido as imagens do capítulo, para que pudessem ser usadas como referência para criar a imagem maluca. Então eu uso essa imagem, tipo uma lista de compras para fazer um pot-au-feu, e aí aparece uma música sobre fazer um pot-au-feu.
+
+Qual era a pergunta mesmo? [música] Uma canção épica com vozes de ópera sobre essa jornada. Veja, está se tornando uma tendência.
+
+[música] [canto]
+
+[música]
+
+[canto]
+
+[música e canto]
+
+E também é ótimo poder usar várias vozes. Vou adiantar um pouco as coisas.
+
+[música]
+
+[música] [cantando] A escolha que eu gosto. [música]
+
+Então, mas antes eu falei sobre a API de interações, mas existem novas maneiras de usar a API, então esse é um exemplo de como usá-las. Basicamente, era igual à API atual. Então você fornece um modelo, fornece uma entrada e obtém modalidades de resposta. Sim, mas o Philip, que trabalhou nisso, não está presente, então não posso dizer nada. Eu não teria renomeado " uh content" para "input" porque isso vai confundir todo mundo, mas é assim que é.
+
+Hum, e então você obtém a saída e, bem, é... e se pudermos verificar a saída, acho que não. É , nós não vemos isso por aqui.
+
+Mas existe uma alternativa, e funciona basicamente da mesma forma, só que você obtém esse ID de interação que pode usar para encadear ações. Hum, e então, é isso , é aquele com imagens e instruções. Uma coisa que você também pode fazer é usar a parte do BPM, então você pode querer uma música que seja muito rápida ou muito lenta, e é isso que te dá essa opção. E eu até disse para usar uma ilusão de aceleração [musical] reiniciada, para dar a ilusão de que a música está ficando cada vez mais rápida. Então, se você quiser música para quando fizer sua rotina esportiva, é assim que se faz .
+
+E como eu disse, você pode definir um tempo específico, então os primeiros 10 segundos serão de violão acústico rápido, depois passa para o piano por 20 segundos, por mais 10 segundos, e então a banda completa entra em seguida. Então,
+
+na verdade, [a música] não segue isso.
+
+Ok, esqueci o que acabei de mostrar. Por algum motivo. Mas a maneira mais fácil é assim. Você pode usar...
+
+você pode dar a estrutura, então é assim que eu quero minha introdução, é assim que eu quero meu verso, é assim que eu quero minha conclusão. E essa música tem apenas 30 segundos, então não é lá essas coisas. Você não terá o refrão, mas também pode adicionar o refrão e a ponte e assim por diante, então...
+
+A escuridão [música e canto] rompe as sombras. Sobre o que é isso? Ah, sim, a configuração da música. Ouça o
+
+chamado triunfante da aurora [cantante], uma luz dourada, uma visão gloriosa, perseguindo a noite [música e canto] com o poder do céu. Nossos corações ressoam. Sim, acho que preciso compor uma música um pouco mais longa para este exemplo. Mas você também pode encadear tudo isso em...
+
+tudo junto. Então, esta é uma música completa onde, desde os primeiros 2 segundos, tenho uma introdução. Não consigo dizer exatamente qual escala usar, nem qual será a intensidade, e então passa para outro verso, e assim por diante. E é assim que você consegue fazer [música] algo muito complexo. Então, começa muito, muito devagar, e então, se nos movermos conforme a bateria e o baixo começam [a música] e assim por diante, então devemos estar nesta parte. Continua sendo um ambiente descontraído
+
+. E começando a ser... Sim, para adicionar grooves [música] e assim por diante, então se você quiser criar coisas complexas, é melhor usar um modelo de música completa porque o modelo curto usa atalhos [musicais] para construir algo interessante em 30 segundos.
+
+E como eu já mostrei, você pode fornecer a letra, então é como criar uma música sobre nano bananas. Casca amarela, um docinho minúsculo, [música] a nano banana, uma delícia tropical. Mas espere, ele emite um zumbido, começa a criar, entrando no modo de IA. Bem, e o que também é engraçado é que você pode usá-lo para criar coisas que basicamente não são músicas. Então, você pode pedir para criar uma música, mas com uma música bem calma de fundo, apenas com alguém lendo um texto ou algo do tipo. Então, neste caso,
+
+estou usando as capacidades de raciocínio do modelo, que é o seu conhecimento sobre o que Shakespeare está fazendo, para criar um texto que seja basicamente algo parecido com o que Shakespeare escreveu. [cantando]
+
+[música e cantando]
+
+[música]
+
+[música]
+
+[música] E eu não disse exatamente para ler, então é por isso que ainda tem música, mas você pode realmente direcionar para não ter música de fundo nenhuma e eu só estou dizendo coisas. E funciona também em diferentes idiomas, então você pode simplesmente pedir para criar músicas em todos os idiomas que você quiser. Às vezes, há algumas palavras que não são pronunciadas corretamente. Ainda está melhorando. Mas aí, e nessa eu tentei pedir para o Rabbit usar dois idiomas diferentes na mesma música e, como é igual aos modelos de TTS e ao vivo que temos, é muito bom em alternar o idioma no meio da transmissão.
+
+E mais uma vez, estou usando o conhecimento do modelo porque é basicamente [música] tentando explicar como o algoritmo de ordenação por bolha funciona na música. Hum, e instrumentos, eu te disse que você viu . Então, sim, há muitas coisas muito legais para construir com o modelo Lyria, então experimente. É muito fácil de usar, pois tudo está no prompt. Então, sim.
+
+Você tem mais alguma pergunta? Não? O que você quer que a página mostre depois? Ela tem mais 7 minutos para preparar algo novo em sua apresentação. Então, e só para esclarecer, não sei se isso já foi comunicado a todos vocês, mas há alguns problemas elétricos no prédio.
+
+Então, vocês são os poucos sortudos e valentes que conseguiram chegar aqui hoje de manhã, já que a maioria dos participantes não teve permissão para entrar no prédio. Então, faremos a sessão que começa às 10h40, mas também reuniremos à tarde todos que apresentariam pela manhã para fazer uma espécie de tour relâmpago por todas as ferramentas do Google DeepMind durante o workshop da tarde. Portanto, se preferir voltar para o workshop da tarde, poderá fazê-lo. Será às 13h.
+
+Então, esse era o exemplo de que eu estava falando. Eu simplesmente não sei onde encontrar músicas de Natal, mas... Como você pode tentar isso e comprar um telefone?
+
+Basta pesquisar por space DJ [música] e estará disponível online.
+
+Você pode mover as músicas para um nível mais alto?
+
+Ela quer que isso seja agradável. Então, o modelo não foi projetado para reproduzir vozes, mas pode fazer algum tipo de vocalização desse tipo. Uh
+
+[música] [cantando] Isto não é um robô. usando a mesma voz e mudando o estilo da música ali. E você tem um piloto automático, então ele simplesmente se move por aí e isso cria música [cantando] até você pará-lo. [música]
+
+Sim, acho que é tudo rock. Som de Nashville. [música]
+
+[música] É , não está se movendo rápido o suficiente. Vamos mexer nisso. Vamos acelerar um pouco o processo. [música] Dublagem australiana.
+
+[tosse] Abaixe um pouco o volume. [música] Dublagem australiana, eu acho. Ninguém aqui entende dublagem australiana? [limpa a garganta] Hum [música] sim, esse é um modelo muito legal e a única coisa é que a [limpa a garganta] sessão termina depois de 10 minutos, então você não sente vontade de executá-lo naquele momento, [música] mas eu acho que deve ser bom.
+
+Vamos ver. É só usar um botão [canto e música] para acelerar o processo. [Gritando]
+
+Então, vou parar por aqui. Mas sim, experimente. É um modelo muito legal para brincar. Ok . Então, é isso, acho que é tudo. Continuarei à
+
+disposição caso vocês tenham outras perguntas ou assuntos que queiram discutir, mas que não queiram abordar diante das câmeras. Então, sim. [aplausos e vivas] Obrigado.
+
+[música]

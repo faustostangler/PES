@@ -1,0 +1,116 @@
+---
+video_title: "Recursive Coding Agents - Raymond Weitekamp, OpenProse"
+video_id: 3hXJI2q0Jz8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3hXJI2q0Jz8
+video_date: 2026-06-25T21:00:06+00:00
+video_description: |
+  Recursive Language Models (RLMs) represent a powerful new paradigm of inference-time compute. We discuss many different ways to apply the principles of RLMs to coding agents, towards higher performance and reliability. We briefly define RLMs, showcase many of their performance advantages, then share how the RLM paradigm can be mapped onto coding agents. We strive to settle the long-standing debate, "Isn't Claude Code with sub-agents a RLM?" Finally, we showcase how both Claude Code Dynamic Workflows and OpenProse can specifically guide coding agents to recursively solve complex tasks with declarable outcomes.
+  
+  The "slides" for this presentation are available as an interactive website at https://recursivecodingagents.com and a companion repo with specific code examples is available at https://github.com/rawwerks/recursive-coding-agents
+  
+  Speakers:
+  - Raymond Weitekamp (OpenProse): Dr. Raymond Weitekamp is a PhD chemist, serial entrepreneur, artist, independent researcher, and AI Engineer at OpenProse.
+    X/Twitter: https://x.com/raw_works
+    LinkedIn: https://www.linkedin.com/in/raymondweitekamp/
+    GitHub: https://github.com/rawwerks
+---
+Olá. Meu nome é Raymond Whitcomb e hoje vou falar sobre agentes de codificação recursiva, que é a ideia de aplicar os princípios dos modelos de linguagem recursiva ( RLMs) a agentes de codificação. Este é um trabalho que desenvolvi tanto em minha pesquisa independente, " Raw Works", quanto, mais recentemente, em minha função na OpenProse. Então, para motivar um pouco isso, todos nós queremos resultados. Todos nós queremos agentes que trabalhem em nosso nome. Queremos
+
+colegas de trabalho confiáveis ​​que sejam produtivos enquanto nos divertimos, enquanto fazemos uma trilha, enquanto relaxamos no frio, enquanto estamos aprontando. E meu argumento, baseado na minha experiência, é que o gargalo para isso não é a inteligência. Os modelos são suficientemente inteligentes. Eles sabem todo tipo de coisa. Eles conhecem a internet inteira.
+
+Mas eles não conseguem apresentar resultados de forma confiável . Portanto, não posso confiar neles. Então, para dar um exemplo bem simples, um dia eu consegui criar um aplicativo SaaS quase totalmente funcional a partir de um único comando, embora um comando longo. No dia seguinte, e juro que isso realmente aconteceu, o Cloud Code esvaziou completamente o conteúdo da minha carteira Solana. Ops. OK. Portanto,
+
+isso não inspira confiança. Então, aqui embaixo temos essa progressão, ok? E todos nós queremos nos mover em direção àquele da direita, onde estamos simplesmente sentados meditando e as coisas começam a se manifestar. Então, de onde vem isso? Isso vem do código do engenheiro de IA. Na
+
+verdade, é da parte de trás da camiseta. Código de engenharia de IA, novembro de 2025. Cara, espero que você esteja lá. Se você ainda não viu, assista no YouTube. Foi incrível.
+
+Então, aqui está a tese. A tese é que os agentes de hoje são gênios mal administrados. A inteligência está lá, e a camada que falta é como especificar, gerenciar, reutilizar e verificar o trabalho. Então, essa expressão, " gênio mal administrado", vem de Alex Zeng, Z Li e Omar Khattab do MIT. Um, Alex e Omar são alguns dos autores do artigo original sobre modelos de linguagem recursivos.
+
+Hum, também falei um pouco sobre isso recentemente no Turning Post. Esqueci de mencionar que estes slides são, na verdade, um site, recursivecodingagents.com. Então, você pode clicar neles acessando este site. Então, tudo que vou mostrar aqui é interativo. OK. O que são
+
+modelos de linguagem recursivos? Assim, gosto de dizer que, em um RLM, o próprio contexto é o objeto de computação. E isto é essencialmente uma combinação de chamada de ferramentas e raciocínio. Vamos falar muito mais sobre isso no próximo slide. Mas a ideia é que o prompt completo não seja uma simples consulta do usuário.
+
+O prompt completo é uma variável. O comando completo pode ser um arquivo ou vários arquivos. E temos esse loop de leitura-avaliação-impressão , REPL, com o qual o agente está interagindo. No artigo original, trata-se de Python. E o RLM recebe a instrução de operar simbolicamente nesse comando. Portanto, não
+
+leia tudo diretamente na janela de contexto. Vamos explorá-lo simbolicamente. E mais ainda, você nem explora simbolicamente de forma direta, ou talvez dê uma pequena olhada, mas tenha outros LLMs, e suponho que outros RLMs, se você permitir que a profundidade da recursão seja maior que um. Temos esses outros agentes recursivos, e novamente vamos nos aprofundar um pouco na terminologia, como os subagentes RLM e LLM, que fazem essa manipulação simbólica para desvendar a resposta e, em seguida, chegar a uma resposta final. Então, fica mais ou menos assim nesta árvore abaixo.
+
+Portanto, minha opinião é que os RLMs são os novos modelos de raciocínio e vejo isso como o próximo paradigma de computação em tempo de teste, computação em tempo de inferência, ou como você preferir chamar. E por que parece óbvio, ou talvez tipo, ei, por que isso sequer existe? Acho que é muito elegante porque é uma combinação muito elegante de duas coisas: raciocínio e execução de código. Portanto, a execução do código é raciocínio. Então, em vez de "nós", tínhamos uma longa cadeia de pensamento como estratégia de estímulo, que evoluiu para modelos de raciocínio que expressavam explicitamente a cadeia de pensamento como os tokens de raciocínio. Já tínhamos chamadas de função,
+
+chamadas de ferramenta, chamadas de ferramenta paralelas, e o RLM realmente junta tudo isso de uma forma que gera resultados incríveis. Então, três exemplos muito simples, um do artigo original de U Long, os RLMs podem processar informações que são muitas ordens de magnitude maiores do que sua janela de contexto, dezenas de milhões de tokens. O que demonstrei em meu trabalho independente foi que o conjunto de ferramentas RLM padrão é, por si só, um sistema de memória realmente poderoso. Então, o RLM sem modificações é essencialmente um dos 10 melhores sistemas de memória, comparável a todos os sistemas de memória personalizados que são fabricados, e provavelmente bilhões de dólares são investidos nisso . E com algumas pequenas modificações, você pode obter resultados realmente incríveis usando-o como memória.
+
+Também consegui demonstrar resultados de última geração, nos quais a estrutura RLM, e especificamente a implementação DSPy dela, foi capaz de obter resultados de última geração em tarefas de raciocínio de longo prazo. Agora, existe esse novo padrão de referência, o Long CoT. Não vou entrar em detalhes a fundo, mas a ideia deste teste de referência era que os problemas são difíceis justamente porque exigem tantos passos de raciocínio, na sequência de análise ou na linha de pensamento, que a maioria dos modelos de raciocínio, incluindo os melhores, não consegue manter o fio da meada por tempo suficiente. Se você permitir que o RLM resolva o problema usando uma combinação de código e chamadas recursivas a subagentes, então um modelo muito pequeno, o Qwen 3.59B, que você poderia executar em um laptop, pode realmente superar o Opus e o GPT-5.4, todos os principais modelos de vanguarda
+
+como LLMs nessas tarefas de raciocínio longo. Portanto, eles são extremamente poderosos. Tão potentes que são, sem dúvida, demasiado potentes para serem comparadas com outros sistemas. Então, aqui estão dois exemplos: à esquerda, um caso de grande repercussão em que a equipe da Symbolica possui essa estrutura de agentes RLM chamada Agentica. Poucas horas após o lançamento do Arc AGI-3 , onde as melhores pontuações de todos os modelos de vanguarda giravam em torno de dois ou três por cento, a equipe da Symbolica apresentou algo em torno de 30 por cento.
+
+Isso é uma loucura. Eles superaram todas as expectativas em poucas horas, usando RLMs como estrutura. Tanto que isso deixou a equipe do Arc Prize bastante chateada. Então, eles enviaram o que interpreto como um tweet de consolo. Bem, pelo que entendi, a situação basicamente dizia algo como: " Parabéns, mas você não resolveu o problema da maneira correta." E nós
+
+não gostamos dos cintos de segurança da RLM. Então, você pode ter esse tweet bacana, mas nos recusamos a realizar a parte completa e privada da avaliação do ArcadeGI. Ah, o que para mim é simplesmente insano. Bem , no meu próprio trabalho e no benchmark COT de longo prazo , meus resultados, assim como os de Alex, do MIT, o primeiro autor do RLM, encorajaram os mantenedores do ranking a criar um ranking separado para o OpenHardware. Bem, para que os resultados dos RLMs pudessem ser exibidos sem contaminar a intenção original da tabela de classificação, que basicamente era não permitir o uso de ferramentas . Então, minha opinião sobre isso é que não me
+
+importo. Não me importa se é espaço latente, tokens de raciocínio ou execução de código. Quero resultados. E eu quero programas de IA que alcancem esses resultados. Certo, isso pode parecer muito semelhante a muitas outras coisas. E eu criei uma
+
+pequena rubrica. Existe um repositório complementar no GitHub que você pode consultar, se tiver interesse. Então, o que precisamos para ser um RLM? Temos um ambiente executável, o prompt é externalizado, há um código que é o que realmente chama o modelo, o modelo é capaz de identificar a decomposição do problema em subchamadas ou subagentes, e o próprio estado permanece simbólico, certo? Então, obviamente, mestrados em direito ( LLMs) comuns e coisas do tipo não atendem a esses requisitos. Ao
+
+programar agentes, subagentes e loops, eles chegam perto, mas ainda não conseguem . E, novamente, o objetivo aqui não é iniciar brigas ou criticar minuciosamente. É apenas uma tentativa de explicar qual é a essência do RLM e dos agentes de codificação recursiva. Outro exemplo que se aproxima, mas não chega lá, seriam os MapReduces codificados diretamente no código. E eu colocaria este projeto de lambda RLM nessa categoria, que é essencialmente uma forma de dizer: "Ok, vou decompor o problema usando cálculo lambda em um map reduce." E depois há chamadas como as do LLM
+
+que executam o map reduce. Mas o LLM não está decidindo, ou o RLM não está decidindo, como decompor o problema. E eu vejo isso como um elemento chave que o torna muito intuitivo para agentes, por assim dizer. Certo, então, falando em RLMs, e quanto aos agentes de codificação recursiva? Ok, para mim parece igual. Nós simplesmente trocamos RLMs e LLMs por
+
+agentes e subagentes. E nós não temos a mesma coisa? Sim, você faz. E eu acho que você poderia adotar essa perspectiva de "haha, pergunta capciosa", tipo, o RLM é um agente de codificação e já é recursivo, então o que eu fiz? E tudo bem, e eu não acho que esse argumento esteja errado, mas ele realmente não leva a lugar nenhum. Então, o que me
+
+interessa é esta questão de como podemos aplicar os princípios dos Modelos Lineares de Regressão (RLMs) a agentes de codificação e torná-los realmente úteis para agentes de codificação. E tenho estado muito obcecado com este problema desde que a postagem do blog RLM de outubro de 2025 foi publicada. Ok, então vou mostrar alguns dos meus experimentos com agentes de codificação recursiva. A primeira solução foi simplesmente empacotar o pacote RLM do Alex como uma CLI (linha de comando). Então, a ideia era simplesmente fornecer ao meu agente de codificação um RLM como uma chamada de ferramenta. Então, digamos que precisamos
+
+analisar um conjunto de 100 milhões de tokens. Bem, agora eu simplesmente uso essa ferramenta e o RLM faz o que tem que fazer. Então, isso é interessante. E pode ser muito útil. E algumas outras pessoas construíram coisas parecidas .
+
+Mas aí eu pensei: "Bem, o que isso realmente significaria? O que seria possível ou como seria possível tornar o agente de codificação totalmente recursivo? Então, o agente de codificação chama a si mesmo, a versão exata de si mesmo. E como você implementaria isso? E foi isso que eu chamei de Y pie. Y significa
+
+o combinador Y do cálculo lambda. E pie, caso você não tenha ouvido falar, é um agente de codificação incrível. É incrivelmente minimalista e foi projetado especificamente para ser extensível. Então, Mario quer que você escreva extensões para pie com novos recursos que você gostaria, em vez de tentar encaixar suas ideias no agente principal. Portanto, ele foi concebido como um núcleo muito minimalista que você estende como quiser.
+
+E quando eu tive a ideia original do agente de codificação recursivo, eu queria fazer isso com pie. Eu não consegui usar as extensões do pie para atingir esse objetivo. Então, eu tive que criar um fork. Estou muito animado para anunciar isso em antecipação a este Falando nisso, revisitei o assunto e agora o Pie evoluiu, e as extensões do Pie evoluíram de tal forma que você pode torná-lo totalmente recursivo com uma extensão pura. Então, eu tenho tanto a extensão recursiva pura, o pacote `pi recursive`, quanto o wrapper `y pi`, que é como um wrapper de conveniência para isso. Então, este
+
+é literalmente um agente de codificação recursiva, no sentido de que `pi` chama `pi`, que chama `pi`, que chama `pi`. Você pode definir a profundidade como quiser. E agora eu quero mostrar alguns outros projetos notáveis ​​na área. Obviamente, há a implementação original de Alex RLM. O `DSPY` ( pi.rlm) é minha escolha principal, especialmente quando estou
+
+fazendo benchmarks. Foi assim que obtive todos esses resultados incríveis em alguns desses benchmarks. O AXE, eu acho, é muito interessante porque é incrivelmente nativo para agentes. O AXE começou como uma variação em TypeScript do DSPY. Quando o de RLM foi lançado, eles obviamente o implementaram, mas Eles fizeram isso de uma forma que permite ao agente AXE escrever uma interface TypeScript completa para outro agente AXE e explorar todo o potencial da recursão, o que eu acho realmente incrível e muito interessante.
+
+Só para mostrar que esse REPL pode ser qualquer coisa, temos um exemplo do Dan, da OpenProse, que criou o Unix RLM. É puro bash e o ambiente é apenas o sistema de arquivos Linux. Então, essa é uma perspectiva totalmente diferente sobre o que é possível com o RLM. E, por último, e falaremos mais sobre o OpenProse adiante, o OpenProse como linguagem permite converter qualquer agente de codificação em um RLM. Falarei um pouco mais sobre como fazer isso no final da apresentação.
+
+O repositório do OpenProse também contém um harness que executa um agente de codificação que permite usar o Codex SDK ou o Cloud Code por baixo e executar esses programas Prose no estilo RLM. Cloud Code é um RLM? Essa é a pergunta que não para de surgir. E a resposta original, no dia do lançamento do post no blog, foi não, não, não é. Mas foi literalmente a primeira pergunta feita, ou melhor, a primeira pergunta feita no mesmo dia do tweet de lançamento. Basicamente, a
+
+pergunta era: "Ei, isso são subagentes do Cloud Code , certo?". Volte à minha rubrica se quiser se aprofundar nos detalhes mais específicos. Mas, sem dúvida, agora é. Então, aqui à direita, vemos Omar dizendo: "Parabéns, Anthropic! O
+
+Cloud Code finalmente é um RLM agora que você tem fluxos de trabalho dinâmicos." Então, o que mudou? Acho que esta é uma maneira interessante de explicar o poder dos agentes de codificação recursiva e o que são RLMs, usando este exemplo. Os fluxos de trabalho dinâmicos foram lançados há algumas semanas e tornam o Cloud Code recursivo, ou seja, capaz de fazer isso. Fluxos de trabalho recursivos.
+
+Eu recomendo fortemente a leitura deste post do blog chamado "A Harness for Every Task" (Uma Ferramenta para Cada Tarefa). Ele mostra seis padrões de fluxo de trabalho diferentes que são muito poderosos. Obviamente, existem muitos outros que você pode implementar. E só para demonstrar, eu escrevi dois fluxos de trabalho para o Cloud Code. Um que explicitamente não é um RLM, então é como um fluxo de trabalho MapReduce codificado, e outro que eu defendo que você pode considerar como uma pesquisa profunda em um sistema de arquivos. Então, você
+
+sabe, selecionar um identificador, atribuí-lo a um agente, fazer com que ele realize alguma análise, trazer de volta o que encontrou, etc. Novamente, estes estão no repositório complementar. E agora, para o Open Prose. Fluxos de trabalho dinâmicos são interessantes. Eles estão disponíveis apenas no Claude Code. Eles
+
+também não são a única maneira de fazer isso. Então, e se você não gosta do Claude Code? Ou se você gosta do Claude Code, mas não quer usar fluxos de trabalho dinâmicos? Fluxos de trabalho? Você quer algo diferente. Então, é disso que se
+
+trata o OpenProse. Tecnicamente, o OpenProse é uma linguagem de programação, mas não é compilada pelo seu computador. É compilada pelo seu agente de codificação. É uma especificação Markdown. É inglês lógico. Você não precisa aprender nenhuma
+
+sintaxe complexa. E existe um comando `prose write` que faz com que o ClaudeCode, Codex, Pi ou seu agente de codificação favorito escreva um arquivo `.prose.md` para você. Nesse sentido, é semelhante ao comando `ultracode` do ClaudeCode, que decide e escreve os fluxos de trabalho para você.
+
+E o OpenProse tem a capacidade de transformar qualquer agente que tenha um sistema de arquivos e subagentes em um RLM. Este é um repositório de código aberto. Você pode conferir. Eu também escrevi um artigo um pouco mais detalhado sobre isso para o Turing Post. E o ponto principal que quero destacar em relação ao OpenProse é... A grande vantagem do OpenProse é que ele
+
+permite declarar explicitamente o trabalho dos subagentes. Criei dois arquivos .md de demonstração em Prose, disponíveis neste repositório complementar, caso você queira explorar o código. Não vou detalhar isso aqui nos slides. É possível dividir um problema em partes menores, que são atribuídas a subagentes, e verificar o trabalho desses subagentes na sessão do agente principal .
+
+E o mais interessante é que você pode usar os recursos adicionados ao OpenProse, como adicionar habilidades e ferramentas como dependências explícitas. Imagine um fluxo de trabalho em que um determinado subagente precisa de uma habilidade específica para desempenhar sua função ou precisa de acesso a uma ferramenta de linha de comando específica, por exemplo, caso contrário, não conseguirá executar sua tarefa. No OpenProse, é possível incorporar essas dependências para garantir que o trabalho seja feito da maneira desejada e que os subagentes estejam configurados com as ferramentas e habilidades necessárias para o sucesso. Faça o trabalho que você está declarando no contrato do Open PROS. Ok, super legal. O que você pode
+
+fazer na prática? Então, eu tenho dois exemplos do Cloud Dynamic Workflows e dois exemplos do Open PROS. Migrações em escala de repositório, que foi o exemplo da postagem de lançamento, refatorar algo enorme com um grande enxame em paralelo e depois mesclar tudo. Isso é super legal. Essa ideia de ir a um diretório e então pesquisar, analisar ou processar recursivamente dentro dele é outro exemplo que tenho aqui.
+
+Você pode fazer auditorias, varreduras de bugs, pode fazer testes adversários, como ter um agente cético ou uma equipe vermelha, um conjunto de agentes que tentarão melhorar o sistema de forma adversária ou em paralelo. E uma coisa muito legal que você pode fazer com o Open PROS, que eu adicionei recentemente, meio que remete ao meu primeiro slide, certo? Então, tipo, um dia eu consigo um resultado incrível, no dia seguinte eles perdem toda a minha criptomoeda, que, felizmente, é uma quantia bem pequena. Mas como podemos tornar essas coisas mais confiáveis? E como podemos, sabe, ter uma sessão perfeita, um dia ótimo, e agora queremos capturar isso e usar repetidamente? Então, eu criei um
+
+sistema onde você pode pegar uma sessão perfeita para Cloud Code, Codex Pi, o que você quiser. É um programa em Prose que vai desconstruir essa sessão e transformá- la em um fluxo de trabalho Prose reutilizável, que, novamente, pode envolver a ideia de agentes de codificação recursiva, para te levar a uma maneira confiável de alcançar esse estado perfeito de desempenho repetidamente . Recursão. Agentes de codificação recursiva são a solução. Eu realmente acho isso muito poderoso. Os
+
+RLMs me impressionaram muito quando surgiram. E, como vocês provavelmente podem perceber por esta apresentação, eu tenho sido absolutamente... Sou obcecado em aplicar as ideias de RLMs (Modelos de Aprendizado de Máquina) a agentes de codificação. As
+
+três coisas que espero que vocês retenham disso são: primeiro, confiança é confiabilidade. Como podemos confiar em algo que não é confiável? E, novamente, meu argumento, e essa ideia do gênio mal administrado, é que o próximo passo não é mais inteligência bruta. É, na verdade, comportamental. É orquestração.
+
+Eu pessoalmente acredito que os RLMs representam esse novo paradigma de computação em tempo de teste , computação em tempo de inferência, onde a chamada de ferramentas e o raciocínio são unificados. E raciocinamos por meio da chamada de ferramentas e podemos iterar recursivamente. E uma dessas ferramentas é chamar outro agente para executar alguma outra tarefa específica ou subconjunto do problema. E também, espero que possamos esclarecer um pouco essa discussão sobre... espera aí, os
+
+LLMs (Modelos de Aprendizado de Máquina) são realmente novos? Não são apenas agentes de codificação? Sim, agentes de codificação podem ser LLMs. Eles não são automaticamente LLMs. Então, mostrei alguns fluxos de trabalho dinâmicos diferentes para o código Claude que podem transformar o código Claude em um LLM, bem como algumas maneiras de fazer isso com OpenPros que você pode usar com qualquer agente de codificação.
+
+Vejo isso como uma maneira incrivelmente poderosa de trabalhar com agentes de codificação. Espero que você explore mais o site recursivecodingagents.com. Mas, com grandes poderes vêm grandes responsabilidades. Então, até a próxima, por favor, use a recursão com responsabilidade.
+
+Muito obrigado.

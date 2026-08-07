@@ -1,0 +1,114 @@
+---
+video_title: "Beyond Code Coverage: Functionality Testing with Playwright MCP — Marlene Mhangami, Microsoft"
+video_id: FWEInOtngmM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FWEInOtngmM
+video_date: 2026-05-16T18:00:06+00:00
+video_description: |
+  When an LLM writes your tests, it tends to write tests that confirm what the code does rather than tests that verify what the user experiences. Your test suite goes green. The app still breaks in ways none of those tests would catch.
+  
+  Marlene Mhangami from Microsoft makes the case for flipping the order: get the agent to write failing Playwright tests against the expected behavior first, then generate code to pass them. The demo runs this live with GitHub Copilot and the Playwright MCP server on a toy store search feature, with the browser open so you can watch the agent click through filters and validate results in real time.
+  
+  Speaker info:
+  - https://x.com/marlene_zw
+  - https://www.linkedin.com/in/marlenemhangami/
+  - https://github.com/marlenemhangami
+  
+  Timestamps:
+  0:00 Introduction to GitHub Octoverse stats and 2025/2026 growth
+  2:13 Does AI actually increase developer productivity?
+  3:52 Importance of maintaining a clean codebase
+  4:36 Test-Driven Development (TDD) and the Red-Green-Refactor cycle
+  6:07 Common criticisms of TDD and unit testing
+  7:43 The problem with AI-generated self-affirming tests
+  8:09 Introduction to Playwright for functional testing
+  9:18 Integrating AI agents with Playwright for faster TDD
+  10:54 Live Demo: Adding search and filter features to a toy store app
+  12:25 Using GitHub Copilot CLI and Work IQ for feature requests
+  13:50 Generating and running Playwright tests live
+  16:10 Best practices for using AI with Playwright
+  17:30 Q&A: Handling state management and testing across different screen sizes
+---
+OK. Oi pessoal. Meu nome é Maybelline e sou defensora sênior de desenvolvedores tanto na Microsoft quanto no GitHub. Eu trabalho em um grupo chamado Core AI, que analisa como os desenvolvedores estão usando IA em nossos produtos. Bem, isso é meio novo.
+
+Para começar hoje, eu queria mostrar algumas estatísticas sobre o GitHub, retiradas do relatório GitHub Octoverse de 2025, que apresenta dados sobre como os desenvolvedores estão usando o GitHub. O que constatamos em nosso relatório foi que mais código foi adicionado ao GitHub no ano passado do que nunca . Assim, cerca de um bilhão de commits foram enviados para a plataforma em 2025, o que representa o ano mais ativo da história do GitHub. OK? O que sabemos agora, em 2026, é que esse crescimento está se acelerando. Então,
+
+ainda não divulgamos estatísticas oficiais, mas há alguns dias nosso COO, Kyle Daigle, twittou que estamos vendo cerca de 275 milhões de commits na plataforma a cada semana. E se extrapolarmos isso ao longo do tempo, veremos cerca de 14 bilhões de compromissos até o final do ano. Isso representa 14 vezes o crescimento que vimos no ano passado, em termos de commits, que, aliás, foi o nosso melhor ano de sempre, com um bilhão de commits. Uma coisa que sabemos é que uma parcela crescente desses commits são coescritos por agentes de IA. Ainda não divulgamos os dados, mas podemos rastrear e ver o que você sabe, por exemplo, o Claude, que co-assina e faz commits, e o Copilot também, mas o Codex não, mas também podemos rastrear com base em algumas palavras no código.
+
+Ao observar todo esse crescimento na quantidade de código que estávamos vendo, surgiu uma dúvida: a IA realmente torna os desenvolvedores mais produtivos? Então, estamos vendo todo esse código, será que ele realmente se correlaciona com a produtividade? Um dos melhores recursos que já vi para tentar responder a essa pergunta é, na verdade, de um engenheiro de IA, de uma palestra do ano passado. E este gráfico compartilha as conclusões dessa palestra, que são de um estudo da Universidade de Stanford com 120.000 desenvolvedores. E neste estudo,
+
+descobriu-se que, embora a IA possa sim tornar os desenvolvedores mais produtivos, o que realmente importa é como os desenvolvedores usam a IA . Portanto, este gráfico do estudo mostra que bases de código limpas amplificam os ganhos e a produtividade da IA, enquanto a IA sem controle em uma base de código amplifica a entropia. Para ilustrar esse ponto, o palestrante apresentou um estudo de caso de uma empresa que utilizou IA de forma descontrolada em seu banco de dados. E o que se pode observar é que o número de PRs (Pull Requests) enviados pela equipe aumentou, mas, ao mesmo tempo, a qualidade do código diminuiu, e eles acabaram gastando muito mais tempo retrabalhando e refatorando esse código. Assim, no geral, embora tenha havido um aumento efetivo de produção de cerca de 1%, a IA não melhorou realmente a produtividade dessa equipe.
+
+Portanto, o que aprendemos com este estudo é que muito do valor que desejamos obter como desenvolvedores de IA depende de termos uma base de código limpa. Portanto, para desenvolvedores que utilizam ferramentas de IA, queremos focar em aspectos como boa cobertura de testes, cobertura de tipos, boa documentação, modularidade e assim por diante. Portanto, eu também diria que precisamos começar a padronizar algumas práticas em nossas equipes e em todo o nosso setor. E este é um tema um tanto controverso, porque algumas pessoas nesta conferência acreditam que basta fechar os olhos e enviar o produto. E isso também não tem problema. Mas, no meu
+
+mundo ideal e com base neste estudo que vimos, eu recomendaria práticas padronizadas para manter uma base de código limpa. Então, como os desenvolvedores podem criar e manter um código limpo? Essa pergunta, na verdade, não é nova. Ao longo do tempo, em nossa indústria, vimos diversos métodos que tentaram fazer da manutenção de uma base de código limpa uma parte central de sua filosofia. Uma das abordagens que tenho visto muitos desenvolvedores que trabalham com programação orientada a agentes mencionarem é o desenvolvimento orientado a testes, ou TDD.
+
+Simon Willison, que é muito popular, publicou recentemente um post no blog sobre como ele está usando uma variante específica de TDD chamada TDD vermelho-verde. E aqui, o que acontece é que a primeira coisa que um desenvolvedor faz é receber uma solicitação de recurso. Assim que recebem a solicitação, eles imediatamente começam escrevendo um teste que falha porque o recurso não existe. Depois disso, o desenvolvedor se concentra em fazer com que o teste seja aprovado. E nessa fase inicial, quando estão tentando fazer o teste passar, historicamente, você não deve se concentrar na qualidade do código. Você só está se
+
+concentrando na velocidade e em fazer o teste ficar verde. No passado, os desenvolvedores talvez copiassem código do Stack Overflow e de outros lugares semelhantes para que o teste fosse aprovado. Mas depois disso, a fase final é a fase de refatoração. E nesta fase, você se concentra apenas na qualidade do código. Então você pega aquele código que você fez passar e o refatora para que ele siga todas as melhores práticas.
+
+Nem todo mundo é fã de TDD e, como muitas coisas nessa área, o TDD foi dado como morto em 2014. Uma das reclamações mais comuns que vejo na internet sobre o TDD é que ele se concentra demais na cobertura de código com testes unitários e não testa o sistema como um todo. Então, DHH criou o Rails e publicou este post no blog em 2014, falando sobre isso, que é um foco excessivo em testes unitários. E sabemos que, quando exageramos na cobertura de código, vários problemas surgem. Uma das questões é que existe uma tendência nos detalhes da implementação do teste . Então, vamos
+
+pegar um exemplo como o que vemos na tela, onde temos um cálculo de pedido com desconto. Se o teste estiver diretamente ligado a um método como ` calculate`, simplesmente renomear o nome do teste, mesmo que a funcionalidade continue funcionando corretamente, vai quebrar esses testes unitários. Isso não vai ser nada bom. Mas mesmo se testarmos especificamente o comportamento do sistema, como o resultado final do preço que procuramos, ou se testarmos em algo como um contrato estável, como nossa API ou um módulo que não muda, mas que exportamos, ele deve sobreviver a quaisquer refatorações do nosso código interno. Eu diria que, se você estiver interessado em aprender mais sobre isso e sobre TDD orientado a comportamento, recomendo a palestra de Ian Cooper chamada "TDD onde tudo deu errado". Foi uma conversa muito boa.
+
+Outra coisa que observamos é que, na era da IA, muitos desenvolvedores estão usando IA para gerar testes. O que eles perceberam é que a IA às vezes gera testes que reforçam as próprias crenças. Portanto, embora os testes de cobertura de código possam ser aprovados e seu conjunto de testes unitários esteja todo verde, o comportamento do sistema não está sendo validado e é aí que reside o problema. Portanto, no restante desta apresentação, vou me concentrar em mostrar como você pode evitar esses problemas e começar a testar a funcionalidade usando o Playwright. O Playwright é uma estrutura de testes de código aberto criada pela Microsoft que automatiza testes de ponta a ponta no navegador, simulando interações do usuário.
+
+E o link que você vê na tela é a documentação. Atualmente, o Playwright oferece suporte a várias linguagens diferentes, como Python, TypeScript e C#, e os scripts de exemplo que você vê na tela representam como um teste normalmente seria. Então, você tem aquela linha que diz "page go to" indicando ao script que a página "toys play" é onde queremos começar. Em seguida, vamos procurar a pesquisa de espaço reservado e preencher a barra de pesquisa com a letra correspondente à palavra Furby. Isso executará a pesquisa automaticamente no navegador, por exemplo. Você também pode usar o modo com ou
+
+sem monitor. Portanto, você não precisa necessariamente ficar olhando para o navegador enquanto seus testes estão sendo executados. Você também pode deixá- los rodando em segundo plano . Por que isso é aceitável? Então, voltando à ideia de TDD, quando usamos o Playwright com IA, isso deve acelerar todo o processo de TDD para nós. Então, muitos
+
+desenvolvedores no passado reclamaram bastante de como o TDD é lento e ineficaz para equipes que precisam de agilidade, mas se tivermos IA, o que acontece é que tanto a parte vermelha quanto a verde ficam mais rápidas. Portanto, estamos focando em fazer com que nossos agentes gerem esses testes comportamentais, os testes do dramaturgo. Em seguida, nosso foco é fazer com que o agente gere o código mais rapidamente possível para que o teste seja aprovado. E então eu recomendaria que os desenvolvedores dedicassem a maior parte do tempo, para que o projeto cresça, à fase de refatoração. Então, eles estão dedicando tempo a analisar o código gerado pelo agente e aprimorá-lo .
+
+Existem diversas maneiras de conectar seus agentes de codificação ao Playwright hoje mesmo. Uma dessas maneiras é através do servidor Playwright MCP. Você pode usar a ferramenta de linha de comando (CLI) se preferir, ou pode usar algo chamado agentes Playwright. E quando você estiver usando agentes do Playwright, você executará o comando que pode ver na tela. E assim que você executar esse comando, ele instalará três arquivos agent.md para você. Então, o primeiro
+
+será um planejador, o segundo um gerador e o terceiro um curandeiro. Então, o planejador vai definir quais testes executar, o gerador vai gerar os testes e, em seguida, o curandeiro vai corrigir esses testes para você. Então, eu quero mostrar uma demonstração para vocês, e espero que os deuses das demonstrações estejam sorrindo para nós hoje. Então, todos nós vamos experimentar. Oh. Oh não.
+
+OK. Vamos lá. Então, quero apresentar um cenário. O cenário é o seguinte: "Ah, você não consegue ver o meu PowerPoint. Você só está olhando para ele agora, e eu não sei como impedir isso."
+
+Hum, deixa eu fechar o PowerPoint, talvez, e ver se isso ajuda. Bem,
+
+agora eu só quero mostrar a tela. Desculpe. Espero que me deem mais tempo. Ok, perfeito. Isso está funcionando conforme o esperado. OK.
+
+Perfeito. Então, o cenário que vamos imaginar hoje é o seguinte: imagine que eu sou um desenvolvedor. Eu trabalho em uma empresa de brinquedos chamada Tailspin Toys. E há alguns dias, recebi um e-mail da equipe de gerenciamento de produtos de busca, pedindo que eu adicionasse alguns novos recursos de busca e filtro ao site. Eles me pediram para adicionar uma barra de pesquisa com busca por texto para pesquisas simples e busca por IA do Azure para pesquisas mais complexas.
+
+Eles também me pediram para adicionar uma barra lateral para que os clientes possam filtrar por categoria e preço. Então, eu gostaria que o Co-pilot me ajudasse com essa tarefa e também que usássemos esse estilo de desenvolvimento TDD em primeiro lugar. Então, esta é a CLI do GitHub Copilot. E a primeira coisa que podemos fazer é tentar fazer com que o agente obtenha as informações que vimos naquele e-mail e incorpore os recursos aqui em nosso terminal. E para isso, vamos usar algo chamado Work IQ, que é uma funcionalidade desenvolvida pela Microsoft que permite aos desenvolvedores se conectarem ao pacote Microsoft 365. Então, Outlook,
+
+PowerPoint, o que você preferir. E para trazer essa informação aqui para o terminal. Portanto, se você usa o pacote M365 para o trabalho, eu definitivamente o recomendo. E o que eu também gostaria de mencionar sobre o TDD é que, no passado, quando fazíamos coisas como testes unitários, normalmente o que motivava as pessoas a escrever um teste unitário era a adição de um novo método a uma classe. Mas, na verdade, neste novo mundo, o que queremos focar é no comportamento. Portanto,
+
+queremos nos concentrar em uma funcionalidade. Portanto, se surgir uma solicitação de recurso, esse será o gatilho para a escrita do teste. Então, temos nossa lista do que precisa ser desenvolvido. E estou passando a segunda etapa e pedindo ao Copilot para me ajudar a desenvolver esses recursos usando TDD vermelho-verde para parar, escrevendo os testes do Playwright que falham para cada recurso. E estou dizendo para não confirmar as alterações apenas para fins deste exemplo. E eu gostaria de
+
+salientar que a primeira coisa que o agente fará é começar a examinar minha base de código. Assim, ele entenderá o que está presente na minha base de código. Eu já tenho o servidor Playwright MCP instalado no meu CLI do co-Copilot e ele sabe o que precisa fazer para criar os testes necessários para essas funções. Assim, o agente entenderá como será a base de código principal e, em seguida, escreverá os testes para ela. Bem, esse processo vai levar algum tempo. Então,
+
+enquanto isso, vou mudar para uma nova aba. E vou executar o comando para obter o teste do Playwright. Então, hoje mais cedo, eu pedi ao agente para gerar os testes que falharam e, em seguida, o configurei para a fase verde, onde o agente cria o código para que os testes sejam aprovados. Agora, estou pedindo ao meu agente para executar os testes do Playwright para testar a barra de pesquisa e o recurso de filtro. Como mencionei anteriormente, já tenho o servidor Playwright MCP instalado. Você pode
+
+vê-lo instalado aqui. E o nosso agente simplesmente vai procurar o arquivo de teste. E se tudo funcionar corretamente, começará a escrever alguns testes e a executar alguns testes. Então vemos que abriu a página correta. O sistema está digitando em diferentes campos para testar se a barra de pesquisa está funcionando. Constatamos que o Furby
+
+foi encontrado corretamente. Simon foi encontrado corretamente. E agora está clicando em botões. Portanto, o teste do filtro de categoria também está funcionando corretamente. Repito, minhas mãos não estão no teclado. Tudo isso é obra do
+
+dramaturgo e da Copilot, então é muito legal. E agora está encontrando corretamente todos os brinquedos na faixa de preço específica. Então, quando executo esses testes de funcionalidade, tudo o que consigo ver ativamente é que, ok, o agente escreveu esse código. O código está funcionando como eu esperava. O aplicativo está funcionando como eu esperava. Existem
+
+muitas maneiras diferentes de testar a funcionalidade do seu aplicativo, e todos os nossos testes foram aprovados. Bem , depois que nossos testes forem aprovados, é aí que eu diria que entramos na próxima fase, que consiste em escrever ou refatorar o código que o agente criou para gerar esses testes aprovados. Então, por fim, vou compartilhar com vocês algumas práticas recomendadas para o Playwright. A primeira coisa que eu diria é que, quando o Playwright executa esses testes de funcionalidade, ele captura screenshots de todos os testes realizados. Tenho o hábito de adicionar essas capturas de tela aos meus pedidos de pull request. Então, se eu tiver feito
+
+alguma alteração, vou adicioná-la a um PR (Pull Request). A segunda coisa é que você não precisa executá-lo no mesmo local onde o navegador é aberto, como você viu no exemplo. Você pode executá- lo no modo headless, para que ele rode em segundo plano. E, por fim, eu diria para você confirmar o código antes de realmente corrigir o teste. Ou, sabe, faça o commit antes que ele comece a fazer alterações no seu código, porque se você não fizer o commit, ele pode não se lembrar do que aconteceu no passado. Então, isso é
+
+algo para se fazer. E eu também diria para gerar um teste para cada funcionalidade. Por fim, seguem alguns recursos que você pode consultar. Ah, esqueci de adicionar o link para o repositório do GitHub, mas todos os slides estão disponíveis nesse link . Você pode consultar a documentação e também pode se conectar comigo nas redes sociais. Então,
+
+sim. Obrigado a todos. Acho que esse é todo o tempo que tenho hoje.
+
+Acho que temos 2 minutos para perguntas. Alguém tem alguma pergunta sobre isso? Sim, vejo uma pergunta aí. Sim
+
+.
+
+Temos muitos... quero dizer , acho que se você tiver muito gerenciamento de estado, eu recomendaria usar agentes do Playwright, que baixam o arquivo agent.md específico, pois ele contém instruções especializadas que são melhores para lidar com o estado e coisas do tipo . Então, descobri que o
+
+Playwright Agents, especificamente, já possui muitas instruções úteis incorporadas que podem ajudar nesse processo. Outra coisa que você poderia fazer, caso não quisesse usar o Playwright para tudo, é testar suas APIs diretamente. Se houver uma API disponível, isso é algo que você poderia fazer. Então, é isso . É isso que eu recomendaria.
+
+Tem mais alguma pergunta? Talvez mais uma pergunta. Hum, bem, não tenho certeza. Sim. Sim
+
+. Sim. Sim, pode. Ele pode comparar seu dispositivo móvel com seu computador. Deveria funcionar sem problemas. Sim. Mais uma. Sim.
+
+Por enquanto, funciona apenas em navegadores. Sim, por enquanto só funciona em navegador. Sim . Ok, acho que esse é todo o tempo que tenho para hoje. Obrigado a todos.
+
+Desculpe pela ausência do link para o GitHub.

@@ -1,0 +1,562 @@
+---
+video_title: "Run Frontier AI at Home — Alex Cheema, EXO Labs"
+video_id: ESbWpPT_9-o
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ESbWpPT_9-o
+video_date: 2026-05-26T17:00:06+00:00
+video_description: |
+  Running GLM 5.1, a trillion parameter model released the day before this workshop, across four Mac Studios costs around $40,000 in hardware and tops out at roughly 20 tokens per second. Alex Cheema from EXO Labs thinks both numbers have about 100x left in them.
+  
+  The workshop covers what that 100x looks like across the stack: kernel fusion that recovered 30% performance on Qwen 3.5 from inefficiencies nobody had noticed, RDMA integration that cut node to node latency from 300 microseconds to single digits and made tensor parallelism actually scale, and the case for splitting prefill onto compute dense hardware and decode onto high bandwidth hardware. The live demo runs GLM 5.1 across four Mac Studios connected by Thunderbolt 5 and cuts large prompt inference roughly in half by offloading prefill to an RTX Spark.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/alex-cheema
+  - https://github.com/alexcheema
+  
+  Timestamps:
+  0:00 Introduction to EXO Labs and the mission to democratize frontier AI
+  2:00 The current state of AI: centralized cloud systems vs. the need for local infrastructure
+  7:40 Technical challenges: kernel efficiency and the overhead of separate kernel launches
+  9:50 The importance of the software harness in optimizing inference performance
+  10:35 Understanding inference constraints: compute-bound vs. memory-bound operations
+  11:28 The distinction between prefill and decode phases in LLM inference
+  13:07 Requirements for efficient local decoding: memory capacity, bandwidth, and energy efficiency
+  15:50 The concept of 'Intelligence per Joule' as a performance metric
+  16:45 Advancements in consumer hardware: higher memory capacity and bandwidth on Apple Silicon
+  18:50 Q&A: The future of consumer appetite for local inference hardware
+  20:17 Discussing the cost and performance of running trillion-parameter models like GLM 5.1
+  22:05 The 100x potential: How code design across the stack improves performance
+  26:35 Future outlook: Bifurcation of local vs. cloud use cases and diminishing returns of model size
+  38:55 Heterogeneous hardware strategies: Combining compute-dense and bandwidth-heavy devices
+  41:47 Demo: Using an Nvidia RTX Spark to accelerate prefill on a Mac cluster
+  48:40 Software architecture: Automating cluster orchestration with EXO
+  53:00 Challenging the 'batching' necessity: Multi-agent systems, search, and continual learning
+  1:05:22 Rethinking cloud economics and renting use cases instead of hardware
+  1:20:55 Demo technicalities: Event sourcing and cluster node discovery
+  1:32:20 Closing thoughts: Transparency in benchmarks and the future of open-source model evaluation
+---
+Acho que isso é pensamento simples. Quem aí conhece o LLM? Sim, todos. Quem está familiarizado com o conceito de fase de pré-preenchimento e fase de decodificação na inferência LLM? Sim .
+
+Quem já utilizou esse modelo localmente? Ok, uau. Isso é bom. Bem, eu sempre digo que ainda estamos no início, mas isso me faz pensar que talvez... quer dizer,
+
+literalmente todos vocês levantaram a mão, então talvez estejamos mais avançados na curva de adoção do que eu imagino. Hum, e é , essa é assustadora. Quem já usou Exo antes? OK. Casal. Ah, legal
+
+. Então, é isso , acho que... só um pouco sobre mim. Então, eu sou...
+
+eu trabalho no Exo. Somos um laboratório focado em executar inteligência artificial de ponta em hardware local. Então, o que estamos fazendo é analisar a pilha completa, o que está envolvido na execução da inferência localmente e no trabalho em toda a pilha. Então, isso se aplica aos modelos, ao software e também ao hardware . E a nossa missão é reduzir o custo de execução de sistemas de IA de ponta localmente. Bem,
+
+atualmente, a maioria das operações de IA funciona na nuvem. Normalmente, se vocês, eu acho que muitos de vocês neste grupo, já usaram IA local antes, geralmente, se forem usar um modelo, a maioria das pessoas usa modelos que são executados em centros de dados. Então, por que isso é um problema e por que deveríamos nos importar? Bem,
+
+acho que o nome Exa vem de exocórtex. Então, a ideia é que a IA irá além de ser apenas uma ferramenta usada em interfaces de bate-papo , o que ela já é, e se tornará uma espécie de extensão de você mesmo. E se você pensar dessa forma, é quase como se fosse uma parte de você e uma parte do seu cérebro. E aí você pergunta: será que eu realmente quero alugar meu cérebro? E eu acho que Andre Karpathy tem uma frase de efeito que resume tudo muito bem, que é tipo, não são seus pesos, não é seu cérebro.
+
+Bem, sabe, há algo bastante profundo nessa afirmação, eu acho, e acho que agora estamos começando a perceber, sabe, à medida que coisas como o OpenClaw, sabe, e sistemas com agentes estão se tornando mais populares e são mais do que apenas uma interface de bate-papo,
+
+há muita preocupação sobre onde essa coisa está rodando. Para onde estão indo meus dados? Sabe, e se a ligação for cortada, né? Sabe, eu tinha um amigo que trabalha com segurança cibernética e ele estava fazendo alguns testes de penetração, que são bem inocentes, sabe, para proteger um sistema, e basicamente foi bloqueado em três provedores de API, como Cloud, Gemini e ChatGPT. Sabe, isto está se tornando mais do que apenas, sabe, este, este uh, este bate-papo, certo? É como se, sabe,
+
+você precisasse disso para ser competitivo em qualquer área hoje em dia e
+
+, com sistemas centralizados, você acaba dependendo basicamente de algumas organizações para isso. E, bem, acho que , sabe, existem duas realidades, certo? Uma delas é um mundo de código fechado, onde haverá uma enorme lei de potência, na qual algumas poucas empresas terão os modelos mais avançados. E o que eles vão fazer é, quer dizer, vão explorar isso ao máximo, porque, você sabe, é assim que eles ganham mais dinheiro. E, sabe, acreditamos que precisa haver uma espécie de força concorrente para manter as coisas abertas e, de fato, ser possível executar esses modelos sem a necessidade de um data center enorme ou de uma quantidade enorme de poder computacional.
+
+Então, eu só queria falar um pouco sobre o lado técnico do que estamos fazendo. Então, acho que a primeira coisa a perceber aqui é que grande parte da discussão gira em torno do treinamento, ou melhor, tem girado em torno do treinamento, e esse tem sido o foco de muitos projetos de código aberto, por exemplo, na necessidade de transparência em relação ao treinamento. E o que estou abordando aqui é especificamente a inferência. Então, se você já tem o modelo, como você executa esse modelo? E se a única opção for comprar um milhão de dólares em hardware para rodar um modelo como o Frontier, então isso é uma barreira enorme e é exatamente nisso que estamos focando aqui.
+
+E, em termos de hardware, como o foco tem sido principalmente no treinamento, o que
+
+se observa é essa ideia de " loteria do hardware", que significa que a pesquisa disponível não é, na verdade, a melhor opção possível. Hum, há muita pesquisa sendo feita sobre a atual infraestrutura de hardware, que foi construída principalmente em torno do treinamento. E, basicamente, o que isso significa é que você empilha essas GPUs da Nvidia no centro de dados. Mas essa não é necessariamente a melhor coisa a se fazer, especialmente quando se trata de inferência. Então, você sabe, o hardware atual está muito focado em operações de ponto flutuante ( flops) e economia de escala por unidade de tempo . E,
+
+sabe, tem isso que eu realmente recomendo que você leia. É da Sarah Hooker, que trabalhava no Google Brain e depois no Cohere. Agora acho que ela está seguindo seu próprio caminho . Mas, sabe, basicamente a ideia é que existem várias ideias por aí que ainda não foram exploradas porque temos muita inércia em relação à maneira atual de fazer as coisas com o hardware atual. Nossa tese é a seguinte: existem várias coisas que ainda não foram exploradas com diferentes hardwares e no contexto de inferência, e que podem ser muito melhores do que a maneira atual de fazer as coisas.
+
+E, bem, esta é realmente uma área que tem muitas oportunidades fáceis de aproveitar . Então, tipo, sabe, com um pouco de... vou te dar um exemplo. Então, tipo,
+
+na semana passada estávamos analisando o Quant 3.5 e executando-o localmente no Apple Silicon e descobrimos que, se você observar a velocidade teórica que obteria executando isso, ela está muito longe da que se obtém na prática. E, tipo, estava errado por 50%. Então, cerca de 50% mais lento do que pensávamos que deveria ser. Então, nós investigamos o que estava acontecendo e descobrimos que basicamente há uma série de sobrecargas introduzidas por kernels ineficientes, especificamente por muitos kernels desnecessários que são executados separadamente, o que leva a uma grande sobrecarga ao executar a inferência. E, sabe, cada um desses
+
+kernels adiciona uma sobrecarga bastante significativa se você estiver pensando em executar um modelo como o Quant 3.5 localmente, sabe, teoricamente você poderia obter cerca de 150 tokens por segundo. Hum, que é, você sabe, um token a cada menos de 10 milissegundos. Então, se você tiver um atraso de alguns milissegundos aqui e ali, isso acaba se tornando um problema considerável . Então, o que fizemos foi analisar um pouco o que estava acontecendo e percebemos que vários kernels separados estavam sendo executados desnecessariamente. Então, fizemos um
+
+trabalho bastante básico para juntar tudo isso e aumentar o desempenho da inferência em 30%. Então, é apenas um exemplo de como, sabe, existem muitas coisas por aí que você talvez pense que estão otimizadas e que já estão bem próximas de obter o melhor aproveitamento do hardware, mas não é o caso. E, sabe, isso existe em toda a pilha. Então, isso acontece no nível do kernel, mas também há muita coisa envolvida na orquestração, como a forma de conectar diferentes peças de hardware, a sobrecarga de comunicação e até mesmo coisas como o chicote de cabos, certo? Então, acho que as pessoas estão começando a perceber que, na verdade, existe muito valor no sistema de compatibilidade (harm harness) e, por exemplo, se você usar código fechado com um determinado modelo e, em seguida, usar código aberto com exatamente o mesmo modelo, obterá um desempenho completamente diferente .
+
+E você sabe, isso é particularmente interessante no contexto local porque você tem recursos extremamente limitados. Portanto, qualquer coisa que você possa fazer na camada de chicote de fios que tenha conhecimento do hardware, você poderá obter muitos ganhos . Então, isso se aplica a toda a pilha. Então, de modo geral, como eu disse, o treinamento se resume a simulações, certo? Então, basicamente tudo é limitado pelo poder computacional.
+
+E o que importa em grande escala é basicamente o quão barato você consegue produzir os flops e, você sabe, quanta energia isso vai consumir? Mas a inferência tem muito a ver com memória. Então, sabe, basicamente todas as operações que você realiza, dependendo do modelo, são, em sua maioria, limitadas pela memória. E especificamente, quando você está executando algo localmente, se estiver executando algo para si mesmo, você não tem a capacidade de agrupar, sabe, as solicitações de vários usuários . Então, tudo o que você faz é em lotes de tamanho pequeno, o que limita a quantidade de memória utilizada. Por que é que? Bem, sim,
+
+basicamente é assim que a inferência funciona, de modo geral, com a maioria dos modelos atuais. Então, existe uma espécie de estágio de pré-preenchimento e um estágio de decodificação, e meu argumento é que o pré-preenchimento não importa tanto assim, especialmente quando você está executando o código localmente. O motivo é simples: o estágio de pré-preenchimento carrega seus contatos com o prompt. Se você estiver carregando um PDF ou algo do tipo, é a parte que gera todos os caches KV. Depois, temos o estágio de decodificação, que é automático e agressivo, e gera os tokens um por um. Essa
+
+parte é limitada pela memória, enquanto o pré-preenchimento é limitado pelo processamento. O que você vê na parte de pré-preenchimento é... e isso remete à ideia de que o ambiente de processamento é muito importante. Um
+
+bom ambiente de processamento recebe muitos acessos ao cache, mantendo o prompt praticamente o mesmo. Se você digitar um comando de barra no contexto do código ao executá-lo, verá isso. Basicamente, ele mostra todas as partes do prompt, e uma grande parte dele é... O prompt do sistema, as
+
+ferramentas do sistema e coisas do tipo não mudam muito, então talvez se o Claude lançar uma atualização isso mude, mas de modo geral, você pode manter a maior parte do prompt igual ao executar cargas de trabalho reais de ponta a ponta. Talvez nos benchmarks você veja pessoas fazendo coisas com contextos muito longos, com tamanhos de prompt muito grandes, e meu argumento aqui é que isso não importa tanto quanto as pessoas pensam. Na verdade, o importante é a decodificação, e o que importa para a decodificação são três coisas. Como eu disse, ela é limitada pela memória, mas a primeira coisa é que você precisa conseguir encaixá-la na memória. Então, se você quiser executar um modelo em uma boa velocidade, se ele não couber na memória, você terá que carregá- lo do disco, o que é extremamente lento. Então
+
+, esse é basicamente o primeiro requisito obrigatório. Em segundo lugar, está a largura de banda da memória. Então, isso indica a velocidade com que ele vai correr. Então, qual a velocidade real de carregamento dos pesos do modelo e dos caches KV na GPU? Hum, e a terceira coisa, e isto é algo que é particularmente importante localmente, é a energia. Então, tipo, sabe,
+
+hum, aqui eu estou falando de energia por byte, então estou falando, tipo, nessa fase de decodificação limitada pela memória, quanta energia custa para mover um byte para um gigabyte? Bem, isso basicamente indica, se eu for executar uma inferência, quanta energia ela vai consumir? Sim , isso é muito importante. Quer dizer, sei lá , tipo, hum, tem um monte desse tipo de demonstração de coisas sendo feitas em celulares, sabe, que a gente vê no Twitter. E, hum, fizemos muita coisa com telefones, sabe, há um tempo atrás, talvez uns 18 meses atrás. Hum,
+
+mas descobrimos que existe um grande problema, que é a energia. Ah, e, sabe, a duração da bateria dos celulares é bem limitada. Então, sabe, talvez você esteja falando de 10 a 15 watts- hora, tipo, em um iPhone. E, por inferência, sabe, pode estar consumindo algo em torno de 10 a 15 watts, certo? Então, estamos falando de cerca de 1 hora de duração da bateria. O que,
+
+hum, não é realmente utilizável. Então, claro , você sabe, muito trabalho está sendo feito para melhorar isso. E eu acho que, eventualmente, os telefones serão capazes de executar modelos melhores. Mas agora, sabe, consome muita energia e também esquenta muito. Então, na verdade, quando estávamos executando testes de desempenho, tipo , uns 18 meses atrás, o telefone estava esquentando tanto que eu não conseguia segurá-lo. Estava
+
+quente demais para segurar. Então, sim. Esses são os três. É assim que eles se traduzem na prática. Bem, então, tipo, tem esse artigo bem recente, de um grupo de Stanford, da Hazy Research, talvez alguns de vocês os conheçam por outros trabalhos, tipo ThunderKittens e tal.
+
+Mas agora eles têm um grupo focado nesse conceito de inteligência por watt. E a ideia é que isso engloba essas três coisas e é uma forma de acompanhar como essas coisas estão melhorando ao longo do tempo? E a métrica é basicamente avaliar o quão bom um modelo é em uma tarefa específica. Você divide isso pela energia que consome. E se você acompanhar essa métrica, verá que ela está melhorando exponencialmente. Então, nos últimos 2
+
+anos, foi cerca de 5 vezes maior. O termo correto para isso, na verdade, não deveria ser inteligência por watt, mas sim inteligência por joule, porque você não está realmente preocupado com o tempo nesse caso. Você está preocupado com, por exemplo , quanta energia uma determinada tarefa vai consumir? Sim . Então, sim. Isso é...
+
+Isso agora está analisando... uma espécie de melhoria de memória. Então, na verdade, é como se você pudesse comprar um componente de hardware comum como este, que... quero dizer, a
+
+Apple removeu a opção de 512 GB recentemente, então você não pode comprar cinco... Estes são de 512 GB. Mas, sabe, você pode comprar um de 256 GB, e é tipo, você pode comprar direto da prateleira, basicamente.
+
+Então, sabe, isso é algo muito novo. Como se você não pudesse comprar hardware para o consumidor com tanta memória assim. Então, isso é uma melhoria drástica e, sabe, uh sim, dê um exemplo também, como o novo MacBook M5, hum, Max tem 120, você pode expandir para 128 GB e a largura de banda da memória é muito, muito boa. Um 614. Então, sim, isso é meio que uma análise da inteligência por joule. Então, é isso aí, sim
+
+. Então, na verdade, são 5x devido às melhorias de hardware, mais 3x devido às melhorias de modelo e, obviamente, esses fatores se acumulam. Então, o que você está vendo é que muitas das melhorias aqui vêm do hardware, certo? Hum, e também a camada do modelo. Então, isso nos leva de volta à ideia de que, sabe, trata-se de analisar toda a pilha, certo? Há muitos ganhos
+
+em toda a estrutura e existem diferentes coisas que você pode fazer. Pessoal, perguntem em que ponto estamos na demo.
+
+Ok, talvez possamos perguntar. Sim, porque eu também quero te mostrar isso , né? Hum, eu não... eu não quero simplesmente conversar. Além disso,
+
+se alguém tiver alguma dúvida ou algo do tipo, sim, você tem alguma pergunta? Sim, então, em termos da atual geração de Macs, para onde você acha que isso está caminhando na vida real? Tipo, eu estou tentando dizer para os meus amigos: pensem nisso como um eletrodoméstico que vocês vão comprar em casa, uma geladeira. Eu quero ser isso. E eles olham para mim e dizem tipo: "Tenho que gastar cinco mil dólares numa caixa, né?" Sim
+
+. Para onde isso está caminhando em termos de apetite do consumidor? E você sabe, será que são apenas problemas na cadeia de suprimentos a montante ou a Apple está vendo isso como um novo centro de lucro e talvez reposicionando os preços estrategicamente? Tipo, a Apple está vendo o quê, desculpe? Como um novo segmento de oceano azul no qual eles podem vender seus produtos . Porque eu acho que sim. Pelo que
+
+ouvi dizer sobre a cadeia de suprimentos, quando essas instalações são construídas, elas já estão financiadas. Então, basicamente, ambas as empresas fecham todos os seus contratos comerciais de memória RAM e depois definem os preços dos diferentes níveis. E acho interessante que o preço tenha mudado para aumentar o armazenamento e oferecer uma quantidade razoável de RAM. Hum. Mas a teoria mais engraçada é que eu vejo você como um comprador de, você sabe, muitos desses equipamentos. Sim
+
+. Gostaria de saber sua opinião sobre o futuro da precificação e sobre o consumo em geral. Sim . Talvez eu possa simplesmente repetir a pergunta para o microfone. Bem, a questão é: para onde você acha que o hardware está caminhando? E será que as pessoas
+
+realmente vão gastar US$ 5.000 em algum tipo de máquina de inferência? Então, minha tese é a seguinte, como eu disse, você pode analisar certas métricas, como inteligência por quê, certo? E o que você está vendo é que o progresso também é exponencial em nível local, certo? E, sabe, agora mesmo, hoje, você precisa de algo assim, certo? Se você
+
+pretende usar modelos de vanguarda, basicamente sua única opção é... bem, em primeiro lugar, o padrão está sempre mudando porque, você sabe, talvez agora o modelo de vanguarda de código aberto, sabe, temos o GLM 5.1, que eu também quero mostrar para vocês, que foi lançado ontem e que provavelmente é o modelo de vanguarda agora para código aberto.
+
+E se você quiser executar isso, são trilhões, são trilhões de parâmetros. E nativamente também é FP16. Então, tipo, você está falando de algo como 1,5 terabytes, certo? Então, você precisa guardar tudo isso na memória, certo? Voltando ao ponto inicial .
+
+E para isso, estamos falando de, digamos, supondo que você ainda tenha os Mac Studios de 512 GB como estes, então estamos falando de algo em torno de US $ 40.000 em hardware, certo? E mesmo assim, não vai rodar tão rápido assim, né? Então, tipo, sabe, talvez consiga processar algo em torno de 20 tokens por segundo se você estiver usando esse tipo de configuração. Hum, isso não é aceitável para muita gente. Sabe, acho que as pessoas
+
+estão acostumadas com um pouco mais do que isso agora, com a nuvem, então talvez algo como 50 tokens por segundo seja o que as pessoas estão acostumadas. Então, esse é o estado atual das coisas, certo? Mas, sabe, nossa tese é que isso vai... tem um aumento de
+
+100 vezes aí. Então, sabe, se você olhar para todas essas partes da pilha, porque elas se acumulam, hum, se você estiver fazendo alterações no chicote de fios, se estiver fazendo alterações nos modelos, se estiver fazendo alterações nos kernels, tudo isso junto, hum, ainda há, sabe, tipo, uma diferença de 100 vezes em termos de custo- benefício . Então, acredito que em breve, dentro de, digamos, 18 meses, você poderá gastar US$ 5.000 e ter um desempenho próximo ao de ponta, rodando muito rápido. Mas isso vai exigir uma espécie de projeto conjunto, certo? É como olhar para as
+
+coisas em toda a pilha. Você já vê isso acontecendo em um centro de dados. Então, você sabe, a aquisição da Grok pela Nvidia mostra que estamos vendo mais especialização, chips diferentes para coisas diferentes. E essa ideia de co-design extremo. Então, analisando tudo junto e pensando, tipo, ok, como podemos construir essas coisas de uma forma que, você sabe, obtenha o melhor desempenho para o caso de uso final, certo? E acho que as coisas se
+
+consolidaram, embora estejam se movendo muito rápido, algumas coisas que parecem que não vão mudar, como, por exemplo, ter agentes, parece ser o paradigma e continuará sendo por um tempo. Hum, não acho que isso vá mudar. Sabe, você vê aqueles MOEs enormes, né? Então, parece que isso também está se consolidando, e é por isso que a Nvidia agora pode dizer: "Ok, vamos construir hardware específico para essa arquitetura", porque eles sabem mais sobre como esses casos de uso final vão funcionar. E, bem , então eu diria que talvez agora eu não recomendaria aos amigos que dissessem tipo, "ah, vá gastar 5.000 dólares", a menos que
+
+eles queiram experimentar. Mas eu diria que, definitivamente dentro de dois anos, você terá alguns produtos no mercado que você poderá simplesmente dizer: "Ei, compre este aparelho" e, em vez de ter todas essas assinaturas ou, sabe, agora se você quiser usar o OpenCore, você nem pode usá-lo com a API Opus, certo? Então, basicamente você provavelmente vai gastar... Eu conheço pessoas que estão
+
+gastando milhares de dólares por dia em tokens no momento, certo? Então, em vez disso, sabe, é só dizer: compre este hardware e você nunca mais precisará pagar por um token. É basicamente gratuito, certo? É apenas o custo da eletricidade. Ah, então, sim, eu diria que em 2 anos. Sim
+
+. Tenho uma pergunta. Sim .
+
+Sim, é uma estimativa. Quer dizer, sim . Sim
+
+. Sim
+
+. Então, a questão é mais sobre o panorama geral, sabe, para onde os modelos estão caminhando e, bem , houve muito progresso em tornar esses modelos maiores. Então, como diz o boato sobre o Myth Mythos, ele tem cerca de 10 trilhões de parâmetros. Acho que é esse o boato, tipo 10 trilhões de parâmetros. Então, tipo , e também havia rumores de que o Gemini tinha algo como 4 trilhões de parâmetros. Então, tipo, e aí talvez a
+
+próxima simulação seja de 20 trilhões ou algo assim. Então, como você sabe, está vendo que os modelos estão ficando maiores. Ao mesmo tempo, o Gemini 4 acaba de ser lançado, é minúsculo e parece ser melhor do que, digamos, o melhor modelo de dois anos atrás. Certo? Então, sabe, para onde as coisas estão caminhando? Hum,
+
+acho que é tudo isso junto. Tipo, eu acho que vai haver, bem, já existe, e vai haver uma demanda cada vez maior por poder computacional. E sempre haverá muito progresso sendo feito nos data centers para, você sabe, acomodar mais poder computacional, e acho que o que veremos em algum momento é que talvez as coisas se bifurquem. Então, haverá várias coisas que você poderá executar localmente. E, bem, você provavelmente consegue fazer uns 99% das coisas localmente, porque se você observar os diferentes casos de uso, todos eles seguem uma curva em S, onde, conforme a inteligência evolui, chega um ponto em que há uma enorme diminuição nos retornos ao executar um modelo mais inteligente para um determinado caso de uso. Por exemplo, não sei se
+
+alguém já usou o Whisper Flow? Sim . Então, pelo que entendi, o Whisper Flow possui um pouco de inteligência artificial para fazer uma boa transcrição. E, para mim, ter um modelo com 10 trilhões de parâmetros...
+
+Primeiro, ter um modelo com 10 trilhões de parâmetros processando por alguns minutos não funcionaria nesse caso de uso, porque você precisa de baixa latência. Mas, em segundo lugar, não acho que haja realmente um retorno significativo em termos de utilidade que você obtém como usuário. Parece haver um limite a partir do qual, se você tiver inteligência suficiente, a transcrição fica boa o bastante. E acho que todos os casos de uso seguirão essa lógica, certo? E você pode apontar para várias outras coisas que já são parecidas com isso. Então,
+
+resumo, por exemplo, ou, sabe, algo como criar uma lista de tarefas ou resumir e-mails, coisas simples assim . É tipo, será que eu realmente preciso de um modelo tão grande? Não, acho que o efeito é de retornos decrescentes massivos. Então, isso vai acontecer e, em seguida, você chegará a um ponto em que, ok, ainda haverá casos de uso em que você simplesmente precisará de muita capacidade computacional. Por exemplo, se você pretende curar doenças ou algo do tipo, obviamente vai precisar de um modelo realmente inteligente e investir muito poder computacional nisso. Mas, na
+
+maioria das coisas que os consumidores usam, eles não precisam disso. Hum, e é aí que eu acho que a maioria das coisas poderá ser executada localmente. Então, é aí que você tem esses dois casos, certo? Tipo, ou você precisa gastar uma quantidade enorme de poder computacional, tipo bilhões de dólares em computação , para fazer essa coisa insanamente complexa, ou você pode simplesmente executar as coisas localmente. Essa é a minha tese. Hum,
+
+acho que é difícil gostar disso, acho que uma das coisas que Karpathy disse recentemente é que a névoa da guerra está cada vez mais perto, ficando cada vez mais perto. Então, tipo, há cada vez mais incerteza. Por exemplo, eu já me surpreendi algumas vezes nos últimos dois anos. Por exemplo, acho que o maior ponto de inflexão para mim foi a adoção do Claude Code e do Opus 4.5, e muitas pessoas voltaram ao trabalho depois do Natal e usaram esses modelos mais recentes e pensaram: " Caramba, as coisas realmente melhoraram". E esse foi o
+
+meu caso, pelo menos. Foi por volta do Natal que eu... sabe, essa foi a primeira vez que usei o Código Claude.
+
+E aí, sabe, eu ainda estava meio cético naquele momento de que seria capaz de realizar grande parte do trabalho que estávamos fazendo, mas então pareceu que, nossa, a fronteira tinha avançado bastante. Há muita coisa que simplesmente não era possível antes com os modelos mais antigos e agora, de repente, é possível. E muito disso também se deve ao trabalho no arnês e coisas do gênero. Não. Há muita incerteza nesse ponto também.
+
+Tipo, quem sabe como serão as modelos da próxima geração? Mas, de modo geral, acho que isso é verdade: não há retornos ilimitados em inteligência, certo? Chega um ponto em que você simplesmente não precisa de mais inteligência para fazer algo. E, se isso continuar acontecendo, então realmente não importa para onde as coisas vão. Sabe, enquanto esse tipo de progresso continuar, você poderá fazer cada vez mais coisas localmente. Sim
+
+. Bem, voltando ao consumidor, o dispositivo de inferência de US$ 5.000, o que eu acho que você está dizendo é que chegaremos a um ponto em que modelos locais com hardware um pouco mais recente serão bons o suficiente, inteligentes o suficiente para a maioria dos casos de uso do consumidor. Então, na verdade, estamos chegando a um ponto em que os casos de uso padrão agora envolvem o uso de modelos de nuvem de ponta para trabalhos realizados em dispositivos do tipo Mac Mini. Não é um Mac Studio.
+
+Mas ainda assim buscaremos mais poder computacional no futuro, porque isso nos proporciona melhores inferências, nos dá vantagem competitiva e nos permite resolver problemas de vanguarda. E é isso que impulsiona a curva naquele ponto em que as demandas do consumidor podem gostar do botão para suas impressões. Hum, estou interessado em outra forma de "fábrica de jogos", que é o fato de que tudo é muito novo no momento, então ainda não vimos muitos modelos em chip surgirem. Acho que em um nível que realmente atenda às necessidades das pessoas muito rapidamente, mas acho que, à medida que tivermos modelos mais robustos que se estabilizem o suficiente em um smartphone, colocar esses dispositivos em capas como essas, acho que eventualmente se tornará uma alternativa suficiente. Sabe, num mundo onde talvez o ciclo de obsolescência desacelere um pouco e possamos então aproveitar melhor os recursos existentes. Essa é
+
+uma hipótese interessante ou surgiu de algum lugar? Qual é, então, a hipótese? Então, a hipótese é que talvez tudo esteja mudando tão rapidamente agora que não temos tempo para criar um bom modelo em um chip. Oh. Todo mundo já passou a dizer que o botão "próximo" já está ativado. Você está falando de
+
+chips especializados para modelos específicos? Sim. Então, digamos, 23 ou 22. Sim. Oh sim.
+
+Bem, a questão é sobre o seguinte: as coisas estão mudando muito rápido agora, mas talvez se as coisas desacelerarem um pouco, se estabilizarem e se consolidarem, a melhor coisa a fazer seja ter chips especializados. Possivelmente sim. Essa é a tese. Sim . Sim, é uma ótima pergunta.
+
+Tipo Talos. Sim, como Talos, por exemplo. Quero dizer, o Talos está no extremo oposto, sabe, literalmente um hardware construído especificamente para um determinado modelo, e depois você tem, eu acho, um espectro, certo? Tipo, você tem GPUs de uso geral, como a Nvidia RTX ou algo assim, ou a H100, certo? Que é exatamente para ser, sabe, uma plataforma onde você pode basicamente fazer tudo. E do outro lado
+
+você tem Talos. E aí, no meio disso tudo, você talvez tenha coisas como Cerebras e Groq. Sabe, acho que pelo menos por enquanto não fazia muito sentido construir esses chips especializados para LLMs, porque eles estão mudando muito rapidamente. Portanto, a fronteira está em constante movimento, mas é realmente interessante, eu acho, se você começar a pensar, ok, bem, se você vai atingir retornos decrescentes em muitos desses casos de uso e você tem um modelo que é razoavelmente bom , então talvez nesse ponto você tenha que analisar qual é o custo de construir isso versus a economia que você obterá usando esse hardware e implantando-o em escala. É que os cálculos não faziam muito sentido no momento, porque talvez a fronteira se mova a cada 3 meses. Então, tipo,
+
+beleza, quando você termina de construir o chip, ele já é inútil, né? Hum, mas acho que isso vai mudar. Sim. Então, acho que, sabe, nós não estamos realmente construindo nosso próprio hardware. Estamos nos esforçando bastante para descobrir qual o melhor hardware a ser usado, mas, em algum momento, talvez faça sentido começar a trabalhar com alguém que esteja desenvolvendo o hardware, porque, principalmente se você estiver co-projetando toda a estrutura, você pode ter opiniões muito fortes sobre os modelos. Então
+
+pode até ser o caso de que, ok, hoje em dia, se você olhar para os laboratórios fechados, certo? Eles precisam fornecer uma API bastante genérica, pois existem diversos casos de uso para os quais as pessoas a utilizam. As pessoas dependem disso para várias coisas diferentes, certo? E, como resultado, eles precisam ter esse grande modelo monolítico que possa fazer tudo. Mas imagine se você for mais opinativo e talvez as coisas se consolidem e haja certos casos de uso que sabemos, tipo, "ok, é isso que queremos", então você poderia ser mais estratégico em relação à especialização dos modelos. Então, você poderia dizer, por
+
+exemplo, ok, teremos 20 modelos diferentes e esses 20 modelos abrangem, você sabe, praticamente as mesmas coisas que este modelo principal poderia fazer, mas cada um é especializado para uma tarefa diferente. E, talvez, se você analisar o hardware, verá que teria alguns chips especializados, capazes de executar esses modelos com muita eficiência. Sim, acho que é isso mesmo , que é para onde as coisas devem ir, certo? Se você partir do princípio de que, ok, as coisas vão se estabilizar, certo? E se o consumidor puder fazer 90% das coisas localmente, acho que essa tese provavelmente se confirmará. Hum
+
+, sim, eu acho que é um ponto muito válido, sim.
+
+Legal. Sim . Quer dizer, eu gosto disso. Acho que isso é melhor do que apenas conversar. Sim, acho que tenho uma pergunta sobre a parte de hardware . Sim
+
+. Porque, se você comparar as GPUs da Nvidia com o hardware de metal da Apple, compare com o da Apple, sim. ferragens metálicas, o resto da arquitetura. Então, se você carregar um modelo grande, obviamente eles terão muita memória, mas se você carregar o modelo, ele caberá na memória. Porém, quando você executar a inferência, o hardware se degradará muito rapidamente. É como se você não conseguisse
+
+obter muito desempenho mesmo com um Mac de 128 GB em comparação com a RTX 5090; você consegue uma inferência muito melhor com o hardware da Nvidia em comparação com o hardware da Apple. Você já sentiu algo parecido? Sim, a questão é que você consegue armazenar muita coisa na memória de um Mac, mas é lento. Então, por exemplo, quando você executa algo em RTX, é muito mais rápido. Então, você viu isso? O que você achou
+
+? Então,
+
+sim, concordo plenamente com você, essas coisas são muito diferentes, certo, em como são projetadas. Então, o Mac é uma espécie de memória unificada. É um conjunto de memória grande, e talvez não seja tão rápido em termos de largura de banda. Na verdade, não tem muita capacidade de processamento. Depois, você tem o RTX. Vamos supor que seja uma RTX
+
+5090. Se compararmos com um MacBook, ela tem muito menos memória, certo? 32 GB de VRAM, mas é muito mais rápido, certo? Então, acho que é como GDDR7, que é... Sim.
+
+quase 2 TB por segundo. Hum, talvez uns 1,5 TB por segundo, enquanto um Mac, sabe, estamos falando de algo como este Mac Studio, certo? 512 GB. Então, é como se tivesse mais de 10 vezes mais memória, mas apenas 800 GB de largura de banda de memória por segundo. Então, mais ou menos metade.
+
+E tem cerca de 10 vezes menos poder de processamento, certo? Então, sabe, eu acho que tudo isso é verdade, e a minha tese é basicamente que você quer os dois. Então, eu falei sobre essas duas fases separadas de inferência, certo? O preenchimento automático e a decodificação. Mas, sabe, a gente tende a olhar para esses modelos como apenas um monte de camadas, né?
+
+Sabe, a gente geralmente não se aprofunda muito nisso, principalmente quando você pensa em executar um modelo. Muita gente simplesmente pensa: "Ah, eu só preciso de uma certa quantidade de largura de banda de memória para rodar nessa velocidade" ou algo assim, mas tem muito mais coisa acontecendo nos bastidores, né? Por exemplo, se você começar a analisar a arquitetura desses modelos, verá que muita coisa acontece ali. Minha tese é que, na verdade, isso já ocorre no data center, mas o ideal é executar diferentes partes do modelo em dispositivos diferentes. Então, o motivo pelo qual perguntei é porque tenho este aqui, um modelo de 120 gigabytes, na cor preta, e um modelo de 220 bilhões de bytes rodando aqui.
+
+Se eu executar essa inferência por 15 minutos, este laptop ficará inutilizável. Está muito quente, mas mesmo se eu ligar na tomada, a bateria descarrega em 5 ou 10 minutos. É inútil. É como se, em comparação com executar a mesma inferência em uma RTX 5090, eu conseguisse obter muito mais desempenho. Sim, posso .
+
+Um modelo grande, obviamente. Consigo obter cerca de 30 bilhões de modelos, mas a inferência que consigo é incrível. Então, por isso perguntei sobre sua experiência com esse tipo de coisa. Sim, então, em algum lugar aqui... Podemos
+
+mostrar o Spark? Sim. Então, tipo, na verdade, a Nvidia geralmente não vende seu próprio hardware, certo? Tipo, normalmente eles fazem parceria com OEMs que depois vendem o hardware para o cliente final, mas no caso do Spark, aquele que você viu provavelmente é o da Nvidia, porque eles abriram uma exceção. Eles têm uma espécie de Founders Edition, que não é esta. Então, este é da ASUS,
+
+mas é basicamente a mesma coisa. Hum, e isso custa cerca de 4.000 dólares. E
+
+uma coisa que fizemos recentemente foi combinar isso com um Mac, certo? Então, basicamente, é uma coisa muito simples que você pode fazer, certo? Então, basicamente, você pode executar isso. Isso tem muito mais poder de processamento. Então, você pode executar a fase de pré-preenchimento da inferência aqui, e esta parte tem muito mais largura de banda de memória, então você pode executar a decodificação aqui.
+
+Agora, com a RTX, é diferente porque ela realmente tem mais largura de banda de memória, certo? E oferece mais poder de processamento, mas com uma quantidade de memória muito menor. Então, mas na verdade, está tudo bem. Então, sem entrar em muitos detalhes técnicos, você pode basicamente ser mais específico e começar a dividir o modelo de diferentes maneiras, e essa é, na verdade, a opção mais econômica. É meio louco que você tenha que fazer isso no momento, como se não existisse algum hardware que simplesmente tivesse tudo.
+
+Mas é esse o caso hoje em dia, certo? Então, hoje em dia, o ideal para executar modelos localmente é fazer as duas coisas. Então, você teria um Mac, um Mac Studio ou um MacBook. Ah,
+
+ao contrário. Então, mas, sabe, há mais coisas que você pode fazer em termos de dividir o modelo, e nós vamos lançar algumas coisas em breve que tornarão isso muito fácil. Então, imagine, sabe, você pode simplesmente conectar uma RTX diretamente no seu Mac e obter um aumento de velocidade de 3x, certo? Sobre a execução de modelos de grande porte. É nesse tipo de coisa que estamos trabalhando e, bem , é meio que análogo ao que está acontecendo no centro de dados, certo? Assim como acontece com a Nvidia,
+
+você tem esses chips Groq, que executam parte da inferência, e eles possuem uma largura de banda de memória muito, muito alta . E aí você tem um monte deles, então você tem esse enorme conjunto de memória, e você combina isso com GPUs da Nvidia. E a mesma coisa está acontecendo com a Cerebras, que também está fazendo algo parecido agora com os chips Trainium da AWS . Bem
+
+, há muito trabalho interessante a ser feito no lado do data center, mas nós acreditamos que o mesmo acontecerá localmente. É como se o software ainda não estivesse perfeito e o hardware fosse um pouco desajeitado. O fato de você ter que empilhar esses Macs assim e conectá-los todos com cabos Thunderbolt e outras coisas é meio estranho.
+
+No momento, sim. Mas , por exemplo, se você usar uma RTX, por exemplo, você poderia tentar executar o Gemma 4, a versão densa, certo? Deveria caber na memória. Talvez seja necessário quantizá-lo um pouco, mas deve caber. Isso também é interessante, não é?
+
+Porque, bem, você sabe, os MOEs podem ser o paradigma atual, mas talvez faça sentido, em alguns casos, executar modelos densos localmente também, certo? Então, no caso de um modelo denso, se você executá-lo em um Mac, será lento porque , bem, a proporção entre memória e largura de banda da memória no Mac é muito alta. Então, enquanto na GPU, é, você sabe, um nível mais baixo. Então, basicamente, não te beneficia muito tentar armazenar todo esse modelo na memória atualmente . Isso é muito escasso.
+
+Por exemplo, se você quiser executar um modelo denso, você só precisa de uma pequena quantidade de memória que consiga executá-lo muito rapidamente. Então, nesse caso, na verdade, sabe, a melhor coisa talvez seja rodar no RTX, certo? Então, isso depende de como as coisas vão se desenrolar, mas acho que no final das contas, você vai querer os dois. Você vai querer os dois. Talvez até como outras coisas. Por exemplo, talvez
+
+você tenha um chip especializado ou algo assim, e talvez tenhamos SRAM localmente. É... no momento, é...
+
+bem, é super caro, né? E também parece que a densidade da memória é muito baixa, então você só pode ter um pouco dela, mas talvez isso seja suficiente para muitos casos de uso, certo? Talvez você consiga executar um modelo menor muito, muito rápido. Então, tipo, eu acho que não é tanto uma questão de Mac versus Nvidia ou algo assim. É como se, pelo menos por enquanto, fosse tipo, ok, na verdade, você quer um pouco de cada coisa.
+
+E é assim que você consegue o melhor custo-benefício . Então, você poderia nos dar apenas um minuto para explicar como você alcança isso hoje em dia? Por exemplo, digamos que eu tenha apenas isso. Então, tipo, eu tenho uma infinidade de dispositivos ao meu redor ou pela casa, mas não estou usando nada para hospedá-los. Sim. E estou
+
+executando um gateway que está roteando essa solicitação. Sim. Então, sim, é realmente complicado fazer isso no momento se você estiver usando as ferramentas existentes. Mas esse é justamente um dos problemas que o Exo resolve. Então, o Exo é apenas um aplicativo que você pode instalar em qualquer dispositivo, ele funciona em segundo plano e descobre automaticamente qualquer outro dispositivo conectado.
+
+E funciona em uma rede mesh, então você pode conectar as coisas da maneira que quiser. E, basicamente, o software, como o Exodus, descobre a melhor maneira de distribuir seu modelo, dependendo do hardware que você possui. Então, esse é o nosso objetivo com o Exodus: tornar isso realmente fácil, certo? E aí, sabe, para nós, ter essas configurações heterogêneas e tudo mais é uma forma de resolver um problema real, porque, sabe, mesmo conversando com pessoas da Nvidia que tentaram fazer esse tipo de coisa localmente, é muito complicado. Bem, e aí você se depara com todo tipo de problema de rede e coisas do gênero. É como se
+
+quiséssemos que o tempo parasse, basicamente. Então, você instala esse aplicativo e pronto. Conecte as coisas da maneira que quiser. Hum, espero que possamos concluir isso e que eu possa te mostrar como funciona na prática. Eles já estão lá. OK. Sim.
+
+Bom. Então, nós temos, nós temos, uh, 4 estúdios Max. Hum, e vou mostrar uma demonstração de como isso funciona exatamente daqui a pouco. Bem, o problema é que eu meio que hesito em dizer, tipo, " ah, é só pegar todo o hardware e fazer isso", porque, como eu disse, hoje em dia, especialmente se você escolher um componente aleatório, não há muito o que fazer, principalmente se o hardware não tiver uma GPU, certo? Então, se você estiver usando Raspberry Pis ou algo parecido, sabe , eu sempre vejo essas demonstrações no Twitter do tipo, olha só, eu combinei esses Raspberry Pis e executei esse modelo grande.
+
+E aí, sabe, você analisa os detalhes e provavelmente eles quantizaram bastante, não é tão útil assim, e provavelmente é muito lento no pré-carregamento. Então, não é muito utilizável. Bem , se por acaso você tiver GPUs sobrando, acho que você poderia criar um cluster e ter algo bastante capaz. Então, qual é a sua filosofia em relação às redes de confiança zero? Acho que é esse o ponto de vista que eu gostaria de entender.
+
+Para mim, a solução que vocês estão propondo é: como tornar o hardware útil nesse contexto? Mas, em termos de exposição da rede do servidor, certo? Estamos falando de usar algo como um iPhone ou similar, mas você está transferindo a inferência para algo que está sob seu controle. Yeah, yeah. Por exemplo, fazer inferências em um telefone, por exemplo, acho que isso não acontecerá daqui a muitos anos, eu diria. Então, sim, quanto a
+
+como isso seria usado, você usaria o Exhale, que expõe um endpoint de API HTTP em cada dispositivo em que é executado. E aí, sabe, você pode usar algo como o Tailscale. Por exemplo, usamos o Tailscale para acessar isso remotamente. Eles resolveram esse problema muito bem. Assim como acessar seu dispositivo local com segurança .
+
+E aí, sim, você pode estar em qualquer lugar, certo? Então, eu posso estar aqui e ter meu cluster em casa e conversar com ele por meio de um aplicativo, certo? Tipo, tanto faz. Vocês estão incluindo todos os primitivos nativos do Tailscale no pacote ou não estão incluindo o
+
+Tailscale? Mas talvez tenhamos nossa própria solução para isso em breve. Tipo, bem, depende do quão problemático isso seja, porque eu não acho que seja tão difícil configurar o seu, especialmente se você estiver configurando seu próprio cluster e tal. Ter seu próprio Tailscale não é tão complicado, mas é algo com que experimentamos há um tempo, e talvez seja algo que façamos. Sim, mas eu acho que é assim que se torna algo assim utilizável.
+
+Certo? Sabe, você quer poder acessar isso em qualquer lugar. Você quer algo como o que eu imagino que você tenha seu cluster em casa, ou talvez seja apenas uma caixa, certo? E, bem, tem acesso a todos os seus dados, certo? E você pode acessá-lo com segurança do seu celular, de qualquer lugar. E está
+
+executando algo como o OpenClaw, então você pode fazer o mesmo que com outras coisas. Quer dizer, você pode fazer isso hoje, certo? É simplesmente caro. Mas, sabe, se estivermos falando daquela configuração atual em que você simplesmente tem isso, sem precisar se preocupar com essas questões de privacidade, como para onde seus dados estão indo, e você pode pagar uns 5 mil dólares por isso, acho que muita gente compraria. Legal. Hum, acho que talvez possamos experimentar a
+
+versão demo. Hum... Tem mais alguma coisa?
+
+Sim, acho que uma coisa a ter em mente aqui é que, como mencionei antes, na nuvem você pode processar em lotes. Então, tipo, na nuvem, você tem, sabe, talvez um milhão de usuários ou milhões de usuários usando seu modelo, certo? É o caso de ferramentas como Claude ou OpenAI. Assim, você tem a vantagem de poder receber todas essas solicitações e agendá-las de forma eficiente, também conhecido como processamento em lote. É mais ou menos assim que funciona, certo? Então,
+
+em vez de fazer cada inferência sequencialmente, você pode fazê-las juntas e obter essas ótimas economias de escala. Bem, você não pode fazer isso localmente porque você pode ser o único usuário. Hum, e é, funciona mais ou menos assim. Basicamente, você pode subir nessa linha à medida que aumenta o tamanho do lote, o que permite obter uma melhor utilização do hardware. E, especialmente com as GPUs de data center, isso funciona muito bem.
+
+Mas eu diria que na verdade não importa. Então, tipo, acho que esta é uma coisa interessante que eu gostaria de falar antes de irmos para a demonstração: tenho três razões pelas quais penso assim. Obviamente, se você pode processar em lotes, sua economia de escala será muito melhor na nuvem, certo? O que é compreensível , já que, se a sua economia de escala for 100 vezes melhor na nuvem do que localmente, o ambiente local sempre será muito mais caro em comparação com o que você pode fazer na nuvem, certo? Então, esse é basicamente o argumento. Mas eu
+
+diria que, na verdade, haverá algum nível de processamento em lote, mesmo que você seja um único usuário localmente. Então, a primeira coisa é tipo multiagente, então, uh, eu não sei por que isso estava parcialmente em chinês, mas uh, isso é tipo Grok 420. Acho que não está mais em beta. Então, na verdade já foi lançado, mas basicamente utiliza quatro agentes diferentes. Agora penso ainda mais. Eu estava usando
+
+outro dia e vi que mostrava o que os agentes estavam fazendo, e parecia haver mais de quatro. Bem, basicamente você está executando como um único usuário. Se você fizer uma única requisição em vez de apenas uma passagem pelo modelo, é como se esses agentes estivessem colaborando e funcionando juntos. Então, se esse for o paradigma, você provavelmente não executará tarefas com tamanho de lote um, mas talvez com tamanho de lote oito localmente. E, considerando as características do hardware, especialmente em um Mac, por exemplo, você conseguirá uma utilização muito boa com esse tamanho de lote.
+
+A segunda coisa é o dimensionamento do tempo de teste. Na verdade, a primeira coisa é uma forma de escalonamento do tempo de teste, mas acho que há muito trabalho interessante sendo feito em abordagens mais gerais, como as baseadas em busca. Então, grande parte do paradigma atual da IA, eu acho, gira em torno do aprendizado, certo? Então, tipo, como você dimensiona esses modelos, treina-os com uma grande quantidade de dados? Mas na verdade, há outra coisa que poucas pessoas estão fazendo no momento, que é, você sabe, dimensionar com a busca. E, bem, o que eu quero dizer com
+
+busca é algo simples que você pode fazer, como o "melhor entre N". Então, em vez de executar uma única passagem pelo modelo, você faz, digamos, 10 passagens pelo modelo e encontra uma maneira de escolher a melhor . E você pode treinar um modelo que basicamente consegue verificar essas respostas e pontuá-las. E então você, sabe, pode fazer formas de pesquisa mais sofisticadas . Então, tipo, tinha um desenho de um rosto se abraçando, não sei se tenho a imagem aqui. É só
+
+isso? Sim, houve uma pesquisa da Hugging Face que basicamente mostrou que você pode executar um modelo de 1 bilhão de testes e analisar a precisão desse modelo à medida que o tempo de computação de teste aumenta . Então, com vários métodos diferentes, certo? Basicamente, o que se observa é que parece haver alguma lei de escala aqui, no sentido de que você pode executar um modelo menor e realizar mais cálculos em tempo de teste, mais buscas e obter o mesmo desempenho que um modelo maior. Então, sabe, talvez o próximo paradigma seja algo parecido com isso também. E
+
+depois, você pode começar a fazer em lotes, certo? Então, em vez de um lote de tamanho um, poderia ser um lote de tamanho oito ou algo assim. Bem, a primeira, a terceira, que eu acho realmente interessante e que provavelmente atingirá um ponto de inflexão talvez este ano, é a aprendizagem contínua. Então, a ideia é que, em vez de apenas treinar o modelo antecipadamente e depois, no momento da inferência, você simplesmente realiza uma passagem direta pelo modelo, você também treina o modelo durante o momento da inferência. Então, hum...
+
+Tenho algo para isso? Sim, então basicamente a ideia aqui é que, na
+
+verdade, cada pessoa tem sua própria versão dos pesos do modelo, com base em como usa o modelo e em seus próprios dados. E, sabe, existe toda essa área de treinamento em tempo de teste, onde alguns artigos recentes mostraram que você pode ter esse problema de contexto longo no momento, certo? Ou problema de memória. Onde os modelos se esquecem e, sabe, você precisa ter essas sessões diferentes porque tem limitações de contexto e coisas do tipo. Você tem treinamento em tempo de teste, o que permite resolver muitos desses problemas, porque agora não existe mais contexto, já que você está literalmente atualizando os pesos do modelo conforme o utiliza.
+
+Isso acabaria completamente com a economia de escala na nuvem, porque agora não seria possível processar em lotes. Portanto, você não seria mais capaz de fazer isso porque cada modelo é, na verdade, um modelo diferente. Então, você sabe, dependendo de como isso se desenrolar, porque existem cenários em que pode ser apenas uma pequena parte do modelo que muda durante o treinamento de teste, mas, no extremo oposto, se o modelo inteiro estiver mudando, então você não pode usar o processamento em lotes de forma alguma . Então, sabe, isso basicamente significaria que o ambiente local ficaria 10 vezes melhor em relação à nuvem se isso acontecesse. Bem, de qualquer forma, vou parar por aqui. Tenho mais
+
+slides, mas vou parar por aqui e tentar gravar uma demonstração para quando estivermos prontos. Estamos prontos para uma demonstração? A rede Wi-Fi está funcionando. Só um segundo. OK.
+
+Mais alguma pergunta? Sim . Qual é o tempo de atividade geral que você tem com essa configuração? Esta configuração aqui. Tipo, quanto você consegue, tipo, 100% disso? Vi uma postagem no Hacker News
+
+de alguém que queria alugar sua capacidade ociosa. Tipo, quanto você pessoalmente... Sim. Usá-lo 100% do
+
+tempo ou em tempo integral? Não. Então, eu ainda uso...
+
+No momento, ainda uso bastante o Opus. Ah, e você sabe, hum , sim, eu uso bastante o Grok e coisas do tipo, hum, eu uso o Local para algumas coisas. Então, e também está crescendo, certo? Então, o conjunto de casos de uso em que " bom o suficiente" é simplesmente insuficiente está aumentando. Mas eu diria que a utilização está bastante baixa no momento. Então, acho que... bem, para
+
+repetir sua pergunta. Então era mais ou menos sobre utilizar, uh, utilizar, quanta utilização você obtém do cluster? E que tal alugar esse computador ocioso? Então, acho que essa também é uma ideia muito interessante . Não é algo em que estejamos realmente focados no momento, porque não faz sentido se não tivermos escala.
+
+Mas se tivermos escala, digamos que tenhamos um milhão de clusters Exa, e cada um estiver usando para si próprio, então a utilização pode ser bastante baixa. Nesse caso, há toda essa capacidade computacional ociosa, sem uso, simplesmente disponível. Então, por que não podemos usar isso para alguma coisa? Talvez pudesse ser até para um
+
+projeto voluntário de ciências, por exemplo, certo? É como se eu pensasse: "Ok, qualquer capacidade ociosa que eu tiver pode ser usada para resolver esse problema científico que exige muita inferência." Certo? Acho que essa é uma ideia realmente interessante e é algo que vamos revisitar quando tivermos, de fato , uma escala maior. Sim, acho que também existe a possibilidade de a utilização aumentar bastante, mesmo no seu cluster local, porque imagine que você não consegue obter o desempenho máximo localmente, certo? Bem,
+
+e você pode simplesmente dar acesso a todos os seus dados. O que eu pessoalmente gostaria é... eu só gostaria disso, porque não estou pagando por tokens, só quero que isso funcione o tempo todo. E talvez possa
+
+, de forma proativa , me informar sobre as coisas. Pode ser algo como vasculhar a internet em busca de coisas que sejam relevantes para mim. Pode ser algo constante, sabe, ficar pensando: "Ok, qual será a direção futura do EXO, talvez algumas coisas para ficarmos de olho ." Sabe, basicamente você tem um agente disponível 24 horas por dia, 7 dias por semana, que pode cuidar de você e servir como uma espécie de companhia. Acho que isso significaria um aumento significativo na utilização, certo?
+
+E você ia querer que essa coisa ficasse funcionando o tempo todo. Então, nesse caso, talvez não haja realmente tanta capacidade computacional ociosa disponível. Hum, mas... eu acho
+
+interessante. Sim, quando atingimos escala, começamos a pensar em questões como: "Nossa, temos o equivalente ao maior data center do mundo. Só que ele está distribuído pelo globo, sabe? Será que existe alguma maneira de aproveitar isso?" E, sim, acho que a inferência é bastante fácil de fazer nesse cenário, porque você não precisa de muita comunicação entre as diferentes máquinas. Principalmente se,
+
+sabe, se as pessoas já estiverem executando esses modelos de ponta em seus hardwares, então elas já têm a capacidade de executá-los, certo? Portanto, você não precisa fazer nenhum tipo de agrupamento pela internet nem nada parecido, porque eles já possuem essa capacidade. Então, é apenas uma questão de distribuir o trabalho de uma forma que envolva o processamento paralelo de dados. E isso é muito fácil de dimensionar. Sim, então . Falando nisso, você acha que existe
+
+algum paralelo com a época em que todo mundo minerava criptomoedas em casa e montava seus próprios computadores com GPUs? Porque aí, sim. Com o passar dos anos, mais e mais pessoas começaram a fazer isso, os preços caíram e, pode-se argumentar, o preço por token também caiu, certo? Portanto, para muitas pessoas, não vale a pena. Sim. Meu
+
+argumento seria que nunca valerá a pena alugar seu hardware para outras pessoas se você simplesmente... Sim. Se você busca apenas ganhos financeiros.
+
+Se você está fazendo isso sem fins lucrativos, então eu... eu acho que estou principalmente... Então, a
+
+pergunta era tipo, você acha que seria como a mineração de criptomoedas, onde originalmente era economicamente viável usar suas próprias GPUs e minerar Ethereum, por exemplo? Mas aí, eventualmente, você sabe, surgiram essas operações em larga escala que fizeram com que simplesmente não valesse a pena minerar por conta própria. Sim , eu acho que... Há
+
+algumas coisas aqui. Então, quer dizer, algumas coisas são diferentes, certo? Porque sim . Ao executar um modelo local, você tem todos os benefícios, seus dados não vão para a nuvem. Para os mineradores de criptomoedas que querem 100% de retorno o tempo todo, o incentivo não é o mesmo , certo? Mas há algumas
+
+coisas que parecem bastante semelhantes à primeira vista, se você simplesmente olhar para elas. Sim, eu acho que é por isso que eu disse que só faz sentido quando atingirmos escala, porque não acho que nenhum projeto que tenha como objetivo apenas te dar dinheiro para alugar seu poder computacional enquanto você vai trabalhar seja uma boa ideia. E acho que já houve alguns fracassos, sabe, especialmente porque muita coisa que existe por aí está num nível de abstração errado, onde você está alugando o hardware, quando o que você deveria estar alugando é o caso de uso, certo? Então, como deveria ser, você pode subir cada vez mais na hierarquia e, por exemplo, cobrar por tokens ou por algo de nível ainda mais alto, como uma tarefa, certo? E acho que quanto mais alto o nível, mais criatividade você tem para usar o hardware. Por exemplo, talvez se
+
+descubra que, ok, esse computador que está disponível, as pessoas estejam dispostas a alugá-lo por um preço muito baixo, certo? Porque, bem, é literalmente capacidade ociosa que está ali parada, certo? Então, de outra forma, eles não receberiam nada por isso. Nesse caso, sabe, se você pudesse, por exemplo, construir algo de nível superior, digamos, imagine uma API onde você pudesse simplesmente enviar uma tarefa e ela seria concluída nas próximas 24 horas, certo? Portanto, não é sensível à latência e, se falhar, pode ser tentado novamente.
+
+Algo assim, talvez você pudesse ter uma API muito, muito barata que funcionasse nesse tipo de rede. Bem, sim, acho que a primeira coisa a fazer é que as pessoas tenham acesso a hardware potente, e acredito que, localmente, eu seria um grande catalisador para isso. E depois você precisa de escala, certo? Não faz sentido fazer isso em 100 Macs. É literalmente uma quantidade insignificante de processamento. Sabe, a coisa fica
+
+interessante quando você começa a pensar, tipo, " ok, e se tivéssemos um gigawatt de poder computacional?" É tipo, bem, sabe, de que outra forma você vai conseguir esse poder computacional? Existem algumas empresas que possuem centros de dados que precisam de todos esses recursos. Você precisa passar por todo esse processo, levantar uma certa quantia de dinheiro, obter essas licenças e coisas do tipo. É como uma outra maneira de acessar uma grande quantidade de poder computacional. Então,
+
+pode ser interessante. Bem, sim , não é algo em que estejamos pensando muito até atingirmos uma escala maior. Sim, acho que estamos quase na hora, então quero mostrar a demonstração. Ah, sim, está pronto? Preciso acessar via
+
+SSH.
+
+Deveria ser.
+
+OK. Não, está funcionando. Legal. Então, uh, pop pop pop. OK. Sim,
+
+temos quatro Macs aqui. E todos eles estão usando o XO. Basicamente, funciona assim: é um aplicativo do macOS que você executa em segundo plano em cada máquina e... é só isso que
+
+você precisa fazer. Então, você instala esse aplicativo, executa-o em segundo plano e, o que acontece é que eles se conectam via Thunderbolt. Então, não sei se é fácil de mostrar. Acho que dá para ver melhor se eu virar a imagem.
+
+Basicamente, cada Mac está conectado a todos os outros Macs. Então, eles estão conectados via Thunderbolt 5, que é basicamente uma espécie de interface para PCIe, então é bem rápido. E, na verdade, fizemos algum trabalho recentemente para integrar o RDMA de baixa latência ao EXO. Então, antes disso, a latência entre Macs, porque isso é como hardware de consumidor comum, rodando esse Mac OS inchado, era realmente muito lenta. Então, você teria cerca de 300 microssegundos, ou seja, 0,3 milissegundos de latência, se quisesse enviar dados entre os Macs. O problema é que isso
+
+não permite dividir as cargas de trabalho de forma eficiente, possibilitando o escalonamento vertical. Então, o que você precisa fazer para realmente aumentar a velocidade é distribuir cada camada entre suas máquinas. Se você tiver 60 camadas em um modelo, como é o caso do Kimmy ou do Deep Seek, então você terá que sincronizar pelo menos 60 vezes cada vez que executar um comando, como gerar um token. Então, na verdade, no caso do paralelismo de tensores, que é uma forma de dividir as operações de tensores entre essas máquinas, você precisa fazer duas sincronizações por camada. Portanto, são 120 sincronizações para um modelo como a Kimmy. Se isso levar
+
+, digamos, 0,3 milissegundos, é muito tempo. São cerca de 40 milissegundos gastos apenas na comunicação, certo? Portanto, isso seria realmente limitante em termos do aumento de velocidade que você consegue obter. E na verdade, antes, naquela época, você nem conseguia aumentar a velocidade. Então, ao agrupar os dados, a vantagem é que você tem toda essa memória disponível para dividir o modelo, permitindo ajustar modelos maiores, mas o processo será mais lento.
+
+Bem, resumindo, com RDMA é 100 vezes mais rápido. Então, é algo como microssegundos de um dígito, que agora, em vez de ser tipo , 30 milissegundos de comunicação, é menos de 1 milissegundo, certo? O que é perfeitamente aceitável se você quiser ampliar esses modelos grandes. Então, o GLM 5.1 foi lançado ontem.
+
+São um trilhão de parâmetros? 1. Acho que são trilhões de parâmetros. Bem
+
+, basicamente, como diabos você vai executar um modelo com um trilhão de parâmetros? Sim, é enorme.
+
+Bem, a ideia é que você não conseguiria executar isso em um único dispositivo, é muito grande. Portanto, estamos agrupando esses dispositivos e, em combinação com essa capacidade RDMA, podemos executá-los mais rapidamente do que em um único dispositivo. Então, já está carregado na memória, você pode ver aqui. Então, GLM 5.1.
+
+E, bem , o XO funciona da seguinte forma: você pode criar instâncias de modelos, e uma instância é apenas uma configuração de um modelo que está sendo executada no seu cluster. Então, já está carregado na memória, e você pode ver que a utilização de memória em cada uma das máquinas é de cerca de 112 gigabytes ou algo assim. Então, é isso, porque leva muito tempo para baixar esses modelos, nós baixamos apenas o de 4 bits, que ainda é bem grande, é tipo, quanto é? Quase 400 gigabytes. Bem, o modelo completo aqui teria cerca de 1,5 terabytes. É que,
+
+sabe, saiu ontem, então a gente baixou a versão de 4 bits, mas, sim, eu consigo conversar com a modelo. Então, será que ele sabe algo sobre engenharia de IA? Curioso. Tenho uma pergunta rápida sobre isso. Já fizemos a conversão para MLX?
+
+Desculpe? Já convertemos este modelo para MLX? Sim, sim, fizemos isso ontem. Então, basicamente, quando um modelo é lançado, sempre há essa corrida para torná- lo compatível com o hardware. Então, nós...
+
+Leo fez isso ontem. Baixei o modelo e o converti. Felizmente, com este foi bastante fácil porque, basicamente, o GLM 5 já tinha sido lançado, certo? Portanto, isto é apenas mais um ponto de verificação do mesmo modelo. Portanto, a arquitetura é exatamente a mesma. Já tínhamos apoio para isso. Então,
+
+com isso, só precisamos converter os pesos. Normalmente, quando um novo modelo é lançado, como o Gemma 4, temos que trabalhar bastante para fazê-lo funcionar. Principalmente o Gemma 4, que é bastante diferente em sua arquitetura e na forma como o cache KV funciona, que é muito diferente de qualquer outro modelo. Então, foi um pouco complicado conseguir trabalho e... Sim, enfim. Então
+
+, sim, isso... Sabia disso? Primeiro, para uma comunidade proeminente.
+
+Foi fundada pela Swyx, sim. Imagino que este seja um ponto de verificação recente, então ele sabe tudo sobre isso. Não sei há quanto tempo existe o termo "engenheiro de IA" , mas, bem, sim. Então, isso está sendo executado nessas quatro máquinas e, se você olhar, não sei o tamanho. Você consegue ver bem? Como você pode ver,
+
+basicamente a utilização em todas essas máquinas é de 100%, porque todas estão sendo usadas em paralelo. Portanto, trata-se de paralelismo tensorial com RDMA. Você pode ver que a resposta está um pouco instável, mas acho que é porque estou me conectando via Wi-Fi, certo? Então, na verdade, é apenas a conexão entre meu Mac e o cluster. Mas aqui tudo o que eu fiz foi algo como executar o Tailscale. Então, temos
+
+uma máquina com o nome de host James e, basicamente, estou me conectando a ela para acessar o painel de controle via Tailscale. É , não sei se poderíamos usar uma versão diferente também. Isso depende do que temos disponível. Uh da da da
+
+Vamos tentar esta. Quen 3.5 deve funcionar bem, certo? Eu experimentei . sim . Uh Uh
+
+sim, isso deve funcionar bem. Então, como eu disse, você pode, basicamente, ter diferentes instâncias de diferentes modelos. E você pode executar todos eles juntos. E este aqui já está baixado em alguns deles. Então posso experimentar isso. Portanto,
+
+este será um modelo bem menor, por isso deverá funcionar muito mais rápido. Deve ser baixado nestes dispositivos. Então, se eu executar esse comando, ele carregará o modelo na memória. Como você pode ver nas duas máquinas, a carga na memória aumentou um pouco. Então, sobre Mike e S13, os de cima e os de baixo.
+
+Agora está mais alto. E, uma vez que estiver carregado na memória, você pode simplesmente conversar com ele. E deveria ser, sabe, muito, muito mais rápido que o outro. Então, de novo, está um pouco instável por causa do Wi-Fi, mas você sabe, você pode ver que os tokens por segundo são tipo 77. Hum, e hum, sim.
+
+Então, se eu fizer algo por um pouco mais de tempo, você pode ver que a utilização aumenta nessas duas máquinas porque elas estavam trabalhando em paralelo novamente. Então, sim, é bem simples. Mas, tipo, grande parte da complexidade está em fazer deste um aplicativo único que você pode instalar, sem precisar configurar nada de rede, e que simplesmente descobre a melhor maneira de fotografar a modelo. Eu também quero mostrar " Sim". Hum, estou configurando a rede.
+
+OK. Sim , eu também quero mostrar por que compramos um Spark. Por exemplo, também existe a possibilidade de dividir modelos em hardware heterogêneo, certo? Então você pode pegar o Spark e o Mac, e neste caso, obviamente, como eu disse antes, este tem muito mais poder de processamento. Então, existem algumas coisas interessantes que podemos fazer em termos de dividir o modelo de maneiras mais granulares do que da forma como estamos fazendo aqui, que é com paralelismo de tensores. Legal
+
+. Bom, enquanto esperamos por isso, posso voltar à conversa. Quer dizer, temos 15 minutos, então...
+
+Além disso, se alguém quiser, podemos tentar isso. Por exemplo, se alguém quiser testar o Exo ou instalá-lo, pode acessar o site exolabs.net e depois adicioná-lo ao cluster. Porque é tipo, sabe, super fácil adicionar dispositivos. Não tenho certeza se funcionará via Wi-Fi, pois depende do firewall, mas sempre podemos conectar via Thunderbolt. Acho que se
+
+tivermos outro cabo. Se alguém quiser experimentar. Você entendeu. Yeah, yeah. Então, uh, ok, então o aplicativo está rodando? Sim,
+
+o aplicativo está rodando, certo? Sim. A mais recente. Então, vamos tentar.
+
+Primeiro, veja se funciona via Wi-Fi. Sim, então . Então, se eu abrir o painel, o que deveria acontecer? Não está funcionando no Chrome? Então, sim, a ideia é que você pode conectar esses elementos da maneira que quiser. Então,
+
+funciona através de uma rede mesh, então, em teoria, deveríamos conseguir conectar este MacBook e fazê-lo entrar no cluster. É , parece que não está funcionando via Wi-Fi. Deve ser algum problema com essa rede Wi-Fi compartilhada, mas podemos tentar conectar o aparelho na tomada. Deve funcionar, certo? Vamos ver.
+
+Ah, vocês também não têm nenhum modelo, então talvez a gente faça um pequeno. Faremos um pequeno. Ih
+
+, você tem? Gemini 4? Não sei se isso vai funcionar, porque nesta versão do aplicativo... bem,
+
+vamos tentar.
+
+Uma peculiaridade desse hardware é que você nunca deve usar essa porta próxima à porta Ethernet. Bem, nós não temos uma boa explicação para isso, mas simplesmente não funciona. Aparentemente, a Apple está corrigindo o problema, então está tudo bem. Você pode usar qualquer outra porta, no entanto. E todos eles são assim. Tipo, você precisa de
+
+Thunderbolt 5 para fazer áudio, cara. Que MacBook é este? Você sabe que chip é esse? M4. M4 Máx. Então, este tem
+
+Thunderbolt 5. Você ativou o AudioMate? Porque você precisa. Você precisa mesmo. Então, sim, sim, sim. Achei que seria
+
+legal se você pudesse fazer áudio, amigo, mas... Então, se esperarmos um pouco, eles devem se descobrir automaticamente. Esperançosamente.
+
+Sim, você tem Exa Thunderbolt, então deveria funcionar. Sim, ok, está funcionando. Então, você pode ver que, na verdade, a primeira coisa que acontece é que, quando um novo nó se conecta, ele basicamente se atualiza com todo o histórico do que aconteceu no cluster, porque usamos o event sourcing, que é comumente usado em bancos de dados distribuídos, onde cada máquina basicamente escreve seu próprio log somente de acréscimo, e então eles são mesclados de alguma forma. E a razão pela qual fazemos isso é por causa das garantias de consistência em todo o cluster. Então, se você estiver trabalhando com algo bastante dinâmico como isso, os dispositivos podem entrar e sair, basicamente, a qualquer momento. Por exemplo, um dispositivo pode ser
+
+desligado, pode entrar em modo de espera ou algo do tipo. Se você está trabalhando com isso, como garante que, se uma solicitação estiver em andamento, ela não será simplesmente perdida? Certo? Então, desde o início, foi assim que arquitetamos isso. Então, é só reproduzir isso.
+
+Hum, mas sim . Acho que eu estava falando de áudio, amigo. Então, tudo isso...
+
+Tipo, o M3 Ultra, que é este aqui, o M4 Pro, o M4 Max, o M5 Pro e o M5 Max, todos têm Thunderbolt 5. O Thunderbolt 5 é necessário para o Audio Mate. E sim, veja, está literalmente reproduzindo tudo o que acabamos de fazer. Não sei se é difícil de ver, mas então, é isso aí. O problema agora é que você precisa inicializar o Mac no modo de recuperação para habilitá-lo, porque é um recurso voltado para desenvolvedores, e a Apple é uma empresa de consumo, então eles não querem que isso esteja ativado por padrão no momento.
+
+Então, este não tem isso habilitado, mas o que podemos fazer é, você sabe, tentar criar uma instância apenas via TCP/IP. Então, será mais lento, mas deve ser possível. Sim, chegamos ao ponto em que estamos executando o segundo modelo, então está quase pronto. Acho que pode ser isso. Pronto. Ok, então agora
+
+você pode ver que isso apareceu no cluster e que está conectado apenas a este. Que é essa conexão Thunderbolt? Assim, o Axle mantém uma visão em tempo real da topologia física e, com isso, consegue descobrir a melhor maneira de distribuir o modelo. Ah , ok. Recebemos um aviso de que há uma versão incompatível do macOS, então estamos usando uma versão diferente do macOS, mas ainda podemos tentar.
+
+Então, às vezes aparece assim no macOS 26.2, enquanto que aqui aparece assim no 26.3, e às vezes isso pode ser um problema, mas ainda podemos tentar. Então, você disse que tinha um modelo, certo? Podemos analisar o que você tem.
+
+Uh ba ba ba Espera, posso colocar isso na lata? Posso colocar isso na lata? Este trabalho?
+
+Tem entrada HDMI? Este microfone? Hum, acho que não, né? Temos um adaptador? Você tem um adaptador?
+
+OK. Vou mostrar o painel de controle desta máquina. Ainda é possível fazer isso.
+
+Então, sim. Agora você pode ver que o MacBook está lá, mas aparece uma mensagem dizendo que há versões incompatíveis do macOS porque ele está na versão 26.2, enquanto estes estão na versão 26.3. Mas na verdade eu posso fazer isso daqui. Então, nem
+
+preciso fazer isso a partir dali. Então, isso também é uma coisa boa. Consigo acessar, sabe, qualquer uma dessas máquinas está executando o mesmo endpoint da API, o mesmo painel de controle. Posso simplesmente enviar solicitações para qualquer um deles. Então, você disse que tinha um modelo. Não consigo ver
+
+isso. Não te vejo. Você não tem nenhum modelo. Quer dizer, está tudo bem. Podemos baixar um modelo. Podemos fazer apenas um pequeno
+
+.
+
+Ah, entendi. Ah, ok. Então, você conseguiu isso usando o MLX. Sim. Então, isso o coloca em um diretório diferente.
+
+Hum, tudo bem. Assim como podemos fazer, você pode filtrar aqui. Basicamente, você pode selecionar qualquer conjunto de nós e o programa filtrará as configurações com base nesses nós. Então, se eu filtrar por aqueles que contêm o " uh espere". Esse filtro está funcionando?
+
+Ou algo assim. Parece correto. Então, se eu executar o programa aqui, vamos ver como ele se comporta com as diferentes versões do macOS. Espero que funcione. Ah, não gostei disso.
+
+Eu penso tipo "Ah, não, está só baixando". OK. Portanto, ao iniciar um modelo, obviamente ele precisa ser baixado primeiro. Hum, o que na verdade é um grande problema com essas coisas. Portanto, se você estiver executando algo localmente, obviamente precisará ter os pesos de todo o modelo.
+
+Isso significa que, sabe, às vezes você precisa baixar algo como um terabyte. Sim , basicamente você só precisa de internet de alta velocidade . E, obviamente, no caso de quando você está dividindo o modelo entre várias máquinas, você basicamente precisa dos pesos de praticamente todo o modelo em cada máquina. Talvez você possa ser mais inteligente, por exemplo, colocando partes do modelo em máquinas diferentes. Mas é meio complicado porque, se um nó morrer, a parte do modelo pela qual ele é responsável será diferente.
+
+Então, basicamente, você precisa do modelo completo em cada máquina. Então, se o download terminar, podemos executar uma inferência. Então, este é o Qwen 0.6B, que é basicamente o menor tamanho possível. É tipo, o que é isso? 0,3 GB. Que
+
+Wi-Fi ruim, eu acho. Você consegue visualizar esse modelo existente com o Xcode XL? Você pode usá-lo, mas precisaria...
+
+Então, por exemplo, agora você tem que migrar os modelos manualmente para o EXO. Então, se você estiver usando um aplicativo diferente, como o llama.cpp, não será possível transferi-lo facilmente, mas vamos adicionar essa funcionalidade para que, se você já tiver modelos de outro aplicativo, o EXO os reconheça automaticamente. Mas já está baixado. Então, diz que está pronto.
+
+Então, isso deve funcionar no Mac. Sim, então você pode ver. Vamos fazer algo mais longo.
+
+Ok, talvez a utilização aqui esteja com problemas, mas, basicamente, isso está rodando no MacBook aqui. Então, é, a ideia é tipo, você entendeu, né? Basicamente, você pode executar este aplicativo em qualquer uma de suas máquinas e conectá-las da maneira que quiser, e o Exa cuidará do resto. Você tem isso? Preencher decodificação? OK. Então, a
+
+próxima coisa que quero mostrar para vocês é: "E se não for só o Mac?" E se você tiver um hardware diferente? Então, vou mostrar rapidamente como funciona se você tiver o Spark aqui e um MacBook. Você quer conectar isso ao HDMI? Sim, claro. Qual? É
+
+esta? Você tem porta HDMI? Sim. OK. Só estou tentando descobrir se está
+
+funcionando. Tipo, podemos tentar? Ou
+
+sim, então a ideia é executar o prefill lá e executar o decode no MacBook. Este dispositivo tem o dobro da largura de banda de memória do MacBook, 546 GB por segundo. Possui 273 GB de largura de banda de memória por segundo. Enquanto isso, este possui quatro vezes mais poder de processamento. Então, tipo, a diferença na proporção é tipo 12x.
+
+Então, a ideia é basicamente a seguinte: para comandos realmente grandes, você consegue um grande aumento de velocidade , não apenas executando-os no seu MacBook, mas também dividindo-os aqui. Mas você não deve executar a decodificação aqui, pois isso consome mais largura de banda da memória. Então, basicamente, sim , você divide essas duas fases. E aí surge uma certa complexidade em transmitir o cache KV, porque agora o cache KV só existe aqui. Então, de alguma forma, você precisa enviar o arquivo para o MacBook para que ele possa decodificá-lo, certo?
+
+Porque o cache KV lê isso toda vez que percorre o modelo. Então, a forma como fazemos isso é... eles estão conectados por Ethernet de 10 gigabits.
+
+Não sei se você consegue ver, mas é Ethernet de 10 gigabits. O MacBook não possui uma porta Ethernet, então usamos um adaptador Ethernet de 10 gigabits. E, bem, é um pouco irritante, na verdade, porque o ideal seria usar um cabo USB-C ou algo parecido para conectá-los. Ainda não temos isso funcionando, mas, bem, mais ou menos está funcionando, só que não está pronto para produção porque é preciso executar vários scripts para que funcione. Hum, mas...
+
+Então, por que está sendo feito via Wi-Fi? Sim .
+
+OK. Hum, será que devemos pular isso? Estamos bem. Você pode tentar por mais um tempinho. Temos talvez 5 minutos e depois, é , o problema é que, por algum motivo, está enviando o cache KV via Wi-Fi no momento, o que faz com que a largura de banda se torne um gargalo.
+
+Então, o que você precisa? É por isso que precisamos de Ethernet de 10 gigabits, porque você está enviando esse cache KV. Você não quer que isso bloqueie, sabe, a sua capacidade de calcular a fase de decodificação, certo? Então, basicamente, você precisa sobrepor computação e comunicação e transmitir o cache KV para o MacBook. E precisa ser rápido o suficiente para que você possa sobrepor completamente as passagens. Se
+
+não for rápido o suficiente, então você terá que usar a função sequencial. Então, você gostaria de fazer o pré-preenchimento, o envio continuará e, em seguida, a decodificação será realizada. O que significa que vai ser lento. Hum, posso ter o cabo HDMI de volta? Sim.
+
+É, acho que estamos quase... Bem, nosso tempo acabou . Então, vou concluir com uma coisa: tudo bem, estou contando tudo isso para vocês , mas por que isso ainda não é mais compreendido ou mais conhecido? Bem,
+
+basicamente, a melhor fonte para esse tipo de coisa no momento é o Reddit ou o Twitter, e cada um diz uma coisa diferente. Então, como eu mencionei antes, existem muitos tópicos que você vê ou pessoas que realizam experimentos. Agora, também temos todos esses cientistas cidadãos, o que eu acho muito legal porque, sabe, existem ferramentas de IA realmente capazes, então as pessoas podem experimentar e testar coisas rapidamente. Mas, por outro lado, há muito ruído. E, se você realmente não entender o que está acontecendo, pode acabar pensando que obteve um resultado.
+
+E como o LLM está lhe dizendo, "Ah, você fez uma descoberta importante." Mas na verdade, sabe, não é tão interessante e não é muito prático. Um bom exemplo disso é quando as pessoas quantizam modelos de forma excessiva. Portanto, se você deseja quantizar um modelo para um único bit, é melhor usar um modelo menor e não quantizá- lo. Então, não é como se esses modelos não fossem muito úteis, certo? De forma alguma. Então,
+
+você pode ver alguns tópicos, por exemplo, sobre "Ah, eu executei o Kimmy em um MacBook ou algo assim." Mas, sabe, é como a versão de um bit, e talvez eles também tenham feito uma poda, ou tipo, em vez de ativar oito especialistas do modelo, está ativando dois especialistas do modelo ou algo assim, entende? E o que queremos fazer é trazer alguma transparência em relação a isso. Então, temos muitos equipamentos. Sim, provavelmente temos o hardware mais adequado especificamente para esse propósito.
+
+E, sabe, nossa ideia é publicar benchmarks abertos que mostrem, ok, qual desempenho eu vou obter em determinado hardware. E essas coisas também estão mudando muito rápido , né? Então, como eu disse, acho que tem um multiplicador de 100x ali dentro. Então, isso também será uma forma de acompanhar o progresso, certo? Então, você poderá ver, tipo, ok, sabe, como as coisas estão melhorando? O
+
+software está melhorando? O hardware está melhorando? Sabe, os modelos estão melhorando? Então, isso acontecerá muito em breve, digamos que dentro do próximo mês, lançaremos um site que basicamente terá milhares de benchmarks. Já estamos continuamente recebendo os dados. Portanto, estamos executando continuamente
+
+esses benchmarks, com diferentes modelos, diferentes quantizações e diferentes maneiras de refinar os modelos. Também queremos combinar isso não apenas com o desempenho bruto, como tokens por segundo e tempo de preenchimento automático, mas também com a qualidade do modelo, certo? Então, por exemplo, inteligência por joule, certo? É uma das coisas que estamos analisando. Então, basicamente, você poderá selecionar um orçamento, digamos, US$ 10.000, e ver a
+
+fronteira de Pareto de todas as configurações locais dentro desse orçamento. E isso vai te mostrar que, se você quer uma qualidade realmente boa, talvez tenha que fazer algumas concessões no desempenho. Então, se você quiser executar o GLM 5.1, talvez consiga 20 tokens por segundo. Mas talvez, sabe, para você seja suficiente usar um modelo menor, nesse caso talvez você use a Gemma e consiga uns 100 tokens por segundo.
+
+E todos esses tipos de fatores existem em diferentes pontos dessa fronteira de Pareto. Bem , é, acho que vou encerrar por aqui . Hum, a menos que tenhamos isto ou...
+
+Ok. Ah, sim. Hum, sim, acho que não sei se já estamos no horário limite, então não tenho certeza se teremos tempo para mais perguntas, mas sim, muito obrigada. Obrigado.
+
+Hum, posso perguntar como está o tempo disponível? Se alguém tiver alguma pergunta rápida, por favor, me avise. Ou devemos fechá-lo? Talvez uma pergunta, se alguém tiver alguma. Ou não. Sim
+
+. Então, Simon Woods falou recentemente sobre alguém que... o ciclo de pesquisa automotiva de Andrej Karpathy, com o objetivo de otimizar o modelo para um hardware específico.
+
+Mac com 48 GB, como aqueles MacBook Pros de 11 polegadas, em cada ponto do disco. Você fez alguma coisa para otimizar suas configurações de hardware para criar os modelos? Sim. combinar combinar o quê? Sim. O que você
+
+tem. Sim . Acho que me inclino mais para o lado cínico em relação a esse trabalho. Hum,
+
+tenho visto muita coisa por aí que é meio que selecionada a dedo, e acho que, especialmente se você estiver usando pesquisa automática sem realmente entender o que está acontecendo, você pode não estar tentando criar expectativa , mas sim acreditar que fez alguma descoberta revolucionária. Bem , vou te dar um exemplo. Já vi coisas em que é só um modelo de um bit rodando e eles dizem tipo, "Olha, temos a Kimmy rodando do disco, hum, a...".
+
+E nem é um desempenho tão bom assim, né? Tipo cinco tokens por segundo ou algo assim, mas, sabe, e também tem todas as outras camadas envolvidas, certo? Então, a pesquisa automática pode fazer uma alteração que impacta muito o desempenho, a qualidade do modelo, e você nem percebe porque acha que ela te avisa, tipo, "Olha, está rodando". Então, eu acho que a pesquisa automática é uma ferramenta muito poderosa , mas na minha opinião, você ainda precisa seguir o método científico. Você precisa ter uma hipótese bem fundamentada . Precisa então
+
+executar experimentos para testá-la. E aí, basicamente, iterar. Então, se for tipo, "Ei, pesquisa automática, vai lá e descobre como deixar isso mais rápido", não vai funcionar. Acho que isso é praticamente uma máquina caça-níqueis de dados . É como uma máquina caça-níqueis. É
+
+como... E pode ser viciante, e você pode pensar: "Nossa, estou fazendo um progresso real aqui". Mas acho que, na verdade, o conjunto de coisas que ela pode produzir com a abordagem de máquina caça-níqueis é muito pequeno. E será muito escasso
+
+também. Talvez eventualmente... Talvez produza certas coisas...
+
+Sabe, se pessoas suficientes estiverem usando e houver poder computacional suficiente, mas é como força bruta. É basicamente uma abordagem de força bruta. Então, eu gosto muito de pesquisa automatizada e também a uso. Acho que é uma ferramenta realmente poderosa, mas precisa ser usada no contexto do método científico, onde você realmente entende o que está acontecendo. Então, sim, mas especificamente sobre o disco, eu simplesmente não acho interessante. Acho que...
+
+Obviamente, a ideia de ter hierarquias de memória é interessante. Isso é algo fundamental sobre computação, eu acho, mas especificamente sobre disco, é... É muito lento.
+
+Existem limitações fundamentais. É melhor focar no problema de memória. Isso seria muito mais econômico. A menos que você faça alguma configuração maluca onde, por algum motivo, empilhar vários SSDs seja muito mais barato do que usar memória normal, certo? O que talvez, com os preços da memória e tudo mais, se tornasse interessante, mas não seria um MacBook, certo? Porque o MacBook tem
+
+um disco e não é tão rápido. Mas eu vi algumas pessoas analisando o problema, tipo: "E se colocássemos 64 SSDs em um gabinete, com RAID ou algo assim, e começássemos a usar essas técnicas onde você pode ser inteligente ao carregar especialistas? Há muita pesquisa sobre prever qual especialista virá a seguir, por exemplo, então você pode carregá-lo de forma otimista e, quem sabe, acertar 90% das vezes." Em 10% das vezes, você tem que carregar tudo de novo e pensa: " É, dá para fazer um monte de truques inteligentes ali, mas pra mim, tudo bem, podem fazer esses truques, mas com memória normal." Não gosto, por que você está olhando para isso, sabe, fazendo isso com o disco?
+
+Ok, obrigada. E com Alex ao fundo, funcionou. Oh. Ok, funcionou. Espere, você quer mostrar então? Sim. Então, basicamente,
+
+podemos mostrar o antes e o depois, certo? Podemos mostrar o antes e o depois? Então, um deles é como um MacBook funcionando sozinho. Hum, e você pode ver que este é um prompt bem grande, então é um arquivo de 38 kilobytes, ou melhor, dois deles. Então, vou fazer o "depois" primeiro. Ok, vamos fazer o "
+
+depois" primeiro. Então, o "after" utiliza ambos em conjunto, pré-preenchimento e decodificação. Portanto, o preenchimento automático será feito no Spark e a decodificação no MacBook. E uma coisa a ter em mente é que isso não faz sentido se você estiver fazendo um exercício curto. Se você estiver apenas dizendo olá, isso não acelera o processo. Mas para
+
+prompts grandes, o tempo de preenchimento automático também aumenta quadraticamente com o tamanho do prompt, certo? Para a maioria das arquiteturas semelhantes ao modelo. Portanto, se você estiver trabalhando com prompts realmente complexos, isso vai consumir uma quantidade significativa de tempo da inferência. Então, neste caso, sim. Então, não sei, isso é tipo um prompt de 100 kilobytes ou algo assim. É, tem
+
+muita coisa do tipo "Está funcionando?" Não. Sim. Sim . OK. Então, basicamente, o que
+
+está fazendo é... Agora, você pode ver a utilização aqui. É como se fosse 100% exclusivo do Spark, porque ele executa o pré-preenchimento lá e transmite o cache KV para o MacBook de uma forma que se sobrepõe.
+
+Então, acho que cheguei a " Ah, bem". Ok, Wi-Fi, eu acho. OK. Deveríamos tentar mais uma? OK. Deixa para lá. Você entendeu a ideia.
+
+Então, sim. Neste exemplo específico, por exemplo, acho que é cerca de 2 vezes mais rápido, não é ? Sim , é aproximadamente o dobro. Sim, então, considerando o tempo total de processamento, o preenchimento e a decodificação são cerca de duas vezes mais rápidos do que executar o processo apenas no MacBook em comparação com executá-lo em ambos os computadores. Então, sim. E aí, você pode imaginar
+
+que a próxima coisa a fazer é, tipo, em vez de um Spark, sabe, e se fizéssemos isso apenas com uma GPU? Então, você poderia fazer isso com uma RTX 5090, que é mais barata e também tem muito mais largura de banda de memória para processamento de arquivos. Assim, você poderá começar a fazer coisas mais interessantes. Um lugar onde você divide partes do modelo. Está funcionando? É o mesmo modelo.
+
+Certo, isso é um único nó? Sim. Bem, não sei se precisamos...
+
+Quanto tempo isso levou? Tipo, uns 7 segundos para uma folha de papel. Ok, 7 segundos para um artigo com a pergunta "O Mac funciona?" E então,
+
+nós... nós já terminamos, uh...
+
+Vamos tentar mais uma vez. Se não funcionar, tudo bem. É isso? Não. Oh.
+
+Sim, então agora o mesmo papel. Agora deve estar funcionando em ambos. Precisa fazer mais uma? OK. Sim . Nesse caso, 4,8.
+
+Portanto, mais uma vez, isso melhora à medida que você aumenta o tamanho do prompt. Ah , legal. OK. Eu sei que terminamos, então vou parar por aqui. Obrigado.

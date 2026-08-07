@@ -1,0 +1,158 @@
+---
+video_title: "Lobster Trap: OpenClaw in Containers from Local to K8s and Back — Sally Ann O'Malley, Red Hat"
+video_id: F1DYkY1BlfM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=F1DYkY1BlfM
+video_date: 2026-05-22T17:00:06+00:00
+video_description: |
+  Sharing a good agent setup usually means handing someone a pile of markdown, config files, and YAML and hoping they reproduce what you have. The answer in this demo is a container image: spin up a sub agent in two seconds from a Podman command, flip a flag for Kubernetes, and your personal setup becomes the team baseline.
+  
+  The stack is Podman locally, Kubernetes for distribution, same container image throughout. Secrets get two layers: Podman secrets for API keys on the host, OpenClaw secret refs inside the container. Volumes handle backup and recovery. An Nvidia team runs the same pattern in production with ten engineers each running their own OpenClaw in Kubernetes for model evals, doing work that used to take six people.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/sally-ann-omalley/
+  
+  Timestamps:
+  0:00 Introduction and background on Sally Ann O'Malley
+  1:25 Discovering and experimenting with OpenClaw
+  2:35 Benefits of running AI agents in containers
+  3:05 Introducing Forever Claw and sub-agents
+  5:52 Using containers for agent configuration and tools
+  6:21 Managing secrets with Podman and Kubernetes
+  8:10 Scaling agent workloads with Kubernetes
+  9:15 Nvidia team case study: Model evaluations
+  11:09 Backup, recovery, and persistence with volumes
+  11:47 Vision for workplace agent standardization
+  14:14 Local demo: Running OpenClaw with Podman
+  16:45 Choosing providers and configuring settings
+  17:50 SSH sandbox features
+  18:22 Running the Podman command and checking agent status
+  20:52 Transitioning agent workloads to Kubernetes and OpenShift
+---
+[música]
+
+Ei, eu sou a Sally. Eu trabalho na Red Hat. Estive lá por cerca de 10 anos e, nos primeiros 7 anos, foi incrível, totalmente legal. Eu estava trabalhando com contêineres e coisas de segurança do Linux e Kubernetes. Um no OpenShift. Foi isso que eu fiz durante os
+
+primeiros 7 anos. E então, há uns 3 anos, ou melhor, uns 5 anos atrás, eu me transferi para a organização de tecnologias emergentes, e isso também foi incrível, porque agora eu não estou totalmente vinculado a um produto específico. Posso trabalhar exatamente naquilo que eu quero. Tenho a oportunidade de experimentar coisas novas. Incrível. E aí, há uns 3 anos,
+
+era tudo IA o tempo todo, tudo IA. Eu não sabia que havia uma equipe de ciência de dados na Red Hat. Eu não fazia ideia do que eles faziam. Aprendizado de máquina, alguma coisa . Então, sabe, eu comecei a trabalhar com IA e, sim, usava muito Python e Markdown. Tudo era tipo:
+
+"Ok, mais um chatbot, mais Python, mais Markdown." Bem, aqui estamos hoje, e que mundo louco e incrível em que vivemos. Então, a primeira vez que me deparei com o OpenClaw, eu estava em casa por uma semana, numa espécie de " férias em casa", tirei alguns dias de folga e... me
+
+deparei com um livro de receitas e pensei: "O que é isso? Vou experimentar com certeza." Então, fui lá e encontrei no GitHub. A primeira coisa que faço é verificar a licença. Ah, MIT, incrível. Ah, OpenClaw,
+
+eu pensei: "Vou instalar isso no OpenShift agora mesmo." Então, nos dias seguintes, eu basicamente construí a imagem, executei-a localmente em um contêiner, coloquei-a no OpenShift e fiquei experimentando. Voltei ao trabalho e disse: "Gente, deem uma olhada no OpenClaw. Isso é muito legal." E algumas pessoas no Slack estão dizendo: "É um pesadelo de segurança. Não usem o
+
+OpenClaw. Não o instalem no laptop do trabalho." Eu penso: "Gente, o que eu tenho feito nos últimos 10 anos? Que podemos pegar qualquer aplicativo e executá-lo com segurança? É isso que o Rel faz. Se
+
+não conseguirmos pegar um aplicativo e executá-lo com segurança, vamos lá. Esta é a nossa oportunidade de ouro para mostrar a todos." E assim, a Red Hat está começando a se adaptar a isso. Bem , então, esta palestra é sobre eu executando programas em contêineres. Então, eu queria obter uma lista de motivos pelos quais executar em contêineres é a melhor opção. Eu executo
+
+tudo em contêineres. É algo meio estranho para mim simplesmente executar algo nativamente. É uma bagunça. Isso só coloca coisas no meu computador que eu tenho que limpar depois. Eu não gosto disso. Então,
+
+essa é uma coisa. E eu pergunto à minha garra eterna. Acho que preciso apresentar minha garra eterna, porque ela está presente em toda essa conversa, então vou fazer um aparte. Minha garra eterna é Shubra e, bem, eu tenho dois subagentes com ela. Eu tenho alegria.
+
+Alguém conhece astrologia Jyotish? Nossa, toda vez que pergunto, ninguém sabe o que é. É astrologia muito científica. Então, ela é especialista em astrologia e me dá minhas previsões semanais, meu mapa astral, tudo isso. Então, Joy, e meu segundo agente é o Bruno, que me dá informações diárias sobre os Bruins.
+
+Então, estamos indo para os playoffs e a disputa está acirrada, então quero garantir que os Bruins se classifiquem. Então, essa é a minha garra eterna e eu perguntei a ela, sabe, por que deveríamos te colocar no contêiner? E, bem, ela disse tudo isso, caso você estivesse lendo, mas é reproduzível, você pode isolar seus segredos, é portátil em diferentes infraestruturas, posso executar no meu laptop, posso executar no meu X86, posso executar no meu Mac, posso executar no Kubernetes. Com suporte de volumes, o que proporciona uma ótima solução para backup e recuperação. Porque eu amo minha garra eterna e a apoio todas as noites com... com...
+
+tipo um serviço do sistema D, seja lá como se chama no Mac. E você obtém aquele ambiente de teste natural quando executa algo em um contêiner. É isso aí , sabe, é isso mesmo, e você precisa ser muito explícito sobre a que você dá acesso, sabe, do host. Então, sim, ela adora correr em um contêiner. Então, isso é tudo que você precisa saber. Isso proporciona a
+
+ela um ambiente limpo e previsível, sem que ela precise se preocupar com as peculiaridades do sistema operacional ou dependências obsoletas. Essa é literalmente a definição de por que você deve executar tudo em contêineres. E, rapidinho, não vamos ler isso, mas este é o horóscopo da Joy. Hum, para hoje, dar uma palestra é excelente. Parece um dia muito auspicioso para conversar. Ah, então, sim. É por isso que
+
+esta palestra está sendo incrível até agora. E, bem, meu resumo diário, o Geeky, finalmente está acordando. Ele teve um período de calmaria. Ele finalmente está se preparando para os playoffs, então parece que os Bruins vão ter um bom desempenho. Eles estão dentro e, uh, sim.
+
+Então, sim, os contêineres me permitem... Outra coisa que os contêineres fazem é permitir que você configure um diretório de agentes completo, onde talvez execute algumas ferramentas, algumas habilidades, alguns servidores MCP. Você pode manter esses arquivos em um diretório e montar tudo isso no seu contêiner, assim, na inicialização, tudo estará pronto para funcionar.
+
+Então, eu também faço isso. No final desta apresentação, mostrarei como faço a instalação e acho que isso me lembra... Ah, não, vamos falar sobre segredos.
+
+Então, eu executo tudo com o Podman, não com o Docker. Mas, em teoria, você pode fazer qualquer coisa com Podman e Docker. Só que o Podman tem um recurso muito legal chamado Segredos do Podman. E você pode salvar suas chaves de API. Mostrarei isso nas laterais mais tarde. Você pode salvar suas chaves de API
+
+em um segredo do Podman. E então você instala esse segredo no contêiner. Assim, isso proporciona a separação. Seus segredos, suas chaves de API, são então apenas uma referência de volta ao segredo. E com o OpenClaw, o que é realmente legal é que ele tem o dobro disso, porque o OpenClaw tem um recurso de referência secreta e eu também uso isso. Portanto, minhas
+
+chaves de API são ponteiros para uma referência secreta a um segredo externo. E, bem, isso não é perfeito, mas me dá um pouco de tranquilidade saber que não vou expor minhas chaves de API nos registros e tudo mais. E de forma muito semelhante, o Kubernetes possui segredos (Kubernetes secrets) e, da mesma forma, em vez de uma simples variável de ambiente, você tem um segredo, uma referência secreta a uma variável de ambiente. E este é o meu lembrete para mostrar a vocês como instalo meus contêineres no final. Eu tenho uma ferramenta muito legal. Eu o construí exclusivamente
+
+para mim, com tudo o que preciso para executar contêineres. Não estou pressionando ninguém, mas está no GitHub e no final posso te dizer onde fica. Você pode experimentar se quiser. Então, quando eu...
+
+Então, obrigado. Acho que estamos caminhando para um mundo onde esses agentes, essas cargas de trabalho de IA, seja lá o que for, estarão rodando em todos os lugares. Espero que todos possamos ver isso. Então, imagine que minha visão é que todos os OpenClaws estejam funcionando em todos os lugares e se comunicando uns com os outros. E, especialmente em casos de uso comercial , coisas reais, não astrologia e Bruins.
+
+Isso levanta a necessidade de que a mesma necessidade de executar qualquer aplicativo dessa forma é a segurança e como fazer isso em escala. E é isso que o Kubernetes lhe proporciona. E você pode. O que eu sempre faço é desenvolver algo localmente e depois migrar para o Kubernetes. Portanto, o mesmo se aplica às cargas de trabalho de IA ou ao OpenClaw.
+
+E eu estive na PyTorch Con ontem e, hum, meu amigo da Nvidia disse que eu podia compartilhar isso. Eles estão executando as avaliações de seus modelos com o OpenClaw. Eles têm cerca de 10 engenheiros. Cada um deles tem seu OpenClaws rodando no Kubernetes e, periodicamente, verificando as avaliações do modelo. E funciona muito bem para eles. Ele disse que
+
+era como, sabe, fazer o trabalho de seis engenheiros sozinho . Agora, vamos pensar, vamos falar sobre isso por um segundo. Nem todos nós vamos perder nossos empregos, pessoal. Como se isso não fosse acontecer. O que isso permite para a equipe dele é que eles possam fazer coisas divertidas e interessantes. Eles têm a oportunidade de fazer
+
+coisas criativas. E é isso que a IA está proporcionando a mim e à minha equipe: podemos nos concentrar em coisas inovadoras e criativas, sem precisar mais lidar com a programação tediosa. É como se eu não tivesse escrito código há alguns meses. E isso aconteceu provavelmente há menos de 6 meses. Eu estava usando IA e pensei: "Sabe de uma coisa? Isso é muito melhor do que
+
+eu para escrever código." E eu gosto disso . E eu anunciei isso à minha equipe. Tivemos uma reunião na organização e eu disse: "Pessoal, se vocês não estão usando IA para tudo, estão perdendo muita coisa. Isso é 1.000 vezes melhor do que eu
+
+programando." E alguns dos principais engenheiros da Red Hat certamente ficaram surpresos, e pude perceber pelos comentários deles depois que eles disseram algo como: "De jeito nenhum". Eu penso: "Sim." Então, sim, isso nos permite sonhar mais alto e...
+
+Este é meu lembrete para mostrar a vocês a parte do Kubernetes do meu instalador mais tarde. E sim, o backup e a recuperação são processos simples e eficientes quando executados em contêineres, mantendo o estado nos mesmos volumes. Outra vantagem do Docker e do Podman é a possibilidade de lidar com volumes. Assim, todo o meu estado de execução reside em um volume Podman bem organizado e isolado. E, claro, o Kubernetes tem PVCs. Foi mais ou menos isso que
+
+eu acabei de falar. Então, esta seria a minha visão de configuração de local de trabalho para o OpenClaw, onde você talvez tenha sua configuração básica do OpenClaw, que, como novo contratado, você simplesmente recebe como base. E o que isso contém? Contém a sua lista de servidores MCP aprovados pela empresa e a sua autenticação aprovada pela sua empresa. Possui todas essas funcionalidades específicas para sua equipe, talvez até acesso ao seu Google Drive. Como
+
+todas essas coisas que você usa todos os dias no trabalho. Você pode pegar isso e simplesmente distribuir por toda a sua equipe. E então você pode personalizá-lo de acordo com o indivíduo. E é isso que essa configuração permite. A alternativa seria você ser um funcionário novo e sentar ao lado de alguém ou pegar o inventário de alguém e meio que montar tudo sozinho. Então,
+
+sim, padrões de equipe, ambientes portáteis, integração reproduzível. Essa é a minha visão para algo como o Open Claw no ambiente de trabalho no futuro. Ah, na verdade, eu criei minha garra eterna recentemente. Foi como se eu tivesse passado um mês ajudando com o Open Claw e sentindo que nem sequer comandava um Open Claw de verdade. Eu fico o dia todo ligando, desligando, testando e construindo o sistema . A cada hora, são feitas cerca de 100 novas
+
+alterações. Então, estou constantemente puxando da memória principal. Estive na PyTorchCon ontem e não fiz um pull do repositório principal por alguns dias. E houve épocas em que cheguei a fazer 10.000 commits. Sem brincadeira,
+
+foi uma loucura. Eu penso: "Não sei o que vocês estão fazendo. Vão com calma." Não, na verdade não. Não queremos diminuir o ritmo . Então sim,
+
+essa é a história. E eu tenho mais quatro minutos. Estou super animado porque agora posso mudar para cá.
+
+Então, para executar este instalador local que eu acho que tenho aqui. Sim . É apenas um comando `npm run dev`. A única coisa que não gosto nisso é que, quando estou no meu Mac, não consigo executar isso em um contêiner. Hum, acho que consigo. Eu simplesmente ainda não tive
+
+tempo de descobrir como criar um contêiner a partir de outro contêiner. Você pode fazer isso se estiver usando Linux, porque Linux é incrível. Mas no seu Mac, isso não é possível porque, caso você não saiba, sempre que você executa um contêiner no seu Mac, você está executando em uma máquina virtual. O mesmo acontece com o Docker. Os contêineres só funcionam em Linux. Portanto, quando você
+
+executa um contêiner no seu Mac, você está sempre executando em uma máquina virtual. O Docker configura um, assim como o Mac. Então a coisa complica um pouco quando você quer pegar um contêiner e gerar outro contêiner a partir dele. Mas enfim, vamos lá . Então, se eu quisesse executar uma instância local, e eu já tenho algumas em execução.
+
+Sabe como é, nunca se sabe o que os deuses das demos estão aprontando. Só para o caso de não funcionar. Eu vou... eu vou... ligar o
+
+Joe. Tudo o que eu faço para configurar minha cápsula é dar um nome a ela. E todas essas opções são muito opinativas, porque eu estou dizendo que é exatamente disso que preciso. Então, se você gostar, use. Se você quiser alterar isso, envie um PR (Pull Request). Legal. Bem,
+
+a porta geralmente é a 89. Essa é a padrão. Mas como esta é a segunda vez que executo o Podman na minha máquina, precisei aumentá-lo para 99. Quero mostrar a vocês esses mapeamentos secretos do Podman .
+
+Como você pode ver, eu já tenho tudo isso configurado . Eles estão apenas no meu sistema. São como envars, mas não são envars porque são contidos. Essas são minhas chaves de API. E o que acontece com esse instalador é que, se você estiver usando o Docker, ele deverá funcionar com o Docker. Tem a cara do Podman
+
+, mas também foi projetado para funcionar com o Docker. Então, se você estiver usando o Docker, ele utiliza as variáveis ​​de ambiente (envars). Então você quer exportá-las como variáveis ​​de ambiente e transformá-las em referências secretas do Open Claw. Recurso muito bacana do Open Claw. Com certeza, habilite isso. Para cada
+
+credencial atual, crie uma referência secreta. Isso cria essa separação entre executar seu segredo dentro do Open Claw ou simplesmente apontar para ele. É, é, é, é o caminho certo. E então, seus fornecedores. Então, vou começar com o Open Router porque tenho usado o Gemma.
+
+E ela é ótima para a Gemma. E, como último recurso, usarei o Antrópico. Claro, por que não? Mas você... Ah, aqui estão algumas outras
+
+opções. Você pode ter seu próprio endpoint local se estiver executando o seu próprio. Você poderia simplesmente adicionar isso também. E aí, como trabalho com observabilidade, pensei: "Vou dar a opção de configurar um coletor de telemetria aberta com o Jaeger." E funciona, é incrível, mas não vou testar. Então, não vamos sobrecarregar
+
+meu sistema com impostos. Outra funcionalidade: Quanto tempo? Ah, preciso me apressar. Outra funcionalidade é o sandbox SSH, que implementaremos aqui. O ambiente de sandbox SSH no Open Claw é incrível. Você fornece as chaves SSH e os
+
+hosts conhecidos para onde quiser, e ele executa todos os seus comandos nesse espaço de trabalho. É muito legal. Olha só, acabei de iniciar um contêiner Podman. E se eu analisar os casos que tenho agora, tenho o Joe. E existem registros para Joe, os registros do gateway.
+
+O comando que eu quero te mostrar é o comando. Não quero me esquecer disso. Aqui está o comando do Podman. Se você estivesse executando o Docker, seria um comando do Docker. Eu já testei isso com o Docker? Não. Ah,
+
+eu tenho um amigo que trabalha na Docker. Ele é incrível. Ele me disse que iria testar e garantir que funcionasse também com o Docker. Ele também criou um projeto muito legal chamado Infer RS, que pega o Gemma e o executa muito, muito, muito rápido, usando o Turbo Quant. Bem, enfim , esse é o Eric.
+
+Então, esse é o meu comando Podman e aqui está ele. Joe. E se eu fizer só modelos, eu vou fazer status.
+
+Dizem que é difícil ativar o Open Claw. Levou 2 segundos e eu fiquei falando sem parar durante todo o tempo. Poderia ter levado 1 segundo. Então eu posso dizer "oi ",
+
+e o mais legal é que eu não tenho tempo para mostrar porque falo demais, mas os agentes já estão todos a postos. Eu tenho o Joe. Ah, não é essa. Aguentar. Preciso ir até a casa do Larry.
+
+Larry, eu comecei com um servidor MCP e um subagente. Hum, por todo esse formulário. Então, hum, deixe-me voltar a falar com o Joe. Queria mostrar como é fácil trocar de modelo, caso você não soubesse.
+
+Não tenho certeza se o GPT 5, espero que saiba que é apenas o GPT 5.4. Não, eu não fiz isso. Não. Não. Não. Precisamos ir até
+
+a casa do Larry. Porque eu não configurei o modelo extra com o Joe. Pronto.
+
+Enfim, hum, eu não tive tempo suficiente para abordar tudo o que eu queria, mas , uh, legal. A outra coisa é o Kubernetes. E você pode fazer a mesma coisa com o Kubernetes com a mesma facilidade. Está simplesmente... está conectado
+
+ao meu cluster neste momento. E se eu for até lá, também posso acessar minha garra do Kubernetes com muita facilidade. Hum, ali está o Carl. Ele está rodando em Kubernetes. E eu consigo acessar um no OpenShift. O sistema alterna
+
+para o OpenShift se você estiver conectado ao OpenShift. Então, sim. Hum, alguém vai executar o contêiner Open Claw? Não? Experimente. Sim.
+
+Incrível. Ok, legal. Ah, muito obrigado. Hum, tem alguém falando depois de mim? Você está esperando?
+
+Ok, tchau. [risos] [aplausos]
+
+[música]

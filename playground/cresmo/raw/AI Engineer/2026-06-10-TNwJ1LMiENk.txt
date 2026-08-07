@@ -1,0 +1,116 @@
+---
+video_title: "Stop Making Models Bigger, Make Them Behave — Kobie Crawford, Snorkel"
+video_id: TNwJ1LMiENk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TNwJ1LMiENk
+video_date: 2026-06-10T17:00:25+00:00
+video_description: |
+  Qwen 3 235B was asked for YouTube's year over year ad revenue growth from 2023 to 2024. It queried a table that didn't exist, tried again, got nothing back both times, and hallucinated an answer. The 4B model Snorkel finetuned with RL called `get_table_name` first, inspected the schema, ran a query, hit a column error, self-corrected, and got the right answer. The training run cost under $500.
+  
+  Kobe Crawford covers why tool discipline matters more than reasoning depth for this class of tasks, how single table training transferred cleanly to harder multi table problems (13.9% to 26.6% on the FinQA reasoning benchmark), and why breaking evals into rubrics helps identify which specific behavior to fix before writing any training data.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/kobie-crawford
+  - https://snorkel.ai/author/kobie-crawford/
+---
+[música]
+
+Esta é a última apresentação que tenho para fazer nesta conferência. Então, já estou sentindo um pouco da euforia de tipo, "Ah, acabou tudo." Hum, eu sei que estamos... estamos em um...
+
+também mais perto do fim de toda a sequência... não tem sido... quero dizer,
+
+continuo achando que essas conferências são alguns dos sinais mais fortes que recebo, onde quer que eu esteja, onde quer que eu vá. Então, de forma geral, como as pessoas sentem que estão conseguindo o que vieram buscar aqui? Só estou curioso porque, sabe, nós somos a Snorkel... quando investimos em
+
+um patrocínio, queremos ter certeza de que as pessoas estão obtendo o que desejam, que voltarão porque queremos patrociná-las da próxima vez. Queremos saber se as pessoas estão felizes com isso. Então, vocês viram o que queriam ver? Sim? Sim . Sim, muito bom. Brilhante.
+
+Brilhante. Bem , agora que são 3h45, vou começar oficialmente . Então, meu nome é Kobe Crawford. Hum, sou defensora de desenvolvedores na Snorkel. Nós nos chamamos Frontier Data Frontier AI Data Lab. E
+
+o que estamos fazendo agora, nosso principal objetivo, é partir do trabalho baseado em pesquisa que a Snorkel vem realizando desde sua criação. Bem, temos trabalhado em várias coisas relacionadas à qualidade dos dados e, neste momento, nosso foco é fornecer conjuntos de dados que garantam um certo nível de qualidade. Estamos muito atentos e extremamente motivados para garantir que os dados sejam de alta qualidade. E parte de como atingimos alta qualidade é sempre garantir que um especialista esteja envolvido no processo. Então, temos colaboradores especialistas com quem trabalhamos e trazemos pessoas para fornecer sua experiência para garantir que os dados que geramos sejam da mais alta qualidade.
+
+E então, para os melhores laboratórios que desejam usar nossos dados para aprimorar seus modelos e realizar a escalada de colinas da maneira correta, é isso que fazemos na Snorkel. Bem, por causa disso, você sabe, muita coisa que acontece ainda depende de mais pesquisa. E esta é uma palestra que aborda alguns dos trabalhos que nossa equipe de pesquisa realizou. E um dos pontos-chave desta pesquisa é que estamos analisando como os dados da melhor qualidade podem ser melhor aplicados e onde precisamos procurar oportunidades para que isso aconteça. Então, neste caso específico, estamos falando em parar de aumentar o tamanho dos modelos. Quer dizer, é
+
+um título bem impactante. Claro, não estamos querendo dizer que os modelos não devam ser grandes intrinsecamente, mas, em linhas gerais, o ponto é que às vezes encontramos grandes vantagens ao aplicar os dados certos ao problema certo. Então, vamos falar sobre um caso de uso específico que nossa equipe de pesquisa descobriu em parceria com a equipe RLLM, um grupo de pesquisa vinculado à UC Berkeley. Então, a equipe da UC Berkeley , o RLLM, o Projeto Agentic, o laboratório deles fez uma parceria conosco neste trabalho específico. Portanto, o objetivo, como eu disse, é fazer com que um modelo com 4 bilhões de parâmetros supere um modelo com 235 bilhões de parâmetros em uma tarefa de uso de ferramenta para análise financeira.
+
+Então, vamos começar com o objetivo da pesquisa. Em seguida, discutiremos a abordagem que utilizamos para esse processo específico e, depois, os resultados. E, felizmente, conseguimos o que buscávamos. Então, é, então , coisas boas podem acontecer. Então, algumas breves explicações sobre o que estamos discutindo aqui. Em primeiro lugar,
+
+à medida que vemos os casos de uso empresariais assumirem uma maior complexidade, temos obviamente a enorme explosão que as pessoas estão fazendo em termos de assistência pessoal. E como as pessoas trabalham no contexto empresarial, muitas vezes ainda precisam de opções mais restritas sobre como implementar algo e garantir que seja confiável. E quando você está procurando por coisas que serão feitas para casos de uso de produção empresarial, você meio que precisa garantir que muitas medidas de segurança sejam implementadas. Então, essas outras prioridades e aquilo que se encaixa no que as pessoas normalmente querem fazer, nós analisamos e dizemos: "Ok, esses são os casos de uso corporativos que as pessoas têm." E, à medida que as pessoas tentam resolver os problemas de fazer com que os modelos tenham um desempenho aceitável para serem implantados como um serviço de produção, vemos com muita frequência que as pessoas optam por: "Bem, não obtivemos o desempenho que desejávamos com isso agora. Vamos simplesmente usar um
+
+modelo maior. Ele será mais inteligente. Terá maiores habilidades de raciocínio. E vamos esperar que o desempenho importante melhore proporcionalmente à carga adicional do tamanho do modelo e ao maior custo de inferência que o acompanha ." E em alguns casos, isso pode não ser a coisa certa a fazer. Então,
+
+vemos pessoas dizendo: "Sabe, vamos comprar um modelo maior. Isso resolverá o problema." E, às vezes, talvez essa não seja exatamente a resposta. Neste caso, o que estamos tentando fazer é dizer: "Não podemos pegar um modelo menor e usar aprendizado por reforço com os dados certos para obter os ganhos de desempenho que buscamos e entregar o tipo de funcionalidade de aplicativo que desejamos?" Então, esse é o objetivo aqui.
+
+E, novamente, por esses vários motivos — custo, velocidade, segurança — e também pela ideia de que, em geral, você começa com um modelo realmente grande, faz sua prova de conceito, a coloca em funcionamento e todos ficam satisfeitos com o resultado. É tipo, "Ok, e agora, o que fazemos para colocar isso em produção?" Se você quer implementar em produção, precisa pensar em como fará essa implantação. Você precisa manter tudo no local? Você tem a capacidade de implantar e executar seu próprio serviço, para não precisar de dependências externas nem se preocupar com os aspectos de exportação e controle de dados? Especialmente no contexto
+
+de dados financeiros, saúde e outras áreas semelhantes, as pessoas também precisam se preocupar com esses aspectos . Então, para que um modelo menor tenha o mesmo desempenho que modelos maiores, acreditamos que, no caso específico do uso de ferramentas para análise financeira, o aprendizado por reforço (RL) é o momento certo para se investir nesse tipo de treinamento. Você está falando de mudar o comportamento. Então, isso é mais uma questão comportamental. O aprendizado por reforço (RL) é melhor para analisar o comportamento do que, digamos, alterar os dados e o conhecimento essenciais que estão contidos nele . Então, essa é uma intuição
+
+sobre como abordamos a questão, e isso faz parte do que está acontecendo aqui. Então, um modelo maior, às vezes é mais como usar uma marreta para quebrar uma noz. É como se adicionar todas essas funcionalidades fosse algo assim. E a equipe da RLLM com quem trabalhamos falou sobre isso e descreveu o fenômeno como o efeito Terence Tao. Uh uh Terence Tao, o famoso matemático que uh uh, esqueci quais prêmios ele ganhou e tal, mas é bem conhecido por ser, você sabe, geralmente brilhante em matemática em geral. E,
+
+portanto, poderia abordar e resolver qualquer tipo de problema matemático. Mas tanta genialidade pode não ser necessariamente o que um analista financeiro precisa ter. Eles não precisam saber todos os tipos de matemática. Eles não precisam usar algoritmos de Dirichlet latentes para falar sobre, sabe, fazer uma consulta SQL, obter alguns resultados matemáticos, receber alguns dados e depois fazer algumas adições e subtrações, certo? Então, a ideia de que você sempre precisa recorrer a um modelo muito mais inteligente para fazer algo, ou a um raciocínio mais profundo para realizar algo bem, é o que estamos questionando aqui.
+
+Então, aqui está o modelo quantitativo de 235 bilhões que criamos para responder à pergunta neste ambiente. Falarei sobre o meio ambiente com um pouco mais de detalhes mais tarde. Mas destaco isso para mostrar que aqui está um modelo de raciocínio, um modelo mais inteligente, e sua resposta no contexto da necessidade de realmente usar ferramentas. Então, a resposta que obteve foi gerada para a pergunta: "Qual é a taxa de crescimento anual da receita de anúncios do YouTube de 2023 para 2024?" Começou com a criação de uma consulta para encontrar alguns valores existentes, mas a consulta escolhida foi para uma tabela inexistente. A mesa não existia. Na
+
+verdade, não inspecionou o ambiente nem as ferramentas para descobrir quais tabelas poderia consultar. Simplesmente gerou uma consulta sem fazer isso. Então, a mesa não estava lá e não recebi nada em troca. Ele tenta adivinhar novamente. Ainda não recebeu nada em troca. E
+
+então, não tendo obtido resposta em nenhuma dessas duas tentativas, acaba recorrendo à mera alucinação . E assim, surge essa resposta alucinatória. É completamente... sabe, não sei o que
+
+os pesos mandaram dizer, mas foi isso que saiu. E, sabe, não é muito útil. Então, embora o modelo seja incrível em termos de raciocínio, muito melhor do que um modelo muito menor seria, esse raciocínio superior não o ajudou quando precisou usar as ferramentas. Voltaremos à mesma questão, agora com base no modelo que ajustamos e que possui apenas 4 bilhões de parâmetros. E você vai ver a diferença. Falaremos um pouco mais
+
+sobre essas diferenças mais tarde. Então, deixe isso para depois . Voltar. Veremos se essa questão da comparação anual voltará a ser respondida . Então, é disso que estamos falando.
+
+Resumindo, falta disciplina no uso de ferramentas, apesar de possuir todas as capacidades de raciocínio que tem.
+
+Avançando então para o que fizemos nesta tentativa de usar o aprendizado por reforço para fazer o modelo menor funcionar bem. A primeira coisa a fazer é gerar um conjunto de dados de alta qualidade. Na Snorkel, nossa abordagem geral é, mais uma vez, envolver especialistas no processo. Não sei se disse "vou repetir agora", mas acho que não. Temos especialistas envolvidos com os dados que utilizamos. A forma como geramos dados
+
+e trabalhamos com eles é através de uma plataforma interna que utilizamos para interagir com diversos elementos. Também solicitamos o trabalho e o apoio de especialistas em várias tarefas e tópicos. Então, se precisarmos de alguém que já atue na área de análise financeira, nós o contratamos e o integramos à equipe. Trabalharemos com pessoas com doutorado em suas respectivas áreas de especialização. E também, claro, pessoas que estão profundamente envolvidas no setor, que trabalham há algum tempo e conhecem bem a área.
+
+O processo de geração de dados, e uma das coisas em que damos ênfase, é como trabalhamos na Snorkel. E, de modo geral, isso pode ser complementado com outros tipos de elementos. Mas é exatamente isso que priorizamos, o que queremos fazer em termos de enfatizar a qualidade como um elemento central. Então, nós temos o conjunto de dados. Em seguida, realizamos uma etapa de verificação para garantir que as tarefas definidas a partir desse conjunto de dados sejam realmente adequadas à tarefa em si e que sejam tarefas válidas para consulta. Você sabe,
+
+você sabe que vai obter os resultados que precisa com isso. E que devamos ser capazes de obter uma resposta verificável para o que estamos procurando . Assim, realizamos todas as etapas de verificação para garantir que tudo esteja correto nesse aspecto. E essa é outra parte do que significa, sabe, reunir o conjunto de dados e deixá-lo pronto para uso. A qualidade dos dados continua sendo uma prioridade para nós. Por isso, garantimos que essa seja a
+
+chave. E então chegou a hora de fazermos nosso teste de realidade com ele. E a forma como fizemos isso, da maneira como foi feito, não trouxe muitas surpresas em termos do que você já viu de mais moderno nesse setor. GRPO Novamente, começamos com um modelo de 4 bilhões de parâmetros. E então, no ambiente em que usamos a estrutura RLLM novamente, por meio da parceria com a UC Berkeley, através dos desenvolvedores dessa estrutura. E temos o nosso
+
+ambiente FinQA que construímos. E falaremos um pouco mais sobre os detalhes desse ambiente daqui a pouco. Mas isso era algo que podia ser feito em um trabalho de 24 horas, e o custo total para executar esse trabalho era inferior a US$ 500 por execução. Então, o aprendizado por reforço não precisa ser algo muito caro para se obter ganhos de desempenho significativos. E se você já está trabalhando com modelos que deseja hospedar por conta própria, se já está pensando em como poderia usar soluções locais ou modelos menores. E se você ainda não está
+
+pensando que pode melhorar os modelos da maneira que deseja, então isso é como um chamado à ação, mostrando que você realmente pode. Na verdade, é muito fácil obter um modelo com o qual você deseja trabalhar e atingir os níveis de desempenho necessários usando aprendizado por reforço. Mesmo que Karpathy não goste disso.
+
+Então, nosso ambiente FinQA é algo que nós construímos. Está configurado para poder hospedar os tipos de perguntas que estão sendo feitas aqui. Oferece um conjunto específico de ferramentas. É um sistema em que tudo está integrado ao ambiente. Portanto, não há dependências externas que possam estar, por exemplo , em algum centro de dados remoto ao qual você não tenha acesso . Assim, quando você implanta o ambiente,
+
+ele é totalmente autossuficiente. É como se você já tivesse trabalhado com algo como o Harbor ou o OpenEnv, e já estivesse familiarizado com o uso de um ambiente como este. E este é um ambiente que nós de fato construímos e publicamos.
+
+Também está disponível na infraestrutura da PrimeIntellect. Você pode fazer isso para que alguém possa fazer o upload diretamente ali na PrimeIntellect. Também no OpenEnv e, na verdade, salvo no repositório do OpenEnv no GitHub. Então, o pessoal do OpenEnv, do PyTorch e da Hugging Face se juntam e hospedam esses eventos nos espaços da Hugging Face. Portanto, esse tipo de coisa é acessível e fácil de encontrar, caso você queira dar uma olhada e ver como pode aplicá-la às suas necessidades. E, por outro lado,
+
+começar a usar a vida real está cada vez mais fácil hoje em dia. Temos o FinQA configurado com 290 exemplos e também temos um conjunto mais avançado de 79 exemplos chamado FinQA Reasoning, que requer consultas em várias tabelas . Portanto, há raciocínio suficiente a ser feito para que identifiquemos que essas são tarefas mais difíceis. Assim, temos essencialmente dois parâmetros de referência construídos dentro desse ambiente. Então, essa é a forma como fazemos isso. Vamos
+
+discutir as avaliações e os resultados que obtivemos trabalhando com isso, considerando o aprendizado por reforço que acabamos de realizar neste modelo de 4 bilhões de parâmetros. Então, nós fizemos isso. Ele apresenta um desempenho melhor do que o modelo de 235 bilhões de parâmetros com esse ciclo de treinamento de RL. E o desempenho em termos de aprovação na primeira tentativa foi essencialmente o dobro do que havia sido em termos percentuais na resolução de problemas. Portanto, trata-se de uma melhoria muito significativa que foi alcançada com esse circuito de US$ 500. E, novamente, o
+
+conjunto de dados correto é realmente fundamental. O objetivo é que as perguntas e respostas sejam realmente úteis para o aprendizado do modelo. Mas o que também é interessante é o que era importante sobre o que o modelo precisava aprender. Só para vocês terem uma ideia de como é o comportamento desse modelo com 4 bilhões de parâmetros. E, como discutimos anteriormente, o modelo com 235 bilhões de parâmetros tentou algumas consultas sem saber quais eram as tabelas.
+
+Não encontrei nada e então tive uma alucinação com a resposta. Este modelo de 4 bilhões de parâmetros, após ter sido ajustado com este conjunto de dados, tenta acessar uma tabela e, na verdade, primeiro descobre as tabelas usando a ferramenta " obter nomes de tabelas". A ferramenta existia também para o outro modelo, mas simplesmente não foi utilizada. Então, a primeira coisa que fez foi consultar para descobrir quais tabelas estavam disponíveis. Isso já é uma vitória. Tudo bem.
+
+A segunda coisa a fazer é, a partir daí, inspecionar o esquema. Deixe-me descobrir o que há nessa tabela para que eu saiba como fazer a consulta SQL correta. Então, é como se o sistema obtivesse informações da tabela para recuperar as informações necessárias para saber o que consultar. Em seguida, executa uma consulta. Na verdade, ocorreu um erro. Na verdade, o sistema
+
+solicitou a coluna de receita. Mas essa coluna não fazia parte dos dados da tabela. Considerando que o erro foi corrigido, ele foi efetivamente implementado. O problema se corrigiu sozinho. O sistema observou o erro e respondeu a ele corrigindo-o para encontrar a coluna correta.
+
+Assim, você vê tanto a correção de erros que o sistema aprendeu a fazer quanto o uso das ferramentas para descobrir as informações corretas desde o início. Portanto, entre esses dois fatores, esses comportamentos são as verdadeiras chaves para o sucesso nessas questões. E isso, na verdade, talvez não seja tão intuitivo quanto parece, sobre onde exatamente o modelo estava falhando. A realidade é que era isso que precisava ser feito, e aqui está, obtendo a resposta correta. Na verdade, o que precisava fazer era aprender a usar as ferramentas. Existem
+
+algumas coisas interessantes relacionadas a isso, que são mais divertidas e também muito úteis e boas para a nossa situação aqui. Os dados de treinamento que mencionamos no início incluíam questões de tabela única e questões de múltiplas tabelas no conjunto de dados geral . E como parte do estudo de avaliação, uma das coisas que eles disseram foi: vamos dar uma olhada e ver se treinamos com apenas uma tabela, treinamos com várias tabelas misturadas, ou seja, com o conjunto de dados completo em ambos os tipos, ou tentamos fazer algum aprendizado curricular e, na verdade, começamos com uma única tabela, deixamos o modelo evoluir um pouco e, em seguida, adicionamos progressivamente várias tabelas. E descobriu-se que o treinamento com uma única tabela era, na verdade, o que produzia o maior ganho para esse tipo de questão. Foi uma surpresa muito agradável.
+
+E a outra coisa surpreendente foi que, embora o regime de treinamento com uma única tabela fosse o melhor, a melhoria que observamos no desempenho do modelo no teste de referência mais difícil, que envolve questões com múltiplas tabelas, foi semelhante, dobrando em termos de percentual de melhoria. Assim, as questões de raciocínio lógico com múltiplas perguntas e tabelas, mais complexas, do conjunto FinQA, também apresentaram um aumento de 13,9% para 26,6% após esse treinamento. Curiosamente, mais uma vez, a disciplina no uso das ferramentas, o simples conhecimento de como utilizá- las no ambiente, revelou-se mais importante do que qualquer outra coisa para aprimorar o desempenho desses modelos nessa área. Então, descobriu-se que o problema não era o raciocínio . Foi a ferramenta que utilizou.
+
+Nos concentramos apenas em uma única etapa para obter o melhor desempenho. E conseguimos corrigir essa falha central . E, considerando que a falha principal foi corrigida, descobriu-se que isso melhorou o modelo em termos de generalização da melhoria para outros conjuntos de perguntas. Então, o ponto principal a reter aqui é que, às vezes, a ideia é encontrar o comportamento específico que realmente está causando o problema. E uma das coisas que eu gostaria de retomar, algo que fazemos na Snorkel, e que nossa equipe de pesquisa tem discutido bastante ultimamente, é a criação de rubricas como parte de nossas avaliações. E então, essas rubricas são elaboradas
+
+ao decompor a correção ou incorreção da resposta de um modelo em uma lista completa de diferentes perguntas que podem ser respondidas. E, analisando cada uma dessas questões individualmente, você pode começar a usar a rubrica como uma forma de encontrar e intuir onde reside o problema real em meio a todas as múltiplas áreas possíveis. Assim, em vez de simplesmente saber sim ou não na prova final, o que é bom para a parte de aprendizado por reforço, você pode usar a rubrica para ajudá-lo a analisar quais comportamentos você deseja e, de fato, gerar conjuntos de dados que o auxiliem nesse processo. Assim, você toma decisões sobre quais conjuntos de dados precisa ou com quais dados deseja trabalhar com base no feedback mais detalhado que a rubrica fornece. E então o RL ainda recebe um único valor, ou algo assim. O GRPO geralmente funciona com
+
+um único valor. É isso. É assim que funciona. Então você usa isso para o ciclo RL propriamente dito.
+
+Então, esse é o resumo do que fizemos com isso. Acreditamos que seja um resultado realmente interessante de se conhecer. E sabe, mais uma vez, a oportunidade de fazer o que você pode fazer ao resolver as perguntas ou os problemas certos realmente ajuda. Este link leva a uma postagem de blog que temos sobre isso. Portanto, se você tiver dúvidas sobre os detalhes deste estudo específico e quiser saber mais sobre ele, poderá explorar as informações disponíveis . Também inclui um link para uma
+
+publicação de um parceiro da equipe da Agentyca sobre a UC Berkeley. Então, a publicação deles também contém informações adicionais que você pode ver, e este é o ponto importante que queríamos abordar. Então, muito obrigado pelo seu tempo e não sei quanto tempo ainda temos para perguntas. Como estamos indo? Já chegamos a esse ponto? Parece que sim.
+
+Sim, desculpe. Certo, então, desculpe, não temos perguntas. Ficarei aqui fora se alguém tiver alguma dúvida adicional. Muito obrigado. Agradeço.
+
+[aplausos]
+
+[música]

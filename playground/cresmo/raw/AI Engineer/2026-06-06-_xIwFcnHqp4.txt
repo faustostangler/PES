@@ -1,0 +1,97 @@
+---
+video_title: "Building Interactive UIs in VS Code with MCP Apps — Marlene Mhangami & Liam Hampton, GitHub"
+video_id: _xIwFcnHqp4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_xIwFcnHqp4
+video_date: 2026-06-06T18:00:32+00:00
+video_description: |
+  The demo profiles a Go app running bubble sort and Fibonacci and the result renders as an interactive flame graph directly inside the VS Code chat window. Not a link. Not a text summary. A live iframe you can scroll and query, sandboxed for the same reason you put a hamster in a cage: so it cannot chew up your VS Code settings or call external APIs.
+  
+  The mechanism: an MCP tool returns both data and a resource reference pointing to a bundled HTML UI. VS Code fetches the HTML and renders it in a sandboxed iframe in chat. The app calls back to the server, the server returns fresh data, the UI updates. Shopify uses this pattern for checkout flows inside chat. Excalidraw uses it for interactive architecture diagrams you can drag and edit. Marlene and Liam walk through building one from scratch using a skill from the MCP repository.
+  
+  Speaker info:
+  - https://x.com/marlene_zw
+  - https://www.linkedin.com/in/marlenemhangami/
+  - https://github.com/marlenemhangami
+  
+  - https://x.com/liamchampton
+  - https://www.linkedin.com/in/liam-conroy-hampton/
+  - https://github.com/liamchampton
+---
+Oi pessoal. Bem, vamos nos apresentar . Meu nome é Madelaine e sou defensora sênior de desenvolvedores na Microsoft e no GitHub. Da mesma forma, meu nome é Liam Hampton e também trabalho na Microsoft e no GitHub, na equipe de defesa das ferramentas de desenvolvimento do Visual Studio Code e do GitHub Copilot. Sim. Eu faço coisas parecidas, mas provavelmente o
+
+Liam também está mais envolvido com o VS Code . Bem, para começarmos, aqui está uma breve descrição do que vamos abordar hoje nesta sessão. Vamos falar sobre o que é MCP e depois sobre por que precisamos de aplicativos MCP e o que eles são. Em seguida, Liam fará algumas demonstrações ao vivo de como usar aplicativos MCP, como criá-los e usá- los no VS Code. Para começar, talvez eu possa perguntar quantos de nós sabemos o que é MCP.
+
+Ok, isso é uma boa parte do espaço. OK, bom. Isso significa que estamos atualizados. Vou fazer um breve resumo para explicar o que é, mas o MCP, claro, é um protocolo aberto que padroniza a forma como os aplicativos fornecem contexto aos LLMs. Então foi criado pela Anthropic.
+
+Ah, está aberto. É um protocolo aberto, então espero que a comunidade possa usá- lo e que nos permita acessar contexto ou LLMs para acessar contexto, como ferramentas, prompts ou recursos, de diferentes maneiras. Então, só para termos uma visão geral de quais partes do MCP analisaremos com as ferramentas do MCP. A primeira coisa é que temos hosts MCP. E os hosts provavelmente são programas como o VS Code que desejam acessar dados dos seus servidores MCP. Então,
+
+você pode ter diferentes tipos de hosts, e eles virão com diferentes clientes também. Então, a segunda coisa é que temos clientes, e às vezes eles serão os mesmos que o provedor de hospedagem, mas nem sempre. E estes manterão a conexão individual com os servidores. Assim, no nosso caso, no VS Code, geralmente incentivamos as pessoas a usar o cliente GitHub Copilot. E é isso que vamos analisar hoje.
+
+E por fim, a última coisa seriam os servidores. E, no caso dos servidores, serão programas leves que expõem funcionalidades específicas por meio do MCP para fornecer esse contexto. Você pode construir seus próprios servidores ou usar um dos muitos servidores disponíveis no mercado. Então, no VS Code, se você for até a aba de extensões e digitar MCP, você verá uma lista de diferentes servidores disponíveis. Recomendamos fortemente que você use a lista de servidores que está no VS Code, pois, às vezes, você pode ter problemas de segurança se simplesmente acessar a internet e escolher um servidor aleatório, que pode conter conteúdo malicioso. Portanto,
+
+recomendamos usar o que está disponível no VS Code ou no GitHub. Assim, quando o MCP foi lançado pela primeira vez, uma das desvantagens era que ele retornava praticamente apenas texto. Então, se alguém fosse fazer uma pergunta como essa, eu pediria para a pessoa desenhar uma imagem, um diagrama explicando o que é MCP. Assim, muitas vezes, nos primórdios do MCP ou, em geral, dos LLMs, você podia acessar um repositório do GitHub e a maioria dos arquivos readme continha arte ASCII ou muitos emojis. Tenho a impressão de que estávamos exagerando no uso de emojis porque, na verdade, não conseguíamos gerar diagramas ou textos formatados interessantes com os MCPs ou com as ferramentas que tínhamos à disposição.
+
+Então, uma boa pergunta a se fazer é: como podemos criar experiências de interface de usuário ricas em chats? É exatamente aí que os aplicativos MCP entram em cena. Assim, os aplicativos MCP permitem que as ferramentas do servidor retornem componentes interativos avançados que são renderizados diretamente no chat. Assim, você consegue que o servidor retorne esses elementos de interface do usuário interessantes para que você possa interagir com eles diretamente no chat, o que também melhora o aspecto visual geral. Então, eu mostrei anteriormente aquele exemplo de arte ASCII onde o resultado era um texto.
+
+Fiz a mesma pergunta usando o servidor Excalidraw MCP, que agora utiliza um aplicativo MCP para gerar um diagrama que explica o MCP. E você pode ver que ele gera... Esta é apenas uma captura de tela de como fica. Mas
+
+outra coisa muito legal é que você pode interagir com esse diagrama. Você pode movê-lo e até mesmo atualizar o texto, pois este é um elemento dinâmico que está disponível no chat. Então, como os aplicativos MCP realmente funcionam? Um bom exemplo é que talvez tenhamos um usuário. Começamos com o usuário fazendo uma pergunta. Então, eles enviarão uma mensagem.
+
+Talvez eles digam: "Mostre-me as análises." E o agente com o LLM vai decidir quais ferramentas chamar usando o servidor MCP. Ele se conectará e então escolherá uma ferramenta. E então o servidor retornará os resultados da ferramenta com uma interface de usuário e uma referência de recurso. Assim, o MCP possui recursos MCP, e essa referência apontará para um elemento HTML armazenado que foi gerado pelo servidor. Então, o host, ou seja,
+
+não o cliente, não seria o GitHub Copilot, mas o host, que é o VS Code, irá buscar o HTML daquela referência de interface do usuário que foi referenciada pelo servidor, e então o host irá renderizar o aplicativo dentro de um iframe isolado (sandbox) . Assim, nesse ponto o usuário consegue interagir com o iframe no host, e há uma separação bastante clara entre os dois. E então o aplicativo pode se comunicar com o servidor repetidamente, proporcionando essa experiência de interação em tempo real. E então o servidor pode retornar dados atualizados, e o aplicativo também será atualizado. Alguns casos de uso diferentes para aplicativos MCP.
+
+Uma delas, por exemplo, é a exploração de dados. Você pode pensar se estivéssemos apenas digitando em um chat o tempo todo e quiséssemos entender melhor um conjunto de dados. Seria difícil interagir com o banco de dados. Seria difícil ficar digitando e fazendo novas perguntas o tempo todo. Ah, sabe, talvez você tenha descoberto informações sobre uma tendência no gráfico de barras e, em seguida, queira encontrar mais informações sobre, digamos, alguns números específicos em outro gráfico.
+
+Digitar essas informações seria cansativo para o usuário, quando ele poderia simplesmente clicar em diferentes botões na interface do usuário. Outra coisa é o comércio eletrônico. Acho que este é um ótimo exemplo de como um usuário, em um caso específico, poderia querer comprar algo na interface de bate-papo. Então, talvez não tanto no VS Code, mas em outras interfaces de chat, como no OpenAI ou algo parecido, o usuário deveria poder comprar e concluir todo o processo de finalização da compra diretamente no chat, em vez de apenas digitar como fazia antes. O que acontecia era, por exemplo, você digitar e perguntar ao cliente: "Posso comprar algo online?". E
+
+então, ele simplesmente retornaria links para você, e você teria que navegar até o navegador. O que queremos é manter o usuário dentro do chat para que ele interaja e tenha essa experiência ali mesmo. Quem está desenvolvendo aplicativos MCP atualmente? Acho que essa é uma boa pergunta a se fazer. Spotify não é Spotify, é Shopify. A
+
+Shopify é um exemplo de empresa que está atualmente desenvolvendo aplicativos MCP. E ouvi uma palestra muito boa sobre como eles também estão se concentrando em manter a experiência da marca de uma empresa a mesma que você teria se estivesse no site da empresa. Se o usuário estiver no chat, os elementos exibidos devem ser os mesmos e transmitir a mesma sensação de marca. Então, eles estão trabalhando nos elementos da interface do usuário que são retornados para que o usuário possa literalmente passar por toda a experiência de finalização da compra, como eu mencionei, para poder comprar de fato pelo chat. Outro grupo que utiliza aplicativos MCP, como mencionei anteriormente, é o Excalidraw.
+
+Isso está muito popular agora, talvez para gerar diagramas de arquitetura ou para ter diagramas interativos. Se você acessar o Cloud Code, por exemplo, encontrará aplicativos MCP muito interessantes que usam o Excalidraw para gerar imagens que visualizam conceitos. A Figma é outra empresa que utiliza aplicativos MCP. Não consegui encontrar uma imagem de um aplicativo MCP do Figma bem renderizado, mas, de modo geral, eles possuem componentes que você pode gerar dinamicamente com aplicativos MCP. Bem, acho que é tudo o que vou abordar e agora o Liam vai fazer nossa demonstração ao vivo.
+
+Sim, muito bom. Obrigado. Então, todo mundo levantou a mão quando Marlon perguntou quem usava MCP ou quem sabia o que era MCP. Quem já está usando os aplicativos MCP? Ok, então está tudo bem, perfeito.
+
+Gritem lá atrás se não conseguirem ver isso. Bem, basicamente, um aplicativo MCP vai nos permitir interagir ou permanecer dentro de um contexto específico, como o VS Code. Então, a maneira como faço isso é que, na verdade, peguei emprestada uma habilidade que está no repositório online do Model Context Protocol . Então, é da Anthropic. Eu editei um pouco e executei através da CLI do GitHub Copilot. Isso
+
+me permite gerar diversos aplicativos MCP diferentes . Então, neste repositório aqui eu tenho um gráfico de chamas. É esse que vamos mostrar hoje. Ah, mas eu tenho um visualizador de Markdown, status de voos, seletor de cores, etc. Apenas aqueles genéricos que você usa quando começa a desenvolver esses projetos. Então, começando por este arquivo
+
+readme, você pode ver que um aplicativo MCP possui três partes principais. Você tem a ferramenta, que é o próprio LLM, e o host, ou seja, no momento o VS Code. Você tem o recurso, que é o HTML agrupado da interface de usuário HTML que você vai montar. Isso pode ser feito em React, em Vue, ou em qualquer outra linguagem, da maneira que você preferir para renderizar sua interface de usuário. E então você tem a ligação entre os dois. Assim, o host e o
+
+próprio MCP ou servidor reconhecerão a ligação entre a obtenção da resposta de dados e a disponibilidade de uma interface de usuário para renderização. Então, existem boas maneiras de fazer isso. Como eu disse, você tem React, JavaScript puro, Vue, Svelte, etc. Então, você pode simplesmente explorar toda essa área de conhecimento. Isso basicamente vai dizer ao Copilot CLI, ao Claude ou a qualquer outra ferramenta de IA que você esteja usando como executar isso ou o que fazer ao executar essa habilidade. Ele vai
+
+configurar tudo de uma certa maneira e também vai te dizer exatamente como executar, com exemplos de código como manipuladores, visibilidade da ferramenta, etc. Então, se é apenas o modelo que pode chamar o aplicativo, se é o modelo e o aplicativo, ou se é apenas o aplicativo. Portanto, são essas pessoas que acionam a ferramenta em um determinado momento. Então, para este exemplo, vou usar um arquivo Go. Sou engenheiro de Go. Eu
+
+escrevo muito código em Go, mas o que realmente me interessa aqui é um algoritmo de ordenação por bolha . Então, é só comparar os valores de um array , algo bem comum em qualquer entrevista de programação. Ah, e também temos a sequência de Fibonacci. Então, n + 1. Isso é como a notação Big O. Basicamente, é
+
+só somar ao número anterior. O que estou fazendo é usar um servidor MCP para analisar o código do aplicativo durante 5 segundos e ver onde o tempo é gasto com mais frequência . Como qualquer processo de criação de perfil faria, este utiliza o pprof do Go, ou seja, o perfil subjacente que você obtém no Go. Mas, essencialmente, o servidor MCP está rodando em localhost. Este é o ponto de entrada aqui. É apenas um servidor que
+
+estou executando localmente. Isso então faz uma chamada ao servidor TypeScript. Tudo isso foi escrito em TypeScript, conforme a habilidade que foi ativada. De todo este arquivo, este é o que realmente importa, pois é nele que o MCP vai empacotar meu programa Go, executá- lo, analisar seu desempenho e gerar alguns dados. E é nesse ponto que a interface do usuário é então vinculada ao próprio servidor MCP para renderizar a interface. Aqui
+
+temos o aplicativo React Flame, que utiliza hooks no React. E aqui podemos ver que vamos analisar o recebimento da entrada da ferramenta. Obtivemos os resultados. Nós temos o... bem,
+
+onde ele passa basicamente a maior parte do tempo, e o próprio gráfico de chamas. Então, quem aqui já usou flame graphs, teve contato com eles ou sabe algo a respeito? Basicamente, o resultado final é um conjunto de dados muito ruim, todo embaralhado. Essa é uma ótima maneira de analisar o desempenho e ver como está funcionando. Então, vou abrir o GitHub Copilot e verificar se meu servidor MCP está em execução. Eu o tenho
+
+instalado aqui, e existe uma ferramenta para ele. Então, faça um perfil do aplicativo. Espero que, se eu perguntar ao GitHub Copilot, ainda esteja funcionando. Deveria reconhecer que precisa chamar a ferramenta por conta própria. Então, vou aguardar um instante para que isso seja executado. Pronto. Percebeu-se que eu tenho
+
+o Flame Graph Profiler instalado. Deveria estar usando isso, carregando o aplicativo MSP. Aguarde apenas 1 segundo para carregar. Pronto . Podemos encerrar isso. Aqui está, na
+
+realidade, a aparência de um aplicativo MSP dentro da janela de bate-papo. Portanto, a interface do usuário é renderizada em um iframe. Podemos analisar as funções principais e o resumo de como elas estão sendo executadas. Isso pode ser editado e depois recortado e ajustado conforme você desejar para que se encaixe na sua janela de bate-papo. O meu é bem grande. Bem,
+
+isso dá uma visão geral de exatamente como eles são e como você pode combiná-los. Normalmente, o que eu faria com esses dados seria perguntar aos meus modelos de IA: "Isso é bom?" Isso é ruim? Onde estou gastando meu tempo? Há muita troca de informações.
+
+Com um aplicativo de interface do usuário que temos dentro de um iframe, você simplesmente elimina isso. Na verdade, você está se livrando disso. Você tem tudo à sua disposição aqui. Assim, você pode ver onde ele está gastando a maior parte do tempo, nas funções, etc., etc. Portanto, essa é uma
+
+ótima maneira de usá-lo. Bem, eu fiz um desenho bem rudimentar, que ficou um pouco melhor no slide da Marlene aqui. Mas, essencialmente, o que eu fiz foi criar um perfil da minha candidatura. Essa informação foi enviada para o modelo LLM, que então indicou que eu precisava acionar essa ferramenta. O servidor MSP executa o comando, retorna alguns dados JSON e os passa para o host. O servidor
+
+reconheceu que existe um recurso para compartilhar e, portanto, ele foi exibido em um iframe na janela de bate-papo . O motivo de estarmos usando um iframe, ou a razão pela qual usamos um iframe, é o mesmo motivo pelo qual você coloca um hamster em uma gaiola, certo? Se você não o soltar em um cômodo, ele vai acabar destruindo tudo. Você não quer que este aplicativo interaja com as configurações do VS Code, com nenhuma API, com nada externo, nada desse tipo. Então, você quer manter tudo dentro da janela de bate-papo. É por isso que está
+
+dentro de um iframe. E acredito que esse é o momento atual . Então, Marlene, mais alguma coisa? Não, não. Bem, nós somos a Microsoft e estamos aqui. O GitHub tem um
+
+estande no quarto andar, no terceiro andar. Então, ah. Como faço para voltar? Precisa estar em frente à câmera. Mas o GitHub tem um estande disponível. Este ano também teremos o Microsoft Build,
+
+que terá um foco maior em código, e ofereceremos uma série de workshops. Acho que será entre os dias 3 e 6 de junho. Portanto, convidamos você a visitar nosso estande no GitHub ou a conferir o Microsoft Build online. Mas, sim, obrigado por se juntar a nós. Então, é isso. Obrigado.

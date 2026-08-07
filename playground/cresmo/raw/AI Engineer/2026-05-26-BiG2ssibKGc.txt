@@ -1,0 +1,137 @@
+---
+video_title: "Stop babysitting your agents... — Brandon Waselnuk, Unblocked"
+video_id: BiG2ssibKGc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BiG2ssibKGc
+video_date: 2026-05-26T13:00:06+00:00
+video_description: |
+  Same prompt. Same agent. Same model. Without a context engine: 2.5 hours, 20.9 million tokens, multiple rounds of human correction, and code that compiled but would have broken the entire system if it shipped. With one: 25 minutes, 10.8 million tokens, and a senior engineer who gave one nitpick and approved the merge.
+  
+  Brandon Waselnuk from Unblocked makes the case that the problem is not access but understanding. More MCPs give agents pipes to information. A million token context window just sits there. Naive RAG stops at the first result it finds, a phenomenon called satisfaction of search borrowed from radiology. What actually changes is a context engine that reasons across your codebase, Slack history, PR patterns, and org structure to build a research packet before the agent starts writing, so it arrives knowing your factory patterns, your fallback infrastructure, and what the CTO said was wrong in that thread three months ago.
+  
+  Speaker info:
+  - https://getunblocked.com
+---
+Olá a todos. Que bom te ver. Meu nome é Brandon. Eu trabalho na Unblocked. É um ótimo lugar. E meu objetivo é fazer com
+
+que você não precise mais ficar cuidando dos seus agentes como se fossem crianças. Tenho certeza de que todos nós temos uma interpretação diferente do que isso significa. O que me vem à mente é cuidado e alimentação. Basicamente, os agentes, sempre que você os inicia digitando "Claude" na sua linha de comando (vamos supor que seja qual for a ferramenta que você use), existem e é como se um engenheiro de software brilhante tivesse acabado de ser iniciado, mas não sabe nada sobre o que precisa fazer, não sabe nada sobre a sua organização, está completamente sem contexto . Normalmente, o que acontece é que as pessoas precisam construir esse contexto, o que abordaremos no início. Mas primeiro, o que vou
+
+abordar hoje, rapidamente, são três mitos sobre como você pode parar de cuidar dos seus agentes como se fossem crianças. E então, três lições que aprendemos da maneira mais difícil ao construir um mecanismo de contexto na Unblocked. Então, basicamente, nosso produto fornece esse contexto para os agentes e vamos falar um pouco sobre como o construímos, as técnicas importantes a serem consideradas , e depois mostrarei um repositório que criamos em nosso workshop de ontem, que será de código aberto no final da semana, e que contém um componente do mecanismo de contexto, que você pode usar e incorporar à sua organização, se quiser. Então, não faz muito tempo, você era o mecanismo de contexto. Se você pensar nisso enquanto escreve código, você pensou em tudo, você sabia de tudo, você descobriu tudo, você estava lidando com isso. E agora, o que é estranho é que
+
+você está em um estado peculiar onde você é, na verdade, o mecanismo de contexto para seus agentes. Uma maneira útil de pensar sobre isso é: como você construiu o contexto quando chegou à empresa? Então, no primeiro dia, você provavelmente não tinha nada, mas você é muito inteligente, terminou a escola, não sei, talvez tenha estudado por conta própria. Então, com o tempo, você acumula contexto fazendo coisas no trabalho, conhecendo o mercado, conhecendo sua equipe, dizendo coisas como: "Aqui está um comunicado de imprensa", e ele é rejeitado. Todas essas coisas boas contribuíram muito para o desenvolvimento das suas capacidades.
+
+E, por fim, você se tornou muito bom no seu trabalho porque fazia boas perguntas, sabia como reunir informações precisas e descartar o que não lhe era útil. É aqui que nos encontramos neste momento. A maioria das pessoas aqui, se você olhar na parte inferior, está no estágio "você é o mecanismo de contexto", porque ou está lidando com as fases iniciais da IA, que era apenas um recurso sofisticado de autocompletar, ou está em uma IDE agente onde você está acionando cada tarefa. O que observamos em todas essas empresas que trabalham conosco na adoção de IA é que geralmente se trata de um nível variável desse processo. Este texto foi adaptado da obra de Basim Eldis. Se
+
+você der uma olhada nele mais tarde, verá que é um ótimo engenheiro. Mas, basicamente, este é o tipo de escada que estamos sonhando, e, ao longe, vislumbramos um futuro idílico que talvez a Codex tenha vislumbrado, eu acho. Infelizmente, não assisti à palestra do Ryan . Mas todo mundo está meio que tentando chegar lá. Para prosseguir, você precisa chegar à camada de contexto selecionado.
+
+Normalmente, é isso que muitas equipes fazem ao criar repositórios estáticos, ou seja, repositórios estáticos de informações contextuais que expressam aspectos importantes da empresa. Isso pode incluir, é claro, arquivos Claude MD , agentes MD, esse tipo de ferramenta. Mas, geralmente, as pessoas começam a inserir uma série de outros elementos-chave do contexto corporativo em uma área que os agentes podem acessar para extrair dados. O problema é que esses são conteúdos estáticos, então alguém precisa mantê- los e atualizá-los. Além disso, eles não têm acesso aos dados brutos reais de tempo de execução. Há uma série de
+
+informações que os engenheiros obviamente precisam e que não ficam armazenadas nessas camadas estáticas que você está começando a ver, que normalmente se parecem com um sistema de arquivos. Uau. Motor de contexto. Basicamente, o que isso precisa fazer é ter todo esse conteúdo estático, claro, mas também ser capaz de, em tempo de execução, quando uma consulta vier do engenheiro de software, normalmente, como implementar esse recurso? Em tempo de execução, ele consegue extrair toda essa fonte estática de todo o seu acervo de conhecimento corporativo, essencialmente, sejam vários aplicativos SaaS, diferentes sistemas de registro, e coletar os dados em tempo de execução para analisar e raciocinar em todas essas superfícies e diferentes repositórios de dados, executando uma busca exaustiva para encontrar tudo o que é importante e, em seguida, enviando uma resposta otimizada por token, ou seja, concisa, para o agente com todos os detalhes necessários para que ele execute as próximas etapas.
+
+Portanto, você perceberá isso, mas normalmente significa que obter o melhor contexto inicial torna todas as escolhas e ações do agente posteriores ainda melhores. Então, se você entregar, por exemplo, um pacote de pesquisa fundamental do tipo: "Ei, eu quero fazer uma nova integração." E se você enviar um pacote que crie um bom plano, e essa informação disser: "Aqui estão nossos padrões. Usamos o padrão de fábrica. Fazemos essas coisas." Por exemplo, ao analisar todos os aspectos da sua
+
+organização, o sistema consegue acionar tarefas em segundo plano para que o agente busque no seu código-fonte e execute as ações necessárias com maior precisão. Isso significa maior eficiência no uso de tokens e conclusão mais rápida das tarefas. Este é o problema relatado pelo nosso amigo Kaparthy. A lacuna, neste momento, não reside na inteligência. É uma questão de contexto.
+
+Embora Mythos pareça bem legal. Então, o problema é que as pessoas pensam que o acesso é a resposta, mas não é a compreensão. Então, fornecer às suas ferramentas de agente MCPs, com conexões para diferentes conjuntos de dados, permite que elas acessem isso, mas você precisa se lembrar do seu primeiro dia de trabalho, quando você não sabia onde as coisas estavam e, definitivamente, não sabia o que não sabia. Então, provavelmente existe algum serviço por aí do qual você nunca ouviu falar na vida. Você está trabalhando em algo. Seu agente diz algo
+
+como: "Ah, eu consegui. Escrevi todo o código do zero." E aí seu engenheiro sênior diz: "Ei, cara. Temos um serviço." E te nega.
+
+Então, uma coisa que vocês vão perceber é que nós realmente acionamos essa tarefa, isso é um comando real. Mais adiante neste slide, você verá dados sobre os resultados. Fizemos isso com o Unblocked, um mecanismo de contexto, e depois sem um, mas tínhamos acesso MCP a cada ferramenta SaaS necessária para realizar o trabalho. E eu vou te mostrar as diferenças. Resumindo, você meio que entendeu . A execução inicial, que
+
+tinha apenas acesso ao MCP, basicamente passou em todas as verificações de código. Compilou. Mas o engenheiro sênior disse: "Isso está completamente errado e o que tentamos fazer teria quebrado todo o nosso sistema se tivéssemos lançado o produto." Então, três mitos sobre a construção de contexto. A primeira coisa, se eu fizer uma análise ingênua dos meus documentos, é o contexto. Infelizmente,
+
+isso não funciona. O algoritmo Inive Rag seleciona um conjunto de itens, coloca um repositório de dados neles e o agente pode então percorrer esse repositório, mas normalmente falha porque há algum problema relacionado à satisfação da busca. Este é um fenômeno conhecido em radiologia, mas, resumindo, se você fizer um raio-X porque, digamos, tem um problema no pulmão, o radiologista fará o exame e, quando encontrar algo, dirá: "Ah, tem alguma coisa no seu pulmão". Eles param de olhar. Porque eles acham que encontraram a resposta para os sintomas que você descreveu, e isso é muito ruim em termos de saúde, é claro, pois pode haver outros problemas.
+
+Então, o que acontece com um agente é o seguinte: se você disser para fazer uma integração com o Zendesk, ele pode consultar um MCP (Provedor de Serviços de Marketing) e, ao encontrar o primeiro dado, ele pensa: "Ah, este deve ser o padrão". Ele para de olhar. Então, o problema é que, se não for exaustivo, não encontrará a causa raiz real, ou pode não encontrar a melhor maneira correta de implementar, e uma série de outros problemas podem ocorrer, e basicamente, quando a saída do agente estiver concluída, você, como engenheiro, lê e pensa: " Não", e então você entra em um ciclo vicioso onde pensa: " Deixe-me corrigir você, na verdade é aqui". Vou indicar o arquivo, e assim você volta a ser babá . Se eu conectar MCPs suficientes, termino o serviço.
+
+Acho que já falei sobre isso. Eles estão lá, são os canos, isso é ótimo, mas não proporcionam uma compreensão ou raciocínio abrangente. E então, finalmente, pensamos nisso por um tempo. Sonhávamos com a janela de contexto de 1 milhão. Está aqui. Não sei
+
+se alguém já o atingiu com alguma coisa e depois tentou fazer com que o agente fizesse alguma coisa. Não pode. Basicamente, não consegue raciocinar com tantos dados. Não é muito útil. Fica ali parado . Não existem entidades
+
+nem relacionamentos, e há todas essas coisas que precisamos para que esses agentes sejam mais eficazes. Então, aumentar a janela de contexto não resolve o problema. Existem vários motivos computacionais pelos quais, mesmo que chegássemos a 100 milhões em uma janela de contexto, isso ainda não ajudaria, a não ser em problemas de "encontrar uma agulha no palheiro". Se você é do tipo que gosta de procurar o Wally. Então, basicamente, é isto que vemos. A
+
+clássica cachoeira. O agente consegue visualizar o código que compila. Mas, normalmente, hoje em dia, eles perdem tudo isso porque não conseguem ver. Não sabe se está lá. O processo teria que ficar rodando por tanto tempo, encapsulando tudo em uma sessão, para realmente obter seus padrões de fábrica ou outras coisas em toda a sua base de código, que você consumiria uma quantidade enorme de tokens. E então,
+
+quando você fechar essa janela do terminal, tchau. Você só precisa fazer isso de novo. E ninguém quer repetir esse custo. É por isso que você precisa de um mecanismo de contexto. Ele entende quem você é e quais informações realmente importam.
+
+Portanto, um componente fundamental disso é um gráfico social, pois você o utiliza como ponto de partida. Porque se eu perguntar como fazer a integração com o Zendesk, o mecanismo de contexto deve saber em quais bases de código eu trabalho, onde está meu histórico de pull requests, com quem eu trabalho e o que eu quero dizer com isso. Porque numa grande organização, lidamos com empresas que têm 20.000 membros como nossos clientes, então é muito diferente. Portanto, você precisa ser capaz de raciocinar sobre isso. Aliás, um
+
+grafo de contexto é uma técnica incrivelmente útil para construir essas coisas. Vamos conversar sobre isso. Isso deve resolver conflitos. Não sei quantas vezes já examinei o código-fonte que está sendo executado na função principal e pensamos: "Sim, essa é a fonte da verdade." Mas existe uma conversa no Slack em que o CTO diz que isso foi implementado incorretamente.
+
+Qual está correto? O mecanismo de contexto deve ser capaz de resolver esse debate. Aliás, um gráfico de redes sociais ajuda nisso, porque se você vir o CTO dizendo em uma conversa no Slack que algo está errado, provavelmente ele está certo. Então, o mecanismo de contexto raciocina sobre isso e pensa: "Bem, o código diz isso. O Slack diz isso.
+
+Essa é a opinião do CTO. Provavelmente devemos informar ao agente o que o CTO disse. E, claro, fornecer o código-fonte, etc." Assim, transmite-se o que é verdade. Portanto, ele lida com a verossimilhança. Esse é um
+
+problema difícil. Temos diversas técnicas em nosso produto para solucionar esse problema. Não está totalmente resolvido. Deve respeitar as autorizações governamentais. Isso é bem básico.
+
+Um dos motivos pelos quais isso é oferecido via MCP é a possibilidade de utilizar o modelo OAuth para governança de dados e por uma série de outros fatores importantes para o crescimento dos negócios. Quer dizer, assim que você passa dos 20 anos, normalmente isso importa porque alguns dados não devem ser acessíveis a outras pessoas. Portanto, ao construir seu mecanismo, você não vai querer colocar tudo lá dentro, especialmente quando pensar em como incorporamos conversas do Slack e combinações do Microsoft Teams . Portanto, se for você, responderemos por meio de mensagens privadas. Mas se outra pessoa fizer uma pergunta, nunca mostraremos conversas privadas que não sejam dela.
+
+Essa é apenas uma maneira simples de pensar sobre isso. Opa. E deve fornecer o contexto correto, o modelo correto, no momento correto, de forma otimizada para tokens. É assim que o nosso funciona. Resumindo, nós coletamos diversas fontes de dados, eles ficam armazenados em nosso mecanismo e temos seis principais diferenciais, que explicarei em breve.
+
+E, no lado da saída, deve haver muitas áreas onde agentes e humanos possam interagir com o mecanismo de contexto. Uma das nossas soluções é simples: engenheiros humanos no Slack simplesmente conversam com ela e fazem perguntas o tempo todo para obter os dados de que precisam. Vou te mostrar um exemplo. Mas é claro, existem agentes. Ao migrar para agentes em segundo plano, eles precisam de um mecanismo de contexto para serem executados sem interface gráfica, em segundo plano ou na nuvem, pois precisam ser capazes de fazer perguntas a uma máquina, e não a uma pessoa. Caso contrário,
+
+você não vai acordar com um PR (Publicidade de Referência), mas sim com a pergunta: " Posso usar esta ferramenta?" Isso não ajuda. Então, esses são os seis. Vamos avançar rapidamente, mas resumindo, conversei com muitos deles, e esses são termos de marketing. Contexto de sistema unificado, para que possa raciocinar em todos os seus sistemas de registro. Tem que ser capaz de
+
+realizar buscas direcionadas. Na resolução de conflitos conforme descrito, muitas vezes os documentos e outros documentos entram em conflito. Como resolver isso? Esse problema de governança de dados , portanto, modelo de acesso seguro. Relevância personalizada, construção de redes sociais, conhecimento de quem você é e com quem você trabalha. E, por fim, claro, a
+
+otimização de tokens. Isso está se tornando um problema bastante sério. Muitas das vantagens da otimização de tokens vêm do simples fato de se ter um mecanismo de contexto, pois você não precisa executar novamente os mesmos comandos para o agente saber. Além disso, com um mecanismo que raciocina sobre tudo, ele consegue compactar a resposta exatamente no que o agente precisa e enviar apenas isso como resposta. Essa tarefa que mencionei, não vou mentir, pedimos ao Claude para fazer a comparação, então ele gerou esses gráficos de barras e números, mas conseguiu destacar todos os pontos principais. A mesma solicitação,
+
+uma era ingênua, tinha todos os MCPs necessários para obter os dados, e a outra tinha apenas nosso mecanismo de contexto. Essa é a diferença entre os princípios fundamentais da engenharia. Mas essas são engraçadas. Parece que não percebeu que usamos o Bedrock como alternativa. A entrega foi um desastre.
+
+Houve um que quebrou os chamadores personalizados. Resumindo, se você estiver trabalhando em uma escala considerável, mais de 20 pessoas, os agentes vão tentar simular as coisas, e tudo vai parecer um protótipo. Não é possível mesclar. Se você tiver um mecanismo de contexto, quando eu enviei este PR, nosso engenheiro sênior responsável pelo mecanismo basicamente apontou um detalhe insignificante e disse: "Sim, você pode aceitar isso. Só precisa corrigir isso." Ótimo.
+
+Essas são algumas das nossas lições mais difíceis. Tentamos otimizar o acesso. Agora, entenda, a gente pensa: "A garrafa vai dar conta do recado." Tipo, o agente com certeza vai descobrir. Vai acabar se transformando em Methos ou algo parecido. Não. Já se
+
+passaram anos, então pensamos: " Temos que resolver esse problema de outra maneira." E acho que isso está correto, com base no lançamento da Anthropic ontem à noite com os agentes Claude e na palestra de Ryan esta manhã. É preciso inserir o contexto no sistema. E um motor é a forma de fazer isso. Em vez de resolvermos os conflitos, criamos problemas . O agente simplesmente
+
+escolheria. No início, encontramos conflitos porque pensávamos: "Não pode ser tão ruim assim". É tão ruim assim. Portanto, resolver conflitos é um problema importante. E, por fim, esta é realmente muito divertida.
+
+Percebemos que, à medida que boas respostas surgiam, obtínhamos feedback delas, então as armazenávamos em cache para reduzir a latência. Se você armazenar em cache uma boa resposta, basicamente, é como quando você escreve documentação, certo? No momento em que você escreve algo, já não é mais válido, porque as coisas estão mudando. Portanto, se você armazenar uma resposta correta e, no dia seguinte, alguém fizer a mesma pergunta e você a responder, provavelmente terá mentido para essa pessoa, pois as coisas provavelmente mudaram no período de 24 horas . Portanto, o sistema não é o mesmo.
+
+Obviamente, algumas questões, tenho certeza, são estáveis, mas isso levou a muitos problemas. Portanto, eu recomendo fortemente que você não faça isso, mesmo que esteja otimizado. É aqui que estão as equipes voltadas para a inteligência artificial. Eles estão usando mecanismos de contexto em todos esses casos. Então, eu sei que somos todos engenheiros, mas tenho certeza de que apoiamos uns aos outros em nossas organizações, como em um canal de perguntas e respostas para engenheiros. Nosso mecanismo de contexto
+
+está presente em todos os canais de suporte técnico dos nossos clientes. Ele detecta se uma pergunta foi feita. Ele pontua com segurança e, em seguida, responde automaticamente. Então, quando as equipes de suporte, as equipes de vendas, enfim, quem quer que seja, perguntam: "Ei, o que está rodando em produção? O que é isso?"
+
+O mecanismo de contexto simplesmente responde a elas e lida com o problema da mesma forma que responderia a um agente que solicita dados. Bem , existem muitas maneiras como esse caso de uso que acabei de mencionar. Mas, além disso, o enriquecimento de tickets, a triagem, o gerenciamento de incidentes e, obviamente, o trabalho com seus agentes na codificação, são todas ótimas maneiras de obter grandes vantagens ao implementar uma dessas ferramentas. As equipes então as personalizam. Então, a maioria dos garfos, nós temos como um livro de receitas. Eles ficam com
+
+esse repositório. O livro de receitas está repleto de dicas. Mas aí você aprimora suas habilidades com seus procedimentos operacionais padrão . Obviamente, você pode criar seus próprios fluxos de trabalho, seja desenvolvendo essa habilidade ou utilizando alguma outra técnica. E depois, claro, os agentes alfandegários. Todos esses elementos
+
+podem aproveitar o mesmo mecanismo de contexto. Assim, você obtém uma enorme vantagem. É isso que estou tentando deixar para vocês . Um agente deve escrever código que pareça ter sido escrito por alguém que trabalha na sua equipe há anos. Tipo, isso é algo que já deveríamos esperar , e essa é uma das técnicas para chegar lá.
+
+Posso fazer uma breve sessão de perguntas e respostas e também uma demonstração. Tenho 3 minutos restantes. Então, qual é a sua preferência? Demonstração. Legal. Então, esta é a ferramenta
+
+sobre a qual falei no workshop. Vamos torná-lo de código aberto. Este é um componente da chave de um gráfico social. Então, quando você executar o programa, isso estará disponível, acho que na segunda-feira. Vamos, na verdade, tornar o código fechado de código aberto agora mesmo . Existe toda uma estrutura, mas nós
+
+pedimos a várias equipes que a hackeassem e enviassem código. Mas basicamente, ele vai construir um desses para você. Vou dar um zoom. Esta é a nossa organização de engenharia. Como você pode ver, existem diferentes nós e arestas, um grafo básico, mas é um grafo social. Rachine é uma
+
+máquina, droga. Então, o volume que ele envia é determinado pelo tamanho do nó. Se analisarmos, veremos que é algorítmico, gerado proceduralmente, e é essa ferramenta que você verá. Mas, resumindo, você pode ver à direita com quem ele está trabalhando. Desculpe, a tela é muito pequena.
+
+Ótimo. Funcionou mais ou menos. Então, você pode ver com quem ele trabalha, cujo código ele revisa e em que área ele atuou. Usamos etiquetas com uma chave de API da Anthropic. Meu Deus, agora está horrível. Vamos ampliar.
+
+Um pouco melhor. Desculpe. É uma ferramenta divertida. Basicamente, esse grafo de especialistas permitiria que, quando uma consulta surgisse, disséssemos: "Ah, você é da Machine. Você trabalha com essas pessoas. Ótimo." Tudo dependerá desses
+
+dados. Em seguida, a câmera dará um zoom nas bases de código com as quais ele está trabalhando. Então, quando você, como engenheiro, pergunta, talvez não seja a melhor pergunta do mundo, mas você pensa: "Ei, preciso terminar isso. Tem um bug. Preciso corrigi-lo." Saberá
+
+quem você é. Tudo vai depender disso. Provavelmente encontrará o erro correto. E, novamente, ele usará esse componente para realizar diversas tarefas e tomar decisões à medida que avança, a fim de fornecer ao agente a resposta exata de que ele precisa. Então, essa ferramenta gera isso para você. Basta apontar para o seu
+
+repositório de código. Vai realizar uma construção. Mas isso faz coisas como criar especialistas em diversas áreas do negócio. Então, em nossas bibliotecas ou serviços. Desculpe pela rolagem rápida. Temos
+
+tempo. Você pode consultar um mapa de calor que mostra quem trabalha com quem, como quem revisa o quê, quem escreve o quê. Você pode consultar tabelas de colegas, sabe, com quem o André trabalha, etc. Então, esses dados disponíveis em um mecanismo de contexto são muito úteis. E, mais uma vez, este será de código aberto.
+
+Acho que você teve seu crachá escaneado. Vou enviar um e-mail para todos vocês assim que for de código aberto, se não houver problema. Outra demonstração rápida, Ghosty, meu Deus! Então, nesta, eu usei nosso MCP e simplesmente perguntei: "Como posso criar uma nova integração First Class com o Zendesk?" Eu apenas disse para usar o MCP.
+
+Provavelmente teria detectado, mas quero ter certeza, para esta demonstração, de que detectou. O processo foi executado. Ele optou por usar nossa ferramenta de pesquisa. Você pode ver que ele construiu uma consulta. Então, o agente fez isso com base no formato do nosso MCP. Portanto,
+
+ele escreveu a consulta correta. Executei isso. Isso exigiu um grande esforço de raciocínio. Os dados foram recuperados. Em seguida, acionou seus agentes de exploração. Isso é
+
+fundamental, pois agora eles estão explorando o local certo depois que esse pacote de pesquisa chegou. Ótimos resultados de pesquisa. Fez o que tinha que fazer. Fez o que tinha que fazer. Elaborou um plano para mim.
+
+Portanto, se você analisar esse plano, não saberá qual é a minha fonte. É justo. Mas, se apenas fizermos uma varredura, encontraremos todas as coisas importantes, como o registro do nosso provedor, obviamente. Temos um modelo de fábrica. Hum, vou dar um jeito, mas tipo, o cliente de módulos da biblioteca. Resumindo, este é um
+
+plano genial. E está praticamente correto. Provavelmente, eu repetiria esse passo mais algumas vezes para garantir que ficasse perfeito. Mas, durante todo o processo de execução, ele consegue continuar chamando nosso MCP. Normalmente, o que vemos é o uso do motor para planejamento.
+
+Executar. E então, basicamente, quando você chegar à fase de revisão de código, utilize seu mecanismo de busca novamente. Porque esse motor gráfico é muito bom em revisão de código e extremamente bom em planejamento. Esse é todo o tempo que eu tenho. Muito obrigado a todos. Eu agradeço. Ah,
+
+estou em um estande no G16. Então, apareça se tiver alguma dúvida.

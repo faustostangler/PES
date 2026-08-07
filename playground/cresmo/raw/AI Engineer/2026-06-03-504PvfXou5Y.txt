@@ -1,0 +1,87 @@
+---
+video_title: "BDD, ADR, PRD, WTF: Capturing Decisions for Humans and AI Alike — Michal Cichra, Safe Intelligence"
+video_id: 504PvfXou5Y
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=504PvfXou5Y
+video_date: 2026-06-03T13:00:08+00:00
+video_description: |
+  "One thing harder than reading AI code is reading AI tests." Mikuel from Safe Intelligence argues spec driven development leaves a loop open: you have a markdown spec, but how do you know the product actually behaves that way? His answer is Cucumber, nearly forgotten and suddenly useful again. Executable, human readable BDD scenarios connect directly to PRDs and critical user journeys and close the gap between what the spec says and what the tests verify.
+  
+  The rest of the talk is enforcement. ADRs capture not just what the rules are but why; agents rejected at commit time get linked back to the document and iterate. Module import linting makes N+1 queries structurally impossible: rendering templates cannot touch the database, E2E tests cannot import any module that could. His sessions run 20 to 50 context compacts. The agent stays on track because the rules live in git hooks and CI, not in the prompt.
+  
+  Speaker info:
+  - https://cz.linkedin.com/in/michal-cichra-61188a84
+---
+[música]
+
+Olá, eu sou Michal. Bem-vindo(a) à captura de decisões, tanto para humanos quanto para IA. Ontem, em conjunto com uma equipe da Safe Intelligence, lançamos o Spec 27, um novo produto para testar agentes. Antes disso, trabalhei na Microsoft, na Red Hat, e passei 10 anos trabalhando em um único produto. Os problemas de consistência que enfrentamos com a IA e a questão da captura de decisões aparecem em todos os produtos que já vi.
+
+E essas anotações são fruto da experiência. E você pode me encontrar na barraca. Então, BDD, PRD, ADR, são muitas siglas. Hum, por que isso importa? Então, vamos analisar isso a partir do final.
+
+Você provavelmente conhece essa história. Hum, espero que não seja uma lenda urbana, mas cientistas colocaram cinco macacos em uma gaiola com bananas em uma escada. Depois, dava-lhes um banho frio sempre que um macaco tentava pegar uma banana. Outros macacos espancaram o pobre coitado. Então eles substituíram os macacos um a um e nenhum dos originais permaneceu.
+
+E, no entanto, eles espancaram todos os macacos que tentaram subir a escada, sem saber porquê. Portanto, humanos e LLMs sofrem da mesma característica. Contexto limitado. As pessoas esquecem. Contexto compacto do LLM. Os humanos vão embora
+
+. Os mestres em direito (LLMs) não têm memória. [bufa] Depois de um tempo operando um produto, a equipe começa a se perguntar: "Por que temos esse fluxo? Por que esse é o objetivo dessa funcionalidade? Por que esse código tem esse formato?
+
+Onde isso se encaixa?" E pode ser que o engenheiro fundador não esteja disponível para responder. E esses problemas se manifestam em todas as organizações. Talvez com IA muito mais cedo do que costumavam fazer . Portanto, ADR significa registro de decisão de arquitetura.
+
+Registra o porquê de você fazer algo e como você impõe isso ou como você quer fazer isso. E você pode abordar exemplos por meio de documentos de referência e trechos de código. Por exemplo, dividimos o código em camadas para evitar consultas N+1. Garantimos essa separação por meio da verificação de importações em módulos. E também garantimos que a leitura do banco de dados retorne formas simples em vez de objetos ORM, para que não possamos fazer essas consultas e evitar duplicação.
+
+E também verificando a sintaxe por meio das importações de módulos. E mais umas 50 ADRs que definem a arquitetura do produto. Não existe um formato único que você precise usar. É apenas um conceito. É um texto, então não há uma maneira específica de aplicá-lo. Você ainda precisa de uma
+
+ferramenta para impor isso. Mas a ferramenta lhe dirá que essa é a regra. Por que você está fazendo isso? E como você vai consertar isso? Em seguida, o agente irá procurar esse documento para entender por que esse problema existe e obter mais informações sobre como resolvê-lo.
+
+Você também pode definir a quais arquivos isso se refere especificamente, como por exemplo, se são arquivos Python ou pastas específicas. E como você realmente a aplica. PRD é um documento de requisitos do produto. Bem, isso é algo mais leve quando você está criando uma funcionalidade; você descreve por que essa funcionalidade existe e quais problemas ela resolve. E como o usuário navega pelo aplicativo para efetivamente interagir com ele. Qual é o
+
+percurso dentro do aplicativo? Pode ser muito leve. Não precisa ser algo muito longo e exaustivo como um documento enorme. Você pode simplesmente capturar o porquê, o problema, o objetivo e a jornada que os conecta. E não é só para os agentes, mas também para você daqui a 6 semanas, quando você se esquecer do porquê de ter feito isso.
+
+Agora, BDD. É o desenvolvimento orientado ao comportamento. Você provavelmente já viu desenvolvimento orientado a especificações ultimamente, mas se você o praticasse, talvez tivesse sofrido o mesmo que eu. Como você valida se o produto realmente atende às especificações? É um documento Markdown, você descreve como ele deveria funcionar, mas como você sabe que ele realmente funciona dessa forma?
+
+Uma coisa mais difícil do que ler o código de uma IA é ler os testes de uma IA. Então, e se você tivesse uma camada intermediária que descrevesse o comportamento do produto em linguagem humana? E o BDD não é novidade, mas pode ser executado e legível. Então, apresento-lhes o Pepino. Quase esquecido, de repente volta a ser útil. Com
+
+certeza é mais fácil de revisar do que as provas comuns. Você pode conectar cenários diretamente aos seus PRDs (Process Requirements Documents) e jornadas críticas do usuário. Ele pode ser legível, executável e fecha o ciclo que um desenvolvimento orientado por especificações [limpa a garganta] deixa em aberto. Essas regras, essas especificações, são posteriormente analisadas em etapas e executadas como código. Mas o que você pode fazer é escrever e ler essas coisas. E você
+
+pode analisá-los. E você pode entender isso. A escolha da linguagem é sua. Não precisa ser imposto. Assim como você, existem várias maneiras de escrever essas funcionalidades.
+
+E é isso, mas eles descrevem como você deve usar o aplicativo, por que ele existe e como funciona. Da mesma forma, eles podem consultar todos os documentos que você possui sobre o porquê das coisas existirem. Além disso,
+
+criar interfaces de usuário consistentes com agentes é um desafio ainda maior . Sistemas de design e bibliotecas de padrões são formas de construir interfaces de usuário consistentes. Assim como era antes da IA, e assim continua sendo agora. Então, você documenta seu idioma. Você diz, por exemplo, que um botão principal é isso e aquilo. É azul. Tem este formato.
+
+Tem esta cor e este tamanho. E você define suas regras. Você diz: " Teremos apenas um botão principal visível em um site, em qualquer página e em qualquer momento." E então você poderá fazer cumprir essas regras. Da mesma forma, você define componentes e padrões.
+
+Por exemplo, se você tiver botões de várias cores e com vários estados, você define componentes, define pré-visualizações, demonstra como eles funcionam e cria trechos de pré-visualizações para que as pessoas possam vê-los na prática. E os agentes conseguem vê-los. E então você pode revisar e verificar se isso realmente está de acordo com os princípios que eu estabeleci? Eles seguem o padrão visual? E depois você os reutiliza.
+
+Assim como acontece com o código, você constrói essas estruturas do zero, partindo de pequenas partes para estruturas maiores. Você as compõe e as reutiliza . Caso contrário, vira um caos, como acontece com o código. Que legal! São ideias interessantes, mas como posso colocá-las em prática?
+
+Portanto, minha equipe e meus agentes mantêm essa postura. Como faço para manter a consistência? Bem, com o loop. Você provavelmente já ouviu falar em fechar o circuito, circuito de reforço, arnês. Como lembrar ao agente que existem regras e como segui-las.
+
+Portanto, nosso ciclo é simples. São hooks do Git, skills, CI, linters e uma série de outras verificações. O objetivo do agente é entregar uma solicitação de pull request e, para isso, ele precisa usar o Git. Assim, usamos hooks do Git para executar tarefas predefinidas, e essas tarefas são posteriormente executadas em um ambiente de integração contínua ( CI). São as mesmas tarefas que são executadas como ganchos.
+
+Se, por exemplo, os agentes ficarem preguiçosos e não quiserem executá-los ou os ignorarem, eles serão pegos. E incluímos linting, formatação, verificação de tipos, detecção de duplicação de código, verificação de arquitetura, linting de documentos, tudo o que for possível. Houve uma época em que as revisões de código se concentravam em estilo, tabulações e espaços, mas isso não tem mais espaço. Todas essas coisas não estão em discussão. São regras, são aplicadas e são automatizadas porque não há mais espaço para discussão sobre elas. Trata-se
+
+mais de conceitos de alto nível. O que você não consegue encontrar, você não consegue impor. Assim, por exemplo, impomos diretrizes à arquitetura do produto e do código. Separamos os módulos e suas importações, para que você possa usar o que e de onde. Por exemplo, nosso conjunto de testes BDD de ponta a ponta não consegue acessar o banco de dados. Assim,
+
+proibimos o acesso a qualquer módulo que possa acessar o banco de dados e, basicamente, forçamos o módulo a iterar sobre os modelos sem consultar o banco de dados, utilizando apenas os recursos do navegador da aplicação. Da mesma forma, no próprio produto, garantimos que não podemos interagir com o banco de dados a partir de modelos de renderização. Portanto, sabemos que nunca existem consultas N+1. Nós apenas definimos maneiras de evitar que esses problemas aconteçam. Você não pode continuar procurando por eles. Você precisa impedi-
+
+los completamente. Então o agente tenta confirmar e enviar as alterações, recebe um feedback sobre a confirmação, que é rejeitada, e é redirecionado de volta para o documento, onde o lê e corrige o problema. E repita o processo. Portanto, existem algumas desvantagens. Ah , desculpe. Não são desvantagens. Bem
+
+, esse loop é genérico. Este ciclo consiste em realizar um trabalho, implementá-lo, receber feedback e iterar. Mas o loop pode ser várias coisas, certo? Às vezes você está trabalhando em uma funcionalidade do produto, às vezes em uma interface de usuário, e às vezes em coisas mais voltadas para os bastidores. Portanto, o ciclo é o mesmo, mas o que muda é o foco do ciclo. Portanto,
+
+temos habilidades diferentes. Existe um sistema de Resolução Alternativa de Disputas (ADR, na sigla em inglês) que, sempre que mencionado, leva o agente a pesquisar informações sobre como operar de acordo com as regras. Como encontrar o código afetado por essas ADRs? Para PRD, o mesmo. No loop `for UI`, na verdade, pulamos várias verificações e, em vez disso, forçamos a iteração rápida no navegador.
+
+E uma habilidade de teste que realmente identifica os testes a serem executados com base na cobertura de código e nas alterações de arquivos. Assim, executamos apenas uma parte específica do pacote de ferramentas, e não o pacote completo. E algumas execuções de objetivos que efetivamente registram as decisões tomadas pelo modelo para que possamos revisá-las posteriormente. Mas todos esses elementos fornecem foco no ciclo, embora o ciclo permaneça o mesmo. Existem desvantagens. Depende
+
+muito do contexto. É como se você pudesse ficar sem metade do contexto logo no início da pesquisa. Mas não tenho medo de contextos compactos. Na verdade, acho que isso tem funcionado bem nos últimos seis meses. Então, nas minhas sessões, há de 20 a 50 contextos compactos e está tudo bem.
+
+Porque as coisas importantes sobrevivem e o agente sempre as consultará novamente. Então, esse é o objetivo, afinal, certo? Por exemplo, você quer ter sessões de várias horas com um objetivo claro: que o agente possa operar de forma autônoma seguindo as regras que você definir. Então esse é o objetivo, de qualquer forma, tipo,
+
+existem decisões que você pode registrar. Existem partes do produto cuja razão de existir você pode descrever. Existe o Cucumber ou o BDD, que podem ter especificações executáveis ​​que você pode de fato ler, revisar e entender. Sistemas de design podem ajudar você a construir interfaces de usuário consistentes a partir de componentes. E, mais uma vez, garanta que, por exemplo, não haja estilos embutidos em nenhum outro lugar.
+
+E você utiliza um arnês para unir tudo . Que a sorte esteja com você. É isso. [aplausos]
+
+[música]
+
+[música]

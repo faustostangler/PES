@@ -1,0 +1,70 @@
+---
+video_title: "What Lies Beneath the API — Benjamin Cowen, Modal"
+video_id: HvZXAOZ3iv8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HvZXAOZ3iv8
+video_date: 2026-06-02T18:00:37+00:00
+video_description: |
+  Intercom is beating their frontier API at one tenth the cost. Pinterest claims orders of magnitude. Ben Cowen from Modal argues this pattern is not the exception for maturing AI products. It is the destination. Frontier labs want their models to win at everything. You want to win at your specific business logic. Those are different goals.
+  
+  He offers three signals it is time to fine tune: paying more for the API than customers pay you, evals that have plateaued, and latency requirements no shared endpoint will meet. His practical case: if you have already built an agent harness and are collecting eval data, you have what you need to start RL training. Supervised fine tuning fits in 300 lines of Python. Modal customers have scaled to 50,000 sandboxes just for RL rollout.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/benjamincowenmath
+  - https://github.com/BenCowen
+---
+[música]
+
+Sim, boa tarde e obrigado por virem a esta sessão. Sei que há muitas opções. Meu nome é Ben Cohan. Sou engenheiro de aprendizado de máquina com atuação em projetos avançados na Modal. E eu gostaria de falar sobre um padrão interessante que temos observado no desenvolvimento de aplicações de IA. Vou revelar
+
+a conclusão agora. Bem, à medida que as empresas amadurecem e seus produtos se especializam, vemos cada vez mais empresas recorrendo a ajustes finos para obter maior desempenho, custos mais baixos e assim por diante. Isso levanta uma questão interessante: quando é que a sua aplicação ultrapassa o limite e entra num domínio personalizado? Quando vale a pena fazer ajustes finos? Então, se você não está familiarizado com a Modal, somos uma plataforma de computação sem servidor de propósito geral .
+
+Nós fornecemos blocos de construção básicos, como funções sem servidor e ambientes de teste reforçados para execução de código. Assim, como desenvolvedor de domínio de campo (FDE) em uma plataforma de uso geral , tive a oportunidade de trabalhar com uma gama extremamente ampla de aplicações de IA. Então, desde simulações de física até química quântica, e claro, processamento de voz, LLMs e agentes. Uma área realmente interessante que tem ganhado muita força é o aprendizado por reforço em larga escala. Então começamos a pensar em alguns desses clientes e em que ponto do espectro de modelos eles se encontram?
+
+Assim, de um lado do espectro está uma API de vanguarda. E as APIs de ponta, e acho que todos aqui concordariam, abriram uma era completamente nova de crescimento acelerado. As pessoas conseguem construir praticamente qualquer coisa de forma excepcionalmente rápida. Eles são incríveis. Hum, mas você não pode personalizá-lo de forma alguma além das configurações básicas de engenharia. Então, hum, você
+
+pode... quer dizer, eu adoro toda essa coisa de modo homem das cavernas. Se você instruir seu LLM a falar como um homem das cavernas, poderá reduzir bastante o número de seus tokens. Mas isso
+
+não vai ser escalável se a sua startup crescer 100 vezes ou 1.000 vezes, certo? Outra coisa interessante que observamos é quando startups ganham grandes contratos corporativos com requisitos muito específicos de latência ou taxa de transferência. Hum, há muito pouca possibilidade de personalização para esses itens. Imagine então se você tiver uma métrica personalizada que englobe a sua lógica de negócios.
+
+Certo, então, para obter essa diferenciação de modelo, muitas empresas recorrem ao ajuste fino. E o que isso tradicionalmente significou foi um salto enorme para o outro extremo do espectro, certo? O treinamento que realizamos possui características de escalabilidade e computação muito diferentes da maioria das cargas de trabalho de produção. Portanto, se você quisesse treinar e executar uma carga de trabalho de produção, no passado você precisava de um cluster grande. Agora você precisa isolar esses recursos dos seus recursos de produção. Você vai
+
+precisar de engenheiros de infraestrutura, ou seus engenheiros de IA vão trabalhar na infraestrutura, talvez até mesmo seus cientistas. Portanto, com esse tipo de opção extremamente personalizada e poderosa, você também tem essa enorme responsabilidade por toda a infraestrutura. Então, você provavelmente já imagina quem eu recomendaria para isso, mas está surgindo uma espécie de meio-termo. Existe um novo tipo de provedor de nuvem que torna isso muito mais fácil. E, sabe, estamos construindo isso para resolver esse problema que estamos vendo, certo? Assim, um
+
+líder após o outro nesse setor está anunciando ou publicando que aperfeiçoou suas estratégias e obteve resultados incríveis. Ok, então a Intercom está superando a API de ponta deles por 1/5 do custo. Um Pentress diz ordens de grandeza. Gostaria de saber o valor exato, mas acho que um de nossos clientes, a Decagon, resumiu isso muito bem, que é: basicamente, a Frontier Labs provavelmente não tem exatamente o mesmo objetivo que vocês, certo? Eles querem que seus modelos vençam em tudo o que for possível.
+
+E queremos que nossos modelos sejam superiores à nossa lógica de negócios, certo? Você quer ser o melhor naquilo que oferece ao seu cliente. Bem, sim , tenho o prazer de anunciar que treinar um modelo é muito mais fácil do que você imagina. Felizmente, existem algumas bibliotecas de código aberto incríveis disponíveis atualmente que tornam isso extremamente acessível. Eles te dão controle total sobre o algoritmo, certo? Assim, você consegue
+
+abranger todo o espectro, fazendo tudo sozinho no nível do algoritmo, sem precisar gerenciar o cluster e outras coisas do tipo . E o mais importante é que isso mantém os ciclos de iteração rápidos da vanguarda do espectro. Então, basicamente, nossa missão é dar a você controle sobre o algoritmo e iteração rápida. [limpa a garganta] Então, esta é a minha opinião polêmica: é apenas uma questão de tempo até que seu produto se torne específico para um domínio. Certo? Então, de certa forma, se você
+
+tem um produto diferenciado, ele é personalizado, certo? Então, quando exatamente você cruza essa linha, é uma decisão que você precisa tomar, mas é algo sobre o qual adoraríamos conversar com você . Então, tenho aqui alguns sinais que podem indicar que você está se aproximando desse momento. Então, se você voltou ao modo "homem das cavernas" e ainda está pagando mais pela sua API do que seus clientes pagam a você, isso pode ser um sinal de que sua economia não está escalando, certo? E você provavelmente se beneficiaria de um ponto de extremidade de inferência personalizado.
+
+O mesmo vale para latência e taxa de transferência, certo? Portanto, se você está atingindo um platô em suas avaliações, isso é um sinal de que você pode obter resultados ajustando o modelo com mais precisão. Existe um ditado antigo na área de treinamento que diz que se você tem dados ruins, lixo entra, lixo sai. Portanto, se você não tem coletado dados e não possui avaliações maduras, provavelmente não é hora de treinar. Você precisa coletar os dados. Bem,
+
+dito isso, uma das principais lições que eu gostaria que todos aqui levassem consigo é que, se você já criou um produto, provavelmente já abordou pelo menos todos os aspectos que precisam de treinamento, caso ainda não o tenha feito. Ok, se você construiu uma estrutura de agentes, então você tem o que precisa para que um novo modelo aprenda, por meio de aprendizado por reforço, como fornecer seu serviço. Certo? Portanto, se você estiver avaliando seus produtos e coletando dados sobre o que está funcionando e o que não está, você terá dados de treinamento para treinar seu modelo. E com o advento das plataformas de computação sem servidor e dessas bibliotecas de código aberto, não sei, muitos de nós, quando começamos a treinar modelos, calculávamos o gradiente manualmente e implementávamos a álgebra linear. Você não precisa
+
+mais fazer isso, a menos que tenha um modelo muito peculiar. Se você fizer isso, adoraria conversar com você sobre o assunto. Mas sim, você não precisa de especialistas em infraestrutura, e coisas do tipo. Este é um momento emocionante. Eu sabia que o vídeo não ia reproduzir.
+
+Enfim, os próximos slides são apenas alguns trechos de código. Não espero que digam "Ah, sim, você nem consegue ler direito", mas eu só quero ilustrar como é configurar um algoritmo de treinamento hoje em dia. Não é um monorepo gigantesco com milhares de linhas de código. É possível realizar ajuste fino supervisionado em 300 linhas de Python. Ok, então, depois de ter seus dados organizados e uma conta no Modal ou em alguma outra plataforma sem servidor, você pode começar muito rapidamente. E
+
+esse código está em nosso repositório de exemplos. O que este vídeo mostra é como podemos escalar contêineres muito rapidamente. Então, só para conectar um pouco esses conceitos , as pessoas geralmente associam o conceito de "serverless" com inferência. Mas com treinamento, também pode ser muito útil para coisas como ajuste de hiperparâmetros, certo? Você pode. Você não precisa,
+
+sabe, cada minuto no seu cluster não é mais sagrado. Você pode distribuir os pedidos em vários contêineres e obtê- los conforme a demanda. Assim que deixar de ser promissor, elimine-o. E aí, nesse ponto, é quase como um algoritmo metaevolutivo. Então, é um momento emocionante para fazer isso. O mesmo se aplica ao
+
+aprendizado por reforço. Muitos de nós que obtivemos nossos diplomas de pós-graduação em aprendizado de máquina nos últimos 10 anos não trabalhamos com aprendizado por reforço, certo? Isso é relativamente antigo, quer dizer, na verdade é bem antigo, mas as coisas que usamos hoje em dia são meio novas. Mas eles também têm essas bibliotecas. Você pode fazer isso em 300 linhas de código.
+
+E algo interessante sobre o Modal em particular é que temos APIs unificadas para sandboxes e contêineres ou clusters de GPU. Resumindo, o que isso significa é que , ao treinar um modelo com aprendizado por reforço, ele precisa praticar bastante. Portanto, trata-se de um processo de avaliação paralela extremamente constrangedor, chamado de implementação. E assim, uma das coisas mais incríveis do último trimestre foi o aumento da escalabilidade por parte dos clientes para 50.000, 100.000
+
+ambientes de teste (sandboxes) apenas para realizar aprendizado por reforço (RL). E você também pode fazer isso. O código é de código aberto. E seria negligente da minha parte não mencionar o que vem depois do treinamento. Você tem que servir ao modelo, certo? E é isso que
+
+a oitava API de fronteira está fazendo, sabe, nos bastidores. Bem, não sei se eles usam vLLM, mas o que quero dizer é que você também pode fazer isso, e na verdade não é tanto código assim. vLLM, SG Lang, Triton Inference Server ou um fluxo de trabalho de inferência personalizado usando apenas Python. Em plataformas como a Modal ou outras plataformas sem servidor, você pode dimensionar automaticamente tudo isso para se adequar ao tráfego conforme ele chega. Então , é isso, só para resumir tudo o que estou dizendo aqui. Não estou dizendo para você
+
+treinar seu modelo agora mesmo. Estou dizendo que não é algo do tipo: "Ah, farei isso daqui a 10 anos." Você pode querer treinar seu modelo em 1 ano, certo? Você pode querer fazer isso em 6 meses. Então comece a pensar em quando você saberá que está na hora de treinar seu modelo.
+
+E como posso me preparar para esse momento coletando dados e desenvolvendo minhas avaliações eletrônicas? E sim, eu adoraria, sabe, dar uma passada no nosso estande. Nós somos mais ou menos o fim daquele lado. Adoraria conversar mais sobre isso com você, ou você pode entrar em contato comigo por e-mail aqui. É isso.
+
+[aplausos]
+
+[música]

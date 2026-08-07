@@ -1,0 +1,124 @@
+---
+video_title: "Your Agent's Biggest Lie: \"I Searched the Web\" — Rafael Levi, Bright Data"
+video_id: btxGmN8RvNU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=btxGmN8RvNU
+video_date: 2026-06-17T13:00:06+00:00
+video_description: |
+  Sometimes the agent did not search the web at all. It got blocked, hit a CAPTCHA, saw a fake page, or fell back to stale training data, then answered as if everything worked. This session is a direct look at that failure mode, and what changes when the same agent is given real web access instead of pretending.
+  
+  Using Bright Data's Web MCP, the demo compares blocked and unblocked runs across sites like LinkedIn, Instagram, Amazon, and TikTok, and walks through the mechanics behind the difference: anti-bot systems, JS rendering, CAPTCHA handling, and why clean access matters if you want reliable citations, real-time results, and fewer hallucinations. If you're building agents that depend on the open web, this is a practical look at one of their biggest hidden failure modes.
+  
+  Speaker info:
+  - https://il.linkedin.com/in/rafael-levi
+  - https://github.com/ScrapeAlchemist
+---
+Certo, então vamos trabalhar assim . É um quarto pequeno. Olá a todos. Bem-vindo. Meu nome é Rafael.
+
+Eu represento a Bright Data. Bright Data é basicamente uma plataforma de acesso web que ajuda agentes ou qualquer pessoa a coletar dados públicos em grande escala. E estou aqui para falar sobre os mestrados em Direito que enganam as pessoas e as convencem o tempo todo: "Ei, eu fiz uma pesquisa. Ei, eu fiz isso." Embora não tenha acontecido. Por que? Como os LLMs são
+
+programados para agradar às pessoas, agrade aos usuários. Então eles produzem coisas suficientes, e esse é o maior problema que estou vendo atualmente com os mestrados em direito. E estou sempre criando aplicativos. Eu preferiria que a LLM me dissesse: "Não, não posso." Mas isso nunca acontece. Ela sempre tenta inventar
+
+coisas. Atualmente, a internet está lutando contra robôs e automações. E isso já vem acontecendo há anos. Todo mundo conhece os CAPTCHAs. Os primeiros CAPTCHAs apareceram no ano 10, tipo , há uma década.
+
+E continua crescendo. E agora temos IA bloqueando IA e um mundo inteiro está acontecendo ao mesmo tempo. E o acesso pela internet, na verdade, não é tão simples quanto parece. Então eles estão recebendo CAPTCHAs, mas na verdade não os reportam. Então, ele tenta encontrar os dados de uma maneira diferente. Às vezes, esses
+
+dados são usados ​​para treinamento. E é aí que reside o pior. Quando utiliza dados de treinamento e informa que esta é a situação atual. Os dados de treinamento são de 2024. Estamos em 2026 e isso não faz sentido , certo?
+
+Então, essas são algumas das novidades que eu estava literalmente conferindo, certo? Então, o Cloudflare bloqueia a indexação por IA em cerca de 20% da web, certo? Portanto, 20% da web é literalmente inacessível por IA devido à funcionalidade de busca padrão que já vem integrada . A Cloudflare também lançou recentemente um labirinto de IA para capturar bots, enganá-los e fornecer-lhes dados falsos. Então, seus resultados estão ficando ainda piores.
+
+OK? Então, o grupo de fracassados ​​invisíveis, certo? Não há erro, nenhum aviso, apenas a resposta errada, certo? Então, o agente envia uma solicitação, recebe uma captura, mesmo que seja uma página em branco, e não te avisa: "Ei, acabei de receber uma página em branco." Vai tentar inventar algo, e é daí que vem a maioria das alucinações .
+
+A necessidade de agradar e a falta de dados. Então, literalmente, inventa coisas. Já vi isso literalmente inventar números e fornecer citações falsas. Você clica na citação, aparece um erro 404, a página não existe, e tenho certeza de que todos vocês já viram isso acontecer recentemente. Quer dizer, literalmente, cerca de 60% das citações no ChatGPT não estão funcionando. Quantos de
+
+vocês já tentaram comprar um produto? Ei, encontre esse produto online para mim, quero comprá-lo, e me dê o link . Você clica no link do produto, e não há produto algum. Então, que produto é esse de que você está falando? O URL não existe, o produto não existe. Então, onde posso comprar esse
+
+produto por 50 dólares? Não existe. Então, o que eu quero mostrar para vocês, e vou mostrar em código. Quantos de vocês estão familiarizados com ferramentas de programação como o VS Code? Não?
+
+Ok, perfeito. Então, ninguém vai se perder se eu mudar para isso. Então, basicamente vou fazer uma demonstração com o MCP e sem o MCP da Bright Data, e vamos comparar o que acontece . Então, primeiro eu vou... eu quero
+
+mostrar a vocês que tenho instruções exatamente idênticas para ambos os roteiros, certo? Então, sem MCP e com MCP. Então, eu lhe atribuo cinco tarefas. Uh Imóveis, rightmove.co. Vamos dar uma
+
+olhada em algumas das plataformas: LinkedIn, Instagram, Amazon e TikTok. Esses são os cinco sites básicos que eu queria acessar. Eles são muito rigorosos com os sistemas anti-bot, e eu quero mostrar a diferença para vocês. Então, primeiro vou executá-lo sem um MCP e vou literalmente deixar a IA falar por si mesma. E o GPT-5 é um pouco lento, então vai levar algum tempo. Mas, basicamente, o que
+
+estamos tentando fazer é acessar este URL. São algumas propriedades locais que eu vendi literalmente há meia hora. Uma empresa do LinkedIn em Israel, vamos dar uma olhada . Conta do Instagram, algum produto da Amazon e um vídeo no TikTok. Isso não se limita apenas a esses cinco sites. É algo que
+
+escolhi e que sei com certeza que não funcionará sem o MCP. Como podem ver, sem o MCP, não tenho acesso a dados web em tempo real. Não tem nenhuma ferramenta de navegação, né? Então, isso é com ferramentas que não estão disponíveis por padrão, logo de cara, tipo o GPT-5. Quer dizer, é um mestrado em Direito (LLM) sólido, mas é um LLM forte.
+
+E zero sucesso, cinco falhas. Exatamente a mesma coisa, exatamente a mesma mensagem, estou executando com nosso MCP. Nosso MCP possui 66 ferramentas. Enquanto estiver em execução, quero apenas experimentar algumas das ferramentas que ele oferece. Mecanismo de busca.
+
+Basicamente, o mecanismo de busca do LLM é capaz de realizar buscas no Google, Bing e DuckDuckGo. Pesquisas reais, não apenas buscas na web que acontecem em segundo plano. Hum,
+
+também tem "scrape" como um recurso de Markdown. Essa é uma muito forte. Basicamente, ele pode enviar uma requisição curl para qualquer URL e obter apenas o código Markdown, sem as tags HTML. Assim, você não desperdiça tokens na análise do HTML. Lote de mecanismos de busca. Se você quiser
+
+usar, tipo, 100 palavras-chave, você pode literalmente enviar 100 palavras-chave e obter 100 resultados em lote . Tipo, a escala também é enorme. Descobrir. Como você pode ver, também possui APIs pré-construídas para muitos sites. E, claro, possui uma infraestrutura de navegador para extração de dados . Portanto, trata-se de um
+
+navegador remoto que seu LLM pode abrir e navegar. O navegador remoto resolve a captura por si só. Possui uma impressão digital única. Assim, ele pode abrir 100 navegadores e navegar no mesmo site sem ser bloqueado. Então, a ideia principal é que, com o nosso MCP, não só é possível realizar uma única sessão, como também várias sessões em paralelo.
+
+E como vocês podem ver, vejamos. Obtivemos sucesso com a decisão certa. Obtivemos sucesso com o LinkedIn Misral. E o Instagram também funcionou. Um produto da Amazon, ele contém as informações sobre o próprio produto. E então,
+
+na segunda parte, pedi aos LLMs que comparassem os resultados sem MCP com os resultados com MCP. Para que você não acredite apenas na minha palavra. Vamos ver o que o ChatGPT realmente dirá. Se não emperrasse. Parece que está preso por algum motivo.
+
+Posso fazer uma pergunta? Claro, por favor. Eu adoro perguntas. Em relação aos perfis de redes sociais, você tem contas que administra? Não, nós trabalhamos apenas com dados públicos.
+
+Dados públicos. Somente dados disponíveis publicamente. Coletar dados protegidos por login não é realmente legal. Por que? Porque ao se cadastrar e criar uma conta, você aceita os termos e condições.
+
+Ao aceitar os termos e condições, você precisa verificar atentamente se há alguma pergunta como: "Você pode extrair dados? Você permite que robôs acessem o site?" E é por isso que talvez alguns de vocês tenham ouvido falar que há muitos processos judiciais em andamento . O LinkedIn está processando essas pessoas. Todo mundo está processando eles. Sim, a Amazon está processando
+
+. Mas acho que mesmo, por exemplo, o LinkedIn e o Instagram, não mostram praticamente nenhum dado público, mesmo que você esteja cadastrado. Bem, o LinkedIn tem muitos dados públicos , claro. Se você pegar como exemplo, eu vou usar este URL. Posso ser bloqueado. Não sei qual é o
+
+IP local, mas... e eu abro uma janela anônima, certo? Pronto. Portanto, esses são dados públicos
+
+que podem ser coletados. Empresa, é a mesma coisa. É a mesma coisa. O único problema é que eles são muito críticos, não é? Então, se você estiver usando, digamos, um endereço IP de Wi-Fi de um grande evento como este, provavelmente será bloqueado porque é um endereço IP de data center, um endereço IP de baixa qualidade.
+
+De casa, você provavelmente consegue acessar uns 5 ou 10 perfis, mas eventualmente também vai precisar fazer login. Então, nós só lidamos com dados públicos. Então, quando vocês usam nossos serviços, ficam tranquilos, pois ninguém vai bater na porta de vocês para processá-los, se é que me entendem. Não. Novamente, não lidamos com dados protegidos por login. Consideramos isso
+
+ilegal, portanto não lidamos com a aceitação de termos e condições e dados protegidos por login. Disponível apenas ao público.
+
+Temos um conjunto de dados completo. Então, se vocês não quiserem usar dados em tempo real e não se importarem se eles tiverem alguns meses, temos conjuntos de dados que vocês podem filtrar facilmente. Por exemplo, se estiverem procurando por pessoas no LinkedIn, por engenheiros de IA em uma determinada área, vocês podem filtrar e obter o conjunto de dados imediatamente. Então, seu agente terá acesso a isso. Então, seu agente pode filtrar o conjunto de dados e fornecer os dados que você deseja, certo? Portanto, tem acesso a todas as
+
+ferramentas. Então, aqui está basicamente uma comparação direta feita pelo próprio LLM. Sem o MCP, não há acesso à internet em tempo real. Se listado, falha, sucesso, falha, sucesso. Então, basicamente é isso.
+
+Ah, burla antibot, resolução de CAPTCHA, certo? Portanto, mais uma vez, nosso sistema resolve CAPTCHAs automaticamente. Assim, se o seu bot acessar um site com um navegador que contenha um CAPTCHA, nosso navegador possui uma solução integrada para resolução de CAPTCHA, que o resolverá automaticamente e permitirá que seu bot continue navegando sem ser bloqueado. Quanto tempo eu tenho? Não sei.
+
+Então, só para resumir, certo? Essas são as maiores alucinações que vocês já viram. O agente fica bloqueado, precisa te agradar e inventa coisas . E conteúdo falso também, né? Então, se você pesquisar no Google o que é Cloudflare, Cloudflare AI Labyrinth, basicamente é um sistema que, uma vez detectado um bot, não o bloqueia. Isso
+
+literalmente alimenta o sistema com dados falsos. Então, alucinações maiores. Certo? E a solução mais simples para isso é garantir que seu agente não seja bloqueado. E é tão fácil quanto implementar nosso MCP.
+
+Nosso MCP possui um plano gratuito com 5.000 solicitações. Então, se vocês quiserem experimentar, podem me contatar no LinkedIn, se quiserem. Ou será que é isso? Espere um segundo. Este é
+
+o formulário de inscrição para o MCP? Eu apareço principalmente nesses códigos QR. Um segundo. Sim
+
+, a internet. Sim, por favor. Como é que ele detecta se existe ou não um Cloudflare Labyrinth? Então, a nossa abordagem é fazer com que o seu agente pareça um ser humano. Literalmente, tipo, tem movimento do mouse pré-gravado, tem digitação, quando digita, é como se imitasse um comportamento humano real.
+
+Então, o Cloudflare simplesmente nem pergunta se você é um robô ou não, certo? Essa é, portanto, a nossa abordagem. Em vez de tentar entender como eles detectam, fazemos com que o agente pareça o mais humano possível para que ele não acione o bloqueio real. Dados enganosos são uma das coisas mais difíceis que você pode encontrar. Muitos sites na Ásia estão fazendo isso atualmente, não é? Os hotéis estão
+
+literalmente oferecendo preços diferentes. Você finaliza a compra pelo celular e vê um preço único. Você pode verificar pelo computador e obterá um preço diferente. Você pode solicitar um serviço de procuração e pagar um terço do preço. Qual está correto? É muito
+
+difícil dizer. Quando se trata de enganar, a melhor opção é garantir que seu agente pareça humano e torcer para que tudo dê certo. Essa é basicamente a abordagem atual. O AI Levers foi lançado há apenas alguns meses. Hum, não tenho muitas estatísticas sobre como exatamente isso funciona. Tudo o que sei é que isso não
+
+nos afetou de verdade. Não vemos nenhum tipo de mudança nos dados, e estamos coletando petabytes de dados diariamente. Temos muitos clientes que estão sempre fazendo scraping. Estamos armazenando dados em cache, então estamos sempre comparando os resultados. Não observamos nenhuma degradação nos resultados. Bem
+
+, acho que estamos fazendo um bom trabalho nesse caso. Este é um código QR que vocês podem usar para se cadastrar. Ah, nós também temos uma página no GitHub . Uh GitHub brightdata.com.
+
+Ah, apenas GitHub brightdata. E outra coisa que eu recomendo que vocês deem uma olhada é a página de habilidades, certo? Então, o que fizemos foi desenvolver habilidades. E terei outra sessão daqui a algumas horas. Se você estiver interessado em ver o que a habilidade faz, basicamente você pode pegar qualquer agente, dizer para ele ir até aqui, e esta página o ensinará a criar um scraper ou um pipeline que coletará os dados para você. Possui
+
+todas as informações necessárias, todas as APIs. E, se você voltar para a minha próxima sessão, que é às 13h, eu acho. Algo assim. Vou demonstrar literalmente como ele constrói o pipeline. Literalmente na sua frente, vou dizer: "Ei, escuta, vamos construir um coletor de Walmart para a ABC." E
+
+vai construí-lo e também vai desmontá-lo. Em vez de analisar cada HTML individualmente, ele criará um analisador sintático, economizando cerca de 99% dos tokens. Porque vejo muita gente dizendo: "Ei, preciso analisar 10.000 páginas, mas são muitos tokens." Não faça a análise sintática com LLM. O LLM cria um
+
+analisador sintático e, em seguida, o script o executa. Mas isso fica para a próxima sessão. Alguma pergunta? Hum, uma pergunta sobre a apresentação. Uh, eu vi que seu MCB expõe 69 ferramentas, o que significa que se eu precisar realizar a mesma operação cirúrgica para o meu agente, eu preciso carregar todas as 69 ferramentas e, claro, filtrá-las. Eu mostrei
+
+69 ferramentas apenas para demonstrar. Bem, se eu precisar apenas extrair dados Markdown e fazer uma busca, eu simplesmente carregaria duas ferramentas. Caso contrário, você estará inundando seus contatos com dados irrelevantes, é claro que não.
+
+Desculpe, não ouvi o começo novamente. Ah, o experimento está começando. Sim. Então,
+
+nós não fizemos nenhuma busca. Eu literalmente disse: "Ei, acesse este URL e veja se consegue carregá-lo." Certo? Então eu não usei a busca nesta demonstração. Claro.
+
+Ah, mas é claro, mesmo com o nosso MCB, eles conseguem fazer uma busca no Google. Sim . E essa é uma das maiores vantagens, porque já estamos acostumados com os resultados do Google. Por padrão, ao consultar o LLM, você espera que ele faça uma pesquisa no Google, mas isso não acontece. Os resultados com o MCB são muito, muito melhores e eu recomendo que você se inscreva, experimente, é grátis.
+
+Vejam os resultados e comparem o que vocês conseguiram. Isso se refere a 5.000 solicitações por dia ou por mês? Por mês. O que significa que, sabe, para um MVP, um pequeno experimento já é mais do que suficiente.
+
+Ah, também temos a opção de pagamento por uso, então se você precisar de um pouco mais, não tem problema, sabe? Sim, é perfeito. Eu participo de muitos hackathons e sempre recomendo: "Escutem, criem um MVP e peçam para o seu agente construir o que for necessário. Ele funciona muito melhor do que sem nada."

@@ -1,0 +1,113 @@
+---
+video_title: "Fast Models Need Slow Developers — Sarah Chieng, Cerebras"
+video_id: TeGsFFNqRLA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TeGsFFNqRLA
+video_date: 2026-05-22T18:00:06+00:00
+video_description: |
+  Codex Spark, a model Cerebras built with OpenAI, generates code at 1,200 tokens per second. The Sonnet and Opus families run at 40 to 60. At that 20x difference, a context window that used to take ten minutes to fill now takes 30 seconds, and every habit built around slow generation starts producing technical debt at a scale nobody has dealt with before.
+  
+  Sarah Chieng from Cerebras covers what the playbook looks like in this regime. Validation and linting at every step is now instant, so there is no excuse not to run it continuously. Generating 75 component variations across five sub-agents and cherrypicking the best one becomes practical where it was not before. And when context burns in 30 seconds, a four file external memory system (agents, plan, progress, verify) is what keeps each new session from starting over instead of from scratch.
+  
+  Speaker info:
+  - https://x.com/sarahchieng
+  - https://www.linkedin.com/in/sarah-chieng-888595139/
+  
+  Timestamps:
+  0:00 - Introduction to the impact of fast AI code generation
+  2:29 - Historical context of model speeds
+  3:10 - Why AI inference speeds are increasing (Hardware/Stack optimization)
+  7:05 - The current developer landscape and risks of "slob"
+  8:27 - Playbook: Orchestrating models and sub-agents
+  9:56 - Playbook: Validation and automated testing
+  10:47 - Playbook: Cherrypicking and variety in output
+  12:07 - Playbook: Adopting a real-time collaborative mental model
+  12:53 - Playbook: Avoiding "slob" and active steering
+  13:54 - Playbook: Continuous refactoring
+  14:30 - Playbook: Context management and external memory systems
+---
+Oi pessoal. Então, vamos direto ao assunto. Assim, nos últimos anos, nós, como desenvolvedores, desenvolvemos uma série de maus hábitos em relação ao desenvolvimento como resultado da lenta geração de código por IA. Portanto, todos nós estávamos familiarizados com isso. Fazemos coisas como escrever prompts enormes e tentar resolvê-los em uma única sessão. Faremos grandes
+
+investimentos, ou teremos nossos 10 agentes todos na tela ao mesmo tempo, compilando, cogitando, pensando. Assim, há cerca de um mês, nós da Cerebras e da OpenAI lançamos um novo modelo, um modelo de última geração, chamado Codex Spark. O Codex Spark consegue gerar código a uma velocidade de 1.200 tokens por segundo. Para colocar isso em perspectiva, se você observar a família de notações Sonnet ou a família Opus, verá que elas podem gerar código a uma taxa de cerca de 40 a 60 tokens por segundo.
+
+Assim, nesta nova era, à medida que começamos a ver modelos de codificação muito mais rápidos — 20 vezes mais rápidos, por exemplo —, isso não só desbloqueia novas capacidades e casos de uso, como também nos obriga a repensar a forma como nós, enquanto desenvolvedores, interagimos com o modelo de codificação. E muitos desses maus hábitos que tínhamos antes, que geravam talvez 50 tokens de código ruim por segundo, a menos que os corrijamos, começarão a gerar 1.200 tokens de código ruim por segundo. Então, esse é o tema da nossa conversa de hoje. Para começar, meu nome é Sara Cheng. Sou o chefe de
+
+experiência do desenvolvedor na Cerebras, onde estamos construindo o maior e mais rápido processador de IA do mundo. Grande parte do meu trabalho consiste em apresentar modelos de inferência e codificação rápidas para desenvolvedores pela primeira vez. E para a maioria das pessoas, é um momento muito emocionante. Não há necessidade de pensar, esperar ou iniciar algo que possa te irritar. Mas, ao mesmo tempo, como eu disse, a menos que mudemos nossos hábitos, não teremos um bom código no futuro.
+
+Portanto, esta palestra é, na verdade, um guia prático sobre como nós, desenvolvedores, podemos pensar em como interagir com os modelos nesse novo regime, especialmente em um futuro onde os modelos geram código mais rápido do que nós, humanos, conseguimos acompanhar. Então, quero olhar um pouco para o passado. Tivemos dois anos muito emocionantes. Os modelos ficaram maiores, estão ficando mais inteligentes, temos janelas de contexto maiores. Mas o que permaneceu relativamente constante nos últimos 2 anos foram as velocidades de codificação, ou seja, a velocidade de modelagem. Então, se observarmos algumas
+
+das famílias populares, temos Gemini, Claude, GPT e Sonnet. Nos últimos 2 anos, eles sempre estiveram dentro de uma faixa de 50 a 150 tokens por segundo. E este é o Codex Spark. Novamente, o Codex Spark é apenas o primeiro de muitos modelos que nós, como desenvolvedores, podemos esperar que sejam muito mais rápidos do que aqueles aos quais estamos acostumados anteriormente. E até tivemos que mudar o eixo Y porque é muito mais rápido. Então,
+
+antes de entrarmos no plano de ação e nas dicas propriamente ditas, quero falar sobre por que isso está acontecendo. Por que estamos vendo, de repente, modelos tão mais rápidos? E é, na verdade, um desenvolvimento muito empolgante . É algo em que muitos de vocês provavelmente trabalham diariamente, mas há muitas empresas trabalhando nesse problema simultaneamente. E, como resultado, toda a pilha de inferência de IA está sendo otimizada simultaneamente.
+
+Então, vamos resumir e analisar rapidamente. Temos o equipamento necessário. Este é um dispositivo físico onde ocorrem a inferência, o treinamento e todas as operações dos nossos computadores. Um dos aspectos mais importantes que precisamos considerar em relação ao hardware é a limitação de memória. E é exatamente por isso que a movimentação de hardware e memória consome de 50 a 80% desse tempo de latência para inferência. É
+
+daí que vem grande parte da frustração . Assim, quando executamos a inferência, temos que mover constantemente nossos pesos e valores de cache KV entre a memória e o chip físico. Na GPU da Nvidia, este é o tipo de hardware mais tradicional. Toda essa memória é armazenada fora do chip, em uma HBM (memória de carregamento rápido) também fora do chip. E agora temos um gargalo de largura de banda de memória.
+
+O que muitas empresas mais recentes estão fazendo, e pensando em empresas como a Cerebras ou a Groq, é pensar em como aproximar essa memória o máximo possível do chip. Então, aqui está um exemplo do wafer Cerebras, onde toda a memória está distribuída pelo chip em SRAM. Assim, cada núcleo tem acesso direto aos valores de que precisa. Ainda mais empolgante, temos inferência desagregada. E essa inferência desagregada realmente se tornou comercial nos últimos meses. Foi por isso que a Nvidia comprou a Groq
+
+por US$ 20 alguns meses atrás. E é por isso também que a Cerebras e a AWS estão agora em parceria para oferecer os serviços de wafer e AWS Premium em conjunto. Assim, na inferência tradicional, existem duas etapas. Existe o preenchimento automático e existe a decodificação. Tradicionalmente, essas duas etapas sempre foram executadas no mesmo hardware. O prefill é a etapa em que pegamos
+
+cada token inserido pelo usuário, processamos, incorporamos e adicionamos ao nosso cache de chave-valor. Isto é uma sequência. Esta é uma etapa que pode ocorrer em paralelo e, portanto, é limitada pelo poder computacional. A decodificação, por outro lado, é onde realmente geramos o token de saída, token por token. E isso é sequencial e, como já mencionamos, depende da memória.
+
+Novamente, isso nos leva aos mesmos problemas que mencionamos anteriormente. Assim, o que estamos fazendo e observando agora, comercialmente, é que estamos dividindo essas duas etapas para que o preenchimento seja feito em um tipo de hardware otimizado para computação e a decodificação seja feita em outro hardware otimizado para memória. Subindo na pilha, encontramos o diagrama. Subindo na hierarquia, analisamos a arquitetura do modelo. Existem inúmeras maneiras pelas quais treinamos e moldamos nossos modelos para que se adaptem ao nosso hardware.
+
+Temos dimensões de camada, memória e tamanho de modelo específicos que sempre levamos em consideração . Um ótimo exemplo é uma arquitetura de modelo bastante padrão, composta por uma mistura de especialistas. Aqui, em vez de ativar todo o modelo de uma só vez para cada token, estamos ativando apenas um subconjunto de especialistas a cada vez. E o que isso faz é nos permitir ter a inteligência de um modelo muito menor, porém mais complexo, com o custo computacional de um modelo muito menor. E, mais uma vez, estamos sempre pensando na memória e no tamanho de nossos modelos.
+
+E muita gente tem se baseado nisso nos últimos anos. Um exemplo é o REAP, que significa poda de ativação de especialistas ponderada por roteador . Tive que ler aquele . E aqui estamos analisando o caso de uso específico. Estamos verificando quais especialistas não estão sendo ativados de forma alguma e os removendo completamente . Estamos nos livrando deles.
+
+Novamente, estamos sempre pensando no tamanho do modelo. E então, na camada mais alta dessa pilha, temos as otimizações de inferência. E é aqui que muitos de vocês provavelmente trabalham. E muitas empresas que vocês provavelmente conhecem também atuam nesse setor. São empresas como a Together, a Base 10, a Modal, que também está aqui, e a Fireworks.
+
+E uma das coisas mais importantes que estamos considerando neste nível é a reutilização do cache KB . Assim, ao armazenar e reutilizar representações de tokens previamente calculadas, não precisamos recalcular a atenção sobre a sequência a cada passo. E agora quero chegar ao topo da lista, à parte mais emocionante: o desenvolvedor. Este é o estado atual da internet, ou melhor, como o Twitter e o LinkedIn se apresentam. Temos alguém executando seis terminais de código na nuvem simultaneamente.
+
+Um enxame de codificação com mais de 500 agentes. Alguém executando oito agentes em cinco telas. E eu entendo o quão tentador pode ser fazer algo assim. Tenho a impressão de que, se você usa o Twitter hoje em dia, a menos que esteja fazendo algo desse tipo, a internet basicamente está te convencendo de que você está vivendo na Idade da Pedra. E que você precisa se atualizar.
+
+Mas a realidade, qual é a realidade do que está acontecendo em todas essas situações? Será que estamos gerando quantidades enormes de código que ninguém está verificando? E, num futuro próximo com inferências muito mais rápidas , isso se torna cada vez mais perigoso. Assim, especialmente com a inferência rápida, vamos gerar dívida técnica em um nível nunca antes visto e não saberemos o que fazer com ela. Então, vou mudar o foco agora para dedicar o restante da apresentação ao guia prático, dicas e fluxos de trabalho, e como podemos reimaginar a forma como nós, como desenvolvedores, devemos operar neste novo regime de inferência mais rápida.
+
+E, como mencionei, o Codex Spark opera a 1.200 tokens por segundo. Mas, na verdade, este é apenas o primeiro modelo do que nós, como desenvolvedores, devemos esperar e para o qual devemos nos preparar: um novo regime de modelos mais rápidos em todos os setores. Assim, começando pela primeira, a primeira categoria consiste em escolher os modelos certos e como orquestrar nossos agentes para que possamos aproveitar os diferentes pontos fortes de cada modelo? E historicamente, sempre pensamos em inteligência. Não
+
+é segredo que nós, como desenvolvedores, não somos particularmente leais e que mudaremos para qualquer modelo, qualquer família que seja a mais inteligente em um determinado momento. E talvez também devamos pensar no custo. A menos que nossa empresa pague por tudo o que quisermos. Assim, aqui a velocidade de inferência é agora 20 vezes maior. Agora também temos outra vertente para considerar: a velocidade.
+
+Assim, um bom modelo mental é usar um modelo maior, como o GPT 5.4 ou 5.3, para o planejamento ou fluxos de trabalho de longo prazo e, em seguida, usar um modelo mais rápido, como o Codex Spark, como executor propriamente dito. Então, aqui está um exemplo. Você pode pedir ao seu GPT 5.4 para gerar seu plano.
+
+Você geraria um... Você iniciaria todos os seus subagentes com o Codex Spark e os executaria em todas as etapas, uma por uma. Outra dica muito útil é transformar sessões bem-sucedidas em habilidades práticas e registrar as trajetórias que estão funcionando muito bem.
+
+Uma coisa que você pode fazer aqui é usar um modelo como o GPT 5.4 para executar a tarefa inicial mais complexa e maior, capturando-a como uma habilidade e, portanto, tornando-a um fluxo de trabalho verificável e repetível. Em seguida, um agente menor e mais rápido, como o Codex Spark, pode simplesmente repetir a tarefa em segundo plano. A próxima categoria, eu acho, é ainda mais empolgante, porque se trata de coisas que simplesmente não eram possíveis nem práticas. Essas são coisas que não faríamos porque estamos cansados ​​de ficar pensando, gesticulando e terminando tudo, como você pode ter visto por aí.
+
+Portanto, quero muito que reflitamos sobre isso e internalizemos essa ideia. Mas, com 1.200 tokens por segundo, um modelo como o Codex Spark torna a validação praticamente gratuita. Não há desculpa nem razão para você não fazer coisas assim. Conjuntos de testes, linting, hooks de pré-commit, revisões de diff, automações de QA baseadas em navegador . Existem diversas funcionalidades
+
+que você pode adicionar a cada etapa do seu fluxo de trabalho, pois tudo acontece instantaneamente. Isso não está te atrasando e você não precisa fazer tudo isso no final ou pouco antes de enviar seu código. Outra dica que eu gosto muito é explorar a colheita de cerejas no mercado. Digamos que eu queira criar uma barra de navegação na cor azul meia-noite, com quatro ícones diferentes. Eu entrego para a modelo e o resultado é ótimo.
+
+Em vez disso, o que posso fazer com o Codex Spark ou um modelo muito mais rápido é instruí-lo a gerar 15 versões no mesmo tempo que um modelo anterior levaria para gerar uma única versão, e posso escolher a versão que mais me agrada . Melhor ainda, posso gerar cinco subagentes, cada um gerando 15 versões, e agora tenho 75 versões, e escolho a melhor. E isso é ótimo para coisas em que realmente valorizamos a quantidade ou a variedade. Então, coisas como direção de pesquisa, diferentes tipos de vertentes da arquitetura, ou até mesmo design gráfico. E o motivo pelo qual eu gosto muito deste é porque ele quase nos permite induzir artificialmente o paladar na saída do nosso modelo . Assim, tradicionalmente, sem nenhum
+
+segredo, é muito fácil descobrir qualquer interface de usuário ou texto que um modelo escreva. As próprias modelos não têm bom gosto. E as maneiras que encontramos para contornar isso, meio que na base da força bruta, foram criar um exemplo nós mesmos, encontrar exemplos para o modelo (o que consome muito tempo) ou fornecer tantos detalhes na solicitação que seria o mesmo que teríamos que realizar a tarefa nós mesmos. Essa é uma ótima maneira de economizar tempo e também de obter resultados muito melhores. A próxima dica é mais uma questão de modelo mental. Bem, agora que os modelos
+
+são tão rápidos, não deveria ser mais necessário iniciar uma sessão, ir buscar um hambúrguer, navegar no Twitter e depois voltar. Agora, você pode realmente se sentar e ter uma colaboração em tempo real com esse modelo. Você deve encarar isso muito mais como programação em dupla, e essa é a única maneira de evitar códigos ruins. Assim, você pode se sentar e fazer perguntas como: como coletar todo o contexto do seu repositório? E como ele realmente funciona? Estar na linha de frente,
+
+tomando decisões e implementando soluções. A IA deve sempre ajudar você a tomar decisões, e não o contrário. O próximo slide... eu detesto esse slide porque é a
+
+palavra-gatilho de todo mundo e uma palavra muito usada , mas como evitar a desleixo? Então, como eu estava mencionando antes, não deveria ser assim, sabe, você gera 10 agentes, nunca verifica o código, você não sabe o que está acontecendo nos bastidores. Quando alguém lhe pede para explicar algo, você precisa ler o código pela primeira vez. Agora, você pode ter duas ou três sessões e realmente sentar ao lado do seu código, e eu sei que isso é algo a que não estamos muito acostumados, mas sente-se com ele e realmente o controle . Entenda o que está acontecendo, porque, novamente, estamos vivenciando a colaboração em tempo real enquanto programamos com esse agente. Você pode ser extremamente específico.
+
+Você pode pensar em coisas como proibir o modelo de excluir arquivos, definir um tamanho máximo de diferença. O modelo possui apenas funções de leitura e escrita, e até mesmo instruções de direção. Coisas assim só mudam isso. Não toque nos tipos ainda. Espere, essa implementação não ficou exatamente correta. Vamos refazer isso.
+
+O gráfico à esquerda é um modelo mental útil, um exemplo de como o desenvolvedor, o agente de IA e a base de código podem trabalhar juntos e como isso deve ser na prática. Esta próxima etapa de refatoração é muito semelhante à que mencionei sobre a validação com verificação. Assim como na verificação, algo como refatorar e limpar seu código constantemente de forma automática é basicamente gratuito, custando 1.200 tokens por segundo. Então, em vez de fazer as coisas no final, pouco antes de confirmar o código, você pode simplesmente incorporar isso ao seu fluxo de trabalho automático. Assim, após a conclusão de cada
+
+tarefa da lista de verificação, você solicita ao modelo que, automaticamente, exclua importações não utilizadas, limpe linhas de código desnecessárias e garanta que todas as suas funções estejam estruturadas da mesma maneira. A última categoria sobre a qual quero falar , e tenho certeza de que muitos de vocês já ouviram essas duas palavras inúmeras vezes nos últimos dias e em diversas palestras, é a gestão de contexto. Mas a razão pela qual vou falar sobre isso novamente é porque, digamos que historicamente você levasse 10 minutos para entender o contexto antes de se deparar com, você sabe, a temida palavra " compactação". Agora, se você dividir 10 minutos por 20, obterá a compactação em 30 segundos. Assim, o gerenciamento de contexto, especialmente com inferência rápida, é mais importante do que nunca, e não dá mais para se dar ao luxo de práticas negligentes .
+
+Portanto, todas essas são realmente boas práticas, independentemente do modelo de codificação ou da velocidade que você esteja usando , mas uma estrutura geral de alto nível é sempre dividir grandes tarefas em objetivos menores e mais definidos. E este gráfico à direita é um bom modelo mental de como a abrangência do seu contexto afetará o seu comportamento. O comportamento do modelo. Portanto, é sempre melhor evitar a faixa de 80 a 100%, pois isso causará compactação do solo. Todos nós sabemos que algumas coisas podem se perder.
+
+Então, uma boa maneira de pensar sobre como externalizar essa memória é alcançar esses pequenos objetivos delimitados. Tipo, como isso se parece? Um exemplo de como você pode fazer isso e configurar um sistema de memória externa que seja persistente sempre que você iniciar uma nova sessão é com este sistema de quatro arquivos. Temos o arquivo agents.md, onde definimos todos os nossos agentes e subagentes.
+
+Temos o arquivo plan.md, que é o que criamos logo no início, e é nele que geramos todo o plano e a lista de verificação passo a passo que vamos seguir. Temos o arquivo progress.md, onde registramos o que precisamos fazer e o que já foi feito. Portanto, cada vez que você inicia um novo agente ou sessão, não há contexto. Ele entra e
+
+analisa o arquivo progress.md. O sistema vê o que já foi feito e pensa: "Ok, é aqui que eu continuo. É aqui que a próxima tarefa precisa ser feita." E por último, temos o verify.md, que
+
+usamos em cada etapa para garantir que tudo esteja correto. É um código limpo e podemos prosseguir para a próxima etapa. Um exemplo disso é, mais uma vez, aproveitar diferentes modelos. Utilizando um Codex GPT 5.3 ou 5.4, ele cria seu
+
+plano e, em seguida, o Spark do Codex GPT 5.3 executa a lista de verificação item por item muito mais rapidamente do que antes. E, como último slide, quero mostrar alguns comandos úteis para você aproveitar ao máximo o Codex. Coisas como permissões, habilidades experimentais, revisão e renomeação. Mas, o mais importante que eu quero enfatizar aqui é que, honestamente, não se trata apenas de ter modelos de codificação mais rápidos.
+
+O que eu realmente quero dizer é que a experiência do desenvolvedor vai melhorar muito. E quando as coisas melhoram tanto, há muito mais que podemos fazer. E existem muitas maneiras pelas quais podemos evitar criar código ruim de uma forma que não seja miserável ou nos obrigue a ficar olhando para uma tela por 30 minutos. Então, muito obrigado a todos por me receberem hoje. Meu nome é Sarah Cheng. Estou
+
+visitando a cidade vindo de São Francisco. É uma honra estar aqui em Londres. Bem, se você tiver alguma dúvida ou precisar de créditos, meu nome de usuário é milksandmatcha em todas as plataformas. Obrigado, pessoal.

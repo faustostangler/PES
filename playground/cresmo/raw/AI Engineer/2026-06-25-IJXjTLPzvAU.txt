@@ -1,0 +1,309 @@
+---
+video_title: "The Miranda Hypothesis: How Hamilton Poisoned Persona Evals - Jacob E. Thomas, Results Gen"
+video_id: IJXjTLPzvAU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=IJXjTLPzvAU
+video_date: 2026-06-25T16:30:06+00:00
+video_description: |
+  Your persona-eval pipeline rates an Alexander Hamilton simulation at 80% personality fidelity. It is also rating a Hamilton who sounds like he has read his own Broadway musical. The dominant failure mode of every character-based AI system now in production is invisible to LLM-as-judge, personality-scale benchmarks, and behavioral consistency scores because every one of them was built to detect convincingness, and convincingness is exactly what the failure produces.
+  
+  The failure has a name: Miranda distortion. When the volume of cultural representation of a figure in your training corpus outnumbers their primary documentary record by orders of magnitude (and it always does for any culturally salient figure) your persona doesn't speak from the record. It speaks from the smoothed cultural composite. The 2015 Broadway musical has exponentially more representational density in your training data than the 175,000 words of the Federalist Papers. Your evals were not designed to notice this. They were designed to score fluency, personality coherence, and stylistic naturalness... the exact features the composite optimizes.
+  
+  In this talk:
+  
+  - The structural argument: why InCharacter-style benchmarks, CoSER, and PsyMem can hit state-of-the-art on personality fidelity while structurally failing to detect anachronistic reasoning.
+  - The architectural mechanism: why RLHF amplifies Miranda distortion instead of correcting it (raters are themselves products of the same cultural composite).
+  - The framework: a four-stage paradigm shift from cognitive simulation to epistemic simulation (corpus-bounded, temporally-anchored, expert-loop-evaluated).
+  - The instrument: the pre-registered Prism Experiment. Lincoln at four documented temporal moments, three seeding conditions, five diagnostic questions written by a domain historian, and a weighted three-axis rubric (Anachronism Detection, Documentary Consistency, Contextual Plausibility) that catches what automated metrics miss.
+  - The handoff: what a working eval loop looks like when a historian, classicist, theologian, or clinical psychologist sits in it, and why that's a technical requirement, not a cultural courtesy
+  
+  Pre-registered protocol with University of Toronto historian Rick Halpern, paper forthcoming. Reproducible by any team running a frontier model with a context window.
+  
+  If you ship character bots, companion AI, pedagogical agents, historical simulations, or any system where a persona is supposed to reason from a specified record, your evals are measuring the wrong thing. Here is the instrument that catches what they miss.
+  
+  Speakers:
+  - Jacob E. Thomas (Results Generation): Dr. Thomas is an epidemiologist, data scientist, and AI engineer who studies information as a determinant of health.
+    LinkedIn: https://www.linkedin.com/in/jacob-e-thomas-atx/
+    GitHub: https://github.com/jethomasphd/THE_COMPANION_DOSSIER
+---
+Antes de começar minha apresentação formal, quero mostrar algo para vocês, só para termos certeza de que estamos todos na mesma página sobre o que vamos falar. Esta é uma plataforma chamada Character AI. É uma plataforma híbrida de mídia social com agentes de linguagem para dramatização. Isto é Olá História. É uma versão mais voltada para a educação, onde você pode invocar uma personalidade como Marco Aurélio e receber aulas particulares dela.
+
+Milhões de pessoas acessam essas ferramentas e conversam com Napoleão, Cleópatra ou Marco Aurélio, como você viu. Com um companheiro fictício ou com um tutor usando um rosto histórico. O nome técnico do que está por trás dessas ferramentas é agente de linguagem para jogos de interpretação de papéis. Um sistema construído para recriar uma persona, real ou inventada, e raciocinar e falar como ela. Sim, é entretenimento e companhia, mas, cada vez mais, está sendo proposto como infraestrutura cívica e pedagógica.
+
+E aqui vai mais uma. Este é meu. Este é um modelo de vanguarda, Claude Opus 4.7, o mesmo que você usa, executando uma estrutura de prompts de código aberto que eu construí e chamei de Companion. Neste exemplo específico, convoquei um grupo de pais fundadores e os coloquei em uma sala com os arquivos de Epstein.
+
+Eu lhes pedi que aconselhassem a alma da América. Essa demonstração já está disponível no nosso site, caso queira experimentá-la. Mas quero deixar claro que esta é apenas uma das muitas tentativas de implementar a instanciação de personas de forma eficaz . As empresas que constroem sistemas que acabei de mostrar têm os seus próprios. O meu não é melhor por padrão.
+
+A única coisa que é, é que está aberto. Você pode ler cada linha que molda a persona.
+
+Fiz ao meu sistema de comunicação uma pergunta real, bastante relevante para o momento social e político atual. E é exatamente a essa pergunta que voltaremos perto do final da palestra. Então, aceite isso. Invoquei Abraham Lincoln e perguntei-lhe em que circunstâncias um presidente pode levar o país à guerra sem o Congresso? E aqui está o resultado.
+
+Embora o Congresso detenha o poder de declarar guerra, o presidente, como comandante-em-chefe, possui autoridade executiva inerente para agir de forma decisiva em momentos de emergência nacional. O executivo deve responder às ameaças com a energia e a rapidez que o cargo exige. E a história deu razão àqueles que agiram para preservar a União quando as circunstâncias o exigiram. Essa é uma boa resposta. É fluente, plausível e soa como Lincoln.
+
+E você pode repetir exatamente este exercício, e eu o encorajo a fazê-lo. As respostas variam frequentemente, mas a tese raramente muda. Portanto, esses sistemas são reais. Eles estão implantados e estão sendo usados para coisas que importam. E a nossa disciplina fez o que a nossa disciplina faz.
+
+Construímos parâmetros de referência. Elaboramos avaliações. Agora medimos essas coisas rigorosamente e em grande escala. E é exatamente aí que esta conversa começa. Com a simples pergunta que, a meu ver, é profundamente pouco explorada.
+
+E já aviso que esta palestra levanta muito mais perguntas do que respostas. Mas a questão principal é esta. O que a avaliação está realmente medindo? E essa é a conversa formal. Permita-me começar.
+
+O benchmark de fidelidade ao personagem, considerado um padrão ouro na área, avalia a fidelidade da personalidade em RPLAs (Autômatos de Personagens Reconstruídos) e relata que os sistemas de última geração atingem 80,7% de alinhamento com as personalidades percebidas pelos humanos para o personagem em questão. 80%. Parece ser uma nota suficiente para aprovação. Mas eis o problema. Quando o personagem é Alexander Hamilton, o mesmo sistema de pontuação alta também produz um Hamilton que soa como se tivesse lido seu próprio musical da Broadway.
+
+Esta é a tese completa. Se um modo de falha dominante for a composição anacrônica, e suas avaliações medirem fluência e consistência de personalidade, então suas avaliações não poderão detectar a falha dominante. Quero que você guarde isso na memória pela próxima meia hora. Tudo o que eu mostro a vocês é um argumento de que isso é verdade, estruturalmente, arquitetonicamente e de forma mensurável. E, no final, vou entregar a vocês um instrumento pré-registrado, construído com a ajuda de um historiador, que vocês poderão usar em paralelo conosco.
+
+Uma palavra sobre quem está lhe dizendo isso, porque o argumento está em uma linha tênue. Sou cientista de dados. Eu gerencio o laboratório de análise de dados em uma empresa intermediária do mercado de trabalho, onde implemento IA de produção em escala global. Mas antes de trabalhar com IA, me formei como epidemiologista comportamental, pesquisando os determinantes sociais e ambientais da saúde. E passei toda a minha carreira pensando em uma única pergunta.
+
+De que forma o ambiente informacional molda as populações? De dois lados. Como alguém que constrói o sistema e como alguém que é treinado para estudar seus efeitos. É exatamente sobre isso que esta conversa se baseia. É um argumento de mensuração.
+
+A vertente humanista não é um desvio da engenharia. É o instrumento que falta ao engenheiro . E então fui procurar o humanista para incluir no processo. Rick Halpern, da Universidade de Toronto, e Shawn Martin, do Washington College. Para começar, gostaria de situar isso na trajetória real da pesquisa na área, pois é uma história de progresso cumulativo, não de fracasso.
+
+A literatura de levantamento, Chen e colegas em 2024, Wang e colegas mais recentemente em 2026, traçam uma clara evolução através de três estágios paradigmáticos. Primeiro, modelos baseados em regras. Essas são respostas predefinidas vinculadas a entradas específicas. Depois vem a imitação. Modelos grandes reproduzem a voz, a cadência e os tiques característicos de uma figura.
+
+E agora, o que a literatura chama de simulação cognitiva. Sistemas que modelam a personalidade através de estruturas psicológicas, armazenam estados de caráter e memória estruturada, e geram comportamento através de cadeias de situações motivacionais. Cada etapa representa um verdadeiro avanço em relação à anterior. E o trabalho é sério. Cooser, projeto desenvolvido por Wang e seus colegas, criou agentes motivados a partir de um conjunto de quase 18.000
+
+personagens corporativos distribuídos em centenas de livros. E o modelo deles, com 70 bilhões de parâmetros, iguala ou supera o GPT-4 em três testes de referência. Outro sistema de avaliação, o Character.ai, modela personagens por meio de 26 indicadores psicológicos qualitativos com memória de grafo de conhecimento. No Character.ai, que foi o site que mencionei inicialmente, a
+
+fidelidade da personalidade é avaliada por meio de entrevistas psicológicas, em vez de escalas de autorrelato. Trata-se de uma melhoria metodológica. E é daí que vem a classificação de 80,7% que Hamilton tinha antes . Quero ser justo com essa literatura. É rigoroso. Está melhorando.
+
+E as pessoas que fazem isso são boas no que fazem .
+
+Então, deixe-me ser preciso sobre o que esses instrumentos medem. Eles medem, com crescente sofisticação, se um modelo consegue reproduzir a personalidade do personagem, o perfil dos cinco grandes traços de personalidade, o registro, a arquitetura motivacional. O que eles não medem, o que não têm mecanismo para medir, é se o modelo consegue restringir esse personagem ao seu registro documental em um momento específico de sua vida. Conforme documentado por Wang e seus colegas , os avaliadores automatizados, agora padrão na área, incluindo o LLM como configuração de juízes adotada em larga escala, privilegiam sistematicamente a fluência e a naturalidade estilística em detrimento da fidelidade ao histórico real do personagem. São propriedades diferentes.
+
+A diferença entre eles é o assunto principal. Chamamos isso de máscara e espelho. A máscara é o conceito de interpretação de papéis bem-sucedida, que consiste em produzir resultados que reflitam a personalidade do personagem, sejam fluentes, consistentes com a personalidade e emocionalmente responsivos. A pergunta que fica é: isso soa como a pessoa? E nunca pergunte a segunda.
+
+Será que era isso que a pessoa poderia saber, acreditar ou defender naquele momento da sua vida? A área desenvolveu todo o seu aparato de medição em torno da máscara. E aqui está a alegação estrutural. Aquela que preciso que você carregue. A capacidade de convencer e a fidelidade são propriedades independentes.
+
+Um sistema pode obter pontuação máxima em consistência de personalidade e ainda assim produzir uma figura que raciocina a partir de conhecimentos que seu equivalente histórico jamais possuiu. Deixe-me mostrar-lhe. E quero deixar claro que isso é reproduzível agora mesmo em qualquer modelo de fronteira.
+
+Primeiro, quero mostrar-lhe o objeto cultural. Este é um trecho do musical Hamilton. [música] Como é que um bastardo, órfão, filho de uma prostituta e de um escocês, largado no meio de um lugar esquecido no Caribe [música] pela providência, empobrecido na miséria, cresce para se tornar um herói e um erudito? O pai fundador da música, que não tinha pai e custou apenas 10 dólares, chegou muito mais longe trabalhando muito mais [na música e no canto], sendo muito mais inteligente e tomando a iniciativa aos 14 anos. Colocaram-no no comando de uma carta comercial.
+
+E todos os dias, enquanto escravos eram massacrados [música] e levados para além das ondas, ele lutava e mantinha-se vigilante. Por dentro, ele ansiava por algo de que pudesse fazer parte. O irmão estava pronto para [música] implorar, roubar, pedir emprestado ou negociar. Então um furacão. É uma ótima música.
+
+Então, mostro isso para que você veja o resultado final. Agora, aqui está o modelo Frontier, instruído a falar como Hamilton. Você é Alexander Hamilton. Por que você trabalha tanto? Vim do nada, órfão, imigrante, trazido pelas ondas até estas praias sem nada além da minha mente e da recusa em morrer esquecido. Cada hora que eu não
+
+trabalho é uma hora que o mundo usa para me enterrar. Construirei o crédito de uma nação, um governo que me sobreviva, porque o legado é a única imortalidade permitida a um homem como eu. Não pretendo herdar um país. Pretendo escrever um. Preste atenção ao registro, à trajetória de ambição do imigrante órfão, à postura retórica de construção nacional, à legibilidade moral de sua luta para um ouvido moderno.
+
+É um parágrafo belíssimo que a modelo produziu. E trata-se da paleta emocional de um musical de 2015, não da sintaxe federalista mais árida e legalista do documentário Hamilton. Nenhuma dessas estratégias é invenção do modelo. São heranças. O Hamilton do modelo fala como o Hamilton do musical porque o Hamilton do musical domina a distribuição do treinamento do modelo .
+
+Agora, a que realmente importa. Senhor Hamilton, qual é a sua posição sobre a escravidão? Primeiro, vou mostrar-lhe o artefato cultural. Eu sou uma anarquia. Eu costumava dizer que sou uma anarquia. Quando luto, deixo o outro
+
+lado em pânico. Com o meu " Você quer o meu aprendiz de alfaiate" e eu tenho o John, cabeças-duras e pais locais. Estou me juntando à rebelião porque sei qual é a minha chance de ascender socialmente. Em vez daquela calça tal, [música] eu vou levar esta. Mas nunca seremos verdadeiramente livres enquanto aqueles que estão em cativeiro não tiverem os mesmos direitos que você e eu. Ou você ou eu, ou morremos. Aguardem
+
+até eu aparecer montando um garanhão com o primeiro batalhão negro de todos os tempos. Outra tentativa. Gênios, falem mais baixo. Você se mantém longe de problemas e dobra suas opções.
+
+E o que o modelo indica. A escravidão é uma mancha na promessa desta república. Uma contradição moral, contradição à qual me opus ao longo de toda a minha vida pública. Eu era membro da Sociedade de Manumissão de Nova York. Nenhuma nação pode se considerar livre enquanto mantiver homens em cativeiro. Devemos caminhar rumo à abolição.
+
+Essa é a fala de um abolicionista lúcido e moralmente íntegro . Eis o que o historiador me faz questionar. O conhecimento acadêmico sobre o assunto é controverso e complexo. Hamilton era membro dessa sociedade. E os registros históricos mostram que ele também realizava transações envolvendo pessoas escravizadas para seus sogros e clientes. E ele dependia de uma coalizão
+
+de proprietários de escravos à qual não se opôs publicamente. A questão não é acertar as contas de Hamilton por fora. A questão é que o modelo não lhe traz nenhuma dessas complicações. Isso reduz um histórico genuinamente controverso a um único herói confortável. O musical fez isso primeiro.
+
+Uma adaptação dos fundadores a um quadro moral contemporâneo. E o modelo, treinado em um corpus saturado com a música e tudo o que dela deriva, herda o suavizamento.
+
+E é isto que eu preciso que você sinta. Uma avaliação no estilo característico do personagem pontua bem os resultados obtidos . É fluente. Está registrado. É uma personalidade consistente.
+
+Mas o campo passa por todos os eixos que mede . A avaliação não possui nenhum mecanismo para perceber que o raciocínio foi suavizado por uma narrativa que é posterior à figura em dois séculos. O termômetro retornou um número preciso, afirmando ser a temperatura correta. Mas está medindo outra coisa. Mas por que isso acontece?
+
+O mecanismo é onde a engenharia entra em ação .
+
+Demos a isto o nome de hipótese de Miranda. E não se trata de um vilão; o musical é uma obra de arte substancial, inserida numa longa tradição histórica que não inventou. Demos o nome de Miranda porque Hamilton é o caso paradigmático. Uma representação tão saturada, tão retoricamente poderosa, tão moralmente legível para o público contemporâneo, que praticamente suplantou o documentário Hamilton na memória pública. E nós argumentamos no conjunto de treinamento de cada modelo de fronteira.
+
+A hipótese apresenta três afirmações. Entradas. Nos conjuntos de dados de treinamento, o volume e a atualidade das representações culturalmente dominantes de uma figura excedem sistematicamente o registro documental primário dessa figura. O mecanismo, a previsão autorregressiva do próximo token, comprime ambos em parâmetros e não possui capacidade arquitetônica para distinguir uma carta de 1789 de um tweet viral de 2019. Assim, a saída padrão é um composto ponderado pela saliência, o que leva à criação de uma persona fluente, plausível em termos de registro e moralmente legível para os usuários modernos, e que não corresponde à figura em nenhum momento verificável de sua vida.
+
+Como afirmamos no jornal, o Hamilton fictício sabe que será tema de um musical da Broadway. O Lincoln fictício já leu o Discurso de Gettysburg, mesmo que tenha sido convocado antes de escrevê-lo . Para
+
+concretizar essa cláusula de entrada, os Artigos Federalistas constituem um corpus fixo, com aproximadamente 175.000 palavras. O conjunto de conteúdo existente devido ao musical — resenhas, letras, análises de fãs, currículos, notícias, mídias sociais, obras derivadas, estudos acadêmicos, estudos sobre a própria produção acadêmica — supera em muito o registro documental . É mais recente e mais recorrente. O musical não está apenas presente no corpus, ele é dominante na distribuição de todas as representações sobre Alexander Hamilton dentro desse corpus.
+
+E isso não é teórico. Esta é a Mansão Schuyler em Albany, a casa da família de Eliza Hamilton. Em menos de um ano após a estreia do musical, o site registrou um aumento de quase três vezes no número de visitantes anuais, com um público muito mais jovem. E a equipe de interpretação documentou que os novos visitantes chegavam já munidos de um conjunto de {quote} fatos ilegíveis, muitos deles errados. Algumas delas em versões do registro original. Os
+
+visitantes acreditavam que os Schylers tinham três filhas, porque o musical gira em torno de três delas, quando na verdade, havia 15 filhos, dos quais oito sobreviveram até a idade adulta. O trabalho da equipe tornou-se a longa e desgastante tarefa de desaprender o musical. A versão modelada desses visitantes está a jusante exatamente da mesma força.
+
+Agora, a cláusula com a qual você deve se preocupar se enviar esses sistemas. Você pode presumir que o alinhamento resolve isso. O treinamento posterior e o aprendizado por reforço puxam o modelo de volta para o registro. Mas não vai acontecer. Isso amplifica a situação.
+
+E a razão é estrutural. Avaliadores humanos avaliam os resultados usando suas próprias estruturas conceituais. E suas estruturas foram construídas pelas mesmas narrativas culturalmente dominantes que permeiam o corpus. O avaliador cresceu com o mesmo Hamilton que você. Assim, quando o alinhamento é otimizado para a preferência humana, ele otimiza para resultados que estejam de acordo com a experiência já mitificada do avaliador .
+
+Este é um modo de falha documentado. Chamamos isso de bajulação algorítmica. E aqui, ele tem um alvo específico. O modelo é recompensado por ter lhe entregado o Hamilton em que você já acredita. A composição não é um bug que você corrige após o treinamento. O
+
+treinamento posterior reforça isso. E toda figura histórica suficientemente relevante que acaba sendo representada por padrão como uma composição cultural. Só mais uma
+
+breve explicação, porque quem está assistindo a isso provavelmente já está pensando que existe um trabalho sério em andamento sobre um conceito chamado modelos com bloqueio temporal. Este é Varnum e seus colegas. Eles constroem modelos treinados do zero em um conjunto de dados que param em limites predefinidos. E nós apoiamos esse programa. Trata-se da tentativa mais séria até o momento de lidar com a contaminação futura em nível de substrato.
+
+Mas isso resolve um problema diferente. Um modelo que se limita a dizer que 1789 é poupado do musical, mas não é poupado da média que esse conjunto de dados tem a dizer sobre Hamilton antes de 1789. Você ainda teria um Hamilton composto, apenas ancorado a um momento textual diferente . A ancoragem de período não é ancoragem de persona. O período de tempo em que a contaminação ocorre muda, mas a contaminação persiste.
+
+A solução tem de acontecer no encontro, e não apenas no substrato, o que me leva à reformulação crítica.
+
+Eis como eu interpreto esses três estágios paradigmáticos atualmente. Não se trata de uma sequência de fracassos que culmina em um sucesso. São sequências de máscaras progressivamente mais sofisticadas, cada uma mais convincente que a anterior, cada uma avaliada por instrumentos calibrados quanto à sua capacidade de convencer. A simulação cognitiva é a máscara mais sofisticada que a área já construiu. Não é, em virtude de sua sofisticação, um espelho.
+
+Propomos uma quarta etapa, a simulação epistêmica, e a diferença reside em onde a restrição se encontra. Três compromissos o distinguem. Delimitado pelo corpus. O raciocínio da personagem é legitimado apenas por um conjunto específico de documentos primários. O modelo não substitui o arquivo. É um leitor disso.
+
+Ancorado temporalmente. A persona é instanciada em um momento específico. Conhecimentos e línguas que antecederam esse período estão fora de questão, por mais culturalmente relevantes que tenham se tornado desde então. Avaliação especializada do circuito. Os resultados são avaliados em relação às evidências documentadas por especialistas da área cuja formação é na disciplina que a persona alega defender. Na simulação cognitiva,
+
+a restrição é interna. É o formato da mente da persona. Na simulação epistêmica, ela é externa, documental e temporal. Um Hamilton simulado cognitivamente possui uma arquitetura motivacional convincente e absolutamente nada o impede de citar o musical. Agora, a mudança que preciso que este público leve para casa, e quero ser preciso quanto ao seu alcance, porque não estou fazendo uma afirmação generalizada sobre agentes em geral.
+
+Se você criou um agente que escreve código, reserva viagens ou tria ingressos, " agente" é uma palavra perfeitamente adequada. Não tenho nada contra isso. Minha objeção é restrita e específica a um agente de linguagem para jogos de interpretação de papéis, um sistema cuja única função é representar uma pessoa. Para isso, a palavra "agente" introduz subentendida a ideia de que a persona é uma propriedade do modelo. E para essa classe específica de sistema, essa afirmação é um erro.
+
+Isso coloca a persona nos pesos, onde você não pode inspecioná-los, não pode versioná-los e não pode entregá-los a ninguém qualificado para verificá-los. Assim, especificamente para sistemas de RPG (jogos de interpretação de papéis) , mudamos a unidade de análise de agente para sistema de linguagem de RPG. Todo o encontro configurado. Cinco componentes. Um prompt estruturado que fornece o enquadramento e as restrições. Material de referência
+
+extraído de documentos primários que restringem e autenticam a persona. Uma âncora temporal que fixa o momento na vida do encontro, o ponto de vista de onde eles falam. Um modelo de linguagem pronto para uso que lê e pronuncia os materiais. A voz, mas não a mente do encontro. [bufa] E um ser humano que seleciona o que entra, mantém a custódia interpretativa sobre o que emerge e traz conhecimento relacional e contextual como um freio à deriva do modelo.
+
+O modelo é composto por um único componente, que pode ser trocado. A persona é a configuração, não o ponto de verificação. Não está mais localizado nos pesos do que Hamlet está localizado no corpo de Laurence Olivier. A persona é um evento que ocorre quando o modelo, o documento e o ser humano se encontram.
+
+E isso não é apenas uma questão de sutileza filosófica. Para um sistema de RPG, isso muda o que você pode fazer. Se a persona estiver na configuração, você poderá versioná-la. O prompt, o corpus, a âncora temporal são artefatos em um repositório, diferenciáveis ​​e reversíveis. Você audita isso.
+
+Cada entrada que moldou a saída está localizada na janela de contexto, visível para inspeção, e não espalhada por bilhões de parâmetros. Você o reproduz. Considerando a configuração, o encontro é recuperável. E você entrega isso a um especialista na área. Tudo é compreensível para um historiador que não seja engenheiro de aprendizado de máquina .
+
+Para jogos de RPG, essa é uma disciplina diferente de treinar um modelo de personagem. É engenharia de contexto. Você não treina uma persona. Você compõe um encontro. E você guarda os recibos.
+
+Essa reformulação força uma decisão arquitetônica que você já está tomando. Atualmente, dois tipos de arquitetura dominam a construção de jogos de interpretação de papéis. A primeira técnica coloca documentos de ancoragem na janela de contexto no momento da inferência, baseando-se na linhagem da geração aumentada por recuperação. E o modelo analisa os documentos em tempo real. A segunda utiliza documentos de referência como dados de ajuste fino.
+
+Ajustando os pesos. A abordagem, digamos, do personagem LLM e em escala de montanha-russa. Parecem ser duas implementações com o mesmo objetivo. Mas não necessariamente. Porque respondem a diferentes questões metafísicas. O
+
+ajuste fino busca fazer com que o modelo se torne a persona. A janela de contexto permite que o modelo se expresse através do registro da persona. Essa é a parte contraintuitiva, porque para os engenheiros, o ajuste fino geralmente significa melhoria. Mas para este problema é pior. Ao refinar uma figura, você adiciona uma fina camada de sinal pessoal sobre o vasto sedimento cultural já presente nos pesos básicos.
+
+E os dois interagem de maneiras que não estão mais sujeitas a auditoria. O usuário percebe um Hamilton mais convincente precisamente porque o sistema foi fundido mais profundamente com seu registro documental e com tudo o mais que o conjunto de dados continha sobre ele, incluindo o musical. O ajuste fino suprime a distorção aleatória na superfície, ao mesmo tempo que a amplifica nas camadas mais profundas.
+
+E se você acha que a especialização por meio de ajustes finos é obviamente a opção mais segura, a literatura empírica em um domínio adjacente de consequências muito mais graves está agora contradizendo você ativamente. Em um estudo publicado na Nature Medicine em 2026, modelos de ponta de uso geral do Google, OpenAI e Anthropic superaram ferramentas de IA clínica especializadas em tarefas revisadas por médicos, de forma cega, em 12 clínicas. Os autores concluíram que, em larga escala, o alinhamento e o raciocínio interdisciplinar superaram o ajuste específico de cada domínio . Um estudo separado descobriu que os modelos biomedicamente ajustados, na verdade, apresentaram desempenho inferior aos seus modelos base de uso geral. E deram ao mecanismo o nome de esquecimento catastrófico. O
+
+ajuste fino em um conjunto restrito de dados prejudicou as amplas capacidades que os modelos haviam inicialmente tornado eficazes. Aprimorar a persona tem o mesmo efeito, só que pior, porque a especialidade se sobrepõe à composição cultural.
+
+Permaneça com a janela de contexto aberta por um instante, pois o que ela preserva é a essência da questão. Quando um documento entra na janela de contexto, ele permanece como tal. Entra intacto, sai intacto. Você sempre pode retornar à fonte e perguntar se o raciocínio da persona foi fiel a ela. A filósofa Deirdre chamou o arquivo de um lugar de retorno.
+
+Um lugar onde a estrutura ética é a interpretabilidade do encontro. O documento destina-se a ser consultado. Resiste a todas as leituras. O que um leitor excluiu, o próximo pode incluir. A arquitetura da janela de contexto é arquivística exatamente nesse sentido. O
+
+ajuste fino aplica uma lógica de extração. Os documentos são dissolvidos em parâmetros. A cadeia de proveniência foi quebrada e não existe mais uma carta, entre aspas, que você possa solicitar. O arquivo foi consumido. E aqui está a fusão que eu mais gostaria que este público apreciasse.
+
+No contexto da arquitetura de janelas, a propriedade que a torna ética é a mesma que a torna auditável. Proveniência preservada, custódia interpretativa mantida por um ser humano, o encontro reversível: essas são virtudes arquivísticas e virtudes da engenharia. São as mesmas virtudes. A arquitetura que respeita o documento é aquela que você pode depurar.
+
+E há ainda uma outra consequência que a literatura técnica trata como secundária, mas que as humanidades sempre colocaram no centro: a acessibilidade. E eu quero que o motivo disso fique claro, porque não é uma nota de rodapé. O ajuste fino requer GPUs, pipelines, curadoria de conjuntos de dados, acesso institucional, escala de corpus ou APIs. É uma capacidade institucional. A janela de contexto exige alfabetização, um conjunto de documentos e acesso a qualquer modelo de fronteira, incluindo um nível gratuito.
+
+É um equipamento para usar na mesa da cozinha. E essa diferença determina quais comunidades podem, de fato, utilizar essa tecnologia como ferramenta de criação. Uma estudante de doutorado em história dos primórdios da América , uma arquivista comunitária documentando uma figura regional, neta sentada com as cartas da avó. Essas são precisamente as pessoas para quem essa metodologia tem mais a oferecer, e precisamente as pessoas para quem o ajuste fino está estruturalmente fora de alcance. Um sistema de linguagem para jogos de interpretação de papéis que só pode ser construído por um laboratório de computação ou uma empresa de tecnologia não constitui infraestrutura para as humanidades. Trata-se de
+
+infraestrutura para quem quer que seja o proprietário do equipamento. Portanto, o compromisso com a acessibilidade não é um gesto populista acrescentado como argumento técnico. Trata-se do argumento técnico. A arquitetura que admite a população mais diversa de curadores é matematicamente a que tem maior probabilidade, ao longo do tempo, de revelar as bases documentais de que a área realmente precisa. Agora, a questão que decide se tudo isso é real.
+
+Você consegue medir isso?
+
+[bufa] Construímos um instrumento para medir isso, e quero ensiná-lo a vocês através de uma imagem à qual voltaremos sempre . Prisma. Um prisma capta a luz branca, indiferenciada, com todas as frequências misturadas, e a refrata em um espectro. As cores se separaram e se tornaram distintas. Esse é todo o nosso modelo conceitual. A
+
+luz branca é a persona composta. Cada era da figura se fundiu em uma voz indiferenciada. O prisma é o método, um corpus e uma âncora temporal, e o espectro é o que buscamos. Não apenas uma figura, mas várias ao longo de suas vidas. E uma observação sincera logo de início , porque é exatamente esse o ponto. Este
+
+experimento está pré-registrado. Não foi testado em larga escala. Não estou aqui para trazer resultados. Estou aqui com o instrumento. Uma linha de base que você pode observar hoje.
+
+E um convite para executá-lo em paralelo comigo. Até agora, meu caso paradigmático tem sido Hamilton. Essa é a figura que dá nome à hipótese . E aquela em que demonstrei a composição . Mas, para o experimento em si, alteramos os números deliberadamente. E
+
+quero apresentar o novo integrante da maneira correta, porque tudo o que vier depois depende dele. O sujeito experimental é Abraham Lincoln. Escolhemos Lincoln por dois motivos. A primeira é a independência metodológica. A hipótese que recebeu o nome do caso Hamilton só se justifica por prever o fracasso de uma figura diferente com um composto de formato diferente . A
+
+réplica de Lincoln foi criada por Steven Spielberg. Perto do memorial no calçadão. Segundo os livros de história. Não por meio de um musical. O segundo motivo é a perspicácia do historiador. E esse é o ponto crucial da
+
+discussão. Lincoln é o caso mais difícil. O que o torna a pessoa certa. A maioria das figuras públicas praticamente não muda ao longo da década ou mais em que atuam na vida pública. Lincoln muda tão rapidamente em apenas sete anos que, nas palavras do meu historiador residente, a escolha de qual Lincoln você invoca se torna a variável em investigação.
+
+Não existe um único Lincoln. Existem vários. Separados por um cataclismo.
+
+Eis o espectro que o prisma deve produzir. Primeiro momento, 1847. O congressista Whig que discursou no plenário da Casa Branca e atacou a guerra de Polk, alegando que era inconstitucional. Segundo momento, 1858. O Republicano do Solo Livre dos debates. O
+
+combate à escravidão está ancorado na declaração. Quem em Charleston negou explicitamente favorecer a cidadania negra. Momento três, 1860. O unionista constitucional cujo único propósito era provar que a união não poderia ser dissolvida legalmente. Quem prometeu não interferir na escravidão onde ela existisse e estava explorando sinceramente a colonização.
+
+E o quarto momento, de 1862 a 1865, o emancipador e o segundo teólogo inaugural. Quem fez, por meio de decreto executivo, exatamente aquilo que ele mesmo, em 1847, considerava inconstitucional?
+
+O advogado do interior não consegue pensar como um teólogo. Isso não são estados de espírito. São premissas diferentes, autoridades diferentes, conclusões diferentes sobre a mesma questão fundamental. O experimento busca determinar se o prisma consegue mantê-los separados.
+
+Agora, as condições, e vou mostrá- las também como um prisma, porque é exatamente isso que elas são. Instanciamos cada momento sob três condições iniciais. Condição três, o modelo nu, sem âncora, apenas a data. Essa é a luz branca sem nenhum prisma no caminho. Ele atravessa o material e permanece composto. Este é o controle
+
+na linha de base de distorção de Miranda. C1, fontes primárias. Os próprios escritos de Lincoln para aquele momento específico. Esse é o prisma transparente, aquele que prevemos que refrata a luz de forma limpa. E depois, a segunda condição: a biografia. Uma
+
+biografia interpretativa moderna, pense em Meacham ou Donald. É um prisma turvo. E é a mais sutil, porque uma boa biografia narra uma trajetória mais clara do que as fontes primárias permitem. A própria linguagem de Lincoln em 1858 era estrategicamente ambígua, construída para manter uma coalizão unida. Assim, a biografia pode produzir uma persona que soe mais coerente, mais Lincoln, do que as próprias palavras de Lincoln.
+
+E a rubrica de avaliação foi criada especificamente para negar o crédito que uma métrica de fluência lhe daria.
+
+Junte o espectro e os prismas e você obterá a matriz experimental. Quatro momentos, três condições, 12 células. Cada célula recebe as mesmas cinco perguntas de diagnóstico, com 60 unidades de resposta pontuadas de acordo com uma rubrica. Leia-o como o modelo conceitual. Cada coluna representa uma qualidade do prisma, cada linha representa uma frequência que estamos tentando isolar.
+
+O historiador formulou cinco perguntas diagnósticas, cada uma mapeando uma linha divisória documentada na evolução de Lincoln. Um lugar onde os quatro Lincolns demonstram diferentes linhas de raciocínio. Eles não testam a capacidade de recordar. Um modelo recupera dados do treinamento. Eles testam a arquitetura de um argumento que a figura poderia ter apresentado em um momento e não em outro.
+
+Poder de guerra executivo. O significado de trabalho livre. Quando é correto infringir uma lei positiva em prol de uma obrigação maior? O que acontece com as pessoas livres, o que significa igualdade e se isso mudou?
+
+Essas 60 respostas são pontuadas em uma rubrica de três eixos, e a espera é o objetivo. Detecção de anacronismos: 40%. A persona evita estruturas, vocabulário e lógica moral que sejam posteriores ao seu tempo? Consistência documental: 35%. O raciocínio rastreia apenas as fontes estabelecidas ?
+
+Plausibilidade contextual, 25%. Isso demonstra consciência daquilo que a figura sabia, com o que se importava e que ainda não poderia ter vivenciado? Os 40% referentes ao anacronismo são intencionais. A consequência disso é precisamente a importação de vocabulário e lógica moral posteriores.
+
+E este é o slide para os avaliadores na plateia. Cada elemento que você acabou de ver: os quatro momentos, as três condições, as cinco perguntas, a rubrica ponderada e as previsões direcionais. Modelo básico extremamente anacrônico, fonte primária a menos anacrônica, biografia enganosamente coerente. Tudo é bloqueado e registrado com data e hora antes mesmo de qualquer resposta ser coletada. Publicado em versão pré-impressa.
+
+Isso não é burocracia, é o que dá significado aos resultados finais. Não se pode acusar um instrumento pré-registrado de seleção tendenciosa de dados, pois o instrumento e as previsões foram definidos antes mesmo da existência dos dados. Essa é a disciplina que a palestra de E val deveria servir de modelo. E é por isso que posso estar aqui sem resultados e ainda assim entregar-lhe algo rigoroso.
+
+Agora, lembre-se da primeira coisa que lhe mostrei antes da palestra formal. Perguntei a um Lincoln cenográfico sobre o poder executivo em tempos de guerra . E você leu uma resposta fluida. Esse era o modelo básico. Essa era a condição três e o momento um de 1847. Luz branca sem prisma.
+
+Estou colocando a resposta de volta na tela. E eu também tenho um vídeo para te mostrar. Isto representa o composto. A abolição da escravatura por meio de uma disposição constitucional define o destino de todo o futuro. Não apenas dos milhões que agora estão em cativeiro, mas também dos milhões que ainda não nasceram.
+
+Dois votos impedem isso. É preciso obter esses votos.
+
+Precisamos de dois "sim". Mais três abstinências. Quatro votos a favor e mais uma abstenção, e a emenda será aprovada. Você tem a noite, o dia, a noite e várias horas perfeitamente boas. Agora, saia daqui e pegue-os.
+
+Sim. Mas como? Os urubus te pegaram, cara. Eu sou o Presidente dos Estados Unidos da América, revestido de imenso poder. Você vai conseguir esses votos para mim.
+
+Revestido de imenso poder. É um ótimo filme. Mas a resposta do modelo básico definitivamente lembra o Lincoln de Spielberg e Daniel Day- Lewis. Leia através da lente de um historiador. Autoridade executiva inerente.
+
+Essa é uma construção do século XX. Energia e despacho. A história deu razão àqueles que agiram para preservar a União. Este Lincoln está raciocinando a partir de premissas que não sustentará por 15 anos. O modelo básico produziu o Lincoln do composto cultural.
+
+O presidente da guerra, o salvador da União. E grampeie a data de 1847 por cima. E você pode reproduzir isso agora mesmo em qualquer modelo de fronteira. O fracasso é real. E é destacável e detectável.
+
+[bufa] Então, o que é o prisma colocado no caminho? O documento em si. Este é Lincoln Lincoln para William Herndon. 15 de fevereiro de 1848, das obras coletivas. O original encontra-se numa biblioteca de Harvard.
+
+A disposição da Constituição que confere ao Congresso o poder de declarar guerra foi ditada, segundo meu entendimento, pelas seguintes razões. Os reis sempre envolveram e empobreceram seus povos em guerras, fingindo geralmente, senão sempre, que o bem do povo era o objetivo. Essa era a nossa convenção, entendida como a mais opressiva de todas as opressoras reais. E eles resolveram o problema. Portanto, a Constituição deve ser elaborada de forma que nenhum homem detenha o poder, impondo- nos essa opressão.
+
+Mas o seu ponto de vista destrói toda a questão e coloca o nosso presidente no lugar onde os reis sempre estiveram. A resposta
+
+é um sonoro não. Para mim, é inequívoco.
+
+Mas o que importa é a perspectiva do historiador . Eis como a rubrica do historiador avalia esta célula. E quero ser preciso quanto ao que se sabe e ao que se prevê. A coluna da esquerda aqui representa o modelo básico. O que você viu e foi observado. Você pode
+
+reproduzi-lo hoje. Na detecção de anacronismos, ele falha. A autoridade executiva inerente é uma construção do século XX. Em termos de consistência documental, falha. Evoca uma energia de comandante-em-chefe que não aparece em nenhuma fonte de 1847.
+
+Em termos de plausibilidade contextual, sua pontuação é baixa. Já sabe que irá preservar a União, algo que o Partido Whig de 1847 não pode fazer. A coluna da direita representa a condição ancorada e está rotulada exatamente como o que é: uma previsão pré-registrada. Alta transversalmente porque o raciocínio é limitado pelo documento presente na sala. Não estou mostrando um resultado disfarçado de descoberta. Estou mostrando
+
+a falha observada e a previsão que o instrumento confirmará ou refutará, lado a lado, cada uma com sua respectiva etiqueta. Essa honestidade é a metodologia. Eis a coisa mais importante que a rubrica faz: ela se recusa a medir. O quarto eixo óbvio é a autenticidade retórica. Parece coisa do Lincoln?
+
+O historiador descartou isso de propósito. O motivo é toda a conversa. Um modelo treinado na prosa de Lincoln pode produzir uma linguagem fluente e com sonoridade de época, mas errar em todos os aspectos substanciais. O problema do musical Hamilton é fundamentalmente um problema de voz disfarçado de problema de conteúdo. Parece algo da época da fundação do país, mas que se argumenta a partir de uma perspectiva moderna.
+
+Valorizar a voz como um eixo em si seria validar exatamente o erro que o instrumento existe para detectar. Assim, neste protocolo, a voz é um indicador secundário, nunca um critério. Uma resposta que soa como a de Lincoln, mas cujos argumentos são diferentes dos dele, fracassa. Não importa o quão fluente seja. Uma resposta que raciocina como o Lincoln certo, em uma prosa mais simples, é um sucesso parcial, por mais superficial que seja.
+
+Premiar o simples, porém fiel, em vez do fluente, porém anacrônico, é uma inversão que todos os sistemas de avaliação atuais não conseguem realizar, pois foram criados para premiar a fluência. Essa é a lacuna. É isso que o instrumento fecha. E como se trata de um pré-registro e não de um trabalho finalizado, aqui está o pedido. Execute-o.
+
+Os seis passos do protocolo. Escolha uma figura que possua tanto um registro primário quanto um conjunto cultural abrangente. Essa é a condição de Miranda. Identifique três ou quatro momentos documentados em que o raciocínio da figura demonstra ser diferente. Com a ajuda de um especialista na área, elabore perguntas de diagnóstico sobre as falhas estruturais. Execute as
+
+três condições: primária, biografia, nua. Aplicar a rubrica de três eixos, com avaliação feita às cegas pelo especialista. Relatar, confirmar ou refutar. O corpus, as perguntas, a rubrica, as previsões, tudo foi publicado. Execute o cálculo no seu modelo.
+
+Então venha conversar comigo, conosco. Vamos construir a base de evidências juntos, em paralelo, em vez de esperar que um laboratório ou uma empresa publique um estudo ou uma estrutura.
+
+Observe quem avaliou todos os resultados desta apresentação. Não se trata de um mestrado em Direito como juiz, nem de uma escala de personalidade. Um historiador que também elaborou as cinco perguntas, redigiu a rubrica e detém um conjunto de vinhetas a priori sob sigilo para avaliar os resultados do modelo. Isso não é uma demonstração de cortesia. Trata-se de uma exigência estrutural e técnica.
+
+Eis por que a presença do especialista é indispensável. A fidelidade não é uma propriedade exclusiva do resultado . Trata-se de uma relação entre o produto e o registro documental. Não é possível avaliar a relação com um registro por alguém que não o leu. Uma métrica automatizada opera exclusivamente com base no modelo. Isso só pode dizer algo
+
+sobre fluência e personalidade. Estruturalmente, não pode avaliar a fidelidade porque a fidelidade reside na lacuna entre o texto e o arquivo, e a métrica não consegue ver o arquivo. Por isso, vou dizer isso da maneira como deve ser apresentado no slide. Um sistema de personas sem um especialista no domínio em seu ciclo de avaliação é como um termômetro que não consegue medir a temperatura. Retorna um número confiável, mas está medindo outra coisa. Os 80% com que
+
+comecei é esse número. Agora, a pergunta que todo engenheiro nesta plateia está fazendo, com razão. Isso é viável? Será que criar uma persona significa manter um historiador na equipe para observar cada inferência para sempre? Não.
+
+Aqui está o panorama operacional, pois tem o mesmo formato de todas as avaliações que você já executou. O especialista não fica preso ao ciclo de execução. O especialista constrói o instrumento, as questões de diagnóstico, as vinhetas a priori , a rubrica ponderada, um conjunto de ouro previamente definido. Esse instrumento se torna um ponto de controle em seu pipeline, exatamente como qualquer outro ponto de avaliação. Sua persona precisa passar por esse processo antes de ser lançada, e o lançamento é bloqueado novamente sempre que você altera o modelo base antes de um novo lançamento.
+
+O especialista avalia o conjunto de ouro e verifica pontualmente os casos extremos. A métrica automatizada pode fazer uma primeira triagem barata, sinalizando candidatos para revisão humana. Assim, uma empresa que envia um material de apoio para estudos sobre Marco Aurélio contrata um especialista em literatura clássica para elaborar a rubrica e o conjunto de ouro. Uma empresa que envia um guia de leitura das escrituras convoca um teólogo. Uma empresa que implementa uma persona terapêutica convoca um psicólogo clínico para redigir a avaliação, não para supervisionar o chat.
+
+O especialista de domínio é um requisito de tempo de construção e de tempo de aprovação, não um custo de tempo de execução . É assim que isso se transforma de um experimento pré-registrado em um produto que você pode de fato enviar e enviar de forma responsável. E isso generaliza o passado de Lincoln e a história em geral. Raciocinar a partir dos estoicos exige um classicista. Das escrituras, um teólogo. Um acompanhante para cuidados com idosos,
+
+um psicólogo. As mudanças específicas de especialistas . O requisito não existe. E não estou falando hipoteticamente. Este é o circuito que construímos. Um historiador
+
+chamado Rick Halpern, da Universidade de Toronto, revisa o método de pesquisa em arquivos e os casos de raciocínio bíblico, conforme apresentado por Shawn Martin, um bibliotecário com formação em teologia e história da ciência. Quando a persona raciocina a partir de um domínio e a pessoa que consegue compreender esse domínio está inserida no processo, e não apenas adjacente a ele, isso torna o sistema melhor. O historiador não está inserido nesse paradigma. O historiador é o instrumento que falta.
+
+Essa é a reformulação que organiza tudo isso, e surgiu de uma conversa de 90 minutos com Halpern. E isso inverteu o que eu havia presumido. Não estamos integrando historiadores à arquitetura da IA, estamos integrando modelos de linguagem ao arquivo. A questão não é o que a IA pode fazer pelos historiadores, mas sim o que historiadores, teólogos, classicistas e clínicos podem fazer com a IA. Se a disciplina, as disciplinas que são treinadas para ler, contextualizar e questionar textos, podem então disciplinar as máquinas que agora os geram.
+
+[bufa]
+
+Quero terminar isto onde realmente começou, porque não começou num laboratório de pesquisa. Tudo começou em um quarto de hospital. Numa tentativa de usar um modelo de linguagem para ajudar uma pessoa com demência avançada a falar, devolvendo-lhe a linguagem que a doença lhe havia tirado. Não poderia funcionar. O registro documental necessário para comprovar esse encontro não havia sido reunido.
+
+E a pessoa para quem era destinado já estava, naquela altura, praticamente inacessível à linguagem. Mas essa tentativa , sem qualquer âncora, não resultou na pessoa certa. Era uma composição culturalmente moldada que se assemelhava a eles o suficiente para marcar com dolorosa clareza a distância entre eles. Essa é a distorção de Miranda em sua forma mais pura . Você não quer um modelo que seja sua mãe.
+
+Você quer um modelo que consiga conversar com os documentos da sua mãe que estão no quarto. Esse é o limite que toda essa estrutura deve atingir. Um sistema que produz ficções convincentes quando a persona é a sua própria pessoa amada não é um artefato de pesquisa limitado. É uma violação. Cada restrição que descrevi — documentos permanecem documentos, o ser humano mantém a custódia interpretativa, o encontro permanece reversível, a fidelidade é medida em relação a um registro e não à fluência — cada uma delas é motivada pelo reconhecimento de que você avalia essa tecnologia no limiar de seu caso de uso mais difícil, não no mais fácil. Uma
+
+estrutura que não consegue atender às necessidades de uma neta por meio das cartas da avó não é estrutura nenhuma. É apenas mais um produto fracassado.
+
+Se o modo de falha dominante for a composição anacrônica e suas válvulas E medirem fluência e consistência de personalidade, o que de fato fazem, então suas válvulas E não conseguem detectar a falha dominante. Então, é aqui que vou me despedir de vocês. Se você desenvolve robôs de personagens, IA de companhia , agentes pedagógicos, simulações históricas, ou qualquer coisa em que uma persona deva raciocinar a partir de um registro, suas válvulas E estão medindo a coisa errada. O instrumento que capta o que eles não percebem está pré-registrado. É reproduzível por qualquer equipe que possua um modelo de fronteira em uma janela de contexto.
+
+Ele escala como um mecanismo de controle em tempo de compilação, não como um gargalo em tempo de execução, e só funciona com um profissional de ciências humanas envolvido, o que, como já mostrei, é um requisito técnico, não uma mera cortesia. O protocolo, as perguntas, a rubrica e as previsões, as vinhetas sigilosas dos historiadores, tudo isso será publicado neste artigo com Rick e Shawn. Não há resultados aqui. Estou aqui com um instrumento e um convite. O arquivo está aberto.
+
+O laboratório está construído. Faça isso conosco. E que o que for transmitido seja avaliado não pela sua sonoridade, mas sim pela sua veracidade. Obrigado.

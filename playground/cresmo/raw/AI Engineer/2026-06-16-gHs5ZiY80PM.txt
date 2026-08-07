@@ -1,0 +1,103 @@
+---
+video_title: "You Might Not Need 50 Diffusion Steps — Ziv Ilan, Nvidia"
+video_id: gHs5ZiY80PM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=gHs5ZiY80PM
+video_date: 2026-06-16T13:00:06+00:00
+video_description: |
+  At GTC a few weeks ago, Ziv Ilan's team at NVIDIA got a video diffusion model generating in close to real time on a single Blackwell B200. The trick wasn't a new architecture, it was stripping out most of the fifty step denoising process diffusion models default to, by combining quantization, caching, and step distillation: training a student model to match a teacher's output using four steps, eight steps, or in some cases just one.
+  
+  Ilan walks through each layer of that stack: dynamic quantization work done with Black Forest Labs on Flux 2, a caching method that skips recomputing latent chunks that barely change between denoising steps, and distillation approaches split into trajectory based training, where the student copies the teacher's exact path, and distribution based training, where it only has to land on the same output, now the more common and higher quality of the two. NVIDIA's open source FastGen repo packages the post training and GPU sharding work needed to apply all this at scale, and Ilan frames the gains as additive, quantization alone can be enough on its own, or you can stack it with caching and distillation to reach the ten to two hundred times speedup that real time generation needs.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/ziv-ilan-deci/
+---
+[música]
+
+Ok. Espero que todos estejam acordados depois do almoço e foi um prazer conhecer todos vocês. Eu sou Ziv. Faço parte da equipe de laboratórios de IA da Nvidia, com sede em Paris, e trabalho com diversos desenvolvedores de modelos de ponta em várias áreas. Claro, a difusão é uma delas e vamos ouvir alguns exemplos de trabalhos que fazemos com elas.
+
+Hum, temos apenas 20 minutos. Então, obviamente, é uma espécie de mistura entre se aprofundar e ir para um nível muito abstrato. Cada um desses tópicos provavelmente exigirá um dia inteiro, ou até mesmo uma conferência inteira, para ser abordado. Então, vou tentar abordar tudo o que puder dentro desse tempo , mas fique à vontade para entrar em contato depois, seja pelo LinkedIn ou se preferir. Ficarei aqui por mais alguns minutos.
+
+Então, sem mais delongas, modelos de difusão. Presumo que todos aqui saibam disso. Alguém sabe como funcionam os processos de geração de vídeo e imagem em alto nível, incluindo a redução de ruído? Perfeito. OK. A ideia é que, ao
+
+contrário das arquiteturas autorregressivas, como o LLM, você tem muitas iterações para remover o ruído da imagem ou do vídeo. Geralmente entre 20 e 50 passos e , bem, vemos, creio eu, no último ano, uma entrada de modelos de alta qualidade muito bons, tanto para geração de imagem, com o Flux II, quanto para geração de vídeo, com o LTX 2, o Google com o Nano Banana e as gerações posteriores, e vemos muitos casos de uso mais práticos para isso. E o principal desafio, depois de termos alguns casos de uso interessantes, é como torná-los realmente utilizáveis, certo? Sabemos que é legal gerar vídeos ou imagens, mas agora, se estivermos falando de um contexto de desenvolvimento ou de uma empresa, isso precisa ser rápido, ok? Queremos que seja maduro, queremos que seja escalável, e esses são geralmente os desafios mais difíceis de resolver, já que esse ecossistema não é tão maduro quanto o ecossistema VLM autorregressivo , ok? Então, tentamos aproveitar
+
+muitos dos conceitos que consideramos muito eficazes para o LLM e, gradualmente, os adaptamos, se me permitem usar essa terminologia, ao mundo dos modelos de difusão, ok? Abordaremos alguns dos tópicos aqui, mas, novamente, vemos cada vez mais pesquisas nessa área diariamente, e espero que esse mundo esteja ainda mais maduro no próximo ano para os engenheiros de IA. Casos de uso e habilitação, imagem em tempo real , vídeo em tempo real são obviamente o Santo Graal, ok? Imagine quantos novos casos de uso surgiriam, como modelos mundiais para robótica, jogos de computador e geração de conteúdo. Isso abre muitas novas possibilidades para empresas e desenvolvedores utilizarem a tecnologia. E o grande desafio,
+
+em conjunto, é claro, a latência, certo? Leva muito tempo para obter uma primeira imagem e, obviamente, para conseguir uma de alta qualidade, ok? Se falarmos de conteúdo em 1080p ou 720p, por exemplo. E para colmatar esta lacuna, vou falar sobre três conceitos. Claro, não vou abordar todas as maneiras de otimizar seus modelos de geração de vídeo e imagem , mas vou mencionar quantização, cache e destilação.
+
+Não é necessariamente a ordem em que você mesmo vai implantá-lo, ok? Normalmente, você começa com a destilação, depois faz alguma quantização e, em seguida, algum armazenamento em cache, mas eu comecei do mais simples para o mais complexo, ok? Simples geralmente significa quantização, ok? Para aqueles que já cursaram mestrado em Direito (LLM), os conceitos são bastante semelhantes. Certo, então falaremos sobre armazenamento em cache e destilação.
+
+Quando falamos de quantização, temos duas abordagens, certo? Quantização pós-treinamento e treinamento com reconhecimento de quantização . Bem, eu diria que em muitos casos, claro, queremos usar a abordagem mais simples como o PTQ, mas sabemos que, pelo menos para manter a qualidade da imagem, a qualidade do vídeo, é um pouco mais complexo com os modelos de difusão, ok? Bem, também sabemos que esse tipo de modelo exige mais atenção , o que significa que o impacto da quantização não é tão significativo quanto nos modelos LLM e VLM, mas ainda é uma solução bastante simples quando consideramos aproveitar os recursos mais avançados do Blackwall, por exemplo, e da computação mais moderna . Neste exemplo, um trabalho que fizemos com a Black Forest Labs no Flux Two, você pode ver que geralmente usamos quantização dinâmica, ok? Você não quer
+
+usar o método `static`, o que significa que calcularemos antecipadamente toda a gama de diferentes parâmetros, a implementaremos e usaremos essa gama estática para a quantização. Neste caso, usamos uma abordagem dinâmica, ok? Isso significa que parte do intervalo será calculado dinamicamente, ok? Novamente, para garantir que a distribuição esteja de acordo com a distribuição de dados que você provavelmente usará ao executar esses modelos. É algo que você pode fazer sozinho, ok? Recentemente, lançamos um
+
+bom exemplo em nosso repositório de código aberto TRT LLM visual gen . Você pode começar a usar e ver como funciona. O que também tentamos fazer para ajudar a comunidade a adotá-lo é auxiliar nossos parceiros na realização de pontos de verificação pré-quantificados. Então, você pode simplesmente ir ao site da Hugging Face, carregar o checkpoint quantizado e começar a usá-lo, ok? Se você não precisar de ajustes finos ou de adaptadores menores posteriormente, é algo bastante prático e você já consegue perceber o impacto. Claro, quando falamos de
+
+quantização, o impacto se dá tanto na memória, ok? Isso exigirá menos memória, o que significa que você poderá executá-lo em GPUs de baixo custo, sejam GPUs para consumidores ou GPUs de baixo custo para data centers, mas, além disso, será algo que ajudará no desempenho, ok? Então, esta é uma parte do conjunto de ferramentas. Mais uma vez, há um mundo inteiro por trás disso para garantir que seja algo eficaz. Hoje mesmo vi uma das pesquisas mais recentes do How Lab, sobre atenção FP4, que, como mencionei, exige bastante atenção para esse tipo de modelo. Por isso, procuramos
+
+acompanhar as pesquisas mais recentes e garantir que elas sejam acessíveis a vocês, como comunidade. Certo, quando estivermos falando da segunda etapa, o armazenamento em cache, ok? O cache KV é algo que, você sabe, qualquer pessoa que tenha trabalhado um pouco com LLMs, com modelos autorregressivos, é algo sobre o qual todos falam , como usá-lo de forma eficiente, como descarregar a carga, etc., etc. Novamente, é um mundo inteiro.
+
+Considerando as características dos modelos de difusão, não é da mesma forma, certo? Nós não geramos um token a cada vez. Portanto, é mais difícil usar esse tipo de técnica quando falamos de etapas de redução de ruído ou, sabe, de garantir que usemos o poder computacional que tínhamos antes na geração de imagens ou vídeos futuros. Existem alguns exemplos de caches T. Novamente, não é um exemplo muito forte, mas é um bom exemplo para entender o conceito, ok?
+
+Já que estamos realizando as etapas de redução de ruído, certo? Conversamos sobre 20 a 50 passos. Existem áreas entre as etapas de redução de ruído que são praticamente iguais, ok? Portanto, não precisamos necessariamente recalculá-los. O que o T-cache faz é o seguinte: se houver uma mudança mínima ou muito pequena entre as etapas de redução de ruído , ele compara e entende que não precisa recalcular para a próxima etapa de redução de ruído.
+
+Então, é algo mais geral, ok? Isso acontece em todo o espaço de pixels ou espaço latente, ok? Técnicas mais modernas de armazenamento em cache farão isso de forma mais baseada em blocos, ok? Imagine só, não sei, agora estamos aqui na sala de aula. A maioria de vocês, que está na minha plateia, está sentada, olhando para a tela, então nada muda muito, mas eu tento ser um pouco dinâmico, para que vocês ainda acordem e me acompanhem, o que significa que esta parte do vídeo não precisa necessariamente ser recalculada por vocês. Eu
+
+preciso, tá bom? Então, vamos isolar apenas esse trecho e recalcular, ok? Claro, você pode definir o limite e isso é algo que realmente faz muita diferença. Apresentamos aqui alguns bons exemplos do aumento de desempenho que você pode obter ao usar esta ferramenta. Mas, claro, certifique-se de experimentar e manter a qualidade, ok? O armazenamento em cache, se
+
+não for feito corretamente, pode ter um impacto bastante significativo na qualidade da imagem, ok? E como criadores de conteúdo, modelos mundiais, etc., é algo que vocês precisam garantir que mantenham enquanto recebem o impulso, ok? Bem, isso é o que chamamos de armazenamento em cache. Novamente, recomendo que você leia mais sobre diferentes técnicas. Isso é algo
+
+que já está disponível no gerador visual TRT LLM que mencionei. Basta ativar um indicador e definir o limite. Você pode experimentar , mas também está disponível no VLLM Omni como difusão GLN e outras bibliotecas de serviço. Destilação, ok? E isso reforça a ideia de que você não precisa necessariamente de 50 passos. A
+
+destilação é algo que vimos, novamente, hum, eu diria que o grande momento para a destilação foi durante o primeiro lançamento do Deep Seek, como eles conseguiram destilar de um modelo muito grande para modelos muito menores e obter, hum, você sabe, eu diria qualidade aceitável, mas com um modelo muito menor. Em difusão, o objetivo não é chegar a um modelo menor, ok? Você ainda terá o mesmo número de parâmetros. Isso tem mais a ver com destilação por etapas, ok? Treinar o modelo, o modelo aluno, para gerar imagens ou vídeos de qualidade semelhante, mas utilizando muito menos etapas. OK? Em vez de 50
+
+etapas, passar para quatro etapas, oito etapas, em alguns casos uma única etapa. OK? E mantendo a qualidade. OK? E esse é o grande desafio. E imagine se você
+
+conseguisse reduzir esse número significativo de etapas, mantendo a qualidade; isso poderia resultar em uma melhoria de desempenho de 10 a 200 vezes. E se voltarmos à geração em tempo real, esta é provavelmente a única maneira de nos permitir alcançar esse objetivo com boa qualidade atualmente. OK? Bem, a próxima, acho que é uma demonstração que fizemos na última conferência GTC, há algumas semanas, em San Jose, com duas técnicas diferentes de destilação. E chegamos a uma geração em tempo real.
+
+OK? E isso é algo que todos estão buscando, todos os laboratórios de IA, e tenho certeza que também as grandes empresas, porque isso significa que podemos realmente voltar ao streaming, algo que abrirá muitas novas possibilidades de uso. OK? Então, como conseguimos isso? OK?
+
+Quando falamos de destilação, sempre temos um modelo do professor e um modelo do aluno. Atualmente, temos duas abordagens principais quando falamos de destilação. OK? Uma delas é baseada em trajetória, o que significa que vamos tentar ensinar o aluno a seguir a trajetória das etapas de redução de ruído, assim como o professor está fazendo. OK?
+
+E a segunda é baseada na distribuição, o que significa que analisaremos apenas a distribuição dos resultados. OK? Queremos que o aluno chegue ao mesmo ponto no final, mas vamos deixar que ele entenda como chegar lá. OK? E não seguindo a trajetória exata.
+
+OK? Diria que a técnica mais comum e de melhor qualidade atualmente é a baseada na distribuição. E também vemos muitas maneiras de combiná-las. Essas técnicas podem ser combinadas. No último vídeo divulgado pela FastGen, eles conseguiram adotar uma abordagem híbrida que manteve a qualidade, mas também alcançou um treinamento mais estável . O desafio, e o motivo de eu ter
+
+deixado para o final, é que a destilação geralmente é uma técnica que se aprende depois do treinamento . OK? O que significa que, digamos, se você quiser que funcione com seus dados, precisará usar alguns dados para essa técnica e desejará que ela convirja de forma adequada, certo? Porque senão, vai ser tipo , lixo entra, lixo sai. OK?
+
+Portanto, exigirá mais poder computacional, mais tempo e também mais habilidade. Novamente, como se trata de um domínio exploratório, ainda em fase de pesquisa , existem muitas técnicas diferentes disponíveis, e esperamos que mais surjam, mas já estamos começando a ver técnicas mais maduras emergirem. E alguns exemplos muito bons são mostrados novamente com os modelos UM de código aberto mais recentes. É claro que os construtores de modelos de código fechado também estão usando essa abordagem. Então, o FastGen é algo que surgiu do nosso grupo de pesquisa em NV. OK? É um
+
+repositório de código aberto. Você pode ir. Existem muitas técnicas diferentes lá. OK? Não se trata de uma técnica ou método de destilação, mas a ideia é que, como é muito complexo quando falamos de modelos grandes, OK? Muitos dos novos
+
+modelos de difusão de vídeo têm 20, 30, 40 bilhões de parâmetros, e esperamos que esse número chegue novamente a centenas de bilhões de parâmetros. Requer pós-treinamento e particionamento escalonado em diferentes GPUs. Para gerenciar tudo isso, criamos o FastGen como uma forma de estruturar esse processo para você e permitir que você se concentre apenas na qualidade e, claro, no ajuste fino da receita exata que deseja usar. Como você pode ver, existem dados de treinamento opcionais aqui. Se você não estiver usando bem o [nome do recurso], sempre pode usar dados de código aberto , e isso funcionará até certo ponto, certo? E, na verdade, estamos satisfeitos
+
+com os resultados. Mas se você quiser que funcione para você, ou se o seu caso de uso tiver uma distribuição de dados muito específica , recomendamos que você use seus próprios dados para o ajuste fino. Alguns dos resultados citados aqui, ok? Sabe, o aumento de velocidade, na verdade, não se resume apenas ao tempo de processamento, mas também ao uso de muito menos recursos computacionais, eu diria, para atingir o tempo real. OK?
+
+Como mencionei, voltamos a usar a GTC e conseguimos utilizar uma GPU Blackwell B200 para gerar vídeo quase em tempo real ou em tempo real , dependendo da qualidade da saída. Portanto, trata-se de algo que recomendamos fortemente que você considere se quiser chegar a esse ponto. OK? Esperamos, mais uma vez, que muitas outras técnicas autorregressivas surjam e se tornem gradualmente relevantes para a geração de vídeo e geração de imagens. Também observamos muitos novos construtores de modelos trabalhando com uma abordagem semelhante à de transfusão ou difusão autorregressiva. OK?
+
+Então, você usa uma difusão para gerar um... um... um
+
+quadro, desculpe, mas depois ela gera quadro após quadro de maneira autorregressiva. Portanto, mais uma vez, esperamos que muito mais dessas técnicas sejam incorporadas a esse domínio, mas ainda é um campo que depende muito da pesquisa. Portanto, repito, este é um ótimo exemplo que você pode analisar. E acho que a maior vantagem disso tudo é que é tudo incremental. OK? Você pode
+
+usar isso mais isso mais isso. Você não precisa necessariamente decidir: "Ok, vou fazer apenas destilação, ou apenas quantização, ou apenas paralelismo contextual", ou ainda, existem muitas técnicas diferentes por aí, e todas são incrementais. OK? Então, você pode começar com a quantização, como mencionei, que é a abordagem mais fácil. Se for bom o suficiente para você, fique por lá.
+
+Caso contrário, tudo bem, vamos passar para o multi-GPU, talvez implementar algum paralelismo contextual, talvez adicionar algumas técnicas de cache. OK? E por último, e mais impactante, está a destilação. E, mais uma vez, espero ver muitos de vocês experimentando e entrando no mundo do desempenho em tempo real agora. Experimente você mesmo. OK? Todos esses recursos são de
+
+código aberto e você pode utilizá-los. Também adicionamos suporte para os modelos de código aberto , sejam eles da família One, da família Flux 2, da família LTX 2 e outros em desenvolvimento. Então, espero que possamos ver vocês contribuindo para isso e tornando a difusão de vídeo tão boa quanto vemos com o LLM VLM. Hum, acho que estou quase na hora. Então, se houver uma ou duas perguntas, terei prazer em tentar respondê-las. Caso contrário,
+
+podemos deixar você respirar por 1 minuto. [aplausos]
+
+Em média, quais seriam, na sua opinião, os requisitos para você aprimorar esse modelo? Porque o acesso aos GB200 não é tão fácil neste momento. E em termos de conjunto de dados, qual o tamanho dos conjuntos de dados que você viu funcionarem bem com alguns desses modelos? Certo, então a pergunta era sobre o poder computacional necessário para isso e, em seguida, sobre o conjunto de dados necessário, só para que todos pudessem ouvir. O bom da destilação é que você não precisa do GB200, certo? Você pode fazer isso com
+
+funis, você pode fazer isso com H200, H100, B200, sabe, B300. Então, não é necessariamente que você precise de um poder computacional tão grande quanto o necessário para o pré-treinamento, mas ainda assim precisa de poder computacional. OK? Então, não é algo que você simplesmente, sabe, pega um exemplo e começa a fazer. Claro, isso depende do tamanho do modelo, certo? Se o seu
+
+modelo for pequeno, você terá modelos de geração de vídeo muito pequenos, com 2 bilhões ou 4 bilhões de parâmetros. Portanto, isso obviamente exigirá muito menos poder computacional. Em relação aos dados , acho muito importante garantir que você saiba como avaliá-los. OK? Assim, você poderá entender a diferença entre usar um conjunto de dados de uso geral e usar os dados específicos que você precisa para o seu caso de uso. E nesses casos, observamos
+
+diferenças. Assim, para as demonstrações mais gerais , não utilizamos nenhum conjunto de dados específico , e funciona bem. Mas, novamente, se for algo como, sei lá, geração de proteínas ou algo relacionado , isso exigirá algo mais específico. Estou no meu limite, eu acho, mas sim, até me expulsarem . Mais alguma pergunta? Certo,
+
+podemos fazer isso depois, eu acho. Obrigado a todos.
+
+[música]

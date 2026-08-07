@@ -1,0 +1,70 @@
+---
+video_title: "RAG is dead, right?? — Kuba Rogut, Turbopuffer"
+video_id: UM6sFg_jdlE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UM6sFg_jdlE
+video_date: 2026-06-09T17:00:27+00:00
+video_description: |
+  Cursor added semantic search and measured a 24% increase in answer accuracy on their composer model, a 2.6% gain in code retention in large codebases, and a 2.2% drop in dissatisfied user requests. Those numbers look small until you factor in that semantic search does not fire on every query. Meanwhile Google search volume for RAG hit a new inflection point in mid 2025 and went through the roof. The Twitter "RAG is dead" discourse and the actual usage curve are moving in opposite directions.
+  
+  Kuba Rogut's argument is that the problem was never retrieval, it was the narrow definition of it. RAG is not just a vector search call. It is vector search, full text search, glob, regex, and filters used iteratively by an agent that keeps searching until it has what it needs. He contrasts Claude Code (grep per session, no index, repeat cost every run) with Cursor (one time upfront indexing, lightweight tool calls at runtime). Claude Code's approach is not wrong, it is a deliberate tradeoff. The frame that clarifies it: embeddings are cached compute, and whether to cache depends on query volume. Jeff Dean's version: you do not need a trillion tokens at once, you need the right million.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/kubarogut/
+  - https://x.com/rogutkuba
+  
+  Timestamps:
+  0:00 Introduction to the "RAG is dead" discourse
+  1:12 Google search volume trends for RAG
+  1:39 Defining RAG vs. Agentic Search
+  3:15 Cursor's indexing and semantic search approach
+  6:10 Contrasting Claude Code (grep) vs. Cursor (indexed)
+  6:40 The concept of embeddings as cached compute
+  8:38 The shift from simple RAG to Agentic Retrieval
+  9:44 Jeff Dean on context windows and stage retrieval
+---
+[música]
+
+Muito bem, sejam todos bem-vindos. Obrigado por terem vindo . Vejo que a sala está cheia, então agradeço a todos por terem vindo. Então, sejam bem-vindos à conversa sobre como o jornalismo tradicional está morto, certo? Meu nome é Kuba. Sou engenheiro de campo
+
+na Turbo Puffer. Para quem não conhece o Turbo Puffer, somos um banco de dados de busca de texto completo e busca vetorial construído desde os princípios básicos, com base em armazenamento de objetos. Se você quiser saber mais, pode me procurar depois da palestra caso tenha alguma dúvida. Então vamos começar. Então, esta palestra que estou recebendo é sobre como o Rag está morto, como a recuperação de ferramentas híbridas e ricas em ferramentas está se tornando o padrão para buscas agentivas sérias.
+
+Então, vocês que estão no Twitter ou em outras plataformas de mídia social, ou como chamam agora o X, devem ter visto muitos tweets assim sobre como o ragtime está morto. Você pode ver que há muitos tweets, especialmente no final de 2025 e no início deste ano, sobre como o Rag está morto, que a busca de arquivos agentiva é tudo o que precisamos, e há muitos tweets e muito conteúdo sobre isso agora. Mas sabe, curiosamente, se você observar dados como o volume de buscas do Google nos últimos dois anos, verá que em 2023, com o início da IA, houve um aumento que atingiu um pico em 2024, estabilizou por cerca de um ano e, por volta de meados de 2025, atingiu um novo ponto de inflexão, onde o volume de buscas disparou. Então, toma essa, Twitter. Então, vamos esclarecer primeiro o que é rag e o que é pesquisa agentiva. Esses são
+
+os dois termos que muita gente anda usando ultimamente. Então, o que muita gente pensa que é um "rag" é apenas uma simples busca vetorial. Eles simplesmente acham que isso é apenas, sabe, incorporar um conjunto de conteúdos, passando um vetor de incorporação e recebendo-o de volta ao passar pelo seu LLM. E o que eu, Turbo puffer, acho que isso realmente significa, é que se você decompor o rag em recuperação aumentada de geração, você sabe que a recuperação não é apenas uma busca vetorial. São muitas coisas diferentes. Pode ser uma
+
+busca vetorial, uma busca de texto completo usando recursos como BM25, grep, globbing, expressões regulares ou outros filtros básicos. E a geração aumentada está obviamente apenas repassando isso para o seu mestrado em Direito de sua escolha. E depois a busca agentiva. São esses os termos que as pessoas andam usando bastante ultimamente. E, geralmente, quando as pessoas começam a falar sobre busca agética, estão se referindo basicamente ao grep do sistema de arquivos. Então, se vocês
+
+estão familiarizados com algo como o Cloud Code, que é o que o Cloud Code Codex, muitas pessoas chamam de busca agética, isso basicamente consiste em usar o comando grep para vasculhar o sistema de arquivos, e é por isso que esses termos estão tão correlacionados. E o que realmente acreditamos que seja, e a definição que queremos dar a isso, é que se trata de fornecer aos agentes um conjunto de ferramentas para, progressiva e iterativamente, encontrar e raciocinar sobre o contexto. Então, com o Cloud Code, como vocês sabem, se já o conhecem, ele consegue ler seu arquivo. Você começa a usar o grep para procurar no seu sistema de arquivos, lê um arquivo, decide que não encontrou o que precisava, o que faltava para concluir a tarefa, e então procura algo novamente e continua fazendo isso até ficar satisfeito, até atingir um estado satisfatório em que pode continuar com a tarefa. Então, vamos dar um passo atrás e falar sobre uma das empresas que usa o Turbo Puffer e que acreditamos estar fazendo um excelente trabalho com a busca por agentes. Esta é uma
+
+empresa chamada Cursor, talvez você já tenha ouvido falar dela. Uma curiosidade: eles foram um dos primeiros clientes da Turbo Puffer. E eles têm uma excelente postagem no blog, publicada no início de 2026, sobre como indexam bases de código. Para quem não sabe, quando você abre uma nova base de código ou um novo branch no Cursor, o que acontece é que o Cursor começa a incorporar sua base de código. Então, o que eles farão é, sabe, dividir o código em partes, analisá-las, incorporar a base de código e torná-la disponível para busca semântica. E esta postagem no blog entra
+
+em detalhes técnicos excelentes sobre como eles fazem isso. Para resumir a ideia principal, o interessante é que eles descobriram que, na maioria das vezes, quando uma equipe de 100 engenheiros abre um código-fonte, geralmente é o mesmo em 99% dos casos. Isso acontece porque, na maior parte do tempo, uma equipe de 100 pessoas trabalha em um ou dois, talvez alguns poucos códigos-fonte, certo? E é realmente caro ter que refazer o processo de fragmentação, reincorporar e reenviar esses códigos-fonte todas as vezes. Basicamente, eles usam árvores de Merkle, que são árvores de hash criptográficas, para calcular semelhanças entre bases de código abertas por pessoas da mesma equipe.
+
+E se forem suficientemente semelhantes, eles basicamente copiarão os dados e, em seguida, atualizarão, refragmentarão e reincorporarão apenas os arquivos que foram alterados, usando o TurboPuffer para garantir que isso seja feito com segurança. Sim, é um excelente post de blog. Eles fazem coisas muito legais. E você pode pensar que isso dá muito trabalho. Por que eles fazem isso? Bem, o
+
+motivo pelo qual fazem isso também é abordado em outra postagem do blog sobre como eles usam a busca semântica. Novamente, eles usam o Turbo puffer para isso. E o que eles descobriram é que, em média, entre os modelos, acho que há um aumento de 12,5% ou 13,5% na precisão das respostas. Isso está relacionado ao contexto de teste interno do cursor. Então, você sabe, não é um parâmetro público, mas você pode confiar nos números que eles nos fornecem.
+
+E você pode ver no lado direito o modelo de compositor deles, então é isso. Isso é antes do Composer 2; eles tiveram um aumento de quase 24% na precisão das respostas. Portanto, fornecer busca semântica a essas ferramentas e a esses modelos pode realmente gerar ganhos de desempenho reais. E você pode ver no canto inferior direito que isso é de um teste A/B online que eles fizeram, o qual também é abordado no post do blog deles, sobre como há uma taxa de retenção de código de quase 2,6% em grandes bases de código e uma redução de 2,2% nas solicitações de usuários insatisfeitos. E você pode estar pensando: "Ah, bem, esses números não são tão grandes, tipo 2,6%, 2,2%, não são tão expressivos", mas eles também levaram em conta que a busca semântica não é usada em todas as consultas. Então, no teste A/B online deles,
+
+você sabe que se você der essa ferramenta para 100 consultas aleatórias, nem todas as 100 consultas se beneficiarão da existência de uma ferramenta de busca semântica, e é por isso que esses números parecem um pouco pequenos. E agora vamos falar um pouco sobre o Cloud Code. Portanto, o Cloud Code não usa busca vetorial, conforme mencionado no tweet de Boris Cherney. Para quem não conhece Boris, ele é essencialmente o pai fundador do Cloud Code. E ele diz que nas primeiras versões do Cloud Code eles realmente usaram o rag em seu banco de dados vetorial local, mas descobriram que simplesmente não funcionava bem para eles.
+
+Mas isto é algo importante de entender, algo que nós, aqui na Turbo Puffer, temos nos dedicado bastante a compreender: a ideia de que embeddings e busca semântica são uma espécie de computação em cache. E você pode estar pensando algo como "computador de caixa", que estão me bombardeando com muitos termos agora. Tipo, eu não sei exatamente o que isso significa. E acho que a melhor maneira de mostrar é com um exemplo que seja basicamente um rastreamento semelhante ao Cloud Code e outro semelhante ao Cursor . De como esses agentes entenderão sua base de código.
+
+À esquerda, temos uma espécie de descoberta do Cloud Code por sessão. Por exemplo, se pedirmos ao agente para entender como funciona a filtragem de metadados, ele terá que usar o comando `grep read assess and repeat` para tentar encontrar os arquivos necessários para obter esse entendimento em cada sessão. Isso significa que você pode ter, por exemplo, 10 agentes em 10 dias diferentes, atendendo 10 desenvolvedores diferentes, e eles podem estar fazendo a mesma pergunta várias vezes ao dia, todos os dias. O agente terá que repetir exatamente os mesmos passos para obter o mesmo nível de compreensão da base de código. E isso pode custar alguns tokens, como você sabe . Sabe, 6.000 não parece
+
+muita coisa aqui, mas lembre-se que isso é apenas uma subetapa de um agente. E à direita temos algo mais parecido com um cursor, onde há um custo inicial de indexação, mas também podemos usar uma ferramenta leve para ajudar o agente a recuperar essas informações em tempo de execução. Obviamente, existe um custo inicial para analisar uma base de código, incorporá-la e disponibilizá-la, mas esse é um custo único e, em tempo de execução, o agente pode simplesmente consultar algo como: como os metadados são filtrados? Isso pode gerar alguns resultados simples e economizaria muitos tokens, muito tempo e muito dinheiro. E isso ajuda o agente a se tornar muito mais rápido.
+
+Você sabe, muitas pessoas na equipe agora, que talvez fossem grandes usuárias do Cloud Code aqui na TurboPuffer, começaram a migrar para o Cursor devido à sua rápida evolução, especialmente com seus modelos Composer 2 e também com essa compreensão semântica que estamos achando realmente muito boa. Assim, da recuperação superficial à recuperação ativa. Então, o que estamos descobrindo agora é que muitas pessoas não estão mais usando o método simples, sabe, o método do Twitter, de simplesmente fazer uma busca vetorial uma vez e jogar o resultado na janela de contexto. O que estamos constatando é que isso funcionou, sabe, lá por 2023, início de 2024, nos primórdios da IA, mas muitos dos clientes mais sofisticados estão usando buscas automatizadas e isso está proporcionando ganhos de desempenho realmente significativos, além de desbloquear novos produtos. E o que estamos descobrindo é que eles estão fazendo muitas ligações, e esses agentes estão raciocinando através de várias etapas. Eles estão pesquisando
+
+semanticamente ou por meio de texto completo, etc., conforme necessário, e estão buscando apenas o que é preciso para aquele caso de uso específico. Mas o importante é saber que a recuperação de dados não se resume mais a uma simples chamada única a um banco de dados vetorial. Está se tornando um processo extremamente iterativo, e esses agentes estão realmente entendendo o que estão procurando e, de certa forma, buscando entender ainda mais. É como um ciclo interessante.
+
+Sabe, o Jeff Dean do Google participou de um programa, podcast ou algo assim, e ele deu uma declaração muito boa que gostamos de usar e que também achamos superinteressante. Ele estava falando um pouco, eu acho, sobre como os modelos da Gemini tinham janelas de contexto muito amplas. Hum, esqueci a pergunta exata que o apresentador fez, mas ele estava dizendo que, sabe, janelas de contexto grandes, não importa se você chega a um tamanho de janela de contexto de um trilhão , o que você realmente precisa é de recuperação em etapas, como um mecanismo leve para reduzir esses trilhões de tokens em essencialmente milhões de cada vez. E, como diz a citação exata, você não precisa de um trilhão de uma vez, você precisa do milhão certo. Bem, nós aqui no Turbo Buffer pensamos muito sobre isso. Bem,
+
+você sabe, temos clientes que incorporam trilhões de tokens dentro do Turbo Buffer, e como vemos, a parte realmente importante é reduzir para esses 100.000, 10.000, milhões, para poder passar para essas janelas de contexto. Bem , isso é tudo para a conversa. Bem, se vocês tiverem alguma dúvida sobre algum ponto específico, adoraria que perguntassem agora ou podem me procurar depois da palestra.
+
+Ah, mas agradeço a presença de vocês. [aplausos]
+
+[música]

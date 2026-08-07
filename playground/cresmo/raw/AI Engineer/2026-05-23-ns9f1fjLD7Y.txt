@@ -1,0 +1,604 @@
+---
+video_title: "Prompt to Pipeline: Building with Google's Gen Media Stack — Paige & Guillaume, Google DeepMind"
+video_id: ns9f1fjLD7Y
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ns9f1fjLD7Y
+video_date: 2026-05-23T14:00:06+00:00
+video_description: |
+  A public domain book, a notebook, and three gen media models. Guom from Google DeepMind fed Wind in the Willows into Gemini, generated character portraits with Nano Banana, animated chapter scenes with VO, and scored each chapter with LIA, all live in the workshop.
+  
+  The full three hour session covers more ground. Paige Bailey demos AI Studio's Build feature creating a bookshelf scanning app with Google login and Firestore from a single prompt, Gemini 3.1 Flash Light analyzing a dinosaur video frame by frame for under a dollar, and Genie 3 rendering a playable world with a pink sparkly squirrel on Regent's Canal. Ian Valentine closes with Gemma 4 running on device: 10 sub agents generating SVGs in parallel on a local 26B model, then open code building and debugging a game from a spec with no cloud API involved.
+  
+  Speaker info:
+  - https://x.com/DynamicWebPaige
+  - https://linkedin.com/in/dynamicwebpaige
+  - https://github.com/dynamicwebpaige
+  - https://x.com/Giom_V
+  - https://www.linkedin.com/in/guillaumevernade
+  - https://github.com/Giom-V
+---
+Meu nome é Paige. Comecei a trabalhar com aprendizado de máquina há muito tempo. Hum, por volta de 2009 ou 2010. Eu estava trabalhando principalmente com... embora pareça que foi há uma
+
+eternidade. Eu estava conversando sobre isso com um amigo recentemente. Bem, lá por 2009 e 2010, era meio surreal que empresas confiassem em software de código aberto para realizar tarefas críticas para os negócios. Então, eu estava contribuindo para coisas como numpy, sci-fi, tipo pequenas antenas, esses microfones. Sim .
+
+Claro. Legal. Legal. Então, numpy, scypi, uh, a biblioteca mapplot, que continua sendo tão extremamente difícil de usar. Hum, scikit-learn, meio que nos primórdios da computação científica. E
+
+eventualmente comecei a trabalhar como engenheiro. Minha formação é em geofísica e matemática aplicada na graduação, e depois em ciência da computação e geologia de carbonatos na pós-graduação . Então, comecei na Chevron trabalhando em geociências de subsuperfície, fazendo muitas coisas como modelagem de velocidade, otimização de perfuração usando modelos de aprendizado de máquina muito básicos e também computação em larga escala. Então, se vocês, assim como eu, têm cabelos grisalhos, talvez se lembrem da Cloudera, uma das primeiras empresas a disponibilizar frameworks e ferramentas de código aberto para uso por empresas da lista Fortune 100. Então, coisas como o Spark... muitos membros da equipe do Data Bricks
+
+vieram do universo Cloudera. Então, eu estava criando vários clusters de máquinas ali. Eventualmente, o TensorFlow foi lançado no mundo do código aberto por volta de 2015, quase no final do seu desenvolvimento. E eu comecei a contribuir para isso. O mundo das geociências é muito voltado para GPUs. Eles já trabalhavam com GPUs antes mesmo
+
+do mundo do aprendizado de máquina, então eu tinha experiência com CUDA e todas as ferramentas associadas, e o TensorFlow, quando foi lançado, só suportava CPUs. Não sei o quão amplamente isso é conhecido, mas era como aprendizado profundo distribuído entre CPUs e eles precisavam de alguém para ajudar a fazer as GPUs funcionarem com o TensorFlow. É por isso também que existem três caminhos de código diferentes na estrutura original do TensorFlow 1, porque eles tiveram que reformular completamente o backend e substituí-lo para CPUs, GPUs e TPUs, tanto para computação em um único nó quanto para computação distribuída em vários nós. Bem, basicamente é isso. Devo toda a minha carreira ao software de código aberto e aos modelos de código aberto. E eu fui contratado pelo
+
+Google justamente por esse motivo. Bem, depois saí para trabalhar no GitHub por cerca de um ano no VS Code, que também é de código aberto, e fiz testes iniciais de experiência do usuário para o C-Pilot, e depois voltei para trabalhar em nossos modelos de grande porte. Bem , eu fazia parte das equipes originais do Palm 2, Gemini e Gemma. Sim. Então, essa é a jornada. Eu não tenho certeza.
+
+Como eu disse, não tenho certeza. É interessante. Você precisa ir embora logo. Você disse para marcar para as 4:15 porque eu tenho reuniões, temos reuniões da equipe de liderança das 4:30 às 5:30. Sim. E Gon estará aqui. E também,
+
+potencialmente, nosso colega Ian virá, e também. Possivelmente porque eu digo algo por horas. Acho que haverá coisas boas o suficiente. Sim
+
+. Se alguém estiver curioso, o código aberto é uma ótima maneira de trabalhar com a equipe para descobrir se você gostaria de trabalhar com eles e também garantir que seu projeto seja público. Eu adoraria mostrar meu palpite de quantas estrelas você conseguiu. Uau. Excelente. Bom trabalho. Estou colocando o papo em dia
+
+com vocês.
+
+certo? Normalmente, se você vê todo mundo correndo para fazer a mesma coisa, isso é um ótimo sinal de que é a coisa errada. Hum, e assim por diante, como se fosse algo que o modelo eventualmente terá a capacidade de fazer. Então, um dos meus exemplos favoritos disso é que, quando os modelos foram lançados pela primeira vez, eles tinham janelas de contexto de cerca de 8.000 tokens, 16.000 tokens, e então todo mundo estava
+
+correndo para construir um banco de dados vetorial, porque eles pensaram: "Bem, temos que contornar essa limitação de que os modelos têm essa janela de contexto muito pequena". E então, obviamente, isso se expandiu com o tempo. Hum, aí está outro ótimo exemplo de todo mundo correndo para criar versões refinadas de modelos para dar suporte a diferentes linguagens. Mas agora os modelos suportam uma variedade de idiomas. Se você esteve acompanhando algumas das sessões do Google DeepMind hoje, já deve ter visto isso em ação. Além disso,
+
+muitos dos modelos dos nossos concorrentes também suportam vários idiomas. Então, acho que, assim como vimos, todos estavam correndo para construir uma estrutura de agentes, quando na realidade, acredito que tudo isso provavelmente será absorvido pelo modelo eventualmente. E também todo mundo correndo para coisas como construir servidores MCP, enquanto agora a maioria das pessoas meio que se afastou dos servidores MCP e está adotando habilidades que são apenas arquivos markdown sofisticados . E, obviamente, a longo prazo, você pode imaginar algo como: "Ah, eu só quero um pequeno ouvinte, observando tudo o que eu faço, e isso criará automaticamente habilidades nos bastidores para eu usar." E vamos começar. Sim. Sim.
+
+Eu ia dizer que não concordo necessariamente, porque vocês sempre vão atender à maioria das aplicações, mas apenas aplicações muito específicas, como por exemplo, aquela em que eu trabalho, o Google não vai trabalhar. Então, esses tipos de contra-exemplos... nossa primeira implementação do Palm 2 e nossa primeira implementação do Gemini, tivemos que fazer ajustes em uma versão chamada MedLM e outra chamada MedPalM para dar suporte a casos de uso médicos. Bem, agora vemos que todas
+
+as pessoas que antes precisavam recorrer a esses ajustes finos estão simplesmente usando o Gemini sem nenhuma configuração adicional, seja com recuperação de dados ou com um prompt personalizado, porque todos os dados que usávamos para esses ajustes finos já estão incorporados ao próprio Gemini. Mas você tem o problema da reprodutibilidade. Você não vai obter os mesmos resultados. Você vai sofrer muitas consequências. Portanto, nenhum modelo de linguagem de grande escala é determinístico. Então, isso será um
+
+problema de qualquer forma. Bem, eu concordo que existem... sabe, acho que grande parte da mágica virá de ter uma visão bem definida sobre os casos de uso e de poder trabalhar diretamente com os clientes e resolver seus problemas. Então, com isso, e
+
+essa é uma transição perfeita para a sessão de hoje. Então, olá a todos. Obrigado por ser corajoso e por voltar. Bem, eu sei que muitas pessoas não puderam participar de algumas das sessões que tivemos hoje de manhã. Então, levantem as mãos quantas pessoas voltaram esta tarde, não estavam aqui esta manhã ou estavam... bem, tudo bem. Excelente. Então,
+
+temos uma surpresa para vocês hoje. Bem, em relação às sessões que realizamos anteriormente, vamos fazer basicamente um resumo delas. Então, vamos analisar todos os exemplos. Hum, você não vai sair de lá com a sensação de que perdeu alguma coisa. Hum, e eu estarei trabalhando em algumas coisas dentro do AI Studio e com antigravidade. Hum,
+
+e então meu colega, uh, meu colega Gom, e você também pode ver um dos meus agentes que está meio que usando o computador e navegando na internet. Hum, vou me desconectar por um segundo para que não vejamos acidentalmente algo que talvez não deva ser compartilhado. E então, vamos direto para o modo de apresentação de slides. Incrível. Então, olá a todos. Meu
+
+nome é Paige. Então, estou muito animada por estar aqui hoje. Hum, e estou particularmente animado para mostrar a vocês tudo o que temos feito no Google DeepMind ao longo do último ano, hum, dos últimos seis meses. Nossa, tem sido uma jornada incrível e nunca na minha carreira estive tão empolgado por ser um engenheiro de aprendizado de máquina trabalhando nessa área. Hum, durante o último mês e meio, parece um pouco como se tivesse sofrido uma lesão cervical. Bem, lançamos uma infinidade
+
+de coisas diferentes. Bem, o Gemini 3.1 Flash Live, que veremos daqui a pouco, permite que você tenha uma conversa em tempo real com a modelo. Bem, o Gemini 3.1 Pro e a Lanterna são, respectivamente, o nosso modelo maior e o nosso modelo muito, muito pequeno, mas muito capaz. Hum, que também são
+
+muito econômicos e muito eficientes. Bem, a Augment Code, se você já ouviu falar dela, é uma empresa da região da Baía de São Francisco. Recentemente, eles reformularam toda a infraestrutura de agentes para usar o Gemini 3.1 Pro por padrão, especificamente devido à relação custo-benefício. É possível realizar um trabalho muito bom com um custo muito baixo . Ah, e também o Nano Banana 2 para
+
+geração e edição de imagens, incluindo busca reversa de imagens, que também veremos em breve. E vocês ouvirão falar sobre isso do meu colega Guom, que é nosso especialista em mídia generativa. Nosso modelo Embedded 2.0 permite incorporar vídeo, áudio, imagens, código e texto no mesmo espaço de incorporação. Então você pode dizer tipo "me mostre tudo que você tem relacionado a lhamas" e você verá de tudo, desde lhamas de pelúcia até fotos e vídeos de lhamas, e até coisas como "qual é o som que uma lhama faz quando emite sons?", porque eu não sei, mas
+
+o modelo, de alguma forma, consegue imitar. Hum, LIA 3 para geração de música, Genie3 para construção de modelos do mundo, hum, nosso ambiente de execução completo com AI Studio que permite incorporar OOTH de banco de dados. Hum, chaves de API personalizadas caso você queira usar outros serviços e uma série de outras coisas. GIMA 4 para modelos abertos. Bem, nós lançamos o produto na semana passada sob a licença Apache 2, o que é realmente empolgante para quem se importa com modelos abertos.
+
+E também o VO3.1 light para geração de vídeo. Uma quantidade enorme de coisas em um amplo espectro de superfícies. E parte da razão para isso é que a Gemini é meio que única no setor em alguns aspectos. Uma delas é que é nativamente multimodal. Assim, ele consegue entender vídeo,
+
+imagens, áudio, texto, código e tudo isso ao mesmo tempo. Mas também pode gerar múltiplas modalidades de saída. Portanto, ele pode gerar texto e código, assim como todos os outros concorrentes no mercado. Hum, mas também pode gerar imagens, editar imagens, gerar imagens e texto intercalados e também gerar tokens de áudio. Hum, então, casos de uso bastante convincentes. Hum, mas acho que
+
+é muito mais interessante ver do que ficar só falando poeticamente sobre isso. Bem, para isso vou abrir o AI Studio rapidinho. Bem , vamos dar uma olhada em algumas das coisas que Gêmeos pode fazer. Bem, para começar, quantas pessoas já usaram o AI Studio antes? Hum, excelente. Fico muito,
+
+muito feliz que todos os membros do Deep Mind tenham levantado as mãos. Bem, para quem ainda não sabe, o AI Studio é o melhor lugar para ter acesso aos modelos da DeepMind assim que forem lançados. Hum, temos uma área de recreação infantil. Também temos um recurso de compilação, que veremos em um instante, muito semelhante ao vzero.dev ou ao lovable. Bem, você pode selecionar diferentes
+
+modelos aqui à direita. Então, como você pode ver, se eu clicar no nome do modelo, vemos algumas opções, desde Gemini até recursos ao vivo, como geração de imagem, geração de vídeo, geração de áudio e música, e também nossa família de modelos abertos Gemma, que veremos em breve. Você pode selecionar diferentes modelos para fins de velocidade. Estou selecionando a lanterna Gemini 3.1 (prévia). Também utilizo
+
+minha instância pessoal do AI Studio, numa tentativa de reduzir custos. Então, a lanterna Gemini 3.1 custa cerca de 25 centavos por milhão de tokens analisados. Hum, o que é realmente muito bom. Hum, quase uma ordem de magnitude inferior ao nosso modelo Gemini 3.1 Pro. E ele
+
+ainda consegue analisar vídeo, áudio, etc. Só que é muito mais leve, o que significa que você pode não ter sempre as mesmas funcionalidades excelentes. Mas geralmente funciona muito bem. E você pode fazer de tudo, desde analisar imagens até analisar vídeos. Então, se eu, por exemplo, fosse procurar um vídeo no YouTube que fosse parecido com um dinossauro. Nós já usamos esse
+
+Rexy, o pequeno T-Rex, antes. Então eu sei que funciona. Hum, mas... mas eu
+
+vou procurar... talvez este aqui, Carnado... que
+
+parece ser um vídeo muito, muito longo, com cerca de uma hora de duração. Hum, talvez a gente... divida isso em partes. Mas se
+
+você clicar nesse sinal de mais, verá que pode adicionar arquivos diferentes. Então você pode adicionar arquivos do Drive, desde arquivos de texto até PDFs. Você pode enviar arquivos diretamente. Você pode gravar áudio ao vivo. Hum, adicione imagens da câmera. Adicionaremos um link para um
+
+vídeo do YouTube, o que faremos agora mesmo. Então, eu colei o link do vídeo do YouTube. Vou definir um tempo inicial de 0 segundos e um tempo final em torno de 300. E a taxa de amostragem será de aproximadamente um quadro por segundo. Hum, e então o que você vê é que são , sabe, 30.000,
+
+hum, 30.900 tokens. Vou me certificar de desativar o recurso de aterramento da pesquisa do Google à direita. E eu gostaria de pedir que criem uma tabela com os horários de todos os tipos de dinossauros que aparecem neste vídeo. Não se esqueça de incluir uma curiosidade sobre cada dinossauro. Bem, para
+
+todos os outros especialistas em dinossauros, tipo, especialistas de sofá em dinossauros na sala, vocês devem ter notado que estava escrito Carnonosaurus. Tenho minhas dúvidas de que seja um dinossauro de verdade. Bem, então, uh, veremos. Veremos o que acontece. Bem, o que está acontecendo nos bastidores é que o modelo está recebendo este vídeo do YouTube para inferência. E
+
+não se trata apenas dos metadados associados ao vídeo do YouTube, mas também do próprio vídeo, quadro a quadro. E uma pergunta... tipo, alguém mais está tendo problemas para visualizar as configurações ou para alterar a iluminação? Ah, agora está melhor?
+
+Ah, excelente. Incrível. Bem, então, muito obrigada pelo pedido. Assim como eu fiz, consigo ver perfeitamente na minha tela. Normalmente, meus olhos ficam um pouco irritados no modo claro, mas isso não importa, contanto que seja melhor.
+
+E então, hum, então isso aconteceu no vídeo. Ele definiu os diferentes dinossauros que viu. Diz que o nome significa touro mediador. Um mencionou o tricerátopo. E também mencionaram que os piranodontes não são necessariamente dinossauros. São um grupo de
+
+répteis voadores. E se eu quisesse obter o código usado para gerar essa experiência e replicá-la no meu próprio aplicativo, tudo o que eu precisaria fazer seria clicar em "obter código" e o modelo seria configurado automaticamente. Ele configura a URL que eu inseri, o tipo de deslocamento para o vídeo, o prompt que eu usei e está em Typescript, Python ou qualquer outra linguagem que você prefira . Resumindo, se você conseguir fazer funcionar no AI Studio, conseguirá fazer funcionar como parte do seu aplicativo. Basta clicar no botão "Obter código". Então,
+
+essa é uma lanterna Gemini 3.1 para análise de vídeo. Você também pode usá-lo para analisar imagens com algumas outras ferramentas integradas. E se olharmos para a direita, podemos ver saídas estruturadas, execução de código, coisas como chamadas de função, inclusive para funções personalizadas. Hum, também algumas coisas como o contexto da URL. Bem, e todas essas opções são muito,
+
+muito especiais, mas também podem ser usadas em uma única linha, caso você queira incorporá-las à sua API. Bem, por exemplo, se eu ativar a execução de código, verei uma lanterna Gemini 3.1 selecionada e entrarei no modo de comparação. Então, eu quero comparar isso, hum, talvez com a pré-visualização em flash do Gemini 3 , também com a execução de código ativada. Hum, e vou procurar uma foto de peças de Lego.
+
+Hum, este aqui. E copie a imagem. Bem , neste momento estamos em modo de comparação. Estou comparando dois modelos diferentes, ambos com a mesma ferramenta ligada. Hum, e diga algo como desenhar caixas delimitadoras em torno de todos os blocos de Lego verdes usando Python. Hum, certifique-se de
+
+exibir a imagem com caixas delimitadoras. E a execução de código meio que dá ao Gemini a capacidade de criar um ambiente Python improvisado, isolado, que usa várias bibliotecas de ciência de dados pré-instaladas e as invoca como chamadas de ferramentas, como se você estivesse escrevendo o código e incorporando qualquer coisa que queira compartilhar. Então, eu compartilhei esta imagem e, muito rapidamente, não sei se você viu a rapidez, ele conseguiu desenhar caixas delimitadoras ao redor dos blocos de Lego verdes. Você também pode solicitar máscaras de segmentação. E, ainda mais empolgante, o Gemini 3 Flash continua funcionando a todo vapor . Bem, se você observar o
+
+custo para definir as caixas delimitadoras, também poderia ter perguntado coisas como, por exemplo, quantos Legos verdes existem ou quais são as orientações dos blocos de Lego. Diga-me, quantos... você sabe como eles se chamam? Aqueles coelhinhos
+
+engraçadinhos, laboo. Diga- me quantos desses você vê em todos os frames deste vídeo. e em que momento, essas são as ferramentas que podem ser invocadas através do ambiente sandbox. E, novamente, é muito, muito barato fazer esse trabalho com a lanterna Gemini 3.1 e a execução de código ativada.
+
+E é apenas uma linha de comando para configurar esse ambiente Python isolado, com recursos computacionais que o Gemini pode usar para realizar esse trabalho. Legal. E parece que a pré-visualização em flash do Gemini 3 conseguiu fazer isso. Estava verificando seu funcionamento. Essa foi a iteração pela qual o processo passou . Então, obteve esse
+
+primeiro resultado e disse: "Certo, quero verificar novamente se o que fiz está correto." Ele desenhou a máscara de segmentação para definir todos os espectros verdes que viu na imagem. E então verificou se essas eram as coordenadas corretas. Ainda assim, se eu observar, o custo da verificação é significativamente maior, mas ainda é da ordem de centavos para desenhar as caixas delimitadoras. Apenas levou um pouco mais de tempo e também muito mais chamadas de ferramentas para invocar. Portanto,
+
+recomendo fortemente que você experimente o Gemini 3.1 Flashlight para seus casos de uso, especialmente se antes você dependia do Gemini 2.0 Flashlight ou 2.5 Flashlight. Legal. Também temos um recurso
+
+chamado "build". O "build" é semelhante ao v0ero.dev ou ao Lovable, se você já o utilizou. Recentemente, adicionamos um recurso que permite adicionar bancos de dados aos seus aplicativos dentro do "build". Então, como exemplo...
+
+Hoje, se eu quisesse clicar neste cara e dizer algo como " crie um aplicativo que permita ao usuário fazer upload de uma imagem de sua estante de livros. A estante deve ter vários livros, com as lombadas visíveis, além de títulos e nomes dos autores. Quero que você use o Google Search para preencher as informações dos livros. Certifique-se de incluir o título, o nome do autor, a descrição e o gênero do livro. E quero que você salve tudo em um banco de dados. O
+
+usuário faz login com sua conta do Google, envia uma foto da sua estante e o aplicativo salva todos os livros em um banco de dados . Assim, ele sabe quais livros possui e tudo fica vinculado à sua conta", o que é uma tarefa complexa. Bem, meio que defini esse trabalho. Eu selecionei a versão 3.1 Pro Preview.
+
+Vou usar a configuração padrão, na esperança de que seja um pouco mais rápida. E vou clicar em " Compilar". O que acontece nos bastidores é que somos colocados em um ambiente semelhante a uma IDE, onde podemos ver o modelo passando pelo processo de raciocínio, descobrindo o que precisa fazer para especificar a tarefa, compilar o plano e verificar quanto tempo leva para funcionar. Também é possível fazer upload de arquivos, como PDFs ou especificações de aplicativos que você gostaria de criar, e enviá-los para o modelo. Você pode se conectar à sua instância do Google Drive.
+
+E também temos uma seção de configurações à direita, onde você pode definir segredos personalizados. No momento, tenho uma chave de API do Gemini que já adicionei. Mas você também pode adicionar uma chave de API do Superbase, do Naden ou qualquer outra de sua preferência . Bem, você pode ver um novo histórico de versões, o que, se você já usou o AI Studio antes, é definitivamente algo muito apreciado. E também integrações. Coisas
+
+como OOTH, bem como GitHub, para que você possa sincronizar com um repositório público ou privado . Mas enquanto isso funciona, vou mostrar algo chamado Genie 3. Ou melhor, antes disso, vou mostrar o Gemini Live rapidinho. Só para o caso de alguém não conhecer. Quantas pessoas já ouviram falar do Gemini Live? Poucas mãos. Legal,
+
+legal, legal. E nós também temos o especialista em Gemini Live aqui. Ian, venha até aqui. Ian é o membro da equipe do Gemma 4 que eu mencionei antes, e ele fará algumas demonstrações de modelos ao vivo, o que me deixa muito animado. Mas... O
+
+Gemini Live permite que você converse com o modelo em vários idiomas. Além disso, você pode compartilhar feeds de vídeo e sua tela. Tudo isso é integrado em um único fluxo de trabalho de reconhecimento de fala (speak-to-text), compreensão de linguagem natural (LLM) e conversão de texto em fala (texto para fala). Por exemplo, ainda temos as peças de Lego abertas, então posso compartilhar minha tela para dizer: "Olá , Gemini. O que você vê na tela?".
+
+Vejo uma pesquisa do Google por "peças de Lego" . Há resultados de imagens mostrando vários tipos de peças de Lego, conjuntos e diferentes combinações de cores. À direita, há uma prévia maior de algumas ilustrações coloridas de peças de Lego da Freepick. Você está procurando algo específico? Alguém fala um idioma diferente do inglês?
+
+Busque. Veja? Ah, excelente. Então, vou pedir para você verificar um fato e também a ortografia. Responda apenas ao usuário. Em busca. Está correto?
+
+Eu quis dizer espanhol. Ah, desculpe. Ah, entendi. Então, espanhol e sim. Ah, aí está. Uh, apenas
+
+espanhol. Excelente. Hum, e então eu ia dizer que não conheço esse idioma ou que nunca o tive antes. Hum, mas apenas espanhol para resposta. Eu sei, eu sei espanhol. Tipo, eu cresci no
+
+Texas, então é meio que um pré-requisito saber espanhol. Uh, mas... mas vou compartilhar novamente. Hum, ei
+
+Gemini, você poderia me dizer o que vê na tela?
+
+Ou, espero que me deixe ver. Não, acho que preciso
+
+clicar no microfone novamente. Ah, é o... Aí está. Tipo, o...
+
+Então, uma das coisas que você pode fazer... você vê que eu modifiquei as instruções do sistema. Hum, mas... tipo, você fala um
+
+dialeto específico do espanhol? Espanhol castelhano. Ok, excelente. Então, hum, eu removi as instruções do sistema e devo ser capaz de fazer isso durante a conversa. Hum, então, Ei, Gemini, você poderia me dizer o que vê na tela, mas em espanhol castelhano?
+
+Excelente.
+
+Sim. Incrível. Então, você pode perguntar durante a conversa. Você pode modificar as instruções do sistema para selecionar diferentes idiomas ou dialetos. E, novamente, se você clicar em " Obter código", ele fornece o código necessário para replicar o que você acabou de fazer. Ou seja, o
+
+nome do modelo, quaisquer configurações, bem como quaisquer chamadas de ferramentas que você possa invocar. E funciona com o compartilhamento de tela. Você pode interagir com a sua tela enquanto a compartilha . Mas também funciona com transmissões de vídeo. Então você pode dizer: " Ei, Gemini, quantos dedos estou mostrando?" E também compor um poema
+
+sobre mim. Bem, eu vejo dois dedos levantados, como o sinal de paz. E aqui está um pequeno poema para você: Com cabelos dourados e um coração aberto, você vem para aprender, para desempenhar seu papel. As câmeras focam, os momentos começam, um espírito criativo, uma obra de arte. Como foi?
+
+Isso? Foi muito gentil da sua parte. Obrigada. Então, os modelos conseguem interagir, visualizar feeds de vídeo e telas. E você pode juntá-los em seus próprios projetos. Só para dar uma olhada.
+
+Vou habilitar o Firebase rapidinho. Ele deve configurar o banco de dados para o aplicativo que estávamos criando. Outra coisa que eu queria mostrar é o Genie. Se você nunca ouviu falar do Genie, é um modelo de mundo criado pela DeepMind . Na verdade, é uma composição de modelos: Nano, Banana, VO, vários Gemini usados ​​para comandos, e tudo é unido em um sistema que permite descrever algo como um jogo, um ambiente com um personagem com o qual você pode interagir, jogar e fazer isso pixel por pixel. Ele
+
+não gera um ambiente Unity. Não gera um ambiente para Unreal Engine. Ele apenas gera isso. É como uma experiência quadro a quadro para qualquer coisa que você possa imaginar. E por aí vai . Então, poderia ser algo como esta
+
+paisagem vulcânica onde você navega com um pequeno veículo explorador usando as setas do teclado. Ou algo como este jet ski onde você atinge uma luz e parece que a física está acontecendo, ou como se a física estivesse reagindo de forma real. Se você jogasse a luz na água e depois desse a volta, ela persistiria durante os 60 segundos do seu experimento. Mas não há nenhum motor de física por trás disso. E mesmo coisas como vivenciar um furacão na Flórida, você pode começar com uma imagem estática ou uma foto de família e ver como algumas dessas coisas são criadas. Mas para isso,
+
+vou voltar ao meu outro navegador. Vou abrir o Project Genie. Vou clicar em "Explorar agora". Então, vou dizer algo como " um mundo". Talvez o Regent's Canal em um dia ensolarado, mas com golfinhos.
+
+Bem, nadando no canal e todos os barcos com bandeiras de pirata, o que esperamos que não faça parte dos dados de treinamento. E então, a descrição do personagem seria algo atípico, talvez um esquilo rosa brilhante com pés roxos e um chapéu de pirata. E então, criar o esboço. O que deve acontecer é que ele usa o Nano Banana para gerar ideias para esse primeiro quadro. Ele nos mostrará para garantir que esteja consistente com o que descrevemos. Claramente, o
+
+Canal Regent está sendo tomado por esquilos rosa brilhantes com chapéus de pirata. E então, o que devemos ver é essa primeira iteração e um mundo jogável com o qual podemos interagir por 60 segundos, pelo menos para a primeira implementação que lançamos ao público. Você pode acessar o Genie 3 por meio de uma assinatura Ultra. Em algumas partes do mundo. Hum, não em todas as partes, hum, mas, hum, mas espero que eu não tenha sobrecarregado minha alocação de GPU ou TPU. Hum,
+
+se tivermos, hum, podemos dar uma olhada na verificação de prateleira. Parece que o modelo está criando as regras do Firestore para nós. Ah, aí está . Então, esquilo rosa brilhante, hum, chapéu de pirata, canal regional, golfinhos. Parece muito bom. Hum, então vamos
+
+criar este mundo. Hum, você pode usar as setas do teclado para se mover, hum, ou as teclas W e D para se mover e as setas do teclado para mudar a perspectiva. Hum, e também devemos conseguir usar a barra de espaço para pular. Hum, mas vamos ver. Vamos ver como isso funciona.
+
+Hum, nossa. Uau. Uau. Uau. Esquilo.
+
+Hum, e parece que o esquilo está andando sobre a água. Hum, ou como Uh, pulando por aí. Hum, você também pode pular. Hum, então pule em cima dos barcos. Uh, você pode ver as bicicletárias. Hum, você
+
+pode ver algumas pessoas pelo caminho. Hum, e parece que todos esses barcos no Regent's Canal têm bandeiras de pirata e golfinhos que não estão se movendo, o que é bem louco. Hum, e se eu clicar na barra de espaço, você pode ver o esquilo pular. Hum, parece que ele não percebe que o Regent's Canal tem águas bem profundas, então eu provavelmente deveria ter especificado isso no meu comando. Hum, e você também pode vê-lo tentar pular. Hum, tentar pular para
+
+a calçada e fazer o seu trabalho. Hum, então é incrível poder ver as coisas que você pode criar. Hum, as diferentes experiências que você pode construir. Hum, e, novamente, é ainda mais maluco para mim que cada parte disso Está sendo gerado dinamicamente conforme você move as teclas de seta. Então, ele cria um vídeo no final que você pode baixar, assistir, revisar e interagir. E isso
+
+usa o Gen3 e essa composição de modelos, em vez de um modelo único. Outras empresas de construção de modelos de mundo, como a World Labs, empresa do Fe Lee, estão adotando uma abordagem um pouco diferente. Elas estão construindo ambientes reais para Unity ou Unreal Engine . Nenhum desses elementos é armazenado como ativos 3D de jogos. São apenas pixels brutos incorporados à experiência.
+
+Legal. Voltando ao AI Studio, parece que o aplicativo ainda está sendo desenvolvido. Deixe-me ver, e espero que possamos dar uma olhada . Normalmente, quando ele começa a trabalhar nos arquivos de configuração, significa que está quase pronto. Eu também gosto muito de analisá-lo para ver qual é a sua abordagem para a construção das regras do Firestore. Bem
+
+, qual seria a abordagem do modelo para interagir com ele? Parece que está confirmando o aplicativo. E então, quando terminar, deve emitir um pequeno som para se comunicar com o próprio aplicativo. Parece que está pedindo permissão para usar minha câmera. Vou permitir.
+
+Temos essa experiência de escaneamento de prateleiras com IA . Vou entrar com minha conta pessoal do Google. Podemos ver que está conectado à Fire Store. Vou encontrar rapidamente uma estante com livros.
+
+Vamos ver. Não parecem livros de verdade, porque muitos deles estão pendurados, suspensos, abaixo da prateleira. A geração de imagens por IA dificulta isso. Mas esta parece decente. Então, vamos salvar esta imagem. Parece que alguém
+
+tem vários livros de culinária. Vou enviar a foto. Esta foto em pixel... e espero que
+
+entenda... espero que Ele consegue entender páginas da web ou formato WP. Ele está coletando dados por meio da busca do Google. E então os livros
+
+devem aparecer na biblioteca, espero. Se não, podemos tentar com um JPEG. Mas a identidade visual é muito boa. Ele conseguiu identificar os sete livros, pelo que parece. Ou pelo menos parece que os identificou. Deixe-
+
+me tentar novamente, mas apenas com uma imagem JPEG. Vou tirar uma captura de tela. A mesma imagem, só que salva como captura de tela.
+
+Vou encontrar aqui. Captura de tela da área de trabalho em 417. Depois, identificar livros.
+
+E se não funcionar, podemos tentar corrigir os erros também, para ver o que pode ter dado errado.
+
+Ah, então parece que não há permissões suficientes para salvar no Fire Store. Então, parece que ele está corrigindo esses problemas. Enquanto isso, você também pode ver que pode entrar, sair e compartilhar o aplicativo. Assim, você pode especificar quem tem acesso a ele e compartilhar. Tela cheia. E
+
+uma das coisas que eu realmente adoro no AI Studio é que ele descobre onde os arquivos devem ser modificados para que as alterações sejam feitas. Ele calcula a lógica de validação, identifica que o tamanho pode ter sido o padrão, ou seja, o tamanho da URL da imagem, e então descobre onde precisa ser modificado para fazer a alteração. Parece que está nas regras do Firestore. Outra vantagem do recurso de compilação do AI Studio é a galeria de aplicativos. Se você precisar de inspiração para alguns dos aplicativos que usam nossos modelos, pode analisá-los. Há de tudo, desde o
+
+LIA para geração de música até experiências multiplayer com jogos. Você pode ver este jogo multiplayer Neon Snake ou este Mandal Bulb Explorer. Pode ver um design com o Nano Banana. É possível alterar e modificar imagens. Você pode dar uma olhada no exemplo do Sik Media Pipe, que permite...
+
+Para jogar esse jogo em que sua mão é detectada. Hum, mas você pega esse pequeno... e todo mundo pode descobrir que eu jogo muito mal. Hum,
+
+como... mover uma das pequenas bolinhas de gude. Hum, nossa , eu sou péssimo nesse jogo. Hum, mas... e
+
+parece que o outro aplicativo terminou de ser criado. Hum, timing perfeito. Hum, mas se eu... se eu enviar a imagem,
+
+vamos tentar identificar o livro novamente. Dedos cruzados.
+
+Sim. E então ele preenche automaticamente todos os livros. Então todos eles foram...
+
+todos foram catalogados com a data, o tipo de livro, os detalhes associados, hum, o nome do livro, o autor, mesmo que alguns desses não estivessem disponíveis nas lombadas dos livros que eu enviei. Hum, se eu sair e entrar novamente, hum, ele mantém todos os livros que eu adicionei. Hum, e se eu quiser compartilhar Estou compartilhando isso com vocês porque, obviamente, quero saber o que vocês têm em suas estantes. Bem, eu poderia copiar este link e gerar um código QR . Se vocês usarem este código QR, poderão acessar o aplicativo que acabei de criar, enviar as imagens das suas estantes e catalogá-las nos seus próprios aplicativos. O
+
+próximo recurso seria dar aos meus amigos a possibilidade de solicitar livros. Porque toda vez que dou um livro para meus amigos, eles tendem a ficar com ele, o que eu entendo, mas também é cansativo. Tenho tantas cópias de Infinite Jest por aí! Mas, enfim, este foi um breve resumo de algumas das coisas que vocês podem fazer no AI Studio, alguns dos novos recursos que adicionamos e os novos modelos que temos disponíveis. E com isso, vou dar as boas-vindas ao meu colega Guiam, que vai falar sobre nossos modelos de mídia generativa. Tudo,
+
+desde geração de música. Da criação de imagens à edição de imagens e geração de vídeos. E deve ser muito divertido. Muito obrigada. Obrigada por virem.
+
+Olá a todos.
+
+Vocês precisarão do botão "up"
+
+e este é o certo.
+
+Vocês vão arrasar. E então, onde eu parei? Vocês podem mostrar minha tela agora. Ok, ótimo. Então, como P disse, será a mesma palestra que dei esta manhã, o mesmo workshop. Só que
+
+temos um pouco menos de tempo. Então, vou falar mais rápido em algumas coisas e talvez não execute algumas coisas em tempo real. Mas o conteúdo que vou mostrar está neste link. Então, se vocês quiserem, podem simplesmente abri-lo e executá-lo ao mesmo tempo. Então, vou falar sobre mídia generativa. Mídia generativa é tudo
+
+sobre criar imagens, vídeos, texto, como texto falado e coisas assim. Acho que eu encaixaria Jenny em mídia generativa como... Bem, então, sim, e temos muitos modelos assim no DeepMind. Deixe-me
+
+explicar todos eles. Bem, rapidamente, meu nome é Guom. Estou no Google há seis anos. Dois anos na Divine, trabalhando com defesa de desenvolvedores. Principalmente com o modelo Gemini até o ano passado, e desde então estou me concentrando mais nos modelos generativos, porque esse é o modelo mais divertido de se trabalhar. Eu já
+
+trabalhei na indústria de videogames antes, e foi assim que entrei no Google. Então, sim, abram seus celulares. Tudo é mídia. Eu já disse isso. Basicamente, Paige falou um pouco sobre nossa visão do que são modelos de mundo.
+
+Minha definição de um modelo de mundo é algo que pode absorver o máximo de modalidades possível e entendê-las através dos cinco sentidos, além de também se comunicar ou gerar informações em diferentes modalidades. Isso realmente está no cerne da visão do DeepMind sobre o que é generativo. A IA deveria ser... Ah, o modelo Gemini de primeira geração,
+
+tipo, foi lançado há apenas dois anos, mas parece antigo, era apenas um modelo de texto para texto, mas na verdade, nos bastidores, já era um modelo multimodelos, porque você podia enviar imagens, mas isso foi bloqueado. Eles fizeram isso por motivos de teste. Não me lembro por quê, mas basicamente eles bloquearam isso no modelo durante o pós-treinamento. E depois, quando foi lançado alguns meses depois, lançamos a versão 1.5. A grande
+
+novidade era que se tratava do primeiro modelo multimodelos. Às vezes, quando você mostrava uma imagem, a resposta era: "Desculpe, eu sou apenas LLM." Não consigo fazer nada com as imagens porque parte do treinamento ainda está lá. Bem, basicamente sim, queremos criar modelos que consigam compreender toda a física do mundo a partir de vídeos, áudios e tudo mais . E a única razão pela qual temos tantos modelos diferentes é que é mais fácil lançar um modelo que só reproduza vídeo, um que só reproduza imagens e outro que só reproduza texto, do que ter um único modelo que faça tudo. E então isso se tornou um
+
+problema. Sempre que queremos atualizar uma das funcionalidades, temos que lançar um modelo completamente novo e todos precisam se adaptar. Então, essa é a razão. Bem, todo mundo nos conhece pelos modelos Gemini, mas temos muitos outros modelos. Vou falar sobre eles mais tarde, mas vou pular essa parte por enquanto. Uma
+
+breve linha do tempo. Nós lançamos coisas o tempo todo. Hum, acho que a Paige já disse isso antes: em média, lançamos um novo modelo ou novas funcionalidades a cada cinco dias. Ah, esses são apenas os modelos de mídia genéricos. Ah, além disso, existem todos os outros modelos.
+
+E se você adicionar todas as mudanças que estamos fazendo no AI Studio, todas as questões de preços, como pequenos recursos aqui e ali, estamos lançando de duas a três novidades por semana. Bem, então, sim, é basicamente difícil acompanhar, e até mesmo para nós é difícil acompanhar tudo o que temos a oferecer. Então, eu sei que para pessoas como você é ainda mais difícil, porque você também precisa observar o que a concorrência está fazendo. Então, é por isso que estamos realizando essas conversas muito rapidamente. Ah, as novidades sobre a Nano Banana. Lançamos o Nano Banana 2 há alguns
+
+meses, no final de janeiro, início de fevereiro. O principal é que você pode gerar diferentes proporções e tamanhos de imagem. Tem fundamentos de pesquisa. Então, basicamente, é assim que eu faço para você não ver mais a minha tela.
+
+Por que?
+
+Ok, imagine que é para isso que servem os anúncios na mídia. Bem, o principal sobre... Ah, obrigada.
+
+Nano Banana uh Pro era isso, adicionava fundamentos de pesquisa. Então você poderia pedir para ele pesquisar na internet e foi assim que eu criei esta imagem. É só procurar no Google o que você consegue encontrar sobre mim e criar uma imagem minha, o que é meio assustador, de certa forma. Bem, a novidade do Neo Banana 2 é que você pode fazer a mesma coisa com a imagem em execução. Então, você pode falar sobre um lugar específico, como uma ponte, por exemplo, e o programa procurará uma imagem na internet e criará uma imagem com base nela. Isso
+
+sem considerar o funcionamento em modo de espera e sem aterramento. Como você pode ver, parece um pouco mais do que um prédio normal. Também temos locução. Resumindo rapidamente, a principal novidade da última semana no VO é que lançamos a versão 3.1 Light na semana passada, que é o modelo mais barato para geração de vídeo que temos. Portanto, são apenas 5
+
+centavos por imagem. Portanto, é muito, muito mais barato do que o V3 era há um ano. Então, a ideia é que você pode usar isso para criar protótipos, testar suas sugestões e assim por diante. E se você quiser uma qualidade melhor, pode optar pelos modelos superiores. Ah, e o LA 3 é o modelo mais legal deste ano. É tudo um
+
+modelo de geração musical. Então você pode gerar músicas de 30 segundos ou músicas completas de três minutos, com a letra e tudo mais. E depois mostrarei algumas demonstrações para vocês. E, pelo que sei, somos os primeiros a oferecer esses modelos de geração de música por meio de API. Isso é muito legal para qualquer tipo de fluxo de trabalho com agentes ou qualquer outro tipo de fluxo de trabalho que você possa ter.
+
+Então, se você quiser ser acordado todas as manhãs com uma música sobre as últimas notícias , você pode. Hum, e outra coisa que eu adoro, mas que ninguém conhece, é que temos outro modelo da LIA que é o LA em tempo real, e este é basicamente um modelo ao vivo. Então, ele cria música indefinidamente e você pode simplesmente acioná-la de maneiras diferentes. Então, isso vai mudar o tipo de música que você está gerando em tempo real, como um DJ. Então, é bem divertido brincar com isso, mas algumas pessoas mais velhas não sabem da sua existência. Como eu
+
+disse, vou participar porque é para ser um workshop. Então, a ideia é que você teste as coisas por si mesmo. Então, você pode abrir este link e ele mostrará o conteúdo que preparei. Bem, enquanto você tira fotos e tudo mais, só um aviso: são modelos de mídia genérica. Portanto, todas elas são modelos remuneradas. Então, eles gostam de usar o
+
+notebook, o que na verdade custa um pouco de dinheiro. A geração de vídeo será a coisa mais cara. Então você pode ficar com isso. O resto é bem barato. Então, acho que você pode executar o notebook "wall" por algo como um. Então, tudo deve correr
+
+bem. Mas eu prefiro ser claro com todos. Então vamos lá. Qual é, então, a ideia deste workshop? Então, a ideia era mostrar todos os modelos de mídia da Gen com este exemplo: vamos pegar um livro, e vamos pegar um livro de uma biblioteca de código aberto. Então, nós temos
+
+permissão para usá-lo e, em seguida, vamos criar imagens para ilustrar a aparência dos personagens e o que está acontecendo em cada capítulo, e depois passaremos para os outros modelos de mídia da geração anterior. Então, estamos criando vídeos sobre o capítulo, compondo músicas e pedindo para o Gemini nos contar o que está acontecendo no capítulo. Isso é apenas uma configuração. Você precisa instalar o SDK. Você precisa de uma chave de API. Acho que você já devia ter
+
+imaginado isso. Hum, estou inicializando o cliente. E algo que eu não sabia até recentemente é que você tem uma maneira de implementar um sistema de repetição ao inicializar o cliente . Então, o que é muito útil hoje em dia, principalmente quando se usa o Nano Banana, porque, especialmente agora que os EUA estão se conscientizando, está ficando mais difícil conseguir algo com isso. E estamos trabalhando nisso, sim, estamos trabalhando para aumentar a capacidade, mas ter algum tipo de sistema de repetição sempre ajuda.
+
+Então, importamos e selecionamos os modelos. Normalmente, quando crio conteúdo usando modelos pagos, tenho uma caixa de seleção que você pode marcar. Se você abrir o arquivo, ele já estará marcado, mas não deveria estar. Mas cometi um erro ontem à noite, porque não quero que as pessoas executem os modelos e tenham que pagar, especialmente pelo VO Notebook, por exemplo, que custa cerca de US$ 20 para executar. Então, não quero que ninguém o execute por engano.
+
+Só para a demonstração, também estou limitando o número de imagens de personagens e imagens de capítulos que estamos criando, para que seja mais rápido de executar. O livro se chama "O Vento nos Salgueiros", de Kenneth Grahame, e eu o peguei das bibliotecas do Projeto Gutenberg, que é uma biblioteca de código aberto onde você pode baixar arquivos de código aberto. livros. Por algum motivo, não funciona desde que estou no Reino Unido. Portanto, deve haver algum motivo para essa biblioteca não estar disponível no Reino Unido. Mas se você executar
+
+o notebook, ele deverá funcionar, pois é muito provável que o servidor esteja em outro país. Assim, será possível recuperar o livro. Então, o que eu estou fazendo é baixar este livro aqui, usando um link, e eu não falei sobre isso, nem sobre a página. Então, muito rapidamente, porque todo mundo sempre nos faz essa pergunta. Uma das especialidades do Google é criar vários projetos que fazem a mesma coisa — vários produtos — e fizemos o mesmo com os aplicativos de mensagens. Estamos fazendo
+
+o mesmo com a Gemini. Isso pode ser um pouco confuso. Então, só para esclarecer rapidamente as coisas, se você olhar para o gráfico, basicamente temos os aplicativos dos consumidores. Então, à esquerda, estão os aplicativos que são para todos. Você pode fazer muitas coisas com eles. Você pode...
+
+você pode fazer qualquer pergunta para Gêmeos. Você pode gerar as imagens e tudo mais, mas como desenvolvedor, assim como imagino que todos nesta sala, você pode ficar um pouco frustrado porque você não consegue acessar os parâmetros, selecionar o modelo exato que está sendo executado, você sabe que provavelmente está fazendo chamadas de ferramentas interessantes, mas você não sabe qual delas está sendo feita. Então, isso é bom para o público em geral, mas não é realmente para nós. Por outro lado, temos a Vertex AI, que é nossa oferta voltada para empresas, e que é exatamente o oposto. Você tem muito controle. Você pode decidir em qual
+
+centro de dados seus prompts serão executados. Então, especialmente na Europa, muitas pessoas querem ter certeza de que os dados não sairão do continente. Então isso é... é meio
+
+conveniente nesse caso. Mas isso também traz grandes responsabilidades. Então é meio difícil de configurar. Normalmente, só recomendo que as pessoas comecem a usar o Vert.ex se já estiverem usando o GCP ou se tiverem uma equipe de DevOps que possa fazer a configuração para elas. Como uma
+
+solução intermediária, temos o AI Studio e as APIs para desenvolvedores que criamos. Basicamente, a ideia é que seja o mais fácil possível começar a usar o modelo e fazer coisas simplesmente criando uma chave de API e usando-a. E, como parte dessa facilidade, temos a API de upload de arquivos do cliente, que basicamente permite não precisar configurar buckets para armazenar seus arquivos. E nós vamos... Estou usando isso neste
+
+exemplo para que possamos fazer o upload nos bastidores. Está criando um bucket, mas a ideia é justamente essa: você não precisa se preocupar com o funcionamento dele. Basta fazer o upload do arquivo e depois você poderá usá-lo em seus prompts do Gemini. Hum, também vou usar saídas estruturadas porque quero ter certeza do que exatamente o modelo vai fazer, já que vou pedir para ele gerar muitas instruções. Então, eu quero saber exatamente isso: está apenas retornando a mensagem inicial e não alguma introdução ou texto, ou algo do tipo "ah, sim, claro, posso fazer isso", e aí fica difícil de passar. Então, é por isso que estou tendo
+
+essa saída estruturada e usando o modo de bate-papo, que é basicamente uma maneira de encadear solicitações ao modelo para que ele possa salvar o histórico e reenviá-lo, de forma que o modelo saiba o que aconteceu antes, o que é bastante conveniente neste caso, porque não queremos fazer o upload do livro o tempo todo. Queremos apenas que o livro esteja inserido na história e no contexto, para que os modelos possam formular novas perguntas e gerar novas reflexões sobre o livro. E quanto às imagens, será praticamente a mesma coisa usando este sistema. Teremos todas as imagens anteriores que estavam na memória. Assim, o modelo será melhor em manter a consistência dos personagens e também a consistência do estilo.
+
+Então, eu só estou dando o livro para ele. Aqui está o livro para ilustrar com nano banana. Isso é tudo. Então, estou definindo um estilo. Então eu fiz de um jeito que você não precisa fazer nada e o modelo cria o estilo automaticamente. Mas aí eu
+
+quis experimentar algo diferente mais cedo. Então será um estilo de fantasia sombria com fundo preto e branco e personagens coloridos. Bem, basicamente, também adicionei algumas instruções de sistema para o Nano Banana porque, com base nos meus testes anteriores, acho que funciona melhor com o Nano Banana 2 e o Pro. Mas com a primeira Nano Banana, sempre que eu pedia imagens de livros em formato retrato, ela tendia a mostrar as capas de livros que eu queria. Então, era sempre uma questão de adicionar títulos e coisas do gênero . Então, precisei adicionar algumas
+
+instruções ao sistema para garantir que eu não quisesse bordas. Eu não quero títulos. Não quero descrição. Eu me mantenho em um ambiente familiar, o que provavelmente não se alinha muito com fantasia sombria, eu acho. Hum, e...
+
+e sem quadrinhos também, porque eu não quero... eu não quero uma história em quadrinhos. Eu quero apenas uma imagem para cada capítulo. E então, basicamente, usarei
+
+esse chat para pedir à modelo que descreva cada um dos personagens principais. Inicialmente, escrevi apenas sobre adultos, mas em certos momentos o Nano Banana não conseguia gerar imagens de crianças na Europa, mas isso não acontece mais. Então poderíamos remover essa parte e eu estou recebendo esta lista de personagens e um prompt para cada um deles. E então eu posso simplesmente analisar cada uma das instruções e pedir para o Nano Banana criar uma imagem que ilustre essa instrução. Então é assim que eu inicializo o gráfico de imagens. Portanto, será um
+
+gráfico separado. E então estou enviando todos os prompts para serem criados. Então podemos ver que...
+
+então, esse é o pequeno personagem principal. Então, como solicitado, o fundo é preto e branco, e o personagem está colorido. Hum, não é exatamente fantasia sombria, mas sim. Hum, esse é o rato d'água. Esse é o sapo.
+
+Ah, o texugo. Sim, o texugo. E, bem, é isso por agora. E então vou fazer a mesma coisa de novo, tipo, agora você tem o livro inteiro na sua história. Então me dê sugestões para cada capítulo para que eu possa ilustrá- los. Então, para cada capítulo, recebo uma sugestão
+
+e crio imagens para cada uma delas. Aqui temos os personagens fazendo um piquenique à beira do rio. Então, outro carro está na estrada e algo está acontecendo. Bem, e aqui na floresta, esse é o primeiro capítulo. E se você olhar atentamente, poderá ver que havia um problema aqui, porque o sapo não foi representado usando os personagens e as imagens que havíamos criado anteriormente. Provavelmente porque o enunciado
+
+não deixou claro que se tratava exatamente do mesmo personagem. Então, é por isso que tenho uma segunda maneira de fazer isso, que na verdade é mais limpa. E se você fosse fazer isso em grande escala, é assim que eu faria. Bem, e estou criando outro tipo de saída estruturada, que é um capítulo com um nome e o enunciado , além de uma lista de personagens que devem aparecer na imagem. Então, estou executando o programa e pedindo novamente ao modelo para criar algo, mas desta vez ele está me dando a lista de personagens. E dessa
+
+forma eu posso, basicamente, para cada imagem que eu for criar, também fornecer as imagens de referência de como o personagem deve ser. Portanto, ele só tem essas imagens em seu contexto, em vez de ter todas as imagens possíveis como tínhamos antes. Neste caso, temos algo como cinco caracteres. Então, tudo bem. Mas se você estiver em um livro de verdade com uns 40 personagens, não seria sustentável esperar que os modelos conseguissem lidar perfeitamente com todo o contexto. E,
+
+sinceramente, se eu fosse fazer isso em grande escala, acho que criaria até mais de uma imagem para cada personagem. Talvez uma imagem da frente, uma de trás e uma de cada lado. Então, eu passaria exatamente aquele que preciso neste caso. Podemos ver que as imagens parecem semelhantes, mas desta vez o sapo é o correto. É, essa parece mesmo...
+
+então agora podemos passar para a próxima etapa e usar o VO para criar pequenos vídeos com base nessas imagens. Então, estou usando o VO, o modelo maior, porque não preciso pagar, honestamente, senão usaria o menor. Mas basicamente vamos fazer a mesma coisa. Vamos pedir ao modelo para gerar um vídeo usando o modelo de visualização. Bem, vou usar o mesmo comando que usamos para gerar a imagem. E estou
+
+passando a última imagem gerada como um quadro inicial. E então eu quero o modo retrato e quero 720p porque vai ficar menor. Bem, vamos lá. Na verdade, eu não verifiquei como os sons se parecem porque fico a uma certa distância . Você não deve passar.
+
+Saiam daqui, criancinhas. Você não pertence a este lugar. Acho que é muito bom. Mas às vezes não é muito bom porque o modelo não gosta da ideia, que era apenas criar a imagem de aço, e acho que o modelo não sabe exatamente o que se espera que aconteça depois. Então, uma maneira melhor de fazer isso é reutilizar o chat para pedir ao modelo que apresente a resposta, com algumas explicações sobre o que está acontecendo após a imagem. Também estou passando
+
+a imagem novamente para que ele saiba exatamente de qual parte do capítulo estamos falando, para que possa apresentar a resposta correta. Então, tipo, surgiu essa ideia... esse molde treme e bagunça seus cachecóis de terror, blá blá blá. Uh, o
+
+pirralho da água bravamente pega o vidro e avança para protegê-lo. Então, podemos ver como as coisas vão
+
+e, tipo, neste caso, os resultados não são tão bons. É, e toda vez, em todos os testes que fiz, de alguma forma, quando uso o mesmo prompt, ele adiciona texto, e não quando eu gero outro prompt. Mas isso não deveria ter nenhum impacto, porque em ambos os casos estou apenas fornecendo um prompt e uma imagem, mas não sei por que está acontecendo assim. E então podemos usar o novo modelo LIA que geramos e enviamos na semana passada para criar músicas para cada modelo. Então, continua a mesma coisa, o mesmo truque de sempre. Vamos
+
+pedir ao modelo para criar os prompts para isso. E então, vamos usar a função "Gerar Conteúdo" com o modelo Laya, pedir para ele criar uma música, graças ao prompt, e é basicamente isso. Então vamos ver, a primeira música deve ser uma música folk acústica orquestral, tranquila e fluida, com duetos de violão e flauta . Vamos ver.
+
+Acho que combina. Depois, a segunda, " The Open Road", é uma aventura rítmica com violino e ônibus acústico.
+
+E a última é uma melodia arrepiante e cheia de suspense, com cordas em pizzicato stacato.
+
+E acho que também combina. E, sinceramente, acho que o modelo é muito bom, porque não é muito comum poder fazer esse tipo de demonstração sem antes verificar como vai ficar, já que eu executei o notebook antes, mas não verifiquei como a música ficaria. E até agora, tem funcionado sempre . Uma das coisas que eu esqueci de mencionar sobre tudo isso é que, internamente, muitos dos dados de treinamento para os modelos Gen Media são criados usando o Gemini. É por isso que o Gemini é muito bom em gerar esses modelos de mídia generativa, pois já está treinado para entender o que o Gemini está pedindo. Então, é isso que
+
+torna o signo de Gêmeos muito bom em gerar esses... esses estímulos. E então, o último modelo que eu queria mostrar é o modelo de texto para fala. Então, tenho quase certeza
+
+de que todos vocês já ouviram falar disso, porque todo mundo adorou a integração no Notebook LM, onde você podia criar um podcast baseado em seus documentos. E esse é basicamente o mesmo modelo que você pode criar, você pode pedir para ele falar, ler e dizer o que o texto que você fornece, e você pode ter dois personagens com vozes diferentes e assim por diante. É isso que torna agradável de ouvir. Mas o que eu queria mostrar para vocês é que existem truques para, na verdade, ter mais de duas vozes. Bem, e a razão para isso é que, bem, acho que a Paige mostrou isso um pouco, mas quando você usa a função de texto para fala ou fala ao vivo, você pode fazer muita coisa nos comandos para que o sistema fale de maneiras diferentes, com sotaques diferentes, com "uh uh" e assim por diante, e vamos usar isso a nosso favor para basicamente ter mais de duas vozes na mesma geração. Então, o que eu fiz foi por
+
+preguiça, eu não faria isso. Era isso que eu queria fazer em grande escala, mas basicamente pedi para extrair um dos diálogos do livro e reescrevê-lo como uma transcrição de uma peça de teatro, substituindo o nome do personagem por "narrador" se for apenas um narrador falando, e para todos os outros, serão apenas personagens com nomes, mas com um estilo específico para cada um deles. E se o mesmo personagem retornar, o estilo será reutilizado, de forma que os mesmos personagens terão que falar da mesma maneira e ter as mesmas vozes. Hum, e então eu defino as vozes. Então o narrador vai usar a voz de Sulafat, seja lá qual for. E então
+
+todos os outros vão compartilhar a voz de Fener. Hum, e então eu só peço para... para... para gerar a
+
+coisa. E só um truque aqui com o modelo TTS: você sempre tem que começar com " leia isto" ou "diga-me isto" ou algo do tipo. Se você simplesmente enviar a mensagem, ela será ignorada por algum motivo. Então, você precisa instruí-lo a ler o texto o tempo todo. Mas é aí também que você pode adicionar algum contexto, algo equivalente a instruções do sistema, como "leia isso de uma forma assustadora" ou "os personagens estão muito animados". É aí que você
+
+também pode adicionar esses detalhes. Então, como você pode ver, o texto que temos é narrado por um personagem que começa a falar muito rápido, com sotaque britânico e um sotaque carregado. E assim por diante, e podemos ver que esse mesmo padrão de fala se repete com frequência. Então é quando os dois personagens ficam nesse vai e vem. Vamos ver como as coisas vão. Com
+
+orelhas pequenas e delicadas e pelos grossos e sedosos, os dois animais permaneceram de pé, observando- se cautelosamente. "Olá, olá. Você gostaria de vir aqui?" "Ah, ah, é muito fácil falar." Ele falou de forma um tanto irritadiça, por ser inexperiente perto de um rio e da vida ribeirinha, com seus costumes.
+
+O segundo animal não disse nada, mas abaixou-se, desamarrou uma corda, segurou-se nela e entrou levemente num pequeno barco que não havia sido visto. Era pintada de azul por fora e de branco por dentro, e tinha exatamente o tamanho para dois animais, e o primeiro animal se apaixonou por ela imediatamente, mesmo sem ainda entender completamente suas utilidades. O remador fez movimentos rápidos e precisos, atravessando a água com agilidade. Então ele ergueu a pata dianteira enquanto seu convidado descia com cuidado. Apoie-se nisso agora. Então, dê um passo animado.
+
+Para sua surpresa e êxtase, ele se viu sentado na popa de um barco de verdade. Este foi um dia maravilhoso. Você sabia que eu nunca tinha entrado em um barco na minha vida? O que? Nunca estive num... Você nunca... Bem, eu...
+
+O que você andou fazendo então? Ele estava bastante disposto a acreditar nisso enquanto se recostava no assento e examinava as almofadas, os assentos, os roldanas e todos os acessórios fascinantes, sentindo o barco balançar levemente sob ele. É tudo tão bom assim? Legal? É a única coisa. Acredite em mim, meu jovem amigo, não
+
+há nada, absolutamente nada, que valha tanto a pena fazer quanto simplesmente brincar em barcos. Simplesmente brincando, aprontando em barcos, aprontando. Olhe para o futuro. Era tarde demais. O barco bateu de forma tão natural que você jamais imaginaria que a mesma voz estava sendo usada para os dois personagens. Eles são muito
+
+diferentes. Então, essa é uma maneira realmente muito legal de criar essas discussões com vários personagens. Então eu posso usá- lo. E, por último, como já dissemos, os modelos Gemini são multimodelos por padrão. Então, eu estava usando um livro, mas você também pode enviar um audiolivro ou um filme, ou algo como um filme não muito longo, mas você poderia fazer as mesmas coisas usando todas as possibilidades de entrada multimodal para que o Gemini crie coisas para ilustrar outros tipos de modalidades também. Quanto tempo
+
+temos? Hum, eu disse que ia te mostrar o modelo em tempo real. Então, este é um ótimo exemplo, um exemplo muito legal de "Oh não, pare". Vou te mostrar algo antes. A Paige deu alguns exemplos de coisas legais que você pode construir em uma ICO.
+
+Uma das coisas que eu queria experimentar era basicamente fazer a mesma coisa que faço no caderno, que é um processo um tanto longo e bastante complicado. Então, basicamente, o que eu fiz foi copiar e colar . Você consegue criar um aplicativo que ilustre um livro usando os modelos GenMedia, conforme descrito neste notebook Python? Basta colar todo o conteúdo do notebook, compilá-lo e veremos como funciona. Bem, pode demorar bastante, tipo, antes levou 15 minutos, então talvez você não queira esperar tanto, mas... bem,
+
+posso te mostrar o DJ do espaço enquanto isso. Então, como eu disse, o modelo gera música em tempo real e esta é uma demonstração onde eles criaram um universo estelar com estrelas e os planetas são sugestões. Então, se nos aproximarmos de alguns planetas, eles começarão a tocar música.
+
+E então, se você for lentamente para outro lugar,
+
+sim. Sim. Acho que na área intermediária.
+
+Vê você. Nossa, estou realmente surpreso que as pessoas não estejam fazendo mais coisas com esse modelo, porque é muito divertido ir lá
+
+e tem um piloto automático, então você pode simplesmente deixá-lo se movimentar por 10 minutos e depois ouvir a música mudando em tempo real. Hum, isso é bem legal. Acima. Vamos ver como as coisas se desenrolam por aqui. Tipo, sim, é pensar. Mas deixe-me mostrar o que acontecia
+
+antes, quando eu o executava . Ah, e deixei meu laptop aberto por meia hora só para que isso não acontecesse e a página não atualizasse. Então, acho que perdi. Hum, mas basicamente foi isso que aconteceu mais cedo, como você pode ver, apenas o prompt e nada mais. Um prompt muito longo apareceu e levou algo como mil segundos, ou uns 15 minutos, se não me engano, para criar o aplicativo, mas basicamente ele faz exatamente a mesma coisa: posso escolher o arquivo e carregá-lo. Vai levar um
+
+tempo, mas acredite, ele faz exatamente a mesma coisa que o notebook fazia, e isso é realmente impressionante. Ele consegue fazer isso logo na primeira tentativa. E só para finalizar, uma das coisas que faço quando estou editando o vibe enquanto ele está funcionando é sempre ter as instruções de como gerar applets ou aplicativos. Bem, uma das razões para isso é que quero que os aplicativos sejam o mais fáceis possível de revisar para mim, porque quero evitar exatamente o que aconteceu na página anterior, em que algo não estava funcionando e você precisava descobrir o que era e pedir ao modelo para corrigir. Então, um dos meus principais truques é pedir ao modelo para criar arquivos diferentes para cada recurso, de forma que, sempre que eu precisar revisar algo, posso verificar rapidamente se, ao pedir para modificar este recurso, ele está atualizando algo que não tem nada a ver com ele. Então, desde o início, eu sabia que havia
+
+algo errado ali, e serei mais favorável nisso nas minhas análises e em tudo mais. E também algumas instruções que eu não entendo por que não são padrão em nenhuma ferramenta de codificação Vibe, que é adicionar logs, porque quando você precisa depurar, você sabe que a mensagem de erro não é suficiente. Você precisa saber o que está acontecendo antes e como está acontecendo agora, porque você precisa saber onde está acontecendo. Então, eu realmente recomendo que você use esse tipo de orientação sempre que for votar em algo, e podemos ver como funciona agora. Ah, e tem mais alguma coisa ali. Acho que a Paige não mostrou,
+
+mas se você estiver disposto a pagar, pode adicionar uma chave de API aqui e então terá mais recursos para usar o Gemini quando estiver programando no AI Studio. Bem, acho que vou deixar você mostrar suas demonstrações e talvez eu possa mostrar depois como ficou. Sim, claro. para o modelo de vídeo quando você gerou o vídeo. Está usando seus modelos para gerar isso ou é apenas uma visualização?
+
+Sim, no momento é apenas uma visualização. Existe alguma maneira de orquestrar todos os modelos e juntá-los, ou é preciso usar apenas os modelos gerados? Ah, se você quiser usar a música gerada por Lia no vídeo "V", por exemplo. Não, você não tem como fazer isso. É mais devido às limitações do modelo, já que a geração VO3 não foi projetada para ser capaz de reproduzir arquivos de áudio. Então, é por isso que é
+
+limitante. Bem, acho que o futuro é que queremos que todos os modelos sejam capazes de incorporar todas as modalidades, para que possamos fazer isso. É a mesma coisa, eu acho que faria sentido até mesmo para o modelo Laria ser capaz de importar modelos de áudio para que possam ser usados ​​como referências também, ou mesmo se você quiser fazer uma música com várias partes e dizer: "Ok, eu adorei sua música, mas o final não foi tão épico assim, então vamos torná- lo mais épico", para que talvez seja só uma atualização do final. Então, sim, não é possível no momento, mas é para onde está caminhando. Uma performance realmente específica para a música em Ven.
+
+Não, eu não tentaria usar o VO para nenhum tipo de música, como os dados de treinamento para música de fundo, que provavelmente são muito limitados porque sempre fazem o mesmo tipo de coisa que não é música. Então, não, mas, mais uma vez, todos esses modelos são treinados mais ou menos juntos e compartilham alguns dados de treinamento. Então, tenho certeza de que a próxima geração de dubladores será melhor nesse aspecto. É que a versão atual foi lançada há um ano, e há um ano não tínhamos modelos de geração de música, como falamos antes sobre texto em vídeos, e há um ano o Nano Banana nem se chamava Nano Banana, era Gemini 1.5.
+
+2.0 geração de imagens, algo assim, e não era tão bom quanto o texto. Então, é... sim, é
+
+apenas uma questão de geração de modelos. Ah, e esqueci de mencionar algo... enquanto isso funciona... se você quiser executar
+
+o notebook, terá que removê-lo também. Bem, aqui, quando eu comecei, sim, eu criei o chat e adicionei esta linha que diz prioridade do nível de serviço. Na verdade, é algo que enviamos na semana passada. E essa é uma forma de indicar quando você está solicitando aos modelos que, se não for tão importante, se você não se importar com a latência, mas se importar com o preço. Existe um nível de serviço chamado Flex, que basicamente significa que a solicitação pode levar alguns minutos para ser processada, mas será rápida. Então é mais ou menos a mesma coisa que
+
+usar a API em lote. E, por outro lado, como eu queria ter certeza de que seria aprovado hoje, você pode dizer que é uma solicitação prioritária. Portanto, terá uma prioridade ligeiramente maior e, bem, não deveria, mas será mais confiável, porém você pagará o dobro do preço. Então, se você estiver executando o programa sozinho, talvez queira remover essa linha para economizar um pouco de recursos. Hum, e podemos ver como as coisas se desenrolam aqui. Ah, e veja, como eu disse,
+
+este modelo está em alta demanda. Então, sim, eu... eu sinto muito por isso. É que o modelo é bom demais,
+
+todo mundo quer usar e não temos capacidade suficiente. Então, se você tiver algum TPU sobrando para compartilhar, podemos fazer um acordo. Você tem uma pergunta. Você planeja disponibilizar variações desse modelo de forma geral, mas voltadas para a arte? Então, a pergunta sobre o vídeo é se haverá algum modelo de mídia de geração de imagens de código aberto. Bem,
+
+eu acho que não para geração de imagens e vídeos. Um dos motivos que vejo para isso é a segurança, não exatamente a segurança em si, mas o fato de que, quando você gera imagens ou vídeos, fazemos muitas verificações sobre o que você está solicitando e o que está sendo gerado posteriormente. Bloqueamos algumas coisas que não estão alinhadas com a nossa visão. E eu acho que, quando você tem um modelo de código aberto para isso, é mais como uma barra aberta, e você pode gerar o que quiser. Então, acho que é aí que os valores da nossa empresa vão nos limitar. Dito isso, por
+
+exemplo, para música, faria sentido, especialmente se você quiser em tempo real, que fosse no próprio dispositivo para que fosse mais rápido. Então isso é algo que pode acontecer em algum momento. Legal . Sim, acho que veremos depois das demos da Gemma se... funciona melhor. Sim
+
+, espero que tenha sido interessante. Obrigado. Então, Ian é basicamente meu equivalente. Eu trabalho apenas com o modelo de mídia gen . Ian está trabalhando nos modelos Gemma e vai mostrar para vocês o grande lançamento da semana passada, a Gemma 4, e como esse modelo é incrível.
+
+Obrigado. Sim. Como G mencionou, meu nome é Ian Valentine. Sou engenheiro de relações com desenvolvedores, trabalho nos modelos de gems e esta é uma conversa improvisada. Bem, obviamente, devido a tudo o que aconteceu hoje, como a Paige mencionou, faremos duas sessões para abordar uma série de assuntos. Teremos também uma série de
+
+palestras com Gemma durante o resto da semana . O Omar vai fazer uma palestra na sexta-feira, se não me engano, que vai abordar muitos assuntos, como o que é uma gema e por que você deveria se interessar por ela. Então, vou tentar fazer essa parte o mais rápido possível. E amanhã teremos outra palestra sobre o que chamamos de velocidades de escape soberanas . Então, assim como você assume o controle da IA ​​e executa coisas no seu dispositivo, na sua própria nuvem ou em celulares, espero que parte do que eu falar aqui seja uma concretização disso. Então, isso explica um pouco
+
+mais sobre o porquê. Vou apenas mostrar-lhe o que é. Faz sentido. Então, vamos nos conectar enquanto fazemos isso. De qual eu preciso? Desculpe
+
+por esta mágica. Sim. Assim que eu receber o vídeo. Você tem algum áudio? Não, não. Vamos optar pelo não.
+
+Vamos tentar mostrar primeiro os vídeos sem áudio. Ah, ok. Como eu disse, isso é super improvisado, então vamos aceitar o que vier. Hum, mas vou mostrar alguns trechos assim que a tela estiver pronta. Ah, você precisa que eu o mova para o lado? Ou posso fazer um espelho?
+
+Vamos fazer o espelho. Vamos fazer o espelho. Hum, onde? Sim, pode ir em frente. Perfeito. Sim. Então, o que eu espero
+
+mostrar um pouco para vocês são algumas das coisas que alguns dos dispositivos nos quais os modelos Gemma podem funcionar. Vou falar muito brevemente sobre o tamanho diferente do modelo Gemma que lançamos na semana passada, porque é novíssimo. E espero que isso dê a vocês uma ideia dos tipos de recursos que agora podem ser usados ​​localmente ou em uma única GPU, algo que talvez não fosse possível há seis meses . Pronto. Vamos lá. Perfeito.
+
+Tada. Então, Gemma 4. Viva! Então, isso foi lançado na última quinta-feira. Bem, é uma família de quatro modelos. Assim, temos o que
+
+chamamos de modelos efetivos, os modelos E2B e E4B. E esses são modelos projetados para funcionar em dispositivos como celulares, Raspberry Pis, Jets e Nanos, algo como um hardware muito pequeno e de baixo custo . Ah, a parte "E" é a pergunta que sempre nos fazem. A eficácia reside no fato de a arquitetura do modelo possuir uma estrutura incorporada por camada, o que significa que os embeddings não precisam ser carregados como parte do modelo. Assim, você pode executá-los em memória flash e, em seguida, pode carregar os elementos incorporados conforme necessário para o modelo. Então, o
+
+que descrevemos como o cérebro do modelo tem cerca de dois bilhões ou quatro bilhões de parâmetros, mas se colocarmos tudo isso na RAM, é um pouco maior do que isso. É algo mais parecido com um modelo de cinco ou oito bilhões de parâmetros. Então é por isso que se chama 2B efetivo. Temos também um modelo de 26 bilhões de parâmetros, que é uma mistura de modelos de especialistas com 4 bilhões de parâmetros ativados, e um modelo denso de 31 bilhões de parâmetros, que é o nosso modelo principal, o nosso modelo de grande porte. E ambos os modelos maiores, o de 26 e o ​​de 31 polegadas, foram projetados para funcionar em laptops e desktops ou em nuvens de GPU de instância única, dependendo da precisão e quantização necessárias. Então, não vou
+
+entrar em detalhes, mas imagine que muitas das funcionalidades que você consegue usar agora, você poderia usar em um MacBook com, você sabe, RAM suficiente ou uma placa de vídeo 5090 ou algo parecido. É mais ou menos essa a situação em que nos encontramos agora. Hum, por que esse tipo de coisa é emocionante e interessante para nós? Porque com esses modelos, estamos nos concentrando mais no lado agentivo. Assim, eles agora têm o pensamento incorporado. São multimodais,
+
+portanto conseguem compreender imagens, áudio e vídeo. Ah, aliás, o áudio é apenas para os dois modelos menores. Os modelos eficientes que funcionam no telefone conseguem entender áudio, mas os demais conseguem entender imagem e vídeo. E estamos vendo modelos de desempenho que são cerca de 10 vezes maiores em termos de tamanho de parâmetros. Assim, o que antes exigia um cluster, agora você pode obter as mesmas funcionalidades com uma única GPU. É aí que
+
+realmente estamos vendo alguma inovação. Bem, e o que eu vou mostrar logo de cara é a seção de demonstração. Ah, vou te mostrar este slide. Eu gosto deste. Isso explica um pouco de onde viemos. Então, os
+
+modelos Gemma 2, como você pode ver bem no meio, são particularmente bons em escrita criativa, mas não tão bem distribuídos entre as outras habilidades. E, à medida que fomos passando pela Gemma 3 e agora pela Gemma 4, conseguimos equilibrar as capacidades gerais do modelo. Temos ferramentas muito melhores para codificação, muito melhores para chamadas de função, e a tomada de ações está toda integrada ao design da arquitetura do modelo, em vez de depender de fortes capacidades de seguir instruções, o que consideramos mais importante em modelos maiores. Assim, os modelos são projetados com isso em mente desde o início. Então, vamos lá...
+
+isso tudo contém spoilers da palestra do Omar . Então, vou direto para a seção de demonstração. Vou te mostrar este . Então, este é o aplicativo Google AI Edge Gallery . Alguém já experimentou esse aplicativo? Hum,
+
+tenho um, dois, ok, tipo um punhado de pessoas. Então você pode baixar este aplicativo na Play Store e na App Store. Funciona em Android e iOS. E o que isso faz é...
+
+é uma forma de testar e experimentar os modelos. Então, lançamos um novo recurso chamado habilidades do agente. E o que as habilidades do agente permitem que você faça é configurar habilidades para os modelos que são executados fisicamente no telefone. Então, este modelo, este é o modelo E2B, está rodando literalmente em um pixel, eu acredito neste caso. E você pode solicitar e testar as diferentes funcionalidades. Então, na prática, é fornecido
+
+um conjunto de habilidades que definem coisas como intents do Android, onde você pode acionar e chamar outros aplicativos, ou você pode escrever suas próprias habilidades em JavaScript ou executar uma visualização da web, e instruir o modelo, que tomará uma decisão sobre como acionar esses eventos. Assim, você pode, por exemplo, adicionar itens a este rastreador de pesquisa ou fazer perguntas sobre o rastreador de pesquisa, e ele chamará a função correta para recuperar esses dados. Então, passamos de um mundo onde podíamos simplesmente conversar com ele pelo telefone para um mundo onde podemos fornecer informações mais ambíguas e ele consegue decidir quais funções chamar. Ah, o próximo, se tocar. Sim.
+
+Então, neste exemplo, temos uma série de opções diferentes. Vou mostrar essa última para vocês. Pronto. Hum, uma série de habilidades diferentes que você pode experimentar. Então, tudo, desde coisas simples como carregar locais em mapas até usar APIs e outros serviços. Então, você pode construir essas
+
+coisas você mesmo ou pode usar algumas das pré-carregadas para tentar entender do que elas são capazes. E este é como o nosso espaço de experimentação para fazer isso. E por último, queria mostrar que este é o modelo 2B, à esquerda. Então você também pode experimentar coisas como a codificação por vibração no dispositivo. O modelo é, na verdade, bastante capaz de fazer isso. Você não vai
+
+construir um grande sistema arquitetônico, mas pode fazer coisas pequenas, como aplicativos da web que entendem várias linguagens diferentes. Você pode escrever coisas em Python, HTML e TypeScript. É possível validar algumas coisas e você poderia criar pequenos aplicativos que podem ser executados no próprio telefone. Então, basicamente, você tem todo o ciclo de feedback na palma da sua mão. Então, esta aqui eles geraram uma calculadora bem simples e, o mais importante, ela realmente suporta divisão por zero e exibe o erro corretamente. Então, ele é
+
+capaz até mesmo de raciocinar sobre esse tipo de coisa e, para acrescentar, acho que no momento ele está com o pensamento desativado, mas se você ativar o pensamento, verá que há um aumento na qualidade da saída em termos do que o modelo é realmente capaz de raciocinar, porque adiciona essa etapa de planejamento antes de executar a ação. OK. Então, a seguir vou mostrar uma demonstração rodando no dispositivo. Hum, quem aqui já usou ou usa o LM Studio, o Olama ou alguma ferramenta desse tipo? Certo, então talvez umas três ou quatro pessoas. Bem, na verdade isso é útil.
+
+Portanto, uma coisa que é realmente importante para nós ao construir esses modelos é torná-los compatíveis com muitas das ferramentas do ecossistema. Então, fazemos parceria com empresas como Alama, LM Studio, VLM e SG Lang para garantir que nossos modelos funcionem muito bem com elas e que possam ser implementados de forma eficiente. O LM Studio é uma espécie de ferramenta para executar instâncias de modelos locais. Neste caso, estou usando o modelo 26B no meu dispositivo e você pode carregá- lo daqui. No momento, este está configurado. Este aqui vai ocupar cerca de...
+
+no momento, diz que são 7,18 gigabytes, mas se você adicionar, por exemplo, memória suficiente para o tipo de contexto que você está procurando, serão necessários cerca de 22 GB de RAM. Este é um Mac M4, então obviamente possui memória unificada, portanto você pode executá-lo, mas se quisesse o desempenho máximo, precisaria de uma GPU com RAM suficiente para executar todo o modelo. E como mencionei, o modelo 26B é uma mistura de especialistas. Então, na verdade, ele só precisa de 4 bilhões de parâmetros ativados. Portanto, é muito mais rápido do que o modelo 31B, mas é mais inteligente do que um modelo com apenas 4 bilhões de parâmetros. Uma das
+
+coisas legais disso é que, com esses modelos, você pode disponibilizá-los na sua máquina local por meio de um endpoint compatível. Então, algo como um endpoint compatível com OpenAI ou um endpoint compatível com antropologia. E depois você poderá usá-los com outros aplicativos. Então, o que vou fazer aqui é disponibilizar este modelo nas portas 1, 2, 3 e 4, e então poderei usar outros aplicativos para chamar a API de conclusões de bate-papo diretamente nesta porta . Então, o código para fazer isso seria algo como abrir o recurso de conclusão de bate-papo do OpenAI e apontá-lo para este servidor, o que seria o equivalente a usar sua máquina local em vez de usar uma máquina na nuvem. Então, vou executar um
+
+terminal aqui. Vou fazer um espaço SVG de demonstração . Então, o que vou fazer é criar uma instância do Orchestrator e depois criar 10 subentidades que irão gerar os SVGs para mim. Então, tudo o que vão dizer para eles fazerem... na verdade, deixe-me garantir que
+
+eu desligue o pensamento para que seja super rápido. Que bom que me lembrei disso. Certo. Portanto, cada um desses terminais aqui é um agente separado. E você pode ver que o orquestrador é este aqui. Então, o processo delega essas
+
+decisões a todas as diferentes subentidades, e cada uma dessas subentidades recebeu uma tarefa diferente para realizar. Como você pode ver, esta será uma ótima maneira de fazer uma prototipagem rápida em sua máquina local. Você não precisa da internet para fazer isso. E a taxa de transferência ali no canto superior representa a quantidade combinada de geração de tokens que está sendo feita por cada subentidade um individual. Então, quando finalmente juntam tudo, o orquestrador simplesmente compila isso em uma página e você obtém uma bela variedade de diferentes SVGs que eles geraram. Então você pode imaginar isso como
+
+qualquer tipo de tarefa ética que você queira realizar em sua máquina. Sabe, organizar arquivos, implementar trechos de código, subdividir pesquisas, analisar dados, esse tipo de coisa . E você pode atribuir a cada um deles tarefas muito diferentes para realizar isso. Então, alguns deles já terminaram. Isso é bom.
+
+Então, espero que algo apareça em um instante. Pronto. Aqui estão meus arquivos SVG. Ah, eles não são tão ruins assim, né ? E como eu mencionei, ah, este é animado. Um planeta em rotação. De
+
+alguma forma, o fig conseguiu fazer parecer que é uma animação, o que é bem legal. Sim. E isso é o pensamento desligado. Então, se eu ativasse a função de "pensamento", ela processaria um pouco mais de informações na fase de planejamento, e geralmente eu obteria arquivos SVG melhores. Quanto mais tempo você dedica a pensar sobre isso, melhores serão os seus SVGs. Bem
+
+, a próxima coisa que eu queria mostrar para vocês é... vou pular aqui para abrir o código. Então, como eu mencionei, você pode usar qualquer aplicativo que utilize uma interface compatível com IA aberta. Então, se
+
+você tiver um ambiente de programação, você pode basicamente apontar para ele e testar o modelo para ver como ele funciona. Então, neste exemplo específico, tudo o que você precisa fazer para configurar isso em código aberto é... Vou encerrar todos os meus terminais aqui. Até logo
+
+. Vamos nos livrar deles. Se você acessar o local, encontrará um único arquivo. Se eu abrir o arquivo vim.config, abrir o código e selecionar "config.json"
+
+e rolar para baixo até encontrar a opção, onde ela está? Esta seção aqui. Isso é tudo o que você precisa especificar. Então você informa o nome do provedor, qual é o esquema , os modelos que deseja expor e quaisquer parâmetros adicionais necessários para o endpoint, e então você simplesmente aponta para uma URL, que neste caso é apenas minha máquina local. E isso é tudo o que você precisa fazer. E
+
+tenho outro exemplo. Não vou executar isso agora, mas temos um guia sobre como implantar o Gemma em algo como o Cloudr Run ou um provedor de nuvem. Então, se você não tiver RAM suficiente para executar a quantização desejada, pode simplesmente usar uma única GPU com este comando, o beta cloud deploy, que colocará o modelo em uma RTX Pro 6000. Assim, se você quiser apenas testar, essa é uma maneira de testar qualquer modelo que você tenha otimizado ou executado por conta própria. E também temos outra forma de acessá-lo. Se você for ao ai.dev,
+
+dev que a Paige e o Gim têm mostrado para você. Os modelos Gemma também estão disponíveis aqui. Então, se você só quer incentivá-los, temos os dois modelos principais que você pode testar e que suportam uploads de vídeo e arquivos, e a integração com a busca também está toda embutida . Assim, você também pode testar o desempenho deles isoladamente. Então, na verdade, não há motivo para você não tentar, independentemente de ter ou não o hardware necessário . Ah,
+
+sim, o que eu queria mostrar para vocês era que eu tinha gerado uma especificação para um joguinho. Onde fica? Ok, então eu criei um jogo chamado Nebula Drift. Então, o que eu fiz foi usar o modelo de 31 bilhões de parâmetros para obter uma espécie de especificação para um jogo, e vou passá-la para o meu modelo local para que ele a implemente. Então, se eu implementar a especificação e fornecer o arquivo, e tiver certeza de que é o modelo correto, e vamos garantir que o recurso de raciocínio esteja ativado novamente para que ele realmente possa analisar a situação . Pronto, aí está
+
+. Ah, e vamos executar isso. Então, por que isso é interessante? Porque não alteramos absolutamente nada em relação ao código aberto. Literalmente, acabamos de fornecer o modelo para que ele possa testar na máquina local, e a especificação de código aberto incluirá todas as ferramentas necessárias para que ele possa executar código aberto e se comportar nesse ambiente. Então, ele deve
+
+pensar na tarefa que precisa realizar e, em seguida, precisa verificar o sistema de arquivos para ler ou gravar arquivos no sistema de arquivos. Se algo der errado, posso, como em qualquer ferramenta de programação, simplesmente solicitar que ele verifique isso ou que retorne o erro para que ele o analise . Então é só isso, seguindo essas instruções. Então, sim, ficou decidido criar um diretório. Então, ele vai usar o shell diretamente a partir desse diretório.
+
+Então, se você já usou alguma ferramenta de programação, isso não deve ser muito estranho, mas talvez você já tenha usado com outro modelo. Talvez você não o tenha usado com um modelo local ou um modelo aberto, como por exemplo, executando-o em seu hardware. Então, eu só quero mostrar a vocês que isso é meio que possível. Oh sim. Pronto.
+
+Um arquivo de índice já foi criado. Isso foi rápido. Bem , se ler a especificação corretamente, deverá gerar mais dois arquivos. Deverá gerar um arquivo JavaScript e um arquivo CSS. E então, o que faremos é tentar ver que jogo conseguimos criar a partir das especificações. Bem, para você ter uma
+
+ideia, seria como um jogo de corrida infinito onde você tem que evitar alguns asteroides. Então, se isso finalizar o código, hum, pronto. Deveríamos tentar isso ? Parece que, na verdade, funcionou corretamente. Então, se eu executar esse comando, onde ele foi gravado ? Qual era o nome? Nebulosa. Oh,
+
+Nebula drift com um sublinhado. Decidido. Ah, acho que está até tentando alterar o caminho do arquivo, enquanto olho para isso aqui. Está tentando fazer edições nele. Parar. Pare de editar. Então, vamos
+
+tentar executar isso. Ok, vamos jogar. Ih , não funciona. Ok, isso é interessante. Então, o que podemos fazer é simplesmente tentar executar isso novamente. Ah, então
+
+há um problema de sintaxe. Então, se eu disser que simplesmente copio isso... Então imagine que na maioria dos chicotes de fios você teria um circuito de feedback onde poderia realimentar o sinal diretamente na programação. Mas
+
+vou fazer isso manualmente e ver se ele consegue detectar o próprio erro. Eu... paro.
+
+Encontrei um erro. Vamos verificar isso. Você realmente leu isso ou não? Vamos tentar novamente.
+
+Certo, então agora deveria... deveria fazer alguma investigação. Então, provavelmente, ele relerá os arquivos para ver se consegue identificar o erro de digitação ou o problema e, em seguida, tentará editá-lo ou corrigi-lo. Na verdade, no código aberto eles
+
+fornecem duas ferramentas. Uma que permite editar linhas individuais e outra que permite simplesmente reescrever o arquivo. Assim, ele pode até mesmo decidir qual deles deve usar para realizar a tarefa. Então, espero que a edição seja feita corretamente. Hum, e depois escreva isso de volta . Então, o jogo foi atualizado no jet.js
+
+e está editando... você está editando outra coisa? Ah, também pode iniciar subentidades.
+
+Então, se você atribuir a ele uma habilidade ou tarefa específica, ele basicamente pode executar subentidades. O 31B é muito bom nisso . O 26B depende da tarefa. Às vezes, ele entende automaticamente qual subentidade deve ser chamada, e outras vezes você precisa dar um pouco mais de instruções. Mas, da mesma forma, em um ambiente como este, você pode expor servidores MCP, criar habilidades, fazer todo tipo de coisa para ajudar a orientar o modelo. Hum, devemos verificar se isso
+
+resolveu alguma coisa? Pronto. Eu nem consigo ver. Isso atualizou as informações? Não, ainda não. Está
+
+tentando editar o arquivo do jogo. Deve corresponder exatamente. Então, tudo bem. Portanto, está tentando editar uma parte do arquivo. Eu também poderia simplesmente dizer, tipo, " nulo". OK. Acho que provavelmente foi
+
+descarregado. Vamos colocar isso de volta. Vamos carregar isso novamente. Tente novamente, Gemma. Certo. Então, se eu disser para simplesmente
+
+gerar o arquivo game.js completo novamente. Hum, onde foi parar? Foi naquele. Assim, você pode especificar exatamente qual arquivo ele deve ler e gravar. Então, espero que ele
+
+obedeça ao que eu digo e depois regenere esse arquivo. Enquanto esperamos, alguém tem alguma outra ideia de jogo para criarmos? Paige é obcecada por esquilos cor-de-rosa, então você poderia tentar algo nessa linha. Alguém tem alguma ideia para um jogo? Um jogo onde você pode criar seu próprio jogo.
+
+Uau. Vamos experimentar. Então, vou usar um jogo. Sim . Certo. Vamos perguntar. Vamos perguntar à
+
+modelo mais experiente. Então, se eu disser "Ah, ok". Escreva uma especificação para um jogo onde você possa construir seu próprio jogo dentro do jogo e use isso como referência. Então, primeiro vamos criar uma especificação. Bem, vamos por aqui e usaremos...
+
+Sim, usaremos a especificação da outra como referência. Vamos tentar executar isso
+
+enquanto vemos o que está acontecendo com nosso código aberto. Parece que está editando o arquivo neste momento. Sim, você pode ver que está processando os tokens ali mesmo. Se eu for a esta, OmniForge. Então, o que eu fiz aqui foi instruí-lo a seguir uma especificação específica. Ah, então mantém o mesmo padrão.
+
+Por exemplo, se eu tivesse um formato específico que precisasse seguir, ele seria muito bom em seguir essas instruções e manter-se fiel a esse padrão. Isso pode não ser impressionante se você já usou algum modelo em 2026, além de saber que é algo que você realmente pode usar em casa. Para mim, essa é a parte interessante, sabe, todas as modelos de ponta conseguem fazer isso. É, até recentemente não, não que você pudesse se candidatar sozinho. Então, vamos deixar isso acontecendo por lá. Meu
+
+arquivo já foi corrigido? Foram feitas mais edições. Podemos ir ver o que mudou. Então está começando. Ah, isso adicionou mais algum tempo delta. Ah, está alterando a entrada.
+
+OK. OK. Bem, você pode ver o que está sendo gerado aqui. Tipo, tem esses estojos pequenos para os tocadores e todo tipo de coisa. Devemos verificar se funciona novamente? Hum, enquanto esperamos por isso,
+
+certo? Você vai se candidatar agora? Ah, sabe, o que eu poderia fazer é simplesmente dizer, hum, digamos, que apertar o botão não inicia o jogo. Regenerar os arquivos. E espero que simplesmente as apague automaticamente .
+
+Vamos fazer isso. Certo, vou pensar a respeito. Veja como está o andamento das nossas especificações. Então, vamos pegar o 31B. Você poderia implementar essa especificação em um único arquivo index.html
+
+com o CSS e o JavaScript incluídos? Veja que ele consegue fazer isso.
+
+OK. Ah, e tem mais uma coisa que eu quero te mostrar. Faremos isso em paralelo. Desenvolvimento de IA. Uma coisa em que o modelo é realmente muito bom, sendo multimodal, é em entender o contexto da entrada que recebe. Então
+
+eu poderia, por exemplo, tirar uma captura de tela de um site, tipo, se eu for ao Gemma do DeepMind. Vamos analisar essa. E se eu simplesmente pegar isso e for ao modelo, posso implementar esta página web como um único arquivo index.html? Se eu simplesmente enviar esse arquivo, aquele ali. Pronto.
+
+E tente executar isso. Sim . Como está o andamento do nosso código aberto? Então, espero que o arquivo do jogo tenha sido escrito sem erros. Escrevi o arquivo de estilo e, espero, também o arquivo de índice.
+
+Então, vamos tentar mais uma vez. Certo. Pronto. Então, esse é o nosso jogo, só que eu não vejo nenhum asteroide. Ok, temos um campo estelar e uma nave que pode ser movida. Então, repito, isso é
+
+apenas o que o modelo conseguiu determinar. Você poderia simplesmente continuar iterando sobre isso. Você poderia acrescentar algo a isso. Hum, não vou... Eu poderia pedir mais
+
+asteroides, mas acho que terminamos com este . Vamos ver como estão se saindo os outros. Então, este é o jogo sobre criar um jogo. Estou realmente curioso para ver o que isso vai causar, porque vai ser algo incrível. E então esta aqui, esta está gerando o "Ah, sim". Isso
+
+gera a página web recriada. Então, tudo isso é gratuito para experimentar . Então, fique atento(a), existem limites de uso em termos de propriedade compartilhada. Mas você pode usá-lo para testar coisas facilmente. É por isso que é um pouco mais lento do que os modelos Gemini, porque só existe um modelo Gemini para atender a todos. Vamos
+
+ver. Este já está pronto? Ainda em andamento . Não sei. Talvez seja feito como uma aventura realmente épica. Acho que
+
+pode ser isso mesmo, sabe, enviar assim que isso estiver pronto. Hum, o que mais eu quero te mostrar? Oh, tudo bem . Enquanto fazemos isso, quero mostrar a vocês esta demonstração incrível. Então, um dos membros da nossa equipe é realmente apaixonado por robótica.
+
+Então, eles... eles fizeram uma versão para quem já usou alguma ferramenta de simulação de robôs. Então, isso se chama Open Duck, que é como um pequeno simulador de pato, e você pode fazer perguntas a ele ou conversar com ele através do modelo E2B, que roda no navegador. Então, você não precisa
+
+baixar o modelo e ele roda na GPU da web diretamente na página do navegador. Então, quando instrui o modelo a realizar essas ações, Gemma interpreta exatamente o que foi solicitado. O programa analisa o que o robô pode fazer e o instrui a executar as ações. Se você observar com bastante atenção, poderá ver onde está escrito "executar ação". Sim . Antes de executar a
+
+ação, o programa informa qual comando está tentando acionar. Então você pode imaginar isso rodando embutido no dispositivo ou, neste caso, no simulador, apenas para comprovar o ponto. Hum, essa é bem legal. A outra coisa que eu quero mostrar para vocês é que a equipe do Android Studio integrou isso na criação de aplicativos para Android. Então você tem uma pequena janela de bate-papo na lateral e pode criar os aplicativos a partir dela. Então eles
+
+têm, mais uma vez, uma espécie de pequena estrutura de construção. Então, se você estivesse apenas desenvolvendo aplicativos para celular, você poderia usar o modelo. Acho que eles estão usando o 26B novamente. Sim, eles estão usando o 26B para esse. E também temos isso funcionando com o ADK. Assim, nosso kit de desenvolvimento de agentes
+
+expõe novamente diferentes funcionalidades. Possui um circuito de raciocínio. Tem um sistema de feedback. Assim, você pode atribuir tarefas de longa duração e ela poderá tomar decisões, como extrair informações e coisas do gênero . Então, existem todos esses ambientes diferentes nos quais você pode executá-lo . Devemos ver como nosso resultado se compara? Ok,
+
+este está concluído. Então, esta será a nossa página web. Ah, isso não é ruim. Parece muito bom. Não imagino que esses botões levem a algum lugar, mas, enfim, qual a novidade? Ah, eu
+
+pensei, literalmente pensei que tinha feito um vídeo. Isso teria sido um pouco... teria sido um pouco intenso. Mas sim, dá para ver, mesmo só pelo
+
+layout, que está bem próximo. A fonte combinou quase perfeitamente. A compreensão da página em si é bastante boa. E isso é meio que uma história de um capítulo só. Então, aponte para páginas da web aleatórias e veja o que ele consegue construir. Vamos ver se agora
+
+estou realmente interessado neste jogo. Vamos ver se isso realmente funciona. Nossa! Certo. Ah, eu tenho um editor completo.
+
+Então, eu posso construir algo como "Oh, eu gosto disso". Então, um objetivo. Posso executar o jogo? Ah, eu consigo colocar coisas lá dentro. Nossa! Por favor, me
+
+diga isso. Oh sim. O triângulo se move. Ah, eu adorei. Por que?
+
+Ok, pronto. Acho que esse é um bom ponto para encerrar. Então, sim, os modelos Gemma, você sabe, rodam no seu celular, rodam em laptops, rodam em GPUs. Vá em frente e experimente, tente a galeria de IA se quiser explorar. Bem, estarei por aqui hoje e amanhã se vocês tiverem alguma dúvida sobre como... mas sim, estou muito animado para
+
+compartilhar isso com vocês e aproveitem o resto da conferência. porque

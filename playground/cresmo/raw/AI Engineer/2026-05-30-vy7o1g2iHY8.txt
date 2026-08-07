@@ -1,0 +1,138 @@
+---
+video_title: "How I deleted 95% of my agent skills and got better results — Nick Nisi, WorkOS"
+video_id: vy7o1g2iHY8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vy7o1g2iHY8
+video_date: 2026-05-30T18:00:06+00:00
+video_description: |
+  WorkOS will be back for the World's Fair next week! see https://ai.engineer/wf and use YOUTUBEPROMO for new tickets only. Join 6000 AI engineers at the "Superbowl of AI"!
+  
+  ---
+  
+  Claude would fake running tests by touching the expected output file. Nick Nisi, DX engineer at WorkOS, fixed it by SHA-256 hashing the actual test output and verifying it cryptographically. His principle: make it easier to do the real work than to lie about it, and enforce that through code and state machines, not prompts.
+  
+  The same discipline reversed an opposite problem. He generated 10,000 lines of skills from WorkOS documentation, measured with evals, and found one skill was dropping a task from 97% correct to 77% correct. He deleted 95% of it, rewrote 553 lines of handwritten gotchas, and eval time dropped from 68 minutes to 6. The model already knew how to code. It just needed to know where the landmines were.
+  
+  Speaker info:
+  - https://x.com/nicknisi
+  - https://linkedin.com/in/nicknisi
+  - https://github.com/nicknisi
+  
+  Timestamps
+  0:00 Introduction
+  1:22 The challenge of context switching with agents
+  2:33 Introducing Case: A harness for agentic workflows
+  3:33 Rebuilding with a TypeScript state machine
+  4:45 The critical importance of evidence-based verification
+  5:59 Applying agentic principles to the WorkOS CLI
+  7:44 Lessons in documentation: Generating skills from docs
+  8:52 Why more data (10,000 lines) led to worse performance
+  9:36 The impact of using evals to measure accuracy
+  10:40 Key takeaway: Enforce with code, not just prompts
+  12:41 Treating failures as bugs in the harness system
+  14:39 Advice for building agentic-ready products
+  16:01 Final summary: Replacing trust with evidence
+---
+[música] Muito bem
+
+, bom dia a todos. Bem-vindos à minha palestra sobre a construção de sistemas de IA que podem ser comercializados. Meu nome é Nick Nisi e trabalho na WorkOS. Temos um estande no andar de baixo. Venha nos visitar e conversar conosco. Teríamos todo o prazer em conversar.
+
+Hum, mas deixe-me começar de novo. Olá, eu sou o gargalo. Bem, sou engenheiro de experiência do desenvolvedor na WorkOS e trabalho em mais de 20 repositórios em oito linguagens diferentes. Ah, são todos os nossos SDKs e ferramentas de código aberto que temos. E é como se fosse AuthKit Next.js, AuthKit
+
+React, WorkOS Node, WorkOS Kotlin, WorkOS Ruby, PHP, em todo lugar. Portanto, há muito o que fazer em diversas áreas. E eu sou muito bom em trabalhar nessas coisas. E eu me tornei muito bom nisso nos últimos oito meses, trabalhando com essas pessoas por meio de agentes. Então, eu mesmo não escrevi uma linha de código nos últimos oito meses, provavelmente. Bem, eu me tornei
+
+muito bom em escalar isso com agentes, revisar o que eles fazem, instruí-los e fazer com que o trabalho seja concluído mais rápido e melhor, mantendo a qualidade. Mas havia um grande problema em fazer isso com um agente de cada vez em todos esses repositórios. Estou constantemente mudando de contexto repetidamente . E fica cada vez mais difícil, e tudo bem , mas o problema é que para cada um deles tem esse pequeno tempo de preparação que eu preciso dedicar , tipo uns 10 minutos do meu tempo para configurar e definir o problema. Vamos analisar este problema no GitHub. Vamos analisar esse
+
+bilhete linear. Vamos dar uma olhada nessa conversa no Slack para descobrir o que está acontecendo e ver se conseguimos reproduzir o problema. Depois disso, vamos em frente. Então, passei boa parte do meu tempo lidando com o agente, basicamente entendendo o contexto que eu já tinha e, a partir daí, fazendo-o funcionar . Por outro lado, também estou trabalhando em produtos que queremos desenvolver para agentes, porque, embora eu tenha dito que sou um engenheiro de experiência do desenvolvedor , o desenvolvedor ainda é a pessoa mais importante no meu trabalho, mas, cada vez mais, o caminho para chegar até esse desenvolvedor passa pelos agentes. Assim,
+
+considero a experiência do agente igualmente importante, pois é assim que vamos nos conectar com os desenvolvedores. Então, havia duas maneiras diferentes de eu usar IA nativa e duas direções diferentes para isso. Então, na parte interna da construção, comecei a desenvolver este projeto chamado Case. Ah, isto é um arnês. Se você já leu "Engenharia de Arnês de Ryan the Populous" , é isso mesmo. É que eu
+
+peguei essas ideias e comecei a desenvolvê- las. Basicamente, eu forneço um problema no GitHub, um PR, uma thread no Slack, um ticket no Linear, qualquer coisa, e posso simplesmente apontar para ele e ele consegue descobrir o contexto necessário e começar a trabalhar. E então não pararia até que houvesse um PR com evidências de que realmente fez o que eu pedi, ou qual era o problema, ou o que resolveu o problema. Mas o mais importante era que fornecesse essas provas. E isso começou como uma habilidade do Claude porque, bem, por que não? Eu
+
+achava que Claude era capaz de tudo. E estava funcionando muito bem, mas à medida que se tornou mais complexo, a perda de contexto se tornou muito real. Simplesmente começaria a esquecer coisas ou a pular tarefas. E eu perguntaria a Claude: "Por que você fez isso?" É tipo: "Ah, é mesmo, você me disse para fazer isso. Decidi não
+
+fazer." Nada bom. Então, eu reconstruí tudo em cima do Raspberry Pi e estou usando uma máquina de estados em TypeScript para facilitar a navegação e a execução passo a passo desses agentes. Portanto, possui cinco agentes diferentes: um implementador, um verificador, um revisor, um finalizador e um agente retroativo. E essas coisas são importantes, mas não são as mais importantes. A peça mais importante
+
+do caso são os portões que estão entre eles . E é isso que a máquina de estados realmente impõe: os controles entre tudo. Portanto, quando implementamos algo, não podemos passar para a revisão até que o verificador o verifique. E depois que o revisor analisa o documento, se houver algum problema, ele precisa enviá-lo de volta ao implementador para que este resolva os problemas. E depois que tudo isso estiver feito, o fechador pode trabalhar. Mas o fechador não pode
+
+trabalhar até achar que terminou. E o responsável pela segurança está lá para fornecer provas. E então, a retrospectiva serve para analisar todo o desempenho. Analisa os registros de tudo o que aconteceu naquele caso e pergunta: "O que eu poderia ter feito melhor?" Em seguida, atualiza seu próprio sistema de memória para garantir que, na próxima vez, possa pular algumas etapas caso fique dando voltas em círculos por um tempo.
+
+E pode dar a si mesmo algumas dicas sobre para onde ir, para que na próxima vez que trabalhar nesse projeto, não encontre os mesmos obstáculos. Então, o próximo agente não importa muito. Provando que o trabalho importa. Provar que o que aconteceu em cada um desses estados é o que importa. E essa palavra, "provar", é a parte mais importante disso tudo, porque os agentes simplesmente mentiriam para mim o tempo todo. Bem,
+
+eu perguntaria: "Ei, você precisa executar os testes." E isso acontecia mais quando era uma habilidade e eu dizia coisas como: "Ei, você precisa executar esses testes e garantir que eles sejam aprovados." E uma maneira de fazer isso foi simplesmente verificar se o arquivo estava em um formato com ponto e maiúsculas . E se esse arquivo existisse, ótimo. Os testes foram executados com perfeição. Bom,
+
+descobriu isso bem rápido. Claude simplesmente tocava naquele arquivo e dizia: "Sim, eu executei os testes." Que engenheiro júnior, eu juro. Então, eu tive que encontrar uma maneira de provar isso. Então, uma maneira de fazer isso era simplesmente pegar a saída do teste, aplicar o SHA-256 e salvar no arquivo de casos testados e, em seguida, verificar criptograficamente. Sim, você realmente executou
+
+os testes. E, na verdade, o principal é que eu simplesmente facilitei o trabalho para que ele fosse feito da maneira que eu queria, em vez de mentir sobre ele. E essa é realmente a questão principal. Bem, parou de mentir não porque eu pedi educadamente, mas sim porque eu a fiz provar que realmente faria o trabalho todas as vezes. Bem, aquilo estava do lado de dentro.
+
+Na parte externa, com a CLI do WorkOS, uh, esta é uma ferramenta que nossos clientes usam. E ele pode fazer muitas coisas, mas seu principal recurso é a capacidade de instalar o AuthKit para você. Um dos maiores problemas quando tentamos, sabe, pedir para alguém dar uma olhada no nosso produto ou quando essa pessoa demonstra interesse é: "Ah, eu teria que gastar um tempo configurando tudo, lendo a documentação e tudo mais ." Não mais. Com a instalação do WorkOS, ele simplesmente identifica em qual projeto você está trabalhando. "Ah, você está em um
+
+projeto Next.js. Você está em um projeto TanStack. Você está em um projeto Ruby. Eu vou identificar isso. Ah, você já
+
+configurou o Auth0? Posso facilmente removê-lo e instalar o AuthKit e tudo funcionará perfeitamente." E faz isso em menos de 5 minutos. Se você não tiver uma conta WorkOS, será criada uma para você, que poderá ser utilizada posteriormente. Portanto, não há qualquer dificuldade em configurá-lo. E
+
+essa é uma parte realmente importante de sermos proativos e assertivos em nossa imagem pública, em como nossos clientes nos utilizam e como nos percebem. Mas isso também tem seus problemas. Enquanto eu o construía, ele ficava excessivamente confiante, como esses modelos sempre são, e dizia: "Sim, eu fiz isso." Um dos casos em que isso aconteceu foi quando eu estava tentando instalar em um projeto TanStack. O TanStack é um projeto relativamente recente. Ainda está em RC e está
+
+mudando constantemente. Bem, desculpe, a CLI fez algumas alterações. Ele instalou o programa e fez algumas alterações em um arquivo chamado start.ts. Esse arquivo é meio implícito, pois possui um contrato implícito com o TanStack. É que ele tem que
+
+exportar certas coisas. E nós meio que estragamos tudo. O código me pareceu correto. Para Claude, parecia certo , mas para TanStack, de início, não parecia certo . Então, bum, falhou.
+
+Então, tivemos que descobrir uma maneira de avisar quando algo desse errado ou de fazer com que o sistema entendesse isso. E eu pensei: "Ah, bem, nós só precisamos de algumas habilidades, certo?" A habilidade é o caminho para isso. Então, comecei a ensinar isso, a desenvolver essas habilidades. E claro, pensei: " Sabe de uma coisa? Temos esses ótimos documentos.
+
+Posso simplesmente pegar nossos documentos e desenvolver algumas habilidades." Então, eu gerei mais de 10.000 linhas de habilidades, todas baseadas em nossa documentação. E eu fiz isso de uma forma bem elaborada, pegando trechos da nossa documentação e criando habilidades a partir deles. E então, ele adicionaria um pequeno comentário na skill com o hash criptográfico do estado atual daquela seção da documentação.
+
+Basicamente, se eu executar o comando novamente e o SHA não mudar, não atualize a habilidade. Então, não se tratava apenas de atualizações constantes. Eu achava que estava sendo muito esperto e incrível. E eu criei essa coisa enorme. E até fiz algumas avaliações sobre isso. Comecei a criar esses cenários
+
+e levava 68 minutos para executá-los. Foi simplesmente uma loucura. E falhava repetidamente, tentava várias vezes e eventualmente conseguia, mas dava muito trabalho, consumia muitos tokens. Então, eu tinha mais fichas. Pensei: mais fichas, ótimo. Isso é muito melhor. Mas
+
+acabou produzindo resultados piores. E foram realmente as medições, as avaliações, que me disseram: "Ei, isso não está certo." Então, eu reescrevi à mão. E em vez de me concentrar em abordar de forma abrangente tudo o que temos em nossos documentos, eu pensei: "Ah, eu só preciso abordar algumas armadilhas comuns para tudo." Então, em toda a nossa documentação, em vez de termos 10.000 linhas disso,
+
+temos 553 linhas de pegadinhas. E essas são as coisas mais comuns que surgiram enquanto eu executava essas avaliações repetidamente. Eles rodavam mais rápido, eram bem menores em termos de quantidade de tokens, levavam apenas 6 minutos por rodada, e eu não estava mandando os modelos nessas longas buscas infrutíferas, fazendo-os verificar um monte de coisas diferentes. Isso manteria o foco nas coisas. Então, ao eliminar 95% disso, o desempenho na verdade aumentou.
+
+E eu só sabia disso porque medi. Então, analisando isso, eu percebi uma habilidade em particular que me chamou a atenção. E quando eu executei com essa habilidade e atribuí uma tarefa, disse: "Ei, carregue esta habilidade e depois execute esta tarefa." Acertou em 77% das vezes. Mas se eu pedisse para realizar a mesma tarefa sem carregar a habilidade, ela acertava em 97% das vezes. Então, eu estava ativamente piorando a situação
+
+, e só sabia disso porque estava medindo. Portanto, as avaliações (evals) são extremamente importantes quando você está trabalhando com esse código não determinístico . Ah, Claude torna tudo muito fácil agora. Eles têm algo como avaliações, um Claude, uma habilidade que fará avaliações para você. E ele até cria uma saída HTML disso e mostra lado a lado. Executei vários testes dessa forma
+
+e outros sem a habilidade, e aqui estão os resultados. Use isso, meça e veja onde você está realmente errando, porque eu achava que estava melhorando muito as coisas por ter um monte de código. Eu só precisava confiar que o modelo já sabia como programar e, em alguns casos, apenas dar um pequeno empurrãozinho na direção certa. Então, o que eu realmente aprendi com esses dois sistemas? Basicamente, você quer impor as coisas, não instruir.
+
+A modelo pode mentir sobre isso. Ele pode decidir não executar determinadas tarefas porque se esqueceu delas , ou porque se distraiu com outras coisas. Mas se você configurar um fluxo de trabalho onde ele precise se autoavaliar e provar que fez o que você pediu, com certeza terá uma experiência melhor. E, muitas vezes, com muito menos fichas. Você quer orientar o modelo, não prescrevê-lo. Então, não diga simplesmente:
+
+"Ei, aqui está um resumo de todos os meus documentos com um monte de informações." Você quer simplesmente prescrever: "Ei, quando você estiver trabalhando no Next.js e estiver dentro do proxy, você precisa fazer isso. Se você não estiver dentro do proxy, não poderá chamar redirecionamentos." Essa é uma questão muito importante que surge constantemente, repetidas vezes . Ah, isso só ia espalhar
+
+essas coisas por todo lado. Então, oriente, mas não prescreva a isso. E então, claro, meça, não busque, não presuma que vai funcionar. É só confiar que tem uma taxa de aprovação, um hash, uma pontuação delta, algo assim, para que você possa provar isso. Uma das coisas que o Case faz no final, como parte do seu script de revisão, é que eu ainda leio todo o código que ele gera para garantir que seja realmente um código do qual eu me orgulharia de publicar, mas não vou perder meu tempo olhando para esse código até que ele me prove que fez o que eu pedi de uma forma que não envolva código. Então, a principal maneira de fazer
+
+isso é, por exemplo, se estiver corrigindo um bug na interface do usuário , eu quero que use a CLI do Playwright e grave um vídeo de si mesma fazendo algo antes e depois da correção, mostrando-me: "Ei, agora está corrigido. Está funcionando." E se eles puderem me provar isso nesses vídeos anexados ao comunicado de imprensa, eu ficarei muito mais inclinado a olhar para esse comunicado e dizer: "Sim, ok, podemos simplesmente corrigir algumas das coisas estranhas que aconteceram, mas o trabalho foi feito corretamente." E eu fico muito mais motivado a perder meu tempo e me tornar esse obstáculo para que isso aconteça. Caso contrário, eu simplesmente peço para fazer de novo.
+
+Assim, cada falha se transformava em dados para a próxima tentativa. Outro ponto importante é quando algo falha, e isso nos remete à engenharia de chicotes elétricos. Se você está trabalhando em um chicote e ele está apresentando erros, não tente corrigir os erros já cometidos, mas sim conserte o chicote para que ele possa corrigir os erros. Bem, Ryan Leuppolo, eu não... eu
+
+não vi a palestra dele aqui, mas vi uma palestra no Zoom, e ele falou sobre como a equipe dele nunca trabalharia no código em si. Eles só trabalhariam no chicote de fios para corrigir o próprio código. E eu levei isso muito a sério com o Case, então trabalho apenas no Case em si para garantir que ele esteja fazendo o que eu quero. E se falhar, tentamos novamente, e isso passa a fazer parte da sua memória. E a outra peça fundamental é que, enquanto o Case está em execução, a peça final é esse agente retrospectivo. E tudo o que
+
+faz é analisar o que foi feito, entrar e examinar as transcrições do Claude e do Codex, como os arquivos JSONL, e extrair informações. Ei, será que eu estava executando muitas ferramentas ao mesmo tempo? Executei a mesma solicitação de ferramenta três vezes seguidas sem alterar nada? Eu estava entrando num ciclo vicioso, tentando identificar esses problemas e ver o que poderia ser melhorado. E então, internamente, o Case mantém vários arquivos de memória como arquivos Markdown, e ele simplesmente entende, tipo: "Ok, aqui eu tenho um arquivo de memória geral. Se eu estiver trabalhando no
+
+Next.js, tenho um arquivo de memória do Next.js, um arquivo de memória de inicialização do TanStack, etc." E descobre onde colocar as informações sobre isso. Para que não cometa um erro e quebre o arquivo start.ts no
+
+TanStack, inicie novamente. Sabe disso porque guardou na memória. E uma coisa que eu quero acrescentar é sobre essa coisa de sonho automático que o Claude agora faz, que meio que limpa a memória dele com o tempo. Essa será a próxima peça que adicionarei. Mas é importante garantir que ele possa aprender com seus erros, e que possa fazer isso automaticamente, para que você também possa fornecer feedback. Tenha também uma forma de você
+
+fornecer feedback sobre isso. E então, da próxima vez que você lhe der uma tarefa, será muito melhor. E, eventualmente, você começará a confiar nisso cada vez mais. E se você está criando um produto que funcione para agentes, há também algumas coisas importantes. Descubra em que os agentes costumam errar sobre o seu produto e concentre-se nisso. Não se concentre no
+
+produto como um todo, porque ele provavelmente sabe muito mais sobre si do que você imagina. Você anota, anota, anota essas pegadinhas e desenvolve habilidades em torno delas. Você também pode criar tutoriais, mas não dependa exclusivamente disso. Os modelos podem ler os tutoriais e aprender com eles. Mas lembre-se que os modelos sabem programar. Eles só precisam conhecer
+
+os detalhes do seu produto e onde estão as armadilhas. E, claro, meça o que você está enviando. Você precisa entender onde o modelo está falhando para o seu produto específico e garantir que você se concentre nisso . E a única maneira de fazer isso é por meio de ferramentas como avaliações. Caso contrário, você pode acabar adicionando ruído e enviando o modelo em busca de pistas falsas.
+
+E pense nos consumidores da mesma forma que você pensa nos desenvolvedores. Pense nesses agentes da mesma forma que você pensa nos desenvolvedores. O que eles querem saber? Como posso melhorar as coisas para eles? Será que tenho muito JavaScript sendo carregado na minha página posteriormente, adicionando um monte de contexto que talvez não esteja sendo incluído quando o processo usado para buscar e resumir as informações na página é executado? Hum, será que eles estão perdendo isso de vista?
+
+Certifique-se de que não seja isso. E se você está fazendo agentes trabalharem para você, como no caso de Case, você substitui a confiança por evidências. Nunca confie nisso. Sempre exija que aquilo lhe prove que fez alguma coisa. Se o teste foi executado, faça com que ele comprove o resultado.
+
+Se corrigiu um bug na interface do usuário, precisa mostrar isso para você. Caso contrário, não perca seu tempo com isso. E impor isso com código, não com prompts. Então, foi por isso que mudei para o Raspberry Pi e usei uma máquina de estados para forçar a mudança, porque tenho controle total sobre essa máquina de estados, e ela está fora do alcance do Raspberry Pi ou do Claude, que decidem: "Devo fazer isso ou não?". Não, você precisa fazer isso. Eu
+
+garanto isso através desse loop. E então, cada falha se torna um bug do sistema. Bem, cada vez que algo dá errado, é um problema no sistema. Vá consertar o chicote de fios. Então, na verdade, o agente precisa criar um ambiente propício para que ele possa trabalhar em conjunto e se concentrar nisso.
+
+As práticas que temos não mudaram muito. Bem, nosso trabalho não mudou muito. Nós apenas simplificamos um pouco. Bem, seu trabalho nunca foi realmente escrever código. O objetivo sempre foi construir esses sistemas, e agora temos uma abstração melhor para entendê-los. Então,
+
+leve isso em consideração e siga em frente a partir daí. Então , é isso que se fala. Ah, obrigada, e terei prazer em responder a quaisquer perguntas dentro do tempo que me resta. [aplausos]
+
+[música]
+
+[música]

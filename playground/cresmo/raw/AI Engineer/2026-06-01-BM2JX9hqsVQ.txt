@@ -1,0 +1,192 @@
+---
+video_title: "What if the network was the sandbox? — Remy Guercio, Tailscale"
+video_id: BM2JX9hqsVQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BM2JX9hqsVQ
+video_date: 2026-06-01T15:00:31+00:00
+video_description: |
+  Standard sandboxing puts the API key inside the sandbox. The agent has the key, which it can exfiltrate, misuse, or — if it runs long enough — find creative ways to leverage beyond its intended scope. Remy Guercio from Tailscale argues that sandboxing conflates two separate problems: execution isolation and access control. You can fully isolate a runtime and still have the agent holding credentials it can abuse.
+  
+  Their answer is Aperture, an LLM gateway built on Tailscale's WireGuard identity network. Every connection carries verified identity — user, tag, or group — and the agent gets a placeholder instead of a real key. There is nothing to exfiltrate. Every LLM call has to pass through the network layer, so Aperture sees every tool call, bash command, and MCP request without instrumentation inside the container. Internally at Tailscale, bash dominates over structured tool calls — and now they can actually see that.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/remyguercio/
+  
+  Timestamps:
+  0:00 - Introduction and the concept of a sandbox
+  1:15 - Breaking down the components of a sandbox (boundary and permissions)
+  1:52 - How permissions are typically handled (API keys vs. OIDC)
+  3:18 - Introducing Tailscale and WireGuard for network-level identity
+  5:42 - Introduction to Aperture (AI Gateway)
+  7:28 - Live demo: Viewing usage metrics and logs in Aperture
+  9:47 - Live demo: Inspecting GitHub Actions PR review bot logs
+  10:39 - Visibility into tool calls, bash commands, and MCP requests
+  11:46 - Agent setup and configuration in Aperture
+  13:59 - Advanced features: Cost controls, quotas, and webhooks
+  15:35 - Using tsnet to build custom internal identity-aware services
+  17:03 - Q&A: How to configure permissions (Grants vs. ACLs)
+  18:46 - Q&A: Network-layer transparency for base URLs
+  20:25 - Q&A: Permissioning based on users vs. model/provider
+  21:28 - Q&A: Handling non-tool call agent behaviors (direct code execution)
+---
+[música]
+
+Olá a todos. [risos] Obrigado por participar. Sei que estamos começando um pouco atrasados. Então, sim, agradeço. Ah, sim, estou feliz em...
+
+animado para falar sobre... uma questão que eu gostaria de levantar e sobre a qual gostaria de refletir. E então eu vou fazer uma demonstração de algo que, basicamente, você pode fazer. É um projeto no qual estamos
+
+trabalhando e construindo, e você pode fazer isso se começar a pensar na rede mais como um ambiente de testes do que, você sabe, necessariamente apenas como a rede em si. Então, é , quer dizer, começando pela pergunta: quais são os componentes de um sandbox, certo? Sabe, eu sei que digo isso. Provavelmente todos vocês pensaram em coisas diferentes. Provavelmente todos vocês pensaram em uma máquina virtual ou um contêiner e no debate sobre se esse é o caso, ou se o agente deve ficar dentro do servidor, fora dele, ao redor do servidor, ou ambos, ou coisas do tipo. Então, sabe,
+
+vou simplificar bastante e depois perguntar, de forma geral, como isso se pareceria na camada de rede. Então, sabe, quais são os componentes no nível mais básico? Quais são os componentes de uma sandbox? Então, primeiro temos um limite, certo? Então, é basicamente isso: entra uma coisa e sai outra .
+
+Certo? Ah, da caixa de areia. E o segundo é um conjunto de permissões. Certo? Então, se você não tiver o conjunto de permissões ou a identidade que faz parte disso, você não terá um ambiente de testes muito divertido, certo? É uma caixa de areia sem brinquedos,
+
+certo? E eles dizem que é uma caixa de areia, mas... não tem realmente nada lá. Então, sabe, se
+
+pensarmos nisso e pensarmos em agentes, certo? Em um sentido específico, como o que significa colocar um agente em uma caixa ou algo semelhante a isso. Bem , podemos pensar em como as permissões são normalmente gerenciadas hoje em dia e o que isso significa. Então, existem duas maneiras, certo? Geralmente, há duas maneiras. Existe uma primeira maneira,
+
+que eu acho que é o que os principais laboratórios de modelagem realmente gostariam que você fizesse, que é usar chaves de API, certo? Então, você paga o preço total. Hum, hum, e hum, você sabe, essa é uma. E sabe, isso também não resolve a questão central, como authN versus authZ, certo? É como se fosse uma chave de API. Isso permite que você
+
+saiba, permite que você tenha acesso, certo? Tipo, sabe, todos os modelos ou alguns dos modelos ou coisas assim. E a outra parte divertida é que se trata de uma chave de API. Então, mesmo que seja um modelo sintético, eles são muito inteligentes em fazer coisas com as teclas que talvez não devessem fazer, especialmente se forem executados em loop por um longo período. E então, a outra maneira, talvez a mais econômica, é usar o OAuth ou o OIDC para gerenciar as permissões do seu agente. Então, hum, mas,
+
+novamente, ambas as coisas acontecem exatamente como você faz na caixa de areia, certo? Então, tipo, sua chave vai para a sandbox, ou, sabe, você entrou no seu agente e ele está rodando em algum lugar por lá, sabe, suas garras abertas rodando por lá com sua conta meio que parada ali no canto. Então, é isso que significa: o agente tem acesso, certo? Para o seu próprio tipo de permissões, certo? Está dentro de uma caixa, mas na verdade tem acesso ao dispositivo para conceder permissões. Então, minha pergunta
+
+é, sabe, e se nós, sabe, de novo, e se nós usássemos a rede? E se pensássemos na rede? E eu não sei quem está familiarizado com o WireGuard? Gosta do protocolo WireGuard? Ok, quase todo mundo. Bem, sim,
+
+então, o que o WireGuard nos permite fazer, e é sobre isso que o Tailscale é construído, é que o WireGuard basicamente nos permite atribuir um conjunto de chaves a todos os nós de uma determinada rede. E na Tailscale, nós conseguimos adicionar uma espécie de componente de identidade por cima disso. Então, basicamente, aqui temos a questão de se isso é, efetivamente, o que é o Tailscale. E nós estamos meio que fazendo a seguinte pergunta: e se pegássemos os componentes de autenticação (authN) e autenticação (authZ) e os colocássemos diretamente no nível da rede? Então, pelo menos em uma, você sabe, em uma rede de cauda, certo? Portanto, estamos usando o WireGuard para
+
+estabelecer essas conexões. E essas são conexões diretas entre tudo o que você possa imaginar. Então, um contêiner, um servidor de GPU, sabe, seu laptop, um telefone, qualquer coisa. Bem, podemos dizer, então, em cada conexão, podemos fornecer a identidade real do que e de quem pode estar se conectando. Então, a cada conexão que ocorre através do Tailscale, você obtém um usuário se esse usuário estiver conectado ao dispositivo. Você obtém todos os
+
+grupos, nesse sentido, como se estivesse fazendo uma sincronização rápida dos grupos. Então, se você trabalha na área de engenharia ou algo do tipo, você pode ter acesso a todos esses benefícios. Você pode obter, sabe, se for um agente, tipo um bot de revisão de RP que você talvez tenha rodando em algum lugar, certo? Em uma ação do GitHub. Pode ser uma etiqueta ou um conjunto de etiquetas. Então, este é o bot de revisão de PR
+
+para este projeto ou este é o bot de revisão de PR para este tipo de coisa. E sabe, podemos pegar isso e aplicar a todas as conexões de rede. Então, não só podemos, como também podemos basicamente governar o acesso à rede com base nisso. Portanto, você não pode nem mesmo falar com algo se não tiver um determinado conjunto de permissões. Mas o dispositivo do outro lado também recebe todas as informações. Então, quer
+
+dizer, se você está acostumado a trabalhar com redes, provavelmente está acostumado a usar endereços IP ou algo como: "aqui está um dispositivo aqui e estamos conectando coisas", ou seja, é um endereço IP mais uma chave, como uma chave de API que o seu serviço fornece. Hum, está tudo meio que misturado. Então, as conexões acontecem, sabe, tipo, as conexões acontecem com a identidade. E assim, isso permite que você crie aplicações muito interessantes em cima disso. Então, eu sei que está muito escuro aqui na tela, então peço desculpas.
+
+Hum, o... hum...
+
+permite que você crie aplicativos muito interessantes . Uma das coisas que construímos é um portal de IA. Então, o que está acontecendo aqui é que, você sabe , provavelmente todo mundo está familiarizado com o típico LLM, o LLM Gateway, certo? Bem, a abertura funciona da mesma forma sob essa perspectiva. Então, você pega uma única chave de um provedor. Sabe, pode ser
+
+Anthropic, OpenAI, Gemini, Vertex, Bedrock ou qualquer outra. Você pode obter uma única chave de qualquer fornecedor. Você pode colocá-lo no Aperture. E do outro lado, o Aperture é apenas um nó novamente nessa rede. Então, é como um nó que você implantou nesta rede. Portanto, ele
+
+consegue ver toda a identidade de tudo que está se comunicando com ele. Assim, no caso de um agente em um ambiente de teste (sandbox), esse ambiente de teste possui uma etiqueta. Esse ambiente isolado (sandbox) é como... podemos
+
+pensar, neste caso, em um executor de ações do GitHub, como uma espécie de sandbox onde seu agente está sendo executado. Você pode usar algo como o OIDC federado do GitHub. Bem, basicamente, quando aquele corredor acelerar, ele terá acesso à traseira do carro. Ela recebe uma etiqueta na rede traseira. E essa etiqueta na rede traseira é o que determina o que ela é capaz de fazer através da Aperture.
+
+Porque, de novo, ele consegue ver isso. Ah, e vou mostrar um exemplo em um instante. Então, sim. Então, é mais ou menos onde estamos. Então, temos, sabe, uma única tecla no Aperture. Em seguida, você pode
+
+escrever todas as suas regras no Aperture. E do outro lado, na verdade, não há chave nenhuma. É como se o jogador que se conecta a partir da área de testes não tivesse nenhuma chave para acidentalmente extrair, compartilhar ou fazer algo com os dados, ou, sabe, ultrapassar os limites. Ali não há absolutamente nenhuma chave naquela caixa de areia. Então, sim. Então, é isso e pronto. E
+
+só para mostrar para vocês ao vivo, eu gosto, eu prefiro, na verdade, mostrar as coisas. Desculpe, só mostro as coisas ao vivo. Então, este é o Aperture. Exatamente como na captura de tela que eu tinha antes. Vou alterar para "Vamos usar o modo claro para facilitar a leitura".
+
+Então, este é o Aperture novamente. Era isso que eu estava te mostrando. Bem, esta é a minha visão da minha instância do Aperture. Então, estou conectado aqui. Na verdade, estou na nossa rede de segurança corporativa.
+
+Então, estou conectado à nossa rede corporativa restrita. Hum, eu já visitei o Aperture como usuário. Sabe quem eu sou. Hum, estou no meu laptop, certo? Então, estou apenas usando meu laptop. Ele sabe que estou logado com a minha conta
+
+. Então, está me mostrando todas as minhas métricas de uso na nossa instância de demonstração aqui. Então, sabe, eu consigo ver todos os tokens que usei. Consigo ver os modelos que utilizei. Consigo ver quanto dinheiro gastei em cada um dos modelos.
+
+E então eu consigo ver todas as solicitações que passaram pelo gateway a partir da minha identidade específica. Então, para mim, está ótimo. Isso também funciona para todo o resto. Hum, eu consigo até detalhar e ver, tipo, então, isso sou eu testando antes e vou mostrar ao vivo. Mas eu só pedi para ele dizer olá.
+
+E com todo o contexto do código Claude, mesmo que você simplesmente peça para ele dizer olá, isso custa 20 centavos. É , você sabe, uh uh, na verdade são 20 centavos. Mas o próximo não é tão caro. Mas eu consigo entrar aqui e ver todos os cabeçalhos da requisição, o corpo da resposta, tudo aqui. E se eu rolar até o final da página, uh, deve haver uh Oh, sim. Veja, isto é tudo.
+
+Caso você esteja se perguntando, isto é tudo o que o código Claude envia logo no início. Então, vamos ver se eu digo... Ah, vamos dizer olá.
+
+Oh não. Talvez eu não tenha feito isso. Será que foi mesmo? Ah, ah, isso é literalmente tudo que o Claude envia logo de cara, como um pedido específico. E então você poderá ver a resposta no corpo da resposta. Ih,
+
+desculpe. Pedi para que me contasse uma história de 10 palavras . Então, é isso. Hum, sabe, um gato sentou-se num tapete e simplesmente desapareceu. Mas é isso que realmente passa pelo gateway quando você faz a primeira requisição do código Claude. Então, é isso
+
+. Então, é isso e pronto. Se eu quisesse me olhar, certo? Veja, esse sou eu aqui. Consigo ver a minha sessão.
+
+Esta é a minha sessão de código Claude com dois, uh [limpa a garganta] você sabe, com duas solicitações aqui. Então, tinha aquele haicai para me contar, sabe, para te dar um resumo do que estava acontecendo, e os 20 centavos que gastei para conseguir aquela história de 10 palavras. E então eu também posso, como mencionei, usar os executores de ações do GitHub. Então, na verdade, este é um bot de revisão de PR que temos, sabe, é apenas uma pequena verificação simples que executamos em cada atualização de PR. E você pode ver isso aqui também, não é? Então
+
+é isso. Possui uma etiqueta. É a etiqueta da ração do nosso cachorro. E você sabe, você pode ver tudo o que o robô de ração para cães fez aqui nos últimos 30 dias. E eu posso abri-lo. Posso dar uma olhada.
+
+Consigo ver cada solicitação executada e posso até dar uma olhada em algo como isto, e podemos ver, por exemplo , que foram gastos 4 centavos. E executou três comandos ao mesmo tempo. Então, na verdade, consigo ver todos os comandos do bash e tudo mais relacionado a esse tipo de coisa . Aqui. Ah, sim, então, sabe, é esse o caso .
+
+Sabe, eu mencionei ter visto aqueles comandos bash. É possível extrair dados, e essa é uma das partes interessantes de trabalhar na camada LLM e ter tudo na camada de rede. Não há... Eu tenho uma espécie de garantia... de que
+
+vi todas as chamadas de ferramentas que essa coisa já fez através da instância. Isso não está acontecendo como se estivesse ocorrendo dentro do contêiner. Isso não está acontecendo por causa do cinto de segurança ou algo do tipo . Se fosse necessário fazer uma chamada de ferramenta, ela teria que passar pelo Apert e nós a extrairíamos daqui para que você pudesse vê-la. Então, se eu quiser ir aqui e você sabe, uh, você pode ver todas as chamadas de ferramentas que foram feitas.
+
+Sabe, o sistema solicitou que a ferramenta MCP fosse chamada para atualizar a revisão de código, executou alguns comandos bash, alguns comandos grep, e então atualizou novamente o comentário na revisão de código, e não há nenhum erro, como se nada tivesse acontecido . Então, se você quisesse cortar ou interromper isso, estaria acontecendo na camada de rede. Então, no momento em que você diz não, não é como se houvesse uma chave e pudesse ser algo como: "Ah, entendi, a chave não funciona mais. Deixe-me ir para este outro endpoint, certo? Ou deixe-me tentar outra coisa.
+
+Ou deixe-me fazer isso, sabe, eu gostaria de ser bem prestativo aqui, certo?" Literalmente, é como: "Ah, a chave não funciona mais." É apenas um hífen. Então, só para mostrar isso, temos o nosso script de configuração do agente . Isso é tudo o que você precisa fazer. No Claude Code, por exemplo, é só:
+
+"Ei, você vai executar o modo de chave de API ." Há um hífen. Só para você ter algo para não reclamar que não há chave de API para o modo de chave de API . E aqui está o endpoint que você precisa, sabe, a URL base que você precisa usar. E, novamente, funciona com o Codex, o Claude Code ou o Gemini CLI. E aqui está o que
+
+você... Preciso usar isso e, sabe, quando você faz isso, você pode, de novo, eu posso dizer, sabe, vou dizer Claude. Este é o meu settings.json. Você pode
+
+ver as mesmas coisinhas aqui em cima. Mas, sabe, eu posso fazer isso e posso dizer, sabe, de novo, me conte uma história de 10 palavras. Aliás, se eu pedi para me contar uma história de 10 palavras umas 3 semanas atrás, era tudo sobre robôs. E aí passou a ser sobre cachorros. E agora é sobre gatos. Então, se tem algum tipo de...
+
+sei lá, conjunto de avaliação de modelos ou algo assim . Não sei. Dá para perceber que algo está acontecendo nos bastidores. [risos] Então, sabe, em termos do que eles fazem, temos o gato, sabe, o gato sentou num tapete e encontrou uma casa. Mas é, nossa , que engraçado. Então ainda não sabe
+
+contar. Opus 4.6 1 milhão de contextos. Sabe, hum [risos]
+
+[risos] Aí está, né? [risos] Uh, e finalmente encontrou o lugar certo. Então, aí está , né? Sabe, simplesmente esqueceu o detalhe extra. Hum, mas, de novo, sabe, se quiséssemos ver isso, né?
+
+Sabe, ei, você tem um pipeline que, sabe, na verdade depende de ter 10 palavras ou algo assim, sabe, ou ter uma certa estrutura. As coisas podem quebrar facilmente, como em um bot de revisão de PR, e sabe, isso pode acontecer, e quando acontece em algo como um bot de revisão de PR, é difícil saber o que está acontecendo ou, sabe, o que aconteceu ou quando. Sabe, eu posso voltar aos meus logs, né? Aqui está minha sessão, né? Com ​​três requisições.
+
+E sabe, aqui estão todas elas, né? Aqui está o resumo e aqui está a primeira requisição com todos, sabe, todos os tokens de entrada. Uh, sabe, essa foi a 20 centavos e aqui está, sabe, você tem certeza disso? Uh e sabe, aqui está, você está certo, eram nove. Uh então, sabe, novamente, se você estiver tentando voltar e analisar certas coisas, você também pode fazer isso aqui. Uh
+
+e, novamente, não há como esconder isso de você, porque não é como se eu fosse ser super prestativo e fazer isso e aquilo e ficar dando voltas. Uh, sabe, simplesmente tem que estar aqui. Uh outra coisa interessante que você pode fazer aqui no meio é, bem, sabe, primeiro também podemos fazer custos e controles de custos e sabe, todos esses tipos de coisas que funcionam entre provedores. Então, se você quiser definir um orçamento ou algum tipo de orçamento na abertura, você pode fazer com que funcione para todos os provedores. Não é como se aqui estivessem mil dólares para todos.
+
+É aqui apenas mil dólares e você pode decidir usar Faça como quiser. E outra coisa: você pode fazer integrações. Oferecemos webhooks, onde para cada chamada de ferramenta ou para cada uma dessas ações, você pode enviar uma solicitação a terceiros com todas as informações sobre a chamada da ferramenta. E, novamente, não há como esconder nada. Tem que passar por aqui. Então,
+
+esses webhooks têm garantia de existir, certo? E de funcionar, não importa o quê. Então, é isso . Se quiser, por exemplo, configurar cotas, você pode dizer: "Ei, aqui está , você ganha US$ 5 por dia, e coisas do tipo." E se divertir o máximo possível, de forma segura, digamos assim.
+
+Você quer, sabe, através do gateway. E, novamente, funciona com praticamente qualquer provedor que você possa imaginar, em toda a gama de provedores que suportam o contexto principal. Então , como eu mencionei no início, este é o Aperture, certo? É o que nós construímos e que você pode usar. Está disponível no nosso plano gratuito. No entanto, ele
+
+é construído usando as primitivas de identidade do Tailscale, e tudo isso está disponível através de uma biblioteca de código aberto chamada TSnet, onde você pode escrever seu próprio programa em Go, certo? Que se conecta à Tailnet e pode ler todas as informações de identidade, pode ler tudo. Então, você pode fazer coisas como, por exemplo, construir um servidor MCP, mas que seja interno à sua organização, ou algo semelhante, ou um endpoint de API ou algo que seja interno à sua organização, você não precisa se preocupar com OAuth ou em abri-lo para todos. Você pode fazer exatamente a mesma coisa e dizer, "Ei, quem fez esse pedido?" Sabe, eu vou , sabe, forçar isso em, sabe, seja lá o que eu estiver usando como proxy no lado do MCP ou coisas do tipo. Então você pode pegar todas essas
+
+informações e fazer isso você mesmo. Curiosamente, você pode construir o Aperture você mesmo, se quiser, usando os mesmos materiais. Tínhamos toda uma estrutura aqui que precisava ser construída em cima da Tailscale. Não seria possível construir isso internamente, usando endpoints de API privados ou algo do tipo. Então, isto foi construído inteiramente de uma forma que, em teoria, você também poderia construir sozinho. Então, é isso aí,
+
+sabe, se alguma ideia surgiu disso, se vocês pensarem em coisas que gostariam de desenvolver internamente, eu adoraria ouvir e conversar sobre isso. Conversaremos depois. Então, sim, acho que estou a um minuto daqui e, bem, se houver alguma pergunta, terei o maior prazer em respondê-la. Ah, sim, sim. Como configurar as permissões?
+
+Como configurar as permissões, por exemplo, quem pode acessar? Então a pergunta é: como configurar as permissões? E você está dizendo que é tipo quem pode acessar o quê ou quem pode ver o quê? Sim, então, na verdade, podemos deixar você configurar isso em dois lugares. Então, existe outra pequena funcionalidade interessante relacionada à forma como a identidade do Tailscale e esse tipo de informação são propagadas pela rede. Primeiro,
+
+você pode configurá-los aqui mesmo, na seção de subsídios. Então, você pode perguntar a quem isso se aplica. Em breve, também adicionaremos recursos como grupos e outras funcionalidades aqui. Mas aí você pode dizer, tipo, nós também temos um servidor MCP, tipo um proxy MCP, aqui também. Então você pode falar de acesso a modelos e cotas, acesso ao MCP, hooks, funções, enfim, tudo nessa linha. Você cuida
+
+das subvenções. Você pode até mesmo defini- los. Então, o Tailscale como um todo possui um arquivo de política que você pode usar. É assim que você define quem pode acessar o quê na rede. Você pode, na verdade, usar esse tipo de recurso chamado "aplicativo". Este aqui é
+
+chamado de "capacidade do aplicativo". Você pode, na verdade, inserir isso no seu arquivo ACL principal ou no seu arquivo de controle de acesso principal para enviar junto com a identidade. Então você não só pode enviar o usuário, as tags ou qualquer outra coisa, como também pode enviar quaisquer metadados arbitrários que desejar, garantidos pelo [bufa] plano de controle do Tailscale [limpa a garganta] . Então, sim, nós tentamos, sabe, temos o editor visual, mas também temos tudo o que é possível fazer em JSON. Sabe, a maioria das pessoas que usam isso em larga escala querem integrá-lo a algum tipo de fluxo de trabalho GitOps. Então, sabe, nós temos
+
+isso. Também temos a API, caso você queira, por exemplo, integrá-la a algum fluxo de trabalho GitOps. Mais alguma pergunta? Acho que foi isso mesmo. Acho que te vi quando você estava configurando o código no Claude; você definiu a URL base para o seu nó do Aperture em vez de usar a URL padrão, como no exemplo.
+
+É possível detectar isso na camada de rede e simplesmente substituir o erro ? Sim. Tudo que vai para o código do Claude vai para o seu nó. Sim, então a questão é: você precisa inserir a URL base ou é possível capturá-la na camada de rede e torná-la transparente? Hum, isso é algo que poderíamos fazer.
+
+Esse foi um dos principais pontos de discussão quando começamos a pensar nisso. E, na realidade, não é bem assim , nós poderíamos, não é realmente algo que nós... não é exatamente do jeito que eu chamaria de estilo Tailscale necessariamente. O
+
+objetivo principal aqui é tornar as coisas muito, muito fáceis para você, sabe, para que você consiga ter acesso ao LLM e/ ou entrar em um ambiente de teste. Você quer poder fazer isso , sabe, no computador de alguém. Queremos tornar isso super, super fácil desde o início. Eu entendo, sabe, que existe uma questão de transparência, mas, quando você faz isso, as coisas podem começar a se desfazer, mudar e se transformar. Sim, e fica muito confuso e sai do seu controle. Sabe, nós só queremos
+
+tornar o processo o mais fácil possível para você, de fato, oferecer esse tipo de acesso ao LLM, e não necessariamente fazer isso de forma oculta, enquanto você faz todo o resto. Então, é definitivamente voltado para pessoas que querem construir, sabe, com IA. E do outro lado, certo, para um administrador de segurança ou de TI, é tipo: "Ótimo, você tem controles fáceis de usar. Você consegue ver facilmente todas as chamadas de ferramentas. Você consegue ver todas essas coisas." Então, estamos realmente
+
+tentando fazer o melhor dos dois mundos, tanto para os desenvolvedores quanto para os gerentes de TI/segurança. Sim . Tudo se baseia em critérios como: você pode afirmar que esses usuários têm permissão para usar essas ferramentas ou isso se aplica apenas ao modelo e ao provedor? Então, é hoje, é... sim, nós queremos...
+
+trabalhar nisso. É o modelo de fornecedor atual. Bem, você pode pensar em praticamente qualquer coisa que usaríamos no Aperture. Você deveria ser capaz de dizer: "Ei, este grupo, ou este, conforme definido pelo meu provedor de SKIM, conforme definido por
+
+, você sabe, seja lá o que for, tem acesso ao modelo". Não se trata apenas do modelo e do provedor, mas também de todas as cotas, sabe? Tudo isso também tem o mesmo tipo de sistema de permissões. Então, você pode dizer: "Esta equipe recebe este orçamento grande, sabe, cada indivíduo recebe este orçamento menor". E então, sabe , fazemos a união dos dois, ou até mesmo fazemos algo como: você pode usar o quanto quiser da GPU interna, sabe, como os endpoints de GPU internos que hospedamos. Mas, sabe, se for
+
+Opus 4.6, você só recebe esta quantidade ou algo parecido . Sim. Como funciona o sistema de permissões em um... Um
+
+mundo onde não se fazem chamadas de ferramentas? É só escrever código. Como funciona o controle de permissões num mundo onde não se fazem chamadas de ferramentas? É só escrever código. Acho que muitos agentes estão se afastando das chamadas de ferramentas e da execução de código, o que, na verdade, torna o tráfego de rede mais difícil de analisar. Sim. Então,
+
+a questão é: num mundo onde as pessoas estão se afastando do MCP e talvez das chamadas de ferramentas estruturadas, como funciona o controle de permissões e coisas do tipo ? Você tem razão, é um pouco mais complicado. No entanto, é exatamente por isso que optamos por fazer isso. Inicialmente, pensamos em fazer isso no MCP, apenas na camada MCP, mas percebemos que era muito mais valioso fazer na camada LLM. E é aqui que...
+
+Bem, deixe-me... Basta acessar os logs. E, sabe, eu vou novamente, não ao chat, mas à métrica específica aqui, vejamos, a métrica específica. Hum,
+
+sabe, isso é... Certo? Então, mesmo com habilidades e tudo mais, certo, ou código, você ainda está executando algo, como normalmente acontece . Sim. Agora,
+
+claro, você poderia escrever a coisa, talvez ofuscá-la e então executá- la. Sabe, um passo de cada vez, sabe, algo assim . Hum, sabe, e muitas pessoas, para ser honesto, muitas pessoas com quem conversamos disseram: "Eu nem sei quais ferramentas as pessoas estão usando." Tipo, por favor, só me diga, tipo, esqueça de bloquear por um segundo. Eu nem gosto do que as pessoas estão fazendo, né? Sabe, é como se o MCP estivesse
+
+na moda e você pensasse: "Será que eles estão usando MCPs?" Eles estão usando apenas comandos bash? Posso dizer que internamente, tipo, desculpe, esta é apenas nossa instância de demonstração, mas internamente, se você olhasse para nossa instância real, o bash domina. Sim. Tudo o mais. Hum,
+
+mas, novamente, conseguimos ver o comando e, normalmente, conseguimos ver todos os comandos e tudo o que está sendo executado. E adicionaremos mais mecanismos de segurança, como, por exemplo: "Ei, você pode ver, este é o comando bash." Vamos ver se é rm -rf / Certo? Hum, talvez não, sabe, ou sabe , ou algo parecido . Sabe, nós vamos adicionar isso. Mas esse é o
+
+motivo pelo qual decidimos fazer isso na camada LLM. Então, sim, tivemos toda aquela discussão sobre tipo, "Bem, e se você não consegue ver tudo, então qual é o valor disso, certo?" Sabe, se você não consegue ver tudo. Então, queríamos poder ver, hum, sabe, pelo menos a partir de determinados agentes que você queira colocar lá, sabe? Ah, sim.
+
+Qualquer outra coisa... quer dizer, eu ia dizer que não sei exatamente que horas são aqui, mas... bem, eu sei que estamos
+
+meio que no final. Hum, terei prazer em responder a quaisquer outras perguntas lá embaixo, se você quiser vir até a cabine ou ao corredor. Sim, obrigada. [aplausos]
+
+[música]

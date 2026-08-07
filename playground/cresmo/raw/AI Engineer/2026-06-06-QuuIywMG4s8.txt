@@ -1,0 +1,117 @@
+---
+video_title: "Evals Are Broken, Use Them Anyway — Ara Khan, Cline"
+video_id: QuuIywMG4s8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=QuuIywMG4s8
+video_date: 2026-06-06T16:00:00+00:00
+video_description: |
+  Cline started at 43% on Terminal Bench. The improvements came from container CPU and memory settings, raised timeouts, and prompt engineering techniques specific to Anthropic model families that do not transfer to Codex or Gemini. Not from switching to a better model. Ara Khan's argument is that benchmark numbers are not gospel and vibes are not a system, and that the truth is inconveniently in between.
+  
+  The practical framework: after a run, portfolio allocate the failures by sending another agent through all the failure traces to find which small levers actually move the score. Zone one is obvious bugs. Zone two is the nuance improvements that explain why a model everyone calls great somehow does not work for your specific harness. Zone three is overfitting to the benchmark, which people do, and which Ara is explicitly telling you not to do.
+  
+  Speaker info:
+  - https://x.com/arafatkatze
+  - https://www.linkedin.com/in/arafatkatze/
+  - https://github.com/arafatkatze
+---
+Tudo bem. Tudo bem. Antes de mais nada, muito obrigado por terem vindo. Na verdade, estou bastante surpreso. Hum, muitas vezes você está trabalhando nas coisas, isolado em um quarto, e pensa: "Ninguém se importa". E
+
+aí, de repente, apareceu muita gente. Então eu só pensei que alguém se importava. Bem , enfim, o título da minha palestra de hoje é "As avaliações estão quebradas e você deveria usá-las mesmo assim". E boa parte dessa conversa é simplesmente uma crítica direta à maneira como fazemos avaliações hoje em dia. E eu meio que quero te ajudar. Eu meio que
+
+quero te dar uma saída para isso. É como se você tivesse uma tecnologia interessante e pudesse usá-la, mas existem muitas maneiras de estragá-la . Então, quero te ajudar. Portanto, minha primeira afirmação é que as pessoas estão enganadas sobre as avaliações. Na verdade, deixe-me corrigir-me. A
+
+maioria das pessoas está enganada sobre as avaliações. E eu quero que você esteja certo sobre as avaliações. Quero que você os use. Quero que vocês gostem, que consigam construir com eles, interpretá-los, usar avaliações em seus próprios fluxos de agentes, e aproveitá-los de todas as maneiras possíveis . Então, basicamente, esse é o objetivo da conversa. Então, para
+
+estar certo sobre algo que tem muitas nuances e pode seguir em várias direções diferentes, a pergunta final é: como as pessoas podem estar erradas sobre isso? Então, basicamente, existem dois grupos de pessoas que estão erradas sobre as coisas, certo? Existem, portanto, duas correntes de pensamento erradas em relação às avaliações. O primeiro grupo é o dos que defendem métricas objetivas. Portanto, a corrente que defende as métricas objetivas é esta. Tipo, tem gente que
+
+gostaria de ver uma lista nesse painel, né? E eles interpretarão isso como algo semelhante a "tipo, significa algo como: 'GPT 5.4 é efetivamente o mesmo que a versão de pré-visualização do Gemini 3.1 Pro'". Acredite em mim, não são a mesma coisa.
+
+Bem, existem muitos desses modelos que parecem apresentar números semelhantes, e em certo ponto, tudo indica que é uma farsa. Assim como você, você não vai acreditar nisso de jeito nenhum . Então, surgiu um tweet hoje de manhã que era uma crítica ao meta, onde o meta foi lançado e era basicamente o clássico " benchmark maximizando tudo". Assim como estamos obtendo os melhores resultados no índice de referência. Está tudo ótimo. E eu garanto a vocês que, se tentarem
+
+muitos desses modelos, eles simplesmente não resistirão ao teste da evidência do mundo real. O outro lado da moeda, o outro campo, onde as pessoas estão erradas, é que elas poderiam ter ido longe demais para o outro lado. Então, basicamente, isso é como um acampamento de degustação. Então, as pessoas do grupo que se preocupa com o paladar são mais ou menos assim. Eles simplesmente são como são, são um arquétipo. Eles simplesmente
+
+acham que tudo se resume a vibrações e tudo gira em torno disso, sabe? Tipo, se você perguntar a eles por que gostam de óperas, eles vão dizer coisas como "Eu gosto de conversar com ela". Tipo, eles vão antropomorfizar isso. E, hum, isso também não está certo, né? Portanto, acho que a verdade está algures no meio, que os emails não são a solução definitiva. Eles também
+
+não são completamente inúteis. Existem maneiras corretas de usá-los. Existem maneiras incorretas de usá-los. Então, para fazer isso, vou te dar três etapas que vão te ajudar a usá-las muito bem. Então, a primeira etapa é como se você pudesse aproveitar os e-mails de outras pessoas. A
+
+segunda etapa consiste em usar e-mails para aprimorar seus próprios agentes. E a terceira etapa é como construir, de fato, seus próprios e-mails para casos de uso específicos. Para não sobrecarregar o tempo, eu poderia falar sobre e-mails por horas, mas só posso abordar os níveis um e dois, e acredito que esses serão os mais úteis para a maioria das pessoas na plateia. Então, vou apresentar algumas heurísticas para interpretar e-mails. Então, a primeira regra prática é que, sempre que um aplicativo de modelagem apresentar um número, simplesmente não acredite nele. Simplesmente não faça isso. Assim como
+
+essas são aproximações. Voltando ao tweet, tipo, simplesmente não acreditem nos números de avaliação do aplicativo modelo . É como se houvesse um certo grau de aproximação. Às vezes são bons, às vezes não. Tem um tweet bem legal em que o Nikunj disse que muitos pesquisadores e engenheiros de IA costumam descartar avaliações.
+
+Eles não consideram isso como algo que deva ser levado tão a sério quanto os números. E, em certa medida, é uma questão de tentativa e preferência. E acho que isso é um pouco mais preciso. Hum, espere um segundo. Sim.
+
+Então, a segunda heurística é que você quer se manter atualizado, mas não quer ser o primeiro a adotar a novidade. E por que estou dizendo isso? Então, se isso for como o Índice de Épocas, é basicamente a pontuação agregada de diferentes modelos em avaliações. E se você reparar, nos últimos dois anos, a cada dois meses o Frontier Lab e o modelo Frontier estão mudando. E está mudando muito rápido.
+
+É muito difícil acompanhar tudo isso. E eu trabalho para isso. Já faz anos que faço isso para ganhar a vida. E eu, eu mesmo, minhas preferências mudam muito rápido. Então, tipo, eu acho que quando você está lidando com essas coisas, a maneira que eu recomendaria é deixar a coisa sair primeiro. Deixe as coisas se acalmarem
+
+por umas duas semanas. E se a coisa ainda resistir ao teste do tempo, acho que nesse ponto você deveria mudar de modelo e experimentar algo novo, em vez de sempre tentar estar na vanguarda. Assim como as pessoas que sempre precisam experimentar o modelo novo e as novidades, como eu. Mas eu faço isso para ganhar a vida e você não precisa. A terceira heurística para avaliações é que você precisa procurar avaliações muito, muito novas e muito precisas.
+
+E a razão pela qual isso é necessário é que muitas avaliações, neste momento, tornaram-se padronizadas. Eles são, na verdade, meio antigos. Como se não fossem úteis para você. Então, este é um post de blog da OpenAI onde eles afirmaram categoricamente que a verificação de desempenho não mede mais as capacidades de codificação de ponta. Bem, acho que para muitas pessoas na comunidade de pesquisa em IA, isso era muito óbvio. Ficou muito óbvio que,
+
+a partir da borda de saída, não se mede as capacidades de codificação de fronteira, pois seria como se tivesse problemas para resolver a sequência de Fibonacci. Isso teria problemas como, sabe, fazer multiplicação de matrizes ou algo do tipo. E é como se isso não se aplicasse à engenharia de software do mundo real. Então, você quer algo que seja ao mesmo tempo muito novo e legítimo. Hum, e depois é preciso discernimento para descobrir isso. Então, essa é a primeira
+
+parte. Mas a segunda parte é tipo, ok, agora que sabemos disso, tipo, ok, aí temos algumas heurísticas de como usar avaliações. Por exemplo, como você usa as avaliações para aprimorar seu agente com base nelas? E acho que é aqui que eu meio que me inclino para a filosofia central desta conversa, que é pensar nas avaliações como um problema de engenharia, mas também como um problema de filosofia, certo? Portanto, o problema da engenharia é obviamente difícil, mas o problema da filosofia também é muito difícil.
+
+Bem, o problema filosófico é que você quer ter um problema e não consegue aproximar exatamente o espaço de busca, ou seja, para onde o problema pode ir, onde os problemas podem falhar. Bem, é um pouco mais fácil fazer isso para problemas de programação. Mas mesmo assim, os problemas de programação têm um espaço de busca praticamente infinito. Eles podem ir em qualquer direção. Então, você quer construir avaliações que sejam uma representação um pouco mais aproximada da coisa real com a qual você está lidando.
+
+E para nós, gostaríamos de dar algum contexto sobre a Cointreau, então eu trabalho no Atendimento ao Cliente. O cliente é uma empresa de programação de código aberto. Temos um produto muito interessante . Recomendo que você experimente. Então, na jornada do cliente, uma das coisas que abordamos no último ano foi que havia poucas avaliações disponíveis. Naquela época,
+
+éramos muito rudimentares. Todas as outras empresas também eram muito rudimentares. E o nosso pensamento foi tipo, ok, se existem tão poucos e-mails padronizados disponíveis e eles também não são eficazes, tipo, eles realmente não medem o que você está tentando fazer no seu trabalho de programação diário, tipo, o que você faz? Portanto, nossa posição era essa, e essa era a posição da equipe do Codex e de muitas outras equipes com as quais conversamos. Por que isso? Por que essa era a nossa posição?
+
+Simplesmente ignore este e-mail . São completamente desnecessários. Provavelmente você estará perdendo seu tempo, e não sei quem se sentirá agradado por isso. E aí, no ano passado, nós... nós
+
+tivemos essa ideia de que, tipo, ok, olha, eu acho que... nós temos que aumentar a aposta e temos que ter alguma medida. Precisamos tentar enviar e-mails. E se ninguém mais o fizer,
+
+nós mesmos o faremos. Vamos construir e-mails reais do zero, que servirão para testar problemas de programação do mundo real enfrentados pelos usuários. Então, nós analisamos um enorme conjunto de dados de pessoas que optaram por compartilhar conosco seu uso do Client e oferecemos dinheiro a elas. Recebemos esse conjunto de dados com os problemas que as pessoas estavam enfrentando. Passamos muito tempo analisando e identificando os problemas que as pessoas estavam resolvendo, e depois fizemos uma limpeza completa, um trabalho manual árduo, para criar problemas realmente relevantes que pudessem ser resolvidos com o Client ou qualquer outro agente de codificação. A parte mais difícil para nós, quando
+
+estávamos criando e-mails, era que, se você está criando e-mails para algo rudimentar, como, por exemplo, um modelo de linguagem natural , você tem um caso de uso muito simples e pontual, como quantos dedos um gato tem, e o modelo de linguagem natural pode simplesmente responder, sei lá, 11 ou algo assim. Eu não sei quantos dedos um gato tem. Mas, bem, um e-mail de resposta única é muito fácil de fazer porque tem uma resposta binária. Tem um espaço de busca muito limitado para o que poderia ser a resposta. Mas quando você está trabalhando com um agente, isso não pode acontecer. Você está trabalhando
+
+com um agente e pode lhe apresentar um problema, como: "Ei, eu tenho este novo servidor MCP. Provavelmente não está funcionando. Como você faz para que ele funcione para mim?" E geralmente é assim que muitos de vocês se comunicam com o Cloud Code ou qualquer outro agente que estejam usando, e comigo também. Então, nesse caso é muito difícil avaliar porque o agente lê arquivos, pesquisa documentos, instala o ambiente, configura tudo, executa scripts Python, faz tudo isso e, no final, executa alguns testes, e aí talvez tudo funcione. Tipo, é que a gente está
+
+tentando avaliar a segunda coisa. Estamos tentando obter notas para todas essas coisas, o que vai levar muito tempo, e depois descobrir tipo, "Ah, funcionou mesmo ou não? Funcionou, mas quebrou outras coisas?" Tipo, você... Então, é por isso que foi mais
+
+difícil. Então, ao mesmo tempo, algumas pessoas muito, muito incríveis, inteligentes e brilhantes da Universidade de Stanford criaram o Terminal Bench, que faz a mesma coisa, onde eles criaram cerca de 89 problemas de programação, que são apenas representações muito aproximadas e razoáveis ​​de problemas de programação do mundo real. Então, isso pode incluir coisas como, sabe, condições de corrida, problemas no banco de dados, e outras coisas do tipo. Tipo, é como resolver esse problema de infraestrutura. E eu acho que o Terminal Bench foi criado para ser usado com qualquer linha de comando de um agente de codificação, para que você possa testar e executar coisas muito rapidamente com a linha de comando, e isso levará apenas alguns minutos para ser concluído. Portanto, algumas
+
+dessas tarefas podem levar de 30 a 40 minutos. E é assim que você sabe que eles são legítimos, porque, tipo, o agente faz um monte de coisas e acaba entrando no nosso código, e às vezes simplesmente enlouquece, e é isso aí. Então, é...
+
+começamos a usar isso. E a maneira de usar isso, assim como a maneira de usar o Terminal Bench, é pensar em um problema de avaliação como um conjunto de ferramentas de avaliação, que contém uma série de problemas. E este tem 89 tarefas. Alguns outros teriam mais. E o que você quer fazer é criar um ambiente propício.
+
+Você quer criar um ambiente isolado, onde, digamos, você tenha uma tarefa como: "Ei, descubra esta condição de corrida neste repositório". E a condição de corrida é que esta coisa não está funcionando. Então, você quer poder executar a avaliação em um ambiente isolado, como uma máquina virtual. Nessa máquina virtual, há toda a configuração, o repositório, tudo. E então você instala o agente que tiver, no nosso caso, o cliente, CloudCode, Codex, o que você quiser usar .
+
+Fazer isso não é difícil, mas também não é trivial. O Harbor é outro software do Loda Institute que criou uma ferramenta onde, digamos, você tem 89 tarefas. Uma maneira de fazer avaliações é aprender cada uma dessas tarefas em sequência e depois fazer todas as configurações. Outra maneira é ter uma configuração padronizada definida na infraestrutura, onde cada uma dessas 89 tarefas tenha a máquina Linux adequada, a RAM e a CPU adequadas. uso, e então, poder isolar esses ambientes e executar essas 89 tarefas em paralelo na infraestrutura. Então, você poderia usar
+
+algumas coisas diferentes para a infraestrutura aqui. Você poderia usar o Daytona, poderia executá-lo em sua máquina Docker se tiver máquinas muito potentes . Tenho certeza de que, se você conseguir lidar com tanta computação, ótimo, mas eu não recomendaria. Nós usamos o Model. Somos muito gratos ao Model, eles nos ajudaram bastante.
+
+Então, um agradecimento a eles. E, nesse caso, o Harbor basicamente permite que você divida as 89 tarefas e as execute em paralelo. Dessa forma, o fator limitante é basicamente a tarefa mais lenta. Sim. Então, a tarefa mais lenta é o fator limitante. O processo é o
+
+seguinte: você obtém uma pontuação, primeiro executa as 89 tarefas, obtém uma pontuação e avalia todas as falhas. Digamos que você tenha 50 falhas, Certo? Das 89 tarefas. O que você quer ser capaz de fazer é alocar esses erros de forma adequada . Você quer, digamos, executar outro agente que analise os rastros de todas as falhas.
+
+Então, o rastro seria um arquivo enorme contendo todas as chamadas de modelo que o agente fez e, então, identificaria problemas específicos, como "este aqui falhou porque não foi executado corretamente. Este outro falhou porque a ferramenta de repetição estava com defeito". E, uma vez que você aloca esses erros corretamente, você descobre quais são as pequenas alavancas que você pode acionar. Se você acionar essas alavancas, poderá fazer melhorias significativas no seu agente de IA. Então, com seus testes, você está basicamente testando três coisas. Você está
+
+testando o próprio modelo. Por exemplo, se você tem um modelo muito bom, mesmo que tenha um agente ruim, mas o modelo supera as expectativas de forma tão drástica que você obtém uma ótima pontuação. Você está testando...
+
+Você está testando seu ambiente de programação. Por exemplo, você pode estar testando se está usando o Cloud Code Codex. Às vezes, tenho certeza de que alguns de vocês já perceberam que os modelos da Anthropic poderiam funcionar com o cursor, com o Droid e com outros agentes de programação, mas, por algum motivo, parecem funcionar muito melhor com o Cloud Code, certo? E eu acho que isso é testar o ambiente de programação, verificando se ele está realmente aproveitando ao máximo o modelo. O terceiro problema é que, se você está resolvendo problemas estúpidos, não importa se você acerta 100% o tempo todo.
+
+Então, você precisa garantir que os problemas estejam sendo elaborados corretamente, algo que o Instituto Luddite fez muito bem . No nosso caso, tínhamos uma pontuação inicial bem menor, de 43%. Fizemos alterações na CPU e na memória. contêineres. Bem, aumentamos os tempos limite, melhoramos o comportamento de raciocínio. Às vezes, pedíamos
+
+ao modelo para pensar mais. Às vezes, pedir ao modelo para pensar mais interfere na qualidade da resposta, porque ele entra como se tivesse um derrame e fica girando em círculos, como se dissesse "Eu sou um modelo. Eu sou um modelo". E continua fazendo isso por uns 2.000 tokens. Então, sim,
+
+você precisa pensar em tudo isso. E sim, nós temos um enorme benchmark interno para todos os tipos de modelos, modelos de código aberto. Mantemos uma lista de diferentes versões para testar. Encorajamos outras pessoas a fazerem o mesmo, se for muito útil. Então, quando você obtém melhorias nas zonas, você obtém basicamente três zonas de melhorias quando obtém uma pontuação original. A primeira é a
+
+falha óbvia. Às vezes, seu harness tem falhas muito óbvias, como um bug que pode simplesmente travar o harness. Esses bugs óbvios que você precisa corrigir, certo? Às vezes você não está sendo limitado pela taxa de requisições ou algo do tipo. Corrija- os, tudo bem. Acho que a zona dois
+
+é a mais crítica, onde você realmente faz melhorias sutis. E essas melhorias sutis são coisas como certas técnicas de engenharia de prompts que se aplicam a famílias de modelos entrópicos, mas que simplesmente não se aplicariam à família de modelos Codex. Seria muito diferente da família de modelos Gemini . E essas são as nuances de, tipo, por que esse modelo é tão bom, tanta gente diz que é tão bom, mas por algum motivo simplesmente não funciona para mim. Acho que essa é a essência de trabalhar com agentes e escalada de colina. É
+
+descobrir essas melhorias sutis, como ajustar seu prompt, tornando-o maior ou menor. E então a zona três é a zona de perigo, onde você está sofrendo de overfitting. Ou seja, você está trapaceando para obter a pontuação mais alta e depois pode twittar sobre isso. Não faça isso. Muita gente não faz isso . Tipo, eu não faria. Quer dizer
+
+, deixa pra lá. Enfim, então, é isso, basicamente, o esboço . A versão final para mim seria algo como: independentemente do tipo de problema que você tenha, quero que você encontre um parâmetro de referência, crie a avaliação e simplesmente aprimore- a. Aprimorar significa que você obtém uma pontuação e depois melhora essa pontuação na avaliação do seu arnês. E você precisa fazer as duas coisas. Não basta
+
+ter um bom número e ficar satisfeito. Você precisa passar no teste de sensação. Tipo, será que é realmente agradável usar este produto neste modelo? E, ao mesmo tempo, você também precisa ter uma pontuação muito, muito, muito decente, com sorte. Se algo novo for lançado, você deve fazer o seu melhor para dar a avaliação correta. Para nós, uma das
+
+coisas que aprendemos foi que estávamos... Somos muito bons em famílias com modelo antrópico , mas não tanto em famílias com modelo geminiano, nem tanto em famílias com modelo kimini, que, repito, são modelos muito bons. Então, quando começamos a analisar os modelos de forma mais abrangente, percebemos que, "Se apoiarmos esses modelos, teremos um grande número de pessoas que os adoram e podem começar a nos contratar". E acho que, de certa forma, essa atração
+
+também se aplicaria a vocês. Bem , minha última observação para vocês é que, sabe, eu já dei algumas opiniões polêmicas, e se vocês trabalham para alguma das empresas sobre as quais eu não falei coisas muito boas, eu ainda gosto de vocês e tudo mais. Eu trabalho na [Nome da Empresa]. Então, se vocês acharem esses problemas fascinantes e quiserem saber mais sobre eles, este é o meu Twitter. Sintam-se à vontade para me contatar, me mandar uma mensagem direta, se quiserem trabalhar em problemas como esses. Por favor, fiquem à
+
+vontade. Se você quiser aprender mais sobre avaliações, se quiser saber como resolver um problema completamente diferente de tudo o que você está definindo para agentes de codificação, fique à vontade para entrar em contato comigo e eu responderei. E, mais uma vez , agradeço muito por me conceder seu tempo.

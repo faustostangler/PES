@@ -1,0 +1,97 @@
+---
+video_title: "Context Graphs for Explainable, Decision-Aware AI Agents — Andreas Kollegger & Zaid Zaim, Neo4j"
+video_id: abvQEhvRI_c
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=abvQEhvRI_c
+video_date: 2026-05-28T14:00:18+00:00
+video_description: |
+  Prescribing drug X is correct 99% of the time for symptom Y. For the 1% where it is fatal, statistical reasoning does not help you. Andreas Kollegger calls this reference class validation: before the agent acts, it has to know which group it is in.
+  
+  Context graphs give agents the why. Not just knowledge and tools but the policies, rules, and prior decisions that explain why a certain action is right in a given context. The decision making framework in this talk has five stages: frame the problem with its causality and environment, pull in global rules and past precedent, run a risk value analysis, either act or escalate to someone with authority, and write the full reasoning chain back into the graph. That last step is the point. Every decision becomes precedent. Future agents inherit it.
+  
+  Speaker info:
+  - https://x.com/akollegger
+  - https://www.linkedin.com/in/akollegger
+  - https://github.com/akollegger
+---
+[música]
+
+Olá, boa noite, desenvolvedores. Como estão todos? Bem-vindos ao curso de Engenharia de IA e à segunda sessão sobre o grafo de contexto do Neo4j . Estou muito feliz por estar aqui com meu colega Abhik para compartilhar com vocês mais sobre grafos de contexto e como eles podem ajudar agentes de IA a tomar decisões mais conscientes. Um dos grandes desafios que estamos tentando resolver hoje em dia na era da IA é basicamente usar grafos de conhecimento para desbloquear a IA, onde queremos usar grafos para preencher a lacuna de conhecimento, fornecer aos agentes de IA as ferramentas certas e enriquecê-los com o conteúdo adequado para realizar suas tarefas.
+
+Para resolver certos desafios. Então, todos sabemos que os agentes de IA são realmente bons em linguagem, raciocínio e criatividade, mas queremos preencher a lacuna de conhecimento que falta para esses agentes.
+
+Então, um grande tópico que já abordamos, como vimos na palestra do Steve, é a memória. Então, vamos falar sobre diferentes tipos de memórias. Então, memória de curto prazo, memória de longo prazo e memória de raciocínio. Então, na memória de curto prazo, nós tentamos entender e capturar as conversas que um usuário teve com o agente de IA. E na memória de longo prazo, capturamos mais conhecimento contextual, neste caso, coisas ao nosso redor, organizações, pessoas e coisas em geral. Então,
+
+isso realmente nos dá uma visão geral mais ampla do contexto. E, claro, precisamos aqui de raciocínio que ajude basicamente a IA a tomar as decisões certas para realizar uma determinada tarefa. Vimos também que, bem, acho que para o contexto disso precisamos de um gráfico. Então, basicamente, um gráfico é feito de nós e relações para ajudar a entender as relações e conexões profundas e complexas entre diferentes tipos de dados. Então, a grande questão agora é: por que usar grafos de contexto? Então, ultimamente também temos falado
+
+muito sobre engenharia de contexto. E agora, basicamente, a grande pergunta novamente: por que usar grafos de contexto? Então, basicamente, ainda estamos dentro da esfera da engenharia de contexto quando falamos de grafos de contexto, mas os grafos de contexto representam uma mudança de paradigma: com agentes de IA que já são muito bons em fornecer conhecimento aos seus usuários, tendo as ferramentas, o conteúdo e o contexto certos, com os grafos de contexto, gostaríamos de fornecer, adicionalmente ao conhecimento, as regras e políticas adequadas aos agentes para ajudá-los a se tornarem mais capazes de tomar decisões. Portanto, não se trata apenas de conhecimento, mas também de decisões. Por isso, não estamos apenas focando em como ou o que um agente pode fazer, mas também queremos capturar, dentro de um grafo de contexto, o " porquê" que está faltando. Então, por que um agente precisa
+
+fazer algo, e isso é algo que capturamos com dados que se concentram em políticas e regras. Então, quando falamos sobre o Neo4j, também dizemos que os grafos estão por toda parte. Então, esta é uma réplica básica de uma organização. Cada organização está basicamente representada aqui, desde o departamento financeiro até o de produtos, fornecedores e assim por diante. Vimos também um bom exemplo dado por Steve anteriormente, no setor de serviços financeiros.
+
+Então, se alguém tem direito a receber uma certa quantia em dinheiro , a resposta é sim ou não. Então, nesta parte do capítulo, estamos realmente nos aprofundando com nossos clientes e verticais para entender suas necessidades e, basicamente, como podemos ajudá-los a resolver a questão do "porquê" e a formar agentes melhores que possam tomar decisões mais conscientes. Hum, isso também é como um gráfico de memória se pareceria. Portanto, se quisermos que um agente também tome as decisões corretas, precisamos também fornecer-lhe capacidades de memória. Então, esta é uma visão geral rápida de como seria o gráfico de memória . Em verde vemos a
+
+memória de curto prazo, então estamos capturando novamente as conversas, a história do estado. E a memória de longo prazo funciona mais como uma visão geral das organizações, das pessoas, e, o mais importante, também como um raciocínio. Então, por que um agente de IA deveria realizar uma determinada tarefa com base em políticas e regras predefinidas? Então, e por trás dessas histórias, digamos que a base, se quisermos construir aplicações gráficas com agentes , é sempre o agente de IA, onde o usuário primeiro envia uma consulta. O agente procura esse conhecimento ou esse tópico, caso esteja disponível em sua fonte de conhecimento. Caso contrário,
+
+passamos para o banco de dados de grafos. Temos um conjunto de ferramentas, como o "text to cypher", que traduz texto humano para nossa linguagem de consulta. Em seguida, tentamos percorrer o grafo em busca do conteúdo correto, com o objetivo de retornar ao usuário um conteúdo mais confiável e de melhor qualidade. Então, Abhik, você tem estado a construir um quadro de decisão nos últimos dias. Vamos dar uma olhada nisso. Claro,
+
+obrigado, Zane. Obrigado, Abhik. Então, temos ouvido muito sobre como seria o modelo de dados para armazenar memórias? Estamos falando de grafos de contexto, e tudo gira em torno da tomada de decisões. Por que nos importamos tanto com a tomada de decisões? E talvez você tenha reparado
+
+na animação incrível. Quantas pessoas têm uma garra? Alguns de vocês são donos de garras? Alguns de nós temos garras hoje em dia, não é? Ao menos você já ouviu falar de garras. O que é fantástico
+
+na garra aberta, e em todos os diferentes tipos de garra, é que elas realmente acentuam a necessidade de uma boa tomada de decisão. A tomada de decisão ocorre basicamente quando se depara com um ponto no fluxo de trabalho ou na vida útil do agente em que ele precisa fazer algo que não está previsto em sua configuração. Você não deu instruções sobre o que fazer em determinada circunstância. Agentes autônomos se deparam com isso o tempo todo. Se você simplesmente os deixar ir fazer coisas de graça, der a eles um cartão de crédito, acesso à sua conta da Amazon e disser: "Ei, mantenham minha geladeira sempre abastecida com Red Bull." Ok, se
+
+eles perceberem que você precisa de Red Bull, eles vão pedir Red Bull. Eles podem não saber, tipo, "Ah, é mesmo, eu deveria pedir um Red Bull, a menos que o aluguel esteja chegando e eu não tenha dinheiro suficiente para pagar". Você talvez não tenha previsto isso. Você pode resolver isso com alguma engenharia rápida e continuar aprimorando as instruções para o agente, mas na verdade existe um problema maior, que é: como tomar boas decisões? Vou explicar como seria um fluxo de trabalho baseado em agentes para tomar boas decisões se você tiver alguma memória disponível, um grafo de rede e um agente em execução.
+
+Porque o caranguejo quer ajuda. Ajude o pobre caranguejo. OK. E, na verdade, é ainda pior, claro, se você já trilhou esse caminho . Você começa com talvez um agente em execução. Isso resulta em múltiplos
+
+agentes com tarefas especializadas ou todos realizando atividades simultaneamente. Todos eles precisam colaborar juntos. Todos eles precisam ter autoconsciência uns dos outros e de si mesmos. O problema se agrava cada vez mais em grande escala. Portanto, você precisa de uma estrutura bem pensada para tomar decisões. Se você tem amigos que estão fazendo
+
+MBA e que estudaram em alguma escola de negócios, talvez aqui na Judge Business School, no Reino Unido, eles provavelmente têm cursos inteiros sobre como tomar boas decisões. Vou explicar um framework que você pode fornecer a um agente, e que você pode implementar na estrutura de sua escolha, seja LangGraph ou, se preferir, pode escrever algumas habilidades . Mas esse fluxo de trabalho geral é simplesmente a maneira como você toma decisões como ser humano. E, como sabemos, em grande parte da engenharia que praticamos hoje em dia, transferir nosso entendimento implícito sobre como fazer as coisas de forma explícita para os agentes é o que os ajuda a desempenhar suas funções muito bem. Então, dado um grafo de contexto e alguma memória, aqui está um fluxo de trabalho para realmente tomar boas decisões.
+
+OK. Começa pelo princípio, simplesmente definindo o problema. É o contexto local que importa. E, no contexto local, surge a pergunta: como você chegou aqui? Essa é, na verdade, a causa da segunda.
+
+Provavelmente começaria por aí. Você passou por uma linha de raciocínio, realizou algumas ações e, de repente, chega a um ponto de incerteza. Em vez de simplesmente escolher o que fazer em seguida, você pensa: "Espere. Deixe-me entrar nesse subprocesso, que é a tomada de decisão, e descobrir o que fazer." Você tem um objetivo em mente, algo que deseja alcançar com esse processo. E o exemplo que tínhamos antes
+
+para finanças era algo instigado por alguém que queria aumentar seu empréstimo ou algo do tipo. Multar. Pode ser isso, pode ser pedir Red Bull, seja qual for a decisão. Um objetivo, a causalidade que levou a esse objetivo é algo que você deseja resolver, e então há um ambiente no qual isso de fato opera. Isso é compra, e na verdade pode ser uma orientação para tomada de decisões médicas nesse âmbito. Então, a situação passa de
+
+"Ei, posso pedir um Red Bull?" para "Há uma vida em risco." São ambientes muito diferentes , mas esses ambientes são importantes para o tipo de decisões que você acaba tomando. É esse tipo de coisa que entendemos porque vivenciamos essas situações. Você precisa explicar essas coisas ao agente para que ele também entenda.
+
+Uma vez que você tenha o enquadramento, isso alimenta um contexto maior, que é o contexto global sobre o que você fez antes nessa situação? Essa é sempre uma boa ideia. Se você conseguir manter a consistência, isso é muito bom. Mas também existem regras globais, tanto as regras rígidas quanto as flexíveis de um negócio. Talvez estejam formalmente descritas em uma linguagem de processos de negócios ou algo do tipo, ou talvez sejam apenas orientações informais em canais do Slack e no Google Docs, enfim. Regras rígidas e flexíveis entram
+
+em jogo aqui para que haja consenso sobre as decisões que você está tomando. E é importante manter essas duas coisas em equilíbrio. O que você fazia antes? Pode ser a coisa certa a fazer novamente. Mas também, quais são as regras globais que estão em vigor agora e que poderiam ter sido diferentes antes? Portanto,
+
+pode haver um motivo para anular as decisões anteriores. Todos esses elementos fazem parte da estrutura. Você tem os dados de entrada, tem uma estrutura para a tomada de decisões que é global, e agora você precisa realmente passar por essa análise. E isso é, obviamente, apenas a análise clássica de risco-valor. E você vai descobrir que, no que diz respeito à gestão de riscos, é provavelmente aí que um agente deve concentrar a maior parte do seu tempo. Se for
+
+algo sério, então você dedica ainda mais tempo. E por "sério" eu quero dizer coisas como este primeiro ponto, que é chamado de validação de classe de referência, onde uma classe de referência é... e em vez de presumir o que é bom e o que importa, você tem que tentar decidir para os participantes envolvidos o que é mais importante para eles. Então, qual é o seu
+
+ponto de referência para o que é importante para eles? O exemplo que eu adoro aqui é o seguinte: imagine que você está na área da saúde, e essa é uma área muito perigosa para se trabalhar, deixando a garra solta, certo? Se você está prescrevendo medicamentos para alguém, e em 99% das vezes você prescreve o medicamento X para o sintoma Y, e isso é a coisa certa a fazer em 99% das vezes. Mas, em 1% dos casos, se você faz parte desse pequeno 1% da população, administrar esse mesmo medicamento pode ser fatal. Portanto, antes de decidir o que fazer, é muito importante saber se você faz parte dos 99% ou do 1%. Estatísticas,
+
+sabe, sobre comportamento, não ajudam muito nesse caso . Esse é um exemplo extremo, mas existem nuances disso em muitas situações de tomada de decisão que, no momento, são meio que implícitas para nós. Boa parte da nossa prática como engenheiros de IA consiste em explicitar o conhecimento implícito que carregamos conosco. Portanto, tenha isso em mente. Na prática, é preciso classificar o que importa, o que não importa e qual é o risco real envolvido. A decisão é reversível?
+
+Você pode devolvê-lo? Diga algo como: "Ah, desculpe, obviamente foi uma má ideia. Vamos voltar atrás e tentar de novo." Isso muda a dinâmica de como você avalia as coisas. E, além disso, qual é o custo de estar errado em geral?
+
+Novamente, é como se uma vida estivesse em risco ou é tipo "Ok, não vou ter Red Bull na minha geladeira". Não é ótimo, mas não é o fim do mundo. Então, não tem problema se essa for uma má decisão. Além disso , é claro que, em termos de valor, não é óbvio o que você está maximizando. Você está tentando maximizar suas economias, seu orçamento? Então, na verdade, não gaste
+
+todo o seu dinheiro com Red Bull. Guarde uma parte do dinheiro porque você está economizando para férias, para comprar uma casa ou qualquer outra coisa. O que você está tentando fazer? Você está maximizando algum valor ou tentando minimizar algum custo? Isso também precisa fazer parte, e precisa ser explícito. Sem isso,
+
+um agente vai usar seu conhecimento geral das condições e pensar: "Ok, bem, na maioria das vezes isso é a coisa certa a fazer." Mas os detalhes importam. Os detalhes são sempre muito importantes. E, por fim, o resultado desta etapa não é, na verdade, a tomada de uma decisão. Gosto de pensar em termos de sistemas multiagentes. Para mim, adoro
+
+agentes altamente focados e compartimentados trabalhando juntos. A única função desse agente seria apresentar uma proposta com algumas alternativas, listando os prós e os contras de cada uma, e não tomar a decisão final. A escolha seria então passada para o próximo agente, que decidiria se poderia ou não agir. Tem autoridade para isso? E se isso acontecer, pode prosseguir, classificar as opções disponíveis e tomar as medidas necessárias para que o impacto seja efetivamente sentido.
+
+Ou pode decidir: "Na verdade, não tenho certeza aqui, ou não tenho autoridade aqui. Então, deixe-me encaminhar isso para outro agente ou outro ator que possa ser um humano que tenha a autoridade, que possa tomar a decisão." Portanto, isto é extremamente importante aqui. Ou age ou não age, deixe que outra pessoa tome a decisão. E a supervisão aqui é basicamente o subprocesso que seria iniciado para que um humano no circuito interviesse ou para que um agente com privilégios mais elevados o fizesse .
+
+A parte final disso é realmente uma parte importante de autoaprendizagem. Uma vez concluída a decisão , seja porque ela já foi tomada ou porque não havia informações ou certeza suficientes para tomá-la, você pode adiar qualquer ação. Essa também é uma situação possível. Ou você toma a decisão e, se o fez, registra todo o processo de raciocínio, o que você considerou e o que você não considerou. Isso faz parte do rastreamento e da responsabilização que discutimos em todos os outros momentos relacionados aos gráficos de contexto.
+
+Tudo isso fica salvo no gráfico, juntamente com a própria decisão e as ações que foram tomadas. Isso permite que os futuros agentes desempenhem melhor suas funções, pois agora têm esse precedente ao qual podem recorrer. Ok, essa foi minha corrida contra o tempo. Este é o diagrama completo do fluxo de trabalho. Você pode implementar isso novamente, se quiser, no LangGraph e no ADK, ou em qualquer ferramenta que você tenha disponível. Descreva algumas habilidades
+
+que funcionam bem para isso. Eu diria que é muito difícil generalizar cada uma dessas coisas. Este é um modelo geral. Os detalhes de cada etapa acabam sendo muito específicos para cada domínio. Então, fica aqui uma pequena ressalva. Bem,
+
+obviamente estamos trabalhando em vários exemplos diferentes em diversos domínios para esse tipo de coisa. Então, se você tiver um domínio sobre o qual ainda não conversamos , adoraria falar sobre ele para que possamos adicioná-lo ao nosso catálogo . OK. Muito rapidamente, esse era eu. O apelo à ação é o mesmo que Steve havia feito antes. Se você quiser aprender mais sobre
+
+esse assunto, temos cursos online gratuitos na Graph Academy. Você pode aprender mais sobre grafos de contexto, aprender mais sobre grafos. Venha conversar conosco nos estandes, venha conversar conosco depois desta palestra. Adoraríamos falar sobre isso o dia todo. Obrigado.
+
+[aplausos]
+
+[música]

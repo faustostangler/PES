@@ -1,0 +1,87 @@
+---
+video_title: "Under 5 minutes to a deployed LLM endpoint — Audry Hsu, RunPod"
+video_id: ILdE7FaAjVA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ILdE7FaAjVA
+video_date: 2026-06-07T16:00:32+00:00
+video_description: |
+  Two failed crypto mining rigs in a basement in 2022. The founders posted on Reddit offering the GPUs for free in exchange for feedback. That is the origin of RunPod, now at $120 million in annual recurring revenue with 500,000 developers on the platform.
+  
+  The demo runs in under five minutes: pick a model from the Hub, configure a context window, deploy a serverless endpoint on H100s. First request queues for 41 seconds on cold start while the container initializes and the model downloads. Every request after that executes in about 1.5 seconds. You pay only while a worker is handling a request.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/audry-hsu/
+---
+[música]
+
+Audrey, eu sou da RunPod. Bem, esta é uma introdução ao RunPod. Só queria saber rapidinho quantas pessoas já ouviram falar do RunPod ou até mesmo já usaram o RunPod? Ok, iniciantes para todos. Ótimo.
+
+Então, a RunPod é uma empresa de infraestrutura de IA em nuvem. Então, nós temos o hardware, temos as GPUs e facilitamos para os desenvolvedores a implantação de modelos. E esse pode ser o seu próprio modelo personalizado, ou pode ser um modelo de código aberto da Hugging Face. Para nós, tanto faz. Você traz o código e nós cuidamos do resto. Só para resumir
+
+rapidamente, quais problemas o RunPod resolve? Tipo, por que estamos aqui hoje, afinal? A infraestrutura pode ser difícil de gerenciar . Penso nos tempos antigos, antes de existir a AWS, ou melhor, o Google Cloud, quando todos precisavam ter servidores locais e gerenciá-los, fazer a manutenção deles. Isso [limpa a garganta] é algo que nós, como desenvolvedores, não queremos ter que fazer.
+
+Essas são coisas das quais, felizmente, nos afastamos e repassamos para o DevOps, e agora tudo está ainda mais abstrato para nós. O acesso à GPU é lento e opaco. Então, hum, não sei se alguém tentou comprar uma placa de vídeo recentemente, mas estamos em uma crise global de abastecimento. É um pouco como na época da COVID, quando todo mundo foi ao mercado e comprou papel higiênico porque não sabíamos por quanto tempo precisaríamos ficar em casa . Estamos um pouco nessa situação agora. Mas esperamos que o mercado se
+
+recupere à medida que os clientes, as empresas e as pessoas consigam estimar melhor o tipo de poder computacional de que precisam. E por último, o foco principal do construtor deve ser a construção. Então, novamente, nós, como desenvolvedores de software, queremos agregar valor por meio dos aplicativos que criamos, e não gerenciando a infraestrutura. E acho que o RunPod tem uma história bastante singular . Estes são os nossos fundadores, Zenon e Pardeep. Então, eles tinham
+
+algumas plataformas de mineração de criptomoedas com GPUs no porão em 2022, que não deram certo, e aí eles pensaram: "O que vamos fazer com nossas GPUs agora?" Então, eles criaram um protótipo do que hoje são os fundamentos do RunPod. Eles postaram no Reddit e disseram: "Ei, alguém quer usar essas GPUs de graça? Só nos deem um feedback." E foi literalmente assim que nossa empresa começou, e temos gerado receita desde então.
+
+E a razão pela qual quero contar essa história não é porque ela seja muito parecida com o Bootstrap, mas sim porque a história de origem do RunPod sempre começou com desenvolvedores e o feedback da comunidade, e isso ainda é verdade hoje. Então, não vou prometer que seremos perfeitos, mas definitivamente estamos muito engajados com nossos usuários no Reddit e no Discord. Então, estamos sempre tentando manter contato com vocês. Só para dar uma ideia geral do RunPod, temos mais de 500.000 desenvolvedores em nossas plataformas, mais de 30 data centers em todo o mundo, incluindo na Europa e na União Europeia.
+
+E acabamos de ultrapassar um marco significativo em termos de receita: 120 milhões em receita recorrente anual.
+
+Esses são apenas alguns dos nossos clientes. Talvez você se surpreenda ao ver algumas empresas de IA nativas da nuvem aqui também, mas elas nos procuram pelos mesmos motivos que a maioria dos nossos clientes . É porque eles precisam de uma infraestrutura de GPU flexível e confiável.
+
+Esta é uma visão geral bastante abrangente de diferentes maneiras de se desenvolver com o RunPod. Então, eu diria que o nosso núcleo, os pods, é o nosso ambiente virtual de teste. Criamos um contêiner para você, alocamos GPUs para ele e gerenciamos o resto. Você só precisa trazer seus Dockerfiles e seu código. Serverless, bem, é o nosso produto de escalonamento automático . Então, quando você pensa
+
+em cargas de trabalho com picos de demanda ou em lotes , a computação sem servidor é realmente ótima porque, em vez de estar sempre ativa como um contêiner, os servidores sem servidor são desligados e, quando estão ociosos, você não paga nada. Clusters, se você estiver fazendo um treinamento intenso, o RunPod também tem um lugar para você. Um cluster com múltiplos nós e redes de alta velocidade. E então o hub, para o qual eu vou mudar em um segundo, é como se fosse nosso repositório central para repositórios de IA. Estes já estão pré-configurados e pré-verificados. Temos alguns
+
+exemplos de anúncios da RunPod para modelos populares, mas nossa comunidade também contribui para eles. Então, existem repositórios que você pode bifurcar, acompanhar e, em seguida, adicionar aos favoritos e implantar no RunPod.
+
+Então, hoje vamos falar principalmente sobre computação sem servidor (serverless). Então, a arquitetura sem servidor é a melhor opção para inferência em tempo real . Eu falei sobre o recurso de dimensionamento automático que vem com ele. O principal motivo pelo qual as equipes o utilizam é ​​porque não precisam se antecipar e calcular com antecedência quanta capacidade computacional precisarão . Você pode configurar o número máximo de trabalhadores que deseja escalar . Você pode definir limites para
+
+tetos de gastos. E você também pode configurar workers que estejam sempre ativos, para que eles já tenham seus modelos baixados e possam responder às solicitações imediatamente. Para muitas equipes, a arquitetura sem servidor é a maneira mais rápida de começar a implantar uma API pronta para produção.
+
+E agora vou mudar de assunto e mostrar rapidinho para vocês como é fácil começar e implantar algo.
+
+OK.
+
+Onde estamos?
+
+OK. Então, agora vou fazer tudo pelo console para que fique bem bonito para vocês verem, mas também temos suporte para CLI. Temos ferramentas para ajudar você a trabalhar com o RunPod, tudo pronto para o seu agente, então você não precisa ler nossa documentação, mas como somos todos humanos aqui hoje, vou mostrar a vocês pelo console.
+
+Vamos começar pelo hub, que é um
+
+ótimo ponto de partida para quem quer explorar e ver o que está disponível, algo que você pode começar a usar imediatamente. Então, como mencionei, essas são listas de repositórios de código aberto de IA já verificadas , e vou escolher o LLM e abrir o repositório subjacente para que vocês possam ver que é, literalmente, um repositório do GitHub. Ele explica como se preparar para isso. Podemos ver que o Dockerfile já está aqui. Já está pré-configurado para você. Ele possui algumas
+
+configurações padrão, dependendo do anúncio. Você pode passar diferentes variáveis ​​de ambiente para configurá-lo como desejar.
+
+Mas vou simplesmente clicar em " Implantar". E eu tenho um modelo que eu queria.
+
+Deixe-me ver. Eu ia escolher apenas uma. Parece bom. Isso fará o download do arquivo do Hugging Face. Estou apenas expandindo as opções avançadas e procurando pelo comprimento máximo do modelo. Vou
+
+aumentar esse valor para a janela de contexto e deixar todo o resto como padrão, mas há configurações para o número máximo de Loras. Todas essas opções de configuração são passadas como parâmetros para o servidor vLLM. E vou configurá-lo como um endpoint aqui. Isso pode levar um ou dois minutos, já que acabei de criar isso. Preciso inicializar meus workers.
+
+Vamos dar uma olhada. Portanto, a configuração padrão aqui é que será implantada em alguns H100, e os A100 serão o backup. Já tenho meus preços. Isso corresponde a uma fração de centavo por segundo. Como mencionei anteriormente, a cobrança será feita apenas durante o período em que o worker estiver em execução e processando uma requisição. O parâmetro `
+
+max workers` permite aumentar esse valor se eu quiser que minha carga de trabalho seja escalada para até 15 workers simultaneamente. Também posso definir alguns workers ativos, aqueles que quero que estejam sempre ligados e que nunca sejam desligados pelo contêiner. E eu posso guardar isso.
+
+Certo, então como faço para interagir com o endpoint sem servidor? Bem, isto é apenas um endpoint HTTP de API. Nós provisionamos esse endpoint para você. Você pode enviar solicitações para este endereço. Seus clientes podem enviar solicitações para este endereço. Se eu simplesmente clicar em "
+
+executar" e adicionar algumas perguntas do tipo "Vamos lá, qual devemos perguntar ao LLM hoje?" Diga uma.
+
+OK. Como eu sou americano, como a Bid Then recebeu esse nome? Não sei. [limpa a garganta] Hum, ok, bem, esses pedidos estão na fila. Deixe-me verificar como estão nossos funcionários.
+
+OK. Temos alguns que estão em fase de inicialização. Bem, este é o contêiner que está sendo criado. Esse é o modelo que está sendo baixado. Os que estão se preparando e os que estão correndo, já terminaram. Provavelmente serão essas
+
+pessoas que atenderão às solicitações que acabamos de adicionar. Tenho telemetria, que está em branco agora, mas inclui o número de requisições, tempo de execução, tempo de atraso, então você tem visibilidade de como seus endpoints estão operando. [bufa] E vamos ver. Ok, já está feito. [bufa] Recebi uma resposta à solicitação e ela ficou na fila por cerca de 41 segundos. Bem, isso
+
+vai demorar um pouco mais do que todas as solicitações subsequentes por causa do tempo de inicialização a frio que mencionei, como baixar o modelo e inicializar o primeiro contêiner, mas o tempo de execução é de apenas cerca de 1 segundo e meio , então sim, provavelmente levou menos de 5 minutos para começar e implantar algo em um servidor sem servidor a partir de um hub.
+
+Alguém tem alguma pergunta? Esta é uma introdução muito curta e direta. Temos outra sessão hoje às 16h, e essa será focada no nosso SDK em Python e será realizada inteiramente pelo terminal. E vou mostrar como posso iniciar e implantar meu código como uma função remota em uma GPU e, no final, torná-lo um endpoint pronto para produção.
+
+OK. Mas é tudo o que tenho para hoje, então, sim, obrigado por terem vindo. [aplausos]
+
+[música]

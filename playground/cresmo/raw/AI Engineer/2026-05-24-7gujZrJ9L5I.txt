@@ -1,0 +1,155 @@
+---
+video_title: "How Google DeepMind Runs Agents at Scale — KP Sawhney & Ian Ballantyne, Google DeepMind"
+video_id: 7gujZrJ9L5I
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7gujZrJ9L5I
+video_date: 2026-05-24T18:00:06+00:00
+video_description: |
+  Google DeepMind employees have worse token quotas than paying customers. That is not a mistake. KP Sawhney explains: customers get priority, and if an internal team spikes usage on a cluster someone monitoring 24/7 will just call and ask them to stop.
+  
+  This panel covers how DeepMind thinks about agents at scale from the inside: managing quota across thousands of power users, a Darwinian skills library where only the strongest skills survive as engineers contribute en masse, and where the Deep Research pipeline is going next. KP's current focus is replacing the pipeline's giant context blobs with a shared file system so each research component can collaborate the way human researchers would, and produce supporting artifacts that the current architecture cannot.
+  
+  Speaker info:
+  - https://linkedin.com/in/ianballantyne
+  - https://github.com/irbg
+  - https://linkedin.com/in/kyle-sawhney
+  - https://github.com/KPSawhney
+  
+  Timestamps:
+  0:00 Introduction of KP Sawhney and Ian Ballantyne
+  0:57 Demo of the anti-gravity agentic platform
+  4:32 Discussion on KP's work with the deep research agent
+  5:46 Using skills libraries and managing agent sprawl
+  7:52 Addressing scalability and token quotas at Google
+  9:44 Audience Q&A: Managing per-user agent behaviors
+  13:12 Audience Q&A: Observability and agent trajectory stores
+  14:46 Audience Q&A: Future of deep research pipelines
+  16:10 Audience Q&A: Handling multi-agent systems
+  17:45 Audience Q&A: Perspectives on skills vs. MCP
+  19:12 Audience Q&A: Evaluating agentic workflows
+  20:25 Audience Q&A: Handling model limits and quota management
+  22:48 Audience Q&A: Automated code review processes
+---
+OK. Olá a todos. Então, meu nome é N Ballantyne. Sou engenheiro de relações com desenvolvedores no Google DeepMind. Olá pessoal. Sou KP Sawney,
+
+engenheiro de software na equipe da plataforma de IA da DeepMind. Hoje vamos realizar um painel sobre agentes para falar um pouco sobre como a DeepMind pensa sobre software com agentes e como construímos nossas próprias estruturas. Vamos começar brevemente com uma demonstração rápida e depois entraremos em uma discussão sobre alguns dos projetos em que a KP está trabalhando. Esperamos que vocês possam fazer muitas perguntas, descobrir tudo o que querem saber sobre como a DeepMind e o Google pensam sobre agentes e, claro, compartilhar suas opiniões conosco . Então, quem aí já usou a antigravidade como ferramenta?
+
+Certo, então, tipo quatro ou cinco pessoas. Bem, eu só queria mostrar uma coisinha rápida, porque uma das coisas que temos no Antigravity é que muita gente sabe que ele tem uma interface parecida com a do Visual Studio, mas não sabem que ele possui todo um gerenciador de agentes e uma estrutura de gerenciamento de agentes por trás dele. Assim, você pode executar e iniciar vários agentes trabalhando em projetos diferentes, e isso está integrado ao IDE, mas também funciona como uma plataforma de agentes em si. Então, você pode fazer coisas se eu tiver este projeto aqui e você tiver este painel de bate-papo ao lado, e eu posso simplesmente dizer, por exemplo, " construa um exemplo desta especificação" e posso fornecer um arquivo específico. Vamos criar o arquivo de especificação. Vamos
+
+implementar essa. E eu vou enviar isso para o Flash. Oh. Está apresentando erros no momento. Vamos recomeçar. Deveríamos tentar isso?
+
+Estou conectado à rede Wi-Fi. Tenho quase certeza que sim. Sim, e se você não estiver conectado ao Wi-Fi, deve usar os modelos Gemini . Essa é a minha propaganda. Então, vamos começar isso de novo.
+
+E espero poder fazer o mesmo. Construa, uh, construa conforme as especificações marcadas aqui. Pronto. Vamos ver se conseguimos desta vez. Ok, pronto. Então,
+
+novamente, o modelo simplesmente desaparecerá pensando, tipo, "ah, de lado". E, idealmente, o que deveria fazer é dar uma olhada nas especificações. Deveria analisar a situação e, em seguida, usar um conjunto de suas próprias ferramentas internas para decidir como proceder. Bem, na verdade, descobri que já existem arquivos que eu havia criado. Pode até me dizer que já fez isso, o que é interessante. Mas a
+
+própria ferramenta possui listas de tarefas integradas. Tem algo parecido com um sistema de planejamento. E o que acabou de acontecer aqui foi que um navegador foi aberto, para que possamos verificar como o aplicativo está sendo executado. E isso também pode ser controlado pela própria antigravidade. Então, se eu fizer isso, se eu esperar 2 segundos, ele deverá assumir o controle do navegador e tentar executar o programa. Então, o que
+
+provavelmente está fazendo agora é analisar a implementação existente para ver o que já foi feito e, em seguida, analisá-la. Vamos dar uma olhadinha rápida para ver o que realmente está sendo feito ali. Hum, vamos tentar de novo. Vai melhorar. Então, diz algo como "Então, quer tentar analisar isso". Ah, uma coisa que ele pode
+
+fazer é inspecionar o DOM. Assim, ele pode analisar a própria página da web como parte disso e fornecer e retroalimentar essa informação. E quando finalmente terminar a tarefa, irá gerar um relatório no final, indicando o que conseguiu realizar e o que implementou, para que você possa analisar. Também pode capturar, por exemplo, uma captura de tela ou um vídeo. Então, se for como uma interação, por exemplo, se você disser para adicionar esse recurso à minha página da web, o processo será iniciado e a funcionalidade será executada . Não sei o quão bom ele é em
+
+jogos, mas vamos descobrir em breve . Ou vai tentar jogar o jogo ou... vamos dar uma olhada. Vamos ver o que está
+
+acontecendo neste momento. Ainda não carregou . Vamos voltar. Ok, temos um plano de implementação aqui. Então, é isto que ele acha que deve alterar no arquivo.
+
+Então, o que você pode fazer é simplesmente entrar e editar uma linha e dizer algo como: "Na verdade, eu quero este comportamento diferente." Ou talvez não era isso que eu queria dizer . Então, isso meio que te dá esse feedback de quem está no processo. E quando você terminar, basta dizer "prossiga". E então isso vai embora e fará aquilo.
+
+Enquanto aguardamos que isso aconteça, você gostaria de falar um pouco sobre o seu trabalho e como ele se relaciona com o seu dia a dia profissional? Sim, claro. Então, uma das coisas em que trabalhei há alguns meses foi o agente de pesquisa avançada, que agora está disponível através da API de interações. Bem, isso tem sido ótimo, mas à medida que continuamos a aprimorar isso, meu foco agora se voltou para aproveitar ao máximo esse arnês antigravidade internamente. E, claro, isso se aplica ao dimensionamento de toda a codificação que estamos fazendo e, você sabe, temos um monorepo gigantesco, então é bem complexo. Mas agora estou começando a
+
+pensar em como generalizar isso para uma variedade de outros casos de uso. Então, em vez de ficar compartilhando enormes quantidades de texto resultantes das buscas realizadas, por que não permitir que as diferentes partes desse processo colaborem em um sistema de arquivos compartilhado? Então, sim, esse tem sido realmente o meu foco, aprimorar essa ferramenta e torná-la excelente não apenas para programação, mas também para uma variedade de outras tarefas . E você tem algum caso de uso interessante, como por exemplo, como as pessoas dentro do Google ou do DeepMind estão usando isso atualmente? Tipo, que tipo de coisas eles estão fazendo com os agentes da DeepMind?
+
+Sim, muita coisa tem acontecido . Temos algumas novidades interessantes que vocês provavelmente saberão mais daqui a alguns meses, na IO, mas não posso dar muitos detalhes sobre elas agora. Mas pelo menos internamente tem havido um grande foco na construção de um vasto conjunto de habilidades que permitam às pessoas desempenhar melhor suas funções. Sabe, habilidades são ótimas, mas em uma organização tão grande quanto o Google, existe o risco de as habilidades se espalharem descontroladamente. Então, essa é uma grande área de foco para nós agora: aprimorar essas habilidades, garantindo que apenas os melhores sobrevivam, quase como na natureza darwiniana. Mas isso está realmente
+
+ajudando as pessoas a entregar um bom código em um ritmo muito mais rápido, o que é obviamente fantástico. Incrível. Obrigado. Então, você pode ver essa pequena barra azul ao redor da borda do momento. É a antigravidade assumindo o controle do jogo.
+
+Parece que o jogo consegue descobrir como iniciá-lo . Acho que ele não sabe quais são os controles, então pode acabar tendo que procurá-los . Bem, sim, foi isso que editou. O arquivo que estava lá antes foi gerado por um modelo diferente, então posso afirmar que nem sequer é o mesmo jogo. Foi completamente reescrito do zero, com base nas especificações que fornecemos.
+
+E então, o que você obteria no final? Ah, sim, você pode ver que é como analisar o DOM, procurando por áreas, tentando descobrir como usá-lo. Você deverá ver um vídeo no final. Ah, sim, isto é um bloco de notas. É como se fossem anotações que ele vai fazendo enquanto executa a tarefa. Assim, você consegue
+
+obter uma pequena ideia de quais comportamentos ele está tentando descobrir. Novamente, você pode entrar e revisar essas coisas. Se você não gostar do que eles estão fazendo, pode meio que interromper . Então, em termos de fluxo de trabalho, isso é bastante comum em muitas plataformas de agentes diferentes atualmente. Mas é assim que pensamos em usar ferramentas como os modelos Gemini , para que possamos utilizá-los em nosso próprio desenvolvimento. Bem, vou encerrar por aqui
+
+. Então, acho que uma grande dúvida que tenho é sobre agentes. Como podemos fazer as coisas em uma escala semelhante à do Google? Então, se pensarmos que a pesquisa aprofundada é um recurso do aplicativo Gemini, mas também um recurso que todos no Google podem usar, quais são os desafios que surgem com esse escalonamento de agentes? Sim, então, o que está mais em mente para nós no momento é... o quanto
+
+isso pode ser explorado para atrair representações simbólicas. Bem, como você pode imaginar, gerenciar a cota por usuário ou por equipe é realmente muito importante. Bem, então, estamos fazendo muito trabalho nessa área . tornando isso mais eficiente e com custo menor. Bem, acho que eu e o Ian estávamos conversando antes e, bem, acho que o que vai ser realmente interessante para pessoas como vocês é a possibilidade de combinar modelos como o Gemma 4, que são efetivamente gratuitos em termos de cota, usando apenas as GPUs ou TPUs que vocês tiverem. Hum, e
+
+então, sabe, usando os modelos mais avançados para componentes específicos do sistema agente. Hum, e a avaliação eletrônica também é algo muito importante em que estamos nos concentrando no momento. Bem, especialmente com esses fluxos de trabalho realmente complicados, como você avalia se eles foram bem-sucedidos? Como minimizar esse custo ? Então, estamos analisando coisas como TPUs simuladas para que, você sabe, seja possível testar o próprio sistema e o fluxo de agentes, mas sem necessariamente gastar muitas horas de TPU. Sim, porque, quer
+
+dizer, tenho certeza de que as pessoas estão cientes disso, mas definitivamente há limitações nesse sentido no momento, e o mundo está tentando obter poder computacional suficiente para realizar muitas dessas tarefas. Só uma pergunta rápida: quem está construindo sua própria arquitetura de agentes ou plataforma de automação no momento? Ok, fantástico. Então, só uma perguntinha rápida: que tipo de escala você está considerando? Quem está tentando? Quem são
+
+seus clientes? Qualquer pessoa?
+
+OK.
+
+Entendi. Alguém está usando algum arnês pronto ou vocês construíram os seus próprios? Tipo, qual é a vibe geral?
+
+Oh legal. Legal. Legal. E para quantos usuários você espera conseguir escalar isso? OK.
+
+Uau. Isso é que é escala! Sim
+
+. Sim, esse é o desafio também. Tenho certeza de que esse também é o nosso desafio . Como impedir que um usuário...
+
+Bem, na verdade, ok, vou transformar isso em uma pergunta. Como impedir que um único usuário derrube todo um sistema criando múltiplas instâncias e múltiplos agentes? Tenho certeza de que isso acontecerá à medida que nos tornarmos mais eficientes nessas tarefas, e teremos usuários avançados criando sistemas complexos com equipes de até 100 pessoas, cada um com 100 agentes. Como é que a gente gerencia os comportamentos específicos de cada usuário, se é que você me entende? Sim, eu sei, é um ótimo ponto e, como eu disse antes, honestamente, agora é uma questão de força bruta com a cota. Então, temos
+
+alguns usuários realmente avançados na DeepMind e, no fim das contas, chega um ponto em que é preciso dizer: " Ok, vocês precisam parar agora mesmo ." Mas, sabe, em geral, acho que isso levanta uma questão interessante sobre como esses produtos serão precificados no futuro . Como você sabe, você viu o Anthropic bloqueando aquela coisa da garra aberta . Isso ocorre porque esses sistemas de agentes consomem muitos tokens e o modelo de assinatura não funciona bem para eles. Então, sim, acho que isso também é uma grande preocupação para mim agora, como mitigar esse problema. Sim, eu
+
+sempre brincava quando entrei no Google que, sabe, você tem todos esses recursos disponíveis em data centers para usar em diferentes projetos. Como saber quando é demais? E um dos meus colegas me disse uma vez que ele simplesmente respondeu: "Ah, eles vão te contar ." E eu fico tipo, "Quem são eles?" E sim, com certeza, há pessoas monitorando essas coisas 24 horas por dia, 7 dias por semana, observando picos e gráficos, e toda a nossa equipe de SRE entra em contato com você e diz: " Você pode interromper a execução deste job neste cluster, por favor?"
+
+Ah, sim, acho que essa também é uma questão interessante. Alguma pergunta da plateia?
+
+Essa é uma pergunta fantástica. Então, nós criamos uma espécie de aplicativo web personalizado para isso, basicamente. E basicamente, existe um sistema de back-end de agentes que é usado para muitas coisas no Google e, essencialmente, sempre que um usuário envia uma consulta para um agente hospedado nesse sistema, ela aparece automaticamente nessa interface do usuário, onde você pode navegar em vários níveis de hierarquia, cada uma das partes do sistema. Se necessário, você pode detalhar até as solicitações de previsão brutas feitas ao modelo e assim por diante. E isso tem sido útil.
+
+E também temos um conceito semelhante a um repositório de trajetórias de agentes. Isso se concentra mais na parte de codificação, onde obviamente pode haver um grande número de etapas envolvidas . E pode ser muito importante diagnosticar exatamente em que ponto o loop começou a ocorrer ou, sabe, quando o modelo saiu dos trilhos. Sim, internamente é tudo personalizado por enquanto, mas eu gostaria de saber o que vocês usam para observabilidade também.
+
+Mais alguma pergunta? Sim.
+
+Ah, que ótimo!
+
+Sim, essa é uma pergunta fantástica. Obviamente, não posso entrar em muitos detalhes sobre planos de lançamento e coisas do tipo, mas o que posso dizer é que sim, é algo que estamos explorando ativamente. Sabe, esperamos que isso torne o processo mais rápido, mais barato e, com sorte, traga melhores resultados, se conseguirmos orquestrar essa pesquisa aprofundada usando a mesma plataforma. Bem, e porque, você sabe, sem entrar em muitos detalhes, há uma enorme quantidade de contexto que passa por todo esse sistema de pesquisa aprofundada, o que se torna bastante caro e, você sabe, consome o contexto. Então, estamos pensando em como tornar cada elemento deste sistema mais parecido com um colaborador, como parte de um espaço de trabalho, que é mais ou menos como funcionaria se os humanos estivessem pesquisando algo a fundo, certo?
+
+E acho que isso abre um grande potencial para coisas como infográficos, artefatos de suporte adicionais e documentos. Sim, definitivamente é uma área de foco para mim.
+
+Essa é uma ótima pergunta. Boa pergunta. A resposta curta para isso é: não sei. Hum, acho que nós, eles não, eles são um pouco mais...
+
+qual é a palavra? Eles são um pouco mais opacos na forma como se apresentaram. A forma como você pensa sobre isso é como se tivesse vários agentes trabalhando simultaneamente em diferentes etapas, mas não é bem assim. Sim, a resposta curta é que não é tão óbvio quais agentes estão realmente trabalhando em uma determinada tarefa. Não é exatamente como um sistema massivamente paralelo nesse sentido.
+
+É mais como se você pudesse dar a eles diferentes... digamos, linhas de operação dentro de um projeto específico, mas você pode dizer a eles para trabalharem em coisas específicas ou pode ter trabalhos que se sobrepõem um pouco, mas não é bem assim. Sim, eu não tenho muitos detalhes sobre as especificidades de como os subagentes trabalham.
+
+Acho que o futuro será, afinal, como tornar a comunicação entre agentes eficiente e como dar a nós, humanos, a capacidade de realmente moldá-la e quase agir como um supervisor em uma linha de montagem digital , sabe? Então, é isso, fiquem de olho, eu acho. Pergunta? Você é o próximo.
+
+Sim, para mim, eu gosto muito de habilidades, e elas têm funcionado muito, muito bem para mim. Hum... talvez isso seja controverso, mas eu sempre achei que o MCP fosse um sucesso passageiro . Eu
+
+gosto disso do ponto de vista da autenticação. Acho que isso é muito poderoso. Mas para mim, uma combinação de habilidades e interações com a CLI do Guardrail funcionou muito bem. E isso agiliza muito o meu trabalho , sabe? Eu tenho habilidade para, como você disse, depurar logs brutos, e você sabe, consigo fazer a maior parte disso pela linha de comando.
+
+E em uma empresa do nosso porte, a grande vantagem é que contamos com a contribuição de pessoas que são verdadeiros especialistas naquela área específica, e aí eu e o corretor recebemos esse conhecimento de graça, sabe? Então, definitivamente tenho habilidades para trabalhar em equipe, se isso ajudar. Quer dizer, nós apoiamos ambos, e acho que essa é a intenção daqui para frente. Novamente, é semelhante ao que a comunidade utiliza. Tipo, sabe, queremos ter certeza de que eles funcionam com o arnês, funcionam com os modelos. Então,
+
+acho que sim, seja lá o que vocês continuarem usando, provavelmente ainda teremos suporte. Provavelmente é assim que se deve pensar sobre isso. Sim. Hum, devo pegar a parte de trás? Devemos optar por essa alternativa?
+
+Sim, eu sei, é fantástico... avaliar essas coisas é realmente difícil. Um, mesmo considerando apenas a natureza mecânica de iniciar todos esses ambientes isolados, configurados da maneira necessária para avaliar um determinado conjunto de problemas.
+
+Acho que a parte mais complicada é conseguir novos conjuntos de dados, sabe? Bem, existem muitas opções boas de código aberto que são ótimas para realizar benchmarks externos, mas você tem razão, para habilidades específicas, a responsabilidade recai quase que exclusivamente sobre o autor da habilidade para criar alguma forma de teste, mas as pessoas também estão experimentando com os agentes que a projetam. É um pouco metalinguístico. Mas sim, ainda há muito trabalho a fazer nessa área. Acho que temos uma questão aqui.
+
+Mesmo em termos de modelo e uso do modelo? Yeah, yeah.
+
+Sim, essa é uma boa pergunta. É engraçado, na verdade, porque temos limites piores do que os seus, já que obviamente priorizamos os clientes e não a nós mesmos. O fato de eu ter clicado umas cem vezes para continuar é porque o site reconhece que sou um funcionário do Google, e a culpa é minha. Sabe, é uma boa pergunta. Bem, acho que isso tem duas partes.
+
+Acho que sempre haverá limites, especialmente dentro de diferentes níveis. Eu não tenho o Ultra, por exemplo. Então, desculpe, minha conta corporativa funciona, mas a pessoal não. Então, eu tenho que mudar meu comportamento. Mas acho que vamos acabar num mundo em que, quer dizer, esperamos que em algum lugar por aqui esteja o Kevin da equipe antigravidade, que provavelmente poderia falar especificamente sobre isso. Hum,
+
+mas acho que vamos entrar num padrão em que será comum você ficar sem crédito ou sem capacidade em um modelo ou algo assim e depois migrar para outro, mas isso acontecerá de forma integrada e transparente . Então, você pode nos dar preferência em vez de, sabe, ter que lidar com situações como: "Você atingiu seu limite de tokens para o modelo Pro, então ele automaticamente te coloca no Flash" ou " Você atingiu seu limite em tudo o que tem na sua assinatura, então você usa um modelo local". Mas, para o seu caso, isso não interromperá o seu fluxo de trabalho, e a notificação que você receberá não será de conclusão da tarefa. É tipo: "Ah, nossa cota acabou, desculpe." Por exemplo, imagine que você estivesse fazendo outra coisa enquanto o computador estava executando uma tarefa e, ao voltar, descobrisse que ele passou a última hora sem fazer nada porque você atingiu um limite. Então,
+
+acho que a forma como falei com ele da última vez sobre isso foi muito mais voltada para tentar deixar mais claro quando se chega a esse ponto e garantir que você possa... Então, sim. Ah, acho que temos tempo para mais uma pergunta. Você quer tentar
+
+?
+
+Sim, então... você está certo. Bem, uma delas é que eu gosto muito do fato de já termos algumas coisas muito boas implementadas para isso . Então, funciona assim:
+
+para cada linguagem, temos um modelo específico de revisão automática que foi ajustado em todos os nossos guias de estilo e em todos os outros exemplos de código anteriores. Mas também, com base em PA ou produto, as pessoas criam seus próprios SRIs específicos e instruções, e assim por diante, para garantir que os outros revisores recebam um bom sinal sobre a qualidade do código. E ontem mesmo enviei um PR para revisão e nem precisei ativar a revisão automática. Acabei de receber um comentário de um agente, que alguém contratou, sobre a assessoria de imprensa, com uma sugestão bastante interessante. Então, sim, acho importante, como mencionei antes, que somos supervisores de uma linha de montagem digital. É como se perguntássemos: como podemos
+
+obter ajuda também com essa parte ? Então podemos todos ir sentar na praia. Sim . Sim, concordamos com você. Como você pode imaginar, a escala de todos os engenheiros do Google enviando centenas de milhares de linhas de código agora é feita por agentes que enviam ainda mais código e passam por mais revisões. Eles construíram muitos tipos
+
+de infraestrutura para nós. Mas também temos ferramentas como o Jewels, por exemplo, que, se você já usou, tem uma interface web onde você pode fazer isso nos seus próprios PRs no GitHub. Então, tipo, você recebe componentes de revisão disso. Então, sim, acho que esta é uma área que vai crescer exponencialmente com o aumento, como mencionei ontem, da quantidade de trilhões de linhas que o GitHub está recebendo atualmente, geradas por agentes e processos semelhantes. Então, por mais que detestemos nosso próprio trabalho tedioso, tenho certeza de que os agentes também detestam o deles. Então, precisamos
+
+encontrar uma maneira de fazer isso. Mas, sim . Bem, acho que nosso tempo para perguntas acabou, mas estaremos por aqui para conversar depois, caso queiram se juntar a nós, ou se preferirem ir ao estande da DeepMind mais tarde, também estaremos por lá. Muito obrigado por ouvirem. Muito obrigado a todos.

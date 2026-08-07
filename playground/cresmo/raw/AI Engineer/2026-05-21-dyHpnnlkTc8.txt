@@ -1,0 +1,117 @@
+---
+video_title: "Cooking with Agents in VS Code — Liam Hampton, Microsoft"
+video_id: dyHpnnlkTc8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=dyHpnnlkTc8
+video_date: 2026-05-21T17:00:06+00:00
+video_description: |
+  One codebase, three problems, three agents running at the same time. Liam Hampton from Microsoft demos the full loop in VS Code: a local agent with Claude Opus writing and fixing unit tests with him in the loop, a background agent using a git work tree to build a front end from a GitHub issue without him touching it, and a cloud agent running in GitHub Actions to make the repo open source friendly.
+  
+  The talk is a framework for knowing which agent path to pick and why. Local when you want hands on iteration. Background when the task is big and you can tolerate being half in half out. Cloud when you genuinely do not care how it gets done. VS Code handles all three from one interface, with Copilot, Claude, and third party agents accessible from the same control plane.
+  
+  Speaker info:
+  - https://x.com/liamchampton
+  - https://www.linkedin.com/in/liam-conroy-hampton/
+  - https://github.com/liamchampton
+---
+Olá a todos. É ótimo ver tantos de vocês que ainda estão aqui na final, no último dia, bem no finalzinho. Espero que todos tenham tido uma ótima conferência. Quem aqui usa o GitHub Copilot? Incrível. Que coisa linda.
+
+Quem aqui usa o VS Code com o GitHub Copilot? Incrível. Então, hoje vou falar sobre esses dois assuntos. Vou falar sobre como usar agentes no VS Code. O senhor que falou anteriormente estava se referindo à carga cognitiva dos agentes, e isso está absolutamente correto.
+
+Hoje em dia vemos uma infinidade de aplicações para agentes, que estão surgindo em todos os lugares: na linha de comando, nos terminais, nas janelas de bate-papo, em outros editores, etc. etc. Mas, de alguma forma, ainda nos encontramos presos a esse paradigma em que todos acreditam que os agentes podem resolver todos os problemas do mundo. Ainda vejo desenvolvedores, e ainda converso com pessoas, que acham que podemos fazer prompts de uma única vez. Eles criarão um aplicativo maravilhoso ou resolverão todos os seus problemas de uma só vez.
+
+Absolutamente não é esse o caso. E acabamos fazendo essas perguntas de uma perspectiva empresarial: qual é o retorno sobre o investimento (ROI), qual é o aumento de produtividade, onde estamos vendo nosso dinheiro? E neste momento estamos vendo todo esse investimento em IA e em toda essa infraestrutura, todas essas ferramentas e serviços, e ainda não colhemos realmente os benefícios desses serviços. Portanto, quando analisamos como as pessoas estão gastando e como as empresas estão encarando a IA, precisamos ter muito cuidado com a forma como estamos utilizando as ferramentas e os serviços. Precisamos ter cuidado com o gasto de tokens. Precisamos entender
+
+as ferramentas e a flexibilidade. Li ontem em algum lugar no LinkedIn que alguém publicou este repositório. Está crescendo enormemente em popularidade e está funcionando como um verdadeiro pirata, permitindo que seus chatbots interajam com seus serviços de IA e modelos de linguagem, reduzindo assim o gasto de tokens. Agora, as pessoas estão criando maneiras realmente intuitivas e divertidas de contornar o gasto de fichas e obter esses benefícios muito rapidamente. Então, o que eu vou abordar são os agentes do GitHub Copilot. Isso não se
+
+aplica apenas ao GitHub Copilot, mas também a outros agentes de IA. Portanto, quando analisarmos os agentes do Copilot em termos de contexto, a que eles realmente têm acesso em seus espaços de trabalho, como estão sendo usados ​​e utilizados no VS Code e na CLI, vamos examinar todos esses aspectos muito em breve. Então, de forma simples e direta, que tipo de agentes temos no momento? Agora estamos analisando agentes locais. Temos agentes locais que estão no VS Code. Você
+
+pode usar o Claude, você pode usar todos esses outros serviços de IA. Ainda aplicável, ainda funcionando na sua máquina local com modelos remotos, qualquer coisa que você já esteja usando, talvez você esteja usando também versões hospedadas localmente. Mas esta é uma forma de ter modelos locais interagindo com você lado a lado, de forma muito prática, muito contextualizada e com a participação humana. Depois, você tem os agentes em segundo plano. Agora usamos a CLI do GitHub Copilot. Também temos acesso a
+
+isso dentro do VS Code. Mas essa é uma forma mais isolada de utilizá-los. Agora estamos efetivamente usando árvores de trabalho Git. Levantem a mão quem sabe o que é uma worktree do Git e quem a utiliza. Incrível, maravilhoso. Para quem
+
+não sabe, uma explicação simples é que se trata de um branch mapeado para uma pasta isolada dentro do espaço de trabalho em que você está trabalhando, como um subdiretório, ou seja, um pequeno trecho do seu código com seu próprio branch associado. Muito semelhante a um branch do Git em geral. Depois, você tem os agentes em nuvem. O Cloud Agent é bastante interessante porque permite escalar para fora da sua organização muito rapidamente e utilizar grande parte do poder da nuvem e de alguns dos serviços que usamos no GitHub. Agora usamos isso quando não queremos tocar na coisa nós mesmos. Eu uso isso quando preciso
+
+escrever documentação ou quando quero ter uma abordagem menos prática. Então, quando usaríamos um agente local? Bem, eu contrataria um agente local para escrever os testes. Quero participar ativamente dos meus testes. Quero entender o que está acontecendo na base de código. Eu realmente quero estar lá no meio do
+
+mato. Quando eu usaria um agente em segundo plano ? Bem, um agente de apoio seria ótimo se eu quisesse algo como 50/50. Quero criar uma interface de usuário para a parte frontal de um aplicativo. Eu meio que quero saber o que está acontecendo. Eu realmente não quero
+
+delegar a tarefa a um agente na nuvem porque não quero ficar completamente alheio ao processo, mas também não quero ficar envolvido diretamente em todas as etapas, pois isso pode levar tempo. Isso pode ser bastante árduo, pode ser bastante irritante. Então, eu usaria um agente em segundo plano e vou mostrar como estou usando o Autopilot para fazer exatamente isso com o GitHub Copilot daqui a pouco. Quando eu usaria um agente na nuvem? Bem, eu usaria isso principalmente para documentação.
+
+Eu detesto documentação. Eu não gosto de escrever isso. Acho que poucas pessoas fazem isso, a menos que sejam desenvolvedores de conteúdo. Na verdade, eu simplesmente delego isso aos agentes na nuvem. Isso pode incluir tornar um repositório compatível com código aberto, ou escrever um arquivo README usando algumas habilidades para isso. O que
+
+eu realmente estou analisando é o VS Code como um ponto de entrada único para agentes de IA. Temos suporte de terceiros, temos informações de bastidores, temos pontos de acesso locais e remotos para todos esses agentes. Em última análise, o que estamos tentando fazer é entender qual é a sua posição como desenvolvedor e o quão fácil podemos tornar o uso desses agentes para reduzir essa carga cognitiva. Parece bastante complicado, mas na verdade é muito simples. Então, vou mostrar um vídeo agora. Eu ia
+
+fazer isso ao vivo, mas acho que não vou ter tempo para fazer tudo isso ao vivo. Então, vou passar por este vídeo muito rapidamente. Então, vou começar com uma aplicação Python muito simples. Isto é apenas um CRUD, ou seja, criar, ler, atualizar e excluir, uma loja de produtos bem simples. Não é muito bonito, não é muito bom. Como você pode
+
+ver, é bem simples. O que eu realmente quero fazer é criar uma interface de usuário (front-end) para ele. Então, abri um chamado no GitHub e estou dizendo: "Ei, isso é maravilhoso, vá em frente e adicione uma interface, precisamos de algo mais bonito aqui." Precisamos que fique bonito. Então, vou resumir e planejar uma solução para o problema 25. Você vai notar que estou usando
+
+um agente de linha de comando em segundo plano neste momento. Agora estou usando isso porque quero que seja algo meio prático, meio automático, com um pouco de compreensão do que está fazendo. Também não me importo muito se isso causar problemas, pode continuar iterando. Também vou usar o Autopilot. O Autopilot está atualmente em versão prévia, o que significa que ele não fará um monte de perguntas se precisar executar várias chamadas de ferramentas. Ótimo, maravilhoso, mas também
+
+pode ser muito perigoso. Use por sua conta e risco, certo? Não abuse disso. Mas estou usando isso aqui para criar um plano. Não quero que me pergunte toda vez que eu quiser fazer uma chamada STP.
+
+Então eu digo: maravilhoso, aqui está o plano. Agora inicie o processo, mas antes de criar uma solicitação de pull request, pois no Autopilot isso será feito automaticamente, pare, pause e deixe-me testar localmente. Enquanto ele estiver ocupado fazendo suas coisas maravilhosas, poderei passar para a próxima etapa, onde usarei outro tipo de agente. Então, vou deixar isso para trás. Vamos criar uma nova sessão de chat e iniciar um agente na nuvem. Notei que este repositório não é
+
+muito amigável ao código aberto. Eu quero que isso tenha um arquivo readme ou diretrizes de contribuição, que tenha todos esses arquivos readme. É isso que eu realmente quero como um projeto de código aberto. Então, vou dar um puxão de orelha e dizer: "Ei, vão lá e tornem isso compatível com código aberto, adicionem todos os arquivos necessários para isso." Não me importo muito.
+
+Agora, como desenvolvedor, posso acessar minha base de código e começar a explorá-la. Notei que não tenho nenhum teste. Então vou dar uma olhada e notei que há um agente personalizado disponível para mim no VS Code. Este agente personalizado basicamente explica e demonstra como usar ou como escrever casos de teste para esta aplicação Python. Então, o que posso fazer agora é começar a ativar um agente local.
+
+Assim, bem na parte inferior, posso clicar em "local". Vou selecionar Claude Opus 46. Meu raciocínio será de nível médio. Quero que seja algo rápido. Eu não gosto muito disso.
+
+Possui um ótimo entendimento neste agente personalizado. Vá escrever alguns testes unitários. Agora, como desenvolvedor, ainda consigo dar uma olhada rápida . Tenho tido um contato bastante próximo e constante com um agente local. Tenho um agente remoto realizando algumas tarefas para mim e um agente em segundo plano criando uma nova interface.
+
+Então aqui eu consigo ver, certo? Alguns testes foram escritos. A empresa vai prosseguir e tentar executá-los. Está passando nos testes. Mas também notei que existem alguns outros problemas no código. Não é
+
+muito amigável. Os erros que estão retornando não são nada bons. Então, vou sugerir que você atualize o tratamento de erros nas rotas e também os testes. Como você pode ver, tenho tido muita conversa com esse agente local. Tenho meu agente remoto e meu agente em segundo plano funcionando simultaneamente.
+
+Enquanto isso estiver funcionando, posso ir verificar o que meus outros agentes estão fazendo. Enquanto o processo estiver em andamento, você pode ver que o Copilot apenas fará uma leitura superficial . Na verdade, eu não acelerei nenhuma parte deste vídeo. Tudo isso acontece muito rápido. Com esses agentes, fiz isso muito, muito rapidamente. Pronto, agora você pode
+
+ver que parte do código foi atualizada. Já temos os novos testes e o código atualizado. Vamos verificar o agente em segundo plano. Isso já terminou. Que legal. Vamos verificar o
+
+agente remoto. Como está o andamento do agente remoto ? Bem, na verdade, este é o teste. Execute o teste. Os testes foram aprovados. Esse é o agente local. Isso
+
+já está terminado. Agora posso ir verificar meu agente remoto. Ao analisarmos isso, podemos ver que, como desenvolvedor, tenho um estilo de trabalho bastante prático e, ao mesmo tempo, bastante independente . Estou trabalhando com vários agentes simultaneamente. Podemos ver onde eles estão sendo executados, tudo dentro deste único contexto do VS Code. Agora, se eu
+
+for verificar a extensão de pull requests no VS Code, posso ver que agora tenho um pull request. Essa é uma que eu já havia trazido antes. A que está rodando no chat está demorando bastante, mas o princípio continua o mesmo. Está executando todos esses agentes diferentes ao mesmo tempo. Então, tudo o que eu realmente quero fazer agora é ir verificar meu agente de antecedentes. Quero ir ver como
+
+funciona. Quero ir ver essa nova interface que acabei de criar. Então, pedi para o programa pausar antes de enviar uma solicitação de pull request e me dizer como testá-la. Então, vou dizer: "Bem, na verdade, a maneira como você me disse como testar isso está errada." Então, continuo com a opção de "mãos à obra" e "mãos à obra".
+
+É mais ou menos 50/50. Estou dizendo: "Isso está funcionando em uma árvore de trabalho do Git. Como eu executo isso na prática?" E lembre-se, esta é a aparência atual do aplicativo. Então, vou dar uma olhada no novo diretório, que é uma árvore de trabalho do Git. Em seguida,
+
+vou executar este aplicativo Python. Você verá uma mudança drástica entre o que é criado no meu diretório único e o que eu tenho atualmente. E há um conflito de portas aqui. Então, apresse-se e execute isso. Aqui estamos.
+
+Então, se eu clicar ali, esta é a nova demonstração do produto. Agora, este é o terceiro agente que estou executando simultaneamente, e essa é essencialmente uma ótima maneira de usar diferentes agentes em um mesmo contexto para iniciar tudo usando o GitHub Copilot. Essa é a nova verificação de erros, e é assim que tenho usado vários agentes. Então, uma base de código, três problemas, três agentes distintos corrigidos, tudo ao mesmo tempo. O agente local estava fazendo a minha prova porque eu queria uma experiência prática. Eu realmente queria que os humanos estivessem envolvidos no
+
+processo. Usei meu agente em segundo plano para escrever o front-end porque não me importo muito com o que ele faz. É uma tarefa bastante árdua . É bastante grande. É um processo bastante demorado.
+
+E então usei meu agente na nuvem para escrever a documentação para mim. Resumindo, foi uma trajetória bastante bem-sucedida. Então, como os agentes em nuvem realmente funcionam? Porque recebo essa pergunta com bastante frequência. Quanto vai custar? Como funciona? O que eles estão
+
+fazendo? E como faço para colocá-los em funcionamento? Bem, na verdade, eles estão sendo executados no GitHub Actions. Eles são bastante seguros porque funcionam em um ambiente isolado. Eles obtiveram contexto ampliado por meio dos servidores MCP. Por curiosidade, quem aqui
+
+usa servidores MCP? Incrível. Assim, o agente em nuvem tem acesso ao servidor MCP do GitHub e ao servidor MCP do Playwright , permitindo que você faça testes com capturas de tela. Você pode realizar testes automatizados de front-end. E você pode, obviamente, escrever seus fluxos de trabalho. Você
+
+agora tem os fluxos de trabalho dinâmicos. E possui mecanismos de segurança integrados. Então, você tem firewalls de rede. Você não quer que esse agente fique conversando com um monte de coisas diferentes. Está totalmente na lista branca e é restrito. Além disso,
+
+não tem acesso à sua ramificação principal. Portanto, você não pode enviar alterações diretamente para sua branch principal. É bastante restrito nesse sentido, portanto é muito seguro de usar. Como mencionei anteriormente, isso se aplica principalmente ao GitHub Copilot, mas não se limita apenas a ele. Na verdade, isso utiliza os mesmos conceitos em todos os diferentes agentes de IA que você pode usar. Portanto, as
+
+instruções personalizadas definem claramente como o agente deve ser executado. Você tem agentes personalizados, que foi o que mostrei hoje naquela breve demonstração, onde você pode usar agentes muito específicos para lidar com determinados problemas, seja corrigindo casos de teste ou escrevendo casos de teste. Você tem arquivos de instruções que irão te ajudar com suas instruções e habilidades de agente. O Agent Skills é mais parecido com a versão mais recente do agents.md.
+
+Agora sempre tem algo novo surgindo a cada semana. Portanto, tudo isso também se aplica ao GitHub Copilot, assim como a outros serviços de IA. Agora, dentro do VS Code, este é um modal bem recente, e posso sair dos slides em um instante para mostrar exatamente como ele se parece. Então, se eu fosse ao VS Code, abrisse meu painel de bate-papo do GitHub Copilot e clicasse na engrenagem aqui em cima, você poderia ver tudo o que eu tenho em um único espaço de usuário para personalizar o bate-papo e os agentes que você está executando. Então, quer você tenha agentes, eu tenho meu agente de teste personalizado. Tenho meus agentes integrados,
+
+que são perguntar, explorar e planejar. Eu tenho algumas habilidades. Então, basicamente, foi isso que alguns membros da equipe do VS Code meio que sugeriram que você usasse aqui. Então, você tem algumas extensões. Você precisa abordar um comentário de relações públicas. Você precisa criar uma
+
+solicitação de pull request. Você pode acessar esses arquivos e editá-los como quiser. E essas são apenas habilidades intuitivas que incluímos ali para você. Não tenho instruções específicas, mas é aqui que você teria seu arquivo de instruções, seus prompts, caso tenha algum prompt integrado, como na criação de um agente, ou diferentes prompts que podem ser acionados e iniciados em habilidades. Você tem ganchos. Sim, eu não tenho nenhum hook
+
+neste caso, mas um ótimo exemplo, se você quiser criar ou configurar alguns hooks, é o Copilot dentro do VS Code e também em qualquer servidor MCP . Assim, você tem todo esse painel de controle dentro dessa janela modal, o que permite controlar seus agentes e as personalizações do chat a partir de um único lugar. Isso não se limita apenas a espaços confinados. Também contamos com suporte de terceiros. Então, o Claude está aqui embaixo, para que você possa acessar todos os seus itens do Claude, incluindo seus plugins, hooks, instruções e skills . Portanto, não se
+
+restringe apenas ao VS Code e ao GitHub Copilot. Então, se você quiser colocar a mão na massa com algumas das habilidades ou personalizações, temos este projeto incrível de código aberto que estamos executando. Chama-se Awesome Copilot. É aka.ms/awesomecopilot.
+
+Como eu disse, isto é direcionado ao Copilot, mas não se limita exclusivamente ao Copilot. Você pode usar isso, manipular os dados e utilizá-los para outras ferramentas de IA também, pois sabemos que as pessoas na comunidade usam mais do que apenas produtos da Microsoft e do GitHub. Também temos um servidor MCP. Portanto, se alguém estiver interessado em utilizar isso em seus fluxos de trabalho do ponto de vista do MCP, também encapsulamos essa funcionalidade em um servidor MCP. Para quem não conhece o MCP, o Mono Context Protocol é uma ótima maneira de colocar a mão na massa e expandir os LLMs com os quais você está trabalhando ou quaisquer personalizações de chat que você tenha. Por exemplo, se você quiser usar o Azure
+
+ou falar com seus recursos do Azure, ou se eu conheço o GCP, AWS, etc., você pode fazer isso por meio de um MCP. Obviamente, o acesso será restrito por autenticação. Mas também existem opções gratuitas e abertas que não exigem autenticação, como o Playwright e as plataformas de documentação, o Microsoft Learn, e assim por diante. Então, para concluir, o Visual Studio Code é um ponto de entrada único para agentes de IA, e nós realmente construímos esse fluxo de trabalho baseado em agentes em torno de vários serviços diferentes. Temos plugins de terceiros.
+
+Temos plugins próprios. E temos suporte completo às especificações do MCP. Temos opções de personalização do chat, e você pode se conectar às sessões da CLI do GitHub Copilot através do VS Code. Portanto, tudo acontece em uma única sequência para você, como desenvolvedor, dentro do seu fluxo de trabalho. Gostaria muito de saber mais sobre seus fluxos de trabalho, o que vocês estão usando, os agentes e como os estão utilizando após a sessão, pois acredito que me resta pouco menos de um minuto. Muito
+
+obrigada por ouvirem e por terem vindo hoje.

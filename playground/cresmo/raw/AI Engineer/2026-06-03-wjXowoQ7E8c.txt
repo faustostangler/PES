@@ -1,0 +1,520 @@
+---
+video_title: "AI Engineer Melbourne 2026 Keynote Livestream | Day 1"
+video_id: wjXowoQ7E8c
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=wjXowoQ7E8c
+video_date: 2026-06-03T02:57:47+00:00
+video_description: |
+  Live from Federation Square in Melbourne, AI Engineer Melbourne 2026 brings the keynote stage to viewers online in partnership with Web Directions.
+  
+  This is AI Engineer’s first partner event in Australia, featuring keynote-stage sessions from one of the most thoughtfully produced developer events in the region.
+  
+  Watch live and follow along with AI Engineer and Web Directions as we simulcast the Melbourne keynote program.
+  
+  Event: AI Engineer Melbourne
+  Dates: June 3–4, 2026
+  Venue: Federation Square, Melbourne
+  Partner: Web Directions
+  
+  Learn more about the event:
+  https://webdirections.org/ai-engineer/
+  
+  Subscribe for more AI Engineer talks, livestreams, and event coverage:
+  https://www.youtube.com/@aiDotEngineer
+  
+  Timestamps:
+  00:00:00 - Intro
+  00:00:26 - Opening remarks by swyx
+  00:02:25 - Opening remarks by John Allsopp
+  00:03:54 - George Cameron (Artificial Analysis): frontier model benchmarks, intelligence vs cost curves, and hardware driving cheaper inference
+  00:20:24 - Sarah Sachs (Notion): compute strategy as product strategy, multi provider leverage, and CPUs for everyday AI workloads
+  00:39:45 - Geoff Huntley (Latent Patterns): software factories, commoditized coding, and smaller AI first teams
+  01:00:39 - Igor Costa (Autohand AI): why coding agents forget, memory vs context windows, and evolutionary agent architectures
+  01:16:24 - Vamsi Ramakrishnan (Google Cloud): Gemini Live voice agents, Python latency limits, and why full duplex systems moved to Rust
+  01:23:01 - Break: Lunch
+---
+Que
+
+eu deveria... Eu sou muito bom em resumir temas, então preparei seis temas que eu gostaria de apresentar a vocês para o resto desta conferência. [bufa] A primeira coisa que eu queria abordar é como a IA está cada vez mais deixando de ser apenas modelos. Bem, aqui estão
+
+duas imagens lado a lado da OpenAI dizendo que um modelo está se tornando cada vez mais a ferramenta principal, certo? A IA 2.1 também está se voltando para isso, e a IA também se refere a serviços, dados, marca e produto, certo? Então, acho que todas essas tendências são muito boas para os engenheiros de IA, porque abrangem tudo o que está fora do modelo. Mas a segunda tendência também mostra que os modelos estão... e acho que o
+
+parâmetro de referência mais realista provavelmente é a quantidade de código escrita por IA. Esta é uma captura de tela das alterações de código na nuvem no GitHub ao longo do tempo. Em fevereiro, representava cerca de 4 a 5% de todo o código. Neste momento , provavelmente está em torno de 10% e, no final do ano, deverá estar entre 40 e 50%. Todos estão percebendo claramente que isso está mudando o mundo inteiro. Os
+
+agentes de código em nuvem, quero dizer, os agentes também são auto-hospedados e permitem forks de slots, o que é realmente interessante. E também, claro, obviamente, há o momento Oplaw, sobre o qual não preciso falar, vocês já ouviram falar bastante, mas também estou muito interessado em saber que ele começa a marcar o surgimento de agentes em domínios não verificáveis. E acho que, por último, o alto potencial está excedendo o trabalho intelectual normal, o trabalho intelectual em direção à fronteira da ciência, tecnologia e matemática, ciclo de vida do desenvolvimento de software, começando com as ideias do ano passado, o que também é chamado de paradoxo de Jevans. E, na verdade, este é o meu argumento sobre por que a engenharia de IA será o último emprego, por que vocês têm segurança no emprego e por que vocês dominarão o mundo. Espero que nos próximos dois dias vocês tenham discussões muito proveitosas e estou ansioso para conversarmos online. Vê
+
+você.
+
+Tudo bem. E agora, Sean realmente me deve uma. Chegaremos aqui em breve . Não se preocupe. Tudo bem. Para dar início às negociações propriamente ditas,
+
+temos George Cameron. Então, George é um australiano que agora mora em São Francisco. Parece haver uma espécie de patente aí, e eles começaram algo para resolver seus próprios problemas há alguns anos. Há uma ótima entrevista com Shan Wang no Leighton Space com os fundadores da Artificial Analysis, empresa que ele fundou. Então, se você quiser saber mais sobre a história deles e tudo o que fazem, recomendo muito que faça isso. Bem, o que eles
+
+fazem é basicamente queimar muitos tokens para verificar objetivamente, em todos os tipos de benchmarks e plataformas próprias e abertas, como os modelos se classificam e como se comparam. Isso é muito valioso para as conversas que teremos hoje pela manhã, onde analisaremos a tokconomics e como o custo do uso da inferência está começando a se refletir em nossas estratégias de produto. Mas, para contextualizar com todos os insights que ele tem sobre o panorama dos modelos modernos, por favor, recebam George Cameron, da área de inteligência artificial. Muito bem
+
+. Estamos... aí está.
+
+Ótimo. Obrigado por me receberem aqui. Bem, eu sou George, um dos cofundadores da Artificial Analysis. Falando muito rapidamente sobre nós. Somos uma empresa independente de avaliação comparativa de IA . Ajudamos milhões de usuários com
+
+nosso site artificial analysis.ai a entender o que está acontecendo na área de IA e a escolher entre as diferentes tecnologias com nossos benchmarks independentes. E também somos bastante conhecidos no setor. No início desta semana, Jensen nos indicou o lançamento do Neotron 3 Ultra. Na semana passada, Anthropic com Opus 4.8 e
+
+nosso benchmark de valor do PIB na semana anterior . Sunda com um GPT, desculpe, Gemini uh 3.5 flash release. É com muita alegria que compartilho um pouco do que fazemos e apresento uma visão geral de como enxergamos o estado da IA ​​em junho de 2026. Realizamos benchmarks em todas as plataformas de IA. Nós
+
+avaliamos agentes, modelos, provedores de inferência e [limpa a garganta] hardware. E também avaliamos modelos de linguagem focados em texto, mas também modelos de imagem, vídeo, fala e música. Acho que para começar, vou fornecer basicamente este gráfico. É um pouco agitado. Hum, que mostra os principais lançamentos dos principais laboratórios de IA nos últimos anos. E está um pouco
+
+agitado, mas acho que isso provavelmente não é surpresa para nós aqui nesta sala, porque foram alguns anos bastante agitados. Houve muitos lançamentos e muito progresso. E acho que o motivo pelo qual gosto de começar com essa conversa é porque ela demonstra que o progresso da IA ​​não diminuiu. Penso que essas afirmações foram muito, muito exageradas. Ouvi muito disso no final de 2025, mas depois saiu o Opus 4.6
+
+. Os agentes começaram a trabalhar por períodos muito mais longos e as pessoas se acalmaram um pouco. E acho que este gráfico mostra isso muito bem, pois há mais pontos nele do que nunca. Bem, se você observar os últimos 3 meses aqui, verá que houve mais lançamentos importantes e que a tendência é de crescimento rápido, o que demonstra progresso na inteligência artificial. Primeiramente, apresentarei nossa métrica de índice de inteligência artificial para análise.
+
+Esta é uma métrica de síntese de 10 benchmarks que executamos para testar a inteligência do modelo de linguagem, a qual fornece uma visão geral de síntese de alto nível e uma comparação relativa da inteligência desses modelos. Neste gráfico, temos o conjunto atual dos principais modelos. E acho importante destacar que, na semana passada, o Claude Opus 4.8 assumiu o posto de modelo de linguagem líder em termos de inteligência, substituindo o GBT 5.5.
+
+Mas acho que, em vez de pararmos por aí, se pudéssemos parar por aí, isso facilitaria muito o nosso trabalho. Mas acho que a questão é que ainda há um motivo para usar outros modelos, considerando o custo, a velocidade e outras compensações presentes nos modelos de linguagem atuais. Primeiramente, analisarei diferentes perspectivas sobre o estado atual dos modelos. É possível ver aqui que se trata, em grande parte, de uma questão envolvendo os EUA e a China, ao analisarmos onde estão localizados os laboratórios que desenvolvem esses modelos de linguagem de ponta . Também presentes neste gráfico estão a França, com a Mistral, e a Coreia do Sul, com diversos laboratórios em uma iniciativa soberana de IA de grande sucesso. E
+
+também os Emirados Árabes Unidos. Bem, acho que o que está fazendo falta, para nós aqui nesta sala, é a Austrália. A Austrália não possui modelos linguísticos que sejam competitivos com os países mais avançados em termos de inteligência. Bem, do meu ponto de vista, eu não acho que isso vá acontecer tão cedo. Outra perspectiva é analisar os pesos abertos, ou modelos de código aberto, em comparação com os modelos proprietários e a inteligência proprietária alcançada. No eixo y temos nosso
+
+índice de inteligência e, no eixo x, o estado de lançamento. O que essas linhas representam é o modelo líder, que é de certa forma proprietário, em comparação com os pesos abertos, e os pesos abertos sempre ficaram atrás da inteligência proprietária. Este gráfico remonta a meados de 2023, com o lançamento do Llama 270B, e você pode ver que, sim, os pesos livres ficaram atrás dos pesos livres... quer dizer, da
+
+inteligência proprietária, mas, de certa forma, conseguiram acompanhar, com um atraso de aproximadamente 3 a 4 meses em relação à inteligência proprietária. Isso não era garantido. Há alguns anos, ou melhor, há poucos anos, as pessoas perguntavam sobre os modelos comerciais que poderiam suportar OpenWeights. Mas acho que o que vimos foi uma tendência que se manteve por vários motivos, e acredito que isso continuará, pois haverá incentivo suficiente, principalmente para laboratórios que desejam atender aqueles que buscam modelos OpenWeights por sua flexibilidade, capacidade de ajuste fino e outros motivos. Em segundo lugar, acho que outra perspectiva sobre isso é que, se o OpenWeights estiver de 3 a 9 meses atrasado, estamos falando de algo como o Opus 4.5 ou o GBT
+
+5.2, considerando a inteligência que você pode obter com modelos OpenWeights, como o KimK 2, o KimK 2.6 ou o mais recente Deep Seek V4 Pro. Então, continua sendo uma opção. Você poderia fazer muita coisa com o Opus 4.5
+
+ou o GBD 5.2, então continua sendo uma opção. E parece que isso vai continuar, considerando os últimos anos e a nossa situação atual. Utilizamos parâmetros de comparação quantitativos, mas procuramos garantir que esses parâmetros estejam alinhados com a utilização no mundo real. Você não tem modelos de escalada de colinas baseados em um número que não se relaciona ao aumento da usabilidade desses modelos e aos casos de uso que estamos explorando com IA agora. Gostamos de
+
+verificar o progresso e acho que o que mostramos aqui com nosso benchmark de valor de PIB, que usa um conjunto de dados de IA aberta que transformamos em um benchmark de IA, é uma perspectiva de um modelo líder há um ano com Claude 4, Cloud 4 e agora com GBD 5,5. Você pode ver que o progresso está sendo feito em termos de produção de conhecimento no mundo real. À esquerda, temos uma tabela útil; à direita, temos uma síntese adicional, um resumo executivo, que fornece totais muito úteis e análises mais aprofundadas do que tínhamos há um ano. Assim, os agentes progrediram em tarefas economicamente valiosas e também gostamos de analisar tarefas que talvez exijam menos conhecimento, mas que também sejam economicamente valiosas. Também houve progresso nesse aspecto . Então,
+
+este é um tipo de mood board para videoclipe, uma tarefa dentro do GDP Vala, e você pode ver que ele está sendo comparado a alguns modelos Open Weight. Mas à esquerda temos o que Gemma um E4B. Quer dizer, é incrível que tenha conseguido isso, mas acho que, como mood board para um videoclipe, talvez eu não seja criativo o suficiente, mas não acho que conseguiria usar esse aqui à minha direita. Mas se compararmos isso com um GBD 5.5, talvez eu consiga fazer alguma coisa com isso. E então, acho que
+
+isso mostra que ainda existem diferenças reais entre os modelos e que os tipos de parâmetros de referência se correlacionam com as capacidades do mundo real. Acho que um dos dois aspectos difíceis de conciliar na IA atual é que temos inteligência mais barata. Portanto, acessar o nível de inteligência do GPT-4 está mais barato do que nunca . Voltando ao que eu estava dizendo antes, você consegue comprar o Kim K 2.6 agora por um preço menor do que o Opus 4.5 conseguia
+
+há seis meses. Portanto, acho que isso demonstra que é possível obter informações de inteligência a um custo menor do que nunca, mas também estamos gastando mais do que nunca dentro de nossas empresas. Fizemos um upgrade para os planos Claude Code ou Codeex de US$ 200 por mês, e o motivo disso é que vou dividir em seis pontos principais que consideramos os mais críticos, ou melhor, que abordamos rapidamente . Cada um desses temas poderia render uma palestra, mas, assim como modelos menores capazes de alcançar maior inteligência, isso é inédito. A redução de custos aumentou a escassez de modelos. Menor proporção
+
+de parâmetros ativos em relação ao total quando o processamento de inferência está em grande escala. O fator determinante do custo é, na verdade, a quantidade de parâmetros ativos. Como automatizar o hardware. A seguir, temos os ganhos de eficiência de software que vale destacar na pilha de inferência, como as otimizações em linguagens VLM ou SG, que estão acontecendo diariamente, assim como a atenção flash. Além disso, estamos explorando diferentes quantizações mais próximas do modelo; não estamos mais em BF16, agora estamos em precisões de quatro bits, seja com modelos Moonshot ou com NVFP4 em outros modelos. Estamos
+
+fazendo melhores escolhas de eficiência, essencialmente para oferecer inteligência mais barata e aumentar a eficiência. Em terceiro lugar está a eficiência do hardware. O hardware está custando mais, mas também oferece mais. Assim, um nó NVL72 consegue oferecer um custo menor em larga escala do que um nó H100, mesmo que custe mais. Assim, essa maior eficiência pode se traduzir em custos mais baixos, oferecidos em modelos maiores que estão aumentando os custos . E como você concilia
+
+isso com o primeiro ponto? A questão é que nem todos gostam ou não de certas aplicações, mas existe uma demanda insaciável por inteligência de ponta. Vemos que isso continua. Penso que, por mim, adoraria ser mais inteligente. Eu adoraria que as pessoas com quem trabalho fossem mais inteligentes. E, portanto, acho que isso se
+
+traduz em modelos. Assim, a demanda insaciável por modelos maiores aumenta os custos. A seguir, modelos de raciocínio. Os laboratórios estão aprimorando a inteligência por meio de mais fichas de raciocínio. Todo mundo sabe que pagamos por token e, portanto, o custo é mais alto . Por último, os agentes. Então, antigamente,
+
+no chat do GPT, você fazia uma pergunta ou enviava uma solicitação para a API e recebia a resposta. Talvez seja melhor transformar isso em uma palavra por meio de código. Agora você tem agentes explorando outros arquivos, verificando seu próprio trabalho e melhorando o resultado, mas estamos lidando com várias etapas para a mesma tarefa. Assim, em nossos benchmarks, estamos normalmente vendo 60 turnos para uma tarefa de manobrista do PIB. Bem, algo entre 20 e 100 turnos é bastante razoável para muitas tarefas de trabalho intelectual e funciona como um multiplicador de custos.
+
+Este é um gráfico que mostra o tipo de modelo de linguagem de inferência de preço uh redu caindo. Aqui, agrupamos os modelos de acordo com sua inteligência. Então, em nosso índice de inteligência, de 0 a 10, de 10 a 20, etc., analisamos quando esse modelo foi desenvolvido, quando essa inteligência foi alcançada (o primeiro ponto de cada linha) e, em seguida, onde estamos agora em termos da versão mais recente ou da versão mais barata que consegue acessar essa inteligência. E o que vemos aqui é que, em períodos de seis a dezoito meses, o custo dessa inteligência cai frequentemente de 10 a 100 vezes.
+
+E isso é algo sobre o qual todos podemos refletir e aproveitar. Se uma tarefa fosse possível, você poderia realizá-la com o Opus 4.5. É bem provável que agora você consiga, pois há ordens de magnitude envolvidas. Não é duas vezes mais barato. Em muitos casos, você pode economizar até 10 vezes
+
+escolhendo um modelo mais barato que tenha sido lançado mais recentemente . Então, acho que há uma demanda insaciável, tanto por inteligência aprimorada quanto, principalmente, por casos de uso mais definidos no mundo real. Muitas vezes, existem opções de 10 a 100 vezes mais baratas em termos de seleção de modelos, e isso se confirma novamente. Aqui temos um gráfico que mostra a inteligência e o custo para nós de executar benchmarks. Então, aqui está o eixo x, onde temos o custo para executar nosso índice de inteligência, esses 10 benchmarks, e... não sei
+
+se teríamos condições de arcar com isso quando começamos, lá por volta de 2023 ou 2024, mas agora está custando mais de 4.000 dólares americanos para executar esses 10 benchmarks para modelos de ponta que estão expandindo o que a inteligência artificial é capaz de alcançar. Como você pode ver, o Opus 4.8 custa mais de US$ 4.000.
+
+Mas existe um tipo claro de curva de desempenho que deve ser levado em consideração ao selecionar modelos para casos de uso. Pensando na sensibilidade ao custo, existem opções em jogo dentro da curva de preços que realmente abrangem mais de 100 vezes em termos de diferenças de custo. Poderíamos falar sobre isso com muito mais detalhes, mas este gráfico mostra o que sustenta grande parte dos ganhos de eficiência: as melhorias de hardware. Como você pode ver, o nó B200 oferece maior velocidade de saída por consulta, além de maior taxa de transferência do sistema. Ele pode ser dimensionado para mais usuários e maior concorrência, o que permite amortizar o custo do hardware entre um número maior de usuários e, consequentemente, reduzir os custos de inteligência e inferência.
+
+Acho que os agentes são uma categoria muito grande e exigem diferentes maneiras de pensar sobre cada uma das categorias de agentes. Acompanhamos sete categorias de agentes de rápido crescimento que, em nossa opinião, alcançaram o encaixe perfeito entre produto e mercado e estão em rápida expansão. Então, esses são agentes de codificação, agentes de trabalho em geral, não apenas de bate-papo, mas também do seu grupo local de código, seu grupo de trabalho Claude, que realmente atingiram um nível de maturidade. Ainda há muito a fazer, mas já atingiu um nível de maturidade que permite seu uso no mundo real. Em seguida, temos os chatbots, agentes de apresentação, OCR, análise de dados e suporte ao cliente como sete categorias de agentes que realmente atingiram um nível de maturidade e adequação ao mercado e continuam a crescer muito rapidamente. Ao
+
+clicar duas vezes, você se depara com aquilo que provavelmente é mais interessante para o nosso público de engenharia de IA: a codificação de agentes. Portanto, os agentes de codificação não são o modelo em si, eles são o modelo e o mecanismo que impulsionam o desempenho, porque quando usamos agentes de codificação, não estamos usando apenas o Opus 4.7 ou o Opus 4.8, estamos usando o Opus 4.8 no Claude Code no Cursor CLI.
+
+Então, Sarah agora é chefe de IA na Notion. Por algum motivo, nós a perdemos. Podemos trazer a Sarah de volta? Ali está ela. Então, ela é a chefe de IA na Notion, mas antes trabalhava na Robinhood e no Google, e é a líder de engenharia em modelagem de IA, raciocínio, orquestração de agentes e infraestrutura de modelos. Além disso, ela
+
+foi entrevistada recentemente por Shan Wang sobre espaço latente. Eu recomendo fortemente que você acesse o Latent Space para se manter atualizado sobre tudo. E ela vai falar, então se você quiser ouvir mais sobre a história pessoal dela e o que eles estão fazendo na Notion, ela vai falar sobre um tema recorrente, como mencionei, relacionado aos tokens, o custo dos tokens e como isso gera uma espécie de pressão reversa em nossa estratégia de produto. Então, para saber mais sobre o que eles estão fazendo lá na Notion, por favor, recebam Sarah Saxs. Oi.
+
+[aplausos] Olá. Estamos bem. Sim. OK. Obrigado por me receberem. Se eu estivesse no mesmo
+
+cinema, estaria dando um enorme "toca aqui" para a inteligência artificial. Bem, vou presumir que você me vê e está fazendo isso. Bem, o motivo é que concordo plenamente com tudo o que foi apresentado. E acho que o que eu quero abordar é o desafio de realmente servir a esse propósito e tomar essas decisões. Hum, levante a mão quem trabalha em uma empresa da lista Fortune 50 .
+
+Ok, que bom para você. Três de vocês, quatro de vocês. Levante a mão se você não sabe. E levante a mão se você oferece produtos de IA aos seus clientes. Certo, e nós, né? O que significa
+
+trabalhar quando você não tem a escala e o poder de negociação, mas quer entregar o melhor para seus clientes? Bem, primeiro, como qualquer gerente de engenharia, nunca é correto levar o crédito por tudo o que você faz. Esta é apenas uma amostra da equipe que realmente construiu tudo o que vou mencionar a seguir. Então, eu sempre gosto de incluir uma pequena amostra de tudo o que estamos construindo. Então, quero analisar alguns cenários reais. E, mais uma vez, não compartilhamos
+
+anotações, então isso lhe parecerá muito familiar em relação ao que acabou de ver. E isso é real. Não vou citar nomes, mas você pode pesquisar rapidinho no Google. Então, veja o exemplo A: um modelo de raciocínio é atualizado, mas não se preocupe, o preço é o mesmo. OK? Bem,
+
+pode ser o mesmo preço por token, mas você executa exatamente a mesma tarefa. E o que acontece? São três vezes mais tokens de saída. OK. Talvez isso melhore as coisas. Isso explica mais. Mas o que
+
+você faz, né? Vamos analisar o anexo B. Existe um modelo sucessor. Então, incremente seu nível de decibéis aleatórios em 0,1. OK. É 40% mais caro que seu
+
+antecessor. Mas, notícia de última hora: a versão anterior será descontinuada em quatro meses. E você construiu todo o seu produto em cima disso. Você vai aumentar seus preços em 40%? Não, espero que não.
+
+Então, o que você faz? Bem, se você é uma das quatro pessoas que levantaram a mão, tudo bem. Seu CEO poderá ir à Bloomberg reclamar disso e você provavelmente conseguirá um ótimo acordo. Mas e quanto a todos os outros, não é mesmo? As empresas da lista Fortune 500 têm equipes dedicadas à inteligência artificial. Eles têm a oportunidade de
+
+negociar, negociam sozinhos e possuem uma vantagem incrível. E eu tenho uma hipótese de que isso está deixando para trás uma grande parte do mercado e não é um mercado eficiente. Bem, hoje em dia você fica sem nada, vejo isso o tempo todo com nossos clientes e com meus parceiros do setor. Você fica para trás, sem nenhuma vantagem. Meu trabalho na Notion é representar essa empresa da lista Fortune 5 milhões, porque eles são nossos clientes. Especialmente [limpa a garganta]
+
+com preços baseados no uso, a acessibilidade da IA ​​é determinada pelo preço desses fluxos de trabalho. Sabe, estamos lidando com dezenas e dezenas de trilhões de tokens por mês. Mas também temos mais de cem milhões de clientes. O que isso significa? Significa que eu posso desempenhar esse papel de negociação em grande escala, mas trazendo isso para todos vocês. E há algumas
+
+lições que aprendi e que não acho que você precise usar esses trilhões de tokens por mês . E quero compartilhar isso com todos vocês porque realmente acredito que nesta economia há muito a ganhar e acho que o mercado não está sendo justo conosco. Então, estamos vendo isso, certo? Bem, por US$ 200 por mês, você pode consumir US$ 5.000 em poder computacional. Como isso é possível? Porque o
+
+Antrópico tem o custo dos bens servidos para si próprio. Aliás, somos parceiros muito próximos deles. E creio que isso seja apropriado para tarefas de raciocínio de vanguarda . OK? Para tarefas realmente difíceis, quero pagar mais porque ainda não chegamos lá. Mas em muitas
+
+situações, não é essa a nossa realidade . Então o fornecedor é seu concorrente, certo? Quantos de vocês imaginam que, nos próximos 10 anos, poderão estar competindo com a OpenAR em algum produto que estejam desenvolvendo? Bem, tenho a impressão de que poucos de vocês estão levantando a mão, o que é interessante. Bem, é assim que está funcionando agora. E vejo isso acontecendo de duas
+
+maneiras diferentes. Primeiro, vejo que as pessoas estão trancadas. Elas não têm saída. Quando você vê grandes empresas de IA aplicada com parcerias extremamente visíveis com a Frontier Labs, há uma grande probabilidade de que elas estejam presas a esse fornecedor, para o qual destinaram todos os seus investimentos em troca de descontos exorbitantes, mas estão sem saída. OK. Isso significa que amanhã, se
+
+surgir um modelo de peso livre ou outro modelo inovador, eles não terão a opção de desistir, porque já investiram 20 milhões de dólares em um
+
+modelo que utilize o melhor disponível, seja ele qual for. Por exemplo, na Notion, acabamos de lançar isto. Este é o nosso produto de gerenciamento de agentes . Acreditamos que a possibilidade de escolha tem valor. Como você verá neste exemplo, é possível usar agentes do Decagon, movê-los para que o Claude Code possa escrever uma correção e, em seguida, talvez pedir para o Codex revisá-la e adicioná-la a uma lista de tarefas para revisão humana, certo?
+
+Podemos cobrar o preço de tabela ou até mesmo oferecer um pequeno desconto nesses modelos, mas o benefício que você obtém é a experiência completa. E não se trata apenas de capacidade. Vemos isso o tempo todo agora. Acho que escrevi um artigo no Twitter há alguns meses com o qual muitas pessoas se identificaram . Acho que a questão está se resolvendo apenas com base na capacidade. Você deve sempre
+
+pensar no custo por capacidade por segundo. A análise artificial é um recurso maravilhoso para isso, caso você não tenha seus próprios recursos. E tipo, está acontecendo mesmo, né? Vemos essas histórias malucas. Isso se resume às manchetes da última semana que mostram que, se você se concentrar apenas na capacidade e não pensar na latência ou no custo, você se coloca em uma posição difícil.
+
+É bem engraçado, para ser sincero. Hum, acho que adorei esses tweets. Se você está no Twitter da IA, e metade de vocês está, então é uma época curiosa para se estar vivo. Mas é real, né? Mas você não quer que esses sejam seus clientes, ok? E
+
+não é apropriado colocar seus clientes nessa situação, seja lá o que esse cara esteja fazendo com o charuto dele. Nem todo tráfego é igual. Ouvimos um pouco naquele gráfico, onde vimos, você sabe, onde diferentes modelos estão se encaixando. Em teoria, se parece com isto. Alterar um campo de banco de dados, priorizar um e-mail, sabe, ficar parecido com esse cara.
+
+Certo, vamos iniciar o tratamento com Miniax para ele o mais rápido possível. Resumo das atas da reunião. São todas coisas pelas quais não queremos pagar 40% a mais quando o GPT-6 for lançado ou qualquer outra coisa que venha depois. Queremos usar pesos livres ou pesos rígidos . Mas, para a tarefa de vanguarda, precisamos entregar essa vanguarda aos nossos clientes. Análise de dados, pesquisa aprofundada.
+
+A questão é que nossos clientes precisam que escolhamos por eles. Caso contrário, estas serão as manchetes. OK? E seu produto é inacessível. O problema é que não é assim que nossos provedores estão trabalhando atualmente.
+
+Eles são incentivados basicamente por dois caminhos. Repito, não vou citar nomes. Use seu raciocínio crítico ou seu modelo favorito para descobrir. Ou você é o melhor modelo de raciocínio, ou você é o exemplo em todos esses tweets, certo? Você é um exemplo de excelência e ninguém questiona seu preço porque você foi o primeiro a ultrapassar qualquer meta que tenha estabelecido.
+
+A segunda opção é que você está um pouco pior, mas tudo bem. Basta que você seja cerca de 30 segundos mais barato por milhão de tokens e o resto do mercado será seu. E quanto aos outros? Certo? Atualmente, vivemos em um duopólio onde os preços não condizem com as necessidades do consumidor.
+
+Tarefas complexas, no entanto, eu acho que são apropriadas. Quero continuar a destacar este ponto. Observamos uma bifurcação, pelo menos no que diz respeito ao uso dessa noção, e quero que todos vocês investiguem e reflitam sobre a possibilidade de haver espaço para modelos de raciocínio complexos e dispendiosos. A armadilha consiste em colocar tudo ali e o melhor modelo de fronteira está mudando rapidamente. Este é um slide antigo que você viu recentemente, fruto de uma análise artificial.
+
+OK. Mas a questão é que está em constante mudança. Provavelmente, estamos alterando nosso modelo padrão para nossos clientes a cada três ou quatro semanas. Bem, dá muito trabalho e temos equipes de avaliação muito avançadas para fazer isso. Mas você não deveria precisar disso. Quer dizer, existem muitos
+
+parâmetros de referência que você pode usar. Se você está sempre mudando de fornecedor, não pode prender seu produto a um provedor específico, porque, se fizer isso, no momento em que passar de janeiro para fevereiro, estará oferecendo uma experiência pior aos seus usuários. OK? Não vale a pena o desconto. Eu não acho. Acho que
+
+você está colocando sua empresa em grande risco e está disposto a ficar para trás, dependendo do mercado para esse tipo de trabalho intelectual saturado. Tudo bem, mas se você quer oferecer algo inovador, não deveria estar fazendo isso. A opção é alavancagem. Para um negócio duradouro, você deve estar preparado para se deslocar a qualquer momento . Você não deve se limitar a um único fornecedor e deve se sentir confortável conhecendo o panorama dos modelos disponíveis, para que esteja preparado para manter suas margens de lucro e seu negócio de uma forma que ofereça a melhor experiência possível aos seus usuários.
+
+Fazemos isso com nosso modelo de automóvel. Então, hoje temos um modelo na Notion chamado Auto. Este é o nosso seletor de modelos. Precisa de uma atualização. O número de modelos está ficando grande.
+
+Mas deixamos os usuários escolherem porque, às vezes, essa relação entre latência, qualidade e custo não é algo que você possa presumir para seus clientes. Você ficaria surpreso com quantas pessoas realmente querem gastar muito dinheiro com triagem de e-mails e quantas realmente não se importam com a precisão das tarefas de pesquisa. Quer dizer, é um exercício fenomenal de pesquisa de usuários, sobre o qual poderíamos ter uma conversa completamente diferente . Bem, é assim que fazemos. Bem, na maioria das vezes escolhemos para os nossos clientes, mas em 75% dos casos eles permanecem, porém esses 25% são válidos e damos a eles a oportunidade de sair. Com esse
+
+modelo automático, temos a oportunidade de realmente pensar na tarefa em questão e oferecer a eles a melhor qualidade que precisam, ao melhor preço e com a menor latência possível. OK. Portanto, se você estiver configurando um agente de triagem de e-mail , é muito improvável que o modo automático seja o ideal, porque você receberá sua primeira fatura com preço baseado no uso e dirá: "De jeito nenhum, chega, estou fora daqui ." Certo, este é o plano de ação. Ok, para todos vocês que adoram tirar o celular do bolso e usar o recurso de deslizar o dedo na tela , desta vez isso será online, mas eu entendo. OK. Hum, construir
+
+para multimodelos. Esteja preparado para a mudança. Entenda o que são os fornecedores de modelos. Avalie com base no valor, não nos tokens. O que isso significa? Este é um exemplo.
+
+Publicamos isso no Twitter há alguns meses sobre provedores de busca na web. Pode ser que um determinado provedor de busca na web seja mais barato por token ou por requisição. Quantas solicitações seu agente está processando? Qual a precisão dos resultados? Ao avaliar, você deve analisar a tarefa como um todo . Você não deve ficar pensando
+
+em uma chamada de API específica. É aí que eles te pegam. OK? Pense no seu caso de uso. Você é o especialista em qualidade para o seu caso de uso.
+
+Troque rápido, troque com frequência. Retribua-lhes de alguma forma. Você sabe por que essas evoluções foram incríveis? Adoro a dinâmica competitiva de um mercado. Adoro quando dizemos "paralelo". Nós escolhemos você, mas foi por
+
+pouco. Fique aí em cima. Para todos os outros da lista, aqui está exatamente por que não escolhemos vocês. Por favor, corrija isso. A maré alta sustenta todos os navios. Posicione-se de
+
+forma a obter o que deseja de seus fornecedores. Abrir mão de descontos em troca de opções. Acho que já conversamos sobre isso. E existe uma terceira opção, que pressinto ser o tema do dia, que é peso livre. Essa tarefa de complexidade moderada é algo que estamos considerando seriamente agora, e já temos em produção um grande volume de tráfego OpenWeight, bem como modelos de aprendizado por reforço .
+
+Eles são suficientemente robustos para suportar grandes volumes de trabalho. Não creio que eles chegarão ao quadrante superior direito em termos de capacidade tão cedo, mas a diferença está diminuindo. Além disso, oferece poder de negociação, total independência financeira e a possibilidade de escolher o provedor de crédito de sua preferência. Certo? Eu diria que 2,6 foi o máximo, foi a primeira vez que isso realmente aconteceu conosco.
+
+Muita coisa aconteceu desde então, mas a versão 2.6 foi o primeiro momento em que realmente vimos uma comparação em termos de qualidade com o GPT52. Aqui está a avaliação. Vimos que vimos pontuações e que estas se referem a tarefas específicas sobre conceitos . Repito, o produto é seu. Você
+
+decide o que funciona melhor para o seu produto. Para tarefas específicas de noção que achávamos que o modelo automático precisava realizar para um subconjunto delas, obtivemos resultados satisfatórios. Kim 26 é ótimo. E os erros são importantes, aliás. Erros são o que você acaba pagando no final. Só para
+
+constar, você ainda paga taxas simbólicas por erros e novas tentativas. Pense nisso em outra apresentação. Mas não se trata apenas do custo dos tokens. Analisamos o número médio de tokens. Há algumas coisas estranhas nisso, como Opus 47 um 46 versus Soneto. Observe o
+
+consumo de tokens. Esqueça o preço de Opus for Sonnet. Observe o consumo de tokens. Certo? Por isso, entender toda a sua trajetória é realmente importante para entender o seu modelo.
+
+Eu adoro o Philip Key, ele tem um livro ótimo chamado Engenharia de Inferência. Mesmo que você não seja um fã de inferências, vale a pena ler. Não precisamos ser pioneiros com peso livre. É apenas uma questão de tempo, certo? Temos um produto que vendemos há seis meses, que nossos clientes adoram, e eles não querem ter que pagar por mais dele amanhã, certo? Confiamos que o treino com
+
+pesos livres esteja reduzindo essa diferença, mas precisamos de uma avaliação correta e de acompanhar de perto para saber quando isso acontecer. E é por isso que investir em suas avaliações é importante. Como vencer essas negociações? Bem, a primeira coisa que você precisa fazer para estar preparado é pensar na sua arquitetura, e não apenas na escolha do modelo. Para nós, percebemos que as decisões de engenharia e arquitetura de chicotes elétricos podem representar cerca de 3 vezes a variação de preço em comparação com a seleção do modelo.
+
+Às vezes, isso significa usar uma estrutura nativa, como codecs e APIs na nuvem. Às vezes, isso significa usar código aberto como o PI. E às vezes isso significa criar sua própria estrutura de controle, porque existem funcionalidades específicas que você deseja e entende as implicações de como o cache de prompts, etc., pode afetar seu trabalho. OK. Mas e se você não precisar de um mestrado em Direito (LLM)
+
+? Sei que dissemos que eram bem-vindos à Cidade dos Tokens, mas estamos indo embora . OK. Estamos partindo de Token Town. E eu quero nos levar de volta a um mundo antigo. Um mundo antigo onde usávamos
+
+CPUs para realizar nossas tarefas. Esta é a minha... nano banana, eu acho, imagem gerada de um engenheiro tentando converter um arquivo CSV em PDF e publicá-lo em um webhook.
+
+Por que ele precisaria de um mestrado em Direito para fazer isso? Por que você desejaria que essa tarefa repetitiva utilizasse constantemente fichas de raciocínio para navegar no MCPS? Certo, porque a Frontier Labs quer que você maximize o uso de tokens. Eles querem que você faça isso de uma forma que lhes permita controlar a própria capacidade. É uma questão econômica à parte, mas eles querem que você maximize o uso de tokens. Seus usuários não. Seus usuários
+
+querem que você alcance o resultado máximo. Por isso lançamos nossa plataforma para desenvolvedores e algo chamado workers. Na Notion, acreditamos que muitas tarefas funcionam melhor em CPUs. O determinismo é algo valioso. Existiram máquinas de estado, certo?
+
+O pêndulo foi tão longe porque pode, mas isso não é um software durável nem acessível. Então, fizemos uma parceria com a Verscell para oferecer recursos que permitem lançar o que chamamos de workers, onde você pode acessar APIs internas, ambientes de teste (sandboxes) computacionais e hospedar pequenos códigos como ações que seu LLM (Learning Lifecycle Management) chama. Observamos uma redução de até 80% no custo dos tokens para alguns de nossos clientes em tarefas repetitivas. [bufa] É uma loucura lá fora. Quer dizer, eu sinto que se eu tirar uma semana de férias e conseguir ficar sem olhar o Twitter, é como se eu tivesse hibernado por dois anos, entendeu?
+
+Entendi. É exaustivo. Faça pausas. [risos] Cuide-se . Mas é uma loucura. E o mercado
+
+é tão jovem. É tão opaco. Está se movendo muito rápido. E você é um jogador nisso. Acho muito triste que estejamos todos meio que nos virando como podemos, mas estamos todos juntos nessa.
+
+E nosso poder de negociação é muito maior se todos defendermos nossos próprios interesses . E eu também acho que você deve isso aos seus clientes. Estou muito orgulhoso. Tenho muito orgulho disso e venho trabalhar todos os dias por causa da maneira como acredito que tornamos a IA acessível e valiosa para as 5 milhões de pessoas mais ricas. Mas nem todos usam o Notion, e eu quero que todos vocês também o façam. Quero que façamos da IA ​​algo que
+
+não seja apenas um meme. Quero dizer, na Califórnia eu li uma estatística que dizia que a IA é mais impopular do que o ICE, que é o nosso serviço de controle de imigração. É uma loucura. Nós não temos o, você sabe, não é uma instituição popular, o ICE. Isso significa que a IA é realmente impopular.
+
+Por que? Porque não estamos criando trabalho valioso, não estamos fazendo isso pelo preço certo, as pessoas não estão vendo o valor e há um monte de memes no Twitter, mas há trabalho real a ser feito e essa é a nossa obrigação, certo? Acredito que seja uma tecnologia poderosa e que seja nosso dever levá-la aos nossos clientes de uma forma responsável, duradoura e adequada. Como você viu, eu uso bastante o Twitter . Por favor, me mencione no Twitter. Você
+
+sempre pode me enviar um e-mail. Estarei neste hemisfério até o final da semana em Melbourne. Hum, obrigada pelo seu tempo. Obrigado por me receberem. Eu amo a Austrália. Tenha um ótimo dia.
+
+[aplausos]
+
+Muito obrigada, Sarah. Hum, isso tem sido perturbador. Eu esperava vê-la ali mesmo . Senti como se ela estivesse na sala conosco. Então, a seguir temos alguém cujo trabalho, tenho certeza que vocês reconhecerão, caso ainda não o conheçam. Faz
+
+menos de um ano que o tivemos em Melbourne. Há pouco mais de um ano, realizamos uma unconferência em Melbourne com uma sala para cerca de 50 pessoas, e quase exatamente um ano depois, estamos aqui, nas salas 1 e 2, com, creio eu, talvez umas duzentas pessoas. Desde então, ele já palestrou em cerca de 19 países, ou seja, em todo o mundo, por causa de Ralph Wigum. Bem, não sei se as pessoas ainda se lembram do Ralph, o personagem dos Simpsons, mas o Jeff estava inovando com ideias sobre pressão de Brack e loops, que eram ideias malucas e inovadoras há 12 meses, e que agora são literalmente comuns. Há o "e se", você usa coisas como Codeex e o modo de otimização de cursor, todas essas tarefas de longa duração.
+
+Essa é a implementação do Ralph usando um dia, foi daí que surgiu, mas era algo nobre naquela época. Então, é muito emocionante fechar esse ciclo, por assim dizer, e tê- lo de volta ao palco, onde passamos de 50 pessoas em uma salinha no centro da Universidade Deacon para 600 pessoas aqui, em dois cinemas. Então, por favor, recebam, ou talvez amaldiçoem, o homem que nos trouxe Ralph, o Ralph Loop, hum, Jeff Huntley. Obrigado, John. [aplausos] Olá a todos. Meu nome é Jeff
+
+Huntley. Bem, estou aqui hoje. Quero que você concorde comigo ou discorde de mim. Não sei onde isso vai dar. Tipo, vou dizer algumas coisas bem provocativas, como o fato de que o desenvolvimento de software agora custa menos que o salário mínimo. Quero que você
+
+reflita profundamente sobre isso. O software foi transformado em commodity. É meio parecido com este iPhone que tenho na mão. Agora qualquer pessoa pode ser fotógrafa. Isso não significa que eles sejam fotógrafos de casamento. Os
+
+gerentes de produto agora podem ser desenvolvedores de software. Isso não significa que eles sejam engenheiros de software. Porque muita coisa mudou bastante no último ano. Então, com essa introdução e terminada, gostaria de dizer oi mãe e que não trabalho para ninguém. Eu não represento ninguém. Estas são as minhas próprias
+
+ideias e reflexões sobre para onde as coisas estão caminhando. Veja bem, já faz cerca de um ano e meio desde que apresentei a ideia de tarefas e agentes de longa duração. Você já os usa diariamente e eu tenho tentado descobrir como tudo isso vai se desenvolver a partir daqui. Aqui estou eu dando uma palestra na Alassian cerca de uma semana antes das demissões em massa, falando sobre como a economia unitária dos negócios mudou para sempre. Ops. E eu quero que vocês reflitam
+
+profundamente sobre isso, porque a economia dos negócios mudou fundamentalmente. Assim como agora é fácil criar software. Isso não significa que você esteja criando as coisas certas. Hoje em dia, qualquer pessoa pode ser desenvolvedora de software. Vejam só , este é um encontro que participei há cerca de 100 dias, antes de começar minha turnê mundial e minhas palestras. Foi
+
+esse encontro de cursores e aqui está Roslin. Roslin não é, de forma alguma, um desenvolvedor de software clássico. Nesse encontro estavam presentes gerentes de produto e designers. Eles estão se divertindo muito , pessoal. Na verdade, não há muitos engenheiros de software por lá, porque nossas habilidades foram banalizadas.
+
+Veja bem, nas minhas viagens, quando comecei a viajar há cerca de 100 dias, fiz uma missão secundária em Oakland. Fui assistir a O Senhor dos Anéis. Eu pensei: "É, missão secundária. Vamos lá fazer." E o meu guia turístico, ele é o operador de guia turístico, tipo, "Jeff, o que você faz?" Eu pensei:
+
+"Eu trabalho com IA. Por favor, não me julguem." E ele fica tipo, "Não, quão boa é a IA? Tipo, eu estou construindo todas essas coisas." Eu penso, o que isso significa para a nossa profissão quando um operador de guia de ferramentas está maximizando o uso de tokens?
+
+Vejam bem, todo mundo agora é desenvolvedor de software, pessoal. Todo mundo agora é desenvolvedor de software. Quero que vocês entendam profundamente que isso se tornou uma commodity. Qualquer um pode escrever software agora. Antes, o software era restrito.
+
+Ou você entendia que podia controlar um computador ou tinha uma interface de usuário que podia clicar e configurar para obter os resultados de negócios. Mas isso mudou completamente. Foi destruído. Os paradigmas foram destruídos. Agora qualquer um pode controlar o computador.
+
+Agora podem escrever código. Antes, isso era controlado. E é meio estranho porque a sociedade foi estruturada em torno da escassez de conhecimento. Os desenvolvedores de software eram os que controlavam o acesso, dizendo: "Não, não podemos fazer isso." " Ah, isso levaria duas semanas, sei lá." Hum, mas não era só isso.
+
+Era como contadores, advogados, todas as profissões de escritório. Cobramos muito dinheiro porque experiência significa que podemos cobrar mais por essa experiência. Mas o que isso significa quando temos IA? O que significa se alguém quer fazer o trabalho de um engenheiro de software sênior e começa com um pacote de habilidades e está fazendo testes baseados em propriedades e testes de sistemas determinísticos? Eu vi algo ontem. PewDiePie, acredite
+
+ou não, está escrevendo testes melhores do que a maioria dos engenheiros de software aqui hoje. Vá ver o GitHub dele. Ele está usando Antivus com Bomadil para testes baseados em propriedades. Enquanto isso, você está usando Playright. O que significa quando essas habilidades que costumavam ser escassas agora são abundantes e temos um YouTuber fazendo testes de software melhores do que a maioria dos desenvolvedores ou engenheiros de software hoje? Uau. Ok. Então, se eu
+
+voltar um pouco, Por volta de 2024, eu disse: "Caramba, as coisas vão mudar. As coisas vão mudar." E escrevi em algumas publicações algo como: "Ei, IDEs, ninguém mais vai usar IDEs." E as pessoas me chamavam de louco. Completamente louco. Tipo, "Não, não, Jeff,
+
+eu adoro o IntelliJ. Eu adoro a JetBrains. Vai durar para sempre." E eu pensava: " Não, acabou. Sumiu." E,
+
+para as pessoas aqui presentes, tenho certeza de que algumas ainda usam suas IDEs favoritas, mas elas se foram. Sumiram mesmo. Foram substituídas por fluxos de trabalho baseados em nuvem ou algo do tipo. As ideias são bem diferentes
+
+agora. Isso foi... isso foi no Natal. Então,
+
+um ano se passou e a sociedade está lentamente passando pela mesma situação. Quero que vocês reflitam cuidadosamente sobre isso. Não importa o quanto a IA melhore e esteja se desenvolvendo nessa curva... A
+
+derivada da inclinação para o aprimoramento é que leva um tempo de inatividade para que as pessoas percebam a inatividade da sociedade. O motivo pelo qual tiveram aquele momento de "putz!" não foi porque os LLMs estavam ficando bons. Eles já eram bons para causar disrupção social em 2024. Eles já eram bons o suficiente. Eles
+
+exigiam muita habilidade para alcançar esses resultados. Mas agora eles simplesmente funcionam, é só configurar e usar. Eles simplesmente funcionam. Mas foi preciso o tempo de inatividade, os feriados, para que as pessoas realmente parassem e percebessem que as coisas estavam melhorando. Veja, as pessoas ao meu redor, de 2024 e até mesmo antes disso, as pessoas que estão realmente se tornando boas com IA, estão praticando de forma deliberada e intencional. Nós as classificamos
+
+como instrumentos musicais. Veja bem, os músicos não simplesmente pegam um violão, dão uma dedilhada e dizem: "Ah, esse violão é uma porcaria" e o jogam no chão. Eles o tratam como uma calculadora. Mas por que os próprios funcionários, mesmo tendo imposto esses instrumentos musicais nas empresas, simplesmente não os usam? Tipo, "Por favor, toque violão." Por favor, toque guitarra. Por favor,
+
+pegue o violão. Por favor, curta o ranking de tokens. "O que mais vocês têm?" É literalmente um teste de curiosidade. Vocês pegariam o violão e investiriam em si mesmos, pessoal?
+
+Mas, na minha opinião, nem todo mundo tem inclinação musical. Vejam bem, acho que agora existem duas classes de empresas. Temos as empresas que já são enxutas, no sentido de que as startups do ano passado dizem: "Não, nunca vamos contratar mais de 50 pessoas na nossa empresa, além da engenharia de campo." Enquanto isso, temos todas as outras empresas lá embaixo, que passaram por um programa de transformação em curva J. Leva três ou quatro anos.
+
+Normalmente, isso não é um problema. Mas aqui temos startups novíssimas como Clay e Christen crescendo em um ritmo acelerado, capazes de, à medida que os modelos melhoram, atacar todas as outras empresas. Então, isso vai ficar interessante. Vocês devem ter visto que a Block demitiu quase metade do seu quadro inicial por causa da IA. Quer dizer, houve algumas idas e vindas. Isso está certo?
+
+Será que... Não está certo? Na minha opinião, Jack está certo. A
+
+IA permitiria reimaginar os organogramas da maioria das empresas. Agora, quero que vocês pensem no Spotify e em como eles produziram aqueles dois vídeos diferentes sobre como o método ágil funciona, com squads, tribos, guildas e tudo mais. E tudo o que foi preciso foi aquele vídeo, e todas as empresas por aí copiaram e implementaram em suas organizações. Vai ser preciso um estudo de caso. O que temos agora é o Jack, o Toby da Shopify e alguns outros executivos.
+
+Eles estão basicamente pegando suas organizações e jogando um baralho de cartas para o alto, sabe, no estilo "jogo de cartas de 52 cartas", e isso pode acabar com a empresa deles, mas eles podem encontrar o modelo vencedor. Basta uma empresa obter esse modelo, e todos vão copiá-lo através de um único estudo de caso. Prestem atenção, pessoal. Nos últimos cinco meses, tenho viajado pela Austrália, Coreia do Sul, Nova Zelândia, São Francisco, Europa, e basicamente...
+
+Conversas com investidores de capital de risco. E a pergunta que está na mente de todos os LPs agora, pressionando seus GPs, é: por que alguém precisa levantar capital semente agora? Qual é o sentido do capital semente? Antes, precisávamos de dinheiro, ou melhor, de levantar dinheiro, para contratar a equipe e construir nosso produto. Mas agora podemos simplesmente construir o produto, expressando o que queremos construir. Então, a disrupção não está apenas
+
+em nossa profissão como desenvolvedores de software e em produtos. Ela também está presente no setor financeiro. Qual é o sentido do capital se for apenas um show de cinco pessoas ? Essa é a pergunta que está na mente de todos. Há respostas e nuances. Venham me procurar e eu me aprofundarei nisso,
+
+porque a pergunta que todos fazem é: o software ainda é um investimento viável? É, mas precisa ser cobrado com base na economia de escala do resultado, não por usuário. Isso é coisa do antigo SAS. Então, sem nenhum motivo específico, toda história precisa de um alvo. Vou escolher o SAP Concur. De
+
+acordo com o LinkedIn [Suspiros] A SAP tem uma estrutura fixa de 6.800 pessoas. São 6.800 funcionários que precisam passar por um programa de transformação de pessoas em formato de J. Eles foram construídos assim. A
+
+maioria das empresas hoje em dia está sendo construída assim. A ideia é que você pega seus funcionários, seus expedidores e seus construtores, e adiciona uma camada intermediária de gerência intermediária acima dessa organização. Quero que vocês reflitam profundamente sobre isso, porque as novas empresas que estão chegando ao mercado hoje não querem fazer isso, e existem empresas como a Block que estão dispostas a fazer experimentos ousados ​​para descobrir o que vem a seguir e o que é diferente, porque a pergunta que está na mente de todos os executivos agora é: quanto tempo leva para transformar 6.800 funcionários? E eu tenho tempo suficiente para essa transformação, mas quando meu negócio for impactado pela IA?
+
+Não necessariamente a IA vai me impactar, mas ela vai permitir que novos concorrentes entrem no mercado. O que acontece quando seus melhores funcionários pensam: " Vai levar muito tempo para fazer a transformação nesta empresa"? Não acho que esta empresa vá conseguir fazer a transformação, então eles desistem e criam uma empresa totalmente nova. Alguém percebeu que a contratação mínima nos laboratórios hoje em dia são CTOs, tipo, da Workday? Você é a pessoa que era responsável pela transformação de pessoas dentro da própria Workday. É tipo, não, eu só
+
+vou conseguir um emprego no laboratório e vou destruir a Workday de forma inversa. Então a questão é: por que transformar 6.800 funcionários? Se você não está abandonando o barco, você pensaria: por que transformar mais? Porque todos nós sabemos que equipes menores obtêm melhores resultados.
+
+E aqui está a história de um fundador na Nova Zelândia. Somos menores, mas efetivamente cortamos dois terços da equipe dizendo que não faríamos demissões em massa. Pessoal, para os desenvolvedores que não estão aqui, conversem com pessoas da área de negócios e finanças. O que não foi dito abertamente não são necessariamente essas demissões em massa, mas sim que as demissões em massa foram suspensas. Por um bom tempo, e isso partiu desse fundador, foi uma das melhores decisões a tomar: se livrar de todas as pessoas que estavam cansadas de ouvir falar sobre IA, os detratores. Agora são 20 pessoas, antes eram
+
+60, e estão produzindo mais do que nunca. Observem a data. Isso foi há três anos, pessoal. Se vocês estão pensando em fazer mudanças na resposta da sua organização à IA, não estão atrasados, mas também não estão adiantados. Vejam bem, isso vai ser difícil para as pessoas. Pensem
+
+em todas as pessoas que participaram de atividades sociopolíticas como em Game of Thrones. Uma das partes mais disruptivas da IA ​​é que ninguém vai abrir mão do seu poder. Vai se transformar em uma espécie de Jogos Vorazes à medida que avança nesse programa de transformação da Curva JC, porque, enquanto descobrimos se isso é sequer possível – não que eu esteja defendendo isso, mas há muitas empresas trabalhando para descobrir o design certo para isso do ponto de vista organizacional – e há até empresas em São Francisco que... Na verdade, estamos
+
+trabalhando na criação de produtos para viabilizar esse tipo de coisa que chamamos de sistema operacional de IA profunda. Não sei aonde isso vai dar. Quero que vocês reflitam bastante sobre isso. Mas uma coisa que sei com certeza é que a experiência como desenvolvedor de software hoje não garante relevância amanhã. Quer dizer, desenvolvedores de software trocam tempo e habilidade por dinheiro. Se uma empresa está tendo
+
+problemas para adotar IA, esse é um problema da empresa. Não é um problema seu. Certo? Se você trabalha para uma empresa que proibiu completamente a IA, você deveria sair dessa empresa. Coloque sua família em primeiro lugar. Invista em vocês mesmos,
+
+pessoal. Quer dizer, se eles estão tendo problemas com IA, esse é um problema da empresa. A empresa precisa resolver seus próprios problemas específicos. Quero que as pessoas pensem rápido. Escrevi isso há quase um ano e meio, quando eu era líder técnico na Canva. E essa é a minha
+
+jornada pessoal, além de entrevistas com outros engenheiros da Canva. E descobrimos que, à medida que implementávamos essas ferramentas, as pessoas se encaixavam em algum ponto desse espectro . Esse era eu. Eu era ótimo. Era como se a IA não fosse boa.
+
+Chega. Prove para mim. Não é só hype. Você começa a experimentar aos poucos e pensa: "Caramba." "Bem, eu tenho um emprego no futuro." E
+
+eventualmente você supera isso e começa a construir com IA, e então você se torna um consumidor e, de repente, começa a aprender como tudo funciona nos bastidores e, então, você se torna um construtor com IA. Agora, para os líderes presentes, a pergunta que quero fazer é: como vocês constroem a ponte para apoiar suas equipes nessa transição? Outra pergunta para os líderes: vocês podem estar percebendo por que há uma linha na apresentação deste ano em comparação com a do ano passado. É simples. Eu não contrato mais pessoas que estão à esquerda da linha. Há um grande
+
+grupo de pessoas curiosas – eu chamo isso de teste de curiosidade – que entendem como tudo funciona. É nessa linha que vocês devem procurar. Um engenheiro sênior deve ser capaz de explicar como a IA funciona nos bastidores. Se eu perguntasse a você o que é uma chave primária, você pensaria: "Jeff, o que você está fazendo? Está me testando?".
+
+Essa costumava ser a pergunta mais básica que você fazia para um estagiário júnior: " O que é uma chave primária em um banco de dados?". Divirta-se, cara, não desista. Mas por que, quando pergunto a um engenheiro de software o que é um agente? "Mostre-me um. Construa um para mim em um
+
+quadro branco", eles travam ou não conseguem entrar em detalhes? Um agente é muito simples, pessoal. É o grande bicho-papão que assusta todo mundo . É um loop infinito. Ele recebe a solicitação, adiciona a um array, envia para inferência e verifica se precisa executar uma ferramenta para copiar e colar automaticamente a resposta de volta, e envia para outra rodada. É muito simples.
+
+Engenheiros de software sênior deveriam ser capazes de explicar isso como um diagrama de sequência em um gráfico. Este é o novo padrão, pelo menos do meu ponto de vista, para entrevistas. Veja o quão a fundo eles conseguem ir nesse conhecimento, porque é um teste de curiosidade. Eu tenho um workshop para os engenheiros de software que não fizeram isso. Você pode construir seu próprio cursor, código de garra e... tipo,
+
+pi. São 300 linhas de código. É muito simples. Crie seu próprio agente de programação. É muito simples.
+
+Vai ser muito interessante ver como tudo isso se desenrola, pessoal. Tipo, eu não sei para onde isso vai. Acho que ninguém sabe. Se alguém disser que sabe com certeza, está mentindo. Porque muita gente acha que nada realmente mudou e isso me assusta profundamente. Me assusta profundamente.
+
+Já estamos vendo o início dos aspectos anti-IA na sociedade. As pessoas dizem: "Ah, está usando muita água, muita água". Não, é um sistema de circuito fechado. Já estamos vendo parte da indignação aumentar [bufa]. Veja, porque muita gente finge que nada realmente mudou, mas na verdade a IA está meio que minando a base e a rede de segurança de muitas pessoas e suas famílias. Sabe, elas acordam e percebem que não
+
+têm emprego e se perguntam: "Por que IA?". Mas será que foi realmente culpa da IA ​​ou a pessoa não investiu em si mesma e em se manter relevante? Fechando ciclos de vida, removendo desperdícios. A otimização de seus sistemas e processos é um acelerador maior do que a própria IA.
+
+Tenho clientes aqui na Austrália, um banco, que tinha um repositório Git para cada componente de interface do usuário na biblioteca de design do Adam. Isso é estúpido. É um desperdício. Se você tem múltiplas fontes de verdade, coisas no Jira, outras no Google Docs e outras coisas do tipo, isso também é desperdício. Estabelecer uma única fonte de verdade é realmente importante. Além disso, e isso é
+
+interessante, é assim que você descobre quem deve contratar para gerente de engenharia. Você deve perguntar a eles: "O que está quebrado nos sistemas e processos, por exemplo, vocês ainda usam metodologias ágeis? Como vocês deixaram de usar ? O que vocês mudaram? Onde estava o desperdício? O que vocês fizeram? Quais foram os
+
+resultados?". Aqui está o principal indicador para a contratação de um gerente de engenharia . O velho ditado era: "Ideias são tudo, ideias não valem nada. Execução é tudo". Mas o que significa se você
+
+pode simplesmente, quando quer algo, ir ao site de uma empresa, tirar uma captura de tela do material de marketing e soltar um pum no meu... Agente de codificação e eu entendo esse recurso. Tipo, eu literalmente compro recursos para coisas do SAS hoje em dia. Então, tudo aqui
+
+foi invertido. Ideias sobre o que construir ainda são muito importantes e é uma das questões mais difíceis de todos os tempos. Mas a ideia de que a execução é mais importante, tipo, não, ideias são mais importantes que a execução, porque a execução agora é uma commodity. Isso vai ser muito difícil para muita gente. Para os engenheiros de software na sala, você pode ter uma conversa hoje. É tipo: o que
+
+você faz? Ah, eu sou um desenvolvedor Golang. Sou legal. Você usa Neoim? Você usa IntelliJ? Você usa VS Code? E,
+
+pode parecer rude, mas nada disso importa mais. Ruby não importa. Existe uma identidade com a qual você se comunica. Eu trabalho para este banco. Eu trabalho com esta pilha de tecnologia e tenho anos de experiência. Não
+
+importa. E esta é uma das coisas que faz as pessoas pensarem: "Ah, droga!" O momento em que você fica realmente paralisado, como se estivesse diante dos faróis, é quando todas essas coisas, essas funções ou essa identidade de quem você é, foram apagadas pela IA, não apenas em software, mas em praticamente todos os campos. E, na verdade, tudo se resume a: você tem investido em si mesmo? Você tem sido curioso?
+
+Porque é muito importante investir em si mesmo. Se a IA está sendo implementada na sua empresa, eles estão lhe enviando uma mensagem. A mensagem é: pegue o violão. Aprenda como essas coisas funcionam por dentro. Há muitos engenheiros que implementaram algumas das minhas ideias no último ano e são apenas exemplos de como isso funciona. Tive muitas
+
+palestras nos últimos 100 dias em que isso aconteceu. Por favor, construa um agente. Seja um engenheiro curioso. Entenda o que é um motor, o funcionamento do pistão e tudo mais . Não seja apenas um mero consumidor. Obrigado.
+
+Muito obrigado, Jeff. Vi essa palestra várias vezes. Vi como ela evoluiu ao longo do último ano, mas parabéns. Ah, e sim, um dos vários australianos que teremos no nosso palco nos próximos dias que estão realmente causando impacto, como o George. Você vai se mudar para São Francisco? Não. Certo. Que bom.
+
+É bom ver isso. Que bom ver isso. Certo. Então, a seguir, vamos tentar o número de equilíbrio na corda bamba novamente e temos o Eigor Costa. Então, entre, Eigor.
+
+Olá. Podemos nos divertir? Certo. Tenho certeza de que vamos resolver isso. Eu preciso... Aqui estamos. Eagle,
+
+você consegue me ouvir? Consigo. Ótimo. Certo. Então, tive o privilégio de conhecer o Eigor nos últimos meses porque tenho me interessado muito pela tecnologia que ele vem desenvolvendo. Em particular, ele tem
+
+feito um trabalho interessante com algoritmos evolutivos, que é algo pelo qual tenho uma espécie de obsessão de 40 anos . Então, Eigor era um ex-líder dos esforços de IA do GitHub por trás de Copilot e, no último ano, ele fundou a AutoHand, que está fazendo um trabalho muito interessante nessa área, sobre o qual ele vai explicar um pouco. Ele vai falar sobre por que nossos agentes de codificação esquecem tudo e sobre a arquitetura da memória. Então, por favor, recebam Igor Costa. Obrigado.
+
+É muita gentileza da parte dele. Agradeço. Olá a todos. Obrigado por assistirem hoje e a todos que assistirem no YouTube mais tarde. Agradeço. Meu nome é Igor, como John disse.
+
+Na palestra de hoje, falarei sobre por que os agentes esquecem coisas. Mas antes de começar, quantos de vocês têm pelo menos 100 agentes rodando agora? [risos] Nenhum de vocês. Ok, legal. É fascinante, vocês verão muitas pessoas interessantes aqui hoje.
+
+Mas, mãe, acho que vou repetir o que o Jeff disse. Mãe. Esposa. Crianças em casa. Então, este é um anúncio em Melbourne . Diz o seguinte: A eletricidade é
+
+uma novidade gigantesca. E eu sou fascinado por história e filosofia. Acho que foi isso que acumulei ao longo de toda a minha experiência nessa área. Tínhamos aquele pequeno personagem ali. Não sei se você se lembra, mas o copiloto também tinha aquela pequena cabeça com um logotipo e um nome. Isso já existia
+
+na década de 1850. Levamos provavelmente 150 anos para chegar onde estamos hoje. E é a mesma coisa. A eletricidade fornece energia para todas as casas, enquanto inúmeros trabalhadores sem salário, sono ou descanso trabalham. Não é isso que estamos fazendo agora?
+
+Mas o problema é que eles não são muito inteligentes. Então, eles estão construindo sistemas sem estado. E foi por isso que saí do GitHub para construir o meu próprio. Eu disse: "Acho que estamos abordando o problema da maneira errada". E é preciso muita coragem, porque começar do zero na era da IA ​​não é fácil. É muito
+
+caro. Então, construímos a primeira CLI de programação e o A CLI que codificamos foi muito simples. O objetivo era otimizar a execução de pelo menos 20 ou 30 instâncias diariamente. Testei todos os agentes da Frontier Labs disponíveis e eles não escalavam para mais de 20 instâncias. Meu computador ficava completamente inutilizável, consumindo muita memória. Isso me chamou a atenção
+
+e pensei: " Vou construir a minha própria". Então, você inicia uma sessão e, na metade , provavelmente após 10 ou 15 mensagens, o agente basicamente esquece o que está fazendo. É como se eu pensasse: "Droga, não é isso que eu quero". E continuamos adicionando recursos. Adicionamos uma janela de contexto.
+
+Aumentamos a taxa de resposta. E estamos tratando isso como algo normal. Não estamos falando da janela de contexto para ciência de contexto. Lançamos o Copilot em agosto de 2021 e fomos os primeiros a criar um produto de IA generativa nas mãos das pessoas. Três meses depois... No
+
+chatpt, aumentamos de 4.000 tokens (estávamos lutando para encaixar tudo no contexto e conseguir responder a 10 sugestões de autocompletar) para um milhão, e meio que estagnamos. Isso porque, se você observar os benchmarks apresentados em outras palestras aqui, não conseguimos ir além desse ponto. E então os concursos continuam crescendo, certo? Mas o problema é que temos medo das coisas que criamos, e a maneira como as criamos é como se tratássemos contexto e memória como a mesma coisa. São
+
+coisas muito diferentes, e provavelmente são a mesma coisa. Eu não sei. Ainda não sei a resposta. Estou descobrindo. Estou curioso como todos aqui. Então, para entender melhor,
+
+vamos falar sobre os nove tipos. Eu provavelmente pesquisei sobre eles o máximo que pude, provavelmente já li muitos artigos, uns 75 para ser honesto. E há muitos deles. Ainda os tratamos como memória de trabalho, memória episódica, memória semântica, mas provavelmente... Compacte isso em 18 minutos
+
+e depois continue com a apresentação. Provavelmente vou me concentrar em quatro. Então, vamos falar sobre memória semântica. Nós, da indústria [bufa], criamos esse conceito de agentes.md, onde você define as regras de engajamento, define como acessar as coisas, define a estrutura que está usando. Mas acontece que pelo menos
+
+sete em cada dez pessoas não seguem o que você escreve lá, porque isso é uma limitação dos modelos. Então, passamos para a memória procedural, que é como podemos aumentar a qualidade do nosso conjunto de dados de treinamento em escala. Habilidades, na minha opinião, é o experimento social mais...
+
+experimentação de todos os tempos. Colocamos nas mãos de todos e dizemos: "Ei, vamos criar uma habilidade. Podemos acumular coletivamente todas as suas experiências." Memória é um acúmulo de experiências e podemos treinar e melhorar nossos modelos. E você viu o salto entre os modelos mais recentes que lançamos esta semana? Porque toda semana é um novo modelo, os
+
+ganhos marginais são todos marginais, certo? Então, estamos tentando escalar. Acho que, de uma forma acidental, nós... nós...
+
+balanceamos a palavra. A escalabilidade é muito importante . E então falamos sobre memória episódica. Acho que nas últimas duas semanas, quando os agentes de codificação começaram a ter a ideia de experimentação com a memória, a memória episódica se tornou algo muito peculiar nesse contexto, porque o tempo é uma dimensão que a memória sempre ignora. Então, quando você trabalha sozinho com um grupo de agentes, é fácil, mas quando você trabalha em equipe, é muito difícil.
+
+É um problema difícil de lidar porque cada um tem uma opinião diferente. Opiniões diferentes significam falta de consenso. Falta de consenso significa deriva, colapso, certo? É realmente difícil, especialmente quando você tenta fazer isso. E se você já ouviu isso ou passou por isso, você está absolutamente certo.
+
+Encerre a sessão porque você está completamente perdido. Então, vem a memória reflexiva. Essa é a última, que é muito importante, e acho que é para ela que os modelos estão se voltando agora, e há uma mudança na indústria em direção a essa área, onde você se adapta, sabe o que fará de forma diferente ou Provavelmente o que aconteceu durante a sessão e depois o que aconteceu aqui... provavelmente há umas
+
+três ou cinco startups tentando resolver esse problema. Mas ainda acho que a memória vai mudar tudo isso e talvez estejamos... essa é a minha questão filosófica, e eu sou um grande observador da natureza. Talvez estejamos abordando
+
+isso da maneira errada. Acredito que a inteligência deva ser distribuída, não concentrada em quatro agentes, sem incluir a nós mesmos. Não acredito nisso e é por isso que estamos construindo algo diferente. Então, esta é a nossa CLI de codificação. Preciso entender primeiro... lembre-se que abrimos o código da
+
+CLI... basicamente, é como um agente de codificação, tem as mesmas funcionalidades do Codeex, Cloud Code, Gemini, Cursor Agent, mas é aberto, é transparente, não é P... bem, P não existia quando
+
+começamos a codificar nossa CLI de codificação... acho que eles começaram... Mario começou três semanas depois,
+
+e ótimo conceito também, mas colocamos tudo dentro... era basicamente como eu gostaria de fazer as coisas e [bufa] uma vez que agentes individuais... você meio que... nós
+
+implementamos essa coisa de... Preferências de memória ou preferências do usuário desde o início. Então, armazenamos isso em um formato básico, não há nada mais rápido do que ler um arquivo no seu SSD. Não há nada
+
+mais rápido do que, se alguém está tentando te vender um banco de dados KV incrível ou um banco de dados vetorial, você está basicamente adotando o SAP. [risos] Não há nada mais rápido do que isso, e eu já fiz testes de desempenho. Então, tivemos esse conceito na Autoan, que abrimos e chamamos de Commander. Acho que duas semanas depois, Charlie, da Conductor, criou um
+
+ambiente de desenvolvimento mais amplo, provavelmente uns 30 ou quatro agentes de codificação (ADIs). [bufa] É como se tivéssemos colocado a memória coletiva. Foi uma experimentação. Ainda é uma experimentação. Nosso agente de codificação CLI já foi baixado provavelmente 300.000 vezes e
+
+150.000 pessoas o usam todos os dias. Quanto mais se usa, melhor fica, porque acumula memória. Colocamos essas quatro memórias... Já discuti isso
+
+aqui e depois falarei sobre a memória compartilhada. Então, como posso fazer com que essas coisas sejam como uma única fonte de verdade, certo? E como posso fazer com que os agentes colaborem como os humanos, chegando a um consenso? E acredite ou não, o mesmo comportamento que observamos em humanos, ou em organogramas, também acontece com os agentes: eles não se entendem, não concordam uns com os outros. Então, escrevi este artigo, chamado "Agent Spawn" (Geração de Agentes). A ideia é
+
+imitar o que acontece na natureza: quando você tem um filho, você compartilha geneticamente alguns traços ou aspectos de sua capacidade física ou intelectual com seus filhos. Assim, eles herdam 50% do seu parceiro e 50% dele, e assim por diante. Então, em vez de tentar carregar tudo no contexto, os agentes carregam a tarefa em questão, refletem sobre ela e então criam uma nova versão com uma opinião diferente. Assim, você pode guiá-los sobre como fazer isso. E por que fiz isso?
+
+É muito simples: porque tenho sido muito obcecado pela ideia de agentes de programação de longo prazo executando em um ambiente muito... Demorou bastante, mais de 48 horas. E descobrimos que não há muitas pessoas fazendo isso, e acho que provavelmente ainda estamos descobrindo muita coisa.
+
+E era muito simples. Queríamos detectar a deriva, como se o modelo, de forma aleatória, tentasse imitar o comportamento do contexto fornecido inicialmente e, então, desse a resposta que você está absolutamente certo, mas que provavelmente não é a coisa certa a se fazer. Então, transferimos essa memória para um agente diferente, e talvez esse agente não tenha a mesma capacidade, o mesmo conjunto de habilidades ou as mesmas instruções que tínhamos antes. E então tivemos outro problema: o problema do colapso. Como eu disse, eles não chegam a um consenso. É um problema muito simples
+
+, em resumo. Mas quando você os vê trabalhando juntos, é bem difícil. Então, como fazer isso? Criamos uma espécie de memória, um sistema de modelos. Abandonamos a ideia de grandes modelos de linguagem. Usamos grandes modelos de linguagem apenas como
+
+uma dependência, não como... um cidadão de primeira classe. Eu vi a ideia ali, mostrando os logotipos dos modelos. É bem
+
+legal. Provavelmente, daqui a seis meses, daqui a um ano, eles não vão mais usar isso porque já não é relevante. Estamos avançando muito rápido. Então eu pensei: qual a melhor ideia para validar isso com o Evolve? Vamos usar o que o Linux 12 tem a oferecer.
+
+Eu construí este aplicativo. Executamos isso por mais de 10 meses. Como você pode ver aqui, ainda está rodando. Ainda estamos tentando migrar o kernel do Linux para Rust. Então, são 10 meses rodando.
+
+Não tivemos sucesso. Desculpe, Linux, não hoje. Mas estamos chegando perto. Quando começamos o experimento, provavelmente tínhamos migrado apenas 12% com sucesso. E o segredo por trás disso vem de um laboratório de IA em Singapura. É por isso que abandonamos o motor de iluminação. Eles criaram essa nova
+
+arquitetura chamada Modelo de raciocínio hierárquico. Então, quanto mais memória, mais modelo. Em vez de tentar fazer as coisas de uma maneira diferente ou compatível, é uma coisa só, certo? Você pode criar modelos menores e mais densos com base nos seus conjuntos de dados já existentes, como dados de clientes ou quaisquer dados transacionais, como suas sessões. Você pode criar um modelo com 20 milhões de parâmetros ou até mesmo um modelo com 2 bilhões de parâmetros, mas isso não significa que podemos treinar muito mais rápido.
+
+Nossos ciclos de treinamento passaram de verificações semanais para cerca de 3 ou 5 horas, dependendo do dia, e podemos ver uma progressão disso. Mas nós realmente achamos que resolvemos o problema. Não, ainda não chegamos lá. Estamos no início dessa jornada, mas há muitas evidências. Na ausência de evidências, usamos a intuição, certo? Como humanos, mas quando
+
+você tem evidências nos dados, você meio que sabe que esse pode ser o caminho certo, e eu trato isso com... Eu não aceito uma proposta do tipo "ok, os dados estão me dizendo isso, provavelmente devemos abordar de uma maneira diferente", mas como estamos usando agora em um de forma agenciada. Experimentos são muito baratos. Então, quando eu começar a treinar
+
+meus próprios modelos, o que provavelmente custará meio [bufa] milhão de dólares, certo? Hoje em dia, parece que o treinamento custa 500 dólares , né? Assim, o custo de propriedade da inteligência artificial está diminuindo drasticamente e acreditamos que você deve ser o proprietário da sua própria IA. Acreditamos que todo o controle deve estar em suas mãos, porque é assim que construímos sociedades. Aqui estão alguns dos desafios que não conseguimos enfrentar ou resolver. A
+
+correção da memória é um problema muito difícil . Ainda não conseguimos resolver isso . Ainda estamos pesquisando essa área. Ainda não posso publicar o artigo, mas estamos perto de resolver isso. A segunda é a memória como um elemento fundamental para o treinamento de sinais. Assim, os
+
+modelos aprendem e armazenam informações de maneiras muito distintas. Como podemos garantir que, quando fizermos, por exemplo, multilocus em modelos de linguagem recursivos, eles possam ser adaptados muito mais rapidamente do que... você sabe, ainda estou tentando corrigir isso
+
+nesta apresentação... e essa é a minha história... tentei torná-la o mais
+
+rápida e simplificada possível, mas antes de terminar, obviamente ainda tenho mais alguns minutos. Eu adoro a ideia de como interpretamos o mundo? E enquanto eu caminhava por aqui, vocês ouviram os aborígenes conversando com vocês? Me dá
+
+cinco. Esta palestra teve como objetivo compartilhar um pouco da nossa experiência prática ao começarmos a desenvolver agentes de voz full duplex com Python, e os tipos de desafios que enfrentamos ao escalar para países como a Índia, onde buscavam meios econômicos de atender potencialmente 10 milhões de usuários por semana, ou mesmo clientes de alto valor, onde até a menor falha ou pausa poderia arruinar a experiência do usuário de voz. Essas são lições duramente aprendidas, e há um motivo pelo qual escolhemos Rust. Bem, eu poderia literalmente concluir toda essa conversa dizendo "ei, essa é a fase conversacional do Python" ou, essencialmente, mapear isso para uma fase conversacional e então usar essa fase para controlar o fluxo da conversa. Certo?
+
+Bem simples. A ideia é que, sim, máquinas de estado e Reg x combinam muito bem. Você não precisa de um mestrado em Direito para trabalhar constantemente com o histórico acadêmico. Bem, você poderia basicamente ter uma tabela regular x com um milhão de padrões estranhos para fazer essencialmente o que um pequeno e eficiente algoritmo de lógica de busca ( LLM) consegue fazer. Essa é uma daquelas coisas que tínhamos completamente esquecido. Por
+
+exemplo, se você quiser que o cliente repita o que você acabou de dizer, digamos, que você está cobrando uma dívida, você quer citar uma regulamentação e perguntar se ele entendeu. Você precisa repetir para dar seu consentimento. Esses são tipos de coisas que você pode calcular com expressões regulares em um fluxo de conversa, o que proporciona uma latência ultrabaixa. Você não precisa desperdiçar uma chamada do LLM para fazer isso, certo? E incorporar uma certa dose de determinismo em um modelo realmente capaz de lidar com a arbitrariedade, certo? Então, precisa
+
+ser determinístico onde for necessário. Por exemplo, se você quiser modelar isso como um DAG (Grafo Acíclico Direcionado), digamos que sejam necessárias essas três etapas antes que a quarta etapa precise ser executada. Você precisa desse tipo de circuito de controle. São esses os tipos de capacidades que estamos desenvolvendo. Nenhum dos SDKs que essas empresas pioneiras estão desenvolvendo possui essa funcionalidade porque elas não viram muitos clientes implementá-la nessa escala. O que estamos fazendo é observar o
+
+grupo inicial de clientes que estão realmente explorando os limites disso. Com o tempo, você verá essas funcionalidades serem incorporadas ao produto, mas agora é uma verdadeira terra sem lei. Portanto, não estou dizendo que o Python ADK seja ruim. Não é adequado para um caminho crítico em tempo real. Se você quiser usar agentes de voz de produção em larga escala com um orçamento de milissegundos, você sabe que precisa migrar para Rust. E a ideia é que o
+
+orçamento de latência seja a arquitetura fundamental para os agentes de voz. Você não tem, digamos, nenhuma margem de segurança para absorver o agente de texto, onde o modelo provavelmente está pensando que o usuário está lendo. Você não tem nenhuma tolerância em termos de UX, é completamente implacável. Portanto, escolhemos Rust e reconstruímos o ADK, e conseguimos fazer um milhão de chamadas por dia para saída em escala, receber mais de 100.000 chamadas por dia em contact centers bastante exigentes, em idiomas vernáculos na Índia. Mas, de certa forma, é uma
+
+prova da escala que o sistema consegue suportar. É isso aí . Uh, eu compartilhei o repositório junto com o link dos crates. Por favor, experimente dar uma volta com ele. Eu tenho um guia de contribuição lá dentro. Estou feliz
+
+e procuro colaboradores da comunidade. Não vamos alterar o tipo de licença. Será o Apache 2.0. E continuará sendo o Apache 2.0.
+
+Obrigado. [aplausos] Incrível. Muito obrigada, Vampi. Bem, normalmente, a esta altura, eu passaria um tempão explicando tudo o que está acontecendo e agradecendo, mas temos tanta coisa acontecendo que não vou fazer isso agora. Bem, vou dizer apenas algumas coisas para garantir que você aproveite ao máximo o evento.
+
+Mas o mais importante provavelmente é simplesmente olhar para esses códigos QR. Então, deixe-me analisá- los. Então, existe uma programação ao vivo e, se houver alguma mudança, nós a atualizaremos. Além disso, notícias serão publicadas ao longo do dia, caso surja alguma novidade. Se você ainda não acessou attendees.web.org,
+
+esse é o segundo link onde falamos sobre como criar conexões. Então temos uma lista de todos que optaram por participar, certo? Então, se você optar por participar, poderá ver que todos os outros também optaram e poderá ver quem está aqui, além de fazer conexões e, com sorte, trazer pessoas que antes não estavam presentes. Você talvez não se deparasse com isso por puro acaso. Hum, também temos com a Jana, que fez o vídeo de abertura, uma série de ótimos vídeos que estão circulando nas redes sociais. Ela está entrevistando pessoas e coisas do
+
+tipo. Elaboramos uma série de missões. E a ideia por trás disso é que não são exercícios inúteis. São coisas que, com sorte, ajudarão você a quebrar o gelo com outras pessoas, talvez a refletir sobre as palestras que você assiste e sobre sua experiência aqui. E temos alguns prêmios excelentes.
+
+Conseguimos alguns patinetes elétricos Segway como prêmios para quem completar essas missões. Então, todos os detalhes estão lá se você acessar attendees.direction.org e for até a seção de missões, ou por meio desse link, que leva você diretamente para lá. E como eu disse, tudo isso faz parte de ajudar você a aproveitar ao máximo essa experiência. Um enorme agradecimento à Jana
+
+por nos ajudar a organizar tudo isso. E quem tem sua própria espécie de garra ou agente que carrega consigo? Tudo bem. Bem, você pode trazê-los para a conferência, certo? Então, esse último código QR ali, basicamente, configuramos para que haja uma transmissão ao vivo de todas as legendas. Então, basicamente, fazemos
+
+legendagem em tempo real, que fica disponível como transmissão ao vivo, e também capturamos cada quadro, ou melhor, capturamos um quadro a cada poucos segundos e enviamos para a Gemini. O Gemini então o converte em conteúdo estruturado. Bem, ele vai gerar descrições de texto, terá todo o texto lá, qualquer link se tornará um link, tudo estará disponível para o seu agente, certo? Então, essencialmente, seu agente poderá estar na conferência com você. Eu escrevi sobre o que fizemos lá, então tudo está rodando no Cloudflare.
+
+Aliás, as pessoas estão subestimando o Cloudflare, que é um programa de desenvolvedores incrível, uma plataforma fantástica. Eles são parceiros da conferência, mas eu os uso há muito tempo e é uma plataforma incrível, certo? Então, traga seu agente. Isso é totalmente um experimento, está em versão alfa e estamos atualizando conforme avançamos. As pessoas na transmissão ao vivo estavam dizendo: "Ei, está dizendo isso." Tenho usado
+
+essas informações para alimentar meu sistema de codificação, que está sendo atualizado. Então, é em tempo real. É uma espécie de experiência, mas espero que você goste. E, por fim, conseguimos uma tonelada de parceiros incríveis. Você provavelmente percebeu isso quando começou a usar Zinc. Então, é isto que vai
+
+acontecer. Temos comida e café aqui em cima . Temos uma hora de intervalo e voltaremos para a sessão " Engenharia de IA" neste cinema. A engenharia de software é na sala 2. E se você tiver um passe de liderança, temos as sessões de liderança no Swinburn. Fica logo na
+
+entrada por onde você entrou, teremos voluntários. Logo abaixo de nós, temos uma grande variedade de opções de catering e, em particular, de café. Você tem alguma restrição alimentar específica? Não necessariamente coisas vegetarianas, mas se você solicitou algo bem específico, todas as suas necessidades serão atendidas. Mas a maior parte do serviço de catering, do café e de toda a exposição acontece no Zinc. Então, reservamos
+
+uma hora para cada intervalo, para dar tempo suficiente. Portanto, se achar que está muito cheio aqui, por favor, vá direto para lá. Temos também o que chamamos de pista do corredor. Isso vai acontecer durante os intervalos e até mesmo durante algumas dessas sessões. Haverá vários patrocinadores presentes para palestrar, mas também teremos alguns palestrantes convidados. Tudo isso está na sua
+
+programação em live.direction.org. Então, aproveite isso também. E, por último, um pequeno incentivo para que você visite todos os nossos maravilhosos parceiros. Alguns são da
+
+comunidade, alguns são startups, alguns são agências e há também alguns nomes muito conhecidos, incluindo nossos incríveis patrocinadores, Google Cloud e Google DeepMind. Se você fizer check-in com todos eles, uma das pessoas que fizer check-in com todos ganhará um Mac Mini. Assim, você pode ter certeza de que conseguirá manter sua garra isolada de tudo o mais. Ah, e provavelmente você executa muitos programas no seu Mac Mini. Enfim, tem muita coisa ali. Bem,
+
+vamos terminar por agora, antes de descermos ou irmos para o Zinc, agradecendo a todos os nossos maravilhosos palestrantes desta manhã. É isso. Ah, temos os maravilhosos voluntários da área de engenharia de tecidos vermelhos. Eles estão aqui para ajudar. Se você tiver alguma dúvida, basta perguntar . Se precisar de alguma coisa, peça a eles.
+
+Eles entrarão em contato comigo, com Rosemary ou com Jenny, que assumirão a responsabilidade final por tudo. Resolveremos qualquer problema na medida do possível . Obrigado novamente. Faça uma ótima pausa para as costas. Lembre-se, fica a cerca de 5 minutos a pé do Zinc. Estaremos de volta
+
+aqui exatamente às 12h30, ou seja, em 1 hora e 1 minuto. Nos saímos muito bem esta manhã. Até lá, aproveite e nos vemos daqui a uma hora. Sim
+
+. Nossa, eu
+
+sinto que te
+
+quero. Tudo
+
+melhorou.

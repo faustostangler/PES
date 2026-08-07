@@ -1,0 +1,113 @@
+---
+video_title: "The AI Skill I Rely On Daily — Priscila Andre de Oliveira, Sentry"
+video_id: li0SaBt9RDM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=li0SaBt9RDM
+video_date: 2026-05-27T17:00:06+00:00
+video_description: |
+  Priscila Andre de Oliveira analyzed 116 of her own Claude sessions from daily work at Sentry. 67% were comprehension. 2% were code generation.
+  
+  Working in a codebase with 15 years of history, around 100 PRs merged per day, and 100,000 organizations depending on it, the unlock is not generation but understanding. She built a personal skill called catch me up with six exploration modes covering architecture, conventions, feature traces, syntax, testing, and history. The loop: understand what the agent found before you let it plan and implement, because a misaligned mental model is where slop comes from.
+  
+  Speaker info:
+  - https://at.linkedin.com/in/priscila-andre-de-oliveira-ab34bb24b
+  
+  Timestamps:
+  0:00 Introduction and speaker background
+  2:25 Sentry's engineering environment and scale
+  3:50 AI-driven projects at Sentry
+  5:48 Maintaining code quality and technical debt
+  7:35 The role of comprehension in software development
+  9:38 Analyzing AI usage patterns
+  10:33 The "Catch Me Up" skill architecture
+  12:15 Short demo of the "Catch Me Up" skill
+  13:56 Planning vs. implementation in AI workflows
+  15:26 Conclusion and key takeaways
+---
+[música]
+
+Olá a todos. Hoje vou compartilhar com vocês como eu uso IA na Sentry e a fila que mais utilizo no meu trabalho diário. Bem, antes de entrarmos nesse assunto, deixe-me dizer quem eu sou. Meu nome é Priscilla. Sou brasileira e moro em Viena, na Áustria. Sou
+
+mãe de uma criança de 2 anos muito enérgica . Bem, eu sou um dos mantenedores do Verdaccio, um registro NPM de código aberto. Sou co-organizador principal do Vienna JS, um encontro bem tradicional em Viena onde discutimos tudo sobre JavaScript. E eu sou um engenheiro de software sênior na Sentry. Ontem alguém me disse que eu não pareço um engenheiro de software, mas adivinhem só? Eu sou.
+
+[risos] Bem, meu título oficial é engenheiro de software sênior, mas recebi uma pequena promoção e agora sou gerente de agentes. Não houve aumento salarial, mas pelo menos meus subordinados não reclamam. Sim, essa foto era de mim no trabalho algumas semanas atrás. Meu colega, Dominik Dorfmeister, achou engraçado me ver gerenciando alguns agentes e tirou esta foto. [limpa a garganta] Hum, sim, felizmente eu tenho três monitores, então funciona muito bem.
+
+Essa é a minha nova realidade. Então, a indústria... uh, desculpe, uh, é assim que eu me sinto ao orquestrar um monte de agentes. É, é estranho, mas
+
+é divertido. E a indústria está mudando, certo? É por isso que todos vocês estão aqui e eu também estou me adaptando. Bem, desde dezembro do ano passado, mais precisamente desde 2025, eu não programo mais. Estou apenas dando um exemplo.
+
+Sim, e até mesmo esta apresentação foi criada com inteligência artificial. Sim, eu não fiz nada. Uh [risos] Hum, como vocês podem ver, essas são algumas das minhas contribuições recentes para o Sentry, e eu criei alguns PRs junto com meu colega de equipe favorito, Claude. E não se trata apenas de correções de bugs, sabe? Também inclui funcionalidades, refatorações e contribuições entre repositórios. Então
+
+é real. Está funcionando. Então, este é o Sentinela. Talvez você não conheça a Sentry, mas somos muito conhecidos pelo monitoramento de erros e desempenho , e evoluímos para uma plataforma completa de observabilidade. Então temos monitoramento de erros, temos métricas, temos criação de perfis e também ferramentas de agentes para monitorar suas plataformas de agentes.
+
+Sim, a base de código é muito complexa e foi fundada em 2010. Tem mais de 15 anos de código. Temos cerca de 400 funcionários em todo o mundo. Temos 100 mil organizações que dependem dessa base de código para funcionar diariamente. E como funcionário, eu também dependo do funcionamento dessa base de código, pois é dela que recebo meu salário, certo?
+
+Então eu não quero simplesmente enviar código ruim. Sim , é um assunto sério. E nós também temos código na Sentry. Recentemente, tivemos um hackathon onde tivemos alguns dias para nos familiarizarmos com IA e experimentarmos coisas novas, e muitos projetos interessantes surgiram dessa semana, desse projeto do hackathon. E nós temos, por exemplo, um ábaco. Isso foi criado para
+
+monitorar o uso de IA internamente na Sentry. Hum, temos o diretor. Este é um agente de revisão de código. Você pode incluir isso em seus PRs. Hum, nós temos um Júnior. Junior é
+
+um bot que temos no nosso Slack, e geralmente as pessoas veem e pensam: " Ah, não gosto dessa interface". Algo mudou. Você pode ir consertar isso ou explicar por que isso foi alterado? Eles gostam de compartilhar algo, talvez algum bug que encontraram no Slack, e então podemos acionar o Junior, que pode analisar a conversa e criar um PR, e eu vou lá e corrijo o bug. E as pessoas estão se divertindo muito com o Junior. Daniel pode. Sim,
+
+ele adora isso. E também existe este repositório de testes do SDK de IA . Bem, isto foi criado antes deste hackathon, mas basicamente é um repositório onde criamos testes para nossas integrações de IA. Então, isso foi muito estranho porque eu comecei a contribuir para este repositório e, hum, hum, minha equipe me disse que eu não deveria programar de jeito nenhum. Eu só deveria solicitar o resultado até obter um bom resultado. Foi uma
+
+experiência diferente. Ah, sim, está funcionando. Utilizamos todas essas ferramentas internamente, todos os dias. E sim, na Sentry estamos apostando tudo em IA. Mas a qualidade ainda importa.
+
+Então, também na Sentry no ano passado, durante três meses, usamos esse tempo como um trimestre de qualidade. Aproveitamos esse tempo para aprimorar nossa base de código. Então, remova todos os tipos `any` do TypeScript, por exemplo, ou todos os itens da lista de tarefas pendentes, porque geralmente, não sei se vocês têm o mesmo problema, mas tínhamos muitas tarefas pendentes, então aproveitamos esse tempo para simplificar o código, remover recursos não utilizados e deixar nossa base de código em uma boa forma. Isso é muito importante, certo? Nós queremos isso.
+
+Isso é o que chamamos de dívida técnica. Então, como eu disse antes, a base de código do Sentry é muito complexa e está em constante mudança. Temos cerca de 100 PRs (Pull Requests) mescladas todos os dias. Temos quatro escritórios. Uh, Sentry é uma fonte confiável. Assim, você pode contribuir com o
+
+Sentry. Também contamos com colaboradores. E estamos constantemente descontinuando componentes, adicionando novos componentes e novas regras de lint. Hum, não sei, você escolhe. Como sempre acontece alguma coisa na Sentry. Estou lá há mais de seis
+
+anos e posso tirar férias. Eu volto e talvez minha equipe de relações públicas esteja cheia de conflitos, e eu preciso resolver esses conflitos, e eu realmente preciso entender que preciso me alinhar e compreender as coisas o tempo todo. É uma prática diária. Então, isso não é novidade, certo? Tipo, vocês sabem que existem estudos que comprovam isso, tipo, 70% de um...
+
+você pode pensar que é só dizer para a IA explorar a base de código e depois fazer alguma coisa, mas talvez a IA não tenha entendido a coisa certa, ou tenha entendido errado, sabe? E você também precisa entender, porque talvez precise direcionar a IA para o caminho correto. Você sabe? Sim. Então é assim que eu uso IA. Hum, isso me tornou
+
+mais rápido, mas talvez não da maneira que você pensa, porque antes... digamos que acontecesse um incidente e eu tivesse que rastreá-lo. Eu teria que abrir um PR... opa,
+
+abrir o GitHub, desculpe. Eu uso o comando `git blame` para tentar entender onde ocorreu a regressão e agora consigo obter a resposta em poucos segundos com uma frase simples. Ou talvez antes de uma decisão sobre o produto. Por que isso mudou? E então eu, não sei, faria essa pergunta no Slack.
+
+Talvez meu colega esteja em outro país, em outro fuso horário, e eu precisaria esperar até o dia seguinte para obter a resposta. Agora, posso simplesmente perguntar à IA e a resposta está lá . Então, tem sido muito útil e isso me tornou muito produtivo, mas tipo, a parte de compreensão disso, tipo, sim. E eles continuavam repetindo as mesmas perguntas. Então, tive a ideia de deixar o Claude analisar meu cache e ver... ele
+
+analisou 116 sessões e classificou tudo em seis categorias. Compreensão, modificação, processo, geração de revisões e outros. E adivinhe só? Isso me impressionou também. Ops .
+
+Assim, 67% do meu uso de IA foi para compreensão e apenas 2% para geração de código. Então, isso me surpreendeu muito. [risos]
+
+Então, como meus prompts continuavam se repetindo , eu criei uma habilidade para mim. Essa habilidade está instalada localmente no meu computador. Eu poderia compartilhar com alguém se quisesse, mas aqui eu uso isso para mim e se chama "me coloque em dia". Isso estrutura as questões de compreensão em dois ou seis modos de exploração. Arquitetura, convenções, rastreamento de funcionalidades, sintaxe, testes e histórico.
+
+Então, uma habilidade é apenas um comando muito detalhado , certo? Com objetivos muito claros. Eu consigo fazer assim aqui. Você pode ver como é. Mas é como se fosse um arquivo MD com linguagem humana. E eu sou uma pessoa muito visual
+
+. Eu trabalho bastante na Sentry na parte de desenvolvimento front-end. E eu gosto de ver as coisas para entender. Então, essa habilidade me proporciona o organograma, tipo, a estrutura, uma tabela para eu entender. Acho que isso ajuda bastante.
+
+E agora posso lhe dar uma pequena demonstração. Só um minuto. [limpa a garganta]
+
+Aliás, esta é a minha apresentação . [risos] Ah, na verdade está aqui, bem aqui. Hum, eu já executei essa habilidade porque não sei, talvez eu tenha alguns problemas, mas...
+
+Você se lembra daquele projeto que eu te disse que eu deveria apenas dar instruções e não programar mais? Então, no início eu não estava familiarizado com esse projeto. Era um repositório novo para mim. E eu usei minha habilidade para isso. Eu disse: " Sou novo nisso. Vocês conseguem ver bem?" Sim
+
+. Então, eu disse: sou um novo colaborador. Explique-me como este repositório funciona e esclareça como ele simula um envelope do Sentry e o intercepta durante os testes. Bem, estou usando o Cloud, como você pode ver, o Opus, e ele me deu um resumo aqui. E eu gosto desse fluxo, de como ele funciona.
+
+E aqui também responderam à minha pergunta: será que simula envelopes? Não, intercepta os reais. Eles geram colecionadores. Sim, eu não vou ler , mas todas essas informações são muito úteis. Tipo, se eu não tivesse IA, eu teria que fazer isso sozinho, sabe? Bem,
+
+eu não gosto de simplesmente torcer por algo que eu não entendo. Se for um projeto baseado em uma estética descontraída, tudo bem, mas isso é coisa séria. É meu trabalho. Então, sim. Essa habilidade está me ajudando muito com isso e também na revisão de Pull Requests, porque às vezes estou revisando o PR de um colega.
+
+Tenho bastante contexto, mas não o suficiente para aprovar esse PR. E eu queria ter esse contexto. Então, eu uso essa habilidade para conseguir isso. Ah, ok . Então, voltando à minha apresentação sobre a mensagem transmitida.
+
+[risos] Então, [limpa a garganta] Jack Nation escreveu um post no blog chamado "Codificação por vibração: nosso caminho para o desastre", baseado na filosofia "simples e fácil" de Rich Hickey. Ele propõe três fases: pesquisa, planejamento e implementação. Acho que vocês também já ouviram falar disso fora do ambiente de código, até mesmo o Cloud Code tem esse modo de planejamento, certo? Então, sim. Concordo com tudo isso, mas acho que falta um passo: você precisa entender a pesquisa que seu agente fez, sabe? Você precisa
+
+entender isso e, como eu disse, talvez esteja indo na direção errada ou talvez precise explorar algo diferente, e precisa ter essa capacidade de compreensão . Depois disso, você pode dizer: "Ok, planeje isso para mim e vamos implementar. Vamos em frente."
+
+Então, Armin Ronacher é o criador do Flask e um ex- Sentinela. Agora ele está trabalhando em sua própria startup. Aliás, hoje ele vai dar uma palestra aqui. Ele está por perto. Então, ele escreveu em sua postagem no blog: "Quando cada vez mais pessoas me dizem que não sabem mais qual código está em sua própria base de código, sinto que algo está muito errado aqui." Sim, concordo.
+
+Então, o que eu espero que vocês possam reter desta apresentação é que o maior benefício da IA ​​em uma grande base de código não é a geração de informações. É compreensão. Monitorei meu próprio consumo e fiquei surpreso. 67% das minhas perguntas são de compreensão e apenas 2% de geração de ideias. Talvez você também monitore seu próprio uso de IA e possa melhorá-lo, certo?
+
+Então, a IA é o colega de equipe que nunca se cansa das suas perguntas. Portanto, não existem perguntas idiotas. É o engenheiro sênior mais barato do mercado. Então, simplesmente vá em frente. Sim, e alinhe seu modelo mental antes de começar a escrever o código, porque você sabe que o fluxo será natural e não vai querer enviar código ruim para a base de código que paga seu salário.
+
+Código da apresentação principal do navio. Realmente. Este é o termo que a indústria está usando. Sim, obrigada. Experimente o Sentry. Esta foi uma palestra patrocinada.
+
+Temos um estande no andar de baixo, caso queira passar para nos dar um oi. Ao escanear este código QR, você terá acesso a um período de teste gratuito de três meses do nosso plano empresarial. Espero que tenha gostado da apresentação. [aplausos]
+
+[aplausos]
+
+[música]

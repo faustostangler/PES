@@ -1,0 +1,81 @@
+---
+video_title: "Scaling the Next Paradigm of Heterogeneous Intelligence — Adrian Bertagnoli, Callosum"
+video_id: WRBNDpUhsJQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WRBNDpUhsJQ
+video_date: 2026-05-24T14:00:06+00:00
+video_description: |
+  A mixture of Qwen 3 VL8B and Kimi K2.5 beat the state of the art on Video Web Arena, outperforming the leading GPT and Gemini models by 18 and 25 percent while costing 3.7 times less and running 3 times faster. The reason it worked is that visual web navigation decomposes into subtasks that do not all need a frontier model: routing zoom and visual parsing to a smaller model alone produced 11x speed and 43x cost improvements on those steps.
+  
+  Adrian Bertagnoli from Callosum makes the case that the GPU cluster era of identical hardware and monolithic models is ending. Heterogeneous intelligence treats model architectures, chip types, and workflows as variables to optimize together. A second result: running recursive long context reasoning tasks on Cerebras instead of a frontier model cuts cost by 7x and latency by 5x while matching accuracy. Callosum is building the automation layer that routes tasks to the right chip and model without bespoke decisions for each subtask.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/adrian-bertagnoli-bb3467178/
+  
+  Timestamps
+  0:14 Introduction and definition of heterogeneous intelligence
+  0:56 Limitations of the current homogeneous intelligence paradigm
+  1:36 Evolution toward mild heterogeneity (MoE, multi-agent systems, hardware disaggregation)
+  3:24 The rationale for heterogeneity: complexity and multi-step problem solving
+  4:26 Mathematical formalization of the production function and skill distribution
+  5:56 Practical implementation of heterogeneous workflows
+  6:55 Case study: Recursive language models and context management
+  9:05 Results on Ulong benchmarks (Cerebras/Sambanova performance)
+  10:20 Case study: Visual web navigation and Video Web Arena performance
+  12:02 Offloading subtasks to smaller models for speed and cost efficiency
+  12:38 The future of compute: Moving to a heterogeneous, multi-agent stack
+  13:10 Partnership with the UK's Arya institute
+  13:31 Closing summary and outlook on hardware/software co-evolution
+  14:01 Q&A: Automation layer for task routing
+---
+Obrigado por terem vindo à minha palestra. Meu nome é Adrian Bertagnoli. Sou um dos engenheiros fundadores da Colossyan e hoje vou falar sobre como escalar o próximo paradigma da inteligência heterogênea. Então, vou começar explicando por que nos importamos com a heterogeneidade, qual aspecto específico a torna muito propícia para a escalabilidade da IA, como ela é usada na prática hoje e como podemos utilizá-la no futuro para escalar o próximo paradigma da inteligência. Então, para que vocês tenham uma ideia do que quero dizer com inteligência heterogênea, gostaria de dar um passo atrás e explicar o paradigma atual predominante de inteligência homogênea.
+
+Assim, a inteligência homogênea, em termos de IA, refere-se principalmente à escalabilidade de modelos individuais em uma frota de chips idênticos. Assim, esta era foi em grande parte impulsionada pela descoberta das leis de escala neural, que nos mostraram que mais dados e mais parâmetros levam a modelos melhores. No entanto, isso está principalmente enraizado em um domínio de treinamento e, à medida que avançamos para um domínio de inferência, torna-se cada vez menos relevante. Então, isso já está mudando e já vemos certo nível de heterogeneidade entrando em nossos sistemas atuais. Assim, no nível da arquitetura, vemos que a combinação de especialistas está substituindo os grandes modelos densos.
+
+Na camada de fluxo de trabalho, vemos que as chamadas LLM individuais estão sendo substituídas por sistemas multiagentes. E, finalmente, no nível de hardware, os chips individuais estão sendo substituídos por sistemas desagregados de pré-preenchimento e decodificação . Então, dado que atualmente estamos em um estado de heterogeneidade moderada, como você pode imaginar um nível maior de heterogeneidade? Como isso se apresentará? Inicialmente, o que estamos vivenciando atualmente é uma heterogeneidade moderada.
+
+Portanto, tudo ainda está sendo executado principalmente em clusters homogêneos, mas temos alguma variedade nos prompts. Ao executarmos sistemas multiagentes, podemos usar diferentes LLMs para diferentes subagentes. Bem, mais uma vez, temos uma mistura de especialistas. Bem, quando aumentamos a heterogeneidade, podemos começar a usar chips diferentes para modelos diferentes. Assim, diferentes LLMs podem ser instalados em GPUs diferentes. Hum, eles
+
+podem estar interagindo. Podemos estar usando modelos completamente diferentes. Assim, temos um aumento de modelos de espaço de estados, modelos de difusão, todos interagindo entre si, todos no hardware ideal que existe atualmente. Na última etapa, onde realmente vemos o paradigma heterogêneo se desdobrar, é quando temos uma coevolução de sistemas, hardware e software. Portanto, haverá uma unificação onde haverá uma integração vertical completa de inteligência e hardware.
+
+Então, por que a heterogeneidade? Por que isso seria uma coisa boa, em primeiro lugar? Assim, os problemas do mundo real são complexos, envolvem várias etapas e são de natureza indefinida. Eles se decompõem em subproblemas, que exigem tipos de inteligência muito diferentes. Portanto, dimensionar um único tipo de inteligência para resolver esses problemas é muito ineficiente e não é o ideal.
+
+Então, como resolvemos esses problemas? Resolver esses problemas exige, na verdade, modelos com arquiteturas e tamanhos diferentes, trabalhando juntos e atuando em conjunto em horizontes de longo prazo, algo que gostamos de chamar de inteligência heterogênea multiagente. Além disso, novas gerações de silício estão chegando ao mercado, mas atualmente não existe uma interface que permita unificar esse novo hardware e auxiliar construtivamente a pilha de computação atual. Portanto, é isso que pretendemos mudar. Portanto, a heterogeneidade, o benefício, não é simplesmente uma crença que temos. Na verdade, formalizamos e
+
+comprovamos isso matematicamente. À direita e à esquerda, você vê uma figura que descreve o princípio da heterogeneidade máxima. Portanto, esses são agentes heterogêneos, onde a cor indica uma distribuição em um espaço de habilidades. Bem, se você considerar que existe comunicação entre esses elementos, aqui indicada por uma topologia em anel, você pode ter o que chamamos de função de produção. E a função de produção é simplesmente a demanda, que pode ser adequada para a demanda de um problema, mas inadequada para outro . Então, aqui temos uma
+
+função de produção que é adequada para a demanda A e inadequada para a demanda B. Se você quiser fazer isso de forma homogênea, você só poderá escalar um pico ou, no caso ideal para corresponder a essa função de demanda, você terá apenas generalistas, ou seja, o conjunto de habilidades mais amplo possível, mas, em última análise, você terá um cilindro muito curto que não atende prontamente à função de produção. Então, formalizamos isso e vimos que, em muitos domínios, incluindo neurociência, economia e ecologia, essas tendências se mantêm e, sob qualquer nível razoável de restrições, os sistemas heterogêneos superam os homogêneos. Então, como usamos isso na prática? Tipo, eu tenho falado sobre os benefícios da heterogeneidade, mas não expliquei o que isso realmente significa em termos de IA.
+
+Assim, otimizamos sistemas multiagentes em três partes diferentes do fluxo de trabalho. Assim, desde o hardware onde os agentes são executados, escolhemos hardware diferente dependendo das demandas computacionais dos agentes, e também de como os agentes interagem e qual fluxo de trabalho eles constroem. Bem, já demonstramos vários benefícios desse tipo de orquestração e quero abordar alguns deles, principalmente no fluxo de trabalho, algo primitivo que chamamos de recursão heterogênea, e na camada de agentes, quero falar sobre modelos de linguagem de ação de vídeo multimodal. Então, recursão heterogênea. Alguém aqui já ouviu falar de modelos de linguagem recursivos ?
+
+OK. Então, para aqueles de vocês que não conhecem o modelo de linguagem recursiva , trata-se de um artigo seminal publicado pelo MIT em outubro passado. E eles basicamente mostraram que, mesmo que você ocupe apenas uma pequena porcentagem da janela de contexto, ainda pode haver uma deterioração drástica do contexto, dependendo da complexidade da informação que você deseja obter do prompt. Portanto, se você estiver realizando uma tarefa de "encontrar uma agulha em um palheiro", isso corresponde a um O de 1. A escala de requisitos de informação é constante, independentemente do tamanho do enunciado. E então você
+
+pode imaginar somar as linhas. Você, você, você dá linhas e colunas. A soma das linhas resultaria em O de N, pois, à medida que o estímulo aumenta, a exigência de informação também aumenta linearmente. Portanto, se você tiver uma necessidade constante de informações , ele se adapta bem a diferentes escalabilidades. Você pode ocupar toda a janela de contexto e obter uma boa resposta. No entanto,
+
+quando se trata de funções lineares ou quadráticas, a qualidade se degrada em torno de 60 a 30%. Assim, os modelos de linguagem recursivos resolvem esse problema tratando o contexto como um ambiente "hum", em vez de colocar tudo no prompt. Na prática, isso funciona da seguinte forma: você apresenta o contexto em um arquivo e, em seguida, um agente de codificação interage com ele programaticamente por meio do REPL do Python, basicamente realizando buscas por palavras-chave , expressões regulares e outros truques para extrair um subcontexto. Esse subcontexto é então passado para um agente recursivo idêntico. Assim, esse agente pode responder à pergunta ou gerar outro agente recursivo. E é por isso que se chama
+
+modelo de linguagem recursivo. Então, simplesmente estendemos esse conceito. Em vez de usar um único modelo em um único chip, mapeamos com base no subcontexto gerado para diferentes chips e modelos, a fim de emular o desempenho, sendo drasticamente mais baratos e mais rápidos. Aqui estão os resultados. Como você pode ver, isso está no benchmark Ulong. Basicamente, este é o
+
+benchmark que eles usaram no artigo, e o GPT-5 (GPT-5.2) era a versão mais recente quando produzimos este trabalho. Ele leva cerca de 2.000 segundos para executar o benchmark e custa cerca de US $ 3,75 por tarefa. Nosso sistema, quando implementado no Cerebras, é sete vezes mais barato e cinco vezes mais rápido. Assim,
+
+você economiza muito tempo, sai muito mais barato, então é basicamente como ter o melhor dos dois mundos . Com o SambaNova, a gente vai ainda mais longe . Conseguimos reduzir ainda mais o preço, à custa de alguma latência. Portanto, somos 12 vezes mais baratos e três vezes mais rápidos. Então, são como tomar decisões arquitetônicas que não se baseiam simplesmente no hardware. Você pode gerar
+
+diferenças de preço de grande impacto e, ao mesmo tempo, emular a inteligência que teria com modelos de vanguarda. Então, o próximo problema que queríamos abordar é basicamente a navegação visual na web. Então, usamos uma combinação de modelos de linguagem de ação de vídeo abertos e fechados. E conseguimos superar o que há de mais moderno em mecanismos de busca de vídeo na web, vencendo o GPT 5.2 e o Gemini 2.5 por 18%
+
+e 25%, respectivamente. E não só isso, a forma como fizemos foi, em vez de tratar o problema como homogêneo, reconhecer que o problema é heterogêneo em si mesmo. O processo se decompõe em múltiplas etapas de raciocínio visual e raciocínio textual, e cada um desses subcomponentes requer modelos diferentes para ser concluído com sucesso. Portanto, aqui você vê uma mudança fundamental na fronteira de Pareto, onde modelos singulares como Kimik A uh 2.5 e GPT 5.2
+
+são superados por misturas, um conjunto heterogêneo de modelos. Portanto, ao usarmos o Quant 3 VL8B-Instruct e o Kimik A 2.5, somos 1,3 vezes mais rápidos do que usando apenas o Kimi Kimi. Somos 18 vezes mais baratos do que usar apenas o GPT 5.2. E se usarmos o Quant 3
+
+mais o GPT, na verdade somos três vezes mais rápidos e 3,7 vezes mais baratos. Portanto, isso só traz benefícios. Não há nenhuma desvantagem em construir isso de forma heterogênea. Então, um dos nossos diferenciais , que nos permitiu superar o estado da arte, é que mapeamos certas subtarefas, como o zoom, e criamos um raciocínio visual diferente para o agente, transferindo essa responsabilidade para modelos menos inteligentes, porque você não precisa de GPT para dar zoom . Assim, somente nessas subtarefas, conseguimos ser 11 vezes mais rápidos e 43 vezes mais baratos do que usando o ChatGPT. Assim, no
+
+geral, é isso que se acumula para tornar o produto 3,7 vezes mais barato e três vezes mais rápido. Então, olhando para o futuro, como vemos o futuro da computação? A primeira era de escalonamento computacional foi dominada pela CPU, onde o processamento se tornou mais rápido. A segunda era foi a de tornar a computação massivamente paralela. Este mercado é dominado pela Nvidia. E o terceiro paradigma, a
+
+computação, vai se tornar heterogênea, mapeando cargas de trabalho multiagentes e, idealmente, mapeando essas cargas de trabalho em diferentes chips. Na verdade, estamos trabalhando com a Aria, o instituto do Reino Unido. Recebemos uma verba de 3 milhões para operar o primeiro cluster heterogêneo colocalizado no Reino Unido. Portanto, queremos realmente fazer a diferença e liderar esta nova era de inovação. Assim, a era da escala homogênea proporcionou um progresso extraordinário. Devemos ser
+
+gratos por isso. O próximo passo é a inteligência heterogênea, onde modelos, fluxos de trabalho e silício coevoluem, e cada nova fonte de diversidade torna todo o sistema mais inteligente, mais rápido e mais barato. Esta é a pior situação que nossa infraestrutura jamais terá. Obrigado.
+
+Como você define qual tarefa deve ser executada no modelo mais rápido e mais barato? Por exemplo, o zoom é algo que está pré-definido no código, tipo, se você precisar usar o zoom, use este modelo, ou se tiver um modelo mais inteligente, use aquele outro ? Inicialmente, começamos tomando decisões personalizadas sobre o mapeamento de certas subtarefas simples para modelos simples, mas desde então, criamos uma camada de automação que detecta a complexidade da tarefa e prevê automaticamente o melhor modelo e o hardware mais adequados . Mais alguma pergunta? Ótimo. Muito obrigado pela sua
+
+atenção. Meu nome é Adrian Berczynski e, se alguém estiver interessado, estamos contratando, então é isso. Ótimo. Muito obrigado.

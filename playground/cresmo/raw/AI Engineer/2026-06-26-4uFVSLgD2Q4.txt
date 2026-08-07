@@ -1,0 +1,97 @@
+---
+video_title: "Agents in Production: How OpenGov Built and Scaled OG Assist - Gabe De Mesa, OpenGov"
+video_id: 4uFVSLgD2Q4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4uFVSLgD2Q4
+video_date: 2026-06-26T07:00:38+00:00
+video_description: |
+  Come and learn about building AI Agents in production. Learn hands-on directly with the AI Agents team from OpenGov which powers AI workflows across thousands of state and local governments.
+  
+  This session will cover:
+  * The core agent loop/harness
+  * A2A protocol
+  * Building with Effect-TS and Typescript
+  * Feedback and evals
+  * Long context handling
+  * Monitoring and observability
+  * Building out tools and skills
+  * Enterprise contribution model
+  * Accelerating workflows with Claude and Cursor
+  
+  Speakers:
+  - Gabe De Mesa (OpenGov): Gabe works on the flagship AI Agent product offering at OpenGov which serves thousands of state and local governments across the country. Gabe was one of the first engineers to join the newly formed AI Agents team. He wanted to share the features he's built, experience he's gained building and running agents in production, battle scars gained from running with real production workloads and customers, architecture, and some best practices to help other engineers run agentic workloads at their companies.
+    X/Twitter: https://x.com/jamesjellow
+    LinkedIn: https://www.linkedin.com/in/gabedemesa
+    GitHub: https://github.com/gabedemesa
+---
+Oi pessoal. Meu nome é Gabe de Mesa. Sou engenheiro aqui na OpenGov e hoje vamos falar sobre agentes em produção, especificamente sobre como a OpenGov construiu e escalou o OG Assist. Então, esta apresentação vai estar repleta de coisas muito boas. Vamos falar sobre agentes de IA. Vamos falar sobre o nosso
+
+arnês. Vamos falar sobre avaliações, observabilidade e rastreamento. Vamos falar sobre ferramentas e habilidades. Hum... Vai ter
+
+muita coisa boa aqui. Vamos conversar com vocês sobre o que fazemos na OpenGov e como operamos na escala em que operamos em produção, para que vocês possam ver um caso de uso real e uma carga de trabalho com agentes de IA. Bem, sem mais delongas, vamos começar. Ok, vamos à agenda. Então, vamos resumir rapidamente o que vamos discutir hoje, em linhas gerais. Bem,
+
+vou contar um pouco para vocês sobre o OG Assist e o que é o OpenGov. Vou contar para vocês a história de como tudo isso começou . Vamos falar sobre a grande aposta da OG Assist no efeito. Hum, um pouco sobre o nosso ciclo principal de agentes . Vamos falar sobre o protocolo A2A, avaliações e sandbox. Vamos
+
+falar sobre como gerenciamos o contexto a longo prazo. Vamos falar sobre monitoramento, observabilidade, como coletamos feedback e como iteramos com base nesse feedback. Por fim, vamos falar sobre ferramentas e habilidades e como, na OpenGov, usamos IA não apenas externamente, para atender nossos clientes, mas também internamente, para aprimorar nossos fluxos de trabalho de desenvolvimento. Só um pouquinho sobre mim antes de prosseguirmos . Meu nome é Gabe. Sou
+
+engenheiro de software aqui na OpenGov. Eu trabalho na equipe de agentes de IA e sou uma das pessoas que ajudaram a construir o OG Assist e alguns dos sistemas que vocês verão hoje. Então, um pouco sobre o OpenGov. A OpenGov é uma empresa de software com a missão de promover um governo mais eficaz e transparente. Então, a OpenGov vende software ERP. Isso inclui coisas como
+
+orçamento, compras, gestão de ativos e licenciamento. E nós fomos fundados há cerca de 14 anos e o que é legal é que temos uma coisa chamada OG Assist, que é um pequeno botão na parte superior de todos os nossos produtos, na barra de navegação. E o mais legal é que todos os nossos conjuntos de produtos e equipes de produto desenvolveram ferramentas e habilidades para ativar esse botão. Então, por exemplo, se eu abrir isso, se eu clicar neste botão e abrir o OG Assist, ele dirá: "Ei, vou perguntar sobre códigos de tarifa, que são muito específicos para faturamento de serviços públicos, o produto atual que estou usando." E você pode ver que, dentro desse tipo de interface de bate-papo, eu consigo falar com um agente, e o agente consegue fazer chamadas de ferramentas para buscar informações em relação aos dados dentro desse conjunto de ferramentas. Então, é muito legal
+
+poder criar essas experiências de forma independente, por meio do recurso que desenvolvemos chamado OG Assist. Ok, então, só uma historinha rápida sobre como tudo isso começou . Então, há algum tempo, percebemos que a IA estava realmente começando a decolar e um diretor criou uma nova equipe chamada equipe de agentes de IA e me convidou para participar. E, imediatamente, eu disse sim, e a OG Assist começou a crescer e nós começamos a integrar a OG Assist em todos os nossos produtos. E não apenas nossas capacidades de back-end , mas também nossas capacidades de front-end . Então, você verá
+
+que uma das funcionalidades que damos ao agente é a capacidade de ver o que está na tela e de interagir com o que está na página. Então, você pode ver que eu estou perguntando ao agente aqui: "Ei, ei, o que está na tela? Você poderia destacar alguns dos próximos passos que eu poderia tomar?" Portanto, você pode ver que o agente aqui está pensando. É como dizer: "Ok, quais ferramentas eu tenho disponíveis para usar?"
+
+E "Ei, deixe-me destacar algo em que você pode clicar e falar mais sobre isso." Portanto, apenas mais uma funcionalidade do OG Assistant. Apenas uma pequena história sobre como tudo isso aconteceu . Então, a grande aposta é na Effect. Então, eu realmente queria incluir este slide porque aqui na equipe de Agentes, fizemos uma grande aposta no Efeito. E basta dizer que
+
+isso se pagou em dividendos. Um, nós escrevemos Efeito. Então, Effect é uma biblioteca para TypeScript. É de código aberto e ajuda você a escrever um código TypeScript melhor. Sabe, ele tem muita coisa embutida, tipo um esquema semelhante ao do Zod, se você já usou. Também possui recursos
+
+para tratamento de erros, registro de logs, rastreamento de erros, enfim, tem muita coisa lá dentro . Isso realmente ajuda a escrever um código melhor e a estruturá-lo melhor, além de auxiliar na arquitetura, na criação de novos serviços e, para nós da equipe de Agentes, realmente nos ajuda a projetar e construir o núcleo do ciclo do agente. Então, vocês verão ao longo desta apresentação, de forma intercalada, como o impacto positivo em nossa equipe se refletiu em diversos aspectos. Então, nós aqui na OpenGov adoramos o Effect e encorajamos outras pessoas a experimentá-lo e, bem, vamos continuar. O Loop Nativo do Efeito.
+
+Inicialmente, usávamos o LangGraph e isso funcionava bem até que a equipe começou a crescer de verdade e nossos casos de uso começaram a evoluir. Então, decidimos migrar para o nosso próprio tipo de Loop de Agente Nativo do Effect para ter controle total sobre esse Loop de Agente, de forma que, se tivermos casos de uso complexos ou recursos que precisamos construir, possamos entrar e ter controle total do Loop de Agente. E não só isso, mas agora estamos totalmente em operação. Assim, todos os recursos interessantes que você obtém com o Effect agora são propagados por todo o Agent Loop, como rastreamento, concorrência estruturada, registro de logs, tudo com um controle mais preciso, e isso realmente nos permite desbloquear todo o potencial de ter nosso próprio Agent Loop construído do zero. Bem, outra coisa que eu queria mencionar é que, no lado esquerdo, você verá um exemplo de código. Esses são
+
+os princípios básicos do Loop de Efeitos que estamos usando. Estamos usando um programa chamado Effect AI, e nesse pacote, há uma coisa chamada... um chat e um modelo de linguagem. Então,
+
+com o chat, você pode instanciar um chat, por exemplo, e então transmitir texto usando essa função de transmissão de texto, podendo passar um prompt. E o que é legal é que, com um modelo de linguagem subjacente, já que estamos usando injeção de dependência, poderíamos passar um modelo de linguagem diferente se precisássemos trocar para outro a quente, por exemplo. Então, ter controle total do nosso próprio Agent Loop nos dá todas as ferramentas e realmente desbloqueia todas as capacidades do modelo, e para a equipe também, ter total autonomia sobre esse loop. Outra coisa que eu queria mencionar é o protocolo agente-para-agente. Então, aqui na equipe de agentes, tivemos muito sucesso com esse protocolo. Portanto, este protocolo
+
+foi criado pelo Google. É uma espécie de protocolo aberto para que os agentes se comuniquem entre si, e achamos isso muito útil para definir as rotas dos nossos agentes. Por exemplo, no back-end, nosso modelo e nosso esquema seguem esse tipo de protocolo de agente. Então, nós modelamos... Por
+
+exemplo, existe algo chamado cartão de agente, que você vê aqui, e ele contém o nome do agente, uma descrição, etc., certo? E ter esse tipo de protocolo rigoroso, essa especificação rigorosa, realmente ajudou a impulsionar nosso desenvolvimento e a promover o alinhamento, porque, sabe, tudo o que tínhamos que fazer era nos alinhar com essa especificação e segui-la, e sabíamos que esse era o tipo de contrato que nosso front-end e back-end consumiriam e produziriam. Então, eu diria que isso também tem sido muito útil para nós. E o mais legal é que o A2A tem muitas extensões, né? Então, você poderia estender
+
+o protocolo e adicionar metadados. Ah, também existe o A2UI. Então, tem muita coisa interessante com o protocolo A2A, mas isso é o que funcionou para nós. Então, só queria compartilhar isso com vocês . Feedback e avaliações.
+
+Então, aqui está a citação: "O transporte é o começo, não o fim." Então, o que fazemos aqui na equipe de agentes é usar várias maneiras para realizar avaliações e coletar feedback. É claro que, como você sabe, as pessoas ligam, enviam e-mails ou simplesmente nos informam, mas a principal forma de contato é através do nosso sistema de "gostei" e "não gostei", onde as pessoas podem nos dizer: "Ei, isso funcionou muito bem. Essa foi uma ótima resposta." Ou, "Essa não foi uma boa resposta." E esse
+
+sinal que captamos nos permite fazer novas iterações . E podemos retomar o controle e ajudar a melhorar, sabe, a resposta no futuro. Bem, também temos avaliações automatizadas. Em nossa integração contínua, executamos avaliações com base em conclusões reais, para podermos testar o prompt, perguntando: "Ei, ele acionou alguma ferramenta? Ele fez o que deveria fazer?" E isso também contribui
+
+para a nossa precisão. Então, essas avaliações automatizadas, em conjunto com a coleta de feedback, realmente nos ajudam a aprimorar nossas ferramentas, nossas habilidades e nossa infraestrutura. É assim que conseguimos iterar tão rápido e com tanta agilidade. Humanos no processo. Então, essa é uma funcionalidade muito interessante que desenvolvemos, que interrompe deterministicamente o loop do agente caso seja necessária a aprovação de uma chamada de ferramenta . Portanto, se um agente tentar fazer
+
+uma chamada de ferramenta que precise de aprovação humana , essa interface será exibida e o humano poderá clicar em aceitar ou rejeitar. Então, rejeitar ou aceitar explicitamente a ação que o agente está tentando realizar. E isso garante que, sabe, estamos construindo confiança e também garantindo que, sabe, estamos seguros, especialmente quando o agente está tentando realizar uma operação de mutação, e sempre, sempre, sempre garantindo que, hum, os humanos estejam no comando. Sandboxing. Então, outra coisa em que trabalhamos, semelhante ao slide de segurança que acabamos de ver, foi que sempre que um agente tenta executar código ou criar arquivos, ele o faz em um ambiente isolado (sandbox). Então, fornecemos aos nossos agentes ambientes isolados (
+
+sandboxes) que podem ser criados sob demanda e usados ​​para escrever e executar código, criar arquivos, em um espaço seguro, efêmero e isolado, onde o agente pode agir sem que precisemos nos preocupar com qualquer risco para nossos sistemas de produção. E é muito legal porque eles também ficam... amarrados... desmontados no final,
+
+então, neste exemplo, eu disse: "Ei, crie um PDF para o pessoal da Conferência de Engenheiros de IA de 2026." E, hum, permita-me fazer o download para que eu possa compartilhar com eles. E você pôde ver que o agente criou um PDF muito interessante dentro daquele ambiente isolado. Então, eu só queria abordar o recurso de sandbox e dar uma breve visão geral de como funciona o sandbox. Contexto extenso. Então,
+
+dentro do Ogie Assist, nos deparamos com muitos obstáculos, especialmente com modelos legados, como limites de tokens ou sobrecarga de contexto, principalmente à medida que as conversas se tornam mais longas. Descobrimos que ter algum tipo de resumo contínuo era mais eficaz do que sempre incluir as mensagens mais recentes. Em vez disso, era melhor fornecer um resumo contínuo após um número n de mensagens, e talvez você queira apenas as n menos cinco mensagens mais recentes ou as n menos dez mensagens mais recentes, certo? E pode ser que você esteja falando apenas sobre um tópico específico agora, mas talvez queira se referir ao contexto anterior, tipo cem mensagens acima, e é aí que entra o componente de memória, porque quando você tem esse resumo contínuo de uma conversa muito longa, você pode recorrer a esse resumo para relembrar o que foi dito . E, sabe, se você perguntar ao agente: "Ei, lembra daquela coisa que a gente conversou ?" Então o agente na conversa
+
+vai dizer algo como: "Sim, eu sei do que você estava falando. Eu tenho uma pequena informação para compartilhar." E pode, sabe, dar continuidade e fazer mais coisas com esse resumo em mente. Então, foi mais ou menos assim que lidamos com contextos longos e memória, e funcionou muito bem para nós. Então, eu só queria compartilhar um pouco sobre isso e como resolvemos o problema do contexto longo .
+
+Interface do usuário em tempo real. Então, neste exemplo, eu disse ao agente: "Ei, escreva-me uma redação longa, mas dê-me alguns exemplos sobre o que a redação poderia abordar." O mais legal é que o agente tinha esse formulário primitivo registrado e conseguiu preenchê-lo para mim em tempo de execução, oferecendo algumas opções para eu escolher . Então, parece algo muito pessoal e muito imediato, que me oferece essas opções em tempo real. Então, hum, isso é só um pequeno... vídeo que
+
+eu queria incluir aqui sobre interfaces de usuário generativas e como conseguimos renderizar interfaces de usuário dinamicamente. Você não pode dimensionar o que não consegue ver. Então, esta seção trata de rastreamento e observabilidade. Na verdade, o que é legal no Effect é que você já começa a usar o recurso de vetorização sem precisar configurar nada. Sabe, quando você usa essas funções de efeito, elas são automaticamente marcadas com esses intervalos, e o intervalo é capturado e inserido nesses rastreamentos para que você possa obter detalhes dessas chamadas de função.
+
+Aqui está um exemplo de um rastreamento da equipe de efeitos. Eu já o vinculei. Você poderia ver isso como: "Ei, quando você acessar esta API, vá para este endpoint, para este manipulador." E você sabe, etc. E leva tempo. E o que é realmente legal é que você
+
+pode criar perfis de todos os seus rastros, certo? Portanto, isso leva um total de tantos segundos e você pode ver onde está o gargalo. Em caso de falha, é possível cruzar dados entre os serviços. Portanto, é realmente muito importante, especialmente ao trabalhar em sistemas de agentes, onde estamos nos integrando com outras equipes, outras APIs e outras funcionalidades da plataforma. O legal do Effect é que você já tem todo esse rastreamento pronto para uso, o que torna a criação , a depuração e a manutenção dessa experiência interativa muito fáceis.
+
+Ferramentas e habilidades. Então, não só fizemos uma grande aposta no efeito, como também fizemos uma grande aposta em ferramentas e habilidades. Portanto, acreditamos que ferramentas e habilidades são tudo o que você realmente precisa. E neste caso, você pode ver à esquerda, que temos esta ferramenta chamada "pegar piada de pai". E este é o método e os princípios básicos de como fazemos as coisas aqui no OpenGov, mas, como você sabe, isso foi retirado do site do Effect, mas você pode ver: "Ei, é assim que se cria uma ferramenta." Em seguida, você
+
+o adiciona a um conjunto de ferramentas, que é uma coleção de ferramentas, e então pode registrar esse conjunto de ferramentas com o modelo de linguagem. Por exemplo, se você recebesse um enunciado dizendo: "Ei, crie algumas piadas de tiozão sobre piratas." Bem, adivinhe só? O agente tem uma ferramenta que pode ajudar a conseguir uma piada de tiozão. Então, na verdade, esses são os alicerces de como desenvolvemos ferramentas e, eventualmente, habilidades, e isso tem se mostrado extremamente benéfico para nossa organização. Então,
+
+eu realmente recomendo experimentar este pacote de IA da Effect e tentar desenvolver suas próprias ferramentas e habilidades. Velocidade do desenvolvedor. Então, não apenas criamos agentes para nossos clientes, mas também usamos agentes internamente aqui no OpenGov. Então, nós usamos muito o Claude e o Cursor, e isso realmente mudou o jogo para nossa equipe. É engraçado porque estamos criando ferramentas e habilidades para agentes que lidam diretamente com os clientes, e isso tem sido ótimo, mas também estamos desenvolvendo-as internamente para ajudar a acelerar nossos fluxos de trabalho de desenvolvimento. Então, ferramentas como Claude,
+
+Cursor e agentes Claude realmente ajudam a acelerar a forma como lemos, escrevemos, revisamos e entregamos código. Então, tem sido uma aceleração incrível. Então, definitivamente queria mencionar isso antes de encerrarmos. É isso. Muito obrigada por assistir.
+
+Você chegou ao fim. Vamos criar agentes que possam ser enviados para produção.

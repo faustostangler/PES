@@ -1,0 +1,66 @@
+---
+video_title: "How We Built Zeta2: Training an Edit Prediction Model in Production — Ben Kunkle, Zed"
+video_id: phchDt63qAA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=phchDt63qAA
+video_date: 2026-05-30T16:00:06+00:00
+video_description: |
+  To validate settled data, Zed ran 10 frontier model predictions per example and measured Levenshtein distance to the final state. For 100,000 training examples that is a million frontier model requests, which is prohibitively expensive. The fix: Zeta 2's student model now approaches teacher quality, so they run it 50 times instead at negligible cost. Ben Conungle, edit predictions lead at Zed, walks through how this pipeline came together.
+  
+  The pipeline pulls opt in production edit traces, distills them through a frontier teacher, and routes bad predictions through a repair step before formatting for the student. The ideal training examples sit in the middle of the Levenshtein distance distribution: too close to the settled state is obvious, too far is noise. A metric called reversal ratio, how often the model undoes exactly what the user just typed, was the key diagnostic for catching bad model behavior before shipping.
+---
+[música]
+
+Eu sou Ben Kunkel. Sou o responsável pelas previsões de edição na Zed. Bem, recentemente anunciamos nosso modelo Zed 2 e foi assim que o treinamos. Vou passar por muita coisa . Obviamente, esta é uma palestra bastante curta . Então, vou tentar deixar
+
+tempo suficiente para perguntas no final, mas se você não estiver familiarizado com modelos de treinamento, vai ser uma apresentação um tanto acelerada. Então, se você não está familiarizado com a previsão de edição, basicamente consiste em fornecer ao modelo uma região de código ao redor do cursor, pedindo que ele preveja a próxima edição que você fará. Fornecemos diversos dados, como suas edições recentes, a posição do cursor, as definições de tipo e de variáveis, ou de elementos ao redor do cursor, além de diagnósticos, erros, etc. Obviamente, precisa ser muito rápido, pois é executado a cada tecla pressionada. Assim, é ideal para um modelo pequeno e especializado, com ajustes precisos. Ele
+
+pode realizar esta tarefa e somente esta. Bem , foi isso que fizemos. Assim, o pipeline, em essência, está utilizando esses dados de produção obtidos por meio de adesão voluntária. Ah, isso funciona muito bem porque são instantâneos. Portanto, todos esses dados que coletamos, como tipos e definições relacionados, etc.,
+
+são capturados e, em seguida, conseguimos transformá-los em dados de treinamento. Para isso, usamos um processo chamado destilação, no qual pegamos um modelo de fronteira, fornecemos todos esses dados de entrada e perguntamos: "Que previsão você faria?" Na verdade, esse é um processo bastante difícil, mesmo que os modelos de fronteira sejam muito inteligentes. Se você perguntar a eles 100.000 vezes, eles vão te dar 100.001
+
+respostas, certo? Portanto, existem vários problemas que nos obrigaram a ajustar com precisão o estímulo que fornecemos a esse modelo de fronteira para obtermos bons resultados . Uma das coisas que fizemos para tentar obter melhores previsões para treinamento foi executar algumas avaliações offline ou estáticas . Então, temos algumas heurísticas para, você sabe, simplesmente desfazer o que você acabou de digitar? Será que está ignorando o limite da região editável que definimos?
+
+Se estiver, enviamos para outro modelo de fronteira com uma mensagem semelhante a esta: "Ei, falhou desta forma. Você pode corrigir?" E é por isso que chamamos essa etapa de reparo. E então, depois de corrigirmos as previsões erradas, podemos essencialmente transformar o que o professor fez na saída esperada do modelo do aluno ou Zed 2. Até esse ponto, tudo é reutilizável em diferentes experimentos. Então, isso é algo
+
+que podemos armazenar em cache. Podemos treinar vários experimentos além disso, transformando o que o modelo de fronteira previu no formato que queremos que o experimento produza. Então, a próxima etapa é a formatação do prompt. Isso é específico para cada experimento. Ou seja, desta vez vamos incluir diagnósticos?
+
+Não somos? Que parte do histórico de edições estamos incluindo? Esses são os tipos de experimentos que estamos realizando. Assim, transformaremos o que o professor nos deu em um estímulo para, eh, destilar e treinar nosso modelo de aluno. E então faremos nossa rodada final de avaliações offline.
+
+Bem, a parte boa de todo esse processo é que o projetamos de forma que tudo seja JSONL, ou seja, uma única linha representa um objeto JSON gigante. Esses arquivos ficam enormes. Bem, cada etapa apenas adiciona mais alguns campos ou reorganiza alguns campos . Então, é um processo muito fluido e dinâmico. Bem, geralmente usamos 100.000
+
+exemplos para treinar um modelo. Tipo, esse é o nosso auge. Para esses experimentos menores, vamos reduzir o número de amostras para uma faixa de 10 a 50 mil . Uma coisa interessante que estamos tentando agora é usar o que chamamos de dados consolidados, que é a ideia de que, eventualmente, o usuário escreve a resposta, certo? Ao solicitar uma previsão enquanto digita, eventualmente você acabará escrevendo o código da maneira que desejava. Então, como
+
+somos os editores, podemos esperar até que você pare de editar a região editável que definimos no modelo, tirar um instantâneo e salvá-lo. E então usaremos isso para orientar nosso treinamento. Bem, isto é realmente muito ruidoso porque, enquanto se espera que a região de edição se estabilize, você pode mudar de ideia, um agente pode entrar e reescrever tudo completamente. Pode ser completamente diferente do que parecia quando a previsão foi feita. Portanto, o que talvez fosse uma previsão razoável, já não parece razoável.
+
+Portanto, precisamos de alguma forma de filtrar isso. Uma maneira de fazer isso é gerar 10 previsões dos professores e verificar se alguma delas está próxima, usando algo como a distância de Levenshtein . Veja se alguma delas está próxima do estado estável. E se forem, sabemos algumas coisas. Sabemos que é previsível, que não é ruidoso e que é completamente diferente da entrada , certo? Porque estamos fornecendo os mesmos
+
+dados de entrada que fornecemos para a previsão original, agora para esta nova previsão. Hum, isso acaba sendo bem caro. Para 100.000 exemplos, você acaba fazendo, sabe, um milhão de solicitações de modelos de fronteira. Isso é proibitivamente caro.
+
+Felizmente, dado que agora treinamos modelos usando as previsões originais do professor, nossos modelos alunos, ou Zed 2, estão se aproximando do professor em termos de qualidade de previsão. Então, em vez de executar o professor, podemos executar nosso ponto de verificação do aluno ou algo semelhante 50 vezes. Isso não nos custa praticamente nada. E podemos repetir o processo para ver se algum deles está próximo da região colonizada, usando o teste de Levenshtein ou algo semelhante. Hum, isso fornece exemplos de treinamento ideais, certo? Porque, ao observar a
+
+distância até o estado colonizado, há uma região que fica extremamente distante; podemos ter certeza de que isso é apenas ruído. Existe uma desvantagem: existe uma região muito próxima, onde é muito óbvio o que você vai fazer, certo? Se você digitou a função add A plus, obviamente é B, certo? Hum, mas aí tem essa parte interessante no meio, onde é quase...
+
+Esse é o ideal que buscamos em nossos exemplos de treinamento. Por exemplo, os dados que ultrapassaram o limite de dados de treinamento do nosso modelo de aluno. Então, novas funções, etc., que você nunca viu antes e que realmente queria. E isso vai aparecer nesses novos exemplos de treinamento que poderemos então usar para treinar. Geralmente
+
+não treinamos a partir do estado estável real, simplesmente porque ele ainda apresenta ruído, mas podemos treinar a partir do que estava mais próximo do estado estável. Portanto, para executar essas avaliações offline, estamos usando um conjunto de testes reservado. Só para garantir que não estamos treinando o modelo com os mesmos dados que estamos usando para testá-lo. Hum, o carro delta f é o nosso Levenshtein. Essencialmente, realiza uma comparação semelhante de n-gramas de vários tamanhos de n.
+
+E então estamos monitorando essa taxa de reversão, sendo as reversões o ato de desfazer exatamente o que você acabou de digitar. Hum, e também podemos analisar a taxa de retenção na produção. Bem, quando estamos avaliando, geralmente comparamos com as previsões de três professores, porque muitas dessas questões não têm uma única resposta correta. Assim, ao gerar três respostas distintas, todas geradas por um modelo de fronteira, podemos ter bastante certeza de que, se o resultado estiver próximo de uma dessas respostas, trata-se de uma previsão bastante precisa . Então, para nossos experimentos, hum, esta é a parte de treinamento e produção. Hum,
+
+essas avaliações que nós... não necessariamente correspondem ao que os usuários realmente desejam em seu editor. Assim, criamos esta página com nossos experimentos. Essas são as duas que estão
+
+online agora. Como podem ver aqui, temos esta amostra a 15%, e é ela que vai receber o resto do tráfego de produção. Então, temos um painel de controle que não posso mostrar para vocês, com a taxa de aceitação, latência e todos esses dados para esses experimentos. Mas esta é uma página que criamos para que possamos, depois de implantá-la , configurá-la para 15% do tráfego, configurá-la para 20% e torná-la nosso modelo de produção. Bem, este codificador de sementes V 0211, que lançamos como Zed
+
+, serve para contagem de erros de diagnóstico e é praticamente o que você imagina. Capturamos um instantâneo de quantos erros havia antes da previsão e quantos havia depois. E então tentamos usar isso para avaliar a qualidade do modelo. Então, é isso. Havia muitos. Terei prazer
+
+em responder a quaisquer perguntas. Acho que temos cinco ou oito minutos restantes. Então, sim. Hum, você disse que é muito difícil determinar o estado atual do problema. Você tem algum sinal que possa compartilhar, como por exemplo, `git commit`?
+
+Ou, desculpe, qual era o algoritmo? Então, você disse que determinar o estado de estabilização, como quando o usuário está satisfeito com aquele bloco de código, por exemplo, é muito impreciso. Existem sinais específicos que você já pode usar e que sejam úteis, como, por exemplo, quando eles se comprometem com alguma coisa? Claro, sim. Então, se não olharmos para o commit "get", poderíamos.
+
+Mas, por enquanto, a gente pede para você parar de editar essa área por 10 segundos. E isso serve como uma heurística bastante aproximada, então só não tiraríamos um instantâneo nos casos em que você estivesse editando aquele local continuamente por um longo período, sem pausar por 10 segundos . Mais alguma pergunta? Muito bem, acho que vocês vão recuperar o tempo de vocês. Obrigado por terem vindo.
+
+[aplausos]
+
+[música]

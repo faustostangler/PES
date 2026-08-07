@@ -1,0 +1,124 @@
+---
+video_title: "Reverse engineering a Viking VOIP phone protocol with Claude Code — Boris Starkov, Eleven Labs"
+video_id: V-L0INGTEOg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=V-L0INGTEOg
+video_date: 2026-05-29T14:00:06+00:00
+video_description: |
+  A Viking VoIP phone sat in the ElevenLabs San Francisco office for a year. Three senior engineers and ChatGPT could not get it working. Boris from ElevenLabs cracked the undocumented protocol with Claude Code in a couple of days: brute forced all 676 possible two letter command combinations, found 80 valid ones, then set up a TCP proxy between a Windows virtual machine and the phone to intercept and log what the proprietary Windows XP software was actually sending.
+  
+  The last piece was a one byte checksum in the persistence command. Claude reverse engineered the formula by running known input output pairs through it, confirmed the pattern in a closed loop, and derived a simple subtraction. Boris describes his own role as being the hands: Claude orchestrated, he physically rebooted the phone and reported how many beeps he heard. The protocol is now open sourced as a Claude Code skill so anyone with a Viking phone can configure it directly without the Windows software. The outcome at AI Engineer Europe: a red phone booth on the third floor where picking up the receiver connects you to a Michael Caine voice agent that quizzes you on British AI history.
+---
+[música]
+
+Olá a todos. Obrigado por terem vindo. Embora esteja sendo servido almoço neste momento. Agradeço muito por você ter vindo . Hum, eu sou Boris. Eu trabalho para a 11 Labs.
+
+Normalmente, fazemos agentes de voz, agentes de voz, como tudo relacionado à voz. Mas para este bate-papo eu só queria te mostrar outra coisa . Talvez você tenha visto, se já esteve no terceiro andar, esta cabine telefônica. Aliás, esta é a Twilio , a organizadora. Hum, nós o construímos como uma demonstração. Uma demonstração
+
+para esta cúpula. Hum, tem um telefone lá dentro. Hum, e eu não sei quantos de vocês já passaram por isso. Alguém fez isso? Você definitivamente deveria experimentar. Oh meu Deus. OK.
+
+Mas a ideia é que, quando você pegar o aparelho, acabe conversando com um agente de IA com a voz de Michael Caine, aprovada. Pronto, aí está. Quem então responde a cinco perguntas sobre a história da IA ​​britânica. E se você responder corretamente a pelo menos uma delas, poderá ganhar um brinde da 11 Labs. Essa é a ideia. Mas hoje eu quero
+
+mostrar para vocês como eu realmente o construí. Então, é assim que está agora. E era assim que estava na semana passada. Este é o antigo...
+
+quer dizer, não é tão antigo assim. Ele ainda tem um controlador interno, mas é um aparelho bem antigo, esse telefone. E o principal problema quando tentamos fazer isso acontecer, o principal problema com esse hardware era que ele só tinha software compatível com o Windows XP. Foi muito difícil configurar tudo, porque descobrimos que ninguém na 11 Labs tinha um laptop com Windows. Todos eles tinham Macs.
+
+Mas também quando tentamos configurar um ambiente virtual, sabe, tivemos alguns problemas com os drivers. Então, o que aconteceu com esse telefone? Nossa equipe em São Francisco comprou isso há um ano para outro evento. E três engenheiros de software, três engenheiros de software seniores e um Claude, uh, desculpe, ChatGPT na época, não conseguiram descobrir como fazer funcionar. Então, durante um ano, ficou lá parado, esperando para ser resgatado.
+
+E para este projeto, nós pedimos que eles o enviassem para Londres. E então eu tentei decifrá-lo, hackeá-lo, fazer engenharia reversa usando o código Claude. E era sobre isso que eu queria falar. Como usar o código Claude não apenas para construir aplicativos, mas também para fazer engenharia reversa de hardware. Aliás, estes slides foram inteiramente criados pelo Claude Code. Então,
+
+a forma como eu os criei foi... eu peguei toda a conversa que tivemos sobre esse processo e então pedi para que o programa criasse slides com base nisso. Então, o objetivo aqui, o que queremos alcançar, é que eles tenham esse telefone Viking.
+
+O telefone Viking retrô, um clássico. E queremos conectá-lo a um agente de IA conversacional da 11 Labs. Ele só pode fazer uma chamada telefônica para um número de telefone. Então precisamos colocar a Twilio no meio. Só para lidar com a complexidade do domínio SIP . Então a ordem foi: Viking Phone,
+
+depois Twilio e, por último, 11 Labs. Sim , esse é o problema. Eu tenho um Mac. Então, não conseguimos configurar isso com muita facilidade. Então, o que acabamos fazendo, ou melhor, o que eu acabei fazendo, foi conectar meu laptop ao celular via roteador e começar a explorar. Quer dizer, ao dizer que eu
+
+comecei a explorar, Claude Code começou a explorar isso. Primeiro, ele mapeou todas as portas disponíveis. Então, porta 1001. Que acabou sendo a porta errada. Era apenas um túnel eletrônico.
+
+Então, o processo continuou e o próximo passo foi identificar a porta de destino que poderia ser usada para se comunicar com o telefone. Então, primeiro passo: Claude Code encontrou uma maneira de se comunicar com o telefone. Então, começou a descobrir isso. Então, enviou-lhes uma sequência aleatória. Quer dizer, não um viking aleatório, mas apenas uma sequência aleatória.
+
+Um para o telefone e o telefone respondeu. Foi assim que Claude Code percebeu que aquilo era, de fato, uma interface, um protocolo. Mas o protocolo não é como algo que se possa encontrar no Google. Não é possível. Não existe documentação aberta sobre qual é o protocolo exato . Então eles tiveram que fazer
+
+engenharia reversa, certo? A primeira coisa que Claude notou foi que, ao enviar uma sequência aleatória para o telefone, ele retorna esse "ER" e depois a própria sequência. Significa que provavelmente é um erro. Ocorreu um erro informando que esta sequência de caracteres não é um comando válido para o telefone. Então, em
+
+seguida, Claude descobriu os comandos que este telefone utiliza, usando códigos de comando de duas letras. Alguns deles não existem, então retorna um erro como o mostrado neste slide. Outros, no entanto, devolvem algo diferente. A próxima ideia foi que, na verdade, se forem comandos de duas letras, podemos simplesmente iterar por todos eles, certo? É, força bruta. Então, ele escreveu esse
+
+programa e literalmente testou todas as combinações possíveis de duas letras. E descobriu-se que a maioria retornava códigos de erro, mas 80 delas retornavam algo diferente, ou seja, eram comandos válidos. Hum, esses foram alguns deles.
+
+Aliás, não tenho certeza... Ok, não tenho certeza do que é isso, mas...
+
+Sim, então alguns dos comandos faziam algum sentido com base no nome. Talvez não essas, mas por exemplo, " SA" para status até que faz sentido. Não sei se faz sentido. Sim. Então, em seguida, tentou configurar as credenciais reais no telefone. Então, esta
+
+é a memória do telefone. Basicamente, o que eles estão tentando fazer aqui é inserir as credenciais corretas na memória do telefone para que ele saiba para onde ligar. Queremos ligar para o tronco SIP da Twilio, certo? E, no fim das contas, sim, esses comandos funcionaram e todas as configurações foram aceitas. Mas o problema é que, no momento em que o telefone foi reiniciado, todos eles desapareceram.
+
+Portanto, eles não foram salvos na memória. Elas foram simplesmente gravadas na memória temporária. E então, eu e Claude começamos a programar, iniciamos uma operação de várias horas tentando descobrir como salvar o que você coloca nessa memória temporária, como torná-lo realmente persistente. Como, por exemplo, salvar o arquivo na memória de longo prazo do telefone. Tentou de tudo. Tentou
+
+comandos diferentes. E então, não sei se os slides vão mostrar isso, mas tentou comandos de três letras. O processo foi repetido sobre todos os comandos de três letras, sobre todas as palavras razoáveis. E não encontrou nada. Então, essa era a situação sem saída.
+
+Isso foi por volta do local onde nossa equipe em São Francisco estava, quando começamos a explorá-lo pela primeira vez. Eles... eles não conseguiam descobrir o que fazer em seguida. Mas isso foi há um ano,
+
+quando só existia o ChatGPT. Agora, com Claude, Claude não desistiu nesse ponto. Claude sugeriu que...
+
+sim, Claude descobriu o problema e então sugeriu uma solução. Então, a solução nesta etapa foi configurar uma máquina virtual Windows. No entanto, o principal problema com a máquina virtual do Windows é que você não pode criar uma ponte de Wi-Fi para o macOS. Portanto, não há conexão com a internet na máquina virtual do Windows . Então, o que Claude fez em seguida foi, na verdade, uma coisa muito inteligente. Foi configurado um
+
+proxy TCP no Mac para que o tráfego da máquina virtual... Ah, por que estamos configurando uma máquina virtual? Porque na máquina virtual do Windows, podemos configurar e executar o software deste telefone, que sabe como se comunicar com ele.
+
+Então, a solução, o que estamos tentando fazer agora, é tentar realizar um ataque do tipo "homem no meio" para interceptar o tráfego entre o software e o telefone, analisá-lo e descobrir como ele se comunica e como funciona. Portanto, o software agora está sendo executado em uma máquina virtual Windows. Em seguida, ele é direcionado e se comunica com o proxy no meu Mac. O proxy está retransmitindo a mensagem para o telefone Viking, mas também registra tudo para que seja possível descobrir sobre o que eles estão conversando, qual é o protocolo e qual é a peça que está faltando. Um código muito simples.
+
+E então, sim, começou a capturar a comunicação. E descobriu que havia um comando que o Cloud não entendia antes, que era o TS. Que tinha uma espécie de carga útil binária estranha. E então tinha mais ou menos este formato. E o que você pode ver aqui é que a maioria dos parâmetros deste comando fazem algum sentido, exceto o checksum. Mas o checksum acabou sendo de
+
+apenas um byte. Então, é algo que você também pode resolver na base da força bruta. Certo . Sim
+
+. Então, o sistema funciona assim: ele não reconhece o checksum, mas sabe quais dados estão sendo enviados e qual será o resultado. Assim, é possível realizar facilmente a engenharia reversa do protocolo de criptografia. O que acabou sendo apenas adicionar um...
+
+Sim, basicamente fazer uma subtração simples, como adicionar um valor simples de um byte ao checksum. Não se trata apenas de código em nuvem, quero destacá- lo. O Cloud Code não se limitou a descobrir qual é o formato "um" do checksum. Na verdade, conseguiu encontrar e depois confirmou, executando mais testes com os valores indicados. Então, era algo como uma iteração em circuito fechado.
+
+E a essa altura o telefone já estava praticamente trincado. Então, agora conseguimos descobrir como o software se comunicava com o telefone. E nós tínhamos a lista de comandos e... o
+
+que era aquilo?
+
+Sim, e então descobrimos como resolver o problema que mencionei no início, que era como salvar o que você coloca na memória. Precisamos disso para executar essa sequência de comandos. E por último, a parte engraçada é que na verdade existe uma memória de 256 bytes no telefone que também acabou rachando. E então, a última parte desse processo foi que eu não queria executar uma máquina virtual do Windows todas as vezes. Então, a última parte foi, na verdade, agora que eu conheço o protocolo, eu sei como falar ao telefone.
+
+Posso simplesmente restaurar as configurações de fábrica e agora posso usar essa habilidade e essas informações para programá-lo diretamente, sem precisar executar a máquina virtual. Então, o que eu fiz foi transformar tudo isso em uma habilidade e torná-la de código aberto, para que agora, se algum de vocês por acaso tiver um telefone Viking, não precise configurar um computador com Windows. Você pode simplesmente pedir ao Cloud Code, tipo, "dê essa habilidade ao Cloud Code" e ele a configurará. Sim , vitória. Funciona. Quer dizer, eu não entrei em
+
+muitos detalhes sobre como essa etapa funciona porque é super fácil graças à Eleven Labs. Nós realmente conseguimos finalizar o vídeo. Quer dizer, este passo é super fácil. Essa foi a parte mais dolorosa. Acho que levei uns dois dias para fazer a engenharia reversa. Estou realmente
+
+tentando evitar a palavra "hackear", tipo, eu hackeei o telefone. Eu fiz a engenharia reversa. Sim . Então, o que aprendemos sobre o protocolo é que ele possui duas camadas. Bem, tivemos sorte de a criptografia ser apenas um checksum de um único byte, porque se fosse algo mais complexo, provavelmente seria muito mais difícil de quebrar. E
+
+sim, e para garantir a persistência, tivemos que executar um servidor intermediário entre a máquina virtual do Windows e o telefone. E é assim que, sim, comentamos sobre o passo cinco aqui. Sem o Cloud Code, não seria possível fazer essa demonstração. Não se trata apenas de tornar o processo 10 vezes mais rápido, mas sim de torná-lo possível, visto que eu não sou engenheiro de segurança . Na verdade, eu sou apenas um engenheiro de software normal e, quando vi todos esses programas, pensei: "O que é isso?". O que é
+
+aquilo? O que é zero X? OK. Sim , é isso mesmo. Então, o resultado disso não é apenas uma bela demonstração que você pode ver no terceiro andar.
+
+É também uma habilidade que facilita muito a programação deste tipo de telefone e, o melhor é que acho que isso pode ser estendido a outros hardwares também. Então, não é algo específico da Viking, mas se você quiser desbloquear algum outro hardware, eu realmente recomendo pensar... Bem, a diferença é que, há um ano, você precisava da interface de software proprietária fornecida pela empresa que fabricava o hardware. Agora você não precisa mais
+
+disso. Você pode se conectar ao telefone, mas da mesma forma que se conecta a qualquer outro dispositivo eletrônico em sua casa. Então, isso é legal. Sim, foi assim que tudo começou, e aqui está a demonstração para quem acabou de chegar. No terceiro andar, temos uma cabine telefônica vermelha que permite falar com Michael Caine.
+
+Quantos de vocês já experimentaram? Alguém tem ? Oh meu Deus. Ok, você definitivamente deveria experimentar . É... é... parece mágico, e eu acabei de te
+
+contar como eu transformei isso em realidade. Sim. Hum, alguma pergunta? Esta é a cabine. E este é o Swiggy.
+
+Fichas que você queimou? [Suspiro] Eu usei os tokens corporativos da Eleven Labs. Então, sim, acho que foi algo entre 10 e 100 dólares. Portanto, bastante razoável. E você tinha o... você
+
+tinha o Cloud? Então, veja, você tinha algum software instalado no UTM no Windows. Você também tinha controle na nuvem? Ou será que alguém teve que fazer isso manualmente? Foi bastante interessante, pois minha participação consistiu basicamente em seguir as instruções do Cloud.
+
+Certo. Então, ele me diria algo como: "Ei, você pode pegar a alça e quantos bipes você consegue ouvir?" E eu gostaria de ouvir e pensar: "Ok, acho que três." Foi tipo: "Seu idiota, ou são dois ou quatro." E eu penso: "Ah, sim, são dois." Então,
+
+era como se eu fosse realmente o agente da Nuvem. Era como se a Nuvem estivesse orquestrando tudo. E respondendo ao seu "Não", respondendo ao seu " Basicamente", eu era as mãos da Nuvem. Não consegui, na verdade. Acho que se eu usasse algum programa de gerenciamento de computadores, conseguiria fechar o circuito completamente e controlar a máquina virtual, mas estava com preguiça, então apenas fiz o que o programa mandou .
+
+Houve algum lugar onde o Cloud ficou preso e você teve que desbloqueá-lo? Preso em que sentido? Como se não conseguisse descobrir o próximo passo. Então, é isso. Foi ele quem orquestrou tudo. Como se eu não tivesse a menor ideia do
+
+que estava acontecendo. Então, intelectualmente, eu não conseguia desbloquear isso. Então, você desbloqueou... eu desbloqueei
+
+reiniciando fisicamente o telefone ou controlando a máquina virtual, mas a parte intelectual, que é quebrar o algoritmo, eu não conseguiria desbloquear . Quer dizer, acho que era simplesmente mais inteligente do que eu. Sim . Como você se conectou fisicamente ao telefone? Sim, eu gostaria de ter uma foto.
+
+Então, neste telefone você pode ver o cabo preto. Isso se chama Power over Ethernet, ou PoE. Sim. Basicamente, existe um cabo Ethernet, aquele que provavelmente todos têm em casa para internet doméstica, e também um adaptador de energia, que os conecta. E coloquei um roteador entre eles, o que me permitiu conectar meu dispositivo.
+
+Então, este dispositivo estava conectado ao roteador e meu laptop também estava conectado ao roteador Wi-Fi . E então sim, e então houve essa etapa de uh [limpa a garganta] pesquisar na rede. Então, esse foi o primeiro passo. Cloud acabou de verificar todos os dispositivos conectados ao roteador e encontrou o telefone. OK.
+
+E eu tenho um emprego em tempo integral. Sim . A próxima sessão será às 11h. Obrigado. Obrigado a todos. Ótimo. Um
+
+[aplausos]
+
+[música]

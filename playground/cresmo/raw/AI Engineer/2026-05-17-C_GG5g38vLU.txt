@@ -1,0 +1,212 @@
+---
+video_title: "Harnesses in AI: A Deep Dive — Tejas Kumar, IBM"
+video_id: C_GG5g38vLU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=C_GG5g38vLU
+video_date: 2026-05-17T17:30:06+00:00
+video_description: |
+  Tejas will be back on stage at the World's Fair next week! see https://ai.engineer/wf and use YOUTUBEPROMO for new tickets only. Join 6000 AI engineers at the "Superbowl of AI"!
+  
+  ---
+  
+  The agent hit a login page, panicked, reported success anyway, and the upvote never happened. Tejas Kumar's diagnosis: not a prompt problem. A harness problem.
+  
+  The demo builds a browser agent on GPT-3.5 Turbo (consciously choosing a VERY old model to show how good harness eng can improve it a lot) against Hacker News and layers in a harness without touching the prompt once. Guardrails cap iterations and compact context. A verify step reads the tool call history to catch the agent lying about what it did. A login handler watches the browser URL each loop and injects credentials programmatically when it hits the login page. By the end the cheap old model reliably logs in and upvotes the post.
+  
+  Speaker info:
+  - https://x.com/TejasKumar_
+  - https://www.linkedin.com/in/tejasq/
+  - https://github.com/TejasQ
+  
+  Timestamps:
+  0:00 Introduction to Tejas Kumar and AI Harnesses
+  1:45 Why we use harnesses: Reliability and control
+  3:00 Defining an agent harness from first principles
+  4:32 Key components of an agent harness (Tooling, Context, Guardrails)
+  5:59 Starting the demo: Building a browser agent
+  7:00 Inspecting the initial agent loop
+  8:12 The problem: Agent failure and hallucination
+  10:20 Adding guardrails and context management
+  11:54 Refactoring into a formal harness
+  13:02 Implementing a verify step to catch lies
+  15:36 Implementing a login handler for programmatic access
+  17:42 Final demonstration: Successful autonomous upvoting
+  18:34 Summary and the future of dynamic harnesses
+---
+[música]
+
+Olá a todos. Todos levantaram a cabeça. Olá, olá. Como foi o almoço? Foi bom?
+
+Você não gostou, né? É como a comida britânica. Enfim, olá. Eu sou Tejas. Eu serei o primeiro palestrante desta tarde. Tejas, pronuncia-se como
+
+Tejas. Não se preocupe, eu não sou. Espero que minha paixão por IA seja, e tive o privilégio de trabalhar em diversos lugares diferentes ao longo da minha carreira, de uma forma ou de outra. Foi uma alegria absoluta aprender com os melhores. Hoje, sou defensor de desenvolvedores de IA na IBM, onde, acredite ou não, fazemos coisas com IA . Treinamos modelos de vanguarda,
+
+construímos sistemas de segurança. É um laboratório muito divertido para se trabalhar. Mas não é sobre isso que vim falar com vocês hoje. Hoje, estou aqui para falar com vocês sobre sistemas de inteligência artificial. Alavancas de IA.
+
+Antes de prosseguir, gostaria de ouvir quem está interessado . Quantos de vocês se sentem confiantes em seu entendimento sobre sistemas de inteligência artificial? Tipo, você pensa: "Eu poderia apresentar isso no palco hoje mesmo." Olhe em volta. Olhe em volta. Não, falando sério,
+
+olhe em volta. É por isso que estamos realizando esta palestra. Bem, essa é a minha esperança. Quero que você responda se eu lhe perguntar isso no final da palestra, certo? Quero que você pense: "Ah, agora entendi!" Esse é exatamente o
+
+objetivo. Eu não tenho literalmente nada a ganhar com isso além de compartilhar conhecimento, ok? Porque esse termo também está meio que em todo lugar. Você provavelmente já ouviu essa expressão ser usada umas 52.000 vezes hoje.
+
+E significa coisas diferentes para pessoas diferentes, porque, por exemplo, no mundo do aprendizado de máquina, significa uma espécie de conjunto de testes aprimorado para modelos de aprendizado de máquina. Mas no mundo da IA, significa algo diferente. Então, hoje, vamos entender isso em detalhes. É um estudo aprofundado, mas tem 18 minutos de duração. Então vamos em frente. Bem,
+
+eu quero começar falando sobre o porquê do uso de arnês. Por que usamos arneses? E a razão para isso é que pagamos aluguel para empresas que nos fornecem poder computacional, inferência e tokens em troca. Alguns de vocês talvez trabalhem para empresas que têm modelos inovadores como a Anthropic, o Google ou outras, e talvez... Qual era o termo mesmo?
+
+Bilionários simbólicos, né? Hum, eu não sou isso. Talvez eu esteja de acordo com os modelos do Watson, mas a grande maioria de nós não são bilionários simbólicos. Nós pagamos aluguel. Nós pagamos literalmente 20 dólares por mês pelo Claude Pro. E aí você se depara com uma
+
+janela de contexto limitada e, sabe, você não consegue aproveitar tudo , por assim dizer. E o modelo que você aluga é uma caixa preta. Eles poderiam fazer isso a qualquer momento, não estou dizendo que fazem, mas poderiam, caso o Opus não esteja disponível por algum motivo , servir o Sonnet mesmo que esteja escrito Opus. Você nunca saberia, né? Portanto, é um grande problema. Há muitas
+
+variáveis ​​que não podemos controlar. Então, por que usar um arnês? Porque o objetivo principal de um arnês é a confiabilidade. Hum, espero mesmo que eu não deva ficar em frente a essa linha branca e acabar não aparecendo na câmera. Enfim, tanto faz .
+
+É a confiabilidade. Trata-se de garantir que os agentes que criamos façam o que devem fazer, ponto final. Independentemente do modelo de caixa preta, independentemente do tipo de coisa que alugamos e assim por diante, ok? Agora que entendemos o porquê de usar um arnês, vamos falar sobre o que é um arnês, partindo dos princípios básicos. Vamos voltar aos arneses que conhecemos e entendemos. Se você já
+
+escalou uma montanha ou algo do tipo, ou viu alguém usando um arnês, sabe o que é isso? É como se os alpinistas literalmente se prendessem a quê? Para uma montanha, porque ela é estável. E eles não podem sair dos trilhos, literalmente. Eles se ancoram em algo estável para que não possam se afastar demais.
+
+Certo, é exatamente para isso que serve um arnês . Tem algum dono de cachorro por aqui? Você tem cachorros? Você passeia com seu cachorro usando uma coleira, ok? É por isso?
+
+Porque seu cachorro não vai te levar à falência com fichas. OK? É isso que é um arnês. Mas o problema é que, se pensarmos em arnês, existem basicamente dois tipos. Existe um do mundo do aprendizado de máquina , que, como mencionei, é como uma suíte de testes e um executor de testes.
+
+Você forneceria alguns dados de entrada a um modelo e observaria a qualidade dos resultados. Isso não é a Europa do engenheiro de aprendizado de máquina . Hoje vamos falar sobre o agente interativo, uma estrutura comum na engenharia de IA. Certo, então o que é um arnês de agente? Um agente de contenção, e esta é a parte mais importante aqui. A questão com o agente
+
+é que eu não estou ganhando dinheiro com isso. É apenas uma expressão. O sistema de agentes engloba tudo o que envolve o modelo e lhe confere um senso de realidade. É literalmente o que o mantém em um ambiente estável, entendeu? Um agente, como o código de Claude, por exemplo, pode ser considerado um mecanismo de suporte para agentes. E alguns de vocês
+
+diriam: "Ah, não, é um agente de codificação". Com certeza, é um agente de codificação. Mas é um agente de codificação controlado. Um arnês de agente tem, mais ou menos, os mesmos suspeitos típicos, as mesmas partes móveis. Primeiro, possui um registro de ferramentas. Quase como o
+
+código Claude, o cursor, o Codex, eles têm ferramentas para ler do sistema de arquivos, para escrever, para executar comandos bash, certo? Eles possuem um cadastro de ferramentas. Eles têm um modelo, e alguns permitem que você escolha um modelo, enquanto outros não permitem. Eles têm um modelo. Eles possuem funções primitivas para gerenciar o contexto. Quase todos os ambientes de
+
+execução de agentes integrados hoje em dia compactam seu próprio contexto, certo? Essa é a função do arnês. Os guarda-corpos são outra parte do cinto de segurança. Por exemplo, o número máximo de passos. Alguém está usando o número máximo de passos? Não faça mais de
+
+cinco chamadas de ferramentas. Isso é um guarda-corpo. Então, se você fizer isso, você simplesmente acaba com a corrida, certo? Um loop de agente é outra parte de um conjunto de agentes, o que é uma loucura. É isso que algumas pessoas com quem conversei enquanto preparava esta apresentação vão dizer: " Espere, um harness não é apenas o loop do agente?" Não, são as coisas relacionadas ao
+
+loop do agente. Na verdade, pode ser um loop em torno do loop do seu agente. Pode ser um loop NM. E vamos analisar isso um pouco em algum código. E, por fim, há uma etapa de verificação. Por
+
+exemplo, em um agente de codificação, após a conclusão do trabalho, uma etapa de verificação seria: "Vamos executar o lint, vamos executar os testes, vamos garantir que nada tenha sido quebrado, certo?" Então, quase sempre usarei agentes de codificação como exemplo, mas você poderia ter uma estrutura para qualquer coisa. E é incrível porque realmente ancora os modelos de caixa preta em um ambiente estável que você controla, entendeu? Gostaria de lhe mostrar uma demonstração. E o que vamos fazer juntos é construir um arnês, o primeiro arnês básico para um bebê . Vamos chamar isso de uma espécie de
+
+sistema de inteligência artificial simplificado para que possamos entender, a partir dos princípios básicos, como funciona. Vamos construir um agente de uso de computador que tenha uma função. A tarefa é ir ao Hacker News e votar positivamente na primeira publicação, ok? É um computador. É um agente de uso do navegador.
+
+Vamos usar um modelo realmente ruim de propósito. Estamos usando o GPT-3.5 Turbo, que é de 2023, certo? Mas vamos aproveitá-lo para que ele realmente possa realizar o trabalho. E vamos economizar dinheiro. Bem, acho que já falei demais
+
+. Vamos começar a demonstração. Bem, então, sejam bem-vindos ao meu projeto. Este é o meu projeto. Olá a todos.
+
+Este é o ponto de entrada. Você consegue ver isso? É muito " sim"? Você quer maior? Vamos fazer algo maior. OK. Na
+
+verdade, este quarto está muito iluminado. Vamos usar o modo claro. Sou eu. Não é da minha natureza, mas às vezes acontece. Assim ficou melhor, né? OK. Então, nós temos um modelo
+
+e estamos testando um LG antigo. Desculpe. Não deveríamos ter visto aquilo. Não, vamos experimentar um modelo antigo. E este é o enunciado. Esta é a tarefa.
+
+Essa é literalmente a minha solicitação. Dê um voto positivo à história que acabei de descrever. Para fins desta demonstração, não alteraremos o prompt em nada. Porque muitos de nós pensamos: "Ei, meu agente não está fazendo o que deveria, então eu só preciso incentivá-lo mais, certo?" Isso nem sempre é verdade. Preciso
+
+alterar o prompt do sistema. Não vamos abordar nenhum dos tópicos sugeridos aqui. Vamos simplesmente construir um arnês e o resultado será diferente. Registramos algumas informações no console e, em seguida, iniciamos uma sessão do navegador. Certo, o que é uma sessão de navegador? É literalmente
+
+só o Playwright. Não é Playwright MCP, é como Playwright Playwright. Esta é apenas uma classe que eu criei com um método aberto que inicia o Chromium, obtém um contexto e cria uma página. E então, navegando... Estamos literalmente chamando
+
+as funções do Playwright, certo? Isso é simplesmente engenharia tradicional. Então, criamos uma sessão, abrimos a sessão, ou seja, uma janela do navegador em um contexto. Em seguida, criamos nossas ferramentas e atribuímos essa sessão do navegador às ferramentas. E nós criamos um contexto e atribuímos a tarefa, ou seja, o estímulo, ao contexto. Agora, criar ferramentas é
+
+literalmente o que o nome sugere. Está aqui. Existem apenas alguns tipos, e a criação de ferramentas é uma função que utiliza uma sessão do navegador e fornece ferramentas semelhantes. E essas ferramentas não são de minha autoria . Isso é do SDK da OpenAI, ok?
+
+Então você tem o nome, os parâmetros de descrição e a execução, que é a forma como você realmente chama a ferramenta em seu ambiente de execução. E existem ferramentas para isso, eu que fiz . É muito fácil. Então, essas são as minhas ferramentas. E então, ao criar contexto, você pode pensar: "Uau, engenharia de contexto". Absolutamente não. Este
+
+é o meu contexto. Não há nada aqui. É apenas um aviso do sistema. Literalmente, o comando mais básico do sistema e a tarefa do usuário. Isso é o básico do básico . E então temos o loop de execução, que nada mais
+
+é do que executar o agente em um loop. Então, o que está acontecendo aqui, nós também podemos simplesmente analisar. Embora seja verdade, trata-se de um loop de agente. E recebemos uma resposta do agente e verificamos se a resposta diz "parar", ou seja, se o LLM disser "terminei", então retornamos o valor. Se recebermos qualquer outra resposta, não fazemos nada além de adicionar esses eventos a um rastreamento. Então,
+
+simplesmente adicionamos a história a uma grande lista de eventos históricos. Faz sentido? E é só isso que estamos fazendo aqui. Isto é apenas um loop onde coletamos eventos até terminarmos, ok? Isso é muito básico. Agora vamos ver como funciona. Então, vou até
+
+aqui e vou perguntar: "O senhor está bem?" Você precisa de água? Vou executar o comando ` npm run agent`. Então, o Chromium será aberto. Vai dar tudo certo, Hacker News, até agora tudo bem. Clique em "
+
+Curtir". Oh não. Então, chegamos à tela de login e, de repente, o sistema entrou em pânico e travou. Mas veja, é mentira. Você vê isso?
+
+Isso é um problema. Então, qual é a solução? Insista com mais facilidade? Não. Altere o prompt do sistema. Sempre faça login com
+
+as credenciais que o sistema solicita. Não. Então, como resolvemos isso? E veja, graças ao meu registro de atividades, podemos ver que ele simplesmente clica no botão de voto positivo e considera isso um sucesso. Não verifica. Essa é a função de um
+
+arnês, entendeu? Então, agora, gradualmente, vamos começar a construir um chicote de fios. Então, vamos em frente. Não vou escrever código aqui. Não vou mais programar ao vivo porque não escrevemos mais código. Inspecionamos as diferenças.
+
+Certo? Alguém aqui escreve código à mão? Talvez você não pertença a este lugar. Enfim, então...
+
+estou brincando. Então, esta é... Esta é a primeira mudança que vamos fazer. Este era o nosso arquivo de índice.
+
+E temos esse loop de execução que eu mostrei para vocês, mas agora vamos adicionar uma coisa a ele, que são as proteções padrão. Vamos criar algumas medidas de proteção, ok? Como são nossos guarda-corpos? Bem, vamos dar uma olhada nisso no editor, com as proteções aqui. Então, temos alguns tipos, mas esses são os nossos limites de segurança. Temos dois. Número máximo de
+
+iterações, ou seja, se você fizer mais de seis passos, eu vou te matar. E o número máximo de mensagens, ou seja, se você tiver mais mensagens do que esse limite, eu comprimirei o contexto. São apenas grades de proteção, ok? Uma pequena ferramenta para combiná-los, e nós podemos simplesmente compô- los aqui. Poderíamos fazer quantas quiséssemos. Então, vamos voltar
+
+às nossas alterações. Essas são as grades de proteção. Se voltarmos ao loop do agente, na verdade usamos as proteções aqui nesta diferença. Assim, incluímos as funções de proteção e podemos ver que aqui o que estamos fazendo é verificar quantas mensagens acumulamos e simplesmente reduzir o contexto se for excessivo. Mas o que eu queria mostrar para vocês é aqui no final, quando nós aumentamos o tamanho do contexto, que são alguns metadados adicionais sobre o que fizemos com nossos mecanismos de proteção, ok?
+
+Nosso compressor de contexto é extremamente básico e extremamente ingênuo. É isso que ele faz. Deixa eu abrir isso com a sintaxe bem destacada. É assim que funciona. Então, o que estamos fazendo é manter sempre o prompt do sistema, o prompt do usuário e as duas mensagens mais recentes. Portanto, se o
+
+mecanismo de proteção for acionado, sempre removemos tudo o que vem depois do aviso do sistema e do aviso do usuário no meio, mantendo apenas as duas últimas mensagens. Isso é muita ingenuidade. Não faça isso. Existem maneiras melhores, mas aqui é onde os bebês vêm em primeiro lugar. Estamos quase lá .
+
+Então, estávamos começando a usar um tipo de suporte, mas não se chama mais suporte, é mais como um suporte para gestantes. É como se já estivesse quase nascendo, tá bom? Então, o que vamos fazer é chamá-lo simplesmente de arnês. Então, vou mostrar outra diferença onde...
+
+Aqui, veja só. Índice, apagamos quase tudo. E nós o movemos para este arquivo chamado harness. Vamos analisar agora o nosso ponto de entrada. O índice sumiu. Então, a
+
+deixa está aí. Mas isso é como se fossem 19 linhas de código, e nós acabamos de executar o harness. Retiramos toda a lógica daqui e a ocultamos em uma função chamada " run harness". E, como seria de esperar, o comando " run harness" faz exatamente a mesma coisa que fizemos no índice, ok? Não há nada de novo aqui, exceto talvez uma função de impressão, que nada mais é do que um log no console. Está
+
+tudo claro até aqui? Sim, acabamos de mudar algumas coisas de lugar. Agora que temos algo chamado arnês, podemos de fato usá-lo. E vamos resolver primeiro o problema da mentira antes de resolvermos o problema de fazer login como eu. Sim, porque diz que eu votei a favor, mas não votei. Eu quero saber.
+
+Então, o que vamos fazer é adicionar algumas proteções e garantir que ela diga a verdade. Se você falhou, me diga a verdade. Como podemos fazer isso? Bem, vamos verificar aqui. Então, muitas, muitas coisas mudaram. Hum,
+
+ou não. Não sei. Espere um segundo. Sim , tudo bem. Muitas, muitas coisas mudaram. Então, executamos o
+
+comando `harvest` e adicionamos um terceiro argumento aqui, que é uma etapa de verificação e o número máximo de tentativas. Max tenta atingir nosso guarda-corpo. Portanto, se você precisou de mais de três tentativas para fazer isso, simplesmente desista. E se formos para o chicote de fios, adicionamos muitas coisas que são apenas código manual. Este não é um prompt diferente. Essa
+
+é a minha lógica. A lógica principal é que a função `run harness` não sobrepõe mais o código que movemos, mas sim o código que movemos para uma função diferente chamada ` run harness attempt`. Então, se formos usar o arreio, vamos por aqui. Preciso verificar a filial, desculpe. Sim . Então, agora, se formos tentar executar o teste de segurança com o arnês
+
+, vamos recolher isso. Vou recolher isto. Vou colapsar todos eles. E se formos tentar executar o teste de arreios, isso é a mesma coisa que o nosso índice. Nós simplesmente movemos isso para uma função chamada " tentativa de execução do conjunto de tarefas" porque nosso conjunto de tarefas principal é apenas um loop que é executado no máximo três vezes, ok? Está claro? Portanto, estamos
+
+apenas aplicando o número máximo de passos, mas ao nível do arnês, por questões de segurança. Então, tentamos executar o teste de arnês que o chama. Temos uma função chamada " verificar voto positivo bem-sucedido". Eu escrevi isso. Isso é determinístico. É isso que eu
+
+quero te mostrar. O que isso faz? Bem, veja, se você se lembra, estávamos rastreando no loop do agente; estamos apenas adicionando eventos históricos. Então, refletimos sobre isso e verificamos se houve um clique do navegador no voto positivo e, se for bem-sucedido, mas realmente bem-sucedido, então consideramos verdadeiro. Mas há um grande porém aqui, que é o fato de agora termos casos de falha de login. Se
+
+houver uma ferramenta chamada "harvest auto login" e a mensagem começar com "failed" (falha), retornamos imediatamente e dizemos "no no, this failed" (não, não, isso falhou). Estamos desmascarando a mentira, ok? Da mesma forma, ocorre um redirecionamento de login irrecuperável . Analisamos as ferramentas de loops de agentes que temos implementado. E se percebermos que o login automático do Harness não foi executado e agora estamos na página que é o URL de login, então, novamente, falhamos.
+
+OK? Então, o que estamos fazendo é adicionar algo como "se isso acontecesse, se aquilo acontecesse, você simplesmente falharia". Volte mais cedo. Está claro? É para isso que serve um arnês. Então, vamos executar
+
+isso agora com o chicote de fios. Uh, execute o agente npm. E agora isso vai parar no Hacker News, e vamos repetir o mesmo ciclo. Ok, vai chegar aqui, e agora ainda falhou, mas veja, parou de mentir porque nosso sistema verifica o histórico da ferramenta e realmente vê o que aconteceu. É para isso que serve um arnês . Ótimo. Isso já é
+
+como se metade da batalha estivesse ganha, porque o primeiro passo para resolver um problema é admitir que você tem um, ok? Ambiente de desenvolvimento orientado a testes. Então, agora que estamos falhando da maneira correta, podemos ter sucesso. E eu gostaria de mostrar isso na última diferença, e então encerraremos a conversa por aqui. Então, número quatro.
+
+Temos uma função completamente nova. Chama-se manipulador de login. Hum, vou adicionar um pouco de realce de sintaxe aqui para que você não fique cego. Mas aqui, crie um manipulador de login. É só isso que faz. Ele
+
+executa cada loop do agente imediatamente antes de enviarmos os dados para os rastreamentos, e é isso que ele faz: verifica a URL atual da sessão do navegador. E se não estivermos em uma página de login, simplesmente aparece "Legal, não tenho nada para você". Isso não é nada custoso em termos computacionais, certo? Se você não estiver na página de login, mas estiver na página de login, preencheremos um valor temporário. Isso pode ser uma variável de ambiente. Pode ser seguro, você entendeu a
+
+ideia. Mas nós preenchemos as credenciais e enviamos o botão programaticamente a partir do framework, não do agente, de forma determinística e segura, porque este arquivo tem acesso a todos os segredos que eu quiser, certo? Então, como se chama isso? Bem, isso é chamado no loop do agente. Então, se voltarmos ao nosso loop do agente e percebermos que estávamos enviando rastreamentos, certo? É aqui que inserimos os
+
+traços. Imediatamente antes, se tivermos um manipulador de login, chamamos esse manipulador no loop do agente. O que faz o manipulador de login? Bem, se não estivermos na página de login, não acontece nada. Se estivermos em uma página de login, as credenciais serão inseridas rapidamente, o formulário será enviado e, em seguida, você será redirecionado de volta.
+
+Além disso, como podemos ver aqui, ele envia uma mensagem para a fila dizendo: "Ei, eu sou o dispositivo de segurança. Fiz login. Agora está tudo certo." Está claro? Sim?
+
+Então, o arnês está literalmente prendendo o agente a algo estável, algo determinístico. É para isso que serve , ok? Vamos executar isso agora e ver o que acontece. Então, execute o comando `npm run agent`. Vai abrir o Hacker News e, quando chegar à tela de login, nessa etapa de segurança, ele fará login, votará positivamente na primeira publicação e fechará.
+
+Incrível. Então, consegui aprovar um pequeno comentário para o Nilux, nível dois, consegui depois de seis tentativas, e posso clicar aqui e ir ao Hacker News e ver que de fato foi aprovado, e posso desfazer o voto agora, o que significa que foi aprovado, certo? Então, o agente usou o computador, fez login como eu, com o meu equipamento que acabei de criar aqui no palco. Esse é o objetivo. Está tudo claro até aqui? Você entende a função de um
+
+arnês? Olha só você acenando com a cabeça. Isso é música para os meus ouvidos. Fantástico. Algo que me chamou a atenção. Não sei.
+
+É bonito aos meus olhos, meio estranho. Não temos uma expressão para isso. Vamos pousar o avião. Terminei. Acho que meu trabalho aqui está concluído. Como isso se traduz
+
+na prática? Por que me importo tanto com arreios? Porque eles comandam o mundo. Os modelos não são determinísticos. E você quer fazer mais com menos. Você quer usar um
+
+modelo barato. Use algo como Quinn ou algo parecido, ou até mesmo algo menor. Use GPT-OSS. É grátis. E com um bom arnês, você pode ir muito longe. É por isso. Na IBM,
+
+criamos um projeto de código aberto que implementamos nas empresas, permitindo que grandes corporações, mesmo em suas áreas privadas com dados sensíveis, realizem operações de rastreamento em todos os tipos de itens, como equipes, chamadas, PDFs e faturas. Nós construímos algo chamado OpenRag, e é... não sei se "Rag" ainda é um termo popular, mas o OpenRag tem uma estrutura incrível que oferece segurança de nível empresarial para lidar com dados internos muito isolados. E é aí que
+
+entra a engenharia de chicotes elétricos. Então, vamos resumir. Abordamos muito conteúdo. Foi um mergulho profundo? Acho que foi um mergulho profundo. Foi uma imersão profunda que durou cerca de 18
+
+minutos. Bem, fomos bastante longe. Não se esqueça que eu não toquei no prompt nenhuma vez. Eu não alterei as configurações do sistema. Acabamos de construir um arnês e o resultado mudou radicalmente. E,
+
+claro, podemos adicionar segredos, podemos adicionar tokens. Sim, fizemos muita coisa. Por fim, espero que você tenha entendido o que é um arnês, o valor que ele pode representar e como você pode utilizá-lo. Qual o próximo passo? Olha, eu não tenho uma bola de cristal como todo mundo aqui, mas não me passou despercebido que 2025 foi o ano dos agentes.
+
+Sim? Hum, 2026 é o ano dos cintos de segurança, tenho quase certeza. Quantas vezes essa palavra é usada aqui? Hum, eu acho que seria muito legal se 2027 fosse o ano dos arreios dinâmicos gerados em tempo real. Seria muito legal se você dissesse para um agente: "Ei, faça isso por mim. Compre uma passagem aérea para mim."
+
+Seja o que for. E então, antes de realizar o trabalho, o agente cria um arnês. Isso é semelhante ao modo de planejamento. Alguém aqui usa o modo avião? Mas, mas turbinado. O agente cria um
+
+dispositivo de segurança real, autoconsciente. Ele sabe: "Ah, talvez eu consiga ter alucinações aqui. Talvez eu consiga. " Cria um arnês, faz o trabalho e retorna para você, protegido por grades e tudo mais. Que legal!
+
+Arnês dinâmicos que podem ser ajustados em movimento. Eu diria que este é, honestamente, o próximo passo lógico em direção à Inteligência Artificial Geral (IAG), e adoraria vê-la em ação. Não sei se isso é só eu sendo...
+
+sabe, um cara estranho com ideias, mas acho que é mais ou menos essa a direção que estamos tomando. Então, com isso, meu tempo está quase acabando. Seria uma grande falha minha se eu não dedicasse os últimos 30 segundos a agradecer imensamente. Os slides estão no GitHub, assim como eu, e adoraria conversar mais sobre isso. Obrigado.
+
+[música]

@@ -1,0 +1,121 @@
+---
+video_title: "How agent o11y differs from traditional o11y — Phil Hetzel, Braintrust"
+video_id: XBaznoTRDFI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XBaznoTRDFI
+video_date: 2026-05-28T23:00:06+00:00
+video_description: |
+  Traditional observability answers one question: is the system up? Phil Hetzel from Braintrust argues that question is not the right one for agents. An individual agent trace can exceed a gigabyte. A single span can hit 20 megabytes. The data is semistructured, packed with unstructured text, and still arrives in real time. None of the systems built for uptime monitoring were designed to ingest, index, and actually use that.
+  
+  Braintrust built a custom database from scratch for this problem: a write ahead log for instant visibility, analytical indexes for fast filtering, and a forked version of Tantivy (a Rust based full text search library similar to Apache Lucene) so an engineer can query every trace that mentioned a specific word. The other difference is who does this work: clinicians, lawyers, and wealth advisers now open traces directly to grade whether an agent responded correctly, and their written justifications become the training signal for automated scoring functions. The human annotations surface the failure modes. The scoring functions scale them.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/philliphetzel/
+---
+Ah, obrigado por se juntar a mim hoje, aqui no final do dia. Então, espero que todos ainda tenham energia suficiente para... qual é o assunto que mais os empolga hoje? Resta saber como a
+
+observabilidade tradicional difere da observabilidade do agente. Uma breve agenda. Vou fazer uma breve apresentação sobre mim e sobre a empresa para a qual trabalho. Bem, esta não será uma apresentação muito focada no produto . Vai ser algo mais teórico.
+
+Então, prometo que não vou te bombardear com slides de vendas. E então vamos analisar como essas duas ideias diferem e também falar sobre o que vem a seguir nesse espaço. Meu nome é Phil Hetzel. Eu lidero a engenharia de soluções na BrainCert. Na prática, isso significa que eu e minha equipe éramos os responsáveis ​​por garantir que nossos clientes obtivessem o máximo valor da plataforma o mais rápido possível.
+
+Antes de ingressar na BrainCert, trabalhei por 12 anos em consultoria e implementação de sistemas. Antes de vir para cá, eu liderava a área global de Databricks na Slalom Consulting . E notei que muitos dos meus clientes eram prolíficos na criação de provas de conceito de IA generativa, mas não tão bons em levar essas provas de conceito à produção. Então, comecei a usar o BrainCert como usuário e gostei muito, então me candidatei a uma vaga e estou aqui há cerca de um ano. Hum, eu gosto de jogar xadrez fora do trabalho. Gosto de passar tempo com minha esposa
+
+e meu dachshund. Esse é o Pistol Pete, com certeza . Esse é o meu cachorro. Ele é uma pessoa de pele morena, não negra. Bem, aqueles de vocês que já participaram das minhas sessões antes não riram dessa piada porque já a ouviram pelo menos uma vez. O
+
+que é BrainCert? BrainCert é uma plataforma de qualidade para agentes. Analisamos a qualidade dos agentes principalmente de duas maneiras diferentes. Seu agente está tendo o desempenho que você esperava durante a produção? Hum, ou seja, você consegue manter a confiança no seu agente? E por outro lado, à medida que
+
+você experimenta novas versões do seu agente, você sente que consegue ganhar confiança conforme o ajusta e modifica ao longo do tempo? Essas são algumas das coisas que a Braintrust faz, obviamente relevantes para a discussão de hoje, porque a observabilidade dos agentes é uma parte essencial do nosso trabalho. Alguém já ouviu falar da Braintrust? Levantem as mãos. Antes desta semana, você já tinha ouvido falar da Braintrust?
+
+Sim, tudo bem, algumas pessoas. Bem, sejam bem-vindos de volta aqueles que já ouviram falar de nós. Bem, vou passar pelos slides bem rapidamente, espero que vocês tenham tempo suficiente para perguntas também. Eu não tenho muito conteúdo. A observabilidade tradicional já está estabelecida, então mesmo quando as pessoas vêm até nós, elas dizem: "Bem, nós já temos ferramentas de código aberto como o Grafana ou, por exemplo, por que não resolveríamos o mesmo problema com uma implementação ou um contrato que já temos?" É algo
+
+muito consolidado. E sabemos que essas aplicações podem operar em grande escala. Então, o argumento que vou apresentar é que o escopo da observabilidade tradicional é, na verdade, bastante diferente do escopo da observabilidade de agentes, e explicarei o porquê. O escopo da observabilidade tradicional, bem, tem tudo a ver com tempo de atividade e desempenho técnico. O aplicativo está funcionando e, do ponto de vista técnico, oferece a experiência de usuário que esperamos? Então, latência, duração
+
+das interações, erros de nível 400 e 500 , tudo isso é medido com ferramentas já consolidadas como o Grafana e o Datadog. Bem, eu diria até que na BrainTrust, embora sejamos uma plataforma de observabilidade de agentes, somos usuários satisfeitos do DataDog. É ótimo para esse tipo específico de caso de uso, pois nos permite entender se as pessoas estão encontrando erros de nível 500 ou 400 em nosso site, por exemplo. O sistema está operacional? Estamos em alta ou em baixa? Isso é o que significa
+
+observabilidade tradicional. Os elementos básicos disso são algumas coisas diferentes. Hum, métricas. Essas são as coisas que você está medindo. Já dei alguns exemplos antes, mas a latência é o mais óbvio. A contagem de erros é
+
+outro fator. As coisas que você pode agregar e medir ao longo do tempo. E então, traços e extensões, hum, todos aqui estão familiarizados com observabilidade? Todo mundo sabe o que é um traço? OK. Não quero presumir
+
+isso. O rastreamento é como uma interação completa de algum fluxo de trabalho. Hum, e um intervalo é apenas uma etapa dentro dessa interação. Bem, todas essas coisas também se aplicariam à observabilidade do agente. Então, nós temos os mesmos, eh, blocos de construção.
+
+Bem, o primeiro problema que explica por que a observabilidade dos agentes é diferente é que os agentes não são determinísticos, enquanto as aplicações são determinísticas. O motivo pelo qual gostamos tanto dos LLMs é porque eles oferecem uma grande variedade de cursos. Eles podem fazer muitas coisas diferentes. Eles são abstratos. Então, por causa disso, enquanto os aplicativos típicos têm caminhos de código muito determinísticos, você sabe, hum, e é proposital que eles façam isso , onde estão executando algum tipo de fluxo de controle conhecido.
+
+As aplicações de agentes são, em grande parte, não determinísticas. Estamos curiosos para saber por que um agente escolheria um caminho em vez de outro. Bem, isso também significa que a observabilidade tradicional terá que se concentrar em métricas muito específicas e conhecidas, enquanto a observabilidade de agentes precisa ser um pouco mais abrangente em termos das coisas que precisa medir. Este é apenas um exemplo disso. Então, vamos começar pela parte de baixo. A
+
+observabilidade do agente pode medir algumas dessas métricas mais tradicionais. Embora com um toque mais voltado para a IA. Tempo até o primeiro token, total de tokens, duração, latência. Todas essas são coisas que você imaginaria serem métricas de nível de observabilidade muito tradicionais. Mas você também pode querer entender aspectos mais qualitativos da sua candidatura. Portanto, não se trata apenas de quanto
+
+tempo levei para começar a responder ao meu usuário, o que é uma forma mais tradicional de observabilidade. Gostaria de saber se as informações que forneci estavam fundamentadas no contexto que reuni com minha candidatura. Utilizei as ferramentas que esperava usar nesta situação ao elaborar minha resposta? A resposta está alinhada com o padrão da marca que defini para este agente no prompt do sistema? Todas essas são coisas que não podem ser testadas por ferramentas de observabilidade tradicionais porque, se você pensar bem, o rastreamento necessário — a informação nele contida para calcularmos esses valores no nível mais alto — é muito maior do que o volume que um rastreamento de observabilidade tradicional conseguiria processar.
+
+Isso nos leva ao próximo ponto . Os rastros deixados por agentes são realmente desagradáveis. Eles estão presentes de diversas maneiras diferentes. Ah, eles são desagradáveis ​​porque são altamente semiestruturados. Mesmo dentro desses dados semiestruturados, existe uma enorme quantidade de dados textuais não estruturados que precisamos analisar.
+
+São volumosos, portanto, um rastreamento de agente pode ter mais de um gigabyte de tamanho. Já vimos isso. Mesmo entre nossos próprios clientes, um intervalo individual pode ter 20 megabytes de tamanho. Portanto, trata-se de um problema de sistemas completamente diferente que precisa ser resolvido para ingerir, processar e, principalmente, usar esse tipo de dado. Além disso, é tão rápido quanto os dados de observabilidade tradicionais. Então,
+
+com sorte, o agente que você está colocando em produção atingirá o Product Market Fit (adequação ao mercado) e você terá muitos usuários e um alto índice de uso associado a ele. Como engenheiro de IA ou gerente de produto desse agente, você vai querer ver essa observabilidade em tempo real, em tempo real verdadeiro. Bem, acredite, sabemos que é assim porque sempre recebemos esse feedback. Você pode fazer isso mais rápido? Estamos sempre tentando tornar isso mais rápido.
+
+As pessoas sempre querem que seja mais rápido. É difícil quando os rastros do agente se parecem com isso, basicamente. Isso é semelhante a um exemplo de rastreamento de agente no Braintrust. Onde não só há uma série de intervalos aqui, abrangendo as chamadas do modelo e as chamadas da ferramenta, mas mesmo dentro desses intervalos, você pode ver a quantidade de texto não estruturado que também está presente . Problema muito diferente para resolver.
+
+Hum, um pouquinho mais aqui. Hum, tipo, talvez eu me concentre especificamente na parte do padrão de leitura. Precisamos fazer duas coisas simultaneamente. Precisamos ser capazes de executar fluxos de trabalho de leitura e ingestão muito rápidos, comuns em observabilidade, ou seja, se alguém realizar uma ação com meu agente, eu preciso ser capaz de ver essa interação praticamente de forma instantânea. Também precisamos nos comprometer com a leitura de padrões em que alguém queira usar nossa CLI e nos enviar comandos SQL, para que possa incorporar rastreamentos de observabilidade ou de valores E para melhorar automaticamente sua aplicação.
+
+Existem muitos meios diferentes que as pessoas usam atualmente para consultar esses grandes padrões de traçados. Hum, este é um problema de sistema completamente novo. Bem, pelo menos na Braintrust, nós projetamos um banco de dados do zero especificamente para rastreamento de agentes. Não vou me aprofundar muito nesse assunto porque temos um blog no nosso site. Acho que foi o último post do blog que publicamos. Se você estiver
+
+realmente interessado em se aprofundar no assunto, mas apenas de forma muito rápida, existem muitos componentes diferentes que precisamos incorporar a este banco de dados para que ele funcione. Por exemplo, precisamos inserir dados imediatamente em um log de transações (write-ahead log) para que as pessoas possam visualizar esses registros instantaneamente, assim que possível. Precisamos ser capazes de indexar esses dados para que, sempre que alguém realizar uma consulta de filtragem ou análise, o processo seja rápido. E nós temos uma coisa chamada índice de Tantivy. Tantivy é um framework de código aberto que nós bifurcamos. Alguém sabe o que Tantivy faz?
+
+Algum palpite? Tantivy é como realizamos, tipo, o estilo de texto na indexação. Então, se você se lembra de quando eu estava mostrando esse rastreamento, faz muito sentido que alguém queira realizar o fluxo de trabalho de, ok, eu só quero saber todos os rastreamentos que contêm a palavra Amazon. Bem, acontece que é realmente difícil fazer isso, a menos que você execute uma indexação completa baseada em texto em seus rastreamentos. Essa é mais uma razão pela qual a observabilidade de um agente é muito diferente da observabilidade tradicional. Na observabilidade tradicional, você realmente
+
+não precisa se preocupar com os problemas de texto. Isso é o mesmo que código aberto? Desculpe? É tipo um motor de jogo de código aberto? O Tantivy é muito parecido com o Apache Lucene, só que escrito em Rust. Sim
+
+. E então todas essas coisas se juntam e precisam ser unificadas por meio de uma linguagem SQL ou similar a SQL. Foi esse o caminho que seguimos na Braintrust. Um problema três. Bem, enquanto existe um tipo muito específico de perfil para observabilidade tradicional, é um engenheiro de sistemas, talvez um engenheiro de produto. Provavelmente não é um
+
+especialista no assunto, ou, se for uma aplicação médica, não é um médico ou enfermeiro registrado. São pessoas com perfil muito técnico que se alinham com a observabilidade tradicional. Bem, isso não poderia estar mais longe da verdade para a observabilidade de agentes, se você estiver fazendo isso bem. Percebemos que as melhores equipes de desenvolvimento de agentes contam com pessoas tanto técnicas quanto não técnicas envolvidas nesse trabalho, pois são as pessoas não técnicas que ou A) estão mais próximas dos usuários ou B) possuem o conhecimento mais próximo do problema em questão. E o que eles podem fazer agora com os prompts?
+
+Eles podem escrever isso em linguagem natural. Assim, eles podem agregar valor real ao possibilitar a participação de agentes. Temos pessoas que são médicos, enfermeiros registrados, consultores financeiros ou advogados. Já os vimos operar em nossa plataforma, analisando rastreamentos e usando essas informações para melhorar. Esse é um fluxo de trabalho que você simplesmente não vê na observabilidade tradicional, onde a preocupação maior é com o tempo de atividade. Bem,
+
+acho que, em geral, as pessoas não percebem que, para realizar observabilidade e avaliações de forma adequada, consideramos observabilidade e avaliações como o mesmo problema. A única diferença entre as avaliações é que você as executa em lote e conhece as entradas antecipadamente. É incrível a profundidade que você consegue atingir quando cria uma plataforma como esta. Parece que... Parece que sim
+
+, por causa dos motivos que descrevi. As nuances relacionadas aos dados , a quantidade e os tipos de pessoas que você precisa incluir no processo. Esses são alguns dos motivos pelos quais se apresentar nesse espaço é tão diferente. Hum, para onde vai esse espaço? Bem, nós já fizemos muito trabalho nessa área. Acho que a pergunta natural
+
+que costumávamos receber era: se vocês, da BrainTrust, estão coletando todos os rastros dos nossos agentes, e todos esses rastros contêm dados valiosos, vocês não podem simplesmente me dizer como as pessoas estão usando meu agente? Bem, e são as perguntas simples que geralmente precisam dos sistemas mais complexos por trás delas . Bem, isto é algo que estamos começando a fazer. Bem, nós implementamos isso há cerca de um mês em nossa oferta de software como serviço, onde recebemos rastros de observabilidade do agente e, em seguida, executamos um LLM bem leve sobre eles para realizar o embedding e o clustering desses rastros, a fim de ver como podemos realizar uma modelagem de tópicos avançada para entender, por exemplo, como as pessoas estão usando nossos rastros, suas intenções, como se sentem ao interagir com nosso agente, o sentimento, ou se estão encontrando problemas, quais são esses problemas em potencial. A ideia principal é que você pode, hum, criar um ciclo de iteração entre um problema que você está vendo em produção e a solução que você está testando. A ideia principal é
+
+tornar isso mais rápido e um pouco mais direto. Hum, eu prometi que ia passar por isso bem rápido. Tenho cerca de 3 minutos para perguntas, se houver alguma, e ficarei muito feliz em respondê-las.
+
+Alguém tem curiosidade sobre isso? Sim. Portanto, o BrainTrust trata claramente da observabilidade funcional dos agentes. Você diria que eu também diria que é técnico? Você diria que também é bom para o desempenho de agentes não funcionais, ou a observabilidade tradicional é suficiente para isso?
+
+Essa é uma boa pergunta, sim. Bem, acho que a observabilidade tradicional pode fazer isso. Um BrainTrust especificamente faz isso. Eu gosto da maneira como você colocou essa observabilidade funcional. Qual é a qualidade do meu agente, segundo a minha definição? E aí a
+
+observabilidade técnica meio que entra em cena por conta própria . Tipo quando você rastreia o aplicativo, você automaticamente obtém a duração dos prompts, o tempo até o primeiro token, etc. Acertos de cache, etc. Sim. No seu tobogã de iceberg, sim.
+
+Você tem anotações humanas? Sim. ali na linha d'água. Sim . Poderia explicar o que é a parte de anotação humana neste produto?
+
+Então, vamos pensar nisso desta maneira. Bem, na verdade, se eu puder, vou me arriscar e mostrar, sem contar. Então, digamos que você recebeu um rastreamento e quer que seu gerente de produto possa opinar se o agente fez um bom ou um mau trabalho. É muito valioso para você ter um especialista que avalie os agentes e também justifique os motivos dessa avaliação . Porque, eventualmente, você vai pegar essas justificativas, provavelmente vai aplicar um LLM nelas e vai criar funções de pontuação mais escaláveis a partir dessas justificativas. Você está
+
+identificando os modos de falha que podem ser implementados em pontuações automatizadas por meio disso. Sim . A anotação humana é uma parte realmente fundamental desse processo. Sim , na segunda fila. Sim, eu só tenho uma pergunta.
+
+Eu sei que você está focado em observabilidade hoje, mas estou interessado em saber como você integra isso com a outra estrutura genética para ter um ciclo fechado, como na otimização offline. E também, hum , acho que a principal diferença que vejo no seu banco de dados é que vocês não estão usando OLAP, porque nós costumávamos usar o ClickHouse, na verdade. Sim, nós nos afastamos disso. Sim, eu só queria saber por curiosidade por que você construiu o seu próprio. Qual a eficiência disso?
+
+Bem, a resposta engraçada é que o nosso fundador é meio maluco . Só um louco construiria seu próprio banco de dados, mas ele é assim mesmo. Ele foi um dos primeiros funcionários da SingleStore, então está meio que acostumado a fazer isso. Mas o que ele descobriu foi quando...
+
+acho que foi... vejamos este slide. Ele descobriu que, ao executar algumas dessas tarefas, precisava de mais índices baseados em texto , algo que o ClickHouse não conseguia fazer, pelo menos não naquela época. Então nós
+
+construímos a nossa própria. E então, a primeira parte da sua pergunta, observabilidade e avaliações, para nós é como se resolvêssemos com o mesmo sistema. A única diferença é que, com as avaliações, conhecemos as entradas antecipadamente e fazemos isso em lote. Com a observabilidade, não sabemos quais serão as entradas antecipadamente e as processamos em tempo real. Mas eu me refiro à funcionalidade do experimento. Tipo, quão fácil é
+
+integrar com... tipo, hum...
+
+estou treinando em... Ah, sim, deve ser bem fácil. Tipo, depois de você ter traçado o desenho, eu peço desculpas por estar falando sobre o produto.
+
+Mas quando você recebe um traço , você o rastreia e então o adiciona a um conjunto de dados offline para poder fazer experiências com ele. Sim. Eu... nós temos... nós temos... Não tenho certeza se há
+
+alguém atrás de nós nesta sala. Precisamos mesmo? Estou aqui. Eu não tenho certeza. OK.
+
+Ah, é mesmo? OK. Então, fico feliz em continuar . Sim. Eu quero algo ótimo.
+
+Perfeito. Sim. Sim
+
+.
+
+Hum, podemos. Você gostaria de falar especificamente sobre o Brain Trust? Como assim, para essa resposta? Sim. Então, tem essa coisa de pontuação online aqui, onde é uma incógnita conhecida, mas você pode atribuir uma nota a ela.
+
+Mas também existem maneiras em que é mais como isso, não são pontuações. É como aquela peça dos desconhecidos desconhecidos. Entendi. Sim, obrigado. Um lugar onde podemos, de uma forma mais aberta, extrair insights disso. Sim. Sim
+
+. Provavelmente é hora de responder a uma pergunta. Se não for ótimo. Agradeço a atenção de todos hoje. Obrigado.

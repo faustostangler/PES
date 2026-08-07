@@ -1,0 +1,79 @@
+---
+video_title: "Production Evals For Agentic AI Systems - Nishant Gupta, Meta Superintelligence Labs"
+video_id: vljxQZfJ9wY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vljxQZfJ9wY
+video_date: 2026-06-25T18:15:06+00:00
+video_description: |
+  As AI systems evolve from chat interfaces into autonomous agents capable of reasoning, planning, and tool usage, traditional evaluation approaches are breaking down. Offline benchmarks and static datasets fail to capture the complexity, non-determinism, and operational risks of real-world AI systems operating in production environments.
+  
+  In this talk, I’ll share practical lessons and architectural patterns for building evaluation systems for agentic AI workflows at scale. We’ll explore how modern AI platforms are shifting from one-time benchmark testing toward continuous evaluation pipelines integrated directly into production infrastructure.
+  
+  Topics include:
+  - Why offline evals fail for autonomous AI systems
+  - Evaluating tool use, planning, reasoning, and multi-step workflows
+  - Online vs offline eval architectures
+  - Human-in-the-loop evaluation systems
+  - Detecting drift, hallucinations, and unsafe behaviors
+  - Building feedback loops for continuous improvement
+  - Observability and telemetry for agentic workflows
+  - Reliability metrics beyond model accuracy
+  
+  Attendees will leave with practical frameworks for designing scalable evaluation systems capable of measuring real-world AI behavior, reliability, and operational impact.
+  
+  Speakers:
+  - Nishant Gupta (Meta Superintelligence Labs): Nishant Gupta is a Software Engineering Tech Lead at Meta Superintelligence Labs focused on building the training and inference AI Infrastructure.
+    LinkedIn: https://www.linkedin.com/in/nishantgupta-ai/
+    GitHub: https://github.com/nishantgpt-lab
+---
+Olá a todos. Meu nome é Nishant Gupta e sou líder técnico de engenharia de software na Meta, onde trabalho na construção da infraestrutura de treinamento e inferência para o Meta Super Dangerous Lab e para a organização de infraestrutura. Hoje vamos falar sobre a produção de anúncios para sistemas agentes. Quando a maioria das pessoas ouve a palavra avaliação, pensa em indicadores de desempenho. Um modelo obtém uma pontuação de 90% em um teste de referência. Uma nova
+
+versão obteve 92%. A equipe comemora. Mas os sistemas de agentes mudaram fundamentalmente o significado da avaliação. Hoje em dia, os sistemas não se limitam a gerar respostas. Eles planejam. Eles chamam isso de ferramentas.
+
+Eles recuperam informações. Eles executam fluxos de trabalho. Eles interagem com a infraestrutura de produção. A questão já não é se o modelo gerou a resposta correta. A questão é: o sistema se comportou corretamente?
+
+Hoje gostaria de discutir como a avaliação está evoluindo da comparação de modelos para a infraestrutura de produção. Este é o problema que quase todas as organizações de IA enfrentam atualmente. Os indicadores de desempenho offline continuam a melhorar. No entanto, a confiabilidade da produção muitas vezes permanece imprevisível. Por que é que?
+
+Porque os benchmarks medem a capacidade do modelo. Comportamento do sistema de medidas de produção . Um teste de desempenho não leva em consideração falhas de ferramentas, interrupções de API, mudanças de contexto, variabilidade do usuário e fluxos de trabalho de longa duração. E à medida que os sistemas se tornam mais autônomos, a diferença entre o desempenho de referência e o desempenho em produção aumenta. O resultado é o que muitas equipes vivenciam hoje em dia.
+
+Como podem ver, os resultados nos testes de desempenho são altos, mas o comportamento em produção é instável. A avaliação tradicional de um LLM centra-se nos resultados. Mas devemos nos perguntar: o modelo produziu a resposta correta? Os sistemas agentes nos obrigam a fazer uma pergunta diferente. O sistema funcionou corretamente? O comportamento engloba o
+
+planejamento da qualidade, o uso de ferramentas, a execução, a execução do fluxo de trabalho, a recuperação de falhas e a tomada de decisões. Em outras palavras, estamos passando da avaliação de respostas para a avaliação de fluxos de trabalho. E isso exige arquiteturas de avaliação fundamentalmente diferentes. Muitas equipes ainda acreditam que as alucinações são os principais modos de falha da IA. Na produção, muitas vezes constituem apenas uma categoria. Os
+
+sistemas agentes introduzem toda uma hierarquia de modos de falha. Na base de tudo, estão as falhas de memória, as falhas de recuperação e as falhas de segurança. À medida que se sobe na carreira , é preciso levar em consideração erros de raciocínio, planejamento inadequado e execução incorreta das ferramentas. No nível mais alto , é preciso pensar em falhas de coordenação entre múltiplos agentes. E é por isso que avaliar apenas a saída do modelo ignora a maior parte do risco de produção que observamos.
+
+Uma das mudanças de mentalidade mais úteis é parar de pensar como pesquisador e começar a pensar como um SRE ou um engenheiro de produção. Os SREs não medem o sucesso com base na precisão. Eles medem confiabilidade, disponibilidade, latência, custo e recuperação. E os sistemas agentes requerem a mesma abordagem. O objetivo não é maximizar as pontuações de referência. O objetivo é maximizar os
+
+resultados confiáveis. A confiabilidade torna-se o principal indicador. A precisão passa a ser o único fator relevante.
+
+Nesta pirâmide está representada a minha visão pessoal sobre os sistemas modernos de avaliação de IA. Na parte inferior, você pode ver que são parâmetros de referência. Eles são úteis. Eles são escaláveis. São repetíveis. Mas seu valor operacional
+
+é limitado. No meio, encontram-se as avaliações baseadas em cenários . Essas simulações reproduzem fluxos de trabalho realistas. E no topo, você vê a telemetria de produção. É daqui que provêm os sinais de avaliação de maior valor. A
+
+descoberta surpreendente é que a maioria dos dados de avaliação geralmente provém de usuários reais interagindo com sistemas reais. Agora, vamos falar sobre avaliações offline de IA . Portanto, a avaliação offline ainda é importante, mas a metodologia muda. Em vez de avaliar instruções, avaliamos cenários. Por exemplo, um fluxo de trabalho de suporte ao cliente, um fluxo de trabalho de geração de código, um fluxo de trabalho de pesquisa. O agente opera dentro desse
+
+ambiente simulado. Medimos a taxa de conclusão de tarefas, a precisão das ferramentas, a qualidade do planejamento e o uso de recursos, que se tornam exponencialmente altos em grande escala. A principal conclusão é que a avaliação do agente deve ser orientada por cenários, e não por instruções prévias . Uma vez que um sistema entra em produção, cada interação se torna um sinal. Essa é uma das maiores mudanças no pensamento sobre avaliação. O tráfego de produção
+
+não é mais apenas tráfego. Isso se transforma em dados de avaliação. Coletamos registros de execução, resultados do usuário, escalonamentos, falhas e sinais de feedback. A produção é o conjunto de dados de avaliação mais amplo e representativo que qualquer organização jamais terá. Muitas organizações consideram os seres humanos como sistemas de contingência. Acho que essa é uma
+
+perspectiva equivocada. Os seres humanos são os avaliadores. Eles fornecem sinais que os sistemas automatizados não conseguem. Eles avaliam a correção, a confiabilidade, a utilidade e a segurança. Esses sinais tornam-se realmente críticos para calibrar os fluxos de avaliação e identificar pontos cegos nas métricas automatizadas.
+
+Os sistemas mais bem-sucedidos combinam a avaliação automatizada com a revisão humana direcionada . Agora, os sistemas de agentes sofrem deriva constante. Alterações no modelo. Você recebe uma nova versão a cada duas semanas ou meses. Os avisos podem mudar, as ferramentas podem mudar, o comportamento do usuário pode mudar. O desafio é
+
+que nenhuma mudança isolada parece mais catastrófica. A confiabilidade se degrada gradualmente. A taxa de sucesso diminui, a escalada de problemas aumenta e as falhas das ferramentas se intensificam. Sem avaliação contínua, as equipes geralmente só descobrem a deriva quando os usuários reclamam. O monitoramento contínuo torna-se essencial.
+
+Observabilidade e avaliação são inseparáveis. Para avaliar um agente, precisamos de visibilidade dos caminhos de raciocínio, das chamadas de ferramentas, do acesso à memória, dos cronogramas de execução e das transições de estado. Como você pode ver neste gráfico, os registros tradicionais não são suficientes. Precisamos de rastreamentos detalhados, assim como em qualquer arquitetura de microsserviços profundamente aninhada para qualquer aplicação ou serviço em questão. Os rastreamentos de agentes tornam-se o equivalente ao rastreamento distribuído para cargas de trabalho autônomas. Sem observabilidade, a
+
+avaliação se torna um mero palpite. Vamos falar sobre o ciclo de avaliação contínua, pois a avaliação é um serviço que está sempre em execução, e não uma fase de teste. Historicamente, a avaliação sempre acontecia antes da implantação, mas agora a avaliação continua após a implantação até que problemas sejam identificados, como você pode ver em A. Revisões humanas analisam os casos extremos, o feedback aprimora os conjuntos de dados, cenários offline validam as atualizações; o ciclo nunca para. A avaliação deixou de ser apenas uma fase e tornou-se uma capacidade operacional.
+
+Este é provavelmente o slide mais importante desta apresentação. Cada métrica apresentada aqui está diretamente relacionada a um resultado de negócio. A conclusão da tarefa mede o valor entregue. O sucesso de uma ferramenta mede a sua confiabilidade operacional. A taxa de escalonamento mede o impacto humano.
+
+As violações de segurança medem a exposição ao risco. A latência afeta a experiência do usuário. O custo determina a escalabilidade. A taxa de recuperação reflete a resiliência. E repare, repare mesmo, que falta precisão.
+
+Não é que a precisão não importe, mas sim que o sucesso nos negócios depende de muito mais do que apenas precisão. Agora, essa é a arquitetura para a qual a indústria está caminhando, mais ou menos. A avaliação passa a fazer parte do plano de controle, não sendo uma ferramenta separada, nem um processo offline. O plano de controle observa continuamente os sistemas, coleta telemetria, executa simulações e coordena a revisão humana, enquanto o plano de execução realiza o trabalho. O plano de controle mede e governa o comportamento, e essa separação está se tornando um padrão fundamental para sistemas de IA em produção.
+
+Agora, vamos resumir as principais lições. Em primeiro lugar, os parâmetros de referência continuam sendo necessários, mas são insuficientes. Em segundo lugar, os sistemas de agentes devem ser valorizados como fluxos de trabalho, e não como resultados individuais. Em terceiro lugar, a telemetria de produção é um sinal de avaliação importantíssimo. Em quarto lugar, a confiabilidade acaba sendo mais importante do que a precisão bruta do modelo. E,
+
+finalmente, a avaliação está se tornando a infraestrutura, não os testes, não o controle de qualidade . Essa é a mudança que toda organização que desenvolve IA para agentes eventualmente precisará fazer.

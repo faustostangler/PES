@@ -1,0 +1,121 @@
+---
+video_title: "Scaling Agents on Kubernetes with acpx and ACP — Onur Solmaz, OpenClaw"
+video_id: VaS2h-dY1-4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VaS2h-dY1-4
+video_date: 2026-05-21T15:00:06+00:00
+video_description: |
+  OpenClaw receives 300 to 500 pull requests per day. Most arrive AI generated, most are not mergeable, and every one of them is signal about something broken in the codebase. Onur Solmaz built acpx to process them without him in the loop.
+  
+  acpx is a headless CLI for the Agent Client Protocol. It replaces PTY scraping with structured agent to client communication and drives sessions through a node based workflow graph: reproduce the bug, judge the implementation, check for conflicts, run a review loop, emit structured JSON. Onur runs parallel Codex sessions from Discord channels while traveling, one channel per task. The talk ends with disposable agent pods on Kubernetes, a Go operator that provisions a full compute environment per task, wires it into Slack, and tears it down when the work is done.
+  
+  Speaker info:
+  - https://x.com/onusoz
+  - https://www.linkedin.com/in/osolmaz/
+  - https://github.com/osolmaz
+---
+Bem-vindo. Então, a palestra é sobre a construção de um ICP no Open Clo. Também aborda outras coisas, como a implementação de agentes de código aberto em frameworks de agentes de código aberto no Kubernetes e coisas do tipo. Então, eu espero poder compartilhar hoje, de uma forma agradável, aquilo em que tenho trabalhado nos últimos dois meses. Um pouco sobre mim, bem brevemente.
+
+Um pouco sobre mim. Eu venho construindo chicotes elétricos desde alguns meses antes do lançamento do ChatGPT. Eu criei uma extensão do Jupiter Lab sobre o modelo original do Codex, como o DaVinci Code 2. Naquela época , eu trabalhava para uma startup e essa estrutura de programação inicial se transformou na estrutura atual ao longo do tempo, como um navio de Teseu. Foi desmontado e remontado tantas vezes.
+
+E sim, eu sou um dos engenheiros fundadores de lá. Estou na indústria há três anos e meio. Uso o Open Clo desde que o Clo Bot foi lançado no Discord. Eu entrei lá . Acompanho o Peter desde que ele escreveu "Clo code is like computer". Eu pensei: "
+
+Esse cara é maluco." É que o Clo insistiu, tipo, eu não ia dar minha máquina para ele, mas ele foi lá, ele se aventurou e abriu o caminho para nós. E quando vi o Clo Bot no Discord, fiquei impressionado. No dia seguinte, eu o instalei na empresa, no nosso cluster. Basicamente, eu estava conversando com pessoas no Discord e todo mundo ficou impressionado. E nós pensamos: "Já
+
+estamos acostumados a vender a empresa há alguns anos." Por isso, comecei adicionando a integração com o MS Teams, caso seja útil em algum momento. E, ao longo do caminho, acabei me tornando um responsável pela manutenção. Eu estava lá quando o nome foi alterado duas vezes. E hoje, meu foco é na interoperabilidade e orquestração de agentes. Um
+
+dos meus objetivos é acelerar a adoção do Open Claw e de softwares adjacentes pelas empresas, além de abordar a questão da segurança do Open Claw. Bem, estará seguro, ou melhor, Peter já falou bastante sobre isso antes, então não tenho mais nada a acrescentar . Parece que ainda está em fase de desenvolvimento.
+
+Desculpe. Vou usar isso. Então, tudo começou quando comecei a desenvolver fluxos de trabalho imediatamente, criando um PR (Pull Request). E aí podemos chamar isso de desenvolvimento orientado pelo Discord. Bem, o desenvolvimento orientado a Telegram se adapta melhor porque é TDD, então, logo
+
+depois que eu o configurei pessoalmente, percebi que o Opus não é tão confiável para projetos complexos como era antigamente . Agora está melhor. Os agentes estão melhorando, mas o Codex era minha ferramenta principal e eu queria usá-lo no Discord. Mas era algo básico, eu estava dizendo que estava brincando de telefone sem fio. Eu estava dizendo para o Opus dizer ao Codex para fazer alguma coisa. Só Deus sabe o que está dizendo,
+
+sabe, porque a escolha das palavras é importante na hora de dar instruções , mas de alguma forma estava funcionando e eu dizia "hum" e depois olhava a sessão do Codex e ele meio que parafraseava o que eu estava dizendo, mas eventualmente, sabe, eu consegui fazer algumas coisas, mas eu sabia que isso poderia ser feito de uma maneira muito mais fácil. E hoje estou executando uma IDE completa no Discord, sabe, temos cargas de trabalho paralelas. Você tem de um a cinco canais, tipo cinco, e eu estou trabalhando com um a cinco agentes em qualquer momento. Então você vê os códigos de um a cinco e depois fecha para testar o recurso de abrir e fechar o painel de controle . E basicamente é assim que meus canais se parecem. E
+
+é muito bom para programar em qualquer lugar, porque eu sou um cara viciado em projetos paralelos e gosto de... sabe, a IA está facilitando muito esse tipo de coisa, como fazer em paralelo. Você tem uma inspiração, executa no fim de semana e já deixa tudo pronto. Você envia. O
+
+ACPX, sobre o qual vou falar, é semelhante. Eu construí isso através do Discord. E o que você faz é... você vincula
+
+o canal do Discord ao Codex através do ACP. Você também pode usar o protocolo de servidor de aplicativos Codex . Harold, outro responsável pela manutenção, desenvolveu isso. E aqui estou eu usando o programa antes de viajar para Londres para criar um PDF, basicamente convertendo os documentos do ACP para PDF. E aí eu tenho que dizer para colocar no modo temporário porque abrir o Codex não reconhece o dispositivo e não consegue me conectar pelo Discord. Então eu
+
+mudo para outro canal e peço para me enviarem a mensagem por esse canal. Somos desenvolvedores e não temos tempo para aprimorar muito bem nossas ferramentas, mas conhecemos suas vantagens e desvantagens. O que é ACP? Então, não é... a maioria das pessoas diz que é
+
+como o MCP? MCP significa fornecer ferramentas ao modelo. Os ACPs servem para padronizar a interação entre o agente e o cliente . É um salve para o Zed. Na verdade, esqueci de colocar o logotipo do Zed. Um
+
+Zed está construindo um novo editor em Rust mais eficiente, com menor consumo de memória, e não em Electron. Então, eu também uso o Zed desde o outono passado e, você sabe, se você usa o Codex no VS Code ou no Cloud Code, todos eles criam plugins diferentes. Não é bem assim. É como se fosse muito trabalho desperdiçado. Se ao menos fosse possível padronizá-los em uma única interface, criá-la apenas uma vez e depois distribuí-la. E essa era a
+
+ideia que eles tinham. Também há muito menos trabalho duplicado. Existem padrões concorrentes. Então, agente, tipo protocolo agente para agente, é para agentes se comunicarem entre si . O ACP, protocolo de cliente-agente, serve para comunicação entre humanos e agentes, mas o agente também pode usar a comunicação humana para se comunicar com outros agentes.
+
+A longo prazo, à medida que esses protocolos forem adotados, daremos suporte a todos eles. Vamos avaliar as vantagens e depois utilizá-las de alguma forma. Mas quando precisei, escolhi o ACP porque, quando mais precisei, precisei de adaptadores para Codex e Cloud Code, e somente eles os tinham disponíveis, enquanto o Google não os tinha na época. Foi por isso que o escolhi. Então, quando você adiciona funcionalidades ao OpenCLO, você faz isso através de uma CLI (linha de comando).
+
+Então, eu disse: "Ok, vamos criar uma CLI para o ACP. Vamos permitir que o agente chame qualquer outro agente pela linha de comando." Então, foi assim que tudo começou. E está lentamente se tornando um canivete suíço para ACP, como mostrarei em breve.
+
+Então, no Open Clo, você tem mangueiras de incêndio. Uh, temos 60 KPRs, uh, mais de 60 KPRs no total. Em média, ficam abertos de 300 a 500 estabelecimentos por dia . E basicamente, da noite para o dia, as pessoas acordaram e decidiram que queriam algo como garras abertas. Portanto, temos dezenas de milhares de partes interessadas que desejam adicionar recursos ao OpenClaw. E o maior desafio
+
+do projeto atualmente é como absorver todas as necessidades e desejos dessas pessoas? E como você os equilibra? Como assim? Não dá para agradar a todos. E como criar um sistema elegante sem gerar uma IA de má qualidade?
+
+Isso pode atender às necessidades de todos. E o fluxo de trabalho de Peter me deu uma ideia. Então, isso também é algo que eu faço. Você vai lá e pergunta ao seu mecânico: "O que é isso?". É aí que o departamento de
+
+relações públicas entra em cena. E, como na maioria das vezes, é uma descrição gerada por IA . Tipo, o que é isso? Bem, se o ser humano dedicou tempo e reflexão a isso, ótimo. Mas sim, você precisa perguntar o que está acontecendo. Você pergunta: qual é
+
+a melhor solução possível? Na maioria das vezes, a resposta é não. E então você pode continuar assim como ele escreveu. Assim como você, você também troca mensagens com o agente. O motivo é que as pessoas simplesmente se deparam com um problema ao usar a garra aberta.
+
+E vai usar o GitHub. E aí eles simplesmente dizem: "Por favor, consertem." E aí eles simplesmente mandam um monte de porcaria para você. Sabe, isto é...
+
+Você não pode mesclar, mas também pode descartar completamente. Você precisa considerar esse ponto de dados. É como um feedback crucial do usuário. Então, você precisa categorizar, colocar em uma caixa, sabe? Isso indica quando alguma parte do código está quebrada. E Vincent também
+
+falou um pouco sobre isso. E aqui está a extensão de código dele fazendo isso. De um lado está aquele que diz que é uma boa solução. E deste outro lado, está apenas dizendo que não é ruim. E é tudo tão mecânico, e depois de fazer isso repetidamente, você percebe que está repetindo a mesma coisa. Quem dera fosse possível
+
+programar algo para automatizar isso. Então, você está automatizando o automatizador. Então, eu comecei a criar fluxos de trabalho de uma forma abstrata. Então, o item vem com a PR e depois você descobre a intenção. Você está avaliando a implementação.
+
+Você fica tipo, olhando para ver se há conflitos. Bem, se as avaliações apontarem alguns problemas que precisam ser resolvidos. Portanto, você precisa fazer com que a integração contínua (CI) seja aprovada, caso ainda não esteja sendo . A maioria das pessoas simplesmente não se importa com isso. Idealmente, todo esse trabalho mecânico já deveria estar resolvido quando a versão final do comunicado de imprensa chegasse às suas mãos, e é nisso que estou trabalhando.
+
+Ah, no fluxo de trabalho temos os vergonhosos loops de refatoração de revisão do Ralph. Bem, eu acredito que, sabe, quando as pessoas dizem tipo, " dê um jeito de executar um agente em um loop", isso não significa necessariamente que ele vá criar uma inclinação. Desde que você não esteja usando o programa para criar algo, mas sim para descobrir bugs superficiais que possam ser facilmente corrigidos, tudo bem. Então, no fluxo de trabalho abstrato que eu criei, que na verdade se chama "como se estivesse se voltando para um programa", você pode instruí-lo a fazer refatorações superficiais e, em seguida, pode dizer se ele precisa de uma refatoração fundamental relacionada ao usuário. Resolver conflitos também não precisa ser assim. Não, era difícil antigamente.
+
+Acho que ninguém mais resolve conflitos manualmente. Então, basicamente, estamos criando procedimentos operacionais padrão para os agentes. Essa é uma palavra sofisticada para fluxo de trabalho. Então, foi isso que eu incluí no ACP-X. É um mecanismo de fluxo de trabalho semelhante ao A10.
+
+Mas está executando uma sessão do Codex. Você vê à direita. Deixe-me mostrar-lhe na prática.
+
+Então, essa foi uma das ações de relações públicas. Está carregando. Vamos acelerar um pouco o processo. Portanto, existem algumas partes programáticas. Então, isso é apenas uma repetição do que já está acontecendo.
+
+Está reproduzindo o bug. Está avaliando a refatoração. Está em fase de revisão. Estou fazendo um ciclo de revisão. E a avaliação não trouxe nenhum resultado.
+
+É o que eu faço, mas faço com que a saída seja em formato de dados estruturados em JSON, para que eu possa inseri- la em um fluxo de trabalho diferente. E eu vou falar, sabe, este é um mecanismo de fluxo de trabalho geral. Motor. Você também pode usá-lo em outras coisas. É como se você precisasse aplicar agentes generosamente nos problemas. Então, eu vejo como uma
+
+pomada que você aplica generosamente em qualquer problema que possa ser resolvido com agentes. Você precisa se desvencilhar do problema e resolvê-lo com agentes. E os agentes pessoais, eu acho que estão em um mesmo nível, existe a Spectrum Enterprise e o agente pessoal. Normalmente, você vê o trabalho que usa no computador e depois o PC que usa no trabalho. E o uso de PCs em casa costumava ser relativamente semelhante, mas esse não será o caso com agentes, porque no trabalho você estará consumindo muito mais inferência.
+
+E isso significa que no setor empresarial haverá muito mais dinheiro a ser ganho. Por isso, também estou um pouco entusiasmado com os agentes empresariais e com o potencial que eles representam. É por isso que acredito em agentes descartáveis ​​sob demanda. Se você usa um clone aberto do Slack, Teams ou Discord, este é um exemplo. Você cria um aplicativo.
+
+O problema é que você não consegue realmente interagir com várias instâncias disso,
+
+tipo, você cria uma conexão, cria um aplicativo do Slack para conectar outro agente com outro nome e outra foto de perfil, você precisa criar outro aplicativo. Você precisa criar um manifesto de aplicativo. E é algo que não deve ser gerenciado manualmente com cliques. E plataformas como aplicativos de bate-papo ainda não têm o padrão que permite o provisionamento multiagente, como criar agentes diferentes de forma simplificada. Isto é o que está na tela que você vê. Eu pedi ao ChatGPT para gerar a
+
+ideia. Você tem um agente, e o nome pode ser gerado por um aplicativo subjacente, permitindo que você se comunique com ele separadamente. Isso não é suportado, e precisa ser suportado para que essa visão funcione. Enquanto não houver suporte, estou usando em outra interface de usuário. Porque vamos iniciar um agente por tarefa, e eles trabalharão nessas tarefas, criando e editando arquivos, e tudo será sincronizado. Será...
+
+será diferente do que você está acostumado com seu agente pessoal. E para conseguir isso, você precisa de alguns componentes-chave. Você precisa ter o Kubernetes instalado. Você precisa ter um arnês de agente. Open Cloak pode ser uma delas. O Codex
+
+Cloud Code pode ser uma delas. Pode ser um CP. Pode ser o GitHub. Você concede acesso de leitura e gravação, e gosta de sincronização de dados de estado. Assim como você, talvez você faça algo usando o rsync.
+
+Algo parecido com o algoritmo que o Dropbox usa. E existem alguns projetos que estão abordando isso. Tenho estado a trabalhar nisto, isto está fora do Open Cloak. Este é o meu trabalho diário. E é um orquestrador de código aberto.
+
+É o operador de objetivo que, basicamente, lida com as partes complicadas. Sabe, existe a experiência do usuário. Você quer criar um serviço de concierge no Slack. É como um agente de concierge com quem você está conversando , mas o serviço fica congestionado porque você tem 100 funcionários no Slack. Então, se você precisar realizar alguma outra tarefa, talvez precise criar uma nova, e então o sistema cria e fornece um link para um site. Bem,
+
+vou pular as menções honrosas ao Cognition e ao Devin , porque, sim, eles inventaram a categoria, mas estou com pouco tempo. Então, o repositório está em text cortex sprits. Vou apenas demonstrar como funciona para o nosso caso de uso. Atualmente, usamos isso para relatar erros. Então, se você estiver no Slack, sabe, você pode pedir para enviar um agente para depurar o problema, sabe, tipo, "Estou perguntando se há algum bug novo após o lançamento em produção." E isso significa alguma coisa.
+
+E então você pede para ele criar um agente. Bem, se eu pudesse adicionar esse agente ao Slack, eu o faria, mas não posso . Então, preciso colocá-lo em outra interface de usuário. E este é um projeto de código aberto. Você pode usar isso, bem, para interfaces de usuário , como um aplicativo React hospedado no cluster no qual você está implantando esses gráficos Helm. E,
+
+bem, você... isso inicia a conversa. Começa a trabalhar no, hum, problema.
+
+É como o Codex Web, o Devin ou algo do tipo, mas na verdade utiliza um pod Kubernetes completo. É um desperdício, mas acho que é a melhor abstração porque o OpenCore mostrou o poder que ele tem quando você dá um computador inteiro para um agente; ele se torna muito mais poderoso. Hum, e eu também acredito nisso . Hum, eu... eu
+
+acho que... mãos abertas usam fogos de artifício. Então, eu também não sou muito versado em todas as diferentes estruturas de virtualização.
+
+Então, eu também estou aprendendo ao longo do caminho, mas tenho um produto funcional que está rodando no Kubernetes. E você pode usar este produto se estiver interessado em implantá-lo internamente e usar o Codex na web. E aí você pode criar componentes independentes, como um back-end, por exemplo. Se você tiver um projeto de código aberto, posso te ajudar a configurar isso . Se você tem um sistema que recebe apenas 100 ou centenas de solicitações por dia, posso ajudá-lo a processá-las. Bem,
+
+isso é o que faz toda a fiação em torno do Slack, mantendo esses agentes ativos, a experiência do usuário e a interoperabilidade. Você não está vinculado a nenhum agente. Você pode mudar. Tudo é construído de forma abstrata com o ACP. Sim .
+
+Essa foi a minha apresentação. Ah, obrigado por ouvir. Alguns links de redes sociais caso você queira entrar em contato comigo. Só quero deixar claro qual é a minha perspectiva em relação ao OpenFlow e ao TextCortex . Então, esta última parte foi sobre o TextCortex e o trabalho que eu faço no TextCortex. Só
+
+para deixar claro. Muito obrigado por ouvir. Acho que sim . Bem. Obrigado.

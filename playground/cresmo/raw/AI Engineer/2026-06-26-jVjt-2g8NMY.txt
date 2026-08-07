@@ -1,0 +1,124 @@
+---
+video_title: "A Genius With Amnesia - Victor Savkin, Nx"
+video_id: jVjt-2g8NMY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jVjt-2g8NMY
+video_date: 2026-06-26T01:15:06+00:00
+video_description: |
+  Imagine a genie grants your wish and materializes the best engineer in the world, John Carmack in his prime, to work on your codebase. The catch: he can only see a tiny corner of it, and he forgets everything between interactions. No matter how good he is, the value isn’t there. This is what coding agents are today. We need to fix it.
+  
+  Speakers:
+  - Victor Savkin (Nx): Victor is the creator of Nx, the agentic monorepo platform, and Polygraph, the meta-harness for maximum agent autonomy, with 20+ years building high-performance frameworks and build tools.
+    X/Twitter: https://x.com/victorsavkin
+    LinkedIn: https://www.linkedin.com/in/victorsavkin/
+    GitHub: https://github.com/vsavkin
+---
+Imagine que você encontra uma lâmpada mágica em uma loja de antiguidades. Você esfrega, um gênio aparece e pergunta como pode ajudar. Você marca o contorno com tinta, dizendo: "Preciso do melhor engenheiro para me ajudar com um projeto impossível no trabalho." E o gênio realiza o seu desejo. Para mim, o melhor engenheiro provavelmente é John Carmack, da época de "Oito Dias", então você fica com Carmack.
+
+Mas o gênio tinha senso de humor e impunha restrições, talvez por segurança. Carmack só consegue ver uma pequena parte da sua base de código, talvez 1/1000 dela. E ele não se lembra de nada do que fez antes. Cada conversa começa do zero. Isso seria enlouquecedor, não é? Você
+
+saberia que existe uma maneira padrão de fazer as coisas, e Carmack não saberia. Você teria que explicar a mesma coisa repetidas vezes . Você teria um gênio de um lado e algo profundamente deficiente do outro. E é isso que os agentes fazem. Deixe-me mostrar um exemplo de quantas vezes reexplicamos as coisas em uma interação simples.
+
+Temos quatro repositórios: interface do usuário, módulo um, módulo dois e plataforma. Quero alterar a interface do usuário e propagar essa alteração por todo o sistema. OK? Primeiro, alteramos a biblioteca de interface do usuário. Digamos que a gente, sei lá, mude a posição de um botão ou algo assim.
+
+Essa é a primeira explicação, inevitável. Precisamos expressar nossa intenção, ok? Em seguida, publicamos. Vamos para o módulo um e precisamos explicar novamente o que acabou de acontecer na biblioteca de interface do usuário, para que ela possa consumir o pacote aqui. Note que geralmente se trata de uma pessoa diferente, certo? Cada item deste diagrama
+
+pode ser preenchido por uma pessoa diferente. E então descobrimos que a biblioteca de interface do usuário publicada não funciona com o módulo um. Então, voltamos à interface do usuário e temos que explicar novamente a mudança original e o problema. Certo? Por ser um agente novo, ele não conhece a alteração original. É
+
+óbvio que não tem conhecimento do problema. Digamos que a gente resolva isso, certo? E publique-o novamente. Vamos lá e explicamos novamente a nova mudança no contexto do módulo um, o mesmo módulo. Ou seja, faça o mesmo para o módulo dois novamente. Em seguida, acessamos o
+
+repositório da plataforma, explicamos como tudo se encaixa e implementamos a alteração lá. Vamos imaginar que, uma semana após o lançamento, um bug aparece no componente da interface do usuário e precisamos corrigi-lo. Então, iniciamos um agente no repositório da interface do usuário. E precisamos explicar novamente a mudança original de uma semana atrás e esse problema de produção que estamos enfrentando. Assim, temos sete explicações para o que é essencialmente uma única mudança.
+
+E também pode não ter sido uma única pessoa a dar todas essas sete explicações, mas elas ainda assim aconteceram, certo? Isso é muito, muito típico de agentes. Então, como resolvemos isso? Bem, existem muitos problemas aqui que contribuem para essa experiência, mas eles se enquadram, basicamente, em duas categorias. A primeira é que um agente está essencialmente vinculado ao repositório. O
+
+agente visualiza e altera geralmente um repositório por vez. Ele nunca vê o sistema inteiro, que pode envolver centenas ou milhares de repositórios. Então, esse é o componente espacial do problema. Em segundo lugar está a amnésia. O agente esqueceu o trabalho. Cada sessão começa do zero
+
+. Nesse caso, o ser humano se torna a memória . Esse é o componente temporal do problema. Observe os dois mais de perto. Primeiro, considere o limite do repositório.
+
+Sem um modelo de como os repositórios se encaixam, o agente depende do humano para fazer a pesquisa. Não consegue alinhar o código com o resto do sistema. Não foi possível alinhar a alteração da interface do usuário com o módulo um. O humano não explicou, então uma versão ruim foi enviada. Também não consegue referenciar de forma confiável as melhores práticas e padrões, porque estes geralmente residem em outros repositórios.
+
+Pior ainda, o agente grava em um repositório por vez, o que significa que não consegue validar as alterações em repositórios posteriores. O módulo um do CI deveria ter falhado na alteração da interface do usuário, mas não falhou. O agente não consegue atualizar os consumidores ao mesmo tempo, mesmo que, ao fazer a alteração na interface do usuário, ele tenha todas as informações necessárias para fazê-lo. Sabe exatamente o que está fazendo. Assim, o usuário precisa explicar as coisas de forma imperfeita para cada consumidor.
+
+Alterar algo em 20 repositórios significa explicar tudo novamente 20 vezes. Muito tempo de desenvolvimento foi gasto, mas também muitos tokens foram queimados. A segunda categoria é aquela em que o agente se esquece. O agente não possui memória episódica. Cada sessão é uma tela em branco.
+
+E o ser humano, neste caso, torna-se a memória. Eis como o gráfico do seu trabalho realmente se parece. Na parte inferior, há um gráfico do repositório. Os artefatos produzidos pela sua organização, além de todos os repositórios de código aberto dos quais você depende . Talvez você possua mil repositórios e dezenas de milhares de repositórios de código aberto.
+
+No topo, encontram-se todas as sessões de agentes que criam e modificam esse código. As sessões estão relacionadas entre si, os repositórios estão relacionados entre si. Portanto, este gráfico representa fielmente o trabalho realizado em sua organização. Descreve o que está lá embaixo e como chegou a estar no topo. É isso que você quer que seu agente veja.
+
+Eis o que ele realmente vê. Existe apenas uma sessão, uma pequena fração da base de código, sem consumo de memória, ok? Por ter uma visão tão limitada, depende de quem entende o sistema, o desenvolvedor. Todo desenvolvedor tem uma parte desse gráfico, certo? Em suas mãos, pelo menos no domínio que conhecem. De
+
+forma geral, o agente não faz isso. Isso não parece loucura, né? Imagine um agente que pudesse visualizar no máximo um arquivo por vez e só conseguisse consultar cinco mensagens anteriores. Há uma espécie de limitação, tanto no espaço, em relação ao que se pode ver, quanto no tempo, em relação ao quão longe no passado se pode enxergar. Você diria que é impossível trabalhar nisso.
+
+O que temos agora é semelhante àquela imagem maluca. E quanto mais complexa for a organização , mais evidente isso se torna. Vou te mostrar como resolvemos isso. Outras organizações com as quais conversei têm soluções semelhantes, então, analise o problema e a solução conceitualmente, não a ferramenta específica, embora a ferramenta seja muito interessante. Criamos uma plataforma meta agnóstica a agentes chamada Polygraph.
+
+Certo, deixe-me mostrar o que ele faz e como resolve os problemas que acabamos de discutir. A primeira ideia que tivemos foi que, se um usuário do GitHub, qualquer usuário, tem acesso a milhares de repositórios, alguns de sua propriedade, muitos deles de código aberto, podemos analisá-los e extrair muitos metadados para construir um grafo de dependências unificado. Não há alterações em nenhuma linha de código nesses repositórios, isso tudo acontece meio que em segundo plano, certo? E então podemos obter esses metadados e alimentá-los no meta harness, criando a ilusão de uma grande base de código que o agente pode ler e escrever em qualquer lugar. Este é o meu gráfico pessoal.
+
+Quero ter cerca de 300 repositórios próprios, certo? E milhares de repositórios de código aberto dos quais meus projetos dependem. O Polygraph calcula o que cada um produz, cada repositório, cada projeto em cada repositório, o que cada projeto em cada repositório consome em termos de pacotes, qual API eles produzem e consomem, e muitas outras coisas, certo? E isso une tudo isso em um grande bloco de código com o qual seu agente pode trabalhar. Então, vamos ver o que acontece, certo? A
+
+primeira coisa que ele faz é permitir que você inicie uma sessão para importar os repositórios relevantes, certo? Então, o que ele precisa fazer é configurar o código-fonte, instalar as dependências, configurar um agente para cada repositório, integrá- los para que possam funcionar juntos e fornecer uma interface gráfica limpa e bonita para fazer alterações complexas sem se perder. Vou te mostrar como tudo funciona em um segundo, certo? Então, isso é uma forma de coletar informações. Coletar informações é apenas uma parte da história, certo?
+
+Sinceramente, é uma parte fácil. Fazer mudanças é mais difícil. Se você tiver 10 repositórios em uma sessão, isso significa que você pode ter 10 solicitações de pull, certo? Você precisa executar a integração contínua (CI). Você precisa coordenar tudo isso, certo?
+
+Você precisa fazer tudo isso, entendeu? E se um deles falhar, não é? O polígrafo trata todos os ICs como um único vetor. Por exemplo, se você observar o exemplo anterior, quando executamos a integração contínua (CI) para o módulo de interface do usuário um e o módulo dois, se o módulo um falhar durante uma sessão do Polygraph, ele determinará quem corrigiu o problema, se o módulo um precisava de uma correção ou se o próprio componente de interface do usuário está quebrado e incompatível com o módulo um, caso em que todos precisarão de uma correção, certo? O Polygraph permite tratar alterações complexas em vários repositórios como se fossem alterações em um único repositório.
+
+Aliás, o mesmo mecanismo corrige a memória episódica. Como capturamos seu trabalho, independentemente de quantos repositórios estejam envolvidos, registramos sua intenção, o repositório em questão e os PRs (Pull Requests). Capturamos também todos os rastros dos agentes. Como capturamos todas essas informações, podemos relacioná-las. Assim, agora podemos dizer que seu trabalho em um repositório se conecta a outro trabalho em outro repositório. Certo? E tudo
+
+isso nos permite restaurar qualquer sessão, qualquer trabalho em qualquer máquina, ou referenciá-lo de qualquer lugar. E eu mostrarei novamente como funciona em um instante. O que você obtém é um agente com memória eidética ou fotográfica de toda a sua organização. Ele entende como os repositórios são escritos, como se relacionam, como são estruturados e memoriza cada sessão de cada repositório, realizada por praticamente todos os desenvolvedores. Certo? E isso cria uma
+
+experiência de desenvolvimento completamente diferente. Deixe-me mostrar-lhe. Primeiro, vamos ver como criamos uma sessão, algo simples. Você executa um comando e seleciona alguns repositórios de uma lista. Aqui está um pequeno projeto no GitHub com apenas três repositórios, pois é uma demonstração.
+
+Eu escolho o back-end e o front-end. Digamos que eu precise fazer uma alteração que, você sabe, mude a API e tenha que atualizar tanto a API quanto a forma como as coisas estão sendo exibidas. Preciso dar um nome à minha sessão. Preciso escolher um agente dentre os que tenho instalados. Eu escolhi Claude.
+
+Mas qualquer agente instalado funciona da mesma maneira. Lembre-se, o polígrafo não é um agente. É um dispositivo meta em torno de um agente que o torna mais capaz. E em um segundo, uh, as botas do agente. E aqui eu poderia interagir com ele como se estivesse em um único repositório, mesmo que vários repositórios estejam envolvidos, certo? Eu
+
+poderia dar instruções. Vai ser um planejamento para a mudança. A interface do usuário também possui algumas animações bem legais . Eventualmente, [bufa] ele descobre como os dois repositórios se relacionam e qual é a mudança. Posso pedir que implementem a alteração.
+
+Minha interação com isso é exatamente a mesma como se eu estivesse trabalhando em um único repositório. O fato de haver vários repositórios envolvidos não é realmente importante, certo? A única parte em que se torna importante é ter vários pedidos de pull request, certo? Mas eu também tenho uma sessão de polígrafo onde esses pedidos de pull request estão localizados. Tudo bem? Se eu analisar a sessão,
+
+verei que tenho uma descrição que descreve o trabalho conceitualmente, meio que ignorando os limites do repositório, dizendo que temos que alterar coisas neste repositório, alterar coisas naquele repositório. Isso me dá uma boa visão de quais repositórios estão envolvidos, quais pull requests estão envolvidos, qual CI está presente nesses repositórios, enfim, tudo o que preciso saber. Muitas dessas coisas são basicamente o que eu teria em um único repositório, só que em vários, certo? E eu também tenho todos os registros do agente capturados, o que é importante para a retomada, que mostrarei em um instante. Agora a coisa fica interessante.
+
+Eu já salvei uma reexplicação. Eu não expliquei novamente a alteração no back-end no repositório do front-end, certo? Expliquei a alteração uma vez e consegui implementá-la em ambos os repositórios, e agora está tudo em conformidade. Agora vamos retomar a sessão. Digamos que eu queira que um colega de trabalho termine a alteração no back-end. Talvez eles sejam os donos do
+
+repositório de back-end. Eu envio a sessão para eles. Eles retomam a operação na máquina deles, certo? Então, estou enviando a sessão para eles. Eles poderiam executar o comando. É uma
+
+máquina diferente, tudo diferente. Eles usam terminais diferentes, certo? Eles iriam reconstruí-lo em sua máquina. Eles não têm a sessão, certo? Eles nunca trabalharam nisso.
+
+Eles podem escolher um agente. O agente que eles escolherem pode ser um agente diferente, certo? Na sessão original, usei o Cloud, mas digamos que eles estejam usando um diferente, o Cortex. A mesma configuração ocorre na máquina deles, mesmos repositórios, mesmos SHAs, tudo configurado corretamente. O agente começa em um triplo como no meu, certo? Eles estão todos conectados novamente,
+
+então trabalham juntos. Todos eles estão configurados com um rastreamento capturado da minha máquina, então o back-end do agente de repositório na máquina deles tem o mesmo brilho e o mesmo histórico. A situação do repositório de front-end é a mesma. Está verificado no mesmo shard correto e o agente está em execução com o histórico correto. Então, meu agente era Claude. Eles programaram, mas
+
+compartilham a memória. E eles poderiam realmente fazer mudanças aqui, como mostrado em um pequeno vídeo. Mas acho que a parte do compartilhamento de memória é fundamental, certo? Hum, eu posso trabalhar, eles podem trabalhar, e podemos compartilhar nossas memórias como se fôssemos agentes diferentes em máquinas diferentes. Posso obter o estado completo da minha sessão na máquina deles? Tem
+
+menos a ver com memória e mais com o estado, certo? O estado do mundo associado à sessão, sabe, é o que lhes permite continuar a minha sessão, mesmo que inicialmente não tivessem feito nada com ela. Fica perto do teletransportador de Star Trek. É como se uma cópia completa da minha sessão, com todo o seu estado, estivesse materializada na máquina deles para que possam continuar. E é assim que costumo trabalhar quando tenho uma solicitação de pull request para revisar e tenho dúvidas; geralmente não pergunto à pessoa. Eu retomo a
+
+sessão deles na minha máquina, obtenho o estado exato, totalmente funcional, sem nenhuma configuração, e então eu simplesmente converso com meu agente sobre as decisões que tomamos, certo? [bufa] Porque todas essas decisões estão registradas nos rastros capturados. Portanto, meu agente sabe exatamente o que a outra pessoa disse ao agente dela. Certo? Só um detalhe: isso também é útil quando eu quero alternar, digamos, do Claude para o Codex no meio da sessão, quando algo dá errado, ok?
+
+OK. Considere o caso anterior que mencionei, em que um bug foi parar em produção. Aqui, vou me referir à sessão e dizer que ela está basicamente quebrada. E você sabe, consegue descobrir o que está errado e consertar? O agente irá pesquisar e baixar o que for necessário.
+
+Se a descrição fornecer informações gerais suficientes, ótimo. Caso contrário, ele irá buscar os repositórios relevantes, os shards relevantes e os logs do agente, certo? O programa irá obter todas essas informações da sessão original para reconstruir esse estado, de forma a poder realizar as correções necessárias, conforme mostrado aqui. Ele realmente providenciou a solução, certo? Eu só precisei dizer: "Isso aconteceu. Há um bug." É
+
+isso. Não me foi solicitada nenhuma informação adicional . OK. Até agora, selecionamos manualmente os repositórios e as sessões, mas não precisamos fazer isso, certo? Em vez de selecionar repositórios manualmente, também posso dizer ao agente o que eu quero. Lembre-se que esse gráfico tem toda essa
+
+inteligência, certo, sobre como os repositórios se relacionam. Eu poderia dizer ao meu agente: "Encontre todos os repositórios que dependem de uma versão específica de uma biblioteca e atualize-os." Certo? [bufa] Quer dizer, ele sabe, né? Eu não precisei selecioná-los. Ele conhece muitos
+
+metadados sobre o que está acontecendo. Também posso fazer perguntas vagas. Coisas do tipo, sabe, "E se eu quiser escrever uma postagem de blog, certo, ou um artigo?" Eu poderia descrever a situação e o sistema descobriria qual repositório é o mais relevante com base nas relações entre os repositórios e no conteúdo deles. Outro exemplo.
+
+Digamos que eu queira adicionar um índice vetorial à coleção PR. E eu gostaria de saber se alguém, em algum momento, fez algo relevante em algum repositório do qual eu possa me inspirar. Então, neste caso, se eu fizer isso, verei que encontrará várias sessões que parecem ser relevantes. [bufa] E eu posso carregar um deles ou os dois , certo? É útil por muitos motivos. Vamos dar apenas um pequeno
+
+exemplo. Isso ajuda na implementação das melhores práticas e na manutenção da consistência. Em vez de fazer tudo do zero, onde, sabe, cada implementação é personalizada, posso replicar a abordagem usada na sessão por um engenheiro que respeito. Agora, nosso código está consistente em todos os repositórios. Isso é muito importante.
+
+Há muito mais por trás disso, é claro. Se você estiver em um repositório, posso solicitar sessões, e o sistema priorizará as sessões relevantes para o repositório, e vice-versa. Se eu solicitar repositórios, o sistema analisará minha sessão e verá o que sessões semelhantes costumam trazer, certo? Há muita inteligência interessante que a torna muito mais útil do que parece à primeira vista, ok? Por último, tudo o que mostrei até agora foi feito usando a CLI do Polygraph, a CLI do meta harness atual, para iniciá-lo, e então você pode iniciar o Cloat, o Cortex ou qualquer outro a partir dele.
+
+Mas você não precisa usá-lo dessa forma. Nesse caso, eu já estou em uma sessão Cloat, mas funciona com qualquer coisa. E eu poderia simplesmente dizer: "Ei, sabe, eu acho que um repositório separado seria útil. Tipo, talvez eu esteja trabalhando em um plugin do Vitest neste repositório do NX, e eu poderia dizer: 'Você pode adicionar o repositório do Vitest a esta sessão para que eu saiba o que está acontecendo?'" Nesse caso, usaríamos o Polygraph, e ele configuraria tudo, e traríamos a biblioteca do Vitest, que é o repositório do Vitest, o repositório de código aberto, para a minha sessão. Então, agora
+
+meu agente pode, sabe, explorar isso. Isso poderia, sabe, descobrir como funciona e talvez resolver um problema que tenho no meu repositório. Prefiro muito mais isso do que dizer contexto sete, porque se eu tiver o código real, o agente pode ir muito a fundo. Assim, os problemas profundos são descobertos ao longo de todo esse processo. Tudo bem.
+
+Assim, os agentes estão limitados no espaço e no tempo. Eles só veem uma pequena fração da base de código, pois não conhecem o passado, ok? E ambos os limites poderiam ser removidos. O Polygraph UH dá aos agentes acesso a todo o código que sua organização pode acessar, tanto o que você possui quanto o de código aberto. Portanto, não está mais limitado pelo espaço. Qualquer
+
+agente pode trazer tudo isso. Certo? E isso dá ao seu agente uma memória perfeita do que aconteceu. Em cada sessão, cada decisão tomada está ao nosso alcance. Como o agente transcende as fronteiras entre desenvolvedores, e não se limita a um único desenvolvedor, ele pode ter mais contexto do que qualquer desenvolvedor individual. É
+
+como se mil engenheiros tivessem uma organização, criando todas essas sessões, e todas elas ficassem acessíveis a cada um deles. Quase como uma espécie de Borg. Cada agente que pode ser executado por cada desenvolvedor contribui para uma espécie de grande mente coletiva, certo? Então, se isso lhe interessar, meu nome é Victor. Você pode me seguir no Twitter.
+
+Se quiser experimentar, acesse try.poligraph.com e veja se funciona para você. Obrigado.

@@ -1,0 +1,119 @@
+---
+video_title: "Why Can't Anyone Answer Questions About the Business? — Garrett Galow, WorkOS"
+video_id: iUWwcG-C8OU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=iUWwcG-C8OU
+video_date: 2026-06-11T18:00:06+00:00
+video_description: |
+  Every business question that needs SQL follows the same loop: explain the question, wait for an engineer, get an answer, realize it needs one more join, share a one-off in Slack, repeat. Garrett Galow from WorkOS built Studio to break that loop — an internal workspace where anyone can ask questions against Snowflake, Linear, and Notion in natural language and get answers or reusable widgets without filing a request.
+  
+  The widgets are the interesting part: the LLM writes them once as declarative JavaScript that calls the underlying data sources directly, so every subsequent run is deterministic and cheap. Three things made it reliable enough to hand to a support team. Preflight sequencing that injects schema context only at the moment a tool is invoked, not upfront, keeping the context window clean. A layering rule that explicitly tells the model to distrust its own knowledge about WorkOS and go to primary sources. And query validation that runs every generated Snowflake query before hardcoding it into a widget, catching the valid SQL that returns zero rows failure mode.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/garrett-galow/
+---
+Boa tarde a todos. Hoje é o último dia. Espero que você ainda esteja acompanhando e não esteja cansado de falar sobre IA. É , hoje vai ser um pouco diferente. Então, eu trabalho para a WorkOS. Meu
+
+nome é Garrett. Eu gerencio o produto da equipe. Bem, hoje não estou falando exatamente sobre o nosso produto. Então, vou falar rapidinho sobre o WorkOS, uns 10 segundos, só para tirar isso do caminho, já que minha empresa se importa com isso. Desenvolvemos funcionalidades para plataformas empresariais. Somos uma
+
+plataforma para desenvolvedores. A resposta rápida e fácil é: se você já acessou o Cursor, você já usou o WorkOS. Seja usando nome de usuário e senha, ou acessando através do seu provedor de identidade corporativo. Nós fornecemos a tecnologia necessária para funcionalidades de plataforma empresarial para empresas como Cursor, Anthropic e OpenAI. Mas hoje vou falar sobre algo um pouco diferente.
+
+Vou falar sobre como funcionamos internamente e sobre as coisas que criamos para aumentar nossa produtividade. Então, imagino que a maioria de vocês provavelmente sejam engenheiros ou trabalhem na área técnica. Você pode ter dúvidas sobre a sua empresa, sobre como os clientes estão usando o produto, como as coisas estão funcionando. Suas equipes de entrada no mercado ou suas equipes de suporte certamente têm dúvidas sobre como os clientes estão usando seu produto, tentando encontrar respostas para essas perguntas. Você pode precisar fazer uma reestruturação interna na sua empresa. Você pode ter
+
+criado painéis de controle e coisas do tipo . Ah, claro, esses podem ser bem rígidos, não é? Você constrói algo muito específico. Alguém chega e diz: "Ah, na verdade, mas eu preciso deste dado adicional. Preciso encontrar a resposta para esta outra pergunta que o painel não responde." Então, ou você
+
+constrói isso, ou você muda, certo? Observamos um fluxo de trabalho mais ou menos assim , onde alguém tem uma pergunta, geralmente sobre o negócio. Eles podem não ter conhecimento técnico suficiente para responder a essa pergunta por conta própria. Eles geralmente precisam de algo como SQL ou de alguém que tenha acesso aos dados. Eles precisam explicar a pergunta, por que precisam da resposta, o contexto para respondê-la. Eles esperam. Alguém
+
+como você precisa ir lá responder à pergunta e fornecer esses dados a eles. Você realmente respondeu à pergunta? Você forneceu detalhes suficientes? Ah, não, não, isso é ótimo, mas na verdade preciso de uma camada ainda mais profunda. Preciso ficar indo e voltando.
+
+Você provavelmente compartilha isso no Slack. Algo como um evento único. Não se adapta muito bem a diferentes escalabilidades. Nós tivemos esse problema. Se você não fizer isso, teremos esse problema todos os dias.
+
+Então, criamos uma ferramenta chamada Studio, que funciona como uma espécie de espaço de trabalho interno onde as pessoas podem responder a perguntas e criar esses tipos de aplicativos ou painéis por conta própria. Então, vou mostrar a vocês dois mais ou menos como é construir isso. Mostraremos também alguns exemplos de algumas das ferramentas que usamos diariamente no Studio. E depois falarei um pouco sobre como funciona por baixo dos panos. Então, para que eu não entenda tudo errado, já tenho uma pequena sugestão aqui.
+
+Mas então, sabe, uma coisa comum que fazemos é bastante marketing de nicho. Sabe, estamos fazendo anúncios em podcasts, estamos usando o Google Ads. Estamos atraindo pessoas para o site da WorkOS, seja para o nosso blog, nossa documentação ou nosso site de marketing. E depois queremos saber que conteúdo eles estão lendo e o que é eficaz, certo? O que acontece quando alguém lê algo no painel do nosso site e depois passa a usar o aplicativo? Então, eu quero
+
+saber, ei, qual conteúdo leva ao maior número de novas equipes. Internamente, chamamos nossos clientes de equipes, o que leva à criação do maior número de novas equipes. Então, posso executar este comando e o Studio começará a funcionar. Basicamente, significa: "Ok, eu quero encontrar esses dados. Preciso verificar a quais recursos internos tenho acesso." Então, ele sabe que tem acesso
+
+ao meu linear, à minha noção, ao meu Snowflake. Então, temos essas fontes de dados às quais nos conectamos. E então, basicamente, entende como usar essas ferramentas e começa a executar consultas. Nesse caso, ele executará uma série de consultas ao Snowflake, que é nosso banco de dados interno. É onde armazenamos grande parte desses dados.
+
+E vai analisar o processo, descobrir os esquemas, verificar as tabelas necessárias e executar a operação. Enquanto isso acontece, já que pode levar apenas um minuto, vou falar um pouco sobre como funciona, mais ou menos nos bastidores. Então, você pode acessar nosso painel de controle interno do estúdio ou usar o bot do Slack para tirar dúvidas sobre o Studio. Isso dá início ao processo. Executamos uma pequena API nos bastidores que recebe esses dados , os analisa e os envia para o Lane Graph, que é um agente vinculado ao LLM ( neste caso, estamos usando o Opus), juntamente com as ferramentas e a camada de orientação sobre como ele deve interagir com esses sistemas.
+
+Então, temos esse proxy de integração para as fontes de dados, principalmente ferramentas como Snowflake, Linear e Notion, que são as que utilizamos. E essa camada de orientação basicamente define regras sobre como você deve consultar esses dados, o contexto necessário para consultar os dados com sucesso. Certo, nosso Snowflake é um conjunto bastante extenso de bancos de dados, então ele precisa obter contexto sobre como eu... Qual é a representação de um
+
+cliente dentro do Snowflake? Como faço para unir tabelas de forma eficaz? Então, o agente controla tudo isso, faz consultas que o LLM executa e, claro, fornece respostas ou atualizações para os widgets, o que mostrarei em um minuto. E hoje armazenamos grande parte desse estado no Convex como uma forma de guardar essas informações localmente, para que sejam preservadas entre as sessões. Então, voltamos.
+
+Legal, parece que conseguimos coletar bastante informação aqui. Deixe-me aumentar um pouco para você. Então, podemos ver claramente que as pessoas acessam nossa página inicial e consultam a página de preços. Podemos ver, por exemplo, as postagens de blog que são mais eficazes para impulsionar as inscrições de equipes. Um registro de alterações e documentação. Estou começando a entender
+
+o resumo. OK. Mas isso é ótimo, responde à minha pergunta, mas eu quero que seja algo duradouro que eu possa reutilizar. Então, você poderia criar uma tabela que me permita visualizar esses dados em diferentes intervalos de tempo? Então, aqui não se trata apenas de executar as consultas e obter a resposta.
+
+Mas na verdade eu queria criar uma ferramenta reutilizável que eu pudesse compartilhar com meus colegas de equipe e usar em nossas reuniões semanais. Então, ele vai analisar como fazer isso e, em seguida, vai construir o que chamamos de widget. Um widget, neste caso, é basicamente como um código em sandbox que é executado. Bem, e isso inclui tanto a interface do usuário, quanto as APIs e as consultas necessárias para alimentar uma ferramenta totalmente utilizável. Bem , isso vai levar um minuto para pensar , enquanto cria o widget.
+
+Hum, tenho outra versão que posso te mostrar. Vamos ver se eles parecem iguais, hum, em diferentes instâncias. Mas este é semelhante a um que eu já tinha pré-construído antes. Então , basicamente, isso me fornece dados sobre equipes em diferentes períodos de tempo. Sabe, que tipo de conteúdo está gerando esses cadastros?
+
+E é ao vivo, né? Se eu executar este comando, a consulta será executada novamente. Isso vai me fornecer os dados para diferentes intervalos de tempo. Eu consigo fazer, sabe, em tela cheia aqui, mostrar. Então, sabe, vai analisar isso com calma . Bem,
+
+veja, e nós temos uma visão bastante semelhante, ligeiramente diferente, mas, bem, esta aqui tem filtros de categoria, então eu posso ver, sabe, com base no tipo de conteúdo que está sendo exibido. Então, vamos ver, tipo, ok, quais são os mais eficazes? Temos muitos posts no blog, quais são os mais eficazes para direcionar tráfego para a plataforma, para que possamos adaptar nosso conteúdo de forma eficaz. Hum, mas isso não é... sabe, isso é
+
+útil para muitas coisas. Por exemplo, o Radar é um dos nossos produtos internos. É como um produto de segurança que bloqueia bots e agentes maliciosos e, sabe, às vezes os clientes dizem: "Ei, por que esse usuário foi bloqueado pelo Radar? Você pode me ajudar a entender?" Então, sabe, nós mesmos criamos alguns desses painéis e outras coisas , mas normalmente isso envolve ter que acessar muitos dos nossos DSCs e compartilhar consultas SQL que são executadas para responder a essas perguntas. Mas
+
+em vez de ter que fazer tudo isso, eu posso simplesmente, sabe, eu já construí esse widget que tem as APIs ou as consultas configuradas. E eu posso simplesmente fazer uma busca por mim mesmo, neste caso, meu e-mail pessoal. E , sabe, neste caso, está executando uma consulta real em nosso banco de dados para realmente extrair esses dados e analisá- los. Então, você pode ver o histórico da conversa aqui, de eu falando com ele: "Ei, você pode criar esse painel para mim?" Uh executa uma série de consultas. É,
+
+na verdade, deu meio errado no começo, mas eu disse tipo, "Ei, você pode... Parece que tem um problema. Você pode continuar?" E
+
+funcionou. E a última coisa era que havia um bug visual na interface do usuário, na coluna de tipo. Então, eu disse: "Ei, você pode corrigir esse bug visual? Eu gostaria que fosse uma coluna só, bonitinha." Então, aqui podemos ver, por exemplo, para o Cursor, que é um dos nossos clientes que usa o Radar, todas as vezes que eu acessei o Cursor com meu e-mail pessoal e se fui bloqueado ou não. Bem, eu fiz um
+
+teste aqui onde, você sabe, eu me bloqueei em um dos nossos ambientes de teste. Assim, isso se torna uma ferramenta de autoatendimento que nossa equipe de suporte pode usar para consultar essas informações. Bem , isso tem sido realmente muito importante para nossa equipe de suporte. Eles usam isso no Slack o tempo todo porque não precisam, você sabe, clientes diferentes têm problemas específicos diferentes. E eles podem dizer algo como: "Ei, você pode encontrar todas as sessões desse cliente para que eu possa descobrir o que deu errado, certo?" Então, não estamos
+
+tentando construir, sabe, não precisamos de uma equipe de plataforma ou de dados para criar esses painéis que serão usados ​​e precisarão ser constantemente modificados. Nossa equipe de suporte pode, basicamente, se for uma dúvida pontual, obter a resposta por conta própria e, se perceberem que a mesma pergunta é feita com frequência, podem criar esses guias e compartilhá-los internamente com outras pessoas. Então, nós meio que construímos nosso próprio painel de controle e ferramentas, de forma autônoma. Então, vou concluir com uma breve explicação sobre o que tivemos que fazer para torná-lo útil e confiável? Então, existem três coisas que se tornaram realmente importantes na construção disso.
+
+A primeira é o sequenciamento. Então, é assim que o agente deve proceder quando recebe uma nova pergunta, quando recebe um estímulo, como ele deve lidar com isso? Então, fazemos com que ele execute várias verificações pré-voo . Então, sabe, todas as ferramentas estão conectadas corretamente? Você tem contexto suficiente para responder à pergunta? Caso contrário, faça perguntas para esclarecer
+
+e, em seguida, verifique uma lista de ferramentas para determinar quais devem ser usadas para fazer a chamada. Bem, na verdade, no momento em que o sistema decide invocar uma ferramenta, é quando inserimos o contexto sobre como usar a ferramenta. Então, por exemplo, se eu mostrar algumas das ferramentas que usamos, como no caso do Snowflake, aqui por exemplo, temos este contexto que incorporamos. E não é trivial, é bastante longo porque basicamente codifica o esquema do nosso banco de dados interno e como entender como conectar as equipes aos ambientes e aos recursos que elas estão usando. Então, por exemplo, isso é injetado em tempo de execução quando o Snowflake está sendo ajustado. Vi
+
+alguém mais cedo em uma palestra falando sobre como você não deve pré-carregar todo o contexto de todas as suas ferramentas, porque isso sobrecarrega sua janela de contexto. Em segundo lugar, a sobreposição de camadas. Bem, temos uma espécie de prompt básico que o Studio usa para começar. Temos as configurações padrão e também regras da organização que, em uma determinada configuração para uma ferramenta específica, podem exigir um contexto específico. Se alguém estiver editando uma ferramenta, queremos que esse contexto seja mantido.
+
+E então, na verdade, por último, instruímos o modelo de linguagem a desconfiar especificamente do conhecimento sobre nosso produto, muitas vezes simplesmente porque, às vezes, o treinamento do modelo está usando dados desatualizados. Nosso produto muda muito rapidamente. As coisas estão em constante movimento. Então, na verdade, nós dizemos para ele: "Não, não, não, procure fontes primárias, busque dados em nossa documentação e coisas do tipo." Não confie apenas no que o modelo "você sabe" sabe sobre o WorkOS necessariamente.
+
+E então, por fim, a validação. Então, se for para enviar uma consulta para nossa instância do Snowflake, sempre executamos a consulta e validamos se os dados são retornados. Sabe, muitas vezes eles podem ter uma consulta SQL válida, mas que retorna zero dados. Se não perceber isso, não será muito útil. Então, na verdade, ele executa consultas e as valida antes de incorporá- las diretamente nos widgets e coisas do tipo.
+
+Basicamente, ele pré-valida o seu trabalho antes de o implementar em um painel de controle. E sim, obviamente realizamos avaliações durante o desenvolvimento do produto. As avaliações são muito úteis. Não tenho tempo para explicar como desenvolver e elaborar avaliações. Mas nós usamos avaliações tanto em nossos ambientes de teste quanto em nossos ambientes de produção. Tratamos tudo isso da
+
+mesma forma. Dessa forma, teremos a mesma experiência ao desenvolver o Studio e também quando nossos colegas de equipe o estiverem usando. Sim, é isso aí . Esse é o Studio. É a nossa forma de poder responder a qualquer pergunta sobre o negócio. Tem
+
+alguma dúvida que eu possa esclarecer para vocês? Só uma perguntinha rápida. Sim. Desculpe. Desculpe, pode prosseguir. Hum,
+
+você fez muita limpeza nos antigos dados do Snowflake? Não , na verdade não. E, como temos, existe esse problema específico em que a conexão entre uma entidade cliente e, digamos, os usuários que ela possui, ou o que quer que seja, tem quatro níveis de profundidade por diversos motivos. E, como todo novo funcionário precisa aprender, se você quiser fazer isso, você precisa copiar e colar esse bloco de junção e usá-lo em todos os seus projetos. É como se a gente explicasse isso para o Studio uma vez, certo?
+
+Sabe como fazer isso todas as vezes. Os profissionais de Direito (LLM) são bastante competentes na interpretação de esquemas de tabelas. Então, há muitas coisas que eles podem conseguir. Se você tiver nomes de colunas bastante autoexplicativos, sabe, o programa consegue entender. Mas, novamente, temos esse bloco de contexto que fornecemos porque ele é importante, por exemplo , no radar, onde temos tentativas de login. Temos
+
+detecções para quando certas coisas acontecem e é como, por exemplo, "ah, você precisa unir isso, essas tabelas se unem desta forma". E, simplesmente informando isso, ele consegue executar consultas eficazes para esses dados. Então, há algumas informações que você deseja fornecer. Mas surpreendentemente bom, tipo, você não precisa ficar checando tudo isso, sabe, não tem um banco de dados de lixo para nós nisso tudo . É como se estivéssemos invocando ferramentas diretamente, apenas com o contexto por cima.
+
+Pergunta? Ah, sim, e isso é realmente interessante, é exatamente o que fazemos. A gente simplesmente acessa um contexto que indica como fazer as junções, e aí o programa entende essas peculiaridades. Uma das coisas que temos analisado, no entanto, é que fazemos algo semelhante, mas essas consultas são geradas como widgets, ou seja, os widgets que fazem isso são auditados ou controlados por alguém? Porque a nossa preocupação é que, por exemplo, quando alguém gera uma consulta, a habilidade a interpreta incorretamente e isso se torna uma verdade absoluta, algo que todos acreditam ser verdade, sem que ninguém jamais tenha verificado.
+
+Então você tem algo parecido? Sim, quero dizer, definitivamente existe um pouco de... sabe, sempre há uma certa necessidade de confiar, mas também de verificar.
+
+Na verdade, fiquei bastante impressionado com a alta taxa de acerto dessa verificação cruzada . Acho que existe uma espécie de categoria que você pode incorporar no contexto de, tipo, garantir que você só extraia entidades não excluídas, certo? Certifique-se de que os itens estejam em estado ativo, certo? Existem alguns elementos nos seus dados que provavelmente apresentam consistência em relação a uma coluna de status, certo? E esse é o tipo de coisa que eu percebi que os mestres em Direito (LLM) deixam passar se não souberem. É como se eles perguntassem: "
+
+Quantos usuários têm esse recurso?" E é apenas uma contagem agrupada por, você sabe, ID do cliente, certo? E aí você pensa: "Ah, não, na verdade você precisa dessas colunas de filtro." Mas se você tem isso no seu contexto, é algo que protege contra muitos desses problemas. Portanto, constato que isso resolveu muitos dos nossos problemas. Hum, e
+
+aí, sabe, se errar a partir daí, é como cometer um erro maior, que é bem óbvio. Posso enviar os dados de várias ferramentas? Então, você mistura e combina os dois? Sim. Sim, sim, então nós temos, uh, você sabe, apenas esses poucos. Estamos adicionando mais
+
+dessas conexões. Mas sim, ele consegue extrair dados de diferentes ferramentas e combiná-los em uma única interface. E como você refrataria os dados posteriormente? Você precisaria saber como relacionar essas ferramentas, tipo , sequencialmente? Então, na verdade, os widgets são código. Então, trata-se de escrever, hum,
+
+JavaScript, que está gerando o código para que as chamadas de API subjacentes ao serviço sejam feitas por meio das ferramentas. Assim, uma vez criado, o widget é confiável. Não é o LLM que está executando a ferramenta o tempo todo. Então, quando eu clico em atualizar aqui, isso está apenas consultando novamente os dados dessas ferramentas. Portanto, o LLM não está envolvido depois que o widget é desenvolvido. Até que eu volte e diga:
+
+"Ei, você pode ajustar este widget? Pode adicionar esta coluna?" ou algo assim. Portanto, o produto final em si é muito confiável nesse aspecto. E se você precisar passar dados diferentes, é apenas um argumento de entrada para isso? Sim, e eu, sabe,
+
+tipo, você pode fazer, sabe, aqui é como se eu estivesse fornecendo uma entrada e ela está sendo passada para a consulta como qualquer código JavaScript faz, certo? Então, tipo quando você estiver fazendo essas coisas de entrada de dados do usuário de novo, né? Você não está contando com o LLM para interpretar isso corretamente. É escrever, sabe, código declarativo. Sim. E como você respeitou o acesso do usuário
+
+aos dados? Como assim? Respeitar o acesso do usuário. Ah, sim, essa é uma ótima pergunta. Hoje em dia, as integrações são baseadas no usuário. Então, é
+
+como se eu mesmo estivesse conectando o Snowflake e o Linear Notion. Hum, isso é algo em que estamos trabalhando para mudar, porque é meio irritante. Não é desejável que todos os funcionários sejam obrigados a fazer isso. E existem casos em que, sabe, talvez você não tenha uma conta do Salesforce, mas provavelmente deveria acessar a plataforma para ler determinados dados do Salesforce. Na verdade, estamos trabalhando naquilo que viabiliza essas integrações; temos um produto chamado Pipes, que realiza integrações com terceiros. Na
+
+verdade, estamos usando nosso próprio produto aqui, internamente. Estamos construindo algo semelhante a um órgão, o que chamamos de conectores orgânicos. Então, por exemplo, uma pessoa configura a conexão e pode definir regras sobre, por exemplo, qual é o nível de acesso padrão quando as pessoas estão consultando esse recurso. Por exemplo, você pode dizer que, por padrão, no Linear você tem acesso somente leitura , mas certas pessoas, com base em funções no aplicativo Studio, recebem acesso de administrador ou de edição, ou algo do tipo. Então, estamos construindo essa camada de permissões por cima disso porque, sim, fazer login por usuário é meio chato.
+
+Legal. Ah, sim, claro. Hum, sim, como você consegue controlar os custos? Então, obviamente, algo assim. Existe algum tipo de cache que vocês utilizam?
+
+Bem, quero dizer, os widgets em si, uma vez gerados, são declarativos, então você não paga o custo do LM toda vez, mas, honestamente, para nós, estamos dispostos a pagar o custo pelas perguntas que serão respondidas. O Opus tem um desempenho muito superior a outros modelos, então, não acho que sacrificar a qualidade em função do custo seria inaceitável. Portanto, estamos dispostos a investir esse dinheiro. Legal. Tudo bem. Muito obrigado.

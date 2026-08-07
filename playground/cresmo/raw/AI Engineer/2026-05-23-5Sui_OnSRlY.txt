@@ -1,0 +1,125 @@
+---
+video_title: "The Missing Primitive for Agent Swarms — Lou Bichard, Ona"
+video_id: 5Sui_OnSRlY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5Sui_OnSRlY
+video_date: 2026-05-23T16:00:06+00:00
+video_description: |
+  Stripe called theirs Minions. RAMP called theirs Inspect. Both are internal infrastructure for running fleets of background agents, and both teams built it from scratch. Lou Bichard's argument is that this shouldn't keep happening.
+  
+  The talk breaks down what agent swarm infrastructure actually needs: a runtime (largely solved), orchestration and triggers (solved), and coordination, which is not. Coordination is the gap where agents pick up tasks from each other, pass messages, and verify they have cleared a stage of the development cycle before moving on. GitHub is a poor substitute: noisy, designed for humans, and not built for agents raising hundreds of parallel pull requests. Lou covers what a proper primitive looks like, shows how Owner ships VM level isolation for agent fleets today, and makes the case that the coordination layer probably needs to be a CLI gateway that any local coding agent can invoke to check its progress and proceed.
+  
+  Speaker info:
+  - https://x.com/loujaybee
+  - https://www.linkedin.com/in/loujaybee
+  
+  Timestamps:
+  0:00 Introduction and definition of a Software Factory
+  1:50 Agent swarm patterns: Swarms, Fleets, and Events
+  3:11 Real-world examples of internal agent infrastructure (Stripe, RAMP)
+  3:50 How Owner handles agent infrastructure and development environments
+  4:49 Understanding Harness Engineering
+  5:43 The three pillars of agent swarm infrastructure: Runtime, Orchestration, and Coordination
+  7:17 Demo: Running sub-agents and fleets in Owner
+  10:20 Challenges of building a software factory
+  11:44 The issue with Context Management and Context Rot
+  12:16 Why GitHub is a poor coordination layer for agents
+  12:59 Proposed solutions: State machines, Durable execution, and CLI gateways
+---
+Legal. Tudo bem. Olá pessoal. Estamos chegando à reta final da conferência. Não sei se isso é bom ou ruim para você. Comece o
+
+fim de semana com uma ponta de tristeza, ou talvez fique triste porque a conferência acabou. Então, vamos falar sobre a primitiva que faltava para o enxame de agentes. Então, falando um pouco sobre subagentes e enxames dentro do contexto de codificação de agentes e da infraestrutura subjacente . Então, apenas uma breve introdução. Então, meu nome é Lou. Sou o CTO de campo em uma
+
+empresa chamada Owner. Na minha vida anterior, eu era engenheiro principal e uma espécie de engenheiro de plataforma. Entrei na Owner trabalhando com gestão de produtos e agora trabalho um pouco mais com nossos clientes na área de campo. Então, pelo menos no meu mundo, todo mundo está tentando construir algum tipo de fábrica de software. Vi algumas palestras diferentes nesta conferência com ideias semelhantes, que tentam pegar agentes de codificação e aplicá-los em todo o ciclo de vida do desenvolvimento de software.
+
+Na verdade, estou me perguntando se essa afirmação está totalmente correta, porque conversei com muitas pessoas ao longo desta semana que ainda não chegaram a esse ponto de refletir sobre isso. Mas isso tem ocupado muito meus pensamentos nos últimos meses. Então, adicionei também uma definição neste slide para definir rapidamente o que acredito ser uma fábrica de software, que é uma espécie de compromisso de remover gradualmente o fator humano do processo de desenvolvimento de software (SDLC). De forma que o ser humano não esteja interagindo proativamente com o computador. Digo isso porque assisti a algumas palestras em que algumas pessoas falam sobre fábricas de software com agentes paralelos, como um único circuito integrado executando vários agentes de codificação ao mesmo tempo. Essa não é a minha
+
+definição pessoal. Minha definição pessoal é que você está gradualmente retirando o fator humano do processo e, então, o trabalho flui do desenvolvimento para a produção, teoricamente de forma automatizada. Mas ainda estamos num estágio muito inicial em termos de onde estamos com as fábricas de software. Então, obviamente, há um monte de visualizações interessantes que tenho mostrado, e muitas delas foram tiradas deste site backgroundagents.com que eu criei e que parece ter bastante repercussão.
+
+Então, por favor, dê uma olhada. Isso também engloba algumas dessas ideias . Mas, na verdade, temos padrões diferentes para executar esses agentes em grande escala, para programar agentes em grande escala. Então, um deles é realmente o padrão de enxame, que, na minha definição, começa com uma intenção individual que é enviada para vários agentes diferentes e, em seguida, encaminhada de volta, digamos, para uma solicitação de pull request ou tarefa individual. E isso é quase como um processo típico de subagente, algo que já vimos várias vezes. Fleets é algo que você
+
+infelizmente não consegue ver muito bem na sala. Mas, no canto superior direito, a opção "frotas" permite distribuir agentes por diversos repositórios dentro de uma organização. Essa é uma funcionalidade que já temos no Owner há algum tempo e que você vê aparecendo aqui e ali, mas não com tanta frequência. Mas acredito que será algo que as organizações começarão a aproveitar muito mais no futuro. E na parte inferior você tem uma espécie de sequência de eventos. Então, se você pensar em como podemos
+
+eliminar o fator humano do processo e construir esse tipo de fábrica de software, você precisa saber como e quando acionar esses agentes, quando eles entrarão em operação. Boa parte disso já existe com a infraestrutura de webhooks e coisas do gênero. É aberta uma solicitação de pull request, criado um ticket de suporte , etc. Uma coisa que tem sido útil para nós nos últimos meses é que muitas dessas grandes empresas também se manifestaram e compartilharam algumas de suas implementações dessa infraestrutura. Então, vou mencionar alguns exemplos notáveis, mas o Stripe tem um.
+
+Existe o que eles chamam de minions, que são construídos sobre a infraestrutura existente, onde eles conectam esses agentes de codificação, que então conseguem executar milhares de solicitações de pull dentro do Stripe. Outra notícia muito importante, e Ramp tem se mostrado bastante ativo nas redes sociais nas últimas semanas. Tem sido uma loucura. Mas eles também construíram uma que internamente chamam de "inspect", que, novamente, é uma espécie de infraestrutura para executar esses agentes em segundo plano. E é algo que já estamos fazendo há algum tempo.
+
+Assim, o Owner, como plataforma, tem sido infraestrutura para ambientes de desenvolvimento há cerca de 6 anos. Mas, obviamente, ao longo do último ano ou dois, houve uma maior integração também com o lado dos agentes. Na prática, o Owner permite que você crie diversos ambientes de desenvolvimento diferentes. Mas, uma das funcionalidades adicionais que temos, como mencionei, é essa funcionalidade de frota. Assim, você pode automatizar, com base em agendamentos ou gatilhos, agentes que são acionados para resolver problemas em diversos repositórios diferentes. Exemplos de casos de uso incluem
+
+a correção de CVEs, o aumento da cobertura de testes ou a aplicação de medidas em larga escala. Na situação atual dos LLMs, essas tarefas parecem ser, muitas vezes, simples. Mas a dificuldade reside em fazer isso em diversas equipes diferentes, milhares de equipes ou milhares de repositórios. Que é basicamente o que estou mostrando aqui. Então, funciona mais ou menos como um fluxo de trabalho de criação. Você está adicionando
+
+prompts, scripts e coisas do tipo e, em seguida, usando isso para impulsionar essa mudança em toda a sua organização. Gostaria também de mencionar o blog de engenharia de integração (Harden Engineering) criado pela OpenAI e pelo Ryan, pois ele resume bem essa mentalidade de tentar capturar e codificar o máximo possível do seu processo no seu repositório, nos seus arquivos de contexto, no seu agents.md, a fim de construir efetivamente essa fábrica de software. Nos últimos dias, recebi algumas perguntas de pessoas sobre engenharia de chicotes elétricos e o que ela realmente é. Para mim, é realmente uma extensão da engenharia de contexto, em que tudo no seu repositório, desde habilidades até agents.md e
+
+testes unitários, tudo que você possa usar para dar feedback ao seu agente, é para mim engenharia de aproveitamento. Então, incluí essa pequena visualização no canto superior porque, para mim, a engenharia de harness tem muito a ver com fazer as coisas, deixar o agente executar o processo , descobrir onde ele se perde e, em seguida, codificar esse conhecimento de volta no repositório ou contexto para tentar fazer com que o agente flua pela fábrica de software o máximo possível. Então, se dermos um passo atrás e pensarmos, em termos de infraestrutura, no que é necessário para construir esse tipo de fábrica de software, a primeira peça desse quebra-cabeça é um ambiente de execução, ou seja, um local onde o agente possa ser executado. E acredito que este problema esteja praticamente resolvido agora. Você então precisa de uma maneira de orquestrar essas ações.
+
+Portanto, você precisa executá-los em grande escala. Então, você precisa aguardar para executar esses agentes, sabe, escalar horizontalmente para cima e para baixo . Você precisa de alguma forma de acioná-los. Mas, para mim, uma das maiores dificuldades ao tentar construir isso hoje é a coordenação eficaz dos agentes. Então, como fazer com que os agentes interajam entre si, assumam tarefas uns dos outros, como eles colaboram?
+
+Em relação aos tempos de execução, muitos de vocês sabem que existem diferentes abordagens. Mas você pode executar agentes em threads separadas. Você pode isolá-los melhor em árvores de trabalho. Você pode então dar um passo além na abstração e colocá-los em contêineres e VMs, ou micro VMs, ou o que o Owner faz, basicamente o que chamamos de ambientes de desenvolvimento. Então, a discussão sobre o sandbox tornou tudo muito confuso.
+
+Mas, pelo menos acreditamos que, para executar tarefas de desenvolvimento adequadas , isso precisa ser feito dentro de uma máquina virtual. A razão para isso é o isolamento do ponto de vista da segurança; um contêiner não é uma barreira de isolamento à prova de balas . Portanto, se você tiver um agente em execução e quiser protegê-lo, este desafio se aplica a um contêiner. Eles também são explosivos. Se você executá-los no Kubernetes ou em pods, terá problemas de "vizinhos barulhentos".
+
+Vai haver disputa por recursos computacionais entre diferentes contêineres. E somente com o isolamento completo de uma máquina virtual você conseguirá fazer isso de forma eficaz e adequada. Deixe-me repassar minha apresentação, desculpe. Legal. Então, deixe-me fazer uma observação rápida: este é um bom ponto a ser considerado . Vou mostrar uma demonstração rápida de
+
+como isso realmente se parece dentro da interface do Proprietário, porque muito disso é um pouco teórico. Fiz uma gravação rápida disso ontem no meu quarto de hotel, só por precaução, caso o Wi-Fi estivesse ruim aqui. Mas, deixe-me explicar isso para você. Aqui você vê a interface do proprietário. Do lado esquerdo, você encontra todas as diferentes tarefas que estou executando. Então,
+
+iniciei duas tarefas diferentes aqui. A primeira coisa que eu pedi ao proprietário foi para implementar o Symphony para mim. Portanto, o Symphony possui uma especificação no repositório que explica como implementar o Symphony. É uma especificação muito detalhada. Então, eu queria usá- lo como exemplo. Eu atribuí a um dos
+
+agentes e pedi que ele iniciasse isso usando agentes baseados em processos. Portanto, são subagentes que operam dentro do próprio ambiente. Então, pegue a máquina virtual, execute o agente dentro dela e esse agente criará subagentes dentro dessa máquina virtual. A outra tarefa que solicitei foi, basicamente, executar uma frota com várias máquinas virtuais diferentes. Assim, o agente fica, na verdade, capacitado a criar outras VMs dentro da plataforma, podendo, tecnicamente, iniciar um número infinito delas. Portanto, independentemente de onde você esteja
+
+executando isso, sua única limitação real é a capacidade de escalabilidade do seu provedor de nuvem, como podemos ver, e talvez eu precise pular um pouco essa parte, pois parece que me apressei demais. Esse agente inferior, o da máquina virtual, então irá gerar esses três subagentes diferentes. Então, ele inicia as diferentes máquinas virtuais que vemos surgindo no lado esquerdo. O agente principal é o agente controlador e os subagentes, obviamente, recebem pequenas tarefas individuais para concluir e, em seguida, trocam mensagens com o agente principal para que este controle e governe a tarefa como um todo . Um desafio que certamente temos é: como construir a experiência do usuário para isso? À medida que
+
+você cria tarefas cada vez mais complexas , como você pensa em gerenciar e controlar esses subagentes e como você pensa na experiência do usuário (UX) em relação a eles? Assim, conforme o processo avança, você também verá, no lado esquerdo, que os agentes começam a ficar online, iniciam seus ambientes e começam a executar tarefas. Por algum motivo, ambos possuem sete tipos de subitens que estão sendo analisados. Então, você pode ver isso. Ao chegar ao fim, obviamente irá encerrar essas máquinas virtuais. Tudo isso vai
+
+desmoronar e sua tarefa estará completa. A segunda forma de UX que temos com os subagentes é esta aqui, no nível do processo, que vou pausar para que não fique pulando de um assunto para outro. Ao iniciar o subagente em nível de processo , tudo acontece dentro da janela do agente único. Então, você pode ver aqui embaixo uma pilha de vários subagentes diferentes que estão sendo iniciados. E então, ao clicar neles, você pode abrir uma nova janela de bate-papo, que funciona como um novo contexto, e usá-la. Então, você tem
+
+duas formas diferentes disso. Uma solução consiste em máquinas virtuais completamente isoladas para escalar esses enxames, e outra em nível de processo, onde você pode executá-la dentro da própria máquina virtual individual. Então, tem muita coisa acontecendo ali, mas eu queria mostrar conceitualmente o que as pessoas perguntam: "Como é um enxame na realidade? Como isso realmente se parece?" E é assim que aparece dentro do ONA.
+
+Então, me dê 1 segundo para voltar voando . Então, voltando à ideia da fábrica de software . Então, como posso ficar sabendo de alguns dos desafios relacionados às fábricas de software? E isso porque eu também tentei construir um. Obviamente, implemento muitas dessas ideias em nossos próprios projetos, mas também, de forma semelhante ao que a OpenAI fez ao desenvolver seus projetos de sinfonia e seu blog de engenharia de interação, penso: " Ok, o que podemos construir em um projeto sem escrever uma única linha de código?" E podemos automatizar o máximo
+
+possível desse processo, de forma que o agente possa desenvolver tudo da maneira mais autônoma e independente possível? E acontece que sim, a tecnologia já existe , mas há alguns desafios diferentes a serem enfrentados. O que está faltando? Uma coisa que você descobre é que o SDLC não é isso. Como você sabe, este é o SDLC conceitual que apresentamos e discutimos uns com os outros.
+
+Cinco etapas muito simplificadas do SDLC (Ciclo de Vida de Desenvolvimento de Software). Os agentes não respeitam isso e não entendem que essas caixas contêm muita complexidade. Então, se considerarmos algo como planejamento ou fase de planejamento, na verdade, dentro disso, nosso SDLC (Ciclo de Vida de Desenvolvimento de Software) possui uma infinidade de microetapas diferentes . E se quisermos que eles treinem agentes para então percorrerem o SDLC (Ciclo de Vida de Desenvolvimento de Software), precisamos encontrar maneiras de realmente dividir o SDLC em algumas dessas microetapas. E isso acontece ao longo de todo o ciclo de vida de desenvolvimento de software ( SDLC).
+
+Portanto, se quisermos construir algum tipo de fábrica de software, precisamos começar a descobrir como resolver esses tipos de microetapas. Como podemos fazer com que os agentes sigam esses passos de forma satisfatória e também de maneira determinística? E a parte difícil disso é o contexto. Provavelmente não é uma grande inovação para todos nesta sala. As janelas de contexto são um dos aspectos mais difíceis de trabalhar com LLMs, porque, como o último palestrante mencionou aqui, o contexto se deteriora.
+
+Contexto, sabe, uma vez que a janela de contexto é consumida, o agente começa a perder o controle de para onde está indo e coisas do tipo. Sua eficácia diminui com o tempo. Eles também costumam pular etapas . Sabe, eles querem nos agradar. Eles são bastante bajuladores, então podem, sabe, pedir para eles escreverem alguns testes e depois eles vão pular alguns testes para concluir a tarefa.
+
+Portanto, muitas das ferramentas que temos hoje também servem para coordenar esses agentes à medida que começamos a implementá-los. Uma vez que você tenha essa infraestrutura, com os ambientes de execução e a orquestração, a peça que falta é a coordenação. Portanto, se você usa algo como o GitHub, o GitHub não é uma camada de coordenação para agentes. Torna-se extremamente avassalador. Sabe, você pode pedir aos seus agentes que criem uma solicitação de pull request, você pode revisá-la, resolver os conflitos de merge, corrigir a build de CI, etc. Mas isso gera
+
+muita confusão para você, como ser humano, que fica difícil entender onde deve intervir com o próprio agente. E o GitHub é uma solução ruim para isso. Uh, Symphony é construído sobre a plataforma Linear, mas sofre do mesmo problema de estarmos reutilizando ferramentas humanas existentes de maneiras muito estranhas para os agentes. Mas acho que agora estamos prestes a resolver isso de forma eficaz. E acho que isso pode ser resolvido de algumas maneiras diferentes. Uma delas é
+
+através de máquinas de estado, sabe, construindo fluxos de trabalho e, efetivamente, máquinas de estado que já temos há muito tempo e, em seguida, construindo-as como nossas versões do SDLC (Ciclo de Vida de Desenvolvimento de Software). Acredito que, em certa medida, algumas das ideias de execuções duradouras também se aplicam a isso. Sabe, muitas empresas foram pioneiras nisso ao longo do tempo para conseguir executar um processo de forma duradoura. Mas também precisamos resolver a questão dos controles e da conformidade. E eu acredito que realmente existe uma lacuna no mercado para empacotar isso em algum tipo de construção de linha de comando (CLI), onde você possa executar localmente em um ambiente de desenvolvimento, mas também remotamente em um ambiente de integração contínua ( CI) ou algo semelhante .
+
+Mas, na prática, se alguém quiser conversar e aprofundar um pouco mais o assunto, acho que temos alguns minutos. Também podemos responder a algumas perguntas, se necessário. Sim, basicamente, minha definição de fábrica de software é transferir esse fator humano para o processo, de forma que ele não precise necessariamente conduzir cada uma dessas mudanças individuais. O contexto e a gestão do contexto são, de longe, a parte mais difícil da construção desta fábrica de software. Dentre esses elementos primitivos, acredito que resolvemos efetivamente a questão do tempo de execução.
+
+Atualmente existem muitas opções para isso, como sandboxes, contêineres e outras soluções. A orquestração está efetivamente resolvida. Os gatilhos foram resolvidos, mas o que ainda me falta é coordenação. Além disso, um dos nossos funcionários da equipe de segurança está aqui presente. E a segurança é outra peça fundamental do quebra-cabeça que precisamos resolver para impulsionar ainda mais a automação.
+
+Mas é essa camada de coordenação que, na minha opinião, é o que está faltando em grande parte. Obviamente, muito disso é um pouco abstrato. No dia 6 de maio, realizaremos uma cúpula virtual para abordar esses tópicos sobre fábricas de software e agentes em segundo plano . Portanto, se alguém aqui quiser participar, pode fazê-lo. Está disponível no backgroundagents.com e lá
+
+também temos uma chamada para propostas (CFP) aberta. Se alguém quiser falar, será ótimo. Não há muitas pessoas no mundo que fazem isso. Então, se você estiver pelo menos experimentando, seria ótimo conversar com você também. Outra coisa: algumas pessoas com quem conversei na conferência, especialmente sobre fábrica de software, reclamaram que muitas dessas palestras são um pouco teóricas, o que é verdade. Então, alguns de vocês podem
+
+querer se aprofundar bastante nesse assunto . Então, na verdade, na próxima semana, com o Zach da ONA, vamos construir uma dessas fábricas de software em público, começando do zero . Faremos isso ao longo de duas semanas em público para mostrar como funciona com a tecnologia atual, para realmente mostrar todos os detalhes dos fluxos de trabalho, caso alguém queira ver como isso funciona na prática . Pronto. Muito obrigado.
+
+Temos dois minutos e meio para perguntas, mas caso contrário, também estarei lá fora, no andar de baixo. Sim. Obrigado pela palestra. Muito útil. Você poderia voltar ao slide onde você estava falando sobre os problemas com a camada de coordenação? Sim.
+
+Memória, e também se você pudesse elaborar um pouco mais sobre o que você propõe como solução, de forma mais concreta. Hum, seria muito interessante ouvir sobre isso. Sim, claro. Então, eu tenho estado... Então, preciso
+
+repetir a pergunta, na verdade, para o fluxo. Então, a questão era sobre problemas com a camada de coordenação e uma solução mais concreta. Como isso poderia ser na prática ? Então, temos vários protótipos diferentes para isso internamente e também tenho pensado em como podemos utilizá- los. Portanto, acredito que um formato que funcione bem seja a interface de linha de comando (CLI).
+
+Então, eu vi algumas outras soluções, baseadas em grafos. Existem atualmente algumas ferramentas de código aberto que permitem definir o fluxo de trabalho de forma eficaz como um grafo. Sabe, tipo o que você usa para gerar diagramas de sereia a partir de fluxos de trabalho do tipo NA10. É onde você pode definir esses tipos de instruções nesse formato. Acho que, em última análise, isso precisa ser implementado em algum tipo de interface de linha de comando (CLI).
+
+O que quero dizer é que, se você tem um agente local em execução, código na nuvem, ou qualquer CLI local em execução, precisa de algo que se integre à sua ferramenta para que possa invocá-la e dizer: "Ei, eu concluí esta parte do meu SDLC e posso prosseguir para a próxima parte como uma CLI?" Se você também quiser, posso te fornecer as especificações completas. Posso te mostrar depois da palestra também. Podemos aprofundar um pouco mais nesse assunto. Mas estou vendo isso sendo resolvido de várias maneiras diferentes. As pessoas estão resolvendo
+
+isso de algumas maneiras diferentes. Existe um diagrama de fluxo de trabalho do tipo NA10. O gateway de linha de comando (CLI) é o protótipo que eu também tenho. E depois há uma série de soluções provisórias improvisadas e diferentes. Existe até um modelo similar, usado pelos mesmos usuários do sistema OpenClaw , cujo nome me escapa, mas creio que seja o ACPX, que foi desenvolvido em cima do ACP. Um que desenvolve parte desse
+
+fluxo de trabalho. Tem um no GitHub, Fabro. Algumas pessoas estão experimentando , mas ainda está em fase inicial. Sim . Mais alguma pergunta?
+
+Você está usando algum protocolo para a CLI? Porque você tem ACP, existe ACP de oito vias. Tem um monte de " Sim, eu... eu não sei se não conhecemos
+
+o padrão". Atualmente não. Então, quanto à implementação que tenho, estou tentando entender se devo lançá-la como uma implementação ou como um padrão, para ser honesto, porque, no geral, não me importo muito com a implementação em si. Eu me importo bastante com o padrão para que possamos colaborar na sua definição. Mas não foi construído sobre ACP, pelo menos ainda não, mas pode ser que venha a ser. É de
+
+oito vias também? Nem de oito vias, não. Sinto que está resolvendo um problema um pouco diferente, então...
+
+Legal. Tudo bem. Muito obrigado. Aproveitem a conferência, pessoal. Obrigado.

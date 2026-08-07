@@ -1,0 +1,104 @@
+---
+video_title: "20 days of compute vs 7 hours: rethinking what state-of-the-art means — Bertrand Charpentier, Pruna"
+video_id: hqHC6Z_lXyo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hqHC6Z_lXyo
+video_date: 2026-06-01T17:00:06+00:00
+video_description: |
+  Ranking image generation models the way Design Arena does it — 26,000 battles, 62 seconds per generation — takes 20 days of compute, costs $5,000, and consumes roughly 400 marathons worth of energy. Bertrand Charpentier, cofounder and chief scientist at Pruna AI, uses that number to make a point: the same evaluation on a fast compressed model takes 7 hours and $265. Efficiency is a dimension of state of the art, not a footnote.
+  
+  The rest of the talk dismantles the idea that any single model holds the title. Leaderboard rankings disagree with each other — the same model goes from rank 10 on one to rank 5 on another. Most models lose 40% of their head-to-head battles, which means the top-ranked model is the wrong choice for nearly half of real use cases. His answer is the Pareto front: plot quality against latency or cost, find the frontier, and expect three or four models clustered tightly in quality score but varying up to 20x in efficiency. Evaluating this way tends to surface small specialized models rather than large foundation models.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/bertrand-charpentier-76995ab6/
+  - https://github.com/sharpenb
+---
+Olá. Então, hoje vamos tentar responder à pergunta: qual modelo de IA é o mais avançado? E acredito que esta seja uma questão extremamente importante para todos, pois, é claro, para nossas aplicações em pesquisa ou quando lançamos um produto, sempre queremos obter o melhor desempenho possível de nossos modelos. Mas o problema é que o conceito de "estado da arte" é um tanto confuso e as pessoas podem ter visões diferentes sobre isso. Então, vamos tentar primeiro entender como as pessoas abordam essa questão e como tentam respondê-la . Geralmente, existem dois
+
+métodos principais que as pessoas tentam usar para saber qual novo modelo representa o estado da arte. A primeira opção é simplesmente acessar a internet e consultar alguns rankings públicos para ver qual é o melhor modelo presente nesses rankings. Outro método é simplesmente realizar uma avaliação interna. E, novamente, vejam com base em sua avaliação interna qual modelo é o melhor. O problema com esses métodos é que, na maioria dos casos, se você os aplicar de forma ingênua, sempre encontrará uma espécie de solução preguiçosa, que é simplesmente usar um modelo de fundação amplo.
+
+Então, vamos tentar ver um pouco desses métodos, como o que as pessoas tendem a fazer de forma rápida, e como isso pode ser feito melhor. Então, o primeiro método é simplesmente verificar uma tabela de classificação pública. Então, por exemplo, se considerarmos o caso de uso de edição de imagens, vamos tentar encontrar o melhor modelo de edição de imagens nesse caso. Normalmente, o primeiro passo é encontrar alguma tabela de classificação. Nesse caso, você pode usar ferramentas como o Design Arena, que é muito famoso.
+
+Em seguida, basta escolher a primeira opção, que é a imagem do ChatGPT. E então você sente que está feliz. Este é o modelo mais adequado para o seu caso de uso. Em geral, é uma solução bastante satisfatória. É como se você conseguisse o primeiro modelo razoável com pouco esforço.
+
+Mas o problema é que você não sabe exatamente muitas coisas sobre como os usuários irão interagir com o seu modelo e assim por diante. Assim, você pode, na verdade, fazer uma escolha muito melhor. Portanto, o primeiro problema é que, se você observar várias tabelas de classificação, mas não apenas uma, verá que cada tabela pública terá uma classificação diferente. Então, talvez seja um pouco pequeno aqui, mas você pode confiar em mim. Existem três tabelas de classificação: LM Arena (agora chamada Arena), Design Arena e Artificial Analysis, que tentam classificar modelos de edição de imagens.
+
+E se você tentar traçar um paralelo entre essas tabelas de classificação, verá que não se trata da mesma posição. Assim como o modelo top de linha não é o mesmo. Além disso, comparando vídeos de dois modelos diferentes, eles serão distintos. Por exemplo, existe um modelo, Humano, que sai da 10ª posição em Análise Artificial e fica em quinto lugar em plataformas como Arena. A ideia é que cada tabela de classificação tenha uma perspectiva diferente e, às vezes, também existam modelos com entradas duplicadas. Então, é um pouco de
+
+ruído, um pouco de "qual é a informação que você quer extrair?". Existem até alguns modelos que aparecem nas tabelas de classificação, mas não em outras. Portanto, é difícil obter as informações principais. E quando você analisa detalhes como as pontuações Elo, que supostamente são as pontuações de qualidade usadas para determinar qual é o melhor modelo, você verá que mesmo essas pontuações Elo são muito diferentes, ou seja, para alguns em algumas tabelas de classificação, elas estarão entre 1.100
+
+e 1.300, mas para outros estarão em uma faixa completamente diferente. Então, relativamente falando, não sabemos o quão fortes são as relações entre os modelos. E geralmente, a principal solução para isso não é confiar em apenas uma, mas sim analisar várias. E quando você vê que há muita diferença entre diferentes rankings, isso significa que provavelmente existem alguns modelos que são aproximadamente equivalentes. O
+
+fato de uma imagem do ChatGPT estar no topo do ranking individual não significa que ela seja a melhor no geral. Outro problema é que, na maioria dos casos, você terá aplicativos que lançará e usará seu modelo para uma aplicação específica. O que vimos antes é como uma pontuação agregada de várias tarefas diferentes. Não sei. Por exemplo, podemos ver coisas como remover objetos, alterar o plano de fundo e editar texto.
+
+Mas podemos, na verdade, criar tabelas de classificação para cada um dos casos de uso específicos. E aqui estão alguns placares de líderes, tipo, de IA de design, eu acho. E acho que há um problema com o "Ok". Ele volta . E você pode ver que, na verdade, se você traçar a diferença para cada caso de uso específico, verá que, novamente, a classificação é completamente diferente.
+
+E a imagem do ChatGPT nunca está no topo deste ranking. Sempre há algum modelo novo e alguns modelos que são ótimos para remover objetos, e alguns modelos que são ótimos para fazer outras coisas. Ou seja, não existe nenhum modelo que supere consistentemente os outros. E existem modelos muito diferentes que funcionam bem para diferentes casos de uso específicos. E isso é normal, pois se deve ao fato de que alguns modelos foram, por exemplo, treinados mais em uma tarefa específica do que outros.
+
+E a solução para isso é que, ao consultar rankings públicos, você sempre deve tentar focar no que seu caso de uso pretende alcançar no final. Por exemplo, se você se concentrar em remover objetos, olhe para esta tabela de classificação e não para as outras. Outro problema é que, geralmente, as tabelas de classificação não são estatisticamente significativas para o seu caso de uso específico. Então, aqui eu tento mostrar duas coisas diferentes. Então, a primeira coisa a se considerar é com base em quantas amostras esses placares de líderes são construídos. E se você observar à esquerda, por
+
+exemplo, a análise artificial, verá que todas essas coisas diferentes são baseadas em alguns milhares de amostras para cada uma delas. Portanto, não é muita coisa se compararmos com a carga de inferência que muitas aplicações têm; provavelmente é muito baixa. Para alguns dos nossos modelos, que têm milhões de amigos por dia, provavelmente obteremos mais informações treinando o modelo em nossa API do que apenas olhando para esses placares de líderes. Outra coisa são os placares amarelos. Normalmente, também é possível calcular a taxa de sucesso de cada modelo. Então, quando você cria
+
+esses rankings, o que você faz é, na verdade, colocar os modelos para competir entre si e perguntar às pessoas: " Qual é o melhor modelo entre os dois, na opinião de muitos usuários?" E o que você pode ver é, na verdade, a taxa de sucesso; geralmente não existem modelos que se aproximem de 100% de taxa de sucesso. Significa que a maioria dos modelos perde pelo menos 40% de suas batalhas. E se o seu caso de uso estiver nesses 40% das batalhas, significa que, ao escolher os melhores modelos, você estará escolhendo o modelo errado. Portanto, mais uma vez, é realmente importante fazer a média de mais amostras e sempre ter uma avaliação que esteja próxima da configuração final e das condições finais do caso de uso.
+
+Agora, podemos verificar também a segunda solução para tentar descobrir qual é o estado da arte dos modelos de IA. E a segunda solução é fazer apenas um teste de desempenho interno. Uma das maneiras de fazer isso é o que eu mais vejo, na verdade, nas pesquisas sobre geração de imagens e vídeos, e assim por diante. As pessoas simplesmente fazem inspeções manuais. Eles experimentam algumas sugestões, alguns modelos, e então desenvolvem uma intuição sobre qual é o melhor modelo.
+
+Outra coisa que as pessoas às vezes fazem é executar algum benchmark automatizado e tentar descobrir, com base nesse benchmark, qual apresenta o melhor desempenho. Então, sim, basicamente você só precisa selecionar o modelo de sua preferência. Então pode ser, por exemplo, o terceiro modelo ou aquele com a pontuação mais alta . O problema é que... Então, existem
+
+alguns problemas com isso, e podemos começar com um joguinho. Então, aqui vou mostrar apenas três imagens. E talvez uma pergunta para você seja: quantas pessoas na sala preferem a primeira imagem entre essas três? Então, esta é uma pergunta como qualquer outra, você pode fazer muitas perguntas. Então, está de acordo com o que foi solicitado? É como perguntar
+
+qual imagem você prefere, e assim por diante? Mas o pedido era, eu acho, um homenzinho e um papagaio ou algo parecido. Sim . Certo, primeiro. Quem prefere a segunda imagem?
+
+Ok, algumas pessoas. Quem prefere a terceira imagem? OK. O que é ótimo aqui é que vimos que as pessoas têm preferências diferentes. Portanto, é importante perceber que, se você gosta de inspeção manual, estará extremamente influenciado pela sua própria preferência.
+
+Portanto, é muito importante não confiar apenas na sua preferência, pois você pode ter uma grande surpresa ao descobrir que, na verdade, esses não são os modelos preferidos por todos. Agora podemos fazer isso de novo. A mesma pergunta se aplica: quem prefere a primeira imagem neste caso? Acho que a descrição era algo como um homem comendo sopa com macarrão ou algo parecido . OK.
+
+Quem prefere a segunda imagem? Ok, ótimo. E quem prefere a terceira opção? OK. Isso também é muito interessante porque vi algumas pessoas mudando de ideia. Então,
+
+sempre à esquerda estava o modelo Sid V, no meio o Flux, e à direita, como em alguns modelos que desenvolvemos, havia uma imagem. E a ideia é que você também fica extremamente enviesado em relação às poucas amostras que analisa. Portanto, ao realizar inspeções manuais, você fica duplamente enviesado: pelo seu próprio viés e também pela quantidade de amostras específicas que você analisa. Então, em geral, a ideia é que você nunca deve confiar apenas na inspeção manual. É bom ter uma ideia, mas não é suficiente. Você
+
+sempre deve pedir a muitas pessoas para fazer isso, e a avaliação humana geralmente é ótima, mas você precisa dimensioná-la adequadamente. Outro problema é que, quando não se faz uma avaliação humana, mas sim uma avaliação automatizada adequada com métricas, por vezes obtêm-se resultados inconsistentes. Por exemplo, isto é um pouco pequeno, mas pode confiar em mim. Classificamos cerca de oito modelos com base em algumas métricas, como uma métrica bastante padrão chamada pontuação CLIP, e às vezes as pessoas, ao avaliar modelos de imagem, verificam essa métrica primeiro. E você pode ver que, se verificar as classificações das três métricas que analisamos, como a pontuação CLIP em diferentes conjuntos de dados, elas mudavam o tempo todo.
+
+E essas métricas devem estar entre zero e zero e um ou zero e 100, e na verdade as variações entre os modelos são extremamente pequenas. Portanto, isso significa que é difícil saber, com base nessa métrica, qual é o melhor modelo. O que você deve fazer é, primeiramente, ter uma compreensão clara do que a métrica representa e também usar várias delas. Então, aqui está, por exemplo, outro tipo de métrica. Quando você se conhece, você conhece o seu caso de uso. Por exemplo, você
+
+sabe que quer ser o melhor em renderização de texto. Existem muitas métricas de renderização de texto que seriam melhores para avaliar seus modelos. Portanto, aqui você pode ver novamente que o ranking está muito mais consistente. Você sempre tem a imagem como o primeiro modelo e a imagem P como o segundo modelo. E as variações também são muito mais significativas. Então, os modelos devem
+
+ser zero, e as métricas devem estar entre zero e um. E existem diferenças claras entre cada modelo. Então, sim, em geral, são métricas de compreensão muito importantes. As pessoas geralmente tendem a usar algumas métricas e pensar: "Ok, fiz meu teste de referência e posso parar por aqui." Mas é importante entender o que você realmente mediu com isso.
+
+E agora, um último problema, que na verdade é comum ao primeiro e ao segundo método, que já vimos antes, é que geralmente a qualidade é determinada pelo poder computacional. Então, aqui está uma imagem bonita do Chat. E para a avaliação deles, uh, Design Arena, uh, eu acho, ou talvez seja LM Arena. Eles fizeram tipo 27, uh, 26 batalhas de K. Isso significa que eles geraram imagens de 20 µm e 26 K.
+
+E cada uma dessas imagens leva 1 minuto para ser gerada. Então, aqui eu resumi todas essas informações. Si- 62 segundos. Uh 26 mil avaliações. E, no total, para realizar essas 26 mil avaliações, são necessários 20 dias de computação.
+
+Em termos de custo, são 5 mil, apenas 5 mil, para realizar essa avaliação. E em termos de energia, são aproximadamente 556 kWh. Então, eu sei que as pessoas podem não ter noção da magnitude do que isso representa, essa quantidade de energia. Só para vocês terem uma ideia, eu verifiquei meu Strava e vi quanta energia eu consumia correndo uma maratona, e na verdade são necessárias 400 maratonas só para gerar todas essas imagens. Então, é muita coisa. Estou cansado depois de uma
+
+maratona, então com certeza não quero correr 400 km . Agora, existem algumas alternativas. Você pode usar alguns modelos diferentes. Então, claro, este é um modelo que desenvolvemos que realiza a edição e geração de imagens em menos de 1 segundo. E para a mesma quantidade de avaliação, leva apenas 7 horas.
+
+Também leva muito menos tempo e dinheiro, cerca de 265 dólares. E em vez de correr 500 maratonas, eu só preciso correr quatro maratonas. Então, se três de vocês quiserem correr uma maratona comigo, isso deve ser suficiente . Então, novamente, a ideia é que as pessoas tendem a olhar apenas para a qualidade, mas é importante não olhar somente para a qualidade, mas também para a eficiência, porque às vezes o ganho adicional que você obtém com a qualidade não compensa o custo computacional em termos de eficiência. Portanto, respondendo à pergunta "qual modelo é o mais avançado?", existem
+
+múltiplos modelos considerados de última geração. E a ferramenta que eu prefiro para isso geralmente são os gráficos de Pareto, onde basicamente no eixo x você tem uma métrica de eficiência. Por exemplo, à esquerda, temos a latência para a geração de uma imagem. À direita, está o preço para a geração de uma imagem. No eixo y você tem uma pontuação de qualidade, digamos, a pontuação L. E aqui
+
+você pode desenhar as frentes de Pareto em vermelho e verá que não existe um único modelo de última geração, mas sim vários, talvez três ou quatro. E você pode ver que, embora a pontuação de qualidade não apresente grandes variações, ficando sempre entre 1.000 e 1.200, há uma grande diferença em termos de eficiência. Então, você pode ser, tipo, várias vezes, sei lá , 20 vezes mais rápido apenas usando um modelo diferente.
+
+Melhor ainda, se você souber a tarefa específica que deseja realizar, poderá fazê-la como na fronteira de Pareto, não com métricas de qualidade que se concentram na capacidade geral, mas sim com base em métricas de qualidade específicas para o caso de uso pretendido. Então, aqui estão algumas frentes de Pareto com foco na renderização de texto. E aqui, por exemplo, otimizamos muito, de forma semelhante ao modelo Flux Two ou aos modelos Flux Two Flex. Trabalhamos com a BFL para isso. E você pode ver que consegue ficar muito mais rápido. Você ainda pode estar
+
+na fronteira de Pareto para o caso de uso específico de renderização de texto. Então, o benchmarking está morto? A ideia é que não está morto. Podemos fazer isso corretamente e obter muitas informações úteis . Sim. E se você usar isso
+
+de uma maneira melhor, como aplicando todas essas regras que você conhece ao usar a avaliação, geralmente não encontrará um modelo fundamental extenso, mas sim vários modelos de desempenho menores que serão muito adequados para o seu caso de uso. Então, eu listei apenas algumas conclusões que podem ser avaliadas em várias amostras. Você analisa as condições de uso do usuário . Utilize múltiplos parâmetros de referência ou indicadores de eficiência, que são aspectos fundamentais a serem considerados na avaliação de modelos. E como alcançar modelos de última geração em geral? É assim que
+
+estamos fazendo em Puna. Na verdade, estamos construindo muitos modelos de desempenho que são disponibilizados por meio de pontos de acesso individuais. Temos, por exemplo, modelos de imagem e modelos de vídeo mais rápidos, que podem ser executados entre 1 e 5 segundos. Mas também procuramos contribuir bastante com o código aberto, com muitas contribuições de código aberto no pacote, para mostrar como você pode compactar seus modelos por conta própria. Também há muito material sobre os melhores artigos de pesquisa em eficiência ou até mesmo sobre custos de eficiência.
+
+Então, obrigado pela sua atenção.
+
+Acho que seu tempo acabou, mas se tiver mais alguma pergunta, terei prazer em respondê-la.
+
+Ok, perfeito. Você tem alguma pergunta?
+
+Ah, claro, na verdade existem vários, quer dizer, você também sabe, existem muitas famílias de métodos de compressão. Então, claro que você pode imaginar que fazemos muita quantização, e fazemos uma quantização diferente para cada módulo específico no modelo, o que é extremamente importante. Bem, também podemos fazer uma poda, removendo alguns componentes que não são importantes. E, para todos esses modelos de imagem e vídeo, algo que funciona muito bem é trabalhar na etapa de redução de ruído. Por exemplo, quando você gera um vídeo ou uma imagem, geralmente usa de 20 a 50 etapas para gerar o conteúdo, e você pode reduzir bastante o ruído por meio de métodos de destilação ou armazenamento em cache.
+
+Então, em vez de fazer cerca de 50 vezes mais cálculos usando a mesma infraestrutura, você pode fazer bem menos, sei lá , 20 vezes ou até mesmo quatro vezes, dependendo do quão agressivo você quer ser.
+
+Então, nós temos, tipo, no nosso pacote, muitos algoritmos de código aberto para um bom armazenamento em cache. Mas também temos alguns algoritmos internos, sabe, que usamos para os modelos que disponibilizamos nos endpoints. Mas sim, existem métodos de cache muito avançados e tal, mas sim. Claro. Obrigado.
+
+Certo, então

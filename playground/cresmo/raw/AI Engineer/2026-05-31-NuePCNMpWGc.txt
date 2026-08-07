@@ -1,0 +1,101 @@
+---
+video_title: "Can LLMs generate Enterprise Quality Code? — Prasenjit Sarkar, Sonar"
+video_id: NuePCNMpWGc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=NuePCNMpWGc
+video_date: 2026-05-31T18:00:21+00:00
+video_description: |
+  Sonar ran 4,444 Java programming assignments through 53 models and measured what actually came out. GPT-4o generated under 250,000 lines for those assignments. GPT 5.4 generated 1.2 million. Claude Sonnet 4.6 generated 627,000 with the highest security issue rate at 300 per million lines of code. Prasenjit Sarkar from Sonar walks through the full leaderboard: pass rate, cyclomatic complexity, bug density, and security issues per model.
+  
+  Their response is a three-stage framework called ACDC: guide, verify, solve. The verify stage runs SonarQube analysis in 1 to 5 seconds before a commit, against 1 to 5 minutes in CI. If issues slip through to the PR, a remediation agent creates one fix per issue, runs it through analysis and compilation to check for regressions, and only presents it if it passes.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/jit2600/
+  
+  Timestamps:
+  0:00 Introduction and the Shift to Agentic Development
+  1:44 Evaluating LLM Code Quality and Reliability
+  3:00 Sonar's Evaluation Framework and Methodology
+  3:39 LLM Performance Analysis (Pass Rates and Code Bloat)
+  5:24 Why LLMs Struggle: Training Data and Hidden Flaws
+  6:45 The Sonar LLM Leaderboard
+  8:30 Complexity Metrics: Cyclomatic vs. Cognitive
+  10:41 The ACDC Framework: Guide, Verify, and Solve
+  11:06 Phase 1: Guide (Context Augmentation & Sonar Sweep)
+  11:42 Phase 2: Verify (SonarQube Agentic Analysis)
+  12:40 Phase 3: Solve (Remediation Agent)
+  14:05 Product Summary and Ecosystem Support
+---
+[música] Muito bem
+
+. OK. Desculpem, pessoal, pelo pequeno contratempo. OK. Meu nome é Prasanjit Sarkar e a sessão de hoje é sobre se todos os nossos mestrados em Direito (LLM) estão gerando código pronto para uso empresarial, certo?
+
+Então, vamos dar uma olhada no primeiro slide. No primeiro slide, estamos falando sobre Adnan Qureshi, que disse há dois meses que muita coisa mudou na área de desenvolvimento de software. Antes, costumávamos escrever o código em uma IDE. Agora as coisas mudaram. Agora tudo gira em torno da capacidade de agir. Então você está criando agentes.
+
+Você está apenas dando instruções em inglês, e o inglês agora é a nova linguagem de programação. Todo mundo está falando sobre isso. E então você deixa para lá, mas sabe, na verdade são os humanos que revisam o código que está sendo gerado pelo agente. Então, muita coisa mudou. Antes, costumávamos começar abrindo o IDE, IDEs sofisticados como o VS Code ou o JetBrains, e agora o Cursor, o Windsurf ou o Antigravity.
+
+E agora estamos caminhando em direção às plataformas de codificação agética, como Code X, Claude, Devin ou Gemini CLI. E de acordo com a Pesquisa de Engenheiros Pragmáticos, realizada em março de 2026, vimos que 55% dos desenvolvedores agora usam regularmente algum tipo de agente de IA, certo? Mas a questão é: você confia no código gerado por esses LLMs, certo? É possível mantê-lo funcionando? É seguro? É
+
+legível? E essas são as questões que vamos desmistificar agora nesta sessão. Então, vamos analisar o porquê, vamos examinar, por meio da avaliação desses modelos e do que eles geram automaticamente. Portanto, estamos abordando dois aspectos . Um aspecto é que todos os líderes do LLM , todas as empresas de LLM, estão dizendo que sua taxa de aprovação é de 80% ou mais.
+
+84% 83% 82%. Esses são, você sabe, os resultados da avaliação humana proveniente do banco de avaliação MBPP SWE. Essas estão ótimas. Esses são os aspectos da correção funcional nos casos de teste, que são os mais conhecidos. Mas o que nos falta são os aspectos de segurança, a confiabilidade no mundo real, os problemas de arquitetura de engenharia, a disciplina de engenharia que vocês têm. Então, a manutenção do código e a
+
+dívida técnica que será gerada pelos próprios LLMs, e o contexto da nossa análise. Portanto, essas são coisas que estão faltando. O que o Sonar fez foi criar uma estrutura de avaliação que percorre mais de 4.444 tarefas de programação Java distintas . Trata-se de um conjunto de dados de código aberto . Aceitamos as
+
+tarefas e depois analisamos os modelos. Agora, quando analisamos os modelos, vimos uma enorme quantidade de dados que surgem da análise, e isso é algo que temos de código aberto, mas não de código aberto. Quer dizer, na verdade, nós o colocamos em mundo aberto. Então, fizemos a análise usando o SonarQube Enterprise e obtivemos informações cruciais para escolher o LLM certo. Agora, vamos analisar se os LLMs são adequados ou não.
+
+Vamos analisar os mestrados em Direito (LLMs) que avaliamos. Então, aqui estou mostrando a vocês os cinco LLMs. E aqui você pode ver que a taxa de aprovação do Gemini 3.1 Pro High vem do banco de testes da SWE. Então, você pode ver que são 84,17%.
+
+Mas é prolixo. Então, aquelas 4.444 tarefas em Java que mencionei, para resolver esse problema, resultaram em 307.000 linhas de código, certo? O que é bastante conciso.
+
+Não é tão ruim assim. Vimos que a complexidade ciclomática é 234. Além disso, é bastante problemática, com 614 bugs encontrados por milhão de linhas de código. E, obviamente, temos os problemas de segurança por milhão de linhas de código, que é 210. Então, você vê que, embora esses modelos estejam gerando código, embora esses modelos sejam consideravelmente mais altos do que os modelos básicos, você vê que, por exemplo, o Gemini 3 Pro está criando o maior risco, o Claude Sonnet 4.6 está criando o
+
+maior risco. Vimos 300 problemas de segurança por milhão de linhas de código, certo? É também um golpe forte. Portanto, para esses problemas e para esse número de tarefas, vemos 627.000 linhas de código geradas pelo Claude Sonnet 4.6. E você
+
+ficará impressionado se observar o GPT 5.4 e o GPT 5.4 Pro High, verá que 1,2 milhão de linhas de código foram geradas para essas mais de 4.000 tarefas em Java. Isso representa uma quantidade enorme de linhas de código, certo?
+
+Isso é um golpe duro. [bufa] Agora, por que isso está acontecendo? Bem, como você sabe, temos visto códigos de qualidade variável . Portanto, os conjuntos de treinamento que você vê, na verdade, contêm código de qualidade mista proveniente de fontes abertas e de outros lugares, e isso também está criando o problema. Um pequeno problema. Em seguida, as falhas de segurança inerentes
+
+. Portanto, os conjuntos de dados que você está usando para treinar o modelo têm falhas de segurança embutidas e vimos que os modelos estão identificando esses exemplos de código inseguros juntamente com os exemplos seguros. Além disso, existem erros ocultos nos dados. Portanto, existem erros lógicos sutis que se infiltram no conjunto de treinamento e que, na verdade, fazem com que seus modelos produzam código que falha ou, você sabe, se comporte de maneira inadequada. E, claro, os próprios mestrados em Direito (LLM), certo? Então, os LLMs são probabilísticos,
+
+certo? Obviamente, sabemos que o comando que você dá a um modelo hoje, amanhã, ao dar o mesmo comando ao mesmo modelo, não irá gerar o mesmo código. Vai gerar código. Vai criar uma quantidade diferente de código, um conjunto diferente de código, certo? Possui um contexto limitado, o que obviamente significa que não compreende os dados, o código-fonte ou a arquitetura da empresa.
+
+E obviamente não tem explicação. Portanto, é muito difícil diagnosticar e melhorar o problema quando o código está sendo gerado. Então, criamos este ranking chamado sonar.com/leaderboard. Aqui apresentamos todos os dados referentes aos diferentes modelos que avaliamos. Até agora temos mais de 53 modelos
+
+e todas as diferentes versões. Então, você vê o Gemini 3 Pro High, o Gemini 3 Pro. Então, é diferente, sabe, uma combinação do aspecto do pensamento também. Assim, avaliamos mais de 53 modelos e disponibilizamos todos os dados em código aberto para que as pessoas possam ver como os modelos estão se comportando atualmente . Portanto, até o momento, você pode ver que o Gemini 3.1 Pro High
+
+foi avaliado em 19 de fevereiro e obteve a maior taxa de aprovação, que é de 84,17%. A densidade de código gerada não está tão ruim, e a complexidade ciclomática e cognitiva das linhas de código também estão boas. Não é tão ruim assim. Mas sim, esta é a tabela de classificação que criamos, onde avaliamos continuamente todos os diferentes modelos que surgem e, em seguida, carregamos os dados. Assim, você pode ver que, ao analisar cada modelo individualmente, fornecemos muito mais detalhes sobre o que exatamente eles estão fazendo. Assim,
+
+você poderá tomar uma decisão concisa sobre se vai adotar este modelo ou outros modelos que conhece, de acordo com a sua arquitetura. Então, você vê que a chave interna, Gemini 3.1 Pro High, tem uma precisão de 84,17. É a correção funcional de que estou falando. E esse é o modelo líder em precisão, mas temos outros cinco modelos que ultrapassam os 80% de precisão, e esses são os nossos principais líderes .
+
+Então, falamos sobre dois tipos diferentes de complexidade. Uma é a complexidade cognitiva, a outra é a complexidade ciclomática. Então, a complexidade ciclomática se resume a quantas ramificações você tem? Tipo, quantos "ifs" e " ifs" e "else", quantos você sabe, quantos loops "for", quantos "ifs" e outros loops, quantos loops "while" você tem. E a complexidade cognitiva é uma métrica proprietária da Sonar, onde medimos o quão difícil um código é para um ser humano ler, entender e manter, certo? Portanto, essas são
+
+as duas complexidades diferentes que mantemos. E se você observar os modelos e o tipo de dados, verá a quantidade de verbosidade que temos visto. Então, nos modelos mais recentes que estamos vendo surgir , dia após dia, estamos vendo que o número de linhas de código está aumentando . Se você observar o GPT 5.2 High, verá que ele gerou um milhão de linhas de código para essas mais de 4.400 tarefas em Java, certo? E se você
+
+observar os modelos anteriores, como o GPT 4.0, verá que eles têm menos de 250.000 linhas de código, mas os modelos que estão sendo aprimorados têm um número de linhas de código muito alto. Você já viu modelos que também estão subindo de nível e que apresentam maior complexidade, tanto ciclomática quanto cognitiva . Você também precisa levar em conta que o número total de bugs por modelo também está aumentando, mas o que temos observado é que os modelos que estão amadurecendo com o tempo apresentam bugs ou problemas de segurança mais sutis, em vez dos problemas antigos. Portanto, eles estão fazendo um bom trabalho
+
+em termos de execução do aprendizado por reforço e estão solucionando os problemas que já identificaram, mas, ao fazer isso, também estão criando bugs mais sutis, muito difíceis de serem detectados por um ser humano. Observamos que o número total de vulnerabilidades por modelo também está diminuindo, mas a quantidade e o tipo de vulnerabilidades que encontramos agora pertencem a um gênero diferente. Certo, então, sim, vimos que está gerando um tipo de código que não atende aos seus padrões de engenharia, mas o que podemos fazer? Neste slide, falamos sobre o ciclo de desenvolvimento centrado no agente. Nós o chamamos de ACDC.
+
+Então, Sonar tem esse nome engraçado, né? Por isso é chamado de estrutura ACDC. Assim, na estrutura ACDC, temos três etapas. Temos a fase de orientação, a fase de verificação e a fase de resolução. Neste caso, temos um laço interno e um laço externo. Assim, na fase de orientação,
+
+apresentamos dois produtos diferentes. Uma delas se chama Sonar context augmentation e Sonar sweep, que está em versão beta privada. Basicamente, o Sonar Sweep processa os dados que você já possui e os dados que você está usando para treinar seu modelo. Portanto, se você tiver dados problemáticos, isso significa que seu modelo criará o código problemático. Se eu processar os dados diretamente ali, o código que será gerado será bom o suficiente, certo? O aumento de contexto
+
+vai inserir o contexto de toda a base de código no próprio LLM. Em seguida, temos a etapa de verificação. Verifique se o estágio é o cubo Sonar. Temos várias maneiras diferentes de, você sabe, utilizar isso. Introduzimos a análise de agentes do Sonar Cube, que está atualmente em versão beta aberta, aberta a todos, e que consiste em executar seu código em tempo de execução. O que
+
+isso significa é que você está usando uma ferramenta como Cloud, Codex, Gemini CLI ou qualquer outra que tenha um MCP integrado e, então, você pode dizer: "Ei, gere este código". Antes de confirmar isso, antes de enviar o PR, você precisa analisar meu código. Então, ele vai analisar esse código muito antes da sua integração contínua ser executada, certo? A execução do CI leva de 1 a 5 minutos e, em seguida, esta análise levará de 1 a 5 segundos. Em um período de 1 a 5 segundos, o código que está sendo gerado agora, antes mesmo de ser confirmado, será analisado e informará: "Ah, estes são os problemas que encontrei." Certo, o problema será
+
+encaminhado para o agente e ele o resolverá imediatamente, antes mesmo de você confirmar a alteração. Então você confirma a alteração, envia esse código de volta para o PR e a análise do PR será executada. Agora, na parte de resolução, introduzimos o agente de remediação do cubo Sonar. Então, digamos que, mesmo depois de tudo isso, se houver problemas que passaram pela fase de verificação e voltaram para a fase de PR, certo? Então você fez o commit do código, enviou um PR e depois descobriu que o SonarCube detectou problemas que nós encontramos e que resultaram em falhas de qualidade. Se isso falhar, o
+
+agente de remediação está logo ali. Atualmente está em fase beta aberta, onde você pode simplesmente clicar e selecionar "Ok, quero corrigir todos os problemas relatados no PR". Além disso, digamos que você tenha uma dívida técnica, certo? Enorme quantidade de dívida técnica. Então você acessa o painel do SonarCube e vê todas essas dívidas técnicas que você tem, basta clicar e selecionar todos os problemas que deseja corrigir e, em seguida, atribuir ao agente. E vamos criar um
+
+PR para cada problema individualmente e vamos corrigi-lo, devolvendo-o aos desenvolvedores. Os desenvolvedores vão analisar isso. Se eles ficarem satisfeitos, vão aprovar e depois incorporar. O grande diferencial do nosso agente de correção é que ele cria a correção, executa a análise novamente, executa a compilação mais uma vez e verifica se isso causa algum problema. Se houver algum problema, ele será descartado.
+
+Não vamos fornecer o código que irá, você sabe, criar uma regressão. Nós não fazemos isso, certo? Portanto, trata-se de uma espécie de loop de verificação que executamos. Então, sim, este é todo o
+
+nosso portfólio de produtos, onde oferecemos desde orientação e verificação até a resolução de problemas. Temos todos esses, você sabe, mais de 40 linguagens de programação e frameworks. Todos os IDEs de DevOps são suportados, sabe, estamos em parceria com isso. Nós também estamos presentes no mercado. Então, sim, é assim que estamos resolvendo os problemas que você está vendo, onde os LLMs estão gerando o código, mas não confiamos nele, certo?
+
+Sim, se você quiser mais informações, estamos no estande da exposição. Venha nos visitar e talvez possamos lhe mostrar uma ou duas demonstrações dos produtos que desenvolvemos. Certo, obrigado. [aplausos]
+
+[música]

@@ -1,0 +1,115 @@
+---
+video_title: "Any-to-Any: Building Native Multimodal Agents - Patrick Löber, Google DeepMind"
+video_id: GIRpQEfYf3U
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GIRpQEfYf3U
+video_date: 2026-05-20T17:00:07+00:00
+video_description: |
+  Draw arrows on a map and ask Gemini to generate a picture of what you see. It produces the Golden Gate Bridge. Not because it matched pixels, but because the image generation model is built on top of Gemini's world understanding and knows what those arrows are pointing at.
+  
+  Patrick Löber walks through the full any-to-any stack: multimodal understanding where Gemini ingests PDFs, video, and audio up to nine-plus hours at once, native image and speech generation called as tools from an agentic loop, and a live audio model where audio goes in and audio comes out through a single architecture with no cascaded pipeline. The session ends with the building blocks for a Notebook LM clone where a reasoning agent decides what to generate rather than a hardcoded workflow.
+  
+  Speaker info:
+  - https://x.com/patloeber
+  - https://linkedin.com/in/patrick-l%C3%B6ber-403022137
+  - https://github.com/patrickloeber
+  
+  Timestamps:
+  0:00 Introduction to the session
+  0:58 Defining "Any-to-Any" and the Gemini ecosystem
+  2:56 Building a NotebookLM clone using an agentic approach
+  3:51 The agentic architecture for multimodal applications
+  4:50 Implementation details for multimodal understanding
+  6:10 Tips for audio/video processing and context caching
+  7:56 Multimodal generation phase
+  8:37 Native image and infographic generation
+  9:04 Native speech generation and podcast style audio
+  9:57 Implementing function/tool calling
+  11:28 The power of native generation models
+  12:37 Multi-language and accent capabilities in audio models
+  13:46 Live API and real-time interaction
+  15:06 Final summary and additional model shout-outs
+---
+OK? Presumo que sim. Obrigado a todos por participarem da sessão. Se você participou da sessão anterior, vamos mudar um pouco de assunto e falar mais sobre Gêmeos agora, mas também tenho dois slides sobre Gêmeos. Então, para deixar o hóspede feliz. Eu sou Patrick.
+
+Sou membro da equipe técnica do Google DeepMind. Eu trabalho na API Gemini e no AI Studio. E hoje quero falar sobre a construção de agentes multimodais nativos para comunicação "qualquer-para-qualquer" . Então, quero falar sobre compreensão multimodal, geração multimodal, interações em tempo real e também construir um aplicativo de exemplo juntos. Portanto, ao final desta sessão, você deverá ser capaz de construir isso por conta própria, um pequeno clone do Notebook LM.
+
+Então, o que significa "qualquer para qualquer"? Essas são todas as funcionalidades que você pode utilizar com a API Gemini. Então, isso possibilita uma grande variedade de usos, porque o Gemini não entende apenas texto, certo? É nativamente multimodal, então você também pode inserir código, imagem, áudio, vídeo e muito mais, como URLs e também a Busca do Google. E agora, além de gerar texto, também somos capazes de gerar imagens, fala, vídeo, chamadas de função e, claro, código. Sim, isso possibilita
+
+muita coisa realmente muito legal. No entanto, este slide está dando uma impressão ligeiramente errada, porque na verdade ainda existem modelos diferentes. Ainda não se trata de um modelo multimodal único . Essa é uma visão mais ampla que temos no Gemini, do Google DeepMind, de trazer mais recursos de geração de informação também para o Gemini. Mas, atualmente, está mais ou menos assim . Este slide é feio, eu sei.
+
+Mas sim, temos o modelo principal Gemini na série Gemini 3, que é capaz de entender múltiplas modalidades, mas só gera texto como saída. E temos também diferentes modelos especializados de geração nativa , por exemplo, o Nano Banana para geração nativa de imagens e geração de fala baseada nos modelos principais do Gemini . E eu quero falar um pouco sobre isso daqui a pouco . E eu também mencionei a Gemma aqui. Corrijam- me se eu estiver errado, mas ele permite entrada de texto, imagem e vídeo, e os modelos menores também permitem entrada de áudio. Assim, você
+
+também pode criar agentes multimodais localmente. Sim . Então, quero me concentrar em quatro coisas, quatro modelos: a compreensão multimodal com Gemini, a geração de imagens nativas , a geração de fala nativa e, se ainda tivermos tempo, também falaremos um pouco sobre a API em tempo real. E então construir algo juntos, ou pelo menos fornecer os elementos básicos para que você possa construir isso, um pequeno clone do Notebook LM . Quem já usou o Notebook LM antes?
+
+Quase todo mundo. Ok, então acho que não preciso explicar. Mas sim, você pode inserir várias fontes diferentes, e a visão geral em áudio é bem popular, pois permite gerar um podcast que explica os tópicos para você. E os infográficos também são muito legais. Então, queremos construir a mesma coisa. E
+
+queremos construir isso como um agente, em vez de um fluxo de trabalho. Isso significa que o agente deve ser capaz de decidir o que criar, em vez de definirmos o local exato do pipeline de forma fixa. Aqui temos um modelo de raciocínio que pode decidir o que criar, e então ele é conectado por meio de chamadas de ferramentas ou chamadas de funções, e então chama os outros modelos especializados. Então, basicamente, é assim que o aplicativo ou a arquitetura de agentes se parece. Já iniciamos a primeira fase para a compreensão multimodal.
+
+E então temos a segunda fase. É aqui que temos o ciclo agentivo, onde usamos o Gemini como modelo de raciocínio, que por sua vez pode chamar diferentes ferramentas, as quais gerarão diferentes modalidades para nós. E então ele age em um ciclo, analisando se precisamos de mais recursos ou se a quantidade atual é suficiente. E, no final, obtemos texto, fala e infográficos como resultado. E sim, quero fazer isso como um exemplo com o artigo "Aprendendo que atenção é tudo o que você precisa". Portanto, queremos
+
+poder inserir PDFs, imagens e vídeos. Isso pode ser uma palestra, por exemplo, ou um tutorial. E depois, gravações de voz. E, idealmente, também queremos esse entendimento intermodal, certo? Que possamos reunir informações de todas as diferentes fontes e permitir que elas criem modelos e estabeleçam conexões.
+
+E, na verdade, é extremamente fácil conseguir isso com o Gemini. Basicamente, este é o código que você precisa. Quem já desenvolveu algo usando o SDK de IA do Google? Metade, metade, quase metade da sala. Sim, basicamente é assim que você configura. Você
+
+obtém sua chave de API gratuitamente em ai.studio e, em seguida, instala o SDK. Está disponível em diferentes idiomas. E então você pode simplesmente enviar diferentes arquivos. Assim como aqui, estamos enviando um arquivo PDF, um vídeo e um arquivo MP3. Ou você também pode
+
+usá-lo diretamente como dados embutidos para arquivos menores . E como dica, mencionei a habilidade da API Gemini à direita, então você não precisa decorar esse código agora. Sim, você pode simplesmente conectar seu agente à habilidade Gemini e, em seguida, dizer a ele para criar isso, e então ele deverá saber como trabalhar com os modelos Gemini. Sim, basicamente é tudo o que precisamos. Em seguida, chamamos os modelos de cliente para gerar conteúdo, e aqui estamos usando o Gemini 3 Flash. E então podemos juntar
+
+tudo na lista de conteúdo e dizer, por exemplo, para analisar todos esses recursos, fornecer um pouco mais de informação sobre o conteúdo de cada um, e então o programa deverá gerar um resumo. E depois, algumas dicas práticas ou informações úteis para facilitar a compreensão. Você também pode usá-lo para transcrever áudio. O Flash, e até mesmo os menores, como o Flashlight, são bastante bons em transcrever áudio. Se você simplesmente digitar a instrução no prompt, será gerada uma transcrição deste arquivo.
+
+E pode ser interessante saber isso em relação ao áudio. Um minuto de áudio equivale a 1920 tokens. E a Gemini tem um limite de tokens de 1 milhão. Portanto, fazendo as contas, isso se traduz em mais de 9 horas de conteúdo que você pode inserir em formato de áudio . Para vídeo, a duração é de aproximadamente 1 hora.
+
+Mas existem configurações que você pode ajustar para ter mais controle, e você pode até mesmo inserir áudios mais longos. Então você pode configurá-lo para analisar apenas registros de data e hora diferentes. Por exemplo, analise apenas do minuto 5 ao minuto 15. E sim, você pode usar a API de arquivos, que permite fazer upload de arquivos maiores com facilidade . Você pode até mesmo inserir URLs, incluindo URLs do YouTube, diretamente. E o que também é
+
+bom saber é que você pode combiná-lo com o cache de contexto. Isso já está integrado à API. Isso é especialmente útil se você estiver carregando arquivos longos no Gemini e realizando consultas repetidas, pois economiza 90% dos custos. Então, sim, isso é compreensão multimodal em poucas palavras. Então, estou fazendo uma verificação rápida aqui. Agora podemos
+
+usar o Gemini para entender todos esses recursos diferentes e gerar um resumo. Na verdade, o cronômetro não está funcionando, então não sei quanto tempo ainda tenho. Mas acho que ainda estamos um pouco bem. Então, sim, a próxima fase é a parte de geração multimodal. Então, para isso, estamos usando o loop agentivo, onde usamos o Gemini como o cérebro por trás disso, e o combinamos com chamadas de função. Vou te mostrar
+
+como fazer isso daqui a pouco. E então essas funções chamam os modelos de geração nativos especializados. E então pode avaliar se esses recursos são suficientes ou se você precisa de mais. E a forma de usar esses modelos especializados também é basicamente o mesmo código. Depois de obter os SDKs, você pode chamar novamente os modelos do cliente para gerar conteúdo. Neste caso, estamos
+
+usando a pré-visualização de imagens em flash do Gemini 3.5. Não é o modelo mais bonito, mas este é na verdade o Nano Banana 2, o nome mais famoso para ele. E então dizemos para ele criar uma imagem. Ou, neste caso, podemos dizer que é muito bom em criar infográficos, o que é bem legal. Basta fornecer a seguinte instrução: crie
+
+um infográfico. E depois cria esses gráficos de slides bem legais para nós. E o mesmo ocorre com a conversão de texto em fala; temos um modelo de conversão de texto em fala que, atualmente, ainda é baseado no Gemini 2.5. E você pode combiná-lo com diferentes configurações. Você também pode criar arquivos de áudio com dois
+
+alto-falantes . Por exemplo, este estilo de podcast. E aqui está um bom exemplo, caso o som funcione.
+
+Como funciona? A
+
+arquitetura de rede neural foi introduzida em um artigo do Google de 2017 intitulado "Atenção é tudo o que você precisa". Esse foi um bom exemplo do modelo de conversão de texto em fala que temos, mas depois ele explica o que é um Transformer em apenas 2 minutos para você. E então, como mencionei, a chamada de funções, que basicamente combina o Gemini com a chamada de funções ou de ferramentas. O que você precisa fazer é criar suas declarações de função. Então você dá um nome e uma descrição. Isso ajuda
+
+o modelo a entender para que serve essa função. E também os diferentes parâmetros. Neste caso, queremos apenas uma string, que será usada como prompt para a descrição detalhada de como a imagem deve ser. E depois você faz o mesmo para a função de geração de áudio. E então, se você configurar seu modelo de chamada de modelo de cliente para gerar conteúdo, você configura as ferramentas.
+
+E você também precisa adicionar isso ao seu prompt. Este é um pequeno exemplo de prompt, um prompt de agente onde você diz ao Gemini: "Ei, aqui está o estudo que sintetizamos anteriormente a partir das diferentes modalidades." E agora você é um parceiro agente de pesquisa. Sua tarefa é aprimorar o guia de estudos com diversos materiais. E então você faz isso e informa as duas funções. Então,
+
+decida quais conceitos são complexos o suficiente para precisarem de um diagrama visual. E para esta chamada, gere uma imagem. E quais seções se beneficiariam de um resumo em áudio? E para esta chamada, gerar fala. E sim, isso é basicamente tudo que você precisa para configurar a chamada de função agentiva para a parte de geração multimodal .
+
+E eu também queria abordar rapidamente a importância da geração nativa. Por isso, chamamos isso de modelos nativos de geração de imagens, por exemplo, porque são baseados no Gemini. Assim, todo o treinamento, ou grande parte dele, que é utilizado nos modelos principais da Gemini agora também está disponível nesses modelos. E isso possibilita uma série de casos de uso realmente interessantes, porque esses modelos entendem o mundo. Este exemplo à esquerda encontrei no Twitter e gosto muito do Nano Banana 1, onde você pode desenhar setas em mapas e simplesmente dizer "ei, crie uma imagem do que você vê aqui".
+
+E como Gêmeos entende o mundo aqui, consegue criar uma imagem correta da Ponte Golden Gate para você. E então, do lado direito, este é um bom exemplo da área educacional. Assim, você pode usar o Nano Banana, neste caso o Nano Banana 2, para corrigir diretamente sua tarefa de matemática, por exemplo, e criar imagens com as correções, pois ele entende matemática. Ele pode até gerar código a partir de imagens para você. Portanto, existem muitos casos de uso interessantes.
+
+E quanto aos modelos de áudio, estes são multilíngues e compreendem sotaques e tons. E aí, pessoal! Hoje vamos começar a construir esses agentes multimodais. Sem enrolação. Vamos começar logo para que possamos dar um pulinho ao pub e tomar uma boa cerveja.
+
+Era um bom sotaque britânico? Sim? Tem alguém que fale alemão aqui? Um dois três. Tenho sotaque bávaro porque, na verdade, também é possível configurá-lo para criar diferentes sotaques. Claro que não são
+
+todos os sotaques do mundo, mas ainda assim. Aqui está uma com sotaque bávaro.
+
+Era um bom sotaque bávaro? Sim, eu diria que está tudo bem. Sim . E sim, mais uma vez, é um ponto de verificação rápido. Agora sabemos como proceder na parte de compreensão e na parte de geração. E isso é basicamente um
+
+clone do notebook LM. E agora, gostaria de mencionar rapidamente que também temos um modelo para interação em tempo real com ele por meio do que chamamos de API ao vivo. E para isso temos um modelo muito novo que também é baseado no Gemini Gemini 3.1 flash live. E chamamos isso de modelo de áudio para áudio. Portanto, a
+
+geração de áudio nativo utiliza apenas uma arquitetura. O áudio entra e o áudio sai. Assim, você não terá mais esse pipeline em cascata com modelos diferentes. E isso possibilita muitas interações com sons naturais realmente incríveis. Acho que não tenho tempo para uma demonstração ao vivo, mas você pode experimentar em ai.studio/live.
+
+E aqui está um vídeo rápido de um dos nossos colegas, Thor. Ei, Gêmeos. Você está tipo... Como você está
+
+hoje? Comece a conversar com ele e então você também pode dizer "Oi". Estou ótimo. Estou ótimo. Obrigado por perguntar.
+
+Só estou curtindo o papo, sabe? E como vão as coisas com você? Você consegue me ver? Tão claro quanto o dia. Eu te vejo lá, com seu cabelo curto e barba, vestindo um elegante paletó escuro sobre uma camisa azul. Mas
+
+sim, experimente você mesmo em ai.studio/live. E acho que é quase isso. Sim, é assim que você pode fazer no código, mas também temos uma funcionalidade para isso que você pode configurar. E agora, sim, estamos nos três pontos de controle. E sim, o padrão
+
+é transferível para qualquer outro campo. E talvez algumas menções honrosas também para outras modelos. Não sei se você viu a apresentação principal desta manhã, mas agora temos um modelo de incorporação multimodal onde é possível combinar todas as diferentes modalidades em um espaço vetorial unificado, o que possibilita aplicações como a busca multimodal. E, novamente, você pode optar por uma abordagem local com Gemma 4 e ter essa compreensão multimodal. E vídeo para imagem para vídeo com áudio nativo. E é isso.
+
+Obrigado e divirta-se criando agentes multimodais.

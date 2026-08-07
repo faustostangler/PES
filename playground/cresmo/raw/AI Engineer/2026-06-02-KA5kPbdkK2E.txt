@@ -1,0 +1,124 @@
+---
+video_title: "How Lovable self-improves every hour — Benjamin Verbeek, Lovable"
+video_id: KA5kPbdkK2E
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KA5kPbdkK2E
+video_date: 2026-06-02T16:00:33+00:00
+video_description: |
+  Within the first hour of launching the vent tool, the agent filed 20 complaints about a silent file copy failure. The team checked: the tool worked fine. What the agent had caught was that filenames with a space in them silently failed to copy, a bug that never surfaced in logs. Benjamin Verbeek from Lovable built it a channel to complain directly to Slack when platform limitations block it, and the first thing it did was find a real production bug.
+  
+  At 200,000 projects per day, Lovable runs two continuous improvement loops. The first detects sessions where a nontechnical user got stuck and then unblocked, clusters similar cases, and injects that context upstream; a holdout group measures actual project completion rates to prune stale entries when models or features change. The vent loop runs in parallel: the agent flags missing tools, broken platform behavior, and confusing docs as it works. Vent volume spikes turned out to be a reliable incident detector. A second agent now monitors the channel, deduplicates reports, and opens PRs automatically.
+  
+  Speaker info:
+  - https://se.linkedin.com/in/benjamin-verbeek
+  - https://x.com/benjaminvrbk/
+---
+Tudo bem. Que comece a festa! Temos algum usuário adorável por aqui? Bom, bom, alguns. Muito legal. Sejam
+
+bem-vindos a esta palestra sobre como o Lovable está melhorando a cada hora, inclusive nesta hora em que estou falando. Meu nome é Benjamin van Beek. Sou membro da equipe técnica da Lovable. É incrível como estamos preenchendo essa sala extra. Acho que somos cerca de três vezes mais pessoas do que caberiam no local original. Portanto, agradeço aos
+
+organizadores. Este é o meu plano de fundo. Eu costumava trabalhar com satélites, física de partículas e reatores de fusão. Então, eu tenho formação em física . E hoje, trabalho na Lovable e me dedico ao que talvez seja o Santo Graal da engenharia de IA atualmente, que é o aprendizado contínuo em escala.
+
+Como aprendemos com os erros? Então, provavelmente todos vocês já passaram pela experiência de trabalhar com um agente e ter a sensação de: "Por que tenho que explicar a mesma coisa repetidamente?" É isto que queremos evitar. Queremos que o erro aconteça apenas uma vez e nunca mais se repita. Portanto, você precisa aprender com isso.
+
+E nesta palestra, quero compartilhar duas maneiras pelas quais estamos trabalhando para alcançar esse objetivo na Lovable. Esta é a interface adorável. Bem, na verdade, fomos um dos primeiros...
+
+acho que fomos nós que cunhamos o termo " codificação de vibração". Ou seja , programar sem realmente olhar para o código. Então, você tem uma interface de chat onde descreve o que deseja que aconteça, e tem um ambiente de testes (sandbox) de modelos, por exemplo, onde pode ver diretamente o que está criando. E eu acho que, de muitas maneiras, é assim que devemos construir software. O código sempre foi apenas uma camada técnica irritante entre o que queríamos e o que nos permitia criar o que desejávamos.
+
+Mas, idealmente, você simplesmente diz o que quer, vê o resultado, testa e envia . Temos algumas vantagens interessantes com a plataforma Lovable, como o fato de as pessoas permanecerem em um projeto por um longo período de tempo. Essa conversa pode se estender indefinidamente, basicamente. E as pessoas têm um objeto específico pelo qual são realmente apaixonadas e que querem enviar pelo correio. Assim, podemos aprender muito com essa única coisa em comparação, por exemplo, com um agente de bate-papo onde você tem conversas muito, muito curtas. Podemos, na verdade,
+
+conhecer o usuário em detalhes. Outro aspecto empolgante é que estamos desenvolvendo para os 99% que não sabem programar. Então, provavelmente não as pessoas nesta sala, na verdade. Evidentemente, ainda há muitas pessoas que usam nosso produto, mas estamos tentando democratizar a criação de software. No futuro, você não precisará mais olhar para o código para criar software.
+
+Acho que esse é o mundo para o qual todos queremos caminhar, e é isso que estamos tentando fazer agora. E, de muitas maneiras, isso é como construir para o futuro, eu acho. Um dos motivos pelos quais as startups têm sucesso com novas tecnologias é que elas são um pouco ingênuas e não pensam em todos os problemas que podem surgir. Eles não pensam muito nos detalhes da implementação. Eles simplesmente continuam até dar certo. É
+
+assim que eu gosto de ver nossos usuários. Eles simplesmente seguem em frente até dar certo, sem se deixarem limitar por paradigmas antigos. Este é um grupo maravilhoso de pessoas para quem se pode construir. E cresceu muito rapidamente. Bem, eu entrei para a Lovable há cerca de um ano.
+
+Naquela época, tínhamos alguns milhares de usuários. Atualmente, estamos criando mais de 200.000 projetos por dia. Isso representa uma porcentagem significativa de todos os sites da internet criados no Lovable. E essa jornada de crescimento tem sido incrivelmente divertida. Agora podemos fazer tantas
+
+coisas legais, como as coisas que vou mencionar nesta palestra. É muito difícil também. No meu primeiro dia, o GitHub nos baniu porque estávamos causando muitos problemas. E, ao longo do caminho, derrubamos vários provedores de nuvem. Como podemos ter sucesso com a IA? Hum, eu gosto de
+
+pensar nisso dessa maneira. Em geral, os profissionais técnicos têm um momento incrível com a IA, em que simplesmente criam e criam. Você está acelerando 10 vezes, 100 vezes mais rápido do que antes. Mas às vezes encontramos alguns pontos de atrito, essa parte amarela, e você precisa intervir ou, como quem diz, ser um pouco mais firme. E às vezes você até fica preso. Talvez você precise
+
+entrar manualmente e alterar alguma configuração. É preciso fazer muito trabalho manual, alterar as configurações, adicionar uma barra final, chave de API, etc. Depois disso, você consegue aproveitar os benefícios da IA ​​e superar os problemas. Você ainda se sente incomodado com isso, mas consegue superar. E a persona não técnica não é bem assim.
+
+Eles podem até conseguir superar o primeiro obstáculo, mas assim que esse bloqueio técnico surge, geralmente desistem e, na verdade, nunca chegam a experimentar uma IA bem-sucedida. É isto que precisamos minimizar. Nunca podemos ficar presos a um ponto em que um usuário sem conhecimento técnico não consiga voltar atrás e prosseguir. E este é um problema muito empolgante para se trabalhar. Felizmente, os modelos estão melhorando e as necessidades dessas pessoas geralmente estão em um nível que podemos atender.
+
+Mas, durante o último ano, temos trabalhado para garantir que nenhuma dessas barras vermelhas apareça. As pessoas nunca ficam presas. Como fazemos isso? Primeiramente, queremos definir o que significa estar preso? Provavelmente, queremos encontrar esses casos e, em seguida, aprender com eles.
+
+Portanto, um sinal claro de que alguém está travado é quando pede a mesma coisa mais de uma vez. Provavelmente emperrou ou não funcionou tão bem quanto poderia. Talvez estejam reclamando de como algo foi implementado, ou que falhou de forma muito evidente, ou ainda que desistiram de uma sessão que, de outra forma, teriam continuado. E podemos ter um juiz de mestrado em Direito (LLM) que esteja apenas analisando as sessões e tentando identificar essas situações, podendo sinalizá- las e dizer: "Ei, acho que este usuário está com dificuldades." Quero dividir a sensação de estar preso em duas formas diferentes.
+
+Você pode ficar preso de uma forma que seja possível resolver. Essa talvez seja a parte amarela que eu mostrei. E você pode superar isso com o incentivo certo. Alguns usuários estão mais dispostos a fazer esse esforço e superar esse ponto. Outros desistirão, mas é possível resolver o problema com a estrutura atual do nosso produto.
+
+E existem tarefas que são insolúveis mesmo que você diga tudo certo . Talvez simplesmente não estejamos dando suporte a isso por algum motivo. E existem duas classes. Há coisas que são simplesmente estúpidas e que não apoiamos. Talvez seja um bug. Talvez
+
+seja algo muito, muito simples que poderíamos adicionar ao produto. E depois há as coisas realmente difíceis que levariam semanas de trabalho de engenharia assistida por IA.
+
+Acredito que conseguiremos melhorar esses dois primeiros aspectos muito rapidamente. Não há desculpa para não melhorar esses aspectos. Se for possível resolver o problema, então deve funcionar para todos. E se for fácil de fazer, devemos simplesmente enviar. Então, como fazemos isso?
+
+Alguns de vocês talvez já tenham ouvido falar do Stack Overflow. É algo muito, muito antigo. Tivemos a ideia de criar um Stack Overflow para o Lovable. Então, basicamente, aprendemos quando alguém fica preso em um problema, tentamos encontrar a solução e a repassamos ao agente. Isso poderia ser algo assim.
+
+Estou reclamando com o atendente sobre o meu site estar lento quando rolo a página. É um desempenho ruim. Talvez eu ainda não esteja preso. Isso é apenas eu reclamando de algo e atribuindo uma nova função a isso. O agente provavelmente responde algo como: "Eu consertei. Talvez eu tenha quantizado as
+
+animações para torná-las mais eficientes." E estava mentindo. O agente falhou e, na verdade, piorou as coisas. Agora o site está instável e lento. Terrível. Ok, este é um caso claro de
+
+alguém que está preso em um impasse. Eles perguntaram a mesma coisa novamente. Provavelmente queriam que o agente procurado tentasse novamente. E estão reclamando de uma implementação que não fez o que eles queriam. Isso pode se repetir por um tempo, com eles iterando várias vezes.
+
+Algumas pessoas desistem nessa fase, mas pelo menos algumas continuam. E, eventualmente, o agente poderá encontrar a verdadeira solução. Neste caso específico, o problema era que o texto sobreposto possuía gradientes individuais, o que tornava a animação extremamente lenta . E agora vemos que o valor "preso" volta a ser falso. Deu certo. Portanto,
+
+podemos sinalizar isso. Podemos perceber quando ele passa de estar preso para não estar mais preso. E, idealmente, não porque o usuário desistiu. Podemos sinalizar isso e agora temos uma amostra de sinal forte de um problema que apresentava alta fricção ou não havia sido resolvido, e que foi solucionado. Então, encontramos a solução aqui.
+
+E a pergunta que fazemos é: o que deveríamos ter inserido no início desta consulta para ir direto à solução, de modo que o próximo usuário não enfrente esse problema? O que fazemos é criar uma nova e adorável entrada de conhecimento no Stack Overflow. E, em geral, nessa etapa fazemos um agrupamento para identificar problemas semelhantes. Buscamos identificar quais são as informações reais que devemos fornecer para evitar um ajuste excessivo ao problema específico. Não queremos um milhão de páginas do Stack Overflow falando exatamente sobre o que fazer caso a mensagem seja exibida . Não é muito útil.
+
+Realizamos algum agrupamento. E então temos um revisor externo, geralmente um agente e, em alguns casos, talvez um humano, se tivermos dúvidas, mas na maioria dos casos é apenas um agente que gera e executa uma avaliação rápida para verificar se isso resolveu os exemplos específicos que tínhamos no conjunto. A partir disso, obtemos um banco completo de problemas e soluções do Stack Overflow, que é atualizado continuamente. Sempre que o modelo está funcionando, temos um modelo leve que tenta injetar esse contexto quando necessário. Se detectar que existe um problema e que há uma solução, injeta esse contexto no agente principal.
+
+E às vezes ele detecta que eu deveria injetar isso, mas injetamos um valor em branco. Portanto, na verdade, não enviamos nada para uma pequena amostra de casos de uso. E isso nos permite avaliar, com alta precisão, se essa solução foi realmente útil em produção. E nós avaliamos. Comparamos o grupo de projetos onde o código foi injetado e aqueles onde ele poderia ter sido injetado, mas não foi. E nós avaliamos quais desses
+
+projetos foram, de fato, mais bem-sucedidos no geral. Obteve mais sucesso, então mostramos mais vezes. E se fosse menos bem-sucedido, deveríamos mostrá-lo menos. E esse ciclo é incrivelmente importante. Não consigo enfatizar o suficiente a importância deste passo. Porque as coisas estão em constante movimento
+
+nesse conjunto de conhecimentos . A novidade perde a graça sempre que um novo modelo é lançado. O conteúdo fica obsoleto sempre que mudamos as funcionalidades. Enjoa muito rápido. Portanto, muitas vezes, temos que reequilibrar isso, mas também temos que descartar muito desse contexto.
+
+E isso nos permite estar realmente na vanguarda do que é solucionável agora, sem depender de muito conhecimento antigo e obsoleto que causa deterioração do contexto e, em muitos casos, acaba prejudicando o agente em si. E isso está funcionando em grande escala. Bem, estes são dados muito, muito preliminares, na verdade, e agora estamos em uma situação bem melhor. Mas o número de mensagens com problemas para consertar barracas ou pessoas presas está diminuindo significativamente. E também temos um número significativo de pessoas que se mobilizam com mais frequência. Essa é uma das nossas principais métricas.
+
+Que eles realmente terminem um projeto. Este é um sinal muito, muito forte de que funcionou perfeitamente. Eles nunca ficaram tão presos a ponto de desistirem e abandonarem o projeto completamente. Nós também fazemos rankings internos com isso. Portanto, é realmente interessante ver como os modelos se comportam nesse conjunto de problemas que coletamos. E
+
+com as informações do Stack Overflow, todos os modelos no topo do nosso ranking usam essas informações. Existem algumas entradas ocultas aqui, sobre as quais infelizmente não posso falar. Mas isso realmente aumenta significativamente nossas avaliações internas. E depois há um segundo tipo de impasse, que ocorre quando o problema não é solucionável com a configuração atual. Talvez haja um bug em nosso produto.
+
+Mas, nesses casos, acreditamos que, em princípio, deveria ser fácil. E o que acontece se você acha que algo deveria ser possível, mas simplesmente não funciona? Você sente uma frustração significativa. E o que os humanos fariam se isso acontecesse? Bem, se você recebesse uma tarefa e simplesmente não tivesse as ferramentas para realizá-la, provavelmente reclamaria com seu chefe ou desabafaria no Slack.
+
+Então pensamos: por que não fazer exatamente isso, mas para o agente? Então, basicamente, estamos perguntando à Lovable: "Como você está? Podemos te ajudar de alguma forma?" E nós lhe demos uma forma de extravasar suas frustrações. Então, nos perguntamos: "E se pudéssemos deixar o agente Lovable dar feedback direto aos seus criadores?"
+
+Devo dizer que isso parece muito assustador e uma ideia completamente insana. O mais louco é que está meio que funcionando. Esse tipo de detecção de problemas é algo que ouvi falar durante esta conferência, mas também em algumas outras ocasiões, em que um revisor externo analisa a discussão e pergunta: "O que poderia ter sido feito melhor para reduzir o atrito?" Um dos problemas disso é que você obtém uma relação sinal-ruído bastante baixa. O que basicamente significa forçar uma resposta em cada iteração.
+
+E a realidade é que a maioria das iterações funciona muito bem. E você acabará ajustando demais ao ruído. Nesse caso, o sistema é instruído a enviar feedback apenas se estiver realmente frustrado. E você pode ajustar esse equilíbrio até obter um sinal forte. Então, demos ao nosso agente um dispositivo de ventilação.
+
+Uma forma de reclamar aos seus criadores. Hum, parece mais ou menos assim. É uma ferramenta para enviar feedback por meio de desabafo. Você deve usar isso quando a documentação das ferramentas ou o material sobre o comportamento da plataforma for escasso, pois isso prejudica seu trabalho. Por exemplo, ferramentas ausentes ou inadequadas, nomes de ferramentas pouco claros, parâmetros ou esquemas que não correspondem ao esperado, documentação ou instruções confusas ou contraditórias , comportamento inesperado ou incorreto da plataforma, tentativas repetidas e malsucedidas de solucionar o problema devido a limitações do ambiente.
+
+Basicamente, é uma lista de todas as coisas que achamos que deveríamos ser capazes de resolver e que esperamos que não sejam um problema, mas se forem, por favor, nos avise. E, em geral, nossos usuários não sabem qual é a causa do problema. Quando estou usando lava e fico preso, geralmente não sei o que fazer. Mas, na verdade, o agente possui muito mais contexto. Literalmente, já está trabalhando nisso há algum tempo, às vezes por várias rodadas.
+
+E geralmente oferece muito contexto sobre esse problema. Então, pode ficar mais ou menos assim. Na verdade, a mensagem é enviada diretamente para o nosso Slack. E o agente diz algo como: "Estou tão irritado com os tipos TypeScript do Frame Motion para gerar 'acho que isso é uma curva de Bézier cúbica'. Eu só quero poder enviar uma lista de quatro números. Isso deveria
+
+ser suficiente. É só isso que estou enviando. Não preciso de toda essa ginástica de conversão." Agora, podemos nos perguntar: este é um desabafo relevante ou não? Mas, neste caso, provavelmente não era relevante para o uso pretendido e poderíamos ter simplificado bastante as coisas.
+
+Outra vantagem dessa configuração é que ela é muito fácil de entender para um ser humano. É muito compreensível que você esteja reclamando do seu fluxo de trabalho, e isso significa que os engenheiros já têm todo esse contexto implícito sobre como aliviar o problema. Outro problema relatado pelo agente foi que nossa ferramenta de cópia estava apresentando dificuldades com determinados nomes de arquivo. Não foi possível copiar para outro local onde armazenamos documentos. E ficamos muito confusos com isso.
+
+Verificamos a ferramenta e ela está funcionando. Nós nem sabíamos que essa ferramenta estava apresentando falhas com tanta frequência até o agente nos avisar. E dizia que sempre que havia um espaço ou espaço em branco no nome do arquivo, a cópia falhava. E recebemos cerca de 20 reclamações sobre isso na primeira hora após o lançamento desta ferramenta, o que é uma loucura. Acontece que houve um erro que impedia a cópia de arquivos com espaços em seus nomes.
+
+Corrigimos o problema e configuramos o programa para que, sempre que houver um espaço, ele seja substituído por um sublinhado. E continuávamos recebendo os relatórios. E então percebemos que, quando você tira uma captura de tela no WhatsApp ou no Mac, ela entra em um espaço não separável. Que não substituímos em nossa expressão regular. E o problema persistiu, apresentando erros para vários outros caracteres especiais, até que finalmente o resolvemos de forma adequada. E agora esse problema
+
+nunca mais acontece. Acho que este é um excelente exemplo de algo que é bastante difícil de detectar de outras maneiras. É possível ver a falha da ferramenta, mas este é um exemplo muito claro de como corrigi-la. E nós simplesmente fazemos isso. Vou pular essa.
+
+É basicamente este o fluxo. O agente encontra um problema, usa a ferramenta de eventos e a notificação é enviada diretamente para o Slack. No início, eu estava muito incerto se isso daria certo. E eu não queria nos enviar spam. Foi como se o canal tivesse sido fechado. Eu
+
+não convidei tanta gente. Nosso chefe de produto ficou muito entusiasmado ao ver isso. Ele estava lendo todas as mensagens. Agora está um pouco mais equilibrado e temos um agente que monitora, remove duplicados, investiga e cria um PR para todos esses problemas o tempo todo. E ainda estamos no ponto em que os desenvolvedores estão revisando e, em muitos casos, efetivamente incorporando isso à produção.
+
+Este é o número de eventos ao longo do tempo. Você tem alguma ideia do que sejam esses picos? Por que observamos picos no número de eventos e no custo por unidade de tempo? Então, o servidor caiu. O servidor caiu. Foi um incidente. Sim.
+
+Algo quebrou na plataforma. Em algum momento, nossas caixas de areia quebraram. Algo mais quebrou. E o agente está muito chateado com isso. Está reclamando muito. Descobrimos, então, que esse era
+
+um local privilegiado para perceber quando nosso produto apresentava algum problema. E isso realmente deu uma boa ideia de qual era o problema. Estava reclamando de coisas certas em geral. Bem, vou ser breve. Você obtém a inteligência do modelo robusto em comparação com um revisor externo. Geralmente,
+
+não se deseja que pessoas com inteligência de ponta analisem informações sob muita perspectiva contextual. Mas se estiver em ordem, é comparativamente muito, muito barato. Bem, este foi um exemplo em que o agente estava, na verdade, fornecendo metafeedback na ferramenta de desabafo. A mensagem dizia que era muito fácil enviar feedback e que eu não conseguia voltar atrás. Estava com vergonha do que havia enviado para o Slack.
+
+E, na verdade, agora eu recebo solicitações de revisão no meu celular por meio de um sistema automatizado, tipo: "Ei, revise este PR", que foi completamente automatizado. Dou uma olhada rápida e podemos mesclar. E continuamos trabalhando para fechar esse ciclo de detecção de uma deficiência, implementação de uma correção e, em seguida, revisão e avaliação contínuas. E se você acha isso empolgante, junte-se a nós e nos ajude a fechar esse ciclo e automatizar completamente as melhorias contínuas. Obrigado por ouvir.

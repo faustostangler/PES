@@ -1,0 +1,181 @@
+---
+video_title: "Introducing WebMCP: Agents in the Browser — RL Nabors"
+video_id: LMbeDEQO6QM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=LMbeDEQO6QM
+video_date: 2026-05-23T18:00:06+00:00
+video_description: |
+  RL Nabors built a comic reader that renders inside Claude. Full panels, navigation, transcript mode, design matched to the original site. No browser tabs. She is reading her own web comic archive entirely through an agent, and it looks like the website.
+  
+  The talk is a case against chat as the permanent UI of agentic software. Chat is to agents what the terminal was to desktop computing: developers love it, everyone else gets the iPhone eventually. MCP apps bundle HTML, CSS, and JavaScript into a single file that agent interfaces render in an iframe, turning any tool response into a real interactive surface. WebMCP goes the other direction: add tool name and description attributes to forms you already have, and browser agents can call your site's functions directly without screenshot parsing or DOM traversal. Both specs exist now. The web platform has been the infinite canvas all along.
+  
+  Speaker info:
+  - https://x.com/nearestnabors
+  - https://www.linkedin.com/in/nearestnabors
+  - https://github.com/rachelnabors
+  
+  Timestamps
+  
+  0:07 Introduction and Speaker Background
+  3:28 Motivations for Future-Proofing the Web Comic Site
+  5:09 Roadmap: MCP, Apps, and WebMCP
+  6:05 Understanding Transports: STDIO vs. HTTP
+  8:57 Defining MCP Tools
+  10:52 The Role of MCP Resources
+  11:37 The Case Against 'Starfish' (Chat-Only) UI
+  13:36 MCP Apps: Building Interactive Agent Interfaces
+  16:34 Best Practices and Gotchas for MCP Apps
+  17:38 Introducing WebMCP: Agents in the Browser
+  19:07 Imperative vs. Declarative Models
+  20:13 WebMCP Demo with the Debugging Extension
+  21:47 Leveraging Native Browser APIs (Speech, Animation, etc.)
+---
+[música]
+
+E mesmo sabendo que algumas pessoas ainda vão chegar, também fui informado de que devo começar pontualmente. Peço imensas desculpas a todos que estavam subindo correndo para cá vindos de uma das palestras lá embaixo. Você deveria ter sabido que essa era a melhor faixa e ter ficado por aqui desde o início, mas, por favor, entre e divirta-se. Olá. Eu sou Rachel Lee, Rachel Lee Neighbors, vizinhos como os vizinhos mais próximos , mas não escrito dessa forma.
+
+Trabalhei nos padrões que impulsionam a web atual, com a Mozilla no Firefox DevTools e com o W3C em padrões da web como a API de Animações Web. Eu até já fui gerente de produto no navegador Edge da Microsoft , e você talvez me conheça pelos meus projetos desenvolvidos durante a pandemia na equipe do React, react.dev e reactnative.dev. Muito bem, passei os últimos 3 anos prestando consultoria para startups de IA e grandes empresas de desenvolvimento web/navegadores, algumas das quais você pode reconhecer pelos logotipos, mas a maioria não, sobre todos os assuntos relacionados à web, IA e interface do usuário. Recentemente,
+
+fui nomeado engenheiro principal de experiência do desenvolvedor na Rise. Você já teve o seu CTO arruinando o fluxo de trabalho do seu agente com uma pequena alteração no prompt ou uma migração de LLM? Você já foi esse CTO? Enfim, se esse for o seu caso, você precisa conferir essa situação. As avaliações são suas amigas, dê uma olhada nelas.
+
+Antes de minha grande carreira na área de tecnologia, eu fazia webcomics para garotas adolescentes em um site que fazia parte da rede iVillage. Acho que ninguém se lembra do iVillage, mas era algo muito importante naquela época. Eu tinha 400.000 leitores semanais. Era financiado por anúncios, e eu aprendi a desenvolver para a web para poder alcançar essas pessoas onde elas estivessem. Era 2006, e era um clima, pode acreditar
+
+. Todo mundo na internet estava tenso. Estávamos no MySpace, onde adolescentes de 14 anos conversavam sobre música com pessoas de 42, e como vocês podem ver, eu curtia muito a cena gótica e emo. Eu era o único gótico na minha aldeia. [Limpa a garganta] Quando entrei no mundo da web, acreditei que o navegador não é apenas um leitor de documentos, apesar do que os especialistas em CSS tentem fazer você acreditar. É uma
+
+tela infinita que pode renderizar qualquer coisa, não apenas documentos, mas também vídeo, áudio, o que você precisar; existe uma API para isso, e tenho trabalhado nesse sentido na web desde então. Eu trabalhei na API de Animação Web com o W3C, criando demonstrações incríveis como a versão interativa de Alice no País das Maravilhas, e, de modo geral, fiz a web realizar coisas que não deveria fazer. E agora escrevo sobre como agentes e IA estão mudando a forma como navegamos e consumimos conteúdo na minha pequena newsletter, a Web Agente. E eu mesmo faço bastante das minhas artimanhas com agentes imobiliários. Este é o ASA, que significa Agente Social Antissocial.
+
+É um aplicativo MCP que permite usar o Twitter e o BlueSky lado a lado sem precisar visitar os sites ou ficar sujeito aos algoritmos de outras pessoas . De qualquer forma, dê uma olhada se você gostar. Bem, estou aqui hoje para mostrar como, com o poder dos recursos primitivos do navegador que já existem e já foram especificados, você pode transformar seu agente em uma tela infinita, ou pelo menos colocar seu site em agentes, de uma forma ou de outra. Então, eu tenho esse hábito. Todo ano, quando penso: "Sobre o que quero falar? O que quero fazer?"
+
+Observo o único item da minha lista de compras que continuo adiando. Nesse caso, meu site de quadrinhos online, o site de arquivo que eu montei lá por 2010, disse: "Ok, você já tem o suficiente. Preciso ir agora." E está começando a apresentar erros 404, e algumas imagens estão começando a aparecer . Talvez eu desligue alguns clusters aqui e ali, e aí aparece a mensagem: "Ai, meu Deus, a CDN falhou." Enfim, precisava de
+
+alguns reparos, e eu pensei: "Bom, não vamos apenas consertá-lo, vamos torná-lo à prova de futuro." Se hoje em dia todo mundo trabalha em agências , vamos ao encontro dessas pessoas onde elas estão. Estou sempre me adaptando ao meu público onde ele está, e ainda recebo cartas de fãs, mulheres que cresceram lendo minhas histórias em quadrinhos, então talvez eu consiga convencê-las a procurar agentes também. Bom, só para avisar que pode ser constrangedor antes de você acessar rachelagreat.com, os anos 2000 foram uma época bem peculiar.
+
+Quadrinhos antigos, Rachel Lee mais jovem, um pouquinho constrangedor, ok? Quero homenagear os fãs, e também estou trabalhando bastante com imagens protegidas por direitos autorais, e não quero ser processado pela Marvel, então vou usar meu próprio material. A vantagem de ter tido uma carreira anterior como artista é que posso fazer o que quiser com a minha arte, sem que me deem explicações. É claro que tive que dar um banho de vidraceiro neles para garantir que ninguém mais o fizesse, mas essa é outra história. Confira o repositório no final deste texto se quiser saber mais sobre como proteger seu conteúdo contra o uso para fins de treinamento. Agora,
+
+eu queria disponibilizar minhas histórias em quadrinhos de forma navegável, em um único servidor, mas com três tipos diferentes de clientes: humanos em navegadores, humanos em agentes e agentes em navegadores usando a web em nome de seus humanos. Eu sei, é complicado. Eles têm tipo essa coisa de poliamor rolando. Então, o que vamos [limpa a garganta] abordar hoje. Ferramentas e transportes MCP: como hospedá- los na web da mesma forma que você hospedaria um site.
+
+Como funcionam os aplicativos MCP? Você já ouviu muita coisa sobre isso. Vou mostrar um exemplo bem legal e apontar as armas de pé. E o Web MCP, em breve em um navegador perto de você. Antes de encerrarmos, quantos de vocês hospedam atualmente um servidor MCP?
+
+Assim como na internet, mas não localmente. Ok, então eu amo vocês. Todos os outros, vocês vão aprender. E quantos de vocês já criaram um aplicativo MCP? Muito bem, quantos de vocês querem fazer um?
+
+Ah, sim, estas serão as próximas páginas da web. E por último, alguém aqui já experimentou o Web MCP? Certo, vamos ver se conseguimos mudar isso. Então, você está aqui. Presumo que você saiba o que é um servidor MCP. Não vou entrar
+
+muito em detalhes sobre isso. Então, vamos começar com os transportes. Agora, se você já desenvolveu para a web, acho que devo perguntar: quantos de vocês já criaram e hospedaram sites ao longo da vida? Tudo bem. Então, você provavelmente está familiarizado com o HTTP, mas talvez não esteja familiarizado com o conceito de protocolos de transporte. Descobriu-se que existe mais
+
+de um protocolo que você pode usar para se comunicar de uma superfície para outra. Os protocolos de transporte são a forma como os servidores MCP se comunicam com os agentes. E existe uma diferença importante entre quando você deve usar cada um deles. Então, STDIO significa Deus, soa terrível quando você lê em voz alta. Entrada e saída padrão, você pode chamar isso de [risos] estúdio. Como diz a música do Phil Collins, porque
+
+estamos na Inglaterra, ok? Estúdio. Vamos chamá-lo assim pelo resto desta apresentação. Ao contrário da minha revisora ​​alemã, que disse algo como: "Acho que você não chama isso de estúdio." Eu pensei: "Cara, você quer que eu chame isso de outra coisa? Acho que
+
+vamos ter problemas." Muito bem, então o servidor, ele roda como um processo local, é iniciado pelo cliente. É por isso que, ao configurar um aplicativo MCP baseado em estúdio, ele sempre acaba sendo uma sequência de JSON com várias entradas de linha de comando que a maioria dos usuários não quer usar nem configurar. A comunicação ocorre, como acabei de dizer, por meio de entrada e saída padrão, e o servidor permanece ativo durante toda a sessão. O HTTP é um pouco diferente porque estamos operando na web.
+
+Aliás, não estamos nem um pouco dispostos a abordar as questões de segurança ou privacidade relacionadas a qualquer uma dessas camadas. Isso está além do escopo da conversa de hoje. Mas com o HTTP, o servidor funciona como um serviço web, ele escuta em um endpoint HTTP, que você talvez já conheça do desenvolvimento de APIs, e a comunicação acontece por meio das nossas queridas requisições HTTP POST , e funciona bem com configurações sem servidor. Sabe, a Vercel e a Cloudflare ficam tentando te vender essas funções de edge computing. Bom, agora eles têm algo para colocar dentro deles.
+
+Tudo bem. [limpa a garganta] Com o Studio, você precisa atualizar um arquivo de configuração com um comando para iniciar um servidor local, mas com HTTP, a experiência do seu usuário... Oh meu Deus. Sua experiência de usuário é tão
+
+simples quanto acessar suas próprias configurações. Ok, está um pouco escondido , mas acredite em mim, quando você ouvir "Oh meu Deus". Por favor, se alguém da Anthropic estiver vendo isso, ajude. Dê um nome e insira um URL, e pronto! Vamos lá, depressa. Vamos lá, vamos lá, vamos lá
+
+, vamos lá. Rachel Lee passou por aqui, mas vocês podem ver que eu realmente consigo digitar essa coisa. É muito "It". Não é assim que se escreve. Pronto.
+
+É [limpa a garganta] muito Pronto, coloquei em /mcp. Você clicou em adicionar, e pronto, aqui está. É um conector, então eu entro e dou todas as permissões para permitir sempre, porque eu conheço esse. Mas não é fácil, se você estiver usando um servidor HTTP para suas ferramentas MCP, para o usuário acessá-las, neste caso, Claude. Muito bem, essas são as ferramentas que eu queria disponibilizar.
+
+Eles se parecem muito com o que está disponível quando as pessoas visitam o site. São muito semelhantes àquela navegação, e todas retornam dados estruturados em formato JSON, exceto a opção para obter transcrições , sobre a qual falaremos um pouco mais adiante . Mas a questão é: liste as histórias em quadrinhos, liste os enredos, porque as histórias em quadrinhos incluem diferentes arcos narrativos, finais e começos. Liste os personagens, pesquise as histórias em quadrinhos, que na verdade é pesquisar as transcrições, isso é outra conversa, e pesquise [limpa a garganta] por personagem porque eu amo o gato, quero ver todo o gato. Ah, e a transcrição é diferente, ela retorna em Markdown.
+
+Boom. Muito bem, vamos dar uma olhada nesses bebês em ação. Essas são apenas as ferramentas. Ainda não chegamos à parte interativa, tenha paciência . Eu tenho um arco narrativo.
+
+Tudo bem. É um pouco prolixo. Todo mundo que diz: "O bate-papo é o futuro." Eu penso: "Isso não é o futuro." É como se eu dissesse: "Obrigado por ter uma longa conversa comigo, Claude. É,
+
+você achou que eu faço quadrinhos bons, Claude. Que bom. Eu gostaria de disponibilizar as transcrições e textos completos para análise de temas, arcos de personagens, etc., em vez de pedir para o Claude obter a transcrição de 533 quadrinhos diferentes. Não é um uso eficiente do contexto. Eu adoraria
+
+usar os recursos do MCP, que são perfeitos para isso, além de habilidades e muitas outras coisas, mas a especificação é vaga, a implementação é vaga e não consigo encontrar um cliente que me permita acessar esses recursos ativamente. Eles estão no servidor, só não estão visíveis na interface. Então, por favor, se alguém que desenvolve um ambiente para agentes estiver ouvindo, mesmo que seja básico, eu aceito. Me dê algo com que eu possa trabalhar. Certo.
+
+Então, eu adoraria que um ou mais clientes implementassem recursos. Os agentes realmente não gostam de usar as ferramentas do MCP para adicionar conteúdo. markdown para o contexto deles. Se você já manteve um site de documentação e pensou: "Vou adicionar as ferramentas MCP ao site de documentação, isso resolve os problemas do agente de codificação saber como...", não. Não,
+
+eu preferiria morrer queimado a acessar sua documentação pelas ferramentas MCP. Então, deixe pra lá. Não é assim que elas deveriam ser usadas. [limpa a garganta] Então, os recursos também poderiam permitir que os agentes decidissem quando pré-carregar esse contexto com a documentação. Tipo, você está mudando para o modo React, ótimo. Vá buscar todos os
+
+recursos React do servidor MCP do React. Obrigado . Tchau. Certo, chega de reclamações . Esse foi o seu anúncio de utilidade pública . As ferramentas
+
+podem retornar dados simples, JSON, texto, markdown, mas também podem retornar um aplicativo interativo [risos]. Então, eu queria colocar um leitor de quadrinhos no seu agente. Assim, enquanto você lê, pode ler algumas coisas com algumas imagens em vez de um longo bloco de texto. É tipo, Claude, você não é meu melhor amigo em Crise. Por que você está me mandando um monte de mensagens agora?
+
+[limpa a garganta] Já foi dito que o chat é o mínimo denominador comum da experiência do usuário. Que ele é para o futuro das experiências interativas o que a linha de comando foi para o software. Minha mãe programava em COBOL, e quando na escola nos faziam clicar duas vezes nos ícones para acessar os jogos, ela dizia: "Não fazemos isso em casa. Abrimos o DOS e digitamos CD blah blah blah.exe. É assim que os
+
+programadores trabalham." Mas todos sabemos que não se faz isso em um iPhone, você toca, aponta e resmunga, certo? Então, isso provavelmente é uma fase para nós, desenvolvedores. Existe o que eu chamo de página inicial com chat ou design de estrela-do-mar, porque fica ali e deixa o usuário fazer todo o trabalho. E você precisa ter muito contexto na cabeça quando acessa a página. Você
+
+precisa saber o que ela pode fazer. Por exemplo, se você usa o Linear, você pensa: " Eu sei que isso é um sistema de tickets. Tenho quase certeza de que quero..." Para ver XY ou Z.
+
+É ótimo se você já estiver familiarizado com o sistema, mas, caso contrário, pode ser um pouco desafiador não ter nenhuma dica ou orientação visual. É como aqueles jogos de texto que eram muito populares antigamente, mas eu não gostaria de ter que fazer minha declaração de imposto de renda pensando: " Verifique a caixa de correio. Tem correspondência? De quem é esta casa?". Isso não é bom.
+
+É pedir demais ao seu pobre cliente para fazer uma pesquisa. Então, felizmente, temos aplicativos MCP integrados em experiências multimídia avançadas para agentes, criadas pela combinação de HTML, CSS e JavaScript em um único arquivo. Parece tão familiar. Estou tendo flashbacks do DHTML. Hum. Então, esta é a função "Obter página". "Obter página" é
+
+minha ferramenta MCP favorita, e eu a adoro . Aqui está ela em ação. Ela retorna um aplicativo MCP. Eu digo: "Ei, eu quero ler a história em quadrinhos 'Princesa Corvo' para a estrela-do-mar, hum, caixa de bate-papo de tudo." E, claro, Claude começa a conversar. É tipo: "Eu te ajudo." ler
+
+. Ah, deixe-me só verificar todas as minhas coisas do MCP. Nossa, encontrei isso na outra coleção de quadrinhos. "Deixa eu pegar essa página." Aqui está. Ok, obrigado.
+
+E veja só. Posso mostrar os comentários. Posso mostrar os comentários. Isso é muito legal. Eles estão disponíveis no site. Tem tudo o que o
+
+site pode fazer. Parece tão bom quanto o site. Você pode navegar para frente e para trás. Mas a parte divertida é que você sobe aqui, pode clicar em modo de texto e pronto, ele mostra a transcrição. Então, você pode simplesmente ler se quiser.
+
+Isso será abordado mais tarde. Então, sim, é como um mini site. Um leitor de quadrinhos, mas está usando todos os recursos do site. Ok. Agora, ha, [suspiro] como você faz isso? Bem, eu defino a
+
+ferramenta como "obter página", dou a descrição. Há um esquema de entrada. Claro, vou precisar do ID da HQ, do ID da história, do número da página, para que eu possa realmente me concentrar em onde obter isso. Para ser honesto, só precisa de um ID de história e do número da página. Eu vou Refatorar isso.
+
+E, claro, tudo isso é necessário. Mas o mais importante, aqui embaixo, onde a mágica acontece, é que você passa esse pequeno meta atributo, define a interface do usuário (UI) e o aponta para um URL (Uniform Resource Locator). Pronto, bem aí. Adorei. Ok. É
+
+importante lembrar que os aplicativos MCP são um pouco especiais. Eles não são como sites. São uma ilha. São arquivos HTML únicos. Portanto, tudo o que você precisa ali tem que ser incorporado em base64. Se você for vincular
+
+a algo externo, como um arquivo de fonte em cache de uma CDN ou algo assim, você precisa adicionar isso a uma política de classe. Isso significa que você não poderá buscar conteúdo dinamicamente de servidores de terceiros, a menos que tenha certeza disso e habilite no seu aplicativo. Ele está em um sandbox dentro de um iframe. Você não tem armazenamento local com isso. Portanto, você não poderá rastrear o estado entre iframes. Você está limitado a
+
+chamadas de ferramentas assíncronas. Ok. E sem acesso à rede. Você tem Para pedir ao servidor que faça coisas para você com a ferramenta "Chamar servidor". Isso entra numa situação bem complicada, que abordarei na seção de pegadinhas. Então, o que isso significa?
+
+Significa que se torna extremamente útil construir seu aplicativo MCP com seu sistema de design. Neste caso, estou compartilhando fontes, CSS e tudo mais do mesmo servidor. Configurei a política do curso e tudo mais. E os componentes HTML e JavaScript podem ser agrupados. Estou usando o recurso de arquivo único para isso. Então, se você já tem um
+
+sistema de design, levante a pata se tiver. Ok, ótimo. Para todos os outros, Deus, sinto muito por vocês. Mas um sistema de design é uma maravilha. Certo, rodada bônus.
+
+Ha. [suspiros] Links exigem permissão do host. Lembra que eu disse "posso"? Você não pode simplesmente abrir uma janela ou, sabe, usar href. Não, não.
+
+Não, não. Você tem que dizer algo como "appref current open link", por favorzinho. Ok. Lembra que eu disse que recursos externos eram necessários? Bem, eles têm uma coisa chamada CSP, ou política de segurança de conteúdo . Fontes, imagens e outros
+
+recursos externos são bloqueados por padrão. Portanto, sem essa configuração de CSP, o navegador simplesmente não carregaria esses itens. Então, se você estiver vendo uma tela em branco e se perguntando o que está errado, verifique seu CSP. E, diferentemente da interface do usuário do MCP, com a qual você talvez esteja familiarizado, os aplicativos do MCP podem chamar ferramentas. Então, eu poderia fazer a navegação para frente e para trás com uma chamada de ferramenta.
+
+Mas, se você estiver fazendo isso, lembre-se de que algumas ferramentas não foram projetadas para serem visualizadas como um grande bloco de JSON. Você precisa definir a visibilidade do aplicativo para garantir que o modelo não tente usar isso e retornar texto. Ele não vai dizer: "Olha só essa linda navegação para frente e para trás." "Vou usar isso." Não, seu otário. Não faça isso. Tudo bem. Então, as
+
+pessoas ainda usam navegadores, certo? Há navegadores mais inteligentes e acessíveis surgindo o tempo todo. Navegadores grandes e pequenos vêm com agentes integrados. Infelizmente, eles ainda têm dificuldades para navegar em sites porque dependem de capturas de tela e de adivinhar como usar a navegação ou percorrer o DOM, o que consome tokens e processa XML, o que não é um bom uso. Ambos os métodos exigem muito poder computacional, porque você está usando modelos visuais ou simplesmente processando um monte de HTML para descobrir onde está a próxima URL. Não seria ótimo se eles
+
+tivessem uma maneira de chamar as mesmas funções e links que você já tem em seu JavaScript diretamente da página que estão visitando? Bem, com o Web MCP, eles podem fazer exatamente isso. Ele transforma cada página HTML em um mini servidor de ferramentas MCP. No entanto, eu só quero ressaltar que o Web MCP é para o MCP assim como o JavaScript é para o Java. Inspirado pela onda de hype do Mas se você Na verdade, analisando mais a fundo, ele se inspira em outras coisas. Não é uma
+
+conformidade exata com a especificação MCP. É basicamente como ferramentas para agentes no seu navegador. Certo. Então, as especificações podem divergir. Tenha isso em mente. Existem duas
+
+abordagens. Como meus quadrinhos não são formulários, exceto para busca, eu uso principalmente o modelo imperativo. Mas com o declarativo, você pode simplesmente adicionar os atributos de nome e descrição da ferramenta a um formulário. Pronto. Se você estiver usando JavaScript ou funções para processar esse formulário, você basicamente expôs esse formulário como uma ferramenta para o agente. Ótimo para sites com muitos
+
+formulários. Se você é uma daquelas pessoas cujo site é um painel de controle, usando o modelo imperativo, você passa o método ` navigator.modelContext.registerTools` com parâmetros. É ótimo para chamadas de API, fluxos de trabalho e transformação de dados.
+
+Eu usei muito isso. Certo. Então, [suspiro] Agora, se estiver disponível, se você encontrar o contexto do modelo no navegador, você pode dizer: "Vou registrar um..." "Você
+
+dá um nome, uma descrição e um esquema de entrada. Meu Deus, é tão semelhante ao MCP. Incrível. Como pode não ser a mesma coisa? Mas você também passa uma função de execução, um callback. E neste caso, é um '
+
+O que fazemos? Próxima página?'. Basicamente, essa função pega o link 'próximo' da página e o passa como o destino da próxima navegação. Então, você pode chamá-la para navegar para frente e para trás na página com um navegador sem precisar clicar em tudo.
+
+Uau. Isso é novo, então só posso ajudar você a imaginar como funciona, porque os órgãos de padronização ainda estão discutindo sobre isso. Então, vou mostrar como usá-la com a extensão MCP B. É como uma extensão de depuração. Você pode ver todas as pequenas ferramentas expostas ali. Eu tenho uma pequena
+
+janela de chat. Isso meio que imita o que as pessoas podem ver no Gemini ou em algum futuro agente no navegador. Neste caso, acredito que estou dizendo 'leia isso para mim'. Ela retorna o transcrição. E então eu poderia dizer que poderia digitar algo como "obrigado . Adorei a transcrição". Eu poderia digitar algo
+
+como "ir para a próxima página". Vamos lá, vá para a próxima página. Ah, eu estava falando no microfone nesse momento. Tudo bem. Enfim, [limpa a garganta] e quando eu clico em "ir", ele me leva para a próxima página. É apenas o
+
+modelo chamando essa função sozinho. Oba! Isso é incrível. Ah, não aplaudam ainda. Então, o melhor lugar para começar a conferir isso é, na verdade, com esta entrevista que fiz com o criador do Web MCP. Na verdade, tudo começou na Amazon. Isso
+
+foi algo que ele criou para contornar vários problemas de autenticação e eu adorei ter feito uma captura de tela de um window.navigator.registerTool. Ah, existe um grupo da comunidade de padrões, tudo muito legal. Hum, ainda não é totalmente compatível, mas você encontra todos os recursos nos comentários daquele artigo.
+
+Então, comecei minha jornada com a web agente com esta palestra há uns 2 anos, quando eu pensei: "O "O navegador vai morrer." Mas o que as pessoas não entenderam com essa manchete sensacionalista foi que a web não está morta, pessoal. Tipo, ela só está mudando. Está evoluindo. CSS e JavaScript não são apenas a linguagem da web. São a linguagem das
+
+experiências interativas em dispositivos. Muito bem. Aqui está em ação. Quero mostrar a vocês que existe uma versão disso que fala. Claro. Brenda parece
+
+cética enquanto Rachel continua explicando. Rachel: "Ha, Gore deixou de fora alguns detalhes importantes." Rachel: "E quanto à forma como a vida vegetal reagirá ao dióxido de carbono extra?" A ilustração do segundo painel mostra plantas altas e vegetação crescendo vigorosamente. Eu poderia continuar, mas isso é só a API Web Speech. Parece
+
+horrível. Tenho certeza de que você pode fazer algo incrível com o 11 Labs. É um recurso de conversão de texto em fala integrado ao navegador. Solução sem dependências. Sem necessidade de inferência. Está
+
+aí, esperando para ser usado. Assim como todas as outras ferramentas incríveis. As APIs disponíveis na web hoje em dia são inúmeras. Todas essas APIs, como Web Speech, Animation, Audio, Canvas, WASM, CSS e muitas outras, já estão disponíveis para você criar algo. E eu mal posso esperar para ver o que você vai fazer com essa tela infinita.
+
+[aplausos]
+
+[música]

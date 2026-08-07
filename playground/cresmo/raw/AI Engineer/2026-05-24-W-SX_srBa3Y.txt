@@ -1,0 +1,89 @@
+---
+video_title: "Let's Talk About FOMAT: Fear of Missing Agent Time — Michael Richman, Cmd+Ctrl"
+video_id: W-SX_srBa3Y
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=W-SX_srBa3Y
+video_date: 2026-05-24T16:00:06+00:00
+video_description: |
+  You kicked off an agent 30 minutes ago. It stopped after two minutes, blocked on a question, and has been waiting ever since. Michael Richman calls this FOMAT: fear of missing agent time. His answer is Cmd+Ctrl, a system that sends you a push notification when the agent needs input, lets you respond from your phone or watch, and lets you start new sessions from wherever you are.
+  
+  The demo shows Claude Code running in a terminal while the Cmd+Ctrl app on an iPhone mirrors the session in real time. Walk away, get notified when the agent completes or gets stuck, reply from the phone, pick up in the terminal. The same setup works across Claude Code, Cursor, Codex, Gemini CLI, and others through a daemon that runs alongside each agent and reports to a shared control plane. The daemon layer is open source. A standup dashboard summarizes all recent sessions so you can catch up without reading every thread.
+  
+  Speaker info:
+  - https://x.com/mrwoofster
+  - https://www.linkedin.com/in/michael-richman-b7807b2/
+  - https://github.com/mrwoof
+---
+[música]
+
+Obrigado a todos. Meu nome é Michael Richmond. Bem, eu lidero várias equipes no Bitly, o encurtador de links, mas hoje estou aqui para falar sobre o FOMAT. Ah, medo de perder tempo com o agente. Sabe o que é FOMO, o medo de ficar de fora? Você
+
+também conhece o FOMAT, só não tinha um nome para ele. O que é o medo de perder tempo com o agente? É como estar dando uma caminhada e ter uma ideia que você quer delegar ao seu agente, mas ter que esperar para voltar ao seu computador de desenvolvimento para realmente executá-la. É quando você se levanta da sua mesa e, 30 minutos antes, tinha um agente trabalhando sem parar, e quando você volta, percebe que depois de 2 minutos ele finalmente parou para te fazer uma pergunta. E ficou lá parado, bloqueado, o tempo todo.
+
+Todos queremos acreditar que nossos agentes têm baixa interação... quer dizer, baixa interação e alta autonomia. Mas todos nós sabemos a verdade, certo? É uma troca de informações constante
+
+, é como cuidar de uma criança, e você não consegue prever quando sua opinião será necessária. Atualmente, as tarefas de programação podem levar entre 5 e 45 minutos, e você geralmente sabe quando deve verificar novamente. O tempo gasto pelos agentes em ociosidade é bastante limitado. Mas esse período só vai se estender. E quanto mais tempo o agente esperar por você, mais tempo de atendimento você terá perdido. Se uma tarefa estiver em execução por 5 horas
+
+ou, eventualmente, 5 dias, você não pode simplesmente verificar novamente mais tarde. Você precisa saber quando precisa de você e precisa saber quando terminou. E isso pode acontecer sempre que você estiver, onde quer que esteja. Pode acontecer em qualquer momento que você não consiga prever. Você pode não estar em sua máquina de desenvolvimento.
+
+Eu voltei? Voltei, desculpe. Então, como eu disse uma vez, mais uma vez, meu nome é Michael Richmond. Eu gerencio várias equipes de engenharia na Bitly. Também sou um dos líderes da nossa estratégia de ferramentas de codificação de IA. Hum, eu sou um
+
+líder de engenharia muito prático. Eu gerencio equipes e também escrevo código. Eu fui coautor do servidor Bitly MCP. E eu treino nossos engenheiros em habilidades de IA e melhores práticas. Penso muito em ferramentas .
+
+As ferramentas que usamos todos os dias, como elas funcionam e se são eficazes ou não para nossos fluxos de trabalho. E a programação agentiva realmente mudou o mundo do software no último ano, e o caminho está sendo pavimentado à medida que avançamos. Então, eu criei um sistema chamado comando e controle para me ajudar a trabalhar com agentes de codificação fora do terminal ou da IDE, porque eu realmente precisava disso e ainda não existia nada que resolvesse o problema. A Anthropic lançou recentemente algumas maneiras de lidar com isso por meio de controle remoto e do mecanismo de teletransporte, e acho que foi há apenas dois dias que a Cursor apresentou uma solução nesse sentido. Então eu escrevi comando e controle. Uma das
+
+vantagens do comando e controle, que mostrarei em breve, é a possibilidade de reunir todos os seus agentes de programação em um só lugar, seja no seu dispositivo móvel ou em qualquer outro lugar. Então, esta é a aparência da minha configuração. Tenho várias janelas de terminal abertas. Cada uma dessas janelas possui várias abas. Aqui está Claude Code. Eis como o Codex
+
+ficaria aqui. Aqui está Gêmeos. Aqui está o IDE do cursor. E a qualquer momento posso ter várias sessões executando vários agentes em todos esses locais, em vários estágios de conclusão. E aqui está o ponto. Não sei quanto a
+
+vocês, mas eu não consigo acompanhar mais de duas ou três sessões simultaneamente. Assim que chego à quarta ou quinta sessão, já não sei mais o que a segunda sessão está fazendo. Não sei qual deles precisa da minha atenção e não tenho ideia em que estágio de conclusão as coisas estão. Então, como saber quando um agente está travado e precisa de uma decisão sua? Como saber se é preciso verificar o andamento de um agente no meio de uma tarefa e, em seguida, descobrir que ela saiu do controle?
+
+E se você quiser iniciar uma nova sessão e não estiver em sua máquina de desenvolvimento? Foi exatamente por isso que construí este sistema. Então, é assim que aparece em um aplicativo para iPhone. Está disponível para Android, está disponível na web e permite monitorar e interagir com sessões de agentes, além de iniciar novas sessões de qualquer lugar. Do seu celular, da internet, até mesmo do seu relógio.
+
+Tenho alguns vídeos de demonstração que vou reproduzir para mostrar algumas das funcionalidades. E a questão aqui é que esta é realmente uma [limpa a garganta] solução para um problema de fluxo de trabalho, uma solução. Vimos esta manhã...
+
+como era o nome mesmo? Agent Craft, que é uma versão para videogame de algo semelhante, e que eu achei incrível. Aqui está o primeiro slide de demonstração. Ok, aqui estou eu no terminal. Vou iniciar uma sessão do Claude Code e vou executar um comando bastante comum. Na verdade, não estou
+
+utilizando nenhuma funcionalidade do Código Claude. Eu só quero demonstrar o sistema de comando e controle. Então, se eu vier aqui para o meu simulador de telefone, você verá que tenho o aplicativo de comando e controle aqui, e o que tenho aqui é a minha sessão. Aqui estão todas as minhas sessões agrupadas por aquelas para as quais quero receber notificações, aquelas que quero acompanhar e as recentes . E aqui vocês verão o que acabamos de divulgar há 27 segundos. Vamos
+
+sair desta sessão aqui e o que você verá é que a resposta que recebi do agente é a mesma, porque se trata da mesma sessão. A beleza do comando e controle aqui é que, digamos que eu queira me inscrever nesta sessão específica para receber notificações e vou enviar uma resposta para esta. Vou dizer "durma" por 1 segundo e dizer olá. Assim que eu atingir esse objetivo, vou deixar os agentes trabalhando. Saí do aplicativo porque o que quero demonstrar aqui é a notificação push que receberei assim que o processo for concluído.
+
+E aqui está. Então eu consigo clicar direto naquele cara e recebo um "olá". Agora, se eu voltar à minha sessão e retomar a interação com esse cara, minha resposta estará lá, junto com a resposta do agente. A grande vantagem disso é que não preciso ficar no meu terminal. Posso me afastar com meu celular, receber notificações quando houver respostas e responder diretamente dali .
+
+Essa é uma característica básica de comando e controle: interagir com as sessões de qualquer lugar. Vamos ver outro. Isso inicia uma nova sessão no aplicativo móvel. Eu ia fazer uma demonstração ao vivo depois de gravar esses backups em vídeo, eu pensei: vou mostrar os vídeos. Aqui está o próximo.
+
+Gostaria de demonstrar outra funcionalidade importante do sistema de comando e controle, que é a possibilidade de iniciar uma nova sessão diretamente da interface de usuário do comando e controle. Posso escolher qualquer agente configurado que eu tenha aqui. Vou continuar usando o Claude Code, mas veja bem, também tenho o Codex, o GitHub Copilot e o Cursor aqui. Vou continuar usando o Claude Code, vou mudar meu diretório para um diretório de testes e vou simplesmente perguntar que horas são? O motivo de eu estar mostrando um comando bem simples é que o comando em si não importa, pois o importante é que estou enviando um comando para o meu agente e recebendo uma resposta. Agora vocês podem ver que estou trabalhando até
+
+tarde da noite aqui. E o melhor é que posso ir até aqui e retomar a sessão, e aqui está a sessão que iniciei a partir do comando e controle. Posso retomar o assunto aqui, de onde parei. E se eu der um comando aqui, qual será a data em mm amanhã, digamos? O que verei aqui é a mesma conversa, e essa é a beleza do comando e controle. Sinceramente, costumo
+
+começar o dia com comandos que envio da cama, e inicio várias sessões, retomando-as no terminal ou continuando-as diretamente no meu celular. Espero que você esteja começando a perceber o poder do comando e controle aqui. E como eu disse, isso se aplica a qualquer um dos agentes de codificação que eu tenho configurado na minha máquina.
+
+Agora, vamos ao problema de manter o controle das sessões. Este terceiro vídeo e depois falarei um pouco mais sobre a importância disso, que é o gerenciamento de sessões. Como mencionei, é difícil acompanhar todas as sessões que você tem em andamento. Quer dizer, se você olhar para o número de sessões que tenho aqui, são muitas, e eu quero revisitar as diferentes seções disponíveis em comando e controle. Como mencionei, você pode se inscrever para receber notificações push. Essa é a
+
+parte superior aqui. A seção "Em meu radar" inclui mensagens que eu quero acompanhar de perto, mas que não me bombardeiam com notificações a cada nova mensagem. Depois, há uma seção "Recentes", que basicamente mostra as últimas 24 horas, e depois o restante. Agora, você pode ver que existem milhares de sessões aqui. Seria impossível para mim manter o controle de todos eles , mas aqui estão eles, organizados para mim.
+
+Outra funcionalidade útil do Command and Control é o que se denomina painel de visão geral. Uma das funcionalidades mais interessantes deste aplicativo é a possibilidade de obter um resumo das sessões mais recentes. E isso é apenas usar as últimas mensagens para dar uma visão geral do que aconteceu em cada uma delas. Então, espero que vocês consigam perceber o poder disso, e acho que esse é o tipo de coisa que precisamos em nosso novo mundo de orquestração de agentes. Isso engloba várias coisas. Isso significa
+
+interagir com suas sessões de agente ou iniciar novas sessões de onde você estiver. Trata-se de gerenciamento de sessão. São notificações, assim você sabe quando seu agente precisa de você, sem ter que adivinhar. E também inclui todos os agentes de codificação que você possa estar usando, tudo em um só lugar. São todas essas coisas, não importa onde você esteja.
+
+Um pouco sobre a arquitetura disso, que talvez lhe interesse. Assim, cada plataforma de agente, Cloud Code, Cursor, Codex, Gemini, Open Code, possui um daemon de Comando e Controle que é executado em paralelo. Eles se comunicam com uma camada do plano de controle. Eles monitoram o ciclo de vida do agente. Quando as coisas mudam, o sistema fica bloqueado e precisa da sua ajuda.
+
+A comunicação ocorre até a camada do plano de controle , e então a interface do usuário se comunica com essa camada da API e notifica você sobre as coisas. O plano de controle agrega todos os agentes, independentemente de onde estejam sendo executados ou em qual estrutura estejam sendo executados. Portanto, esta pode ser sua máquina de desenvolvimento, pode ser uma máquina virtual na nuvem ou pode ser ambas. E este é um ponto importante que quero enfatizar. Eu precisava de um sistema que oferecesse uma visão unificada de todas as minhas sessões de agentes. Independentemente da
+
+plataforma em que estejam sendo executados, independentemente da máquina em que estejam. Posso ter o Cloud Code rodando no meu Mac e o Codex CLI rodando em uma máquina virtual na nuvem, e todas as sessões de ambos ficam disponíveis através de uma única interface de usuário. E como eu disse, ele foi projetado para ser independente de ferramentas de programação. Funciona com quase todos eles. Gostaria de acrescentar também que a camada de daemon é de código aberto, portanto, você pode integrá-la a qualquer uma das suas estruturas de agentes em que esteja trabalhando e acessá-la por meio da interface de usuário única atual.
+
+Portanto, seja qual for o seu agente, você pode contatá- lo e ele pode contatá-lo. E isso me leva ao ponto de que todos nós queremos que nossos agentes sejam o mais autônomos possível, certo? E a verdade é que ainda não, por mais que alardeemos isso. E especialmente não se você estiver limitado à forma como pode interagir com eles em seus ambientes nativos. Esta é uma solução que resolve esse problema.
+
+E eu gostaria de falar um pouco sobre um conceito mais amplo com o qual isso está relacionado. E isso significa que, apenas no último ano, o fluxo de trabalho de codificação agentiva transformou completamente o que é o desenvolvimento de software. Transformou a maneira como trabalhamos e também a maneira como desfrutamos do nosso trabalho. Então, você conhece o velho conceito de fluxo, que é como estar totalmente concentrado, imerso no seu código, hiperfocado em uma única coisa. Você e seu código resolvendo um problema. E eu acho que o
+
+novo tipo de fluxo no mundo dos agentes tem mais a ver com a coreografia dos agentes. Vários agentes trabalhando em paralelo, com você alternando entre eles, desbloqueando um e redirecionando outro. E o novo fluxo surge da elegância dessa coreografia e dos resultados obtidos. Assim, talvez parte desse medo de perder tempo com o agente possa ser aliviado. Outro ponto que realmente quero destacar aqui é que esse paradigma do agente sempre disponível, na verdade, ressalta o valor e a importância do tempo longe dos seus agentes. Matt Pocock fez alusão a isso
+
+ontem. Não sei se você ouviu a entrevista com Simon Wilson no podcast do Lenny na semana passada. A carga cognitiva de gerenciar múltiplas sessões de agentes é realmente alta. E é exaustivo, como provavelmente todos vocês sabem. Você precisa de uma pausa. E aqui está o ponto.
+
+É nesses intervalos que muitas vezes temos as nossas melhores ideias. Precisamos de sistemas que nos permitam entrar em contato com nossos agentes durante esses intervalos, onde quer que estejamos e quando quer que isso aconteça. E é assim que realmente aliviamos o medo de perder tempo com o agente. Mais uma vez, meu nome é Michael Richmond. Adoraria saber mais sobre seus fluxos de trabalho, seus truques e os problemas que você enfrenta.
+
+Convido você a experimentar o Command and Control se tiver interesse. Você pode encontrar o conteúdo online aqui e me encontrar no LinkedIn aqui. Adoraria entrar em contato e continuar a conversa. Obrigado. [aplausos]
+
+[música]

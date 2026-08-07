@@ -1,0 +1,127 @@
+---
+video_title: "GPU Cloud Deployment Without Leaving Your IDE — Audry Hsu, RunPod"
+video_id: zDGHt0LB-dA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zDGHt0LB-dA
+video_date: 2026-06-09T18:15:10+00:00
+video_description: |
+  The iteration cycle before Flash: commit, push, build a Docker image, pull it from the registry, load it onto a server, allocate a GPU, then find out if it works. Audrey Hsu demos what replacing that with a single decorator looks like — add `@flash.endpoint` to an async Python function and it deploys to GPU cloud from your IDE, with hot reload so a model swap is one line of code rather than a container rebuild.
+  
+  The second demo chains three models: Qwen 3 generates image prompts, DreamShaper renders them, Nano Banana 2 composes the results into a single photo. H100 pricing is $0.00116 per second, charged only while a worker is handling a request. RunPod's recommendation: start with pods while experimenting, switch to serverless when you need hundreds of workers autoscaling across data centers.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/audry-hsu/
+---
+[música]
+
+Olá a todos. Meu nome é Audrey. Eu trabalho na RunPod. Alguém de vocês estava presente na minha sessão anterior? OK, bom. Porque então eu vou sentar.
+
+Esta introdução é a mesma, mas o que vou mostrar é um pouco diferente. Alguém já ouviu falar do RunPod ou já usou o RunPod? Você tem? Você se importaria se eu lhe perguntasse como você já utilizou nossos serviços ou ouviu falar de nós? Pensei em ir para a universidade.
+
+Temos alguns créditos do RunPod, então eu os uso como um incentivo para treinamentos melhores e treinamentos da LLM. Certo, na sua universidade? E onde você estuda na universidade? Você, Oxford. Oxford. Fiz um
+
+intercâmbio de estudos lá durante um verão. É um lugar incrível . Ok, adorei. Certo, e qual é o seu nome? Yunus. Yunus. Ok, então o Yunus provavelmente
+
+já sabe um pouco sobre isso, mas vou dar uma breve introdução para vocês. Hum, o que fazemos? Somos uma empresa de infraestrutura de nuvem com inteligência artificial. E nossa missão é construir a plataforma fundamental para que os desenvolvedores possam dimensionar suas cargas de trabalho de IA. Basicamente, o que isso significa é que nós trazemos o hardware, as GPUs e a capacidade de computação. Nós facilitamos para vocês
+
+trazerem seu código, seus modelos e implantá-los o mais rápido possível. Não queremos que você gaste tempo configurando infraestrutura e pensando em coisas como escalonamento. Por que o RunPod existe. Muitas equipes com as quais conversamos estão enfrentando o mesmo problema: a infraestrutura. Elas estão dedicando mais tempo à infraestrutura do que aos modelos. Então, coisas como a versão do CUDA e o
+
+alinhamento, por exemplo, quais versões do PyTorch funcionam bem juntas. Hum, quais, quais, uh, as novas GPUs, uh, SKUs, tipo, foram testadas e tipo, continuamos descobrindo os bugs. Então, grande parte disso se deve a coisas que tentamos fazer para eliminar o problema de configuração para vocês , para que possam se concentrar apenas no treinamento do modelo ou na criação de seus aplicativos. E um pouco da história da nossa empresa. Então, Zenin e Pradeep são os dois fundadores.
+
+Eles fundaram a RunPod em 2022. Depois de um empreendimento fracassado de mineração de criptomoedas, tinham várias GPUs sobrando no porão. Eles construíram um protótipo do que hoje é a base do RunPod. Eles simplesmente postaram no Reddit e disseram: "Alguém quer algumas GPUs de graça em troca de feedback?" E foi literalmente assim que nossa empresa começou. E desde então temos
+
+construído em público, junto com a comunidade. Então, estamos gerando receita desde o início. Hum, o que é muito, muito raro. E mesmo hoje, temos cerca de 500 desenvolvedores em nossa plataforma. Estamos presentes em mais de 30 centros de dados em 10 países. Na Europa, isso inclui
+
+França, Romênia, Islândia, se isso fizer parte da Europa. Ah, Ásia-Pacífico. E recentemente atingimos um marco bastante importante de 120 milhões em receita recorrente anual. Esta é apenas uma breve visão geral de alguns dos nossos clientes. Você pode se surpreender ao ver que algumas dessas empresas são nativas de IA, assim como algumas grandes corporações. E, basicamente, o que
+
+eles têm em comum é a necessidade de uma infraestrutura de GPU flexível e confiável. Então, eu definitivamente diria que estamos superando as expectativas. Resumindo rapidamente, existem diferentes maneiras de usar o RunPod, dependendo do que você está tentando fazer. Então, se você precisa de um ambiente de máquina virtual mais persistente, os pods são uma ótima opção. Se você puder alugar uma cápsula sob demanda, pagar por segundo e, quando terminar, desmontá-la e começar de novo.
+
+Os pods servem se você precisar de uma GPU reservada. Enquanto seu pod estiver funcionando, a GPU é sua e ninguém pode tirá-la de você. Um modelo sem servidor (serverless) é ideal para quem está pronto para implantar algo e se preocupa mais com a escalabilidade, ou seja, se suas cargas de trabalho são mais variáveis ​​em termos de frequência e intensidade. Nós ajudamos você a dimensionar automaticamente seus servidores e reduzi-los quando não houver solicitações em andamento, para que você não pague por tempo ocioso. Um cluster, ótimo caso de uso para treinamento, multi-nó. E o hub
+
+também é um lugar onde você pode implantar repositórios de IA de código aberto que já foram pré-avaliados por nós para modelos populares como ComfyUI, Stable Diffusion e vLLM. E essa é uma maneira, se você estiver apenas explorando, de clicar em alguns lugares e começar rapidamente. Bem,
+
+hoje vou falar sobre computação sem servidor. E o produto que acabamos de... E vou trocar meus monitores novamente aqui, muito, muito rapidamente, para que possamos espelhar minha tela.
+
+Uma das coisas que mais incomoda os desenvolvedores é quando eles ainda estão na fase de iteração ou desenvolvimento. Normalmente, quando você está trabalhando em algum código relacionado ao seu modelo de inferência e ainda está testando algumas coisas, você precisa fazer um commit, enviá-lo para o GitHub, construir sua imagem Docker, baixá-la do registro de contêineres e, em seguida, carregá-la em um servidor, alocar uma GPU nela e só então testá-la para ver se está funcionando como esperado. E então você repete todo o processo até estar pronto. O problema que o Flash está tentando resolver aqui, e o Flash é o nosso SDK para Python, é eliminar todo esse ciclo de iteração para que você possa implantar sua função em uma GPU diretamente do seu ambiente de desenvolvimento local. E vou dar um zoom rapidinho aqui.
+
+Então, isso é tudo que você precisa saber sobre Flash em um pequeno parágrafo. Se você tiver uma função Python assíncrona comum, adicionar nosso decorador de endpoint Flash, ele implantará e empacotará tudo dentro da sua função em uma nuvem com GPU. Tudo ao redor, sua função principal, quaisquer funções auxiliares que você tenha, tudo isso é executado em seu ambiente de desenvolvimento local, mas se você precisar de computação em GPU, isso pode ser executado na nuvem. E você pode ter um mod quente, uh, recarregar arquivo. Assim, se você alterar qualquer coisa em seu aplicativo, em qualquer lugar, ele será reempacotado e enviado imediatamente, permitindo que você teste e itere muito rapidamente.
+
+E vou mostrar um exemplo disso .
+
+OK. Então, eu tenho uma função aqui, gerar imagem. Estou simplesmente carregando o PyTorch. Estou carregando um modelo de difusão estável pré-treinado , o Stable Difffusion XL Turbo, que é ótimo para geração rápida de imagens, e vou salvar a imagem, que será retornada codificada em base64. Então posso executar isso aqui mesmo . Eu já
+
+instalei todas as minhas dependências. Eu já tenho um projeto em Flash em andamento . Vou executar o script flash uh image generation.py. E o que eu vou fazer na verdade é dar uma pequena
+
+corridinha relâmpago. Assim, o comando `flash run` inicia um servidor de desenvolvimento local aqui. É apenas um servidor de API rápido. E posso enviar minha solicitação aqui para este endpoint. E vou fazer isso muito rapidamente.
+
+Só quero começar meu projeto.
+
+Este é apenas um pequeno script auxiliar que enviará uma solicitação POST e decodificará a imagem para que vocês possam ver como ela ficará depois de gerada. E a geração de imagens era assíncrona. Vamos lá.
+
+E vamos passar um comando para ele. Posso contar com a ajuda da plateia? O que queremos gerar hoje? Literalmente qualquer coisa. Qualquer coisa aleatória.
+
+Gatos voando no céu. OK. Gatos voando no céu. Como é o céu? Que horas são? Nublado. Um
+
+em Londres. Sim. Voando em um dia nublado, em algum lugar no céu de Londres. E eu passei sem problemas . Ele está observando com muita atenção. Ele está me
+
+ajudando a depurar o código ao vivo. Eu amo isso. Obrigado. [risos] É meio difícil de ver no modo escuro, mas eu passei o URL e é verdade. Você parou depois de localhost? Hum, será que é problema com o
+
+meu HTTP?
+
+Certo, aqui está.
+
+Ok, voltando ao servidor de desenvolvimento local . O sistema visualiza a solicitação. Isso deu início ao trabalho. Está na fila.
+
+Vamos esperar um instante para ver se termina. Enquanto isso acontece, gostaria de chamar a atenção de vocês de volta para a ideia de
+
+torná-la ainda maior para vocês. Hum, o decorador de ponto final. É aqui que toda a magia acontece. Eu já forneci um nome para o meu endpoint. Eu especifico uma família de GPUs. Bem, as Ada 80
+
+Pro são diferentes variações das placas Nvidia H100. Bem, posso especificar que meu número máximo de trabalhadores seja cinco, então posso ter no máximo cinco deles em execução simultaneamente. Bem, eu coloquei apenas um processo de trabalho ativo, então este estará sempre em execução e sempre ligado. E aquilo é definitivamente um dragão. E provavelmente não aceitou minha solicitação porque eu não a passei como uma flag.
+
+Incitar. Pronto. Ok, agora com certeza está fazendo os gatos voarem. [bufa] Ok, de volta ao decorador de ponto final. Hum, e também existem outras configurações diferentes para o tempo limite, que define por quanto tempo um trabalhador fica ocioso. Vamos lá.
+
+Ok, pessoal, isso está com uma aparência terrível. [risos] São gatos. São gatos abstratos. Bem, eu não sou de Londres, mas talvez alguém possa me dizer se isso se parece com uma chaminé londrina. Talvez.
+
+Ok, então eu não... eu não... eu
+
+não gostei do que acabou de acontecer. Então, o que vamos fazer em vez disso é trocar nosso modelo. Então, vou apenas comentar esse código aqui. E aqui embaixo
+
+vamos trocar pelo DreamShaper, que é um modelo de µm refinado baseado no Stable Diffusion 1.5. Bem , enquanto o Stable Diffusion XL Pro é mais otimizado para geração rápida, acho que este vai gerar uma imagem de melhor qualidade para nós. E é especialmente melhor para estilos mais artísticos e de ilustração. Então, alterei alguns dos parâmetros . Vai envolver mais alguns
+
+passos de inferência. Vamos definir isso para 25. Altura e largura 10 por 24, está ótimo. E vamos enviar a mesma solicitação novamente. Vamos ver o que acontece. Qual é a
+
+diferença?
+
+Então, mais uma vez, o que tornou tudo isso realmente rápido foi que, em vez de fazer uma alteração no código, confirmá-la, reconstruir meu Docker, enviá-la para algum lugar e, em seguida, alocar a infraestrutura de GPU, tudo isso acontece aqui mesmo, no meu IDE, e eu não preciso sair dele. Isso é bom, né, pessoal? Gostamos deste? OK. Então, só mais uma coisa que vou mostrar para vocês, para finalizar, é onde eu acho que usar uma ferramenta de desenvolvimento como o Flash faz uma grande diferença, quando você está tentando...
+
+não apenas fazer uma única chamada para um modelo. É tudo uma questão de código de orquestração, certo? Então, tenho aqui um fluxo de trabalho que já preparei. Bem, o que vai acontecer é que, em vez de eu gerar e digitar cada prompt, vai enviar uma solicitação para a Gwen que já está hospedada em um endpoint público. Hum, e a Gwen é a Gwen 3, que vai gerar todas as sugestões para mim.
+
+E depois disso, ele enviará isso para o nosso DreamShaper, que está sendo executado em nosso endpoint. E depois disso, há mais um processo pelo qual ele passa. A solicitação será enviada para o Nano Banana 2, um modelo premium do Google que é excelente em compor fotos . Bem, espero conseguir tirar algumas fotos legais dos nossos fundadores e enviá-las para eles depois que essa demonstração terminar. OK.
+
+Agora vamos executar todo o pipeline aqui. Verificar. OK. Dois homens caminhando em Londres. O dia está nublado. Um
+
+dia nublado, close-up dos seus rostos. Hum, algum outro pedido para esses dois homens?
+
+Hum, como eles são? Tipo, será que eles estão fazendo alguma coisa? Óculos, sim. OK. Dois homens de óculos, close-up de seus rostos.
+
+Ok, então vamos gerar. Vamos gerar três dessas e compô-las juntos.
+
+OK. Então, como funciona em termos de preços? Preços, com certeza. Bem, para cada solicitação que enviamos, você só paga pelo tempo que essa solicitação fica em execução. Então vamos ver. Eu
+
+disse que toda esta sessão seria realizada apenas no terminal, mas vou voltar ao console só para mostrar o que está em execução. Vamos ver. Este é o endpoint que criamos a partir do terminal. Bem, aqui estão os trabalhadores. Acho que dissemos algo como cinco funcionários, então temos cerca de cinco ou seis aqui que estão alocados.
+
+Bem, três deles estão correndo porque eu pedi três fotos. Então, este é o tempo de atividade. É por isso que você está sendo cobrado. E deixe-me ver, o custo de um H100 neste momento é de 0,00116 centavos por segundo. É igual a um pod, ou o preço é um pouco diferente? O preço é um
+
+pouco diferente para serverless em comparação com pods porque, com pods, você não tem a mesma escalabilidade. Portanto, existe um pequeno custo adicional para soluções sem servidor. Então, o que geralmente recomendamos é que, se você ainda estiver experimentando, comece com um número muito baixo de workers ou comece com pods, certo? Porque quando você está experimentando, pode precisar apenas de um número limitado de GPUs, uma GPU por vez, duas GPUs por vez. Hum, computação sem servidor é para quando você precisa de centenas de nós de processamento rodando em centenas de GPUs e deseja que eles sejam distribuídos para uma melhor disponibilidade em diferentes data centers.
+
+[Risos] Ok, pessoal, aqui está a nossa apresentação final. Então, essa foi a nossa proposta inicial. Dois homens [bufa] de óculos caminhando em Londres num dia nublado, close-up de seus rostos. Então, à esquerda, isto é o que o DreamShaper gerou com base na engenharia de prompts que a Gwen 3 fez para nós. Então, este esboço é muito melhor do que o que eu enviei. Tem dicas muito melhores
+
+sobre anotações, como por exemplo, posso lê-lo em voz alta para você, já que sei que é difícil de enxergar. Hum, expressões pensativas e rostos marcados pelo tempo , foco suave nas nuvens ao fundo, paleta urbana discreta com tons de cinza e azul profundo, iluminação nublada. Hum, e à direita está a foto final composta, hum, desta mão. Esta é uma foto muito bonita de Pradeep. E esta é, de alguma forma, uma foto muito antiga do Zed. E vou
+
+rolar a página para baixo para mostrar que esta é a foto de referência que enviei. Bem, no geral, sim, eu só queria mostrar para vocês como é possível começar bem rápido. Você pode começar no seu ambiente de desenvolvimento local . Você pode usar modelos de código aberto . Você pode usar o modelo "traga o seu próprio" ou um modelo privado.
+
+Hum, e foi muito divertido fazer isso. Então, obrigado a todos por terem passado um tempo comigo. [aplausos]
+
+[música]

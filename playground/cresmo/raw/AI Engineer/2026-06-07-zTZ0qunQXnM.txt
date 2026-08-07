@@ -1,0 +1,208 @@
+---
+video_title: "From MCP to Scale: Pipelines That Build Themselves — Rafael Levi, Bright Data"
+video_id: zTZ0qunQXnM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zTZ0qunQXnM
+video_date: 2026-06-07T14:00:12+00:00
+video_description: |
+  Scraping is not the hard part anymore. Maintaining scrapers is. This session shows what it looks like when an agent uses MCP to inspect a site, understand its structure, generate a production scraper, and keep that pipeline working when the site changes.
+  
+  Using Bright Data's MCP, APIs, and browser infrastructure, the flow moves from one-off extraction to something much more useful: agents that build parsers, save tokens by switching from page parsing to reusable scripts, and repair broken collection jobs without a human getting dragged in at 2am. If you're thinking about web data, automation, or agents that operate beyond a single prompt, this is a practical look at pipeline building at scale.
+  
+  Speaker info:
+  - https://il.linkedin.com/in/rafael-levi
+  - https://github.com/ScrapeAlchemist
+---
+Muito bem, vamos começar. Então, na sessão anterior, não sei quantos de vocês estavam aqui, mas falei sobre como o MCP dá acesso a LLMs em sites que estão protegidos por CAPTCHA, sistemas de detecção de bots e assim por diante. E nesta sessão, quero falar sobre como coletar dados em escalas com o LLM (Learning Learning Machine). Porque muitas vezes vejo no Reddit e em outras redes sociais coisas como: "Ah, preciso escanear 10.000 produtos, mas isso exige muitos tokens se eu tiver que analisar tudo com LLM." Então, obviamente, você não faz
+
+isso. Certo? Então, toda a sessão gira em torno de como construir pipelines, certo? Com mestrado em Direito (LLM). Em vez de dizer: "Ei, LLM, você pode ir lá e analisar isso para mim?" Crie um programa
+
+que faça a análise para mim, e eu demonstrarei como é fácil com as nossas habilidades, certo? Assim, a Bright Data possui habilidades que, na prática, ensinam seu mestrado em Direito (LLM) a construir um pipeline de vendas. Com nosso MCP, ele consegue extrair o HTML para saber quais seletores precisa analisar, e assim por diante. Então, as tags de raspagem, certo? Escreva o script de extração de dados.
+
+Hum, não sei quantos de vocês já escreveram scrapers antes. Certo, você sabe a dor de cabeça que é quando, de repente, as coisas somem, os dados desaparecem, e você tem que acordar de repente. Não sei se vocês já fizeram isso para clientes, e os clientes ficam tipo, "Meu Deus, não tem mais nada disso!" Então, basicamente, era assim que funcionava antes. Você escrevia um scraper e fazia a manutenção dele. Aliás, às vezes você fazia
+
+mais manutenção do que escrevia o programa, certo? Então, tudo, especialmente se o site está constantemente mudando seus seletores, ou se é um site React, fica muito complicado, certo? Um agente resolve toda essa dor de cabeça, certo? Ele pode explorar com nosso MCP, entende quais dados são necessários. Ele escreve o scraper, executa e faz a manutenção. Aliás, eu faço
+
+coletas diariamente e a cada 30 minutos tenho um pool de classes LLM que é iniciado. Ele verifica quais dados foram coletados, garante que tudo esteja correto. Se tudo estiver correto, ele é encerrado. Se, por exemplo, houver uma validação de dados definida, certo? Digamos que o ponto de dados seja Está faltando alguma coisa.
+
+Seu agente resolve. 5 minutos. Você não precisa acordar no meio da noite. Então, deixe-me demonstrar. Para esta demonstração, quero usar o Cloud Code. Não
+
+sei quantos de vocês usam o Cloud. Se você usa o Codex ou algo parecido, eu prefiro o Cloud Code. Gosto de como ele funciona . Ele faz um ótimo trabalho. A maneira como você cria scrapers hoje em dia é ridícula porque, antigamente, levava semanas para configurar. Criamos uma página no GitHub semelhante ao BrightData
+
+, certo? Habilidades do BrightData. Aqui, basicamente, seu agente tem tudo o que precisa, ok? Ferramentas para criação de scrapers, práticas, tudo o que precisa para criar um scraper. E o que eu quero mostrar é...
+
+primeiro, vamos começar com algo simples. Vou criar um scraper e queria gravar porque achei que demoraria muito, mas agora leva apenas uns 3 minutos. Crie um scraper. O scraper tem duas entradas: pesquisa por palavra-chave, número máximo de páginas para walmart.com.
+
+Todo mundo conhece o Walmart. O Walmart tem um sistema anti-bot muito agressivo . Se alguém tentasse extrair dados, simplesmente não funcionaria. Mas, com o Bright Data,
+
+ele consegue descobrir. Certo, vamos corrigir isso. walmart.com: faça uma busca por fones de ouvido e colete três páginas. Então, o que ele vai fazer agora é acessar nosso GitHub, obter todas as habilidades necessárias para construir scrapers e, em seguida, usar o MCP que já está conectado à nuvem para extrair o HTML da página.
+
+Ele encontrará todos os seletores necessários e construirá um scraper para você. Um scraper pode ser visto como um arquivo Markdown, que basicamente extrai o texto, certo? Quanto às habilidades, não... Precisamos do HTML, só
+
+precisamos do texto. O scraper em Markdown faz parte do MCP da Bright Data. O MCP oferece 5.000 requisições gratuitas, então, se alguém quiser experimentar, pode fazê-lo gratuitamente. Basta criar uma conta na Bright Data, o que não custa nada, e deixar que ele faça o trabalho. Então,
+
+por que isso é melhor do que ter um LLM analisando cada página, cada HTML? Vou pedir para ele informar quantos tokens economiza. Para as três páginas que testei, economiza-se cerca de um milhão de tokens apenas com a criação do scraper e o uso de um script para analisar o HTML. Mesmo que você não esteja fazendo scraping para produção, digamos que você queira encontrar os melhores fones de ouvido pelo melhor preço, certo? Antes, você ia ao Google ou a algum site como o CNET, onde eles comparavam tudo, mas aqui você pode usar... as avaliações do marketplace.
+
+Então, eu posso dizer aqui, tipo, ei, ei, hum, escaneie as cinco páginas, encontre a melhor avaliação de fones de ouvido. Então, isso pode ser útil para você pessoalmente, certo? Em vez de ser bloqueado, ele pode encontrar coisas que você precisa em sites que estão atrás do Cloudflare. Ah, esqueci de excluir o antigo. Não. Não, pare. Pare. Pare. Espere um
+
+segundo. Exclua o scraper antigo. Scraper. Eu estava testando e esqueci completamente de limpar. Vamos usar um site diferente. Escolha um
+
+site. Qual é um marketplace popular que bloqueia agressivamente no Reino Unido? Muito. Amazon? Não é tão agressivo. Você vai se
+
+surpreender. Eu consigo extrair dados com IPs de data centers. Qual é um site popular que todo mundo usa aqui? Muito. Muito.
+
+V- v e r y.com. V- Muito? Muito. Assim?
+
+y y.com? Isso. Ah, esse é o Reino Unido? Ok, perfeito.
+
+Então, assim eu não quero... Pare. Nova sessão.
+
+Vamos lá. Onde está a nova sessão? Ah, aqui está.
+
+Sério?
+
+O que há de errado com a minha colagem? Ok. É loja de roupas? É categoria. Ok, então vamos tentar fones de ouvido de novo, a mesma coisa, certo? Então, eu não sei.
+
+Nunca usei este site. Eu... Veja.
+
+Teste limpo. Sem trapaças.
+
+Hum. Então, o que mais isso te oferece? Bem, novamente, pesquisa de mercado. Hum. Por exemplo, eu estava procurando um novo apartamento, certo? Eu queria me mudar para uma
+
+casa. Então, com o CloudCrawl, com o BrightData, configurei um ouvinte. Literalmente, apenas dizendo: "Ei, ouça. Crie um scraper que rode a cada meia hora quando houver uma casa particular nesta área , abaixo deste preço, me notifique." Foi só isso que eu fiz. Em alguns dias, eu consegui... uma
+
+notificação e agora eu moro lá. Então, essas coisas não são úteis apenas em uma escala onde, você sabe, preciso coletar milhões de registros, mas também para uso pessoal. É tão fácil hoje em dia. O CloudCrawl faz um trabalho incrível, certo? Eu sei que o Crawlera também faz um ótimo trabalho , mas eu prefiro o CloudCrawl porque, sei lá, me dá menos dor de cabeça. O
+
+Crawlera às vezes me leva a uma busca inútil. Hum, quantos de vocês usam o VibeCode? É incrível. Por que não, né? Qualquer um pode construir qualquer coisa agora.
+
+Hum, então, você construiu? Eu tenho a estrutura, os padrões de busca. Não sei qual ferramenta de terceiros vou usar . Ah, ok. É construir um scraper.
+
+Hum, isso costumava levar, sei lá . Se você estivesse tendo um bom dia, talvez um dia inteiro, talvez um dia e meio, certo? Você precisava ir conferir os seletores, descobrir como funcionava. Costumava ser interessante e divertido, mas você Não precisamos mais fazer isso. Então, o que estou tentando mostrar a vocês é que, com nosso MCP, com nossa infraestrutura, temos mais de 150 milhões de IPs.
+
+Com nossa tecnologia de desbloqueio, mesmo que seja necessário executar um navegador remoto, podemos criar uma automação de navegador para você. Os navegadores estão rodando em nosso sistema. Então, eu posso literalmente abrir mil navegadores neste laptop, que estão rodando em nossos servidores. E eles podem fazer o que você precisar. Já temos 90 produtos.
+
+Ok, só precisamos corrigir o Unicode, porque está em libras.
+
+Quase pronto. Você pode dar mais detalhes sobre o MCP ou é só isso? Claro, eu falei na sessão anterior, mas enquanto carrega, deixe-me explicar. Basicamente, o MCP oferece um agente e 66 ferramentas. Algumas delas são... temos
+
+um sistema que pode enviar um curl para qualquer URL e nosso sistema receberá o HTML de volta. Ele também captura dados, se necessário. e enviar com um token. Ele saberá exatamente quais cabeçalhos e cookies o site precisa. Basicamente, ele garantirá que o servidor pense que é um navegador e retorne o HTML. Assim, seu agente pode
+
+literalmente enviar solicitações curl, obter dados sem questionamentos. Ele pode obter um HTML completo. Pode obter apenas um trecho em Markdown. Markdown serve para economizar tokens, certo? Você só quer o texto da página. Não se
+
+importa com as tags HTML. Ele não gosta do símbolo de cerquilha (#). Vamos lá, você pode fazer isso. Então, esse é o primeiro ponto. Em segundo lugar, temos cerca de 500 APIs diferentes pré-construídas para diferentes domínios.
+
+Então, em vez de obter o Markdown, você pode obter um JSON do produto. Por exemplo, para a Amazon, temos uma API pré-construída. Você pode adicionar seu agente e ele pode dizer: "Ok, vá verificar algo na Amazon ". Ele nem precisa criar um scraper. Ele pode simplesmente enviar a solicitação e receber os dados de volta.
+
+Além disso, A infraestrutura de navegador remoto e tudo o que seu agente precisa para acessar a web está funcionando, certo? Então, você não é bloqueado. Enquanto isso estiver em execução, quero mostrar, por exemplo, que vou pedir ao Walmart para pesquisar fones de ouvido sem o MCP. Então, estou dizendo para ir ao Walmart, pesquisar por fones de ouvido e me dizer qual é o primeiro resultado. Sem o Bright Data MCP.
+
+Ele fará uma busca, que será bloqueada. Tela de verificação de segurança do produto, robô ou humano, obviamente, certo? Essa é a primeira coisa. Agora, faça o mesmo com o Bright. Meu Deus!
+
+Agora, ele está usando o Scrape como um Markdown. Está fazendo uma busca. Está extraindo apenas o texto. Não está extraindo o HTML, apenas o texto em si.
+
+Sempre que você faz isso ao vivo, fica mais lento . O tempo é...
+
+Ah, na verdade, pode ser... Pode ser abrir um navegador e segurar o botão. Sabe, o Walmart tem um daqueles botões de clicar e segurar, e precisa segurar. Isso leva uns 30 segundos.
+
+Então, pode estar fazendo isso agora mesmo. Então, nós criamos uma solução de captura de IA. Tipo, nós temos uma solução de IA interna. E movimentos, cliques e coisas do tipo? É perfeito.
+
+Então, já temos o primeiro resultado: fones de ouvido azuis. Ah, basicamente, aí está. Já temos os resultados dos fones de ouvido, sem robô ou humano, com o nome completo do produto . Então, já temos o resultado aqui. Me diga, se você fizesse isso manualmente, quantos tokens a mais você usaria?
+
+Quantos você economizaria? Vamos analisar, e este é provavelmente o maior problema, certo? Tokens são caros. Eu gasto milhões e milhões de tokens por dia. Eu costumava gastar mais, mas otimizei.
+
+Então, todos vocês estão procurando como economizar dinheiro com o Landing Maps? Como desperdiçar menos tokens de acesso à web? E a Bright Data tem a solução. Em vez de analisar o HTML completo, crie um scraper. Em vez de usar...
+
+você sabe... Ok, ele extrai o HTML e os dados, construindo o analisador sintático. Mas está funcionando muito lentamente agora.
+
+Parece que todo mundo está com código branco. Então, basicamente, aqui está o resumo, certo? O que temos aqui? A análise sintática de saída do Big Swings mostra 90 produtos com tokens de entrada, tokens de saída
+
+e economia total. Então, é uma economia de cerca de 62% de tokens. Não é um número alto. Este site, eu acho, tem um HTML estruturado. Não tenho certeza. Mas era isso que eu queria mostrar para vocês. E
+
+o melhor é que ele se mantém. Se quebrar, ele conserta. Posso configurar um loop, certo? Por exemplo, na nuvem, posso definir um agendamento para executar a cada 30 minutos e verificar algo. E é isso que estamos oferecendo a vocês, ok? Com ​​o nosso
+
+MCP, seu agente tem acesso a toda a web sem ser bloqueado. Nenhuma captura o impedirá. Nenhum sistema anti-robôs o impedirá. vai impedir. E você não terá dores de cabeça com isso. Não sei quantos
+
+de vocês já lidaram com bloqueios, certo? Quando você cria um scraper, tudo fica muito complicado. Então, isso elimina toda a dor de cabeça. Alguma pergunta? Onde está o código? Com ​​licença
+
+? O código... o código que você usa para gerar um scraper, certo?
+
+Posso... se você quiser ver o código? Quer dizer, está aqui. Temos o scraper.
+
+Vamos dar uma olhada.
+
+Ele usa o API Web Unlocker. É a mesma coisa que um scraper em Markdown com um MCP. Ele envia uma solicitação simples e recebe os dados de volta. Este é o parser que ele criou. Quer dizer,
+
+parece muito bom. Este é o esquema que ele criou para a saída. Ele faz uma busca por palavra-chave. Ele tem o número máximo de páginas, certo? Então, eu pedi duas entradas: a busca por palavra-chave e quantas páginas extrair. Espere aí
+
+. Vamos ver... Podemos executá-lo aqui como... Bem, onde estão as
+
+variáveis? A chave da API está na chave.
+
+Vamos executar. Faça outra execução nos laptops. Quais são os resultados das duas páginas? E agora você meio que controla isso. Tipo, você nem precisa executar, certo? Ele
+
+vai acionar e manter tudo para você. Você pode criar um script que fará tudo isso automaticamente. Eu prefiro a interface visual para a demonstração. Às vezes, você gosta de olhar para o nosso código, que é um pouco mais complicado. Mas agora, basicamente, eu posso fazer qualquer pergunta. Ele
+
+vai executar o script. Então, não está desperdiçando tokens para executar o script, talvez uns 60 tokens, certo? Então, ele vai obter todos esses dados com 100 tokens. E então você pode fazer o que quiser, pode fazer perguntas sobre isso. Mas agora estamos trabalhando com JSON, e JSON é muito mais eficiente em termos de tokens do que qualquer Markdown ou qualquer outro arquivo, certo?
+
+Ainda como de costume.
+
+Posso perguntar se vocês podem fazer isso em todos os sites de autorização também? Ah, não, nós só lidamos com dados públicos. Por trás do login, estão os dados privados. E, só para avisar, se você criar uma conta, você aceita os termos e condições do site. Sempre verifique os termos e condições do site. Se eles disserem para não extrair dados, não
+
+usar robôs, e você usar, então essa empresa pode processá-lo. E isso está acontecendo, você provavelmente já ouviu falar disso nas notícias o tempo todo . O LinkedIn está processando todo mundo. Todo mundo está processando todo mundo porque os dados agora são como o novo ouro, o petróleo, certo? Todo mundo está tentando, tipo, "ah, esses são meus dados". Elon Musk
+
+assumiu o Twitter e o bloqueou. É isso. Literalmente, antes era tão aberto e agora está tudo bloqueado em algumas poucas contas que você pode extrair dados. Então, estamos vendo isso em todos os níveis. Muito lento hoje em dia. Então,
+
+sim, a mesma coisa se aplica se você aceitar os termos e condições. Se você fizer uma pesquisa e houver uma confirmação, sempre tenha cuidado com isso. Só lidamos com dados públicos. Então, nada atrás de um login. Não aceitamos termos e condições.
+
+E, na verdade, ganhamos alguns processos. Fomos processados ​​pela Meta. Fomos processados ​​por Elon Musk um mês depois que ele assumiu o controle. E o juiz disse que é muito simples. Dados públicos são dados públicos.
+
+Não importa como você os coleta. Não importa o que você faça com eles. São públicos. Sabe, é como andar na rua, anotar os preços no balcão e depois vender para alguém. São dados públicos. Estão disponíveis. Você
+
+pode fazer o que quiser com eles. Certo? Então, como de costume, trava na demonstração ao vivo, mas
+
+podemos executar isso manualmente.
+
+Meu Deus.
+
+O que é isso? Estou definindo uma variável. Está fazendo isso. Não, não vai funcionar.
+
+O que estou perdendo?
+
+Ainda travado? Ah, ok. Pronto. Ok, então aqui temos...
+
+Vamos ver. Quantos tokens? Quantos tokens você gastou para obter
+
+Então, mesmo que você não consiga construir pipelines para grandes empresas e não precise para uso pessoal, eu sempre mantenho o MCP conectado. Eu não peço ao LLM para fazer isso, eu sempre peço para criar um script que possa ser usado posteriormente . Ele usa seu próprio script para salvar os tokens.
+
+Literalmente, estamos falando de 1.000 tokens, enquanto que, se precisar passar pelo JSON, são 10.000 tokens. Estamos falando de centavos comparados ao custo de extrair os dados manualmente. Mais alguma pergunta?
+
+Alguém tem problemas para obter os dados? Não, nenhuma pergunta. Todo mundo diz: " Não vou compartilhar meus problemas. Não tenho problemas." E aí vão para casa e pensam: "Ah, eu tenho um problema sim." Mas, de qualquer forma,
+
+temos um estande. Se você quiser conversar em particular e tiver dúvidas sobre os dados ou o acesso ao LLM, fique à vontade. Estou sempre disposto a ajudar. Aliás, podemos nos conectar no LinkedIn, pessoal, se quiserem. Deixa eu resumir algumas coisas que fizemos aqui.
+
+Então, o pipeline de autorrecuperação. Quando seu agente tem acesso a um site bloqueado e você está trabalhando... quero dizer, o MCP é útil em cerca de 20% dos domínios, certo?
+
+Aqueles que têm Akamai, Data Dome, Cloudflare, esses domínios com proteção reforçada . Geralmente são os mais valiosos, certo? Como imobiliárias ou grandes sites de e-commerce. Com o nosso MCP, ele tem acesso. Se tiver acesso, pode criar um scraper. Se puder criar um scraper,
+
+pode mantê-lo. Basicamente, era isso que eu queria mostrar para vocês. Que na Bright Data, temos todas as ferramentas que seu agente pode precisar para explorar, criar e manter um pipeline, certo? Então, se você quiser configurar um listener para um apartamento e estiver procurando um lugar mais barato para morar. Ou talvez você queira reservar uma mesa em um restaurante que está sempre lotado. E literalmente, eu tenho um
+
+ouvinte agora. Estou esperando há dois meses. Todo mundo está reservando imediatamente. Então, assim que a vaga abrir, ele reservará automaticamente para mim. Isso pode ser muito útil até mesmo para pequenas coisas, coisas pessoais, certo? Não estou
+
+falando de escala empresarial, onde preciso baixar milhões de registros. Ok? Mas ter acesso a todos os sites é importante. Então, além de extrair dados, você também pode realizar ações no site? Sim, claro.
+
+Preencher um formulário, enviá-lo também. Sim. A única coisa que você não pode fazer é entrar. Certo? Então, digamos que você precise realizar uma pesquisa, certo? Você
+
+não pode gerar a URL, precisa clicar em botões. Digamos voos. Você quer verificar a disponibilidade de voos, Skyscanner ou algo assim, certo? A URL geralmente é um hash e você não pode fazer nada com ela. Então, sim, o LLM pode acessar um navegador, Navegador remoto, mesmo que seja um site com restrição geográfica.
+
+Pode ser algo como: "Ok, eu quero um IP dos Estados Unidos". Então, ele abre um navegador com um IP dos Estados Unidos e clica em coisas, preenche formulários e assim por diante. A beleza disso é que nosso navegador imita o comportamento humano real. Então, quando seu agente clica, não é um teletransporte. Há um movimento do mouse pré-gravado, como se fosse um ser humano real . Quando digita, digita um
+
+pouco mais devagar, acelera, pode até cometer erros, e assim por diante. Então, temos digitação pré-gravada, temos movimentos do mouse pré-gravados. Assim, se o site tiver um rastreador que envia constantemente ao servidor o que o usuário está fazendo, parecerá um ser humano real . Não importa qual seja o seu agente, mesmo que seja um agente básico para navegação, eu nunca usei os modelos mais avançados, certo? Por exemplo, o modelo Claude Haiku é mais do que suficiente para navegação. Se estiver
+
+mascarado... É um ser humano de verdade, funciona perfeitamente. E é basicamente isso. Se vocês
+
+quiserem se conectar no LinkedIn, fiquem à vontade. Estou sempre disposto a ajudar. Se tiverem alguma dúvida sobre como obter os dados, se tiverem problemas para acessar qualquer coisa, podem me mandar uma mensagem. Parece que durou muito mais do que 15 minutos. Adorei. É a
+
+segunda vez que faço uma apresentação e tenho meia hora em vez de 15 minutos. É incrível. Agora é a hora de vocês perguntarem ou discutirem algo. Nada? Ótimo. Ok, pessoal, acho que
+
+vou encerrar esta sessão assim: fiquem à vontade para vir ao estande no terceiro andar se tiverem mais perguntas e vamos manter os dados públicos em sigilo. Obrigado.

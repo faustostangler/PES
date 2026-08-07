@@ -1,0 +1,133 @@
+---
+video_title: "Dark Factory: OpenClaw Ships Faster Than You Can Read the Diff — Vincent Koc, OpenClaw"
+video_id: pmoDeA3RBZY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pmoDeA3RBZY
+video_date: 2026-06-05T16:00:06+00:00
+video_description: |
+  OpenClaw hit 3,000 commits in a single day. Vincent Koc's commit history shows exactly when he goes to sleep and when he wakes up. He and Peter Steinberger ran roughly 60 to 70 agents between them during the great refactor: 2,700 commits, close to a million lines of code changed, 82% of the core codebase touched in one night, plugin architecture shipped by morning.
+  
+  The talk covers how you actually manage this at scale: swim lanes of 15 to 20 parallel coding sessions organized by type, when to nuke a session versus let it run, and what he calls reading the reasoning tokens. The skill is not prompting. It is knowing when an agent is bullshitting you. 2025 was about token maxing. 2026 is about not wasting them.
+  
+  Speaker info:
+  - https://x.com/vincent_koc
+---
+Eles conseguiram. Legal. Incrível. Então, sejam todos bem-vindos. Eu sou Vincent. Hum,
+
+o que eu faço? Sou um dos principais responsáveis ​​pela manutenção do OpenClaw, trabalhando com Peter. E como vocês já ouviram, eu também tenho um emprego fixo, assim como o Peter. Ele tem um emprego fixo na OpenAI. Mas, sabe, é um projeto de código aberto. Coisas incríveis têm
+
+acontecido. Vou falar sobre o que chamo de fábricas de documentação e como o OpenClaw é publicado mais rápido do que você consegue ler as diferenças. Esse meme é hilário demais. Então, acho que Peter postou isso há uma ou duas semanas. Acordo e me deparo com um novo avanço tecnológico. Eu acordo
+
+. É essa piada que estamos enviando a uma velocidade insana, e a velocidade é simplesmente fenomenal. E alguns de vocês podem pensar: "Ah, isso é pura sorte ou estamos como o Ralph, dando cambalhotas ao máximo." Bem, acho que há trabalho de engenharia de verdade aqui, e vou falar sobre isso. Bem, como eu disse, meu nome é Vincent. Sou o
+
+carro amigável do seu clã. Bem, este sou eu usando óculos de realidade virtual em 2013. Então, apesar do meu sotaque soar um pouco australiano, eu nasci e cresci no leste de Londres, não muito longe daqui. Na verdade, eu cursei faculdade aqui perto, em Westminster. Sim, em algum momento decidi morar na Austrália e meu sotaque mudou. Mas
+
+eu costumava adorar tecnologia. Eu adorava estar na vanguarda da tecnologia. E esse foi um dos primeiros óculos de realidade virtual que surgiram . Veio numa caixa grande com um aviso enorme dizendo: "Ei, use por 5 minutos de cada vez." Porque não tinha nenhum dispositivo anti-enjoo embutido.
+
+E o engraçado é que eu não usei esse aqui por 5 minutos. Usei por 3 horas. E eu joguei Team Fortress 2, me diverti muito , e depois vomitei por 3 horas porque minha visão ficou turva como a de abelhas. O que estou tentando dizer é que qualquer coisa no limite vai ser instável, vai ser horrível, até mesmo péssima . Vai ser um território desconhecido. E trabalhar no
+
+OpenClaw e fazer parte da equipe que provavelmente entrega commits em uma velocidade insana, a ponto de eu ser limitado pelo GitHub a cada hora, é uma experiência interessante. E a Grã-Bretanha já passou por essa experiência antes. Bem, tivemos a Revolução Industrial, quando as fábricas e o algodão eram produzidos em volumes extremamente grandes. E existe muita história aqui relacionada à produção e à produção em larga escala no Reino Unido e na Europa. E eu sinto que estamos passando por esse momento novamente.
+
+Estamos passando por um momento em que nos perguntamos como construir em grande escala. E as formas como trabalhávamos antes simplesmente não funcionam mais. E é meio estranho porque no meu trabalho diário, eu trabalho na área de avaliações, onde tudo é estruturado, tem telemetria e precisa ser perfeito. E eu trabalho em um projeto onde tenho essa fé cega na dificuldade. São dois mundos distintos, mas que estão começando a se unir.
+
+Antes tínhamos teares manuais em casas de campo, e fábricas centralizadas por toda parte. Os artesãos eram os operários da fábrica. Mas o gargalo eram as mãos do tecelão . Estamos agora a transitar para um mundo onde os engenheiros que escrevem código em editores já não são tão comuns. Uh, se espalha por vários repositórios. Os
+
+engenheiros estão se tornando gerentes de fábrica, e é com eles que vou conversar. E o gargalo passa a ser o paladar, sabe, essa palavra tão agradável. Ah, mãos de mãe italiana, sim. Então, dentro do contexto, o que isso significa? Você está falando um completo absurdo e as pessoas estão construindo coisas em uma escala gigantesca?
+
+Eles são. O que aconteceu foi muito semelhante à época do ChatGPT, em que todos negavam veementemente o uso do ChatGPT. Todos viviam em um mundo onde o medo era absoluto e reinava. Mas a realidade era que todos estavam usando. No fundo, todo mundo pensava: "Meu Deus, o que está acontecendo?
+
+Preciso falar com isso." E o mesmo está acontecendo com esses agentes autônomos em grande escala. Algumas organizações já o propuseram abertamente. Por exemplo, a Anthropic, com o trabalho recente que realizaram na criação de um novo compilador C. Bem, o Spotify disse que não está mais escrevendo código manualmente, supostamente.
+
+Um Steve Yegge, que eu adoro, disse que consegue bater cerca de 50 recordes pessoais por dia, sozinho. Ele se autodenomina um mantenedor de boas vibrações. Eu consigo me identificar com isso de certa forma. E no OpenClaw, onde estávamos no auge, chegávamos a fazer 800 commits por dia. E sendo realista, existem cerca de 10 a 15 pessoas responsáveis ​​pela manutenção principal, todas com empregos fixos. É algo de proporções astronômicas
+
+. E para mim, isso aconteceu no dia 15 de março. Hum, o que foi isso? Tipo, há 2 ou 3 semanas? Onde cheguei a atingir quase 3.000 commits por
+
+dia. E se você prestar atenção, vai ver que meus commits param quando eu vou dormir. Então, se você quiser ver quando eu vou dormir, quando eu acordo e quantas horas de sono eu tenho, basta dar uma olhada no meu histórico de commits. Sim, é astronômico. Mas a questão é que isso vai se tornar a norma em todos os outros lugares. É como se eu estivesse te
+
+dizendo que você precisa acordar, que essa escala de velocidade vai ser normal. E tentar analisar os PRs e lidar com toda essa bobagem pode não funcionar. Mas em algum lugar nessa mistura está a engenharia. Existe um tipo de engenharia que vai acontecer. Então, nós nos comprometemos a atingir o nível máximo. Você sabe? Vamos lá
+
+. Vamos fazer o máximo de commits possível. E isso me lembra do Ralph fazendo looping, né? É tipo isso, isso, isso, esse cara que você diz: "Ei, vou te dar uma tarefa. Vou gastar fichas por umas 8 ou 9 horas." E
+
+você fica esperando, sabe? Você está esperando. Você está torcendo para que algo aconteça. Talvez algo aconteça. Não sei.
+
+Mas e se tivéssemos uma abordagem um pouco mais opinativa em relação a isso? E se chamássemos isso de loop de bot? Não sei. Um dos outros responsáveis ​​pela manutenção me deu essa ideia. Talvez a gente crie um nome para isso.
+
+Precisamos de algo mais do que apenas tokens? Como é esse mecanismo de recompensa ? Como podemos ter um pouco mais de opinião? Sim, vamos executar loops, mas vamos ser um pouco mais inteligentes na forma como fazemos isso. Então, bem na hora em que você viu aqueles 3.000 commits, isso foi no dia
+
+anterior, eu estava na Nvidia com o Peter e o senhor que você vê à esquerda é um dos outros funcionários da Nvidia. E eles disseram tipo, "Ei, estamos construindo a Garra do Nemo." Eu fiquei tipo, "O quê?" O que está acontecendo ? E vamos te ajudar a construí- lo.
+
+E eu estava na sala. Eu disse: "Não consigo trabalhar em um laptop por horas a fio. Você pode me trazer um monitor?" Eles me trouxeram uma tela. Bem, Peter não tinha um monitor, então aquele à esquerda é o laptop dele. Ele pediu uma
+
+tela, então deram a ele uma tela ainda maior que a minha porque, sabe, por que não? E simplesmente começamos a trabalhar. Então, ele está executando cerca de 15 sessões de programação e tem seu Mac Studio em casa, ao qual está conectado por VPN. Estou executando mais uns 10 ou 15. E, entre todos nós, provavelmente estamos executando, incluindo os subagentes, talvez até 60 ou 70 agentes.
+
+Mas em primeiro plano, talvez umas 15 raias de natação, se você quiser chamar assim. E nós simplesmente vamos em frente. O engraçado é que estávamos trabalhando no Nemo Claw de um lado, mas um dos mantenedores decidiu: "Vou mexer em algumas coisas. Vou mover algumas pastas ." E isso significava mudar canais inteiros. Então, todas as nossas conversas
+
+com o MS Teams e o Slack acabaram sendo movidas para outro local na base de código. E nós pensamos: "Meu Deus, vamos ter que mudar muita coisa." E eu encontrei um lugar muito bom para colocar minha bebida também. O pessoal da Nvidia não gosta disso. Então, o que acabou acontecendo foi o que chamamos de a grande refatoração. Basicamente,
+
+pensamos: " Temos muita gente enviando PRs. E o que eles realmente querem é desenvolver funcionalidades. O problema é que não queremos dar a todos todas as funcionalidades que desejam, pois isso causaria inchaço. Como o Peter disse antes, o desafio é: a quem eu digo não? Não se trata de dizer sim. Num mundo
+
+onde os tokens são baratos, eu poderia simplesmente dizer sim para absolutamente todos e mesclar tudo. Mas isso transformaria essa base de código num verdadeiro caos . Então, a visão era que precisávamos reduzir essa base de código. Precisávamos dividi-la em pedaços. E uma arquitetura de plugins fazia sentido.
+
+Imagine se você fosse a OpenAI, a Mistral ou a Anthropic: e se você fosse dono daquela parte do código do provedor, e ela fosse entregue a você, separada de todo o resto? Essa mudança no código foi como um catalisador para nós. Eram 2h da manhã. Estávamos cansados. Pensamos: "Por que não refatorar toda a base de código?"
+
+Parece uma boa ideia. Ideia esplêndida. Então, 2.700 commits depois, quase um milhão de linhas de código alteradas, afetando 82% da base de código principal, os plugins foram lançados. Na noite anterior, acho que era 1h da manhã. Eu estava tentando
+
+dormir. E os testes não estavam passando. E eu pensei: será que eu era Ícaro e voei perto demais do sol? Como gostamos de dizer, será que me empolguei demais? Na verdade, eu geralmente achava que me empolguei demais.
+
+Mas, como equipe, conseguimos reunir essa base de código novamente. A salvação foram esses testes unitários horríveis que o código de IA adora gerar, que acabaram se ajustando demais ao nosso código. Então, quando removemos tudo completamente, ainda tínhamos esses testes que estavam extremamente sobreajustados. E enquanto eles passassem, sabíamos que estávamos mais ou menos perto. Então, como fazemos isso?
+
+No meu caso, eu chamo de minha fábrica. São muitas sessões de programação. Todo mundo me pergunta: "Qual é esse segredo?" Como é que se faz isso? Que coisa louca é essa?
+
+Tipo, como vocês estão construindo isso? Muito simples. Eu tenho raias. Hum, podem ser cinco, dez, vinte. Mas, tradicionalmente, elas se dividem em partes diferentes. Então,
+
+tipo, se eu... Isso funciona com o laser? Você não consegue ver direito. Mas
+
+imagine que você é um gerente de fábrica e tem uma linha de produção embaixo. Essencialmente, você pode ter um caso em que, digamos, CI de um lado, funcionalidades de outro e bugs de outro. Então, quando estou refatorando e fazendo outras coisas, a base de código está bem estável. Quero refatorar alguns testes. Bom, essas podem ser as raias um e dois. Eu não preciso ficar
+
+monitorando muito. Eu só digo: "Fiquem à vontade." Certifique-se de passar no teste. Simplesmente comprometa-se. "É só encaminhar." Já com os agentes três
+
+e quatro, eu posso estar analisando recursos e problemas específicos relacionados ao Docker ou a um dos nossos canais de mensagens . Nesse caso, estou conversando com esses agentes. Eles investigam, trabalham e voltam. E talvez o agente cinco esteja analisando novos P0s e P1s. Isso pode usar outros dados, como o GitHub. Temos agentes que rodam
+
+dentro de um canal do Discord. Então, quando fazemos um lançamento, podemos perguntar: " O que aconteceu nas últimas duas horas que eu preciso acompanhar?". E isso se adapta à escala. Mas o que acaba sendo interessante é que os tokens deixam de ser o problema. Bem, depende de quem você pergunta.
+
+O que realmente se torna o problema é o poder computacional bruto e o meu espaço mental para ficar de olho em todas essas sessões. Então, confiamos no Harness. O resultado é que eu não tenho mais esse processo absurdamente complicado. A única coisa complicada na minha vida é adotar o Git. árvores de trabalho e meio que gostaria de não ter feito isso.
+
+A única razão pela qual digo isso é que, quando você está executando um ambiente de teste extremamente pesado , ele acabou sobrecarregando completamente minha máquina, porque eu acabei executando... cada PR que eu tocava se tornava uma nova árvore de trabalho do Git . Eu acabo com algo perto de 70 ou 80 árvores de trabalho do Git ativas em um único dia na minha máquina, e isso é um inferno. Então, eu tive que
+
+criar uma espécie de "mágica" em torno da minha sessão do Codex. Meu Codex reconhece as árvores de trabalho do Git. Se eu pressionar a tecla Esc, ele trava. Ele se autorrepara, se recupera, obtém, você sabe, informações esparsas. Mas, sendo realista, eu deveria ter adotado o que Peter e outras pessoas fazem, que é simplesmente clonar o repositório 10 vezes e apontar 10 sessões diferentes do Codex para cada um. Mas o truque
+
+aqui é que eu não usei nenhuma " mágica". Eu não uso o modo de planejamento ou o modo de especificação. Eu tenho uma conversa com o agente e nós trabalhamos juntos e...
+
+Encontre um jeito de fazer funcionar. Então, sendo realista, fica mais ou menos assim, como no filme Matrix. E as pessoas perguntam: "Ah, Vincent, como você sabe que está funcionando?". Isso vai soar um pouco insano.
+
+Se alguém assistiu Matrix e viu a cena em que Neo vai até lá, vai pensar: "Como você sabe?". Como você lê o texto?" E o cara responde: "Ah, sabe, eu faço isso há um tempo, então consigo ver coisas como 'mulher de vestido vermelho' ou 'cara passeando com o cachorro'." E você começa a desenvolver uma espécie de relação em que consegue sentir os padrões de raciocínio.
+
+Eu sei que parece meio ridículo, mas às vezes estou olhando para a raia da piscina e penso: "Isso parece estranho." Não parece estranho por causa do que está fazendo. Parece estranho por causa de como está se explicando para mim. Está enrolando. Não faz sentido. Parece que
+
+não sabe o que está fazendo. E isso me lembra muito de como eu gerenciaria pessoas. Se eu tivesse alguém trabalhando para mim e essa pessoa começasse a falar besteira descaradamente, eu diria: "Espere um minuto." O que está acontecendo?" Então, nesses casos, eu posso simplesmente encerrar a sessão e dizer: "Sabe, eu não vou lidar com essa parte do código."
+
+Vou deixar isso para outro mantenedor." Ou talvez eu volte a isso daqui a quatro ou cinco dias. Mas essa experiência parece muito intuitiva, e a intuição que desenvolvi foi fruto do enorme volume de testes de limite de tokens que tive que realizar no último ano. Então, há o trabalho de engenharia. Eu chamo isso de ambiente de desenvolvimento de agentes.
+
+Basicamente, o processo funciona assim: eu tenho habilidades. Eu as chamo de " dot skills", similar a " dot files". Tanto minhas "dot skills" quanto meus "dot files" estão disponíveis no GitHub. É tudo de código aberto. Podem usar à vontade. Algumas das minhas
+
+habilidades são privadas, mas há habilidades lá para escrever documentação técnica, por exemplo, que eu criei em conjunto com outros desenvolvedores e engenheiros do mercado. Você pode usar uma gem de habilidades, algo como o Geppetto, para o qual eu também contribuo. Ou você pode simplesmente dizer: "Acesse o Codex". Tenho usado essa habilidade nas últimas duas semanas. Analise as sessões do Codex, leia os logs, fazer melhorias na skill.
+
+Hum, então eu pegaria essa skill e a implantaria no meu open core ou no meu ambiente pessoal e usaria algo como vercel.skills.sh como um mecanismo para verificar isso. Adicionei alguns outros testes e elementos além disso, mas existe um processo de como eu gerencio e mantenho minhas skills como engenheiro. A maneira como gerenciamos os PRs envolve um certo nível de trabalho de engenharia. Hum, existe uma
+
+espécie de piada recorrente que todo mantenedor que entra no projeto decide tentar resolver, tipo: "Meu Deus, temos 6.000 PRs." Como vamos resolver isso? Vou agrupar tudo e tentar resolver isso." 60 mil?
+
+Quantos? 60 mil. Pronto. Pronto. Muito obrigado. Então, essa
+
+foi a minha versão de como tentar resolver isso. É como um gráfico semântico, uma incorporação vetorial em todo o GitHub . Este é um PR. Tem 73.106 arestas. O que acaba acontecendo é
+
+que todo mundo tem o mesmo problema, então eles decidem enviar sua versão do PR. Vira um ruído total. Então, existe até um processo em torno de como consumimos o que vamos trabalhar . Talvez não chamemos de roteiro, mas temos uma maneira de eliminar duplicatas e ver o que está disponível. Isso pode ser um sinal para eu dizer: "Ok, se há pressão suficiente em um problema, ele deve ser grande o suficiente para que todos esses outros incompetentes decidam que é um grande problema." Talvez eu devesse ir lá e resolver
+
+isso." Surpreendentemente, existem avaliações. Depois de todo esse trabalho de refatoração, decidimos criar uma espécie de Slack simulado com modelos sintéticos e reais , para que pudéssemos executar loops de avaliação e verificar se cada um dos provedores e canais funcionava. E essa pergunta me foi feita recentemente: "Como você gerencia mais de 10 agentes?" E você deve estar se perguntando.
+
+Eu perguntei de volta: "Como você gerencia mais de 10 funcionários?" E eles não tinham resposta. Eu já havia trabalhado em grandes organizações, como companhias aéreas e outros lugares semelhantes, gerenciando grandes equipes de IA. Eu tinha experiência em gerenciar até 30, 40 pessoas ou mais. Então, para mim, não era um paradigma novo. Mas acho que, para engenheiros e
+
+pessoas que trabalham com esses agentes de codificação em grande escala, são as habilidades interpessoais que importam. É como perguntar ao seu agente: "O que está acontecendo?" Como saber quando eles não estão te enganando? E como administrar essa fábrica? Então, não se trata mais apenas do modelo ou do agente. Trata-se do processo. Em
+
+2025, o foco era maximizar o uso de tokens. Em 2026, o foco é não desperdiçá-los. Trata-se de eficiência com tokens. Trata-se de agentes no processo. Obrigado.

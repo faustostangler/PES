@@ -1,0 +1,63 @@
+---
+video_title: "Why (Senior) Engineers Struggle to Build AI Agents — Philipp Schmid, Google DeepMind"
+video_id: 3_gYbhABcAE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3_gYbhABcAE
+video_date: 2026-05-30T14:00:06+00:00
+video_description: |
+  A `deleteItem` endpoint is obvious to the developer who built it. An agent only sees the function schema and docstring. Philipp Schmid from Google DeepMind argues this is why senior engineers struggle most: they carry years of implicit context that agents do not, and design tools assuming it.
+  
+  He names four other shifts: text replaces structured state, errors are inputs not restart triggers (especially costly when an agent has been running for 15 minutes), evals replace unit tests because the right question is how often it works not whether a fixed input always produces a fixed output, and build to delete because you will rebuild the same agent with a better model anyway.
+  
+  Speaker info:
+  - https://x.com/_philschmid
+  - https://www.linkedin.com/in/philipp-schmid-a6a2bb196/
+  - https://github.com/philschmid
+---
+[música]
+
+Ok, legal. Incrível. Oi pessoal. Meu nome é Philip. Eu trabalho na DeepMind em tudo relacionado a agentes no Gemini ou à API do Gemini. Portanto, se você tiver alguma
+
+dúvida, preocupação, encontrar algum bug ou problema depois, por favor, me avise . Hoje, vamos falar por 10 minutos sobre por que os engenheiros têm dificuldade em criar agentes, e eu vejo isso todos os dias, tanto internamente quanto externamente no Google. Trouxe cinco exemplos das diferenças entre a forma como criávamos software tradicional há alguns anos e a forma como criamos agentes hoje em dia. E se compararmos em um nível mais abstrato, certo? Quando desenvolvíamos software, criávamos uma especificação, um PRD (Documento de Requisitos de Produto), escrevíamos código e, às vezes, criávamos testes para garantir que nosso código funcionasse. Implementamos o sistema
+
+e, em seguida, nosso usuário o utilizou. E quando se trata de agentes imobiliários, as coisas são um pouco diferentes. Definimos instruções sobre o que queremos que nosso agente faça. Executamos o programa, observamos o que ele faz, talvez ajustemos nossos comandos, talvez ajustemos nossas ferramentas. Executamos o processo novamente e entramos nesse ciclo iterativo de como podemos melhorar e tornar nosso agente muito mais confiável, o que é bem diferente de como construímos software. E uma coisa com a qual gosto de
+
+comparar é que o software tradicional funcionava mais como um controlador de tráfego, certo? Tínhamos controle sobre os semáforos, a velocidade permitida, as estradas que podíamos usar, basicamente sobre como o carro se comportava. E agora, com os agentes, somos mais como um despachante. Dizemos ao agente: "Ei, eu quero ir para Londres e sou da Alemanha. Posso usar o trem, posso voar, posso usar meu carro e ir debaixo d'água." E trata-se mais de:
+
+"Ok, definimos o objetivo do que queremos que o agente faça, mas não definimos o passo exato que o agente precisa dar para atingir esse objetivo. E quero dizer, todos vocês provavelmente já viram, em seus agentes de programação, que às vezes ele faz algo muito estranho, mas no final atinge o resultado. E é isso que queremos fazer. Então, começando com o primeiro exemplo, o texto é o nosso novo estado. Tradicionalmente, tínhamos estruturas de dados e tudo era mapeado para valores booleanos ou para indicadores que podíamos verificar. Então,
+
+inicialmente, quando criávamos, por exemplo, um agente de pesquisa aprofundada, ele retornava um plano: "Ok, vou pesquisar isso e aquilo". No software tradicional, poderíamos ter um plano exato ou rejeitar o plano, mas não conseguíamos captar o significado semântico. E agora, com os LLMs, eles conseguem entender o significado semântico. Então, por exemplo, se eu tiver uma solicitação de pesquisa aprofundada para fazer uma pesquisa de mercado, posso aprovar o plano inicial, mas também posso, ao mesmo tempo, fornecer informações adicionais. Talvez eu queira me concentrar em... como o mercado dos EUA
+
+e ignorar a Califórnia. Talvez eu queira fornecer algo adicional e não ter várias etapas, certo? Tradicionalmente, provavelmente seria exibido um "recusar" e, em seguida, haveria um acompanhamento. Eu poderia precisar fornecer mais informações, criar um novo plano e continuar. Outro bom exemplo é que tudo relacionado à memória e à personalização pessoal não pode ser mapeado para estruturas de dados, certo? O exemplo que tenho aqui é:
+
+sou da Europa, então uso principalmente Celsius, mas e se eu quiser usar Fahrenheit para cozinhar? Antes, tínhamos algumas opções, como o perfil do usuário ser Celsius, ser da Europa ou usar Fahrenheit, mas eu não conseguia ajustar dinamicamente com base na preferência do usuário, com base no que eu fornecia. Então, na verdade, tudo se resume a texto e contexto. Quero dizer, poderiam ser imagens, vídeo, áudio também, mas não estamos mais operando com esses conceitos claros de dados estruturados. Outra coisa é que devemos começar a delegar o controle, e a armadilha, ou o exemplo que podemos ter do suporte ao cliente anterior, é quando um usuário entrava em contato dizendo: "Ei, quero cancelar minha assinatura".
+
+Eu poderia ter uma classificação modelo que meio que classificava a intenção: "Ok, o usuário quer cancelar". E então eu tinha um fluxo de trabalho predefinido: "Ok, você tenta vender isso?" Você quer cancelar a assinatura?" Mas não havia uma opção dinâmica para reagir a isso . E talvez, em vez de seguir o fluxo de cancelamento da assinatura , e se o seu agente tentasse entender o significado e oferecesse algo como uma alternativa à assinatura, e o usuário mudasse de ideia, resultando em uma intenção completamente diferente?
+
+É muito difícil modelar todas essas diferenças e singularidades, e todos aqueles fluxos de trabalho com estado que tínhamos antes. Então, precisamos confiar no LLM ou entregar o controle, já que não estamos mais trabalhando em ambientes puramente determinísticos . O terceiro ponto é que erros são apenas entradas. Se algo no fluxo do seu agente falhar, precisamos tratar isso como uma entrada normal, muito semelhante a uma entrada do usuário. Em Go, já fazemos isso, certo?
+
+Uma chamada de função pode ser um erro ou um valor, e as tratamos da mesma forma. E precisamos fazer isso de maneira muito semelhante para os agentes. No passado, as requisições HTTP eram muito baratas. Quando alguma busca, alguma busca de produto, falhava, você simplesmente executava a requisição novamente. Refizemos todo o trabalho, o que foi bom. Mas agora, se
+
+você tem um agente que leva 5 minutos, 15 minutos e algo no fluxo quebra e você precisa começar tudo de novo, você precisaria gastar muito poder computacional novamente para executar todas as etapas anteriores. E você também pode perder o contexto existente. Então, não podemos simplesmente recomeçar todo o processo. Precisamos entender e tratar os erros de forma diferente, devolvê-los ao modelo, talvez ter algumas soluções alternativas, algumas verificações adicionais que nos permitam continuar avançando no fluxo, em vez de recomeçar do zero . O quarto exemplo ou etapa é que precisamos migrar de testes unitários para avaliações.
+
+Antes, ao desenvolver software, escrevíamos testes de integração, testes unitários, testes de fumaça e todos os tipos de testes diferentes, e presumíamos que, ao fornecer a entrada A para o nosso código B, sempre obteríamos C como saída. E esse não é mais o caso com agentes. Agentes são não determinísticos. Não podemos garantir que a mesma entrada levará sempre às mesmas etapas e ao mesmo resultado. Portanto, precisamos migrar De testes unitários a avaliações. Precisamos testar com que frequência
+
+algo funciona, porque os agentes só são bem-sucedidos se forem realmente confiáveis, certo? Se você tem um agente de atendimento ao cliente e a mesma solicitação funciona apenas uma vez a cada 10 tentativas, não é algo que você queira colocar em produção, pois se torna muito instável. Portanto, precisamos testar em avaliações quantas vezes o teste é aprovado e, em comparação com o software tradicional, os resultados são muito subjetivos, certo? Um resultado pode ser muito diferente se você pedir para ele criar um relatório de pesquisa ou um cenário de feedback do cliente. E precisamos de feedback mais qualificado. Um LLM como juiz ou especialista humano,
+
+por exemplo, é uma boa maneira. E sempre precisamos rastrear o que o agente está fazendo, mas precisamos criar com base na saída. Talvez o agente decida que, para um usuário, precisa executar quatro etapas a mais para realizar mais pesquisas do que para outro usuário. Ele pode consumir alguns tokens a mais, mas, no final, o resultado é o que realmente precisamos e queremos medir em termos de sucesso. E a última parte é que os agentes evoluem e as APIs não. E
+
+se Você já trabalhou no backend e, se construiu uma API, provavelmente viu muitos métodos e endpoints que parecem autoexplicativos, como o método de exclusão de item, que parece bastante intuitivo se você estiver trabalhando na API do produto. Mas um agente não vê o código, não tem o contexto e a experiência adquirida ao longo dos anos trabalhando na API. Portanto, precisamos construir APIs ou ferramentas que sejam realmente prontas para agentes, autodescritivas e com interfaces semânticas. Imagino que, se você tem um microsserviço de produto com um endpoint de exclusão de item com um ID, não precisa definir uma docstring explicando o que o ID significa ou o que acontece se algo falhar. Mas nossos agentes só veem os esquemas de função, as docstrings e a definição da ferramenta. Então,
+
+à primeira vista, eles não entendem realmente o que o método de exclusão de item faz. É por isso que precisamos nos adaptar à ideia de que " precisamos de métodos e ferramentas escritos para serem usados ​​por agentes, sem pressupor anos de experiência de desenvolvimento ou de pessoas que construíram a API." Resumindo, precisamos confiar, mas também verificar. Devemos parar de lutar contra o modelo. Você não deve tentar forçar o modelo a seguir um fluxo de trabalho específico, com a seguinte ordem: primeiro, faça isso; segundo, faça aquilo. Precisamos preservar o significado.
+
+Agora tudo é contexto. Já não dispomos dessas estruturas de dados tão bem definidas para todas as nossas aplicações. Precisamos projetar pensando na recuperação. Os modelos não são perfeitos. Os agentes não são perfeitos, especialmente se tivermos agentes com longa trajetória de trabalho . Coisas muito estranhas vão
+
+acontecer. Portanto, você precisa projetar pensando na recuperação. Precisamos avaliar e não apenas afirmar. Os agentes não são 100% confiáveis. Precisamos encontrar o equilíbrio certo entre quantas vezes nossa execução precisa ser bem-sucedida para disponibilizá-la ao usuário. E por último, mas não menos importante, construa
+
+para eliminar. A dura lição que todos nós estamos aprendendo é que o software é descartável. Vamos reconstruir muitas e muitas vezes as mesmas coisas com modelos melhores e agentes melhores. As coisas vão mudar. Sim, também está disponível no meu blog. Então, se
+
+você quiser analisar isso um pouco mais a fundo com alguns exemplos de código. E se não, se tiver alguma dúvida, fique à vontade para entrar em contato comigo e resolver tudo dentro do prazo. Obrigado.
+
+[música]

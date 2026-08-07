@@ -1,0 +1,216 @@
+---
+video_title: "Why Eval++ Is the Next Great Compute Primitive — Sunil Pai & Matt Carey, Cloudflare"
+video_id: SKDJo2CopRs
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SKDJo2CopRs
+video_date: 2026-06-08T13:00:13+00:00
+video_description: |
+  Matt Carey and Sunil Pai from Cloudflare's agents team explain why Durable Objects turned out to be the right compute unit for AI agents: addressable, persistent, hibernating, stateful, and fast enough that 15ms London latency puts you inside a single animation frame. The Agents SDK builds on this to give resumable streaming, multi tab sync, and background scheduling out of the box, without any distributed systems engineering in userland.
+  
+  The bigger reveal is Dynamic Workers: take a string of LLM generated code, run it in a sandboxed isolate with no ambient access, and grant only the capabilities you explicitly allow. They frame it as reclaiming 30 years of avoided eval. The session ends with both speakers teasing their afternoon talks, one on collapsing 2,600 Cloudflare API endpoints into a thousand token MCP tool, and a coding agent harness built entirely on Workers that they are, by their own admission, already shipping.
+  
+  Speaker info:
+  - https://x.com/threepointone
+  - https://x.com/mattzcarey
+---
+Oh sim. Bem, seja bem-vindo(a). Hum, eu sou o Matt e este é o Sunil. Nós trabalhamos com agentes na Cloudflare. Isso, isso. Então, é, talvez você
+
+queira se apresentar um pouco melhor do que eu. Este é Matt Carey. Eu só contrato meus amigos para a nossa equipe. Diga alguma coisa. Certifique-se de que esteja no microfone.
+
+Yeah, yeah. Oh sim. O meu está ligado? Continuo pensando na Cloudflare como uma empresa para amigos e familiares. Ah, adoramos fazer favores. Todos os nossos amigos mais próximos
+
+não pagam as contas do Cloudflare, que, aliás, já é muito barato. É ridículo. Bem, começamos a desenvolver agentes de IA a sério há pouco mais de um ano e tem corrido surpreendentemente bem. Hum, quantas pessoas aqui são como casca de laranja? Ou seja, objetos duráveis.
+
+Oh sim. Oh sim. Tecnologia com o pior nome possível , mas incrível, não é? Todo mundo diz: "É um banco de dados". Eu penso: "Não, mas tem um banco de dados." E eu fiquei
+
+tipo, "mas, mas começamos a usar isso e acabou funcionando muito bem". Possui algumas funcionalidades únicas. Alguns podem chamar isso de dependência de fornecedor, outros podem chamar de inovação. Mas, desde então, a equipe cresceu. Bem, a maioria de nós está sediada em Londres. Bom, você é
+
+britânica, mas acabou de se mudar para Lisboa, o que é incrível, aliás. Pessoal, vocês passam os dias bebendo vinho e comendo peixe, batatas e pão. É a vida de um rei. Hum, eu moro em Newcastle. O tempo está muito pior.
+
+Mas eu gosto. Eu tentei assistir Geordie Shore e me arrependi. Não, não é nisso que estou pensando. Enfim, estávamos desenvolvendo agentes e voltando ao assunto. Ah, desculpe, sim, claro. Bem,
+
+não sei... podemos contar um pouco sobre nossa trajetória até agora, algumas das tecnologias que estamos usando e algumas das novidades que estão por vir. Felizmente, nada disso foi gravado, então podemos contar para vocês sobre alguns recursos secretos que serão lançados em breve .
+
+Ah, mas eu adoraria falar sobre isso por alguns minutos. Se você tiver alguma dúvida, ou então, temos uns cinco tópicos que achamos que seriam interessantes de abordar. Mas o que você quer saber sobre Cloudflare e agentes de IA? Conte-nos sobre isso. Incrível. Então, tudo
+
+começa com objetos duráveis. OK? Então, você sabe como todo mundo acredita que a maneira de construir servidores hoje em dia é escrever uma função que recebe uma solicitação e retorna uma resposta. Certo? Modelo mais simples. E você decide que
+
+quer criar um contador de visitas para o seu site. Então, o que você faz é dizer, uh, seja x = 0 ou seja, contador = 0 e para cada solicitação você dirá contador++. E funciona localmente, e você pode implantá-lo. E falha imediatamente. Por que falha?
+
+Não existe estado. É como se ele ligasse, fizesse o que tinha que fazer e depois desaparecesse. O contador estará sempre zerado. Na maioria das vezes, pelo menos. Assim como no trânsito, pode ser que reutilize o isolado. Portanto, agora você precisa
+
+usar um banco de dados para armazenar o estado. Você precisa fazer um monte de coisas. Em vez disso, para um determinado ID, e se você pudesse ter uma classe que fosse criada uma única vez para um determinado ID, e então todas as solicitações futuras, todas as conexões websocket, chegassem ao mesmo lugar? Então, chamamos isso de serverless com estado, o que é a coisa mais confusa , porque os servidores têm estado. Mas funciona como um modelo sem servidor, no sentido de que é escalável em todo o planeta.
+
+E graças à mágica rede planetária da Cloudflare, isso significa que em Londres, por exemplo, você tem uma latência de cerca de 15 ms. Para efeito de comparação, 60 FPS equivalem a 16 ms, um pouco mais de 16 ms. O que significa que, se vocês já usaram o TLDraw, ele é baseado nessa tecnologia. Se você abrir vários celulares na mesma tela compartilhada e começar a desenhar nela, verá tudo perfeitamente sincronizado em todos os celulares. Ah, eu sei que sou parcial, mas é muito bom.
+
+Enfim, descobrimos que essa é a unidade de computação perfeita também para construir agentes de IA. Eles são endereçáveis. Você pode executar processos de longa duração nele, mesmo que não haja solicitações sendo direcionadas a ele. Eles podem ser executados em segundo plano. Eles hibernam. Eles vão
+
+dormir. Eles têm persistência. E eles podem se conectar com praticamente tudo . Então, essa foi a aposta inicial que fizemos. E eu me pergunto se posso...
+
+Vamos rolar para baixo. Gostaria de saber se a API está disponível nesta página. Algo algo marketing marketing marketing. Ah, sim, veja, é mais ou menos assim que parece . Basicamente, você cria uma nuvem da qual importa informações de agentes.
+
+Por favor, não nos perguntem quanto pagamos por este pacote NPM. Você pode estender e adicionar mais. Você fica tipo, ah, quando começar, agende essas coisas. Você pode criar pequenos objetos que podem ser chamados. Portanto, os agentes também podem ser implementados como uma solução completa. Nós fornecemos recursos como
+
+hooks do React e outros, que não precisam ser necessariamente React, mas presumo que também tenhamos clientes JavaScript puros. Você pode definir coisas que são realmente chamadas pelos clientes. Você pode executar tarefas em segundo plano. Tipo, agendar é a minha coisa favorita porque significa que você pode dizer coisas como toda sexta-feira às 21h. Analise todo o meu histórico do Git, meu wiki e o Notion, compile tudo e envie para meu gerente.
+
+Uh uh, certifique-se de errar a ortografia para que pareça que fui eu quem escreveu. Então, você pode fazer tudo isso. É legal. Você pode, e pode fazer com que isso se multiplique por milhões, trilhões, algum número absurdo da Cloudflare. É aí que tudo começa. E
+
+ao longo do último ano construímos várias coisas. Portanto, temos um back-end de primeira classe para o SDK de IA da Vercel. E descobrimos que o SDK de IA é ótimo. Será que o Nico está por aqui em algum lugar? Não. Enfim,
+
+não permitimos que funcionários da Vercel entrem em nossas salas de bate-papo. Então, descobri que ainda há muito mais a fazer para deixá-lo pronto para produção, como chamar ferramentas, sincronizar, retomar tarefas e outras coisas entre abas. Portanto, temos o melhor back-end do mundo para o SDK de IA. Estou dizendo muitas coisas. Então, temos isso. Eu quero falar com vocês
+
+sobre o modo de código, que, aliás, é sobre este ponto da jornada, tipo, o MCP ficou mega popular por volta de abril do ano passado. Então, descobriu- se que objetos duráveis ​​são, na verdade, uma ótima maneira de criar servidores MCP, porque, se você conhece o MCP, sabe que, quando foi lançado originalmente, era necessário ter uma conexão com estado entre o cliente e o servidor. E essa é uma das coisas mais irritantes sobre implantar servidores MCP em produção na nuvem. E objetos duráveis ​​mantêm uma conexão com estado de forma muito, muito fácil. Esse é, de certa forma, o objetivo principal. Então, nós aproveitamos
+
+essa oportunidade bem cedo. Tínhamos alguns dos primeiros servidores MCP, como o PayPal, Century, todas as grandes empresas usavam esse sistema . Linear, Interfone, ou qualquer outro nome que se aplique. Sim . todos eles.
+
+Alguns não podemos nomear. Ah, e ah, e sim, então, acontece que o MCP foi realmente muito bom para isso. E isso nos levou a muitos outros caminhos tortuosos, na verdade, onde...
+
+acho que isso nos conduz ao modo de programação, de fato. Claro. Sim. E então, então temos objetos duráveis. Temos trabalhadores, que é algo como uma função sem servidor como serviço. Como uma
+
+lambda, você pensa. Imagine se uma sonda lambda fosse projetada 10, 15, 20 anos depois, algo assim. Parece melhor. Então, temos essa nova primitiva, que chamamos de trabalhadores dinâmicos, que funciona como um trabalhador, mas em vez de ter que implantá-lo na nuvem, você pode acessar um trabalhador e dizer: "Tenho essa sequência de código que um cliente me enviou, ou um usuário me enviou, ou que foi gerada por um LLM." E vou executar esse trecho de código em um processo isolado. Então, a partir de uma
+
+string, você pode executar o código. E isso meio que deixa muita gente confusa. Estive no MCP Dev Summit na semana passada e havia uma startup ao meu lado e esse cara estava tentando me convencer de que nenhum ambiente corporativo permitiria que as pessoas executassem código gerado automaticamente e que eles nunca tinham visto isso acontecer. E aí alguém da Lockheed Martin veio até mim e disse: "Ah, nós adoramos código, adoramos isso, tipo, gerar código." E eu achei essa dicotomia muito engraçada.
+
+Basicamente, você pode executar o código que as pessoas geram nesse recurso chamado worker dinâmico. E achamos que é um ambiente muito, muito bom, um ambiente semelhante ao que você já conhece. Bem, não uma máquina virtual. Não é completo. Não possui um sistema de arquivos completo . Não tem toda aquela sensação de
+
+peso típica de máquinas virtuais. Mas é um isolado que você pode criar e pode criar bilhões deles sob demanda. Isso é bem legal. Então, em qualquer lugar onde você queira ter código gerado pelo usuário ou onde você usaria anteriormente algo como uma DSL. Imagine que você tivesse um arquivo JSON gerado ou construído a partir de alguma interface, ou seja, de um formulário extenso. E então você
+
+pegaria isso e converteria em código. Agora, é só escrever o código. Pelo menos, espero que seja isso. Sim. Então, eu adoro, uh uh, então, uh, eu odeio ser aquele cara que fica dizendo: " Ah, você deveria ler meu blog". Mas,
+
+aliás, você deveria ler nosso blog. O blog da Cloudflare é muito bom, incrivelmente técnico. Tipo, a única parte em que tentamos vender alguma coisa para você é quando o pessoal do marketing pede para colocarmos um CTA (chamada para ação) bem no final da página. Pode ignorar essa parte. Mas todo o resto é incrível. Vamos abordar isso em detalhes. Então,
+
+sabe como os sandboxes começam em uma máquina virtual ou um contêiner e depois você tenta adicionar segurança em torno deles? Então, começamos exatamente pelo caminho oposto. A única coisa que você pode executar nele é JavaScript, mas ele não tem acesso ao fetch, a nenhuma API, nada. E de fora você pode decidir, ok, aqui estão quatro APIs. Ah, e eu só permito requisições de saída para github.com. Inferno,
+
+github.com/xyz ou math.random. Não sei, algumas solicitações falham. Você pode escrever um código que faça isso.
+
+E a forma como recomendamos é, não, simplesmente bloquear as requisições de saída. Você define explicitamente as capacidades de execução do sandbox. Nenhuma variável de ambiente é exposta a esse código. Você deveria dar uma olhada nisso. Devo fazer uma demonstração do servidor MCP? Tipo, posso mostrar
+
+o servidor MCP que você montou? Porque vou contar a vocês o que tenho a dizer. Agora podemos começar a falar sobre nossas conversas. OK. Ah, podemos ficar aprontando alguma coisa com nossas conversas. Ok, ok. Então,
+
+basicamente, usando isso, podemos afirmar que corrigimos o MCP não uma, talvez duas vezes. E essa foi a nossa conversa. Ah, o seu é...
+
+Isso mesmo. Hum, 17h40. Vou dar uma palestra sobre o modo de codificação, o que chamamos de modo de codificação. Eu tenho o chapéu. Para quem está perguntando onde pode obter o modo de código, temos uma página de carreiras em cloudflare.com.
+
+E amanhã falarei sobre como você pode usar o modo de código no seu servidor MCP para dar acesso a todos os 2.600 endpoints da API da Cloudflare com apenas 1.000 tokens. Então, esse modo de codificação, essa ideia de poder gerar código que você depois executa, é extremamente poderoso. Acho que não temos tempo suficiente aqui para explicar completamente como isso funciona, então eu gostaria apenas de convidá-lo(a) a participar de nossas palestras. Sim, você deveria ter gostado.
+
+A forma como tenho explicado isso às pessoas nos últimos 30 anos, ou melhor, nos últimos 20 e poucos anos. Você se torna o cara mais velho da sala muito rápido. Disseram-lhe para nunca usar eval no código. Na verdade, nos workers do Cloudflare, você não tem `eval`. É perigoso.
+
+Mas nós aceitamos, e os trabalhadores dinâmicos são como avaliações aprimoradas. Então, eu penso nisso como existe um ramo inteiro da árvore tecnológica que não exploramos há uns 30 anos. E agora estamos oferecendo a você uma maneira rápida, segura e barata. Existe algo como rápido, bom e barato? Sim .
+
+Talvez não seja bom. Não sei. Você precisa experimentar e nos contar o que achou. E você tem a oportunidade de repensar a maneira como constrói interfaces e como as coisas acontecem, especialmente em um mundo onde todos os seus usuários podem escrever código, certo? Isso é o que define os trabalhadores dinâmicos.
+
+Isso é muito legal, cara. Tenho me divertido muito brincando com isso. É muito novo. Devemos revelar algumas novidades ou você prefere falar sobre os outros lançamentos que tivemos recentemente? Prossiga. Sim, uma pergunta. Tenho uma
+
+perguntinha rápida porque acho que parece que vocês são... quer dizer, vocês obviamente são super... sabe?
+
+Talvez seja só impressão minha. Estou com dificuldades para encontrar uma maneira de mapear todas as coisas que estou construindo para este mundo. Não sei bem se é só impressão minha ou se estou tentando encontrar uma ponte. Gostaria apenas de ouvir algumas opiniões sobre o que as pessoas estão construindo na indústria que, na sua opinião, não deveriam estar sendo construídas dessa forma . Eles deveriam construir dessa forma. Eu tenho uma boa anedota.
+
+Isso seria muito útil para você. Adoraria dar exemplos. OK. Vamos dar um exemplo. Cada um de nós fará um . Eu deveria... quero dizer, faremos cinco cada
+
+um. Vá em frente. OK. Então, quer dizer, estamos aqui para fazer propaganda, mano. Por exemplo , meu exemplo favorito é que está rolando muita coisa sobre interfaces de usuário generativas no momento. E as pessoas
+
+basicamente perguntam: "Você já ouviu falar de Jason Bender?" Sim . É como gerar um JSON que depois é renderizado. É meio que o nome. Por que você está gerando JSON?
+
+Por que você simplesmente não gera o HTML ou até mesmo o React e depois renderiza isso? Bem, por que, por que, por que você não pode fazer isso? Bem, algumas plataformas não possuem um mecanismo primitivo para renderizar código não confiável. E se você fizesse isso? Literalmente, você poderia fazer com que seus usuários, seus clientes, seus códigos de cliente e seus agentes, que vivem na nuvem, gerassem código que seria executado e exibido na interface do usuário. Alguém já experimentou o
+
+Cloud Artifacts? Basicamente é isso, né? É apenas HTML, mas é renderizado no seu navegador. Portanto, as pessoas não se preocupam muito com essa segurança. O que lhes interessa é o momento em que o vídeo é renderizado em seus servidores. É aí que a coisa
+
+começa a ficar um pouco suspeita. E agora eles estão tipo, certo, você precisa de JSON. Você não precisa mais de JSON. Você poderia renderizar React. E é assim que se constrói.
+
+Então, tem uma coisa divertida aqui. Sim, você quer fazer o próximo? Qual recurso? Trabalhadores dinâmicos. Trabalhadores dinâmicos. Sim, sim, sim,
+
+trabalhadores. Vou optar por algo um pouco mais simples. Certo, então, como o nosso agente não é exatamente o ambiente de execução, mas sim a biblioteca que você usa. Assim como você pode usar o SDK de IA da LangChain, você pode fazer qualquer coisa com o nosso SDK de agentes. Nós lhe oferecemos isso. Mas,
+
+como existem esses modelos de objetos duráveis , isso significa que, digamos, você queira criar um streaming que possa ser retomado. Certo, então você me conta uma longa história para o mestre em Direito. E você aperta o botão de atualizar no meio disso. Como garantir que a transmissão continue? Em um mundo sem servidores. Ok, agora você
+
+precisa configurar um banco de dados, precisa configurar a replicação e precisa configurar sessões persistentes. No mundo dos objetos duráveis, no contexto do SDK de agentes, você simplesmente se reconecta e, se houver um fluxo em andamento, ele simplesmente diz: "Bem, aqui está o início do fluxo e vou continuar enviando bytes para você". Significa que você obtém automaticamente a sincronização de várias abas e vários navegadores. É como se você estivesse olhando para o celular e para o laptop ao mesmo tempo. Todos esses itens já vêm inclusos na caixa. Na verdade,
+
+o principal caso de uso que deu origem aos objetos duráveis ​​foi a criação de sincronização colaborativa em tempo real. Agora, acredito que a IA deveria ser um jogo multijogador. Você já reparou por que não consigo compartilhar um link do meu chat GPT com você e nós dois participarmos da mesma conversa? É porque a OpenAI não construiu isso e eles pensaram: "Ah, temos problemas maiores para resolver". Metade dos nossos funcionários pede demissão a cada 3 semanas, mais ou menos .
+
+Acontece que, com primitivas como essa, você não precisa fazer correções no espaço do usuário e se tornar um engenheiro de sistemas distribuídos maluco. Você está transferindo o problema para a Cloudflare. Bem, esse é o nosso problema. Bem, eu digo que é problema nosso, mas nós nos apropriamos do mérito das pessoas que realmente o construíram. Nós implementamos o JavaScript por cima disso .
+
+Então, eu gosto muito disso. Gosto do fato de já vir com sincronização, streaming, etc., prontos para usar . Significa simplesmente que você pode brincar, pode construir o seu próprio universo, pode se concentrar nas coisas que lhe interessam. Essa demo é matadora, não é? Eu
+
+gosto muito disso. É como se mostrar a sincronização fosse muito divertido. Porque aí, quando destranca, eles ficam tipo, ah, ok, tudo bem . Se você conseguir fazer isso, eu vou me preocupar em ganhar dinheiro. É uma coisa divertida de se fazer. Seria justo dizer que
+
+seríamos capazes de usar a interface Cloud do Cloud Code, que simplesmente... Deveríamos começar a vazar segredos? Sim, agora podemos começar a vazar segredos. OK. Sim
+
+. Sim. Sim. Sim . Então, há algumas coisas legais que você pode fazer aqui. Bem,
+
+imagine um loop de agente que fosse executado no SDK de agentes e que fizesse o back-end do Cloud Code. Agora você tem um servidor que funciona de forma persistente e ao qual você pode se conectar a partir de qualquer cliente. Então, um terminal, um chat, um telefone, um aplicativo iOS ou um aplicativo web. Na verdade, não importa. É como se tudo estivesse sincronizado entre todos os seus clientes.
+
+Tudo pode ser retomado. Tudo tem estado. Então, acho que agora cabe à Cloudflare criar uma solução, certo? Um agente de codificação que roda exclusivamente em workers e você... Será que
+
+devemos construir isso, cara? Deveríamos construir isso? Bem, estamos construindo isso só para deixar claro. Caso não tenha ficado claro, esperamos enviá-lo em breve. É exatamente isso: a conferência está me roubando tempo, impedindo-me de gastar tokens.
+
+Assim que eu puder voltar a isso. Não, mas não, nós acreditamos nesse mundo. Veja, todo mundo está construindo uma estrutura e todo mundo está aproveitando os benefícios de sua infraestrutura ou filosofia. Isto é nosso. Onde você não só tem esses agentes com estado que podem ser iniciados e encerrados automaticamente, mas também recursos como geração de código em tempo real e execução instantânea, extremamente rápida, possibilidade de retomar a execução, etc., tudo pronto para uso
+
+. E se você quiser delegar a um contêiner grande, você certamente poderá fazê-lo. Bem, nossa equipe também lida com o SDK de sandbox do Cloudflare. Você quer executá-lo em um navegador? Bem, nós temos um navegador. Você não precisa
+
+usar nossos produtos. Você quer usar o Daytona, que, aliás, é um ótimo produto. Adoro as coisas de areia que eles fazem. Você quer usar o navegador ou quer executar o What's the light panda? É esse o nome? Você pode fazer isso. Mas os
+
+trabalhadores e o SDK dos nossos agentes se tornam o ponto central de conexão de todas as coisas. Essa é a visão que temos. Vai acontecer mais cedo do que se imagina. Como você criaria um Cloudflare, especialmente um que pudesse criar suas próprias skills? Porque acho que essa é a coisa que eu mais amo.
+
+Você poderia simplesmente dizer, por exemplo, enviar uma mensagem de voz e ela diria: "Agora tenho um cron que faz coisas realmente incríveis". Então, nós temos... nós temos várias soluções de armazenamento. Hum,
+
+temos um no objeto durável. Então, temos algo como o SQLite diretamente no objeto durável. Então, você pode guardar coisas lá. Você pode armazenar coisas no R2. E tudo isso, no momento, você precisa meio que conectar com fios, mas em breve não precisará mais.
+
+Tudo bem. Então, é o seguinte. O que é nuvem aberta? Você quer algo que tenha um batimento cardíaco. Você quer algo que tenha um sistema de arquivos virtual. E você quer
+
+algo que esteja conectado a serviços. Exatamente. E você quer extensões. Isso significa que você deseja gerar código que seja executado em um ambiente isolado e seguro . Implementei extensões esta manhã.
+
+Funciona muito bem no nosso caso. Aliás, eu sou amigo do Mario. Olá, Mario. Sim, com certeza. Aliás, adoramos o Pi, o agente de codificação Pi. Na verdade, também queremos executar o
+
+Pi diretamente nos nós de trabalho. Já conversamos com ele sobre isso. Porque não? Mas este é o futuro. Sim, estamos trabalhando nisso sem parar neste momento . Se não fosse por vocês
+
+, eu estaria queimando fichas. Você tem mais alguma pergunta? Quanto tempo temos? Nem sei quanto tempo temos.
+
+Você gostaria de usar Python? Incrível. Então, também vamos usar Python. Os workers dinâmicos e os próprios workers são compatíveis com Python. Basta dedicar um pouco de tempo, como para aprimorar os detalhes mais refinados.
+
+Python é de primeira classe. JavaScript é de primeira classe. Todo o resto é WASM. A coisa com que temos brincado ultimamente é o Zig. Nosso rapaz aqui é, creio eu, a primeira pessoa a trazer o Zig para produção no Cloudflare Workers por uma série de motivos que, na verdade, não podemos abordar hoje. Mas o
+
+bom do Zig é que os pacotes WASM são minúsculos em comparação com Go e Rust. Então, para outras linguagens, usamos WASM ou, se for muito importante para você executá-la nativamente, você cria um contêiner . Novamente, temos um SDK de primeira classe que permite inicializá-lo e realizar tarefas. Dito isso, meu amigo, seu mestrado em Direito está se resumindo a escrever código neste momento. Tipo, por que isso importa, né? Tipo,
+
+se é JavaScript ou não. É exatamente esse o meu ponto também. Tipo, e se você escrevesse o que quer que fosse? Sim. Yeah, yeah. Portanto, a infraestrutura
+
+atual é, em primeira classe, JavaScript e Python. Bem, como você deve ter percebido, eu sou programador React, então eu penso: "Ah, Python é muito difícil." Ah, mas não, vamos dar o acabamento nessas arestas e faremos isso também. Puxa, nós temos uma ferramenta que permite executar um bundler dentro de um worker agora mesmo. O nome é literalmente "agrupador de trabalhadores". Ele
+
+baixa as dependências do NPM, remove tipos, JSX, TypeScript e tudo mais, e gera algo semelhante ao que você gostaria de executar dentro dele. É muito legal, porque aí ele usa o cache do Cloudflare para as dependências em vez de se preocupar com a indisponibilidade do NPM. É muito bom. Tudo bem. Quando você disse que precisa configurar o armazenamento SQLite agora e que não vai fazer isso agora, o que você quer dizer com "em breve"? Ah, não,
+
+na verdade funciona. Chama-se atcloudflair/shell. Bem, as APIs não deveriam apresentar problemas, mas estão utilizáveis ​​hoje. Ele oferece um sistema de arquivos completo, em camadas, sobre o SQLite e o R2, para arquivos maiores. Eu vejo.
+
+Funciona hoje. Você pode usá-lo hoje. Na verdade, é exatamente isso. Eu não quero falar sobre a história desse projeto. Mais alguma coisa? Se
+
+você pesquisar o próprio nome no Twitter, encontrará o histórico desse projeto. Sim, foi um pouco dramático. Hum, há mais alguma coisa em que eu possa ajudar vocês? Alguém quer créditos e outras coisas de graça? Como eu disse, companhia de amigos e familiares, então...
+
+Hum, não sei se você queria falar sobre outro assunto, o novo CMS que lançamos na semana passada. Ah, chama-se M - Ótimo nome para um produto nos dias de hoje . É, ele funciona totalmente com Workers, Objetos Duráveis, etc. E o bom do M- é que o sistema de plugins é construído inteiramente em workers dinâmicos. Então, você sabe como o WordPress tem vários incidentes de segurança envolvendo seus plugins? Bem,
+
+você simplesmente define onde os plugins serão executados, e tudo funciona sem precisar de configuração adicional . O M-, por outro lado, é totalmente compatível com qualquer plataforma. Não é específico do Cloudflare, e estamos trabalhando no suporte a outras plataformas para esse recurso de worker dinâmico que temos no momento. Sim . Outra coisa é We Next.
+
+Temos uma versão do Next.js que roda completamente no Wheat, e é muito divertido de usar. Hum, o que mais a gente faz? O que a gente faz, mano? O que devemos fazer?
+
+O problema é que na próxima semana teremos uma de nossas Semanas dos Agentes, então vocês verão bastante coisa nossa na próxima semana. Oh sim. Tipo, duas vezes por ano temos essas semanas de anúncios em que a coisa fica bem agitada, e a da semana que vem vai ser particularmente agitada, com anúncios de várias coisas legais. Sim. Mais alguma pergunta? Prossiga.
+
+Hoje, amigos e familiares virão nos fazer perguntas. Envie o ID da conta e, opcionalmente, subornos. Veja, você pode considerar isso um suborno ou dinheiro de proteção. Tipo, eu também estou tentando desenvolver um pouco dessa vibe mafiosa . Ah, mas não, cara. Tipo,
+
+a forma como a Cloudflare é construída, o motivo de ser tão barata, se deve a decisões tomadas há 10 anos. Nós não construímos centros de dados gigantescos. Em vez disso, instalamos hardware perto dos provedores de internet. Compramos largura de banda em grande quantidade de provedores de internet de nível zero, ou seja, de alto nível, e fazemos acordos em que os bytes que cruzam fronteiras não são cobrados . Portanto, nossas contas gratuitas não são consideradas despesas de marketing. É assim que o
+
+negócio funciona. E eu preciso que mais pessoas saibam disso. Tipo, eu passei um tempão nisso. Eu fiquei tipo, "Como é que eles conseguem dar isso tão barato?" Então, o custo seria de US $ 5 por mês, e conhecemos pessoas que estão construindo negócios multimilionários de SaaS com base nisso. Mas, se você
+
+quiser menos de 5 dólares, bem, podemos virar amigos. Isso é legal. Acho que... outras coisas divertidas que
+
+temos... é esse horário? Ah, bem, acho que estamos no momento certo. Como é que ninguém bate à porta?
+
+Oh, você está... você está... Sinto muito.
+
+Principalmente depois de termos feito algo em relação à sessão anterior. Muito obrigado. Temos um estande no pavilhão da exposição. Hoje falarei às 17h40. Ele falará amanhã. Você deveria assistir às
+
+duas palestras. Tipo, olha só pra gente. Tipo, eu cortei o cabelo pra isso, gente. Tipo, tipo, vai ser divertido. E também, venha passar um tempo com a gente. Nós adoramos
+
+conversar com as pessoas. Acesse agents.cloudflare.com ou developers.cloudflare.com/agents
+
+para obter toda a documentação. Você pode registrar problemas em github.com/cloudflareagents. Nós adoramos. É exatamente isso.
+
+Tipo, faça seu Clan Curl conversar com nossos Clan Curls. Ah, e estou ansioso para ver o que você vai construir.

@@ -1,0 +1,114 @@
+---
+video_title: "From Transcription to Live Music: Gemini's Audio Stack — Thor Schaeff, Google DeepMind"
+video_id: Bc6Ojl2XS1w
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Bc6Ojl2XS1w
+video_date: 2026-06-09T16:33:12+00:00
+video_description: |
+  One API call to Gemini 3 Flash Preview: speaker labels by name, timestamps, emotion tags, language detection with English translation, and a full summary. That is the audio understanding layer that underlies everything else Thor Schaeff demos here, including speech generation directed by a "director's note" rather than picked from a catalogue, and Gemini 3.1 Flash Live, a sound to sound real time multimodal model with thinking baked in rather than cascaded through a separate LLM.
+  
+  The talk ends with Lyria 3, Google DeepMind's music generation model that can now produce full songs with lyrics. The live demo has the Gemini Live model calling Lyria via tool use on request to generate a German techno schlager about the UK startup scene, live on stage.
+  
+  Speaker info:
+  - https://x.com/thorwebdev
+  - https://www.linkedin.com/in/thorwebdev
+---
+Tudo bem. Quais são as novidades em áudio com IA? Desculpe. É um pouco enganoso porque o título omite a seção "Ask Google DeepMind". Então, estamos apenas dando uma olhada naquilo em que temos trabalhado na DeepMind. Se fôssemos analisar
+
+tudo sobre áudio com IA, levaríamos muito tempo aqui, mas sabe, eu adoraria mostrar a vocês um pouco do que estamos trabalhando na DeepMind. Sim, esse sou eu. Oi pessoal. Eu sou Thor. Eu trabalho na área de experiência do desenvolvedor no Google DeepMind, atuando na API Gemini e no Google AI Studio.
+
+Ah, olá para eles. Seja bem-vindo(a). Meu nome é Torsten. Uh, bom dia. Je m'appelle Thor. Je suis très désolé, mon
+
+français c'est très mauvais. Uh konnichiwa ou escrevendo isso. Bem, você tem o que escolhe, eu faço o que falo ou o que digo quando vou para casa. OK. Isso foi para a demo e agora só preciso garantir que da última vez que fiz essa demo, gravei por cima e depois tudo sumiu. Foi muito triste, mas
+
+voltaremos a isso daqui a pouco. Sim, o que temos feito na DeepMind? Houve alguns lançamentos. Na verdade, entrei para a equipe em novembro, literalmente um dia antes do lançamento do Gemini 3 . Então, eu entrei e eles me disseram: "Amanhã lançaremos Gemini 3." E
+
+eu fiquei tipo, "Eba!" Não fiz nada, mas foi ótimo. Foi um ótimo momento. Bem, mais recentemente, no que diz respeito aos modelos abertos, lançamos o Gemma 4, acho que literalmente na semana passada. E sim, é realmente incrível. Algumas coisas legais que
+
+você pode fazer com o Gemma 4 são multimodais. Ele possui reconhecimento de áudio nos modelos Gemma 4 e você pode fazer isso tanto no dispositivo quanto em dispositivos de borda . Isso é algo muito empolgante. Em termos de mídia e áudio, você provavelmente já está bastante familiarizado com nossos modelos de geração de imagem e modelos de geração de vídeo. Obviamente, o vídeo também inclui geração de áudio. Então,
+
+é aqui que está a evolução mais recente com o vídeo 3.1 Light no modelo de mídia Gen Media Size e, nos modelos de áudio, lançamos recentemente o Gemini 3.1 Flash Life, que é o nosso modelo full duplex, ou seja, de conversação em tempo real de som para som . Também é multimodal, permitindo a ingestão de texto, voz e vídeo em tempo real . O que veremos daqui a pouco.
+
+Então, sabe, falando em áudio, é um assunto muito amplo, mas a base de tudo o que fazemos são os modelos Frontier Gemini. Assim, o Gemini 3 é incrivelmente bom em compreender áudio. E sabe, não se trata apenas de transcrever, mas sim de compreender todas as nuances que estão ali presentes. Então, isso pode incluir, obviamente, a fala, mas também o contexto da fala, a emoção, o ritmo, enfim, qualquer coisa que varie dentro do áudio, não apenas o texto. Assim, em termos de compreensão de áudio, nosso objetivo é construir modelos que compreendam profundamente, transcrevam de forma rica e raciocinem de forma robusta através do áudio. Lidar de forma impecável com
+
+uma grande variedade de idiomas, dialetos, sotaques e modalidades diferentes. E, de certa forma, em qualquer lugar e a qualquer momento, sabe, o Gemini é realmente bom em transcrever até mesmo pessoas que estão falando umas por cima das outras. Hum, o que é realmente incrível, sabe, essa transição perfeita entre diferentes idiomas. Essa foi a demonstração que estamos analisando agora. Então, o Echo Script é uma espécie de pré-visualização em flash do Gemini 3 para analisar gravações de áudio e extrair informações delas.
+
+Ele foi criado com o Google AI Studio, então você pode encontrá-lo na galeria do AI Studio. Você pode experimentar. Hum, posso te enviar os slides mais tarde também. Então, era mais ou menos isso que eu estava tentando demonstrar antes. Então, sabe, diferente de um modelo de transcrição pura, podemos extrair muita informação do áudio com uma única requisição ao modelo ou uma única requisição à API, se estivermos usando a API. Então, como
+
+você pode ver aqui, em resumo, eu me apresentei pelo nome. Então, na verdade, conseguimos identificar a seção com o palestrante pelo nome. Ah, esqueci que não havia ninguém interrompendo a apresentação, senão também teríamos percebido isso. Talvez possamos ver se temos mais tempo depois e fazer isso. Mas, como podemos ver aqui, estamos extraindo registros de tempo, rotulando o falante, identificando-o, identificando o idioma e a emoção transmitida, certo? É com
+
+prazer que me apresento como Grace. Agora você pode ver que isso estava em alemão. Normalmente, meu alemão seria classificado como raivoso. Bem , aqui, sabe, eu acho que estou muito feliz por estar com todos vocês. Então, eu acabei de dizer, sabe, rotule a emoção, rotule o idioma se for um idioma que não seja o inglês, e me dê uma tradução em inglês também, certo? Em
+
+francês, " neutro", normalmente você diria "triste". Sabe, o francês é um pouco mais... não, eu disse, sabe, desculpe, meu francês é muito ruim. Hum, não
+
+soou triste o suficiente, então, neste caso, ficou neutro. Bem, isso... isso não funcionou muito bem em japonês. Preciso praticar isso,
+
+caso alguém leia japonês, para que diga "Olá, meu nome é Thor". Infelizmente, foi uma pequena falha. Vamos ver se meu mandarim melhorou. Olá a todos, sou alemão e moro nos Estados Unidos. Desculpe, meu chinês é ruim.
+
+Sim, isso está correto. Tem alguém que lê chinês nesta sala? Não, tudo bem. Bem, vamos confiar que isso está correto. Então, podemos ver aqui que este foi, você sabe, um tipo de solicitação ao modelo, onde basicamente eu disse para ele identificar os falantes distintos.
+
+Se você tiver contatos, sabe, identifique-os pelo nome e nomeie os alto-falantes também. Forneça- me os horários exatos. Dê-me o idioma. Se o idioma não for inglês, forneça a tradução. Identifique a emoção dentre, você sabe, feliz, triste, com raiva, neutra. E, em seguida,
+
+forneça também um breve resumo de todo o áudio no início. Então, essa foi uma chamada de API para a pré-visualização em Flash do Gemini 3. E, sabe, conseguimos divulgar todas essas informações. Sabe, eu simplesmente forneci um esquema de resposta, ou seja, saídas estruturadas, e consegui preencher minha API e minha interface de usuário com isso para ter essa estrutura. Então, sabe, esse tipo de compreensão de áudio e a pesquisa básica nos modelos Gemini 3 são o que impulsiona a geração de fala, bem como a
+
+geração de conversas em tempo real. Então, ter essa compreensão de áudio é realmente muito bom em termos de saber como certas coisas soam, incluindo ritmos diferentes, sotaques diferentes e cenários desse tipo . Então, como você sabe, a base de todos os nossos modelos agora é a pesquisa fundamental do Gemini 3, e a partir daí estamos construindo os modelos de áudio dedicados . Portanto, com a geração de fala, é um pouco diferente. Sabe, se você já usou outros provedores de TTS (sintetizador de fala) antes, provavelmente tem uma biblioteca enorme de vozes diferentes que você pode filtrar por gênero, sotaque, idioma e outras opções .
+
+Mas então, em Gêmeos, você tem, sabe, acho que são umas 30 vozes básicas, mais ou menos. E então o que você faz é direcionar essa voz para agir de uma certa maneira. E, novamente, como temos essa compreensão de áudio, podemos basicamente modificar a voz para, você sabe, agir de uma certa maneira, para, você sabe, usar um certo sotaque. Assim, podemos partir de um pequeno conjunto de vozes básicas para um tipo de voz muito específico, que é exatamente o que procuramos para a geração da nossa fala. Novamente, existe um pequeno aplicativo que você pode experimentar.
+
+Também está disponível na Galeria do Google AI Studio. Chama-se biblioteca de vozes. Então, o que podemos fazer é, sabe, dar a estrutura de instruções que acabamos de ver, estamos construindo o perfil de áudio, a cena, estamos ambientando a cena, estamos instruindo, por assim dizer, essa nota do diretor. Então, estamos dando orientações para a atuação, sabe, assim como você dirigiria uma pessoa para agir de uma determinada maneira. E um exemplo de contexto e tipo de transcrição que desejamos. Então, agora
+
+o que podemos fazer é, sabe, nós acabamos de dizer algo como, queremos, sabe, um irlandês com voz aguda . Então, basicamente, eu usei o Gemini 3 Flash novamente para construir o nosso prompt do sistema para a geração de fala. Então, estamos dizendo aqui, sabe, estamos definindo nosso perfil de áudio, sabe, Finian aqui na cena, em um pub aconchegante e lotado, na costa do Condado de Clare. Sabe, diga as falas com um forte e autêntico sotaque irlandês. E agora, esperamos que os TPUs não me decepcionem. Pronto.
+
+Falhou. Mas, bem, eu não... sabe, eu preparei para que pudéssemos ouvir aqui. Ah, você não acreditaria no
+
+tamanho da coisa até vê-la com seus próprios olhos, eu te digo. Foi uma grande confusão, sem dúvida, e no final da noite estávamos todos rindo até não aguentar mais. Então, como vocês podem ver, esta é a voz base aqui . Que tipo de problema poderíamos resolver? Então, sabe, esse é um sotaque americano bastante padrão . Mas agora, ao adicionar
+
+esse nó de diretor, podemos... Ah, você não acreditaria no tamanho da coisa até vê-la com seus próprios olhos, eu te digo. Foi uma grande confusão, sem dúvida, e todos nós rimos muito.
+
+Ou, sabe, de forma semelhante, temos aqui o Zephyr. Então, essa voz está aqui. Pronto para construir algo incrível hoje? Novamente, sabe, um sotaque americano/inglês bastante padrão. E agora poderíamos dizer, sabe, dar um toque singapuriano, tipo C.
+
+Uau, você precisa experimentar esse arroz com frango! O chili é absolutamente delicioso e você vai adorar. A fila é mais rápida antes do tio fechar a loja, ok? Alguém já passou algum tempo em Singapura? Sabe, sim.
+
+Sabe, isso é algo que você ouviria no Hawker Center. Então, novamente, você sabe, isso é meio que sustentado pela compreensão do áudio. Assim, o modelo realmente entende como soam esses diferentes cenários e consegue modificar a geração da fala para que se pareça com eles. Sim, e então, você sabe, finalmente, uma espécie de áudio nativo som para som multimodal em tempo real. Então, lançamos a lanterna Gemini 3.1 há algumas semanas
+
+. Portanto, trata-se de um modelo multimodal de comunicação fala-para-fala em tempo real. Você pode ingerir texto, áudio e vídeo em tempo real por meio de uma conexão WebSocket e, em seguida, receber uma resposta de áudio em tempo real, bem como uma espécie de transcrição de texto. Sabe, obviamente, os benchmarks, especialmente na área de áudio, não são totalmente confiáveis . Sabe, é ótimo poder entender o raciocínio, o pensamento por trás disso.
+
+Assim, o pensamento, o raciocínio e a inteligência estão incorporados diretamente no modelo. Então, isso é diferente de um pipeline em cascata, onde você processaria um texto e depois um LLM para obter a inteligência. Aqui, como você sabe, a inteligência está integrada ao modelo de áudio. Então, essa é basicamente a diferença . Mas, obviamente, em cenários reais, você pode testar isso em ai.studio/life.
+
+Então, a grande vantagem do AI Studio é que você pode experimentá-lo sem pagar nada. Então, isso permite que você experimente os modelos sem precisar usar o cartão de crédito. Portanto, o AI Studio é uma ótima maneira de fazer isso. E, novamente, como você sabe, temos a compreensão de áudio meio que incorporada ao modelo aqui. Então, o que podemos fazer é dar algumas instruções ao sistema, sabe, por exemplo, falar com um sotaque irlandês amigável . E também podemos incorporar,
+
+por exemplo, a imagem da nossa câmera aqui . E então podemos dizer: "Ei, você consegue me ver?" Olá! Eu consigo te ver perfeitamente bem , então eu consigo. O que lhe vem à mente hoje?
+
+O que você achou da minha roupa? Ah, olha só você com sua camisa de Gêmeos. No geral, parece magnífico. E o boné virado para trás te dá um ar descontraído e estiloso, com certeza. Você está com um visual impecável.
+
+Ah, maravilhoso. Kannst du mir ein Gedicht auf Deutsch erzählen, bitte? Ah, um poema em alemão, é isso? Claro, posso tentar isso para você. Aqui está uma pequena . É
+
+war einmal ein kleines Licht, das strahlte so hell und mit. É brachte Freude em jedes Herz, vertrieb den Kummer und den Schmerz. Então, o que é engraçado aqui é que isso também aplica o sotaque irlandês ao alemão . Então, obviamente, você precisa ajustar as instruções do seu sistema para, sabe, não falar com sotaque irlandês em nenhum idioma. Mas é engraçado como você pode alternar entre os diferentes idiomas ali. Novamente, acesse
+
+ai.studio/live e experimente. Você também pode capturar a imagem da sua tela, ou seja, basicamente capturar os quadros de vídeo juntamente com o áudio, a uma taxa máxima de um quadro por segundo no momento. Essa é praticamente a quantidade máxima que você pode ingerir. Bem, aqui estão alguns exemplos. Se
+
+você for desenvolvedor, fique à vontade para experimentá-los. Eles também estão disponíveis nos documentos. Esses são apenas alguns exemplos de como você pode começar, digamos, em Python para uma conexão servidor-servidor ou em JavaScript para uma conexão cliente-servidor . Então, você pode encontrá-los aqui. Também recomendo as habilidades de Gêmeos. Então,
+
+publicamos habilidades de agente de codificação para praticamente todas as APIs do Gemini, incluindo a API Life. Então, sabe, trabalhar com áudio em tempo real pode ser um pouco mais desafiador. Então, usar essas habilidades de agente e instalá-las em seus agentes de codificação pode realmente ajudar a direcioná-los da maneira correta e fornecer o resultado que você está procurando. Bem, por último, temos... Ok, temos um pouco
+
+de tempo. Então, música. Você sabe, também áudio. Então, coloquei isso aqui. Uh, lançamos recentemente o Lyra 3.
+
+Então, sim, é um modelo de geração de música . Bem , agora ele consegue gerar música com letras. Existem dois modelos distintos. Existe o Lyra 3 Clip, que é um modelo de geração de jingles de 30 segundos, e o Lyra 3 Pro é o modelo de geração de músicas completas . Então, sabe, meio que juntando tudo. Não sei se você se
+
+lembra dos bons e velhos tempos em que você ligava para a estação de rádio e pedia uma música. Então , eu meio que criei um aplicativo chamado Life Jukebox. Então, agora podemos experimentar, fornecendo ao modelo Gemini Life em tempo real uma ferramenta para gerar uma música usando o Lyra. Então, vamos ver se conseguimos fazer isso aqui. Neste momento, você está ao vivo no ar com o DJ da jukebox. Que
+
+lenda absoluta! Com quem estou falando e que tipo de atmosfera vamos criar hoje? É um estilo rave propriamente dito ou algo um pouco mais próximo, talvez um techno alemão do cenário de startups do Reino Unido? Techno alemão Schlager sobre o cenário de startups do Reino Unido? Cara, isso é revolucionário. Eu amo isso. Certo, imagine a
+
+seguinte situação. Batida techno pulsante, no melhor estilo Hans Zimmer. ótimo. Vamos. Vamos fazer isso.
+
+Segurem-se firme, já estamos quase lá. Só para garantir que seja um sucesso absoluto. Tem alguma palavra-chave ou história específica do mundo das startups do Reino Unido que você gostaria de ver na letra? E estarei pensando em energia frenética ou algo um pouco mais melódico dentro dessa loucura techno. Energia frenética e surpresa com a letra. Muito
+
+bem, você está dentro. Prepare-se para ter seus tímpanos estourados. Techno alemão frenético com um toque de startup britânica . Preparando uma delícia para você. Dá uma olhada nisso.
+
+Muito bem, vou deixar vocês com isso. Se você não fala alemão, desculpe, mas muito obrigado. Agradeço a todos vocês. Sem problemas.
+
+Ah, sim, e se você quiser os slides, posso simplesmente rebobinar. Tem praticamente todos os links ali. Se isso for útil, você pode simplesmente pegá-los ali. Incrível. Obrigado.
+
+E sim, aproveite o resto da conferência. E um grande agradecimento também aos nossos amigos que trabalharam no áudio, sem eles nada disso seria possível . Saúde.

@@ -1,0 +1,130 @@
+---
+video_title: "Building Agent Interfaces: Lessons from Chrome DevTools (MCP) for Agents — Michael Hablich, Google"
+video_id: _B4Pv9ttFgY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_B4Pv9ttFgY
+video_date: 2026-06-05T17:00:06+00:00
+video_description: |
+  Chrome DevTools MCP shipped with one tool: debug_webpage. Agents failed silently because they couldn't compose behaviors. The team decomposed it into 25 focused tools and assumed the problem was solved. It wasn't — now agents had 25 tools and no reliable way to pick the right one. Michael Hablich's talk is an honest account of building the same thing wrong three times and what the fixes actually looked like.
+  
+  The concrete lessons: semantic summaries instead of raw 50,000 line JSON trace files, error messages rewritten so agents can self heal without a human in the loop ("Cannot navigate back, no previous page in history" instead of "Unable to navigate back in currently selected page"), a metric called tokens per successful outcome to measure interface fuel efficiency, and a deliberate decision to keep the autoconnect friction rather than remove it once they thought through prompt injection and the lethal trifecta.
+  
+  Speaker info:
+  - https://x.com/MHablich
+  - https://www.linkedin.com/in/michael-hablich/
+---
+[música]
+
+Vamos começar logo, para não perdermos tempo, certo? Então, olá. Bem-vindo. Vamos falar hoje sobre a criação de interfaces de agentes. Então, deixe- me começar com uma pergunta. Quem aqui
+
+já está usando servidores MCP ou ferramentas de linha de comando no seu agente? Ok, pessoal? Para ser sincero, isso não me surpreende. Quem aqui já construiu servidores MCP e os implementou com sucesso? Certo, são aproximadamente metade das pessoas.
+
+Bem, hoje vou compartilhar quatro lições de engenharia da equipe do Chrome DevTools sobre como criamos o Chrome DevTools para agentes e como o implantamos para obter resultados eficazes. Configuração rápida de contexto. O Chrome DevTools para humanos é usado diariamente por milhões de desenvolvedores web para depurar páginas da web. Está integrado diretamente no Chrome e os desenvolvedores o utilizam para depurar páginas da web. Encontre erros, audite-os, analise o perfil de desempenho e assim por diante.
+
+Ah, certo . Então, vamos falar um pouco mais sobre as Ferramentas de Desenvolvedor do Chrome para agentes. Portanto, esta é uma versão específica do Chrome DevTools, mas voltada para agentes. Que surpresa. Sim , deixe-me mostrar rapidamente como funciona.
+
+Então, você pode ver no lado esquerdo o Gemini CLI e o prompt sendo inserido, e agora o Gemini CLI está configurando o servidor MCP , o que abre o Chrome no lado direito e, em seguida, inicia a depuração. Acho que sim, isso tem a ver com rastreamento de desempenho. Então, ele faz um rastreamento de desempenho, analisa o rastreamento retornado ou a análise de desempenho, age de acordo com ela e, em seguida, torna a página da web mais rápida, valida se ela realmente ficou mais rápida e pronto. Você já deve ter terminado. Está quase pronto.
+
+Desculpe, é o vídeo. Qualquer que seja. O que eu queria dizer é que sim , isso vai funcionar em qualquer cliente MCP e em qualquer ambiente de agente compatível com MCP. Na verdade, não importa. Essa era a CLI do Gemini, também funciona no Cloud Code, Codex, Open Claw, não importa.
+
+Se você quiser mais informações, acesse este código QR, pois ele o levará a uma página da web que explicará tudo sobre como instalá-lo e configurá- lo para sua plataforma de agentes. Pergunte novamente. Quem aqui já experimentou? Certo, então 10%? Obrigado.
+
+Eu te amo. Eu também amo todos os outros, mas amo mais os outros. Então, eu fui grosseiro. Eu não me apresentei . Meu nome é Michael Hablich.
+
+Sou o gerente de produto das ferramentas de desenvolvedor do Chrome no Google. E também sou professor convidado na universidade perto de onde moro. Tenho 20 anos de experiência em tecnologia, como desenvolvedor, testador, engenheiro de controle de qualidade, gerente de projetos, gerente de produtos, gerente de programas e assim por diante. Se você tiver alguma dúvida depois, por favor, fale comigo no corredor ou entre em contato comigo pelo LinkedIn. O código QR te levará à minha página do LinkedIn.
+
+Ambas as opções são válidas. Por favor, faça isso. Eu ficaria muito interessado em conversar com você sobre servidores MCP, ferramentas de automação de navegadores e coisas do tipo. Ok, mas chega de propaganda. Vamos em frente.
+
+Distribuímos o Chrome DevTools porque percebemos que os agentes de codificação estavam trabalhando às cegas . Então, tipo, há um ano e meio, eles eram muito bons em gerar código, mas não conseguiam validar o que estavam fazendo na prática, certo? E isso foi péssimo. Mas partimos do princípio de que eles ficariam bem se lhes apresentássemos uma grande quantidade de dados. Porque, afinal, são máquinas, certo? A questão é que estávamos errados. Então,
+
+este é o cabeçalho de um arquivo de rastreamento. Um arquivo de rastreamento contém todos os dados sobre o perfil de desempenho. E este é um arquivo com vários megabytes de dados, e são cerca de 50.000 linhas de JSON, e nós o testamos em um agente comum naquela época, há cerca de um ano e meio . E, sem surpresa, isso é informação demais para um agente ou modelo conseguir processar, e ultrapassou os limites do contexto.
+
+E se você viu a palestra do Matt sobre a zona de descarte, você está movendo o agente para a zona de descarte nesse ponto. Então pensei: "Ok, construímos errado." Isso não vai funcionar. Precisamos fazer algo diferente. Então, nesse caso, por exemplo, o que fizemos, nossos endpoints de rastreamento de desempenho, também podem retornar isso para pós-processamento com outras ferramentas, mas o que realmente está fazendo é retornar Markdown e resumos semânticos. Por exemplo, este
+
+é um resumo semântico que fornece informações sobre métricas de desempenho típicas, como o maior Contentful Paint (CFP), IMP (Input Mean Time) e assim por diante. Não vou aborrecê-los com todos os detalhes das métricas de desempenho. E vamos falar sobre eles de qualquer maneira, porque são um ótimo exemplo de como isso funciona. Bem, essencialmente, não forçamos o agente a ler o livro inteiro, o rastreamento, mas sim o direcionamos para a frase correta, e este é o resumo semântico. Isso funciona muito bem.
+
+No final das contas, ou melhor, no começo, os agentes são uma classe de usuários diferente. Então, foi aí que meio que caiu a ficha para mim, tipo, ah, é verdade, eles são como um segmento de usuários separado. Então, como podemos raciocinar sobre isso? A questão é que agentes e humanos compartilham a intenção, compartilham o objetivo, certo? No nosso caso, por exemplo, ambos querem identificar erros em uma página e querem corrigir esses erros.
+
+Mas eles pensam diferente. Eles têm diferentes limitações cognitivas, mais ou menos. Para os seres humanos, tem muito a ver com complexidade visual. Então, os humanos são criaturas tipicamente muito visuais, e precisamos de layout, precisamos de cor para encontrar um sinal. E este talvez não seja o melhor exemplo de
+
+eficiência. Hum, parece muito feliz, e talvez seja mesmo. Não sei. Hum, sobre o que é ? Então, a eficácia se resume a saber se o agente completa toda a jornada do usuário?
+
+A finalidade funcional foi efetivamente cumprida? Sim ou não. E depois há a eficiência, que, como seria de esperar, está relacionada com o custo do token, as chamadas de ferramentas e a duração. No final das contas, o que os tokens por resultado bem-sucedido indicam é a eficiência energética da sua interface, certo? E há uma ressalva, porque sempre há uma ressalva. A
+
+eficiência de combustível é praticamente inútil se você não consegue chegar ao seu destino. Por isso, chama-se tokens por resultado bem-sucedido e não token por resultado. Então, certifique-se de também medir a eficácia, certo? E há mais uma ressalva. E isso é algo que não se pode medir globalmente. Quer dizer,
+
+você pode fazer isso, mas talvez queira fazer porque é uma métrica interessante, porém os resultados serão tremendamente diferentes entre diferentes jornadas do usuário e classes de tarefas. Portanto, não os compare globalmente, compare- os dentro da jornada do usuário que eles estão medindo. E o que eu quero dizer com isso é que, por exemplo, no Chrome DevTools, temos a jornada do usuário para web scraping, certo? Então, um agente acessa um site e extrai informações. É relativamente barato.
+
+Mas também existem jornadas do usuário mais complexas, como depurar um site ou descobrir por que o layout responsivo não está funcionando. Essa coisa vai usar mais tokens, mas não tem problema porque é uma sessão muito mais complexa e interativa que está acontecendo. Certo, como isso se parece na vida real? Bem, é assim que fica na prática, em um projeto interno no qual estamos trabalhando, e vocês podem ver muitas barras de neon, o que é ótimo. Eu gosto de bares com luzes de néon.
+
+Mas não vou me preocupar com detalhes. O importante são as barras de néon do lado esquerdo; quanto mais comprida a barra, mais eficaz a ferramenta. Certo? Quanto menor a barra, menos eficaz é a ferramenta para o caso de uso específico. Portanto, cada uma dessas barras do lado esquerdo representa casos de uso.
+
+Bem, isso significa que as barras menores são provavelmente aquelas em que devemos focar nosso trabalho a seguir, como melhorá-las, como melhorar o número de tokens por resultado bem-sucedido nelas. Sim . Bem, como você já deve ter imaginado, medir a quantidade de tokens por resultado bem-sucedido não é tão simples. A questão é que mesmo uma medição imperfeita é melhor do que simplesmente tomar decisões baseadas na intuição . E com isso, pelo menos você poderá tomar decisões baseadas em dados.
+
+Certo. Ian, desculpe. Ah, eu estava com o áudio ligado. Nas Ferramentas de Desenvolvimento para Agentes, estamos abordando o consumo excessivo de tokens de três ângulos diferentes. Primeiro, há a categorização das ferramentas. Então, de
+
+forma bem simples, nós escondemos ferramentas de nicho por trás de parâmetros de linha de comando . Por exemplo, temos ferramentas para depurar extensões do Chrome . E nem todo mundo está desenvolvendo extensões para o Chrome. Então, por que adicioná-lo ao menu de contexto padrão? Não faz sentido fazer isso. E existe também
+
+o modo compacto. E este é divertido. Então, o que o modo compacto faz é, tipo, levar a categorização de ferramentas ao limite. Acho que está expondo apenas três ferramentas diferentes. Selecione a página, navegue pela página e avalie o script.
+
+Isso é ótimo para a sua janela de contexto, mas tem um preço. Hoje vou falar muito sobre as vantagens e desvantagens. Bem, existe uma contrapartida, porque quanto menos ferramentas você expõe, menos ferramentas ficam disponíveis para o seu agente, o que significa que ele pode precisar realizar turnos extras para atingir o mesmo objetivo. Pode ser que não disponha das ferramentas adequadas para efetivamente realizar uma tarefa, como, por exemplo, receber solicitações de rede. Você não pode fazer isso com o script de avaliação.
+
+E coisas do gênero. Sim, e também existe uma interface de linha de comando (CLI). Ah, desculpe, temos uma interface de linha de comando que oferecemos. Hum, talvez você tenha visto a palestra anterior sobre um modelo de código e tudo mais. Nós também apoiamos isso. Então, sim, é um servidor MCP,
+
+mas também existe uma interface de linha de comando para a mesma coisa, oferecendo praticamente a mesma funcionalidade. O que isso permite é que você faça com que seus agentes encadeiem comandos para realizar o pós-processamento. Assim como neste exemplo, acho que você não consegue ver . Bem, a árvore de acessibilidade é extraída com um comando grep, e então o resultado, o ID do controle, é direcionado para um comando de clique. E isso, claro, economiza muitos tokens, pois o modelo não precisa processar todos os tokens. O
+
+pós-processamento do token está ocorrendo no seu computador. Certo. Bem, a eficiência é inútil se o seu agente ficar preso. Isso nos leva à recuperação de erros. Sim, porque cada vez que seu agente encontra um erro, isso vai custar tokens, pois ele precisa tentar novamente, precisa entender o que está acontecendo e coisas do tipo. E isso é péssimo.
+
+Oh sim. A recuperação de erros é um espectro, e vamos falar um pouco sobre isso, sobre o que estamos fazendo aqui. Então, primeiro, é claro, você deve adicionar mensagens de erro úteis. Isso parece óbvio. Bem, para muitas ferramentas, não é.
+
+E também não era óbvio para todas as ferramentas que oferecíamos, então fizemos algumas iterações para melhorar as mensagens de erro. Como aqui, por exemplo,
+
+não foi possível navegar de volta na página selecionada para uma determinada entrada do histórico da ferramenta. Na verdade, adicionamos a última frase, e isso permitiu que o agente se autorreparasse, o que é extremamente útil porque, dessa forma, o agente não precisa de um humano para corrigir os problemas, mas pode, eh, se autocorrigir. Depois, há os desvios proativos. Assim, abaixo de cada um dos agentes, existe um modelo, e o modelo está sendo treinado com determinados dados. E às vezes, há situações em que você deseja contrariar os dados de treinamento.
+
+E é isso que você pode fazer com desvios proativos. Como neste exemplo, redirecionamos o agente de criação de perfil de desempenho para nossa ferramenta de rastreamento de desempenho inicial, e não para a auditoria do Lighthouse. E existem manuais de diagnóstico. Bem , nós também oferecemos, é claro, capacitação . E temos uma habilidade chamada, hum, solução de problemas, e vemos que muitas pessoas têm problemas para configurar corretamente o servidor MCP do Chrome DevTools, e essa habilidade de solução de problemas entra em ação para ajudar o usuário e o agente a corrigir os problemas de configuração.
+
+Mais uma vez, possibilitando a autorreparação do agente. E tudo isso aumenta a resiliência do seu produto, ou melhor, da infraestrutura de agentes que você está construindo. Isso é ótimo e ajuda a identificar os erros. E agora, vamos falar sobre a capacidade de detecção, que na verdade se refere à prevenção desses problemas. Assim, nosso projeto inicial tinha uma ferramenta monolítica chamada depurar página web.
+
+Portanto, tínhamos apenas uma ferramenta: depurar a página da web. E outro agente poderia enviar um comando para lá e dizer: "Ei, depure esta página da web. Há alguns problemas de layout responsivo." E era interessante do ponto de vista da engenharia, mas na prática não funcionou. Bem, nós o decompusemos em 25 ferramentas diferentes. E resolvemos o
+
+problema? Conseguimos resolver o problema? Claro que não. Porque transferimos esse problema para outro. E assim, os agentes passaram a ter 25 ferramentas à sua disposição. Como você vai descobrir
+
+qual usar em cada situação? Bem, vamos falar sobre isso. De acordo com este artigo aqui, 97% das descrições de ferramentas MCP apresentam problemas de qualidade. E isso é importante porque o esquema é a interface do usuário do agente. Então, vamos melhorar a interface do usuário.
+
+E resolver isso é uma questão de equilíbrio, como eu disse. É sempre uma questão de equilíbrio. Porque, é claro, você pode melhorar as descrições, e isso aumentará o tamanho da sua janela de contexto. Então, provavelmente você não quer isso. Ou talvez você queira.
+
+Além disso, modelos menores, em particular, não lidam bem com muitas descrições, pois tendem a usar ferramentas que não deveriam usar em primeiro lugar. Existe um ponto de equilíbrio. Hum, leia o jornal. Super interessante. Ah, sim. Mas existem algumas coisas que você
+
+realmente deveria fazer que são relativamente incontroversas, e uma delas é, hum, definir o propósito. Explique claramente qual é a função principal da ferramenta . Isso está funcionando? Ah, sim. Aqui está.
+
+Vamos. Sim. Ah, tudo bem . Explique claramente a função principal da ferramenta e forneça diretrizes de uso, como critérios de ativação claros. E como isso fica, por exemplo, nas Ferramentas de Desenvolvedor do Chrome para Agentes? E, bem
+
+, novamente, ferramenta de rastreamento de inicialização de desempenho. O que temos ali como descrição é usado para encontrar problemas de desempenho, especificamente problemas de desempenho do front-end e métricas essenciais da web, como LCP, INP e CLS. Por que isso é relevante? LCP, INP e CLS são métricas de desempenho da web, e um agente é capaz de fazer a conexão: "Ah, vou usar essa ferramenta se precisar, por exemplo, melhorar o carregamento da página." Estamos longe de terminar de otimizar isso, porque os modelos e as estruturas dos agentes também continuam mudando o tempo todo, então é como uma busca interminável pela descrição mínima viável.
+
+Sim, mas é o que é. Você pode potencializar tudo isso com habilidades. Como eu disse, nós também temos habilidades, e isso é ótimo, especialmente se você tem fluxos de trabalho mais complexos. Mas, novamente, há um preço a se pagar. Não são almoço grátis.
+
+Se você acumular habilidades demais, vai acabar transferindo o problema e se deparando com o mesmo problema novamente. É, os agentes vão elogiar suas habilidades mesmo que não devessem . Hum, o tamanho da sua janela de contexto vai aumentar e tudo mais. A relação de custo-benefício está mudando, não está desaparecendo. Ok, agora otimizamos em termos de custo, recuperação e descoberta. Vamos falar
+
+um pouco sobre confiança, porque você não quer ter uma porta dos fundos no sistema. O Chrome DevTools para Agentes possui um recurso chamado conexão automática, que permite que você, o usuário, utilizando seu agente de programação, como o Claude Code, compartilhe a tela com o agente, dizendo algo como: "Ei, estou com um problema aqui. Por favor, me ajude a depurar e corrigir esse problema que estou vendo." Recurso incrível. Eu gostei muito. E,
+
+claro, os usuários solicitaram o recurso: "Ei, por que preciso clicar em 'permitir' o tempo todo? Eu não quero fazer isso. Por favor, lembrem-se da minha escolha." E em um design de experiência do usuário tradicional, isso teria sido uma vitória clara, certo? Porque se trata apenas de eliminar o atrito que você deseja remover.
+
+Num mundo em que você delega tarefas remotas a agentes e automatiza o trabalho desses agentes, é preciso pensar nos limites da confiança. Então, foi por isso que o projetamos , de forma que o atrito fosse intencional, pois não queríamos que houvesse atrito. E por quê? Vamos conversar sobre isso. Existe uma postagem no blog de, hum, Simon Willison sobre o fator triplo letal.
+
+Código QR. Você deveria ler, é ótimo. Hum, não vou falar mais sobre isso. E utilizando isso, há pelo menos três níveis gratuitos que estou considerando em navegadores e agentes de navegação, mais ou menos. Você tem o nível um, que é o ambiente de desenvolvimento local.
+
+No ambiente de desenvolvimento local, você tem o usuário no circuito e ele deseja conceder acesso ao perfil padrão do Chrome aos dados aos quais você já tem acesso, para o agente, dentro de um limite de tempo. E então você tem o segundo nível, que consiste em agentes em execução em um ambiente de integração contínua . Portanto, são ambientes controlados, mas separados. Nesse ponto, você já deveria estar usando recursos de separação de dados, como contêineres, é claro, mas também outras coisas como perfis separados do Chrome e coisas do tipo . Se você quiser se conectar a eles, também temos um mecanismo para isso, chamado porta de depuração remota.
+
+E em terceiro lugar, há agentes com acesso total à internet, o que é essencialmente o modo YOLO, porque qualquer página da web consegue enviar uma mensagem de texto de verificação rápida para o seu agente. Então, certifique-se de que faça o mesmo que no nível dois, mas também no nível três, eh, certifique-se de que eles tenham a lista de permissões de domínio e não solicitem mitigações de injeção, tudo isso junto. Voltando ao fator da trajetória da folha , é nisso que geralmente pensamos no primeiro nível, e é aí que todos esses três fatores se encontram. Por isso, na verdade, dizemos não; o ser humano precisa consentir todas as vezes. O ponto principal é que um agente local, de primeiro nível , e uma frota de agentes de navegação, de terceiro nível, onde seus agentes de pesquisa talvez compartilhem uma ferramenta como o Chrome DevTools para agentes, mas eles não devem compartilhar mais nada sobre o seu modelo de segurança, certo?
+
+OK. Vamos lá, deixe-me concluir. A experiência do usuário está evoluindo para incorporar a experiência do agente. Um agente é apenas mais um tipo de usuário, um segmento de usuário, que também possui requisitos não funcionais. Eficiência, facilidade de descoberta, segurança, estabilidade, e assim por diante.
+
+Compartilhei quatro pontos-chave das Ferramentas de Desenvolvedor do Chrome para agentes. Quando implementamos isso, medimos a eficiência energética da interface com tokens por resultado bem-sucedido. Transforme erros em planos de recuperação. Analise as descrições dos testes para verificar a intenção e nunca comprometa a confiança por conveniência. Os agentes serão nossos próximos usuários.
+
+Vamos ajudá-los a nos ajudar. Com isso, desejo a todos uma ótima continuação da conferência. [aplausos]
+
+[música]
+
+[música]

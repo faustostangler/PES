@@ -1,0 +1,107 @@
+---
+video_title: "Beyond Components: Designing Generative UI for MCP Apps — Ruben Casas, Postman"
+video_id: hCMrEfPG2Yg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hCMrEfPG2Yg
+video_date: 2026-06-03T17:00:06+00:00
+video_description: |
+  Ruben Casas from Postman prompted a model to rewrite his blog. It built a search box with a blur animation and accessibility out of the box, without being asked. That was when he concluded the model writes better frontend code than he does. His question for the talk: if the models are this capable, why are most agent UIs still invoking static prebuilt components?
+  
+  The talk maps three points on the spectrum. Static components pass props to predefined React elements (AG UI, Goose auto visualizer). Declarative UI has the LLM generate JSON or YAML that a rendering engine maps to components at runtime. Ruben argues this is the right balance today. Fully generative UI skips components entirely: the model writes HTML, CSS, and JavaScript on demand. His weather agent does this in a single tool call. The catch is containment: LLM generated code needs a sandbox, which is why MCP apps and their double iframe default matter. He closes on the TV analogy. The first TV shows were radio shows with cameras because nobody could imagine what else to do with the new medium. We are in that era.
+  
+  Speaker info:
+  - https://x.com/Infoxicador
+  - https://www.linkedin.com/in/ruben-casas-17100383/
+  
+  Timestamps:
+  0:00 Introduction: The evolution from 'poor man's bit coding' to high-fidelity UI generation
+  2:56 Why are we still stuck with static UI?
+  3:33 The new computer: Searching for the interface of the future
+  4:47 The role of MCP apps and 'Super Apps'
+  5:52 Three levels of UI generation: Static, Declarative, and Generative
+  6:03 Understanding Static UI components (e.g., AG UI, Goose)
+  7:42 The benefits of Declarative UI (e.g., JSON/YAML renderers)
+  10:06 Moving to the next level: Generative UI components
+  11:25 The challenge of trust: The need for sandboxing and containment
+  12:22 Why MCP apps are the ideal delivery mechanism for Generative UI
+  13:21 The 'TV/Radio' analogy: Imagining the future of agent interaction
+  14:46 Beyond components: Towards true human-agent collaboration
+  16:16 Conclusion: Shaping the future of user interfaces
+---
+[música]
+
+Olá a todos. Então, eu sei que sou a pessoa que está entre você e seu almoço. Mas esta será uma palestra muito interessante que combina as duas palestras anteriores com o futuro. E é sobre isso que quero falar hoje. Então, em novembro de 2022, o que costumávamos fazer era ir ao ChatGPT e pedir ao ChatGPT para criar um componente. E nós simplesmente
+
+copiávamos e colávamos. Você precisa fazer a pergunta e responder usando blocos de código. Então, sabe, de novo, corrige, repete. E é a isso que eu chamo de " programação para pobres". E já percorremos um longo caminho. De certa forma,
+
+funcionou. Foi muito emocionante. Você poderia obter modelos que poderiam realmente construir alguma interface de usuário para você. E tenho certeza de que isso não ia escrever um código melhor do que eu, certo? E então as coisas melhoraram muito, muito rapidamente, muito, muito depressa.
+
+O que aconteceu no ano passado, e se você está ciente do que aconteceu nos últimos meses de 2025, foi essa aceleração, um ponto de inflexão incrível onde as coisas mudaram. E isso ficará marcado nos livros de história como um fato de que as coisas mudaram muito rápido, tudo de uma vez. E isso se deve em parte ao lançamento de dois modelos muito importantes, que foram o 5.2 ChatGPT, desculpe. Sim, era um GPT 5.2 e um Opus 4.5.
+
+E eles não eram apenas muito bons na maioria das tarefas, tarefas de longo prazo. Eles também eram muito bons na geração de interfaces de usuário de alta fidelidade. E eles estavam produzindo interfaces de usuário muito boas e funcionais. Às vezes atencioso, às vezes realmente muito bom. E também muito rápido.
+
+Eu vivenciei isso quando experimentei um desses modelos e tentei reescrever meu blog. Sei que outras pessoas já usaram isso de maneiras mais criativas, mas eu só tentei, sabe, um único exercício: reescrever meu blog. E então aconteceu isso, algo que eu não pedi. Criou uma caixa de pesquisa muito agradável com uma animação de desfoque e acessibilidade integrada. E foi aí que percebi que, no espaço de 3 anos desde o lançamento do ChatGPT até hoje, passamos de, você sabe, poucas linhas de código são ótimas.
+
+Ele pode funcionar. Oh. E agora ele consegue escrever código front-end melhor do que eu. E sabe, eu não me importo. Não, não há ego.
+
+É a realidade. Então, aqui está a questão. Se esses modelos são tão bons em escrever código de interface do usuário, por que ainda estamos presos a esse paradigma antigo de interfaces de usuário predominantemente estáticas? E onde está aquele momento Jarvis de que estávamos falando antes? Onde estão minhas janelas flutuantes da interface do usuário que aparecem e desaparecem? E por que ainda não chegamos lá
+
+? Então, meu nome é Ruben Casas. Sou engenheiro de equipe na Postman. E tenho estudado interfaces de usuário e interfaces generativas no último ano, e também tenho trabalhado com aplicativos MCP. E hoje quero mostrar a vocês o que estamos fazendo atualmente e para onde estamos indo no futuro.
+
+Então, a novidade é que temos um computador novo. E como disse Andrej Karpathy, interagir com esse novo computador é como falar com um terminal. Você tem acesso direto a este sistema operacional. E a interface gráfica do usuário (GUI) ainda não foi inventada. É como se estivéssemos nos anos 70, quando tudo era feito apenas por texto.
+
+E nós temos uma superinteligência, mas não temos uma linguagem de interface madura. E hoje ainda estamos tentando descobrir para que serve essa nova interface neste computador. E as pessoas perguntam: é um bate-papo? Vou mostrar a vocês o que estamos fazendo hoje. Na verdade, esse foi um tweet bem recente da semana passada, onde as pessoas reclamavam que a maioria das empresas de SaaS estava adicionando chat às suas páginas iniciais, e que todo mundo está colocando chat em todo lugar.
+
+E isso é ótimo. Não tenho problema nenhum com o chat. Essa não é a interface de usuário final. Por enquanto está tudo bem. Mas a questão é: se não é um chat, então qual é a interface deste computador?
+
+Por outro lado, como vimos com os aplicativos MCP, existe [limpa a garganta] outra possibilidade, que é a de termos um aplicativo ou superaplicativo para governar todos eles. É aí que entram os aplicativos MCP, onde, em vez de colocar todas essas janelas de bate-papo em suas páginas iniciais e em todos os aplicativos que você usa, teremos um superaplicativo como o ChatGPT, o Claude ou o Gemini, que permitirá a interação com a maioria das interfaces de usuário e sites que temos hoje. E isso é bom. É assim que usamos os aplicativos MCP atualmente para renderizar interfaces de usuário de terceiros dentro de um ambiente de agente. Bem, ambas as opções podem ser válidas. E acredito que isso faça parte
+
+da evolução para descobrir qual será essa nova interface para o computador. E, para ser sincero, não sei qual será a versão final . Os consumidores nos dirão. Mas uma coisa é certa: são duas perguntas diferentes. A questão é: onde a interface do usuário é executada? Nesse caso, trata-se de uma
+
+interface de usuário de terceiros, um superaplicativo ou, neste caso específico, um aplicativo de bate-papo ? Mas o mais interessante é o que o modelo está gerando. E é sobre isso que quero falar hoje, em termos de como estamos gerando essa interface de usuário? E nós vimos isso. Temos principalmente interfaces de usuário estáticas, declarativas e generativas.
+
+E vou descrever brevemente este aqui . Então, precisamos começar com a abordagem de componentes estáticos para executar a interface do usuário, que é o que a maioria dos agentes faz hoje em dia. O agente é apenas um orquestrador. O agente realiza uma chamada de ferramenta por meio de aplicativos MCP ou por meio de chamada direta de ferramenta do agente. Em seguida, teremos alguns parâmetros e dados passados ​​para componentes estáticos predefinidos que foram criados pelos desenvolvedores. E
+
+isso é muito semelhante ao que temos feito nos últimos 20 anos com a interface do usuário. E então o cliente renderiza o componente. E, como você pode ver aqui, é muito semelhante a simplesmente fazer com que um servidor envie alguns dados, e então a interface do usuário será renderizada pelo cliente. Mas, neste caso, o agente irá gerar esses dados e as propriedades necessárias para isso. E alguns exemplos que temos hoje são o protocolo AGUI. Eles possuem um SDK que permite
+
+registrar uma ferramenta cliente que corresponde a um componente React. A chamada da ferramenta receberá alguns elogios. Essas propriedades serão mapeadas para um componente estático que, em seguida, será renderizado para o usuário. Outro exemplo é o Ganso. Goose é um cliente MCP onde você pode experimentar a maioria dos recursos do MCP. E o Goose tem um
+
+recurso muito interessante chamado Goose Auto Visualizer, onde você pode simplesmente passar qualquer tipo de dado para o Goose, e o Goose tentará encontrar correspondências para esses dados, organizá- los e, em seguida, passá-los para um conjunto de componentes predefinidos que a equipe do Goose criou. Neste caso, temos alguns componentes interessantes que você pode usar para visualizar seus dados. Então, esse é o método estático. Essa é a forma mais comum de gerar interfaces de usuário atualmente. Mas tenho observado uma evolução recentemente, que agora chamamos de interface de usuário declarativa.
+
+E a interface de usuário declarativa leva isso a um nível superior. Portanto, ainda teremos alguns componentes estáticos predefinidos que os desenvolvedores criam, e isso inclui seu sistema de design e todos esses componentes que você possui. Mas, em vez de o agente simplesmente passar as propriedades e os dados, ele usa um descritor que pode ser JSON ou YAML. Ou eu também já vi Python com MCPs rápidos, onde eles têm um descritor em Python que mapeia para esses componentes estáticos predefinidos. E então você tem esse mecanismo de renderização de tradução que pega esses descritores e os converte na interface de usuário final.
+
+Qual a diferença? Bem, neste caso, é mais dinâmico. Ainda são componentes estáticos, mas são mais personalizados. E se você olhar para isso e pensar que também pode parecer familiar , é porque não é novidade. A Netflix faz isso há muito tempo, desde a era da personalização e dos servidores na interface do usuário, em que, ao acessar a página inicial da Netflix, você se depara com uma interface completamente personalizada . Mas isso ainda está mapeado para os
+
+componentes e elementos da interface do usuário da Netflix. Outra ferramenta muito boa que vi recentemente é o JSON Render. O JSON Render está sendo desenvolvido pela Vercel. E é uma forma de mapear seus componentes usando JSON e também YAML. Eles lançaram o suporte para YAML recentemente.
+
+E criar todas essas interações de interface do usuário muito dinâmicas e excelentes que você pode usar hoje mesmo. Mas, por enquanto, dizem eles, o JSON Render ainda está limitado aos seus componentes estáticos. E sim, eles ainda são componentes estáticos. O LLM não está gerando esses componentes. O LLM está gerando o JSON.
+
+No entanto, acredito que, neste momento, a interface de usuário generativa declarativa seja provavelmente o equilíbrio perfeito em termos de flexibilidade e consistência. Porque você ainda gostaria de ter seu sistema de design. Você ainda quer ter previsibilidade de como a interface do usuário será gerada, além de ser mais rápido e potencialmente mais barato neste momento. Então, você não cria e usa muitos tokens para criar a interface do usuário. Mas, como mencionei no início, por que ainda estamos presos nessa situação?
+
+E qual é o próximo nível? Acho que o próximo nível serão os componentes generativos. E os componentes generativos, bem, se encaixam na premissa que mencionei no início, de que os modelos são bons em escrever código front-end. Eles são bons em programar em React. Eles são bons em React, criando conteúdo em JavaScript e CSS.
+
+E a questão é por que não permitimos que eles simplesmente escrevam isso sob demanda, em tempo de execução. O que poderia dar errado nisso, não é? Este modelo de geração da interface do usuário utiliza as capacidades do agente. Nesse caso, você também pode usar uma chamada de ferramenta, mas em vez de chamar esse mecanismo de renderização de layout, você pode chamar o mesmo modelo com amostragem reversa ou pode chamar outro modelo que irá gerar o HTML, CSS e JavaScript sob demanda e, em seguida, passá-lo para o cliente. Eu fiz um experimento, eu trabalho na Postman, em que criei um agente meteorológico que se conecta à API, a API de previsão do tempo. Isso gera
+
+uma piada. Ele cria o HTML, CSS e JavaScript, tudo em uma única chamada de ferramenta. E você se depara com essa interface de usuário aleatória, mas muito... criativa, onde
+
+tudo é criado pelo agente. Não existe nenhum componente. Não há tradução. Portanto, é claro que existe um problema com essa abordagem. Bem, o problema com essa abordagem é que, se não confiamos em código de terceiros, não devemos confiar em código gerado por LLMs e simplesmente apresentá-lo ao usuário.
+
+Hum, interfaces de usuário generativas, e esse nível de interface de usuário generativa, precisam de um modelo de distribuição. E esse modelo de distribuição requer um limite, requer contenção e requer um ambiente controlado, que é o que estávamos discutindo anteriormente. É por isso que eu acho que os aplicativos MCP são muito importantes, porque eles são o melhor mecanismo de entrega para interfaces de usuário generativas. Temos os recursos fornecidos pelo MCP, incluindo autenticação, chamada de ferramentas e troca de mensagens entre a interface do usuário e o agente. Ah, por padrão, ele é executado em um ambiente isolado (sandbox) com esse iFrame duplo. É o
+
+padrão para entrega de interface de usuário de terceiros atualmente. Isso se tornará o padrão? E uma coisa interessante é que não se limita apenas a interfaces de usuário de terceiros. Também pode ser usado para interfaces de usuário próprias. E é por isso que acho que o que a Anthropic está fazendo com o recurso de visualização é muito interessante do ponto de vista estratégico, porque eles poderiam simplesmente ter criado seu próprio mecanismo de renderização e arquitetura para entregar essa interação na nuvem, mas decidiram usar os aplicativos MCP porque eles fornecem a maioria dos recursos que mencionei anteriormente , prontos para uso.
+
+Então, se a Anthropic decidiu usar aplicativos MCP para sua interface de usuário própria, vocês podem se perguntar por que nós não podemos fazer o mesmo? É um protocolo muito, muito rigoroso. E especialmente quando a interface do usuário está sendo gerada dinamicamente pelos agentes, pelo código, pelos modelos de codificação, então esse é o melhor mecanismo de entrega. Bem, provavelmente a versão atual não é a final. E as pessoas continuam perguntando se o chat é a forma final? O aplicativo MCP é a
+
+versão final? Ainda estamos tentando descobrir isso. E o futuro óbvio é provavelmente óbvio demais. E nós perguntamos: onde está meu Jarvis? Onde estão minhas janelas flutuantes?
+
+E se você parar para pensar, essa é a primeira coisa que as pessoas imaginariam: como seríamos se estivéssemos gerando ou criando uma nova interação com o usuário. Mas o que eu acho é que ainda não temos imaginação suficiente. E essa analogia que ouvi recentemente é muito interessante: quando o rádio surgiu na década de 30, e a televisão surgiu, os primeiros programas de TV eram programas de rádio com câmeras, porque eles não conseguiam imaginar o que seria possível fazer com essa nova tecnologia. Então, essa nova tecnologia que temos hoje é muito semelhante à época em que a televisão surgiu, e ainda estamos na era do rádio, onde não sabemos todas as coisas incríveis que faremos no futuro com essa nova mídia, com esse novo poder que temos com o novo computador. E podemos ver que nem sequer conseguimos imaginar como será.
+
+Bem, claro que isso é especulativo, mas o que eu acho que realmente vai acontecer é que vamos ir além dos componentes e caminhar mais para uma colaboração, por meio da colaboração entre humanos e agentes . Se você ainda não ouviu falar do aplicativo Excalidraw MCP, definitivamente dê uma olhada, porque o aplicativo Excalidraw MCP não serve apenas para gerar e visualizar diagramas. O aplicativo Excalidraw MCP faz algo muito interessante: ele cria um artefato compartilhado. Cria-se uma tela onde um humano e um agente podem colaborar em um espaço compartilhado, no qual é possível interagir com o agente e pedir, por exemplo, para alterar algo, mas também é possível clicar e modificar a interface do usuário da maneira que se está acostumado. E essa se torna a nova forma de interação, a nova forma de vivenciar os poderes do agente .
+
+E, neste momento, estamos muito limitados à nossa imaginação. E acredito que esses agentes são muito, muito poderosos, podendo ser usados ​​simplesmente como orquestradores e mecanismos de entrega para me mostrar algumas visualizações. Portanto, acredito que, além dos componentes, o futuro da interface generativa será uma experiência mais colaborativa, onde sim, teremos alguma interface generativa, mas essa interface será super personalizada e colaborativa. Então, ainda estamos no início. Hum, nós não temos a resposta. As pessoas perguntam,
+
+sabe, qual é o futuro da interação do usuário, das interfaces do usuário? Ainda não sabemos. Mas podemos moldar esse futuro e criar esse novo computador. E esse sou eu. Muito obrigada por ouvirem isto.
+
+[aplausos] Podem me encontrar e fazer qualquer pergunta. Obrigado.

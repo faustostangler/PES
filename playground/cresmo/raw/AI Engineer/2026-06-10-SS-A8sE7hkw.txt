@@ -1,0 +1,122 @@
+---
+video_title: "Sovereign Escape Velocity: Ownership w Open Models — Gus Martins, & Ian Ballantyne, Google DeepMind"
+video_id: SS-A8sE7hkw
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SS-A8sE7hkw
+video_date: 2026-06-10T15:00:06+00:00
+video_description: |
+  Gemma 4's 31B model sits fourth on the LM Arena open model leaderboard. The models around it are at least twice as large; some are 20 times larger. It runs on a single GPU. Competitors at comparable quality need four or five.
+  
+  Ian Ballantyne and Gus Martins walk through what that size efficiency unlocks: running on a Pixel phone (the E2B and E4B models use 2B and 4B of GPU memory despite having more parameters), deploying a medical variant on two GPUs for an entire hospital, and running parallel multi agent workloads on an M4 Mac via LM Studio. The talk also covers the license shift from a custom Gemma license to Apache 2.0 — the practical effect is that sovereign institutions in Ukraine, Bulgaria, and Brazil can get legal sign off without 18 months of procurement review.
+  
+  Speaker info:
+  - https://x.com/gusthema
+  - https://www.linkedin.com/in/gus-martins-64ab5891
+  - https://linkedin.com/in/ianballantyne
+  - https://github.com/irbg
+---
+Oi pessoal. Hum, você consegue me ouvir? Sim, você pode me ouvir. Oi. Desculpe. Pedimos desculpas pelo
+
+atraso de 1 minuto. Vou me esforçar ao máximo para terminar mais cedo para que meu amigo possa fazer demos bem legais para vocês. Eu sou o Gus. Este é Ian. Somos da equipe do Google DeepMind e, especificamente, eu trabalho no produto Gemma. Alguém aqui sabe o que
+
+são os modelos Gemma? Ok, perfeito. Perfeito. Muito obrigado. Então, hoje vamos falar um pouco sobre propriedade e modelos abertos. Ah, e
+
+bem, vocês sabem quem somos. Mas a ideia é a seguinte: na última quinta-feira, lançamos nossa nova família de modelos, Gemma 4. E vou falar um pouco sobre elas. Amanhã haverá mais informações na palestra principal de Omar e também amanhã haverá outra palestra de CassD, na qual ela entrará em ainda mais detalhes. Vamos contar um pouco da história, mas a história é um pouco maior. Faremos o nosso melhor
+
+aqui. Então, por que isso importa? Bem, se você me perguntar, eu trabalho para o Google, é claro. Se você me perguntar qual o melhor modelo para você experimentar, eu responderei que é o mais fácil . Gêmeos. Gemini é o melhor
+
+modelo que temos. Um modelo multifuncional bastante robusto consegue fazer todo tipo de coisa. Mas há mais nessa história do que apenas ter o modelo mais forte possível. Em algumas situações, você deseja ser o proprietário do modelo. Você quer poder executar o programa em seu próprio hardware. Você quer
+
+personalizá-lo. Você deseja poder enviar seus dados proprietários que não podem sair da sua infraestrutura. Portanto, existem muitas situações em que nem mesmo o melhor modelo proprietário será capaz de ajudá-lo diretamente. É aí que você pode precisar de um modelo aberto. É aí que Gemma entra em cena. Então, quando você se pergunta por que o
+
+Google tem duas famílias de modelos? Porque se complementam. Portanto, Gêmeos é o mais inteligente. É possível fazer muita coisa legal, mas está hospedado nos servidores do Google. Você precisa da API para acessar. Se você precisa de mais controle e
+
+acesso, precisa de um modelo aberto. É por isso que temos a Gemma. É por isso que estamos muito orgulhosos de que a qualidade seja muito, muito alta. Vamos entrar em detalhes mais tarde, mas a ideia é que você poderá fazer muita coisa legal com ele. Entre os lançamentos que fizemos, disponibilizamos quatro tamanhos. Ah, dois são voltados
+
+para dispositivos móveis, digamos assim, ou para a Internet das Coisas (IoT) ou dispositivos menores. É um E2B e um E4B. Hum, esses nomes são um pouco estranhos. Somos os únicos que usamos esse nome. Ah, e o E significa eficaz. E a ideia aqui é que o
+
+modelo usa o equivalente a 2B em memória, o que um modelo de 2B usaria, mas é maior do que isso. O 2B está em torno de 5B, uh uh, parâmetros. Mas aí você pergunta: "Ah, mas onde estão esses outros 3B na memória?". O interessante é que eles não são realmente parâmetros dos transformadores. Eles
+
+são como tokens de mapeamento. Assim você pode deixá-los em outra memória. Portanto, o que você realmente precisa na memória da sua GPU é de 2 bilhões ou 4 bilhões. Por que fazemos isso? Assim, você poderá executar esses modelos em um telefone Pixel ou em qualquer outro telefone que você tenha. Você pode executar
+
+esses modelos e eles são muito robustos. Os modelos E2B e E4B possuem entrada de texto, vídeo e áudio, mas só realizam saída de texto. Eles conseguem pensar, programar, chamar funções, todas essas coisas legais. Tudo isso está rodando no seu celular agora mesmo. Você pode baixá-lo agora mesmo. Certo.
+
+Temos também outros dois modelos, que são maiores. Temos um 26B e um 31B. O modelo 26 é uma mistura de especialistas, o que significa que é como se tivéssemos muitos outros modelos trabalhando juntos, onde cada um deles é como um modelo 4B. Por que isso importa? Porque possui 26 bilhões de parâmetros, mas precisa de um espaço de quatro bilhões de parâmetros para realizar o trabalho. E
+
+isso torna o sistema acessível a muito mais hardware, para muito mais pessoas, e ainda assim continua bastante robusto. Mas o nosso modelo mais robusto é o 31B denso, que possui 31 bilhões de parâmetros. E isso é realmente muito forte. Se analisarmos nossa pontuação ELO no LM Marina, podemos ver que nossos dois modelos estão, creio eu, em quarto e sétimo lugar como líderes em modelos de código aberto . E se você comparar com os 20 ou 30 melhores, todos eles são pelo menos duas ou três vezes maiores que os nossos modelos, e em alguns casos, 20 vezes maiores. Portanto, estamos
+
+falando de uma quantidade desproporcional de inteligência em relação ao tamanho. Portanto, o modelo 31B é o que eu uso com muita frequência. Ele pode fazer basicamente tudo, desde codificação AIC até suporte multilíngue, tudo isso. Por isso, recomendo vivamente que você experimente esses. Eles são tão robustos que ambos são realmente ótimos para usar em um modelo implantado na nuvem. Eles
+
+podem ser executados no seu computador, mas se você os usar no seu servidor como ponto final para realizar seu trabalho, eles são muito bons. E você pergunta se este é o modelo mais inteligente? Não, não é. Eu vou... Sou muito
+
+parcial e adoro eles, mas conheço as capacidades deles. Mas a questão é: você precisa do modelo mais inteligente do planeta para resumir seus e-mails, realizar tarefas menores, ajudar na programação e executar funcionalidades de busca e interação com documentos? Provavelmente não. É por isso que esses modelos são tão bons, porque são mais baratos. São muito resistentes, mas têm um custo de funcionamento mais baixo. Eles exigem muito
+
+menos hardware. um 31B executando uma GPU. Os concorrentes precisam de 200 GB de memória, o que equivaleria a talvez quatro ou cinco GPUs. Como você pode ver, o preço aqui é realmente muito diferente. Um lugar fácil para você experimentar esses modelos é no AI.dev, onde você pode testar os
+
+modelos Gemini VO e todos os outros mods, exceto o Gemini G, que estão disponíveis nos modelos 26 e 31B. Você pode experimentá-los agora mesmo. Eles são gratuitos. Você pode brincar com ele. E eles conseguem fazer... Eu ia
+
+mostrar uma demonstração, mas não posso agora. Eles conseguem fazer coisas legais, que são visão, pensamento e execução de código, tudo ao mesmo tempo, certo? Vou tentar postar algo sobre isso mais tarde, mas dá para brincar com os modelos com bastante facilidade. E aí, agora vamos terminar a apresentação e depois vocês podem brincar com eles. E como eu estava dizendo, a inteligência por parâmetro que esses modelos trazem é muito boa, é muito, muito forte. E se
+
+usarmos a pontuação ALO ​​para o Lemarina, porque é um benchmark, é uma questão de preferência pessoal, certo? Podemos analisar os parâmetros acadêmicos. Eles são muito, muito fortes. Mas a forma como o modelo responde às suas consultas é muito importante, certo? É assim que seus clientes verão como você verá e interagirão com isso. É por isso que
+
+isso é tão importante. E por que tudo isso importa? Uma das razões pelas quais nos importamos tanto é porque queremos que o usuário tenha autonomia e, mais do que isso, estamos possibilitando a soberania. Soberania significa que você é dono do modelo e pode adaptá-lo aos seus casos de uso, sem estar sujeito a, sei lá, perda de serviço ou a alguém dizendo "não, você não pode mais usar este modelo". Tudo está disponível para você, e uma das mudanças que fizemos no ano passado, até Gemma e outros, foi... Tínhamos nossa licença específica, uma
+
+licença Gemma, que é muito boa, adequada para fins comerciais e tudo mais, mas há um problema. Se você possui uma licença personalizada, não sei se você tem algum advogado por aqui. Bem, se eu disser que temos uma licença personalizada, seus advogados vão me olhar com aquela cara de "eu te odeio , Gus", e depois vão passar uns 18 meses fazendo um processo de licitação para entender a licença e tentar alterá-la. E isso nunca funciona. Portanto, é bastante difícil para instituições soberanas adotarem esse tipo de coisa. É por isso que
+
+passamos para a versão 2.0, para o Gemma 4 e para o futuro, e isso facilita muito a nossa vida e a sua, para convencer o seu departamento jurídico, digamos assim, de que "olha, nós possuímos este modelo, podemos usá-lo". Isso é muito importante e permite que muitas instituições soberanas usem nossos modelos. Temos alguns exemplos, por exemplo, aqui. A Ucrânia usa o Gemma em partes de seus serviços. Temos uma
+
+versão do modelo Gemma que foi ajustada para a Bulgária, era o seu LLM (Licensed Liability Management) para o país, baseado no Gemma 2. Estamos trabalhando para garantir que eles usem o Gemma 4. Agora também temos uma versão brasileira que é baseada no Gemma 3 e ajustada para o português. E o desafio desses modelos hoje é que, se você quiser ajustar o Gemma a um idioma específico, está se tornando muito difícil fazer isso. E o problema é que não está nas ferramentas nem nada do gênero, porque o modelo já é bastante robusto nessas linguagens. Portanto, qualquer ganho que
+
+você tente obter pode não ser alcançado. Então você pode gastar muito tempo para conseguir apenas 1%. E talvez eu não saiba se é a melhor maneira de usar seu tempo. Então, isso é bom e ruim ao mesmo tempo, porque é bom que você possa usar automaticamente em muitos idiomas. Você pode experimentar agora mesmo e, se você acessar o Marina para idiomas, verá que muitos idiomas estão entre os dois primeiros e é um modelo 31B. É muito, muito pequeno,
+
+não é? Isso é muito bom. Dito isso, vou deixar meu colega continuar e mostrar algumas demonstrações. Obrigado, convidados. Então, uma coisa que eu acho realmente importante sobre esses modelos é que, quando você pensa em usar modelos abertos, você pensa em usar modelos proprietários.
+
+Estamos vendo uma mudança agora em direção a capacidades mais autônomas e aos tipos de tarefas que estamos tentando realizar. E isso acarreta um custo em tokens e na geração de tokens. Uma das vantagens de assumir a propriedade dos modelos é a capacidade de controlá-los ou, em casos onde já houve investimento em hardware, poder iterar sobre eles. Este gráfico à direita é do relatório sobre o estado da IA ​​feito pelo OpenRouter e mostra... bem, ele está um pouco pequeno para você
+
+neste diagrama, mas dê uma olhada no link. Uh mostra os diferentes tipos de tarefas que as pessoas estão realizando através do roteador aberto no momento e você verá que uma delas está aqui. Esta aqui, em termos de programação, está bem no meio do caminho e é uma das tarefas mais complexas em termos de geração de tokens, tanto de entrada quanto de saída . Portanto, quanto mais agentes trabalharem e realizarem esse tipo de tarefa para nós, que envolve custos muito altos de geração de tokens, mais benefícios teremos em poder controlar esse processo em si. Então, por exemplo, se você tem um laptop capaz de realizar uma tarefa específica, como processar um documento, analisar dados, fazer uma pesquisa ou, como o Gus mencionou, programar algo adequado, você tem uma GPU que pode usar para fazer essas coisas. Agora, algo semelhante ao que
+
+Gus disse sobre, você sabe, nós não necessariamente... ainda temos modelos de vanguarda para fazer as melhores coisas possíveis. Eu não recomendaria usar esse modelo para fazer uma arquitetura de sistema completa e um redesenho do seu aplicativo, certo? Não foi feito para
+
+isso. Mas ele é muito bom em seguir instruções específicas para tarefas como refatoração, análise e geração de código em pequenos módulos. Você pode delegar uma parte do trabalho para esses modelos, seja em uma única GPU ou no seu próprio hardware. A forma como pensamos sobre isso é como um conjunto de limites: quando chegamos ao ponto em que esses modelos são capazes de realizar a tarefa e, ao mesmo tempo, se encaixam no hardware adequado, conseguindo executá-la com a latência correta? Dependendo da tarefa do usuário, que precisa ser concluída em alguns segundos, ou de um processamento em lote, os limites podem ser ligeiramente diferentes. Além disso, é importante considerar o
+
+custo de execução, ou seja, se você já possui custos irrecuperáveis ​​em infraestrutura. Você está preparado para investir e operar com isso, seja alugando tempo de GPU ou algo semelhante? Portanto, essas serão muito específicas para a tarefa que você está tentando realizar. Mas o que você pode fazer com modelos abertos é pensar com muito cuidado sobre quais dessas tarefas você pode totalmente terceirizar ou assumir totalmente, em vez de depender apenas do uso dos melhores modelos possíveis para fazer isso na nuvem. E um exemplo. Então Gus falou sobre
+
+os diferentes tipos de hardware que podem executar essas coisas. Por enquanto, vou executar essa pequena demonstração em segundo plano . Agora temos modelos que funcionarão diretamente em dispositivos móveis e de borda . Este exemplo aqui foi desenvolvido pela equipe da Coremax. Um é um conjunto de habilidades do agente que o modelo está executando em um telefone. Então, vou silenciar o
+
+microfone por enquanto. Então, você pode conversar com o modelo, pode mostrar imagens para ele, pode mostrar o mundo ao seu redor, e pode dar comandos e conversar com ele. E o que isso demonstra é que consegue analisar um conjunto de habilidades que possui sobre assuntos relacionados ao telefone. Portanto, ele pode executar ações no próprio dispositivo. Assim, você pode acionar outros aplicativos, como aplicativos de calendário, aplicativos de mapas, ou definir suas próprias habilidades. E o que diferencia
+
+os modelos Gemma 4 da geração anterior é que agora eles conseguem raciocinar sobre quais ações precisam ser tomadas e, de forma confiável, definir essas chamadas de função. Então, o que este aplicativo permite que você faça é funcionar como uma espécie de área de recreação. Então, esta é a Galeria de IA do Google, disponível para iOS e Android, onde você pode experimentar e ver o que modelos deste porte são realmente capazes de fazer. Então, acho que este é o modelo de dois bilhões de parâmetros, mas também existe o modelo de 4 bilhões de parâmetros, dependendo do tamanho do seu hardware. E quando chegarmos aos desktops e GPUs únicas, como o Gus mencionou, é aí que você poderá usar os modelos 26 e 31B novamente no seu hardware local. E eu vou te mostrar como fazer
+
+isso daqui a pouco. Mas há um ponto crucial aqui: embora não estejamos pagando pelo preço desses agentes ou modelos em tokens, na verdade estamos pagando por eles em termos de custos de energia. Se pararmos para pensar, já que agora estamos considerando a utilização de GPUs, estamos pensando na utilização de MPUs no próprio hardware. Hum, quando você vai realizar essas tarefas? O usuário precisa de uma resposta imediata ao tirar uma foto ou é algo que você pode processar offline, em segundo plano, quando ele conectar o celular à noite?
+
+O que estou tentando dizer aqui é que os limites e a forma como você pensa sobre o uso desses modelos mudam quando se trata de dispositivos ou propriedade, porque você passa a pensar mais em como eles estão sendo executados e por que estão sendo executados. Sim , perfeito. E da mesma forma no âmbito empresarial, se você não tiver um hardware capaz de executar o modelo de 31 bilhões de parâmetros, poderá começar a pensar em reduzir a escala. Então, talvez se você quisesse usar um modelo com mais de 300 bilhões de parâmetros, antes precisaria de várias GPUs. Agora você pode pensar em usar um único H100 ou A100 ou até mesmo, em alguns casos, um L4. E, obviamente, os custos relacionados
+
+a isso também diminuem. Portanto, trata-se de um cálculo que você terá que fazer dependendo dos seus casos de uso. Mas existem maneiras de você expandir. Por exemplo, usar um desses modelos para atender, você sabe, uma pequena equipe ou uma empresa, dependendo do que você está tentando fazer. E o ponto final é que você também tem o componente de ajuste fino, que é o fato de que, como esses modelos podem ser personalizados, você pode implantar sua própria versão deles. Por exemplo, temos
+
+uma variante dos modelos Gemma chamada Medgema, que é especializada para casos de uso médico. Então, se você quisesse algo que operasse com dados privados que você mesmo pudesse controlar , agora você pode implantar isso de forma viável em uma ou talvez duas GPUs para executar isso, por exemplo, em um hospital inteiro. Portanto, vale a pena considerá-las para o caso empresarial. Bem, vou passar direto para as demos agora. Hum, eu te mostrei algumas demonstrações por telefone. Vou mostrar uma
+
+demonstração rápida aqui. Quem quer que levante a mão rapidamente? Quem já usou uma ferramenta chamada LM Studio? Ok, pouco menos da metade das pessoas. Portanto, o LM Studio é uma forma de você experimentar com modelos locais. E aqui está
+
+o modelo 26B. Portanto, este é o nosso modelo mais rápido, dentre os dois modelos maiores, com quatro bilhões de parâmetros ativados. E neste momento, considerando o contexto, provavelmente tenho cerca de 26 GB de RAM. E este é um Mac M4. Então, eu tenho memória unificada. Já cheguei a cerca de 48
+
+gigabytes. Ah, então eu posso executá-lo nesta máquina. E eu vou executar este terminal aqui mesmo. Vamos tentar . Ops. Apresentando minha demonstração antecipadamente. Vamos tentar
+
+novamente. Pronto. Então, vou executar um pequeno processo onde farei uma tradução rápida no meu dispositivo. Então, o que vai acontecer é que eu tenho um orquestrador aqui do lado, que, espero, vai ativar meu agente em um minuto. Vamos garantir que temos tudo pronto. Vamos ver o que a
+
+LM Studio está fazendo. Sim, está apenas processando no momento. E então vai distribuir essa tradução para todas essas janelas diferentes, e cada uma delas representa uma subentidade diferente. Então, isso está rodando no meu dispositivo e vai executar basicamente todas essas traduções de uma só vez. Então, eu anunciei o Gemma 4 e quero muito traduzir para todos esses idiomas diferentes. Então você verá em um
+
+segundo que, com sorte, enviará para lá, 3, 2, 1, e esperamos estar gerando traduções em um segundo. Pronto. Assim, você pode imaginar realizar qualquer tipo de tarefa ética em sua máquina local. Você poderia usar o programa para processar arquivos, fazer análises adicionais e, com sorte, em um minuto você verá que ele conseguirá compilar tudo isso e gerar uma página da web rapidamente, para que você possa ver os resultados através da tradução. Pronto. Portanto, existe
+
+também a questão da multilinguismo no modelo. OK. Ah, certo . Bem, para não perdermos tempo, quero apenas dizer que o próximo passo principal para explorar e testar esses modelos é tão simples quanto este código à direita. Você pode pegar qualquer interface compatível com OpenAI que você tenha e apontá-la para um serviço como Olama ou LM Studio, e simplesmente selecionar o modelo Gemma. Essa é toda a alteração
+
+de código necessária para, pelo menos, testá-lo. Portanto, a primeira coisa que recomendamos que você faça é integrá-lo aos fluxos de trabalho existentes para verificar o que o modelo consegue processar. Em que, exatamente, ele funciona bem? Para que precisaria de ajuste? O que está além da sua capacidade em termos da complexidade da tarefa. A próxima etapa
+
+é reforçar seus conjuntos de avaliação, porque, como você sabe, os benchmarks são ótimos para indicar as capacidades gerais, mas a realidade é que a qualidade do modelo depende de seu desempenho na sua tarefa, e não na tarefa de outra pessoa. Hum, outra coisa que mencionei muito brevemente é pensar em como você realmente disponibilizará esses modelos no final. Portanto, se você precisar executar sua própria GPU, precisará hospedá- la. Sim, você controla o tempo de atividade e inatividade do site, mas também existem custos de manutenção e outras coisas do tipo. Portanto, você precisa considerar isso como um dos fatores, assim como os custos contínuos, bem como quaisquer custos iniciais de investimento (capex) se você comprar infraestrutura ou hardware para isso. Em dispositivos móveis, por
+
+exemplo, você precisa pensar: se vou transferir tarefas para um telefone, o que estou dando suporte a isso? Que aceleradores eles têm? Qual a capacidade da memória RAM ? Assim, a conversa se torna um pouco mais complexa, mas há uma série de coisas que você pode desbloquear, como trabalhar offline ou trabalhar com dados privados dos usuários que nunca saem do dispositivo deles. E, por fim, se você quiser expandir isso para níveis empresariais, terá que pensar novamente no tipo de infraestrutura que está utilizando e quais serão os custos contínuos envolvidos. Mas de certa forma
+
+isso desbloqueia essa possibilidade. Então, resumindo, você pode usar esses modelos praticamente de qualquer maneira que imaginar. Experimente que tipo de tarefas são possíveis com ele. Use alguns dos parâmetros de referência para ter uma ideia do que é viável. Mas, na verdade, queremos ouvir seu feedback, saber como você se sai com essas ferramentas, como as aprimora e que tipo de problemas encontra . E nós também queremos te ajudar nessa
+
+jornada. Então, com isso, muito obrigado.

@@ -1,0 +1,161 @@
+---
+video_title: "Rewiring the State — Eoin Mulgrew, No. 10 (Downing Street)"
+video_id: ObNKGf9YR0g
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ObNKGf9YR0g
+video_date: 2026-05-18T17:00:06+00:00
+video_description: |
+  The cabinet office was about to spend one and a half million pounds on an outside law firm to analyze the UK statute book. One engineer embedded with the in-house legal team for two weeks instead. The tool now lives with that team and can be run whenever they want. Eoin Mulgrew from the Number 10 data science team uses that as a typical example, not a headline one.
+  
+  The talk covers what it actually takes to run a small insurgent technical unit at the center of government: market rate pay, a 0.7% acceptance rate, recruiting exclusively from outside the civil service, and an unusually direct mandate to go into departments and ship. The demos include a policy simulation tool, a delivery red-teaming PMO, two public dashboards that had never existed before, and a public service that went from idea to live in two months. The closing argument is a photo of a recent Harvard dropout and YC founder standing outside HMP Wormwood Scrubs holding the keys, two weeks into the job.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/eoinmulgrew/
+---
+[música] Tudo pronto
+
+? As pessoas conseguem me ouvir bem? Incrível. Legal. Obrigado. Sinto
+
+um certo constrangimento com o título grandioso. Bem, agora que tive que deixar assim por alguns segundos. Bem, enfim, quem aqui trabalha no governo? Posso perguntar? Levantem as mãos.
+
+Muito bom. Era isso que eu esperava. Você provavelmente já conhece bem algumas das coisas sobre as quais vou reclamar. Quem consegue imaginar algo pior? Tudo bem.
+
+Bom. O que é medido é melhorado, então faremos outra medição no final. Na verdade, não vou levantar a mão, caso mais pessoas se levantem . Olá a todos. Meu nome é Owain Mulgrew. Bem, eu
+
+trabalho na equipe de ciência de dados, aqui perto, no número 10 da Downing Street. Bem, eu lidero nosso trabalho de transformação intergovernamental , incluindo nosso programa de bolsas de estudo , que é principalmente sobre o que vou falar hoje. Sim , eu queria vir aqui contar o que estamos fazendo, na esperança de que alguns de vocês decidam participar , o que seria muito legal. Um breve resumo sobre nós. Então, a equipe de ciência de dados número 10, a 10 DS, foi criada durante a pandemia, em parte como uma resposta à pandemia.
+
+Nosso principal objetivo é garantir que as decisões mais importantes do país sejam baseadas nas melhores evidências possíveis. No entanto, estamos em processo de expansão bastante radical de nossa própria capacidade de engenharia e desenvolvimento de IA, não apenas com a intenção de impulsionar a adoção de IA no próprio número 10, mas também em partes estrategicamente importantes do estado. E a maneira como estamos fazendo isso é bastante inovadora em si mesma. Antes de entrarmos nesse assunto, um pouco de contexto para ambientar a situação. Sei que alguns de vocês estão vindo da Costa Oeste, etc. Bem, alguns de vocês podem
+
+não estar acompanhando as notícias. Acredite ou não, existem alguns desafios quando se trata da prestação de serviços públicos no Reino Unido. Bem, eu digo isso meio brincando, mas é algo bem sério, sabe? Neste momento, existem 7 milhões e 250 mil pessoas em listas de espera do NHS (Serviço Nacional de Saúde do Reino Unido). Creio que existam cerca de 350.000 processos judiciais acumulados
+
+. Atualmente, apenas uma em cada cinco decisões sobre pedidos de licenciamento de construção neste país é tomada dentro do prazo. Por trás de tudo isso, existe uma crise de produtividade no setor público que já era grave e só se agravou desde a pandemia. Existem diferentes estimativas quanto à dimensão desta crise. Bem, eu me baseei em um número do Instituto Tony Blair, que diz que há ganhos de produtividade anuais de cerca de 40 bilhões de dólares com a IA no governo. Mas é evidente
+
+para qualquer pessoa que trabalhe no sistema e para a maior parte da sociedade que, se há algum setor pronto para ser disruptado nos próximos anos, esse setor é o governo. E eu a chamo de indústria, e não de organização. É uma indústria grande e complexa, com 400.000 pessoas. E acho que devemos analisar a situação sob essa perspectiva.
+
+Infelizmente, porém, o governo tradicionalmente não tem se destacado na formação e no desenvolvimento de equipes técnicas de alto desempenho. Muitos desses problemas não são específicos do Reino Unido. Muitos dos nossos amigos americanos já devem estar familiarizados com eles. Bem, alguns dos motivos mais comuns são , e o salário é um deles, óbvio. Isso torna bastante difícil para nós competir pelos melhores talentos disponíveis e, posteriormente, retê-los. Mas também existem algumas barreiras,
+
+tanto reais quanto percebidas. Bem , o governo é uma organização muito hierárquica em muitos aspectos. Há muita burocracia. Como resultado, muitas vezes pode se mover incrivelmente devagar. Não apenas por esses motivos, mas também pelo fato de que existem regulamentos e salvaguardas em vigor que são muito sensatos, porque, em última análise, somos responsáveis ​​perante o público e o Parlamento.
+
+Mas tudo isso pode resultar em um sistema que nem sempre é tão atraente para profissionais técnicos de alto desempenho , especialmente o tipo de pessoa que queremos, pessoas que estão ansiosas para deixar sua marca no mundo. Então, o que fazemos nesse caso, ou o que fazemos a respeito? Mudar muitas dessas coisas é como um desafio sistêmico. É como virar um petroleiro, o que é um clichê um tanto batido, mas é um bom clichê. Somos uma pequena equipe no centro.
+
+Sabe, manobrar aquele petroleiro está além da capacidade de qualquer equipe, muito menos de uma pequena startup como a nossa. No entanto, acho que Calum Beer, nosso diretor de IA , encerrará a conferência esta noite. Essa é exatamente a função dele, e ele está fazendo um ótimo trabalho no Departamento de Ciência e Tecnologia para atingir esse objetivo, então recomendo que todos compareçam. Mas existe muita vontade política neste momento para fazer as coisas acontecerem e para garantir que, desta vez, estejamos aproveitando as novas tecnologias para realmente fazer a diferença em alguns desses problemas que acabei de mencionar. Então, a pergunta que nos fizeram foi: "Bem, o que vocês podem fazer a respeito?"
+
+E essa era, de certa forma, a resposta. Como eu disse, somos uma equipe bem pequena no centro. Em relação ao que podemos fazer, dissemos: "Ok, então vamos tirar as amarras." Vamos basicamente estabelecer uma pequena unidade insurgente bem no centro, que não esteja sobrecarregada por algumas das restrições que acabei de descrever . O que quero dizer com um modelo de insurgência?
+
+Então, estamos montando uma nova equipe. Bem, opera com um mandato do número 10. Operamos com um nível excepcionalmente alto de apoio político para entrar nos departamentos e fazer as coisas acontecerem. Conseguimos pagar preços de mercado dentro de limites razoáveis. Não estamos necessariamente pagando dinheiro do Meta .
+
+Mas a questão é que muitas pessoas aceitariam de bom grado cortes salariais se tornássemos economicamente viável vir trabalhar em alguns desses desafios, porque elas têm interesse, certo? Nós também operamos com um nível de autonomia excepcionalmente alto . Conseguimos ser bastante oportunistas em relação aos desafios que assumimos, entrando em um departamento e identificando oportunidades para causar impacto. Além disso, este é crucial. O processo de recrutamento padrão do serviço público é otimizado para muitas coisas, mas não necessariamente para recrutar talentos técnicos excepcionais. Bem,
+
+nos foi permitido recrutar do nosso jeito. Temos um processo seletivo bastante rigoroso, focado exclusivamente em habilidades técnicas. Hum, temos uma taxa de sucesso de cerca de 0,7, 0,8%. E o mais interessante de tudo, e é isso que nos diferencia, é que recrutamos exclusivamente pessoas de fora. Uma das melhores maneiras de causar impacto é levando pessoas como as que participaram desta conferência para o governo, porque o que aconteceu no passado é que elas tendem a não sair e algumas acabam criando suas próprias equipes. Vou falar sobre
+
+isso mais tarde. Mas, falando nisso, não quero dar a impressão de que estou simplificando demais. Muita gente de fora, principalmente da indústria de tecnologia, acha que só isso já é importante, que se você tiver apoio suficiente dos ministros, você pode entrar, sabe, quebrar os silos de dados, você pode fazer o que quiser. Na prática, é muito mais difícil do que isso, senão todo mundo estaria fazendo. E ainda é muito cedo para tirar conclusões. Parece que
+
+estamos apenas começando essa jornada, mas descobrimos que há um enorme interesse por ela. Então, temos vindo recrutando pessoas dos laboratórios. Temos contratado pessoas das grandes empresas de tecnologia e dos principais institutos de pesquisa. Temos acolhido empreendedores em série que foram selecionados pela YC. Pessoas que provavelmente não imaginavam que estariam trabalhando no serviço público nesta mesma época do ano passado.
+
+Mas, pensando bem, as decisões que chegam à mesa de um ministro estão entre as coisas mais importantes com que você poderia trabalhar. Portanto, se você tornar isso economicamente viável e prometer às pessoas que as colocará em um ambiente onde elas poderão fazer seu melhor trabalho, isso torna tudo muito interessante. Vale ressaltar também que queremos recrutar missionários, não mercenários. Então, o salário importa, mas não é o único fator, porque um salário não vai te fazer levantar da cama de manhã quando as coisas ficam difíceis, e fazer o que fazemos tende a ser difícil. Em termos de como operamos, bem, novamente, é um pouco diferente das equipes governamentais normais. Bem,
+
+há uma abundância de oportunidades fáceis de aproveitar em todo o sistema. Como você pode imaginar, é uma organização tradicional. Existem muitos casos de uso simples de IA que você pode implementar em poucos dias para economizar dinheiro, melhorar a prestação de serviços e tudo mais . Nesse quesito, em grande parte, fazemos tudo nós mesmos. Essa é a parte mais fácil e mais gratificante.
+
+Enquanto conversamos, temos os primeiros engenheiros da história do número 10 de Downing Street destacados para trabalhar diretamente com as equipes de políticas públicas e operacionais , equipes de assessores políticos, equipes de advogados, equipes de comunicação, pesquisadores de opinião pública e tudo mais. Eles observam seus fluxos de trabalho, seus pontos problemáticos e desenvolvem soluções em conjunto com eles para ajudá-los a realizar seu trabalho com mais eficiência e eficácia. E, de modo geral, transformar ideias em implementações em algumas semanas e disponibilizar novas funcionalidades aos usuários rapidamente. E também alguns dos outros problemas que discutimos. Eu mencionei, sabe, alguns dos enormes atrasos no sistema.
+
+Isso não é algo fácil de se alcançar. Isso é algo realmente complicado e, normalmente, quando se trata disso, adotamos um modelo de parceria, no qual alocamos alguns dos nossos funcionários para outra equipe ou outro departamento, às vezes por períodos prolongados. E vou dar exemplos de ambos daqui a pouco. Vou começar com algumas das coisas mais fáceis de se fazer . Vale a pena destacar que muitas das coisas que fazemos no número 10 eu realmente não posso mostrar para vocês.
+
+Eu sei que isso parece uma desculpa esfarrapada , mas acredite em mim. Algumas coisas são um pouco delicadas. Estamos realizando muita automação de fluxos de trabalho , ampliando as equipes existentes, como você pode imaginar. E aqui estão alguns outros exemplos de coisas que fizemos apenas nas últimas semanas. Então, a simulação de políticas públicas acabou se revelando muito interessante. Então,
+
+aqui podemos permitir que as equipes de políticas públicas no prédio testem o impacto de diferentes decisões políticas antes que elas sejam tomadas. Hum, acho que neste aqui estamos analisando diferentes decisões sobre o crédito universal e como elas podem impactar... Ah, pausei.
+
+Como elas podem impactar as finanças domésticas, entre outras coisas, mas isso pode ser aplicado a uma ampla gama de assuntos. Não se trata necessariamente de substituir a análise humana . Não estamos nos eximindo do trabalho. Mas o que isso significa é que muito mais decisões na construção civil estão sendo tomadas com base em modelos de alta qualidade e em um ritmo muito mais acelerado do que seria possível de outra forma .
+
+E esta é mais uma, das últimas duas semanas. Então, o gabinete do primeiro-ministro estava prestes a gastar 1,5 milhão de libras para contratar uma firma externa de advogados para fazer uma análise de toda a legislação do Reino Unido. Bem, admito que o código penal é tão extenso quanto quatro elefantes africanos em termos jurídicos, mas ainda assim é um caso de uso de IA bastante óbvio. Então, íamos gastar 1,5 milhão. Em vez disso, um de nossos engenheiros se integrou àquela equipe de advogados internos por algumas semanas.
+
+Os benefícios disso não se resumem apenas à economia de dinheiro. Obviamente, 1,5 milhão não é pouca coisa. Mas também velocidade. Então, o problema com a análise que iríamos pagar é que ela poderia ser feita mais lentamente do que o ritmo em que novas leis e regulamentos são criados. O que significa que você terá que fazer isso novamente após um certo período de tempo. Então agora temos essa
+
+ferramenta que a equipe pode usar e pode fazer isso quando quiser, sem demora . E também podemos, potencialmente, torná-lo de código aberto e compartilhá-lo com outras equipes do governo. Hum, e aqui está mais uma. Então, no número 10, somos responsáveis ​​pela execução de todos os principais projetos e compromissos do programa eleitoral do governo. Isso significa que recebemos muitos relatórios sobre o andamento de diversas atividades. Bem, esta é uma pequena
+
+ferramenta de teste de intrusão (red teaming) que a equipe criou há algumas semanas e que agora está sendo usada diariamente. É basicamente um PMO que colocamos no bolso das equipes de entrega na sede. Não apenas para que possam analisar os relatórios de entrega que chegam até elas , mas também para que emitam um segundo parecer sobre as equipes que os elaboram. Então, isso alertará os tomadores de decisão no número 10, sabe, se esta equipe, este departamento, normalmente tem um viés de otimismo. Hum, será que eles tendem a classificar seus riscos como "âmbar" de forma desproporcional ? E as medidas de mitigação que eles implementam costumam ser
+
+eficazes ou não? Além da adoção da IA, ter essa capacidade internamente é realmente muito bom. Acho que a transparência é um aspecto em que este país pode melhorar um pouco . Até alguns meses atrás, o governo nunca havia publicado um painel de controle público para que vocês pudessem ver como estamos nos saindo em termos de entregas. Mas agora já publicamos dois em dois meses. Acho que alguns de vocês talvez
+
+conheçam aquele da esquerda. Este é o Plano de Ação para Oportunidades em IA que Matt Clifford elaborou há cerca de um ano . É assim que o Reino Unido está se saindo em relação à implementação de computação e, de modo geral, à preparação do país para ser líder na adoção de IA. E agora você pode acessar a internet e ver como estamos nos saindo na prática . Sim . Além disso, outra coisa que
+
+não posso mostrar agora é que, daqui a duas semanas e meia, um dos nossos ministros vai lançar um novo serviço público que milhões de pessoas no país vão usar. Não posso entrar em mais detalhes e roubar a cena deles. Bem, nas palavras deles, é difícil acreditar que isso não existisse antes. Presumi que algo semelhante já existisse. Bem, isso é algo que pensamos há dois meses e que agora será implementado e usado pelo público. Não é
+
+exagero dizer que, normalmente, no governo, um projeto como esse pode ficar em fase de descoberta por um ano ou mais. Então, sim . Vamos então abordar os assuntos relacionados à mídia. Então, essa é uma oportunidade fácil de aproveitar dentro do prédio. Bem, agora eu quero falar sobre alguns dos trabalhos que estamos realizando para ajudar outras equipes em diferentes partes do ecossistema.
+
+Bem, para os propósitos desta apresentação, vou me concentrar apenas em três dos nossos parceiros. Um deles é o AI Safety Institute, o Incubator for AI e o Just AI. Acho que praticamente todos nesta sala conhecem a AISI. Grande vitória para o Reino Unido. Foi ótimo termos feito isso . Somos o principal órgão governamental
+
+para avaliação de modelos de vanguarda e também fomos os primeiros no mundo. E desde o primeiro dia ficamos muito orgulhosos de apoiar essa iniciativa, colocando alguns dos nossos colegas lá para ajudá-los a estruturar seu fluxo de trabalho em cibersegurança, entre outras coisas. Não vou me alongar muito sobre isso. Mas um dos nossos primeiros colegas foi o Dr. Harry Coppock. Acho que o Harry não está aqui, mas o
+
+colocamos na AISI desde o primeiro dia. E ele liderou o uso da ferramenta Inspect, entre outras coisas. Então, existe um ambiente isolado do CFI para testar o que os agentes de IA realmente fazem quando recebem autonomia e ferramentas. E a Incubadora de IA, que agora está localizada em Washington, D.C.
+
+Quem aqui está familiarizado com a Incubadora? Algumas pessoas. Então, a Incubadora é essencialmente um projeto derivado do nosso programa. É uma equipe que existe no Departamento de Ciência e Tecnologia e que faz exatamente o que o nome indica. Ela fomenta novas soluções de IA para uso em todo o setor público. A
+
+equipe original de descoberta, e a maior parte da equipe técnica, eram nossos colegas. E o mais legal agora não é só ver o trabalho que eles produziram enquanto estavam lá, mas também o fato de podermos colaborar com eles para ampliar parte desse trabalho. Aqui está um exemplo recente. Então, essa ferramenta se chama Extract. Então, várias pessoas da nossa equipe trabalharam no Extract. É uma
+
+colaboração com a DeepMind. É baseado no Gemini e essencialmente digitaliza grandes partes do processo de solicitação de planejamento , especialmente aquelas partes que atualmente são em grande parte manuscritas, incluindo mapas desenhados à mão também. Isso foi apresentado pelo Primeiro Ministro na London Tech Week do ano passado e estamos atualmente em processo de implementação em todas as autoridades locais da Inglaterra. Como eu disse, atualmente apenas um em cada cinco pedidos de licenciamento urbanístico são decididos dentro do prazo. Isso tem um impacto enorme no crescimento econômico, e o crescimento econômico é basicamente o maior desafio que este país enfrenta neste momento.
+
+Portanto, qualquer coisa que possamos fazer para reduzir esse impacto é realmente significativa. Acredito que, em termos de aspiração, isso nos levará a um ponto em que cada vez mais pedidos de planejamento possam ser decididos automaticamente por IA. E depois outra interessante. Hum, isto é muito atual. A desigualdade educacional é um grande problema não só no Reino Unido, mas em outros lugares também. Muitos de vocês já devem ter
+
+lido artigos sobre tutores de IA. É um momento realmente emocionante. A perspectiva de poder, de certa forma, igualar as oportunidades e colocar tutores de nível internacional à disposição de todas as crianças, independentemente de sua origem socioeconômica, é muito animadora. Mas é algo que precisa ser feito com muito cuidado. Então, atualmente estamos trabalhando na elaboração de salvaguardas e na avaliação de vários modelos de fronteira em comparação com parâmetros de referência. Não se trata apenas de
+
+garantir que as crianças possam interagir com esses itens em segurança em um ambiente de sala de aula, mas também de avaliá-los de acordo com várias métricas. Penso que, neste caso, o parâmetro relevante é a carga cognitiva imposta ao aluno. E por último, mas não menos importante, os novatos da área, a Just AI. Alguns de vocês podem ter estado aqui ontem para a palestra Just AI . Tinha alguém aqui? Sim.
+
+OK, bom. Para a maioria de vocês, isto é novidade. A Um Just AI é uma nova equipe que foi criada no Ministério da Justiça, alguns dos quais estão lá. Olá. Hum, hum, novamente, eu não diria que é um spin-off do programa de rádio, isso nos daria crédito demais. Mas o fundador da Just AI é
+
+um dos nossos ex-colegas, Dan James, que está fazendo um trabalho brilhante por lá. E estão enviando engenheiros de campo para prisões e outras partes do sistema de justiça criminal. Então, estamos adotando uma abordagem semelhante à que usamos no número 10, com pessoas da área de políticas públicas, comunicação e direito, mas, em vez disso, elas estão se integrando às equipes de agentes de liberdade condicional e diretores de presídios. E eles estão realizando um trabalho muito interessante. Não posso entrar em muitos detalhes, mas a maior parte se resume a usar a IA para impedir o fluxo de drogas para as prisões, encontrar maneiras de otimizar processos que atualmente são bastante manuais e envolvem muitas pessoas, e, de modo geral, melhorar a segurança dentro do sistema prisional.
+
+Hum, e um desses AFEs está ali. É o Will. O Will é um dos nossos colegas atuais. Desculpe, Will, eu te envergonhei . Eu adicionei sua foto ontem à noite porque achei que seria um bom ponto para encerrar. Bem, para
+
+vocês terem uma ideia, há alguns meses o Will estava na Califórnia a apanhar sol. Ah, esse é ele do lado de fora da prisão de Wandsworth em um dia chuvoso. Bem, sim, Will abandonou Harvard, fundou uma empresa, entrou na Y Combinator, ganhou um pouco de dinheiro, mas quis vir trabalhar para nós. E essa é a segunda semana dele no trabalho, e ele está do lado de fora de uma prisão com as chaves da própria prisão, prestes a entrar. E é exatamente isso que estamos tentando fazer com este programa.
+
+Você provavelmente fez coisas boas na indústria, isso é brilhante. Venha se juntar a nós, e lhe daremos as chaves do estado e veremos o que você é capaz de fazer. Então, sim. Olha, ainda é muito cedo . É uma espécie de experimento o que estamos fazendo.
+
+Mas acho que as provas disso até agora mostram que pequenas equipes de elite podem, de fato, alcançar muita coisa . Bem, nós já estamos economizando dinheiro. Já estamos implementando novos serviços públicos em uma velocidade sem precedentes. Bem, já estamos reformando os serviços públicos de linha de frente e já estamos colocando novas capacidades de IA nas mãos de outras equipes no topo do governo. Então, sim. Para
+
+surpresa de ninguém, isto era uma proposta de recrutamento. Estamos contratando. Então, por favor, assine o código QR e eu estarei aqui o resto do dia se você quiser vir conversar. Obrigado. [aplausos]
+
+Eu... eu acho que tenho tempo para algumas perguntas, talvez. Alguém pode me dizer se não for isso.
+
+Ligações? Ah,
+
+então, em um dos exemplos anteriores que você mostrou, havia um chat para explicar políticas e, bem, não explicar, mas tentar diferentes projeções e ver como elas se comportariam. Hum, você tem que lidar com... bajuladores e bajulações? Bem, considerando que, por exemplo, se
+
+você tiver um usuário que não seja muito versado em IA, e que apenas queira ouvir o que deseja ouvir, ele pode direcionar a ferramenta para algo como: " Olha, eu sou um gênio absoluto" . Minha política vai ser fantástica, apesar de a política ser realmente ruim, mas a IA... Sim, sim, sim. É basicamente isso.
+
+Devo reduzir o imposto de renda para 0%? Você tem toda a razão. Sim, esse é um risco muito real. Bem, não é algo que tenhamos encontrado com muita frequência, mas isso só acontece porque, digamos, revisamos os modelos minuciosamente antes de disponibilizá-los aos usuários. Também oferecemos bastante capacitação profissional. Então, assim como
+
+muitas das equipes com as quais trabalhamos, estamos criando ferramentas para elas. Eles podem ser advogados, sociólogos, professores, ou algo do tipo. Então, nós os orientamos sobre alguns dos riscos que isso apresenta. Sim, é uma boa pergunta. Obrigado.
+
+Olá. Muito obrigado pelo discurso. Ah, eu sou Jack, da Accenture. Acho que você superou nossa proposta de contratação, mas, bem, nós também vamos tentar. Bem, minha pergunta em relação às políticas públicas é a seguinte: à medida que esse modelo de FDE (Educação de Força de Trabalho) avança e realmente gera impacto, como você vê o fato de que, como você disse, ainda é um experimento em estágio inicial?
+
+Como você vê o início da expansão e, essencialmente, o início do relacionamento com os governos centrais, com os governos locais, com as diferentes linhas partidárias e assim por diante? Esse tipo de "Sim, sim" é muito real. postura governamental, postura humana. Como você acha que isso vai se desenrolar? Sim, com certeza. Então, em termos de
+
+escalabilidade, acho que no final das contas eu disse: "Ah, sabe, podemos fazer bastante coisa", e algumas das pessoas que se juntam a nós acabam criando suas próprias equipes, o que é ótimo. Basta virar o próprio petroleiro? Não, possivelmente com o tempo, mas levaria muito tempo, e precisamos resolver esses problemas mais rapidamente. Bem, nós estávamos pensando nisso. Bem, acho que, sendo realista, algumas dessas coisas exigem intervenção estratégica. Então, precisamos mudar
+
+a forma como o resto do governo funciona. Parte do acordo que fizemos com os ministros foi, basicamente, permitir que os libertássemos das amarras, que criássemos uma pequena equipe no centro que seguisse regras diferentes e a usássemos como prova de conceito. Então, isso é quase como um episódio piloto. Eu gostaria de ver muito do que estamos fazendo se tornar a norma, se tornar rotina. No momento, isso é basicamente uma gambiarra para burlar o sistema. Então, precisamos mudar isso em
+
+primeiro lugar. Hum, acho que também, se estivermos falando realmente de escala, eh, falamos sobre alguns casos de uso bastante específicos ali. Bem, acho que o que queremos fazer nos próximos 12 a 24 meses é realizar mais trabalho horizontal. Analisando os processos. Então, eu também deveria explicar isso para as pessoas, tipo, quando você pensa no serviço público, provavelmente pensa em pessoas que elaboram políticas públicas trabalhando em alguns dos prédios por aqui que você pode ver pela janela. Isso representa
+
+uma fração muito pequena do funcionalismo público. São cerca de 400.000 pessoas. A maioria deles são operadores de call center, são guardas prisionais, enfermeiros, etc., etc. Há muitos processos envolvidos
+
+, seja a transcrição, que todo policial dirá ser o seu maior pesadelo, ou aqueles enormes call centers do DWP e do HMRC. Então, sim, se quisermos aumentar a ambição, gostaria de ver a gente buscando mais casos de uso horizontais que possam ser aplicados em massa em todo o sistema. Sim, desculpe, essa resposta foi um pouco longa. [risos] Uh, acho que esta é a última. Sim.
+
+Pode gritar se quiser. Depende de você.
+
+Ah, sim, eu trabalho para uma empresa de tecnologia educacional que, entre outras coisas, está criando tutores de IA. Então, adoraria conversar mais sobre isso com você. Mas uma coisa que descobrimos, quero dizer, o grande problema com a maioria das crianças é que, você pode criar o melhor tutor de IA do mundo, mas o verdadeiro problema é a motivação. Sabe, se você sentar uma criança de 12 anos na frente de um computador, ela fará de tudo para evitar aprender. Então, minha pergunta é a seguinte: em primeiro lugar, estou interessado em saber mais sobre qual é a visão do governo em relação a isso. Isso vai ser implementado
+
+nas escolas? Será que as crianças vão ficar sentadas em frente aos computadores usando-os? E em segundo lugar, como se resolve esse problema de motivação? Sim, com certeza. Então, no momento, acho que nosso plano não é necessariamente desenvolver produtos que concorram com os seus, mas sim estabelecer parâmetros e diretrizes para que as escolas possam adotar os produtos que desejarem. Bem, em termos
+
+de adesão dos alunos, ainda não fizemos muito a respeito. O teste que você acabou de ver foi o nosso teste inicial, que foi realizado, creio eu, com 70 professores que, na época, representavam o papel de seus alunos. Bem, na verdade, sua experiência pode ser bastante valiosa. Bem, a gente conversa depois. Sou da Noruega. Então, é ótimo
+
+ver suas ambições, e tenho certeza de que muitos países em toda a Europa estão fazendo exatamente a mesma coisa. Você está realizando algum tipo de colaboração com outros países? Vivenciar e compartilhar ideias, etc. Sim, um pouco. Não, Noruega. Mas se você tiver contatos,
+
+ficarei muito feliz em conversar com eles. Sim , nós fazemos um pouco. Existem algumas equipes que fazem algo parecido com o que nós fazemos, embora de uma forma um pouco diferente. Bem, existem algumas iniciativas diferentes em andamento no governo dos EUA, que não estão muito longe de se concretizar. Coisas como essa força-tarefa , partes do serviço digital dos EUA, e também de Singapura. Conversamos bastante
+
+com Singapura. Mas sim, nós poderíamos fazer mais. Então, sim, se você tiver algum contato no governo norueguês, eu ficaria muito feliz em conversar sobre isso.
+
+Feito. [aplausos]
+
+[música]
