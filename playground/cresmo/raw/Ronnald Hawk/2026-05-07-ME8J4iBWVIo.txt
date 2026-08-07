@@ -1,0 +1,235 @@
+---
+video_title: "Seu Agente de IA Não Está Pronto Sem Isso | Evaluators"
+video_id: ME8J4iBWVIo
+channel_name: "Ronnald Hawk"
+channel_id: UCPiCs9REsEymr43a0ceL_BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=ME8J4iBWVIo
+video_date: 2026-05-07T17:02:59+00:00
+video_description: |
+  ––– Recursos & Educação –––
+  Comunidade (Engenharia de IA de verdade)  https://www.rhawk.pro/comunidade  
+  –––Serviços–––
+  https://www.rhawk.pro/empresas
+  
+  ––– Descrição –––
+  Não basta criar um agente de IA. Ele precisa funcionar. Neste vídeo, eu mostro como usar evaluators para transformar falhas em método, medir qualidade e evoluir agentes de IA até que eles se tornem confiáveis em produção.
+  
+  Você vai entender por que colocar um agente no ar não é o último passo, por que benchmarks públicos não dizem se a sua solução funciona e como criar métricas próprias para avaliar respostas, comparar modelos, reduzir custo e melhorar a consistência do sistema ao longo do tempo.
+  
+  Neste vídeo, você vai ver:
+  - O que são evaluators para agentes de IA
+  - Por que agentes de IA falham e como se preparar para isso
+  - Como usar LLM as a Judge para avaliar respostas
+  - O que é G-Eval e como ele ajuda na criação de métricas
+  - Como criar critérios, rubricas, thresholds e evaluation steps
+  - O que é um golden dataset e por que ele deve existir desde o dia um
+  - Como comparar resposta gerada com resposta esperada
+  - Como usar métricas para evoluir prompts, modelos, ferramentas e a própria harness
+  - A diferença entre benchmark público e métrica real do seu produto
+  
+  Se você quer criar agentes de IA, automações inteligentes, sistemas com LLMs e soluções prontas para produção, este vídeo vai te mostrar uma das partes mais importantes da engenharia de IA: medir se o seu agente realmente funciona.
+  
+  ––– Playlist –––
+  Playlist IA:   https://www.youtube.com/playlist?list=PLk6saMUFiINn0Y0CnynRthzCCC6e-juJY  
+  Playlist Negócios: https://www.youtube.com/playlist?list=PLk6saMUFiINl-TQpZjq6isCdhw8eZ7c9P
+  
+  ––– Capítulos –––
+  
+  00:00 Introdução  
+  01:32 Colocar um agente no ar não basta  
+  02:18 O erro de confiar apenas em benchmarks públicos  
+  04:48 Por que sua solução de IA vai falhar  
+  08:21 Como medir qualidade em sistemas com LLM  
+  10:24 LLM as a Judge  
+  11:30 G-Eval e Chain of Thought  
+  13:19 Demonstração prática de um evaluator  
+  14:09 Critérios, evaluation steps e rubricas  
+  18:33 Golden dataset e respostas esperadas  
+  22:02 Rodando o evaluator na prática  
+  23:49 Score, threshold e reason  
+  27:15 Métrica própria vs benchmark público  
+  
+  ––– Social –––
+  Instagram:   / rhawk.pro  
+  Linkedin: https://www.linkedin.com/in/ronnald-hawk/
+  
+  #AgentesDeIA #LLM #AIEngineering #Evaluators #LLMasAJudge #ContextEngineering #Automacao #Chatbot #ArquiteturaDeSoftware #Harness #GEval #InteligenciaArtificial
+---
+Não basta criar um agente, ele precisa funcionar. E quando eu digo funcionar, eu quero dizer duas coisas. Um é colocar no ar. E dois, é garantir que suas respostas sejam consistentes e confiáveis. Nesse vídeo, você vai entender sobre evaluator e vai notar também que se você começar a aplicar o que eu vou te mostrar aqui agora, você tá na frente de 99% das pessoas que criam soluções de a. Eu sou o Hulk. Eu
+
+ajudo indivíduos e empresas a construírem soluções de e lucrarem com isso. Ambos os links estão aí na descrição. Recusas imitações. Bora pro vídeo. Lá para meiados de 2023, início de 2024, era um mistério a questão de colocar uma solução de IA no ar. E
+
+quando eu digo IA é IA generativa. A gente não sabia muito bem comoar lidar com a API. A gente não sabia muito bem como lidar com memória. O tempo foi passando, a gente não sabia lidar muito bem com contexto. E esses problemas foram resolvidos. Se você olhar aqui no
+
+meu canal, tudo que eu faço é compartilhar como eu aprendi e como eu faço. Se você tá na comunidade, nós temos exemplos lá, mais de um de como construir um sistema de ponta a ponta. E como quando eu digo sistema, eu quero dizer o seu back end, o seu front end, o seu banco de dados, a sua observabilidade. Você passa a ser dono do sistema. Nós estamos na fase agora que isso não é mais um mistério. E quem
+
+de fato quer construir, constrói, não fica arrumando desculpa, falando que é difícil, sei lá o quê. Não é difícil, é engenharia. Como toda engenharia, existem certos cuidados que você tem que tomar. Acontece que colocar no ar não é o último passo e esse é um engano que principalmente quem vende engenharia de software tradicional tem dificuldade de entender em relação às soluções de IA. Que é a solução de IA? Diferente de uma
+
+IPI tradicional, né, que você testa funciona ou não funciona, ela te traz novos desafios e essa é a disciplina que nós todos estamos explorando em tempo real. Não adianta você achar que você vai entrar numa pós-graduação, num mestrado, e você vai aprender o que existe de mais novo no mercado, porque o mercado está se formando agora, tá? E a próxima fase desse mercado é garantir que as respostas desses sistemas, como eu citei aqui, sejam consistentes e confiáveis, tá? E como que a gente faz isso? Uma das tentações mais comuns no mercado é olhar benchmark público.
+
+Então, saiu um novo modelo, aí vem isso, muda tudo. Ai, meu Deus do céu. E isso é um erro assim muito claro. E dá para notar quem é iniciante e quem não é, né? Por quê? Você não compara
+
+um modelo com um outro olhando um benchmark se você tá criando a sua solução. E eu tô falando aqui para você que cria solução na tua empresa ou tá criando um negócio e parará. Correto, Ronald? Mas você não faz coding? Não existe. Uma coisa é Vibe Coding, separa
+
+isso da tua cabeça. Outra coisa é engenharia de ar que a gente tá fazendo. Nós estamos construindo produtos e serviços usando LLMs. Nós estamos em um outro mundo. OK. Show de bola. Tá bom? E
+
+a gente olha isso aqui e aí toda semana vai ter um lançamento de modelo, vai ter uma notícia sensacionalista e você fica perdido. Mas se você notar com com um olho é treinado, você vai ver aqui que, por exemplo, eu tô gravando esse vídeo aqui em 2026, quase meados de 2026 e a gente tem aqui no topo da lista o GPT 5.5, mas você tem aqui lá pro finzinho, você tem o modelo, como eu já falei aqui várias vezes, do Quin 3.527B 527B com 42 aqui de inteligência, né, no index geral. A gente vai chegar lá e vai entender o que que é um um índice, né, uma métrica, tá? E se você notar aqui, a
+
+gente tem um modelo aí, eu não sei quanto tempo ele tem, um ano, um ano e meio, que é o Cloud Hikon. Na época, muita gente passou a adotar ele por conta do hype da Antropic para criar as próprias soluções. Então se você tinha um chatbot, pessoal porque ele é melhor, né? E na verdade isso não é mais real nos dias de hoje. Modelos menores, principalmente os modelos densos e modelos open source, aparentemente nessa altura do campeonato, estão há 6 meses atrás dos modelos líderes. E isso gera
+
+uma confusão muito grande no mercado, acreditando que você sempre precisa do modelo mais caro para criar solução, o que faz com que a sua solução seja inviável financeiramente. Isso porque você tá se comparando com a Antropic, você tá se comparando com a Open Ai, eles não são seu concorrente, ok? Então tira isso da sua cabeça. Essas métricas aqui, quando você vê são legais para você ter uma ideia, mas não é o que você quer para a sua solução. Tira isso da tua cabeça. Você a partir de agora vai
+
+entender como criar sua métrica e porque ela é importante. Vamos lá. Primeiro ponto, você vai falhar. E quando eu falo você vai falhar, é a sua solução vai falhar. Você vai criar a sua solução e ela vai falhar. Ronald, como
+
+assim? Você tá sendo pessimista? Nada a ver. Isso aí tem duas opções de você não ser, entre aspas, pessimistas. Ou você ainda tá fascinado com a mágica do do reino da fantasia que te venderam há dois anos, né? Martelaram. E eu entendo
+
+se você tá nessa fase, tudo bem. O que eu quero te mostrar é que existe a realidade do mercado. A realidade do mercado não é a realidade do marketing que fizeram, ok? Beleza? Não quer dizer que não funcione. Funciona muito bem,
+
+com certos cuidados, tá? Ou a segunda é que você é o iniciante, né? Segunda não, essa ainda é a primeira. Você é um iniciante, você tá fantasiando ou você é um gênio. Você encosta, você cria e ele funciona magicamente. Aí beleza. Se você
+
+é um gênio, realmente esse vídeo aqui não é para você. Eu tô falando com pessoas que criam e vão falhar, que são 99.999% das pessoas. Beleza? Show de bola. Isso
+
+é um fato. A falha vai acontecer. E o que que a gente pode fazer? Um chorar e falar: "Ai, não funciona aí, é uma porcaria. Não dá para construir a solução. É muito difícil. Ai, Deus! Ó
+
+vida, ó azar. Você pode fazer isso, nada vai te impedir. Ou então você se comporta como profissional e resolve o problema. O que o profissional faz é resolve o problema, gera valor, faz dinheiro. É basicamente um pipeline bem definido. É basicamente assim que
+
+funciona. Beleza? Então, sabendo que a falha vai acontecer, sabendo que isso não é uma surpresa, não é? E não funcionou direito, não, não vai funcionar direito. Quando você começar a fazer, você pode desde o início se preparar para esta falha e tornar esta falha o método que a sua solução vai se tornar boa e perfeita ao longo do tempo. E
+
+grava bem isso que eu tô falando. Ao longo do tempo, o trabalho de engenharia de A não é fiz a solução e entreguei. Se você comprou uma solução de alguém que o cara pegou e te entregou, você sabe que você ou você vai ter que evoluir essa solução por conta própria ou então a tua solução vai ter problema já já. E tudo bem, tá? A gente tá numa fase de amadurecimento do mercado, isso faz parte da das lições duras que a gente aprende e é assim que funciona, tá? E
+
+por que que você quer fazer isso? Você quer garantir qualidade para lançar produto e serviço, vender e escalar com segurança. Nada pior do que você botar uma solução no ar e você ficar tremendo assim, sabe? Será que tá funcionando? Será que tá funcionando? Será que tá
+
+funcionando? Será que tá funcionando? É muito melhor você saber que tá funcionando ou que não tá funcionando. Você saber onde tá a limitação e onde você precisa trabalhar. O que você não consegue medir, você não pode melhorar.
+
+No mundo de engenharia de software tradicional, a gente cria lá testes, por exemplo, para uma API e a gente sabe se ela funciona ou não. E a gente bota no A, a gente cria teste de carga. Você tá na comunidade, por exemplo, você já viu como a gente faz um teste de carga num sistema de A? A gente consegue ver todas essas coisas de maneira determinísticas. Só que quando a gente tá lidando com LLM e ela tem eh a sua própria personalidade, né? Ela às vezes dá
+
+resposta de um jeito e às vezes com a mesma pergunta ela responde de outro jeito. Nós temos que ter outros métodos para verificar essa consistência, tá? E eu falei bastante disso nesses dois vídeos aqui, se você ainda não viu, né? No vídeo eh esse vídeo de ha, né? Particularmente o que aconteceu ali naquela época? Eu tinha pego um projeto
+
+grande de criar ha e as respostas estavam inconsistentes. Então o que que eu acabei fazendo? Eu criei um framework para mim de fazer teste na reg e não só no na resposta final, né? O cara responde e a resposta sai. Eu criei um teste, são vários testes, na verdade, uma suitch de testes, né? Um conjunto de
+
+testes para testar como ele recupera. E aí eu descobri métodos de recuperação mais eficientes. Se você tá na comunidade, você já viu todas essas métricas lá, tá tudo documentado, framework tá lá. Eu sei que tem membros que já pegaram aquele framework e aplicaram para criar o negócio, por exemplo. Então, funciona.
+
+OK. Beleza. Só que qual era o problema lá naquela época? Deixa eu ir pro próximo aqui, depois eu volto para lá. Qual era o problema naquela época? Não
+
+existia um modelo claro para criar essas métricas. A discussão ainda tava muito em aberto. Tudo que existia era suposições. Existiam papers, mas não existia ninguém publicamente falando como fez. Então o que que eu fiz foi, tá, li os papers, né, e criei a minha.
+
+Só que qual o problema de criar a minha? É muito difícil de manter, né? É muito difícil de operar. Oar é muito difícil, né? O dia a dia acaba se tornando muito maçante eh fazer algo quando você cria do zero, né? Isso é normal. Então, é por
+
+isso que a gente usa um framework aqui, uma biblioteca lá, etc, etc, etc. Tá? E o que que eu fazia aqui? Eu testava o retrieval, eu testava alucinação, se eu não me engano, e testava a qualidade da resposta final, tá? Então, eu tinha três tipos de métricas aqui. Algumas métricas olhando
+
+para dentro, né, do sistema e outras se preocupando só com a resposta final. Você vai notar que essa palavra aqui, ó, eles a judge, é uma constante. Então, se você nunca ouviu esta esta ideia, eu tenho esse vídeo aqui que eu falo mais profundamente o que é LLM as a judge com exemplos, tá? A grosso modo, o que é o LLM as judge? Você vai usar uma LLM para julgar a resposta do teu agente, OK?
+
+Então você vai usar uma LLM externa para julgar a resposta do teu agente. E qual é a ideia que idealmente no mundo ideal você teria um humano vendo a resposta, falando assim: "Essa resposta foi boa, essa resposta foi ruim". O problema disso é que isso não escala, né? Se você quer rodar um uma suit de teste com 1000 testes, com 100 teste, é impossível, né? Fica inviável.
+
+Então a saída que a gente encontrou na indústria foi usar uma outra LLM. como juiz. É basicamente isso, tá? E a tese central é se a LLM pode gerar, ela pode avaliar, desde que seja uma outra LLM, né? No geral é bom que seja assim.
+
+E a ideia é mais fácil criticar do que fazer. Isso é uma verdade universal, inclusive, tá? Então vamos prosseguir aqui. E recentemente a gente chegou nessa ideia aqui, ó, do Geval. Essa não é a única, é o único método. Ela não é o
+
+único jeito. Existem vários, há vários jeitos. Por exemplo, aqui, ó, na reg hoje a gente tem métricas próprias de ha. E aí você já deve ter ouvido eh falar em certos frameworks, tipo Ragas. Eu já usei ele e eu não gostei muito, mas tudo bem. E e ele implementa assim,
+
+mais importante craft framework são as ideias centrais, porque no fundo, se você vê esse vídeo aqui do LLM as adjudes, se você tá lá na comunidade, você vai ver que eu implementei tudo na mão, né? Eu implementei tudo na mão usando as ideias, assim como eu implementei a busca híbrida na mão, eh, que a gente já discutiu bastante sobre isso, né? Você pode implementar na mão, você pode usar o framework que você quiser. O ponto é entender as ideias centrais. E o que que esse artigo, o que que esse paper provou? Essa técnica de GVAL,
+
+basicamente usa Shan of Hots. Você tá na comunidade, tem um curso lá de engenharia de prompt, tem Shin of Hots lá. Basicamente quando você vê lá um reasoning model e ele fica pensando, né, aquilo seria um chafots de 2024, tá? a gente forçava o Shain of Hots e você pode pegar um modelo não reasoning hoje e fazer ele ter o Shan of Fots próprio. Se você fizer isso no prompt, obviamente você vai ter que imprimir a saída igual eles fazem, mas é a técnica bem simples e ela é muito efetiva e é por isso que você tem esses modelos high x high parará parará. O que ele faz é ou ele faz um
+
+Shen fortes maior ou faz um Shin Fotos menor. E se você vê um modelo que é não reasoning, ele não tem Shen of Tá. E é basicamente o que o Geval faz. E como que isso se dá? Eu vou mostrar um exemplo prático, cara. Prático, tá? Esse
+
+repositório aqui tá lá na comunidade. Você tá na comunidade, você pode baixar e brincar aí. E esse aqui é o EVA One, né? O Eval inicial. Já é um EVAL pronto, funcional, ótimo para você entender os conceitos no detalhe. Pega esse vídeo
+
+aqui, expande e tal e discute lá no Discord com a gente. Vamos lá, show de bola. O que que a gente tem aqui? Tá? O que que acontece? Você vai ver coisas
+
+diferentes aqui. Primeira coisa, eu tô usando aqui, ó, Geval. Então, eu tô usando esta ideia. Não fui eu que implementei isso. Eu tô usando uma biblioteca. Show de bola, tá? Mas eu
+
+poderia implementar. Nada me impede se implementar. A ideia tá aqui, só você fazer engenheria reversa e implementar. Simples assim. O difícil é operar no dia a dia, tá bom? Show de bola. E o que que
+
+a gente vai fazer aqui? A gente tem um critério, tá? Um critério. Qual é o critério? Avaliar se a resposta gerada pelo bote está correta. De acordo?
+
+Parará. parará, tá? Presta atenção nisso. A segunda coisa que a gente tem aqui são os passos. E se você conhece ofs, você vai notar rapidamente que isso aqui é uma lista com passos, né? Isso aqui é
+
+uma lista em Python. Aqui uma vírgulazinha e tem passos. Leia a pergunta do usuário, compare parará, parará, parará, parará. Por que que você quer fazer isso aqui quando criar a métrica? O seu juiz também usa uma LLM.
+
+As LLMs podem ser temperamentais. Ela pode tomar um caminho uma hora e um outro caminho uma outra hora. Fazendo isso aqui, você garante que o teu modelo, que vai servir de juiz sigue exatamente o mesmo critério de julgamento em todas as rodadas para todas as perguntas e respostas. Beleza? Beleza. Você pode usar só o critério ou
+
+usar só o Evaluation Steps, por exemplo, mas eu recomendo fortemente você usar o Evaluation Steps também junto com o critério, tá? Uma coisa que é opcional, mas altamente recomendado, segundo os meus testes, tá? Eh, rubbrica. O que que é isso? Quando a gente roda um evaluator, ele vai te dar uma nota, tá? Eu vou mostrar
+
+isso aqui para vocês já já. Essa nota, falar nisso, deixa aqui rodando. Eu já rodei aqui, já rodei o arquivo, mas deixa ele aqui rodando para eu mostrar para vocês enquanto eu falo. Deixa aqui fazer um make evolv, tá? Beleza. Ele vai
+
+rodar esse script aqui. E é isso, tá? Ele vai ficar aparecendo aqui, mas deixa eu continuar discutindo aqui o que eu quero mostrar para vocês. O que que é uma rúbrica? Você quando ele gerar a resposta final, né, a avaliação, ele vai dar uma nota de zero a um, tá?
+
+Você pode pensar que isso é zer 10 a 10, porque a gente normaliza depois, tá? Mas não interessa. Você precisa garantir que como sua LLM é um juiz, né? é uma LLM, continua sendo uma LLM. A natureza dela é ser confusa, muita das vezes é ser probabilística. É
+
+a natureza dela, não é confusa, né? Confusa é uma palavra ruim. Desse modo, criando rúbricas claras, você define qual é a nota que ela deveria dar dada uma condição. Beleza? Então isso aqui é responsabilidade sua, criar. E aí você nota que nós estamos
+
+criando um artefato que não é o agente, né? que não faz parte da entrega que teu cliente vê, mas é um artefato central para o teu produto. OK? OK. Beleza. Tá.
+
+Outro fator aqui importante dentro desse nosso critério, thrashhold, tá? Enquanto tá rodando ali, deixa eu te mostrar este cara aqui para amarrar as ideias. Quando você criar uma métrica é o que deve ser julgado. Então você precisa responder essa pergunta. O que que essa métrica tá avaliando? O que que ela está julgando?
+
+Pelo seguinte, você pode criar uma métrica e a métrica que eu tô usando ali, o padrão se chama correctness, tá? O que que seria isso? Se a resposta tá de acordo com o esperado, mas existem outras métricas que você pode criar, outros padrões que você pode criar. Você pode ver, por exemplo, se o tom de voz tá igual você especificou, você pode ver se tá alucinando, você pode ver n coisas, tá? Então, o que que você tá jogando nessa métrica? E perceba
+
+que esta é uma métrica dentro de um conjunto de métricas que você pode ter, mas se você tiver pelo menos uma, você já vai estar na frente de 99% das pessoas, porque você vai aí vai começar a medir de fato se seu agente funciona ou não. Não é. Fiz um prompt, ele responde legal. Não é assim, cara. Não é assim que a engenharia de re a real funciona no mundo. A engenharia de a
+
+corresponde a você coloca a solução no a, banco de dados, API, parará parará, e ela funciona de forma consistente e evolui. E essa é a discussão que nós temos agora a respeito de harness, porque você vai entender em breve o seguinte: a sua harness, ela vai evoluir baseada nisso aqui que eu tô te mostrando. Ela não vai ser a mesma ontem. E é por isso que você vai notar que Codex evolui, que o cloud Code evolui, porque eles têm exatamente o que eu tô te mostrando aqui. Eles coletam dados, eles usam esse dado para melhorar a própria harness e eles continuam ficando melhor ao longo do tempo. Beleza? Show de bola. Segundo
+
+critério, como o julgamento deve acontecer, eu mostrei lá para vocês o criteria, né? O criteria e os steps, tá? Selecionar dados de evidência. Esse aqui é uma palavrinha muito legal, né? um um conceito muito legal chamado Golden Data sets. Rolland, o que que são golden data
+
+sets? Aí o nosso Eval rodou aqui, como como vocês estão vendo, eu já mostro ele para vocês, tá? O Golden Data 7 é isso aqui, ó, caras, ó. O que que importa aqui de fato, tá? Como funciona o reembolso e a resposta, né?
+
+Então, o input, o que seu usuário perguntaria, o que que seu usuário pergunta geralmente no seu sistema, o que que você tá fazendo ali, tá? E a resposta que seria clientes podem solicitar parará parará parará. É só isso, tá? Esse aqui seria o Golden Data básico. No dia um do teu projeto de A, isso aqui deve existir, não é para deixar para depois. Eu sei, você tá me
+
+vendo aí, eu sei que chega a demanda para você e você tem que criar a solução de A para ontem e aí você vai falar assim: "Depois eu faço isso, eu não tenho tempo". O que vai acontecer que sua solução vai ser para sempre ruim. Você pode até botar no a, mas você nunca vai confiar nela. E quando eu digo ruim é você vai estar no escuro, você não vai poder confiar, tá? Então essa é uma situação ruim e principalmente se você tá criando soluções do mundo real, você vai querer evitar isso cedo ou tarde.
+
+Então esse é um método que todo mundo faz no mundo inteiro, tá? Então o que eu tô te apresentando aqui é o que funciona. Show de bola, tá? Uma coisa importante que eu gosto de fazer é dar um nome para as perguntas. Eu gosto de botar o nome dessas coisas são fixas em inglês variável também, né? E as outras
+
+coisas eu gosto de botar em português, mas aí é gosto pessoal, tá? Então esse aqui seria o golden data set. Como que você constrói isso? Você pode construir isso de maneira sintética, né? Você pode dar um conjunto de documentos e falar para ele gerar, mas idealmente você tem um humano no loop, ok? Seja o
+
+stakeholder, isso é responsabilidade do stakeholder, tá? Então, você trabalha num time que tem lá um PO, é ele que deve preencher isso aqui. O que você deve fazer, se você é técnico, é prover a ele um um template, um CSV, um Google Sheets. E essa responsabilidade é dele. Ele tem que saber que a responsabilidade é dele.
+
+Roland, mas o PO falou que sou eu que faço, então você mostra esse vídeo para ele e explica o porquê. Ele é quem conhece do produto, provavelmente, tá? Eu defendo a ideia que se você é técnico, você deveria conhecer do produto também. Não dá para desassociar e a do negócio. Você deve dominar ambos.
+
+Mas se você trabalha num time, dependendo da sua estrutura, essa responsabilidade é dele. Ou ao menos ele deve assinar embaixo. Você pode criar, mas ele tem que assinar. Beleza? Beleza.
+
+E qual é o segundo papel desse cara aqui? Como a gente viu inicialmente, a sua solução vai falhar, correto? O papel dele é a partir do momento que você identifica uma falha, um ed case, um caso em que não dava para prever, e isso é comunzíssimo, né? Você soluções de a são particulares porque você só sabe o que vai acontecer de fato depois você bota na mão do teu cliente. Você não sabe gente mão tudo que acontece, como toda a solução, mas a é particularmente curioso como funciona, né? O teu usuário vai fazer uma query
+
+ali no, né? Ele não tem só um botão para apertar, ele tem um um lugar em branco para ele digitar. Então, muita coisa pode acontecer ali que você não prevê. Você vai pegar esses casos e você vai estender esse Golden Data Set com essa esse conjunto de perguntas e respostas e vai rodar teu benchmark de novo, vai rodar tua métrica de novo, o teu evaluator aqui, como você viu. E a partir desse momento você vai descobrir, tá? Ele não tá respondendo. Eu vou
+
+mostrar como isso funciona, tá? Vem aqui comigo. Eu já rodei esses caras, né? Você viu aqui que eu rodei bonitinho, tal, e ele vai dar a resposta. Você vai ver aqui que no nosso caso, né, eu tive um resultado muito bom, né? Vou mostrar
+
+aqui para vocês já no no no log, tá? Esse aqui é o log, tá? Então, a gente teve o resultado de sucesso aqui, né? Nossa métrica funciona muito bem. Eu vou botar lá para baixo. Você vai ver que a
+
+nossa métrica passou 100%. Por quê? Um, as perguntas são super simples aqui, né? Nada demais. E esse aqui seria o nosso agente. Eu criei aqui um suporte bot com
+
+instruções simples. Você vê que não tem nada, não tem chamada de ferramenta, não tem nada acontecendo. É só certas instruções e certas perguntas e respostas. Então o que acontece aqui na hora do evaluator é ele chama esse cara aqui, esse agente e chama a LLM as adjud. Compara a resposta que ele deu com a resposta esperada e dá uma nota. E
+
+aí você vai ver isso no log aqui, por exemplo, tá? Então você vai ver aqui, ó, hã, o nome da métrica, né, que eu criei, você vai ver a nota que ele deu e você vai ver o thrash a gente geralmente começa com 07, mas tudo depende dos seus testes. Isso você vai ajustando ao longo do tempo e você vai ver que o meu juiz aqui usa o GPT4 ou Mini. E o curioso é ao longo desse desse teste aqui, né? E é um teste bem simples, e eu tive 100% de acerto, eu usei o o deixa eu ver aqui. Eu usei este
+
+cara aqui, ó, de psíic V4 flash a um preço ridiculamente acessível, né? Então você vê assim, é uma solução simples, é, mas um modelo simples resolveu uma solução simples. Então isso aqui fica viável financeiramente, não porque eu acho, mas porque eu tenho evidência para qualquer um e mostrar assim, ó, funciona, OK? Tá aqui. Isso é diferença entre uma solução amadora e uma solução profissional hoje. Beleza? Tá? Você vai
+
+ver que ele classificou então com o número, né? E a gente tinha o thold. Então, se ele passou acima do thrash a gente considera que isso é verdadeiro. E você vai ver que dificilmente você vai encontrar um, né? Um. Ele vai dar um
+
+apenas quando a solução, né? Quando a resposta fori exata. E qual o legal disso aqui? Você vai começar a notar que aqui, ó, essa era a pergunta. Esse aqui foi o a resposta gerada pelo modelo e essa aqui foi a resposta esperada. Então
+
+você vai ver que quanto mais semelhante com a resposta esperada, maior vai ser o score que a gente vai ter. É basicamente isso aqui, tá? Outra coisa interessante, além disso, você consegue gerar esse tipo de arquivo aqui, ó, que é o que que é importante aqui? Esse esse arquivo é tipo ele é bem parecido com o anterior, só que aqui a gente tem o reason, tá? E o que que seria isso? Isso aqui é a justificativa
+
+do teu juiz do porque ele deu a nota que ele deu. Como que você usa isso aqui? Vou imaginar que você tem uma resposta que você acredita que é certa e o juiz deu errada, né? Ou o juiz deu uma nota mais baixa do que você acha que tem que dar. Então, de repente, você vai ter que trocar o quê?
+
+o prompt do juiz, correto? Você vai ter que, ah, tá bom, então tem algum passo aqui no meu critério de avaliação que está falho, segundo é o que eu tinha imaginado. Você percebe que esse é um trabalho que não começa e termina inicialmente. Esse é um trabalho cíclico que você vai estar fazendo até a sua solução ficar madura e perfeita. Beleza? Voltando para
+
+cá, não, para cá, tá? Você vai olhar isso aqui e vai avaliar se ele faz sentido. Outra solução é é o juiz avaliou corretamente isso aqui. Ele tá correto. E aí o que que você vai fazer?
+
+Você vai vir na tua solução e você vai trocar o que precisa ser trocado. No nosso caso aqui, a nossa solução só tem um prompt, mas soluções do mundo real tem ferramenta. Então, por exemplo, você tem lá a ferramenta de ler e-mail, de enviar e-mail, sei lá o quê, tá? O teste que a gente tá fazendo aqui, que eu tô mostrando aqui para vocês, se chama caixa preta. que é o agente gera resposta e eu tô preocupado apenas se a resposta corresponde ao que eu tô esperando. Mas existem
+
+outros tipos de teste que você pode implementar e à medida em que você ficar mais maduro na área, que é ele chamou a ferramenta que ele devia chamar nessa resposta. Quantas vezes ele chamou essa ferramenta? De fato, precisava chamar essa ferramenta todas as vezes? Isso são aprimoramentos que você vai fazendo dentro do seu sistema para ele ficar cada vez mais eficiente, mais performático e com o melhor retorno sobre investimento. É assim que funciona, não é retorno sobre investimento vazio. Assim, você vai
+
+notar claramente que muit das vezes, como eu tenho falado aqui repetidamente, você vai poder usar um modelo bem barato, um modelo bem menor do que o modelo que é o Sota do momento para criar sua solução, desde que você consiga ver esse tipo de coisa aqui. Não vai ser. Eu acho. Você vai ver o dado. Você vai apresentar o dado na tua empresa, falar que tá aqui. Cara, eu
+
+provi pr vocês aqui, ó. É R$ 10.000 por mês de economia fazendo essa alteração aqui. Me deu o aumento minha promoção. Você vai se tornar um cara mais valioso, naturalmente, só porque você sabe resolver esse problema de performance e custo, tá? E se você cria uma solução e
+
+vende, eu não preciso nem te explicar isso, tá? Beleza? Show de bola. Voltando para cá, vamos voltar para cá. Show de bola. Então vocês já viram o Gold
+
+dataset, vocês já viram a rúbrica, né, que seria criar o significado do score. Isso você precisa ter, né, você precisa entender como faz isso e você precisa criar o thrashhold. Se você alterar alguma dessas coisas aqui, por exemplo, você alterou a pergunta no seu dataset, você já pode considerar que você tá criando uma nova métrica. Essa é uma pegadinha que as pessoas não entendem muito bem. Por exemplo, eu troquei o thrashhold, então já é uma outra métrica. Você não vai
+
+poder comparar um modelo, né? Você vou imaginar que você trocou o o o Deeps Flash lá, o modelo que gera resposta por um outro, mas você também trocou algo no dataset. Então você não pode comparar maçã com banana, você só pode comparar maçã com maçã, tá? Então esse conjunto de coisas aqui compõe a sua métrica, tá? O que que seria um benchmark? O que as pessoas
+
+confundem quando a gente vê aqui, ó, um benchmark. O benchmark é uma comparação histórica. Então você tem um conjunto de regras que vão ser repetidas para todos esses modelos ao longo do tempo e aí você vai criar um benchmark. De repente você não quer criar um benchmark, mas principalmente você quer criar uma métrica. A métrica é muito importante se você é sério sobre soluções de a sua solução não nasce perfeita. A sua
+
+solução se torna perfeita com clareza de propósito e métrica. Então, se você cansou de brincar de ar, você sabe onde me encontrar. Os links estão aí. Mais uma vez, prazer em revê-los. Até a próxima.
