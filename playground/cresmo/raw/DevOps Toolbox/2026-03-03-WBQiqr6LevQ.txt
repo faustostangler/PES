@@ -1,0 +1,96 @@
+---
+video_title: "Stop Using Git Worktrees. Do THIS Instead."
+video_id: WBQiqr6LevQ
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WBQiqr6LevQ
+video_date: 2026-03-03T14:30:22+00:00
+video_description: |
+  Code reviews that understand context, not just diffs, with Augment Code: https://fandf.co/3LicfbQ
+  ---
+  
+  Worktrunk is "Git worktree management for parallel AI agent workflows." - that's how they put it.
+  Here's my take: it's the best feature Git never got, making Worktrees (a fantastic option with very poor UX), as smooth and easy as branches, but BETTER!
+  - https://worktrunk.dev/
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+O Git possui um recurso que torna a vida muito mais agradável. Você pode trabalhar em várias instâncias do seu aplicativo simultaneamente. Você não precisa guardar, abrir, limpar ou reiniciar. Estas são árvores de trabalho, mas tal como os tanques soviéticos da Segunda Guerra Mundial, [música] são muito eficazes, mas um incômodo para o usuário. São ótimos no papel, mas a experiência do usuário vai te deixar de cabelo em pé . Um cara que você provavelmente já
+
+conhece resolveu isso antes com um plugin do Neovim, que eu usei por um bom tempo. Até que deixei de fazer isso. Toda vez que eu voltava para a CLI, era a mesma velha dor de cabeça me fazendo retornar aos branches. Até que encontrei algo, uma nova CLI. Uma solução que não apenas corrige a experiência do usuário, mas adiciona camadas de magia. Você pode fazê-lo executar comandos,
+
+integrar webhooks e navegar pelas árvores como se fossem, bem, galhos. O que, não por acaso, também faz desta uma ferramenta fantástica para o mundo moderno do trabalho baseado em agentes. Se até recentemente as pessoas desconsideravam as árvores de trabalho, dizendo que nunca precisariam trabalhar em funcionalidades paralelas e múltiplas, isso não é mais verdade. Você pode executar trabalho paralelo em diferentes árvores de trabalho, que por sua vez podem, obviamente, ser executadas em abas diferentes ou, de preferência, em janelas do tmux. Agora você pode sentar, relaxar e observar um grupo de agentes trabalhando em diferentes partes do seu aplicativo, ou simplesmente aproveitar o fato de não precisar se esforçar muito ao alternar entre árvores de contexto. Isso torna
+
+o trabalho sequencial paralelo. Então, hoje estamos fazendo com que as árvores de trabalho voltem a ser excelentes. Mas não vamos parar por aí. Integrei várias opções novas para tornar o processo tão tranquilo quanto, bem, chegou a hora de eu dizer, quanto óleo de coco. Vamos colocar a mão na massa com o porta-malas.
+
+Vamos definir o problema primeiro, certo ? Em um novo projeto com rastreamento Git e tudo mais, podemos criar um arquivo readme, adicioná-lo ao Git e fazer o commit. Adicionando arquivo readme. Agora que o arquivo está sendo rastreado, que maravilha! [música] Posso passar para uma branch de recurso, sem problemas. Mas eu esqueci de mencionar algo
+
+importante. Vou voltar rapidinho e adicionar algum conteúdo [música] ao arquivo readme. Que boba eu sou. Ok, vou confirmar que acabei de adicionar conteúdo e voltar para minha branch de funcionalidade. Note bem, a branch de funcionalidade não está ciente do conteúdo do arquivo readme que acabei de adicionar, pois foi criada antes de fazermos as alterações. Ok, ainda
+
+não terminei de trabalhar nessa funcionalidade, então vamos deixar como está. Vou deixar um agente aqui para desenvolver minha nova funcionalidade e voltarei mais tarde para revisar, pois sou um desenvolvedor responsável. Mas, ao voltar [a música] para a posição principal, ah não, não conseguimos fazer a transição porque há alterações conflitantes. [música] Sim, posso guardá-los aqui e depois fazer a troca com sucesso. Mas pense bem, não só preciso ter em mente que existe uma ou várias peças escondidas. Imagine
+
+ter que se lembrar disso para várias mudanças. E se o agente que deixei lá continuar fugindo? Literalmente, ele faz alterações em segundo plano, e o estoque pode se tornar irrelevante em questão de segundos. O Git não foi projetado para considerar desenvolvedores trabalhando em paralelo em várias ramificações. Então, em vez de termos que lembrar do stash, [música], voltar ao branch, aplicar as alterações e continuar trabalhando, temos as árvores de trabalho do Git. Uma
+
+funcionalidade fantástica com uma experiência do usuário incrivelmente insatisfatória. Há um vídeo no canal que aborda as árvores de trabalho em detalhes, mas a ideia principal é esta. Como as árvores de trabalho são snapshots separados, você precisará de um diretório pai para todas elas . Uma configuração básica de árvore de trabalho começa com um clone simples, o que não é um grande problema. Você adiciona "bare" ao seu comando de clonagem e, em seguida, finaliza com um " .bare" ou ".Git", o que funcionar melhor,
+
+não importa muito. E você acabou de criar um repositório vazio. Sem arquivos ou trabalhos rastreados, apenas árvores de tarefas prontas para uso. É aqui que você começa. [música] O comando `git work tree add main`, por exemplo, definirá seu branch principal em seu próprio subdiretório. Se você quiser trabalhar na
+
+pasta principal, basta acessar essa pasta e fazer as alterações desejadas. Você pode adicionar outras árvores de trabalho e listá-las, o que mostrará o clone original, bem como outras árvores e seus respectivos snapshots, hashes e nomes. Remover uma árvore de trabalho é igualmente fácil e, quando estiver pronto para trabalhar, você pode ativar seu agente favorito e criar o recurso que desejar. A questão é que, em vez de mudar de branch, agora você pode navegar até a branch principal enquanto o código aberto está sendo processado no nosso front-end em outra árvore de trabalho. Sem conflitos, [música] sem problemas, completamente desapegado. Você
+
+notará que nossa nova interface ou outras árvores de trabalho também aparecem sob os ramos. Não necessariamente limpa com a remoção da árvore de trabalho , mas permite que você mescle as alterações quando estiver pronto. Assim, as alterações foram mescladas, mas a árvore de trabalho antiga ainda está lá, assim como o branch. Isso pode não parecer grande coisa, mas, embora facilite sua vida, apresenta alguns problemas . Além de ter que limpar constantemente os ramos e as árvores de código, você precisa percorrer vários caminhos, o que é irritante ao usar sua IDE. Existe
+
+um ótimo plugin para Neovim criado por ThePrime que permite navegar e fazer referências cruzadas em árvores de trabalho. Você deveria dar uma olhada, mas existe uma maneira mais simples de fazer tudo com a ajuda do Work Trunk. Ao falar sobre o gerenciamento de fluxos de trabalho complexos de IA com ferramentas como o Work Trunk, fica claro que, à medida que nossos ambientes de desenvolvimento se tornam mais rápidos, precisamos de ferramentas que realmente consigam acompanhar o software de nível profissional. É aí que entra o nosso patrocinador de hoje, Augment Code. A Augment Code é uma plataforma de codificação com IA criada especificamente para desenvolvedores experientes que trabalham com bases de código grandes e complexas. Embora muitas ferramentas
+
+disponíveis dependam do que chamamos de programação intuitiva, o Augment foi desenvolvido para quando você realmente precisa enviar o produto para produção. Seu principal diferencial é um mecanismo de contexto proprietário que entende todo o contexto arquitetônico do seu projeto, recuperando cadeias de dependência e pontos de chamada antes mesmo de iniciar a análise. Minha funcionalidade favorita é o novo recurso de revisão de código . É um agente de revisão nativo do GitHub que não apenas te bombardeia com comentários de linting, mas foi desenvolvido especificamente para encontrar bugs reais e minimizar falsos positivos. Ele usa um agente de raciocínio para percorrer o processo e coletar contexto até ter informações suficientes para realizar uma análise precisa, dando a sensação de estar recebendo orientação de um engenheiro sênior e não de um robô. A
+
+melhor parte é que a Augment Code oferece revisão de código gratuita para projetos de código aberto. Quer você esteja trabalhando em um repositório enorme ou apenas queira aprimorar seu processo de pull requests, definitivamente deveria conferir essas ferramentas. Use o link na descrição para começar a usar o Augment Code hoje mesmo. Agora, voltando ao vídeo. Com um site de documentação simples e direto ao ponto e um projeto cada vez mais popular no GitHub, o [music] work trunk está se tornando uma opção fantástica para aqueles que desejam a liberdade do trabalho paralelo sem o incômodo de entender árvores de trabalho. Bem,
+
+vou arriscar aqui, e muitos de vocês não vão gostar disso, mas com o work trunk, você não precisa saber Git. Não, não estou dizendo para jogar Git fora ou JJ. Não estou dizendo que você não deva aprender, mas para os novos programadores que ou improvisam na implementação em produção, ou para os desenvolvedores de software preguiçosos que nunca se preocupam com pull requests hoje em dia, o worktrunk faz quase tudo por você. Deixa eu te mostrar, e depois me ataca nos comentários. Legal.
+
+[música] Então, estamos instalando rapidamente. Não sou uma pessoa muito sortuda, mas parece que o suporte ao Nushell foi integrado literalmente 4 horas antes de eu começar a analisar o projeto. Quais são as chances? Vou só pegar rapidinho a versão que saiu , ah, droga, ontem. Quando você se deparar com isso, mesmo que esteja trabalhando no Nushell, o comando `brew install work trunk` resolverá o problema. [música] Seu próximo passo é
+
+wt config shell install, e tudo é feito para você, incluindo um novo script auto load, que garante que você esteja executando o comando quando [música] o shell iniciar. Agora, o tronco de trabalho fornece códigos de trapaça para a árvore de trabalho. Você não só pode criar e remover, como também pode trocar, mesclar, executar hooks, fazer um monte de coisas [musicais], e isso nem inclui as partes realmente legais . Começando pelo básico, use `switch` e hífen `c` ou hífen duplo `create` para criar a nova árvore de trabalho. Você perceberá rapidamente que, sem configurar nada, o `work trunk` criou uma ramificação e uma árvore de trabalho em um caminho pai, nomeou-a adequadamente e alterou o caminho como se tivéssemos acabado de criar uma ramificação do Git.
+
+[música] Eu literalmente subi um degrau na hierarquia de caminhos e estou em um novo projeto.novo_recurso. [música] A lista wt mostra o nome, o status, a deriva do cabeçalho, o hash do commit e muito mais. Agora, podemos fazer alterações sem problemas, e o status mostrará [música] em que ponto estamos. Linhas adicionadas e até mesmo commits, caso tenham sido feitos. Podemos mudar
+
+para a rede principal, sem problemas. As mudanças [na música] não nos acompanham até lá, e não há conflitos. Mas você já sabe disso sobre árvores de trabalho. Eis algo que você não sabia ser possível. [música] Vou criar mais uma árvore de trabalho de funcionalidades. Agora,
+
+tenho três. Se eu quiser remover um deles, então, primeiro, excluirei a árvore de trabalho, segundo, excluirei o ramo e, terceiro, mudarei para o diretório principal do nosso projeto. Mais uma vez, tornando as árvores de trabalho não apenas ótimas novamente, mas tão fáceis quanto trabalhar com galhos [musicais]. Linus, se você puder, por favor, inclua isso aqui, cara. Mas, pessoal, ainda não terminamos. Esses
+
+são apenas os conceitos básicos. É muito difícil se recuperar das próximas funcionalidades. Vamos criar uma árvore de trabalho de notas e adicionar um arquivo note.txt. Atenção, [música] não é trocadilho intencional. O arquivo não está sendo rastreado e eu
+
+não confirmei nenhuma alteração. wt mesclar e finalizar a compra. [música] Preparei o arquivo e gerei uma mensagem de commit com Claude. Sim, sim, aconteceu. Armazene as alterações no diretório principal do projeto , mescle o commit, restaure as alterações armazenadas e remova a árvore de trabalho e o branch. E [na música] podemos continuar
+
+trabalhando. Quer dizer, precisamos parar por aqui e apreciar a experiência do usuário. Você nem precisa se preocupar com árvores de trabalho ou com o que quer que esteja acontecendo embaixo delas. O Work trunk [música] cuida de tudo para você. Para os programadores que gostam de trabalhar com mudanças, esta é simplesmente uma maneira melhor de lidar com elas . A implementação nem sequer é
+
+o ponto principal aqui. Você literalmente não precisa mais se preocupar com arquivos de preparação, commits, preparação ou qualquer coisa do tipo. Você simplesmente inicia um espaço de trabalho de recurso e, quando terminar, clica em mesclar, e é isso [música]. É uma combinação de árvores de trabalho do Git, o método de rastreamento de alterações do Jujutsu e espaços de trabalho, tudo em um só lugar. Além disso, extras. Sinceramente,
+
+mudou minha vida. Pode ser melhorado? Claro que pode. Ao listar árvores de trabalho, você pode formatar a saída em JSON. E o que você faz com a saída JSON?
+
+Correto, envie para jq, que [música] por sua vez você pode enviar para fcf e trocar de ramo como um verdadeiro hacker. Este é um apelo ao autor do tronco de trabalho; por favor, inclua isso. Ainda não terminamos, pessoal. O Work trunk ainda não tem busca difusa , mas [música] vem com uma opção de execução. Você pode executar diferentes árvores de trabalho e fazê-las iniciar o OpenCode, o Claude ou o que preferir, desde que tenha o GitHub CLI instalado (ou o GitLab, para os menos afortunados). O
+
+branch `work` reconhecerá seus PRs, os resolverá e os configurará para que você possa testar, experimentar ou revisar. Isso é legal, mas como qualquer outro sistema moderno, o verdadeiro poder está nos ganchos. [música] O Work trunk vem com vários hooks para você implementar e acionar processos dependendo da etapa do processo que você está encapsulando, como executar `npm install` na criação ou `go test` após a mesclagem, talvez um `docker compose up` ou uma instância do PostgreSQL para iniciar para você. Todas essas opções estão disponíveis para você na configuração, que pode ser global ou específica do projeto. [música] Podemos criar um modelo com o comando `config create`, enquanto a flag do projeto define as configurações locais no arquivo `.config`. Uma coisa que adoro
+
+ter que manter organizada é a renomeação da janela do tmux após a troca de [música]. Na primeira vez, ele pedirá permissão e, pronto, mudará a árvore de trabalho e renomeará a janela que estiver no topo. Na verdade, você não está limitado a essa opção. Existem muitas variáveis ​​de modelo e instruções sobre como usá-las. Se você quiser uma combinação de repositório e branch, por exemplo, para melhor contexto, ficaria assim: repositório-branch entre parênteses de fechamento. E no nosso próximo switch,
+
+temos o fatbot main no topo, atualizando-se a cada [música] switch. Fantástico. A última coisa que gostaria de mostrar combina duas opções que o Worktrunk oferece. Lembre-se de que mostramos como o WT mescla um processo de várias etapas com stashing, commit, removal, etc. Bem, esses processos podem ser divididos em etapas. E
+
+o subcomando `step` permite que você execute apenas um commit, apenas um squash, apenas um rebase ou até mesmo um push. Dentre essas, [música] há a minha favorita, e pode soar estranho a princípio, "step copy ignored", que permite copiar arquivos ignorados entre árvores de trabalho. Eis o motivo pelo qual considero isso tão útil. Vou criar uma nova funcionalidade no meu projeto de bot, que não terá o meu snapshot SQLite [de música], com o qual estou fazendo testes. Naturalmente, este arquivo é ignorado como qualquer outro arquivo .db,
+
+mas isso não deve mudar. Mas e se isso fosse copiado por aí? A etapa WT de cópia foi ignorada, o que inclusive adicionarei a um gancho pós-inicialização, e todos os meus arquivos ignorados agora são copiados. Mas, caramba, isso não é bom. Miz não está nada contente com isso. Independentemente
+
+de ser ou não um problema real, neste caso não é. O Miz foi projetado para não confiar em todos os caminhos por padrão, e isso é ótimo. Mais detalhes sobre isso no vídeo do Miz que você encontra no canal. Vamos supor, a título de exemplo, que o arquivo miz.toml não precise ser copiado [música] por aí. É aí que
+
+entra o comando `dot worktree include`. Basta manter nosso arquivo de banco de dados lá e o comando `worktrunk [music]` coletará os arquivos git ignorados que estão incluídos aqui. O arquivo SQLite está presente e [music] miz.toml desapareceu. Doce. Há muito mais no worktrunk, muito
+
+mais mesmo. Há CI e outros recursos, há ajustes no LLM para suas mensagens de commit e a integração com a nuvem exatamente para isso. Worktrunk [música] é definitivamente um daqueles projetos que agora fazem parte do meu fluxo de trabalho e, se eu puder adivinhar, também a longo prazo. Além de ser uma solução fantástica para um problema real que eu tinha há muito tempo, o autor é super atencioso. Levantei algumas questões e elas foram resolvidas prontamente, então meus sinceros parabéns a eles e à equipe por isso e pela pura alegria que esse projeto proporcionou. Um projeto que mencionei
+
+brevemente aqui e que acredito integrar-se perfeitamente com o worktrunk é o Miz and Plus, pois, após alterar as árvores de trabalho, você pode querer que variáveis ​​de ambiente, processos e outras ferramentas sejam configuradas automaticamente . Você pode configurar um gancho do worktrunk para o início da operação, fazendo com que o Miz e o Plus também confiem no novo caminho, para maior suavidade. Agora, assistam a este vídeo a seguir, Miz e Plus. Obrigado por assistir e até o próximo vídeo.

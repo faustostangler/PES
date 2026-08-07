@@ -1,0 +1,93 @@
+---
+video_title: "Stop Using S3. Use Open Source Instead."
+video_id: BvyGBDxGTAs
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BvyGBDxGTAs
+video_date: 2026-02-20T14:30:19+00:00
+video_description: |
+  Private, encrypted cloud storage for DevOps & remote machines 👉
+  https://internxt.com/devopstoolbox **87% off** already applied: code DEVOPSTOOLBOX
+  ---
+  
+  Garage is an open-source distributed object storage service tailored for self-hosting.
+  It's lightweight, easy to scale, and it's FREE.
+  - https://garagehq.deuxfleurs.fr/
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Em 2006, a AWS praticamente não existia. A Amazon só precisava de uma maneira de impedir que sua livraria online derretesse sob o próprio peso. Então, eles criaram um serviço de armazenamento. Eles chamaram de S3. Vendi isso como um serviço para qualquer pessoa, e o resto é história. Um ano depois, já contava com 10 bilhões de
+
+itens. Hoje, estamos falando de mais de 500 trilhões. Isso equivale a meio quatrilhão de objetos. É um número tão grande que parece falso. E veja só, o S3 é uma obra-prima. As
+
+APIs, as funcionalidades, a maneira como tudo funciona. [música] Mas para a maioria de nós, a 3ª temporada tem três grandes pegadinhas. Primeiro, o custo. Não é o espaço de armazenamento que te prejudica. É a armadilha de saída. Você paga uma taxa para recuperar
+
+seus objetos armazenados, geralmente mais alta do que a taxa de armazenamento em si. Em segundo lugar, a complexidade. [música] Para realmente economizar dinheiro, você basicamente precisa de um doutorado em precificação da AWS. Para navegar no Glacier, considere o sistema de níveis inteligente, as taxas de requisição da API e, por fim, o controle. [música] Por muito tempo, a resposta foi Minio. Era
+
+o padrão ouro para auto-hospedagem e armazenamento de objetos do Kubernetes. Mas ultimamente, as coisas mudaram. Entre a mudança de licenciamento, a remoção drástica de recursos da comunidade e a mudança repentina para o modo de manutenção, o Mo começou a parecer menos uma ferramenta da comunidade e mais um gigante que está envelhecendo e se tornando corporativo. [música] Alguém se lembra? E se pudéssemos ter total compatibilidade com o S3, a CLI, as APIs, o fluxo de trabalho, mas em um pacote que fosse realmente de código aberto ? Algo que não precisa de um
+
+cluster de servidores corporativos e que pode rodar em alguns laptops antigos ou em um Raspberry Pi que você tenha por aí. É aí que a Garage entra em cena. Não é apenas uma alternativa. É uma maneira diferente de pensar sobre armazenamento de objetos. Vamos lá .
+
+O Garage é de código aberto, escrito em Rust e, como convém a uma plataforma de auto-hospedagem , é servido no Forgejo, uma alternativa ao Git que também pode ser hospedada por você. [música] Também existe um espelho no GitHub para divulgação, mas além disso, possui um site de documentação fantástico com tutoriais fáceis de seguir e manuais de referência. Para contextualizar, o objetivo do Garage é ser um repositório de objetos leve para hospedagem própria. Ele foi projetado para ser resistente, simples e capaz de suportar cargas extremas. Uma das minhas frases favoritas aqui é " abrangente em termos de recursos", que visa cobrir a maior parte do S3. Isso é
+
+importante por dois motivos principais. Primeiro, você pode desfrutar do seu próprio S3. Isso é óbvio. Mas, em segundo lugar, se você estiver executando o S3 em produção, mas fizer sentido usar outro S3 local para testes ou desenvolvimento, talvez você esteja apenas começando e tenha servidores disponíveis e possa começar a usar as mesmas APIs. Desfrute das mesmas características com a sua rocha física local. [música] Que
+
+recursos incríveis são esses que me deixam tão animado ? Bem, para começar, temos a API do S3, que também permite distribuir diferentes nós de cluster em diferentes localizações geográficas, tal como o S3. Isso já sugere uma funcionalidade enorme, que é o agrupamento de nós formando um armazenamento de objetos escalável como o S3. Ele pode hospedar sites estáticos, e veremos isso em ação, além de uma integração com orquestradores como Kubernetes e Nomad. Pensei que conseguiria pré-instalá- lo, mas não só não tenho certeza para que serve o Guardian Home. Isso não está
+
+documentado oficialmente no site deles. As versões de lançamento não oferecem uma opção Darwin para o meu Mac. Então, optei pela opção de conteinerização. Podemos executá-lo, mas ele falhará imediatamente ao solicitar um arquivo de configuração. Então, vamos criar nosso primeiro arquivo TOML de garagem, começando com alguns caminhos para dados e metadados. O mecanismo de banco de dados,
+
+que é o meu querido SQLite, um fator de replicação, que não teremos, e várias outras opções para a API, hospedagem web, etc. Observe que incluímos alguns segredos para criptografia de comunicação. Bem, na verdade ainda não forneci essa informação. Então, vamos primeiro criar a chave e adicioná-la ao token de métricas do segredo RPC e ao token de administrador. Sim, sou um gênio que usa a mesma tecla para tudo. Me processe. Mesmo
+
+com uma configuração local robusta, às vezes você precisa de um local seguro para os backups finais. Idealmente, sem adicionar mais uma fatura mensal recorrente de SAS às suas despesas gerais, é aí que entra a Interext, patrocinadora do vídeo de hoje. A Interext é uma plataforma de armazenamento em nuvem de código aberto que prioriza a privacidade e foi essencialmente criada para a forma como trabalhamos. Diferentemente dos provedores convencionais, a Interext adota uma abordagem de conhecimento zero e utiliza criptografia de ponta a ponta. Isso significa que as chaves são suas. Nem mesmo a Interext consegue ver
+
+seus despejos de banco de dados ou arquivos de configuração. Você pode enviar seus backups do GarageBand ou snapshots do Proxmok diretamente para o Internext ou usar o Docker para integrá-los ao seu fluxo de trabalho do NAS. Ela funciona como uma camada de infraestrutura privada e criptografada que simplesmente não interfere no sistema . A melhor parte para quem busca minimizar custos recorrentes é que eles oferecem um plano vitalício completo com 5 TB de armazenamento. É um pagamento único, sem assinaturas, sem custos mensais exorbitantes. Inclui também
+
+o pacote completo de ferramentas de segurança, como VPN e antivírus, o que torna esta oferta muito vantajosa. Se você deseja garantir seu armazenamento externo de forma definitiva, eles estão oferecendo aos espectadores do DevOps Toolbox um desconto exclusivo de 87%, que é ainda maior do que o oferecido no site deles. Acesse interex.com/devopstoolbox e use o código DevOps Toolbox no momento do pagamento. Você verá que o desconto de 87% será aplicado imediatamente. É uma grande vitória
+
+para garantir a propriedade dos seus dados a longo prazo sem o custo adicional do SAS. Agora, vamos voltar à Garagem. Uma rápida ida ao cais e já estamos a caminho. Uma coisa que está faltando, e que os espectadores da Sharp provavelmente já notaram, são várias portas servindo a API K2V, a API S3, as APIs de administração e o servidor web. Nada disso foi realmente implementado através do Docker.
+
+Então, se você estiver executando uma versão conteinerizada do Garage, mapeie-os, [música] e estaremos prontos para começar. Ao acessar a primeira porta, é retornado um XML de acesso negado, algo familiar para quem já teve o prazer de trabalhar com o S3, o que não é novidade . Ocorreu um erro 404 (não encontrado) na porta do nosso servidor web. [música] Agora tudo o que vamos executar está sendo feito através da CLI do Garage. Como estamos trabalhando em um contêiner, sairemos para o contêiner, seguido pelo gar cli e o comando, e então seus atributos, como o menu de ajuda, que oferece controle de workers, visualização de status, controles de cluster, chaves, buckets, [música] etc. Por exemplo,
+
+com o subcomando bucket, podemos obviamente criar, excluir, conceder permissões e muito mais. Vamos criar um balde, que tal? O primeiro problema é a falta de quorum, o que é curioso para um cluster de armazenamento de objetos de nó único. Assim, em "status", temos os nós saudáveis ​​e seus respectivos IDs. Os primeiros caracteres são suficientes para o cadastro. Executamos o
+
+layout de transporte com a atribuição DC1 como padrão para o primeiro e único nó. Criaremos um disco de 1 GB e o ID do nosso nó para fornecer. Só falta aplicar o layout. E pronto. Foi aplicado um novo layout de cluster . Aqui você pode
+
+adicionar nós, configurar replicação e fragmentação, mas hoje vamos manter as coisas simples . Agora é hora de um novo balde com um nome original. Liste-o. O novo balde está lá. Podemos ler informações como tamanho e objetos, habilitação de acesso à web e aliases. E é aqui que a diversão
+
+começa, pelo menos para mim. Além disso, peço desculpas por ter percebido no meio do vídeo que não criei um alias para o comando longo do exec sempre que preciso da CLI. Portanto, a partir de agora, "gar" será abreviado. A próxima parte é fundamental. Você conhece as chaves da AWS, um ID de chave e um segredo. Aquelas que a IA completa automaticamente,
+
+se você simplesmente perguntar, aquelas que o GitHub está cheio de vazamentos dessas chaves, como na AWS, são geradas uma única vez. Portanto, guarde o segredo e anote-o. Não seja como eu. Com a chave em mãos, podemos executar o comando `bucket allow`, definindo as permissões desejadas, selecionando o bucket e a chave correspondente. É importante que você tenha sua configuração da AWS CLI pronta, pois vamos executar o AWS S3 como se estivéssemos trabalhando com a versão real.
+
+Portanto, o parâmetro de região padrão da AWS será simplesmente "garage". A URL do endpoint, com base em onde o Garage está sendo executado, usará meu host local na porta 3900. Mas quando tentamos, e claro, também precisamos das chaves. Então, o ID da chave de acesso da AWS e a chave de acesso secreta da AWS. Esperamos que não haja vazamentos além desses temporários. Agora, AWS S3 LS e pronto,
+
+novo bucket na casa. Vamos criar um arquivo JSON não analisável (não-P) e, usando a AWS CLI, copiá-lo para o nosso bucket usando o caminho do bucket no S3 e, em seguida, executar o comando `ls` . Pronto! Lembre-se dos URLs pré-assinados do S3, aqueles que permitem criar links especiais de uso único ou com prazo de expiração. Confira [música] isso. Pré-assinar com um número
+
+de segundos correspondente a 7 dias do caminho do arquivo JSON. Aqui está o nosso link. Vamos ver se isso se confirma. Yay. Aqui está um JSON malformado. Eu literalmente consegui
+
+errar um objeto JSON de seis caracteres. E quanto aos sites? O S3 é uma maneira fantástica de hospedar sites [de música] estáticos. Sempre foi tão fácil quanto criar um bucket com o nome do seu domínio e simplesmente ativar o recurso de hospedagem web. A música Garage faz exatamente o mesmo por você. Dê uma olhada nisso. Basta inserir
+
+o nome do balde no site da garagem e pronto. Vamos ver o que o Kodium produz se eu simplesmente adicionar uma tag HTML. Hum, que chato. Ok, vamos incluir isso aqui. O arquivo index.html é uma configuração padrão para
+
+buckets do S3 que hospedam sites. Portanto, não há nada a configurar. A informação indica que o acesso ao site está habilitado. Então, devemos estar prontos para começar. Bem, isso é complicado com o S3. Geralmente, quando você
+
+hospeda um site em um bucket, você direciona o registro do seu domínio, como o meu, por exemplo, dotp.sh, para o bucket. A API do S3 recebe a solicitação com o cabeçalho do host definido para esse domínio. E é assim que ela entende que deve servir. Como estamos executando localmente, precisamos enganar o sistema. Começaremos criando um bucket
+
+com o nome do domínio que eu gostaria de hospedar. Vamos conceder as permissões usando a chave fornecida anteriormente. Agora, copie nosso índice para o caminho do bucket usando a CLI da AWS para S3. Permitir o uso do site da garagem. E assim devemos terminar. O curl também é uma
+
+ferramenta fantástica, você deveria aprender mais sobre ela em um vídeo que fiz recentemente, adicionando o domínio como um cabeçalho adequado e pronto, HTML do Garage! Mas queremos ver isso em um navegador, não é? Existem duas opções principais para isso: podemos adicionar o dotsh e mapeá-lo para o IP do host local ou criar um proxy reverso usando o Caddy, que provavelmente é meu novo servidor favorito. Mais sobre isso no vídeo que também publiquei na semana passada, onde crio um proxy para a porta do servidor web, que podemos executar. E veja o Caddy obtendo certificados TLS sem que ninguém peça. Isso é uma
+
+verdadeira joia. De qualquer forma, o Safari entra em ação aqui para garantir que não haja registros de navegador em cache. Existe o Creative Garage HTML, um site que agrada aos olhos. E já que estamos falando de proxies reversos, o Garage sugere vários deles [para música] , principalmente como uma opção de terminação SSL, que, novamente, se esse for o seu objetivo, honestamente, use o Caddy. Nada mais chegará perto de tornar sua vida tão fácil. Existem o
+
+Engineix, o Confir, o Traffic, o Caddy e outros. Devo dizer que, como mencionei anteriormente, todos esses três tópicos foram abordados em um vídeo específico no canal. Recomendo muito que você assista a todos se estiver com dificuldade para escolher. Por fim, o Garch vem com uma API de administração, que configuramos em nosso arquivo de configuração no início, e até tentamos acessar brevemente sua porta. com um token configurado ou com tokens que podem ser gerados com um escopo de permissão mais restrito. Com a
+
+CLI, você pode acessar endpoints adicionais, como o monitor de integridade do cluster e outras opções de administração. Outra coisa que adorei foi o fato de eles já terem SDKs disponíveis para várias linguagens. Com o [music] Go, por exemplo, você pode obter o SDK do guarant como uma biblioteca e usá-lo para manter o cluster. Obter, adicionar ou alterar nós, gerenciar o layout e qualquer outra atividade relacionada à manutenção. É importante ressaltar que, quando se trata de objetos, você sempre tem o SDK do AWS S3, que não é apenas fantástico e bem documentado, mas provavelmente um dos SDKs mais testados e comprovados que existem. E posso atestar isso por
+
+anos de experiência. Isso abrange tudo o que você precisa para executar seu armazenamento de objetos como um profissional, exceto por um ponto importante, que já mencionamos anteriormente: a terminação SSL ou um proxy reverso que faça isso por você. E embora eu tenha vários vídeos assim no canal, recomendo que você dê uma olhada neste e somente neste. O melhor certificado SSL, Caddy.

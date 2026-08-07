@@ -1,0 +1,78 @@
+---
+video_title: "Pi Can Finally Go Full YOLO Without Wrecking Production"
+video_id: SyTfzEgzjHs
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SyTfzEgzjHs
+video_date: 2026-07-31T13:00:28+00:00
+video_description: |
+  Massive thanks to Docker for supporting the channel and sponsoring this video. More on sandboxes here: https://docs.docker.com/ai/sandboxes/
+  ---
+  
+  Sandboxing an agent let's you wrap it in a micro VM, monitor it's actions and limit the scope of it's capabilities. When working with real scale production systems, consider trying a sandbox.
+  
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Eis o que acontece quando seu agente se torna desonesto. [música] Na semana passada, enquanto eu explorava casualmente mais uma funcionalidade para o meu projeto em uma nova árvore de trabalho do Git, solicitando algumas alterações, meu agente, como de costume, começou a planejá-la para mim. Acabei de receber um telefonema, então me afastei do computador por 10 minutos, e quando voltei, não pude acreditar no que meus olhos estavam vendo. O Sr. Codex havia integrado e enviado o código para a ramificação principal, e se tivesse parado por aí, eu nem contaria essa história para vocês. Mas, de repente, em
+
+um projeto no qual ele já havia trabalhado e implementado provavelmente centenas de vezes, ele decidiu implantá-lo em produção por conta própria e até criou um script para se dar suporte no futuro. Meu Deus, que audácia! É claro que respondi calmamente, pedindo-lhe que cravasse uma nova barreira protetora em seu cérebro frágil para nunca mais fazer aquilo. E aí, você vê essas pessoas no LinkedIn dizendo que têm cinco desses sistemas funcionando durante a noite. Claro, claro. Este e muitos
+
+outros eventos semelhantes deixaram isso claro. Preciso que o Raspberry Pi e o Codex continuem funcionando, mas também preciso que estejam rigorosamente protegidos . E se houvesse uma maneira de executar todos esses agentes de forma completamente não supervisionada, no modo YOLO turbinado, mas com segurança? E se tivéssemos uma caixa de areia? E quem melhor para isso do que a sua empresa de embalagens favorita? E não, na
+
+verdade não está mais usando contêineres. Falaremos mais sobre isso adiante. Vamos lá. [música] O
+
+Docker Sandbox tem uma história bastante interessante. Originalmente, foi lançado usando contêineres, o que faz sentido, já que é Docker. Mas eles logo perceberam que os agentes de codificação são diferentes. Eles executam código arbitrário, precisam de privilégios de root, instalam pacotes e, frequentemente, precisam de acesso ao próprio Docker. Dar a um agente o socket Docker do host é basicamente dar-lhe o controlo sobre a máquina. Então, eles mudaram de estratégia e colocaram cada
+
+sandbox dentro de sua própria micro VM com um daemon Docker privado dentro dela. Dessa forma, o agente ainda pode criar imagens e executar contêineres sem precisar interagir com o host . A ironia é que o Docker ficou famoso por substituir máquinas virtuais por contêineres, e agora os agentes de IA estão promovendo o efeito contrário. Confuso? Não se preocupe, vou explicar tudo claramente. Execute
+
+agentes de IA com segurança. Veremos. Funciona com agentes líderes {quote}, mas Pi não está presente. Vamos lá, Docker, até o Kiro está aqui. Um ponto a observar é que, mesmo vindo do Docker, o isolamento não é um contêiner, mas sim uma micro máquina virtual. Aliás, se você pensou que
+
+conseguiria resolver isso com um contêiner, existem dois motivos pelos quais essa não é uma boa ideia. Primeiro, um contêiner normal compartilha o kernel do host, portanto, uma exploração do kernel ou uma fuga do runtime do contêiner pode potencialmente comprometer o host. Em segundo lugar, há também o problema do socket do Docker . Montar o socket do Docker, sabe, aquele comando `var run Docker socket` quando você precisa do Docker dentro do Docker para simular processos, especialmente com agentes, configurar um ambiente local é uma loucura. Isso dá ao agente um controle quase root sobre o host. Os ambientes de sandbox do Docker fornecem a
+
+cada micromáquina virtual seu próprio mecanismo Docker privado . Chegaremos lá. Confiança na torneira de cerveja. Você sabia que pode confiar em toques para obter privilégios de uso? Em seguida, instale a CLI de sandboxes do SBX Docker. Na primeira
+
+vez que você executar o programa, ele solicitará que você se autentique corretamente com um código curto de uso único. Em seguida, ele desejará inicializar uma política. Você obtém o modo aberto, basicamente o modo amarelo, e nesse caso eu nem entendo por que você precisaria de um ambiente de testes (sandbox). Depois, há a opção equilibrada, que é a mesma opção padrão. E, por último, temos o lockdown, o ambiente isolado, o local secreto, ou como você quiser chamar, um ambiente que não tem acesso a nada. Escolha o
+
+seu veneno e terá acesso ao pacote SBX correspondente . A partir daqui, basta seguir as instruções. Pressione Enter ou C e vamos criar nossa primeira sandbox. Como já mencionei, existem muitas opções, o que não me agrada muito. Gosto de trabalhar com o agente Pi e não vejo motivo para me limitar a outra coisa, então vamos usar um shell por enquanto.
+
+E então, as credenciais, onde adicionamos um token de API de diretor para trabalhar, que usarei para minha assinatura do Codex. Agora, a próxima parte é muito familiar para vocês, desenvolvedores que usam contêineres para o trabalho de desenvolvimento diário, onde vocês sempre precisam montar uma parte do seu host local para trabalhar. É exatamente isso. Vou pegar a árvore Git do meu projeto de local de treino e criar o ambiente de testes. Funcionará por um tempo e depois apresentará um painel de monitoramento com o status, o uso de recursos e ações como parar, sair (como você faria com um contêiner) e, claro, removê-lo definitivamente. Há também uma
+
+visualização de monitoramento que fornece o registro de rede e que será preenchida com dados em breve. Além de um conjunto de regras que permite à máquina virtual se conectar a outros hosts, como AWS, Ubuntu, GitHub e NPM. Voltando ao nosso registro, já existem algumas entradas onde a máquina virtual tentou obter dados. Você notará que, em toda a interface do usuário, existem ações, mapas de teclas, bem como sugestões com um caractere de destaque, geralmente o primeiro. Assim como aqui, pressionando D para excluir uma regra de rede ou B para bloquear futuras tentativas de acesso semelhantes registradas no log.
+
+Você pode obter mais informações com os caminhos de montagem e uma visão melhor do uso de recursos, mas acho que você entendeu a ideia. Vamos abrir. Por algum motivo, existe a opção de abrir o programa em uma nova janela ou aba do terminal, o que é um comportamento totalmente contrário à multiplexação. Docker, por favor, integre o tmux. Vou executar o comando nesta janela, claro, salvar a opção e pronto, [música] estamos dentro. Um rápido comando LS mostra o
+
+projeto montado localmente, e me perdoem por usar árvores de trabalho Git, o que torna tudo um pouco caótico. Mais informações sobre árvores de trabalho em um vídeo dedicado no canal. [música] Bem, não tenho certeza do que essa máquina virtual é feita , o que é bastante estranho para alguém que está acostumado a configurar contêineres com um modelo bem definido. Go está presente, Git também, mas não tenho certeza do porquê. Como o comando `b x l s` fora da máquina virtual, obviamente, me dirá o que está em execução, o tipo de agente e os caminhos de espaço de trabalho ou de montagem , mas só isso. Existe uma boa
+
+solução para resolver tudo isso. Falaremos disso daqui a pouco. Entretanto, aqui está um dos principais motivos para usar um ambiente de teste (sandbox). O Docker não está apenas presente na máquina virtual, ele executa seu próprio mecanismo dedicado a essa micromáquina virtual. Sem vazamentos, sem acesso externo ao meu servidor.
+
+Aliás, o daemon do Docker nem sequer está em execução na minha máquina neste momento. Enquanto que na máquina virtual, eu consigo executar "Olá Mundo", por exemplo, e obter uma resposta adequada. Quando você terminar de usar a máquina virtual ou quiser uma nova, você pode simplesmente removê-la da interface do usuário, como faria com um contêiner, e ela desaparecerá da interface. E, assim como um recipiente, você pode colocar praticamente qualquer coisa que quiser ao redor dele. Uma opção é uma injeção secreta simplificada pelo ambiente de teste (sandbox). Como b x conjunto secreto e você pode
+
+adicionar g para torná-lo globalmente disponível em todos os lugares. E então defina algo como, sei lá , sua chave de IA aberta. Outra opção bem interessante é a flag de clonagem que, em vez de fazer você trabalhar no seu projeto original, cria um clone para você. Assim, mesmo que você esteja protegido pelo seu sistema de controle de versão, o agente pode sabotar o projeto à vontade sem afetar seus arquivos. Bem, [bufa] já que ainda não temos o pi, vamos tentar com código aberto. Adicione o código aberto
+
+e o caminho para trabalhar, aguarde o carregamento da máquina virtual e pronto. Código aberto, pronto para usar. Se perguntarmos sobre o acesso e, com sorte, tivermos feito tudo corretamente e a máquina virtual estiver funcionando adequadamente , devemos obter uma resposta satisfatória. Fora deste repositório, o acesso é limitado. Não consigo ver o host, mas posso executar comandos do Docker aqui mesmo. Certo, conseguimos tudo o que
+
+queríamos, não é? Bem, não exatamente. Ainda estou extremamente limitado. Primeiro, não posso usar meu agente favorito, o pi. Em segundo lugar, e quanto a ferramentas e variáveis ​​adicionais, injeções de credenciais, comandos de inicialização, sabe, todas aquelas coisas sofisticadas que eu consigo fazer um contêiner executar? Bem,
+
+existem duas maneiras de fazer isso com ambientes sandbox. Primeiro, existe a opção de modelo. Você tem uma lista de imagens base, as mesmas que vimos nas duas plataformas que usamos: Cloud, Codex, Open Code, e também há a opção de configuração manual. Assim, poderíamos criar um modelo personalizado que se parecesse muito com, bem, um arquivo Docker. Isso porque é verdade. Você cria
+
+o contêiner Docker, envia para um repositório remoto (se quiser) e aí sim, isso funcionaria perfeitamente. Meu lado DevOps não consegue conceber a ideia de usar uma máquina virtual com base em ferramentas que eu não preciso. Entram em cena os kits de sandbox do Docker . Sim, é experimental, mas de qualquer forma estamos vivendo em um mundo de experimentos. Basicamente, um kit permite que você tenha controle total sobre a criação de sua própria máquina virtual. Ou seja, uma
+
+imagem base para trabalhar e muitas outras coisas. É baseado em um arquivo spec.yaml, e se isso se assemelha ao YAML do Kubernetes, você não está sozinho. Estou construindo um ambiente de testes chamado Pi aqui. Como você pode ver, posso definir a imagem que usarei (a imagem do shell), um nome de arquivo para o agente usar em seu contexto e, por fim, um ponto de entrada para executar. [música]
+
+Agora, para as credenciais, vou usar a chave do Codex. Isso pode ser um pequeno problema , já que estou fornecendo a chave da API em vez de deixar o Raspberry Pi autenticar com o Codex para que eu pudesse usar minha própria assinatura. Esse é um problema para o qual não tenho certeza da solução, então, se você tiver sugestões, deixe um comentário abaixo. Posso definir políticas de rede, incluindo a lista de domínios permitidos com suas respectivas portas, adicionar variáveis ​​de ambiente e até mesmo injetar um contexto embutido. Agora, se tudo for feito corretamente, poderemos começar a trabalhar. Primeiro, o comando `SBX kit
+
+validate` é como o seu `Terraform plan` para quem o conhece, confirmando ou rejeitando o modelo, ou, no meu caso, gerando uma lista de campos obsoletos na forma de avisos. Não sei como conseguiram descontinuar algo tão rápido, mas enfim, hora de ir. Tão grande quanto executar o kit de hífen duplo no caminho local e desta vez escolhemos torta. O ambiente de testes está sendo construído e criado. Bem, isso levou um tempinho, uns 70 a 80 segundos, mas aqui estamos. O Pie está em execução, ainda não foi
+
+autenticado e integrado aos provedores, mas está lá. É claro que posso resolver meu problema anterior autenticando com o Codex através do novo arquivo pie que acabei de executar. Só não sei bem como fazer para grudar e assar dentro do próprio kit. Vamos trabalhar nisso. Assim, você tem uma maneira de criar VMs seguras com seu agente favorito e praticamente controlar tudo o que ele faz. Se você está deixando o agente fazer o que quiser
+
+, então eu sou totalmente a favor. O ambiente de testes (sandboxing) é o caminho a seguir. E se você realmente gosta de se soltar, mas não apenas gastar fichas por diversão , confira a função babá neste vídeo a seguir. Ele ficará em cima do seu agente e garantirá que ele execute o loop até terminar, corrigindo seus erros durante o processo. Obrigado por assistir. Nos vemos na
+
+próxima.

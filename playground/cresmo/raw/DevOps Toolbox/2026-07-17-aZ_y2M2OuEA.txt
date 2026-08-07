@@ -1,0 +1,107 @@
+---
+video_title: "Give me 15 minutes and I'll Fix Your Dockerfiles Forever"
+video_id: aZ_y2M2OuEA
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=aZ_y2M2OuEA
+video_date: 2026-07-17T13:30:16+00:00
+video_description: |
+  Cut code review time & bugs in half, instantly, with CodeRabbit: https://coderabbit.link/devopstoolbox
+  ---
+  
+  I've been building docker containers and seen others do the same for years, but we've all been mostly doing what we *think* is right. Here are 5 corrections, that sped up my builds, my apps, and everything around their infra instantly.
+  
+  - https://github.com/immanuwell/dockerfile-roast
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+You know that story about the five monkeys who learn that climbing a ladder gets everyone punished and then when the punish is removed and actually all the monkeys have been slowly replaced, the group still attacks everyone who tries to climb. It's embarrassing to say, but it's so prevalent in tech. We just do stuff because that's how we used to do things around here. Know that? Well, among many examples I have, one is literally killing companies all the time with huge images, appalling use of cash or lack thereof, not understanding core principles, and listening to AI when it comes to refining or even building a container from scratch. Spoiler alert,
+
+it's bad. Very bad. Now, in times when actual engineering skill is so rare and companies slowly realizing they actually need someone who knows what they're doing to look at their system, we need to talk about the smallest unit of modern infra, the container. It can literally make or break both your system but also the bank. Doing things right, however, means you can ship faster, scale, and enjoy long living systems that don't fail. For years,
+
+I had the habit of building containers in a certain way because I thought I knew best. And that's how just we've always been doing things, which is the most dangerous phrase in the language according to GraceHopper. So today we're diving into five Docker file misconceptions and how to solve them correctly. By the end of this video, you'll know exactly what to use and when while constructing containers and maybe become an expert builder. Let's get into it.
+
+You probably know this platform, maybe even this image as well. But do you actually know what are all these tags? I mean, you probably know Alpine, but should you use it? What about Slim? Do you use them as a tag? Okay, let's rewind a little. We'll start by focusing on three options and pull
+
+Python as is, then the Alpine version, and then Slim. Now, in terms of size, it's quite clear who wins the race, but it's also important to see by how much, and more importantly, what it means for your app. Now, Python is just an example here. Don't worry, we're soon targeting Node, Golang, and others. So, there's about 90 megabytes difference between Alpine and Slim and then another giga for the full version. Is it worth saving the extra 90 going for Alpine? What are
+
+we losing? Can we go even further? Okay, here's a Docker file. It uses Python Alpine and runs Kafka. It's just a random process. Now, I went ahead and built this image. Confluent Kafka fails because
+
+there's no matching distribution found for it. Alpine is tiny, but it uses a strange libby. Libby Cy is the standard C library. Even when you write Python, Node, Go, etc. A lot of native code underneath still calls C-level OS functions like open, read, write, etc. Muscle lipsy is one such
+
+implementation which is small and clean making Alpine so small but it's not compatible with GIC which is what most application releases actually use and built for. GIC is the default C library used by Debian, Abuntu, Fedora etc. So in short mazalib does not equal GIC. Your app will rebuild native dependencies from scratch or just silently be slower. Back to our container file. You may
+
+have noticed this flag saying only binary, which insists on getting the built binary instead of compiling it from source, which Alpine would have done if we hadn't prevented it. Something I've actually been unknowingly doing for years. Just by switching to Slim, then rebuilding the same image, we get a nice, clean, successful build. For the negligible difference in size, I'd say it's worth it, especially if you consider the time it takes to recompile every single dependency from source. Now, Alpine fails to build LMDB, which is a tiny key value store written in C. Now,
+
+we've mentioned Alpine with its muzzle lip C doesn't get the support with releases. So, it needs to build from source. And what people usually do is paste this error to chat GPT and have it fix things for them which usually comes back with sure APK add build base which is a seedbuilt tool chain that comes with GCC make muzzle dev and other small libs you've probably found yourself adding in the past. If we build our image now it finishes off successfully with a small build time. Sure 10 seconds isn't a lot but this is just one library out of many. Well,
+
+what if we ditch the build tools and change it to sleep? Docker build again takes less than a second. That's almost 15 times faster. Consider that at scale. These Alpine mistakes are so prevalent, it's kind of amazing. I mean, consider enterprises. Thousands of build processes
+
+a day. Imagine trying to optimize while doing the exact opposite. So, the Alpine/Slim debate is out of the way. Let's tackle another extremely common mistake, the use, or more precisely the abuse of cash. So you have your node image and you went with slim because you're smart about it and learned from the first part of this video, but you also have a bunch of stuff. Your package JSON that
+
+when invoked creates an infamous node module and I'm sure you've seen this one before to give you a sense of its average size. So our app is just a simple console log. Moving on with our image, we add a work there and then copy everything. npmci stands for kin install which is what you want to have during well CI and similarly when building containers. Next we run npm start and basically we're good to go. Build it then the tag should also give a hint for our problem. We've built
+
+it and npmci runs. This video is sponsored by CodeRabbit. AI coding tools make it ridiculously easy to generate code. Sometimes too easy. You blink and suddenly there's a pull request with 10,000 lines no one's going to review. CodeRabbit is the review layer for that world. It reviews
+
+pull requests and it also works earlier inside your IDE or CLI so you can catch bugs, security issues and bad patterns before you push. It pulls context from your entire codebase, linked issues, documentation and your team's rules, runs 40 plus llinters, security scanners behind the scenes and gives you feedback that's actually useful and actionable. CodeRabbit can generate autofix changes you apply as a commit or stacked PR which saves the endless fix please review again loop. The part I really like is CodeRabbit review UI. Instead of reading a big AI authored PR in alphabetical file order, it recognizes the change into logical layers that build onto each other with plain language summaries and diagrams when they actually earn their place. You also get
+
+CodeRabbit agent for Slack with which teams you can investigate code. Pull context for multiple systems including ticket and documentation plan work and keep everything inside the Slack thread with scoped guardrails. If AI is helping you write more code, you need something serious reviewing it. Check out CodeRabbit through the link in the description. Now back to the video. I'll change
+
+my main code to say version two instead of one. Rebuilding the image now just rebuilds everything, but there's no point in doing that. The dependencies haven't changed. No point in npm install again. The one thing I changed was a character that the app prints. The concept is this
+
+layer order is your cache strategy. Use it well and every subsequent run would enjoy it. Abuse it and you're basically running a cold build every single time. Docker reuses layers until an earlier input changes. If you copy source before installing dependencies, every code edit invalidates the dependency install layer. I was once actually taught to think of it like an onion.
+
+You peel it from the outside. The deeper the change you're making, the deeper we need to peel this onion to rebuild it. The more external the change, the more cache we have, the less we have to rebuild. Let me show you. So, our very first step would be copying what matters initially, the package JSON and the lock file. Then installing npm. From this point, we add the copy all,
+
+which usually takes care of the code itself. Meaning, if we made code changes, this does not invalidate our npm installation process. Now changing to version three which is again a code change. Docker build has almost everything cached from work there through copying package files and yes npmci takes nothing because it's cached on disk. Now some people will look at an image just like the one we've just built and immediately go copy all is bad. Just get rid of it. Well the bad
+
+pattern is not copy dot dot. It's actually sending garbage into the docker build context. If you ignore things properly, that stops being a problem while keeping the Docker file more readable. Let's say our node modules is a huge bloat. If you've ever used DD to create fake bloat, you'll be familiar with the next line. So 50 megabytes of stuff, we don't want Docker to mount. We probably
+
+also don't want LO files or MS, etc. Just building the container tells us we're transferring X amount of stuff to our container. And mind you, I was very conservative with the size here. The proper way is ignoring stuff just like git with docker. Node modules, git files, logs, your disc artifacts all do not belong there. I've seen too many teams either unfamiliar with the option or think of
+
+it as this obscure feature no one uses. Instead, they'll have a mileong copy command to precisely get every single file or folder onto their app. You probably know how that ends. Once properly ignored, we don't have to lift another finger. The copy dot dot still is in place. Rebuilding
+
+the image shows basically zero context transferred onto our container. Beautiful. Sometimes you will accumulate bloat though, even when you're doing your best. I mean, building artifacts just to see it works or other stuff that slip through the cracks. Builder stage equals bloat zone.
+
+Final stage runtime only. The next demo will make the size difference obvious. And for this trick, I'm going to use Golang. As a compiled language, Go usually takes a bit more effort where building a container around. I'll get the smallest print high library that ever exists. I'm kidding. Cdevs,
+
+don't come at me. And then go run main high. Good. So, with the Alpine image, let's first look at the size. 272 megabytes. Not small compared to what we know from earlier, like 130 megabytes over
+
+the Python Alpine. Mainly because Go needs more leverage when it produces a binary. If it produces a binary, there's no point in running it on a full-blown operating system, is there? I mean, sure, it works, but why? So many applications, specifically gobbased containers, are built this way, thinking they're golden, where in fact, it's a huge waste. Let's talk about multi-step
+
+builds for a minute, but more importantly, how you use them. If you don't know the practice, pay attention. You'd usually want to name the first container as builder. Builder is a common name where you can then copy everything onto it. This is literally everything you have locally in the project excluding docker ignore files. Then we go build which produces well a small binary.
+
+Now this binary that can basically run everywhere doesn't need a golang runtime or any runtime for that matter. We're then copying from the builder one thing and one thing only the app binary. And as a command this container will literally run that. No wrappers no nothing. Docker build easy.
+
+When I guess the size compared to our earlier 272 megabytes, we're now down to 11. Impressive, isn't it? But we can do better. Shrinking things even further. Our binary can run anywhere, right?
+
+How about running it on nothing? Docker has from scratch, which basically comes with nothing and can run your binary. A from scratch image with our binary is just 2.3 mgabytes in size. Ridiculous.
+
+And it runs too. So that's how you keep your end result light. But this can be a double-edged sword. Just like slim versions seem to be more practical than alpine. DROless is more practical than scratch. It's the same concept. Still tiny, no shell, no package manager, has some useful
+
+runtime basics, which you still need occasionally and better defaults around user certifications and stuff like that. In simple words, less annoying than scratch. Food for thought. In the meantime, let's jump through another burning hook. two processes on the same container. Before you throw
+
+tomatoes at me, just listen. Sometimes you have a small container with a Python server process and then you need it served through Engineix for various reasons. There's a great engine video on the channel to expand on that. But you don't want the complexity of two containers just for that. The server as is works. Let's feed it through engineix but inside the same image. Nothing
+
+fancy. A process to take us from HTTP and send to the back end to port 8000. In comes supervisor D, a process control system. Basically a watchdog that makes sure everything lives in the container under one controlling umbrella. The confin file holds the settings and then their processes or apps in proper terminology. Then their commands which also tells the watchdog to auto start in
+
+case they fail. R image amongst engineix and supervisor would need to have copy commands for both the code the config and then the supervisor config inside. Docker build runs smoothly. Docker run puts the container up and to test it's actually working. Let's expose port 80 to my local host. And boom. Hello from app server. Great success. As someone on Twitter once said,
+
+one process per container is a vibe, not a law. If your app needs engineix plus the application server and you're not at Kubernetes scale, just use supervisor. The one process dogma costs more complexity than it saves sometimes. Maybe it's me getting old, but sometimes this meme just feels legit. At some point you just strive for calm waters and stability rather than a complicated beast of a setup that needs five other engineers to just maintain. Now the next bit I've seen so
+
+many engineers fail to get I just had to show it. I'll call it digests over tags. Let me explain. When we use a tag like node 26 slim, we usually get what we want. But tags can move tomorrow.
+
+base tag just like latest or nightly can be moved over to a different build whether by accident or in purpose. If you run Docker buildex image tools inspect and add your image you'll be able to see a unique build digest shop one that does not change. The tag can move. This is permanent. If you add it to your image, you'll actually pin the version forever, not relying on the good hearts of the authors. This is usually easy with official images, but when it comes to internal ones,
+
+mistakes are far more common. Protect yourselves. Pin digest hashes. Before wrapping things up, I want you to meet D-roast, a Rust utility that will roast your Docker file so that some of what you've learned in this video will pop up. Great for both local and CI use. install it, run it with an image
+
+name, and it'll give you a log style options with info, warn, and actual errors like npm install to npmci or copy all without an ignore file. It'll literally roast you. And if you don't have a thick enough scheme, it comes with a no roast option, giving you the gist of what you probably want fixed. Right, we've got a lot in. And while there's more to building containers properly, I think we covered the important 90%. If I missed anything, please do comment below. Regardless,
+
+once your Docker is built like a pro, you want to make sure logs are easily readable from your process as well as container metrics, maybe even alerts. Most people install a bloated system with like five different components, but I found something extremely cool. Check out Dozel in this video next and thank me later. Thank you for watching. I'll see you on the next

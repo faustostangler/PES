@@ -1,0 +1,90 @@
+---
+video_title: "This Underrated Tool Replaced 3 Homelab Services (and it's open source!)"
+video_id: 3wJ0IQ3rHjA
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3wJ0IQ3rHjA
+video_date: 2026-06-26T14:40:20+00:00
+video_description: |
+  Private, encrypted cloud storage for DevOps & remote machines 👉
+  https://internxt.com/devopstoolbox **87% off** already applied: code DEVOPSTOOLBOX
+  ---
+  
+  Netbird does it all: tunnels, proxying, firewall, if you want it - netbird delivers.
+  - https://github.com/netbirdio/netbird
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Todos nós adoramos canais de redes sociais por diversos motivos. Compartilhar um projeto com um colega, disponibilizar algo na internet a partir do seu laptop ou executar uma nuvem doméstica completa à qual você possa acessar remotamente. Neste canal, abordei o FRP como uma ótima maneira de fazer proxy reverso e ter controle total do seu canal, de forma semelhante ao Cloudflare. Já falei sobre o headscale e o tailscale, uma alternativa de código aberto, mas o fato de todas essas serem soluções incríveis dá a impressão de que você está se esforçando demais. Ou são comandos longos e improvisados, ou a falta de uma interface de usuário oficial, ou ainda mexer nas configurações. Mas existe outra solução de código aberto
+
+que está silenciosamente se tornando uma das alternativas mais populares a todas as mencionadas acima. É elegante, é rápido, vem com sua própria interface de usuário, mas é muito mais importante do que tudo isso. Alega fazer muito mais do que apenas proteger uma rede mesh. Ele funcionará como seu proxy reverso e seu servidor DNS, reescrevendo entradas dinamicamente, se necessário. E se você estiver gerenciando um laboratório doméstico ou qualquer tipo de rede, provavelmente precisará de alguma coisa. O Netbird elimina esse problema.
+
+Está pronto para produção, caso precise que as coisas funcionem em grande escala. É ótimo para quem hospeda o próprio imóvel, eu o utilizei por um longo período e fiquei extremamente satisfeito. Se você procura uma opção de rede mesh robusta e testada em batalha, construída sobre o WireGuard e que funciona em qualquer lugar, você vai adorar. Vou mostrar como configurar, gerenciar, dimensionar, proteger e, quem sabe, assumir o controle de serviços auto-hospedados que você vem executando em casa. Chegou a hora de colocar a mão na massa.
+
+Embora a Netbird seja descrita em termos simples como um facilitador de túneis, ela se apresenta como uma plataforma de acesso seguro . É um software de código aberto bastante popular, escrito em Go, e oferece uma interface visual desde o início, tanto para configuração quanto para gerenciamento. E embora seja de código aberto, assim como o Tailscale, existe uma empresa por trás que você pode usar para facilitar as conexões através da opção de nuvem oferecida por eles. Estou usando a versão Community Edition, que primeiro sugere que eu crie uma conta na Netbird, o que me parece estranho, já que eu esperava um servidor auto-hospedado. Então, vamos ignorar isso por enquanto. Eu implementei o
+
+Netbird como um servidor Kubernetes no meu cluster K3S de laboratório doméstico. E embora isso pareça muita coisa, há dois pontos importantes aqui. A implantação do servidor de rede executa um único contêiner para o servidor de rede, executando seu processo com um arquivo de configuração montado e abrindo portas para HTTP e comunicação. Abaixo, você encontrará os endpoints do Slashmetrics e do Health, que podem ser usados ​​para monitoramento. O outro é o pod do painel de controle, que é bastante semelhante, apenas executando a imagem do painel de controle da NetBird e abrindo o HTTP para comunicação através do navegador.
+
+Para aqueles que conhecem Kubernetes, também existem alguns serviços para auxiliar no fluxo interno de requisições DNS, mas para aqueles que não conhecem, podem ignorar ou conferir meu workshop introdutório de Kubernetes para iniciantes abaixo. Parece que nossas implantações estão em andamento. Vamos dar uma rápida olhada no nosso serviço de registro de atividades. Tanto o Dozel quanto a forma como configurei o acesso aos serviços do laboratório doméstico são vídeos no canal. Vá conferir. O Netbird
+
+parece estar funcionando bem, assim como seu componente de painel de controle. Então, é hora de configurar. A interface do usuário do Netbird está pronta para que possamos nos cadastrar. E se você encontrar, não se preocupe em tentar as credenciais. Tudo se foi. Conta criada. E
+
+agora podemos fazer login. O Netbird solicita uma rede ponto a ponto ou acesso a uma rede remota. Este é um conceito importante que precisamos esclarecer. Embora o Netbird ofereça essa opção, o verdadeiro poder do WireGuard reside na sua rede mesh ponto a ponto . Isso cria uma conexão segura e de curto alcance sem sobrecarregar nenhum servidor, utilizando novamente o poder de um sistema puro. Eu abordei esse assunto com mais detalhes
+
+no vídeo do Headscale, caso você queira conferir . A outra opção, que não deve ser descartada, é o acesso remoto à rede , que permite configurar o Netbird de forma mais semelhante a uma VPN tradicional, onde você se autentica com uma máquina e isso lhe dá acesso a toda a rede interna. É como uma analogia a uma fortaleza VPN. Você tem o portão principal e, depois de passar por ele, você está dentro do reino. Então, ponto a ponto, é hora de conectar um dispositivo à internet. Começando
+
+pelo meu computador de laboratório doméstico. Logo em seguida, recebemos um URL com um código de usuário de uso único. Abra-o. O login do dispositivo e a confirmação de que estamos conectados também estão indicados no próprio servidor. Agora temos uma rede mesh em funcionamento com um par de dispositivos. Vamos adicionar
+
+mais um. Você não precisa procurar outros clientes ou alternativas de código aberto . O cliente de rede para Android e iOS está disponível imediatamente. E, ao contrário de outros concorrentes, não dá a impressão de ter sido desenvolvido em um fim de semana por uma criança de 5 anos. Já que não vamos usar a opção de nuvem, embora seja totalmente possível, vou alterar o servidor e configurar o meu próprio.
+
+Mude isso. Aperte o botão enorme que você não tem como errar. É preciso autenticar, claro, já que esta é a primeira vez que utilizamos este dispositivo, e após a conexão, ele envia um ping para o host conforme sugerido na interface do usuário, retornando um horário preciso e um host ativo. A interface do usuário também nos oferece agora o iPhone como um dispositivo de rede adicional. Portanto, é hora de seguir em frente. Imediatamente, obtemos uma
+
+boa visualização da pequena rede que acabamos de configurar no centro de controle da NetBird . Você deve ter notado um pop-up inconfundível do Net Birds oferecendo TLS e O automáticos. Atualmente está em versão beta e estou bastante satisfeito com o meu, mas este definitivamente parece ser a solução completa para todas as minhas necessidades. A Internext, patrocinadora do vídeo de hoje, é uma plataforma de armazenamento em nuvem que prioriza a privacidade e se adapta perfeitamente à nossa forma de trabalhar. É um sistema de código aberto com criptografia de ponta a ponta e proteção de conhecimento zero. Assim como acontece com o
+
+armazenamento da sua casa, eles não podem ler seus dados. E isso não é marketing, é arquitetura. Especificamente para fluxos de trabalho DevOps , o recurso mais útil é o suporte ao Arclone. Você pode conectar o Internx Drive nativamente ou via WebDAV. Portanto, tudo o que você faz normalmente ou automatiza normalmente com o Arclone funciona exatamente da mesma maneira. Backups agendados,
+
+criação de artefatos, exportação de arquivos de configuração de máquinas remotas, tudo se encaixa perfeitamente. Eles também acabaram de lançar o versionamento de arquivos, que é um daqueles recursos que você não acha que precisa até precisar, e que reflete exatamente o que você acabou de configurar. Com o Rust Office, eles agora oferecem um plano definitivo vitalício, com pagamento único de 5 TB e sem assinatura para um destino de backup que deve existir apenas em segundo plano . Esse modelo de preços faz muito mais sentido do que pagar mensalmente para sempre. Acesse interext.com/devopstoolbox
+
+e use o código devopstoolbox para obter 87% de desconto, que é maior do que o desconto oferecido diretamente no site. Aproveitar. Voltando agora ao vídeo. Se você ainda não assistiu ao meu vídeo sobre o Caddy no canal, assista agora mesmo, pois ele é o meu proxy reverso preferido e tem um enorme poder que vai além da configuração mais simples que já vi em um sistema desse tipo: a geração e o gerenciamento automático de certificados TLS . Não poderia ser mais fácil do que isso. Agora, o fato da Netbird oferecer
+
+o mesmo serviço me deixa muito animado. Agora eu potencialmente seria capaz de lidar com conexões locais e remotas, além de disponibilizar meus aplicativos com HTTPS configurado automaticamente, com uma ressalva. Bem, na verdade, duas. Primeiro, está em versão beta, como já foi mencionado, mas segundo, os servidores com hospedagem própria precisam gerar tráfego. Bem, eu não entendo completamente por que o Caddy não se encaixa aqui. E embora eu goste bastante de carros de luxo
+
+, o motivo pelo qual escolhi a Cadillac foi exatamente esse. Então, acho que não vou tentar isso agora. Vou experimentar em breve e depois conto o que achei. Voltar à interface do usuário. A seção de pares lista os nós atuais com seus endereços, grupos e versões de cliente. Você pode criar
+
+chaves de configuração para permitir que outras máquinas novas entrem na rede por meio de convite. Por agora , vamos pensar na configuração atual e em como posso usá-la para acessar serviços internos. Como escolhi uma rede ponto a ponto e meu celular consegue ver a máquina do meu laboratório doméstico, isso não significa que ele consiga ver todos os serviços em execução nos K3s dentro do host. É para isso que servem as rotas de rede. Permite acessar outras redes sem precisar instalar o Netbird em todos os recursos. Isso
+
+nos leva de volta à ideia de VPN que mencionei anteriormente. Se você estiver interessado no Netbird para uma rede mesh puramente segura, a melhor opção, caso esteja executando-o em um cluster, é a arquitetura sidecar. Adicionando um aplicativo específico com o contêiner sidecar para integrar à nossa rede. Dito isso, estou aqui para me divertir, não para sofrer. Então, vamos verificar o que uma rota de rede nos fornece. Digamos que eu precise acessar meu
+
+laboratório doméstico como uma rede. A regra incluiria um bloco de sidra. Aqui, eu fui bastante abrangente. Eu sei disso por mera formalidade e preguiça. Uma vez que a regra esteja em vigor, precisamos escolher a quem a política se aplica.
+
+Neste caso, todos os dispositivos na rede. E você pode ir ainda mais a fundo e adicionar uma verificação de postura, algo que eu não tenho visto muito, ou quase nada, em alternativas. O bloqueio pode ser aplicado a uma versão específica do cliente, a um país, a uma região, a um intervalo de rede, a um sistema operacional e até mesmo a um processo em execução no cliente. Este é enorme. A rede basicamente oferece acesso remoto, mas também um firewall muito detalhado, que especifica com precisão as políticas aceitas. Claro, você pode inserir uma série de
+
+IPs, mas a análise detalhada do processo em execução ou da versão do cliente abrange tantos vetores de ataque que acaba restringindo bastante o escopo da investigação . Então, você acabou de obter acesso remoto a uma rede mesh baseada em WireGuard que também gerencia seus certificados TLS, mas agora funciona como um mini firewall. E se isso não te empolgar, espere só, porque o Netbird está prestes a descontinuar mais um serviço que estou executando no meu laboratório doméstico. Agora, ainda não terminamos com a configuração detalhada da nossa rota de rede. Adicionamos nós de roteamento individualmente ou em grupo. Habilite-os e só
+
+então poderemos começar a trabalhar. Meu dispositivo móvel, que está conectado no momento (e observe que está na rede celular para garantir que estou usando uma conexão global), agora pode acessar o serviço de logs que só pode ser acessado do meu laboratório doméstico. Vamos ser ainda mais minuciosos na verificação. Volte ao Netbird e desconecte-se. Acessei o serviço de registro novamente no Safari e nada. Incrível. Por enquanto, o
+
+acesso a isso ainda é feito através do Caddy para mim. Quando um dispositivo tenta acessar o Caddy a partir deste endereço, executar o comando curl no meu serviço de logs a partir de uma rede remota não funciona. O endereço IP é resolvido conforme o esperado, apontando para um IP privado ao qual não temos acesso. Mas isso, como já foi dito, não é segurança. É segurança por obscuridade. Aqui estou eu, entre aspas,
+
+hackeando minha própria configuração e mostrando como você pode acessar qualquer serviço que execute o mesmo joguinho engraçado de esconde-esconde. Não exige nenhum esforço. Faça com que o curl resolva o endereço IP para o endereço IP público, caso o tenha encontrado, e tente acessar o serviço novamente. E sabe o que mais? Estou conectado. O aperto de mãos TLS foi
+
+concluído e o Dozel é servido em um prato. Existem duas maneiras de fazer isso, como já mencionamos. Um usuário irá configurar o caddie e proteger a entrada, encontrando o endereço IP local apenas como ponto de acesso para este serviço. Feito isso, podemos repetir o mesmo processo. Ainda não consigo descobrir o IP interno, mas resolvê-lo usando o IP público leva ao kadi, que acaba recebendo o sinal de proibido exatamente como configurado. Isso funciona, mas existe uma
+
+maneira ainda melhor, que vou ilustrar rapidamente para você, em vez de me aprofundar novamente nas configurações de DNS. A caixa branca é meu laboratório doméstico, com o Caddy instalado internamente e acessível pela internet global. Eu também tenho um serviço de registro de atividades, como o Jellyfin e o Netb Bird. Atualmente, a configuração envia tudo para o Caddy, que distribui o tráfego para outros serviços, incluindo o Netbird, o que é um cenário um tanto estranho. O Netbird é um gateway de acesso remoto e também pode funcionar como firewall e, potencialmente, como proxy reverso. Este deve ser o
+
+ponto de acesso principal. Enviamos o tráfego para ele em vez do Caddy. O Netbird permitirá o tráfego se você estiver vindo de sua configuração de malha e, somente então, o Caddy encaminhará suas solicitações para os serviços de backend. O que me leva de volta à opção de proxy reverso Netird. Se eu conseguir não só colocar o Netbird na frente, mas também integrar minha configuração do Caddy a ele, será uma grande vitória. Vou
+
+aguardar o término da fase beta e depois volto a entrar em contato . E, por favor, comentem se tiverem interesse em que eu aborde esse assunto. Estou animado para ver tudo visualizado em um só lugar. Entretanto, eis outra grande surpresa em Nepert. Eu não esperava ver isso. O Netbird oferece um
+
+sistema de gerenciamento de DNS, acredite se quiser. Sim, ele permite resolver nomes locais na rede privada e controlar o acesso ainda mais. Para isso, você cria seu próprio servidor de nomes, que é adicionado ao Cloudflare aqui. Selecione os pares com os quais deseja usá-lo e configure-os para resolver um domínio específico. Feito isso, todos os pares configurados agora têm um resolvedor local que serve entradas DNS e responde a consultas internamente. Você pode
+
+adicionar vários desses e, além dos já conhecidos, pode usar um nome personalizado para resolvê-los. Acho que vou parar por aqui, pois estou me desviando um pouco do roteiro deste vídeo. Quem já assistiu aos meus vídeos sobre o HomeLab sabe que atualmente estou usando o Adgard para essa finalidade. Recentemente, migrei do Adgard para o meu DNS público, que também suporta HTTPS, como você viu neste vídeo. Mas ter ambos integrados em um só lugar torna tudo mais acessível, fácil de monitorar e resolver corretamente, sem complicações, o que definitivamente desperta minha curiosidade. Comente abaixo se tiver
+
+interesse em saber mais sobre as funcionalidades do DNS na internet e, claro, sobre a configuração de proxy reverso. Enquanto isso , dê uma olhada na minha configuração de DNS que me permite criar entradas públicas dinamicamente sem precisar vinculá-las a nenhum IP público, usando o DN simple e um truque do Caddy. Obrigado por assistir. Te vejo na próxima.

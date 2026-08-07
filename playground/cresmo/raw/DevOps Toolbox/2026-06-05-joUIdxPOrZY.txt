@@ -1,0 +1,94 @@
+---
+video_title: "The Perfect Password Manager Is Hiding In Your Terminal"
+video_id: joUIdxPOrZY
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=joUIdxPOrZY
+video_date: 2026-06-05T13:30:31+00:00
+video_description: |
+  Get started with SerpApi using 250 free credits: https://serpapi.com/?utm_source=youtube&utm_campaign=devopstoolbox_june_2026
+  Huge thanks for SerpApi for sponsoring and supporting the channel!
+  ---
+  
+  Pass is a hidden gem available to everyone that can replace your secrets manager!
+  - https://www.passwordstore.org/
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+E se eu lhe dissesse que seu terminal pode ser seu gerenciador de segredos? Sim, tanto a sua senha do Instagram quanto a chave do seu banco de dados. E se fosse gratuito, de código aberto e criado pelo mesmo pesquisador que deu vida ao WireGuard? Frequentemente utilizamos ferramentas e pagamos por serviços sem questionar sua relevância ou alternativas. É claro que a popularidade dos produtos leva as pessoas a evitarem pesquisas muito aprofundadas ao escolher uma nova opção, mas quando se trata dos seus segredos, vale a pena dar uma segunda olhada. O
+
+Pass é extremamente leve, mas vem com várias extensões que ajudam você a migrar de praticamente qualquer serviço que você usava anteriormente. Ele monitora as alterações. Você pode configurá-lo para lidar com senhas de uso único. Há opções para Android e iOS, bem como para qualquer outro sistema operacional de computador . As opções são infinitas, mas acho que encontrei algo que vai além de todas elas, tornando-se um dos caminhos mais seguros para agentes que escrevem código e precisam acessar segredos. Nem tudo são
+
+flores. É um caminho cheio de obstáculos que eu não esperava, mas se você perseverar e gostar do terminal tanto quanto eu, você vai adorá- lo. Vamos lá.
+
+Como muitas vezes as pessoas adoram mencionar ou criticar ferramentas que não seguem a filosofia Unix, o Pass a segue. Faz uma coisa e faz bem. Na verdade, poderia ter feito muito mais, mas é simples e eficaz. O Pass salva todas as senhas como um arquivo no disco criptografado com GPG. Não sei se você só percebeu agora, porque demorei bastante para me dar conta de que estava usando GPG em vez de PGP. Para alguns, isso pode
+
+ser óbvio, mas, sinceramente, eu não percebi. Para esclarecer qualquer confusão, PGP é o padrão original, Pretty Good Privacy, criado na década de 1990. Esse padrão se chama OpenPGP, e o nome sugere que ele é de uso aberto. Ele surgiu como um software gratuito, mas evoluiu para um produto comercial, agora propriedade da Broadcom. GPG, no entanto, é GNU PG, para ser mais exato. Utiliza
+
+o mesmo padrão, mas o implementa em um software de código aberto. Agora que esclarecemos a questão da chave, vamos falar sobre o criador, Jason Donenfeld, também conhecido como zx2c4, e não consegui encontrar nenhuma referência ao que isso realmente significa. Jason é um pesquisador de segurança bastante conhecido, famoso principalmente por criar o WireGuard, um protocolo VPN rápido, moderno e simples que cria um sistema de túnel de rede criptografado. Se você usar o Tailscale, agradeça ao Jason. Então, se o criador do WireGuard desenvolver uma CLI para senhas, eu topo. Essa
+
+lenda tem seis conexões no LinkedIn, nenhuma experiência listada, só está disponível por e-mail e hospeda o código em seu próprio servidor Git. É assim que você sabe se alguém é confiável hoje em dia. Muito bem, hora de colocar a mão na massa. Seu primeiro e único pré-requisito é o GPG. Em um Mac, execute o GnuPG, mas a versão do Gnu sugerida está disponível principalmente para Linux, como você provavelmente já percebeu pelo nome. O GPG está pronto para uso, e basta ver
+
+os algoritmos criptográficos suportados. Nosso primeiro passo, como você provavelmente já imaginou, é gerar uma chave. Você deve ter notado que um arquivo .gnupg foi criado em nosso diretório home . É aí que o GPG armazenará pares de chaves, sementes aleatórias para a geração e muito mais. Sem entrar em muitos detalhes sobre as
+
+opções de criptografia, vamos usar RSA e o comprimento máximo possível, porque, afinal, por que não? As chaves podem ter um prazo de validade. Na verdade, a opção padrão é nenhuma, e é com ela que vou continuar. Confirme se é esse o caso e forneça seu nome, endereço de e-mail e um comentário útil, se necessário . O GPG precisa de aleatoriedade para gerar sementes adequadamente e pede que você digite um pouco do seu tipo de dado ou mova o mouse para gerar entropia.
+
+A principal função de uma chave é ser imprevisível. Houve ataques famosos no passado que implementaram métodos de geração de chaves usando funções matemáticas previsíveis, e as ferramentas modernas dependem da entropia, um nome sofisticado para aleatoriedade, para aumentar a imprevisibilidade, se é que isso faz sentido. Seu sistema operacional coleta eventos ou ruídos de baixo nível, como operações de teclado, mouse e disco, que são usados ​​como semente para /dev/random. Espero sinceramente não ter estragado a explicação, então espero que os engenheiros de segurança aqui possam comentar com validações ou o oposto, o que for melhor para eles . Com isso em mente, adicione uma senha à sua chave para uma camada extra de segurança, e pronto. Temos um
+
+par de chaves, uma pública e outra privada, criadas e assinadas. Para listá-las, execute o comando "list secret keys possible by adding a format" e agora é hora de assinar. Escrevemos uma mensagem secreta em um arquivo, que depois iremos proteger. Se você tentar isso com um endereço de e-mail que não possui uma chave pública fornecida pelo provedor de e-mail, não adianta assiná-lo ou criptografá-lo, então você receberá uma mensagem de erro. Então, vamos usar o meu por enquanto, o que adiciona um novo arquivo com o mesmo nome e terminando com ASC. Antes de decifrarmos nosso
+
+segredo, vamos falar sobre outra opção. Aliás, o parâmetro "armor" aqui indica ao nosso GPG para gerar saída em texto em vez de binário. Com a assinatura destacada, criamos um arquivo de assinatura separado, que usaremos posteriormente para verificar a autenticidade. O GPG pede a senha e agora temos um arquivo de assinatura para trabalhar. Use a verificação com a assinatura e o arquivo, e pronto, assinatura válida. Um
+
+agradecimento especial à SERP API por patrocinar este vídeo. Se você já tentou importar resultados do Google em tempo real para suas próprias ferramentas, sabe como isso pode se tornar complicado rapidamente. Os scrapers param de funcionar, as páginas mudam e os limites de taxa se tornam difíceis de gerenciar. É aí que a API SERP se torna útil. Isso fornece uma API limpa para resultados de mecanismos de busca. Assim, em vez de
+
+gastar tempo mantendo a infraestrutura de coleta de dados , você pode integrar esses dados diretamente ao seu próprio fluxo de trabalho. Um bom exemplo é o monitoramento da concorrência ou o rastreamento de buscas locais. Se você deseja ver como produtos, páginas ou empresas estão aparecendo nas buscas, a API SERP facilita muito a obtenção desses resultados de forma estruturada, incluindo listagens e avaliações, e o seu uso em seus próprios alertas, painéis ou ferramentas internas. Também funciona perfeitamente com fluxos de trabalho de IA quando você precisa de resultados de pesquisa atualizados como uma entrada confiável. Se você quiser experimentar, a SerpAPI está oferecendo 250 créditos gratuitos. Confira o link na
+
+tela e você também poderá escanear o código QR . Agora, voltando ao vídeo. Preciso fazer uma pausa e destacar que esse conceito é a base de todos os aplicativos de mensagens diretas que você possa imaginar: Telegram, WhatsApp e até mesmo Signal. Embora alguns deles usem seus próprios protocolos, o conceito criptográfico central é o mesmo: assinar mensagens para garantir sua autenticidade. O GPG e qualquer aplicativo com criptografia de ponta a ponta que você tenha utilizam o mesmo componente básico. Agora, vamos dar uma
+
+olhada rápida no arquivo. Tem a aparência que você imaginaria para uma assinatura ou certificado PGP. Observe também que isto aqui é PGP. Estamos usando seu protocolo aberto. Agora, podemos simplesmente descriptografar nossa mensagem criptografada anterior usando o GPG. Nada de
+
+especial, funciona, e lá está impressa nossa mensagem secreta. Agora que entendemos o GPG, começamos executando o comando "pass init" para criar o repositório de senhas. Ele será criado com a extensão .htaccess dentro do seu diretório pessoal. Agora, você pode passar o comando `git init`, que, aliás, funciona com qualquer comando git, e veremos isso em breve. Ah,
+
+e certifique-se de inicializar com um e-mail conhecido para que ele tenha uma chave, caso contrário você terá problemas. Para inserir sua primeira senha, basta digitar "inserir" seguido de um nome e digitá-lo duas vezes. Pronto, já está implementado e rastreado pelo Git. Fantástico. Deseja obter sua senha secreta? Digite o
+
+nome da senha e o valor será impresso automaticamente. Agora, é hora de estruturar. Use a barra invertida para separar sistemas baseados em diretórios. Assim, o e-mail profissional, por exemplo, no diretório de empresas, seria configurado da seguinte forma. Para obtê- lo, use o mesmo caminho. Assim como outros
+
+gerenciadores de senhas, se você precisar que uma senha seja gerada automaticamente, use o gerador de senhas. E se você adicionar um caminho, ele será salvo lá. Ao passar o comando "business", será exibida uma árvore com tudo o que estiver no caminho do negócio, onde, seguido pelo nome, como mostrado anteriormente, o valor será impresso. Algumas funcionalidades interessantes são o hífen "c" para copiar o conteúdo para a área de transferência com um temporizador de autodestruição, o que é realmente legal, e eu já consegui criar scripts para contornar isso. Quarenta e cinco segundos depois, o segredo sumiu da minha área de transferência. Se, por algum motivo, você quiser
+
+visualizar todo o repositório de senhas, use a senha LS. E a minha funcionalidade favorita de todas, a busca por senha. Basta enviar um termo de pesquisa parcial e deixar que o sistema encontre o resultado para você. Você também pode excluir uma senha, é claro. Para isso, vou criar uma senha que quero tanto perder quanto apagar com muita convicção. Executei o comando "run pass delete" e, claro,
+
+queria me livrar do Jira, mas ele sumiu num instante . A opção "Exibir senha" é outra forma de mostrar o armazenamento de senhas, e você também pode editar seus valores. O comando ` pass edit` insere o valor na variável de ambiente do seu editor de dólares, permitindo que você o altere. Você pode, naturalmente, mover os segredos, alterando tanto os caminhos quanto os nomes. Agora, com todas essas operações em mãos, vamos dar uma olhada rápida em como o Git as registrou. Já mencionamos que o comando `pass`
+
+aceita qualquer comando Git e seus subcomandos. Então, o comando `git log` mostra tudo o que acabamos de analisar, em uma série de commits que você pode verificar e usar para fazer rebase interativo, se estiver se sentindo corajoso. Você pode, naturalmente, explorar a estrutura de arquivos para encontrar uma árvore de arquivos e diretórios GPG muito simples e direta . Tudo isso é ótimo, mas e se você tiver uma mensagem ou texto realmente secreto? Bem, o passe vem com uma opção de várias linhas, permitindo que você inclua todos os segredos que tiver na fila.
+
+Pessoalmente, eu ficaria feliz se também fosse lançado no Neovim. Não sei se isso é uma opção ou não, mas enfim. De qualquer forma, quando você ler o segredo, ele será impresso com linhas de quebra e tudo organizado. Acredite ou não, além de outras bandeiras e pequenos detalhes, isso cobre praticamente tudo o que aquela passagem tem a oferecer. E é exatamente esse o ponto quando você tenta seguir a filosofia Unix. Mas, usuários de um
+
+gerenciador de senhas e do LastPass agora se perguntariam: "E quanto às senhas de uso único e ao uso em dispositivos móveis? Quer dizer, minhas senhas, que agora estão armazenadas com segurança no meu computador, são praticamente inúteis se ficarem restritas a ele." Não se preocupe, o passe pode ser prorrogado. Eu não venho, mas sim os listo e me preparo para recebê-los. Você encontrará isso na documentação. Funcionalidades como atualização de senhas,
+
+adição de recursos para ações com vários arquivos e outras opções. Existe a importação de senhas, que pode importar suas senhas de qualquer assinatura que você já tenha. E há opções para praticamente todos os modelos que você possa imaginar, até mesmo para o chaveiro da Apple. Então, resolvi experimentar . Deixe-me resumir isso para você. Não é tão fácil quanto você pensa.
+
+Embora seja perfeitamente possível, você precisa se esforçar um pouco para que isso aconteça. Para alguns de vocês, a emoção faz parte do jogo, mas para aqueles que esperam a suavidade de um serviço pago , preparem-se para uma jornada turbulenta. E embora eu também tenha tentado o Cute Pass como um cliente com interface gráfica, que eu nem sequer consegui abrir, muito menos executar, encontrei algo melhor. O Raycast possui uma extensão de passe. Quem precisa de mais alguma coisa? Dá uma olhada nisso
+
+. Pop Raycast, agora você vê toda a sua loja, clique no segredo que deseja e pronto. Ele é colado em qualquer aplicativo que esteja sendo executado em segundo plano . Imagine que é meu navegador em uma página de login. Não há nada mais fácil do que isso. Aliás, caso a importação anterior
+
+não funcione, existem vários scripts de migração prontos para uso. Tenho quase certeza de que também é possível programar algo por meio de intuição, mas não sei se essa é a melhor maneira de testar pela primeira vez. Por fim, eu estava muito interessado em fazer o aplicativo móvel funcionar. O Pass está disponível na App Store, mas exige um pouco de esforço da sua parte. Primeiro, você precisa de um repositório de senhas, então eu enviei meu pequeno repositório de segredos para um repositório privado no GitHub. Você fornece
+
+um caminho, uma ramificação e um token para clonar e sincronizar, e pronto, seus segredos estão no seu celular. Por fim, quero mostrar algo que acredito tornar o passe ainda mais poderoso no mundo em que vivemos hoje: a IA. Se você optar por usar apenas uma senha, tudo bem e é perfeitamente aceitável. Mas e se, em vez disso, ou além disso, você pudesse criar um gerenciador de segredos de repositório definitivo? Sabe, em vez de usar variáveis ​​de ambiente com ponto e correr o risco de enviar texto não criptografado. Por outro lado, você
+
+não quer ficar mexendo com gerenciadores de segredos complexos quando trabalha localmente, mas também não quer ter que lidar com algum tipo de agente para programar, e sim garantir que ele tenha acesso às suas chaves com segurança. Dê uma olhada nessa funcionalidade. Em um repositório, podemos definir o armazenamento de senhas " deer" e "var" e configurar o diretório de trabalho atual para ele. Em seguida, após a autorização, nos informaram que estava vazio, o que é um ótimo sinal. Agora podemos inicializar usando a mesma chave e está tudo certo. Em uma
+
+partição separada, sem a variável de ambiente, vamos obter o armazenamento principal de senhas. Mas ninguém quer manter uma variável de ambiente constante antes de cada comando, nem queremos ficar definindo-a para cada sessão. Felizmente, você tem o conceito de mise en place, que é o melhor em gestão do ambiente local e um tema popular neste canal, além de ser um dos tópicos abordados em vídeo. Adicionamos a variável de ambiente ao arquivo mise.toml e sim, ela está no final porque já revelei muitas informações importantes no YouTube e não confio mais no efeito de desfoque. É isso.
+
+Casca fresca, passe o show, vazio. Fantástico. Agora posso começar a usar segredos locais, como uma senha de banco de dados, por exemplo. Configure, pegue e pronto. Por ser uma ferramenta simples que faz uma coisa e a faz bem, você pode experimentar . O Pass facilita o
+
+uso global ou local, remoto e como um gerenciador de senhas completo. Você pode importar de provedores, mas também da Apple, do Chrome e de qualquer outro repositório secreto que você possa imaginar. Adoraria ouvir a opinião de outras pessoas nos comentários. Tentamos fazer dele o único gerenciador de segredos com OTP e uso diário. Entretanto, já que mencionei brevemente o conceito de mise en place, mas não me aprofundei o suficiente, recomendo fortemente que você assista a este vídeo a seguir para poder avançar para o próximo nível. Obrigado por assistir. Te vejo na
+
+próxima.

@@ -1,0 +1,110 @@
+---
+video_title: "I'm never going back to GitHub UI ever again."
+video_id: Z-3dUHDnkEI
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Z-3dUHDnkEI
+video_date: 2026-03-06T14:30:26+00:00
+video_description: |
+  Start building with Orchids today. Use code MARCH15 for 15% off: https://orchidsapp.link/devopstb
+  ---
+  
+  gh-dash is an amazing TUI that helps you gain control back over Github PRs issues and notifications
+  - https://www.gh-dash.dev/
+  - https://github.com/omerxx/dotfiles
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Se você ainda gerencia seus Pull Requests no GitHub clicando em várias abas do navegador e esperando notificações do Slack dos seus colegas, quero te mostrar algo que elimina essa bagunça e cria um fluxo de trabalho eficiente. Não me interpretem mal, eu fazia isso há anos, perdendo horas todas as semanas. Você pode nem perceber, mas a constante alternância entre código e navegador cria um atrito enorme. Muitos consideram a interface do usuário do GitHub como o padrão ouro para participar de discussões de projetos, recursos, problemas e revisões de código. Na verdade, pelo menos para mim, é uma armadilha de caos aleatório. Desde o meu primeiro esforço, lá
+
+em 2013, eu não tinha ordem nem fluxo quando se tratava de visibilidade e participação em múltiplos projetos de programação. Finalmente percebi que é no navegador que minha produtividade vai para o buraco. Hoje, vamos parar de ignorar commits, PRs e issues. A CLI do GitHub corrige alguns desses problemas, mas o gh-dash é uma extensão que a complementa com uma interface de usuário em tempo real ( TUI) que muda completamente o jogo. Mas não estamos apenas instalando uma extensão.
+
+Vou mostrar como adaptei isso para um pipeline personalizado usando tmux, Neovim, work trunk e até mesmo código aberto. Ao final deste vídeo, você não apenas filtrará e mesclará mais rapidamente, como também terá um sistema que entregará automaticamente suas solicitações de compra aos agentes para revisão instantânea antes mesmo de você digitar uma tecla. Para mim, esse foi o mesmo momento de revelação em que aprendi sobre os movimentos Vim, resolvendo uma dor que eu nem sabia que tinha. Muito bem, vamos colocar a mão na massa. [música] [bufa] gh-dash, como o nome sugere, é um utilitário centrado no GitHub. Neste caso,
+
+trata-se de usar a CLI do GitHub, que você precisaria ter instalada para começar. [música] Conheço o projeto há anos, mas recentemente ele ultrapassou a respeitada marca de 10.000 estrelas no GitHub. Criado por um desenvolvedor fantástico que recomendo seguir, [música] é escrito em Go e usa todos os recursos que vêm com um projeto de pulseira de berloques. Desde o bubble tea que alimenta a interface até o brilho labial que lhe confere estilo, [a música] e até mesmo o GIF no topo foram criados usando seu projeto VHS. Voltando ao
+
+projeto em si, se você já estiver autenticado no GitHub, ao contrário de mim, pode adicionar a extensão gh-dash sem problemas, assim: Se você não estiver autenticado, aguarde alguns segundos, abra uma conta SSH como o profissional que você é, copie o código de uso único, aprove o acesso com o GitHub e faça login. Agora, você pode instalar a extensão do GitHub. [música] A lista de extensões do gh nos diz que está lá, então execute gh-dash e pronto, [música] aqui estamos. O arquivo e a extensão gh-dash também são uma CLI baseada no Cobra. Por ser um projeto repleto de charme , o menu de ajuda já exibe componentes belíssimos e resultados coloridos. Para ser sincero, é bastante limitado,
+
+já que estamos lidando com uma interface de texto (TUI), mas você encontrará uma opção para carregar arquivos de configuração específicos ou diferentes, embora ela respeite muitas configurações padrão antes que você realmente precise usá-la. [música] Antes de fazer qualquer coisa, dash, permita-me dar-lhe um apelido, é respeitar ambas as setas, mas mais importante, os movimentos do Vim. Para rolar a lista ou navegar entre as abas, use as teclas a, j, k e l. Da mesma forma, Shift + G + G levará você a ambas as extremidades da lista, respectivamente. Outro comentário importante antes de prosseguirmos. Executar o comando `gh-dash`
+
+dentro de um projeto, como seria de esperar, reconhece o repositório. Portanto, meu próximo plugin do tmux para a sessão agora está no contexto da interface de usuário atual. Por padrão, ele procura por PRs dos quais eu sou o autor, mas essa não é minha opção preferida, especialmente para um projeto de código aberto como este. Cuidaremos disso em breve. Seu melhor amigo é o menu de ajuda, que pode ser acessado pressionando o ponto de interrogação. Possui os
+
+movimentos, o mapeamento de teclas e tudo o que você precisa. Tudo o que você vê aqui é totalmente personalizável. Nós chegaremos lá. Este é um bom momento para lembrar aos espectadores que tanto a configuração desta interface de usuário de texto ( TUI) quanto todo o resto que tenho estão no meu repositório de arquivos de configuração (dotfiles) no GitHub. Observe que alguns destes podem depender de outros utilitários e preferências pessoais.
+
+Vou mostrar [música] aqui. Talvez não sejam a sua primeira escolha. P mostra a prévia. Isso é muita letra P em uma frase. De qualquer forma, você pode ocultá-lo por padrão na configuração, mas quando você começa a usar, é assim que funciona. Dependendo
+
+do espaço disponível, quando ativado, o recurso de pré-visualização fornece muitos dados para você trabalhar. Primeiro, há uma visão geral, um resumo e as alterações. Você pode rolar para cima e para baixo usando as teclas Ctrl+U e Ctrl+D, respectivamente. Os colchetes, como o menu de ajuda pode lhe lembrar, são usados ​​para alternar entre as diferentes abas: atividade [música] , commits, checks e arquivos alterados. Agora, vamos nos concentrar nas abas principais da interface de usuário em tempo real (TUI). Temos meus pull
+
+requests, filtrando por padrão os PRs atuais do repositório do caminho [music] atual, do qual sou o autor. Mover-se para a direita com a tecla " l" ou as setas atende às necessidades da minha guia de revisão. Por último, a aba "Envolvido", que menciona os PRs nos quais, bem, eu estou envolvido . A diferença entre essas abas configuráveis ​​é, obviamente, a linha de filtro. A filtragem é definida pelos filtros de pesquisa do GitHub, permitindo que você pesquise por PRs, issues, filtre organizações, status e até mesmo marcos, caso esteja usando essa opção específica no GitHub. Ao pressionar [música] barra,
+
+você será direcionado para essa linha, onde poderá alterar o que quiser, exceto a primeira entrada, que sempre diz dois pontos PR. No canto inferior esquerdo, o sinal de RP está aceso. Essa é uma das três visualizações principais do Dash. Falaremos dos outros daqui a pouco. Se você excluir todos os filtros, obterá todos os PRs (Pull Requests) deste projeto, mas se iniciar o dash em um caminho que não seja de projeto, ele obterá todos os PRs abertos no GitHub dos quais eu sou o autor.
+
+Você pode, por algum motivo, remover a opção de autor, o que resultará em, bem, 83 milhões de PRs (Pull Requests). Eis um PR criado há 11 segundos em um projeto do qual eu nunca ouvi falar. E, só para garantir, há um número exato de PRs encontrados na parte inferior. Por sorte, a paginação trouxe 20 deles, caso contrário, eu seria responsabilizado por um ataque DDoS ao GitHub. O gh-dash é um ótimo exemplo do que acontece quando alguém cria uma ferramenta que realmente resolve um problema real. E
+
+por falar em construir coisas, este vídeo é patrocinado pela Orchids. A Orchids é uma desenvolvedora de aplicativos de IA sediada nos EUA e listada entre as 25 melhores do Y Combinator, mas não do tipo que você está pensando. A maioria dos construtores de IA disponíveis te limita a uma única pilha de opções. Você adquire um site ou um aplicativo, e pronto. Orchids permite que você construa qualquer coisa. Interfaces web, aplicativos móveis,
+
+extensões do Chrome, bots do Slack, agentes de IA. Vi alguém construir um clone de terminal Bloomberg totalmente funcional com ele, e os resultados dos testes de desempenho estão em outro nível, muito acima do Vercel, Bolt, Replit ou Lovable. E no que diz respeito à interface do usuário, além do Figma e outros nomes conhecidos semelhantes . A pilha não importa. A plataforma não importa. Você escolhe o que
+
+quer construir e a Orchids cuida do resto. E aqui está a parte que eu realmente gosto. Você pode trazer sua própria assinatura. Codex, Claude, Gemini, Copilot, seja lá o que você já esteja pagando . Conecte e use os modelos a preço de custo, em vez de pagar um valor exorbitante como acontece com outras plataformas. Só isso já
+
+faz valer a pena conferir. Eles também estão oferecendo, para vocês que estão assistindo, 15% de desconto agora mesmo. O link está na descrição ou aqui embaixo, caso queira experimentar. Muito bem, agora, voltando ao vídeo. Para efetivamente analisar uma alteração, existem duas opções principais. Se você pressionar "d",
+
+que representa "diff", você obterá uma interface de linha de comando (CLI) simples mostrando as alterações. Bem, isso não é ruim, mas certamente não é ótimo. Quer dizer, é possível, mas definitivamente podemos melhorar. Sem querer me precipitar, mas a configuração é importante para o contexto aqui. No arquivo de configuração, que estamos prestes a construir do zero, há uma configuração de paginação de diferenças que pode ser alterada para algo como o maravilhoso Delta, um paginador de diferenças de código aberto baseado em Rust que torna a vida, bem, mais simples. Uma vez instalado, configure-o,
+
+reinicie o dash, pressione d novamente e confira [música] esta maravilhosa sintaxe colorida. Separadores, pistas de código que circundam a alteração, beleza. Mas isso ainda parece um pouco estranho. Gostaria de adicionar meu recurso delta favorito: comparação lado a lado. Configuração do gh-dash, encontre a diferença no pager e adicione uma pequena flag.
+
+Após a configuração, reinicie o gh-dash. Agora, vamos dar espaço para que a comparação se mostre em toda a sua glória. Lá estão eles, lado a lado no terminal. O que mais podemos pedir? Bem, na verdade, você pode [música] pedir ao GitHub para exibir seu PR, por exemplo, que é onde a tecla o entra em ação. Abrindo [música] este PR
+
+no navegador, onde você pode ampliar, encontrar a aba de arquivos alterados e revisar o mesmo código lá. Eu [música] juro, tentei me conter para não ir ainda mais longe aqui, mas realmente não consigo. Existe uma opção ainda melhor além de diff, delta e GitHub, e vem do mesmo autor [music]. No perfil do aplicativo, você encontrará o diffnav, uma interface de usuário em tempo real ( TUI) baseada em delta que adiciona uma árvore para navegar pelas diferenças, proporcionando uma experiência de usuário ainda mais agradável. Instale, abra o arquivo de configuração novamente e troque delta por diffnav. De volta
+
+ao traço, d e delta, lado a lado com uma árvore de arquivos [música]. Navegue facilmente entre as alterações nos arquivos, incluindo linhas adicionadas e removidas, e, como seria de esperar, há um pequeno menu de ajuda, caso queira ocultar a árvore, desativar a comparação lado a lado e até mesmo alterar os ícones. Ok, [música] agora realmente terminamos com as diferenças. Existe outra opção, pouco discutida, para usuários do Neovim, chamada octo.nvim. Se você parar para pensar
+
+, muitas vezes é necessária uma avaliação real, sabe, interação humana, deixar comentários e coisas do tipo. É aí que o Neovim entra em cena para ajudar. Bem, não quero me alongar muito no assunto, mas, afinal, estamos falando de avaliações de relações públicas. Então, eu o integrei para os PRs nos quais realmente quero me aprofundar, revisar de perto e interagir. É melhor do que usar o GitHub de fato?
+
+Isso é discutível. Às vezes é, quando você está muito próximo do código e consegue acessar um trecho de código em outro módulo, é extremamente útil. Ah, e o motivo óbvio: usar um editor de texto adequado em vez do navegador. Quer dizer, óbvio. Confira. Este é o octo.nvim, um
+
+plugin popular que recebeu o nome em homenagem ao octocat do GitHub , eu acho. Ele permite que você revise comentários, participe de discussões e muito mais, diretamente do Neovim. [música] Para instalar com lazy.nvim, basta adicionar octo.lua ao seu diretório de plugins lua.
+
+Você encontrará o meu no repositório de arquivos de configuração (dotfiles). Salve o arquivo e, na próxima vez que você carregar o sistema de forma preguiçosa, ele será carregado com as dependências. Quando estiver pronto, você terá várias opções de oito elementos. Gosto de começar pela lista de PRs do Octo , buscando os PRs abertos do repositório atual em uma lista filtrada por aproximação. Ele vem integrado ao telescópio, como você pode ver, permitindo tanto a localização aproximada quanto uma pré-visualização. Selecionar uma opção a abre e,
+
+se eu clicar em "commit", aparece uma lista de opções, desde responder até fechar, excluir, atribuir; todas as opções que o GitHub exibe estão aqui. Posso até adicionar uma reação a um comentário, [música] e exibi- la no navegador como o Dash faz, mostrando a reação e os problemas atribuídos ao Copilot. [música] Como seria de esperar, você pode inserir a diferença no editor, que mostra o mesmo que o padrão no Dash, com a óbvia exceção de que você pode navegar no Neovim em vez de uma janela de terminal simples . Há também a opção de deixar um comentário, e recarregar a página do navegador também exibirá o comentário. Provavelmente, o motivo mais procurado e provavelmente o principal para enviar um PR para o Neovim é uma avaliação. Você pode iniciar uma sessão de revisão
+
+com comparação lado a lado usando dois buffers. O Octo vem com mapeamentos de teclas para sugestões e comentários em linha. Certifique-se de encerrar a sessão com a marcação como pronta para pré-visualização, ou você deixará seus colaboradores confusos, como eu fiquei com uma revisão pendente na edição [música]. Isso é legal, sem dúvida, mas há uma grande sobreposição entre Dash e Octo. Pessoalmente, acho que o Dash [music] é perfeito para revisar a lista e manter a lista de RP/problemas, enquanto o Octo é para quem quer interagir e revisar adequadamente.
+
+Sinceramente, na maioria das vezes acabo abrindo o navegador a partir do Dash e continuando por lá, mas isso provavelmente é só um mau hábito e ainda não me acostumei o suficiente com o Octo. É difícil superar a experiência do Neovim quando se trata de animação e composição de texto. Na verdade, existe uma maneira melhor de conectar o Dash ao Octo, mas isso é feito na configuração. [música] Então, antes de prosseguirmos, vamos apenas afirmar o óbvio. Você já pode fazer muitas dessas coisas no Dash, como aprovar um PR com um comentário predefinido, atribuir, desatribuir, marcar como pronto para revisão, etc.
+
+Ok, já fomos longe demais. Vamos falar sobre configuração. Se você ainda não fez nada para contornar as configurações padrão, encontrará um arquivo .config/gh-config.yaml . E aqui, tudo é
+
+personalizável, começando pelas abas de PR. Eu [música] posso remover meu pull request ou alterar os filtros. Posso fazer o mesmo com a lista de problemas e notificações, que ainda não vimos. Estamos quase lá . [música] Bom, essas são ótimas, mas estou começando do básico. Primeiro,
+
+quero que a janela de pré-visualização esteja fechada por padrão, facilitando a navegação na lista quando ela for aberta, mas quando o painel de pré-visualização for exibido, quero que ele ocupe mais espaço na tela. Você pode alterar o comentário de aprovação do PR, o tamanho da lista e muito mais. Ao reiniciar o Dash, a primeira aba que tínhamos acessado anteriormente é exibida, sem o painel de pré-visualização. Ok, agora [música] vamos adaptá-la ao meu fluxo de trabalho. Vou reverter a configuração para remover o filtro do meu usuário e visualizar todos os PRs (Pull Requests) dos repositórios atuais. [música] Reiniciar e pronto
+
+. Lindo. Agora, negligenciamos duas das três principais visualizações do GH Dash. A primeira é a lista de problemas, claro. Um simples "S" para alternar, também indicado na parte inferior, abre a lista de problemas, que, como antes, por padrão é filtrada pelo meu usuário, mas, obviamente, é personalizável na configuração. E por último,
+
+mas não menos importante, a lista de notificações. Sim, aquela mesma que você vê de vez em quando e ignora no GitHub. Não, só [música] para mim. Enfim, está aqui e o menu de ajuda foi alterado para refletir o mapeamento de teclas para notificações. O painel de pré-visualização aqui serve como um acesso mais fácil às teclas de atalho; portanto, pressionar M, por exemplo, marcará este item como lido, conforme indicado na parte inferior. Também podemos marcar como concluído para
+
+removê-lo completamente da lista. Não sou muito fã do conceito de notificações do GitHub . Nunca achei que fosse suficientemente útil. Pode ser a forma como está filtrado ou sei lá o quê. Adoraria ler outras ideias e dicas nos comentários, se vocês tiverem alguma. Porque, obviamente, existem
+
+notificações importantes que eu quero receber, como comentários em PRs ou discussões das quais participo, ou quando sou marcado em uma issue. Talvez o Dash mudasse a forma como eu uso essas coisas. Agora, é hora de falar sobre uma das opções mais poderosas aqui, pelo menos na minha opinião, as configurações de teclas [musicais] . Essas podem ser universais ou específicas de cada ponto de vista. Por exemplo, definindo G para LazyGit, minha maneira favorita de lidar com qualquer repositório do GitHub usando variáveis ​​de modelo, como o caminho do repositório para acessar via CD, alterando o separador para ponto e vírgula porque sou fã do Neovim, e então executando o LazyGit, pronto . Ao pressionar G em uma nova sessão do Dash [música],
+
+a interface familiar do LazyGit é exibida. Para quem precisa mudar o estilo, também incluí um modelo de cores que peguei emprestado da documentação, deixando o Dash ainda mais chamativo. E agora, vamos à configuração de revisão de código, porque é para isso que estamos aqui, afinal . Na configuração, que eu já criei como link simbólico a partir do meu repositório de arquivos de configuração, encontre a entrada de vinculação de teclas. Em universal, adicionaremos PRs [música] já que o contexto da revisão de código é relevante apenas aqui. A letra
+
+maiúscula C criará uma janela do tmux com o nome do repositório e uma sessão do Neovim que deverá abrir o Octo com uma edição de PR. Novamente, estamos injetando os parâmetros úteis fornecidos pelo Dash no contexto de uma solicitação de pull request. Ok, hora de falar de dinheiro. GH [música] Dash, apertei C, e o Neovim apareceu, a janela foi nomeada e o PR foi aberto. Visão geral, diferenças e todas as funcionalidades que acompanham o Octo, que eventualmente também podemos abrir no navegador, como vimos anteriormente, para lidar com a contribuição. Mas isso
+
+não é o fim, não é? Quer dizer, claro, as reações do Octo são ótimas, mas vivemos em um mundo onde a IA escreve código, revisa código ou, pelo menos, está lá para ajudar. Seria quase um crime não portá-lo para cá, não é? Depois de testar várias combinações diferentes, acho que encontrei a combinação ideal. Isso vai envolver cerca de quatro utilitários diferentes, mas tenha paciência porque realmente vale a pena. Em vez do Octo, você
+
+tem um PR de código aberto. Ele obterá o número do PR do Dash, fará o check-out e se abrirá, onde poderemos adicionar um prompt ou um comando para revisão. Isso é bom, mas não é automatizado o suficiente. Dá uma olhada nisso . O Worktrunk, que abordei no vídeo da semana passada, é o melhor complemento para Git nesse caso de uso. Se
+
+você optar por usar o número de dois pontos do PR, a operação será a mesma, mas dentro de uma árvore de trabalho do Git. E isso não é tudo. Adicionando X para um comando de execução, podemos injetar uma sessão de código aberta com um prompt solicitando a revisão desse PR. GH Dash, escolha um alvo e aperte C. Estou diminuindo a velocidade aqui só para mostrar o que está acontecendo. Criamos uma nova janela do tmux, o
+
+Worktrunk busca o novo PR usando a variável GH Dash e, em seguida, executa o open code solicitando a revisão do branch [music] atual. Que fofo! GH Dash é um desses facilitadores. Está no terminal, é personalizável ao seu gosto, você controla as abas, as teclas, os filtros, de tal forma que é portável para o Neovim ou qualquer outro sistema que você preferir, tornando os PRs e issues acessíveis pelo teclado em vez de ter que navegar pelo GitHub. Uma das melhores ferramentas que descobri recentemente, que torna essa opção ainda mais poderosa, é o Worktrunk, que pega as árvores de trabalho do Git e as torna tão fáceis quanto branches. Chega de
+
+esconder, abrir, reiniciar ou limpar. Confira no vídeo a seguir e garanta que seu fluxo de trabalho seja ainda mais eficiente. Obrigado por assistir e até o próximo vídeo.

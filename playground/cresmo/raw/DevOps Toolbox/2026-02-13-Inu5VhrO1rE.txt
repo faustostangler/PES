@@ -1,0 +1,108 @@
+---
+video_title: "I Was DEFINITELY Using The Wrong Server"
+video_id: Inu5VhrO1rE
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Inu5VhrO1rE
+video_date: 2026-02-13T14:30:24+00:00
+video_description: |
+  DNSimple is a developer friendly, rich API DNS system!
+  Start your 30 day FREE trial here: https://dnsimple.com/api?utm_source=devopstoolbox
+  ---
+  
+  It may not be on the bleeding edge as HAProxy, not ultra focused on Kubernetes as Traefik,
+  yet it's THE MOST LOVED server, by a margin. And for a GREAT reason.
+  I tried Caddy for the past month and I honestly believe it's my new GO-TO.
+  From web serving through reverse proxying and the golden top: automatic SSL, for EVERYTHING! 
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Muitos de nós, desenvolvedores, tratamos os servidores web como animais de estimação. Instale os certificados, organize os arquivos de configuração e fique acordado até tarde quando ele ficar doente. Eu conheço esse sentimento porque já o vivi. Em agosto de 2016, acordei às 5h da manhã com meu pager vibrando e tocando o pior som possível: um alarme de produção. Os sistemas estavam fora do ar e meu telefone começou a receber mensagens de pessoas gritando. Corri até minha mesa apenas
+
+para descobrir que nosso certificado SSL curinga havia expirado na noite anterior. Uma única tarefa manual evitável paralisou toda a nossa infraestrutura. Hoje não. Hoje vamos falar sobre um cão de serviço. Você sabe o que? Um cão robô de serviço. Ele sabe
+
+o que fazer, não atrapalha e lida com as tarefas complexas, como SSL, sem que você precise pedir. Você já viu um servidor em localhost rodando em HTTPS? Nem eu. Qualquer vídeo recente que eu tenha feito, e digo qualquer um mesmo, recebeu tantos comentários de fãs da Caddy que eu simplesmente não consegui ignorar. Veja bem, passei 15 anos construindo infraestrutura para alguns dos maiores nomes da tecnologia, e sempre me disseram que a Engineix é a melhor.
+
+Mas se você tem acompanhado o canal ultimamente, deve ter notado que continuo questionando exatamente esse ditado. Passei os últimos 30 dias tentando quebrar o Caddy, submetendo-o a testes de estresse rigorosos e forçando-o a um cluster de produção de alto desempenho. Fiz tudo isso para mostrar a vocês como e por que esse servidor, que antes era de nicho, agora é indiscutivelmente o servidor web mais amado do mundo. Agora, uma ressalva. Sou muito fã da melhor ferramenta para cada tarefa, e não existe um servidor perfeito para tudo.
+
+Mas Caddy realmente parece fazer jus ao título, o servidor definitivo. Vamos explorar tudo, desde uma configuração de desenvolvimento local até um gateway Kubernetes de nível de produção que processa milhares de solicitações simultâneas, para que você possa decidir por si mesmo. Tenho minhas próprias ideias, que compartilharei no final. Vamos colocar a mão na massa. [bufa] O servidor definitivo que já mencionamos, tornando seus sites mais seguros, confiáveis e escaláveis ​​do que qualquer outra solução. Não tenho 100% de certeza sobre a
+
+última parte, mas com certeza vamos verificar isso hoje. Onde realmente se destaca, sem sombra de dúvida, mais do que qualquer outra alternativa que eu conheça, é na obtenção e renovação automática de certificados. É realmente suave como óleo de coco. Existe até um truque para mostrar o quão rápido e poderoso ele realmente é, e chegaremos lá. Há muito mais.
+
+Sintaxe de configuração extremamente simples, backends dinâmicos, pronto para alta disponibilidade, limitação de carga, disjuntores, etc., etc. Ah, e importante. É grátis. Sem barreiras de pagamento para empresas, como em alguns outros sites que conhecemos. Deseja
+
+patrocinar o projeto para obter apoio? Existem níveis para todos, desde desenvolvedores independentes até... bem, você sabe. De qualquer forma, amado e
+
+popular. Já mencionamos isso, certo? 69,9. Espera aí, será que eu vou ser o sortudo dos 70 mil ? Não. Portanto, 69.000 estrelas não mentem. O
+
+tráfego para comparação é de cerca de 60. Engineix em 30. Envoy em 30. O proxy de Nova Jersey está bem acima de seis. Testes de popularidade à parte, e embora uma estrela no GitHub não seja um indicador preciso de adoção, o EngineX chegou a ser responsável por quase um terço da internet em determinado momento, e o Caddy não é novato no ramo. Lançado
+
+há mais de 10 anos por Matt, é extensível, multiplataforma, escrito em Go e vem com suporte de primeira classe em YAL, Toml, Engineix e muitas outras opções que veremos em breve. O slogan do arquivo README não é por acaso: "todo site em HTTPS". Vamos começar, então? Ao instalar o Kaddi, você encontrará, naturalmente, todas as plataformas imagináveis. Mas se você rolar a página para baixo, passando pelas janelas, pelos apelidos e até mesmo pela opção Unicraft para quem a conhece, você encontrará Miz. Eu tenho um vídeo do Miz no
+
+canal. Confira. E por essa razão, usarei Miz hoje. Miz usa a versão estável global mais recente do Caddy, [música], que, aliás, é a versão 2102 lançada há cerca de 4 meses. Caddy sem argumentos é o menu de ajuda, onde você já encontrará informações interessantes, como proxy reverso com autoridades confiáveis ​​ou não confiáveis, mas fiquei curioso sobre o servidor de arquivos, algo que sempre explorei com Python ou Node.js e agora surge
+
+[música] como um recurso fácil em um proxy/servidor. Veremos como isso se aplica em breve. [música] O primeiro comando ` caddy run` inicia um servidor. 2019 é a porta muito especial, devo dizer, onde você pode encontrar a configuração, que está vazia para nós no momento. Agora você pode começar a usar algo mais complexo, como um arquivo `caddy.json`, e utilizar
+
+essa estrutura extensa com aplicativos, servidores, listeners e muito mais. E vai funcionar perfeitamente. Você pode até mesmo enviá-lo para o servidor desta forma, que agora retorna a configuração carregada através da API e nosso " Olá, mundo!" é exibido em 2015. Mas estávamos falando sobre configuração enxuta de confiança zero, não é? Então, em vez dessa enorme
+
+lista de colchetes, conheça o arquivo caddy, onde a mesma estrutura horrenda pode ser reduzida a este texto de resposta de porta de dois pontos e, sim, de verdade, o caddy adopt encontra o arquivo caddy local e o carrega. Ok, para este truque vou usar o Gemini para criar uma página de destino idiota e peço sinceras desculpas pelo que você está prestes a ver. Lembre-se do nosso servidor de arquivos Caddy, servidor de arquivos, escuta e porta, e oh meu Deus, eu realmente sinto muito. Outra funcionalidade interessante para um servidor de arquivos, caso ele não tenha um índice para disponibilizar, é a opção de navegação, que transforma o Caddy em um pequeno servidor de armazenamento de arquivos. Vou até transferir alguns arquivos JPEG para lá. E veja só, uma lista de
+
+arquivos SER, seus tamanhos e datas. Tem eu trabalhando no canal no chão do último estúdio, trabalhando no canal dentro de um táxi, ou até mesmo trabalhando no canal dentro do hospital com a melhor vista de Londres. Agora, quero mostrar algo que reforça a seriedade com que a Caddy encara os certificados. Eu carrego o mesmo servidor de arquivos usando um arquivo Caddy, mas um que começa com uma entrada DNS. No meu caso, localhost, depois servidor de arquivos e a opção de navegação. Execute-o.
+
+E o que é aquilo nos registros? HTTP. O HTTPS iniciou a manutenção do certificado em segundo plano para a PKI local, instalando o rootert, que está solicitando minha senha. Ok, agora meu Mac inicia uma inicialização solicitando alterações nas configurações de confiança do sistema. Multar. E é isso. Certificado
+
+obtido com sucesso. Agora estou servindo o localhost em HTTPS. Vamos configurar o HTTPS no host local. Sim, existe o certificado autorizado pela autoridade local do Caddy e um servidor de arquivos carregado. O sistema de arquivos Caddy é, na verdade, mais poderoso do que apenas este navegador aparentemente simples para servir arquivos. Ele pode ser emparelhado com
+
+sistemas de arquivos virtuais usando a diretiva FS. Você começa declarando um sistema de arquivos global. Pode ser local ou remoto. Você pode trazer o seu próprio e personalizá-lo ao seu gosto, usando o Caddy para servir literalmente qualquer coisa, da maneira que preferir. Um excelente exemplo de uso que me vem à mente são as URLs assinadas do AWS S3 . Muito bem, agora vamos voltar à
+
+história principal. O Caddy, além de ser um servidor fantástico, também é um proxy poderoso. O proxy reverso é tão simples quanto executar um subcomando da linha de comando de uma porta para outra, o que nos leva da porta 2080 para a 9000, onde tenho um servidor Cadifile em execução mantendo o tema de configuração simples. Fazer o mesmo em um Cadifi seria algo como: uma porta inicial e um destino de proxy reverso. Seja sincero e me diga se você conhece algum servidor que faça proxy de alguma coisa de uma maneira mais simples do que isso. Aliás, você não está limitado
+
+apenas a portos. Qualquer servidor DNS válido pode ser usado na configuração. Como esperado, você notará que o CAD está tentando obter um certificado TLS, mas falha porque, infelizmente, eu não sou o proprietário do example.com. Então, que tal fazermos isso de verdade? Agora, falando
+
+em DNS, vamos começar com a promessa da Caddy de proporcionar uma experiência incrível com HTTPS, usando meu provedor favorito, o DNS Simple. Criei rapidamente um registro CNAME no meu domínio secundário com o prefixo "Caddy demo" . Isso precisa ser traduzido para a demonstração no servidor Caddy para funcionar. E uma vez configurado, o Doggo busca o DNS de forma simples e rápida. Já temos tudo propagado e pronto. Então, vamos testar. Acesse
+
+nosso novo subdomínio. E vamos contar os segundos enquanto o navegador realiza o handshake TLS. Nos bastidores, o Caddy, usando o provedor do Nate, emite um certificado, instala-o e o prepara para resolução. E alguns segundos depois, você recebeu um certificado provisionado dinamicamente, sem precisar fazer nada. Isso sim é algo. Então,
+
+tudo está pronto para funcionar. Mas já mencionamos como tudo isso é inútil sem um servidor DNS robusto que direcione o tráfego para você. Se você já trabalhou com infraestrutura, sabe que o DNS é a parte mais sensível. É por isso que mexer manualmente nos registros DNS toda vez que você inicia um novo serviço é extremamente trabalhoso e uma fonte de problemas. É aí que entra a automação, e é por isso que estou animado em apresentar este vídeo patrocinado pela DN Simple. Se você utiliza ferramentas de infraestrutura de código
+
+como o Terraform, como deveria, o DNS Simple foi feito para você. Não só toda a plataforma é construída por e para desenvolvedores, como o seu provedor TF torna o gerenciamento de seus registros DNS incrivelmente simples. Você pode definir domínios, registros e serviços diretamente no seu código. Ao implantar seu sistema infravermelho, as configurações de DNS são configuradas automaticamente . Chega de entrada manual de dados, chega de erros de digitação, apenas gerenciamento de DNS automatizado e sem complicações.
+
+Agora, você pode pensar: "Bem, isso não é diferente de outros provedores de DNS." Então, estou aqui para dizer que sim, é verdade. Se você já teve contato com um sistema DNS, provavelmente sabe o quão pouco intuitivo ele é e o quão ruins são suas APIs. Não aqui. DN Simple foi desenvolvido em torno da API deles. Crie uma
+
+conta usando o link e comece a hospedar seu DNS com o teste gratuito de 30 dias da Dian Simple. Ah, e espere, você precisa comprar isso. Agradecemos a Dian Simple pelo apoio ao canal. E agora, voltando ao videoclipe. Então, o Caddy faz todas essas coisas legais, mas como ele se comporta na prática? Queria comparar
+
+com algo concreto, e o que me veio à mente imediatamente foi o trânsito. Para mim, parece uma comparação direta, com uma boa base, experiência de jogo semelhante e um conjunto de recursos e ofertas praticamente idênticos. Preciso, no entanto, de uma pequena ressalva. O teste que você está prestes a ver, apesar de eu ter executado diferentes permutações provavelmente mais de 30 vezes, pode não ser indicativo. Também está funcionando na minha máquina local. Por mais
+
+potente que seja, isso não indica que se trata de uma opção de nível de produção , mas sim de uma comparação entre o ponto A e o ponto B, entre um Cadillac e o trânsito. Verde é para caddie, amarelo para trânsito. Como já mencionei, executei este teste muitas e muitas vezes. Neste caso, cada contêiner recebeu dois núcleos e 4 gigabytes de RAM. Conforme as solicitações chegam, os dois se comportam praticamente da mesma maneira. A
+
+partir daí, a linha amarela no indicador de uso de memória continua subindo, abrindo uma diferença considerável em alguns momentos . Mas algo acontece quando chegamos ao ponto de ruptura do sistema. A latência P95 das solicitações é bastante alta, o que significa que o sistema está sob carga extrema. O que me interessa aqui é ver o tráfego de memória aumentar continuamente e parecer que nunca é coletado pelo coletor de lixo. Com a queda nas solicitações, o tráfego parece alocar ou usar mais que o dobro da memória do Caddy. Se alguém nos comentários puder
+
+explicar esse fenômeno, ficarei feliz em ouvir. O que aprendi aqui é que, em comparação com o tráfego que sobrecarrega o sistema sob diferentes perfis de carga e recursos, o Caddy continuou sendo o sistema mais estável e eficiente em termos de memória, que inclusive se destaca com menos recursos disponíveis. Algo para se pensar. O Caddy, obviamente, não limita você a um único servidor ou porta, mas algo que no Engineix seria feito dessa forma, com o Caddy é tão simples quanto uma diretiva separada, cada uma entre colchetes, contendo uma porta e uma resposta. Ou você pode ter o mesmo relógio embrulhado da mesma forma. Você pode ter
+
+notado, ou melhor, percebido a falta de uma interface de usuário ou painel de controle de qualquer tipo. O Caddy não vem com um. Inicialmente fiquei surpreso. O Traffic, por exemplo, é elogiado por sua interface web intuitiva . A Engineix esconde isso atrás de um paywall, e todas elas têm uma solução de código aberto. O mesmo acontece com a
+
+Caddy. Você pode encontrar o Caddy Manager, similar ao famoso gerenciador Engineix, no GitHub. A versão mais recente inclui até o SQite, meu banco de dados favorito de todos os tempos e tema de um vídeo popular no canal, mas mostrar apenas mais uma interface aleatória parece um pouco desconexo. Vamos falar sobre o que vem incluído na embalagem. O Caddy foi projetado para o Kubernetes, e nada demonstra isso melhor do que um endpoint de métricas opcional para serem posteriormente coletadas pelo Prometheus, uma simples adição de métrica ao arquivo. Normalmente, isso
+
+ficaria restrito a um endpoint /metrics, mas, de qualquer forma, basta executar um curl no servidor e pronto, as métricas estarão prontas para serem coletadas por uma série temporal de sua escolha. Controlando os tempos de recarregamento da configuração, os tempos de coleta de lixo do Go, o uso de memória, as rotinas, etc. Mas isso não é tudo que envolve a migração para o Kubernetes. Uma rápida olhada na organização no GitHub revela alguns projetos interessantes. [música] Um deles é este controlador Kadu Ingress, pronto para ser implantado. E embora pareça bem
+
+conservado, você notará que a última versão foi lançada há 3 anos. Não se preocupe, a equipe do Caddy está dois passos à frente, trabalhando no Gateway, uma implementação da API de gateway do Kubernetes usando o Caddy como base. Esta é a próxima geração de Ingress do Kubernetes, mas não vamos abordar esse tema agora. Para quem tiver interesse, há um curso introdutório de Kubernetes na descrição . Antes de encerrar , preciso trazer algo crucial.
+
+Módulos. Esses são plugins do Cad que ampliam o sistema. Algumas são padrão, oficialmente aprovadas, e outras não são padrão. Terceiros não incluídos na distribuição. [música] Existe uma lista enorme para você explorar, com diferentes APIs, Git, S3 e túneis Grog, diferentes provedores de serviços e gerenciadores de cache, e a lista continua.
+
+Uma delas é a DN Simple. E já que eles são os patrocinadores deste vídeo, vou demonstrar uma extensão do Caddy usando um módulo não padrão que pode ser instalado com o Xcaddy. [música] Agora, veja bem, usar módulos no Caddy não é tão simples. Refiro-me à versão não convencional, a menos que eu esteja perdendo algo muito importante que exija que você supere alguns obstáculos incomuns. Você sabe o que? Deixe-me mostrar-lhe. Você encontrou o
+
+módulo desejado. Ótimo. Agora é hora de usar o Xcaddy. O que é XCD, você pergunta? Bem, isso cria o Caddy com plugins. Sim, você
+
+reconstrói o projeto com os plugins adicionados para que ele funcione corretamente. Por favor, por favor, Deus, faça com que eu esteja completamente enganado aqui, mas eu não quero reconstruir isso para um plug-in personalizado. Enfim, vamos lá. Como meu karma está comprometido, tive que clonar o XCAD, compilá-lo localmente, usar o Xcaddy para reconstruir o Caddy com meu plug-in e, em seguida, executar um servidor Caddy que, entre os módulos disponíveis, possui um módulo não padrão chamado DN Simple. Isso é realmente incrível. Isso me permite
+
+controlar meu sistema DNS a partir do Caddy, e as opções são realmente infinitas, mas espero sinceramente que eu esteja perdendo algum ponto importante aqui. Ok, vou parar por aqui. Não posso deixar de mencionar que portei o Caddy ainda mais para o meu cluster Kubernetes para garantir que ele não apenas roteie o tráfego, mas também lide com meus módulos adicionais e funcione perfeitamente como um gateway. E agora a pergunta: será que isso vai ficar comigo? Eu realmente acho que sim, se o Traffic parecia ser minha principal opção até hoje para projetos paralelos de uso local e Kubernetes. Kadi parece
+
+estar subindo rapidamente até o topo. Sendo totalmente transparente, não acho que esteja à altura quando se trata de um controlador de entrada para um cluster de grande escala. Mas, em relação a todo o resto, configuração zero, ótimo desempenho, inúmeras extensões disponíveis, o que não gostar? Se você ainda está curioso sobre o indiscutível rei dos servidores, assista a este vídeo a seguir para saber mais sobre coisas que você nunca imaginou que ele pudesse fazer. Obrigado por assistir e até o próximo vídeo!

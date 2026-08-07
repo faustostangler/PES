@@ -1,0 +1,84 @@
+---
+video_title: "The Perfect Home DNS Flow"
+video_id: 6J5Rygo_DcY
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6J5Rygo_DcY
+video_date: 2026-06-12T15:00:24+00:00
+video_description: |
+  DNSimple is a developer friendly, rich API DNS system!
+  Start your 30 day FREE trial here: https://dnsimple.com/api?utm_source=devopstoolbox
+  ---
+  
+  I found my perfect homelab DNS setup to enjoy both auto SSL certificates using a public domain - that doesn't expose my home to the world, it takes some work - but it's worth it!
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+---
+Este vídeo é patrocinado pela DN Simple. Falaremos mais sobre isso adiante. Sabe quando você quer disponibilizar algo localmente, não com um endereço IP, mas com sua própria entrada DNS? Ou falha, ou funciona parcialmente, ou seu navegador começa a te odiar. E se você pudesse controlar seu próprio DNS, definindo o URL acessível pelo navegador de acordo com suas próprias preferências? Mas não
+
+só isso, uma que leva você aos seus serviços auto-hospedados com certificados TLS, acessíveis remotamente sem nunca [música] expor seu IP. Parece estranho, não é? Alguma coisa tem que mudar . Bem, eu criei um fluxo com três componentes diferentes para construir a cadeia DNS doméstica perfeita. [música] Eu não recebo avisos irritantes do navegador, meus certificados são válidos e, se você encontrar meu URL, ele não leva a lugar nenhum. No entanto, eu consigo
+
+acessá-lo tranquilamente de qualquer lugar do mundo, enquanto outros não conseguem. Ao final deste vídeo, você será capaz de configurar seu próprio sistema oculto, porém totalmente funcional e acessível, usando seus próprios domínios para serviços privados. E, uma vez feita a configuração inicial, ele continuará funcionando para sempre. Existem alguns problemas técnicos, então estou aqui para ajudá-lo(a) a resolvê-los com segurança. Vamos lá.
+
+[bufa] Se eu simplesmente consultar um nome DNS como qualquer outro, que naturalmente não está em cache nesta máquina ou em qualquer servidor, vamos consultar os servidores mais poderosos, o famoso 8888 do Google ou o 1111 do Cloudflare, e surpresa, surpresa, nenhum dos dois tem uma resposta. No entanto, você certamente pode manter seu próprio servidor DNS e obter respostas dele antes de se deparar com os principais problemas. Esta é a minha página inicial do AdGuard respondendo. Eu pedi à minha ferramenta de consulta DNS [música] para começar a consultar especificamente esse local. dns.lan é uma entrada que
+
+tenho internamente no meu laboratório doméstico e que retorna uma resposta válida. O que estou querendo dizer é que não queremos que serviços locais sensíveis, como registros ou câmeras de segurança residencial, se tornem públicos. Assim, em vez de consolidar uma entrada global que todos possam ver, posso ter algo que possa ser resolvido da minha própria casa, o que é quase perfeito. [música] Funciona, mas tem suas desvantagens. Portanto, obtemos uma resposta válida do meu DNS local, mas não respondemos se consultarmos apenas os servidores globais, o que começa a revelar o primeiro problema. Você precisa estar perto do
+
+servidor DNS local, ou seja, na mesma rede, e garantir que a máquina esteja apontada para ele primeiro [música] para obter a resposta. Mas, afinal, o que isso significa? Bem, no meu Mac, por exemplo, estou trabalhando atualmente através de uma interface Ethernet [de música] . Portanto, uma opção é literalmente selecionar essa opção e acessar as configurações de DNS, que no momento contêm apenas o Google e o Cloudflare. Em seguida, adiciono manualmente meu DNS residencial. Vamos remover o
+
+Google por enquanto para obter resultados mais curtos e claros no terminal. Agora que está na lista, consultar o dns.lan sem apontar para um servidor específico nos diria que o Cloudflare não o reconhece, mas o AdGuard tem uma resposta que pode ser resolvida na forma de um endereço IP. Então, problema resolvido, certo? Podemos abrir o navegador, acessar https dns.lan e esperar um
+
+minuto. Funciona, mas algo parece errado. O serviço existe, sim , mas os navegadores modernos não gostam de exibir certificados suspeitos que ninguém assinou. Zen não é muito cooperativo, e com isso quero dizer que ele nem sequer me deixa avançar. Existe um prático botão "voltar", que parece ser altamente recomendado na ausência de outra opção. Primeiro,
+
+uma rápida olhada no certificado. É emitido pela Caddy, nosso proxy reverso, uma opção fantástica. Recomendo que você assista a outro vídeo no canal depois. [música] Mas, só foi emitido pela Caddy com a autorização da autoridade local para assiná-lo, e isso é um problema do navegador. O Safari, por outro lado, embora também se oponha à ideia , abre outra opção. Agora, claro,
+
+podemos visitar o site e ele funcionará corretamente. Ali está o meu painel de controle do AdGuard, exibido de forma organizada no navegador, e ali estão as minhas configurações de reescrita de DNS que permitem respostas como dns.lan, que já vimos anteriormente. Por que isso é um problema? Bem, não só todas as vezes que sou aconselhado a ficar longe, e alguns navegadores sequer me permitem acessar, como também, se eu abrir em outro dispositivo, como um tablet ou um celular [de música], terei que passar por todo o processo de troca de navegador, ignorando os avisos. Eu não gosto
+
+disso. Não está funcionando bem e parece errado. Seria aceitável se fosse o servidor DNS que eu só preciso de vez em quando, mas este é o meu serviço de registro de logs e sim, sim, mais um bom vídeo que tenho no canal que você deveria assistir. Diferentemente do AdGuard, estou testando o Dozzle com bastante frequência. São os meus olhos para o meu laboratório doméstico. O Safari [música]
+
+me permite acessar, mas eu quero que isso continue em HTTPS, e também quero parar de me preocupar com essas telas de aviso. [música] Então, o DNS local nos dá resolução local, o que é ótimo, [música] mas precisamos de fluidez. E se optarmos por um DNS global como um DNS de verdade? Vamos usar meu domínio de servidor DNS simples com um novo subdomínio de logs para enviar tráfego para meu serviço de registro de logs doméstico. [música] Mas, como mencionei antes, não quero que um registro de nome público seja resolvido para o meu IP residencial real. E esse é o meu pior problema:
+
+nada impede o acesso do mundo exterior. Você entra em contato com o domínio e o provedor responde: "Claro, este é o seu IP." Seu navegador acessa o endereço IP e envia uma solicitação com um DNS adequado. Caddy diz: "Ah, claro, eles estão vindo do lugar certo. Podem ir em frente." E se eu simplesmente fizer com que ele seja
+
+resolvido para o IP local? Ainda consigo acessar a rota interna correta. Eu deveria [música] ter um bom certificado porque esse é um nome de domínio real. E isso deve resolver nossos problemas. Vamos ver como esse fluxo funciona. [música] Vou começar
+
+definindo uma entrada DNS local para o domínio público. Agora, isso começa a ser um pouco desafiador. Pode ser que resolva corretamente com ferramentas de DNS, mas os navegadores não gostam da ideia de um domínio público com uma entrada que apenas os servidores locais conhecem. Precisamos meio que forçar isso. Uma opção é criar um resolvedor ETC específico para o nosso domínio e adicionar o servidor de nomes de forma bem explícita . [música] Agora, isso vai funcionar e
+
+podemos até usar o netcat para acessar o endereço do subdomínio com a porta 443 para HTTPS e, na teoria, funciona perfeitamente. Acessei o link no navegador, droga, o problema persiste. Alguns de vocês podem estar olhando para a tela e pensando: "Esse cara não é muito esperto, né ?" E você não está errado, mas estou tentando chegar a um ponto. Um domínio público serve. Não fará a mesma mágica se você
+
+servir apenas localmente. Você vai precisar de um problema real com o certificado, um que seja válido, aprovado e reconhecido pelos navegadores. [música] Então, é isso aí. DNSimple, o provedor real deste domínio e um dos meus patrocinadores favoritos do canal, vou criar a mesma resposta, um IP local que será resolvido por um provedor real. [música] Essa será a solução definitiva. Adicione o registro e
+
+agora é só esperar. A propagação do DNS pode levar de segundos a horas. A Cloudflare ainda está com dificuldades para encontrar uma resposta, e uma consulta global mostra que ainda estamos em processo. [música] Enquanto esperamos, você pode estar pensando: "Bem, por que não definimos um subdomínio aleatório e estranho que ninguém conhece? Basta usar algo como o DNSimple ou qualquer outra plataforma, mas com o nome logs123xyz.devops.toolboxes.ch."
+
+Eis apenas um exemplo simples, entre muitos outros, que o impediriam de pensar dessa maneira. O Subfinder é uma ferramenta popular de enumeração de domínios que procura esses registros. Um registro DNS em si não é gravado automaticamente em um log público universal, mas, na prática, uma vez que o subdomínio é usado publicamente, ele pode vazar para muitos lugares. Registros de transparência, bancos de dados DNS passivos, mecanismos de busca, plataformas de inteligência de ameaças , até mesmo arquivos da web e, obviamente, scanners. Você pode escolher qualquer domínio e pedir que ele liste tudo o que sabe. Forneça uma chave de API para um dos
+
+outros serviços mencionados na documentação, e a busca será ainda mais completa. Portanto, os domínios públicos são exatamente o que são. Não confie no fato de que ninguém sabe que isso existe como forma de proteção. Ótimo, já esperamos tempo suficiente. O Google já sabe que nosso novo serviço de registros [música] está sendo resolvido para o meu servidor local. Vamos lá pelo
+
+navegador, e que diabos? De novo? É aí que o Caddy entra em ação. Ele verifica nosso domínio e cria um certificado válido. Já que estamos aqui, vamos usar o Dozzle e dar uma olhada nas travas em U do Caddy. O
+
+certificado foi criado, mas a entidade emissora ainda é local. O processo de emissão de certificados funciona definindo um desafio para comprovar que um domínio é de fato seu ou meu. [música] Normalmente, basta que aponte para um IP onde o Caddy esteja sendo executado, mas com um IP local isso não funciona. Existem algumas opções, como adicionar um registro TXT no provedor de DNS para comprovar que você o controla. Mas se você pensa que vou adicionar uma entrada TXT toda vez, está muito enganado. Existe uma ótima
+
+solução que automatiza esse processo. Caddy tem provedores de DNS, [música] muitos deles incluindo DNSimple. Você pode listá-lo na configuração com um ID de conta e um token, e então estará tudo pronto. Ele criará essas entradas, emitirá certificados e as excluirá automaticamente para você. Prepare seu token. Certifique-se de que o Caddy não mostre
+
+mais "TLS interno", pois queremos que ele use o DNSimple da seguinte forma. Para adicionar a extensão, você precisará usar o X Caddy para recriá-la com o plugin do seu provedor. Mais detalhes sobre isso no vídeo do Caddy no canal. Por agora, tudo está pronto. Vamos abrir o Dozzle de novo e dar uma olhada nisso. Certificado
+
+obtido com sucesso para logs.devopstoolbox.sh. Embora esteja apontando para um endereço IP privado que pode ser resolvido localmente. Abra o URL no navegador e dê uma olhada. Sem
+
+avisos, sem nada, entregue corretamente via HTTPS. Esta página é segura e o certificado é válido e confiável, emitido pela Let's Encrypt e automatizado pela Caddy. Fantástico. Terminamos. Ou será que não? Vamos esclarecer um
+
+conceito. Isso por si só não garante a segurança . Isso é o que se chama de segurança por obscuridade. Se você encontrar o IP público do Caddy e ele receber uma solicitação, basta informar que você está vindo de um determinado host. Isso permitirá sua passagem, o que nos leva a uma das duas opções.
+
+Ou você oculta o Caddy completamente e o transforma em um serviço local também, mas aí seu servidor VPN ou Netbird não poderá ficar atrás dele. Ele precisa funcionar de forma independente ou ser servido a partir de um IP separado na nuvem [música] ou qualquer outra configuração que você tenha. Outra opção é bloquear isso no nível do Caddy, especificando o IP remoto permitido a partir do qual o endpoint é servido ou simplesmente vinculando um IP específico ao bloqueio. Há um último problema que preciso resolver. Está tudo funcionando, o fluxo é perfeito, mas se eu estiver fora, longe da rede do meu laboratório doméstico, preciso conseguir acessar esses serviços. Vamos usar o
+
+Tailscale aqui, mas com uma pequena alteração. Estou executando o Headscale no meu laboratório doméstico; talvez você queira assistir a outro vídeo sobre o assunto, mas, para fins de exemplo, o processo é o mesmo. Em vez de fazer login, estou fornecendo um servidor de coordenação personalizado. Essa rede precisa ser pública, não tem jeito , mas essa é a natureza dos servidores VPN. Você pode, naturalmente, usar o Tailscale ou executar o Headscale em sua própria instância na nuvem. Cadastre meu
+
+celular. O nó está se registrando agora e estou usando a rede celular aqui só para garantir. O Safari acessa nosso serviço de registro e pronto, estamos dentro. É isso. Serviços locais, nomes de domínio público resolvidos tanto internamente quanto remotamente por meio de um túnel, tudo isso enquanto fornece certificados válidos. Missão cumprida. Já
+
+mencionei isso algumas vezes aqui, e acho que o projeto mais importante para você antes de começar esse processo é o Caddy, um proxy reverso perfeito e um servidor web que realiza a geração e assinatura de certificados de ponta a ponta para você. Você viu o que ele é capaz de fazer neste vídeo. Confira tudo no vídeo aqui. Obrigado por assistir e até o próximo vídeo.

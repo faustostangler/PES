@@ -1,0 +1,101 @@
+---
+video_title: "I was using Postgres wrong this whole time"
+video_id: 47ObuL8iYes
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=47ObuL8iYes
+video_date: 2026-02-06T14:30:03+00:00
+video_description: |
+  Get started with TimescaleDB for free by creating a Tiger Cloud account: 
+  https://tsdb.co/devopstoolbox
+  
+  TimescaleDB is a PG extension that turns your already-fantastic DB intro a real-time machine.
+  - https://github.com/timescale/timescaledb
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: 
+  https://learn.dotb.sh/courses/second-brain-neovim
+  
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes: 
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Se você ainda acha que o PostgreSQL é apenas um banco de dados para iniciantes que você eventualmente superará, os engenheiros da OpenAI acabaram de revelar uma novidade bombástica que vai te surpreender . [música] Atualmente, eles estão usando o PostgreSQL para dar suporte a 800 milhões de usuários simultâneos do Chat GPT. Mas eis a parte que parece impossível para os seus principais produtos. Eles estão fazendo tudo isso com uma única instância de gravação primária . Enquanto o resto do mundo complica demais suas infraestruturas com cinco bancos de dados NoSQL diferentes, a OpenAI está provando que o PostgreSQL é o campeão em escalabilidade. Eles estão atingindo
+
+latência P99 de dois dígitos em milissegundos e mantendo a disponibilidade do 59 na plataforma de IA mais famosa do mundo. Então, se o Posgress já é tão confiável como uma ferramenta de uso geral, o que aconteceria se conseguíssemos torná-lo ainda mais rápido? E se você pudesse pegar essa mesma base [musical] sólida como uma rocha e transformá-la no mecanismo de séries temporais mais escalável do planeta? Sem nova sintaxe, sem migrações complexas, apenas uma extensão de código aberto . Se você ainda não conhece, conheça o Time Scale DP. É a extensão que
+
+transforma o PostgreSQL em um monstro de tempo real. É como pegar a Toyota dos bancos de dados e adicionar propulsão, permitindo que você ingira milhões de pontos de dados por segundo com 90% mais compressão e consultas mais rápidas do que ferramentas NoSQL especializadas. Quando criei o DevOps Toolbox, meu sonho era abordar esse tipo de projeto de código aberto , e é por isso que me sinto tão sortudo por ter a Tiger Data, empresa por trás do Timecal DB, patrocinando este vídeo. Hoje, vamos parar de falar sobre escala e começar a construí-la. Vou mostrar como instalar o Time Scale, converter uma tabela padrão em uma hipertabela e usar agregações contínuas para tornar suas análises instantâneas. A OpenAI
+
+provou que o PostgreSQL é o melhor. Hoje, vamos mostrar a vocês como transformá-lo em um deus. Vamos. [música]
+
+Agora, antes de mergulharmos de cabeça no terminal, precisamos limpar algo [música]. Afinal, o que é uma série temporal? Bem, a maioria dos bancos de dados é projetada para armazenar o estado atual. Seu saldo bancário, seu nome de usuário, sua senha. [música] Quando as coisas mudam, os dados antigos são sobrescritos. Mas um
+
+banco de dados de séries temporais é diferente. Não se importa com o estado. Ela se preocupa com a mudança. Imagine um banco de dados padrão como uma foto. Mostra exatamente o que está acontecendo neste momento. Mas um
+
+banco de dados de séries temporais é mais parecido com um filme. É um fluxo contínuo de eventos, cada oscilação nas ações, cada leitura de sensor. Cada batida do coração é capturada, às vezes em uma escala gigantesca. [música] Mas o tempo não é apenas um rótulo. É o acesso principal. Agora, em um banco de dados normal, à medida que
+
+seu filme fica mais longo, pesquisá-lo se torna um pesadelo. Se você tiver um bilhão de linhas de dados de temperatura e solicitar a média da última terça-feira, um banco de dados padrão terá que examinar toda a biblioteca. É aí que a coisa trava . E é por isso que existem ferramentas especializadas . Mas com uma série temporal, você obtém o melhor dos dois mundos [musicais]. A
+
+confiabilidade de uma foto para os dados do seu usuário e um mecanismo de vídeo de alta velocidade para os dados dos seus eventos. Em termos de escala temporal, todos eles estão vivendo na mesma instância de progresso. [música] Como já foi mencionado, o Timescale DB é de código aberto, uma extensão popular, talvez a mais popular do PostgreSQL, e não é à toa. Transformando literalmente seu PG em um banco de dados de séries temporais para análises em tempo real de alto desempenho . [música] Isso é um tanto quanto complicado . Agora, presumo que alguns de vocês
+
+estejam gritando: "Ah, é mesmo? E o banco de dados InfluxDB?" Foi isso que eu pensei [sobre a música]. Bem, o Influx não deve ser ignorado de forma alguma. Tão popular quanto, de código aberto, escrito em Rust para [música] aqueles que se importam. Dois problemas óbvios. A, não está
+
+no PostgreSQL. Ou se você já usa o DB de escala pesada mais testado em batalha e gostaria de [música] alguma série de dez centavos com algo diferente, parabéns, mais uma tecnologia para aprender, manter e implementar. E a opção B, bem, essa é um pouco mais complicada porque, dependendo do seu caso de uso [musical], você terá que escolher com cuidado. Vamos conversar sobre isso. Há debate sobre essa escolha em muitos subreddits, mas o consenso geral, que também coincide com a minha experiência, é que o Influx é a opção mais rápida, enquanto o Time Scale é o motor principal. [música] Há
+
+outra comparação da própria Tiger Data , que devo dizer, é bastante honesta, afirmando que o Influx tem um desempenho melhor com baixa cardinalidade de dados, enquanto a escala de tempo supera o desempenho quando a complexidade aumenta. Só para ter certeza de que não estou sendo influenciado por preconceitos, perguntei à Gemini, o que acrescentou um contexto importante. Você mantém a sintaxe SQL familiar, já usa esquemas relacionais e, claro, se já utiliza as extensões PG super populares como o PostGIS, é o seu sistema operacional. Enfim, fiz um vídeo dedicado às infinitas possibilidades [musicais] do PostgreSQL, você pode conferir mais tarde, mas por agora, estou mais interessado em explorar os bastidores. Isso pressupõe que você já tenha o PostgreSQL instalado.
+
+[música] Se não tiver, use seu gerenciador de pacotes favorito e certifique-se de que seja a versão 17 ou superior. [música] Time scaled DB é um conjunto de utilitários que você precisa ter se estiver executando o banco de dados localmente. Ele vem com o time [music] scale DB tune, um pequeno software de código aberto que ajusta o TS para melhor desempenho com base na CPU e memória disponíveis localmente. E devo dizer que é um acréscimo muito bacana. Agora, embora você possa até mesmo deva executar o PostgreSQL como um serviço local, [música] não tenho certeza de por que você faria isso em uma instância do Mac com o Homebrew, a não ser em um ambiente local, mas se você fizer isso, você precisará usar o psql e criar a extensão de banco de dados de escala de tempo. Obviamente, você vai
+
+querer que ele seja instalado primeiro e depois encontrado . [música] Vou facilitar minha vida com um amiguinho chamado Docker. Este pode ser o momento perfeito para apresentar o MSIM Plus, a melhor maneira de gerenciar ambientes locais, e você pode encontrá-lo em um vídeo no meu canal. Mas desta vez vou seguir a recomendação de um chef em relação à escala de tempo, [música], que começa com Docker. Então, Docker será a solução. A maneira mais simples de
+
+executar as coisas é executar dentro e [música] começar a ler as coisas. Mas se você assistiu ao meu vídeo sobre PostgreSQL ou simplesmente tem experiência suficiente, sabe que existe uma maneira muito melhor [música] de fazer as coisas no PG através do terminal, que é chamada de PG CLI. Forneça nossa string de conexão e teremos recursos como autocompletar, sugestões, histórico de comandos [de música] , o pacote completo. Está tudo pronto. Chegou a hora de usar as armas pesadas, e tudo começa com as hipermesas. Em um
+
+banco de dados padrão, ao atingir milhões de linhas, os índices ficam grandes demais para a memória RAM e tudo fica mais lento. Nem sempre você precisa de índices enormes, mas se precisar, e isso sempre acontece com séries temporais [musicais], você precisa de algo para dividir seus dados em blocos. Um hypert resolveu isso funcionando como uma tabela virtual que divide automaticamente seus dados em pequenos pedaços gerenciáveis. Imagine como uma biblioteca de jornais. Em vez de despejar um bilhão de edições diárias em uma sala gigante, uma hipermesa cria uma nova sala pequena a cada semana do ano. Quando você precisa encontrar dados
+
+da última terça-feira, você não procura no prédio inteiro. E você simplesmente entra na sala de terça-feira. Faz sentido quando você pensa a respeito. Vejamos outro exemplo da Tiger Data. Esta é uma tabela métrica clássica. Registros de data e hora e um
+
+valor numérico, talvez níveis de CPU. A tabela de hiperconjuntos divide os dados em blocos usando esses registros de data e hora e os agrega com base no dia em que foram coletados, já que essa é a configuração que lhe foi fornecida. Agora, isso não só parece inteligente, como torna a consulta [de música] 350 vezes mais rápida do que a busca de dados padrão, que, como você sabe, já é ótima no PostgreSQL. para o aplicativo. Parece uma única tabela normal do PostgreSQL. Isso melhora
+
+tudo. [música] Gestão de dados, desempenho, consultas e outros. E você não precisa usar os registros de data e hora. [música] Qualquer tipo de dimensão funciona. Vamos criá-los em nosso DP local e ver como [a música] funciona. Então, uma hipertabela é simplesmente uma
+
+tabela com colunas. Obviamente, temos o tempo com o carimbo de data/hora TZ, que é o carimbo de data/hora do PG [música] com um fuso horário. Estamos coletando dados meteorológicos aqui, como temperatura e umidade. Mas a mágica está em adicionar uma hipertabela de banco de dados com escala de tempo . Vamos particionar usando a coluna de tempo [música] e segmentar por localização para tornar as coisas mais eficientes. Acho que
+
+99%, ou melhor, 100%, das consultas são baseadas em localização. Não há motivo para fazer outra coisa. Faz sentido. A tabela é criada e há algo fantástico que você desejaria em qualquer compressão tstp [música] . A escala de tempo não comprime os dados por padrão. Primeiro, você precisa
+
+habilitar manualmente a compressão para cada tabela individualmente. [música] No entanto, uma vez que você o tenha habilitado, existe uma maneira padrão pela qual o sistema lida com isso usando tarefas em segundo plano, de modo que quando [música] você importa dados para uma tabela hiper compactada , ela chega primeiro em um estado não compactado e só é reduzida posteriormente. Mas se você ativar essa opção, a escala de tempo comprime esses dados à medida que são gravados na memória. Esclarecido isso, afinal , o que a compressão faz? Em resumo, ele pega dados previsíveis e os codifica. No entanto, se você estiver
+
+registrando dados a cada minuto no relógio, não precisa armazenar a data e a hora completas para cada linha. Isso é muito texto e números redundantes. [música] Em vez disso, a escala de tempo usa codificação delta. Primeiro, ele armazena o primeiro registro de tempo [da música] na íntegra. Em seguida , em segundo lugar, calcula os dados, a diferença entre o primeiro e o segundo valor, e em terceiro lugar, para tudo o que vem depois disso, armazena apenas a variação, ou seja, o delta.
+
+Agora, a tabela hiper está armazenada no catálogo. Assim, você pode obtê-lo dessa forma, com todas as informações relevantes. Quando se trata de consultas, você pode simplesmente usar as boas e velhas instruções SELECT do SQL. Vamos preencher a tabela Hyper com alguns dados, informando o horário atual no escritório e alguns valores para armazenar. [música] Leia como qualquer outro dado, assim. Obviamente, você
+
+não está limitado a uma única inserção como em qualquer outra tabela PG. Este exemplo já parece um monitor de casa inteligente usando um simples PostgreSQL para gerenciar o clima da casa, e eu adorei. Tabelas Hyper explicadas e compressão ativada. Chegou a hora da próxima camada disponibilizar as informações instantaneamente e fornecer a potência necessária para análises em tempo real. Baldes de tempo [música]. Que baldes são esses
+
+? Bem, pense nas hipertabelas como o armazenamento de backend [música] que divide os dados em partes para recuperação. Embora os intervalos de tempo sejam a interface que cria as visualizações, eles agrupam os dados buscados nos blocos de dados para uso em seu relatório. Sabe como você gostaria que o gráfico de níveis de CPU mostrasse uma média de períodos de 5 minutos [de música] ou uma média de 6 horas ao longo de 2 semanas para ter uma perspectiva geral melhor? É para isso que servem os baldes . O intervalo pode ser de microssegundos,
+
+milissegundos, minutos, horas, até anos e séculos. A escala de baldes é infinita. Deixa eu pegar minhas anotações rapidinho porque eu resumi tudo muito bem. E "I" é a abreviação de Gêmeos. Aliás, PG tem planos parecidos . Mas o conceito de "balde de tempo" é um
+
+superconjunto disso. É mais flexível em termos de intervalos. Você pode compensar isso a qualquer momento que seja conveniente para o negócio ou para a lógica da aplicação. E existe uma coisa [na música] chamada agregados contínuos. Chegaremos lá . Não é algo que se possa simplesmente mencionar
+
+, mas, resumindo, trata-se de uma atualização automática constante das visualizações em segundo plano. Para configurar, selecionamos um intervalo de tempo, definindo um intervalo de 1 dia usando a mesma coluna de tempo. Gostaríamos de obter a temperatura média da tabela de condições e focar nela, pois essa é a parte importante. Nós agrupamos por categoria. [música] E aqui estamos com a temperatura média do dia da gravação. Bem, é verdade que temos praticamente
+
+zero dados para trabalhar aqui, mas você não precisa que eu explique a escala gigantesca em que isso foi testado, precisa? Ok, lembre-se dos agregados contínuos, que são o que tornam o processamento em tempo real muito mais rápido em grandes conjuntos de dados. Eu mencionei que é uma forma de [música] de cache. Permita-me explicar. A maioria dos bancos de dados suporta o conceito de "view", que é uma consulta nomeada armazenada no servidor em uma ou mais tabelas. Ao selecionar essa opção, você pode
+
+acessar a visualização, o que facilita as coisas, embora não seja necessariamente muito eficiente. Um problema, por exemplo, é que você não armazena nenhum resultado depois de acessá-los, o que significa executar a consulta infinitas vezes. O PG possui algo chamado visões materializadas. Esses dispositivos armazenam os dados fisicamente e os atualizam periodicamente. Parece ótimo, não é? Mas
+
+isso traz consigo um novo problema. Eles executam a consulta inteira novamente a cada vez. Mas as séries temporais mudam principalmente em incrementos. Não faz sentido ficar lendo indefinidamente os mesmos dados históricos que nunca mudam. Entram em cena os agregados contínuos, uma visão materializada que computa as mudanças somente se elas ocorrerem.
+
+Materializado gradualmente, se preferir. Confira. Começaremos criando uma tabela que armazena os dados dos sensores. Sempre quis saber o nível de hidratação da minha planta. Possui um registro de data e hora, o ID do dispositivo [de música] e a leitura. E é uma hipertabela,
+
+claro, ou seja, usando o tempo como sua dimensão. Agora, vamos adicionar uma visualização materializada chamada estatísticas horárias [música] usando uma escala de tempo de função para ser contínua, que contém esta consulta, um intervalo de tempo com as leituras médias e máximas em um período de 1 hora. O que resta é adicionar a política de agregação contínua para introduzir a automação [de música] em segundo plano. Comece retrocedendo 3 dias, termine uma hora a partir de onde estamos agora e repita isso a cada hora. [música] A apólice está registrada. Você também pode definir uma escala de tempo
+
+para compactar as estatísticas horárias e uma política para executar a compactação para dados com mais de 4 dias. Outra característica importante, que eu não me perdoaria se não mencionasse, são as hiperfunções. Embora o SQL seja ótimo para dados, big data, [música] você precisa de ferramentas dedicadas de alto desempenho . As hiperfunções são a maneira que os engenheiros de dados encontraram para segmentar e analisar as informações. [música] Há delta, aparições, interpolações, taxas.
+
+Sinceramente, estou me metendo em algo um pouco fora da minha zona de conforto. Então, isso é para vocês, nerds de dados [música]. Se você pensou que os dados do Tiger sobre código aberto paravam por aí , está muito enganado. Entre outras extensões, eles criaram a popular escala vetorial PG, que permite usar vetores no PostgreSQL, algo essencial na era da IA. Eu aprofundei um pouco mais em vetores [música] no meu vídeo sobre o banco de dados Trusso, mas, resumindo, você precisaria instalar a extensão na sua instância do PostgreSQL.
+
+[música] Então você poderia criar uma tabela com um vetor do tipo e vários elementos. Obviamente, será uma hipertabela na qual podemos inserir documentos de IA [música], assim como PG é um banco de dados, TS é uma série temporal e a IA precisa de vetores. Agora, vamos encontrar documentos sobre ciência [música] semelhantes ao vetor que eu forneci. Recomendo muito que você dê uma olhada no Tiger Agents for Work se estiver interessado em IA, que funciona como um utilitário ou biblioteca para um slackbot genético [musical]. E com isso, é hora de concluir. Eu poderia ter
+
+ido mais longe, mas preciso parar por aqui e dizer que esta não é apenas uma tecnologia de código aberto incrível, como também está integrada a um dos melhores bancos de dados da história do desenvolvimento de software moderno, e é por isso que recomendo muito que você assista a este vídeo em seguida. Trata-se da quantidade de coisas malucas que o Postcrist consegue fazer e que você provavelmente nunca ouviu falar. Obrigado por assistir e até o próximo vídeo!

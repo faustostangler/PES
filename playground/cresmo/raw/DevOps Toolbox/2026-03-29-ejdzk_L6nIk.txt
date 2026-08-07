@@ -1,0 +1,86 @@
+---
+video_title: "I Was DEFINITELY Using The Wrong Tmux Manager"
+video_id: ejdzk_L6nIk
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ejdzk_L6nIk
+video_date: 2026-03-29T13:30:35+00:00
+video_description: |
+  Depot: Build faster. Waste less time. Get started for free: https://depot.plug.dev/RrO1CQ0
+  ---
+  
+  Sesh is everything I wanted for Tmux sessions, and a little more
+  - https://github.com/joshmedeski/sesh
+  - https://github.com/omerxx/dotfiles
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Não é todo dia que você tem que admitir que estava tão errado. Não por ter uma opinião, mas pela audácia de ignorar a alternativa e continuar construindo um concorrente. Deixa eu te explicar. Eu uso o sessionx, um plugin do tmux que te deixa bem rápido com um alternador de sessões que tem um localizador difuso, pré-visualização, atalhos configuráveis ​​e outros recursos legais adicionados por colaboradores incríveis. Mas isso foi inspirado por um pequeno script chamado t, criado por Josh Medeski, que mais tarde arquivou o t para construir um gerenciador de sessões melhor, mais robusto e fantástico chamado sesh. Agora, vou responder às perguntas
+
+imediatamente. É melhor assim? Sim, muito melhor. Não de uma forma que eu ache que faria os usuários do SessionX simplesmente descartá-lo e migrar para outra plataforma, mas para aqueles de nós que gostam de mexer, experimentar, combinar diferentes fluxos e coisas do tipo , bem, vocês vão adorar. Este dispositivo ativa, alterna e faz tudo o que se espera de um gerenciador de sessões moderno, mas vai além. Possui um
+
+comando específico para clonar projetos e um seletor de última sessão, que é ao mesmo tempo simples e genial. Possui seletor integrado, autocompletar comandos do shell e muito mais, mas além de tudo isso, é altamente configurável. Você pode usá-lo para criar sessões, configurar suas pré-visualizações, iniciar janelas de comando e, se isso está começando a soar como o tmuxinator, bem, você não está errado. Sesh é um pacote incrível, e hoje quero mostrar como estou usando. Vamos .
+
+Acho que vale a pena gastar 60 segundos explicando por que alguém se importaria com o gerenciamento de sessões. Quem usa o tmux ou alternativas geralmente busca uma maneira fácil de separar o trabalho em abas ou janelas (para usar a terminologia correta) e divisões para multitarefa. A maioria das pessoas para por aí, mas as sessões permitem criar vários espaços de trabalho contendo janelas e divisões, entre os quais você pode alternar . O problema é que o tmux, embora tenha integrado sessões ao sistema, não as tratou como um recurso de primeira classe, pelo menos não em termos de usabilidade, o que fez com que a maioria dos usuários as evitasse ou até mesmo usasse o tmux sem ter conhecimento dessa opção. É aí que entram ferramentas como sessionx, sesh e outras. Dito isso
+
+, com quase 2.000 estrelas, o subestimado sesh está no GitHub e é anunciado como um gerenciador de sessões de terminal inteligente. Embora eu ache que "tmux" deveria estar escrito em uma fonte maior aqui. Instale o programa usando o Homebrew, o Nix ou outras opções de pacotes e execute-o para visualizar o menu de ajuda. E como começo cada exploração pelas opções do menu de ajuda, não pude deixar de notar alguns subcomandos bastante incomuns que eu não esperava. Quer dizer, clonar,
+
+selecionar e visualizar em um gerenciador de sessões? Vamos tentar a primeira opção, porque, embora pareça simples, é muito bom clonar um projeto e começar uma nova sessão. Estamos no caminho, prontos para partir. E como não tenho suporte para autocompletar inicial, usarei código aberto aqui, mas guardarei esses resultados para mais tarde. Entretanto, vamos começar pelo básico. O primeiro comando que
+
+você normalmente executaria é `sesh list`. A princípio, você pensaria: "Hum, não me lembro de ter iniciado todas essas sessões." E a verdade é que você realmente não fez isso. Isso é o zoxide simplesmente imprimindo os caminhos visitados. Esse é um bom momento para parar e mencionar que o zoxide é um pré-requisito aqui.
+
+É uma alternativa fantástica ao CD e uma atualização do antigo script Zed. Tenho um vídeo sobre o zoxide, e se você já me viu executando o comando `z path` em algum lugar, é disso que se trata . A próxima sessão, por exemplo, também usa o zoxide, mas apenas para ajudar você a descobrir o caminho a partir do nome. Sesh faz as coisas de forma diferente. O sistema parte do princípio de que você já precisa de um dos caminhos locais mais visitados e os organiza em uma lista pesquisável com valores aproximados, tornando as coisas mais acessíveis do que você imaginaria inicialmente. A opção "Conectar" é como você
+
+alterna entre as sessões. Você pode inserir uma lista de sessões no fzf, por exemplo, e fazer com que o resultado seja usado pelo comando `sesh connect` desta forma. Nova sessão no meu diretório de teste, devidamente nomeada e posicionada no caminho. Outra opção é a televisão, mencionada anteriormente no canal, caso essa seja sua preferência para um seletor de áudio com zoom difuso. Voltaremos à integração mais aprofundada da TV de sessão um pouco mais tarde. Para uma configuração inicial que dê a
+
+aparência de uma interface de usuário para sessões, aqui está a sugestão da documentação. Vincular uma tecla do tmux à conexão de sessão, exibir uma lista enorme usando ícones, tudo isso na janela pop-up do fzf Tmux, e com vinculações embutidas que fixam os ícones por tipo de opção na lista, com uma pré-visualização ao lado. Por agora, vamos apenas executá-lo. Tmux prefix shift T e pronto. Sesh mostrando minhas sessões com seus respectivos ícones do Tmux, o caminho do meu socket com o símbolo de diretório e uma pré-visualização, tudo contido na janela pop-up. Para efeito de comparação, veja como será a
+
+próxima sessão. Ok, de volta à televisão. Embora o link na documentação esteja quebrado, uma busca rápida na documentação da TV mostra o sesh. Por algum motivo, não vem com os canais de atualização de TV usuais, mas basta pegar o arquivo de configuração toml e adicionar um canal de sessão à sua configuração de TV e pronto, a sessão de TV funciona perfeitamente. Uma experiência visual incrível, com uma caixa de pesquisa intuitiva , painel de seleção e pré-visualização com ações que você pode configurar facilmente pela TV. Beleza. Mais informações sobre televisão em um
+
+vídeo dedicado no canal. Queria mostrar a integração com a TV, não só porque é um recurso interessante e mais uma coisa que este dispositivo consegue fazer com facilidade, mas também para mostrar como é fácil transferir a sessão para onde você quiser. Sua preferência, suas ferramentas, seu ambiente. Ele foi projetado para ser flexível e suportar qualquer tipo de configuração. Se há algo que invariavelmente interrompe o ritmo de qualquer fluxo de trabalho DevOps, é esperar que a criação dos contêineres seja concluída. Normalmente,
+
+você fica preso assistindo a uma barra de progresso se arrastar , mas a Depot, patrocinadora do vídeo de hoje, está aqui para evitar completamente essa frustração. É uma plataforma de infraestrutura para desenvolvedores que funciona como uma substituta direta para suas ferramentas de compilação existentes. A transição é perfeita porque basicamente você só precisa trocar o comando `Docker build` por `Depot build`. Eles acabaram de lançar algo bastante significativo, o Depot CI, que é um mecanismo CI totalmente novo, construído do zero. Sabe como os sistemas de CI tradicionais criam uma VM vazia e fria toda vez que você envia código, clonando seu repositório, baixando dependências, e tudo mais? A Depot CI inverte esse modelo. Você
+
+envia o código e, 2 segundos depois, está executando uma tarefa com um novo ambiente pré-aquecido , sua imagem personalizada já carregada e as dependências já instaladas. A migração é um processo com baixíssimo atrito . O comando `Depot CI migrate` copia seus fluxos de trabalho existentes do GitHub Actions para uma pasta `.depot`, e tudo funciona perfeitamente. Inclui depuração SSH, métricas de CPU e memória, e reproduções completas do pipeline. Chega de se comprometer e rezar quando
+
+algo quebra. Esta é uma ferramenta essencial clássica de DevOps que, na verdade, economiza tempo no seu dia a dia, eliminando os gargalos de CI. É uma daquelas coisas que você realmente precisa ver em seu próprio fluxo de trabalho para acreditar o quanto a diferença de velocidade impacta sua produtividade. Você pode acessar o link na descrição para iniciar um teste gratuito e ver como suas compilações podem ficar muito mais rápidas. Agora, voltando ao vídeo.
+
+Outra opção é a goma de mascar Charm's, o limpador de unhas felpudo da empresa que cria tudo 10 vezes melhor do que qualquer outra. Aqui está um chiclete para acompanhar minhas sessões. Em todas as ferramentas, sempre há uma funcionalidade que eu descarto pensando: "Ok, quem precisa disso?" E aí eu simplesmente não consigo parar de usar. Você sabe como no tmux você pode configurar a última vinculação de janela? O
+
+meu funciona com o prefixo A. Com o sash, você pode usar o sash por último para obter o mesmo comportamento nas sessões. Escolha o mapa e alterne entre eles com facilidade. Com o sessionx, resolvi isso definindo sempre a última sessão visitada sob o cursor ao abri-la. Como você já deve ter percebido, o Sash oferece uma maneira mais portátil de fazer isso, fornecendo a opção na linha de comando. Mas,
+
+na minha opinião, é aqui que o Sash realmente se destaca: na sua capacidade de configuração. A menos que esteja usando outro caminho, crie o arquivo sash/sash.toml em seu diretório .config. A primeira coisa que você provavelmente vai querer fazer é importar o esquema JSON padrão do Sash. Isso importa uma
+
+série de configurações padrão sensatas para o Sash, ajudando você a começar. A primeira coisa que configurei aqui foi uma lista negra que basicamente oculta uma sessão da lista. Por que eu iria querer fazer isso? Bem, meu plugin de fluxos, por exemplo, que aparece como uma janela sobreposta a qualquer sessão do tmux, usa sua própria sessão chamada scratch. Eu nunca quero me conectar a essa sessão, ela é reservada exclusivamente para essa janela pop-up. Agora
+
+está filtrado. Você também pode configurar o comprimento do diretório nos nomes de sessão, mas eu prefiro o padrão para manter as coisas curtas. Além disso, uma grata surpresa é a menção ao tmux flogs aqui e o fato de que ele funciona muito bem com flogs. Acho que o motivo disso é que, quanto mais detalhes você der ao caminho, mais fácil será para o Flogs, que também usa o Zoxide, adivinhar o caminho e te direcionar para ele, tornando as coisas ainda mais fáceis. Voltando à configuração, você pode alterar a ordem de exibição das sessões definindo uma ordem de classificação. Eu
+
+realmente não encontrei utilidade para isso, principalmente porque estou usando nomes de sessão muito diferentes, então vamos para a próxima coisa bem legal, mas que acabei não usando: o cache. Que gesto atencioso. Se você estiver em um sistema sobrecarregado, pode armazenar listas em cache, o que acelera as chamadas. O problema com o cache é que ele é, bem, armazenado em cache. Então, se eu encerrar uma sessão como acabei de fazer com o FactBot, fechando a última janela, o Sesh ainda a terá. Vai desaparecer em alguns
+
+segundos, mas ainda acho isso confuso. Uma vez desativado, voltamos à fonte da verdade. Essa é a minha preferência. Em seguida, você pode definir a pré-visualização da sessão padrão e o comando de inicialização, o que significa que qualquer nova sessão iniciada poderá executar imediatamente o Neovim, por exemplo, ou simplesmente executar o EZA para listar os arquivos, como mostrado abaixo. Isso é ótimo, mas e se você quiser sessões dedicadas pré-configuradas para diferentes tarefas? Não necessariamente modelos já
+
+iniciados, mas sim modelos que você pode acessar a qualquer momento. Bem, você pode fazer isso com a tag de sessão. Dê um nome, um caminho, um comando de inicialização e também um comando de pré-visualização, se desejar. Uma coisa que estou sentindo falta aqui é de uma variável de modelo que eu possa injetar ou simplesmente usar, como se o caminho já existisse. Idealmente, eu gostaria de usá-la abaixo no comando de pré-visualização para expandir o mesmo caminho em algo como um par de chaves, mas isso é só um detalhe.
+
+De qualquer forma, dê uma olhada nisso. Na próxima vez que a sessão estiver ativa, haverá uma opção de configuração do tmux. Ainda não é uma sessão, mas tem uma engrenagem ao lado pronta para usar. Ele tem uma pré-visualização da minha configuração do tmux, mas se eu clicar nele, bem, o que você sabe? Configuração do Tmux no Neovim pronta para ser alterada. Gostei
+
+tanto deste que também o copiei para o Neovim . O problema é que, se você não der um comando de inicialização, ele simplesmente copiará as configurações padrão. Portanto, você sempre pode desativar o comando de inicialização, se isso fizer sentido. Que tal dar um passo além? Talvez em projetos nos quais eu costumo trabalhar . Neste caso, estou usando o
+
+WorkTrunk para gerenciar minhas árvores de trabalho, e este é outro ótimo vídeo do canal que você pode querer assistir. Vou fazer com que cada sessão do bot comece com uma lista de árvores de tronco de trabalho . Talvez eu realmente queira que o código aberto comece. bot de sessão boom código aberto. Já que isso abriu um leque de opções, agora posso ter minha sessão X, de relevância questionável, aberta com o gh-dash, minha nova maneira favorita de lidar com issues e PRs do GitHub, que, e me desculpem por não me conter novamente, configurei em seu próprio pipeline automatizado que chamaria o trunk de trabalho, criando uma árvore para este PR, buscando o branch e abrindo o código, pronto para revisar e corrigir o PR.
+
+Isso foi muita coisa, então, para esclarecer, eu simplesmente configurei o sesh para automatizar a criação de qualquer sessão X , alterar o caminho para ela, abrir o gh-dash, que por sua vez chamou o work trunk e abriu o código. Não recomendado para pessoas de coração fraco. Às vezes eu me impeço e digo: "Ei, cara, você foi longe demais ." Mas existem alguns fluxos de trabalho que me fazem olhar para o terminal e sorrir . As sessões não são o fim do processo de configuração. Você pode
+
+configurar janelas. Por exemplo, na sessão X, eu posso querer ter o Git preguiçoso em sua própria janela. Adicione isso à sessão, o que na verdade me surpreende. Eu pensava que o Toml conseguia entender subcomponentes. De qualquer forma, crie uma nova janela com o mesmo nome mencionado e inicie a sessão X com o gh-dash em uma janela, e uma nova janela com o lazy git seja aberta na outra . Um mundo de novas opções
+
+fez meu cérebro gerar 10 novas ideias. Você pode, é claro, expandir isso com mais janelas, quantas quiser, para ser sincero, e fazer com que todas sejam iniciadas lado a lado sempre que você iniciar essa sessão. Existe também a opção de definir curingas, como abrir o Neovim para todo o caminho home/test. Mas há algo que você nunca pensou que veria: uma integração com o Raycast. O Raycast é um lançador de aplicativos para macOS extremamente popular, do qual sou fã incondicional, e se você procurar, encontrará o Sash na loja de extensões, que foi instalado quase tantas vezes quanto as estrelas que possui. Corrijam isso para funcionar com o
+
+Ocidente, porque não somos selvagens, e vejam só, eu posso literalmente chamar o Tmux com a sessão correta e seus modelos de qualquer lugar, a qualquer hora. Há muito mais em Sash, mas isso é a maior parte e já é bastante coisa. Se você não se importa com esse nível de personalização, o Session X ainda é uma ótima opção. Uma instalação rápida do TPM e o problema está resolvido. Com o Sash, você precisaria instalar um binário independente e adicionar uma configuração para realmente aproveitar todo o seu potencial, mas vale muito a pena.
+
+Bem, senti falta de algumas coisas, como a possibilidade de renomear uma sessão, talvez uma tecla de atalho para corrigir as opções de pop-up e outras pequenas coisas, mas, no geral, é uma opção fantástica para qualquer usuário do Tmux. Você provavelmente já viu o Zoxide mencionado aqui, que é um pré-requisito tanto para o Sash quanto para o Session X, mas também é uma ferramenta de produtividade incrível por si só, com a qual recomendo fortemente que você se familiarize. Assista a este vídeo a seguir para saber mais sobre Zoxide. Obrigado por assistir e até o próximo vídeo.

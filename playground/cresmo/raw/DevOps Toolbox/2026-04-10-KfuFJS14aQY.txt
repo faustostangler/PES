@@ -1,0 +1,108 @@
+---
+video_title: "This S3 Alternative is INSANELY Lightweight (and 100% open source)"
+video_id: KfuFJS14aQY
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KfuFJS14aQY
+video_date: 2026-04-10T14:30:16+00:00
+video_description: |
+  Private, encrypted cloud storage for DevOps & remote machines 👉
+  https://internxt.com/devopstoolbox **87% off** already applied: code DEVOPSTOOLBOX
+  ---
+  
+  2.3x faster than MinIO: RustFS is an open-source, S3-compatible high-performance object storage system.
+  - https://github.com/rustfs/rustfs
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Sua fatura de nuvem está silenciosamente consumindo sua empresa. O H percebeu isso no ano passado, quando tirou sua equipe do S3 e a colocou em servidores próprios baseados em NVMe , economizando 1,5 milhão de dólares por ano. E isso aconteceu depois que ele negociou um desconto e um contrato de fidelização de quatro anos com a Amazon. Esse número, embora relativo ao tamanho e ao uso, deveria causar arrepios . A maioria dos engenheiros nunca questiona o armazenamento em nuvem. É a opção
+
+padrão. Está por toda parte. Quer dizer, foi literalmente assim que a AWS começou. Aqui está Theo, simplesmente aceitando seu destino na 3ª temporada. A maior parte dos custos são S3, o que significa que a maioria deles não pode ser reduzida.
+
+E todos nós estamos fazendo o mesmo. A questão é que, à medida que você se acostuma com algo, seu código e seus scripts ficam integrados à sua API. Seus backups ficam armazenados nele, e todo novo projeto simplesmente o utiliza. Então, o que você pode fazer? Seu código está vinculado ao S3, ou você está acostumado com projetos que, por padrão, funcionam com suas APIs? E
+
+se sair do S3, ou pelo menos se livrar da fatura mensal, fosse na verdade muito simples? Venho executando todos os meus backups no S3, e vejo o custo se acumular há anos. Comecei a procurar uma saída. Todos os caminhos levavam ao MinIO, mas parecia um exagero. E recentemente, foi arquivado e a licença foi alterada. Tentei primeiro o Garage. Funciona,
+
+mas os comentários naquele vídeo repetiam a mesma coisa. Três vezes mais rápido, desempenho de nível profissional, uma interface de usuário completa e a ambição de superar todos os outros projetos compatíveis com S3 me fizeram escolher o Rusted Face. Alto desempenho, totalmente compatível com S3, um painel de controle web completo , arquitetura distribuída pronta para uso , funciona em qualquer plataforma. Foi assim que eu montei meu próprio S3.
+
+Então, eu tinha minha pequena placa que eu mesmo hospedo, mas se você for usar um S3 em casa, vai precisar de alguns discos, meu amigo. Começaremos com um pequeno SSD conectado diretamente, mas mais adiante neste vídeo, montaremos nosso enorme NAS. Agora, considerando o que já está instalado, são quase 24.000 estrelas, grandes promessas de velocidade e Rust como linguagem de escolha. O RustFest está definitivamente na disputa pela coroa quando se trata de espaço S3 de código aberto.
+
+Autoridade insuficiente? Dá uma olhada nisso. Mencionada entre as 20 principais startups de código aberto dos EUA, com crescimento de quase 10 vezes em menos de 3 anos de existência. Em destaque como o repositório número um do dia nas tendências do GitHub. O que estou tentando dizer é que está fazendo barulho.
+
+Obviamente, existem opções básicas do S3, mas também suporte para outras opções populares para satisfazer usuários do Kubernetes ou simplesmente fãs incondicionais do S3, como o DJH antes de ele migrar completamente para o modo presencial. A comparação com o MinIO é interessante, mas duvido que alguém em sã consciência vá usar o MinIO em seu laboratório doméstico hoje em dia, muito menos migrar para ele em um ambiente de produção. Sim, os resultados de desempenho para as operações de obtenção e gravação são impressionantes, especialmente quando se trata de um grande número de arquivos de tamanho relativamente pequeno. É aí que o RustFest se destaca, e o MinIO mais S3 geralmente ficam lentos devido à indexação em segundo plano. RustFest também vem com um console poderoso e outras opções, mas o elefante na sala, como sempre acontece nesses casos, é a licença. O Apache 2, escolhido para este projeto
+
+, permite seu uso comercial. Ele permite modificar o código-fonte, distribuí-lo, sublicenciá-lo e, no nosso caso, usá-lo de forma privada. Agora, você é obrigado a incluir um aviso de direitos autorais, mas não precisa disponibilizar seu próprio código como exigem algumas outras licenças. E você certamente não precisa usar a mesma licença para o seu projeto. Os pessimistas argumentariam que este aviso por si só já é motivo de problemas, se não agora, pelo menos um prenúncio de problemas futuros. Eu não. Com minha experiência trabalhando com grandes
+
+sistemas de produção e organizações , posso afirmar com segurança que fico feliz quando uma empresa opta por disponibilizar um produto em código aberto, principalmente nessa escala . Pode-se dizer o que quiser sobre Redis, Elastic, HashiCorp, todos se envolveram em dramas desnecessários de licenciamento e depois recuaram, restando apenas um saldo negativo de publicidade que ficará para sempre na memória. Ainda podemos usar a maioria deles à vontade, sem problemas. E embora possamos continuar debatendo nos comentários, o que quero dizer é que, na verdade, sou a favor da licença . Eu não tenho uma varinha mágica.
+
+Só posso esperar que esses caras aprendam as lições dos gigantes mencionados anteriormente. Então, você está usando o Restic FS como sua camada de armazenamento compatível com S3, o que é ótimo para fluxos de trabalho locais e auto-hospedados. Mas, como você verá em breve, todo armazenamento hospedado localmente precisa de um backup externo. E é aí que a maioria das pessoas acaba optando pelo S3 ou GCP, adicionando mais uma assinatura recorrente à pilha. A Internxt, patrocinadora do vídeo de hoje, é uma plataforma de armazenamento em nuvem que prioriza a privacidade e se adapta perfeitamente à nossa forma de trabalhar. É de código aberto e possui criptografia de ponta a ponta
+
+com proteção de conhecimento zero . Assim como acontece com o armazenamento da sua casa, eles não podem ler seus dados, e isso não é marketing, é arquitetura. Para fluxos de trabalho DevOps, especificamente, o recurso útil é o suporte ao rclone. Você pode conectar o Internxt Drive nativamente ou via WebDAV, então tudo o que você faz normalmente ou automatiza normalmente com o rclone funciona exatamente da mesma maneira. Agendamento de backups, sincronização de artefatos, exportação de arquivos de configuração de máquinas remotas, tudo se encaixa perfeitamente . Eles também acabaram de lançar o
+
+versionamento de arquivos, que é um daqueles recursos que você não acha que precisa até precisar, e reflete exatamente o que você acabou de dizer sobre o Restic FS. Agora eles oferecem um plano vitalício definitivo , com 5 TB de armazenamento pagos uma única vez, sem assinatura, para um destino de backup que deve funcionar apenas em segundo plano . Esse modelo de preços faz muito mais sentido do que pagar mensalmente para sempre. Acesse internxt.com/devopstoolbox e use o código devopstoolbox para obter 87% de desconto, que é maior do que o desconto oferecido diretamente no site. Aproveitar. Agora, voltando ao
+
+vídeo. Restic FS funciona em qualquer lugar: Linux, Docker, Mac, Windows. Vamos usar o Docker no meu laboratório doméstico. Falarei mais sobre isso em um vídeo que postei recentemente no canal. Especificamente, vou optar por compor. O Compose é uma forma de descrever
+
+tudo o que o contêiner Docker precisa, com um pequeno mecanismo de monitoramento para garantir que ele seja reiniciado caso algo falhe. Certo, então vamos executar o comando via SSH no meu computador pessoal e criar um arquivo .compose para o nosso serviço. Existe um serviço Rust S3 com várias configurações. Todas essas informações foram retiradas da fonte oficial e incluem telemetria e Prometheus Grafana Loki. Quer dizer, essa
+
+configuração completa que você tem aqui é um exagero, na minha opinião, para o meu laboratório doméstico pessoal. Se você estiver em uma implementação em escala DAG, então, sem dúvida, monitore seu S3. Preciso de uma configuração doméstica modesta , então meu aplicativo Docker Compose só aceitará Rust S3 por enquanto. Parece que estamos online, então temos duas portas importantes aqui, 9000 e 9001. Lembrem-se delas . A partir de 9000, aqui está uma
+
+resposta XML que, se você conhece o S3, já viu mais de uma vez, o que é um ótimo sinal. A porta 9001, no entanto, nos leva à interface do usuário. Administrador do Rust S3 para usuário e senha, e pronto. Finalmente, um S3 hospedado localmente em um navegador. Vamos começar criando um, bem, bucket, porque, você sabe, é o S3. Vou chamar isso de meus
+
+backups. Você pode ativar o versionamento de objetos, bloqueios em arquivos e até mesmo cotas, o que demonstra que há recursos aqui para um serviço completo com usuários e permissões, mas estamos nos adiantando . O bucket está online e, veja só, você pode usar a interface para enviar qualquer coisa. Visualização em tela cheia também disponível. Baixar, excluir, etc.
+
+Então temos uma porta para servir a funcionalidade e uma porta para servir a interface do usuário. Vamos em frente. Isso pode parecer uma bobagem, mas, novamente, se você tem experiência com o S3, sabe que uma das coisas mais estranhas que ele ainda tem é a existência de nomes de buckets exclusivos em todo o mundo. E não, não quero dizer que dentro da minha conta eu só posso definir um bucket com um determinado nome. Os nomes dos buckets são exclusivos para todas as empresas na AWS em todo o planeta Terra. Há mais de 1 milhão de
+
+usuários ativos diariamente na AWS, em 190 países, que representa 30% da infraestrutura global de nuvem, e mesmo assim, se você quiser nomear seu bucket com algo como "NSFW", "não toque" ou "eu te odeio ponto com", bem, esses nomes são ótimos. Há 99% de chance de já estarem reservadas. Mas, com sua própria infraestrutura, não há problema. Eu te disse que era uma estupidez. Ainda bem que não tenho mais limitações. Voltando ao nosso painel de controle,
+
+qualquer usuário do S3 precisa de chaves. É aqui que você os cria. Podem vir com data de validade e uma breve explicação sobre o motivo de estarem ali. Assim como nos serviços da AWS, você precisará configurar seu ambiente com o ID da chave de acesso e as variáveis ​​da chave de acesso secreta, bem como, e isso é fundamental aqui, sem trocadilho, um endpoint diferente para a AWS CLI, usando o IP do S3 e a porta que mencionamos anteriormente, 9000. Só para o caso de você estar se perguntando como isso vai funcionar fora de casa? Bem,
+
+você precisaria de duas coisas para conseguir isso. Um servidor DNS para encaminhar solicitações para seu laboratório doméstico, como s3.domain.sage. Em seguida, você precisa de um proxy reverso que reconheça esse padrão e o direcione para o RustFS. Estou usando o DNSimple para gerenciar meu DNS
+
+e o Caddy como proxy reverso. Isso torna tudo 10 vezes mais simples. Portanto, meu domínio devopstoolbox.sage, que é usado principalmente para configurações domésticas, está configurado no DNSimple para me redirecionar para casa. Ao acessar o domínio, você se depara com um erro 404 fornecido pelo Caddy. Vamos
+
+testar o acesso remoto ao S3 enquanto eu estiver fora. Mas, desta vez, em vez de um endpoint S3 local com um endereço IP, veja como funciona perfeitamente com um domínio real. Por favor, leve em consideração que se trata de HTTPS, e nem vou mencionar os certificados SSL. Caddy vai cuidar de tudo para nós. Primeiro , recarreguei o arquivo do Caddy e obtive o certificado com sucesso para meu novo domínio. Vamos lá
+
+. Adoro o Caddy. O próximo passo é mapear isso no Caddy, e não há nada mais fácil do que isso. Adicione um domínio e um destino de proxy reverso. Mas sabe de uma coisa? O CasaOS, embora tenha uma boa
+
+configuração de composição, acaba gerando, como consequência, muitas redes de contêineres, o que cria um isolamento que nem sempre desejamos. Que tal mapearmos o Caddy para as redes internas para melhor acessibilidade? Isso nos permite chamar o nome do contêiner diretamente e resolvê- lo de dentro do Caddy. Então, em vez de ficar brincando de esconde-esconde com endereços IP, dê uma olhada nisso agora . Saída IP, nome da tag do contêiner Docker inserido, e momento da verdade, AWS S3 LS, e sim, meu bucket de backups aparece.
+
+Consultar o objeto dentro dele também funciona bem . Também posso usar o famoso comando S3 CP para baixar objetos, e aqui está uma captura de tela do objeto que carreguei e baixei recentemente. Mas isso é bastante comum, não é? E quanto à pré-assinatura de URLs? Sabe, aqueles links para download que são de uso único ou têm prazo de validade . Vamos simplificar o
+
+nome do objeto para image.png para facilitar a visualização. Agora, faça o pré-cadastro com um tempo de expiração em segundos e observe o URL. Vamos tentar abrir no navegador. Fantástico. Agora, se você analisar
+
+mais a fundo, verá que eles não estavam brincando quando disseram que os recursos são equivalentes aos do S3 . As políticas são, literalmente, políticas estruturadas do IAM que você pode aplicar aos usuários, definindo quem pode acessar o quê e como. Como um objeto somente leitura que permite obter objetos e realizar outras operações. E então, você tem um sistema completo de gerenciamento de usuários para colocar essas políticas em prática. Criei um como exemplo para que meu editor de vídeo também possa usar meu armazenamento. Mas a
+
+próxima aba deixou as intenções do Rusted Fest ainda mais óbvias. Percebi que é possível configurar não apenas usuários individuais , mas também grupos de usuários, o que facilita ainda mais a aplicação de políticas e a definição do escopo de acesso. Bem, isso é um nicho de mercado, mas demonstra claramente que foi feito para ser escalável. Há também o uso, que presumo que fique ainda melhor se você tiver o Grafana e a coleta de logs executando um site de logs apenas com RustFS, como eu tenho aqui. Um ótimo complemento, que faz todo o sentido neste caso, é o armazenamento em níveis. Existem muitas maneiras de
+
+você aproveitar o direcionamento de dados em qualquer sistema a seu favor. A primeira é do quente para o morno. Digamos que exista um conjunto de dados que você precisa recuperar muito rapidamente . Uma camada ativa (hot tier) pode ser configurada para ser executada em seus SSDs NVMe, enquanto outros dados, digamos, por exemplo, arquivos salvos na semana passada, podem ser movidos para uma camada passiva (warm tier) em discos SATA. Isso permite uma melhor utilização caso você tenha diferentes tipos de configuração de disco.
+
+Além disso, e mais interessante para o meu caso de uso pessoal, existe uma camada fria. A vantagem de ter uma camada de dados tão "fria", que não precisa ser acessada com frequência ou mesmo nunca, é que ela pode ficar armazenada remotamente. Em casa, posso transferir isso para o meu NAS, mas veja só o que o RustFS tem reservado, sem trocadilho. Ao adicionar um nível, você não escolhe apenas uma política, mas também onde ela será executada. Seu RustFS, ou talvez o verdadeiro S3 original, ou outro cluster MinIO, ou Azure, Google, Cloudflare, o que você preferir. Está tudo aqui.
+
+E o sistema transferirá seu armazenamento para o espaço refrigerado com base no que você definir. Escolha o que quiser, dê um nome, adicione as credenciais e, se for literalmente o S3, também uma classe de armazenamento e uma região . Deseja receber notificações sobre as operações da sua FS ? Os eventos podem distribuir as solicitações recebidas e compartilhar eventos com webhooks. Você pode enviá-los para o SQS e coletar o que for relatado. Por fim, aqui está um ótimo
+
+exemplo de um serviço que funciona perfeitamente com o S3. Queria acrescentar algo para que este sistema fizesse ainda mais sentido para quem está a assistir a este vídeo e gosta de fazer testes em laboratórios domésticos. Bom, o Restic é backups feitos da maneira certa. Um sistema que se integra perfeitamente ao RustFS para criar backups periódicos. É um único executável que cria uma estrutura, criptografa, valida para evitar corrupção e, claro, restaura a partir de backups. Agora, encontrei a garagem do Jim. Ele está
+
+no YouTube e produz conteúdo excelente sobre laboratórios caseiros . Então, peguei isso do GitHub dele. Você tem um modelo padrão para configurações de backup sensatas, um cron para executá- las, mas também para excluir arquivos antigos e até mesmo um processo para verificar se os arquivos já possuem backup. Basta confirmar as variáveis ​​de ambiente aqui. Por exemplo, nosso repositório restic deve mencionar o endereço IP do sistema de arquivos rest ou, de preferência, o nome do contêiner para torná-lo mais dinâmico. Em seguida, certifique-se de que
+
+ele tenha um nome de pacote de porta {barra}. O restante será obtido do arquivo .env. Agora, o básico funcionará assim. Você cria um pequeno arquivo .env
+
+com suas chaves da AWS ou, neste caso, com o sistema de arquivos REST . Defina uma senha extremamente forte para os backups. Agora, diga ao restic para inicializar primeiro. Ok, parece que funcionou. Então, vamos dar uma olhada na interface do usuário. Temos um
+
+arquivo de configuração e um diretório de chaves, que é uma estrutura pronta para armazenar backups. Então, vamos fazer o que tem que ser feito. restic faz backup de tudo em {slash}data e mais de 1.000 arquivos, 11 megabytes, 0 segundos, snapshot salvo. Agora a estrutura do bucket de backups é mais complexa: dados, índice, snapshots, tudo criptografado, fragmentado, indexado, dados reais. Vamos
+
+criar rapidamente um alias para restic para parar de digitar tantos comandos docker exec . E agora posso executar a CLI como se estivesse fazendo diretamente. Chegou a hora de colocar nosso plano B à prova, não é? Segue uma lista de aplicativos de laboratório doméstico hospedados. Vou excluir a interface web aberta, que uso para conversar com meu LLM hospedado no Ollama. Perdido.
+
+Agora, vamos restaurar a partir do backup. Na esperança de que o restic realmente use o sistema de arquivos rest e não nos decepcione. Use a CLI para listar os snapshots. Agora, restaure o ID do snapshot usando um destino local. O Restic diz que foi restaurado, o que basicamente não significa nada, e pulou a maior parte do processo. Ao listar nossos aplicativos, o resultado é
+
+uma interface web básica e aberta, exatamente como tínhamos antes. Ah, S3 servido em casa e em qualquer lugar. Fique tranquilo(a) em relação aos backups. Posso armazenar tudo em camadas frias na AWS ou no Cloudflare ou, melhor ainda, no meu próprio NAS doméstico. Muito bom.
+
+Agora, embora toda essa configuração mostre tudo o que é necessário, ela omite alguns itens básicos para um laboratório doméstico. Confira o próximo vídeo para se preparar com tudo o que você precisa para começar com o pé direito em sua hospedagem própria. Obrigado por assistir e até o próximo vídeo.

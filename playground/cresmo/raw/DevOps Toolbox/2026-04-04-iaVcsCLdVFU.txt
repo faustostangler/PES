@@ -1,0 +1,96 @@
+---
+video_title: "Stop Paying for SaaS You Can EASILY Host"
+video_id: iaVcsCLdVFU
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=iaVcsCLdVFU
+video_date: 2026-04-04T13:30:49+00:00
+video_description: |
+  Try Twingate - it's FREE! https://twingate.plug.dev/OhkoS3a
+  ---
+  
+  Self hosting is easier than you think.
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Tem esse tweet do incrível Fireship. Continuo voltando a este ponto, incrédulo. Possui alternativas populares e viáveis ​​de código aberto para muitos produtos e, ultimamente, parece que a economia de assinaturas está saindo do controle. Acabei de calcular que pago por cerca de 10 serviços diferentes todos os meses e, com a entrada das plataformas de IA em nossas vidas, esses pagamentos triplicaram e quadruplicaram no último ano. Meu canal se chama literalmente DevOps Toolbox. Ontem, construí sistemas de produção para
+
+grandes nomes da indústria, só para jogar mais lenha na fogueira. Recebi um e-mail do Bitly onde eu tenho literalmente um único link curto e eles querem que eu faça um upgrade. É isso. Terminei. Eu desisto.
+
+Abri meu próprio hotel. Por favor, me digam que não sou o único com essa sensação. Enfim, se eu quiser continuar criando conteúdo sobre código aberto e apresentando alternativas a todas essas plataformas, está na hora de eu construir minha própria pequena nuvem. Chegou a hora de hospedar seu próprio servidor. Neste vídeo, vou começar do zero, ou seja, da mentalidade corporativa de "pessoa comum" ou de vítima.
+
+Ok, você entendeu. Tudo isso até a possibilidade de executar sua própria nuvem em casa. Não são necessários racks enormes e caros, apenas um laptop antigo ou um pequeno cubo e algumas configurações que criam uma rede segura, protegida e acessível. Ao final deste vídeo, você terá o conhecimento necessário para hospedar serviços de acesso público, bem como aplicativos privados baseados em túneis seguros, sem gastar um centavo além da sua conexão de internet atual . Encurtadores de URL, streaming de música e programas de TV, unidades de sincronização e terabytes de armazenamento, e até mesmo seu próprio LLM privado, tudo no porão da sua mãe. Quero
+
+dizer, sua casa. Vamos colocar a mão na massa, então?
+
+Você não precisa de um rack enorme, um conjunto de servidores ou GPUs da Nvidia, a menos que esteja planejando criar um concorrente de IA de código aberto . Seu pequeno Raspberry Pi 4, Zima Cube, laptop antigo, o computador gamer refrigerado a água da sua avó, tudo serve para isso. É isso que estou usando. Essa caixa estava ao meu lado no chão, ainda sem embrulho, há quase um ano. Possui 8 GB de RAM e um processador pequeno que dá conta da maioria das minhas necessidades. Este aqui
+
+vem com seu próprio sistema operacional que facilita a instalação e execução de contêineres, mas eu não sou do tipo que usa interface gráfica para esconder meus preciosos registros. Também utilizo meu próprio NAS como serviço paralelo e, embora este vídeo não seja sobre o aspecto de armazenamento em si, ele complementa minha configuração, pois estou cansado de pagar pela AWS. Selecionei meu conjunto de ferramentas para esta sessão, mas se você precisar de inspiração sobre o que pode fazer com sua própria configuração privada, o Awesome Self-Hosted é uma fonte enorme de sistemas de código aberto que você pode executar facilmente por conta própria. Você pode fazer o que quiser. Um agradecimento especial também ao subreddit auto-hospedado, que conta com quase um milhão de visitas semanais, toneladas de informações e suporte caso você precise. Ok, hora de mexer com o software. Existem
+
+muitas opções de virtualização disponíveis. Começando pelo Proxmox, Kubernetes, seu irmão um pouco mais adequado, o K3s, e até mesmo uma nova solução de código aberto da AGH, chamada outrora de TUI poderosa e repleta de recursos adicionais . Mas como cada um desses tópicos requer seu próprio vídeo e um pequeno curso para serem abordados, vamos começar pelo básico: os contêineres Docker. Principalmente porque a maioria dos dispositivos que você usará já os possui e, mesmo que não, é fácil configurá-los. Muito bem, hora de trabalhar. Meu
+
+primeiro objetivo, e o projeto de código aberto que usarei para configurar tudo, é também o principal atrativo que me trouxe até aqui: um encurtador de URLs. Este também é um ótimo exemplo porque queremos que seja público, para que os URLs compartilhados sejam acessíveis a todos, mas o painel principal onde os criamos deve estar disponível apenas para mim, em modo privado. O shlink, ou como eu o chamo, shlink, é um encurtador de URLs de código aberto escrito em PHP, o qual não estou julgando e você também não deveria. É simples, é poderoso e funciona muito bem. Antes de começar a configuração, como estou usando meu pequeno dispositivo Zima, esta interface de usuário é a familiar CasaOS. Possui sua própria loja de aplicativos, onde
+
+posso configurar várias opções de hospedagem própria, como desativar a autenticação de dois fatores para ter meu próprio servidor de autenticação, além de outras opções como nuvem aberta, sobre a qual, pessoalmente, não quero ouvir falar nada a mais. Mas não só não tem tudo o que eu quero, como também não estamos usando interfaces gráficas, certo? Precisamos de controle. Então, acesse seu servidor via SSH e continue a partir daí. Atualmente, existem contêineres Docker em execução nos bastidores.
+
+Dependendo da sua escolha de distribuição Linux ou gerenciador de hospedagem próprio, haverá algum tipo de simplificação, como esta interface de usuário, que nos ajuda a configurar portas, pontos de montagem, variáveis ​​e tags de imagem. Mas se isso lhe parece um arquivo Docker Compose dividido em uma interface codificada em Vibe, é porque é exatamente isso . Se você realmente precisa de uma interface, instale uma adequada como o Portainer, que é uma ótima opção para monitorar esses contêineres, especialmente quando você estiver ausente. Mas, caso contrário, se você se sente confortável com o terminal, o que, a julgar pelo canal que você está usando atualmente, espero que sim, basta encontrar os arquivos de composição no CasaOS. Eles estão neste caminho, então podemos criar os nossos próprios. Começando com um
+
+pequeno teste, vamos definir o IP local como o domínio de trabalho, sem segurança por enquanto, mas não se preocupe, chegaremos a tudo seguro para produção. Execute o Docker Compose e pronto. Shlink está nascendo. Os registros parecem estar corretos, hora de usar. A CLI está dentro do contêiner, então o primeiro comando que executamos é `docker exec container name shlink API key generate`, e guardamos essa informação em segurança. É assim que
+
+vamos configurar nosso painel de controle em breve. Um alias curto, SL, para que eu não precise ficar executando o comando exec até termos uma interface de usuário. E agora a SL tem uma ampla gama de opções. Criar, excluir, editar, listar, definir regras de acesso, analisar visitas e muito mais. Então, vamos criar uma URL curta no Second Life e usar theotb.sh
+
+como uma opção não tão boa, já que ela já é bem curta. No entanto, existe um URL encurtado. Faça o teste e pronto, está tudo certo. Vamos implantar em produção. Vou usar meu domínio de teste devopstoolbox.sh,
+
+gentilmente fornecido pelo DNSimple, que adicionei à minha configuração. Por cima, vamos adicionar o cliente web shlink e, pronto, cliente web ativo. Vamos conectá-lo ao servidor usando a chave que geramos anteriormente. Como o domínio ainda não está configurado, vamos usar o IP local para ver se tudo funciona. Legal. URLs listadas e até mesmo
+
+monitoramento da contagem de visitantes. A última parte é o DNS, que deve ser enviado para minha casa. Agora, esta parte é complicada, então preste atenção. A maioria de nós utiliza uma rede doméstica simples com o dispositivo fornecido pelo nosso provedor de internet , que funciona como roteador e switch. Está entre nós e o mundo. Vamos fazer com que as
+
+solicitações passem por um balanceador de carga real , capaz de receber solicitações seguras criptografadas por SSL, lidar com o encerramento, gerenciar certificados e funcionar como um proxy reverso. Até então, tudo isso era considerado coisa de DevOps que as pessoas detestavam mexer, especialmente quando trabalhavam em pequenos laboratórios domésticos, até o mundo conhecer o Caddy. Há um vídeo completo dedicado ao meu laboratório para Caddy no canal, mas por agora, uma configuração simples já basta. Quão pequeno? Dá uma olhada nisso . Abra o arquivo Caddy, adicione a
+
+configuração e configure o proxy para o meu servidor. Sim, é sério. Agora, veja só isso. Antes de podermos disponibilizar o Caddy na porta 80, meu pequeno servidor está atualmente com a interface web do Caddy instalada lá. Então, vamos nos livrar disso enviando para alguma outra porta não utilizada.
+
+Agora que está pronto, o Caddy já deve estar apto a funcionar. Os logs estão ativos, o Caddy está funcionando, mas está tentando configurar meu domínio devopstoolbox.sh, que ainda não consegue encontrar. Para isso, precisamos garantir que o DNS veja o Caddy. Portanto, a última peça do quebra-cabeça, e indispensável para qualquer entusiasta de laboratórios domésticos, é uma regra de encaminhamento de porta no seu roteador que aceite HTTPS na porta 443 e os encaminhe diretamente para o servidor.
+
+Uma breve explicação sobre a importância disso, e mencionarei a palavra DHCP para que aqueles que já a conhecem possam pular 30 segundos. Já estabelecemos que o seu roteador doméstico também funciona como um switch de rede. Ele utiliza um protocolo que atribui automaticamente endereços IP de rede interna aos dispositivos domésticos. Seus laptops, iPads, smartwatches, campainhas inteligentes, etc. Ele protege você, impedindo que endereços IP públicos, quando acessados ​​pela internet, cheguem aos seus dispositivos importantes. Isso é bom
+
+e também explica por que as redes Wi-Fi públicas do Starbucks são perigosas, porque pessoas como eu ficam lá procurando portas abertas em outros dispositivos. De qualquer forma, essa regra de encaminhamento de porta, embora essencial, implica um pequeno risco ao permitir a passagem de solicitações. É por isso que estamos mantendo o HTTPS e temos o Caddy para servir como segurança. Ótimo, vamos em frente. Agora, veja só isso. Agora podemos acessar o endereço
+
+HTTPS público devops.toolbox.sh com um encurtador de URL personalizado. Sim, estamos ao vivo. Que tal criarmos uma versão especial com um slug de nome para o meu repositório de dotfiles, que as pessoas tanto pedem? Então, arquivos de configuração (dotfiles), salvar domínio,
+
+vamos lá e pronto. Ok, Caddy com a frente virada, verificado. Terminação SSL, verificar. Verifique também os URLs públicos . O que acontece quando estou trabalhando remotamente e quero acessar o painel de controle? Além disso, sabendo que este servidor
+
+não vai servir apenas um encurtador de URLs, mas também vários outros sistemas que serão abordados neste vídeo, preciso criar um túnel seguro para ele. Felizmente, o patrocinador do vídeo de hoje e parceiro de longa data do canal é a TwinGate. Alguns de vocês que conhecem provavelmente o associam a infraestruturas de nível empresarial e monstros do Kubernetes, mas na verdade é também uma solução fantástica para quem hospeda os seus próprios servidores. Basta criar uma rede e escolher o método de implantação. Vamos usar um Dockerfile simples que converti para Docker Compose. Adicione-o à sua configuração e, no
+
+momento, nosso sistema de rede local (LAN) está em um único endereço IP. É essa a solução que vou usar. Baixe o cliente TwinGate para o seu sistema, faça login e pronto. Bem, mudei de rede, mas se você ainda não acredita, veja só. O TwinGate desconectou, atualizei o painel de controle e ele sumiu. Você sabe o que?
+
+Vamos pegar meu celular. Isso claramente está acontecendo em uma rede celular. Felizmente, a TwinGate possui um cliente para todas as plataformas, incluindo iOS. Uma vez instalado, o mesmo truque: faça login e pronto. Desta vez, usando o domínio localmente acessível que acabei de adicionar, facilitando o processo para que eu não precise me lembrar de endereços IP. Realmente
+
+não há nada mais seguro ou tão fácil quanto isso. Não sou um fã fácil de agradar, mas é exatamente isso que está escrito na página inicial. Segurança, desempenho e simplicidade, sem concessões. Então, temos nosso gato mais curto na frente, o Twinkate embaixo, e a estrada está basicamente livre daqui em diante. Basta escolher sua próxima aplicação auto-hospedável. E embora eu
+
+tivesse muitas opções para instalar neste vídeo, escolhi algo que você vai amar ou odiar, ou, se você for como eu, ambos ao mesmo tempo. Um mestrado em Direito ( LLM) oferecido localmente. Não, isso não vai substituir seu agente de codificação com 7 bilhões de parâmetros rodando em um conjunto de GPUs, mas se você se preocupa minimamente com a privacidade e com o compartilhamento de cada pergunta confidencial com grandes empresas que estão lentamente destruindo tudo de bom que amamos, talvez queira ouvir o que vem a seguir . O Ollama, famoso por permitir servidores LLM locais , agora possui uma opção leve dedicada à CPU. Já que quero usar minha caixinha, vamos usar essa.
+
+Todo o resto pode ser transferido para o seu servidor potente, caso você tenha um. Vou instalá-lo rapidamente da maneira mais fácil e usar o
+
+modelo Qwen 2.5 com 3 bilhões de parâmetros, que não é nada mal para a maioria das coisas. E não é que funciona? Pode ser que não saiba o significado da vida ou não tenha senso de humor, absolutamente nenhum, mas para o tipo de poder que temos aqui, acho isso impressionante. Mas, afinal, quem quer conversar com uma modelo pelo terminal?
+
+Isso não vai funcionar. Conheça o Open Web UI, a interface web de código aberto extremamente popular para conversar com LLMs. Tudo o que você precisa fazer é levá-lo para casa, apontá- lo para a modelo e começar a conversar. E como foi aqui que meu armazenamento local esgotou seus recursos, é hora de montar um NAS local, porque você não é um verdadeiro auto-hospedeiro sem um desses dispositivos. Estou brincando, sim. Qualquer
+
+SSD pequeno serviria igualmente bem. Tenho sorte de ter um, então ele encaixa perfeitamente. Agora posso usar com tranquilidade uma interface web auto-hospedada para interagir com meu LLM também auto-hospedado. Mas há uma coisa que continua me incomodando. Eu entendo a importância da privacidade, do controle e da flexibilidade, mas será que isso realmente vale a pena do ponto de vista financeiro? Vamos analisar a Hetzner
+
+e a OVHcloud como duas excelentes opções com preços acessíveis. Para obter um computador com quatro processadores, oito GB de RAM e, idealmente, mais de 100 GB de SSD, seria necessário pagar pelo menos seis libras, sete euros ou dez dólares por mês. Se você precisar de um pouco mais de espaço em disco, como eu tenho aqui, um SSD modesto de 150 GB, você pagaria cerca de 16 euros por mês. Vamos considerar uma média de 18 dólares . Dei uma olhada rápida na Hostinger e, embora você possa encontrar algumas ótimas ofertas por lá, ela é mais voltada para uma configuração completa em nuvem com sites, nós, servidores, etc. Resumindo, você
+
+acabará pagando praticamente o mesmo valor que já estabelecemos. E quanto ao hardware, certo? Afinal, você está recebendo uma caixa. Bem, além do fato de que você obviamente pode, como mencionado, usar componentes antigos que tem em casa, um Raspberry Pi 5 com 8 GB de RAM custa cerca de US$ 150 em pagamento único, é claro. Divida isso pelos 15 que você gastaria por mês para manter o mesmo servidor em uma plataforma de hospedagem remota como a Hetzner e você recuperará o investimento após 10 meses. Matemática sólida, Homero.
+
+Ótimo trabalho. Atualmente, a potência média para esse tipo de dispositivo é de cerca de meio a um quilo. Digamos três dólares por mês. Resumindo, em um ano, o retorno sobre o investimento (ROI) estará bem recuperado. Considerando que a hospedagem própria levará um ano , e levando em conta apenas os números, eu diria que é um ótimo negócio. A
+
+jornada de autohospedagem acaba de começar. Estou em dúvida se devo incluir esse carinha no jogo e formar um grupo ou se devo seguir o exemplo de Gilfoyle e construir o filho de Anton aqui. De qualquer forma, meu NAS está a caminho de substituir todo o meu uso privado do S3. E existe um projeto de código aberto perfeito para isso. Assista a este vídeo sobre lixo a seguir e me agradeça depois. Obrigado por
+
+assistir e até o próximo vídeo.

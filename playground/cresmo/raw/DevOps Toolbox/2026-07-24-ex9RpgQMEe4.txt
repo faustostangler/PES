@@ -1,0 +1,85 @@
+---
+video_title: "The Postgres Tool We Should’ve Had Years Ago"
+video_id: ex9RpgQMEe4
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ex9RpgQMEe4
+video_date: 2026-07-24T13:30:22+00:00
+video_description: |
+  Give every agent its own database: https://b.link/dotb-boo
+  ---
+  
+  Ghost lets you fork a managed PG with beautiful simplicity.
+  If you want to do the same on your own check out the last section of this video!
+  - https://ghost.build/
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Você já viu essa história? Você não tinha como não ver . Agentes de IA excluem todo o banco de dados de produção de uma empresa, garantindo também a exclusão dos backups. Bastaram cerca de 9 segundos para que o Pocket OS, uma startup promissora, simplesmente evaporasse. Bem, [música] sim, isso é extremo e você não consegue controlar agentes que se comportam de forma desonesta sem as permissões adequadas. E se você
+
+entregar as chaves da produção, bem, a responsabilidade é sua. Mas, e se você já tivesse dado o primeiro passo? Quer dizer, todos nós já passamos por essa tensão no passado. Quero testar minha funcionalidade, mas preciso de alguns dados de produção. Eu não vou, ou simplesmente [música] estou com preguiça de tirar prints regularmente. Então, sabe de uma coisa? Vou
+
+usá-lo diretamente. E então, você adiciona agentes de codificação à mistura. Isso sim é explosivo. E se você tivesse uma maneira de criar um fork do banco de dados de produção? Como um branch do Git onde você pode experimentar, alterar dados, excluir, restaurar e descartar quando terminar, sem nunca afetar o ambiente de produção. É exatamente isso que o Ghost se
+
+propõe a resolver: um serviço de bifurcação do Postgres . Embora a CLI seja de código aberto, ela utiliza um backend SaaS. Possui um plano gratuito generoso, mas se você ainda não o utilizou e deseja um fluxo funcional localmente, continue até o final, pois eu te ajudo. Então, hoje [música] estamos dando o primeiro passo para remover agentes do seu santo graal. Para sermos transparentes , costumo encontrar esses projetos no GitHub e entrar em contato com a empresa responsável por eles. Portanto, um enorme
+
+agradecimento à Tiger Data por ter escolhido este produto e por apoiar o canal patrocinando este vídeo. Com isso esclarecido, vamos afastar esses agentes da produção da PG. Vamos lá. [música]
+
+ghost.build é onde você encontrará documentação, tutoriais e animações que me deixam animado, sabendo que estou prestes a executar o Ghost por dentro e por fora. A premissa é simples. Os agentes realizam sessões de exploração e esses experimentos carecem de segurança. A simples separação implicaria na perda de acesso aos dados reais, e é aí que o Ghost entra em cena. Como você provavelmente já
+
+sabe, tudo começa com um curl, e veja o Ghost pairando dentro do Ghosty. Há um menu interessante, mas, na minha opinião, bastante redundante. Você precisará selecionar seu MCP, o que basicamente o adiciona ao caminho relevante em sua máquina. Por algum motivo, a opção Codex conseguiu falhar de forma gloriosa. Mostrarei como contornar esse incômodo mais tarde.
+
+Após fazer login, o Ghost ID mostrará o uso e o método de desativação. E aqui está uma novidade: você também pode obter os preços através da linha de comando (CLI). Há 100 horas de computação gratuitas, o que não é muito se usado em tempo integral. A própria CLI do Ghost é de código aberto e está disponível no GitHub caso você sinta falta de algum recurso específico. Mas vamos fazer com que ele realmente funcione. Seu primeiro comando é simplesmente
+
+ghost create. Dê um nome à solicitação e adicione o parâmetro `weight` para obter a resposta quando o Postgres estiver pronto, em vez de fazê- lo de forma assíncrona. Já nos deparamos com uma string de conexão e, por favor, não se preocupem com as credenciais, elas já foram excluídas. Vai esperar 20 segundos e pronto. O banco de dados está pronto. Você pode listar os bancos de dados existentes,
+
+obtendo seu status, armazenamento e horas de computação para fins de faturamento. Existem algumas maneiras de se comunicar com seu banco de dados Ghost. O Ghost Connect responde com uma string de conexão que você pode usar em qualquer lugar ou com a qual pode se comunicar diretamente, o que faremos em instantes. Mas, apenas para destacar alguns recursos convenientes, o [music] Ghost schema permitirá que você obtenha suas tabelas e estruturas sem precisar conectar o sistema diretamente. Minha funcionalidade favorita, no entanto, é o Ghost SQL, onde você pode literalmente executar instruções SQL diretamente do seu terminal para o seu Ghost remoto. [música] Vamos criar uma
+
+tabela de clientes seguida de eventos de uso e, sem perder tempo, inserir algumas instruções de inicialização para gerar entradas no estilo Addison Bob. Assim que concluído, a CLI envia a resposta do Postgres. Executar o esquema Ghost novamente neste ponto mostra por que é tão bom tê-lo com as tabelas que acabamos de adicionar. Podemos começar a explorar a obtenção de informações iniciais, como e-mails, planos e registros de data e hora. E [a música] aí está . Bom, tudo isso é ótimo, mas
+
+não estamos aqui para aprender alguns subcomandos de linha de comando que você poderia desenvolver sozinho em uma tarde, certo ? A próxima funcionalidade é a cereja do bolo. O Ghost pode criar branches ou forks, escolha a sua analogia com o Git. Mais importante ainda, ele cria um instantâneo do banco de dados para você ou seu agente trabalharem de uma só vez. Crie um fork fantasma, dê um nome para a origem e outro para o destino, aguarde o processo e pronto . Imagino que tenha demorado um pouco
+
+mais, pois isso cria e move os dados, embora três entradas não devam ter peso. De qualquer forma, o Ghost Lease retorna com nosso banco de dados de produção e o banco de dados de tarefas do agente destinado a algum trabalho de IA inseguro. O esquema é exatamente o mesmo que o esperado e, se executarmos uma instrução SELECT apontando para o nosso novo snapshot, ela retorna os mesmos dados, novamente, como esperado. Agora, vamos nos concentrar na coluna do plano, pois vamos mexer nela e compará-la. Eu gostaria que o Pie entrasse em ação e me ajudasse com alguns trabalhos de agenciamento. Se você não conhece Pie,
+
+tem um ótimo vídeo sobre ela no canal. O Pie possui um vasto catálogo de extensões, mas infelizmente, o Ghost ainda não é uma delas. No entanto, existe uma ótima solução para esse problema. O Ghost possui diversas integrações com muitos agentes conhecidos, como Cloud, Codex, Cursor, Gemini, entre outros. Mais uma vez, Pie não aparece em lugar nenhum, mas também tem um MCP. Provavelmente é uma palavra que
+
+você não ouve há algum tempo, mas o MCP basicamente encapsula a API. Espero que isso não seja novidade para ninguém. O problema com o Pie, e peço desculpas por me desviar um pouco do assunto, é que ele não vem com nenhuma extensão, muito menos suporte para MCP. Na verdade, Mario, seu criador, acha que os MCPs são uma má ideia, mas ele também pensa assim da maioria das ferramentas, e é por isso que o Pie é tão enxuto. Tão enxuto que não vem com nada. Mas não se preocupe. O Pie possui
+
+suporte MCP de código aberto que permite servidores MCP, assim como qualquer outro agente. Após uma instalação rápida, no agente Pi, temos o MCP JSON, onde podemos adicionar o Ghost, que é executado usando a mesma CLI que vimos até agora com o comando `ghost MCP start`. Vamos instruir o Pi a usar o MCP contra o banco de dados de tarefas de alguns agentes e pedir explicitamente para que ele não acesse o ambiente de produção. Adoro como o Pi envia a linha de comando para o Neovim quando eu quero, para que eu possa expandir as coisas e pedir para refatorar o esquema do nosso banco de dados adicionando uma tabela, migrando uma coluna para essa nova tabela, criando uma nova relação e fazendo mais algumas coisas depois. Vai demorar um pouco até termos um resultado conclusivo. Este é o nosso
+
+esquema de produção e, caso você tenha esquecido a estrutura que pedi para memorizar, ela permanece intacta. Nossa ramificação de tarefas do agente se parece com isso. Diferente, para dizer o mínimo. Este foi o resultado da nossa seleção simples original. Essa afirmação é a mesma com o instantâneo, as novas colunas e as relações. Desde que adicionei
+
+slugs e relações, posso tentar executar uma consulta mais complexa no meu novo fork do banco de dados , que também funciona muito bem com a coluna de slug, trilands, etc. Agora, aqui está um recurso realmente interessante que a maioria de vocês provavelmente apreciará. Executar o comando `ghost share` com um prazo de expiração definido gera uma URL baseada em token para compartilhar a cópia do banco de dados após as alterações. Seja um colega ou um agente de visualização remota, uma vez acessado, ele mostrará isso, um fork compartilhado com alguns comandos fáceis de usar. Terminou sua tarefa? Sem problemas. Hora de
+
+arrumar as coisas. O comando `ghost delete` irá, surpresa, surpresa, excluir seu banco de dados, e a opção de confirmação garantirá que o processo seja concluído sem problemas. Em poucos segundos, já era . Só para garantir que nossos clientes não sejam afetados, vou ignorar os alarmes na minha cabeça e excluir também o banco de dados de produção . Bom. Funciona, mas essa era a
+
+premissa, não era? E se você pudesse hackear, bem, não exatamente hackear, mas executar o mesmo programa sem usar um backend de serviço sofisticado ? Claro, você não terá os recursos sofisticados e a linha de comando executando SQL e criando novos bancos de dados, mas a essência, usar snapshots para permitir que os agentes façam o que quiserem enquanto ainda aproveitam os dados, é totalmente possível. Dá uma olhada nisso. Em vez de usar o Ghost, vamos iniciar nosso próprio Postgres usando um contêiner Docker. Vamos chamá-lo de
+
+pgforks, definir nossa senha e porta super secretas. Assim que estiver em funcionamento, basta dar uma olhada rápida nos logs e o contêiner do banco de dados estará pronto para uso. Então, vamos começar criando um banco de dados .pro dentro do pgforks. E quanto à injeção de instruções SQL sofisticadas , você pode perguntar? Bem, veja só
+
+isso. Embora eu potencialmente possa fazer algo assim, sou um leigo e estou usando um shell novo, então sou forçado a ser mais rígido. Não é tão absurdo assim. Em vez de uma injeção direta, vou criar um arquivo seed.sql onde terei o comando de criação de tabela duplo e meus clientes Allison, Bob e Carol com seus respectivos eventos. Vou usar o Docker no
+
+CP. Aliás, você sabia que o Docker tem um comando CP? De qualquer forma, vou copiar isso e executar novamente. Para ser justo, só de ler o trecho anterior em voz alta, já me fez pensar. Por que não crio um pequeno utilitário que faça exatamente isso? Use o Docker para criar,
+
+construir, iniciar e, em breve, bifurcar (fork). Você sabe o que? Vamos fazer o fork primeiro e depois pensar mais sobre isso. Então, parece que tudo correu bem. Tabelas criadas, inserções inseridas. Se quisermos selecionar
+
+agora, basta executar o comando psql e executar a consulta que desejarmos. E agora, aqui está a mágica, pessoal. Foco. Assim como o ghost fork, podemos usar o pg_dump, que é a ferramenta do Postgres para fazer backup ou exportar um banco de dados. Ok, já temos o lixão. Agora, nosso segundo passo é
+
+criar o fork. Crie outro banco de dados com um nome diferente e, como você já deve ter imaginado , execute o pg_restore no fork com o nosso arquivo de dump. Então, voltando à criação de scripts ou à automatização do processo. Um fork, como vimos com o Ghost, é essencialmente um novo banco de dados, seguido de um dump e, por fim, uma restauração. É basicamente isso. É melhor ter tudo na
+
+nuvem, de uma vez só, algo de que você possa se livrar? Claro. Gosto de não ter que me preocupar com espaço ao usar garfos na produção, nem com os riscos ou aspectos de manutenção envolvidos? Absolutamente. Mas será que é possível fazer isso sozinho? Você sabe disso. Acho que
+
+muitos desses serviços hoje em dia são ótimos porque proporcionam a tranquilidade de lidar com escalabilidade, armazenamento, infraestrutura e tudo mais . E isso não é algo que deva ser ignorado. Algo para se pensar. Por fim, em vez de esperar que um agente atrapalhasse meu trabalho, agilizei o processo e fiz tudo sozinho, aplicando este arquivo SQL de migração de agente. Eu copiei, apliquei e verifiquei a lista de alterações. Está ótimo. A seleção do
+
+banco de dados de produção permanece inalterada, mas seu fork agora tem as colunas de plano alteradas para slug. Existe um preço mensal, e acabamos encontrando um serviço semelhante funcionando localmente, gratuito pelo menos inicialmente. A questão é a seguinte. Com o crescimento contínuo do número de agentes e a alta dos preços dos tokens , não só estamos obtendo um uso cada vez maior dos modelos mais simples, como também estamos, lenta e parcialmente, aliviando a tensão que antes existia em relação às permissões e aos controles de acesso. Ter um serviço para bifurcar com segurança o banco de dados de produção pode ser uma salvação, mas também pode acabar com as suas operações. Então, [música] acho que vou
+
+replicar o processo do Ghost localmente e, com certeza, usá-lo com este plano gratuito para experimentar. Quem sabe? Consigo perceber como estalar os dedos e obter uma imagem instantânea dos dados de produção pode se tornar viciante. Portanto, antes de mexer com o PostgreSQL local ou com o Ghost, recomendo fortemente que você se aprofunde no PostgreSQL assistindo ao próximo vídeo. Você vai me agradecer depois.
+
+Obrigado por assistir. Te vejo na próxima.

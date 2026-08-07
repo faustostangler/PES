@@ -1,0 +1,98 @@
+---
+video_title: "This Tool Replaced 7 CLIs (and killed my opensource)"
+video_id: wwJA9mDqIVc
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=wwJA9mDqIVc
+video_date: 2026-03-20T14:30:49+00:00
+video_description: |
+  Depot: Build faster. Waste less time. Get started for free: https://depot.plug.dev/VXBhb5T
+  ---
+  
+  Television is the missing fuzzy finder I always wanted.
+  - https://alexpasmantier.github.io/television/
+  - https://github.com/omerxx/dotfiles
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+---
+Não são muitos os projetos que conseguem me surpreender depois de 12 anos trabalhando em um terminal. Vejo um novo projeto brilhante e presumo que seja mais um gerenciador de arquivos ocultos ou uma das milhões de alternativas modernas em Rust para utilitários Unix. Então, quando vi a televisão pela primeira vez, não, não esta, aquela, pensei: "Ok, mais um localizador desfocado. O mundo tem FCF e já é incrível como está." Eu estava errado. Ele não só vem com um
+
+tema, como também com uma interface de usuário facilmente personalizável e uma janela de pré-visualização plugável. E antes que você mencione FCF novamente, eu sei que isso pode ser feito lá. Por favor, tenha paciência. Acima de tudo, como qualquer outra TV, ela vem com um controle remoto para trocar de canal. Entre as variáveis ​​de ambiente, diretórios e textos óbvios, ele vem com ganchos pré-configurados.
+
+Essas ferramentas podem monitorar Git, Docker, Kubernetes, npm, tmux, AWS, seus downloads e até mesmo hosts SSH. E se essa longa lista não tiver o que você procura, ela oferece um modelo TOML muito fácil para criar seu próprio canal, o que eu fiz. Múltiplos. Você vai ver como esses canais substituíram mais de sete utilitários diferentes que eu tinha instalados. E isso antes mesmo de adicionar as minhas próprias contribuições. É perfeito? Bem, não, mas é
+
+fantástico o suficiente para ignorar e um seletor difuso muito necessário para aqueles de nós que estamos cansados ​​de encadear resultados e descobrir flags. Vou compartilhar o que está faltando no final, na esperança de que os autores o façam, mas, fora isso, pode ser o próximo passo crucial que eu nem sabia que precisava. Vamos lá.
+
+Todo projeto começa com um teste de popularidade e a televisão [musical] já ganhou força. Escrito em Rust, e a julgar pelos comentários, 50% de vocês estão animados enquanto a outra metade já foi para outro vídeo sem ouvir mais nada. Mas a TV é um localizador difuso muito rápido, portátil e facilmente hackeável. Copie o comando, execute-o e, aparentemente, a opção escolhida pelo script de instalação para Macs é o Homebrew em vez do download do seu próprio arquivo binário . Se você simplesmente clicar em "TV" no seu diretório pessoal, ele começará a selecionar arquivos, e isso acontece porque o seletor padrão é " arquivos". Isso é variável e
+
+configurável. Chegaremos lá. O menu de ajuda do lin exibe alguns comandos listando os canais disponíveis para conclusão e atualização de canais; sem isso, sua TV permanecerá em preto e branco. E embora os outros switches se assemelhem ao FCF, como você provavelmente pode perceber pela breve lista aqui, não é por isso que eles estão aqui. Você não pode lutar contra isso.
+
+Executar programas de TV em um ambiente mais controlado permite acessar instantaneamente um seletor de arquivos com pré-visualização, algo semelhante a abrir um explorador de terminal como o Ranger. Como não tenho usado esses programas recentemente, nem os tenho instalados, então vou escolher um arquivo. Mas o que acabou de acontecer? Voltei ao shell com o nome do arquivo exibido. Eu não esperava por isso. Teremos que deixar isso de lado
+
+e consertar também. No entanto, há uma coisa de que não preciso mais na TV por aqui. Ranger está fora da lista. E embora a opção padrão seja arquivos, aqui estão outros seletores padrão que acompanham o software, como, acredite se quiser, texto. A busca por sequências de caracteres resulta em uma interface de usuário muito prática. O que mais? Repositórios Git. Você
+
+pode ter vários deles em um mesmo diretório, com seus respectivos logs do Git como pré-visualização. Facilita um pouco o acompanhamento de vários projetos , embora, para ser honesto, isso não garanta que todos estejam na branch master obtida remotamente, então não diria que seria minha primeira escolha. Agora, em vez de termos que adivinhar quem será o próximo a escolher, todas as TVs vêm com um controle remoto. Este comando é aberto por padrão com Ctrl+R, permitindo alternar entre diferentes canais, como variáveis ​​de ambiente (envars), por exemplo, ou diretórios, o que já evidencia os problemas de compatibilidade com o NuShell . Vamos abordar esse assunto. Você pode continuar
+
+visualizando os branches do Git e outras opções. Para visualizar a lista completa a partir do seu terminal, basta executar o comando "TV list-channels". Ora, seria de esperar que esta lista fosse para a televisão em vez de ser impressa, o que é um bom exemplo de como as coisas também podem ser simplesmente transmitidas por streaming. A lista de canais de TV é transmitida para a TV e pronto. Mas, escolha uma e não escolha nada. Não, isso
+
+não é um erro. A TV vem com configurações padrão. O que realmente torna isso poderoso, algo como as habilidades de um agente de IA, são os canais que você cria, modifica e controla. Não quero entrar em muitos detalhes agora, porque a seguir você verá um comando que preenche sua televisão com todos os comandos que você puder pedir. Mas aqui vai um breve resumo. Em "dot config
+
+television", ao lado do arquivo de configuração que vamos construir juntos, encontra-se o diretório "cable". Vamos criar um novo canal. Eu sei que isso soa estúpido, mas estou listando os canais. Bem, este modelo tem muito mais do que você pode ver aqui, mas, resumindo, os metadados permanecem como estão, a fonte contém o utilitário de origem, neste caso, canais de TV, e depois temos ações e atalhos de teclado para acompanhá-los. A tecla Enter está mapeada para a ação "zap", e eu acabei de criar o comando "zap", que recebe a entrada da fonte e, no nosso caso, simplesmente a adiciona à TV. As ações podem ser executadas para substituir a
+
+TV ou bifurcadas para serem executadas e, quando você terminar, elas retornarão à fonte de TV original . Por último, temos a pré-visualização, que obviamente lista os comandos que você deseja executar no painel de pré-visualização. Canais de TV, escolha algo como "env", e uma maneira mais agradável de listar os canais, não é? Eu [músico] não posso ser o primeiro a pensar nisso. Se há algo que invariavelmente interrompe o ritmo de qualquer fluxo de trabalho DevOps, é esperar que a criação dos contêineres seja concluída. Normalmente,
+
+você fica preso assistindo a uma barra de progresso se arrastar , mas a Depot, patrocinadora do vídeo de hoje, está aqui para evitar completamente essa frustração. É uma plataforma de infraestrutura para desenvolvedores que funciona como uma substituta direta para suas ferramentas de compilação existentes. A transição é perfeita porque basicamente você só precisa trocar o comando `Docker build` por `Depot build`. Nos bastidores, ele usa uma infraestrutura de buildkit remota com cache persistente para tornar suas compilações do Docker até 40 vezes mais rápidas. Ele também oferece suporte nativo multiplataforma para x86 e arm sem as lentidões usuais da emulação que consomem seu tempo. Além das compilações
+
+em si, você também pode integrar os executores de ações gerenciados do GitHub ao seu pipeline de CI/CD. Esses executores são cerca de três vezes mais rápidos do que os executores padrão hospedados no GitHub, principalmente porque seu cache é 10 vezes mais rápido. Você não precisa se preocupar com limites de concorrência ou ficar preso em uma fila enquanto toda a equipe está enviando código ao mesmo tempo. Seja Intel, ARM ou mesmo em sistemas operacionais Windows ou macOS, ele simplesmente funciona dentro do seu ambiente existente. Esta é uma ferramenta essencial clássica de DevOps que, na verdade, economiza tempo no seu dia a dia, eliminando os gargalos de CI. É uma daquelas coisas que
+
+você realmente precisa ver em seu próprio fluxo de trabalho para acreditar o quanto a diferença de velocidade impacta sua produtividade. Você pode acessar o link na descrição para iniciar um teste gratuito e ver como suas compilações podem ficar muito mais rápidas . Agora, voltando ao vídeo. Outro caso de uso fantástico da TV é o rastreamento de registros. Posso pegar o log do meu sistema e encaminhá-lo, ou então as métricas do Victoria de um cluster Kubernetes remoto. Facilmente
+
+analisável. Risquei mais uma ferramenta da minha lista, que usei por muito tempo para ler os logs do Kubernetes. A TV acabou com a música para mim. Sinceramente , essa é uma das melhores maneiras que já vi de ler e pesquisar registros. Pode haver, de fato, algo aqui. Você
+
+não tem limites. Qualquer registro, JSON ou texto [música] será enviado com prazer para nossa televisão. Seus registros do Git, iguais. Processos, bem, sim, mas se você estiver no NuShell, a tabela vai produzir alguns resultados estranhos. Portanto, os arquivos de TV, como demonstrado anteriormente, não são muito úteis. O que você pode fazer em linha é executar
+
+arquivos nvim TV, permitindo que você selecione um arquivo e o envie para o nvim. Isso é bom, mas não muito eficiente. E se simplesmente corrigíssemos o comportamento padrão? Basta encontrar o canal de arquivos em " Cabos". [música] Encontre o comando de edição, faça com que a associação faça sentido, como Enter em vez de F12, e atualize as ações conforme achar melhor.
+
+É basicamente isso. Execute o canal de TV, que, lembro, já executa arquivos como canal padrão, selecione um arquivo e ele estará lá, aberto no nvim. E se você não tiver um seletor, mas a pesquisa for pequena o suficiente para que você possa usá-lo? A TV pode usar pipes, mas também pode simplesmente receber o comando de origem e o comando de pré-visualização, assim: Você também pode ajustar a pré-visualização diretamente através da solicitação. Aliás, é exatamente isso que estou sentindo falta aqui. A TV permite que você experimente
+
+, principalmente na interface tui, mas também através de opções de linha de comando (CLI). Mas, e se eu não conseguir prever o tamanho da pré-visualização, por exemplo? Não faria sentido ajustar em tempo real? Você sabe o que? Esqueça essa. E se eu estiver usando essas
+
+flags e também quiser executar comandos nos arquivos aqui? Isso não é possível. Isso torna a TV hackeável, mas também bastante limitada neste momento. Se compararmos com você sabe quem, um recurso interessante é o suporte a expressões regulares nos padrões de busca, o que justifica a exibição de um vídeo no canal para te ensinar tudo sobre regex de uma vez por todas. Ok, lá vem, [música] meu ponto fraco, uma integração de shell.
+
+Aparentemente, o NuShell é totalmente compatível, então é claro que eu optei por usá-lo. Então, o que você obtém com uma nushell ou uma shell com conteúdo televisivo? Dois novos amigos foram adicionados, e isso é muito parecido com o estilo do FCF. Pressione Ctrl+R para acessar o histórico, o que é um tanto estranho, considerando o que é filtrado aqui em comparação com meu histórico do Atuin. Vou continuar usando o Atuin, mas [música] control T é uma conclusão inteligente. Eu consigo acessar via CD e aqui estão os
+
+diretórios para onde posso entrar. A pré-visualização está quebrada, então uma edição rápida no canal dirs, trocar ls por algo apropriado como exa, e pronto, [música] tudo funciona. Posso usar o recurso de autocompletar, visualizar o diretório e clicar para entrar. Ok, pronto. Sem o próximo comando, a TV não é o que é. Atualize os
+
+canais de TV, aguarde alguns segundos [para ouvir a música] e, em seguida, liste os cabos. Quer dizer, olha só isso. AWS, bash, cron, Docker, downloads, fontes, GitHub, Kubernetes. Devo continuar? Tudo o que você deseja está aqui, e tudo o que estiver faltando pode ser facilmente construído por você mesmo. Todos os
+
+canais estão no repositório de televisão, cabo, e escolha o seu veneno, torcendo para que não seja o Windows, e contribua se tiver alguma ideia revolucionária que todos possamos usar, como o canal que acabei de criar . Não se irrite com comandos de uma linha incompatíveis do nushell. Se você é um hipster como eu, que se recusa a voltar atrás, migrei meus canais para arquivos ocultos e estou revisando-os aos poucos para corrigir problemas de compatibilidade. Eu até tentei usar código aberto com o modelo gratuito deles , o que causou ainda mais caos, então, por favor, não faça isso. Nushell é especial, e esse é provavelmente o limite da IA. Portanto,
+
+buckets da AWS, problema resolvido. A possibilidade de listar e visualizar o conteúdo é incrível e com certeza ficará na minha memória. E pronto , mais um utilitário que eu já usei riscado da minha lista. Pacotes de cerveja, aqui estão eles. Acho que precisamos de mais ações, e se pudéssemos remover essas e usar a seleção múltipla, isso criaria um excelente limpador para Mac. Talvez eu devesse
+
+criar um canal e vendê-lo. Enfim, os canais me fazem pensar em tantas opções. Preciso pensar bem nisso e começar a aprimorar minha configuração com comandos de TV, como navegar por árvores de tarefas ou construir um alto-falante Kubernetes que funcione do jeito que eu gosto. Talvez em outro vídeo. Comente se você gostaria de me ver pirando no Kubernetes com a TV. Mas,
+
+quando vejo algo engraçado, passei meses [música] construindo o sessionx do tmux. É bastante popular também. Abre um seletor de sessões no tmux com pré-visualização rolável por nome e algumas outras opções. Este é o sessionx, uma janela pop-up que exibe sessões em execução, um seletor difuso e uma pré-visualização com rolagem. Mas agora consigo executar outro plugin que desenvolvi, chamado flox, que abre uma janela flutuante e roda o TV com seu seletor de sessão tmux. Não é uma
+
+loucura? Precisamos apenas trabalhar nessas ações, mas isso pode facilmente substituir muito trabalho. Isso literalmente acabou com meu plugin, caso alguém queira usar o TV como seletor de sessão para o tmux. Ok, hora de fazer algumas configurações. É no arquivo .config/television/config.toml que tudo acontece. Os comentários já
+
+são bastante informativos sem entrar em todos os detalhes, mas acho que essa configuração precisa de algumas mudanças drásticas para fazer sentido. Você pode usar temas como o Gruvbox, se for do seu interesse. Vou continuar usando catppuccino até mudar de ideia. Meu problema real começa com as configurações de teclas. [música] Para começar, 90% das teclas aqui estão mapeadas para Control e há teclas F demais, que, para ser sincero, não faço ideia de onde ficam no meu teclado, e olha que conheço bem o layout dele, caso isso ainda não tenha ficado claro. Muitas outras aplicações,
+
+a começar pelo tmux e Neovim, mas também código aberto e até mesmo gerenciadores de arquivos como o Aerospace, vêm com algum tipo de chave de cabeçalho feita especialmente para isso. É bastante ingênuo esperar que o usuário tenha todas as suas combinações de controles disponíveis apenas para um aplicativo. Na minha configuração, a tecla Control A já está sendo usada pelo tmux. HJKL para flechas, e continua. Então, isso precisa de alguns ajustes, para dizer o mínimo, mas também, se você não está fornecendo uma tecla líder ou uma opção de mudança de modo, acho que vale a pena mapear outros modificadores como direita, shift ou função, algo que eu não consegui encontrar [música] na documentação começando pelo menu de ajuda. Uma das
+
+coisas que você mais deseja ter por perto com qualquer ferramenta nova. Não só tive que procurar e descobrir que havia um parceiro não conflitante para o controle, como literalmente adicionei teclas F [de música] ao meu D 5 em outra camada apenas para acessar o menu de ajuda, o que teria sido melhor se pudesse usar algo como o típico ponto de interrogação, que por algum motivo não é mapeável aqui. No entanto, o menu de ajuda foi ativado. Finalmente, posso respirar um pouco. Outra coisa com que podemos brincar no layout é ativar/desativar a barra de status, o que, para ser honesto, é bastante inútil. Mas o que eu
+
+realmente preciso é poder girar o layout da posição vertical para a horizontal e vice-versa. A opção de alternar layout está te mordendo. Agora, posso ativar e desativar meu painel de pré-visualização usando Ctrl+O. Tento me lembrar disso como "abrir com O". E agora, com Ctrl+ T, posso alternar o layout, e isso é bastante conveniente. Por fim, para
+
+mostrar o poder da TV e de muitas ferramentas que ela pode substituir instantaneamente sem esforço, usuários do Kubernetes como eu, que já usaram o kubectx ( outro utilitário fzf puro criado para alternar entre clusters), entendem isso. Contexto do Kubernetes: selecione seu cluster, que também exibe uma prévia de dados importantes, e alterne entre contextos com um único clique. Boom. Um canal acabou substituindo outro utilitário dedicado que eu tinha anteriormente, que possuía um fluxo melhor e informações adicionais úteis. Acho que já ficou claro que o poder da TV reside na sua simplicidade e abordagem enxuta, mas ainda parece um pouco desajeitada ou omitindo elementos óbvios. Não o
+
+suficiente para eu esquecer isso. Com certeza vou manter este aqui, e já comecei a trabalhar em alguns outros canais . Essa é imperdível. Substitui quase sete utilitários diferentes que eu usava atualmente, e os recursos de criação de modelos o tornam fantástico. Eu adoraria ter uma chave de líder de configuração, mais chaves modificadoras para a configuração, um parâmetro de execução para a CLI e, se não for pedir demais, corrigir todos aqueles bugs iniciais malucos. Se você ainda não está
+
+convencido, e mesmo se estiver, assista ao próximo vídeo do fzf, pois este é um dos CLIs mais poderosos, senão o mais poderoso, que temos atualmente na internet. Obrigado por assistir e até o próximo vídeo.

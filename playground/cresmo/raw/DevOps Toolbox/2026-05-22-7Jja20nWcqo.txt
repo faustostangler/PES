@@ -1,0 +1,80 @@
+---
+video_title: "Stop Using Tailscale. Use Open Source Instead."
+video_id: 7Jja20nWcqo
+channel_name: "DevOps Toolbox"
+channel_id: UCYeiozh-4QwuC1sjgCmB92w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7Jja20nWcqo
+video_date: 2026-05-22T11:30:04+00:00
+video_description: |
+  Private, encrypted cloud storage for DevOps & remote machines 👉
+  https://internxt.com/devopstoolbox **87% off** already applied: code DEVOPSTOOLBOX
+  ---
+  
+  Headscale gives you CONTROL over your mesh network!
+  - https://headscale.net
+  
+  ✅ Build a Second Brain With Neovim in Under 90 Minutes: https://learn.dotb.sh/courses/second-brain-neovim
+  ✅ Zero To KNOWING Kubernetes in Under 90 Minutes:
+  https://learn.dotb.sh/courses/k8s-from-scratch
+  ❗Use `devopstoolbox20` at checkout for 20% off!
+  
+  ⌨️ The keyboard on this video is the Dygma Defy: http://dygma.com/DEVOPSTOOLBOX
+  🎹 Keycaps on my Defy are made by 3DKeyCaps: https://3dkeycap.com/?ref=vxdqqmmo
+  ⚡ Tech I use: https://kit.co/omerxx/my-battle-station
+---
+Você viu esse tweet? Não é a única, e isso me fez pensar. A escama de cauda é incrível. Assim como outros, tenho usado com satisfação há muito tempo, mas sua essência ainda é SaaS. Então, por que eu não assumo o controle disso? Principalmente quando
+
+sua contraparte de código aberto é um dos projetos mais populares no GitHub. Além do fato de que poderei obter usuários ilimitados, políticas ilimitadas e outros recursos, que são todos limitados a menos que você pague, serei eu quem controlará o gateway, não um servidor de código fechado em uma empresa em que eu simplesmente confio cegamente. Quando se trata dos itens mais sensíveis que possuo, meus sistemas internos de automação residencial, a decisão parece ainda mais sensata. Não tenho nada contra a Tailscale. Pelo contrário, um serviço fantástico construído sobre o incrível WireGuard e oferecido praticamente de graça. Mas nem tudo se resume a
+
+dinheiro. Para mim, trata-se de latência, controle e um toque nerd que me leva a hospedar e executar serviços por conta própria, apenas por diversão. Ao final deste curso, você terá as ferramentas necessárias para executar sua própria rede mesh e acessar serviços privados usando um túnel que você mesmo cavou. Vamos lá. O
+
+Headscale faz exatamente isso e visa diretamente substituir o centro de controle Tailscale. Embora você possa continuar a desfrutar do cliente de código aberto deles. Ambas as soluções são baseadas na mesma tecnologia, o WireGuard. Claro, você pode configurar o WireGuard por conta própria, mas digamos que existe um bom motivo para as pessoas usarem o Tailscale em primeiro lugar. WireGuard é complicado. O Tailscale torna tudo
+
+incrivelmente fácil. Mas por que não usar uma VPN, você pode perguntar? Bem, para simplificar, isto é uma VPN. Os clientes usam um gateway para obter acesso a vários servidores. [música] Isso pode ser incrivelmente ineficiente se você estiver acessando uma máquina local estando fisicamente perto dela, enquanto seu servidor VPN está muito, muito longe. E se você acha que isso é uma
+
+piada, pense em empresas que executam sua infraestrutura sensível, como VPNs, na AWS Leste ou Oeste dos EUA, enquanto mantêm infraestrutura local em seus prédios, seja do outro lado do país ou do outro lado do mundo. E essa [a música] era a minha situação em casa. Por que eu viajaria através de continentes para que meu laptop e meu celular acessassem minhas câmeras de segurança com segurança ? Bem, o WireGuard [música] não está formando um gateway, mas sim uma rede mesh de nós. Você é uma máquina que se juntou ao sistema, agora faz parte da infraestrutura de rede, executando túneis WireGuard leves entre cada par de nós disponíveis, tornando o sistema não apenas mais rápido, mas também tolerante a falhas. Para o Tailscale,
+
+além disso, existe um serviço principal, que é o servidor, responsável pela coordenação, armazenamento de chaves privadas, etc. Em teoria, você pode ler mais sobre isso no link abaixo. Vamos colocar isso para funcionar. [música] Bem, como mencionei, tenho um laboratório caseiro com K3s, então é lá que ele ficará. [música] Você pode configurar do jeito que quiser, na verdade não muda muita coisa.
+
+A infraestrutura possui dois elementos importantes: a configuração e o próprio servidor. A partir do primeiro, o URL do servidor não permanecerá assim. Vou disponibilizar um DNS público de verdade , e assim resolveremos o risco de segurança de uma forma muito interessante. Aguarde até o final para isso. Existe um endereço para escutar conexões e outro para métricas. Isso é praticamente
+
+tudo que você precisa para começar. O servidor headscale é um contêiner da versão oficial disponibilizada no Docker Hub, e o comando é simplesmente headscale serve. As portas estão configuradas para corresponder à configuração que mostramos anteriormente. Mais uma palavra sobre a configuração. O Headscale implementa quase todos os recursos do Tailscale. A
+
+lista é longa. Uma dessas funcionalidades é o Magic DNS, que basicamente fornece entradas DNS internas automáticas para diferentes máquinas. E embora isso seja legal, e eu tenha configurado para testar , é muito problemático. O DNS é simples, mas também complicado. Se você experimentar, por exemplo, configurando seu próprio AdGuard ou simplesmente usando o Magic DNS da Headscale, perceberá rapidamente que nem todos os dispositivos encaminham você para endereços não públicos aparentemente suspeitos.
+
+Os IPs funcionam muito bem, mas quem consegue trabalhar com eles? Existe um bom motivo para o DNS ter sido criado. Como mencionei, estou usando registros públicos para o meu serviço, mas de uma forma que o mantenha privado. Falaremos mais sobre isso adiante. Quanto ao Caddy, que é o principal proxy reverso do meu laboratório doméstico, adicionaremos uma linha simples que envia o tráfego do meu domínio público para o serviço headscale local do K3s. Então,
+
+nosso servidor está online, parece estar funcionando e respondendo aos comandos, então podemos começar a trabalhar. Hora de instalar o cliente Tailscale [música]. Mencionamos que essa parte é de código aberto e nos poupa o trabalho de usar qualquer outra coisa para criar um nó na rede mesh. Assim que estiver pronto, provavelmente vamos querer adicionar uma pequena interface de usuário, e embora o headscale não venha com uma, [música] existem muitas opções no GitHub. Optei pelo headplane, a opção mais popular . Voltando ao servidor, o headscale é,
+
+na verdade, sua própria CLI para diferentes operações. E como está sendo executado dentro de um contêiner, vou usar um pequeno truque para executá-lo dentro dele, apenas para disparar o comando. E como não vou executar esse tipo de comando toda vez que quiser alguma coisa, um alias pode ser útil. [música] Ok, vamos lá. A lista de usuários do Headscale aparece vazia, obviamente. O número
+
+de usuários que criam conteúdo com meu nome já é praticamente suficiente neste momento, e é isso que eu sou. Então, você está configurando o Headscale como uma alternativa ao Tailscale, o que é ótimo se você deseja ter mais controle sobre sua própria rede. Mas, assim que você começa a hospedar mais da sua infraestrutura por conta própria, há uma coisa que você percebe muito rapidamente. Local não é a mesma coisa que backup. Suas configurações, chaves, segredos, manifestos, nós de laboratório doméstico, configurações exportadas, tudo isso passa a fazer parte do sistema. E mesmo que esteja
+
+instalado em apenas uma máquina, um NAS ou um cluster, ainda assim representa um ponto único de falha. É aí que a Internxt se encaixa perfeitamente. A Internxt é uma plataforma de armazenamento em nuvem que prioriza a privacidade e funciona muito bem como destino de backup externo. É de código aberto, criptografado de ponta a ponta com proteção de conhecimento zero e em conformidade com o GDPR. Assim como nas ferramentas de hospedagem própria que mencionamos neste canal, a ideia é que você mantenha o controle dos seus dados. A Internxt
+
+pode armazená-lo, mas não pode lê-lo. Para fluxos de trabalho DevOps, o mais importante é o suporte ao Rclone. Você pode reconectar o Internxt Drive nativamente ou por meio do WebDAV, o que significa que os mesmos padrões de automação que você já usa ainda se aplicam. Agende backups, sincronize exportações de configuração, envie arquivos importantes de máquinas remotas ou simplesmente mantenha uma cópia da configuração do seu laboratório doméstico em algum lugar fora do local. Eles também adicionaram controle de versão de arquivos, que é exatamente o tipo de coisa com que você não se importa até o dia em que realmente precisar dela. O plano em que
+
+você deveria se concentrar agora é o plano definitivo para toda a vida. Pagamento único de 5 TB, sem assinatura mensal. Para um destino de backup externo que deve existir silenciosamente em segundo plano, esse modelo faz muito sentido. Use o link na descrição para conferir. A oferta através desse link oferece 87% de desconto no plano vitalício definitivo, um desconto maior do que o atualmente disponível diretamente no site. Agora, voltando ao vídeo. O
+
+painel de administração está pronto e precisa de uma chave para começar a funcionar. Extraia-o do contêiner usando nosso alias, alimente-o no plano de cabeça e pronto. Ainda não há máquinas na rede. Meu usuário está configurado, hora de adicionar [música] o primeiro nó. A Tailscale utiliza um servidor de login personalizado , que aceita as rotas e entradas DNS conforme mencionado anteriormente para o DNS mágico. Recebemos um URL para visitar,
+
+que por sua vez gera um comando de registro de nó com um usuário e uma chave. De volta ao servidor, registramos o nó com nosso usuário e pronto, o nó MacBook Pro 2 está registrado. [música] O controlador principal também está satisfeito, e recebemos um novo endereço IP especial de uma nova rede interna formada neste momento com um dispositivo. Status do Tailscale na minha máquina. Só para lembrar, este é um nó na rede, não o servidor de controle em si. Mostra apenas a minha máquina
+
+na rede. Bem, aqui está a minha ideia. Eu sei que tenho meu laptop como um nó único e [música] meu plano de controle é meu servidor doméstico. Isso é legal, mas agora eu quero adicionar o que é conhecido no jargão de redes como um "perna" no meu laboratório doméstico. Novamente, não se trata do servidor de controle que não faz parte do jogo, mas sim de adicionar outro nó. Então, eu
+
+implementei um contêiner Tailscale bem simples . Chamei-o de roteador de sub-rede na esperança de que um dia ele realmente permita o acesso a alguns dispositivos, mas acho que isso já é ir além dos limites do que estou fazendo aqui. Mesmo processo. Esta é uma linha longa que dá ao Tailscale um comando para se registrar na rede usando nosso domínio. Ok, o nó está tentando se registrar. Agora,
+
+precisamos acessar o caminho no servidor de controle. Aqui está o nosso comando e estamos dentro. O roteador K3s está pronto. Na headplane, adicionei algumas sub-redes para garantir que possamos acessar a rede interna de pods do Kubernetes remotamente. Esta é a nossa forma de expor redes físicas adicionais à Tailscale, e isso requer aprovação, que está disponível aqui na interface do usuário. Ok,
+
+hora de falar de dinheiro. Quero acessar o Dozzle, meu serviço de registro de logs, que também é um software livre incrível e sobre o qual já falei recentemente em um vídeo no canal. Por enquanto, vamos acessar o serviço interno do K3s e usar o endereço IP interno do cluster de visualização de logs que aponta para o Dozzle. Se fizermos tudo corretamente, eu devo conseguir acessar esse endereço IP. Boom, [música] Dozzle está online e acessível de fora do cluster K3s. Todos os meus registros e
+
+monitoramentos de aplicativos estão ali. Só para termos certeza absoluta, vamos desativar o Tailscale para encerrar o serviço e ver se ainda conseguimos acessar o Dozzle. Nada funciona. Fantástico. Tailscale voltou a funcionar e estamos de volta.
+
+Ok, acessar o Dozzle pelo IP será impossível. E aí entra o DNS. Uma opção que adoro é o meu AdGuard local, que, aliás, agora também é facilmente acessível através do Headscale, onde posso reescrever entradas DNS como logs.domain e chegar lá rapidamente. Existe um pequeno problema com o DNS doméstico, e é por isso que estou reconsiderando essa configuração. O AdGuard é fantástico para bloquear
+
+anúncios ruins, mas quando você adiciona entradas suspeitas e fora do padrão, os navegadores tendem a não confiar nelas ou a não resolvê- las. E nem estamos falando do HTTPS, que adiciona mais uma camada de inconvenientes, caso você queira usá-lo. Então, encontrei algo [música] melhor. Adicionei outro IP público, mas um que resolve para um endereço privado. Se você tiver acesso, funciona, mas se não tiver, e não deveria ter porque está dentro do meu cluster [de música] K3s, ou pelo menos espero que seja esse o caso, você não tem nada a ver com isso. Assim que a propagação for feita corretamente, meu
+
+domínio de logs será traduzido para Dozzle. Dias felizes. Para ser sincero, preciso dizer que o DNS é muito mais complexo do que isso, e existem outras opções, especialmente para quem tem laboratórios caseiros, que abordarei em outro vídeo. Mas, independentemente disso, agora tenho uma ligação direta com as minhas aplicações em cluster. Gostaria de acrescentar, no entanto, que configurar uma única perna no cluster e expor tudo é um problema relativamente simples de VPN . A melhor arquitetura
+
+seria implantar um pequeno sidecar do Tailscale ao lado dos aplicativos que eu realmente quero expor. Deixe um comentário se tiver interesse. Entretanto, para ver o básico deste cluster de laboratório doméstico [música] e como fiz tudo funcionar em conjunto, confira este vídeo a seguir. Obrigado por assistir. Te vejo na próxima.
