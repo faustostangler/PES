@@ -1,0 +1,508 @@
+---
+video_title: "How to Build a Video Player in Next.js (Step-by-Step)"
+video_id: QL15V0vzt88
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=QL15V0vzt88
+video_date: 2026-03-15T15:46:57+00:00
+video_description: |
+  Get started with ImageKit for free: https://tinyurl.com/ab2rcuuf
+  
+  Today you'll learn how to build a Next.js video player. We'll cover all of the core features that you would want: uploading videos, handling and generating thumbnails, having video watermarks or overlays. This will cover everything you need to have a solid base for a video display or video playing type application, so that you can go and extend it and have it work for your own application.
+  
+  🎞 Video Resources 🎞
+  Code in this video: https://github.com/techwithtim/NextJSVideoPlayer
+  Adaptative Bitrate Streaming: https://imagekit.io/docs/adaptive-bitrate-streaming
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  
+  ⏳ Timestamps ⏳
+  00:00:00 | Project Demo 
+  00:01:51 | Project/Code Setup
+  00:03:52 | ImageKit Setup
+  00:06:15 | Scaffolding the App
+  00:11:06  | Uploading Videos
+  00:52:14 | Video Library
+  01:04:30 | Video Player/Watch Page
+  01:21:38 | Watermarking
+  
+  Hashtags
+  #ImageKit #NextJS #SoftwareEngineer
+  
+  UAE Media License Number: 3635141
+---
+Hoje você aprenderá como criar um reprodutor de vídeo Next.js. Vamos abordar todos os recursos principais que você possa desejar, como, por exemplo, o envio de vídeos, o gerenciamento de miniaturas, a geração de miniaturas, a adição de marcas d'água ou sobreposições em vídeos, além de opções como alterar a velocidade de reprodução, a qualidade ou o formato dos vídeos. Este guia abrangerá tudo o que você precisa para ter uma base sólida para um aplicativo de exibição ou reprodução de vídeo, permitindo que você o expanda e o adapte para sua própria aplicação. Todo o código que escrevi neste vídeo estará disponível no link na descrição.
+
+Para isso, usaremos uma ferramenta chamada ImageKit, que gentilmente patrocinou este vídeo, mas falaremos mais sobre isso adiante. Então, resumidamente, o que eu gostaria de fazer é mostrar uma demonstração do aplicativo finalizado. Lembre-se que ainda não está totalmente completo. A ideia é fornecer uma base para que você possa expandi-la e incorporá-la à sua aplicação. Como podem ver, tenho a possibilidade de carregar vídeos aqui. Posso escolher um arquivo de vídeo, uma
+
+miniatura e até mesmo uma marca d'água. Assim que os vídeos forem carregados, eles aparecerão na biblioteca, onde poderemos ver as diferentes miniaturas, o título, a data e todas essas informações. Se clicarmos em um vídeo aqui, veremos o reprodutor de vídeo, que é a parte principal deste aplicativo. Ele carrega o pôster ou a miniatura, e então podemos apertar o play, ajustar o volume, colocar em tela cheia, alterar, por exemplo, a velocidade de reprodução ou baixar em modo picture-in-picture, ajustar a qualidade, sobre o que falaremos mais tarde, e você entendeu a ideia. Agora, se abrirmos outros vídeos, vocês verão que eles carregam bem rápido. E se você realmente
+
+tiver o Let's Silencioso. Você verá que há uma imagem com marca d'água. É um pouco difícil de ver porque o jogador está cobrindo o canto inferior direito. Então, vou mostrar como adicionar isso também, o que é bem legal e um recurso exclusivo do ImageKit, que usaremos para lidar com vídeos, miniaturas, etc. Dito isso , vamos ao vídeo. Um breve
+
+aviso: este curso não foi desenvolvido para iniciantes e pressuponho que você já tenha alguma experiência com TypeScript e Next.js, pois não explicarei o framework. Vou mostrar apenas como construir o reprodutor de vídeo. Então, vamos começar a configurar este aplicativo. O primeiro passo é simplesmente abrir um editor de código. No meu
+
+caso, estou usando o VS Code, mas você pode usar o que quiser. E então, o que vamos fazer é simplesmente criar um novo projeto Next.js. Então, aqui no terminal do VS Code, vou executar o comando NPX create-next-app @latest e, em seguida, vou dar o nome de my-video-player. Você pode chamar isso do que quiser. E para que
+
+esse comando funcione, é claro que você precisa ter o Node.js instalado. Agora, vamos usar configurações personalizadas, então vamos em configurações personalizadas, TypeScript, sim, ESLint, sim, compilador React, não, Tailwind, não. Deseja usar o código dentro do diretório SRC? Sim, temos.
+
+Você gostaria de usar o aplicativo roteador? Sim, nós faríamos. Deseja personalizar o alias de importação? Não. E então, estaremos prontos para prosseguir, e o programa começará a configurar o projeto para nós. Tudo
+
+bem. Então, o projeto foi criado e a próxima coisa que faremos é instalar o pacote necessário. Então, vamos digitar `npm i`, e depois isso é `@imagekit/next`. Precisaremos usar isso porque utilizaremos o ImageKit para lidar com o armazenamento de vídeo, bem como com a entrega e otimização. Na verdade, acabei de perceber, desculpe, vamos cancelar isso porque acidentalmente fiz isso no diretório raiz quando queria fazer dentro do projeto.
+
+Então, vamos acessar o diretório my-video-player e executar o comando novamente para instalá-lo dentro deste projeto, e não no diretório errado. Ok, legal. Então, isso está instalado, e agora temos o aplicativo mais ou menos construído aqui, pelo menos temos a estrutura dele. E o que vamos fazer é criar um novo arquivo .env aqui dentro, porque precisamos de algumas variáveis ​​de ambiente para que este aplicativo funcione. Agora, só para dar
+
+uma ideia da arquitetura aqui, já que precisamos fazer upload de vídeos, vamos usar os recursos de back-end do Next.js, onde teremos alguns endpoints de API que podem nos dar a autorização necessária para fazer o upload de um vídeo, e também teremos outro endpoint que poderá recuperar o vídeo e nos fornecer as informações necessárias para exibi-lo na interface do usuário. Agora, como mencionei, para as funcionalidades relacionadas a imagens e vídeos , usaremos o ImageKit. Agora, o ImageKit é uma API de imagem e vídeo, além de um DAM (Digital Asset Management) com inteligência artificial. Isso torna extremamente fácil trabalhar com imagens e vídeos, armazená- los, otimizá-los, transformá-los e gerenciá-los, para que você não precise se preocupar com toda essa complexidade e possa se concentrar apenas na criação do aplicativo. É muito fácil de usar
+
+e você pode experimentar gratuitamente clicando no link que está na descrição. E esse será o primeiro passo a ser dado neste vídeo. Precisamos de uma conta aqui para podermos começar a usar esta API para gerenciar todos os vídeos. Uma das principais vantagens do ImageKit é que ele permite fazer transformações simplesmente alterando diretamente a URL do vídeo. Por exemplo, se você quiser legendas, uma sobreposição, ou se quiser alterar a qualidade ou o formato, em vez de ter que fazer algo complexo, basta adicionar um parâmetro de consulta à URL do vídeo que deseja carregar e ela será transformada automaticamente . Funciona não só com vídeos,
+
+como também com imagens. E eu já os usei muitas vezes neste canal. É por isso que me sinto à vontade em tê-los aqui, obviamente, e isso vai facilitar muito a nossa vida. Então, como mencionei, crie uma conta aqui novamente, é grátis, e depois acesse o painel do ImageKit porque precisaremos obter algumas chaves de API para trabalhar com o ImageKit. Então, a partir daqui, você verá que tem uma espécie de biblioteca de mídia. Você pode ver que eu já o
+
+utilizei anteriormente. Você tem um monte de outras coisas. Você pode consultar as configurações, o uso, etc. Mas o que nos interessa são as opções de desenvolvedor. Então, vamos acessar as opções do desenvolvedor aqui. Vou dividir a imagem para que
+
+fique do outro lado da minha tela. E o que vamos fazer é adicionar algumas variáveis ​​ao nosso arquivo de variáveis ​​de ambiente. Agora, o primeiro será exposto à nossa interface . Então, este será o próximo endpoint público {underscore} imagekit {underscore} url {underscore}. E vamos igualar isso a...
+
+Vamos aumentar um pouco isso aqui. O endpoint da URL que você vê aqui nas opções do desenvolvedor. Em seguida, teremos outro, que será o ImageKit. Portanto, isso precisa ser escrito em letras maiúsculas. A chave pública ImageKit {underscore}. Certo, vamos inserir isso
+
+em um segundo, e então precisamos da chave privada {underscore} do ImageKit. Para a chave pública, vamos copiar este valor aqui e colá-lo. E para a chave privada, vamos expô-la onde precisamos da senha e também colá-la . Então, eu simplesmente coloquei esses valores no meu arquivo de variáveis ​​de ambiente. Não quero vazar essas informações para você, então acabei de fechar agora. E o que podemos
+
+fazer é começar a construir a estrutura básica para a aplicação. Como mencionei, precisaremos configurar uma pequena infraestrutura de back-end com alguns endpoints de API para lidar com o upload e, em seguida, obter os vídeos. Em vez de criarmos um banco de dados personalizado ou usarmos algo como Postgres ou MongoDB, vamos simplificar as coisas e usar uma opção de armazenamento local, onde armazenaremos alguns dos dados de vídeo em um arquivo JSON. Quando digo dados de vídeo, quero dizer metadados. Então, tipo o título do vídeo, a miniatura, ou algo assim. Mas não
+
+vamos armazenar os arquivos em si, como, por exemplo, a imagem em miniatura ou a imagem do vídeo. Esses dados serão armazenados no ImageKit, onde poderão ser otimizados automaticamente para nós. OK. Então, o que vamos fazer é entrar no diretório SRC e começar a construir a estrutura da aplicação. Então, vamos criar uma nova pasta diretamente em SRC chamada lib. Também
+
+vamos criar uma nova pasta. Isso será chamado de estilos. Vamos criar uma nova pasta. Isso será chamado de tipos. E então vamos criar uma última pasta dentro de SRC aqui, desculpe, chamada components, assim. Bem,
+
+eu já escrevi todos os estilos para esta aplicação. Então, em vez de nós codificarmos tudo, o que levaria muito tempo, e vocês simplesmente copiarem o código, o que eu sugiro é que vocês copiem as diferentes folhas de estilo, ou arquivos CSS, diretamente do GitHub, cujo link estará abaixo, e depois as arrastem para o aplicativo de vocês. Então, o que vou fazer é simplesmente copiar os vários estilos, e você pode ver que temos global, library, upload e watch.css. Possui todas as diferentes classes. Tudo já está
+
+escrito. Você pode dar uma olhada, se quiser. Mas isso vai evitar que tenhamos que escrever tudo do zero. Então, eu os coloquei novamente dentro deste arquivo styles.css. Muito bem, então a
+
+partir daqui vamos criar os arquivos necessários nesses diretórios para estruturar o projeto, e depois iremos para o diretório do aplicativo e criaremos mais alguns arquivos necessários lá. Então, para os tipos, vamos criar um novo arquivo chamado video.ts, específico para o tipo de vídeo. Então, para a biblioteca, teremos o arquivo video-storage.ts.
+
+Isso vai funcionar como uma espécie de banco de dados. Em seguida, vamos analisar os componentes. Vamos criar uma pasta chamada "video" e, dentro dela, criaremos uma nova pasta chamada " player". Certo, então devem ser três pastas. Dentro da pasta de vídeos, vamos criar um novo arquivo chamado video player.tsx.
+
+Vamos criar um novo arquivo aqui, e este será o arquivo de vídeo para upload. tsx, e isso deve estar dentro da pasta de vídeo, ok? E então, dentro da pasta do player, vamos criar um novo arquivo e vamos chamá-lo de " simple player". tsx. Fique à vontade para alterar a estrutura de diretórios se quiser, mas desta forma tudo ficará bem organizado. Certo,
+
+então esses são os componentes que vamos precisar. Em seguida, vamos acessar o aplicativo e começar a criar os arquivos necessários. Em primeiro lugar, podemos simplesmente remover os arquivos CSS, assim não precisamos mais deles. Também podemos remover o arquivo de ícone e simplesmente [música] excluí-los por enquanto. Em seguida, vamos criar uma nova pasta. Isso será
+
+chamado de API. Vamos criar uma nova pasta. Esta será chamada de "upload" e faremos uma última chamada " watch". Sei que há muitas mudanças aqui, mas estou fazendo-as agora para que tenhamos toda a estrutura básica pronta, e então possamos navegar entre os arquivos e escrever todo o código necessário. Agora, para assistir, isso representará o caminho para assistir a um vídeo. Então você
+
+vai para {slash}watch, e então vamos criar uma nova pasta, e vamos colocar entre colchetes o ID, e este será o caminho para o ID individual do vídeo que você deseja assistir. Então, se você for em /watch/algum ID numérico, teremos um novo arquivo chamado page.tsx, certo? Em seguida, vamos renderizar a página para este URL ou esta rota. É assim que o Next.js funciona, então essa é
+
+a convenção ou estilo que vamos seguir . Em seguida, para o upload, também vamos criar o arquivo page.tsx. Então, a mesma coisa. Se você acessar /upload, será redirecionado para esta página. Em relação à API, isso se referirá
+
+às nossas rotas de API de back-end. Então, teremos duas rotas aqui. Vamos ter autenticação de upload, ok? E teremos mais uma, que se chamará vídeos. E então, dentro dos vídeos, teremos novamente esse tipo de ID dinâmico. Então, se você for em vídeos e depois usar
+
+esse ID, teremos um caminho aqui dentro . Então, vamos criar nossas rotas agora. Então, vamos usar o arquivo route.ts. E então, dentro dos vídeos, teremos o percurso. ts. E então, dentro de
+
+upload-auth, teremos o arquivo route.ts. E esses devem ser todos os arquivos diferentes de que precisamos. Então, vamos encerrar isso. Como você pode ver, se acessarmos upload-auth, temos essa rota que vamos renderizar. Se tivermos vídeos
+
+e, em seguida, um ID dinâmico, será este o caminho. E se formos apenas aos vídeos, então será este o caminho. Então, apenas vídeos nos darão todos os vídeos. O ID individual nos fornecerá os dados referentes apenas a esse vídeo específico. Tudo bem. Assim, criamos a estrutura básica de toda a
+
+aplicação, e agora podemos começar a escrever algum código. Quero começar pela parte administrativa (back-end) e depois passaremos para a parte técnica (front-end) . O processo de upload de um vídeo funcionará da seguinte forma: basicamente, enviaremos uma solicitação ao servidor dizendo: "Ei, queremos enviar um vídeo." O sistema interno irá então verificar se podemos carregar um vídeo. Então, se por algum motivo precisarmos estar logados, que seja . Em seguida, será gerado um
+
+token exclusivo para nós, que poderemos enviar para o front-end, permitindo o upload de um vídeo. Portanto, o motivo pelo qual queremos restringir o acesso ao upload de vídeos ao back-end e conceder permissão ao front-end é para garantir que as pessoas não abusem do recurso, pois se tivéssemos acesso à chave privada do ImageKit apenas no front-end ou na interface do usuário do nosso aplicativo, qualquer pessoa poderia fazer upload de vídeos para o nosso aplicativo ImageKit. Não queremos isso. Queremos que eles pelo menos tenham que usar nossa API para que possamos controlar a quantidade de vídeos que eles enviam, o tamanho dos vídeos e coisas do tipo. Então, a ideia básica é que nosso back- end usará as credenciais do ImageKit. Isso vai gerar um
+
+token. Esse token permitirá ao usuário enviar um vídeo. Enviaremos o token para a interface do usuário. Eles então farão o upload do vídeo e, se quiserem fazer outro, solicitarão novamente ao sistema . Você pode tornar isso tão seguro ou inseguro quanto desejar, mas esta é a configuração e o fluxo básicos que você deve seguir. Então, o que vamos fazer é acessar
+
+essa rota de upload off aqui e clicar em importar, e então vamos importar os parâmetros de upload off do ImageKit/next/server. Agora, se observarmos essa função, podemos ver que ela está aqui. Vamos lê-la. "Gera os parâmetros de autenticação necessários para o envio de arquivos para o ImageKit. Destina-se ao uso exclusivo no servidor." Portanto, o que ele fará é
+
+retornar os parâmetros de autenticação, incluindo token, assinatura e tempo de expiração, que permitirão que alguém com acesso a esse token faça o upload de um vídeo. Como esse token expira, é seguro usá-lo em vez de termos acesso à chave privada completa no front-end. Em seguida, vamos importar a próxima resposta de next/server. E vamos usar a função assíncrona de exportação, que será uma requisição GET. E o que vamos fazer é simplesmente gerar os parâmetros de autenticação de que precisamos. Então, para
+
+fazer isso, vamos usar um bloco try-catch simples. Certo, então vamos identificar o erro aqui. Agora, no bloco try, vamos dizer que a constante private key é igual a e esta será process.env.imagekit_private_key. Em seguida, vamos
+
+dizer const. Vamos soletrar isso corretamente. A chave pública é igual a process.env. chave_pública_do_imagekit.
+
+Ok, então agora temos a chave privada e a chave pública. Vamos dizer "se". Então, bem aqui, vamos colocar nosso ponto e vírgula. Portanto, se não for chave privada ou chave pública, retornaremos um erro. Então, vamos dizer "retornar" assim, a próxima resposta. E para
+
+a próxima resposta, será em formato .JSON. E então, dentro do JSON, vamos simplesmente indicar o erro desta forma. E vamos dizer que as chaves do ImageKit não estão configuradas. Ok, legal. Agora, se esse não for o caso,
+
+também retornaremos uma próxima resposta. ponto JSON. E desta vez, dentro do JSON, o que faremos é colocar reticências . E isso vai desativar os parâmetros de upload. E vamos passar para isso tanto a chave privada quanto a chave pública dentro de um objeto, assim como a chave pública.
+
+OK. Portanto, a chave pública pode ser compartilhada com o front-end sem problemas, e nós também precisamos dela. Portanto, isso nos dará o token exclusivo, que também pode ser compartilhado sem problemas, assim como a chave pública. E então, em nosso bloco `catch` aqui, vamos simplesmente usar `console.error` e exibir " Erro ao desativar o upload". E então podemos simplesmente exibir
+
+qualquer que seja o erro. E então, da mesma forma, podemos retornar uma próxima resposta. ponto JSON. E isso pode simplesmente exibir uma mensagem de erro e, em seguida, informar que a geração de credenciais falhou. Legal. Então, isso é tudo que precisamos
+
+para obter as informações necessárias para enviar um vídeo. Agora, o que faremos a seguir é acessar a pasta lib e escrever no módulo de armazenamento de vídeo que precisaremos usar para armazenar as informações sobre os vídeos que enviarmos. Então, antes de fazermos isso, desculpe, vamos primeiro falar sobre tipos, porque precisaremos declarar o tipo de um vídeo para usá-lo corretamente em TypeScript. Então, vamos selecionar a interface de exportação e, em seguida, será um vídeo, assim. Para um vídeo, teremos um ID que é uma string. Teremos um
+
+título que será uma sequência de caracteres. Teremos uma descrição que também será uma string . Quase todas elas serão cordas, na verdade. Teremos um caminho de arquivo que é uma string. Teremos um nome de arquivo que será uma string. Vamos ter um
+
+caminho em miniatura. Ok, então vamos escrever " miniatura" corretamente. Acho que está tudo bem. E isso será uma string, mas será opcional. Em seguida, teremos uma duração.
+
+Ok, e este será um número, que, novamente, é opcional. Em seguida, teremos um objeto criado que será uma string. Em seguida, teremos uma marca d'água, que também será opcional. E esta será uma configuração de marca d'água, que será um novo tipo que escreveremos em 1 segundo. Em seguida, teremos a qualidade {ponto de interrogação} e isso será um número, e teremos o formato, que também será opcional, e poderá ser automático, ok, ou MP4, ou WebM.
+
+Ok, eu sei que é muita coisa, mas é o tipo de conteúdo que se espera de um vídeo. E então teremos outra interface, que chamaremos de interface de exportação, e então esta será a configuração da marca d'água e esta será o caminho da imagem. Ok, vou explicar isso em um segundo: é uma string. Vamos ter uma posição para a marca d'água e esta será no canto superior esquerdo. Ok, ou isto vai ser no canto superior direito ou no canto inferior esquerdo. Ok, ou canto
+
+inferior direito. Certo, e então teremos a opacidade, que será um número. Da mesma forma, isso será opcional. E então teremos uma largura. Isso também será opcional, e será um número. Certo, então esses são
+
+os dois tipos de que precisamos. Agora, a marca d'água será algum tipo de imagem que aparecerá em uma dessas posições no vídeo. Então, você já deve ter visto no YouTube que eles colocam marcas d'água nos vídeos, se o criador quiser que elas estejam lá. Portanto, temos a mesma capacidade aqui no ImageKit e é por isso que criamos essa interface. OK. Então, agora vamos
+
+voltar ao armazenamento de vídeo e começar a gravar nele, porque agora temos o tipo necessário para isso. Então, vamos importar vídeo e isso virá de e será em /types/video. Legal. Em seguida, vamos importar `fs`, que é o sistema de arquivos, de `fs`, e vamos importar ` path` de `path`, que será `path`. Ok, então vamos dizer const e vamos dizer que data_file é igual a path.join
+
+e este será o process.cwd, que é o diretório de trabalho atual, e então vamos dizer data e depois videos.json. Então, a ideia é que teremos uma nova pasta chamada "data" que armazenará um arquivo chamado "videos.json" dentro do diretório de trabalho atual.
+
+Em seguida, teremos algumas funções. O primeiro passo será a leitura dos dados. O resultado será uma lista de vídeos, que serão do tipo "video", ou seja, um array. E então, o que faremos aqui é dizer que `const directory` é igual a `path.dirname`.
+
+Ok, e então este será o arquivo de dados. Então, isso vai ler todos os vídeos que temos atualmente e vamos garantir que isso seja uma função. Ok, então vamos dizer se não for fs, ok, ponto exista sync, e então este será o diretório. Então, o que vamos fazer é criá-lo. Então, vamos usar `fs.make`
+
+ou, desculpe, `mk dir` e depois `sync`, e vamos colocar o diretório assim , e então vamos definir ` recursive is equal to true`. Então teremos outro "se" aqui, e diremos "se não fs". E isto é uma sincronização de saída novamente, e este será o arquivo de dados. Então, o que precisamos fazer é criar o arquivo de dados. Então, vamos executar o comando `fs.write
+
+file sync`, ok, e aqui teremos o arquivo de dados. Em seguida, usaremos json.stringify e inseriremos aqui os vídeos e um array vazio. Depois, fora desse array, mas dentro da chamada da função, inseriremos null e, por fim, dois valores. Bem, o que isso vai fazer é basicamente criar um novo objeto JSON, que é um array de vídeos vazio, porque se não tivermos esse arquivo, não teremos nenhum vídeo.
+
+Vamos dizer: "Ok, não queremos nenhum... esqueci qual era o parâmetro, nenhum substituto, mas queremos um nível de indentação de dois." Ok, então vamos retornar json.parse
+
+e depois vamos dizer fs. E esta será uma sincronização de leitura de arquivo, e vamos simplesmente ler o arquivo de dados com utf-8 como tipo de codificação. OK. Então, isso nos dará a capacidade de ler um dos arquivos que contém os dados do vídeo, funcionando como se estivéssemos lendo um banco de dados, já que estamos usando um arquivo local. Em seguida, vamos executar a função `write data`, ok? E depois
+
+vamos executar `data`, seguido de ` videos`. Este será o valor de `video`, que é um array, pois é isso que está sendo escrito. Então vamos dizer vazio, e o que vamos fazer é dizer sf. e este é o comando write file sync, e vamos escrever o JSON no arquivo de dados. Ok, assim: dot stringify, e então isso será apenas o que quer que sejam os dados, e depois null, e a mesma coisa também.
+
+Certo, então essas são algumas funções internas para ler e gravar dados no arquivo. Em seguida, teremos uma função de exportação que obterá todos os vídeos. E o que isso fará é retornar uma lista de vídeos, que é um array. E o que vamos fazer é dizer " retornar" e então estes serão os dados lidos. Então, vamos ler os dados assim e depois usar o operador ponto para exibir os vídeos ou um array vazio.
+
+OK? Depois teremos outra função. Então, esta será a função de exportação para obter vídeos por ID. Esta função receberá um ID, que é uma string, e retornará "video" ou " undefined" como tipo. Vamos garantir que não nos esqueçamos dos dois pontos. Certo, então o que
+
+vamos fazer aqui é dizer "return" e isso vai ler os dados. Ok, então vamos ler data.videos.find e vamos dizer V assim . O ponto V é igual ao ID para encontrar o vídeo correto.
+
+Muito bem, por último, aqui embaixo vamos selecionar a função de exportação e salvar o vídeo. Para salvar um vídeo, vamos precisar dos dados do vídeo, certo? E então o que podemos fazer é simplesmente retornar um novo objeto de vídeo e dizer que ` const data` é igual a `read data`. Então vamos dizer dados ponto vídeos ponto push. Ok, e vamos inserir o vídeo. Então vamos dizer para
+
+escrever os dados. Vamos gravar os novos dados e retornar o vídeo. Perfeito, e isso é tudo que precisamos para o armazenamento de vídeos. Agora que temos o armazenamento de vídeo, podemos voltar às nossas rotas. Vamos agora abordar as rotas de upload. Então, vídeos e
+
+depois apenas este principal aqui. Então, vamos acessar os vídeos e depois este principal aqui, e dentro do percurso deste vídeo teremos duas funções. Uma que vai receber todos os vídeos e outra que nos dará a possibilidade de criar um novo vídeo. Então, o comando de upload nos dará o token necessário para enviar um vídeo, mas quando quisermos salvar o vídeo, precisaremos ter esse token dentro desta rota aqui, que você verá em 1 segundo. Então, o que vamos fazer é importar e essa será a próxima solicitação, assim como a próxima resposta do próximo servidor.
+
+Em seguida, vamos importar a função "obter todos os vídeos", bem como a função "salvar vídeo" da nossa biblioteca. Vamos importar o tipo de vídeo do nosso arquivo de tipos, não do Image Connect, mas de outro lugar, e então isso ficará em ` types /video`, e acho que será algo assim . Ok, perfeito. E então vamos importar e isso será V4 como UUID V4 de e isso é UUID. Certo, para obter um identificador único para os vídeos, acredito que precisaremos instalar este pacote, caso ainda não o tenhamos instalado. Então, vamos abrir o arquivo
+
+e executar `npm i` e depois `UUID`. Ok, perfeito, parece que foi instalado e agora não estamos recebendo nenhum erro. Perfeito. Portanto, a primeira função que podemos escrever é bastante simples. Vamos usar a função assíncrona de exportação e, em seguida, escreveremos "get" em letras maiúsculas; essa será a rota "get". E
+
+vamos tentar e o que faremos é retornar a próxima resposta .json e então isso será vídeos dois pontos e então obter todos os vídeos. OK. Agora, se houver um erro, e vamos capturá- lo, o que podemos fazer é simplesmente retornar a próxima resposta em formato JSON e exibir a mensagem de erro, como " falha ao buscar vídeos". E também podemos retornar um status aqui, então podemos dizer status 500.
+
+Ok, isso deve ser tudo o que precisamos . Em seguida, teremos outro processo e diremos para exportar, e este será assíncrono. Ok, função [bufa] e isto vai ser postado. Agora, o que vamos receber aqui é uma solicitação, que será a próxima solicitação. Então, vamos colocar desta forma. E
+
+o que faremos é dizer: tentem. E vamos tentar salvar o vídeo. E vamos bater um papo aqui na TV também. Ok, então, para o try, o que faremos é dizer que const body é igual a await request.json.
+
+Certo, assim mesmo. Então, aguarde até recebermos os dados JSON. Em seguida, vamos definir ` const video` como ` type` e criar o objeto de vídeo. Então, para o vídeo, precisamos de um documento de identidade. Então, este será um UUID V4, e poderemos gerar um valor único a partir dele. Em seguida, vamos
+
+dizer o título, que será o body.title, ou simplesmente "vídeo sem título" . Ok, então teremos a descrição, que será igual a body.description ou simplesmente uma string vazia. Em seguida, teremos o caminho do arquivo. Ok, e
+
+este será o caminho do arquivo body.file, assim: Em seguida, teremos o nome do arquivo, que será o nome do arquivo body.file. Em seguida, teremos o caminho da miniatura, que será igual ao caminho body.thumbnail ou a uma string vazia.
+
+Em seguida, teremos a duração, que é o body.duration. Então, teremos criado um novo valor para `date.to` e este será uma string ISO, assim: E então teremos a marca d'água, que é igual a body.watermark.
+
+Ok, legal. Muito bem, então esse será o nosso vídeo. Então, o que faremos é dizer "return next" e isso será response {dot} json e o que faremos aqui é dizer que video é igual a save video video e então colocaremos o status, que será 201, que significa criado com sucesso. Legal, e então, para o nosso erro, vamos simplesmente dizer `return next response {dot} json` e depois ` error`, que dirá "falha ao criar vídeo", e para o status, vamos usar 500. Ok, isso é tudo que precisamos agora para esta rota. Isso nos permitirá obter todos
+
+os vídeos, bem como criar um novo vídeo. Já que estamos aqui, vamos escrever o roteiro para um vídeo específico e depois podemos prosseguir. Ok, então, para o vídeo individual, isso é bem simples. O que vamos fazer é clicar em importar e, em seguida, esta será a próxima resposta do próximo servidor, e vamos importar o vídeo obtido por ID do nosso armazenamento. Em seguida, vamos dizer `export async function get` assim, e o que isso fará aqui é receber uma solicitação com um sublinhado, porque na verdade não precisamos disso, mas este será o tipo de solicitação padrão.
+
+Depois, vamos dizer ` params` assim, e isso será igual a `params:: promise` e ​​`params:: id:: string`. O motivo pelo qual escrevemos isso é porque precisamos obter os parâmetros. Preciso dos parâmetros porque esta será uma rota parametrizada, certo? Ou algo como um parâmetro de caminho com o ID. Então preciso obter o ID do vídeo que eles estão tentando acessar. Então, vou usar `
+
+try` e depois `const video`, então vamos fazer assim: `const video is equal to get video by ID`, e vamos aguardar o ` params.id` dessa forma. O que eu posso fazer é simplesmente usar ` await params` e depois acessar o ID. Agora vamos dizer que se não houver vídeo, basta retornar e este pode ser o próximo response.json e aqui vamos dizer erro e então isso será vídeo não encontrado.
+
+Certo, assim podemos retornar o status 404. Ok, agora, caso contrário, podemos simplesmente retornar a próxima resposta. Vamos garantir que o JSON não esteja indentado. Ok, e então o vídeo ficará assim mesmo. Perfeito. Caso
+
+contrário, teremos que capturar o erro e, em seguida, retornar o próximo response.json. Teremos um erro que indica falha. Ok, não consegui obter este vídeo e o status ficou assim. Então, o status é 500. Ok, isso é tudo que
+
+precisamos para isso e vai finalizar nosso back-end. Agora que desativamos o upload, podemos obter um vídeo individual, podemos obter todos os vídeos e podemos salvar um vídeo. Agora, o que teremos que fazer em seguida é escrever a página de upload, bem como os contêineres principais para nossa aplicação. Então, o que faremos é começar acessando nosso componente de layout aqui e começar a modificá-lo, porque na verdade não precisamos da maioria dos elementos presentes aqui. Então, vou remover todas essas configurações de fonte, porque não precisamos de nenhuma delas . Podemos remover a importação global
+
+e, na verdade, podemos remover também esses metadados . Agora vamos nos livrar desses nomes de classe e vamos modificar isso em um instante. Ok, então, primeiro vamos escrever as importações. Então vamos dizer importar e então isso vai estar em Ok, e então barra estilos barra globals.css.
+
+Em seguida, vamos importar o ImageKitProvider do ImageKit next e o link do next/link, ok? Então, para o layout, o que faremos é o seguinte: teremos o HTML, teremos o corpo (body), mas dentro do corpo precisamos colocar o ImageKitProvider para que possamos usar os componentes do ImageKit. Então, vamos pronunciar ImageKitProvider assim. Muito bem, e então dentro do ImageKitProvider podemos ter os filhos. E para o ImageKitProvider, acredito que precisamos passar a URL. Então, vamos dizer que o
+
+endpoint da URL é igual a process.env.next_public.
+
+Ok, então public_imagekit_url_endpoint. E aqui dentro vamos construir uma barra de navegação super simples. Então, vamos ter apenas uma barra de navegação. Para a barra de navegação, vamos usar o nome da classe igual a "nav". Agora, dentro da barra de navegação, teremos uma div.
+
+Para a primeira div aqui, vamos dizer que o nome da classe é igual a e este é o contêiner de navegação. Em seguida, teremos outra div. Ok, então, uma div como esta, e vamos definir o nome da classe como "nav-links" e então vamos adicionar alguns links à barra de navegação. Então, vamos ter um componente de link simples. O primeiro será "href é igual a uma barra" e dirá "nome da classe é igual a nav-button".
+
+E então, para isso, vai aparecer biblioteca. OK? E esse será o primeiro link. Agora, vamos garantir que escrevemos "link" corretamente, porque isso estava nos causando um problema, ok? E agora vamos copiar isso e, para o próximo, este será o botão de upload e irá para /upload e, da mesma forma, será um botão de navegação. Certo, então
+
+deve ser isso, e depois, fora da navegação, teremos apenas um componente principal. Vamos usar o nome da classe, então um nome de classe como este é igual a `main`, e vamos colocar nossos filhos dentro de `main`. Portanto, este é o layout que será exibido em todas as páginas que temos. Então, novamente, temos o provedor ImageKit, e estamos encapsulando tudo isso para termos acesso ao contexto, aos componentes e a tudo mais do ImageKit. Em seguida, temos o elemento principal e a barra de navegação envolvidos dentro do corpo do código HTML. Certo, isso deve ser
+
+bom para o layout. Agora, podemos começar a escrever alguns dos outros componentes. O próximo componente que vamos escrever será o componente de upload de vídeo . Certo, então, para o upload, este será um componente do lado do cliente, pois precisaremos de alguns elementos de formulário diferentes que iremos carregar ou atualizar, desculpe. Então, vamos usar o cliente na parte superior. Em seguida,
+
+vamos importar o estado de uso. Ok, isso será do React. Em seguida, vamos importar e fazer o upload aqui. Vamos acessar o diretório de upload, que será o act imagekit/next. Em seguida, vamos importar o roteador de uso do próximo arquivo. Isso será, na verdade, a
+
+navegação. Certo, assim mesmo. Em seguida, vamos importar a folha de estilo que precisamos, então vamos usar o caminho /styles/upload.css. OK? Em seguida, vamos selecionar "export
+
+default" e definir isso como uma função, e depois fazer o upload do vídeo com os parâmetros da seguinte forma. Agora, para o envio do vídeo, vamos usar um formulário, certo? Porque precisamos solicitar ao usuário informações como o título do vídeo, a descrição, o arquivo do vídeo, a miniatura e quaisquer marcas d'água. Então, vai parecer um pouco complexo, mas é só porque precisamos coletar todos esses valores, e aí estaremos prontos para prosseguir. Então, vamos começar pelo nosso estado. Então,
+
+vamos dizer que `const router` é igual a ` use router`. O motivo de usarmos o roteador é que, depois que o usuário carrega um vídeo, podemos redirecioná-lo para esse vídeo. Em seguida, vamos falar sobre a forma constante e a forma definida. Vamos usar apenas uma vírgula aqui. será igual ao estado de uso. E então
+
+teremos o título, uma string vazia, e depois a descrição, também uma string vazia. Em seguida, vamos usar `const file` e depois `set files`. Desculpe, então "files" será equivalente a "use state". E então, para isso, vamos ter assim, o registro. Certo, qual será o valor: uma string, um arquivo ou nulo? E então, para o
+
+estado padrão, isso será um objeto. Vamos exibir vídeo, null, miniatura, null e marca d'água, null, assim. Ok, legal. Então é isso. Em seguida, teremos `const` e diremos: `loading`, `set loading`, ` set loading`, assim, é igual a ` use state`, e então `false`. E vamos dizer `
+
+const error`, definir `error` é igual a usar `state`, e então `this` pode ser uma string vazia. Certo, então isso vai resolver toda a questão estadual para nós. Em seguida, vamos criar uma função. Portanto, a primeira função será fazer o upload do arquivo. Então vamos dizer `const upload file`, e isso será igual a `async`, e então `file` será do tipo `file`, e então `folder` será do tipo `string`.
+
+Ok, e isso será const off, assim, é igual a e isso será await, fetch, e vamos buscar nosso back-end, que é {slash} API {slash} upload-off. Ok, e vamos dizer "ponto" então, vamos pegar nossa solicitação e retornar r.json. E então, o que faremos aqui é dizer "return upload", e diremos "file", " file name", e então "this will be the file.name", e diremos "folder comma" e depois "dot dot off". Como você
+
+pode ver, estamos usando a função de upload diretamente do ImageKit aqui. O que vamos fazer primeiro é obter os detalhes necessários do sistema e depois vamos carregá-los assim, ok? Assim que obtivermos os detalhes de autenticação, carregaremos os dados para o ImageKit e, em seguida, salvaremos esses dados no banco de dados, supondo que o carregamento tenha sido bem-sucedido. Certo, então essa é a função de upload de arquivos. A seguir, vamos escrever o formulário e depois escreveremos o resto das funções. Então
+
+vamos usar a tecla Enter e vamos ter um formulário aqui, então vamos usar a tecla Enter (barra). Então, para o formulário, vamos dizer que ao enviar, isso será igual a uma função que escreveremos em 1 segundo, então, na verdade, vamos apenas criar um esboço rapidamente. Então podemos usar `const` e depois `handle submit`, e para `handle submit` isso pode ser simplesmente uma função de seta, e então podemos colocar ` handle submit` assim, e então vamos dar um nome de classe, então vamos dizer que o nome da classe é igual a ` upload-form`, assim. Ok, legal. Primeiro, vamos exibir um erro, caso exista.
+
+Então, vamos exibir "erro" e, em seguida, adicionar uma div simples. A div terá o nome da classe igual a e então este será o erro de upload. Certo, assim mesmo, e depois exibiremos a variável que representa o erro. Ok, então vamos usar a div e definir a classe como " form-group". Então vamos ter um rótulo, ok?
+
+E para o rótulo, vamos dizer que o nome da classe é igual ao rótulo do formulário e então podemos criar este título. Então podemos ter um campo de entrada. Portanto, o primeiro campo de entrada que teremos será para o título. Portanto, para a entrada, isso deve ser, na verdade, apenas um componente. Vamos considerar que "tipo" é igual a "texto".
+
+E vamos colocar isso aqui dentro para que seja um pouco mais fácil de vermos. Vamos considerar que o valor é igual à forma. {dot} título assim. Vamos dizer que a mudança é igual a e, e então esta é uma função que estará na forma de conjunto. Então, configure o formulário desta forma. E então
+
+vamos dizer f [bufa] e então isso vai estar aqui dentro . Vamos dizer {dot} {dot} {dot} e depois f título e depois e.target {dot} valor assim. Ok, então vamos dizer que o nome da classe é igual ao input do formulário {dash} e vamos dizer que o placeholder é igual ao título do vídeo, assim. Vamos escrever "placeholder" corretamente. Certo, e acho que isso é tudo que
+
+precisamos para esta contribuição. Talvez possamos formatar isso rapidamente para que fique um pouco mais apresentável. Ok, legal. Então, vamos copiar essa div e colá-la aqui embaixo, porque vamos ter outro grupo de formulário. Para este grupo de formulários, a mesma coisa. Vamos apenas formatá-lo.
+
+Vamos mudar de " título" para "descrição" e então isso também vai dizer "descrição" e depois a mesma coisa. Descrição, e então podemos dizer descrição do vídeo assim. Ok, legal. Então, vamos simplesmente escrever outro grupo de formulários. Então, deixe-me copiar essa div e agora vamos apenas fazer o upload dos arquivos. Então, vamos trazer esse cara aqui.
+
+Então, para este grupo de formulário, teremos um nome de classe de rótulo igual ao rótulo do formulário {dash}. Para a etiqueta, vamos escrever "arquivo de vídeo" e depois colocar asteriscos assim para que você saiba que é obrigatório. E então vamos inserir as informações. Ok, e para esta entrada, o tipo será igual a arquivo. Em seguida, vamos clicar em "Aceitar", "Ok", e para o vídeo, será " vídeo/asterisco", porque esse é o tipo que vamos aceitar. E então vamos dizer "
+
+ao alterar" e simplesmente " definir arquivo". Então, configure o arquivo. Agora, a função `set file` ainda não foi escrita, então não se preocupe, vamos escrevê-la em um segundo. Agora, vamos colar isso duas vezes e, novamente, deixe-me formatar rapidamente, e vamos alterar estes parâmetros. Em vez de " vídeo", vamos dizer " arquivo de miniatura" e, em seguida, "definir miniatura do arquivo".
+
+Acredito que será "imagem". Hum, isso deve ser bom. Ok, então esta também será uma imagem, e este será o arquivo de marca d'água, que será marcado como opcional. E então aparecerá uma marca d'água, assim. E por último, vamos colocar um botão.
+
+OK. Para este botão, aparecerá apenas " carregando" seguido de um ponto de interrogação. Vamos colocar " uploading" ou, caso contrário, vamos colocar " upload" como texto do botão. Vamos definir `type` como igual a `submit`, o que significa que o formulário será enviado, e vamos definir `disabled` como igual a, o que significa que o formulário está carregando arquivos. ponto vídeo.
+
+Não são arquivos. vídeo dot, desculpe, mas se não tivermos um vídeo, bem, não podemos carregá-lo. E então vamos dizer que o nome da classe é igual ao botão de envio. Legal. Então, agora vamos escrever essa função de configuração de arquivo que precisamos. Então, para definir o
+
+arquivo, vamos ter outra função, e vamos dizer `const set file`. Agora, para configurar o arquivo, vamos usar as seguintes informações. Então, esta será uma função de seta, que receberá uma chave, que é uma string, e retornará um "E", e este será o evento react.change, assim. E este será um elemento de entrada HTML.
+
+E então esta será a seta, e o que faremos dentro desta função é, digamos, definir arquivos, e receberemos F, e diremos que faremos o seguinte, então ponto ponto ponto F. Então, em um objeto ponto ponto ponto F, e então esta será a chave que eles enviaram, dois pontos E .target. Ok, então target.files {ponto de interrogação} .0
+
+ou nulo. Certo, então quando chamarmos o método `set file`, ele nos dará uma nova função que recebe o evento de alteração do React. Então vamos ver, ok, quais arquivos eles estavam realmente enviando? Vamos pegar esse arquivo, associá- lo à matriz aqui, certo, para o nosso estado, e então estaremos prontos para prosseguir. Agora só precisamos escrever a função de envio do manipulador e, em seguida, terminamos. Então,
+
+para lidar com o envio, vamos torná-lo assíncrono e vamos receber E como argumento. Em seguida, vamos usar E.prevent. Ok. padrão. Acho que é assim.
+
+E. Impedir o comportamento padrão para que não atualizemos a página. Então, caso contrário, e isso será o arquivo files.video, você pode simplesmente retornar, pois precisamos de um vídeo para enviar. Vamos então afirmar que o carregamento de conjuntos é verdadeiro.
+
+E o erro definido é uma string vazia. Em seguida, vamos tentar pegar a bola e depois tentar enviar o vídeo. Então, no bloco try, vamos usar const, e então isso será a resolução do vídeo, a resolução da miniatura, ou resolver, ou como você quiser chamar. WM resolve é igual a await, e então será promise.all.
+
+E vamos fazer três promessas. O primeiro passo será o upload do arquivo, onde usaremos o arquivo files.video, e depois selecionaremos /videos como a pasta para onde queremos fazer o upload. Agora, precisamos escrever essas palavras corretamente, então " promise" e "upload file" precisam ser escritas dessa forma. Certo, então vamos enviar o arquivo para este diretório.
+
+Este é o vídeo que estamos enviando. Então vamos falar em arquivos. miniatura {ponto de interrogação} ok, e se tivermos isso, vamos dizer carregar arquivo, e então isso será arquivos. miniatura, e depois / miniaturas ou nulo. Certo, e então faremos a mesma coisa, vamos copiar isso, colar aqui embaixo e substituir por "marca d'água". Então, se
+
+tivermos uma marca d'água, ok, então ela precisa ir ali, então marca d'água, e então a mesma coisa em / marca d'água. Perfeito. Portanto, isso tentará fazer o upload assíncrono de todo o conteúdo necessário. Em seguida, vamos definir `const res` como igual a `await`, e então vamos armazenar esses dados no backend. Então, vamos usar /api/videos e especificar que o método será POST. Em seguida,
+
+vamos dizer que os cabeçalhos são iguais ao tipo de conteúdo e que, portanto, este será do tipo application/ json. Em seguida, teremos o corpo da requisição, que será convertido em string pelo método `json.stringify`, contendo os dados necessários para o vídeo. Então, vamos dizer que o título é igual a, e este será o formulário. título. Certo, e então
+
+teremos a descrição, que será form.description. Em seguida, teremos o caminho do arquivo, que será o caminho do arquivo de vídeo (res.file) ou uma string vazia. Em seguida, teremos o nome do arquivo, que é video res.name
+
+ou files.video.name. Ok, então teremos o caminho da miniatura, que será o arquivo res {ponto de interrogação} ponto.file.path
+
+ou será uma string vazia. E depois teremos a marca d'água. Ok, e isso será wm res {ponto de interrogação} e então vamos pegar o caminho da imagem. Certo, qual é o valor de `wm res dot file.path` ou uma string vazia? E depois a
+
+posição. Certo, porque para a marca d'água precisamos de mais informações. Então, vamos dizer canto inferior direito. E então a opacidade será de 0,7, assim. E então a largura que diremos é 120.
+
+Ok, dois pontos indefinidos. Então, na prática, estamos perguntando: "Ok, a marca d'água está aí?" Caso haja uma marca d'água, precisamos de todas essas informações referentes à marca d'água. Precisamos saber informações como a localização, a opacidade, a largura e o caminho da imagem. Caso contrário, simplesmente colocamos "indefinido". Ok, então
+
+o que podemos fazer é dizer se res. e isso vai ficar bem. Então, se isso foi resolvido, ou desculpe, se não, tudo bem, podemos simplesmente lançar um novo erro como este, e o erro pode ser " falha ao salvar". Ok, caso contrário podemos dizer const. Então, const assim, video é igual a await res.json
+
+e então podemos dizer router.push e podemos push para entre crases {slash} watch {slash} e então este pode ser o ID do vídeo. Então, vamos fazer isso. O ID do ponto do vídeo é assim. Ok, deixe-me adicionar os pontos e vírgulas para que possamos inserir isso aqui com uma tabulação e tudo deverá funcionar corretamente . Certo, e por último, precisamos apenas
+
+capturar o erro. Então, vamos dizer: "Muito bem, detecte o erro." Para o erro, vamos dizer: "Definir erro". E então isso vai ser um erro, ok, instância de erro, ponto de interrogação, mensagem de erro, caso contrário, o upload falhou. Certo, e então vamos dizer: "Iniciando carregamento". Assim.
+
+Falso. Ok, legal. Portanto, isso concluirá a função de envio do manipulador e, na verdade, finalizará todo este componente. Então, deixe-me dar um zoom out um pouco. Você pode ver que temos o formulário.
+
+Temos a função de definir arquivo. Temos a função de envio de arquivos, que na verdade faz o upload do vídeo para nós. Ok, agora para o elemento `e`, isso vai nos dar algum erro, então vamos usar ` react.form` assim, com o evento `form`, mesmo que esteja obsoleto, só para evitar erros. Já fizemos o upload do arquivo. Já temos todos os dados do
+
+estado e agora podemos começar a fazer o upload de algo sem problemas. Então, como este era o componente de upload de vídeo , o que vamos fazer é simplesmente acessar nosso aplicativo aqui. Vamos fazer o upload. Vamos acessar a página e escrever um componente bem simples. Então, vamos dizer: "Importar upload de vídeo de nossos componentes." Em seguida,
+
+diremos: "Exportar função padrão". E esta pode ser a página de upload. Agora, para a página de upload, vamos retornar apenas uma div simples. Na div, teremos uma tag h1 com o texto "Enviar vídeos". Em seguida, vamos renderizar o componente abaixo, que é o upload do vídeo.
+
+Ok, agora que temos isso, quando formos para /upload, devemos ser direcionados para a página de upload, e devemos conseguir enviar um vídeo e visualizá-lo dentro do ImageKit. Então, vamos tentar isso. Vamos até lá e vamos executar nosso aplicativo. Então, execute npm run dev. Vamos ver se conseguimos enviar um vídeo. Então, vamos abrir este
+
+aplicativo. Ok, está apresentando um erro dizendo que não consegue encontrar o arquivo page.module.css. Então, vamos corrigir isso rapidamente no nosso arquivo page.tsx.
+
+Certo, então vamos remover isso. Ah, e na verdade, vamos descartar tudo o que está aqui dentro, porque não precisamos de nada. Por enquanto, podemos simplesmente retornar um fragmento. Então, vamos retornar um fragmento e simplesmente remover as importações, pois não vamos usar esse código agora. E pronto.
+
+Agora podemos ver que temos uma biblioteca e uma página de upload. E se formos fazer o upload, temos uma página de upload muito simples. Então, vamos tentar enviar alguma coisa. Vídeo do Tim . Vídeo legal. Então, o que vamos
+
+fazer agora é escolher um arquivo de vídeo e um arquivo de miniatura. Então, quanto ao arquivo de vídeo, deixe-me encontrar um. Ok, então eu só tenho um anúncio de patrocínio aleatório que estava no meu computador. E deixe-me escolher um arquivo de miniatura. Ok, e temos apenas uma miniatura aleatória. Vamos então clicar
+
+em "enviar". Agora, ao fazermos isso, devemos ver no back-end que essas rotas foram chamadas. Portanto, a função de desligamento do upload foi chamada, assim como a função de upload. Vejamos agora. Hum, vai demorar um segundo para carregar. E depois que
+
+terminar, podemos voltar e ver se foi adicionado ao ImageKit e se o upload funcionou corretamente. Bem, acabei de me deparar com um problema: o arquivo que eu estava tentando enviar era muito grande. Portanto, no plano gratuito do ImageKit, existe um limite de tamanho. Acredito que sejam 20, talvez 40 megabytes. Mas não é muito grande.
+
+Por causa disso, não consigo enviar este vídeo. Então, o que eu vou fazer é encontrar uma que seja menor e que eu consiga enviar. Mas tenha isso em mente. Se você fizer um upgrade para o plano pago, poderá enviar vídeos significativamente maiores. Ok, então eu acabei de trocar o arquivo que estava enviando e funcionou. Agora, o
+
+redirecionamento nos causou um problema porque ainda não escrevemos o componente para a outra página. Mas se eu quiser verificar se está funcionando, posso simplesmente acessar o ImageKit. Agora devo ver que tenho duas pastas. Então, eu tenho uma pasta de miniaturas que foi criada com a miniatura que foi enviada. Agora também tenho uma pasta de vídeos que foi carregada ou criada com o vídeo que foi carregado. Então, você pode ver que está
+
+aqui. E este é apenas um vídeo aleatório gerado por IA que eu carreguei aqui. Legal. Ok, agora o upload está funcionando e também devemos conseguir ver que uma nova entrada de dados foi criada aqui, armazenando as informações sobre nossos vídeos. Então, temos o ID, título, descrição, caminho do arquivo, nome do arquivo, caminho da miniatura e a data de criação. Então, o que eu quero fazer agora é
+
+continuar escrevendo o resto do código para que tenhamos, de fato, a página de visualização, construamos o reprodutor de vídeo, possamos exibir os diferentes vídeos, etc. Então, vamos fazer isso. Então, vamos onde está escrito " reprodutor de vídeo". Acabei de perceber que deveria estar escrito " biblioteca de vídeos". Então, não sei o que eu estava lendo quando fiz isso, mas biblioteca de vídeos, pronto. E agora podemos
+
+escrever isso para exibir todos os nossos vídeos. Então, a mesma coisa, isso vai usar o cliente. E o que vamos fazer é importar a imagem, e vamos importar o componente de imagem do Image Kits. Vamos dizer a partir de e este Image Kits {slash} em seguida. Em seguida, vamos importar o tipo de vídeo. Então, vamos
+
+importar vídeos dos nossos tipos. Em seguida, vamos importar o link para que possamos acessar o reprodutor de vídeo. Então, aqui está o link e depois vem a seguir. Ok, próximo link {barra}. E então vamos clicar em importar e vamos importar nossos estilos. Então, em
+
+{slash} estilos como assim {slash} library.css. Ok, legal. Agora, vamos usar props de interface porque precisamos de algumas props para isso, que serão vídeos {dois pontos} vídeos assim ou vídeo e então um array. OK. Então, agora vamos usar a
+
+função padrão de exportação da biblioteca de vídeos. Para a videoteca, vamos usar alguns vídeos que farão parte do nosso acervo de adereços. Ok, então vamos usar {colon} props assim. Então, o que faremos é dizer que a constante URL endpoint é igual a process.env.next_public_imagekit_
+
+endpoint ou a uma string vazia. E vamos escrever "props" corretamente, com letra maiúscula. Em seguida, vamos verificar se o comprimento dos vídeos (videos.length) é igual a zero e, então, podemos retornar. E vamos retornar uma div.
+
+Agora, para a div, vamos apenas garantir que a coloquemos entre chaves. Vamos usar o elemento ` div` e então o nome da classe será igual a `library-empty`. Em seguida, teremos outra div. Este será o nome da classe e, na verdade, será uma tag <p>, desculpe, não uma div. Então, vamos ajustar isso.
+
+Vamos considerar que o nome da classe é igual a `library-empty`. Ok, texto vazio. Então vamos dizer que ainda não há vídeos, apenas que eles estão cientes. E vamos disponibilizar um link para que eles possam enviar um vídeo. Então, vamos inserir o link assim e depois clicar em " enviar vídeo".
+
+E então vamos dizer que isso vai redirecionar para / upload. E vamos considerar que o nome da classe é igual ao da biblioteca. Ok, clique em -enviar- e depois no botão. Perfeito. Agora, vamos descer aqui e escrever o componente quando ele tiver vídeos. Então, agora vamos
+
+ter uma div. Vamos considerar que o nome da classe é igual à biblioteca. Ok, -grade. Então, vamos usar o videos.map e vamos reproduzir um vídeo assim .
+
+Então, para o vídeo, o que vamos retornar é o seguinte. Então, na verdade, em vez de fazer isso, vamos simplesmente colocar um conjunto de... Como você quer chamar esses parênteses? OK? E dentro dos
+
+parênteses, está correto? Sim. O que teremos é um link. Então, se eles pressionarem esse componente, irão para o reprodutor de vídeo. Para o link, vamos usar `href is equal to` e isso estará entre crases (``). Então, vamos
+
+usar crases (`) e depois isso deve ser /watch/, depois isso será um cifrão e então o video.id. E também teremos uma chave, então diremos que a chave é igual ao video.id, porque teremos vários vídeos aqui dentro, então precisamos da chave para o React. Em seguida, teremos a div.
+
+O nome da classe será igual ao da miniatura do cartão. Em seguida, teremos um componente de imagem. E quanto ao componente de imagem, este vem diretamente do ImageKit. Vamos escrever os diferentes parâmetros de que precisamos. Então, vamos dizer que o endpoint da URL é igual a e então este será o endpoint da URL.
+
+OK? Em seguida, teremos `src` igual a, e este será o caminho do arquivo `video.thumbnail`. Ou então, vou mostrar uma maneira de gerar dinamicamente uma miniatura para o vídeo de forma automática. O ImageKit tem um recurso muito interessante: se você não enviar uma miniatura ou se quiser gerar uma miniatura a partir de um vídeo, basta digitar um URL específico. Como eu estava dizendo
+
+antes, o ImageKit permite que você faça transformações de vídeos e imagens apenas alterando os parâmetros de consulta em uma URL. Então, o que podemos fazer é usar o caminho do arquivo de vídeo e depois /este caminho, que é o ik-thumbnail, e ele irá gerar automaticamente uma miniatura a partir do primeiro quadro do vídeo. Agora, você pode gerar o gráfico a partir de qualquer registro de data e hora, mas o primeiro quadro geralmente funciona muito bem. Então, é isso que vamos fazer. Vamos usar o símbolo de dólar, vídeo, então precisa ser uma variável, {ponto} caminho do arquivo e, em seguida, vamos usar {barra} ik- miniatura {ponto} jpeg. Agora, esta parte,
+
+certo, é o que vai gerar a miniatura para nós. Então, ele vai analisar o vídeo automaticamente, criar a miniatura como o primeiro quadro e nos enviar. Então, mais uma vez, um recurso super legal do ImageKit. Vamos então dizer que o alt é o título do vídeo {dot}. Vamos definir a largura como 320 e a altura como 180.
+
+Vamos definir o nome da classe como "thumbnail- image" e, em seguida, podemos aplicar uma transformação. Então, para fazer a transformação, podemos fazer uma transformação assim e, em seguida, podemos inserir uma lista de transformações que queremos aplicar. Então, eu quero que tenha 320 de largura e 180 de altura. Novamente, o ImageKit também permite transformações. Portanto, mais uma vez, podemos transformar a imagem simplesmente passando esse parâmetro de transformação, e ela aplicará automaticamente um ajuste de largura e altura , retornando a imagem para nós. Podemos fazer todo tipo de
+
+transformação com as imagens. Por exemplo, podemos torná-las em preto e branco. Podemos remover o fundo. Podemos adicionar texto por cima deles. Na verdade, vou mostrar-lhe rapidamente o que quero dizer. Então,
+
+se olharmos para o SDK ImageKit do Next.js e rolarmos para baixo, vamos encontrar as transformações. Onde estão as transformações? Aqui estão as transformações em cadeia. Você pode ver que é possível fazer algo como girar a imagem. Você
+
+pode adicionar uma sobreposição, certo? Você pode realizar várias transformações em uma só. Você pode usar uma cor sólida. Você pode aplicar todo tipo de coisa aqui simplesmente escrevendo o código, e então, nos bastidores, o que esse componente, como se chama mesmo, fará é ajustar a URL usada para buscar a imagem e aplicar a transformação a ela. Isso ocorre porque, novamente, as transformações no ImageKit são apenas parâmetros de consulta. Por exemplo,
+
+se formos em transformar e adaptar, podemos ver que é assim que se aplicam transformações a diferentes recursos armazenados no ImageKit. Então, é muito útil e muito fácil de fazer. E quando usamos o componente Next.js que estamos utilizando, ele aplica automaticamente essas transformações em segundo plano para nós. Então, vou mostrar o que quero dizer em um segundo com mais detalhes, mas agora temos apenas esta imagem que representa o vídeo.
+
+Agora, o que faremos é adicionar outra div. Teremos um nome de classe, e isso será igual às informações da miniatura. Agora, aqui dentro, teremos uma tag H3. O H3 terá o mesmo nome de classe que o título da miniatura, e neste caso será " video.title".
+
+Teremos então a data em que isso foi carregado. Então, teremos que o nome da classe é igual à miniatura - data . E aqui, esta será uma nova data de criação do vídeo, pois trata-se de uma string .toISOString. Ok, vamos usar o comando .split
+
+em T zero para obter apenas a data e não a hora. Certo, então vamos formatar isso, e ficará muito mais fácil de ler. Ok, agora todos os vídeos com suas miniaturas devem ser exibidos. Vamos ver se isso realmente funciona se formos à videoteca. Mas, para visualizar a biblioteca de vídeos, precisamos criar esta primeira página, que é a página inicial, e que precisa ser um componente React. Certo, então, para a
+
+página inicial, vamos escrever o seguinte: Vamos simplesmente importar a biblioteca de vídeos e depois importar todos os vídeos. O que faremos é simplesmente criar uma variável. Então, vamos dizer que `const videos` é igual a `get all videos`. E então vamos retornar uma div simples. Então, vamos fazer isso. Então, retorne a div.
+
+Na verdade, nem precisamos de um nome de classe; podemos simplesmente usar um H1 e dizer, por exemplo, que o nome da classe é igual ao título da página. Vamos dizer "bem-vindo" ou algo como "reprodutor de vídeo". E então o que podemos fazer é simplesmente renderizar o reprodutor de vídeo. Nossa videoteca, desculpe. E, na verdade, por que estou dizendo reprodutor de vídeo? Isto deveria ser uma
+
+videoteca. E então vamos passar o vídeo. Desculpe, eu disse que vídeos são iguais a vídeos como este, e então formatei isso. E podemos começar. Ok, então acabamos de escrever esta página inicial simples. Então agora, com
+
+sorte, não vamos mais encontrar um erro ao acessar essa página. E se olharmos aqui, vamos atualizar a página. E o que está escrito? A exportação padrão não é um componente React na página de ID de observação {slash} . Ok, então é porque vamos {slash} assistir. Vamos para a
+
+página inicial, e você pode ver que está escrito "Vídeo do Tim" . Por algum motivo, a miniatura não está aparecendo, e vamos dar uma olhada nisso em 1 segundo. Bem, pelo menos está renderizando alguma coisa. Ok, então acabei de olhar o console e parece que o endpoint da URL, por algum motivo, não está funcionando corretamente. Então, se formos para o ambiente ENV, vamos ver o que está errado. O próximo
+
+endpoint da URL pública do ImageKit é igual a este. Deveria estar carregando, mas talvez não tenhamos colocado no local correto . Então vamos ver. Se formos ao layout, tudo bem, vamos apenas copiar esse valor aqui. E sabe o que talvez tenhamos que fazer?
+
+Talvez tenhamos que reiniciar o terminal. Ok, e parece que, se eu olhar para o reprodutor de vídeo, acho que tínhamos o nome da variável errado aqui. Então, vou colar a versão correta. Sim, próximo endpoint de URL pública do ImageKit. Ah, era isso que tínhamos no ambiente ENV, então só estamos nos certificando de que temos o correto. E então, se
+
+formos ao layout, vamos garantir que temos o correto aqui também. Certo, e parece que sim. Então, espero que isso resolva o problema. E pronto, aí está. Podemos ver que a miniatura está aparecendo e sendo exibida na tela.
+
+Agora, apenas para um teste, vamos à biblioteca de vídeos e vejamos o que acontece se removermos isso e usarmos apenas a miniatura gerada pelo ImageKit. Então, se acessarmos este link agora e atualizarmos a página, levará apenas um segundo para carregar na primeira vez, pois o sistema está armazenando os dados em cache e gerando a imagem em miniatura , mas deveremos conseguir visualizá-la em 1 segundo. Ok, legal. Levou apenas um segundo e agora você pode ver que carregou e este foi o primeiro quadro do vídeo, então foi isso que gerou como imagem. E agora, na próxima vez que carregarmos a página, ela aparecerá instantaneamente aqui porque a imagem já foi gerada . Novamente, algumas das
+
+transformações, quando aplicadas, levarão apenas um segundo, pois o ImageKit precisa processar os dados em segundo plano. Portanto, tenha isso em mente se você for fazer transformações de imagem personalizadas e coisas do tipo, o que é bastante útil. Leva apenas um segundo, então, sabe, pode haver uma pequena latência na primeira vez que você executar o programa até que ele seja gerado. Ok, então agora que temos a biblioteca de vídeos e o recurso de upload de vídeos, o próximo passo é construir o player e a página de visualização. Então, vamos entrar no player, vamos para o player simples, e vamos programar essa parte. Assim que tivermos o
+
+reprodutor, poderemos gerar os vídeos na página de exibição e, bem, poderemos de fato assisti-los. Muito bem, então para o nosso reprodutor simples, a mesma coisa, este será um componente cliente. Vamos importar o estado do React. Também vamos importar nosso vídeo e construir o SRC a partir dele, e isso será feito com o ImageKit, então vamos para o ImageKit em seguida. Em seguida, vamos importar e este será o vídeo como tipo de vídeo de e este estará em e este é, acredito, {slash} tipos {slash} vídeo. OK. E então vamos
+
+importar a transformação. Na verdade, daqui também. Então, vamos importar a transformação. Ok, legal. Então, agora vamos criar uma interface, que serão os elementos básicos do jogador . Ok, e isso vai
+
+incluir um vídeo, que será do tipo vídeo. E também receberá um endpoint de URL, que é uma string. Ok, então vamos usar o operador ` const` e criar uma função chamada `strip`, que precisaremos daqui a pouco. Essa função receberá uma string e removerá alguns caracteres desnecessários para uma transformação específica que aplicaremos em seguida. Então, vamos dizer que p.começa com
+
+Ok, barra. Então, se começar com uma barra, o que faremos é usar p.slice one. Então, basta remover essa barra inicial. Caso contrário, basta retornar p.
+
+OK? Então vamos dizer const min. Ok, então const min_q será igual a um. Esta é a qualidade mínima. E então, a constante max_q será igual a 100, que é a qualidade máxima de um vídeo, porque vou mostrar como podemos ajustar a qualidade ao renderizar o vídeo. Em
+
+seguida, vamos executar o comando `export default function simple player`. Isso vai receber o vídeo e o endpoint da URL das propriedades do player simples . OK? Em seguida, vamos criar um parâmetro chamado "qualidade" para que possamos ajustar a qualidade do vídeo em um segundo. Portanto, vamos dizer que a qualidade definida é igual ao estado de uso. E
+
+depois falaremos sobre a qualidade do vídeo. Ok, {ponto de interrogação}. 50. Portanto, se não tivermos especificado uma qualidade de vídeo , por padrão usaremos a qualidade 50. Agora, vou explicar em 1 segundo como a qualidade funciona , mas quanto menor a qualidade, mais rápido o vídeo carrega. Agora, você
+
+pode reduzir significativamente a qualidade sem comprometer a qualidade visual ou exibir uma grande quantidade de artefatos. Assim, um vídeo com qualidade 80, por exemplo, carregará significativamente mais rápido do que um com qualidade 100, mas é quase impossível perceber a diferença na qualidade. Assim, o ImageKit nos permitirá fazer isso para que possamos otimizar a entrega do vídeo, o que é bastante útil. Enfim, você verá em um instante como isso funciona. Então vamos dizer transformação constante, ok? E vamos considerar que a
+
+transformação aqui é uma matriz, e teremos uma matriz de transformações que queremos aplicar a este vídeo. Então, o que vou fazer aqui é criar uma lista de transformações que aplicaremos ao vídeo com base no conteúdo que carregamos para ele. Por exemplo, se tivermos uma marca d'água em vídeo, queremos colocar a marca d'água no vídeo. Então, como eu estava mencionando, existem todas essas transformações, uma das quais é uma marca d'água ou uma sobreposição de vídeo ou imagem. Então, neste vídeo, podemos colocar uma imagem por cima, como uma marca d'água, e é isso que vou aplicar aqui nesta lista de transformações, além de alterar o formato do vídeo, se houver. Então,
+
+vamos dizer, ok, assim, qualidade, ok? Dentro de uma matriz, isso será apenas uma transformação de qualidade para aplicá-la usando a qualidade definida aqui, que alteraremos posteriormente. Em seguida, vamos dizer reticências , e dentro dos parênteses, vamos dizer video.format {ponto de interrogação}. Então, se o vídeo tiver um formato específico, teremos um array aqui, que contém um objeto chamado `format`, e então ` video.format`, ok? Então, podemos mudar
+
+o formato para algo como WebP, sabe, MP4, ou qualquer outro, certo? Somos capazes de fazer isso. E então, caso contrário, desculpe, então vá para "caso contrário", teremos um array vazio, ok? Em seguida, vamos dizer reticências, e depois a mesma coisa, vamos colocar parênteses e dizer vídeo. marca d'água, assim. E então
+
+teremos um {ponto de interrogação} e um array. Então, dentro da matriz, teremos um objeto e vamos dizer " overlay", ok? E então isso será do tipo ` image as`, e vamos dizer `const`, assim . Então teremos uma entrada, e a entrada será uma tira. A marca d'água do vídeo.
+
+E este será o caminho da imagem. Certo, então vamos colocar dessa forma. Então diremos que a posição será igual a esse foco. Ok, e agora o vídeo. posição da marca d'água.
+
+Ok, ou por padrão vamos selecionar a posição inferior direita. E vamos falar em transformação. Certo, e então vai ser assim . E vamos definir a largura como video.watermark.width
+
+ou o valor padrão de 120. Agora, vamos dizer: Ok, temos o ponto de interrogação aqui. Caso contrário, apenas um array vazio. Portanto, se não tivermos uma marca d'água, simplesmente não aplicaremos essa transformação. Acabamos de criar uma lista de transformações que podemos aplicar ao vídeo quando usamos o componente de vídeo do ImageKit em 1 segundo. Agora, eu só quero ir à
+
+documentação e mostrar a vocês como isso funciona. Então, se dermos uma olhada... Vamos voltar ao Next.js aqui. Você pode ver no
+
+vídeo que podemos oferecer uma série de recursos diferentes, que você verá aqui em 1 segundo. Agora, uma coisa que podemos fornecer é uma lista de transformações. E as transformações que acabei de mostrar aqui são algumas que você pode aplicar. Por exemplo, adicionar sobreposições. Se você acessar esta página , verá que é possível adicionar uma sobreposição, que funciona como uma imagem. Então,
+
+carregamos uma imagem de marca d'água no ImageKit. E aí podemos simplesmente aplicar isso diretamente sobre o vídeo, e ficará visível durante todo o vídeo como uma marca d'água, o que é muito legal. Você pode fazer o mesmo com as imagens, mas estou apenas mostrando o que vamos criar aqui. Por exemplo, você tem a fonte de vídeo correta , controles e transformação. Um exemplo de transformação é a sobreposição, onde você pode até mesmo colocar outro vídeo em cima do vídeo e ter um vídeo dentro de outro vídeo, o que é bem legal.
+
+E há várias outras funcionalidades que você pode usar. Tipo, eu não tenho a menor chance de ir além de quatro deles. Mas o que estou fazendo é simplesmente pesquisar na documentação e escrever o código aqui. Bom, enfim , essa será a transformação. Agora, a próxima coisa que vamos fazer é obter a miniatura. Então, vamos usar `const`
+
+e isso significa que `thumbnail src` é igual a `video`. O caminho da miniatura, ou se não existir, usaremos crases (`), um cifrão ($) e, como mencionei antes, geraremos a miniatura, então usaremos video.filepath. Ok, e então isso vai ser uma miniatura com barra ik. jpeg assim. Então, se não tivermos uma
+
+miniatura da imagem carregada, usaremos uma do ImageKit que a gera a partir do primeiro quadro. Em seguida, diremos que ` const poster URL` é igual a `build src`. Esta é uma função especial que irá construir um URL do ImageKit para nós. Agora, aqui dentro, vamos dizer que este é o endpoint da URL. A fonte será a fonte da miniatura, e então vamos definir a transformação que queremos aplicar para que o tamanho da miniatura tenha 1920 de largura e 1080 de altura. Agora, poderíamos
+
+aplicar quaisquer outras transformações que quiséssemos aqui. Poderíamos girar a imagem, poderíamos convertê-la para preto e branco, poderíamos remover o fundo, certo? Assim como qualquer transformação que você possa fazer usando esta função de construção de código-fonte, que simplesmente constrói este URL especial para você no ImageKit, permitindo gerar diferentes imagens, vídeos, etc. Certo? Então, o que vamos fazer é retornar uma div.
+
+Essa div terá o nome de classe igual a "simple player". E vamos exibir o vídeo. Certo, então para exibir o vídeo, vamos usar o componente de vídeo. Para o componente de vídeo, este pode ser simplesmente um componente autossuficiente. Vamos considerar que a chave é a qualidade.
+
+Certo, você já vai entender por que precisamos disso . Em seguida, diremos que o ponto final da URL é igual ao ponto final da URL. Vamos considerar que SRC é igual a e este será o caminho do arquivo de vídeo. Certo, então, o caminho do arquivo de vídeo, que fará referência a ele no ImageKit. Vamos dizer que transformação é igual a transformação. Vamos usar o termo "
+
+pôster", que se refere à imagem que será exibida durante o carregamento, como URL do pôster. Vamos usar a opção "controles", que exibirá os vários controles disponíveis. Vamos dizer que as jogadas são em linha. Vamos definir `preload` como igual a ` metadata` e, em seguida, adicionar uma tag de estilo simples diretamente aqui, onde definiremos a largura como 100% e a proporção como 16:9. Ok, isso deve exibir o vídeo.
+
+Agora, vou acrescentar mais uma coisa aqui que nos permitirá alterar a qualidade. Então, vou usar uma div e definir o nome da classe como " simple dash player dash controls". Dentro da div, vou colocar apenas um rótulo. Este rótulo indicará que o nome da classe é igual a "simple dash player dash quality dash label". Ok, e vamos dizer que isto é HTML 4 e que esta será a entrada de qualidade que temos abaixo em um instante.
+
+E isso vai transmitir qualidade. Em seguida, teremos uma tag de entrada. E, no caso da tag de entrada, isso nos permitirá alterar a qualidade do vídeo. Então, vou dizer que ID é qualidade, tipo de entrada é igual a número, min é igual a min_q, max é igual a max_q. Vamos dizer que valor [limpa a garganta] é igual à qualidade e vamos dizer que na mudança e vamos chamar uma função aqui em um segundo que eu escreverei.
+
+Vamos dizer que o nome da classe é igual a e então esta será uma entrada simples de qualidade do jogador . Ok, legal. Assim. Tudo bem. Então, esse será o campo de entrada. Agora, só precisamos escrever
+
+isso na função de alteração. Então, a função de alteração será simplesmente assim . Então, vamos dizer const on on quality change. Ok, e isso vai levar em consideração o tempo necessário. Portanto, e é igual a react.changeevent
+
+e, em seguida, este é um elemento de entrada HTML. Certo, e então o que isso fará é dizer que const n é igual a e.target.value como número. E então diremos "se não", porque precisamos garantir que esse seja um valor válido antes de alterá-lo. Então,
+
+vamos dizer que se nenhum número não for um número de n, então vamos definir a qualidade e vamos defini-la como o mínimo de max_q e o máximo de math_min_q e o arredondamento de n. Eu sei que parece um pouco complicado, mas precisamos garantir que o valor de qualidade aqui não possa ser alterado para um valor diferente de 1 a 100. Então, para a condição de alteração, vamos simplesmente chamar a função que está configurada para detectar a alteração de qualidade. Certo, e então vamos formatar isso para que fique um pouco mais fácil de ler. Ok, então vamos diminuir o zoom. Então, agora temos o
+
+reprodutor que, ao ser carregado, o que faremos em 1 segundo, gerará uma lista de transformações, incluindo a marca d'água, o formato e os diferentes controles de qualidade. Vamos gerar a miniatura que será exibida para a imagem. Teremos uma pequena participação para melhorar a qualidade. E então usaremos o componente de kit de imagens do Next.js por padrão, que cuidará automaticamente do carregamento de tudo isso para nós.
+
+Ok, legal. Em seguida, temos a possibilidade de alterar a qualidade. Para que isso carregue, precisamos exibir essa informação na página de visualização. Então, vamos acessar este arquivo page.tsx.
+
+Escreva isso e então praticamente terminamos. Só mais algumas coisinhas depois disso. Ok, então na página de visualização, vamos importar. Vamos dar um zoom um pouco. Ok, não foi encontrado em e isso será o próximo/navegação, assim.
+
+Ok, então vamos importar o vídeo obtido. Ok, pelo ID do armazenamento. Vamos importar o reprodutor simples. E vamos importar o link de next/link. E vamos importar nossos estilos. Então, vamos dizer
+
+em /styles/watch.css. Assim mesmo
+
+. Em seguida, vamos falar sobre as propriedades da interface. Ok, vamos chamar isso de parâmetros porque vamos precisar do ID do vídeo. E isso será uma promessa, que terá um ID e uma string. Em seguida, diremos exportar.
+
+Ok, exportar const dynamic é igual a forçar dynamic. Em seguida, vamos dizer "export default async function watch page", e isso será params. Então, vamos adicionar os parâmetros e, em seguida, estas são as propriedades. E o que vamos fazer é obter a identificação. Então, vamos dizer const Okay, ID é igual a await params assim. Vamos definir `const
+
+video` como equivalente a obter o vídeo por ID e, em seguida, vamos carregá-lo a partir do ID. E então vamos verificar se não há vídeo, então, se não houver vídeo, podemos simplesmente chamar "não encontrado", o que nos retorna um erro 404. Caso contrário, podemos retornar o vídeo. Então, vamos retornar a div. Ok, dentro da div, vamos colocar um link. Este link apenas o levará de
+
+volta à biblioteca. Teremos um atributo href, que será igual a uma barra (/), e teremos um nome de classe, que será igual a backlink. Ok, então vamos ter uma div. Vamos definir o nome da classe como sendo igual a video-container. Em seguida, teremos o reprodutor simples.
+
+Para o reprodutor simples, vamos renderizar o vídeo, então diremos que ` video` é igual a `video`. E o endpoint da URL, ok, então o endpoint da URL aqui será igual ao process.env. E então este é o endpoint next_public_imagekit_imagekit_url_, assim:
+
+Certo, então por que isso está me causando um problema? Diz que pode ser indefinido. Ok, vamos colocar um ponto de exclamação aqui, porque sabemos que não vai ficar indefinido. Legal, então essa é a div. E então, fora da div, teremos uma tag h1 simples.
+
+Ok, então vamos lá, h1. Para isso, vamos apenas colocar o título do vídeo, então vamos usar ` video.title`, e vamos colocar `class name is equal to` e então isso será `video-title`. Em seguida, teremos uma descrição do vídeo, então vamos usar ` video.description` e definir a classe da tag de parágrafo como ` video-description`. Portanto, a classe
+
+será ` video`. descrição assim. Vamos escrever corretamente. Hum, e descrição. Está tudo pronto . Ok, então essa deve
+
+ser a página de visualização agora. Então, se voltarmos aqui e clicarmos em um dos vídeos, devemos ser direcionados para uma página de visualização. E você pode ver que temos o vídeo e que levará apenas um segundo para carregar pela primeira vez. Mas, como você pode ver, a imagem carrega bem grande. E então poderemos executar o vídeo. Ok, perfeito,
+
+o vídeo carregou. Eu simplesmente não vou reproduzir o áudio porque ele está protegido por direitos autorais . E você pode ver que podemos analisar isso detalhadamente, certo? Podemos ir para lá. Podemos alterar a velocidade de reprodução. Podemos
+
+colocar em tela cheia. Ok, também podemos alterar a qualidade. Então, se alterarmos a qualidade para algo como 20, por exemplo. Ah, ok, como eu faço isso? Vamos mudar para um valor como 10 e ver se a qualidade cai. Ok, vocês
+
+podem ver aqui que a imagem está um pouco mais granulada agora porque definimos a qualidade para 10, mas carregou mais rápido. Então, você pode alterar a qualidade, fazer alguns ajustes . Por isso adicionei o controle. E na verdade há muitas outras coisas que você pode fazer aqui com o vídeo, mas eu simplesmente não queria nos sobrecarregar agora. Então, o que eu quero fazer agora é testar o recurso de marca d'água, enviando outro vídeo com uma marca d'água. Então, vamos
+
+fazer isso. Ok, então vou fazer o upload agora. Observe que incluí um arquivo de marca d'água; vamos ver se conseguimos obter um. Ok, preciso fazer mais um aqui para aparecer. Então, essa é a marca d'água que vou usar e vamos ver se ela aparece no canto inferior direito. Ok, levou um tempinho
+
+, mas agora vocês podem ver que, se olharmos para o vídeo, conseguimos ver a marca d'água. Vou deixar o vídeo rodar por um segundo para que o player feche e você possa ver que agora ele está integrado à imagem e funcionando. Isso funciona por causa da URL que está sendo carregada. Então, não tenho certeza se vai funcionar, mas se eu olhar na aba de rede e atualizarmos aqui, devemos conseguir ver o que está carregando o vídeo. Podemos ver qual era o URL para obter essa fonte. Então,
+
+consegui encontrar e este é o URL na barra do navegador. Você pode ver que este é o nome do vídeo, 1080p, certo? Carregando o arquivo MP4. Como você pode ver, temos isso, uh, você sabe, TR, que significa transformação. Essa é a qualidade. E
+
+então, carregamos uma imagem de marca d'água como esta, ok? Então, só para mostrar, esses são os URLs. E se você simplesmente digitar esse URL no seu navegador, verá que ele aparece na tela e o vídeo é exibido, certo? Assim, ele pode ser exibido em qualquer aplicativo. Não precisa ser apenas o nosso reprodutor de vídeo. E repare como está rápido
+
+agora que está em cache, não é? E carregamos novamente com uma qualidade inferior. E se aumentarmos a qualidade para 100, o arquivo ficará maior e, portanto, demorará um pouco mais para carregar. Você pode ver que está demorando um pouco, mas devemos obter um vídeo de melhor qualidade quando carregar. Além disso, notei um pequeno problema: estávamos recebendo alguns erros relacionados a algo estranho com a hidratação . Então, acabei de adicionar o
+
+aviso de supressão de hidratação a este campo de entrada aqui. Quando fiz isso no reprodutor simples, o problema desapareceu. E agora estamos praticamente prontos para começar. Então, como vocês podem ver, nós praticamente criamos um reprodutor de vídeo completo que funciona com marcas d'água, com múltiplas transformações, permite alterar a qualidade, ajustar as configurações e tudo mais. Outra coisa que gostaria de mencionar é que, se você quiser que isso seja ainda mais rápido, pode usar um recurso do ImageKit chamado streaming de taxa de bits adaptável . Então, vou mencionar isso rapidamente
+
+. Adaptativo. Ok, vamos ver se aparece aqui. Streaming com taxa de bits adaptável, também conhecido como ABS. Agora, isso não é compatível com todas as transformações ou com este componente do Next.js, mas se você não quer todas
+
+essas personalizações e apenas deseja tempos de carregamento extremamente rápidos, o streaming de taxa de bits adaptável é muito interessante porque altera automaticamente a qualidade do vídeo com base na largura de banda do computador do usuário, para que você obtenha os tempos de carregamento mais rápidos, e então pode aumentar a qualidade conforme necessário. Então, vou deixar um link para isso na descrição. Você pode ler , mas é muito útil para transmitir vídeos de forma eficiente. E você pode ver que é possível obter esse URL de streaming HSL adicionando uma transformação a esse tipo de mestre IK. Novamente, você precisa ler a documentação. Não vou
+
+explicar tudo, mas o importante é que isso permitirá que você transmita o vídeo mais rapidamente e que ele se ajuste automaticamente, o que é muito legal. Bem, pessoal, dito isso, vamos encerrar este vídeo. Se gostou, não se esqueça de deixar um like, se inscrever no canal e nos vemos no próximo vídeo. [música]

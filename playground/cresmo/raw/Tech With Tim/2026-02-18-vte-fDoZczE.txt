@@ -1,0 +1,351 @@
+---
+video_title: "OpenClaw Full Course: Setup, Skills, Voice, Memory & More"
+video_id: vte-fDoZczE
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vte-fDoZczE
+video_date: 2026-02-18T13:18:26+00:00
+video_description: |
+  Setup your VPS with Hostinger and use the code TECHWITHTIM for a 10% discount on annual plans: https://hostinger.com/techwithtim
+  
+  In this full OpenClaw course, I walk you through everything from initial VPS setup to advanced configuration, skills, memory, voice integration, and automation. We’ll cover Docker, gateway access, SSH, model configuration and cost optimization, Telegram integration, speech-to-text, coding skills, markdown system files like IDENTITY and USER, SOUL.md, HEARTBEAT.md, cronjobs, and more. If you want to run powerful AI agents on your own infrastructure and actually understand how the system works under the hood, this is for you.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🎞 Video Resources 🎞
+  QMD Backend: https://docs.openclaw.ai/concepts/memory
+  Secure Setup Guide: https://www.youtube.com/watch?v=tnsrnsy_Lus
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview 
+  00:27 | Security Warning
+  03:07 | VPS Setup
+  06:00 | Understanding Docker
+  06:50 | Accessing the Gateway
+  07:34 | LLM Limits
+  09:00 | SSHing Into the Server
+  11:06 | Model Configuration & Cost Saving
+  18:00 | Telegram Configuration
+  20:10 | Adding Voice & Speech-to-Text
+  23:07 | Telegram Groups & Channels
+  26:30 | Understanding Skill
+  28:15 | Viewing Skills and Markdown Files
+  31:45 | Enabling Coding Skills
+  34:20 | Memory & Preferences
+  38:17 | Important Markdown Files (IDENTITY, USER, etc.)
+  40:28 | SOUL.md
+  41:24 | HEARTBEAT.md
+  44:28 | Cronjobs
+  
+  Hashtags
+  #openclaw #openclawforbeginners #openclawtutorial
+  UAE Media License Number: 3635141
+---
+Today, I'll be giving you a full comprehensive tutorial on how to set up Open Claw so it is productive, efficient, and actually helps you get something done. I'm going to go through skills, memory, the different files you need to configure, voice mode groups, all of the different things that actually allow you to get some value out of this tool. And then I learned the hard way, spending now over probably 60 70 hours configuring my own open core instance. So with that said, let's get into it. So first I do need to give you a quick disclaimer about security.
+
+And also just generally want to mention that in this video I'm going to be pretty thorough. I'm gonna be very detailed. I'm going to try to actually teach you something new. So while it will be pretty long, there's a reason for that. And I would suggest that you're going to get a lot more value out of a video like this than a quick ten minute setup where they're just blitzing through all of the steps and you have no idea what's going on.
+
+Anyways, that brings us to security. Now, while what I'm going to show you in this video in terms of set up is secure, if you want to go kind of extreme and make sure that you're very secure. I have a full 50 minute long video that breaks down every step you can take to harden and secure your open core instance. So I'll put that on screen right here. I'm not going to repeat everything in that video because again, it's already filmed and it's there for you to watch.
+
+And I'm going to assume generally that you already know how to set up Open claw in terms of getting at least access to the open cloud gateway or accessing it from the terminal or telegram. I will repeat those steps, but I will go through that quickly and focus most of my effort on all of the skills, integrations, connections, etc.. Now with that in mind, the general best practice here is to treat open claw like an untrusted virtual assistant. What I mean by that is that imagine you had actually a real person, maybe living in another country, and they were helping you with stuff and had access to a bunch of your data.
+
+You'd want to ensure if that person went rogue or had bad intentions, that they couldn't completely mess up your life. That means you wouldn't give them access to your main computer. You wouldn't give them access to your crypto keys, your primary email address, or any of those things. Right? So treat open cloud the exact same way.
+
+Make sure that if you are connecting it to external resources, that those are secure and that you set up separate accounts for it. Now you also definitely want to make sure that you run this on a virtual private server. This is a server that runs in the cloud that's hosted and managed by a company. It's typically a part of a large data center that is literally more secure than an airport. It's going to have things like regular backups, disaster recovery, you know, fire protection, natural disaster protection, and theft protection that you don't have when you run open claw on something like a mac mini or your own computer.
+
+Now, yes, sure, you can do that. But generally speaking, AV is just the best option. It's also very cheap and very easy and quick to set up. And as soon as you don't want it anymore, you can just turn it off. Rather than investing, say, $1,000 in a local hardware device.
+
+Okay, so anyways, that is the kind of basic set of steps on security. Just remember, the more stuff that you add to open claw, the more insecure that it becomes, and you only want to connect it to things that you would be okay, you know, at some point in time got hacked or got lost or got insecure. If you treat it like that, you're going to be fine and you won't have any security issues. So like I mentioned, I will run through a quick install of open client in case you haven't already done this. Now, the fastest and easiest way to get this up and running is to use host Stingers.
+
+One click install for their virtual private server KVM to plant. Now I'm fortunate enough to partner with host Stinger, so I also have a discount code, which I'll show you in one second, but you can see that it's as low as $7 per month. And the advantage here is you can literally just press 3 or 4 buttons, then open, closed, already set up and running. And you don't need to do any manual configuration yourself. Now this is still secure.
+
+There's no issue with doing this. But if you want the extra secure version of set up, then again you can watch the video that I'll put on screen that walks through some more advanced steps to really kind of go overkill and ensure that no one's going to access your virtual private server. So in my case, what I'm going to do for this video is just press on deploy. When I do that, it's going to bring me to the checkout page where I can select my plan. So what I'm going to do is just go with one month.
+
+But if you did go with 12 months or 24 months, then you can access my coupon code, which is tech with Tim, which will give you an additional 10% off. Just keep that in mind in case you want to use it. So I'm going to go one month. I'm also just going to uncheck ready to use with AI. Now you can use their credits there.
+
+If you don't want to worry about API keys, but in my case I am going to manually enter my own anthropic or OpenAI API key, which I will show you in a second. So from here, choose your server location and then press on, continue and proceed with the billing, and then it will set up the virtual private server and bring you to the screen you will see next. All right. So you should be brought to a page that looks like this, where you're now going to need to enter at least one of these four API keys that you see. So I'm going to go with anthropic.
+
+But you can use anything that you want. And you can change this later. But you just need to start with one of them. Otherwise the setup is going to be a little bit more complex. So what I'm going to do is just go to anthropic console, and you can find the links directly from this page here on where to go to find the keys.
+
+And I'm just going to make a new key. And I'm just going to call this hosting or Claude. That's fine. And let's copy the key and I will delete this after okay. So I'm just going to paste that inside of here and then press on deploy.
+
+And this will take a second. Once it's done what's going to happen is it will actually spin up a Docker container on this server, which will be running our open claw process server, whatever you want to call it. From there, we actually won't need to go directly into the terminal to manage anything there unless we want to. What we can do is just directly access the open cloud gateway, and from the gateway we can start configuring everything that we need. The advantage of using something like open Claw is that rather than you having to go in and manually modify a file or change a config, you can just tell the model to do that for you.
+
+So for example, when we want to set up telegram, we don't actually need to go in and run any commands on the server. We can just tell it, set up telegram and connect to this bot token. Right. And it will just be able to do that for us. Okay, so the VIPs is now spun up and you'll know that everything is functioning when you see this Docker container configured here in the Docker manager.
+
+Now Docker is effectively a way for us to run an isolated container on the virtual private server that has its own dependencies, its own management, its own files, whatever, so that if something were to go wrong with this Docker container, it wouldn't cause an issue with our whole virtual private server. Now, if you're a beginner and you have no idea what that means, don't worry too much about it. Just effectively it's running through Docker. So that does change the way in which you're going to interact with this. If you want to SSH into the server, which I will show you in a second.
+
+Anyways, what we can do is we can first just click right into this so we can press on manage. And when we press on manage we're going to be able to see the environment. And if we press on the environment we can see all of our environment variables. The first thing we're going to do is we're just going to copy the Open Cloud Gateway token, okay. And we're going to press this button right here, which is going to link us to the Open Cloud Gateway interface.
+
+From here we can just paste our gateway token. And then we can log in. And now we're inside of open cloud. It is set up. It's configured and we can just start chatting with it.
+
+So from here like this is really all you need now to start setting everything up. And you can just talk to the model, you know, hello world or something. Right. And it should give you a response. Now what I'm going to suggest is that the first thing we do is we add additional models or we change the model from anthropic to something else, because you are going to get very heavy rate limits are if you are using the anthropic models and can be extremely expensive.
+
+So I'll show you how to do that in one second. But I first want to just show you how you can actually manually access the server if you're looking to do that. And actually we have a good learning moment here already because I tried to type something to the assistant and nothing was working. So I'm kind of sitting here going like, why is not functioning? And then I realized that I went to the logs here.
+
+By the way, this is a super useful thing that you should definitely utilize. If it's not working, go to logs. I just filtered by error. Or sorry, an error and fatal. And I noticed that if I started reading through this, it said no API key found.
+
+And then above here it said my credit balance is too low to access the anthropic API. So what I did is I'm just here on a billing, and what I added was a $10, what do you call a credit amount. So I can actually start using the API. So definitely make sure that you have credits, that you purchase some credits in whatever platform you're using for the LLM. And I also suggest that you set your own limits.
+
+So we'll show you the default limits. But you set a monthly limits of something like $100, for example, like I said. So you don't accidentally use a ton because this can get extremely expensive very fast. Also, I would recommend adding a notification so that you get emails when you spend a certain amount so you know what's actually going on. Okay.
+
+Anyways, let's go back to chat and let's just type hey sir and make sure that this is going to work. And that looks a little bit better. Now we're getting the three dots. So hopefully we're going to get a response. And there we go.
+
+It gave us the information okay. So what we're going to do now before I start going into all of the setup is I'm just going to quickly show you how if you did want to access this from the terminal, you could do that now first from the hosting or kind of manager here, whatever you want to call this, you know, platform, console. You could press the terminal button here and it will just directly sign you into the server. And in the web here you can start typing commands and start actually interacting with the server. Now if you don't want to do that, you can go to the overview and you can use the SSH command, which I'm going to assume you're familiar with if you'd like to do that.
+
+And you'll see here that this is the command ssh route add. And then the IP address. And what you're going to have to do is change the root password of the server in order to be able to sign in, because you wouldn't have set it by default. So you're going to change the root password SSH sign in with the account. And then you will have the same view as this.
+
+Now I will zoom in a little bit and I'm going to show you that if you wanted to for example access open claw. If you just type open colon, nothing's going to happen because this is running inside of a Docker container. So what you're going to have to do if you want to run terminal commands is you're going to have to type Docker PS you're going to have to find this container ID here okay. And copy it. So from here you're going to have to right click and copy.
+
+And you're going to type Docker. And then this is going to be your run. Yeah I think it's run or no Docker exec. Sorry dash it. You're then going to paste this ID.
+
+So let's paste that there. I'm going to have to remove all of these things that I don't need okay. So remove that. And then I'm going to type slash bin slash bash. So this is how you can actually execute the Docker container interactively.
+
+When you do that you're going to notice that it will change this at symbol to be at the Docker container ID. And then from here you can type open claw. And if you do that it will run open colon. And you will be able to actually interact with it. And run any of the commands that you want. Okay.
+
+So I'm not going to go through doing anything in the terminal, but I'm just showing you that that's how you would do this. Again, you run Docker PS you get the name here or the ID, sorry. You then run docker exec it for interactive, put the container ID and then slash bin slash bash and you can start interacting with it in the terminal. Okay cool. So we have this set up now.
+
+And like I was saying, the first thing I would suggest we do is actually change the model that we're using or at least configure the LLN so that we save a bunch of money and we have the best intelligence possible. Now, anthropic does have the best models for open class. So for example, the newest model that just came out, opus 4.6, is the current best model that we definitely want to be using. However, we don't want to use it all of the time because of the rate limits.
+
+So a lot of times it just won't work because we've gone past our rate limit, especially if you're on a new account and it's very, very expensive. So the approach that I recommend is that we run with opus 4.6 for usually the starting tasks and any high level complex, you know, kind of planning tasks. And then we have that delegate to a cheaper, less intelligent model that can handle everything else. Now my case, what I've been doing is I've been connecting this to my OpenAI subscription or my ChatGPT subscription, because this allows me to use my usage or kind of quota from ChatGPT that I'm already paying.
+
+In my case, $200 per month for. But even if you're paying $20 per month for it, you can still access all of that usage. And OpenAI has made that, you know, available to do and not against their terms of service. So what I would suggest here is that you connect this to another model that is cheaper. In my case, I'm going to show you connecting it to the Codex model, which is still quite good and has almost unlimited usage when you are paying like I am $200 per month.
+
+However, if you're not paying for that, that I would suggest at least connecting this to just a cheaper model. For example, the Kimmie models are pretty good, or anything that's going to be just, again, cheaper than opus, because if you run opus every single day and you're doing a lot, you can spend 100, 200, 300, $500 per day. I know someone, one of my friends was spending the $200 per day running this purely with opus, which is insanity. So first things first, let's tell it the following. We're going to say okay, switch to use opus 4.6 by default.
+
+All right. So it should automatically switch its model then over to do that. And we'll verify that that's working okay. So it said that it's switched over now and just restarted the gateway. By the way the way that I'm seeing all of this information on the side is I have this little brain thing enabled.
+
+So if you want to disable that it will just show you what it did. If you want to see the full logs, you can view it here. And again you can go to the logs to see everything that's happening, which is always pretty useful. So I'm going to go back to chat, and I'm just going to quickly tell it to disable the rest of the fallback models, because if you have a look here, it shows the models that it's using is anthropic right. Shows which ones there's access to and then it shows the fallbacks are these.
+
+So I'm just going to tell it remove these fallbacks okay. And we'll leave ChatGPT 5.2 but remove the other two. So actually we're going to do it like this because I don't want it to accidentally try to switch to one of these models that doesn't exist. So I'm going to hit enter.
+
+And hopefully we'll do that okay. So now I want to add additional models. So I'm going to say help me add the Codex model. From my open AI subscription. Same thing. Any model you want to add, just tell it.
+
+It can help you do that and hopefully should run through the setup steps. It's probably going to have me click a link and then from that link I will be able to authorize and then kind of give it an authentication token to add the model. Now once we have multiple models here, what we're going to do is give it instructions to switch between the models based on what we want it to do. So it says what options do you want? I'm going to say I need to connect via OAuth to my OpenAI Codex plan.
+
+Give me the link to do so. So I know that that's how we need to connect to it. So hopefully it should give me the link. But I guess the way that I promised it before wasn't clear. So anyways, let's see what it does now. Okay.
+
+So you can see it's giving us a few options here on how to connect this. And it says, you know, option A is opening our API key. And option B is OpenAI code Codex subscription. So I'm going to say use this and run the command okay. And again notice that I'm just using the model directly to do this rather than me going in the config and modifying everything.
+
+And it's really a matter of knowing what to ask for, as opposed to you having to manually go do that. So I'm just going to ask it. Hopefully it will run that command and then we can connect our OpenAI model. Okay. So you can see it's giving me this URL.
+
+So what I'm going to do is press on that. And then what I need to pass to this afterwards is the localhost URL redirect. So I'm just going to sign in and then give it that okay. So I'm going to press continue here. And then what's going to happen is will redirect me to this URL.
+
+So let's give it a second I want to copy it. And then I'm just going to paste it in here. And hopefully it will configure that for me. Again if you want to do another model you just tell it the other model and it will set it up. Now while it's doing this, what I want to do is I want to tell this to actually write a command for me that's going to allow me to switch between the models and then have it automatically do that as well.
+
+So I'm going to say make a command called slash model that allows me to switch between the opus 4.6 and Codex, I don't know, 5.3 or something. I think is what it is. Whatever the best one is.
+
+Okay, so now we'll queue that up. So after this is done, we'll run the commands okay. So it looks like it created that command. So now if I run the command slash model we should be able to switch. Let's go slash model and then Codex and see if that command is going to work.
+
+And it says model set to Codex 5.2. Okay. Perfect. Looks like that is indeed working.
+
+All right. So now we have the two models. Again. What I want to do is just quickly give it some instructions to always default to opus. But then any time we're doing some kind of coding task or something that doesn't require a lot of intelligence or complexity to switch over to the Codex model to save money.
+
+So let me write up a prompt and tell it that, and it should save that in its preferences and configuration. I want you to always use the opus 4.6 model by default, but whenever an instruction is provided to you, I want you to determine whether or not you need that level of intelligence, or if you can switch to a cheaper model like Codex 5.2. Codex should always be used for coding tasks, and anything that is lower leverage or doesn't require a ton of detailed steps or thinking.
+
+So always use opus to come up with the plan to start the process, but then delegate lower level tasks using sub agents to the Codex model to ensure that we're saving money in cost. Whenever you run a task, start by telling me what model you're using for running it. So tell me, hey, we did Codex 5.2 for this. We did opus for this, etc.
+
+so that I know that it's running correctly, save this preference for the future. So it looks like that's working. And what this would have done here is create a rule. So now we can go reference that rule to understand. All right I need to do this I need to switch between the models.
+
+So what I'm going to tell this now is I want to set up telegram. Tell me how to connect it okay. Now while it does that I'm just going to open up telegram on my computer and I will start running you through the steps. Okay. Now it says that we can just run this command to connect telegram, and it says that we need to paste the, bot token when prompted.
+
+So I'm going to say run the command for me and I will send the token. And the general steps is that we need to open telegram and chat with the ad bot father type new bot and then copy the token. So it's very easy. What we're going to do is open telegram. We're going to go into the search here.
+
+We're going to find bot father and make sure you find the one that has the checkmark. Okay. Then from here we're going to type start and we're going to go slash new bot. All right. When we do that it's going to ask us for a name.
+
+So just call this Timmy. All right. And let's go Tim A123456 underscore bot. Just make sure it ends in underscore bot. It's I'm going to give you a token copy the token.
+
+And of course don't give that to anyone else. And then we're going to wait for this to finish. And we are going to send it the token so that it is able to, what do what do you call it, actually trigger this. Okay. So this is the token and we're going to paste that here now.
+
+Well that sets it up. We are also just going to press this link right here which will bring us to chat with our bot. So we want to chat with the bot that we just created. From here we're going to press on start. And as soon as it's connected we should get some kind of message here saying, hey, like we need to pair this or add some setting.
+
+So wait for the bot to finish. And then what you can do is just type any message here again, and it should tell you something like, hey, it's not paired, it's not connected. And then we can run the pairing command. All right. So this works. And I just typed hi.
+
+And you can see that it now gives me this. So I'm just going to copy this code here. And I'm going to say I got this you know parrot whatever and just paste the information in. And hopefully you will be able to run the pairing command and then will be connected with telegram. All right.
+
+So it said the pairing was approved. What I'm going to do now is just tap type. Hi. And see if we get a response from the bot. And then from this point forward we're able just directly to use telegram.
+
+Okay. So it says we're using opus 4.6. Hey telegram is connected. What do you want me to do next. Perfect.
+
+So that is exactly what I was looking for. So now, rather than me having to type out all of the prompts, I do want the ability to actually just speak them. So I'm going to tell it enable speech to text so you can transcribe my audio messages. Because by default if I send this an audio message is not going to understand it. So I'm just going to tell it, hey, you know, add that tool, add that skill and set yourself up.
+
+Now while it does that, I will just quickly mention, right, that the thing that makes this bot useful is skills. So if you press on skills here in the what do you call it, Claud dashboard or, you know, gateway dashboard, whatever you want to call it, you'll see there's this long list of default kind of built in skills that you can install and configure. Now, skills usually contains some kind of underlying software, as well as a markdown file that explains to the model. In this case open claw, how to actually use the skill. So go through here, have a look at some skills that are useful to yourself and you can disable them or you can install them sometimes.
+
+Again you need some command right. And I'll show you installing some of them in a second. But when we tell this, hey, we want to be able to speak to you. Well, we're effectively telling you to do is create a new skill that will allow it to transcribe audio messages. So I'm going to go here that says we can enable audio transcription.
+
+But you need to pick a transcription provider. The config schema supports tools that medium audio deep Graham OpenAI I'm going to say use whatever the default is that doesn't okay. So it doesn't require a new key. Perfect. And then that should enable voice mode for us okay.
+
+So you can see even though it was kind of lying to us before and saying, hey, you know, I need to provide OpenAI key, whatever, I just told it, no, you don't need that because I know it can do it by default. And it's so we can now send an audio message. So let's test this. Hey, so I'm just sending an audio message. Can you tell me what this audio message says.
+
+Make sure that you can transcribe it correctly and that you can understand my accent. Just give me back exactly what I said in the audio message. Okay, perfect. And it should be able to understand this now and transcribe it. Let's see if that works.
+
+All right. So this is being a little bit annoying here. Let's just bring it back. And it's telling me hey there's no model. Even though it said it used a model and it set it up.
+
+So I'm just going to tell it install whisper locally to convert speech to text. That should set up for us and get it working again. I'm showing you the process. This is what happens when you're working with Open Claw. Sometimes stuff breaks and you have to do a bit of problem solving.
+
+Okay, so it said that it's installed this now and it's just asking me if I want better accuracy or for it to be faster. So I'm just going to type bass and I hope this is going to work. Hey, I'm doing a test. I want to see if you can transcribe this audio message. If so, tell me exactly what it said okay.
+
+And let's see what we get okay. So it looks like the audio message I was sending was blank because I was sending it from my computer. And I guess my mic is already being used by OBS to record. So I just sent one from my phone and hopefully it's going to work now. Let's see. Awesome.
+
+And finally it looks like it's working. We have voice mode enabled. I can now send audio messages for it to transcribe. All right. So now that telegram is configured what I want to do is I want to start setting up some different telegram channels that we can chat inside of that are going to allow us to kind of segregate different things that we're talking about.
+
+So for example, if I have the bot running as like a virtual assistant, but then I also have it running like an accounting task or doing programing, I probably don't want all of my messages in one channel, because that's going to be pretty difficult to organize into. View the history of. So what we can do is we can make a new group here in telegram. So what I can do is go here, go new group. I can call this, you know, startup ideas or whatever.
+
+The thing is that I want to chat about with the bot. So let's go start up ideas, not channels. And then let's add the bot by just typing in their username. Okay. And go ahead and press on create.
+
+So now what I can do is I can start chatting with the bot. But in order for this to work I do need to manage the group and I need to give the bot permission. So I'm just going to right click on the bot here, and I'm going to go promote to admin. And when I promote them to admin, I am going to just make sure they have the correct permissions and go save. And now what I can do.
+
+Wait one second, let me just look at this because it says it has no access or has access. Masters okay good. I'm going to just tag the bot. So say at time hello okay. And hopefully it's going to read something.
+
+So reacted to that showing us that it saw it. So that's a good sign says hey team what's up. Perfect. So now I can chat with the bot directly inside of this channel. And all I need to do is give the bot instructions to remember that it should only talk about these ideas in this particular channel.
+
+So what I'm going to do is I'm just going to do a voice transcription here and tell you kind of how I would instruct this. Hey, so I'm going to start adding you to some group chats where it's just you and me, the name of the group chat or the name of the group channel is the topic that I want to discuss in that channel. Don't talk about anything else and only reply or send me messages in the appropriate channels based on the name of them. If I DM you directly, we can talk about anything. But if I DM in a channel like, you know, startup ideas or something, we only talk about startup ideas.
+
+Again, whatever the title of that, what do you call it? Channel is. Now, I also want you to reply to any message, so don't just reply. If I ping you, reply to anything in those channels, make this a rule and ensure that you remember this going forward. In the future.
+
+You also should be able to create groups with me. I'll give you the permission to do that. So if we have a new thing to talk about, make a new group with me and start chatting with me there. I don't know if that last part is going to work, because I actually haven't tried that before, but I'm just going to send that over to the bot and I will go and configure the bot further to hopefully allow it to create new groups. Okay, so a reply to that.
+
+Now, I don't know if there's actually going to be to create new groups, because I don't know if there's another setting we need for that. But I'm going to say create a new group called accounting and let's see if it's able to do that. Okay. So it looks like it can't make the groups for there's probably a way that I can enable that. But for now we'll just leave it.
+
+Anyways. Point is, we can make different groups, right? We can pin those groups, and then we can just have kind of a more organized way of chatting with the bot. Now, I did try to send something in the group, and I did still need to ping the bot. So again, there's probably a way to configure that, but for now that's fine.
+
+We can just ping the bot if we want it to reply. And actually, in the future we could add multiple of our bots in the same group. That could be interesting to see how that would go. Okay, anyways, let's go back here and let's now start talking about skills. So skills allow the bot to have some capabilities that it can complete, right.
+
+Or that it can do. Now by default there's some skills that are already added. And if we go to the what do you call it gateway dashboard. And you go to skills and you expand this, you'll see there's a bunch of default skills that are already installed that you just need to enable or add the dependencies for, for example, voice calling, right? Getting the weather, playing a Spotify song.
+
+You know, creating a skill is a skill that exists all of this kind of stuff. So I would suggest reading through here and enabling any of the ones that you want for sure. But I also would suggest having a look at this place called Claw Hub. Now, Claw Hub has a list of pre-built skills that you can use and just build into your bot. However, before you start just going and adding all of these random skills, I would suggest that you understand what is skill is.
+
+And we're going to talk about that now. So a skill is effectively just a markdown file. Now I'm going to show you that if I open up any one of these skills, you'll see that the skill is just in this skills MD file. MD stands for markdown. And all this skill is is just a bunch of formatted text that explains what the bot should be able to do.
+
+Now, this skill can also reference files. So you can see in this case it has a guest scripts slash stats.py file, which is a python file that it can run to complete something. So that's all the skill is. You can tell the bot to add its own skill and it can just write it can figure it out of itself, or you can bring in pre-built skills from place like Claw Hub.
+
+Again, I don't suggest just randomly bringing them in, but I want to show you how you can view all of the skills that your bot has and start actually viewing all of the different files that essentially enable the bot to do something. So to do that, you need to open up some kind of code editor. Now I suggest that you open up cursor. You can also open up Visual Studio Code or VS code. You can download it for free on the internet.
+
+Just search VS code or cursor download. Okay. So from here what we're going to do is hit Ctrl, shift P or Command shift P on our keyboard and we're going to go add new SSH host. This is how you open the command palette in VS code or cursor. From here we're going to say SSH routes at.
+
+And then we're just going to copy whatever we had here. So actually we just copy this command. And again make sure we know what the password is. And hit enter. We can just use the default SSH config.
+
+Then we're going to go Ctrl shift P again or command shift P and then connect to host. And we're just going to choose the host that we added recently okay. Now once we press that it's going to open up a new window. We're going to select our operating system as Linux. And we're going to paste in our root password and hit enter.
+
+From there. It should open up a remote kind of terminal. And you're now inside of the server. So what we can do is we can actually go open folder and we can find the folder that contains all of the data for open claw. So in order to find this folder we're going to go to Docker.
+
+We're going to go to open Claw data and then dot open claw like that. And you can see there's a bunch of stuff here. So we're going to go ahead and press on open. And then in the left hand sidebar let me just close my agent. Okay. It's asking me for the password again. So it's fine.
+
+Let's type the password. We should be able to see this data. So you'll notice here if you open up the sidebar to view the files. Right. You could do that with control B or command B on your keyboard.
+
+There you'll see a bunch of information showing up okay. So we have credentials. We have cron. And then if you go into workspace we have all of these different files which is really the configuration for the agent. Now. Right now we don't see any skills in here.
+
+The reason for that is that a lot of the built in skills are actually stored in a different location because they're already written. But if you were to ask the bot to make its own scale, it should show up here. So let's actually test that, make a simple skill that says hello world in five languages, and let's just go five random languages, okay? And let's see actually if we can create that and then we're going to have to refresh this and we'll be able to view hopefully the new skill files. So I can show you what it looks like before we start enabling other ones.
+
+Okay. So it's making the skill right now. And you can actually see that it's now create a new folder called skills. And then it has Hello World Languages as a subfolder which is the name of the skill. And then we have this skill.md file that explains what this skill is right
+
+name description and then all of this. Now you'll notice that after I do that, I now will have a command. And this command should be hello world languages. Or sorry slash skill. So I can do slash skill and then I can do hello dash world dash languages.
+
+And it should trigger that skill to execute. And you can see that it now runs the skill. Right. So that's effectively what a skill is. I just want you to understand that before we start adding a bunch of them.
+
+And now that we can make our own custom skills, which is very easy, or you just ask it to do something which is a repeatable task that you want it to have written down. Make sure you review what it writes inside of here and customize it, because that's going to give you the best results. Now, some skills that we definitely want to enable that are default skills are going to be the following. And they have to do with git and GitHub. So a lot of times you can have your agent actually code its own skill.
+
+So it can write its own custom Python files or scripts or whatever websites. And that's quite useful. So what you're going to want to do right away when setting up this agent is first enable the coding agent. So what you can just simply do is you can copy this and just tell the agent enable this skill okay. So I'm just going to say enable the skill and just copy it.
+
+And it's going to go and install and configure it as needed. You're also going to want to enable GitHub. And in order to enable GitHub I highly suggest that you create your own GitHub account specifically for the bot. So I've already done this. I've gone to github.com.
+
+I've made my own bot or my own GitHub account called tech with Team Cloud Bot, and what we'll do is we'll connect this GitHub account so not our get up account, a separate GitHub account to the bot, and then allow it to write all of its code. Now notice that I actually have some code here already. And the reason for this is I've instructed my cloud bot on a different instance for any time it writes any code to commit the code to GitHub, automatically create a new git repo and store all of the code so that I always have access to it. I can manage it, I can make changes, I can pull it down. You get the idea. Okay.
+
+So we have like, you know, a YouTube OS dashboard, whatever, all of this stuff. And you can see any of the code that's been written. So anyways let's go back to telegram and you can see it says the coding agent skill is already present. By missing the requirements I'm going to say use Codex okay. And hopefully it's going to set that up okay.
+
+So it looks like Codex was installed. So if we go back here now we should be able to see that the coding agent we might have to refresh here hopefully is no longer being blocked. So let's go here. And you can see coding agent is good. We can also see we have workspace skills.
+
+And these are ones that it created itself. Cool. So the other one that we want is GitHub. So I'm just going to press the button to install the GitHub CLI here. And then what I'm going to do is go down to what is it.
+
+My agent and tell it to configure GitHub. And you know, tell me what I need to do to essentially have my GitHub account signed in. So I'm going to say configure git slash GitHub and tell me how to connect my account okay. So it's giving me a few steps here. It says I need to set my git identity.
+
+And then I'll authenticate with the GitHub CLI. So I'm going to tell it my name as well as my email. And then to authenticate for me. Okay. Cool.
+
+So what I'm going to do is just go to this link that it's giving me. And then type in this code. So let's do that and see if we can authenticate. Okay. So I just did that. So I just told it hey I did that.
+
+You know maybe it's going to test this now. And let's see if GitHub is working. And then again we can give this some instructions to save to always right. And save any code you know to GitHub effectively. All right. So it looks like GitHub is configured.
+
+Now the next thing that I want to do is go over memory and preferences. Just so you understand kind of how this works in what do you call it. Open clock. So something you need to understand is that any time open clock spins up again and you have a new session, it effectively forgets whatever you were talking about before. And the only way for it to remember something and to keep improving is for it to actually modify the files that it has in its file system.
+
+And you can think of the files like it's memory. Now there are multiple files you're going to see here related specifically to memory. So first is memory MD. Now this is persistent long term memory that it will always read before it's doing some kind of action. So if there's something that you always wanted to remember you put it inside of this file right here.
+
+Or you tell the model to put it there. The other memory is daily memory, which is set up by default. And if you go here into the workspace, you'll see that it has memories for each day. Okay. So it explains what's happening, what's going on in that day, what it needs to do, blah blah blah.
+
+Now by default, Opencore I believe is only going to read two days of previous memory. So if you tell it to do something, you know, one week ago, it's not going to remember that unless it's in the persistent memory. So I'm quickly going to show you two settings that you can enable that will allow open clock to have longer memory and to save things better. Now what they are I'm just going to copy them in here. Okay. So I'm just pasting them. But essentially they're the following.
+
+It is compaction memory flush dot enabled memory search dot experimental dot session memory to true. Now I'm going to say enable these okay. And explain what they do. So I found that when I enable these two settings I get a better result in terms of the memory we're just going to wait for Opencore to explain it because it will give us a better explanation probably, than what I can come off come up with at the top of my head. But you can see this enabled them, and it says when the conversation gets too long, Opencore will trigger a memory flush prompt.
+
+So important context gets written to memory files before compaction drops history. And then this one lets memory search include recent session transcripts, not just files in memory. Improving recall of what just happened. Okay, so that explains what it's doing. But effectively what would happen is if you're talking for a really long time with Open Claw, it's automatically going to compact what you were talking about.
+
+Now, before we have it compact that we want it to save that into the memories, that we don't lose any of that information. So that's what it's doing. And then same thing with the session memory. Rather than just reading the information that's in the memory files, we want it to read what was recently in session. Right.
+
+So what we talked about that maybe wasn't audible okay. So hopefully that makes a little bit of sense. Now another thing that we're going to do, and I'm just pulling this up from the open cloud docs to make the memory even better, because this is really the crux of how this gets good is we're going to enable vector memory search using a queue back end, which is significantly better at searching through the memory than the default back end service. You don't really have to understand this, but effectively, in the background, Open Claw will search through the memory files using some type of vectorized search. Now we can change how we're doing that search, so that it's just going to be a lot more effective and give us better results.
+
+So what I'm going to do is I'm just going to copy all of this content from the docs. I'll leave this link in the description. If I forget someone, leave a comment and I will add it. And I'm going to say enable this, okay. And just tell it to enable it.
+
+and it should go through the prerequisites here and install this for us. So I'm going to tell it yes. Install the prerequisites okay. So it looks like AMD is added now. So our memory should be a little bit more optimized.
+
+Just working better in the long term. Now I'm going to go through a bunch of other things that we can set up and configure. But keep in mind that, you know, open claws for you, right? You guys customize it. And what I'm trying to do is give you a solid base that you can then extend.
+
+So while it's not super detailed in terms of every little individual skill we add, the idea is I want you to understand what these things are. So you know what's going on in the back end when you do make changes by yourself. So now I want to talk a little bit about some of the other files that are here. And specifically I want to talk about this identity file as well as this user file. Now the user files the information about you okay.
+
+Or in this case about your human because it's like in reference to the claw bot. And the identity file is the information about the claw bot itself. So rather than you just filling this file in manually yourself, what I would suggest you do is actually go to open claw and ask it to give you an interview and ask you questions on what you want. So I'm going to give you an example prompt that you could pass so it can modify these files. Say, hey, I need you to update the identity file as well as the user's MD file with important long term information.
+
+Ask me a bunch of questions. Give me an interview. Give me a quiz on all of the data you need for me in order to create those files and optimize them as much as possible in the future. If something changes, continue to update these files and ask me more information as we chat through this conversation and just in general in the future, so that you always have the most recent up to date data and you're constantly updating these files. That's maybe a little bit overkill, but point is, you know, you can just say, hey, give me an interview to update these files.
+
+And that's a lot easier way to go about doing it than you having to manually kind of work through and, you know, fill in all of this data okay. So you can see it's giving me a bunch of stuff. Right? I'm not going to actually go and fill this in because I don't care too much about it. I'll just give it a quick answer so we can see the update.
+
+So my name is Tim. You can call me Master Tim. My pronouns are the normal ones. He ham. My time zone is Asia Dubai.
+
+I usually work from 10 a.m. to one in the morning. My goal is to grow my YouTube channel. Okay, whatever. Right.
+
+And then go ahead and hit enter and hopefully it is going to update the file now and again. If you want to see the updates you can refresh. What is it this. And it should show the new version of the file assuming that it updates it. Okay.
+
+So you can see it's update the file now and it kind of has that information. Then for the identity we're not really getting like the correct stuff. But you get the idea. Okay. So we could, you know, adjust that later in the future okay.
+
+So that kind of covers that. Now, the other files that are useful is going to be the soul as well as tools and heartbeat. So the soul is kind of some more instructions in terms of how the bot should operate, the way it should talk to you, you know, core truths, things that it believes. Right. Like at the soul of the age and kind of at the heart of it, I guess you could say so if you want to modify this, you can.
+
+But generally the default one is pretty good. And it says, you know, each session you wake up fresh, these files are your memory, read them, update them, etc. and then it goes through boundaries. You know, private things. Stay private.
+
+Here's your vibe, all of that kind of stuff. So you can adjust the soul based on what you want. If you want something rude, if you want something happy, if you want something funny, you know that's where you would put it inside of here. Now we also have tools. Tools are different things that can be used by things like skills.
+
+So for example you have an SSH host, a preferred, you know, voice speaker rooms, names, device nicknames, all that kind of stuff. You can put that directly inside of this file. I don't really use tools too much, but you know, you can modify this file if needed. Awesome. And then the last one is going to be the heartbeat file.
+
+Now the heartbeat file is super interesting because what you can do is you can have the clawed bot triggered to wake up effectively every set number of minutes. You can have it every five minutes, every 30 minutes, every hour. And when it wakes up, what it's going to do is it's going to read this heartbeat file. Now inside of this file you can direct it to do something continuously. So something that's common to do is to continually improve itself.
+
+So what we can do is we can say update your heartbeat file such that any time you wake up, you review any of the mistakes that you've made previously and start making improvements and fixing those mistakes. When you do this, make sure you run multiple sub agents and paralyze the tasks so we can do multiple things at the same time. Okay, so actually just introduce another concept to you as well here called sub agents. So when you're running this Claude bot, you know right now we're in this kind of one session where I'm asking you to do something, waiting for the response. You can do that, right?
+
+Or you can actually tell it to run multiple sub agents. And when it runs sub agents, what that will do is it will run a background agent, which is another instance of in this case opus or codex or whatever that's going to go and achieve some kind of task. So I can say, hey, spin up ten sub agents and go work on different parts of this task altogether and then collaborate once you're finished. And it will just automatically make these different sub agents and you can see them inside of your cloud gateway. So if you go to sessions, for example, you will see the different sessions that are running as well as the different, what do you call it, sub agents that are being triggered by those.
+
+Okay. So there's a bunch of stuff you can effectively just see everything that's going on inside of the gateway. But that is what you should be aware of. Okay. Now you can see inside of the heartbeat file says on every heartbeat review, recent mistakes, issues and propose fixes.
+
+When doing this review, spawn multiple sub agents and run the tasks in parallel. Right? So now any time it wakes up and has a heartbeat, it will do this. Heartbeats are not going to do like super long running operations. Typically.
+
+It's usually for kind of short, repetitive things that you want to do all of the time. For example, check my email on every heartbeat, right? That's something that makes sense to put inside of here. Okay. So let's go back.
+
+And one thing to note is that if you go to the config here, I believe it's in the configuration. It might not be directly here. Okay. Break out. This will get out of this.
+
+You can tell it how frequently you want the heart to beat. So I'm going to say what is. Let's just do it like this. The frequency of your heartbeat. And it's going to tell us I believe 30 minutes is the default.
+
+Let's see okay. So good job. I checked that because it looks like it's actually off. So I'm going to tell it to turn on the heartbeat. And enable it every 30 minutes okay.
+
+So anyways good job we figured that out because I forgot that it was off by default. And this is the thing, right? If you don't know something, just ask the agent like I'm asking it. But generally these are kind of the best practices for the setup. So now it's kind of modified the config.
+
+And you can see that it's going to heartbeat every 30 minutes. Now and then every 30 minutes we will have that task that's inside of that file kind of, you know happen right okay. So that's that. The next thing I want to quickly go over is Chronos. So I don't think that's inside of here, but it should be in its own folder. Yes.
+
+Some folder crowns. Essentially a cron is a task that can run at a set time at a set frequency. So, for example, if you wanted to be reminded of something at 9 a.m., that is a cron where at 9 a.m.
+
+this task will run it and it will remind you of something. And you can see the cron jobs here inside of the, what do you call it here? The open clock gateway. And you can manually create your own one by going through this. Or you can just tell the agent to set up a cron.
+
+So I'm going to say in five minutes, remind me that I need to finish recording this video. Whatever. Right. And then what will happen is it should automatically create the cron for us in the gateway. And we should be able to see the job.
+
+So in my own personal clobber, I have like 4 or 5 cron where every day at like 9 a.m. I want you to review the stuff I did yesterday. Give me an update every, you know, three times a day. Whatever I want you to do x, y, z.
+
+So if you want to run at a certain time, like remind me to go to the gym, remind me to eat my breakfast, you know, that's where a cron comes in in handy. Or if you want a task like back up my database or something, and you want that to run every day at a certain time, you would make that a cron. You don't need to necessarily tell it to make a cron, but just understand that's what it is and you can see I now have this cron. This is a one off cron that's scheduled to run in four minutes. And then once it does I will be able to see the history okay.
+
+Now generally speaking there's obviously a lot more stuff I can go through here in terms of setting this up, but I don't know if that's going to be particularly useful, especially because everybody has their own unique thing that they want this to do. I think generally understanding what I explained here is a very good start. So you know what it is. You need to modify how the thing actually works, how you can get value out of it right? Things like setting up the multiple group chats using the different models.
+
+Right? All of that stuff is quite useful. And that's kind of what I meant to show you. So I will definitely do some follow up videos showing some more advanced use cases of the claw bot or Open Claw whatever in the future. For now though, this is where I will leave it.
+
+And please leave a comment down below if you want more instructions on a particular area so I can go more in-depth with that and kind of explain it in a way that's going to be valuable to you guys. Anyways, with that said, I will wrap up the video here if you enjoyed, make sure leave a like subscribe and I will see you in the next one.

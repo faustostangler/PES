@@ -1,0 +1,182 @@
+---
+video_title: "The Postgres Performance Trap Every Developer Falls Into"
+video_id: BharE_Kc9sQ
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=BharE_Kc9sQ
+video_date: 2026-03-17T12:30:28+00:00
+video_description: |
+  Sign Up for TigerData for free: https://tsdb.co/twt-TigerData
+  
+  So your Postgres database is getting slower. Your queries used to take 50 milliseconds. Now they're taking two, three, four, maybe even five seconds. And here's the thing: nothing changed in your code. The good news is that there's a solution that actually works. It's open source, it runs on top of Postgres, and I'm going to show you exactly how to set it up for free in this video courtesy of TigerData.
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10
+  
+  🎞 Video Resources 🎞
+  Github Repo: https://github.com/timescale/timescaledb
+  
+  ⏳ Timestamps ⏳
+  00:00 | The Postgres Problem
+  01:20 | The Optimization Loop
+  04:20 | The Problematic Workflow
+  08:49 | The Solution
+  11:30 | Live Demo/Setup
+  
+  Hashtags
+  #Postgres #TigerData #SoftwareEngineer
+  
+  UAE Media License Number: 3635141
+---
+So your Postgres database is getting slower. Your queries used to take 50 milliseconds. Now they're taking two, three, four, maybe even five seconds. And here's the thing. Nothing changed in your code.
+
+You didn't write worse queries. You didn't mess up your schema. Your table just got bigger. So you do what any good developer does. And you add an index, the performance improves.
+
+And then a few months go by and it's slow again. So you partition the table. Again performance improves. And a few more months slow again. Then you bump up the instance size.
+
+Throw more ram at it to in the auto vacuum. And again this works just for a while until one day you step back and realize that you've been doing these patch fixes for over a year. That you're spending real engineering time, real infrastructure money. And all you're doing is keeping the same queries running at the same speed on a table. They won't stop growing.
+
+Now, if this sounds familiar to you, I've got good news and I've got bad news. And the bad news is that no amount of Postgres tuning is going to fix this issue. But the good news is that there's a solution that actually works. It's open source. It runs on top of Postgres.
+
+And I'm going to show you exactly how to set it up for free in this video courtesy of Tiger Data. Who sponsored today's content? Okay, now before I show you the solution, I want to walk you through why this happens. Because understanding the root cause is going to change how you think about this entire problem. So let's dive in.
+
+So let's say you've got a Postgres database and you've got a table. Maybe it's called events or logs, user activity, sensor readings, whatever it is. Now it may have a timestamp column and new rows are constantly being inserted into it. It could be hundreds per second, could be thousands per second. Could be tens of thousands.
+
+And over time, this table gets big. You know we're talking about millions. Maybe even tens or hundreds of millions of rows. Now, the first thing that happens is that your query is going to start slowing down. You're doing something like give me all of the events from the last hour, grouped by device.
+
+Now that's a totally reasonable query, but it's scanning way more data than it needs to. So again you do the textbook thing. Step one you create an index. Like what I'm going to put on screen. Now this index helps.
+
+Postgres can now find the relevant rows way faster using the B-tree index instead of doing a full table scan. So your query may go from three seconds back down to 100 milliseconds simply because of the index. Well, you might think that solve the problem, but not quite, because as your table is still growing, the index is growing with it. So every single insert now also has to update that index. So your right performance is going to start to degrade.
+
+And the index itself once it gets big enough is going to start to lose its effectiveness. Because Postgres still has to traverse a deeper and deeper. So a few months later things are slow again. And now you move to step two partitioning. So have a look at the query on screen.
+
+This is an example of something you might do to partition the table. So now with this Postgres is only going to scan the relevant partitions when you query by time range. And that's a massive improvement. But you're still in the business of manually managing partitions. You have to create them ahead of time.
+
+Drop the old ones. Deal with edge cases where the query planner doesn't prune correctly, and as your partition count starts to grow into the hundreds, the planner itself starts to slow down because it has to evaluate every single partition before it can even begin executing the query. So now you're back to being slow and you move to step three, which is basically to throw money and configuration at the problem. So you crank up the auto vacuum settings, you increase the maintenance work memory, you bump the shared buffers. Maybe you upgrade from an eight core to a 16 core CPU.
+
+Maybe you go up to 32 cores, maybe you add more Ram. You get the idea. Here's an example of some of the configuration variables that you might change. And yes, this is going to buy you a few more months, but you're now spending significantly more on infrastructure. You're spending engineering time tuning all of these configuration parameters.
+
+And you're doing this instead of building features. And the worst part is that you know it's going to happen again. The table is still growing. The workload hasn't changed, and you're just running faster on a treadmill now spending more money. Now here's the important part.
+
+None of these steps are wrong, right? Like adding up index is correct. Partitioning the table is correct. Tuning these configurations is correct. These are all legitimate Postgres best practices.
+
+But the problem isn't what you're doing. The problem is that each one of these fixes is just treating a symptom, not the root cause of the problem. And the root cause is that Postgres is underlying architecture. So the way that it stores data and the way that it manages transactions was not designed for workloads like this. Now I promise I'm going to get into the solution.
+
+But first let me quickly describe a workload pattern. And if this relates to you, definitely keep watching. So number one data arrives continuously. Not in a nightly batch job, not during a scheduled ETL window. It's constantly arriving around the clock.
+
+You may have thousands or tens of thousands of inserts per second. Number two, almost every row has a timestamp, and almost every query filters on a given time range. So give me the last 30 minutes, right? Compare this week to last week. Show me everything between these two dates, etc..
+
+Number three data is append only. So once a row is inserted, it never gets updated. And you're writing things like sensor readings, log entries, transactions, user events. Right. These are just facts that exist.
+
+Number four your retaining this data for months or years. It's not a temporary buffer. You need it for compliance, for analytics, for ML training whatever it is. And number five your queries need to be fast. This isn't called storage. Waiting for a weekly report.
+
+You're serving dashboards, running alerts, doing real time analysis. You know subsecond to low second response times is what you're looking for. Now, if even a few of these describe your system, then congratulations. Because you don't have a Postgres optimization problem. You have a time series problem.
+
+And the reason none of your fixes stick permanently in Postgres is because you're asking a general purpose database to do something it was never designed to do. So let me break down what's actually happening under the hood here. When you ask Postgres to do this. So Postgres was designed for traditional application data. So things like users orders, products, data that gets created, read, updated and deleted.
+
+Now to handle that safely, Postgres attaches a little bit of bookkeeping to every single row. Now this is about 23 bytes of metadata that tracks things like which transaction created this row? Is someone else currently reading this row? Has this row been deleted yet? And it's basically Postgres way of making sure the two people can read and write at the same time without stepping on top of each other.
+
+And for a users table or an orders table, you know that makes total sense. Rows get updated all the time, and you need that bookkeeping to make sure that you're not writing and reading at the same time. But things like your events, your logs, you know, this data is append only. You write it once and you never touch it again. So every single row is now carrying 23 bytes of metadata that exists to manage updates and delete.
+
+That will never happen. Now, 23 bytes sounds tiny when you're inserting tens of thousands of rows per second, that overhead adds up to gigabytes per day of storage. That's just doing effectively nothing. And it gets worse because Postgres has this background process called auto vacuum, and its job is to go through your tables and clean up old versions of rows that have been updated or deleted. It's like a janitor walking through your building looking for trash.
+
+Now, on a normal table? That's great. There's actual cleanup that you need to do, but on your append only events table, there is no trash. So nothing was ever updated. Nothing was ever deleted.
+
+But auto vacuum doesn't know that. So it's still walking through your entire table, which at this point is maybe hundreds of millions of rows and looking for work that doesn't exist. And while it's doing that, it's competing with actual queries and using up CPU and IoT. And then the last piece is indexing. So B-tree indexes the default kind that are used in Postgres work by building was essentially a sorted lookup structure.
+
+Again, something like a binary tree. Now these are amazing for traditional queries where you're looking up a user by an ID or looking up an order number or something. But for this workload, almost every query is asking, give me everything from the last hour. Or show me data between these two dates. And a B-tree doesn't have any concept of time.
+
+It doesn't know that yesterday's date is cold and the last five minutes are hot. It treats row number one and row number 500 million exactly the same. So as your table grows, the index grows linearly with it and your time range queries have to do more and more work. So to bring it all together, Postgres is spending storage on bookkeeping that you don't need, running cleanup jobs on data that was never modified, and indexing everything uniformly when your access pattern is almost entirely give me the recent stuff. Now this is the architectural mismatch.
+
+And that's why tuning the configs, adding more hardware, creating the index is only giving you a few months of optimization. And then as soon as the table grows larger, everything falls apart. You're effectively optimizing around a design that fundamentally doesn't match your workload. So with that all said, what do you actually do about this? And this is the part that I'm kind of excited to get into, because the answer is not to just abandon Postgres and move to a completely different database.
+
+The answer is that you extend Postgres. There's actually an open source Postgres extension called timescale DB. And what it does is it changes how data is stored, partitioned, compressed and queried under the hood. Now it keeps everything else the same. So you still you sequel, you still use your existing extensions.
+
+You still use your existing connection libraries, your aurum, your monitoring tools, whatever. Everything you know about Postgres stays the same. But what changes is the engine underneath? So I'm going to quickly walk you through the key features before I show you the demo. Just so you understand why you would want to use something like this again, it is called timescale db.
+
+So the first feature of this extension is hyper tables. Now when you convert a regular Postgres table into a hyper table timescale DB automatically partitions your data by time into what it calls chunks. So you don't have to manually create partitions. You don't have to manage them. You don't have to drop old ones.
+
+It just handles it for you. And the query planner knows how to skip irrelevant chunks. So your time range queries only ever touch the data that they need. Now the second feature is column compression. Timescale DB can compress your time series data by 90% or more.
+
+And it's not just about saving storage. The compressed data is actually faster to query for analytical workloads because it reads less data from the disk. Now the third feature is continuous aggregates. So these are like materialized views but just way better. So a materialized view in Postgres rebuilds from scratch every time you refresh it, whereas a continuous aggregate updates incrementally so it only processes the new data.
+
+Since the last refresh. So if you need hourly or daily roll ups of your data, they can stay current without the cost of reprocessing your entire table. And then fourth retention policies and data tiering. So you can set automatic policies to drop chunks after a certain period or tear them to cheap object storage like S3 will keeping them queryable. Now those are the four core benefits, and while it might sound a little bit complicated, I promise you it's very easy to set up.
+
+And I'm going to show you a demo in just one second. Now the company that's behind timescale DB is called Tiger Data. Now, you might have known them previously as time scale, but they just recently rebranded to Tiger Data. Now they're the ones who built an open source time scale DB. And they also run Tiger Cloud, which is their managed Postgres platform.
+
+And that's what I'm going to use in this demo, because they have a 30 day free trial that doesn't require a credit card. And you can spin up a database in about 60s. I'm going to leave a link to the description so you can follow along. But what I'm going to do is hop over to the computer now and show you a demo of how to use this feature. Okay, so I'm on the computer now, and I'm going to run you through a live demo so you can see what the real speed difference is in a really use case.
+
+Now keep in mind this is a free open source extension that you can enable anywhere. So you can see the repo right here. Again you know this quick start guide walks. You through exactly how to do it. In this video I am going to use Tiger data just because it's much easier to set up.
+
+And they have a 30 day free trial which you can access from the link in the description. You don't need a credit card, and if you wanted to play with it yourself, this is the fastest, easiest way to get it up and running. Not to mention, their databases obviously are great and designed for this kind of workload, so it's kind of a no brainer to use that if you have this type of workload. Anyways, what we're going to do here is just create a new account. I already have one, so I'm just going to sign in.
+
+And once you do that, it should prompt you to create a free service. So I've signed into my account here. And you can see I'm just in this new project which is free. And for services, what I can do is just press create service here with the default options, which will give me a Postgres with time scale DB and vector extensions database. So let's go ahead and create this.
+
+And while it does that it will just take one second. And I can explain what we're going to do next. So the next thing that we're going to do is we're going to configure the MCP server and directly work with this database inside of an AI tool. In my case I'm going to use cursor. Now you can use anything that you want, but I just find it a lot easier to execute the queries when you can just tell an AI agent to do so.
+
+And we'll set up a live example of a bunch of events, will insert like a few million events into a database, and compare the speed and planning of the various queries. When we're using vanilla Postgres versus when we are using the hyper tables, and when we are using the time scale DB extension. So what we can do actually, is we can just go skip this step for now, and we can go directly to where it says integrate with AI tools and start running through the setup steps. So what I'm going to do is open up cursor. You can see I've got it open right here.
+
+And what we'll need to do is just run a few commands to install the tiger CLI. And then once that's installed, we can set our password, connect to our service and automatically have the MCP server added to any tool that we'd like cloud code, Codex, etc.. So if you are on, what is it, Mac or Linux? It's going to be pretty easy to use brew or to use the curl command.
+
+But on windows I would suggest using go. So what you can do is make sure go is installed on your computer. If you're on windows like I am and then you can go, no pun intended, to the terminal and then run this command. Now I already have it installed so I don't need to run that. And then the next thing that we'll need to do is just run the command Tiger off login.
+
+So again install this tool based on whatever command you want to use and then go and run Tiger off log in. So let's go ahead and do that. It should open up a browser window for you. You can simply just press authorize because you should already be signed in. And then it should redirect back to the terminal and tell you you are good to go.
+
+Okay. So you can see here that it says that I am authenticated. And the next step is to simply run the next command that it gave us here. So let's look at it, which is to set the password and have that in the clock. So what we're going to do is just copy this command.
+
+Same thing. We can just paste it into the terminal. However on windows this command won't work. So I'm just going to tell the, What is it agent here. Give me the PowerShell version of this command.
+
+Okay. And just paste it. Because in PowerShell you're going to have to use some like fancy env syntax, which I don't have memorized, but it should give me the new command, which I can just paste in here. And then we can move to the next step where we just install the mQTT server. Okay. So it's giving me this.
+
+I'm just going to copy the command and paste it. You can see I just have to use this env. And then I have to do a semicolon. And you get the idea. So I'm going to hit enter.
+
+And you see it's saved the password successfully. And then the last command that we need to run is Tiger MCP install. So we're just going to go here and go Tiger MCP install. We're going to select cursor. You can select any of these AI tools.
+
+And when we do that it will automatically add this to the cursor configuration. And we just need to restart cursor in order for this to work. So we're just going to go here and restart cursor. And then we can start directly interacting with this database from cursor. So if I open this up I'm going to say are you connected to Tiger Data.
+
+Okay. And let's see what it says. And while we do that we can also open up the settings and just go here to tools and MCP. And we should see the Tiger MCP server installed. And we can see all of the different things that it can do.
+
+Okay. So I just change the command a little because it was having trouble with that. I said, are you connected to Tiger Cloud Database. And you can see that it's now running a few tools here. Let's see what it said. It just got access to the services.
+
+And you can see it has one data project or database server okay. Service. Sorry. And then it's giving us kind of the values right here. Awesome.
+
+So we are now connected inside of our cursor. And just quickly to have a look here in the UI. If you go to the overview of your project you can see different actions. So if you want it to go and connect to it, import data, etc. convert to hyper table.
+
+You also can go to the explorer where we can view all of the data that we have. And now what we're going to do is just start running a few queries, just doing it again in cursor to make it easier, so that we can kind of do a demo here and we can see what it's actually like if we are using a hyper table. Okay. So we're just going to run this query. I'm going to say run this query.
+
+And then again tiger data or tiger CLI or whatever. You can just use the tools here and execute this for us on the table. So I just said create table events. And then we're going to have some kind of event data that we'll put in here. That would be time series data.
+
+So let's wait for that to trigger. And then we're going to insert a few million rows. So we have some data to test with. Okay cool. So let's run the insert command.
+
+Now this is going to take a second to run because I am going to be inserting again pretty much a new row for every second in the past 30 days, which is about 2.6 million rows to simulate some kind of event data, but in a real production database, of course, you could have much more. And you can see here this was created successfully, and then we'll just wait for this to execute. And while we're at it, if we want to, we can go again. And we can view in the kind of UI here all of the data about the database.
+
+So you can see now we just have one normal Postgres table, but we can look at the continuous aggregates, the columns store, all of that kind of stuff. So if I just go to public here you can see I have the events table and you can see I have all of the different values. And then I can look at indexes, foreign keys, all of that kind of stuff. And as I keep refreshing, it should get larger as we keep inserting more rows from this command. Okay. So that query is done.
+
+And now let's just run a query that we might do that would get some data from like the past hour for example, and see how long that would take to execute. So I'm going to say run this now and I'm just going to paste in this query which is explain analyze. So I want to get the details of the query. And then I want to select the average of the device data over the past one hour. So let's go ahead and run that and see how long it takes to execute okay.
+
+So it gave us the data here we can see the execution time was 549.5 milliseconds. Planning time 0.9 rows returned, rows scanned right and rows removed by the filter. And then we can see what it did here in the plan. Right?
+
+Which is, you know, a lot of stuff, sequential scan on the events, blah, blah, blah, blah. You get the idea. So what we're going to do now is we're going to turn this into a hyper table, and I'm going to show you the speed difference. Now, in order to do that, it's actually very easy. We can just start by enabling the hyper table extension.
+
+So I'm going to say enable this and run the following again one line if it's not already enabled. So create extension if not exist time scale DB. Just make sure that's on the database. Now again if you're not using Tiger Cloud, you can just check the open source repo to see how to set it up for your particular server or wherever you're running your database. Okay, but let's go back here.
+
+It should be good. So that extension is created. Next thing we're going to do is just run the command to migrate the table to a hyper table. So I'm going to say run this. And it's very easy.
+
+You can just say select create hyper table. Put the name of the table that you want. Then specify the column name that you want to use. So in this case create it at. Go ahead and hit enter.
+
+And we can see here. Let's give it a second. That should create the hyper table for us okay perfect. So the hyper table was created. And now I'm going to rerun the same query.
+
+So I'm going to say run this query on the hyper table. And let's see the difference in performance now when running it okay. So we just ran. It actually gave us a table because of how I can ask the question where it's showing us the before and after. So with the plain table execution time for 549.5
+
+milliseconds after 1.7 milliseconds, planning time 0.9 versus 43 milliseconds, obviously a little bit larger buffers, 49 versus 24,000. And then you can see the rows read right 2.6 versus 3290.
+
+So the query is about 320 times faster on the hyper table. And you can see what the plan shows here versus what we had before. Now of course, as we get larger in table size, this is going to become even more effective because the planning time is not going to drastically increase, but the execution time on the before table would. So if we just look at the execution time, we're looking at around 400, 500 times faster, which is insane. From literally doing two lines right, two queries enable extension, convert to hyper table, nothing else change.
+
+We reran the exact same query and you can see that it's just significantly faster because the underlying architecture now makes sense. So overall, if your data has timestamps, if it's append only, if it's growing continuously, and if your queries filter by some kind of time range, that's a time series workload. And the reason why the fixes we did before talked about before, don't work in vanilla Postgres is because it wasn't architecturally designed for that. Now, this isn't a skill issue, it's simply a workload mismatch. No timescale DB, which you just saw was purpose built for exactly this and it runs right on top of Postgres.
+
+You don't have to throw away anything, you literally just enable the extension like you saw. Entire data has made this open source and their cloud platform, as we just looked at, has a 30 day free trial that you can start using right now to experiment with it further. So I'm going to leave that link in the description, but you can set it up exactly how I just showed you. So I want to give them a massive thanks for sponsoring this video, as well as making this technology available to everyone. I know some of you guys complain about the sponsored videos, but this is free.
+
+It's open source. It's extremely useful to know. I know I'm going to be using it in my projects. And if you've had this exact same problem, I'm hoping that this helped you and that you're going to be able to implement it now and get faster queries. Anyways, let me know what you guys think in the comments down below, and I'll see you in another video.

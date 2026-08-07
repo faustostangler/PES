@@ -1,0 +1,367 @@
+---
+video_title: "LangGraph Tutorial - How to Build Advanced AI Agent Systems"
+video_id: 1w5cCXlh7JQ
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=1w5cCXlh7JQ
+video_date: 2025-05-05T12:54:24+00:00
+video_description: |
+  Download PyCharm and use it for free forever with one month of Pro included: https://www.jetbrains.com/pycharm/
+  
+  In this video, you're going to learn how to build AI agents using LangGraph. LangGraph is a much more professional and in-depth framework compared to something like LangChain or LlamaIndex, which allows you to build a really complicated and well thought out AI agents. If you're looking to push something into production, you want to have scalability features, and overall you just want more control, then LangGraph is what you should be using.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🎞 Video Resources 🎞
+  Code In This Video: https://github.com/techwithtim/LangGraph-Tutorial
+  UV Website: https://docs.astral.sh/uv/
+  UV Video: https://www.youtube.com/watch?v=6pttmsBSi8M&ab_channel=TechWithTim
+  Anthropic Console: https://console.anthropic.com/settings/keys
+  LangGraph Getting Started Guide: https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-1-build-a-basic-chatbot
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:44 | LangGraph Core Features
+  02:31 | LangGraph Examples
+  04:20 | IDE Choice
+  05:00 | Environment Setup/Install
+  07:45 | Getting LLM API Token
+  08:59 | Simple LangGraph Chatbot
+  23:20 | Generating The Visual Graph
+  24:25 | Complex LangGraph Chatbot
+  
+  Hashtags
+  #LangGraph #LangChain #AiAgents
+---
+In this video, you're going to learn how to build AI agents using LangGraph Lane graph is a much more professional and in-depth framework compared to something like LangChain or Lama Index, which allows you to build a really complicated and well thought out AI agents. If you're looking to push something into production, you want to have scalability features, and overall you just want more control than Lane graph is what you should be using. But it can be difficult to learn. So that's why I'm making this video. I'm going to break it down for you as simple as possible, and by the end of this, you'll know how to build AI agents, and you'll have a more complex one that you can adapt and change to your use case.
+
+Now, what we're going to do here is just quickly discuss the key differences between lane graph and something like lane train. Then we're going to hop on to the computer. So let's go ahead and do that. All right so let's scroll down here and just look at some stuff that they have on their website. So Lane graph really is meant for when you want to have a more complex application.
+
+It really is an orchestration framework. That means that it allows you to control the flow and kind of how your AI agent uses various stage or passes through various stages. If you're not familiar, there are modules like lane chain. Lane chain is kind of a simpler, higher level framework that makes it easy to build simple AI agents. But when you have a lot of state or you have a lot of steps, it can be difficult to orchestrate that agent because it doesn't have those lower level features.
+
+So lane chain really just gives you much more control. And it also is much better at persisting things like the context. So as you can see here, persisting context for long term interactions. So it knows kind of the information that you've given to it. And you can update and modify the state as you move through these various different steps.
+
+Now as it says, lane graph uses a graph to represent data and to represent kind of the state of an agent. I'm going to show you that in just one second, but those are the main kind of key features. Now, of course, there are also advantages here when it comes to things like scalability and fault tolerance. We're not really going to get into that in this video. The lane graph also has kind of this cloud platform that you can pay for that would allow you to deploy your lane graph applications.
+
+Again, we're not doing that in this video, but it is worth noting because that's kind of a huge selling point of using something like lane graph. Okay. So those are the main features. Now what I want to do is I want to show you an example of a graph that you could generate with lane graph. So have a look at these graphs here.
+
+On the right side we have a very simple one. On the left side we have one that's a little bit more complicated. Now we're actually going to build both of these graphs. And these graphs will represent an agent system or an AI agent. So if you look at the right hand side here where we have start shop on and then end.
+
+This is a super simple agent flow and something that you've probably built before without using something like line graph. Now all this means is we started this particular node. Maybe we collect something like some user input. We then throw that to a chat bot and maybe the chat bot gives us some output. And then we add okay, very very simple graph.
+
+Now on the left side we start to get a little bit more complicated. Still simple. But you can see where lane graph starts to have an advantage. Here we now have some orchestration. And we kind of have a flow between our application.
+
+So we have some start node. Maybe we collect some user input in this case the user input can be maybe a problem that a user is having. We then classify that input. We pass that to a router based on that classification. Whether it's something that maybe a therapist should handle or something that, like a more logical thinker, should handle.
+
+We then route that request to one of these two nodes. So this logical node or this therapist node and then we end from there. Okay. So in lane graph we have nodes which are all of these things you're seeing like start classify router. These are all nodes.
+
+And then we have edges. Those are the connections between those nodes. And we can have things like conditional edges which you can see here in our router where we can either go to the therapist or to the logical okay. So that's kind of how lane graph works. That's how we orchestrate the flow of the agent and allows us to build these really small components that we can combine together to make these large agents systems.
+
+And that allows us to have multiple agents that are interacting with each other and to do some really cool stuff. Obviously in this video, we can't cover everything, but you're going to see how we make a super simple one, and then how we get a little bit more complex and really take advantage of the graph component of link flow. Okay. So now let's hop over to our IDE, let's start coding. And let's actually get into cause I know this is going to make a lot more sense to you guys.
+
+Once we really jump into the code now right now I am using PyCharm, okay? A lot of people ask me why I use this. Well, PyCharm really just is the best IDE when it comes to professional Python development. PyCharm does have a free subscription, but I also have a link in the description where you can get a three month extended free trial of their Pro subscription because I have a long term partnership with them, so make sure to check that out from the link below and you'll see in this video why I do choose to use PyCharm. Because the autocomplete it's just better.
+
+The environment management, all of that kind of stuff. It's really just a go to IDE if you're doing a lot of heavy Python coding. Anyways, with that in mind, let's start creating a few things and getting our project set up. So what we're going to do is open up our terminal and we're going to start dealing with our dependencies. Now, since we're in PyCharm, we can use something like, virtual environment and we can just create it manually.
+
+But recently I've been using UV a lot. So I'm going to use UV and show you how that works in terms of kind of enabling the dependencies for this project. If you're unfamiliar with UV. This is a new package manager for Python. I'm just going to look it up right here so you guys can see it.
+
+So UV right here okay. I'll leave a link to this in the description. You can install it very easily. You can actually install it using pip which is kind of funny. Once you have it installed you should be able to just follow along with me here and type in the relevant UV commands.
+
+I also have a video I'll leave on screen that shows you how to use UV. Okay, so let's assume you have you've installed on your system. What we're going to do is we're going to open up a new folder. So I've done that inside of my IDE here. And we're going to initialize a new UV project.
+
+To do that I'm going to type UV init and then dot. This just means initialize in the current directory. So you can see it's now initialized a new project. And if we open this up here you see that we have our Python version Pi project AutoML Main.py file, all of that kind of stuff.
+
+From here we're going to install the various dependencies that we need. So in order to do that we can just type UV ad. And then the first one we're going to bring in is Python. And then don't envy. This is for loading environment variables.
+
+After that we're going to type a few more that we need. We are going to bring in Lang okay. Graph like that we should spell lang graph correctly. Of course we're also going to bring in lang chain and then in square brackets. This is going to be anthropic okay.
+
+So and tropic like that. And I believe we do need to put this in quotation marks because we're using these square brackets okay. So we're going to have python dot env lang graph. And then lang chan anthropic. Did I spell anthropic correctly.
+
+Let's make sure that we are good there. And after that we are going to bring in last one here, which is ai pi kernel, which we'll use later on for actually creating something like a Jupyter notebook. So we're going to go ahead and press enter here. It's going to create the environment for us and add all of those dependencies. And we should pretty much be good to go.
+
+And if we look at our Pi project file, we can see that we have the dependencies showing up here. Okay. So that's all we need for now. After this, what I'm going to do is open up my main.py file.
+
+I'm going to delete everything inside of here. Now, after the main.py file has been created, we're going to go ahead and make one more new file. This file is going to be a dot env file okay. Just go ahead and press add there. That's fine.
+
+The dot env file is going to store an environment variable that will allow us to kind of store the key for whatever it is that we're going to use. Now we can use any LM that we want here. In this case I'm going to use clod or I'm going to use anthropic again. Kind of pick whatever you want. You can use OpenAI.
+
+You could use a llama if you wanted to do this locally. But I find the clod works pretty well here. So that's the one that I'm going to go with. So inside of this file, all I'm going to do is just write an environment variable. So to do that we're going to say actually let me just copy it in here so that I don't mess it up.
+
+We're going to have entropic underscore API underscore key is equal to. And then we're going to paste in our API key. Now in order to get our API key we're going to have to go to the entropic console. So we're going to go to console.entropic.com/dashboard
+
+okay we're then going to go to API keys. Here you will need to count on this. And I believe you will need a credit card. Although it should only cost you like a few cents. You can see here like one of these cost me $0.43.
+
+These I don't think have cost me anything so far. And then I'm going to make a new API key. I am just going to call this Lang graph like that. I'm going to go add and then I'm going to copy this key and delete it later so that you guys don't see it. Obviously don't leak this with anyone.
+
+And then I'm going to paste it right here okay. So we have our API key now inside of this dot env file. Again you're n need to copy this step for whatever LLN provider you use. And if you just want to follow along with this video then of course the easiest will be to use entropic. And that's the one that I installed.
+
+Okay, so now that we have the key we have everything installed. We can actually start writing some code. So from our main.py file here, the first thing we're going to do is we're going to say from env import load dot env. We're then going to call the local env function.
+
+And what this is going to do for us is load in this environment variable. So it can then be used when we initialize our model. So again just to be clear here we need an LLN and the LLN will kind of control the agent or be the brain of the agent. But around that line we can wrap a bunch of functionality. We can build this graph, we can have these multi-agent systems which is what Lang graph allows us to do. Okay.
+
+So now that we've done that, what we're going to do is bring in a few things. So we're going to say from typing import annotated and literal okay, we're going to say from line graph dot. And this is going to be graph. And we are going to import the state graph okay. And we're going to import start in all capitals and end in all capitals.
+
+Sorry for the cut there but I just fixed my interpreter settings. From now we're not getting any of those autocomplete issues. I did that in PyCharm just by pressing this button and selecting the existing interpreter inside of this dot venv folder. Okay, so now that we've done that, we have a few more imports that we need here. So we're going to say from line graph.
+
+And then this is going to be dot graph dot message. We are going to import this function called add underscore messages. We're then going to say from this is going to be the length chain this time okay not line graph. So we're going to say from link chain dot chat underscore models. And we're going to import the init underscore chat model.
+
+Then we're going to say from pedantic we're going to import the base model. And we're also going to import the field. We'll use this later on. And then lastly we're going to say from typing underscore extensions we are going to import the typed dictionary okay. So that's all of the imports that we need.
+
+Now that we've done that we're going to load in our lab okay. So we're going to say Len is equal to init underscore chat model. And then inside of here we're going to specify the model we want to load. So I'm just going to copy this in so that I don't make a mistake. And keep in mind all of this code will be available from the link in the description.
+
+So you will be able to just copy this if you need to. So you can see here that I'm just loading in the clod 3.5 sonnet latest. Okay, you can put any model name you want here, but in this case we're loading the entropic one. And because we have this environment variable in our dot env file and we've loaded that in with load dot envy.
+
+Oops. That's not what I meant to do. This is going to load properly and allow us to access Claude and use our API key. Okay. And there's other models you can use here. Again, you can use GPT.
+
+You can use DPC. There's all kinds of ones. You will have to look that up or maybe ask an AI tool to assist you. But it's relatively easy to swamp the Lem. In the example that I'm showing you.
+
+Okay, so now that we have the Lem, the next thing that we want to do is we want to start setting up this state for our graph. Now, I know some of this will seem confusing right now. Just bear with me and I promise I'm going to break it down. But there is a bit of code that we need before we can really get going here. So we're going to make a class and we're going to call this state.
+
+Now inside of here, we're going to have a typed dictionary okay. That's going to be the type or the inheritance for our class. And this is where we're going to specify the state that we want our model in our agent system to have access to. And this is going to kind of control the flow of our application. So for right now we're going to keep it nice and simple.
+
+And we're going to say messages. And then this is going to be annotated. And then we're going to have list and then add underscore messages okay okay. Now what this is doing is we're saying that messages is going to be of type list. And whenever we want to change the messages we're going to use this function called add messages, which is provided by Lane Graph to essentially add a new message to this list.
+
+I know that this seems a little bit weird, but this is just how you do this for storing messages. And in our state, what we're going to be doing is just keeping track of all of the messages that have been set. So the message that we say, for example, like a user message, and then the message that the LMM gives us back. So something like the assistant message, okay. So this is like the most simple state that you can set up.
+
+And again when we use annotated here, I mean you can read this if you want. It kind of explains first we're putting the type and then second we're putting how we want to modify this type okay. So that's our state. All right. So we have the state.
+
+And later on I'm going to show you an example where we put some other things in the state. But for now it's just going to store the messages. Now that we have the state, what we're going to do is we're going to kind of define a graph builder that will work using this state. Because again, if we go back here, this is essentially what we're going to be creating in these next few lines of code. We're going to create these graphs.
+
+And then we can run through the graph. And that represents our AI agent or our agent ecosystem okay. So on line 18 here we're going to say the graph underscore builder is equal to a stage graph okay. And then for the state graph we're going to pass our state. There's other types of graphs you can have.
+
+But the state graph is kind of the most basic. I don't know why this keeps popping up. I guess I'm highlighting something okay. So graph Builder is equal to state graph. And the reason why we're getting these lines here is because we haven't yet used these objects.
+
+We'll use them later. So don't worry. And let me just add some spacing here between our class okay. So now we have our graph builder. And the next thing that we need to do is we need to start figuring out these nodes or building the nodes that are going to be in our graph.
+
+So for right now we're going to have a single node which is going to be our chat bot. But later on we'll have multiple nodes. So for now let me show you how you make a simple node. So to make a node you simply write a function. So I'm going to say define chat bot.
+
+This node is always going to be taking in the state okay. So it's going to take in the state. And then it's going to return essentially a modification to the state or the next state that we'll have in our graph. Again I know it seems weird. Just bear with me here as we write this out.
+
+So what I'm going to do is I'm going to say return and I'm going to return something that looks exactly like this state right here. So I'm going to say messages okay. And then inside of a list I'm going to say Elm dot invoke okay. And for this we're going to take in this state. And then messages okay.
+
+So what I'm doing is I'm saying all right. For this node I want to take in the current state. The state is going to be a bunch of messages. So what I'm going to do now. So I'm going to say okay I want to return now some new messages.
+
+And these messages are going to be a list. And what I'm going to do is I'm going to say Elm dot invoke. And then whatever the current messages were. So I take all the messages in my state, I pass that to my elm. When you invoke the let me just means you're calling the Yellow Elm, just as if you were using like Claude Desktop or something.
+
+We're just wrapping that in a list and then we're returning that. Now, the way that this works is that it's going to take this list or whatever is inside of here. It's simply going to add that into our state because we have this add messages function. So when we return something that kind of matches this state dictionary, since we've defined how it is, we want to modify the state, this new message, whatever the line returns to us, will simply get added into the state. Okay, so that's our first node.
+
+Now in order to use this node, we need to register it in our graph. So to do that we're going to say graph builder. And we're going to say add underscore node. And we're going to add a node called chat bot. And this is going to point to the chat bot function.
+
+So whenever you want to add a node let me just do a little bit of spacing here. The way that this works is you say graph builder okay. So our graph builder right here for our state graph add node. You give the node some string name. In this case we call the chat bot.
+
+And then you point it to some particular function. All right. So now we have our single node. But the thing is in order for our graph to work we always have to have a start node and an end node. So again if we go back here you can see we have start and we have end.
+
+We always need this in our graph. So we need to connect this node to the start end to the end. So in order to do that we can say graph underscore builder dot add underscore edge and then when we add the edge we can use the name of our nodes and connect them. So I want to connect my start to my chat bot. So that's what I'm going to do.
+
+And start again is a variable that we imported here. It's kind of a special value that represents the start of our graph okay. So we have an edge and we say all right we're going to have an edge between start and Shap on. This is a directional edge which means we go from start to chat bar. And then we can just copy the same thing here and now rather than going from start to chat bot, we're going to go from chat bot to the end, because after we get a response from our chat bot node, the next step is we just want to end.
+
+We want to end this system. Okay. That's it. So we've now just built a really simple graph. We added a single node.
+
+We added edges between the start node and the chat bot and the chat bot in the end. And now what's left is to simply run this graph. So let me show you how we do that. So what we're going to do here is say graph is equal to the graph builder dot compile okay. So after you construct the graph here by adding the edges you're going to compile the graph, which just means you're actually going to convert it into something that's runnable.
+
+And then we'll be able to run it. Now in order to run the graph we're just going to grab some user input. So we're going to say user input is equal to let's go input here. And let's go like you know enter a message okay. And then we're going to say our state is equal to graph dot invoke okay.
+
+And let's spell this correctly. Now when we invoke the graph we can do this by passing the state that we want the graph to start with. I know again this seems a little bit weird, but essentially what we're going to do is we're going to pass some state here. This is like the initial state that we want to start with which is going to match this type. Okay. So here this is really just the type of our state.
+
+So now what we're going to do is we're going to pass in messages. So we're going to have essentially this dictionary. We're going to say messages colon. We're going to have a list. And then inside of this list we're going to have a roll.
+
+This roll is going to be the user. And then we're going to have content. And the content is going to be the user input. Now let me just make this a little bit smaller so that you guys can see this okay. So we have state is equal to graph dot invoke.
+
+And then what we're doing is we're passing messages because again we need to kind of match this state right here which is a typed dictionary. And then again let me get out of this thing. Sorry. We have the roll is user and then the content is user input. So now because we're invoking the graph at the end of this we're going to be able to get the state at the end of the graph run.
+
+So we can simply look at that state. We can grab the last message which should be coming from our line. And we can print that out again. I'm going to run through this slowly, so don't worry. But for now we're going to say print state messages.
+
+And then we're just going to say negative one dot content okay. Because all of the messages are going to have this role and this content field actually have some other fields as well. But in our case we just care about the content. That's what we want to print out. So what I want to do now is I want to run this code.
+
+I just want to make sure it works. And then I'm Brian, I'm going to walk through it step by step so that you fully understand it. So let's press run here. It's going to open up our terminal. It asks us to enter a message.
+
+Let's go with something simple like hello world. Let's wait a second and you can see it says, hi, how can I help you today? Okay. Let's run this again. Let's say, you know, what is this square root of, you know, 128 or something.
+
+Let's see what it gives us and give this a second. And it says so the square root is eight, root two, which spoke to me 11.137. And it kind of gives us the response okay. So let's walk through what's happening here because I fully understand this is a bit confusing, especially if it's your first time seeing it.
+
+So of course we start with our imports. All these ones that we're missing, we're going to use in one second. When we make the example a little bit more advanced, we load in our environment variables. We initialize our LM and then we create this state. Now the state is really just defining the type of information that we want to have.
+
+As we run through this graph right now, it's quite simple because the graph is just this right start chap on end, but later on you can have some more advanced state, which will kind of allow you to control what edge you go down or what path you go down in the state. Then we have our graph builder. So we say, okay, we want to eventually build a graph using this state. We're going to use a state graph. So we take in the state that we defined.
+
+And then we have our nodes. Now in these nodes you can do anything that you want. But typically what these nodes do is they modify the state or they check the state. So in this case all we're doing is we're invoking the Elm using all of the messages that are currently in our state. So that will come from here.
+
+When we start with this message okay. We then take whatever the next message is and we add that into messages okay. Then we construct a graph. So we say all right we want to have this node chat bot connected to this node. This function right here we add our edge.
+
+So start edge and the end. And then we compile the graph and we run it. Now at this point when we run it we started with a single message. The reason for that is we're immediately going to go to this node. And this node is going to check the state.
+
+It's going to take our starting message and then it's going to run this okay. And that's how it works. Now if you want to see something, we can print out all of the messages that we have. So it just print the kind of what we call this here state messages, just so you can see what it looks like. And you can see that we are tracking all of the messages.
+
+So if we run this again let's just go. Hello. Okay. I just want to show you the kind of output here. And you can see we have a human message that says hello.
+
+And then if we keep scrolling here we have an I message and it says, hi, how can I help you? And you can see there's some other fields in here, like this is the content that we're printing out. But we also get, for example, the model that we use, the stop reason. All of this kind of stuff. Okay.
+
+So that's why I'm just printing out the, the content. So we have two messages, right? Because we're tracking all of the messages in our state. And then what I did is I grabbed the last message and I just printed the content. Okay. So quick pause here.
+
+This graph that you see here, you can actually generate this for any of the, what do you call it, the graphs that you make in line graph. Now, in order to do that I'm just going to show you a code snippet. So if you go to this website right here, it's actually the Getting Started guide for line graph. They have this right here. This code from IPython dot display, import image etc.
+
+if you run this at the bottom of your script, if you're inside of a Jupyter notebook, then it will allow you to actually save this image or to view the image. Now, I'm not going to do all of this right now, but essentially what you would do is you would make a new Jupyter notebook. You would just paste this at the bottom. So you take all of this code paste and Andrew Bruno, Jupyter Notebook, simply run the cell and then it's going to generate the image for you. Okay.
+
+If you're unfamiliar with Jupyter notebooks, that's not really the tutorial that I'm aiming to do. So I'm not going to walk through those steps. But if you are, then you can generate the graph and you can see it. Now I already generated them obviously, so I don't need to do that. But if you want to test it out and kind of make sure the graph looks as you expected to, then that's what you can do.
+
+Okay, so now that we've created this simple example, I want to move to a more complex one where we build out this graph right here where we have a classifier a router, and then we can go between multiple AI agents. Now my idea is that sometimes you want maybe a more emotional response, or sometimes you want a very logical response. For example, if you were to talk to me, I'm probably going to give you a logical response. If you were to talk to my mom, she's probably going to give you an emotional response. So what I want to do is I want to create an AI system where, based on what the user is saying, we can kind of adapt how we're responding to them using two different AI agents.
+
+So the concept is we're going to start here. The user is going to give us some input. We're going to classify that input whether we go logical or risk or therapist. Sorry that's what I'm calling this here. But really it's emotional.
+
+We're then going to have a router. The router is going to look at the classification. If the classification is logical, it's going to ask the logical agent to give us a reply. If it's emotional or therapist, it's going to ask the therapist agent to give us a response. So that's what I want to generate.
+
+So let's move over now and see how we do that. It does require a few more steps. Let's remove the bottom four lines here. Let me get out of this bottom four lines okay. And let's go back up to the top.
+
+And let's start by modifying our state. So in our state like before I do want to keep track of all of the messages that we had. But I also want to have another piece of state that specifies the message type that we're going to be using. Okay. Because we are either going to have like the emotional message type or the logical message type.
+
+And we need to know that in the state of our graph, so we know which AI agent should kind of handle the next task. So for this I'm going to say this is string or none as the type. Because we may not have any message type, but if we do then it will be a string okay. So when we start is nothing. And then later we can add some string to it.
+
+So now that we have this state, I'm also going to make another class above this, which is going to be a type that we're going to use for something called a structured output parser. Okay. You'll see how this works in one second, but it's pretty cool. So we're going to say class. And this is going to be message classifier okay.
+
+And this is going to be a type it's going to inherit from the base model of pedantic pedantic is a typing system in Python okay. And inside of here what we're going to do is the following. We're going to say our message. And then this is going to be underscore type is of type literal okay. And then for the literal we're going to have emotional as one of the types and logical as the other. Okay.
+
+Now why is this not giving us the correct highlighting okay there we go. It's fine now. And we're going to say this is equal to field. And inside of here we're going to have dot dot dot comma. And then we're going to have a description okay.
+
+Which is going to define how we kind of fill in this value. Again give me a second to type this out. It's kind of hard to type and explain it at the same time. And then I will break down kind of what this is. So we're going to say classify if the message requires an emotional or logical response okay.
+
+So we can say emotional and maybe we'll just go like therapist here to be a bit more clear. And then we're going to save that. So what I'm doing we just space this out here is I'm making this pedantic type. And I'm saying that in the type I want to have this field which is a message type. Now this is going to be a literal literal just means it's like an exact value.
+
+And the value is either going to be emotional or logical. Okay. That's kind of what I mean by literal value like a literal string. And we're saying this is equal to a pedantic field. The three dots. Don't worry about that.
+
+We just put that here in order to now add the description. And then we specify kind of what this field of represents. So we're saying okay the message type is going to be a classification. If the message requires an emotional therapist let's spell this correctly okay. So you'll see how we use this in a second.
+
+But essentially what we're going to do is we're going to have a stage within our kind of agent system here, where we ask an LLN to give us an output that matches this pedantic type. So that's why I'm defining it here. And you can make these types anything that you want. You can have as many fields as you want, but what's important is that you specify the type of the field, which we did here, and then you give the field a description. So the model knows how to fill this in.
+
+So we're using this as a classification. But for example if you wanted to collect someone's personal details you can make another class like you know person. And then inside of here you have all the fields like name string is equal to a field. You give this a description, etc. and all of the things that you want the model to kind of extract from the text you would put inside of this model.
+
+And you then tell them, hey, use this particular model and give me a response. In this format it's called a structured output format. You're going to see this in just one second okay. So now we have our state. We have our message classifier type.
+
+And we want to start building out our various notes. Now I'm going to remove this whole graph because right now we don't need any of that. And we will leave the compile because we use that in one second. All right. So after this we're going to start defining our various functions okay.
+
+So we're going to say define. And the first thing we're going to have is classify underscore message okay. Now this is going to take in our state. And for now I'm just going to say pass. And we'll write that in just one second.
+
+Now after classify message we're going to have define therapist. And this is going to be agent okay. This again is going to take in our state. And for now we're going to pass. Now why can I not spell therapist correctly or is that correct I think therapist there you go.
+
+Is now correct okay. Then we're gonna have another one. We're going to say this is going to be logical agent. And we're going to take in state and state. And then pass.
+
+Okay. So what we're doing so far is we're saying, all right, we want to have this classify message node. We're going to have a therapist agent node and a logical agent node. And then what are we missing. Well we need one more which is going to be our router.
+
+So we're going to say define router. Same thing here for the router. We're going to take in the state like we do for all of our nodes. We are going to pass. And then we're going to space this out.
+
+So we can start writing these one by one. But I like to just define the nodes that we're going to have up front, so that we know what it is that we're about to be doing. And again, if we look here we have a classifier a router logical and therapist. Okay. So we've kind of written the function to represent all four of these.
+
+So let's start with classify message. If we're classifying message we're going to start by getting the last message. So we're going to say last message is equal to state messages. And then negative one. So whatever the user last typed we'll we're going to get that.
+
+And then we're going to use that to classify. We're then going to say our classifier underscore LM is equal to our LM dot. And this is going to be with underscore structured output. We then are going to pass our message classifier. So what we're doing now is we're creating essentially a version of our LM that will give us only output that matches this pedantic model.
+
+So that's how we use this kind of structured output class okay. Now that we have that what we can do is we can invoke the AI classifier LLN. So we're going to say result is equal to the classifier lm dot invoke. And then inside of here we can put a list of messages that we want to invoke. Now the first thing we need to do is we need to tell the classifier what it should be doing.
+
+So we're going to specify a message and we're going to say roll is system okay. This means this is not a user message. This is coming from the system like instructions on what this should do. And then we're going to say content. And inside of here we're going to write kind of what the instructions are for this model.
+
+So I'm just going to paste them in here. Again you can copy this from the link in the description. But essentially this is what we want. So we're going to say that we want to classify the user message as either emotional or logical. Now it's emotional. If it asks for emotional support.
+
+Therapy deals with feelings or personal problems and logical evidence for facts, information, logical analysis, or practical solutions. So this system prompt in combination with the description of our message class for classifier pedantic model will allow the yellow line to take the user message, which we're going to put here in one second, and then classified into this structured output. So after we have the system message we're also going to specify the user message. So we're going to say role user. And then we're going to say the content is simply the last message dot content okay.
+
+And we're going to pass all of this to the classifier LM. And then what we can do is we can return whatever this result is. So we're going to say return. And then we're going to say message underscore type. And this is going to be result dot message type.
+
+Oops. So let's go back here message underscore type. Now again the way that this kind of works is because we're returning something that matches something in our state, we're automatically going to update the message type in this state to be equal to whatever this is. So when you're returning something from these nodes, as long as you match one of the types with the state, which is what you're supposed to do, then it's going to update that state for us, which means now in the next steps of our graph, we'll be able to access this state and know what it is that we should do next. Okay. So that's our classify message.
+
+Now that we've classified the message we need to look at our router. Sorry so that we know what to do next. Essentially should we route to the therapist or should we route to the logical agent. So inside of our router we're going to say the message underscore type is equal to the state dot get. And then we're going to get the message underscore type.
+
+Or we're going to default to logical okay. So if for some reason the message type didn't get classified correctly we're just going to go default to the logical route okay. Then what we can do is we can say if the message type is emotional then we can return and we can return next. And then therapist I'm going to show you how this looks in one second, because this isn't currently in our state. And what's the issue here.
+
+We're missing one of our quotations okay. And then otherwise we can just return. And this is going to be next. And then logical. So all we're saying is we want to look at our message type in the state.
+
+Now if the message type is logical then well we can return logical. Otherwise we're going to return therapist I'm doing this intentionally. We could have just used the message message type, which you'll see in a second, but because the message type is different than the next node that we want to go to, that's kind of what I'm doing here. I hope that makes a bit a bit of sensory, but I'm just adding an additional node just to add a little bit complex these. So you can kind of see how this works with different situations okay.
+
+So now let's build out the therapist agent and the logical agent which will be very straightforward. And all we're going to do early is just change kind of the system prompt that we passed to them. So same thing we're going to say last message is equal to state messages. Negative one okay. We're then going to say the messages that we want to send are going to be the following.
+
+We're going to have a role which is system okay. And then we're going to have content. And for the content I'm just going to again paste this in. You can copy this from the link in the description. I just don't want to waste the time writing all of it okay. So there we go.
+
+This is our system message. It says you are a compassionate therapist. Focus on the emotional aspects of the user's message, show empathy, validate their feelings, etc., etc..
+
+Okay, you can do anything that you want here. But this is just the message that I'm using for this to make sense. Now we're going to have another message. This is going to be role of user and then the content of this message is going to be the last message content. Okay.
+
+Then what we are going to do is we're going to say the reply is equal to lambda invoke on the messages. And then we are going to return the following. We're going to say messages like this with a list. We're going to say the role is the this assistant sorry. And then the content is going to be reply dot content.
+
+Okay. Now we can literally copy the exact same thing here. And we can put this in our logical agent. The only difference is we are going to change the, system message here. Okay.
+
+And why is this giving us an issue. It says duplicated code fragment okay. That's fine. Don't worry about that. And we are just going to take this new system message.
+
+Give me one second here for the logical agent and paste this in. So let's go here and paste. And it says you are purely logical system. Focus on only facts and information. Provide clear concise answers based on logic and evidence etc.
+
+etc.. So again we can make this a reusable function. But same thing just changing the system message. And obviously here you can make like two entirely different agents.
+
+We're just making them, you know kind of simple chat bots with different system prompts. All right. So there we go. We have our messages now. We have our logical agent.
+
+We have our therapist agent. We have our router. We have our classify message. And now it is time to actually build out the graph. So as we build out the ground we're just going to add the nodes and edges, which I think is the easy part.
+
+So now we're going to say graph builder add underscore node I like to start by adding all of the nodes. So first we're going to say classifier. And this is going to go to the classify message function okay. Next we can add the therapist. That's fine.
+
+We're just going with autocomplete here we can add logical. That goes to the logical agent. And before that we can add the router. So let me just copy this and change this to say router. And the router function okay.
+
+So we have classifier router therapist logical. Nice. Now we need to add our edges. So the first edge we can add is with the start. So we can say graph builder dot add underscore edge.
+
+We're going to go start. And the first one we're going to go to is our classifier okay. So classifier like that. Next we're going to say the graph builder dot add underscore edge. And then we're going to add the edge from the classifier okay.
+
+To the router. Very good. Next rather than just adding a standard edge now because the router could go to one of two different places, we're going to add a conditional edge. So we're going to say graph okay underscore builder dot add underscore conditional edges okay. Multiple edges here.
+
+And we're going to say that we want to go from the router okay. We're going to have a function here which is going to be our condition okay. So we're going to say lambda and this is going to be state. And then we're going to say state dot get. And then next.
+
+And then just bear with me here we're going to say therapist okay. Is going to go to the therapist. And the logical is going to go to the logical. Now I know this is a little bit weird, but essentially what this does or the way this works is we start by defining the source. Then we can write a function that we will call to get a value that we will then match against this path map.
+
+So what I'm doing is I'm looking at the state and I'm getting next okay. Now the reason we can do that is because from our router, we return this next value. Now notice next is not defined in our state. It's okay if it's not defined here. It doesn't need to be defined here.
+
+We can still access it afterwards. We just haven't typed it correctly. So if we wanted to we could go like next. And then we could say string or none in our state. But I'm just trying to show you that if you don't have that in the state and you return something, you can still access this returned value in the next node.
+
+Okay. So that's why I did it this way, just to kind of show you that you don't need to map it in the state, but it's a good idea to do that. So you can define exactly how it should work, the type it should be, etc.. So we're returning next.
+
+Okay. So here now in our conditional edges we're able to look at the state. So we say lambda state. This is a function right state dot get next. We then get whatever this value is and we say okay.
+
+If the value is therapist we go to therapist. If it's logical we go to logical. But we could change this right. If it was one go to therapist. If it's to go to logical.
+
+Or we could have different node names, which is why we have this kind of path mapping as defined here okay. So that's our conditional edges. So now we're either going to go to therapist or logical from router. Next what we need to do is we need to add the address. Let me get out of this.
+
+Between our therapist and logical and the end. So we're going to say Graph builder dot add underscore edge. And we're going to go from the therapist not to logical but to the end okay. And then we're going to do the same thing here. And we're gonna go from logical to the end okay.
+
+So we're adding edge between therapist to end and logical and end so that we will be able to end the graph. All right. So at this point the graph is finished. We can compile the graph. And this will all be working.
+
+But the next step is to actually allow us to run through the graph. And well to utilize this tool. So let me show you how we do that. We're going to write a simple function here called a run chat bot okay. Inside of run chat bot we're going to get some initial state.
+
+So we're going to say state is equal to and we're going to define our initial state. So we're going to have messages which is an empty list. And we're going to have the message underscore type which is going to be none to begin. All right. Then what we're going to do is we're going to have a while loop.
+
+So we're going to say while true and inside of here we're going to get some user input. So as a user input is equal to inputs are just going to say message like that. All right. Now if the user input. So if user input is exit then we are just going to print by and we are going to break.
+
+So we can get out of the while loop so that we have a way to kind of exit this. Right. Okay. Good. So we have our break.
+
+Now after that we're going to say state messages. And then this is going to be equal to state dot. Get okay messages. And then we're going to have an empty list. And then we're going to say plus a list.
+
+And then we're going to append the user's message. So we're going to say roll and then user. And then we're going to say content and user input. So what we're doing is we're saying okay let's look at the current state. Let's try to get the messages like messages does not exist.
+
+Get an empty list. And then what we're going to do is we're just going to add this new message with the roll and the content to our state messages, okay, so that we can kind of keep doing this continually. Then we're going to say state is equal to graph dot, invoke with the current state. So what's going to end up happening here is that we're going to get the new state after the graph is invoked. And then we're going to keep using that variable within here.
+
+So we can kind of keep track of the messages that have been said previously. And we can keep invoking the yellow line okay. So then what we're going to do down here is we're going to say if state dot get messages, okay. And the land of state here messages is greater than zero. So we're just going to make sure that we do actually have a message.
+
+Otherwise this code would fail. We're going to say last message is equal to state messages negative one to get the last message. And then we're simply going to say print. And we're going to print an F string. So we're going to say assistant colon.
+
+And then this is going to be the last message dot content okay. And then down here we can simply say if underscore underscore name underscore underscore is equal to main then run the chat bot function okay. So let's quickly look at this. We have this run chat bot function. We just space it out.
+
+We start with some initial state we go into a while loop. Sorry. We grab the user input. If the user input says exit we have a way to quit. So we, you know, print by and we get out of there.
+
+Otherwise we take this message. We add to the current state. We then invoke the graph using the current state. And then we look at the state after the invocation. And if there's any messages, we print them out.
+
+That's how this works okay. So let's run this and see if the functions, if we have any errors or not. I'll be amazed if this runs the first time, but let's give this a shot. Okay. So I think, yeah.
+
+So this message. So let's say, hey, I'm really sad right now and let's see if it goes to the correct agent here and gives us the emotional response. Okay. So so here you're feeling really sad right now. It must be really difficult to experience.
+
+Would you like to tell me more about what's going on? I'm here to listen. So that definitely seems like you went to the emotional agent. Let's do something like I need some advice. You know, my father would give or something, and let's see if it goes to the logical agent.
+
+Okay? I hear you're missing your father's guidance right now. Okay, so actually, this time we went to the emotional agent. I guess it doesn't have the same file that I had, but let's go. I need some hard, solid advice about buying a house or something, and let's see if it goes to our, logical agent this time.
+
+Okay? Give it a second to run. And here we go. So logical requirements, clean title property. So definitely seems like, you know, it's giving us kind of the in-depth, logical, response to yeah, here's a logical analysis for buying a house and our agent is working properly.
+
+And then lastly we can type exit and we can get out of that. Okay. Sweet. So that pretty much wraps this up I know that this is complicated. There's a lot of code here that we wrote, but I wanted to show you kind of a more advanced use case of line graph because this is complicated, right?
+
+It's not a simple framework. And I know if you just do a super simple example in the tutorial, it doesn't get you to where you guys need to be. So I want to just show you something that has kind of the routing and more advanced graph, multiple different nodes, conditional edges. Obviously, this is really just scratching the surface of what's possible. If you guys want to see more line graph on this channel and definitely let me know and I'd be happy to do some more.
+
+If you guys enjoyed, make sure leave a like subscribe to the channel. I will see you in the next one. Maybe.

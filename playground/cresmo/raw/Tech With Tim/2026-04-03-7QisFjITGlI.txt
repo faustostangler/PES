@@ -1,0 +1,323 @@
+---
+video_title: "Learn Snowflake with ONE Project"
+video_id: 7QisFjITGlI
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=7QisFjITGlI
+video_date: 2026-04-03T13:00:22+00:00
+video_description: |
+  Get started with Snowflake today for free: https://signup.snowflake.com/?template=us_economy_agent
+  
+  Today I'm going to teach you Snowflake by building a real project. By the end of this video, we'll have a conversational AI agent that can answer plain English questions about the US economy. It is a cloud data platform where companies store massive amounts of data and then analyze it.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  
+  🎞 Video Resources 🎞
+  Get the juypter notebook here: https://www.techwithtim.net/snowflake-economy-agent
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview 
+  00:31 | What is Snowflake? 
+  03:12 | Snowflake Project Setup
+  04:55 | Free Data Source
+  06:55 | Exploring the Data 
+  12:30 | Snowpark in Python
+  24:09 | Dynamic Tables/Views
+  29:41 | Semantic Views & Cortex Analyst
+  35:00 | Streamlit App
+  40:17 | Cortex Analyst REST API
+  
+  Hashtags
+  #Snowflake #Python #Streamlit
+  
+  UAE Media License Number: 3635141
+---
+Today I'm going to teach you snowflake by building a real project. By the end of this video, we'll have a conversational AI agent that can answer plain English questions about the US economy. Like what's the current unemployment rate? Or how is inflation changed over the last two years and everything powering it is going to run entirely inside of snowflake, which is the point of this video. But before we start building, let me quickly explain to you what snowflake actually is, because a lot of people have heard the name before, but they don't actually really know what it does.
+
+Now what? A high level snowflake is a cloud data platform, so think of it as a place where companies store massive amounts of data and then analyze that data. Now combines a few things that traditionally used to be separate systems, which makes it pretty valuable and important. First, data storage. So where your data lives.
+
+Next, data warehouses. So where you can run queries and do analytics especially on a large amount of data. Data pipelines. So systems that transform and prepare data. And then I am machine learning tools so that you can build intelligent applications directly on your data.
+
+Now the key idea is that your data compute and applications all run in the same environment, which makes it much easier to build scalable, data driven systems and to scale up different components based on what you need. So, for example, if you need more compute, that doesn't mean that you need to migrate your entire database. You could just scale it up inside of snowflake. If you want to add an AI tool, you don't need to rework everything, you can just add it. You're going to see this in a second, but overall, snowflake is very good for separating those different things out and allowing your data to be separate from the compute that it actually runs on and is being analyzed up.
+
+So in this tutorial, I'm going to show you how developers actually use snowflake by building something really practical. And here's exactly what we're going to do. So first we're going to explore some real economic data from a free public marketplace data set that snowflake has. Now this is going to give us thousands of different economic indicators like inflation, unemployment and mortgage rates. This is just an example.
+
+You can obviously use anything that you want, but this will give you a solid base and it's free and easy to set up. Then we're going to use Snowpark. Now this is Snowflake's developer framework works in different languages. For example, in this video we'll use it in Python to transform the raw data into something that we can actually analyze. Next we're going to create a dynamic table.
+
+Now this is basically a self updating data pipeline that will automatically refresh whenever new data appears. Now after that we're going to define a semantic layer. And this will actually teach Snowflake's AI what our data means. And kind of defines all of the different rows, columns, etc. in a way where the AI can actually understand the data.
+
+And finally, we're going to build a Streamlit dashboard or kind of Streamlit application that turns all of this into a conversational AI assistant, where you can actually ask questions about the US economy and get answers and get answers instantly. So based on your own data. So by the end of this video, you'll understand how snowflake works, how to build pipelines inside of it, and how to connect AI directly to your data all in one platform for free. So with all that said, let's get on the computer and get started. Also, a massive shoutout to snowflake for partnering with me on this video.
+
+Don't worry, they're free to use. I'm going to show you how to set it up right now. Now you'll notice that right now I'm inside of a large Jupyter notebook. Now, this notebook is pretty much a text based version of the tutorial that I'm going to go over here, and I would highly recommend that you download it and follow along with it step by step, because a lot of the code that we're going to be writing, or at least executing, is already written and I'm just going to be copying and pasting it. There's not really a ton of value in me teaching you sequel here.
+
+The point is to teach you snowflake, which allows you to execute, you know, Python code, SQL code, etc.. So we're just going to be copying in those different snippets. For example, if you scroll down you can see there's some Python files with some scripts already written. Of course I'll go through the important components of those, but it's just not that valuable to write every line of code completely from scratch.
+
+Okay, so make sure you've got this notebook. Once you've got that notebook, we're going to move to step one, which is getting the data and then exploring it in any type of data project, whether you're doing an ML model, whether you're analyzing some data, the first thing you need to do is understand the data. In our case, we need some data source. And before we can get our data source, we need to make a new account on snowflake. So if you want to make a new account you can just search snowflake sign up, or you can click the link in the description.
+
+It should bring you to a page that looks like this, where you can sign up for a free snowflake trial, and you'll be able to get, in this case, $40 in free credits when you select the correct option, which is the Cortex Code clock. So let's make a new account on snowflake again. Go to the link in the description. Press cortex code CLI. Make sure that you choose the one for developers, not for the enterprise is right. Now.
+
+Put in your details. You get $40 in free credits and that is more than enough to last you for a very long time. You will not need to pay for anything, you can just use the credits that it gives you. Okay, make the new account and then once you do that, you should be brought to a page that looks something like this. And from here, what we're going to do is we're going to start by loading in some sample data.
+
+And in order to get that, we can go to the snowflake marketplace. Now from the marketplace you can see there is a ton of different data sources here that you can explore and mess with. You can purchase some of them. Some of them are free. And the data source that we're going to be using for this video is the economic data for the US, which comes from the snowflake public data free data set.
+
+This is completely free to use. What I've done is I've left a link to it directly in the notebook. So if you click in it, it will bring it to you in the warehouse or in the marketplace story. And then what you're going to have to do is press the button here when it loads that says get. In my case it says open because I've already got it.
+
+What you can do is just leave the default options and then just press like get or access or whatever the button is. From there, it should prompt you to actually query or explore the data. What you can do is press on open like I'm just doing right here. And it should bring you into a new workspace where you can start actually running some SQL queries on this data. Now, I know that was a lot of steps.
+
+If for some reason that isn't working, but you were able to get the data and you press at least that get button and then went through that flow, you can always get into the place that I am in right now by simply going to projects and then to workspaces. Now, workspace is a place where we can have different types of files, for example SQL files, and we can explore, mess with our data, run analysis, etc.. And something interesting to note, let me just zoom out a little bit here, is that we can change the compute that we're using inside of the workspace. So remember how I was saying we actually can separate our data from the compute we're using to analyze the data.
+
+And in this case we have three warehouses that we could select from. We're just going to keep the default one here. We don't need to change anything. But just notice that that's already kind of built in. And you can see that.
+
+And then you can change the actual database that you want to be using as well. So in our case we're using the snowflake public data frame. We can see that we just have one schema in here which is public data free. And the first thing that we want to start doing here is start exploring this data. So let's go back to our notebook and let's have a look at how to do that.
+
+So first natural thing to do would be to show the databases. Now we already know what the database is but we can run the command in here. Let's zoom in a little bit. And when we execute that command we can see that we have our databases here. And we have this snowflake public data frame.
+
+Now, we know from when we looked at it that we just have that one schema here, right, which is the public data three. So now we're going to start looking inside of that and seeing what tables are available. All right. So now that we have all of the databases we want to start looking at the tables or the views that we have in our database. Now if we just look at the Database explorer down here, you can see that we can actually click into the database or snowflake public data free.
+
+We can see that we have an information schema as well as a public data free. And it looks like we actually just have a bunch of views here. And we don't have normal database tables. So if we go and we look at all of these views, we can see there is a bunch of information. Now I've already passed through this so we can pull out the, you know, interesting stuff that we need, but you can see SCC, United Kingdom or United something US real estate, world Bank, whatever.
+
+Right. So there's all different types of data inside of this database. And if we just wanted to quickly view that we could run a query like show sorry show views in schema and then snowflake public data free, public data free. And if we run that, we can see the result right here, right. And see all of those views that we just had to look at.
+
+So in our case we just care about a few of them. I believe particularly two views is what we're going to be looking at. So let's go ahead and actually make a new file here. Let's call this a SQL file. Let's change the name by double clicking.
+
+And let's start by actually pulling in some information about some economic indicators that we're looking for. So if I go back to my notebook you can see that we can preview the economic indicators table. So what I'm going to do is just copy this command here, where we're going to look inside of the Financial Economic Indicators time series, which is kind of a view or a table here inside of snowflake. If we paste this let's just call this, you know, I don't know, preview or something okay. We can run that and let's see the information that we get.
+
+So we can see that inside of this view we have a bunch of different kind of abstract variable codes. And then we have some variable names. So these variable names seem to kind of represent what this code means. Let's make this a little bit smaller. And we can see that we have like CPI and other household equipment and furnishings CPI frozen and refrigerated CPI.
+
+So this seems to all be information about the consumer price index. But I think there's some other data in this table as well. And then we can see we have the date we have the value. And then we have the unit that we're using. Okay cool.
+
+So now that we understand that what I want to do is start pulling some specific economic indicator data that I'm going to need for this project. Because remember, we want to build an AI agent that's able to understand the US economy and in order to do that, we can kind of feed it three pieces of information, which is going to be the CPI, which is the current inflation rate, the unemployment rate and the 30 year mortgage rate. So what I want to do is just kind of preview what all of this looks like. So I understand this data again, kind of in this exploratory phase where we're just looking through it. And that's what we would start any data project with.
+
+So let's start by looking at the CPI or inflation. So what I'm going to do is just make a new SQL file. So I have all of these stored and let's paste this in here okay for CPI and run it and see what the CPI looks like. So you can see that we essentially said okay let me just go through this. We want to look in the Financial Indicators time series.
+
+We want to make sure the country is USA. This is the variable that we want. We want to order it by descending and then limit it to 12. So we get the last 12 months. And if we have a look here you can see that we have 2025.
+
+And what is this November 30th. We have the value right here. Right. We keep going and we get all of the different values for the consumer price index over the last year. Cool okay. So let's make another one.
+
+Let's go back to our notebook. We're looking for the unemployment rate here. So let's copy that and then just rename this to UN m employment. Paste this inside of here and then go ahead and run. And when we do that we can now see the unemployment rate.
+
+So current labor force unemployment rate 20 years okay. And then we get the value right here I guess that's like 4.1% 3.9%. We can see it's been increasing actually slightly over the past year okay.
+
+So that's good to see. And then last thing we're not going to see at the unemployment rate. We get to see that data. Is the 30 year mortgage rate. So let's copy this and paste it in over here and just go 30 year mortgage.
+
+So we have this kind of all nice if we can spell this correctly and separated. And let's paste it. Give it a second here. And if we run that we can have a look at the values. And same thing 30 year fixed rate.
+
+And you can see that right now we're sitting about 6.2% which is quite high. Well maybe not in history, but at least based on what I remember in the past few years. Okay. So we now have kind of this, you know, workbook that we're inside of.
+
+We have these different files where we've previewed some stuff. We have the CPI with the unemployment, we have the 30 year mortgage rate. And we could keep working in here. We could make some more, you know, SQL files and explore the data. But at this point we kind of know these three indicators that we want.
+
+Right. And notice that the 30 year mortgage rate, I actually pulled it from a different view, which is the Freddie Mac Housing Time series. I didn't explore that view because I just already know where to get that data from. But of course you would have to find that in kind of the exploratory phase. So we have two from the time series, right?
+
+And then we have one from this Freddie Mac Housing Time series. We got the 30 year fixed rate mortgage. So what I want to do now actually is I want to kind of start working on taking this data and combining it together into one large table or database that I can use to run my AI model, because I don't want to give my AI model access to literally everything that's inside of this sample data, because that's a lot. I want to kind of take this information, make sure I keep it up to date, and just load it in like a small database or small view or table. So in order to do that, I'm going to make a new SQL file here.
+
+And I'm going to start following kind of the next steps that I have here in my notebook. So notice we're now into part two where we're looking at Snowpark connect now like it says Snowpark. And it gives you a PySpark like API that runs on snowflake compute. You can use it to prototype the transformation interactively, filter combine, pivot data, etc. and see results before promoting to a dynamic table, which we're going to have a look at in one second.
+
+Okay, so what we're going to do is we're going to make a project database. We're going to run this directly inside of kind of the snowflake UI that you just saw. And then we're going to run a script here where I actually show you how we can take data and manipulate it from Python. That's inside of snowflake. So what I'm going to do is I'm going to copy this SQL code right here, and I'm going to go back here and I'm going to paste it in and start walking you through what we're going to do step by step.
+
+Okay. So what we're going to do is we're going to create a new database. If it doesn't exist called economic agent database, then we're going to make a new schema inside of that database called analytics. Then we're going to make a new data warehouse that defines the size. So extra small.
+
+And then when we want to suspend it. So after 60 minutes and then we want to resume it automatically when we start using it we're going to call that compute which then we're going to use the database economic agent. We're going to use the schema and we're going to use this warehouse. So notice we've kind of separated three things the database the schema and then the compute or the warehouse that we actually want to use to analyze this data. And again snowflake keeps those all separate.
+
+So what I'm going to do is just call this script create DB. Let's go ahead and run this and just give it a second to execute. And just make sure you select all of it when you run it. And you can see statement was executed successfully. Now I believe if I refresh the database explorer we can see we have this economic agent database.
+
+We also have this analytics schema here which we can then start working with. But okay so we've created a new database. Now what we're going to do is we're actually going to load up a Python script on our own computer. And we're going to start manipulating some of the data in that database. Okay.
+
+So in order to use Snowpark, which is like I said, kind of a PySpark, a like API, we need to install it using Pip. So what I'm going to do is I'm just going to make a new file here, and I'm just going to call this, I don't know, demo.py. I know it's very small. Editors please zoom in.
+
+And in this Python file I'm just going to copy all of this Python code. So let me pull it up right here from the notebook and start walking you through it step by step so I can show you how we can connect to our snowflake instance from code. Okay. So we're going to paste all of that inside of here. And before we can start running this we do need to install the different packages.
+
+So let's have a look at how that works. So just to better explain this a little bit I just pulled up a website here which explains Snowpark. And you can see this is a set of libraries and code execution environment that runs Apache Spark, Python and other programing languages with the snowflake vectorized engine. So this is effectively just developer tools that you can use to interact with snowflake. Now you can see that you can choose the language that you want to use.
+
+In most cases you're going to be using Python. You have the scalability without the complexity, right. And you can just start kind of messing around and using things like pandas dataframes directly inside of snowflake. So you can see you have Snowpark dataframes, you have pandas directly on snowflake, which is very useful, especially if you're a Python user, and there's a bunch of other stuff that you can do here and read. But anyways, I'm going to start going through how this works.
+
+Okay, so as I said, first things first we do need to install this. So what we're going to do is just copy this install command which is pip install snowflake Snowpark python. And then pandas. We can use a pandas dataframe directly inside of Snowpark. And then we're going to bring in the snowflake connector for Python.
+
+So go ahead and run that pip command and it should install all of that for you. Let's wait for that to finish and then I'll be right back okay. So all of that is installed. So I'm going to go back to my demo Python script here and start walking you through how we can actually set up this connection. So again first step install the different libraries.
+
+Then copy all of this code into a Python file. And let's start walking through it. So you can see that we have our imports here. So we're using Snowpark right. Like we installed.
+
+You also notice that there's some connection parameters. Now these connection parameters are what's required to actually connect to our snowflake data as well as to the warehouse. So you can see that we have the database which is the econ agent database. We have the schema. We have the warehouse.
+
+And we have the role. Because you can set up different roles based on different users or access controls that you want to have for your database, but we're not going to get into that in this video. We then have our account user and password. I'm going to show you how to get those values in one second. So you can just plug them in and then run this code okay.
+
+Now let's assume that we have this connection parameters. What we're going to do is build a new session. This is just a way of connecting to snowflake. Once we do that what we're going to do is read the two source tables. So you can see that we're looking for snowflake public data, free public data, free financial economic indicator time series, and then the Freddie Mac housing Time series that we actually ran the SQL queries for before it was same thing as before, except this time I've translated into Python code.
+
+We're able to extract what the CPI is, the unemployment rate, and then the mortgage rate. Okay. And you can see that the way that I do this is I say okay for the CPI. I want to filter the column that I want to filter on is this I want to make sure it's country USA. I want to have another filter so I can combine multiple filters together.
+
+Again the column is the variable name. And I want to make sure the column is equal to this. And then I'm selecting the following right. So I'm selecting the date the value. I'm casting it as a double type.
+
+And then I'm getting the CPI value as well. And in this case it's going to give me all of the different reps. Then I do the same thing with the unemployment okay. So I'm not going to go through all of it. It's exactly the same thing querying all of the unemployment data.
+
+And then I'm querying all of the mortgage data. And then we'll continue on to what I'm going to do afterwards. But first let's get our connection parameters okay. So in order to actually connect to this and start running queries and, you know, creating new rows and whatnot from snowflake, let's go here. Actually. Yeah. Let's just go to this page.
+
+What we're going to do is go to our little profile icon here. Now from our profile icon we're going to go to where it says account. And we're going to go view account details okay. So once you brought to this page right here you'll be able to find all the information that you need for setting up the connection. Now you can have a look at the config file here where you can change the connection method to be either web browser or password.
+
+I would recommend just using password for now, and it will give you the different values that you can fill into that Json object. You also can change the warehouse that you want to use. So we could use, you know, compute right. And then it changes it right there. We also can change the database.
+
+So if I change this and I go to analytics you can see that it gives me all of those values which I already filled in here. Okay. Now continuing if you go to connectors and drivers we can choose one of these as well. So ODBC connection string go driver dot net etc..
+
+And then it gives you the SQL commands as well. So what we're going to do is we're going to go password method from the config file. We're going to copy the account okay. So just make sure we get that and paste it here. You can ignore this comment because this is wrong.
+
+We're then going to go user for the user. We're going to copy the username. And then the password is going to be whatever password you set when you sign in to snowflake. So just paste it there okay. Now if you do put your password in here and you try to run the code, you may get an error that looks something like this where it says database error, failed to connect to the database failed to authenticate.
+
+And then that's because MFA authentication is required. But none of your current MFA methods are supported for programmatic authentication. This will happen when you've enabled multifactor authentication. So the way to get around this is actually to create a personal access token. Let me just show you how to do this.
+
+So if you go to your user profile again at the bottom right and you go to settings from here, you can go to authentication. You can then go and generate a token. So I'm going to generate a token which is a personal access token. And then this will work as opposed to using your normal password. So I'm going to create the token. You can change the expiry date.
+
+Let's just call this I don't know demo okay. And then generate it. And then we're going to copy it and go back and replace the password field with the personal access token. Okay. So now we have the personal access token. Again don't leak this to anyone.
+
+I will delete it after the video. And I'm going to rerun the code here. I'm just using UV but you can use anything that you want. We should see that we get connected to snowflake. It's going to start running some stuff here right.
+
+And then kind of giving us some output. And I'm going to run through the code step by step so you can understand what it is that we actually just did. But generally you should get the idea that it is working. So we just want to make sure that is connected to snowflake and then we can proceed okay. So get your personal access token, put in your user and your account details.
+
+Run the code to make sure it works, and then just kind of scan through to see what's going on. So you've already covered we're going through and extracting the CPI, the unemployment rate and then the mortgage rate. Now afterwards what we actually want to do is a union, all of these into a data frame. So what we did is we said CP, CPI, street union, all unemployment the union all and then mortgage. What that does is now combine the data.
+
+We just showed some of that because we're using kind of the pandas dataframe feature here to do that. And then what we did is we actually pivoted this by having one row per date and one column per metric. So we said, okay, we want to create a pivot where we're going to have the metric being CPI unemployment rate and then the mortgage rate for 30 years. We want to aggregate this based on the value and then sorted based on the date, and create kind of a dashboard that has all of these different values, you know, sorted by date. So if we're looking at, you know, 2025, November 30th or November or whatever, we can have like what was the CPI on that date, what was the unemployment rate and what was the mortgage rate in one column or one row?
+
+Sorry, in our database, as opposed to having to query it from multiple places. So then you can see that what we were doing is just showing this dashboard. Now in my case, I didn't actually save this data anywhere. We're just doing kind of some analysis in Python because I want to show you how Snowpark worked. So again, let's run the code again and just quickly have a look at kind of what's going on here.
+
+And then we can move to the next step. So you can see okay I see the snowflake. We had 946 rows of CPI number nine, 34 of unemployment. And then a lot for mortgage. You can see if we look at the values and the metrics right.
+
+We have those here. And then what we did is we created this pivoted dashboard where we can see for some dates, we do have no values because we have additional dates for the mortgage rate that we didn't have for the CPI or for the unemployment rate. But if we look at a value like 1130, we have the CPI, we have the unemployment rate and then know if we look at another one, let's go. Here we have the CPI unemployment rate. No, no, no unemployment rate.
+
+And you get the idea okay. So we can look at this see if we're happy with this value. If not we could transform this so that we have all of the correct kind of dates connected. But at least for now, we have kind of one view, or at least the ability to create one view, where we're kind of combining all of this data together and aggregating it by the date. Anyways, with that said, let's move on to the next step where we're going to start creating what's known as a dynamic table.
+
+So we close this okay. So we had a look at this Python code right. We kind of understood what's capable what we can do with the data and how we can, you know, manipulate this and look with it inside of pandas. What we're going to do now is create the dynamic table. Now this is effectively a data pipeline where rather than us having to kind of manually run some script and for example, like, you know, inject the freshest CPI data, you know, what is it, unemployment rate data.
+
+We can create a table that will automatically keep that data up to date for us. So let me just explain this a little bit more in depth. What we just did right is we just kind of one off ran this script that went and created this kind of pivot and, you know, connected these different rows together into some dashboard that we were able to view. That's fine. But what happens when we move to the next month and we get updated CPI data or updated unemployment data, we would then need to manually run that script again, maybe update a database row.
+
+You get the idea, right? Data is constantly changing and we want to keep, you know, loading it in and having the freshest data for our AI Asia that we're going to make in a few minutes. So what a dynamic table allows us to do is have snowflake automatically keep the data fresh for us. So you can see it says a dynamic table is like a materialized view that refreshes itself. You provide a SQL query and a target like and snowflake keeps it fresh automatically with no cron jobs or orchestrators.
+
+Okay, so what we're going to do is we're going to create a dynamic table using the same logic that we just had in Snowpark. We have the filter, the union and the pivot. This time we're going to write it as SQL for the dynamic table. And what will happen is snowflake will now look at that table and it will automatically refresh it at whatever frequency we've put. So any time that the original data source changes this new table that we have will automatically update as well.
+
+Now there's a large query here that I'm going to paste to, what do you call it, snowflake in what's called snow site where we were kind of messing around, with the data in that workspace. And this will create that for us. And I'm going to walk you through exactly what this query does. So let's go back here. Okay.
+
+Let's just close this copy clipboard and close. So that means I'm going to have to recopy this because it just replaced my clipboard. Let's go back here to projects and then workspaces okay. And if we want to keep our workspace organized let's make a new SQL file. And let's just call this dynamic table okay.
+
+Now from here let's paste all of this inside. And let's kind of slowly start going through it step by step so we can understand what we're doing. So of course we're using this database that we created. We're using the analytics schema. And then what we're going to do is create or replace the dynamic table called Economic Dashboard Live.
+
+The target lag is one hour which means every hour we will refresh this. This is the warehouse that we want to use to create this. We're then going to say as select. And I'm going to quickly go over and just reference my notebook to explain to you what's happened. So specifically what this query is going to do is it's going to pull the economic data from multiple public sources into a single dashboard table.
+
+So like we said, we get the CPI unemployment rate, a 30 year fixed rate mortgage. This query is going to gather these metrics from the two sources. Right. It's going to transform the different metrics into a common structure using union. Oh, and that label for each metric and standardize the value type, the header query pivots the combine data so that each date becomes a row, and each metric becomes a column.
+
+And then the resulting dynamic table is always kept up to date. Okay. So exactly same thing that I showed you before, but now we're just doing it inside of SQL. So I'm not going to run through every single single command is a little bit complicated. But now in the era of AI, you can get AI to help you create these queries, just like I did.
+
+So effectively we're selecting all the values right from these. So we're saying select union union right. Create all that group by date. And then we are good to go. So what we're going to do is just select all of this and run it.
+
+And again this is doing the exact same thing that we just did inside of Python, but now inside of SQL and creating it directly inside of snowflake as a new table or view inside of our schema. We also could have done this directly from Python, but I wanted to show you in both ways. You can see kind of how it works. Okay, so you can see now if we go to the economic agent database, we have analytics. And if we open up analytics, we now have one dynamic table.
+
+And if we have a look at the dynamic table it is the economic dashboard. Right. So you can see that right there. And we can start querying it and having a look at it if we wanted to verify that it was working properly. Cool.
+
+So let's actually proceed to do that. Let's just put a new query down here. Select it and then run it. And when we do that, you can see that we're able to actually view some data from the table where we have all of the different values, right, which are the dates. And then all of the values and the corresponding rows.
+
+Cool. Okay. So select Asterix from Economic Dashboard live order by date descending limit 20. That's what we're running. And then last thing we can check the refresh status.
+
+So let's copy this query right here to see when this will be refreshed. And you'll notice that I'm just selecting the one query that I want to run. So when I select that I can just press the button. And you can see it says Economic Dashboard. Yeah. Let's have a look here.
+
+Here's the rows. Here's the bytes. Target lag one our refresh mode incremental. And you can modify any of these values. If you wanted to.
+
+And if those source views change at all this will automatically update every one hour. Okay. So now we're at a point where we kind of have all of the important information that we need combined into one view or one table, whatever you want to call it. So the next thing that I want to do is I want to start hooking this up to AI so we can actually have AI being able to understand our data and use it. So let's just open this up.
+
+Let's go back to our notebook and explain what we're going to do next. All right. So now we're moving on to talk about semantic views. No semantic view I'm just going to read it from here is a data dictionary in your schema that has business friendly names descriptions and metrics. So the cortex analysts we'll talk about that in one second.
+
+But it's built into snowflake can understand and interpret your data. Now we can actually build this directly from the user interface. So let's go there and I'm going to show you what it looks like. And we'll make more sense. So from here we're going to go to AI and ML.
+
+We're going to go to analyst. And you can see that should bring us to a view. This is semantic views. Now what we're going to do is select our database. So let's find the one that we created which was our econ Asian database.
+
+Let's find our schema which is analytics. And we're going to go create semantic field. Now let's just zoom out a little bit so it's easier to see for our semantic view we're going to give this view a name. So let's go back and reference what we talked about here. So we can see that here I've just put economic dashboard semantic.
+
+So let's call it that in all capitals economic dashboard. And then semantic okay. And for the description you should just give this a quick description on what it actually is. So let me just kind of voice type something in here combined CPI 30 year mortgage rates and unemployment rates for the US okay. And that's fine.
+
+And then we're going to go and press on next. Effectively what we're going to be doing here is creating a semantic database, which is a database that contains information that humans or lambs like our AI can actually understand. So we can say, hey, this, you know, 30 year fixed mortgage rate column. This is what it actually means. Oh, this value here. This is what it represents.
+
+So it's all this additional data that allows the querying of data more effectively from something like an LLN. Okay. Now it says provide context here, which is optional. For now we're just going to skip this. But if you wanted to give like examples of what might be asked of your data, you could put that here.
+
+Anyways. So we're going to go skip. And then we're going to select our table. So to select our table we're going econ agent database. We're going to go to analytics.
+
+And we're going to select this dynamic table okay. So we're going to go ahead and press on next from here we're going to select our columns. So what we're going to do is just select all of them. So date CPI unemployment and mortgage rate says add sample value. So semantic view if you real value from each column.
+
+Yes we'll do that. Add descriptions to the semantic view. We use AI to figure out the sensible descriptions to add in saving you time. Yes we will do that okay. And then we're going to go ahead and press on create and save okay.
+
+So now we can see that the semantic view has been created. And what we can do if we want to quickly look at what the semantic view actually looks like, is we can press on this edit Yaml button. There's actually a few other ways to do this as well. But if you click on this, you'll see that this was generated by AI for us. And you can see that we have these descriptions for all of the different values.
+
+We have the date associated with the economic date record. Right. Our data record, sorry CPI consumer price index values measuring inflation and changes in cost of goods mortgage rate, the 30 year mortgage interest rate. Right. Unemployment rate, the unemployment rate expressed as a decimal portion, blah blah blah blah blah.
+
+And we have all of this additional data which is now inside of this view, which can be used by our AI models. So if we keep scrolling through here, you also see we have logical tables. This is the table that we added right. Economic dashboard live. We can add a bunch of other stuff here.
+
+And then we have facts right. So CPI mortgage rate and unemployment rate which is information that the AI can use when we're querying this table. Now I'm not going to go into this too much in depth. Of course, there's a lot more you can do here with the semantic views. But generally speaking, you need to create the semantic view in order to use some of the AI and ML features inside of snowflake here.
+
+So now because we have this semantic view, what we can do is we can start prompting in this kind of playground on the right hand side here and querying or asking questions about our data, because now an Lstm or an AI model that's running in the background is handled by snowflake, at least in this playground situation, will be able to understand the data going, query the correct data, and use Snowflake's engine to do so. So we can say something like when was the highest CPI that you have available? I don't know if that's actually going to work or make sense, but let's just run that. And the cortex analysts will try to interpret the question right. And then go and run various queries on our data set.
+
+So you can see we have the logical query and then give us the value. Right. 3 to 5 is the highest value one that it has I don't know if that's correct or not but that's what it's saying. Go let's say what was unemployment in November 2025 okay. And you can see that it ran the query and then it gave us the values.
+
+And it found 0.041 found no for the other ones because those were just where we have the housing data and we can see the query that it ran to do this. So effectively what we've done right is we've created this kind of querying engine. Now by creating this, you know, semantic view that allows snowflake to go here or cortex analysts, whatever you want to call it, query the database and then give us the data back. Now once we have that data back, we can then process that with an alarm to get like a nice markdown response or combine it with additional data.
+
+But this is the first step to kind of creating, you know, an AI agent around our data and having these kind of advanced ride capabilities. Okay, so now we have the semantic view. And if we want we can also run this just to view the view and see what it actually looks like. I'm going to skip that for now. So now that we have that we're going to move on to the next step where I'm going to show you how we can use this from code, because of course, yes, it's cool to use it in the playground, but if this is actually going to be useful to us, we need to be able to use it from our own application.
+
+And that's how we can kind of complete this project. So in order to use what we just created, which is the cortex analysts, we can do this inside of a Streamlit application, which I'm going to show you. But we also can just directly use the Cortex Analyst API because they have their own API from our own code, in a similar way to what we did before, to kind of make our agent. So first things first, I'm just going to copy all of this Streamlit code here, which is a kind of Python UI library, and I'm going to go now over to snowflake, and I'm going to go to Projects and Streamlit. So you can actually run Streamlit directly natively inside of snowflake, which is super cool to kind of create a dashboard so you don't need to run it on your own computer.
+
+Now from projects I'm going to make a new Streamlit application. So what we can do here is run this on the warehouse. We can just call this something like AI agent V1. We're going to choose our application or our database and analytics and then just choose compute and go ahead and press on create. And what this is going to do is spin up a new Streamlit app directly in the cloud for us.
+
+So we don't need to actually authenticate or anything because it will be directly connected to our snowflake account already. Okay. So it's going to load kind of a sample Streamlit application. You can see, you know we have this app and we can kind of run this and you know view the different data that's inside of here. That's fine. However we don't care about that.
+
+So we're going to scrap everything that is here because we do not need that. We're going to go to environment dot Yaml. We're just going to quickly add a new dependency dependency. Sorry which is snowflake dash dash ml dash python, which we're going to need to use the cortex analyst in just one second okay. So we're going to just change the environment dot Yaml.
+
+We're then going to go to our Streamlit app. And if we go back here to our kind of, you know, markdown file or, you know, notebook or whatever, we can copy all of the code for this Streamlit demo and we can paste it in. But first I want to quickly run through the code so you understand what we're actually doing. So the interesting thing here is because we're running this directly inside of snowflake, we can just get the active session that we're inside of, which will allow us to authenticate without needing like a personal access token. So you can see we bring the imports in, we get the current snowflake session, and then we're able to just to run a Streamlit application natively so we can have title caption, you know, we can cache some data.
+
+And then what we're going to do is actually select the last 24 values that we have here from our economic dashboard live table. We of course could select more as well. But this is how we kind of load in the data from our auto refreshing dynamic table. We just display some of that data. And then what we do is we set up a really simple kind of message prompt here, where users can type in a message, and then you can see we just append that to the current state.
+
+And then what we do is we pass the current data. So data string that we have as well as the users message which is the prompt. And you can see we just put a few metrics and notes here. And then we just again have a little bit of formatting with Streamlit to put the data out. I'm not trying to teach you Streamlit here.
+
+That's why I wrote all of this code already. And you can see we use this complete function where we run the Mistral Large Learn model from where if you go right here, the cortex and stuff like okay, so we're going to take this code, we're going to paste it inside of here. And we can go ahead and press on run. And right now it says no module snowflake cortex. That's fine.
+
+We're just going to give it a second to install and then be right back okay. So what I was able to do here just to get this to work because it was giving me a little bit of issues, is I just pressed on packages here and then I just typed snowflake dash ML, dash Python and just pressed on it. And when I did that, it, well, I guess I just uninstalled it, but you did install it a second. So snowflake dash ml dash python. And you can see that it's right here and it got installed. Okay.
+
+So if you need to install something you can press that. And then also I had just manually added it to the dependencies. So let's wait for this to load. And then we should be good okay cool. So we can see that it's just showing us kind of some values right here.
+
+We can view the raw data and see all of that popping up. And then we can ask questions about, you know, unemployment inflation or mortgage rate. So let's ask it something like how has CPI changed from today to six months ago? I don't know if it's even going to have all that information, but let's run it and see what it says okay. And you can see we pretty much instantly get the answer there.
+
+And then we could ask it maybe what about on employment. Let's see what it says okay. And then we get unemployment. And I'll say what is the trend for mortgage rates. Awesome.
+
+Then it gives us the general downward trend from July 31st to today, where it has decreased by like 1.5% or something like that. Cool. Okay. So that is that for the Streamlit application.
+
+Now again, I just want to show you that you could do this directly, kind of in the browser inside of snowflake because it doesn't natively support that. You of course can also run this locally on your own computer, but then you would have to get a different snowflake session because you can't get the active session because you're not already signed in. And what we're going to do now is actually do that. We're going to move on to the computer, and I'm going to show you another script where we can directly use the Cortex Analyst API to effectively run the same thing, but on our own machine. Okay.
+
+So we're back in the notebook here, and you can see that we have another script that we can just copy into a local Python file. Same thing. We just need to put in the details so the host account user and a password. And then we're able to actually send a request natively to the Cortex Analyst API. Using the semantic view.
+
+In order to get the data back that we need. I'm going to walk you through this code here in just one second. Let me just put it in a Python file. So it's a little bit easier to see. Okay.
+
+So I just made a new file called Ask economy.py. You can see that I've put my account. And then just for the host it's just the account dot snowflake computing.com.
+
+We have our user ID that actually should be tech with Tim. And then we have the personal access token that we had before. You can just use the same one that you had previously. Now we need the semantic view. Semantic view.
+
+If you follow everything in this tutorial should be this. But if you name it as something else then adjust it. Okay, so step one get a session token for the rest API. So Snowflake and Cortex Analyst or Cortex has its own Rest API. It's going to be run on your account.
+
+Dot snowflake computing.com/session/v1/login request. We can actually send our account information, and it will give us back a token that we can use for this session to send further requests. So that's what we're doing. We're getting kind of our JWT token here.
+
+We then move to step two where we can ask Cortex Analyst the rest API for some information. So we have a question like what is the current unemployment rate. What we can do is we can pass to API v2 cortex analyst message. So this is just sending a message that will be completed by Cortex Analyst. The message we want to send is just type text.
+
+And then this is the question. And the semantic view we want to ask it about is well the semantic view that we created. We then pass the snowflake token in our authorization header and we are good to go. Then we can parse the response. So the response that we're going to get back is kind of going to be like a SQL statement, because the way the cortex analyst works is it just gives us the data directly from the semantic view.
+
+It's not really doing all this additional processing on top. So you can see kind of what I'm doing here is processing the text versus the statement that it gives us, because it's going to give us a SQL statement as well as like some text above, the SQL statement. And then what I can do is actually execute the SQL statement. So the way the cortex analyst works is that it would generate the query to run. And that query, if ran, will give you the data that you're requesting.
+
+But we still need to run the query. So I'm getting the SQL statement. And then I'm now connecting to snowflake again okay. This time using the snowflake connector. And then I'm going to create a cursor I'm going to execute the what what do you call the statement that was given to me.
+
+And then get the values and print it out so we can see the direct data from cortex Analyst like we were doing in the playground before. Now, in order for this to work, you just need to make sure that you have Snowflake Connect or Python and requests installed. If you have that, then you can run the code, which I'm going to do right now. We're going to test it out. All right. So the code just executed did take a second.
+
+You can see analyst. This is our interpretation of your question. What is the most recent unemployment rate in the available data. And then you can see that it gave us this SQL query. We then executed the SQL query.
+
+And you can see that we got the value 0.04099 which is the most recent one. And of course we could just change the what do you call it here question to test this out. But overall this is directly using the cortex API. And now that you have this you can then take this data, pass it to an additional LM right.
+
+And run it as kind of a more agent system. However, overall, you know, this is kind of the starting place. If you have the rest API and it's functioning, everything else is a lot easier. It's more just about executing, running the data, etc. and that's it guys.
+
+If we look at our notebook, that is going to wrap everything up. There's nothing more that I have in here. That's everything I wanted to show you in this video. And while I note was a lot, it's a little bit confusing. snowflake is kind of a new thing for a lot of you.
+
+I wanted to show you a lot of the different things that are possible, give you a step by step tutorial that you can follow along with, and actually play with, and hopefully you have a better understanding of what snowflake is, how it works, and how you can mess with it. The way to get better is just to keep playing with it. So I would suggest doing that and I will be making some more snowflake videos on this channel, especially as AI and data engineering become more and more important. If you have any ideas or feedback for that, please let me know in the comments down below. And with that said, I'm going to wrap up this video.
+
+If you guys enjoyed, make sure to like, subscribe and I will see you in the next one.
