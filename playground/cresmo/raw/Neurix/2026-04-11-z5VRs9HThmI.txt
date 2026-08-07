@@ -1,0 +1,169 @@
+---
+video_title: "How Hackers Bypass CAPTCHAs with Python"
+video_id: z5VRs9HThmI
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=z5VRs9HThmI
+video_date: 2026-04-11T09:50:09+00:00
+video_description: |
+  CAPTCHAs are a common defense against automated attacks, but sophisticated actors can bypass them programmatically using Python-based tools and machine learning techniques.
+  
+  This video is for educational and awareness purposes only. 
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker OS
+  - Ubuntu Server: Victim OS
+  - Python 3 & JupyterLab
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  02:12  The 4 key Python libraries used
+  04:30  Accessing Sally's Site with Python
+  07:17  Solving Sally’s CAPTCHA 
+  12:18  Loading the Wordlists
+  16:35  Launching the CAPTCHA Attack
+  24:45  Website Hacked! 
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #CAPTCHA #cybersecurity
+---
+Esta é a Sally. Ela é uma artista com um sonho e um pincel na mão. Após anos vendendo suas pinturas em mercados locais, ela finalmente deu o salto e lançou sua primeira loja online, sallyshop.test. Cada detalhe do site é criação dela, desde o layout da página inicial até as fontes escolhidas a dedo.
+
+É um reflexo digital da sua arte, construído com esmero. Para proteger seus clientes e seus dados de login, Sally adicionou o que ela acreditava ser um recurso de segurança robusto: um CAPTCHA. "Agora os bots e hackers não podem mais simplesmente usar força bruta para descobrir nomes de usuário ou senhas", pensou ela. "Eles precisariam ser humanos para passar pelo CAPTCHA." Mas o que Sally não sabe é que até mesmo as fechaduras que parecem mais resistentes podem ser abertas se forem construídas de forma incorreta.
+
+E é aí que Kim entra em cena. Ele é um hacker ético, um testador de penetração contratado para encontrar falhas de segurança antes que os verdadeiros criminosos o façam. Hoje, Kim vai analisar o formulário de login da Sally Shop. E ele está prestes a provar que este CAPTCHA está longe de ser indecifrável. Vamos começar.
+
+Mas primeiro, você pode estar se perguntando: o que exatamente é um CAPTCHA? CAPTCHA significa Teste de Turing Público Completamente Automatizado, usado para diferenciar computadores de humanos. Em termos simples, é um teste que tenta bloquear bots fazendo perguntas que humanos conseguem resolver facilmente, mas que máquinas não conseguem. Você provavelmente já os viu em todos os lugares. Coisas como clicar em todas as fotos com semáforos.
+
+Digite as letras onduladas que você vê. Ou resolva este problema matemático simples. O objetivo? Impeça o uso abusivo automatizado, como bots enviando spam em formulários, realizando ataques de força bruta em páginas de login com ferramentas como o Hydra ou extraindo dados ilegalmente. No caso de Sally, ela adicionou um CAPTCHA ao seu formulário de login.
+
+Dessa forma, mesmo que alguém tivesse uma lista de nomes de usuário e senhas, precisaria resolver um novo CAPTCHA para cada tentativa de login. E isso supostamente impede completamente as tentativas automatizadas de força bruta. [música] Mas eis a reviravolta. Os CAPTCHAs podem ser burlados. E Kim está prestes a provar exatamente isso.
+
+Para decifrar esse sistema CAPTCHA, Kim utilizará quatro bibliotecas principais do Python. Cada um desempenha um papel específico em seu ataque e, juntos, eles dão a Kim o poder de automatizar o que Sally pensava que apenas os humanos podiam fazer. A primeira biblioteca é a de pedidos. Esta biblioteca permite que o script Python de Kim funcione como um navegador. Ele pode carregar páginas da web, enviar formulários de login, gerenciar cookies e muito mais.
+
+Em seguida, temos o pytesseract, um wrapper em Python para o Tesseract, um dos mecanismos de reconhecimento óptico de caracteres de código aberto mais poderosos . É isso que Kim usa para ler o texto da imagem CAPTCHA. Assim como seu cérebro analisa uma imagem e enxerga números, o Tesseract pode fazer o mesmo, mas em código. Para trabalhar com imagens em Python, Kim usa o Pillow. Por fim, temos o BytesIO, um utilitário prático do módulo de entrada/saída do Python .
+
+Kim executa esta primeira célula para verificar se as bibliotecas foram importadas corretamente. Como você pode ver, há um erro: nenhum módulo chamado pytesseract foi encontrado. [música] O Python está dizendo para Kim que não reconhece o nome pytesseract. Isso porque, embora ele tenha criado um ambiente virtual, ele ainda não instalou o pacote pytesseract dentro dele. Para instalar o pytesseract, o comando é simples: pip install pytesseract.
+
+Mas e se você não souber o comando pip exato ? Sem problemas. Você pode simplesmente pesquisar "pip" no Google seguido do nome da biblioteca. Em seguida, selecione o resultado do PyPI. Esse é o Índice de Pacotes do Python.
+
+Ali, o comando correto é exibido logo no topo. Kim pode simplesmente copiar isso, voltar ao terminal e executar o comando `pip install pytesseract`. A instalação é rápida e você poderá notar algo interessante. Juntamente com o pytesseract, ele também instala o Pillow automaticamente. Isso ocorre porque o pytesseract depende do Pillow para lidar com imagens.
+
+Em Python, os pacotes podem ter dependências e, quando você instala um, o pip instala todos os outros necessários para que ele funcione corretamente. Agora que tudo está instalado, Kim volta ao seu caderno e executa a primeira célula novamente. Desta vez, sem erros. Tudo foi importado com sucesso. O ambiente de Kim está pronto e ele está prestes a buscar e resolver os CAPTCHAs da Sally .
+
+Para isso, ele define os três URLs principais que seu script precisará. O primeiro é o endereço base da loja online da Sally. Aponta para a página inicial. Todas as outras páginas que Kim precisa acessar, como a página de login ou o CAPTCHA, são construídas a partir dessa URL base. A segunda é a página de login.
+
+Aqui os usuários inserem seu nome de usuário, senha e código CAPTCHA. É o ponto de extremidade responsável por verificar as credenciais e decidir se permite ou não o acesso de alguém. Se Kim acessar a página de login da Sally, ele poderá ver o URL que precisa. sallyshop.test/login.
+
+É exatamente essa que ele usa no código dele. E, por fim, temos o URL da imagem CAPTCHA . Você deve estar se perguntando: "Espere aí, é normal um CAPTCHA ser uma URL?" A resposta é sim, absolutamente. Na verdade, é assim que a maioria dos sistemas CAPTCHA funciona nos bastidores.
+
+A página de login geralmente contém uma tag de imagem como esta. Essa tag aponta para um endpoint do servidor, um URL especial que gera a imagem CAPTCHA dinamicamente. Cada vez que o navegador, ou no caso de Kim , seu script em Python, acessa esse URL, o servidor retorna uma nova imagem com um código gerado aleatoriamente incorporado . Essa abordagem mantém a página de login limpa e dinâmica. A imagem CAPTCHA é carregada separadamente e geralmente está vinculada a uma sessão, armazenada em cache por um período limitado e invalidada após um único uso.
+
+Sim, não é apenas comum, é uma prática recomendada exibir CAPTCHAs como URLs de imagens dedicadas. E é exatamente isso que o site da Sally faz. O sistema gera uma nova imagem a partir do endpoint CAPTCHA sempre que alguém visita a página de login e a exibe para o usuário. A última parte desta célula apenas imprime cada URL para que Kim possa verificar se tudo está configurado corretamente. Como você pode ver, os URLs da página inicial, da página de login e do CAPTCHA agora estão definidos corretamente.
+
+Agora, Kim está pronto para interagir com o site, mas, assim como um navegador real, ele precisa manter uma sessão de usuário consistente em várias solicitações. Para isso, ele pode simplesmente usar o módulo requests importado anteriormente. Este módulo possui um recurso poderoso chamado sessão que faz exatamente isso. Essa única linha de código é mais poderosa do que parece. Ao chamar requests.session,
+
+Kim cria um objeto de sessão persistente. Ele funciona como um navegador, rastreando cookies, cabeçalhos, estado de autenticação e, mais importante, o ID da sessão do usuário emitido pelo servidor. Sem essa única frase, todo o ataque desmoronaria. Com isso, o script de Kim agora funciona como um navegador de verdade, só que mais rápido, mais inteligente e automatizado. O próximo passo é criar uma função que faça duas coisas. Primeiro, faça o download
+
+do CAPTCHA mais recente. E em segundo lugar, utiliza o reconhecimento ótico de caracteres para extrair o texto. Aqui está a função, e vamos analisá-la linha por linha. A primeira linha define uma função chamada get_new_captcha. A segunda linha simula a visita à página de login, tal como um navegador faria.
+
+Assim como no navegador, acessar a página de login inicia uma nova sessão, gera um novo CAPTCHA e define um cookie de sessão. Sem essa etapa, o CAPTCHA que Kim busca em seguida pode estar desatualizado ou inválido. Vamos dar uma olhada no navegador. Se voltarmos à página de login da Sally, podemos ver que, cada vez que Kim recarrega a página, uma nova sessão é iniciada, um novo CAPTCHA aparece e, provavelmente, um cookie de sessão é criado. A chamada para session.get_login_url
+
+faz a mesma coisa programaticamente. É basicamente o equivalente a atualizar a página de login. Em seguida, Kim envia uma solicitação para o URL da imagem CAPTCHA. Isso retorna a imagem real que o servidor gerou quando a página de login foi carregada. Os dados da imagem são armazenados no campo de conteúdo da resposta.
+
+Nessa fase, é simplesmente um fluxo de bytes brutos. Se a ideia de requisições, respostas ou outros conceitos HTTP ainda não estiver clara, meu curso de web hacking, cujo link está acima, explica esses tópicos em detalhes. A próxima linha é onde a mágica começa. O BytesIO encapsula os bytes brutos da imagem de uma forma que o Pillow, a biblioteca de imagens do Python , consegue entender. É como transformar um bloco de dados binários em um arquivo real.
+
+Em seguida, o Image.open lê esse arquivo e cria um objeto de imagem adequado. Lembre-se de que a imagem vem do Pillow, conforme importada na primeira célula. Agora, Kim tem o CAPTCHA em um formato com o qual o Python realmente consegue trabalhar. A próxima linha é a etapa central do reconhecimento óptico de caracteres. A função `
+
+pytesseract.image_to_string` recebe a imagem e usa o Tesseract para ler os caracteres. A opção PSM 7 informa ao Tesseract: "Estou lhe fornecendo uma única linha de texto. Não é necessário procurar parágrafos ou blocos. Basta ler os dígitos."
+
+Isso torna o Tesseract mais rápido e preciso para CAPTCHAs numéricos. Por fim, a função retorna duas coisas. A imagem propriamente dita, caso queiramos exibi-la ou depurá-la. E o texto extraído, com todos os espaços em branco à direita removidos usando a função strip. Com essa única função, Kim agora pode recarregar a página de login, buscar um novo CAPTCHA, resolvê-lo automaticamente e se preparar para usá-lo em uma tentativa de login.
+
+Em seguida, Kim executa sua nova função para testá-la . Mas ele recebe um erro. O Tesseract não está instalado. O Python está informando que o OCR Tesseract está faltando. E isso faz sentido.
+
+Lembre-se, o PyTesseract que instalamos com o pip é apenas um wrapper em Python. Ele se conecta ao mecanismo Tesseract real, que deve ser instalado no próprio sistema operacional. Então, Kim vai até o terminal e começa atualizando sua lista de pacotes. Em seguida, ele verifica se o Tesseract já está instalado. Como você pode ver, não está instalado.
+
+Para instalar, Kim executa o comando sudo apt install Tesseract OCR. Em seguida, o gerenciador de pacotes baixa e instala tudo o que é necessário, incluindo o binário do Tesseract e seus modelos de linguagem. Após a conclusão da instalação, Kim verifica novamente executando o comando "Tesseract double hyphen version". E desta vez, mostra Tesseract 5.5, confirmando que o motor já está instalado.
+
+Está totalmente configurado e pronto para ser usado em qualquer roteiro, inclusive em seu caderno. Com o Tesseract instalado, Kim volta ao notebook e executa a célula novamente. E agora, funciona. A imagem CAPTCHA é exibida diretamente no notebook. Como você pode ver, ele mostra os dígitos 9312, com algumas linhas coloridas adicionadas para confundir os bots.
+
+Essas linhas são chamadas de ruído e servem para confundir os sistemas automatizados de OCR . Na célula seguinte, Kim imprime o texto extraído pelo Tesseract. O resultado é 9312. Uma correspondência perfeita. Agora, vamos executar a função obter novo CAPTCHA novamente.
+
+Como já mencionamos, isso equivale a atualizar a página de login em um navegador real. O servidor irá gerar uma nova imagem CAPTCHA. E como você pode ver, desta vez, a imagem mostra 9997. Outro código novo com ruído e linhas diferentes. Vamos ver se o Tesseract conseguiu resolver este também.
+
+E pronto, o resultado é 9997. O Tesseract é rápido, preciso e incrivelmente poderoso. Uma ferramenta de OCR capaz de lidar até mesmo com os CAPTCHAs mais complexos com facilidade. Com essa única etapa, Kim agora possui um solucionador de CAPTCHA totalmente automatizado. O próximo passo é combinar isso com uma lista de nomes de usuário e uma lista de senhas, e testar o formulário de login da Sally uma senha de cada vez.
+
+Para isso, Kim recorre a um poderoso recurso de código aberto chamado Seclists. Seclists é uma enorme coleção dos nomes de usuário, senhas e payloads mais comuns para ataques de força bruta e testes de segurança. [música] É como um dicionário, mas para hackers. É utilizado por profissionais em programas de recompensa por bugs, testes de penetração e hacking ético. Para verificar se já está instalado, Kim abre um terminal e digita Seclists.
+
+O sistema retorna uma mensagem de comando não encontrado e oferece a opção de instalá-lo. Kim digita "sim" para confirmar e, assim, todo o pacote Seclists é baixado para o computador dele. Agora que está instalado, se Kim executar o Seclists novamente, uma lista de pastas será exibida. Estas são as diferentes categorias da coleção. Duas coisas se destacam imediatamente: nome de usuário e senha. É
+
+exatamente disso que Kim precisa. Com essas duas listas e seu solucionador de CAPTCHA, Kim agora tem tudo o que precisa para invadir o formulário de login de Sally por força bruta. Uma tentativa de cada vez. Para os nomes de usuário, Kim escolheu a lista dos melhores nomes de usuário. Esta lista é pequena, objetiva e rápida. Ideal para testar
+
+páginas de login rapidamente. Vamos ver o que ele contém usando o comando cat. E como você pode ver, inclui alguns dos nomes de usuário mais comuns usados ​​na internet. Coisas como root, admin, administrador. Exatamente o tipo de credenciais que os atacantes tentam primeiro.
+
+Kim copia o caminho completo do arquivo e cola em seu caderno. Em seguida, ele escreve duas linhas de código simples para carregar os nomes de usuário. Vamos analisar isso em detalhes. A primeira linha abre o arquivo para leitura. R significa modo de leitura.
+
+A codificação UTF-8 garante que o programa possa lidar com texto padrão. Configurar a opção "ignorar erros" instrui o Python a ignorar quaisquer caracteres estranhos ou ilegíveis . A instrução `with` é uma maneira limpa e segura de abrir arquivos. O arquivo é fechado automaticamente em seguida. A primeira parte da segunda linha lê o arquivo inteiro para a memória e, em seguida, a função ` splitlines` o divide em uma lista, com um nome de usuário por linha.
+
+Só para confirmar, Kim imprime os cinco primeiros nomes de usuário. E lá estão elas, prontas para serem usadas no ciclo de força bruta. Ele também pode imprimir os 10 primeiros nomes de usuário em seu caderno. E compara-os com a saída do terminal anterior. Como você pode ver, eles combinam exatamente.
+
+Isso confirma que a lista de nomes de usuário foi carregada corretamente. Kim agora tem a lista de palavras-chave com os nomes de usuário em seu caderno, pronta para ser usada em seu ataque. Em seguida, Kim faz o mesmo com a lista de senhas. Ele retorna ao terminal e navega até a pasta de senhas dentro do Seclists. Ao rolar a página para cima, ele vê várias pastas interessantes, incluindo bancos de dados vazados, credenciais padrão ou credenciais comuns.
+
+Essas pastas são verdadeiras minas de ouro para testes de segurança. Os bancos de dados vazados contêm credenciais reais obtidas em violações de dados anteriores . As credenciais padrão incluem os logins padrão de fábrica usados ​​por roteadores, dispositivos IoT e softwares. E credenciais comuns? Essa é uma lista selecionada de senhas usadas por milhões de pessoas: as fracas, as previsíveis e as reutilizadas. É
+
+exatamente isso que Kim está procurando. Kim entra na plataforma e encontra várias listas pré-construídas com base em credenciais vazadas e populares. Entre eles, ele identifica um chamado best15. Uma lista pequena, porém poderosa, das senhas mais usadas no mundo. Para ver o que continha, ele usou o comando "gato".
+
+E os resultados falam por si. Senhas como dragão, deixe-me entrar ou eu te amo. Essas não são apenas suposições. Essas são senhas reais usadas por milhões de pessoas todos os dias. Se alguém usar uma dessas credenciais no site da Sally, a Kim vai descobrir.
+
+Kim copia o caminho completo e cola em seu caderno. Assim como antes, ele escreve um bloco com permissão de leitura para poder ler o arquivo com segurança. E use linhas de divisão para transformá-la em uma lista de senhas individuais. Para confirmar, Kim imprime a lista inteira. E compara com o que viu no terminal.
+
+Uma combinação perfeita. Agora, Kim tem tanto os nomes de usuário quanto as senhas na memória, além de um solucionador de CAPTCHA funcionando. Todas as peças estão no lugar. Agora que Kim tem um solucionador de CAPTCHA, uma lista de nomes de usuário e uma lista de senhas, ele está pronto para lançar o ataque. A função que ele escreveu para isso se chama CAPTCHA de força bruta, e é aí que tudo acontece.
+
+Vamos analisar linha por linha. Essa função recebe dois argumentos: uma lista de nomes de usuário e uma lista de senhas. E tentará todas as combinações possíveis de ambos. Ele utiliza dois loops aninhados, um para cada nome de usuário e outro para cada senha. Para cada par de pares, ele tenta fazer login.
+
+Agora, aqui está o truque. Alguns CAPTCHAs podem não ser lidos corretamente pelo PyTesseract, o mecanismo de reconhecimento óptico de caracteres. Isso também acontece com os seres humanos. Às vezes, o texto simplesmente não é claro. Então, Kim envolve a lógica de login em um loop while true.
+
+Esse loop while significa continuar tentando a mesma combinação de nome de usuário e senha até que um CAPTCHA seja resolvido com sucesso. Com isso, Kim garante que nenhuma combinação de nome de usuário e senha seja ignorada devido a uma falha no reconhecimento do CAPTCHA. O ataque é dividido em quatro etapas principais. O primeiro passo é resolver o CAPTCHA. Para isso, Kim chama a função anterior para solicitar um novo CAPTCHA e resolvê-lo usando o Tesseract.
+
+Ele guarda apenas o texto resolvido, não a imagem. Lembre-se que esta função atualiza o navegador, recupera a imagem do CAPTCHA e o resolve. Na segunda etapa, ele prepara os dados do formulário de login, exatamente como um usuário real faria. Esses dados de login são compostos pelo nome de usuário atual, senha e CAPTCHA. O terceiro passo é crucial.
+
+É aqui que Kim tenta efetuar o login. Utilizando a sessão persistente que criou anteriormente, ele envia uma solicitação POST para o endpoint de login com os dados do formulário. Esta solicitação simula o que um navegador faria, mas de forma totalmente automatizada. O servidor verifica se o CAPTCHA está correto para essa sessão. E se o nome de usuário e a senha corresponderem a uma conta válida.
+
+Na etapa final, Kim analisa a resposta do servidor para decidir o que fazer em seguida. Quando ele visita a página de login de Sally no navegador e insere um CAPTCHA incorreto, o servidor responde: "Falha no CAPTCHA, tente novamente". Mas se ele inserir o nome de usuário ou a senha incorretos, mas o CAPTCHA estiver correto, a mensagem muda para nome de usuário ou senha inválidos. E isso é uma pista enorme. Isso revela a Kim algo muito importante sobre como o servidor processa a solicitação de login.
+
+Significa que o servidor verifica o CAPTCHA primeiro. Somente após a validação do CAPTCHA, o sistema passa a verificar o nome de usuário e a senha. E isso não é incomum. Na verdade, é exatamente assim que a maioria dos aplicativos da web funciona. Ao exibir duas mensagens de erro diferentes, o servidor de Sally está vazando informações acidentalmente.
+
+Isso indica a Kim exatamente qual peça falhou. O CAPTCHA ou as credenciais. E isso é tudo que Kim precisa. Em seu script, ele pode construir uma lógica semelhante para simplesmente inspecionar o texto de resposta retornado pelo servidor e reagir de acordo. Se a resposta contiver a mensagem " Falha no CAPTCHA", Kim saberá que o CAPTCHA não foi resolvido corretamente.
+
+[música] Nesse caso, ele usa a instrução continue. A função da instrução continue é pular o restante da iteração atual do loop e retornar ao início do loop while. Isso significa que a função get new CAPTCHA foi chamada novamente. Isso significa que a página de login é atualizada, um novo CAPTCHA é gerado e Kim tenta novamente o mesmo nome de usuário e senha com um novo CAPTCHA. Agora, se a resposta contiver um nome de usuário ou senha inválidos, Kim sabe que o CAPTCHA estava correto, mas o nome de usuário ou a senha estavam errados.
+
+Portanto, não há motivo para tentar essa combinação novamente. Ele usa a instrução break para sair do loop while, que é o loop de resolução do CAPTCHA , e passa para a próxima senha. Isso significa que o nome de usuário é o mesmo, mas a senha é nova. O que resulta em uma nova combinação de nome de usuário e senha . Por fim, se nenhuma mensagem de erro aparecer na resposta, isso significa que o CAPTCHA foi resolvido com sucesso e que o nome de usuário e a senha são válidos.
+
+Kim encontrou um par de credenciais que funcionam. Nesse ponto, o script imprime o resultado e o ataque está completo. A função CAPTCHA de força bruta retorna então o nome de usuário e a senha corretos, interrompendo completamente o ataque. A linha de mensagem de login cria uma mensagem de registro legível para humanos que mostra exatamente o que a função CAPTCHA de força bruta está tentando fazer em cada etapa. Inclui o nome de usuário atual, a senha atual e o valor do CAPTCHA que acabou de ser resolvido.
+
+Kim usa essa mensagem para imprimir um feedback detalhado durante o ataque. Enquanto o loop de força bruta estiver em execução, esta mensagem de log será exibida quando um CAPTCHA falhar, quando as credenciais estiverem incorretas e quando uma tentativa de login for bem-sucedida. Isso facilita o acompanhamento do progresso em tempo real, a depuração de problemas caso algo dê errado e a visualização clara de qual combinação funcionou. Vamos executar esta função CAPTCHA de força bruta . Na verdade, antes de fazer isso, vamos adicionar um toque visual.
+
+Em vez de apenas imprimir o texto do CAPTCHA resolvido, por que não exibir a imagem real do CAPTCHA para cada tentativa? Isso torna o ataque mais fácil de acompanhar e muito mais divertido de assistir. Kim rola a página para cima até a linha onde a função "obter novo CAPTCHA" é chamada. O sublinhado aqui significa que não nos importa a imagem, apenas o texto. Mas agora, Kim também quer exibir a imagem .
+
+Então, ele altera a função e garante que ela retorne ambos os valores. E então, ele pode exibir a imagem. Mas nos notebooks Jupyter, as imagens só aparecem se forem a última linha da célula. Mas esse não é o caso aqui, então Kim usa uma abordagem melhor, a função display do IPython. Ele volta para a célula de importação e adiciona a importação para a função de exibição.
+
+Em seguida, execute a célula para garantir que ela esteja disponível em todo o notebook. Ele agora pode rolar a página de volta até a função CAPTCHA de força bruta e adicionar uma linha para exibir tanto a imagem do CAPTCHA quanto o texto do CAPTCHA resolvido logo após a resolução do mesmo. Isso exibirá a imagem CAPTCHA real e o texto que o Tesseract extraiu dela. Agora, tudo está pronto. Assim, a cada tentativa de login, a imagem do CAPTCHA é exibida.
+
+Isso mostra exatamente o que o mecanismo de OCR, neste caso o Tesseract, está tentando resolver. Se o Tesseract não conseguir resolver o CAPTCHA, a mensagem "Falha no CAPTCHA" será exibida. E quando o CAPTCHA é resolvido corretamente, mas o nome de usuário ou a senha estão incorretos, uma mensagem de credenciais incorretas é exibida. Na célula seguinte, Kim simplesmente chama a função CAPTCHA de força bruta. Ele passa para essa função as listas de nomes de usuário e senhas que leu de secLists.
+
+Agora ele pode comandar a célula, e o ataque começa. CAPTCHA após CAPTCHA. Cada um é lido, resolvido e enviado automaticamente. Os nomes de usuário e as senhas são testados um a um. Vamos analisar o resultado mais detalhadamente.
+
+Na primeira tentativa de login, o CAPTCHA é resolvido corretamente. Você pode ver isso. O número 2144 foi extraído e submetido. Mas as credenciais estão incorretas, então o script passa para a próxima senha, 1234. Desta vez, o CAPTCHA não é lido corretamente. O
+
+Tesseract retorna 995, resultando em uma mensagem de falha no CAPTCHA. O script, portanto, continua tentando o mesmo nome de usuário e senha até que um CAPTCHA seja resolvido corretamente. Na terceira tentativa, obtém um CAPTCHA válido. Mas as credenciais ainda estão incorretas, então o script continua. Esse processo se repete para diferentes combinações de nome de usuário e senha. É
+
+possível ver que, às vezes, o CAPTCHA falha. E às vezes o problema é resolvido, e o script passa para a próxima senha. Quando a lista de senhas se esgota, o programa passa para o próximo nome de usuário e repete o processo. Até que, finalmente, bingo. Para o nome de usuário "admin" e a senha " dragon", não há erros. Prêmio máximo.
+
+Kim conseguiu entrar. Não com algum truque mágico, mas com paciência, lógica e automação. O site de Sally agora está comprometido. Com essas credenciais em mãos, Kim consegue fazer login. Ele acessa a página de login de Sally e insere as credenciais que acabou de descobrir.
+
+Admin como nome de usuário e dragon como senha. Em seguida, ele resolve o CAPTCHA exibido na página, como qualquer pessoa faria, e clica em "entrar". E pronto, ele conseguiu entrar. Entrou como administrador e tem acesso total ao site. Bastou automatizar a leitura do CAPTCHA e contar com um servidor que revelasse informações demais .
+
+Se você achou este vídeo útil ou esclarecedor, curta e inscreva-se para mais análises aprofundadas sobre falhas de segurança cibernética do mundo real, explicadas passo a passo. Obrigado por assistir e até o próximo episódio. Até lá, mantenham a curiosidade e a segurança. Bye Bye.

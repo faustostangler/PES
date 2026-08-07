@@ -1,0 +1,103 @@
+---
+video_title: "How hackers find every open port on a computer"
+video_id: f_oJygxJFP4
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=f_oJygxJFP4
+video_date: 2026-06-08T09:37:00+00:00
+video_description: |
+  Every machine has 65,535 doors. Here's how hackers find the ones that are open.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker OS
+  - Various OS & IoT devices: Victim OS
+  - Nmap: Network discovery tool
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue
+  00:27  What are ports, services, and service versions
+  01:18  The quick top-10 scan
+  01:59  Reading the 3 port states (open / closed / filtered)
+  03:30  The 2 scanning methods: SYN vs Connect
+  06:33  Connect scan in action: packet trace + REASON
+  09:15  SYN scan in action: same REASON, different footprint
+  10:40  When you don't choose: Nmap's default behavior
+  12:38  Outro
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #nmap  #cybersecurity
+---
+Kim foi contratada por Sally para realizar um teste de penetração interno na rede da empresa dela. Ele acabou de conectar seu laptop com Kali Linux à rede de Sally. Ao executar o comando mostrado no vídeo anterior, ele consegue identificar quais máquinas estão ativas na rede. Mas saber que uma máquina existe não lhe diz nada de útil sobre ela. Agora ele precisa da próxima camada de detalhes.
+
+Quais portas estão abertas, quais serviços estão sendo executados nessas portas, quais versões desses serviços estão expostas e, idealmente, o sistema operacional do próprio host. É aqui que a verdadeira ação de hacking começa. Na verdade, cada máquina de rede possui 65.535 portas TCP. Imagine-as como portas numeradas na parte externa do prédio.
+
+Cada porta pode hospedar um serviço específico, que é um programa que se comunica através de uma rede usando um protocolo específico. E, por fim, cada serviço normalmente possui um nome e uma versão de software. Por exemplo, ao analisar uma máquina que executa um servidor web com o Nmap, pode-se descobrir que a porta 443 está aberta e executando o serviço HTTPS. O Nmap também pode identificar o software por trás desse serviço como Nginx 1.2.4.0.
+
+Digamos que Kim queira dar uma olhada rápida no host que encontrou em 192.168.122.192. Ele executa o comando `sudo Nmap`, seguido pelo endereço IP e, em seguida, o resultado é 10 portas.
+
+Vamos analisar isso. Com a opção "top ports 10", Kim está instruindo o Nmap a não escanear todas as 65.535 portas na máquina alvo. Em vez disso, o Nmap irá analisar apenas as 10 portas mais utilizadas, permitindo que ele obtenha uma visão geral rápida dos serviços que provavelmente estarão expostos. Kim pressiona Enter.
+
+E aí está o resultado. Em menos de 2 segundos, Kim já sabe muito mais sobre o servidor de Sally. Ele consegue ver que existem quatro portos abertos. A porta 22 executa SSH, a porta 25 executa SMTP, a porta 80 executa HTTP e a porta 110 executa POP3. Uma porta aberta significa que a porta está acessível e que um serviço ou aplicativo está ativamente escutando nela. Ao
+
+observar essas portas abertas, HTTP, SMTP, POP3, Kim suspeita que esta máquina seja um servidor de e-mail. Também pode hospedar uma interface web, por exemplo, para fornecer acesso a e-mails através de um navegador ou para gerenciar o sistema de correio. Isso faz dele um alvo promissor para futuras investigações. A análise também mostra que as portas 21, 23, 443 e 3389 estão fechadas. Portanto, FTP, Telnet, HTTPS e RDP não estão em execução no host.
+
+Uma porta fechada significa que o host está acessível, mas nenhum serviço está escutando nessa porta. Finalmente, podemos ver que existem duas portas filtradas. NetBIOS na porta 139 e Microsoft DS na porta 445. Uma porta filtrada significa que o Nmap não conseguiu obter uma resposta precisa. A porta pode estar aberta ou não, mas dispositivos de rede como firewalls estão bloqueando suas sondagens.
+
+Em outras palavras, Kim não sabe se as portas estão abertas por trás do firewall, mas o próprio filtro indica que esta máquina possui algum tipo de proteção implementada. Este último ponto é importante. Uma porta filtrada não é insignificante. Isso indica a Kim que existe uma barreira de proteção entre ele e o alvo, e essa é uma informação útil para o restante do confronto. Deixe-me mostrar-lhe outra coisa.
+
+Quando Kim envia uma sonda para um dos portos de Sally , surge uma pergunta que vale a pena fazer. O servidor da Sally sabe que acabou de ser escaneado? A resposta depende inteiramente de como o Nmap está realizando a varredura. Existem dois métodos principais, e cada um deles apresenta um equilíbrio entre ser difícil de notar e encontrar tudo. O primeiro método é chamado de varredura SYN, às vezes conhecida como varredura semiaberta.
+
+Para entender isso, você precisa saber como uma conexão TCP funciona normalmente quando um navegador se conecta a um servidor. Toda conexão TCP consiste em um handshake de três vias. Primeiro, o cliente envia um pacote SYN. SYN é a abreviação de synchronize, que é como dizer: "Olá, gostaria de me conectar." O servidor responde com um pacote SYN-ACK , que é um reconhecimento de sincronização, significando: "Claro, estou aqui e pronto para conectar". Por fim, o
+
+cliente envia uma confirmação, dizendo, basicamente, "Ótimo, conexão estabelecida". Neste ponto, a conexão TCP está totalmente aberta e pronta para trocar dados. O exame SYN realiza apenas os dois primeiros passos. Kim envia um SYN, o servidor responde com um SYN-ACK e, em seguida, Kim nunca envia o terceiro pacote. A conexão nunca é concluída.
+
+A resposta SYN-ACK comprova que a porta está aberta e que algo está escutando, que é tudo o que Kim precisa saber. Mas como o handshake nunca foi concluído, não existe uma sessão completa da perspectiva do servidor. Isso torna a varredura SYN mais rápida e mais difícil de detectar, já que apenas dois pacotes são enviados por porta, e o registro de atividades é menor, ou às vezes inexistente. No entanto, isso requer privilégios elevados, como executar a varredura com root ou sudo, porque o envio de pacotes SYN brutos é restrito para usuários comuns. O segundo método é a varredura de conexão.
+
+Este gesto completa o aperto de mãos triplo . Kim envia uma solicitação de sincronização, recebe uma confirmação de sincronização do servidor e, em seguida, envia a confirmação final para concluir a conexão. A sessão TCP está totalmente estabelecida, tal como um navegador normal se conectando a um servidor. Em seguida, o Nmap fecha a conexão educadamente. A vantagem da varredura de conexão é que ela não requer privilégios especiais, pois utiliza a API de conexão padrão do sistema operacional, em vez de criar pacotes brutos como faz a varredura SYN.
+
+A desvantagem é que é muito mais barulhento. O servidor registra uma sessão TCP real do IP de Kim, facilitando a detecção. Se a equipe de TI da Sally revisar os registros de acesso amanhã de manhã, verá a visita da Kim . Cada porta escaneada se torna uma conexão registrada. Portanto, este comando é chamado de varredura de conexão porque completa o handshake TCP de três vias, estabelecendo assim uma conexão completa com a porta de destino.
+
+E a primeira é chamada de varredura SYN porque identifica portas abertas com base na troca de sinais SYN e SYN ACK sem estabelecer completamente uma conexão TCP. Quando Kim executa o Nmap, ele pode escolher qual método de varredura usar. Ele pode usar {dash} ss para realizar uma varredura SYN ou {dash} st para realizar uma varredura de conexão. Vamos observar as duas varreduras acontecendo no mesmo alvo, na mesma porta. Primeiro, vamos analisar a varredura de conexão.
+
+Kim executou o seguinte comando. Vamos analisar isso passo a passo. A primeira parte instrui o Nmap a escanear o alvo especificado. {dash} p80 instrui o Nmap a verificar apenas a porta especificada. Aqui, 80 é a porta HTTP.
+
+{dash} st força o tipo de varredura de conexão. E o rastreamento de pacotes permitiu visualizar todos os pacotes enviados e recebidos. Os parâmetros adicionais desativam tudo o que possa sobrecarregar a saída. Sem ping ARP. Nenhuma consulta de DNS.
+
+Sem sonda ICMP. Apenas a varredura TCP e nada mais. {dash} pn é um truque comumente usado. Ele ignora a fase de descoberta do host e assume que o host de destino está ativo. Isso é particularmente útil quando as solicitações ICMP são bloqueadas, pois permite que as varreduras prossigam sem depender de respostas de ping.
+
+Por fim, o argumento `reason` é usado para mostrar por que o Nmap considera uma porta como aberta, fechada ou filtrada. Normalmente, o Nmap apenas informa o estado da porta, como aberta ou fechada, mas com a flag `reason`, ele também exibirá o pacote de resposta específico ou o comportamento que levou a essa conclusão. Kim pressiona Enter. E aqui está o resultado. Duas linhas se destacam no rastreamento de pacotes. A
+
+operação de conexão TCP está em andamento e a conexão TCP foi estabelecida. Essas linhas são o próprio registro do Nmap sobre o que está acontecendo na camada de rede. A mensagem " Operação de conexão em andamento" indica que o Nmap iniciou uma tentativa real de conexão TCP. A mensagem " Conectado" indica que o handshake TCP de três vias foi concluído com sucesso e a sessão foi totalmente estabelecida. Isso não é um aperto de mão semiaberto nem uma técnica de sondagem. É uma conexão TCP real
+
+, exatamente como aquela que um navegador web cria ao se conectar a um servidor. Em seguida, observe a última linha da saída. Motivo: syn-ack. Isso é o Nmap nos dizendo, de forma abreviada, "Eu sei que esta porta está aberta porque recebi um syn-ack de volta durante o handshake." As linhas de conexão e a coluna de justificativa contam a mesma história sob duas perspectivas diferentes.
+
+O rastreamento de pacotes mostra a conexão ocorrendo e a coluna "motivo" mostra a conclusão do Nmap a partir dela. O handshake de três vias foi concluído, ou seja, syn, syn-ack e ack, e o Nmap obteve o mesmo status de conexão que qualquer navegador normal obteria. Em seguida, encerrou a conexão educadamente e informou que a porta estava aberta. É isso que torna a varredura de conexão educada. Ele se comporta como um cliente real.
+
+É também isso que o torna barulhento. O registro de conexões do servidor acaba de registrar uma sessão TCP de entrada proveniente do endereço IP de Kim. Se a equipe de TI da Sally verificar os registros de acesso amanhã, verá a visita da Kim. Agora vamos dar uma olhada no syn scan. Kim realizou a mesma varredura, na mesma porta e com o mesmo alvo, mas usando uma varredura SYN em vez de uma SYN.
+
+A única coisa que mudou foi o parâmetro -sS para varredura SYN em vez de -sT para varredura de conexão. Kim pressiona Enter. E aqui está. Existem dois pacotes. É isso.
+
+Kim envia um pacote TCP com o sinalizador SYN definido. Olá, gostaria de iniciar uma conexão. O alvo responde com SYN-ACK. Claro, estou aqui. Vamos nos conectar. E então,
+
+nada. Kim nunca envia o terceiro pacote do aperto de mãos. A conexão nunca é concluída. Essa é a parte semiaberta. Kim conseguiu tudo o que precisava com apenas dois pacotes.
+
+A resposta SYN-ACK comprova que a porta está aberta e que algo está escutando, mas como o handshake nunca foi concluído, não existe uma sessão TCP completa da perspectiva do servidor. Agora, observe a coluna "Motivo" na parte inferior. Está escrito SYN-ACK. Essa é a mesma razão da verificação de conexão. Isso não é um erro.
+
+O que leva o Nmap a determinar que uma porta está aberta é a resposta SYN-ACK, e ambos os tipos de varredura recebem exatamente a mesma resposta. A diferença entre as varreduras não é o que convence o Nmap. É isso que o Nmap faz em seguida. A verificação de conexão completa o aperto de mãos com um reconhecimento e se encerra educadamente. O scanner SYN simplesmente se afasta.
+
+O parâmetro `reason` indica o que convenceu o Nmap, não como o Nmap se comportou posteriormente. Agora, eis algo que vale a pena saber. Na prática, os testadores de penetração não digitam -sS ou -sT todas as vezes que executam o Nmap. Na maioria das vezes, eles simplesmente digitam Nmap. E então, o que acontece? Qual varredura o
+
+Nmap escolhe quando você não especifica nenhuma? A resposta depende de um fator: se você está executando o programa como root. Se você executar o Nmap com sudo, o Nmap usará a varredura SYN. A técnica semiaberta requer a criação de pacotes TCP brutos, o que exige privilégios de administrador (root). Enquanto o Nmap os tiver, ele automaticamente seguirá o caminho mais furtivo.
+
+Se você executar o Nmap sem sudo, o Nmap usará o método de varredura connect. Sem acesso root, ele não consegue criar pacotes brutos, então usa a API de conexão normal do sistema operacional, que é exatamente o que o comando connect scan faz. Essa é a resposta clássica. Vamos testar. Note que Kim não está usando o Kali Linux.
+
+Veremos por que isso é importante daqui a pouco. E aqui está. Quando o Nmap é executado com sudo, ele realiza uma varredura SYN semiaberta. Quando a mesma varredura é executada sem sudo, o Nmap alterna para uma varredura de conexão e completa o handshake TCP completo. Até o momento, tudo se comporta exatamente como descrito na documentação do Nmap.
+
+Mas o Kali Linux introduz uma reviravolta interessante. Em sistemas Kali modernos, o usuário padrão recebe permissões especiais que permitem ao Nmap enviar pacotes brutos sem a necessidade de sudo. Consequentemente, tanto o Nmap quanto o sudo Nmap normalmente executam uma varredura SYN por padrão. Vamos verificar isso. Quando Kim retorna ao Kali Linux e executa o mesmo comando, ambas as varreduras utilizam a técnica de varredura SYN.
+
+Essa é uma escolha de design específica do Kali. O raciocínio é simples. Os testadores de penetração geralmente preferem varreduras SYN porque são mais rápidas e menos ruidosas. Exigir o uso de sudo para cada verificação adicionaria atrito desnecessário a um fluxo de trabalho que depende constantemente desse recurso. A conclusão? Se você não quiser ser
+
+detectado, execute explicitamente o comando sudo nmap -sS. Não confie nas configurações padrão. Variam conforme a distribuição. Se você gostou deste vídeo, não se esqueça de curtir, se inscrever e ativar as notificações para não perder o próximo episódio. Vejo você lá. Bye Bye.

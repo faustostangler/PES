@@ -1,0 +1,104 @@
+---
+video_title: "How hackers find every device on your network"
+video_id: ZOFdhWp89a0
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZOFdhWp89a0
+video_date: 2026-06-02T09:45:26+00:00
+video_description: |
+  Every device on your network is shouting its presence. Here's how hackers listen.
+  
+  This video is for educational and awareness purposes only. 
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker OS
+  - Various OS & IoT devices: Victim OS
+  - nmap: Network discovery tool
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  00:30  Finding the network range (ip a)
+  01:09  Scanning for live hosts (nmap -sn)
+  04:31  Scanning from an IP list (-iL)
+  06:19  Scanning specific IPs or ranges
+  07:13  Scanning a single host
+  07:43  Under the Hood: ARP vs ICMP
+  12:04  Outro
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #nmap  #cybersecurity
+---
+Kim foi contratada por Sally para realizar um teste de penetração interno na rede da empresa dela. Ele acabou de conectar seu laptop com Kali Linux à rede de Sally. Neste momento, ele não sabe nada sobre isso. Quantas máquinas existem? Quais estão em execução? Quais delas valem a
+
+pena investigar? Antes que Kim possa fazer qualquer outra coisa, ele precisa de uma visão geral. A primeira coisa que Kim faz é verificar qual endereço IP a rede de Sally acabou de atribuir à sua máquina. Ele abre um terminal e executa o IPA, abreviação de endereço IP, que lista todas as interfaces de rede do sistema e o endereço IP atribuído a cada uma delas. Aqui está. O endereço IP
+
+atribuído ao laptop de Kim foi 192.168.122.71.
+
+E o /24 indica que a rede abrange tudo de 192.168.122.0 a 192.168.122.255.
+
+Isso resulta em 254 endereços de host possíveis. Agora Kim conhece os limites do território. Para descobrir ativamente quais desses 254 endereços estão realmente ativos, Kim usa o Nmap, uma poderosa ferramenta de varredura de rede e auditoria de segurança. O Nmap possui diversas opções para detectar máquinas em execução. O mais citado é o das solicitações de eco ICMP, o mesmo mecanismo por trás do comando ping.
+
+Mas, como veremos mais adiante, o Nmap usa discretamente algo ainda mais rápido em uma rede local. O comando que Kim usa é sudo Nmap 192.168.122.0/24
+
+-sn -n -oA tnet pipe grep for pipe cut -d quote space quote -f5. Vamos analisar esse comando mais detalhadamente. A primeira parte é o intervalo de rede alvo que Kim acabou de descobrir. -sN desativa a verificação de portas. Kim só quer saber quem está lá, não quais serviços estão sendo oferecidos.
+
+-n desativa a resolução de DNS. Fazendo isso, obtém-se uma saída mais rápida e limpa, e o servidor DNS de Sally não é alertado sobre o que Kim está sondando. -oA tnet salva os resultados em todos os formatos com o prefixo tnet. Isso significa que o Nmap criará três arquivos chamados tnet.gnmap, tnet.nmap e tnet.xml,
+
+cada um contendo os mesmos resultados de varredura em formatos diferentes para usos distintos. Tnet é apenas um nome que Kim escolheu. Poderia ser qualquer outra coisa. Por exemplo, Sallynet, escaneie um, ou segunda-feira de manhã. Os profissionais de teste de penetração costumam nomear seus arquivos de saída de acordo com o cliente ou o projeto, para que os arquivos de varredura de diferentes trabalhos não sejam misturados posteriormente.
+
+Estamos usando apenas o tnet para este vídeo. A última parte não é Nmap. Esse é um truque do shell do Linux que Kim está usando para limpar a saída. Sem isso, o Nmap imprime uma grande quantidade de informações para cada host. Coisas como endereço MAC e assim por diante.
+
+Kim não se importa com a maior parte disso agora. Ele só quer uma lista limpa de endereços IP. Então, ele direciona a saída através de dois filtros. O comando grep four mantém apenas as linhas que contêm a palavra four, que por acaso corresponde a todas as linhas que começam com Nmap scan report for. Cut {dash}d {quote} {space} {quote} {dash}f5 pega cada uma dessas linhas e extrai o quinto campo separado por espaço , que é o próprio endereço IP.
+
+Em conjunto, o pipeline pega a saída ruidosa do Nmap e a reduz a um IP por linha, exatamente o formato que Kim deseja. É esse tipo de conhecimento básico de Linux que diferencia um iniciante que usa ferramentas de um profissional de testes de penetração que consegue encadeá-las. Agora, Kim pressiona Enter. E aqui estão os resultados. Sete apresentadores ao vivo.
+
+De um total possível de 254 endereços na rede, apenas sete responderam. Kim agora tem uma lista de máquinas para investigar de fato. Um pequeno hábito profissional que vale a pena mencionar. Kim salvou a digitalização com o Oatnet por um motivo. Os profissionais de teste de penetração armazenam todas as varreduras que realizam.
+
+Durante um atendimento real, Kim pode realizar dezenas de exames, frequentemente comparando resultados de diferentes ferramentas em momentos distintos. Os dados armazenados fornecem a ele algo para comparar, algo para documentar e algo para incluir em seu relatório final para Sally. Ferramentas diferentes produzem resultados diferentes. Ser capaz de demonstrar qual ferramenta gerou qual resultado é um dos fatores que conferem credibilidade ao relatório. Então, deixe-me mostrar-lhe outra coisa.
+
+Em um engajamento real, Kim nem sempre precisa descobrir a rede por conta própria. Às vezes, Sally entrega a ele uma lista de máquinas específicas que ela quer que sejam testadas. Por exemplo, os servidores de produção, as estações de trabalho dos desenvolvedores, as impressoras que ninguém auditou desde 2019. Não é incomum que os clientes definam o escopo de um teste de penetração dessa forma, informando ao testador exatamente quais hosts estão dentro do escopo e quais estão fora dos limites. O Nmap consegue ler esses alvos de um arquivo, em vez de obrigar Kim a digitá-los manualmente.
+
+Digamos que Sally enviou por e-mail para Kim um arquivo chamado hosts.list com os sete endereços que elas combinaram. Kim dá uma olhada rápida primeiro, usando o comando para gatos. Sete endereços IP, um por linha. Isso é tudo que o Nmap precisa.
+
+Agora, Kim executa a mesma varredura ICMP de antes, mas em vez de fornecer ao Nmap um intervalo de rede, ele o direciona para um arquivo. A nova opção aqui é -iL hosts.list. Ele lê a lista de alvos do arquivo hosts.list.
+
+Kim pressiona Enter. E é aqui que a coisa fica interessante. Apenas três dos sete anfitriões responderam. Os outros quatro estão em silêncio. Isso não significa necessariamente que estejam offline. As
+
+solicitações de eco ICMP só funcionam se o firewall do destino responder aos pings. As três máquinas silenciosas podem estar simplesmente ignorando as sondagens de Kim porque foram configuradas para descartar o tráfego ICMP. Esta é uma das lições mais importantes na análise de redes. O fato de um host não responder ao ping não significa que ele esteja fora do ar. Pode estar perfeitamente operacional, executando serviços críticos, simplesmente recusando-se a confirmar a sua própria existência.
+
+Sistemas reforçados fazem isso de propósito, e quanto mais preocupada com a segurança for a empresa de Sally, mais hosts silenciosos Kim poderá esperar encontrar. Vamos passar para outro assunto. Às vezes, Kim não precisa analisar uma lista inteira ou uma rede inteira. Talvez Sally queira que apenas três servidores específicos sejam testados hoje. Talvez Kim tenha suspeitas sobre algumas máquinas específicas e queira se concentrar nelas antes de expandir sua atuação. O
+
+Nmap permite que ele passe endereços IP diretamente pela linha de comando. Aqui, por exemplo, Kim testará os IPs que terminam com 35, 40 e 139. Ele pressiona Enter. Três IPs, três resultados. Limpo e explícito.
+
+Se os endereços IP que Kim deseja forem sequenciais, ou seja, estiverem um ao lado do outro no espaço de endereços, ele pode usar um intervalo abreviado em vez de digitar cada um. Isso significa todos os IPs de {dot} 35 a {dot} 100. É o mesmo que listá-los um por um, mas mais curto para digitar. É útil ao testar um bloco contíguo de servidores. Agora, digamos que Kim queira dar um zoom em uma máquina específica.
+
+Por exemplo, 192.168.122.35.
+
+Antes de começar a sondar em busca de portas e serviços abertos, ele quer confirmar se o dispositivo está realmente ativo e acessível a partir de sua posição na rede. Ele usa a mesma varredura de descoberta de hospedeiros de antes, mas direcionada para apenas um alvo. E aí está o resultado. O apresentador está de pé. Kim agora sabe que tem um alvo para trabalhar.
+
+Mas é aqui que as coisas ficam interessantes e onde a maioria dos iniciantes deixa passar algo importante. Quando Kim executou o comando Nmap -sn, ele presumiu que o Nmap estava enviando solicitações de eco ICMP. Isso significa pings. Mas em uma rede local, o Nmap na verdade faz algo diferente. Vamos verificar isso.
+
+Kim adiciona duas opções ao seu comando: -PE e rastreamento de pacotes. A opção de rastreamento de pacotes faz com que o Nmap imprima cada pacote que envia e recebe. E o parâmetro -PE instrui explicitamente o Nmap a usar solicitações de eco ICMP como método de descoberta. Em outras palavras, Kim está dizendo: "Não escolham o método de descoberta que quiserem. Estou pedindo especificamente que enviem pings."
+
+Veja o que o Nmap realmente enviou. Não se tratava de uma solicitação de eco ICMP. Era uma solicitação ARP. Kim solicitou ICMP, mas o Nmap silenciosamente usou ARP em vez disso. Então, o que é ARP e por que o Nmap ignorou a solicitação de Kim? ARP, abreviação de Address Resolution
+
+Protocol (Protocolo de Resolução de Endereços), é o método pelo qual máquinas na mesma rede local encontram os endereços de hardware umas das outras. Cada dispositivo em uma rede local possui dois identificadores: um endereço IP, semelhante a um endereço de rua, e um endereço MAC, semelhante a um nome pessoal. ARP é o protocolo que mapeia um para o outro. Quando Kim pede ao Nmap para escanear um host em sua rede local, o Nmap usa ARP primeiro porque é mais rápido e confiável do que ICMP em uma LAN. O ARP está integrado à própria camada de rede , portanto as máquinas quase sempre respondem a ele. O
+
+ICMP, por outro lado, é frequentemente filtrado ou bloqueado por firewalls. O alvo respondeu com seu endereço MAC. Essa é a resposta ARP. E o Nmap concluiu que o host estava ativo. Kim nunca enviou um sinal.
+
+O alvo nunca teve a chance de ignorar uma delas. Também podemos confirmar isso com o indicador de motivo. Isso mostra por que o Nmap concluiu que um host estava ativo. E lá está, em texto claro. O host está ativo, recebeu resposta ARP, não recebeu resposta de ping, não recebeu eco ICMP. O
+
+Nmap chegou à sua conclusão com base na troca de dados ARP. Se Kim realmente quer testar o comportamento do ICMP, talvez ele esteja tentando descobrir se os firewalls de Sally descartam pings; para isso, ele precisa desativar o atalho ARP. A opção para isso é desativar o ping ARP. E aqui está. Agora Kim está enviando solicitações de eco ICMP reais .
+
+O alvo respondeu com uma resposta de eco ICMP . Assim é a aparência de uma varredura de ping real . Este é um detalhe que os iniciantes quase sempre ignoram, e que influencia todo o processo subsequente. Se Kim estiver escaneando hosts em sua rede local, na mesma sub-rede, sem roteador intermediário, o Nmap estará usando ARP e, se o host estiver ativo, significa que o alvo respondeu ao ARP. O protocolo ARP é difícil de silenciar na maioria das máquinas, portanto, um host na rede local de Kim quase sempre aparecerá ativo, mesmo que seu firewall esteja descartando um pacote a cada dois.
+
+Mas, no momento em que Kim realiza uma varredura em um roteador, digamos, em uma sub-rede separada na rede de Sally, o ARP deixa de funcionar. ARP é um protocolo exclusivo de rede local. Nesse ponto, o Nmap realmente recorre ao ICMP, e a configuração do firewall do alvo volta a ser relevante. A lição? A forma como o Nmap determina se um host está ativo depende de onde o host está localizado.
+
+Na mesma rede local, o Nmap normalmente usa solicitações ARP. Este é o método mais confiável em uma sub-rede local. Neste caso, não depende em nada do ICMP. Mesmo que o ICMP esteja bloqueado, o ARP ainda funciona. Em redes remotas, ou seja, em sub-redes diferentes ou na internet, o Nmap utiliza uma combinação de sondas.
+
+Por padrão, ele pode tentar uma solicitação de eco ICMP , ou seja, um ping. Também pode tentar um ataque TCP SYN em portas comuns como a 80 ou a 443. Os testadores de penetração que desconhecem essa sutil diferença ficam confusos quando suas varreduras locais mostram tudo ativo, enquanto as varreduras remotas não mostram nada. Não são os firewalls que estão sendo inconsistentes. É o Nmap mudando de estratégia silenciosamente.
+
+No próximo vídeo, veremos o que Kim faz quando tem um apresentador ao vivo confirmado . Como ele passa da existência desta máquina para a execução destes serviços específicos nestas portas específicas e nestas versões específicas? Se você gostou deste vídeo, não se esqueça de curtir, se inscrever e ativar as notificações para não perder o próximo episódio. Vejo você lá. Bye Bye.

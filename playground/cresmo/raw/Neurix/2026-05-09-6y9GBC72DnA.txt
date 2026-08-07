@@ -1,0 +1,74 @@
+---
+video_title: "5 hacking tools that feel illegal..."
+video_id: 6y9GBC72DnA
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6y9GBC72DnA
+video_date: 2026-05-09T09:00:33+00:00
+video_description: |
+  5 powerful hacking tools that are shockingly available for free, and what that means for your security.
+  
+  This video is for educational and awareness purposes only. 
+  
+  Chapters:
+  0:00  Prologue
+  0:17  Nmap
+  2:03  Wireshark
+  2:54  Hydra
+  3:58  John the Ripper
+  5:54  Aircrack-ng
+  7:55  Outro
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #ethicalhacking #cybersecurity  #hacking
+---
+Existe uma categoria de software que é gratuita, legal para baixar, mas, no momento em que você começa a usá-la, sente que está em um lugar onde não deveria estar. Hoje, vamos analisar cinco deles . Experimente aquelas que não te deixam nervoso(a). Número cinco, Nmap. O Nmap, abreviação de Network Mapper (Mapeador de Rede), é uma das ferramentas mais famosas em cibersegurança e o ponto de partida de todos os ataques.
+
+Antes de atacar um sistema, você precisa saber o que está armazenado nele. Quais portas estão abertas, quais serviços estão em execução, as versões desses serviços, o sistema operacional e assim por diante. O Nmap responde a todas essas perguntas com um único comando. Vejamos o caso de Sally, por exemplo. Ela está executando um servidor Ubuntu no endereço IP 192.168.122.192.
+
+Ela instalou a máquina na semana passada. É seguro, ela pensa. Kim senta-se em sua própria máquina Kali, abre um terminal e digita Nmap seguido pelo endereço IP do servidor de Sally. Sem sinalizadores, sem opções, sem autenticação, apenas o endereço IP. Ele pressiona Enter e o Nmap começa a enviar pacotes cuidadosamente elaborados para as portas mais comuns do servidor de Sally, anotando quais respondem.
+
+Menos de 5 segundos e veja o que o garçom da Sally acabou de dizer para a Kim. O Nmap conseguiu até mesmo resolver o nome do host dela, Ubuntu. Três portos estão abertos. SSH na porta 22, o que significa que Sally aceita logins remotos. HTTP na porta 80, o que significa que ela está executando um servidor web.
+
+E o MySQL na porta 3306, o que significa que ela está executando um banco de dados e, de alguma forma, esse banco de dados está acessível pela rede, o que já é um erro. Kim não tocou na máquina. Ele não fez login, não enviou nada malicioso. Ele simplesmente perguntou e o garçom da Sally lhe contou tudo. É por isso que o Nmap é a base de todo teste de penetração.
+
+É também por isso que cada defensor deve testá-lo primeiro em sua própria infraestrutura, antes que alguém como Kim o faça. Número quatro, Wireshark. O Wireshark é o analisador de pacotes mais popular do mundo . Ele monitora todo o tráfego de rede que passa por uma interface e o exibe para você em um formato legível para humanos. Protocolos, cabeçalhos, cargas úteis, tudo.
+
+Por exemplo, se Joshua se conectar a um aplicativo da web não criptografado, abrir seu navegador e digitar seu nome de usuário e senha, Kim poderá capturar essas credenciais com o Wireshark. Ele pode vê-los ali, em texto simples. Joshua nunca contou sua senha para Kim. Kim apenas ouviu a emissora e a emissora disse isso em voz alta. É exatamente por isso que o HTTPS existe. O
+
+Wireshark é a ferramenta que ensinou a uma geração de desenvolvedores por que a criptografia é indispensável. No tráfego HTTPS moderno , Kim vê apenas caracteres sem sentido. Número três, Hidra. Hydra é um programa para quebrar logins em paralelo. Você fornece um serviço de destino, uma lista de nomes de usuário e uma lista de senhas, e ele tenta todas as combinações na velocidade da máquina até encontrar uma que funcione.
+
+Aqui, por exemplo, Kim está atacando o serviço SSH no site de Sally. -L Sally é o nome de usuário. -P famosa lista de palavras rockyou, uma lista popular de 14 milhões de senhas vazada em uma violação de segurança real em 2009. Depois de alguns segundos, o Hydra a encontra. A senha de Sally é Ashley, provavelmente o nome de sua melhor amiga.
+
+Com essas credenciais, Kim consegue fazer login. E pronto, ele agora tem acesso SSH à máquina de Sally. É por isso que alguns administradores de servidor desativam a autenticação por senha em favor de chaves SSH. Essa é também uma das razões pelas quais o fail2ban existe e por que todo sistema de login deveria limitar a taxa de tentativas falhas. A Hydra representa a aparência da ausência dessas defesas.
+
+Número dois, John, o Estripador. John the Ripper é uma ferramenta complementar à Hydra. Enquanto a Hydra se concentra em quebrar credenciais de login em tempo real, John se especializa em hashes de senhas. Essas são as versões criptografadas de senhas armazenadas em bancos de dados, vazadas em violações de segurança ou extraídas de arquivos. Agora que Kim tem acesso root no computador de Sally , ele pode copiar o arquivo shadow do Etsy dela .
+
+Este arquivo contém as senhas de todos os usuários do sistema, mas armazenadas como hashes, não em texto simples. Os hashes são projetados para serem irreversíveis, mas senhas fracas ainda podem ser quebradas. Agora que Kim tem o arquivo de informações de Sally em seu computador, ele pode usar o John the Ripper para tentar quebrar as senhas. O comando que ele executa é o seguinte. A primeira parte especifica o formato de hash usado no arquivo shadow, para que John the Ripper saiba como interpretar os hashes de senha.
+
+A segunda parte informa a John the Ripper qual lista de senhas candidatas ele deve tentar durante o ataque. Aqui, Kim usa as listas de senhas mais comuns , uma coleção de senhas frequentes disponíveis em listas de senhas. John irá gerar o hash de cada senha na lista de palavras e compará-lo com os hashes no arquivo shadow. Caso seja encontrada uma correspondência, John identifica a senha original em texto simples. A terceira parte é o arquivo que contém os hashes de senha que John tentará quebrar.
+
+Kim pressiona Enter. E aqui está. Três senhas quebradas em menos de um segundo. Eu te amo, a senha de administrador. Ashley, a senha de Sally.
+
+E "sunshine", a senha de um terceiro usuário chamado James. John the Ripper não decifrou os hashes do arquivo shadow. Em vez disso, ele gerou o hash de cada palavra na lista de palavras e comparou os resultados com os hashes no arquivo de sombra. Quando um hash correspondia, a senha correspondente era encontrada. Agora Kim pode acessar essas contas uma por uma e ver tudo o que elas estavam escondendo. Cada segredo, cada mensagem,
+
+cada arquivo, tudo a apenas um clique de distância. Número um, Aircrack-ng. O Aircrack-ng é um conjunto de ferramentas que analisa redes Wi-Fi, captura o tráfego e tenta quebrar as chaves de criptografia. Ficou notório que isso demonstrou que o WEP, o protocolo original de criptografia Wi-Fi, era trivialmente quebrável, e que o WPA, Wi-Fi Protected Access, o protocolo de segurança aprimorado que substituiu o WEP, podia ser atacado usando ataques de dicionário ou de handshake . Vamos explicar exatamente como isso funciona em um vídeo futuro.
+
+Por ora, vamos ver o que acontece quando Kim executa o comando airodump-ng wlan0mon. E aqui está. Todas as redes Wi-Fi dentro do alcance do adaptador de Kim aparecem na tela, bem visíveis. Cada linha representa uma rede, facilitando a visualização exata do que está ao seu redor. O BSSID é o endereço MAC do ponto de acesso.
+
+Este é um identificador único atribuído a cada dispositivo de rede. Significa que dois pontos de acesso não compartilham o mesmo BSSID. É assim que ferramentas como o Aircrack-ng conseguem distinguir uma rede Wi-Fi de outra, mesmo que várias redes tenham o mesmo nome. O PWR representa a intensidade do sinal. Quanto mais próximo de zero, mais forte; menos 90 está muito longe.
+
+O ESSID é o nome da rede legível para humanos, nomes como "Wi-Fi gratuito", "TP-LINK home" e assim por diante. Os nomes que você realmente reconheceria ao conectar seu dispositivo. Embora o BSSID identifique a rede no nível do hardware, o ESSID é o que facilita aos usuários escolherem a rede desejada. A partir daqui, o fluxo de trabalho é simples. Kim pode simplesmente escolher um alvo que ele tenha permissão para avaliar, forçar um cliente a se reconectar, capturar o handshake e executar o Aircrack-ng contra ele usando uma lista de palavras. Se a
+
+senha for fraca, ele a obtém. Se for uma senha aleatória de 20 caracteres , ele não a usa. É por isso que mydog2019 não é uma senha segura para Wi-Fi. Então, é isso. Já falamos sobre cinco ferramentas de hacking que não deveriam ser gratuitas. No entanto, todos eles
+
+são completamente legais para baixar e, muitas vezes, já vêm pré-instalados em uma distribuição Linux que você pode obter em menos de 5 minutos. O motivo pelo qual essas ferramentas não deveriam ser gratuitas não é porque elas sejam ruins. É devido à sua grande capacidade. O Nmap mapeia uma rede inteira em segundos. O Wireshark expõe todas as senhas não criptografadas em uma rede. O Hydra realiza ataques de força bruta
+
+a centenas de tentativas de login por segundo. John the Ripper quebra hashes de senhas. Aircrack-ng audita redes Wi-Fi. Em qualquer outro setor, um software tão poderoso custaria milhares de dólares por licença. Em cibersegurança, tudo é de código aberto.
+
+Isso não é um acidente. Os defensores precisam disso. Todo profissional de testes de penetração utiliza essas ferramentas para encontrar vulnerabilidades antes que os atacantes o façam. Todo engenheiro de redes os utiliza para auditar sua própria infraestrutura. As ferramentas são gratuitas porque a alternativa, que é a defesa sem ferramentas [música] e o ataque com elas, é catastrófica.
+
+Se você gostou deste vídeo, inscreva-se para ver mais análises aprofundadas sobre o lado estranho e um pouco desconfortável da segurança cibernética. Até a próxima! Bye Bye.

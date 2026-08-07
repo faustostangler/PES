@@ -1,0 +1,98 @@
+---
+video_title: "How hackers upload malware via job application"
+video_id: PxqFUdUauUc
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=PxqFUdUauUc
+video_date: 2026-06-19T10:41:58+00:00
+video_description: |
+  A job application form that accepts any file is a door into the server. Here's what happens when an attacker walks through it.
+  
+  This video is for educational and awareness purposes only!
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Linux Server: Victim 
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue
+  02:33  What is a file upload attack?
+  03:35  Finding the target application server
+  05:27  How a basic web shell looks like
+  07:15  Launching the file upload attack
+  08:05  Server hacked!
+  10:04  How to protect
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #cybersecurity #hacking
+---
+Esta é a Sally. Ela administra uma pequena empresa de café chamada Sally Coffee. O negócio está crescendo rapidamente, por isso ela está contratando para quatro vagas em aberto para ajudar a atender à crescente demanda, melhorar as operações diárias e apoiar a expansão da empresa para novos locais. Esta manhã, o desenvolvedor dela lançou uma página de carreiras novinha em folha no site dela. Os candidatos podem consultar as vagas disponíveis, preencher o nome e o e-mail e enviar o currículo.
+
+Tomemos Lewis como exemplo. Atualmente, ele é gerente assistente de um café em outra empresa. Ele já estava pronto para uma promoção há algum tempo, e quando vê que Sally está contratando um gerente para o café, pensa que essa pode ser a sua chance. Ele preenche o formulário de inscrição com seu nome e e-mail. Em seguida, ele abre seu currículo uma última vez para garantir que esteja impecável.
+
+Tudo parece bem. Ele está pronto para fazer o upload. Mas antes que ele faça isso, vamos analisar os dois lados simultaneamente. Lewis está à direita, fazendo o que qualquer candidato a emprego faria. A máquina da Sally fica à esquerda. A pasta "dev" que você vê
+
+aqui é a pasta raiz do site de café da Sally. Tudo que faz o site funcionar está dentro dele. Existe um arquivo index.php, que é a página que Louie está visualizando neste momento. Existe também uma pasta chamada uploads. É
+
+lá que todos os currículos enviados pelo site da Sally Coffee são parar. Se Sally abrir, poderá ver que duas pessoas já se candidataram, David e Sarah. Agora, Lewis pode arrastar seu currículo para a caixa de upload. Como você pode ver, o arquivo foi carregado corretamente. Agora ele pode clicar em enviar candidatura.
+
+Aqui está. O currículo de Lewis foi parar na pasta de uploads. Algumas centenas de kilobytes de PDF estão armazenadas no servidor de Sally, aguardando que ela as revise posteriormente. O site saúda Lewis com uma mensagem de agradecimento, informando que sua inscrição foi recebida . Do ponto de vista dele, o formulário funcionou exatamente como ele esperava.
+
+E, da perspectiva de Sally, sua nova página de carreiras também está funcionando. Estão chegando candidaturas. O sistema está contratando pessoas. Mas o que acabou de acontecer, o formulário aceitando alegremente um arquivo de um estranho na internet e o colocando em uma pasta em seu servidor, é exatamente o mecanismo que um invasor usaria para fazer algo muito diferente. E é aí que Kim entra em cena. Ele é um
+
+hacker ético e especialista em testes de penetração. O trabalho dele é testar a nova página de carreiras antes que os verdadeiros atacantes a encontrem. Hoje, Kim vai fazer exatamente o que aqueles agressores fariam. E o que ele descobrir vai mudar a forma como Sally encara todos os formulários de upload na internet. Vamos começar.
+
+Mas antes de vermos Kim em ação, você pode estar se perguntando: o que exatamente é um ataque de upload de arquivos ? A ideia básica é simples. Os sites modernos permitem que os usuários carreguem arquivos o tempo todo. Fotos de perfil, currículos, recibos, documentos, capturas de tela do suporte ao cliente e assim por diante. O site espera um tipo específico de arquivo.
+
+Geralmente é uma imagem ou um PDF, e espera-se que esse arquivo contenha dados, não código. Mas e se o site não verificar de fato o que você enviou? E se você pudesse enviar um arquivo cheio de código em vez de dados? Se o arquivo for parar em um local onde o servidor web consiga executá-lo, o servidor não saberá fazer nada melhor. Ele detecta um arquivo com a extensão correta, digamos .php em um site que utiliza PHP,
+
+e executa a mesma ação que executa com qualquer outro arquivo PHP. Ele executa o código internamente. O atacante conseguiu que o servidor alvo executasse seu código, não em um navegador, nem em um ambiente isolado (sandbox), mas na própria máquina que executa o site. Trata-se de um ataque de upload de arquivos. Agora, vamos observar Kim realizar o ataque de upload de arquivos.
+
+Kim começa da mesma forma que qualquer atacante , analisando o que o formulário aceita. Ele examina o formulário de upload. Não há filtro de tipo de arquivo visível na página, nem restrição de "somente PDF" no seletor de arquivos. A área de upload indica que o formato PDF é preferencial, mas " preferencial" não é uma restrição. É uma sugestão.
+
+Kim tem mais uma coisa a verificar antes de se comprometer com um ataque. Ou seja, ele precisa saber qual tecnologia está sendo executada no servidor. Isso é importante porque o arquivo malicioso de Kim precisa ser escrito em uma linguagem que o servidor realmente execute. Um arquivo PHP não significa nada para um servidor Python. Um arquivo JavaScript não significa nada para um servidor Ruby. Kim precisa adequar sua
+
+carga útil à plataforma. A maneira mais rápida de descobrir qual tecnologia um site utiliza é inspecionar seus cabeçalhos HTTP. Cada resposta enviada pelo servidor inclui metadados que o navegador não exibe. Uma maneira simples de visualizar esses cabeçalhos é usando o curl. Então, Kim abre um terminal e executa curl com as flags {dash}i contra o domínio Sally.
+
+{Dash}i instrui o curl a buscar apenas os cabeçalhos HTTP, e não o conteúdo completo da página. Isso se chama solicitação de cabeçalho. E aí está a pista que Kim estava procurando. Agora ele sabe que a tecnologia que alimenta o site é o PHP. Outra forma de visualizar o cabeçalho é através das ferramentas de desenvolvedor do navegador.
+
+Se Kim abrir as ferramentas de desenvolvedor, for até a aba de rede, atualizar a página e clicar na solicitação principal, ele verá lá: X-Powered-By: PHP 8.5.4, o que indica que o servidor está executando PHP. O desenvolvedor de Sally não configurou o servidor para ocultar esses cabeçalhos, o que é comum. A maioria dos servidores vaza essas informações por padrão.
+
+O cabeçalho "X-Powered-By" por si só diz a Kim tudo o que ele precisa saber. Ou seja, este é um site em PHP. Agora Kim sabe que o servidor executa PHP. Essa é a linguagem na qual ele precisa que seu payload seja escrito. Ele prepara um pequeno arquivo PHP em sua máquina chamado KimCV.
+
+Ele deu esse nome deliberadamente. Para quem olha de relance, parece um currículo. O nome do arquivo até corresponde ao padrão que outros candidatos poderiam usar. A única coisa que denuncia é a extensão PHP no final, em vez de PDF. Dentro desse arquivo, Kim escreve este pequeno script PHP.
+
+Duas linhas de PHP, só isso. Vamos analisar o que ele faz. As tags PHP dizem ao servidor: "Este é um código PHP, execute-o." Agora imagine que Kim solicite esse URL posteriormente. A função Get CMD analisa o endereço web solicitado pelo usuário e extrai o valor de um parâmetro chamado CMD da parte que vem depois do ponto de interrogação.
+
+Neste exemplo, Kim define CMD como "who am I". Portanto, get CMD retornará "who am I". Finalmente, system é uma função PHP que envia o que recebe para o sistema operacional subjacente para ser executado como um comando. Resumindo, este script recebe dados da URL e os envia diretamente para o sistema operacional do servidor sem validação, retornando o resultado posteriormente através da página web. Este arquivo é uma pequena interface de controle remoto .
+
+Qualquer pessoa que consiga acessar o servidor e adicionar um ponto de interrogação (CMD) como parâmetro no final pode executar comandos do shell no servidor de Sally e ler os resultados em seu navegador. Isso é o que chamamos de web shell, um script que transforma a barra de endereços em uma interface de comando remota. Os atacantes reais usam versões muito mais sofisticadas com navegadores de arquivos, histórico de comandos e persistência integrada. Esta versão mínima é suficiente apenas para provar que o ataque funciona. Agora que Kim tem sua carga útil, ele só precisa enviá-la para o servidor de Sally.
+
+Ele preenche o formulário de inscrição como um candidato normal, digitando seu nome e endereço de e-mail. Para o currículo, em vez de selecionar um PDF, ele seleciona o arquivo shell.php que acabou de preparar. A área de soltar arquivos exibe o nome do arquivo. Note que o site não apresenta reclamações.
+
+Não há nenhum aviso do tipo "Desculpe, apenas PDFs são permitidos" . O formulário aceita de bom grado qualquer coisa que Kim lhe entregue. Ele clica em enviar candidatura. O site o parabeniza. Ele recebe até mesmo um link para visualizar o arquivo que acabou de enviar.
+
+Este é o primeiro sinal de que algo está muito errado. O site da Sally deveria aceitar currículos de candidatos a emprego. O programa simplesmente aceitou um arquivo PHP de um desconhecido, salvou-o em seu servidor e, com sorte, forneceu ao desconhecido um link para acessá-lo. Kim, agora é só seguir o link. Mas ele não está apenas consultando o arquivo.
+
+Ele acrescenta um parâmetro à URL. Ou seja, {ponto de interrogação} cmd=whoami. E aqui está. " Who am I" é um comando do Linux que exibe o nome do usuário atual. Kim acabou de perguntar ao garçom de Sally: "Qual é o seu personagem?" E o servidor de Sally
+
+respondeu: "Estou executando como Sally." A partir daqui, Kim pode começar fazendo tarefas simples de reconhecimento, como verificar qual sistema o servidor está executando. Por exemplo, ele poderia usar algo como ` cat /etc/os-release` para ver a versão do sistema operacional. Isso pode parecer inofensivo, mas na verdade o ajuda a entender com que tipo de máquina ele está lidando e quais pontos fracos ela pode ter. Aqui ele pode ver que Sally está usando o Ubuntu 26.04.
+
+Isso lhe proporciona uma compreensão mais clara da configuração do sistema e das possíveis implicações de segurança associadas àquela versão específica. Mas antes de sair para caçar, Kim quer saber em que parte do servidor de Sally o código dele está sendo executado. Ele troca o comando por pwd, abreviação de print working directory (imprimir diretório de trabalho). E assim, sem mais nem menos, ele se vê dentro de uma pasta no computador da Sally. Agora ele quer ver o que tem lá dentro. Para
+
+isso, ele pode simplesmente usar o comando ls, que lista o conteúdo das pastas. E aqui está. Kim agora vê currículos de candidatos que se inscreveram na empresa de café de Sally na esperança de conseguir um emprego. Kim pode estar se perguntando se ele tem acesso a esses arquivos de currículo. Como o comando "cat" não consegue abrir um PDF, ele usa o comando "PDF para texto", que extrai o conteúdo de texto de um PDF e o exibe como texto simples.
+
+E assim, o arquivo se abre. Agora Kim pode ver o currículo de Lewis, incluindo dados pessoais como número de telefone, endereço de e-mail e histórico profissional. E não é só o Lewis. Seriam todos os candidatos que já enviaram informações por meio deste formulário. Currículos, dados de contato, informações salariais: Kim pode ler tudo ou apagar.
+
+Então, como se proteger contra ataques de upload de arquivos ? A boa notícia é que a defesa contra isso é bem compreendida. O padrão é o mesmo em todas as linguagens e em todas as estruturas. Aqui estão as três defesas que realmente funcionam. Valide a extensão do arquivo em relação a uma lista restrita de permissões.
+
+Pergunte a si mesmo: esta extensão está na minha lista de aprovadas? Um formulário para upload de currículo deve aceitar {dot}pdf, talvez {dot}docx, e nada mais. Listas de bloqueio, como reject.php.py e outras semelhantes, sempre deixam algo passar.
+
+Listas de permissões não funcionam. Verifique o conteúdo real do arquivo, não apenas o seu nome. Um arquivo chamado PDF. Qualquer pessoa pode renomear um arquivo malicioso para terminar em {dot}pdf. A verificação mais segura é analisar a assinatura binária do arquivo e confirmar se ele corresponde ao tipo de arquivo que alega ser.
+
+Se a assinatura do arquivo não corresponder à sua extensão, rejeite-o. Execute o servidor web com os privilégios mínimos necessários. Se o servidor web for executado como uma conta de serviço restrita, sem acesso ao shell e sem permissão para escrever fora do seu próprio diretório, os danos causados ​​por um ataque bem-sucedido de upload de arquivos serão drasticamente reduzidos. Kim ainda pode conseguir ler alguns arquivos, mas não consegue acessar o restante do sistema. A defesa em profundidade é importante.
+
+Por hoje é só. Obrigado por assistir. Se você achou isso útil, clique no botão "Gostei", inscreva-se no canal e ative as notificações para não perder o próximo episódio. Vejo você lá. Bye Bye.

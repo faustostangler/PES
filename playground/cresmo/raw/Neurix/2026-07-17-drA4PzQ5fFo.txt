@@ -1,0 +1,101 @@
+---
+video_title: "What is a VLAN, and how to build one"
+video_id: drA4PzQ5fFo
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=drA4PzQ5fFo
+video_date: 2026-07-17T09:30:27+00:00
+video_description: |
+  A VLAN separates the computers in an office by team, purpose, or trust level, even when they all share the same switches and cables. 
+  It's the reason 2 devices plugged into the same network can be completely unaware of each other's existence. In this video, we build one in a virtual lab and see it happen.
+  
+  ▬▬ Tools Used ▬▬
+  - Ubuntu: sales & Eng PCs
+  - Cisco IOL: router & switch
+  - EVE-NG: network simulator
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  0:00  Prologue
+  0:27  Sally's Office Problem
+  1:25  What VLAN means
+  1:59  Sally's Network Topology
+  3:43  Configuring the VLANs
+  7:55  VLANs Activated
+  9:04  Inside the Switch's Brain
+  9:57  Outro
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #vlan #networking #ccna
+---
+Esta é a Sally. O negócio dela tem crescido. Antes, ela administrava tudo pelo laptop em casa, mas agora tem um escritório de verdade, com mesas, funcionários e uma pequena equipe. Como a maioria das pequenas empresas, ela montou sua rede de contatos de forma bastante simples. Todo mundo conecta o computador a um switch. O switch se conecta ao
+
+roteador, e o roteador conecta o escritório à internet. E por um tempo, tudo funciona bem. Mas agora que sua empresa está crescendo, Sally começou a perceber um problema. Na verdade, ela tem duas equipes. Sua equipe de vendas trabalha com informações do cliente, dados de contato, propostas de preços e contratos com clientes.
+
+Sua equipe de engenharia trabalha com coisas completamente diferentes: código-fonte, protótipos de produtos e documentação técnica. Neste momento, todos os computadores do escritório dela estão na mesma rede, o que significa que, em princípio, qualquer coisa em qualquer computador pode alcançar qualquer coisa em qualquer outro computador. Se o laptop de um vendedor for infectado por malware, esse malware poderá atingir os arquivos da equipe de engenharia. Se um engenheiro configurar incorretamente um compartilhamento por acidente, a equipe de vendas poderá visualizar documentos técnicos internos. Sally quer separar as duas equipes.
+
+Não fisicamente, porque eles ainda compartilham o mesmo espaço de escritório e os mesmos equipamentos de rede, mas logicamente. Ela quer que cada equipe veja apenas o seu próprio tráfego. A tecnologia que permite que ela faça isso se chama VLAN. Você deve estar se perguntando: o que exatamente é uma VLAN? VLAN significa rede local virtual . E o nome, na verdade, já nos diz
+
+muito, então vamos analisá-lo. Uma LAN, ou rede local, ocorre quando computadores são conectados entre si na mesma rede. Eles podem se ver, conversar e compartilhar recursos. Virtual significa que a LAN não é definida por cabeamento físico. É definido pela configuração. É
+
+possível ter várias LANs lógicas compartilhando o mesmo equipamento físico, e cada computador vê apenas a LAN à qual foi atribuído. Aqui está a rede da empresa de Sally. Sally entende do seu ramo de atividade, mas networking não é a sua área de especialização. Então, ela contratou Chuck, um especialista em redes que sabe exatamente como resolver esse tipo de problema. Chuck chega naquela manhã, pega duas xícaras de café, senta-se no console e começa a trabalhar.
+
+Vamos dar uma olhada por cima do ombro dele e ver como ele configura a VLAN da Sally. Primeiro, Chuck analisa a rede física de Sally. Ela tem um switch Cisco, o mesmo tipo de switch que você encontraria em um escritório de pequena empresa. Estão conectados a esse switch três computadores. À esquerda, está o PC 1, um laptop da equipe de vendas .
+
+No meio, um segundo computador, um laptop de engenharia, e à direita, um terceiro computador, outro laptop da equipe de vendas. Os três computadores estão conectados ao mesmo switch físico. Neste momento, todos estão na mesma rede. Chuck liga o computador para inspecionar os endereços IP deles. O primeiro computador de vendas tem o endereço IP 192.168.1.10,
+
+o computador de engenharia tem 192.168.1.20 e o segundo computador de vendas tem 192.168.1.30.
+
+Este é o ponto de partida de Chuck. Um switch, três computadores e nenhuma VLAN configurada ainda. Vamos confirmar se todos conseguem se comunicar entre si, começando pelo PC 1. Ele consegue pingar o PC de engenharia? Sim, pode.
+
+Ele consegue pingar o outro PC de vendas? Sim, pode. E o mesmo é verdadeiro na direção oposta. O PC 2 e o PC 3 também podem acessar os outros computadores na rede. Como podem ver, todos conseguem se comunicar uns com os outros.
+
+Esse é o comportamento normal de um switch básico sem configuração de VLAN. Mas agora, observe o que acontece quando Chuck adiciona VLANs. Para configurar as VLANs, Chuck abre a interface de linha de comando do switch. Esta é uma interface baseada em texto que permite configurar e gerenciar o switch por meio de comandos digitados. A primeira coisa que ele faz é entrar no modo privilegiado.
+
+Isso é feito com o comando enable. Este comando dá a Chuck acesso aos comandos administrativos do switch. No modo de usuário normal, ele só pode visualizar informações básicas. Para fazer mudanças, ele precisa de privilégios elevados. Em seguida, ele entra no modo de configuração.
+
+O comando para isso é configure terminal. Isso indica ao switch que ele deseja começar a alterar a configuração. Agora, Chuck pode criar as VLANs. Primeiro, ele cria a VLAN 10 simplesmente digitando VLAN 10. O número 10 é simplesmente o ID da VLAN. Os
+
+IDs de VLAN são apenas rótulos que o switch usa para identificar diferentes redes virtuais. O número 10 não tem nada de especial. Chuck poderia ter escolhido outro número de VLAN válido. Engenheiros de rede costumam usar números como 10, 20 ou 30 porque são fáceis de lembrar. Observe que o prompt de comando mudou de "config" para "config VLAN".
+
+Isso porque Chuck agora está configurando especificamente a VLAN 10. Quaisquer comandos que ele inserir agora serão aplicados a esta VLAN até que ele retorne ao modo de configuração global . Em seguida, ele dá um nome a essa VLAN, ou seja, vendas. O comando "name" instrui o switch a atribuir um nome à VLAN. Neste caso, a VLAN 10 é denominada "vendas".
+
+O nome não afeta o funcionamento da VLAN. É apenas uma descrição que facilita a compreensão da configuração por parte dos humanos. Agora, ele sai do modo de configuração VLAN usando o comando exit. Agora, Chuck cria a segunda VLAN. O comando VLAN 20 cria uma nova VLAN com o ID 20. Novamente, o número é apenas um
+
+identificador. Em seguida, ele nomeia a configuração como "engenharia" e sai da configuração da VLAN 20. Agora, o switch sabe que existem duas VLANs separadas. VLAN 10 para vendas e VLAN 20 para engenharia. Mas há uma coisa importante que você precisa saber. A criação de VLANs não
+
+move automaticamente nenhum computador para elas. No momento, todas as portas dos switches ainda estão atribuídas à VLAN padrão, que é a VLAN 1 nos switches Cisco. Portanto, embora as VLANs 10 e 20 já existam, nenhum dos computadores as está utilizando ainda. O próximo passo é atribuir cada porta do switch à VLAN correta. Agora, Chuck precisa informar ao switch quais portas pertencem a qual VLAN.
+
+Ele começa pela porta onde o laptop de vendas está conectado. O comando de interface informa ao switch qual porta física Chuck deseja configurar. Neste caso, trata-se da Ethernet 0/1, a porta conectada ao PC de vendas 1. Observe que o prompt de comando muda de config para config if. Isso porque Chuck está configurando uma interface específica.
+
+Em seguida, ele entra no modo de acesso da porta de comutação. O comando `switchport mode access` informa ao switch que esta porta é uma porta de acesso. As portas de acesso conectam dispositivos finais como laptops, desktops, impressoras ou servidores e transportam tráfego para apenas uma VLAN. Agora, Chuck atribui essa porta à VLAN de vendas com o comando `switchport access VLAN 10`. Isso coloca a porta Ethernet 0/1 na VLAN 10.
+
+Isso significa que qualquer dispositivo conectado a essa porta se torna automaticamente parte da rede de vendas. E isso é tudo para o primeiro laptop de vendas. Em seguida, Chuck configura o laptop de engenharia. Os comandos são os mesmos. A porta Ethernet 0/2 está conectada ao PC de engenharia, então Chuck a atribui à VLAN 20, a VLAN de engenharia.
+
+Por fim, ele configura o segundo laptop de vendas. Como o PC de vendas 2 também pertence à equipe de vendas, a porta Ethernet 0/3 foi atribuída à VLAN 10. É isso. A configuração está concluída. Os laptops de vendas 1 e 2 agora fazem parte da VLAN 10, e o PC de engenharia faz parte da VLAN 20.
+
+Observe que nada mudou fisicamente. Os mesmos três computadores continuam conectados ao mesmo switch usando os mesmos cabos de rede. A única coisa que mudou foi a configuração do switch. Vamos ver o que acontece agora quando os computadores tentarem se comunicar. Primeiro, o laptop um tenta alcançar o laptop de vendas do outro.
+
+Ambos fazem parte da equipe de vendas. Ambos estão na VLAN 10. Isso funciona perfeitamente. Eles podem conversar entre si . Agora, o laptop tenta acessar o computador de engenharia. Então, o vendedor de laptops está tentando
+
+alcançar o computador de engenharia. Nada. Nenhuma resposta. Vamos testar a conexão na direção oposta. Será que o PC de engenharia consegue competir com os laptops de vendas?
+
+Nenhuma resposta do vendedor do laptop. E quanto ao segundo laptop de vendas? Além disso, nenhuma resposta. [música] A separação funciona nos dois sentidos. Lembre-se de que esses três computadores ainda estão conectados ao mesmo switch físico.
+
+Os cabos não foram alterados. O interruptor não foi alterado. A única diferença é que agora estão em VLANs diferentes. O laptop de vendas 1 e o laptop de vendas 2 estão ambos na VLAN 10. O PC de engenharia está na VLAN 20.
+
+O switch os está tratando como duas redes completamente separadas. É quase como se houvesse dois interruptores diferentes dentro do mesmo dispositivo físico. E esse é o poder de uma VLAN. Então, o que realmente aconteceu dentro do interruptor? Vamos analisar mais de perto o que o interruptor realmente faz.
+
+Quando o laptop um envia um pacote para o PC de engenharia, o quadro chega ao switch na porta Ethernet 0/1. O switch verifica sua configuração e vê que esta porta pertence à VLAN 10. Em seguida, ele procura o dispositivo de destino. O computador de engenharia está conectado à porta Ethernet 0/2. Mas essa porta pertence à VLAN 20.
+
+Nesse ponto, o switch para. Não encaminha o tráfego porque a VLAN 10 e a VLAN 20 são redes de camada dois separadas. Do ponto de vista dos switches, estes são dois switches completamente separados que por acaso existem dentro do mesmo dispositivo físico. Essa é a ideia por trás das VLANs. Uma VLAN permite que um switch físico funcione como vários switches independentes.
+
+Um hospital pode usar VLANs para manter os equipamentos de monitoramento de pacientes separados dos computadores da equipe. Uma universidade pode usar VLANs para separar a rede Wi-Fi dos alunos dos sistemas administrativos. Uma empresa varejista pode usar VLANs para manter os terminais de pagamento isolados da rede Wi-Fi pública para visitantes. Em todos os casos, a ideia é a mesma. O simples fato de os dispositivos compartilharem o mesmo equipamento físico não significa que devam compartilhar a mesma rede.
+
+As VLANs permitem que um único switch físico se torne várias redes lógicas, dando a diferentes grupos seu próprio espaço separado, mesmo utilizando o mesmo hardware. E foi exatamente isso que Chuck fez por Sally. Sally tinha uma rede plana onde todos os dispositivos estavam na mesma rede lógica. Agora ela tem duas redes separadas funcionando no mesmo switch físico. A equipe de vendas tem sua própria VLAN e a equipe de engenharia tem sua própria VLAN. Mesmo
+
+escritório, mesmos cabos, mesmo hardware, mas agora cada equipe tem seu próprio espaço de rede isolado. Você passou a vida inteira usando VLANs. Agora você já sabe o que são. Por hoje é só. Obrigado por assistir.
+
+Se você achou isso útil, clique no botão "Gostei", inscreva-se no canal e ative as notificações para não perder o próximo episódio. Vejo você lá. Bye Bye.

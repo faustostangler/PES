@@ -1,0 +1,71 @@
+---
+video_title: "How hackers steal passwords with Wireshark"
+video_id: fJ_28JtJeCM
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=fJ_28JtJeCM
+video_date: 2026-04-21T09:30:23+00:00
+video_description: |
+  Passwords feel like secrets, until the wrong person is listening on the same Network.
+  
+  This video is for educational and awareness purposes only. 
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker OS
+  - Windows 10: Victim OS
+  - Wireshark: Network analyzer
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00  Prologue 
+  00:55  What is Wireshark?
+  03:37  Wireshark in Action
+  06:10  Password Hacked
+  07:19  How to Protect
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #wireshark  #cybersecurity
+---
+Esta é a Sally. Ela é uma artista com um sonho e um pincel na mão. Após anos vendendo suas pinturas em mercados locais, ela finalmente deu o salto e lançou sua primeira loja online, sallyshop.test. Apaixonada por criatividade e orgulhosa do seu trabalho, Sally dedicou horas à criação de um belo website para exibir e vender sua arte original. Cada
+
+pintura conta uma história. Cada pixel do site dela foi colocado com carinho. Sally acha que seu site é seguro, mas ela está enganada. E é aí que Kim entra em cena. Ele é um hacker ético, o tipo de hacker que invade sistemas para que pessoas como Sally possam aprender a defendê-los.
+
+Hoje, Kim vai interceptar as credenciais de login de alguém que está comprando no site da Sally. Um cliente chamado Joshua vai fazer isso usando apenas uma ferramenta gratuita e uma conexão de rede. Vamos começar. A principal ferramenta de Kim hoje é o Wireshark. O Wireshark é um dos analisadores de rede mais poderosos do mundo.
+
+Ele captura e exibe tudo o que acontece em uma rede em tempo real. Cada solicitação, cada resposta, cada pequeno fragmento de dados que trafega entre seu computador e a internet. Pense no Wireshark como uma escuta telefônica digital para o tráfego da internet. Se seus dados estiverem trafegando por uma rede, o Wireshark poderá vê-los e capturá-los. E aqui está a parte assustadora. Se esses dados
+
+não estiverem criptografados, o Wireshark pode lê-los palavra por palavra. Para começar, Kim abre a barra de pesquisa do computador e digita Wireshark. Ele clica no ícone e o Wireshark é iniciado. Assim que o Wireshark é aberto, ele lista todas as interfaces de rede disponíveis na máquina. São como orelhas virtuais. Cada um deles
+
+monitora uma parte diferente da atividade de rede do seu computador. Por exemplo, uma interface pode lidar com Wi-Fi, outra com Ethernet e outras podem ser para VPN ou máquinas virtuais. Para capturar o tráfego de uma conexão específica, Kim precisa selecionar a interface correta. Essa é a que está realmente ouvindo a rede em que Joshua está conectado. Neste caso, tanto Kim quanto Joshua estão conectados à mesma rede local por meio de uma conexão Ethernet com fio, Ethernet zero. Então, Kim seleciona essa interface.
+
+Ele clica duas vezes e o Wireshark começa a capturar tudo naquela rede em tempo real. Eis o detalhe crucial. Tudo o que Joshua envia por essa rede, cada clique, cada formulário e, sim, até mesmo suas credenciais de login, pode aparecer na tela de Kim em texto simples. Vamos dedicar um instante para entender o que Kim está olhando. Na interface do Wireshark, cada pacote capturado aparece como uma linha, e cada coluna fornece informações importantes sobre esse pacote.
+
+Você verá a hora em que foi capturado, o endereço IP de origem, que indica quem enviou, e o endereço IP de destino, que indica para quem foi enviado . Você também verá o protocolo que está sendo usado, que é basicamente a linguagem que o pacote está "usando", como HTTP, TCP ou DNS. E, por fim, há uma coluna de informações que fornece uma breve descrição do conteúdo do pacote. Neste momento, está tudo uma bagunça. Centenas de pacotes passam por essa tela a cada segundo. STP, DTP, LLC e dezenas
+
+de outros protocolos, todos misturados. Para um iniciante, parece um caos. Mas Kim sabe exatamente o que está procurando. Ele só se interessa pelo tráfego HTTP porque esse é o protocolo não criptografado que os sites usam quando não possuem medidas de segurança adequadas. Então, ele vai até a barra de filtros na parte superior, digita HTTP e pressiona Enter.
+
+Agora a vista está limpa. O Wireshark só mostrará o tráfego HTTP. Neste momento, nada aparece ainda porque Joshua não fez nada. Mas quando ele abre o navegador e visita o site da Sally, o tráfego começa a aumentar repentinamente. Podemos ver uma lista de solicitações HTTP sendo enviadas e recebidas entre dois endereços IP.
+
+A coluna de origem mostra quem enviou o pacote e a coluna de destino mostra quem o recebeu. Você notará dois endereços IP principais aqui. 192.168.1.30,
+
+essa é a máquina de Joshua, a vítima. E 192.168.1.22 é o servidor da Sally, onde o site está hospedado.
+
+Portanto, quando você vê um tráfego onde a origem é .30 e o destino é .22, isso significa que Joshua está enviando uma solicitação para o servidor. E quando você vê que a origem é .22 e o destino é .30, isso significa que o
+
+servidor está respondendo a Joshua. Essa troca de informações é como funciona toda a comunicação na internet. Seu navegador não baixa uma página da web magicamente. Ele solicita algo, uma imagem, uma folha de estilo, um formulário, e o servidor responde. E a conversa continua aos poucos até que a página esteja totalmente carregada.
+
+Então, o que estamos assistindo aqui é a conversa completa entre Joshua e o servidor de Sally, sendo espionada por Kim em tempo real. Você também notará métodos HTTP como get, post e outros na coluna de informações. As credenciais de login são quase sempre enviadas em uma solicitação POST. Eis aqui a diferença rápida entre os dois. Uma requisição GET é o que seu navegador envia quando solicita algo do servidor, como carregar uma página, buscar uma imagem ou abrir o próprio formulário de login.
+
+As solicitações GET geralmente não transportam dados confidenciais, pois tudo o que você envia com uma solicitação GET é adicionado ao final da URL, ali mesmo na barra de endereços, para todos verem. Uma requisição POST, por outro lado, é o que seu navegador envia quando está submetendo algo ao servidor, como preencher um formulário e clicar em um botão. Os dados são inseridos no corpo da requisição em vez da URL, razão pela qual as credenciais de login são quase sempre enviadas em uma requisição POST. Então, quando Joshua faz login, o pacote que Kim está monitorando é uma solicitação POST. Agora, Joshua navega até a página de login.
+
+Ele insere suas credenciais, joshua@sallyshop.test como nome de usuário e "let me in" como senha. Em seguida, ele clica em "entrar". Assim que Joshua enviou o formulário, algo interessante apareceu. Kim percebe uma nova solicitação de postagem vinda do computador de Joshua.
+
+Era exatamente isso que ele estava esperando, pois as requisições POST geralmente contêm dados de login. Kim clica com o botão direito do mouse no pacote POST e seleciona "Seguir" e, em seguida, "Fluxo TCP". Isso indica ao Wireshark: "Mostre-me a conversa completa entre esses dois dispositivos do início ao fim por meio desta conexão." Ele filtra o ruído e oferece a Kim uma visão clara de tudo o que o navegador de Joshua enviou para o servidor e o que o servidor respondeu. Uma nova janela será aberta.
+
+Isso é chamado de visualizador de fluxo TCP. Mostra a requisição HTTP bruta exatamente como foi enviada: cabeçalhos, corpo, tudo. [música] Kim rola a página para baixo e aqui está. O e-mail e a senha de Joshua em texto simples, completamente expostos, sem criptografia, sem proteção, apenas dados brutos circulando pelo ar, legíveis por qualquer pessoa que esteja monitorando a mesma rede. [música] Portanto, se você administra um site como o da Sally, certifique-se de ter um certificado SSL instalado e o HTTPS ativado em todas as páginas do seu site.
+
+Não apenas a página de login, não apenas a página de finalização da compra, mas todas as páginas. Porque, no momento em que uma página é carregada por meio de uma conexão não criptografada, os invasores podem explorar essa vulnerabilidade para sequestrar sessões, roubar cookies ou injetar conteúdo malicioso. A boa notícia? Configurar isso nunca foi tão fácil. Ferramentas como o Let's Encrypt oferecem certificados SSL totalmente gratuitos, e a maioria dos provedores de hospedagem modernos, como Cloudflare, Netlify, Vercel e muitos outros, ativam o recurso para você com um único clique.
+
+Não há mais desculpas. Não, é muito caro ou muito técnico. Se você achou este vídeo útil, clique no botão "Gostei", inscreva-se para mais tutoriais sobre hacking ético e deixe um comentário abaixo dizendo o que você gostaria de aprender a seguir. Mantenham-se curiosos, mantenham-se éticos e nos vemos na próxima. Bye Bye.

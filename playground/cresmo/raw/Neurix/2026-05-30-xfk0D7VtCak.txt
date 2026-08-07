@@ -1,0 +1,77 @@
+---
+video_title: "The GitHub supply chain attack explained"
+video_id: xfk0D7VtCak
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xfk0D7VtCak
+video_date: 2026-05-30T10:11:14+00:00
+video_description: |
+  This is how a single poisoned package can reach hundreds of organizations, and why GitHub is just the latest victim.
+  
+  This video is for educational and awareness purposes only. 
+  
+  Chapters:
+  0:00  Prologue
+  0:14  What is a supply chain attack?
+  1:00  Why open source is so vulnerable
+  2:15  The worm that keeps spreading
+  4:42  The GitHub breach in context
+  5:39  What this means for you
+  6:17  How to defend against this
+  7:49  Outro
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #ethicalhacking #cybersecurity #github
+---
+Recentemente, 3.800 repositórios do GitHub foram colocados à venda em um fórum criminoso. Isso foi resultado de um ataque em larga escala à cadeia de suprimentos. Funciona assim. Vamos começar por definir o que significa, de fato, um ataque à cadeia de suprimentos.
+
+O nome soa técnico, mas a ideia é simples. Pense em como os alimentos chegam à sua geladeira. Uma fazenda o cultiva, uma fábrica o processa, um caminhão o entrega , um armazém o armazena e uma loja o vende. Quando você finalmente o come, ele já passou por uma dúzia de mãos que você nunca viu. Agora, imagine que alguém envenene uma dessas latas na fábrica.
+
+O caminhão não sabe disso. O armazém não sabe disso. A loja não sabe disso. Você não sabe disso. Você compra porque confia na marca.
+
+Você fica doente porque alguém anterior na cadeia não estava seguro. Isso é um ataque à cadeia de suprimentos. O software funciona exatamente da mesma maneira. A maior parte do código nos aplicativos que você usa não foi escrita pela empresa que os vende. É um código aberto, escrito por voluntários, mantido por pequenas equipes e distribuído por meio de registros públicos.
+
+Uma aplicação web típica utiliza entre 50 e 500 pacotes de código aberto. Cada pacote pode ter suas próprias dependências. Isso significa subpacotes dos quais ele depende. Ao percorrer toda a árvore de código, você pode encontrar milhares de trechos de código escritos por milhares de pessoas, todos contribuindo para um único aplicativo. O sistema funciona com base na confiança.
+
+O desenvolvedor confia no pacote. O pacote confia em seu mantenedor. O responsável pela manutenção confia que suas credenciais estão seguras. Cada elo dessa corrente é um ponto onde a confiança pode ser quebrada. E este ano, a corrente está se rompendo em todos os lugares ao mesmo tempo.
+
+Na verdade, se um atacante conseguir contaminar um desses subpacotes, da mesma forma que alguém poderia contaminar uma lata em uma fábrica, todos os aplicativos construídos sobre ele também serão contaminados . O desenvolvedor que criou o aplicativo bancário não sabe disso. O banco não sabe disso. Você não sabe disso. Suas credenciais foram roubadas porque alguém anterior na cadeia de segurança não era confiável. É isso que está
+
+acontecendo agora em grande escala. Agora, vamos à parte perturbadora, o verme Shai-Hulud que continua se espalhando. É aqui que os ataques modernos à cadeia de suprimentos se tornam verdadeiramente assustadores. Os atacantes descobriram como fazer com que esses envenenamentos se autorrepliquem. Aqui está o loop, passo a passo.
+
+Na primeira etapa, eles comprometem uma ferramenta popular para desenvolvedores. Por exemplo, em setembro de 2025, invasores inseriram código malicioso em @control/tinycolor, um pequeno pacote de utilitários de cores em JavaScript baixado mais de 3 milhões de vezes por semana. Quando os desenvolvedores atualizaram esse pacote, o código malicioso foi executado automaticamente em suas máquinas por meio de um script de instalação oculto chamado bundle.js. Na segunda etapa, os atacantes roubam as credenciais dos desenvolvedores infectados.
+
+Assim que o bundle.js estava em execução na máquina do desenvolvedor, ele fazia uma varredura em busca de tudo o que conseguia encontrar: tokens do NPM, tokens do GitHub, credenciais da AWS, credenciais do Google Cloud, chaves do Azure e assim por diante. Ele usou uma ferramenta real de busca de credenciais chamada TruffleHog para realizar a pesquisa e, em seguida, carregou o conteúdo para um repositório público do GitHub chamado Shai-Hulud, que é de onde o worm tirou seu nome. Numa terceira etapa, os atacantes usaram essas credenciais roubadas para publicar versões adulteradas de suas ferramentas. Com o token NPM do desenvolvedor infectado, o worm agora identificava todos os outros pacotes mantidos por esse desenvolvedor, injetava o mesmo código malicioso neles e publicava novas versões no NPM automaticamente.
+
+O mesmo código que afetou @control/tinycolor agora estava presente em outros pacotes infectados do desenvolvedor . Na etapa final, o ciclo se repete. Cada nova vítima se tornava um novo vetor de infecção. Em poucos dias, o worm se espalhou de uma pequena mancha para mais de 500 pacotes, incluindo alguns mantidos pela CrowdStrike, uma das maiores empresas de cibersegurança do mundo. Os atacantes não visaram cada pacote individualmente.
+
+Um único verme se espalhou pelo ecossistema e o comprometeu automaticamente. Shai Hulud surgiu pela primeira vez em setembro de 2025, quando contaminou mais de 500 pacotes do NPM em uma única campanha. Uma segunda onda, chamada Shai Hulud 2.0, surgiu em novembro, atingindo desta vez 25.000 repositórios do GitHub.
+
+Uma terceira variante, o mini Shai Hulud, foi a que chegou recentemente ao próprio GitHub. O mesmo verme, a mesma estratégia. Três ondas de ataques em oito meses, e os atacantes que as executam acabaram de divulgar o código-fonte publicamente, o que significa que já existem imitadores em ação. Então, o que realmente aconteceu no recente ataque hacker ao GitHub? Um único funcionário do GitHub instalou uma extensão maliciosa para o editor de código.
+
+A extensão parecia normal, mas não era. O sistema roubou as credenciais do funcionário e, por meio delas, os invasores acessaram 3.800 repositórios internos de código-fonte do GitHub. Os repositórios foram então colocados à venda em um fórum criminal por US$ 50.000.
+
+Mas o GitHub não é a primeira vítima, e não será a última. Ao longo do último ano, o mesmo padrão de ataque atingiu o scanner Trivy da Aqua Security, o KICS da Checkmarx e a biblioteca Light LLM . Isso também comprometeu ferramentas utilizadas pela OpenAI, Mistral, Comissão Europeia e centenas de outras organizações. Os pesquisadores que acompanham esse fenômeno contabilizaram mais de 20 ondas distintas de ataques, que contaminaram mais de 500 softwares de código aberto somente no último ano . O GitHub é apenas o nome mais visível da lista.
+
+Você pode estar pensando: "Eu não sou desenvolvedor. Por que isso me afeta?" Bem, porque todos os softwares que você usa foram construídos dessa maneira. O aplicativo bancário no seu celular, o navegador que você está usando para assistir a este vídeo, o sistema operacional do seu laptop ou o software que executa os registros do seu hospital . Todos eles utilizam código aberto que não escreveram.
+
+Quando esse código é corrompido, todos os usuários subsequentes ficam expostos. A OpenAI foi afetada porque dois funcionários instalaram um pacote comprometido. Suas máquinas foram comprometidas antes que alguém percebesse. Nem a Open AI nem esses funcionários escreveram o código malicioso. Eles simplesmente usam um software que foi construído sobre essa base .
+
+Então, como você se defende disso? Bem, se você é um desenvolvedor, as orientações das equipes de segurança neste momento são concretas. Primeiro, altere seus tokens de acesso. GitHub, GitLab, credenciais na nuvem, tokens NPM e assim por diante. Considere qualquer token existente antes de 2026 como potencialmente comprometido.
+
+Em segundo lugar, adie as atualizações não urgentes. Quando uma biblioteca popular lança uma nova versão, espere alguns dias. Fique atento a relatos de atividades maliciosas antes de atualizar. O período entre a violação do pacote e a descoberta da violação é normalmente de 24 a 72 horas. Terceiro, use credenciais de curta duração.
+
+Esses ataques têm predileção por tokens de longa duração que permanecem válidos por meses. A prática recomendada moderna consiste em usar tokens que expiram em horas ou dias, e restringir o escopo ao menor conjunto possível de permissões. E, por fim, analise suas dependências. Ferramentas como Socket, Snyk e a própria ferramenta de revisão de dependências do GitHub podem sinalizar versões de pacotes novas e suspeitas. Se você não for um desenvolvedor, o guia será mais curto.
+
+Primeiro, mantenha seu software atualizado. A maioria dos pacotes contaminados são corrigidos poucos dias após a descoberta. Em segundo lugar, utilize a autenticação de dois fatores em todas as contas que a suportam. Senhas roubadas são inúteis sem a autenticação de dois fatores. E, por fim, desconfie de extensões de navegador e plugins de IDE que prometem aumentar a produtividade de desenvolvedores .
+
+Essas são as novas superfícies de ataque, inclusive do lado do consumidor. Resumindo, os ataques à cadeia de suprimentos não são sofisticados. Os grupos que realizam esses ataques não estão usando vulnerabilidades de dia zero nem quebrando criptografia. Eles só fazem isso: explorar a confiança. O software de código aberto é uma das grandes histórias de sucesso da computação moderna.
+
+Quase toda a tecnologia que você usa é baseada nisso. O modelo só funciona porque todos na cadeia confiam no código de todos os outros. Hoje, essa confiança está sendo sistematicamente abusada em uma escala e velocidade para as quais o ecossistema não foi projetado . O GitHub é a vítima mais recente e visível. Eles não serão os últimos.
+
+Enquanto o mundo do código aberto não repensar a forma como lida com credenciais, dependências e verificação de atualizações, o próximo grande ataque à cadeia de suprimentos já estará em andamento. Este é o problema que ninguém sabe bem como resolver. Por hoje é só. Obrigado por assistir. Se você achou isso útil, clique no botão "Gostei", inscreva-se no canal e ative as notificações para não perder o próximo episódio.
+
+Bye Bye.

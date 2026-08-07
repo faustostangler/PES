@@ -1,0 +1,105 @@
+---
+video_title: "How hackers use XSS to get into websites"
+video_id: Rv1P6mCF1Z8
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Rv1P6mCF1Z8
+video_date: 2026-06-15T09:30:22+00:00
+video_description: |
+  A single line of code, hidden in a product review, is enough to take over another customer's account. Here's how stored XSS works.
+  
+  This video is for educational and awareness purposes only.
+  Only test systems you own or have explicit permission to assess.
+  
+  ▬▬ Tools Used ▬▬
+  - Kali Linux: Attacker machine
+  - Windows Firefox Browser: Victim 
+  - Browser DevTools: Exploitation
+  
+  ▬▬ ⏱️ Chapters ▬▬
+  00:00 Prologue
+  01:41 What is XSS?
+  03:14 Injecting JavaScript via XSS
+  04:02 Understanding the JavaScript code
+  05:59 Launching the attacker listener
+  08:20 Victim’s session cookies stolen
+  09:07 Exploiting cookies (with browser DevTools)
+  10:36 How to protect against stored XSS
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #penetrationtesting #xss #cybersecurity
+---
+Esta é Sally, a orgulhosa proprietária da Sally's Pottery, uma pequena loja online que apresenta suas cerâmicas feitas à mão. Ela acaba de adicionar um recurso totalmente novo que a deixa muito animada: uma seção de avaliação de produtos . Agora os clientes podem deixar avaliações e compartilhar suas opiniões sobre os produtos que compraram. Sally adicionou esse recurso porque as avaliações geram confiança. Ouvir experiências reais de compradores reais ajuda os novos visitantes a perceberem o valor e a qualidade do seu trabalho.
+
+Neste momento, a seção de avaliações está vazia. Sally acabou de lançá-lo esta manhã. Mas, na hora do almoço, chega a primeira avaliação dela . Veja o caso de Jennifer. Ela é uma nova cliente que acabou de receber seu pedido.
+
+Ela entra no site da Sally e deixa uma resenha muito positiva. Uma peça belíssima. O esmalte é deslumbrante ao vivo. Algumas horas depois, Charles aparece. Ele é um cliente assíduo. Este é o terceiro pedido que ele faz
+
+para Sally. Ele acrescenta sua própria avaliação. [música] Meu terceiro pedido da Sally. Nunca me decepcionei. Sally está encantada. O sistema de avaliações dela está
+
+funcionando exatamente como ela imaginou. Clientes reais, feedback real, prova social real para o próximo visitante que estiver decidindo se vai comprar. É também uma superfície de ataque totalmente nova. Sally simplesmente abriu uma caixa de texto em cada página de produto, e tudo o que alguém digita nela é salvo e exibido para todos os outros. Isso abre caminho para ataques como o XXS.
+
+E é aí que Kim entra em cena. Ele é um hacker ético e especialista em testes de penetração. Hoje, Kim vai analisar essa nova seção de avaliações, e o que ele descobrir vai mudar a forma como Sally encara todos os formulários de entrada que ela já criou. Vamos lá . Mas antes de vermos como Kim faz isso, você pode se perguntar: o que exatamente é um ataque XXS?
+
+XXS significa cross-site scripting (script entre sites). O nome é historicamente confuso. Na realidade, significa injeção de código em uma página da web. O objetivo é enganar um site para que ele envie código malicioso para os navegadores de outros usuários. Eis a ideia básica.
+
+Os sites modernos são interativos. Eles recebem informações dos usuários, como avaliações, comentários, biografias de perfil e consultas de pesquisa, armazenam-nas em um banco de dados e, em seguida, as exibem na página. Normalmente, isso não é um problema. O usuário digita: "Ótimo produto". O site armazena essa informação e a exibe para outros visitantes.
+
+Mas e se o usuário não digitar "Ótimo produto"? E se eles digitarem código HTML ou JavaScript ? Se o site não higienizar cuidadosamente os dados inseridos antes de exibi-los, o navegador não conseguirá diferenciar entre o conteúdo pretendido pelo site e o conteúdo injetado pelo atacante. Ele simplesmente executa tudo o que lhe é dado. Esse é o tamanho XXS.
+
+Em outras palavras, o navegador do visitante interpreta a entrada do atacante como parte da própria página e a executa. Você pode traçar um paralelo com a injeção de SQL. Tanto a injeção de SQL quanto o XXS são ataques de injeção em que o atacante fornece uma entrada que é tratada como código. A diferença? A injeção de SQL tem como alvo o banco de dados do servidor, enquanto o XXS tem como alvo o navegador do usuário, o cliente. É
+
+por isso que o XXS é frequentemente considerado um ataque do lado do cliente, enquanto a injeção de SQL é principalmente um ataque do lado do servidor. Agora, vamos observar Kim executando o ataque XXS. Kim está procurando vulnerabilidades no processamento de entrada de dados , e o formulário de avaliação é o ponto de partida óbvio. Trata-se de uma contribuição pública totalmente nova que Sally adicionou sem muita reflexão. Kim percebe que Sally colocou uma primeira barreira no local. Você precisa estar conectado
+
+para deixar uma avaliação. Isso impede bots aleatórios e abusos casuais. Qualquer pessoa que queira publicar uma avaliação precisa primeiro criar uma conta. Mas para Kim, isso não é um problema. Ele criou uma nova conta e agora pode entrar com seus dados de login.
+
+Agora, ele é apenas mais um cliente conectado no site da Sally, sem nenhuma diferença entre Jennifer ou Charles. Ele acessa o formulário de avaliação na página do produto, mas em vez de digitar uma avaliação, digita algo completamente diferente. Vamos analisar isso em detalhes. As tags de script informam ao navegador que tudo entre elas é código JavaScript e deve ser executado. Kim está tentando inserir código ilegalmente no site de Sally para que ele seja executado pelos navegadores dos visitantes.
+
+A próxima parte é o servidor próprio de Kim, que roda em seu laptop. O nome do host Kim corresponde ao endereço IP da máquina dele. A porta 9000 é onde seu ouvinte está acessando. O parâmetro C indica onde os dados roubados serão anexados. A parte do "roubo" é apenas um endpoint de URL que Kim escolheu para seu ouvinte.
+
+[música] document.cookie é a forma que o JavaScript usa para ler os cookies que o site definiu no navegador do visitante, incluindo o cookie de sessão que comprova que ele está conectado. A função encodeURIComponent torna o cookie seguro para ser inserido em uma URL. Finalmente, esta parte é a que realmente faz o trabalho. Cria um novo elemento de imagem na memória e define seu URL de origem.
+
+Ao definir o elemento de origem de uma imagem, o navegador envia imediatamente uma solicitação HTTP para esse URL para buscar os dados da imagem. Mas Kim não está realmente pedindo uma imagem. Ele está ocultando dados dentro da própria URL. Observe a URL que ele está construindo. O "C" no final é um parâmetro de consulta, como a pesquisa em um URL de pesquisa do Google.
+
+Tudo o que vier depois do sinal de igual é enviado para o servidor, e o que Kim está colocando ali é o cookie de sessão do visitante . Assim, quando o navegador de um visitante tenta carregar essa imagem, ele está, na verdade, enviando seu cookie para o servidor de Kim, incorporado na URL de uma solicitação que parece uma busca de imagem perfeitamente normal. Por que Kim usa uma requisição de imagem e não um método mais óbvio como `fetch`? Bem, porque as imagens não acionam avisos de segurança. Os navegadores carregam imagens sem problemas de qualquer lugar da internet.
+
+É a maneira mais limpa de vazar dados de uma página silenciosamente. Em resumo , essa carga útil instrui o navegador do visitante a enviar silenciosamente seu cookie de sessão para o servidor de Kim, disfarçado de solicitação de imagem. Mas essa carga útil só funciona se o servidor de Kim realmente existir para receber as solicitações. Portanto, antes de enviar a avaliação, Kim precisa configurar um ouvinte em seu servidor. Ele preparou um script de ouvinte chamado servidor Kim em sua própria máquina.
+
+Este é um programa muito pequeno, com cerca de 20 linhas, que roda na porta 9000 e fica aguardando. Sempre que uma requisição atinge o `steel`, o endpoint do listener de Kim, o script do listener captura o valor do cookie presente na URL, o grava em um arquivo de log e retorna uma imagem transparente de 1x1 para que o navegador da vítima não exiba um ícone de imagem quebrada. O arquivo de registro no qual Kim grava os cookies se chama loot.log. Ele chama isso de "saque" porque esse é o apelido clássico em cibersegurança para dados roubados, credenciais, cookies, tokens, qualquer coisa que você consiga extrair de um sistema alvo.
+
+O arquivo seria criado automaticamente pelo script de escuta na primeira vez que um cookie fosse capturado. Mas Kim cria o arquivo antecipadamente e o abre em um terminal com o comando `tail-f`, para que possa observar a chegada de novos cookies em tempo real, linha por linha, à medida que as vítimas acionam o payload. O terminal está vazio por enquanto. Ainda não chegaram biscoitos. Kim ainda não divulgou a carga útil.
+
+A armadilha não está armada. Bom, está na hora de definir isso. Kim define a classificação para cinco estrelas para que sua avaliação não pareça suspeita e, em seguida, clica em enviar. Nada visível acontece. Sem janela pop-up, sem mensagem de erro. A página
+
+recarregou normalmente. A avaliação de Kim está na lista, mas o corpo da avaliação parece vazio. Não há nada para ler. Mas o script malicioso está lá dentro. O site de Sally armazenou exatamente o que Kim digitou, e agora essa informação está em seu banco de dados, vinculada ao seu produto, aguardando o próximo visitante que carregar a página.
+
+Kim agora pode sair da sessão, afastar-se do site de Sally e esperar que o primeiro cookie de sessão apareça em seu terminal. A armadilha está armada. Algumas horas depois, Linda aparece. Ela já é cliente e fez pedidos anteriores à Sally. Ela já tem até algumas peças dessa coleção.
+
+Ela quer dar uma olhada em uma nova obra que vem pensando em desenvolver. Então, ela vai para a página de login. A partir de agora, vamos observar os dois lados do ataque simultaneamente. Linda está à esquerda, fazendo exatamente o que já fez uma dúzia de vezes antes. O terminal de Kim fica à direita, aguardando em silêncio.
+
+Linda digita seu nome de usuário e senha, clica em entrar e pronto. Essa única linha é o cookie de sessão da Linda , o identificador que o site da Sally usa para saber que este navegador é da Linda. A mensagem simplesmente viajou do computador de Linda para o ouvinte de Kim, através da avaliação maliciosa que Kim havia publicado horas antes. Linda não faz ideia de que algo aconteceu. Do lado dela, a página carregou normalmente.
+
+O cabeçalho agora diz: "Olá, Linda." Ela está conectada. Ela continua navegando pelos produtos como se nada estivesse errado, porque, da perspectiva dela, nada está. Kim agora tem tudo o que precisa para se passar por Linda. Ele abre seu próprio navegador e acessa o site de Sally.
+
+Ele está desconectado, apenas um visitante comum, da mesma forma que Linda estava antes de entrar. Ele clica com o botão direito em qualquer lugar da página e seleciona "inspecionar" para abrir as ferramentas de desenvolvedor do navegador, um conjunto de ferramentas que permite visualizar e modificar o código da página e a atividade de rede. Na aba de armazenamento, ele expande os cookies e clica no site da Sally. Ele vê ali o seu próprio cookie de sessão , aquele que o navegador obteve na última vez que visitou o site da Sally. Ele copia o valor do cookie do seu terminal.
+
+Essa única sequência de caracteres é a única coisa que o site da Sally, e a maioria dos sites semelhantes, verifica para confirmar se alguém é a Linda. Kim cola o cookie roubado de Linda por cima do seu próprio, substituindo seu ID de sessão pelo dela, e então pressiona Enter. Agora ele atualiza a página. E aqui está. O site o trata como Linda.
+
+Kim não digitou a senha de Linda. Ele não quebrou o formulário de login. Ele não conseguiu quebrar nenhuma criptografia. Ele acabou de roubar o biscoito que comprova que alguém é a Linda. E agora o site da Sally acredita que ele é ela.
+
+Ele clica nos meus pedidos. E aqui está. Três compras anteriores, totalizando US$ 100 em cerâmica, com datas de envio, nomes dos itens e valores totais. Kim está visualizando o histórico de pedidos privados de Linda em sua conta, referente à sessão ativa dela . A partir daqui, dependendo do que o site de Sally revelar, Kim poderia alterar o endereço de entrega de Linda, fazer novos pedidos usando o método de pagamento salvo ou modificar o e-mail da conta dela.
+
+Qualquer coisa que a própria Linda pudesse fazer a partir de uma sessão com sessão iniciada. Tudo isso por causa de uma única linha de código escondida em uma revisão que ninguém se lembrou de validar. É o que chamamos de XSS. Então, aqui está como se defender disso. Escapar cada entrada do usuário antes de exibi-la.
+
+[música] Esta é a solução fundamental. Sempre que um site exibir conteúdo proveniente de um usuário, caracteres perigosos como menor que, maior que, aspas duplas e aspas simples devem ser convertidos em entidades HTML inofensivas. Então o navegador os exibe como texto em vez de executá-los. Em PHP, isso é uma única função, chamada htmlspecialchars. Outras linguagens possuem funções equivalentes.
+
+Frameworks modernos como React ou Angular escapam vulnerabilidades por padrão, tornando o XSS mais difícil de escrever do que de evitar. Valide a entrada na entrada e ignore-a na saída. São dois trabalhos diferentes. A validação rejeita entradas que não fazem sentido. Um campo de avaliação não deve aceitar tags HTML. O
+
+mecanismo de escape processa qualquer entrada que tenha sido transmitida, tratando-a como dados quando for exibida. A validação por si só não basta. Os atacantes são habilidosos em contornar os filtros e a fuga por si só deixa apenas casos extremos. Aplique ambas as camadas. Por fim, defina o sinalizador "somente HTTP" para cookies de sessão. Este aqui se refere
+
+especificamente ao ataque que acabamos de presenciar. O parâmetro HTTP only informa ao navegador que o JavaScript não tem permissão para ler os cookies de sessão. Somente o servidor pode acessá-los. Com apenas o HTTP configurado, a chamada de cookie de documento de Kim retornaria uma string vazia para o cookie de sessão. Por hoje é só. Obrigado por
+
+assistir. Se você achou isso útil, clique no botão "Gostei", inscreva-se no canal e ative as notificações para não perder o próximo episódio. Vejo você lá. Bye Bye.

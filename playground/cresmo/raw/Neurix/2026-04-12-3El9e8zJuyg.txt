@@ -1,0 +1,49 @@
+---
+video_title: "Google Gemma 4 Explained in 5 Minutes"
+video_id: 3El9e8zJuyg
+channel_name: "Neurix"
+channel_id: UCUOlY1VUTHMdkLph5ORHF2Q
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3El9e8zJuyg
+video_date: 2026-04-12T09:32:23+00:00
+video_description: |
+  Google's Gemma 4 is tiny, brilliant, and fully open. This is the technical breakdown of how they pulled it off.
+  
+  Chapters:
+  00:00  Prologue
+  00:31  The AI open-source landscape
+  01:21  Gemma 4 hardware requirements
+  02:00  TurboQuant: smarter compression
+  03:40   Per-layer embeddings: the core innovation
+  04:32   The full picture
+  
+  Join Neurix to get access to perks:
+  https://www.youtube.com/channel/UCUOlY1VUTHMdkLph5ORHF2Q/join
+  
+  #artificialintelligence #google #gemma4
+---
+O Google acaba de lançar uma bomba no cenário da IA. Eles lançaram o Gemma 4, um modelo de linguagem abrangente sob a licença Apache 2.0. E essa licença é a chave. Significa liberdade total.
+
+Você pode usá-lo comercialmente, para pesquisa, modificá-lo ou redistribuí-lo sem condições, sem limites de receita e sem letras miúdas que entrem em vigor quando seu produto começar a gerar receita. Na verdade, nenhuma grande empresa de tecnologia chegou tão longe. Para entender por que o Gemma 4 se destaca, vamos analisar o panorama atual dos modelos abertos . No extremo esquerdo do espectro, você encontra modelos totalmente abertos, lançados sob a licença Apache 2.0.
+
+Essa é a Gemma 4, e junto com ela, o GPT-OSS da OpenAI. Ambos possuem a mesma licença, mas os modelos GPT-OSS são maiores em tamanho e obtêm pontuações mais baixas em testes de desempenho. Mesma liberdade, mas menos capacidade. Movendo-se em direção ao meio, encontramos modelos como Qwen e DeepSeek. Modelos robustos fabricados na China sob diversas licenças, que se situam entre as abertas e as restritas.
+
+Em seguida, bem à direita, a lhama da Meta. Sim, é um produto de código aberto, mas sob uma licença personalizada que dá à Meta poder de negociação assim que seu produto começar a gerar receita significativa. Então, está aberto até que deixe de estar. O segundo aspecto que torna a Gemma 4 especial é o seu tamanho. A versão do Gemma 4 com 31 bilhões de parâmetros apresenta resultados semelhantes a modelos como o Kimiko 2.5, considerando
+
+benchmarks padrão. Mas os requisitos de hardware são drasticamente diferentes. Gemma 4 pode ser baixado com aproximadamente 20 GB e roda localmente em uma única Nvidia RTX 4090, produzindo cerca de 10 tokens por segundo. Em comparação, executar o Kimiko 2.5 requer um download de mais de 600 GB, pelo menos 256 GB de RAM do sistema, quantização agressiva e várias GPUs Nvidia H100 .
+
+Agora, a questão é: como o Google conseguiu fazer um modelo tão pequeno sem sacrificar a qualidade? A resposta começa com a compreensão do verdadeiro gargalo na inferência LLM local: a largura de banda da memória. Quando um modelo gera um token, ele precisa ler todo o conjunto de pesos armazenados na VRAM, a memória de vídeo da sua GPU. A velocidade de inferência não é limitada pela capacidade computacional. Isso é limitado pela velocidade com que esses pesos podem ser lidos da memória.
+
+Portanto, reduzir o número de pesos que a GPU precisa ler é a maneira mais eficaz de tornar um modelo mais rápido e muito menor. É aí que a Turboquant entra em cena. Juntamente com o Gemma 4, o Google introduziu uma nova técnica para comprimir os pesos dos modelos, visando solucionar diretamente as limitações de memória. Turboquant. A Turboquant opera em duas etapas principais.
+
+Primeiro, converte os dados de peso de uma representação de coordenadas cartesianas padrão em coordenadas polares definidas por um raio e um ângulo. Como os valores angulares seguem padrões estatísticos previsíveis, o modelo pode ignorar certas etapas de normalização e armazenar os dados de forma mais eficiente, reduzindo a sobrecarga de memória. Em segundo lugar, a Turboquant aplica uma técnica matemática conhecida como transformação de Johnson-Lindenstrauss. Este método projeta dados de alta dimensionalidade em um espaço de dimensionalidade muito menor , até bits de sinal únicos, positivo ou negativo, preservando aproximadamente as distâncias entre os pontos de dados. O resultado é uma compressão extrema com perda mínima de informação.
+
+Embora o Turboquant represente um salto significativo na quantização, é importante notar que ele não é o principal fator por trás dos tamanhos reduzidos dos modelos do Gemma 4 . Essa distinção pertence a uma decisão arquitetônica diferente, chamada de incorporações por camada . Em um transformador padrão, cada token recebe um único vetor de incorporação na camada de entrada. Essa representação é então transmitida por todas as camadas subsequentes da rede, embora a maior parte da informação nela contida seja relevante apenas para um pequeno número dessas camadas. Incorporações por camada alteram isso.
+
+Em vez de uma única incorporação universal por token, cada camada recebe sua própria versão menor e personalizada. A informação é introduzida no ponto da rede onde é realmente necessária, e não toda de uma vez no início. Isso elimina a transferência redundante de dados entre camadas e reduz significativamente o tamanho efetivo do modelo sem comprometer sua capacidade de raciocínio. O resultado é um modelo que ocupa menos espaço na memória e é mais eficiente na forma como utiliza os parâmetros disponíveis. Vamos analisar o panorama completo de como essas técnicas se combinam para produzir a eficiência do Gemma 4 .
+
+Existem três etapas principais. Na camada superior, as incorporações por camada reduzem a complexidade da arquitetura. Na etapa intermediária, o TurboQuant comprime ainda mais os pesos. E na parte inferior está o resultado, um modelo de 20 GB rodando em uma única RTX 4090. Mas também pode rodar em um smartphone ou um Raspberry Pi.
+
+Um modelo que começou como uma inteligência de nível de centro de dados, agora rodando em uma placa de 50 dólares do tamanho de um cartão de crédito. Em resumo, o Gemma 4 não é importante por ser o modelo mais poderoso disponível, mas sim por fornecer inteligência competitiva a uma fração do custo do hardware, e o faz sob uma licença verdadeiramente aberta. A combinação de incorporações por camada, arquitetura eficiente e avanços como o TurboQuant representa uma mudança significativa na forma como os modelos abertos são construídos e distribuídos. Por hoje é só. Obrigado por assistir.
+
+Se você achou isso útil, clique no botão "Gostei", inscreva-se no canal e ative as notificações para não perder o próximo episódio. Bye Bye.
