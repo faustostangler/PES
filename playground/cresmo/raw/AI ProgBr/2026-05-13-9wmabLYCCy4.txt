@@ -1,0 +1,209 @@
+---
+video_title: "Intel Arc Pro B70 32GB vai APOSENTAR a RTX 5090 da Nvídia? Testei com LLM e geração de Imagens"
+video_id: 9wmabLYCCy4
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9wmabLYCCy4
+video_date: 2026-05-13T21:55:14+00:00
+video_description: |
+  Testei a placa Intel Arc Pro B70 32GB rodando IA local, que custa um terço de uma RTX 5090.
+  
+  A Intel Arc Pro B70 é a nova GPU de workstation da Intel com 32GB de VRAM GDDR6, 608 GB/s de banda e 367 TOPS de INT8. Por menos de mil dólares ela entrega capacidade de memória suficiente para carregar modelos densos de 27B parâmetros e modelos MoE como o Qwen3.6 35B-A3B com janela de contexto completa de 256K tokens.
+  
+  Neste vídeo eu mostro a jornada completa: começamos no LM Studio com Vulkan e apenas 5 tokens por segundo, e chegamos no llama.cpp com SYCL alcançando até 75 tokens por segundo no Qwen3.6 35B-A3B em Q4. Também testei processamento de prompt, geração de imagens com ComfyUI e comparei com cenários onde a RTX 5090 ainda domina.
+  
+  Se você monta um Home Lab, faz inferência local de LLM, gera imagens com Stable Diffusion ou ComfyUI, ou simplesmente quer rodar IA com privacidade sem depender de API, este review mostra exatamente onde a Arc Pro B70 entrega valor e onde a 5090 ainda vale o preço três vezes maior.
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaCube: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiarcb70&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira 
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiarcb70&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiarcb70&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiarcb70
+  
+  _______
+  
+  0:00 Intro
+  0:23 Preço e Disponibilidade
+  1:24 O Que Vamos Testar
+  2:01 Setup
+  6:31 Benchmark 
+  15:32 Geração de Imagem
+  16:14 Z-Image Turbo
+  18:01 Qwen-Image-Edit
+  21:42 Veredito Final
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Hoje, quando a gente fala de rodar e localmente, uma das melhores placas que existem é a RTX 5090. E o motivo disso é ela ter 32 GB de V RAM. Isso faz com que caiba modelos muito interessantes ali, incluindo o Quen 3.6 de 27 bilhões de parâmetros, com uma quantização ali Q4, além de modelos de imagem, de áudio e até modelos de vídeo. Então, realmente essa placa é um monstro. Mas o que
+
+também é um monstro é o preço dela. E eu vou te falar, esse preço aumentou bastante. Eu comprei uma placa dessa há alguns meses atrás e aqui no Canadá estava custando em torno de 3.500 canadenses. Quando eu abri o site da Amazon hoje para ver os preços para esse vídeo, ela tá custando mais ou menos 5.500 canadenses, com algumas versões
+
+passando dos 6.000. Então, quase dobrou o preço de quando eu comprei para cá. Mas esse vídeo aqui, ele não é sobre a RTX 5090. Na verdade, é porque quando eu fiquei sabendo que a Intel ia fazer uma placa de também 32 GB, ou seja, que competiria mais ou menos ali com a 5090, eu falei: "Cara, que legal". Mas legal
+
+mesmo, foi o preço que eles colocaram. Eu acabei de pegar aqui, ó, Intel Arc B70 e aqui no Canadá essa placa tava saindo a99 canadenses. Ou seja, com valor de 190 aqui, dá para comprar quatro dessas. ou melhor, dava, porque mais uma vez, uma semana depois de eu comprar essa placa, ela já aumentou para9. Então agora dá para comprar três, mesmo com aumento. Olha que absurdo. Hoje
+
+então a gente vai ver aqui a Intel Arc Pro B70. Essa daqui não vai ser uma comparação direta com a 5090. Tem uma pegadinha aqui nessa placa que eu vou falar mais pra frente no vídeo e vai ficar mais claro quando a gente fizer um próximo vídeo botando uma contra a outra. Hoje a gente quer ver como que ela se sai. A gente vai ver tokens por segundo no lhama bent. A gente vai ver
+
+como que eu consegui aumentar em 50% a taxa de tokens por segundo dela. E vamos ver também como que ela gera imagens com Z IMA de Turbo e com Quen IMA de Edit, que são modelos muito legais de geração de imagem. Então vamos lá que eu tô empolgado. Cara, essa placa aqui é boa demais. Show de bola. Sem mais delongas,
+
+eu já tô carregando aqui, ó. Tô gravando o meu Mac, mas eu tô conectado aqui através do LM Link, né, do LM Studio, lá no meu Ubunto que eu instalei no Zima Cube para conseguir instalar todos os drivers dessa placa. Mas a primeira coisa que eu fiz foi tentar rodar direto no LM Studio, porque a pergunta que não queria calar, o que todo mundo quer saber é como que esse modelo vai rodar o nosso Quen 3.6 de 27 bilhões de parâmetros. Então já vamos começar por ele. Tô rodando aqui uma versão Q6.
+
+Coloquei a janela de contexto dele para em torno de 20.000 tokens. tá ocupando aqui, ó, 23 GB, o que cabe perfeitamente com bastante espaço de sobra nos nossos 32 GB da Ark B70. Então, aqui, ó, janela de contexto, 26.000 tokens Q6. E aí eu
+
+vou te confessar logo de cara aqui, ó, quando a gente der o nosso oi, que a velocidade dele inicial me deu uma pequena decepcionada. Olha só isso. Eu vou fazer o seguinte, eu vou até parar aqui e eu vou desligar o thinking nele e vou dar um oi novamente pra gente ver. Seis tokens por segundo. Eu falei: "Pô, seis tokens por segundo?" Não, seis
+
+tokens por segundo não dá para usar, dá para devolver. Só que aí eu me liguei no seguinte, essa é uma placa da Intel. Se eu olhar aqui o que que o LM Studio tá usando, ele tá usando Vulcan, mas será que essa é a melhor forma da gente usar essa placa? Pois é, pra gente rodar LM não basta a gente ter acesso ao hardware, a placa, a camada de software por trás dessa placa vai ser muito importante também. E é por isso que a Nvidia é a líder do mercado, porque ela tem o CUDA. O CUDA é a camada de
+
+software que faz com que, basicamente, tudo que existe de inteligência artificial rode muito bem na Nvidia e muitas vezes é treinado já nesse ambiente. Até por isso que as placas da Nvidia são tão boas pra inteligência artificial. Já a placa da Intel, ela precisa de uma camada de software ali para ficar um pouco melhor. E o Vulcan é uma camada de software meio genérica. Ela funciona pra AMD, pra Intel, só que pelo menos para Intel ela não funciona tão bem assim. Pra gente conseguir
+
+extrair o máximo dessa placa, a gente tem que instalar alguma coisa. E uma dessas coisas poderia ser o LLM Scalersor, que seria ali um fork do VLLM, que é um software de inferência incrível, tá? Principalmente se você tiver fazendo inferência para mais de uma máquina ao mesmo tempo, se você tiver usando BET, ou seja, imagina você ter uma empresa, você tem um servidor, o modelo vai estar rodando aquele servidor e todas as outras pessoas, os seus devs, os seus usuários, vão est fazendo requisições para esse servidor. Nesse caso, VLLM é o melhor dos softwares. E como esse foro pela Intel, tá bem otimizado, mas eu achei que não tá tão otimizado assim. Então, além do LLM
+
+Scaler, a gente tem algumas outras opções aí. Uma é o open vino no lugar do Vulcan, mas a que mais se encaixou no que eu queria foi o Seckle. Eu consegui mais performance com se do que com llm scale. E o sequle a gente consegue usar no lhama CPP, o que pro meu caso eu acho até mais interessante, já que eu normalmente não vou estar servindo para muitas pessoas ao mesmo tempo. Então, depois de passar horas e mais horas atrás de software, instalações e nada funciona, nada dá certo, consegui, fiz dar certo e esse daqui foi o melhor que a gente conseguiu. Olha só, Quen 3.6, 27
+
+bilhões parâmetros, Q6, carregado a 256.000 1000 tokens de janela de contexto, ou seja, janela de contexto completa. Tá rodando no lhama CPP lá no nosso Zima Cube com o buntu. Eu fiz um dual boot só para conseguir instalar essa placa e nossa arc B70 ali top zone. Eu vim aqui e dei aquele oi morrendo de medo, né, de ser cinco tokens por segundo e ser isso que é. E aí pra minha
+
+surpresa, ele pensou, pensou, pensou, mas ó, a gente chegou, ó, tá subindo ainda, tá? A gente chegou numa média de 14 tokens por segundo. 14 tokens por segundo pro Quen 3.6 27 bilhões de parâmetros que6, tá? E aí eu pensei 14 tokens por segundo é muito melhor do que cinco, né? Então tava entre 5 e seis lá,
+
+mais do que dobrou a velocidade, mas eu falei acho que eu consigo abrir mão de um pouquinho de qualidade para ter um pouquinho mais de velocidade. Será que o Q4 vai resolver pra gente isso? Carreguei então o meu modelo Q4 aqui na memória. Ele ocupa até um pouco menos de memória. E aí com Q4 fui lá e dei o meu oi cruzando os dedos. E o que que a
+
+gente teve aqui, ó? 7 16 17 18 19 20. Passamos dos 20 tokens por segundo, tá? E tá bem estável ali, ó. 20.85 85 tokens
+
+por segundo. Agora a gente já chegou num cenário onde dá para usar esse modelo. Aí a partir daqui eu resolvi fazer o seguinte, vamos fazer um benchmark. Eu quis ver como é que ele rodava com quentes. 0.8 bilhões de parâmetros, por exemplo,
+
+com gema de 4 bilhões de parâmetros. Aí eu rodei o Lama Bent e aí eu confesso que o meu tempo tava corrido, ó, eu não consegui organizar ainda aqui. Então vou pedir para ele organizar esses dados para mim. cria um dashboard interativo para visualização desses dados. E aí tô passando todos os dados que a gente obteve ali com LMA Bentch. O tempo de
+
+processamento eu achei que não tá tão rápido assim, tá vendo? Ele tá bem para trás, mas eu acredito que isso dê para melhorar com software. Só ainda não estamos lá. Isso daqui numa 5090 já teria processado umas sete vezes ou mais. Então, enquanto ele tá escrevendo aqui pra gente o nosso dashboard, eu vou explicar o seguinte. Existem dois pontos
+
+onde essa placa perde feio para 5090. O primeiro tem sido aqui o perfil, a parte onde ela processa o prompt, ou seja, ela analisa ali todos os dados que estão entrando no prompt e começa a gerar os tokens de saída. O segundo é exatamente na geração dos tokens de saída. Então, apesar da gente estar conseguindo aqui 18 tokens por segundo, numa 5090 eu chutaria que a gente conseguiria em torno de 60. Mas por que que isso acontece? Porque a Arc B70 ela tem 608,
+
+618 GB/sundo de largura de banda. Já a 5090 tem 1.7 TB, então é aproximadamente três vezes. O resultado vai ser que a taxa de tokens por segundo na saída vai ser também três vezes maior do que dessa placa. Só que a gente vai ver que tem uma coisa aqui nesse benmark que ela tá montando pra gente agora que muda o jogo, principalmente se a gente quiser tentar usar ela com código. Show de
+
+bola. acabou de criar o código aqui pra gente e ele levou um tempinho para criar, tá? Levou 12 minutos e no final a média já ficou 16 tokens por segundo. A gente vai ver que é um pouquinho diferente do que o nosso benchmark mostra, porque afinal de contas aqui ele gerou 11.000 tokens e a entrada dele já tinha 6900 tokens. O tempo de
+
+processamento desses 6900 tokens ficou em torno de 270 tokens por segundo, tá? Então isso daqui foi o perfil e vamos ver aqui o nosso benchmark. Então, olha só, esse aqui foi o gráfico do nosso processamento de prompt, né? Primeira vez que ele roda por algum motivo, ele acaba sendo um pouco mais lento com processamento de prompt em torno de 200 tokens por segundo. Mas a partir dos 1000 tokens aqui, ele fica bem estável em torno de 299 tokens por segundo. Se a gente olhar o
+
+processamento que a gente teve agora na geração desse dashboard aqui, 268 tokens por segundo. Então cai um pouco, né? Mais ou menos uns 10% de queda, só que a gente tá falando de 6.000. 00 tokens, né? Quase 7.000 tokens. E aí,
+
+se eu mudar aqui, ó, vou mudar agora para token aí aqui a gente já tem o máximo de tokenation aqui para poucos tokens, né? E ele vai caindo conforme vai aumentando esse número de output. Ó, para 1000 tokens a gente tinha 22.35 tokens por segundo. Para 2000 já caiu para 22.14. Então ele vai caindo
+
+bastante conforme a gente vai aumentando o número de tokens de saída. Então, 22 ou 16 tokens, foi o caso dessa geração, para código eu acho que fica um pouco lento, principalmente se você já tiver uma base de código que ele vai ter que ler e produzir e alterar, fazer tool calling para tudo isso. Ficaria lento, pelo menos nesse momento, com esse software que a gente tem. Uma saída para isso, para usar ainda o 27B, seria utilizar MTP. Eu ainda não utilizei MTP, tá? Mas em breve, assim que eu conseguir
+
+parar para testar MTP de flash, eu vou trazer aqui pro canal. Essas são técnicas de geração especulativa, onde você tem um modelo menor que ele faz a previsão de múltiplos tokens e o modelo maior ele vai aceitando ou não esses tokens. E como o modelo maior não tem que gerar cada um dos tokens e o modelo menor gera os tokens muito mais rápido, e a gente vai ver isso aqui, inclusive, isso faz com que acelere bastante a geração de tokens de modelos densos, como o Quin 3.6,27 bilhões de parâmetros. Agora, uma forma simples da gente acelerar, talvez perdendo um pouquinho qualidade, é simplesmente optando pelo quentes. 6 de 35 milhões de
+
+parâmetros, porque esse daqui é um mix of experts com 3 bilhões de parâmetros ativos, tá? Antes da gente dar uma analisada aqui no código, vamos olhar aqui o seguinte, essa imagem aqui, ó, porque aqui nessa ponta aqui a gente tem o Quen 3.6 27 bilhões de parâmetros e aqui a gente tem o Quen 3.6 de 35 milhões de parâmetros mixture of experts. Então a gente pode ver que em todos os gráficos o 27B ele é melhor do que o 35B, mas nem sempre ele é muito melhor. Às vezes ele é um pouco melhor.
+
+Então pode ser que seja mais interessante usar o Quen 3.6 de 35 milhões de parâmetros. E a gente pode ver isso aqui pelo gráfico, né? Então aqui eu rodei duas versões, a versão Q6 e a versão Q4. A versão Q6 eu rodei até 4.000 tokens, tá? E a versão Q4 eu rodei
+
+até 8.000 tokens. E a gente pode ver aqui, ó, que a gente já tá falando de 50 tokens por segundo. Então é mais do que o dobro do que o 27B. 50 tokens por segundo já é bem utilizável, já dá para utilizar inclusive com código. Não é a
+
+coisa mais rápida do mundo, mas dá para usar. Tá aqui, ó. Mesmo com 4000 tokens de output, ele ainda se mantém ali em 49.2. Agora, se a gente diminui pro Q4, aí a coisa fica melhor ainda, né? Lembrando
+
+que esse 27B que a gente viu aqui é com Q4, tá? Se a gente bota aqui 4 no 35B, aí a gente já tá na faixa de 70 tokens por segundo. Então 75 para contextos pequenos e para contextos maiores, ó, como 8K, a gente cai um pouco, mas cai para 68 tokens por segundo. De 4K para 8K, a gente caiu de 71.98, quase 72 para 68.31. Então aqui, ó, a gente já tem um
+
+modelo realmente utilizável nessa placa. Eu diria que pelo menos nos meus testes e com a stack de software que eu tenho instalado hoje, esse daqui seria o modelo que eu utilizaria no dia a dia. Eu utilizaria o 27B só se eu quisesse algo pontual ou um start, né, uma documentação, algo do tipo, até poderia ir pro 27B, gerar uma vez, esperaria ali um pouquinho, mas depois pro grosso mesmo, eu usaria o 35B. Existem outros modelos que são interessantes também, ó. Se a gente pegar, vou pegar até um comparativo aqui, ó, 35B com o Gema 4 26B, mas o Quent. Acabou sendo mais
+
+rápido aqui, tá? Aqui é a versão 35 bilhões de parâmetros versus a versão de 26 bilhões de parâmetros do Gema 4. O Quent. Ele tem 3 bilhões de parâmetros ativos. O Gema 4 tem 4 bilhões de parâmetros ativos e isso faz diferença.
+
+Mas seria uma opção também usar um gema. Quando a gente vai pro gema de 31, aí eu vou comparar esse gema de 31 com que de 27, né? O gema de 31, ó, ele é mais lento do que o Quen 27, mas isso também era esperado porque ele tem mais parâmetros e ele é denso, assim como o Quen 27. A gente vê também que ele tem uma queda um pouco mais acentuada aqui com o aumento do contexto. E aí eu testei também os modelos menores. A
+
+gente tem aqui, ó, o Quen de 0.8 bilhões de parâmetros. E aqui, apesar de parecer que cai bastante, né, a gente, na verdade tem lá com 4.000 tokens, 213 tokens por segundo. Aqui já é uma velocidade absurda, mas a gente tá falando de um modelo de 0.8 bilhões de
+
+parâmetros e aqui é 224. Então a diferença não é tão grande não, apesar do gráfico fazer parecer que é com o aumento do contexto. Se a gente botar um contexto 100.000 tokens, talvez essa diferença seja bem mais significativa. Quando a gente vai aqui, ó, pro coin de 9 bilhões de parâmetros, eu preciso até tirar esse daqui para manter a escala.
+
+Aí a mesma coisa acontece. A gente vê uma queda aqui, né, na geração de tokens com aumento do contexto, mas a gente ainda tá ali, ó, na faixa dos 45 tokens por segundo, o que é um bom valor, né? Lembrando que esse daqui é um modelo denso, 9 bilhões de parâmetros e a gente tá aqui com ação Q6. Vamos falar um pouquinho de processamento de prompt. Vou pegar aqui o quent. 35 milhões de
+
+parâmetros, ó, em torno de 500 tokens por segundo de processamento de prompt. tá bem estável aqui, mesmo com aumento do contexto. E aqui é a versão Q4. Essa curva aqui de baixo é a versão Q6. Então tem uma queda aqui, né, para 450. uma
+
+queda, eu diria que um pouco menos 20%, 15%, talvez 18%, mas aqui a gente tem uma boa taxa. Quando a gente vai pro 27B, aí a gente tá aqui, ó, com Q4 na faixa de 300 tokens/ segundo. A gente já olhou esse gráfico. E aqui o Gema, a gente tem também 800 tokens por segundo. Então o Gema ele foi melhor do que o Quen. O Gema tá com uma taxa bem acima
+
+da do Quemen, tá vendo? De processamento de prompt Gema eu só fiz até 2.000 aqui. Poderia ter feito mais, acabei não fazendo. Mas bem, a taxa é muito maior mesmo pro Q8. Tá vendo o Q8 do Gema?
+
+consegue bater o Q4 do Quen, tá? Aqui, quanto maior, melhor essa taxa de tokens por segundo no processamento. E aí, se a gente pegar aqui o Gema 431, aí vou até comparar ele com de 27 aqui. Aí, nesse caso, o Quen é melhor, tá? O Quen foi melhor do que o Gema de 31, mas aqui a gente tem muito mais tokens também no Gema, o que não quer dizer que ele seja melhor, né? Porque se a gente olhar aqui
+
+no gráfico, ele tá aqui, ó, Gema 43 bilhões de parâmetros e ele não consegue bater nem o Quen 35 milhões de parâmetros. Então, nesse caso aqui, na maioria das vezes, eu optaria por usar o Quen de 35 bilhões de parâmetros, porque ele vai ser mais rápido do que o gema de 31. E na verdade mais importante é porque ele vai ser mais inteligente também. Agora eu confesso que tinha uma coisa que eu tinha até mais interesse em testar do que rodar lls e seria rodar outros modelos, como modelos de imagem, por exemplo, de áudio e etc. Tem um workflow que eu tô sempre tentando ajustar, que eu uso na minha 5090, onde eu preciso gerar uma imagem e depois um vídeo dessa imagem. Só que a 5090, ela
+
+não tem memória para manter modelos de imagem e modelos de vídeo carregados ao mesmo tempo, né? Então eu preciso carregar um modelo de imagem, gerar a imagem, carregar um modelo de vídeo e a gente perde tempo com isso. Se eu conseguisse usar essa placa para gerar as imagens e a 5090 para gerar os vídeos, eu conseguiria economizar bastante tempo. Então eu queria saber como que ela sairia gerando imagens. E aqui a gente tá no Confiu E aqui com workflow do Z image Turbo. Z imago, ele
+
+é um modelo relativamente pequeno. Ele é um modelo de 6 bilhões de parâmetros, tá? Então a gente nem precisaria dos 32 GB para rodar ele, mas ele é um modelo que eu sei que ele é rápido. E aí eu quero saber se ele vai ser rápido nessa placa aqui. Eu vou rodar aqui, ó.
+
+Basicamente o prompt que eu tô dando é Vancouver. Eu quero que ele crie alguma coisa que vamos ver o que que ele vai criar aqui com esse prompt tosco. Bom, o modelo não tá carregado na memória, ele vai carregar o modelo ainda. Então essa parte de carregar o modelo vai ser a parte mais lenta, tá? Então ele precisa transferir todos os dados primeiro pra memória RAM, depois para Viewrent, tá?
+
+Então esse processo demora um pouco, mas depois que ele carregar tudo, a geração, eu acredito que vai ser numa excelente velocidade, pelo menos eu espero. Ó, já gerou aqui e gerou aqui uma imagem que realmente isso aqui lembra muito Vancouver. Eu vou colocar agora o seguinte, ó, Rio de Janeiro. E a gente vai ver em tempo real, então, a geração dele, ó. Apertei aqui para gerar. 1 2 3
+
+4 Ger aqui pra gente. Então, esse daqui é o Zeiman de Turbo rodando na Arc B70, né? 4 segundos praticamente. Aí gerou uma imagem aqui pra gente. Eu poderia inclusive aumentar aqui, ó, os steps.
+
+Vamos aumentar para oito. Vamos voltar aqui. Ele vai levar o dobro do tempo. 1 2 3 4 5 6 7 8. E vai gerar com um pouco mais de qualidade, mas a gente ainda consegue reconhecer elementos aqui do Rio de Janeiro. É o Rio de Janeiro
+
+perfeitamente, não, mas é semelhante. Agora, se a gente quiser mais qualidade, a gente vai ter que mudar de modelo. E eu vou te falar, saíram os modelos interessantes essa semana, tá? Saiu um da Baidu, que parece ser bom, saiu um outro que talvez seja o melhor modelo local, mas um bom modelo também é o Quen Image Edit. Eu tenho aqui o Quen Image Edit, né? Então já tenho o workflow dele
+
+e esse daqui é um excelente modelo também. Vou fazer o seguinte, ó. Faça uma caricatura dessa pessoa, corpo inteiro, cabeça grande, feições exageradas. Então é isso que eu vou pedir para ele aqui. E esse daqui ele é um pouco mais pesado, tá? Ele tem 20
+
+bilhões de parâmetros, se eu não me engano, então ele vai demorar um pouquinho mais, mas ó, começou a gerar aqui e eu dei um mole, tá? Eu não coloquei aqui o turbo mode, ele tem um turbo mode que ele usa um Lora, né, de quatro passos para também gerar ali em quatro pequenos passos. Quando esse turbo molde não tá ligado, ele gera, cadê? Deixa eu pegar aqui só para confirmar. Mas se eu não me Ó, ele gera em 40 passos, então vai demorar um pouquinho mais, mas teoricamente fica a qualidade um pouco maior também. Ó, aqui
+
+a gente consegue ver que ele vai levar um pouquinho mais de 3 minutos, então, para gerar a imagem toda. Já tá chegando aqui na metade, né, em 50% da geração. Vamos esperar um pouco. Depois a gente vai ver também com o turbo ligado, que aí é bem mais rápido, ó. Então, ele levou aqui no total 249 segundos, também conhecido como 4 minutos e 9 segundos.
+
+Isso aqui foi o que ele gerou. Eu vou te confessar que eu achei que ficou ruim, não ficou muito bom. Vamos ligar o turbo aqui, tá? Eu vou pedir para ele gerar novamente. Ele vai precisar carregar o lora aqui. Eu tô achando que vai
+
+estourar a memória, mas aí eu vou mexer ali rapidinho e a gente vai conseguir rodar. Então aqui, ó, a gente realmente teve um problema aqui com a memória, então vou ter que rodar ele com uma flag a mais. Problema é que eu tava rodando com GPU only e aí quando eu tento carregar o Co Imagine Lightening aqui, que é um Laora, fica muito pesado pra quantidade de memória, né? 32 GB é bastante, né? Mas também não dá pra gente abusar. Então, deixa eu tentar
+
+rodar novamente. Vai demorar um pouquinho de novo para carregar, mas agora ele vai descarregar uma parte que ele não tiver usando pra memória RAM ou até mesmo pro swap file. E mesmo assim vai ficar mais rápido, porque aí a gente só vai precisar de quatro steps. Ó, agora ele já carregou, ó, e já tá gerando ali um, dois. Ele leva ali uns 2 a 3 segundos, né, para gerar um passo.
+
+Mas olha só, já acabou, vai tá finalizando ali e a gente vai ver o tempo total aqui embaixo, ó. Levou 70 segundos para fazer tudo, mas aqui tá considerando o carregamento do modelo também. O resultado foi esse aqui, ó. Já gosto mais desse resultado aqui. Agora a gente vai ver que para gerar uma nova versão, ó, é muito rápido, tá? Então, em
+
+poucos segundos, ó, já tá na metade, ele já vai gerando aqui. E aí, quando acabar de gerar aqui, ele precisa só passar por mais um processinho aqui. Finalizou. Pronto. Ó, se a gente olhar agora lá no log, 10 segundos para gerar essa imagem.
+
+Pô, 10 segundos para gerar uma imagem, tá show de bola, ó. Vou colocar aqui, ó. Transforme essa foto em um quadrinho de anime. Vamos lá. Vamos gerar aqui, ó. Ó,
+
+já tá processando aqui. Pronto. É, não, não sei. Com um estilo de anime meio estranho, a barba ficou cheiona, né? minha barba não fica assim, não.
+
+A barbinha falhadinha aqui. E aqui, ó, levou um pouquinho mais, levou 16 segundos, teve que processar o prompt, né? Mas esse aqui é um resultado que eu considero bom. Se a gente pegar aqui, ó, os elementos ali embaixo, aqui é uma caixa de som que tava ali mesmo. Tem a caixinha de som aqui. Aqui tem a placa
+
+do YouTube, uma luminária. Vamos ver se a consegue enxergar isso lá, ó. Placa do YouTube, luminária, tá? Então, o resultado é muito legal e tudo isso a gente tá rodando localmente, sem internet, com privacidade. Esse modelo a gente não conseguiria rodar numa 5060 Ti, a não ser que a gente fizesse muito offload pra memória brand, só que aí ficaria lento demais também. Então
+
+assim, comparando com a 5090, 5090 provavelmente geraria essa imagem menos 5 segundos. Aqui levou 16, é três vezes mais, mas 16 segundos não é tanto assim. Para esse cenário onde eu tava falando de gerar uma imagem, depois gerar o vídeo dele, como o vídeo vai levar mais tempo para gerar, esse fluxo funcionaria muito bem, porque quando chegasse no momento da 5090 gerar o próximo vídeo, a segunda imagem já estaria pronta. Então esse foi o nosso primeiro teste da Ark B70, uma placa de 32 GB de V RAM. E cara, tô gostando da placa. Acho que
+
+ainda tem algumas coisas que eu preciso ajustar, algumas coisas que a Intel precisa ajustar, principalmente em questão de software, mas se eles continuarem investindo em software, vai dar bom. Pontos importantíssimos, tá? Essa placa custa nos Estados Unidos, por enquanto menos de 1.000. O que que isso quer dizer? quer dizer que tá abaixo da
+
+cota de importação. Então, se você vai viajar paraos Estados Unidos ou conhece alguém que vai viajar paraos Estados Unidos e não vai trazer nada, dá para trazer essa placa na bagagem até declarar e não pagar nada de imposto. Outro ponto positivo, cabe modelos interessantíssimos. Cabe o Quent. 6 27B, cabe o Quentin6 35B, cabe o Gema 4 26 bilhões de parâmetros e cabem modelos de imagens que são realmente bons. Ela é
+
+melhor do que a 5090? Não, a 5090 é melhor e é muito melhor do que essa placa. Em termos de velocidade, não tem comparação. As duas vão conseguir carregar os mesmos modelos, digamos assim, mas vai funcionar muito melhor na 5090. Agora, se a 5090 vale pagar três vezes o preço, aí é questão de cada um.
+
+Dependendo do que que você vai fazer, vale, porque esse ganho de velocidade vai se pagar. Já em outros casos não vai importar tanto, vai dar para esperar um pouquinho mais para ter o mesmo nível de qualidade, só que um pouquinho mais lento. Mas tá aí, né? Por que que eu não fiz nesse vídeo um versus da Ark B70 contra a 5090 lado a lado? Porque eu quero fazer um outro vídeo em breve a gente vai fazer da Arc B70 versus a 5090. Em breve vou fazer a Arc B70
+
+versus a 5060 Ti também pra gente ver diferença de velocidade e modelos que cabem nos dois. Agora se você gosta desse tipo de comparação, dá uma olhada aqui, ó. 5090 versus Mac M3 Ultra. Aqui a gente já tá falando de coisas diferentes. Um computador que cabe modelos gigantescos, mas é um pouquinho mais lento, e uma placa que é a mais rápida entre as placas para consumidor, mas tem 32 GB, que é bom, mas não cabe tudo. E se você quiser ver um vídeo
+
+sobre a nossa 5060 Ti, eu vou deixar aqui, ó. Eu rodei ela no Zima Board. E a propósito, eu tô rodando no Zima Cube ali, a Arc B70, tá? e em breve fazer um vídeo sobre o Zimacube também, porque tem sido importantíssimo aqui no meu home laab. Mas é isso aí, deixa aquele like, aquele hype, se inscreve no canal.
+
+Vou ficando por aqui, até a próxima.

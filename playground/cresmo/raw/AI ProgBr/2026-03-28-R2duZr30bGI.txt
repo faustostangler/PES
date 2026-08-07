@@ -1,0 +1,133 @@
+---
+video_title: "O futuro do computador AUTÔNOMO não é da Anthropic, é Open Source: MolmoPoint-8B"
+video_id: R2duZr30bGI
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=R2duZr30bGI
+video_date: 2026-03-28T18:44:21+00:00
+video_description: |
+  Eu testei o Claude Computer Use essa semana e fiquei incomodado. Funciona, mas você precisa mandar screenshots do seu computador pra Anthropic. Tudo que aparece na tela, eles veem. Pra mim, isso tinha que ser diferente: local, open source, sem depender de ninguém.
+  
+  Foi aí que encontrei o MolmoPoint-8B. É um modelo da Ai2 com 8 bilhões de parâmetros que não só entende imagens e vídeos, mas consegue apontar com precisão onde estão os objetos. Carreguei imagens com vários animais e ele identificou cada um. Mostrei uma rua cheia de carros e pedi pra ele separar por tipo. Mandei um screenshot da minha própria interface e ele encontrou botões, sliders e campos de texto.
+  
+  Nem tudo foi perfeito. Em vídeo, ele errou em algumas posições. Mas o potencial é enorme: imagina criar um agente que controla seu computador sem enviar um único pixel pra nuvem? 
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaimolmopoint8b
+  
+  _______
+  
+  0:00 Intro
+  1:00 Documentaçao
+  2:25 Descrevendo imagens
+  3:46 Apontando objetos
+  4:32 Múltiplos objetos
+  5:55 Identificando pessoas
+  6:27 Teste com vídeo
+  7:43 Teste com interface
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Em vez de carros eu colocar sedans. Vamos ver se vai funcionar. Show de bola. Excelente trabalho. A gente tá quase chegando no dia que uma LLM vai controlar o nosso computador de forma completamente autônoma. Inclusive, essa
+
+semana eu testei o Cloud Computer Use e ele não funcionou tão bem quanto eu achei que ele ia funcionar, não. Além do mais, eu tenho uma grande questão com a privacidade disso, né? Você tá mandando ali screenshots do seu computador para uma empresa que vai poder ver tudo que você tá fazendo, tudo que você tem no seu computador. Então, para mim, essa solução tinha que ser local, tinha que ser open source. Mas para isso a gente precisa de uma LLM open source que consiga não só enxergar uma imagem, mas saber exatamente onde as coisas estão e exatamente isso que a gente vai ver hoje. Hoje a gente vai ver o Momo8B.
+
+é um modelo de 8 bilhões de parâmetros de uma empresa chamada Elen AI, que é capaz de enxergar imagens, descrever elas também, entender completamente. Mas não só isso, ela consegue apontar pros objetos dessa imagem. E o mais legal é que funciona para vídeos também. Vamos lá pra tela, pra gente ver como é que isso funciona. Tô aqui no blog da LNAI, na página do Momo Point. Vamos dar uma
+
+olhada aqui nos benchmarks, ó. Esse é um modelo de 8 bilhões de parâmetros. E isso é muito interessante porque com 8 bilhões de parâmetros ele consegue caber em diversos tipos de computadores. Se você tem 8 GB de memória, você consegue rodar ele numa quantização aí que é 4, tá? Mas se você tem, por exemplo, uma placa com 12, com 16 GB de V RAM, você consegue rodar ele tranquilamente. A
+
+gente tá rodando aqui no Mac Studio e provavelmente ele seria ainda mais rápido numa placa da Nvidia. Então a gente tem algumas variações desse modelo, né? é o Momo 8B, que é o que a gente vai testar aqui. Ele é excelente em video tracking e image point, batendo modelos como o Gemini 2.5 Pro, no caso aqui de vídeo, até o Gemini 3 Pro, Quen 3VL de 235 bilhões de parâmetros no caso de imagem, GPT 5 no caso de vídeos. E
+
+quando a gente fala de apontar para interfaces de fato, aí ele tem uma variante que seria o Momo Point GE, também de 8 bilhões de parâmetros, que é bem competitivo, mas fica um pouquinho atrás do Gemini Pro e desse UI Venus 1.58B. Seria legal ver esse modelo aqui também. Se vocês quiserem, deixa aqui nos comentários. E tem uma outra variante também que é o Momo Point Vid de 8 bilhões de parâmetros que esse é focado em apontar para vídeos e ele bate todos os outros modelos aqui, incluindo Cloud Sonet 4.5, Gemnight 3 Pro, GPT5 e
+
+etc. Show de bola. Vamos ver ele na prática. Eu criei essa pequena interface aqui pra gente conseguir usar o nosso M Point, tá? Então, a primeira coisa que eu vou fazer é carregar o nosso modelo aqui. Eu já apontei para ele. A gente tá
+
+usando Momo point 8B, uma versão com 5 bits de quantização. Eu vou começar carregando essa imagem aqui que tem diversos animais. Eu vou começar pedindo para ele descrever a imagem, não apontar para nada ainda. Descreva essa imagem. Vou mandar ele rodar aqui, ó. Já tá
+
+processando. E pronto, ele escreveu aqui, ó. Essa imagem é uma colagem de oito fotos de diferentes animais selvagens organizadas em duas linhas de quatro fotos cada. Os animais incluem um leão, um pássaro colorido, uma borboleta azul, um ursos. Ficou meio errado aqui, mas ok. Uma lagartixa verde. É, não sei
+
+se é uma lagartixa, mas beleza. Uma sapos. Português dele não parece muito bom, tá? Um porco palhaço e uma ave de capoeira. Isso aqui é uma coruja. Deixa
+
+eu tentar em inglês. Ele fala aqui, ó. Aqui, então, no canto esquerdo, a gente tem um leão com uma juba marrom e uma barba branca. Então, pô, bem escrito, né? É um papagaio colorido com corpo amarelo, uma borboleta azul e aqui acabou o nosso os nossos tokens, porque eu limitei o máximo de tokens aqui para 100 tokens, mas a resposta dele em inglês tá muito mais detalhada. Então, se der pra gente
+
+usar ele em inglês, melhor. Agora o que eu vou fazer é o seguinte, ó. Aponte para o urso. Vou rodar aqui, ó. O urso ele tá aqui nesse quadrante aqui. E aqui, ó, ele
+
+apontou pro nosso urso. Mas a gente tem uma coisa interessante nessa imagem. A gente tem dois pássaros. Então vou pedir para ele apontar para os pássaros para ver se ele consegue apontar para mais de um objeto. E aí ele tá processando aqui, ó. E
+
+alguns segundos depois, pronto. Nesse caso aqui, ele falou dos pássaros, mas ele não apontou, tá? Que eu vou fazer o seguinte, eu vou traduzir para inglês, porque eu acho que a instrução fica mais correta. Agora sim, ó, ele apontou. Então, pro papagaio, tá? E pra nossa
+
+coruja. Perfeito. Então, ele consegue apontar para múltiplos objetos na mesma imagem. Vamos ver se ele consegue apontar para ainda mais objetos numa mesma imagem. Essa daqui é a imagem que eu vou carregar, tá? E vou pedir para
+
+ele apontar pros carros. Point to the curse. No caso aqui, ó, ele tá com as duas imagens carregadas. Posso usar várias imagens ao mesmo tempo, mas eu quero só esse screenshot agora. E ele vai processar aqui, ó. E ele apontou
+
+então para todos os nossos carros da imagem. Só que aqui ele errou, né? Aqui ele encontrou um carro que não existe e aqui também. Vamos rodar novamente, mudando o seguinte, ó. Vou mandar ele apontar só pros carros amarelos.
+
+Ó, agora ele apontou, no caso, para esses três carros. Esse daqui não seria exatamente um carro. Vamos tentar fazer o seguinte. Se eu mudar aqui, em vez de carros, eu colocar sedans, tá? que seria o tipo daquele carro ali. Vamos ver se
+
+vai funcionar e vamos ver se ele vai reconhecer como sedan também, né? Ó, reconheceu. Show de bola. Excelente trabalho. Esse daqui ele reconheceu como um não sedan, ou seja, ele ainda tá categorizando como um carro. Isso aqui é meio que um
+
+caminhão, né? Um truck. Mas se a gente colocar o tipo certinho sedan, aí ele vai apontar pro certo. Se eu mudar ali pra truck, point to the truck, ele provavelmente vai apontar só pro nosso amarelinho lá. Deixa eu chegar para cá.
+
+Processando ainda, ó. apontou exatamente pro nosso truck aqui. Esse carro aqui, ele poderia ser considerado um truck ou uma picap. Então, provavelmente, se a gente colocar picap, ele apontaria para isso. Será que ele consegue identificar que isso aqui são pessoas? Point to the
+
+persons. Excelente. Ele não pegou essa daqui, mas ele pegou todas as outras. Ou talvez ele tenha pego essa e colocado no ponto errado. Vou gerar de novo porque ele encontrou uns pontos meio aleatórios ali. Ele botou uns pontos aqui, ó. Deixa
+
+eu tentar ver se Ó, agora sim ele tirou os pontos daqui. Só que essa daqui ele realmente não reconheceu, cara. E, pô, tá exatamente na cabeça de cada um. Vamos testar com o vídeo agora. Vou carregar esse vídeo aqui.
+
+>> Então, aqui eu vou botar o seguinte: Aponte pro relógio laranja. Eu tô com relógio laranja no pulso, então ele vai extrair aqui os frames do vídeo. A gente tá limitado a 10 frames. Então ele vai extrair esses 10, vai processar para cada frame e vai apontar para onde tá o meu relógio ali. Pelo menos é isso que a gente espera. No nosso caso do relógio
+
+aqui, ele deu uma alucinada legal, né? Ele não acertou muito bem as posições. Vamos fazer o seguinte, vamos tentar ver se ele consegue as mãos, que as mãos mexem bastante nesse vídeo. Point to the hands. Mais uma vez ele tá extraindo os frames do vídeo. Depois vai
+
+começar a processar e aí a gente vai ver se dessa vez ele acertou melhor. Tá aqui. Ele acertou a mão, tá? Primeiro já é sucesso. Segundo, tem duas mãos. Agora
+
+ele não acertou e colocou lá em cima. Terceiro também não. Aqui também não. Aqui eu não sei se foi sorte. Só acertou um ponto. Então eu diria que não
+
+acertou. Aqui ele acertou. Aqui também. Aqui também. Aqui também. E aqui ele errou
+
+completamente, tá? Então ele demorou a pegar no tranco, funcionou aqui na metade e cagou na saída. Mas é um resultado OK. Agora eu vou fazer o seguinte, eu vou carregar exatamente a screenshot dessa tela daqui. E basicamente eu vou pedir para ele apontar para alguns lugares aqui dessa tela. Vamos tentar em português
+
+primeiro. Aponte para o campo onde eu devo clicar para alterar o modelo. Seria esse campo aqui. Essa é a screenshot que eu tirei. Eu quero que ele aponte para esse campo aqui. Opa, aqui, ó. Caminho
+
+do modelo. Então, ele meio que apontou pro label do campo, mas ok. Cara, sabe pro que isso aqui seria muito legal pra gente fazer um tutorial, né? Se a gente tivesse criando um blog postorial onde a pessoa deveria clicar, tipo, essa minha aplicação aqui tá basicamente pronta para isso, ó. Agora eu vou mudar aqui para ele apontar pro botão. No caso, vou
+
+até destacar aqui, ó, o botão, não, o texto. Eu quero aqui, tá? Não aqui. Se bem que aqui também funcionaria, né? É, vamos ver.
+
+É, ele botou aqui, aqui de fato funcionaria e eu poderia ser um botão aqui de fato. Agora, se eu botar navegar nos arquivos, né, que seria ali browse files, provavelmente ele vai apontar pro botão certinho. E aqui agora, perfeito, apontou exatamente para onde a gente esperava. Aqui, ó, a resposta dele é dessa forma, assim, ó. Ele me diz que ele encontrou um elemento e ele coloca os pontos desse elemento. Se a gente
+
+tivesse mais elementos, vamos ver como é que a resposta fica. Aponte para os sliders. Então eu quero que ele aponte para esses três aqui, tá? Vamos ver aqui. Tá processando ali. E aqui embaixo
+
+ele me mostra, ó, cinco pontos encontrados. Cinco é muito, não tinha cinco não, tá? Tinham três só. Então ele apontou para cá e para cá também deu essa alucinada, mas aqui ele acertou certinho. Então quando a gente olha a resposta lá, a gente vai ter aqui, ó, primeiro ponto, segundo ponto, terceiro ponto, quarto ponto, quinto ponto e aí no sexto não tem mais ponto. Se eu gerar
+
+novamente, provavelmente ele vai acertar três só. Vamos ver. Agora sim, acertou somente os três que realmente são os sliders. Será que ele consegue identificar que isso aqui é um microfone? Vamos lá. Ponte para o
+
+microfone. Vamos ver aqui, ó. Aqui tá um microfone, tá? meu microfone de lapela. Vamos ver se ele vai reconhecer um objeto encontrado. Só que aí ele achou
+
+que o microfone era isso daqui, né? Então ele nesse caso ele não acertou. Quero ver se ele consegue ver bem a imagem ali. Vou colocar para o óculos. Vamos ver se ele vai identificar. Ah,
+
+agora sim, identificou certinho ali, ó. Esse daqui é um modelo que abre um pouco o leque das possibilidades, principalmente para quem é deve, tá? Esse daqui não é um modelo que normalmente você vai utilizar ele diretamente ou você vai utilizar para criar código, etc. Mas esse modelo vai ser utilizado dentro de uma aplicação. Assim, ele vai poder expandir o poder daquele app ali para poder fazer alguma coisa enxergando a tela, né, identificando elementos e etc. Alguns
+
+exemplos disso seria sim um app que pudesse clicar na tela, digitar texto e navegar no computador autonomamente. Ou, como exemplo que eu falei, um app para gerar tutorial de como se usa algum aplicativo, mostrando onde que tem que clicar, etc. tudo de forma automática também. Então, nesses dois casos, a LLM, ela vai est ali por baixo dos panos orquestrando o aplicativo, né, a camada de aplicação que essa sim vai atuar, seja desenhando nas imagens e gerando ali aquele tutorial, seja controlando o computador e tomando ações autônomas. Inclusive, se você quiser ver um exemplo disso, uma LLM tentando controlar um computador, dá uma olhada nesse vídeo aqui onde eu testei o cloud computer use e eu vou te falar que eu esperava um pouco mais. E se você quiser ver modelos
+
+de LLMs pequenininhos que dá para você colocar na tua aplicação para ela ficar mais inteligente e rodam em praticamente qualquer máquina, dá uma olhada aqui, ó, no Quen. 0.8 8 bilhões de parâmetros, 2 bilhões de parâmetros, modelo que também consegue enxergar e é extremamente inteligente. Vou deixar o card aqui para você assistir depois. Não esquece de se inscrever, dar o like e conferir se você tá com o sininho ativado para não perder nenhum vídeo, beleza? Vou ficando por
+
+aqui, até o próximo vídeo.

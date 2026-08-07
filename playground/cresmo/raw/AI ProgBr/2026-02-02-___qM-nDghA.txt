@@ -1,0 +1,147 @@
+---
+video_title: "O iFood chinês criou uma LLM. Será que é boa? - Longcat Flash"
+video_id: ___qM-nDghA
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=___qM-nDghA
+video_date: 2026-02-02T20:49:45+00:00
+video_description: |
+  Já pensou se o iFood lançasse a própria inteligência artificial? Pois é, parece loucura, mas a Meituan (que é tipo o iFood da China) acabou de fazer exatamente isso. E eles não estão de bobeira não, eles tem vários modelos, inclusive de geração de vídeo e imagem. No vídeo de hoje, eu testo uma das LLMs deles, localmente, pra criar código e ver se é tudo isso mesmo.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytailongcat
+  
+  _______
+  
+  0:00 Intro
+  0:39 Documentação
+  6:17 mlx_lm.chat
+  10:22 Flappy Bird
+  12:14 Teclado de Música
+  
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Imagina que você acordasse hoje com a notícia que o iFood lançou seu próprio chatt. Isso é meio estranho, né? Meio esquisito assim, mas exatamente isso que acontece lá na China com a empresa Mituan. Miran, sei lá como é que fala isso. Mituan, vou chamar assim. Ela é
+
+uma empresa de entrega de comida, assim como iFood. E ela entrou com tudo no mundo da inteligência artificial. E ela não tem só LLM, não, tá? Ela tem modelo de vídeo, de imagem. Tá arrebentando aí.
+
+E hoje a gente vai ver um desses modelos. A propósito, se tiver alguém assistindo o iFood aí, pô, representa nós, né? Lança uma paradinha aí, pô, uma LLMzinha, pequenininha que seja, porque essa aqui não é pequenininha, não. Vamos lá pra tela. Long Catch Flash Chat, esse é o nome do chat GPT da Mituan. E olha
+
+só, eles não estão de bobeira, não, tá? Isso aqui é um modelo de 526 bilhões de parâmetros. Não é esse que a gente vai testar porque não cabe na minha máquina. Mas isso aqui é só para ter uma ideia do que que eles estão fazendo. O que a gente vai ver hoje é o irmão menor, o Long Cat Flash Light. Mas
+
+só pra gente ter uma ideia, vamos olhar aqui no irmão maior um pouquinho sobre as especificações dele. Então, o modelo de 562 bilhões de parâmetros, acho que eu falei 526, eu toda hora falo isso, mas bem, 560 bilhões de parâmetros na arquitetura mixture of experts, o que permite que ele ative só poucos desses parâmetros por token. E aqui ele fala que ele ativa entre 18.6 e 31.3, 3, o que torna ele um modelo dinâmico, que não é tão comum assim. A média dele,
+
+então, fica aí em 27 bilhões de parâmetros por token, o que quer dizer que ele é um modelo muito mais rápido do que se fosse um modelo denso de 500, já ia falar 26 de novo, de 562 bilhões de parâmetros. Para você ter uma ideia, o Deep Seek ele tem 670 bilhões de parâmetros. Então, tá próximo disso aqui, tá? Quando a gente fala de um modelo de 500 bilhões de parâmetros, a gente já tá entrando num nível onde dá para ele concorrer com modelos fechados. Mesmo que não seja com a última geração de modelos fechados com a geração anterior, dá pra gente fazer essa comparação aí. Inclusive, a gente testou
+
+um modelo aberto aqui de 1 trilhão de parâmetros, que é o Kimk 2.5. E é um modelo muito legal. Eu vou deixar o link aqui embaixo para você assistir, porque o pessoal curtiu esse vídeo, tá? Então assiste lá depois. Mas hoje o que a
+
+gente vai ver é o irmão menor, o Longcat Flashlight, um modelo bem pequenininho em comparação com o irmão maior, mas ainda assim um modelo grande, tá? A gente chamaria aqui de um modelo médio, vai 70 bilhões de parâmetros. E essa é a chance de eu testar o Long Catch localmente. Eu queria muito testar o de 500 bilhões, mas não cabe na minha máquina. Eu tenho aqui um Mac Studio com M3 Ultra e 256 GB de memória unificada, o que é bastante coisa, mas ainda é pouco pro modelo de 500 bilhões parâmetros, mas é suficiente pro irmão menor setentinha cabe aqui na minha máquina, então a gente vai testar ele hoje, tá? 70 não, né? 68.5, como ele tá
+
+falando aqui. Nesse caso aqui, ele já é um modelo que ele vai ativar aproximadamente 3 bilhões de parâmetros por token. E ele tem um contexto de 256.000 tokens, o que é bastante coisa, tá? Cabe livros inteiros aqui nesse contexto. E
+
+se você é novo no mundo da inteligência artificial, o tamanho do contexto é o quanto de tokens ou de dados o modelo ele consegue manter, digamos, na memória, né? ele consegue se lembrar durante uma sessão. Então tudo que você quer que o modelo saiba, fora conhecimento dele que ele foi treinado para isso, que você quer passar pro modelo ali, vai ter que caber, vai ter que tá dentro do contexto. Então se você quiser, por exemplo, resumir um livro ou tirar os bullet points de um livro muito grande, o livro inteiro ele precisa caber ali no contexto. Ou então você vai ter que ir para outras estratégias como Rag e etc. Mas se você colocar um livro
+
+muito grande num modelo que tem um contexto pequeno, aí não vai conseguir trabalhar em cima daquele conteúdo ali. O que é muito importante, por exemplo, quando a gente tá falando de código, né? Se você quer que o modelo ele entenda toda a tua base de código ali para ele poder te dar resultados melhores, contextos grandes vão permitir que você passe mais código ali e ele entenda um pouco melhor do que que se trata, do que que tá acontecendo, de como você já fez ali o teu código e etc. Então esse daqui pode ser que seja um modelo bom para código, principalmente quando a gente tá trabalhando de forma gênica, né? Cursor, Kline, essas ferramentas. Bem, vamos dar
+
+uma olhada aqui, ó, embaixo, que ele tem uma tabelinha pra gente onde ele compara com o Kim Linear. Como eu falei, esse daqui tá numa outra liga, tá? Esse aqui é o 70 milhões de parâmetros. O de 500 a gente até poderia comparar com química 2, química 2.5. Esse aqui não. Esse
+
+daqui tá comparando com o irmão menor do Kim também, que é esse Kim Linear aqui de 48 bilhões de parâmetros. E o Quen Next 80 bilhões de parâmetros, que tá bem próximo aqui. Ele também tem 3 bilhões de parâmetros ativos. E aqui tem um pouquinho mais de dado porque como ele falou lá em cima, é mais ou menos 3 bilhões. E aqui ele fala melhor que é entre 2.9 e 4.5 bilhões de parâmetros
+
+ativos. Isso daqui vai tornar esse modelo aqui muito rápido, tá? A questão é se ele vai ser bom ou não pelo benchmark. se é que a gente pode confiar em benchmark. Ele bate tanto Quen quanto o Gemini 2.5 Flashlight, que é uma
+
+versão fechada, né, um modelo fechado do Google. Então isso daqui é muito interessante, ó. em alguns benchmarks, principalmente de uso de ferramentas agênticas, né? Quando a gente tá falando de agente, quando você tá, por exemplo, trabalhando num cursor da vida, é a aplicação que ela vai permitir, que ela vai dizer pro modelo como que ele pode acessar um arquivo, quais comandos ele pode dar, como que ele pode fazer para aplicar comandos ali no terminal, por exemplo. Então, saber usar essas ferramentas que a aplicação dá é muito importante pro modelo. E aqui ele bate
+
+todo mundo aqui, né? Quando a gente olha aqui em código também, que é algo que interessa, a gente também tá batendo todos os outros modelos com uma sobra muito grande. Então, se a gente comparar com Quen 3, ó, de 37 para 54 é a diferença, de 15 para 33. Então ele parece ser um modelo muito melhor em código do que o Quen 3 Next de 80 bilhões de parâmetros, por exemplo. Apesar de que esse modelo aqui não é conhecido por ser muito bom em código, tá? Então não sei se isso aqui quer
+
+dizer muita coisa. Acho que ele escolheu a dedo ali o modelo que ele queria testar, né? Talvez fosse até mais interessante, pelo menos para mim, ver essa parte aqui comparando com o Quentinter Excoder, mesmo que fosse o de 30 bilhões de parâmetros, que aí sim eu ia ter uma ideia do quão melhor ele é do que a família do Quen. Mas beleza, vamos colocar a mão na massa, tá? Se você acompanha o meu canal aqui, você sabe que muitas vezes eu testo esses modelos no LM Studio e dessa vez não vai dar para fazer isso, porque esse é um modelo muito novo. O LM Studio ainda não
+
+atualizou para dar suporte a ele. Então, hoje a gente vai usar o terminalzão, né? a gente vai rodar ele na mão. E pra gente rodar ele na mão, a gente vai utilizar um framework chamado MLEX. O MLX ele é um framework feito para rodar modelos de LLM e também modelos de áudio hoje, modelos de imagem, até vídeo no hardware da Apple, especificamente os hardwares da série M, né? Mas o MLX
+
+permite que você rode, no iPad, inclusive se você quiser saber mais sobre isso, rodar modelos MLX em iPhone, iPad, etc., Eu fiz um vídeo lá pro meu canal Iprogbr, que é um canal exclusivo onde a gente fala de desenvolvimento paraa Apple, tá? Vou deixar o link aqui embaixo também. E hoje a gente vai usar ele. Então aqui tá o meu comando, né? MLX_line LM. LM é o
+
+módulo ali, digamos assim, do MLX, que permite que a gente rode a gente tivesse rodando um modelo que ele também tivesse visão, como é, por exemplo, Quen 3V ou Gemini 4.6V, esses modelos, a gente rodaria o MLX VLM, um pouquinho diferente, mas mais ou menos a mesma coisa. E aqui a gente vai rodar então no formato de chat, eu passo o modelo que já tá baixado na minha máquina. A gente tá rodando uma versão MLX convertida e quantada pelo MLEX Community, tá? E quantada com 4 bits. Aí
+
+a quantização do modelo é o quanto de espaço ele vai ocupar tanto no HD quanto na memória run. Isso vai fazer com que quanto mais quantizado ele for, mais rápido ele é também. E ele consegue também rodar em hardwares menos potentes. Só que ele perde um pouco da precisão, ele fica um pouquinho mais burro, tá? 4 bits é normalmente o limite que a gente tenta ir abaixo disso, três, dois, é muito caso a caso, mas na maioria das vezes não fica tão bom assim de se utilizar, mesmo modelos grandes. E
+
+aqui eu tô passando máximo de tokens para essa sessão, 16.000 tokens, que acho que é o suficiente. Apesar desse modelo, ele ser um modelo que aceita até 256.000 tokens de sessão, né, de contexto, a gente vai para cada saída aqui ter 16.000. Acho que tá bom. Já tô
+
+com modelo carregado aqui, ó. ele me dá uns comandinhos ali. E deixa eu explicar rapidamente o que que é isso aqui, porque é importante. Normalmente um modelo ele não é por natureza um chat onde a gente manda uma pergunta e ele entrega uma resposta e aí a gente manda uma réplica a essa resposta e ele sabe do que a gente tá falando. Normalmente o modelo ele é one shot só. A gente manda
+
+uma pergunta, ele faz uma resposta. Se a gente quiser que ele faça referência aquilo que ele falou ou que a gente perguntou na primeira mensagem que a gente mandou, a gente precisa mandar tudo isso junto de novo, senão ele perde, ele se perde, ele não sabe do que que a gente tá falando. Então aqui a gente tá usando a aplicação de chat que faz tudo isso por baixo dos panos. Deixa eu te explicar melhor com um exemplo. Se eu falar aqui, ó, oi, meu nome é Igor e der um enter, ele vai me fazer a saudação, né? E eu pergunto agora, ó,
+
+qual o meu nome? Por a gente tá usando essa aplicação de chat, ela vai mandar todo o histórico de mensagens de novo e isso vai preencher o contexto. Ele vai saber do que a gente tá falando. Então aqui ele vai me responder: "Seu nome é Igor". Tá? Se a
+
+gente não tivesse no chat, se a gente tivesse só mandando mensagem para ele, ele não saberia. A gente teria que fazer essa junção na mão, tá? Só uma pincelada rápida de como a LLM funciona, né? já que eu sei que muita gente que tá chegando aqui tá tendo o primeiro contato com uma LLM rodando localmente. Então vou sempre trazer alguma coisinha nova, porque assim vocês vão aprendendo.
+
+Eu vou também reforçando um pouquinho do que eu sei e fica bom para todo mundo. Como eu falei, ele me deu alguns comandos aqui, tá? Então, se eu apertar o R aqui e der enter, eu tô reiniciando o meu contexto. Quer dizer que tudo que a gente falou até aqui, apaga, esquece, nunca aconteceu. Então, se eu falar agora, ó, qual o meu nome, ele não sabe mais, tá? Ele não tem informação do meu
+
+nome porque a gente reiniciou a nossa sessão. Então, vamos lá, vamos começar com clássico aqui, né? Sempre que a gente faz um modelo novo aqui no canal, muitas vezes a gente faz um flapd. Então é isso que eu vou pedir para ele. Vou pedir para ele criar um Flapbird. Crie
+
+um jogo Flapbird com HTML, CSS, JavaScript. Propositalmente tô dando um prompt muito simples, né? Mas nesse caso aqui normalmente funciona porque os modelos sabem muito bem o que que é um flapbird, tá? Então a gente não precisa explicar muito. Se for algo muito específico, algo que não seja muito padrão, aí você vai ter que fazer um prompt dando muito mais contexto, explicando muito mais detalhadamente para você dizer exatamente o comportamento que você quer do resultado que ele vai gerar. Beleza? Então vamos
+
+lá, vamos ver que que ele vai gerar aqui pra gente. Vamos ver se vai funcionar, ó. Show de bola. Terminou aqui, tá? Tá falando um pouco aqui sobre o que que ele fez. E ó, pelo visto, a gente vai
+
+conseguir usar tecla de espaço ou mouse, tá? Então vamos copiar aqui. Como ele fez tudo num arquivo só, posso colar tudo aqui e a gente vai ter aqui. Opa, já começou ali com o game over porque [risadas] não tava ligado que ia começar tão rápido assim. Tá melhor. Tudo bem. Vamos
+
+ver aqui, ó. Ã, deixa eu atualizar a página. Opa, tá, o restart não tá funcionando, mas eu tô achando que os controles não tão funcionando. Ah, tá OK. Hum.
+
+Eu acho que eu passei ali, hein. Tá, o mouse não tá funcionando mesmo, mas o espaço tá, só que a colisão não ficou muito boa. Mas bem, esse daqui é um resultado. Eu esperava um pouco mais para um modelo de 70 bilhões de parâmetros. Eu confesso que eu esperava um pouco mais. Mas vamos
+
+tentar algo um pouco diferente. Para quem acompanha lá o meu canal principal, sabe que eu tô fazendo uma série do Zero Aposentadoria só com apparia, onde eu crio app simples, como um jogo da Velha, que é um dos nossos projetos lá. E a ideia é sair do zero até chegar ao faturamento mensal de aproximadamente R$ 8.500. Esse é o nosso projeto. E lá nesse
+
+projeto a gente recebeu a seguinte pergunta que eu quero destacar essa parte aqui, ó. como que a gente faria a parte audiovisual, né, como efeitos sonoros, músicas e etc. No caso do jogo da velha, a gente tem alguns sonzinhos, né? Quando o usuário ele ganha uma partida, ele faz um som de vitória, quando ele perde, ele faz outro. Então, vamos ver como que a gente resolveria isso utilizando um modelo de LLM para ajudar a gente. Então, o que que eu
+
+quero pedir aqui pro Longcat me ajudar a fazer? Eu quero que ele faça um tecladinho, né, que ele gere oscilador, mas que ele me permita gravar e reproduzir, talvez exportar esses sons. Se eu conseguir isso aí, beleza, eu já tenho um primeiro passo para eu criar os meus próprios sons, os meus próprios efeitos sonoros. Então, vamos ao seguinte prompt aqui, ó. Cli um teclado musical utilizando HTML, CSS, JavaScript, que utiliza um oscilador para gerar os sons. Projeto deve
+
+permitir gravar, reproduzir e exportar as músicas criadas. Vamos ver que que ele vai fazer aqui pra gente. Show de bola. Então aqui ele tá explicando o que que ele fez, tá? Então como que ele tá exportando, ó. Legal. Isso aqui ele
+
+exporta como Jason, mas eu queria exportar como MP3. Bem, mas tudo bem. Isso aqui é um primeiro passo. Depois, se fosse o caso, a gente poderia pedir para ele modificar para exportar como WP3. Caramba, ó esse resultado aqui. Deixa eu
+
+botar a tela cheia pra gente conseguir ver, ó. [música]
+
+Deixa eu ver se Ah, ele não botou o teclado aqui para funcionar. Eu também não pedi, né? Mas bem, vamos ver. Cara, muito legal. Só tá errado isso aqui, né? Tá tocando a
+
+mesma coisa. >> [música] >> É, não devia ter esses dois assim. Bem, dá para melhorar isso aqui, mas vamos lá. Vamos gravar aqui, ó. Pô, tá, tá errado aqui, tá difícil, mas vamos lá.
+
+Vamos tentar de novo. Pera aí, deixa eu parar a gravação. Limpar. Gravar de novo.
+
+Não tá funcionando aqui o reproduzir, não gravar. Pelo visto não gravou nada. [música]
+
+Bem, infelizmente. Deixa eu ver aqui o exportar também. Não tá exportando nada. Infelizmente aqui a parte de gravar, reproduzir, parar não funcionou. Mas olha só, interessante aqui a parte visual que ele fez, né? Bem completo.
+
+Aqui tem informações da da música. Se a gente der mais uns dois promptes, a gente conseguiria resolver isso aqui. O que que daria para fazer aqui? Pedir para ele colocar pro teclado aqui ativar as teclas ali. Então ficaria mais fácil de tocar. Dá um jeito nesse estalo que
+
+tá tendo entre uma nota e outra. Ó, tá tendo um estalo, né? teria que ter um fade e mandar ele consertar essa parte da gravação de exportar. Mas de qualquer forma, eu acho muito interessante que hoje a gente consegue fazer localmente, tá? Com modelo que não é um dos maiores modelos, é um modelo médio, mas a gente consegue fazer isso. Isso daqui
+
+provavelmente você consegue fazer com modelos menores também, tá? Acredito que um Quenter acertar isso aqui. Talvez não de primeira, como esse também não acertou, mas tanto esse quanto um Quenter com certeza conseguiria fazer isso em alguns prompts. E eu acho muito legal isso, muito legal que a gente consegue fazer uma pequena aplicação que seja útil, que dê pra gente utilizar. Isso aqui eu conseguiria utilizar para criar alguns sons, né? Daria para mexer
+
+ali no oscilador, por exemplo, pro efeito não ficar aqui. Tá bem, essa nota tá bem suave até, né? a gente poderia ter outras formas de onda ali para fazer o som ficar mais 8 bits, por exemplo, né? Ou até brincar um pouco ali com arpejo, com alguma coisa e assim você pode criar então os sons paraas suas aplicações, pros seus jogos. E é mais ou menos isso que eu faço. Então esse foi o
+
+Long Cat Flash, tá? Um modelo de 70 bilhões de parâmetros de uma empresa chinesa de entrega de comida. Tô esperando o nosso iFood. Quero ver, hein. Bem, eu achei que o modelo é mais ou menos, tá? Ele é aquilo ali mesmo,
+
+né? 70 milhões de parâmetros, tá no meio do caminho. Não achei tão bom assim, mas sempre tem espaço pra gente fazer mais testes e achar um caso de uso específico onde ele possa se sair bem. Quanto mais modelo a gente tiver, mais opção, mais coisa para testar, melhor. Eu quero saber de você, que que você achou e eu quero saber se você tem rodado modelos locais, se tem, qual que é o teu hardware, né? Deixa aqui nos
+
+comentários. Vamos trocar uma ideia. Eu rodei hoje no Mac M3 Ultra 256 GB. E esse Mac ele permite que a gente rode até 100, 200 bilhões de parâmetros, até um pouquinho mais, se for bem quantizado. Me fala também para que que você tem usado modelos de LLM. Você tem
+
+usado os modelos de vídeo, de áudio, de imagem? Bem, deixa aqui nos comentários seu caso de uso também. Vou ficando por aqui, até o próximo vídeo.

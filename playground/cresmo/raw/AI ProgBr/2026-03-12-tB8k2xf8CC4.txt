@@ -1,0 +1,219 @@
+---
+video_title: "O MacBook NEO consegue rodar LLM local? Aqui está a VERDADE."
+video_id: tB8k2xf8CC4
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=tB8k2xf8CC4
+video_date: 2026-03-12T23:00:43+00:00
+video_description: |
+  O MacBook Neo consegue rodar LLMs locais? Testei o Qwen 3.5, LFM 2.5 e Qwen 3 TTS direto no chip A18 Pro com LM Studio.
+  
+  O MacBook Neo é o computador mais barato da Apple, com chip A18 Pro e apenas 8 GB de memória unificada. A maioria das pessoas descartaria ele para rodar modelos de linguagem local, mas dá pra surpreender dependendo do modelo e da configuração.
+  
+  Nesse vídeo eu testei modelos de 0.8B até 9B de parâmetros usando LM Studio, medi tokens por segundo para cada tamanho, e ainda mostrei como aumentar o limite de VRAM acessível pela GPU via terminal, um truque que funciona em qualquer Mac da Apple.
+  
+  Além de LLMs de texto, também testei geração de áudio com o Qwen 3 TTS rodando localmente: clonagem de voz com menos de 2 bilhões de parâmetros, no laptop mais barato da Apple. O resultado foi além do esperado.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaimacneollm
+  
+  _______
+  
+  0:00 Intro
+  0:49 Hardware do MacBook Neo
+  1:51 Qwen 3.5 0.8B
+  3:41 LFM 2.5 1.2B
+  5:57 Qwen 3.5 2B
+  8:10 Qwen 3.5 4B
+  11:30 Qwen 3.5 9B
+  16:42 Qwen 3 TTS
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Olha só o que nós temos aqui. Esse daqui é o MacBook New, o mais novo integrante da família de computadores da Apple. E esse daqui é um computador feito para estudantes. Ele vai ser excelente para você navegar na internet, fazer tarefas simples como escrever com Word, né? Fazer um Excel. Então, para coisas na
+
+nuvem e para aplicações leves, incrível. Mas esse daqui é um canal onde a gente fala sobre inteligência artificial. Então, a gente vai colocar esse computador aqui para rodar LLMs locais. Será que ele dá conta? É isso que a gente vai ver. E eu já tô aqui com o meu
+
+LM Stúdio aberto, tá? Eu já baixei alguns modelos. A gente tem aqui o Quen 3.5 de 0.8 bilhões de parâmetros, o Liquid LFM 2.5 de 1.2 bilhões de
+
+parâmetros e as outras versões do Quen 3.5 de 2 de 4 e de 9 bilhões de parâmetros. Mas antes da gente colocar eles para rodarem aqui, a gente precisa dar uma olhadinha no nosso hardware. Então vou aqui em settings. Eu já tô aqui, ó, com modo developer ligado, tá?
+
+Se eu desligar aqui, ó, ele não me mostra essas abas aqui do lado. Então, se eu ligar, eu consigo ver meu hardware, que é o que eu quero ver agora. Esse computador, ele tem um total de 8 GB de memória unificada, onde a gente pode usar até 5.33 para VR, ou seja, para ser acessível pela GPU. Ele tem um chip Apple A18 Pro, tá? Então, esse daqui não é um M1, M4,
+
+não. Ele é um A18 Pro. Esse chip aqui é um chip que veio no iPhone 16 Pro, então é um chip de telefone no MacBook. Olha só que loucura. Por isso que esse computador é tão barato. Quer dizer,
+
+pelo menos nos Estados Unidos, onde ele custa $99. Eu fiz um vídeo fazendo o unboxing dele, tá? E aí eu falo um pouco mais sobre as características desse computador. Se você quiser assistir, eu vou deixar o link aqui no card. Aqui embaixo a gente tem algumas opções, tá? de guard rayos,
+
+que se a gente colocar off aqui, ele pode travar o computador e tudo, mas por enquanto a gente vai deixar ali no balanceado e vamos começar a brincar. Vamos começar com o menorzinho deles que eu separei aqui, que é o Quentin 3.5 0.8 4 bits, tá? Então, peguei o modelo que já é pequeno, diminuí ainda mais pra gente entender qual velocidade que a gente consegue ter de tokens por segundo aqui. E já eu falo mais sobre a largura
+
+de banda desse computador. Então, vamos carregar aqui o nosso modelo com 3.0.8. Primeiro vamos ver se ele vai carregar, né? E carregou. Beleza, show de bola.
+
+Agora a gente pode ir lá pro nosso chat. Eu vou começar com prompt simples. Eu peguei esse computador ontem, ainda nem adicionei aqui, por exemplo, teclado em português. Agora sim. Agora acho que a gente vai conseguir escrever as coisas com acento. Ah, parágrafos. Agora sim.
+
+Conte uma história infantil com dois parágrafos. Vamos ver se ele vai executar isso pra gente. Opa, esqueci de carregar aqui. Bem, eu carreguei lá, mas não carreguei no chat. OK, agora sim.
+
+Vamos embora. Ó, bem rápido. Nossa, tô gostando da velocidade, hein? Ele só ignorou completamente os dois parágrafos, né? E mandou ver uma história bolada aqui.
+
+Tudo bem. Qual a velocidade dele? 77 tokens por segundo. Não é que o bicho consegue rodar ll, mas tudo bem, essa daqui é uma LLM pequenininha, né? 0.8
+
+bilhões de parâmetros. Mas mesmo assim, 77 tokens por segundo. É bem interessante. Que que acontece? Esse computador aqui, ele assim como os MacBooks, o Mac Mini, todos os outros computadores da Apple que usam chips integrados dela, tem 8 GB de memória unificada que dá acesso ali a GPU, mas quando a gente vê aqui os tokens por segundo, o que importa mesmo é a largura de banda. E esse computador aqui tem 60
+
+GB/sundo de largura de banda, tá? Não é tão rápido assim, mas a gente pode ver que ele consegue fazer um negócio legal. Pra gente ter uma noção, o Mac Mini M4, ou melhor, o M4 de forma geral, versão base dele, tem 150 GB por segundo de largura de banda. Então, esse aqui tem um pouco menos da metade, mas ainda assim para um computador de $99 eu diria que nada mal. Vamos aumentar um pouquinho. Vamos para 1.2 bilhões de
+
+parâmetros. 1.2 bilhões de parâmetros é a quantidade de parâmetros que tem no LFM 2.5. E a gente tá usando aqui a versão struct dele. É uma versão sem o
+
+pensamento. Inclusive, esse modelo é bem legal. Eu tô preparando um vídeo aqui pro canal onde eu treinei a versão thinking dele usando o Step Flash 3.5. Você não viu o nosso vídeo sobre o Step Flash 3.5? Cara, esse modelo faz sites
+
+de uma forma absurda, assim, criativo, design legal. Então eu falei: "E se ele ensinasse o LFM 2.5 a criar sites também? Será que o LFM aprendeu?" Bem, ainda não gravei esse vídeo. Eu, na
+
+verdade, ainda nem vi o resultado, mas essa semana vou gravar. Em breve vai estar aqui no canal. Não deixa de se inscrever. Se quiser ver o vídeo do Step 3.5 Flash, o card vai est aqui em cima.
+
+Mas vamos lá. Me fale como eu digo bom dia em 10 línguas diferentes. Vamos deixar que ele escolha as línguas, então. Espanhol, buen dia. Buena, buenos dias. Português do Brasil, boa manhã. Ô,
+
+LFM, francês, bonj. Inglês, good day. Não, good morning. traduziu literalmente. Que que é isso? Italiano,
+
+Jorno, verdade. Alemão, Cotentek. Saba Kahã. Esses aqui eu não consigo falar direito. É, eu não gostei muito do resultado em si, mas aqui a gente teve, ó, 37 tokens por segundo e um tempo de perfil aqui de 0.86
+
+segundos. OK? Toda vez que eu tento usar o LFM, eu acabo batendo ali num ns problemas com o conhecimento dele. Eu acho que não é um modelo muito legal para você usar se você precisa que ele te traga uma informação. Ele vai ser mais legal para lidar com informações que estão dentro do contexto. Que que
+
+isso quer dizer? Por exemplo, você deu um PDF para ele, ele vai conseguir extrair coisa dali. Você deu um texto para ele resumir, ele vai conseguir fazer isso. Mas toda vez que ele traz alguma coisa da memória, eu não curto tanto. Uma pena, gosto muito da ideia desse modelo, né? É um modelo para rodar
+
+em qualquer lugar. A gente vê que ele consegue rodar aqui tranquilamente, né? Mas tem esse probleminha. Vamos lá, vamos pro próximo modelo. Ah, lembrando, eu tô carregando esses modelos aqui com contexto de 4.000 tokens só, tá? A gente
+
+pode até aumentar isso. Tô tô viajando. Carreguei de novo 0.8. A gente pode até aumentar isso, mas primeiro vamos ver que que ele roda aqui com 4000 tokens.
+
+Quintas. 2B. Esse aqui eu acho que vai ser o nosso sweet spot. Se a gente conseguir rodar esse modelo bem, dá para fazer muita coisa. Então vamos lá, Quen, me conte uma piada. O Quen 2B, ele
+
+ainda, apesar dele ser um modelo que ele consegue pensar, ele não vem com pensamento ativado por padrão, o que no nosso caso aqui até bom. Ó, 29 tokens por segundo. 29 tokens por segundo é bom. Por que a água não pode ser servida em copo de vidro? Porque o vidro não tem água. Tá bom? Se você entendeu, deixa
+
+aqui nos comentários que eu tô lento hoje, talvez. Mas ok. Vamos lá. Outra coisa que esse modelo consegue fazer é enxergar imagens, né? Então vamos pegar uma imagem aqui pr ele enxergar. Eu
+
+peguei essa imagem aqui que é uma foto ali do meu fundo e a gente tem aqui um joystick, uma placa do YouTube, um pato de borracha, um carrinho com Arduíno, uma lâmpada, um drone, uns teclados aqui embaixo. Vamos ver se ele consegue descrever pra gente aqui. Eu acho que vai levar um tempinho um pouquinho maior para conseguir ler a imagem, mas eu espero que ele consiga. Ele não tá me dando nenhum feedback aqui. Tá só gerando, gerando, gerando para um lado, ó. Show. Então ele não me falou que ele
+
+tava processando o prompt, mas ele tava. Levou um tempinho, a gente vai ver já quanto tempo levou pro primeiro token, mas vamos ver se tá certo aqui, ó. Robô de mesa, um pequeno robô com rodas e circuitos visíveis montados sobre uma base preta. É, seria isso aqui. Maca de borracha. Hum.
+
+Um macaco amarelo clássico. Eu nunca vi um macaco amarelo clássico, mas tudo bem. Posicionado no centro da mesa. Não é exatamente uma mesa também. OK.
+
+Joystick de arcade. Verdade. É um joystick de arcade. Aqui. Prêmio do YouTube. Um quadro prateado com logotipo
+
+do YouTube. Play button iluminado. Verdade. É ele também. Caixa de drones.
+
+Uma caixa cinza com drone pequeno montado no topo. Perfeito. Planta. Realmente tem uma planta aqui atrás, ó. Teclado. Teclado mecânico, branco e
+
+preto. Outros teclados. OK. E luz LED azul. Realmente tem uma luz LED azul aqui embaixo. Esses itens gerem um
+
+ambiente de trabalho hob focado em tecnologia, jogos e automação. É, tecnologia de fato. Então sim, a gente consegue ver imagens aqui no MacBook New. E o que a gente pode ver é que ele levou 32 segundos para conseguir processar essa imagem. Não é dos mais rápidos, mas ok. Vai. 26 tokens por
+
+segundo foi a velocidade de resposta. Então já tá começando a ficar um pouco mais lento, né? Será que a gente consegue rodar o modelo de 4 bilhões de parâmetros? Bem, vamos testar. Modelo de 4 milhões de parâmetros carregado aqui.
+
+Vamos dar só um oi para ele basicão, só pra gente ver a resposta. Ó, ele tá identificando ali que é português. Legal. Alguns modelos têm dificuldade de entender só oi, né? Mas, ó, entendeu direitinho, tudo certo. Vamos ver o
+
+tempo, ó. 17 tokens por segundo. Levou 0.74 segundos para processar o prop, mas o propt era só oi, né? Então não podia levar muito mais do que isso mesmo. E 17
+
+tokens por segundo na saída. É OK. Não é dos melhores, mas é OK. A gente tá rodando essa versão aqui e ela tem 4 bits, tá, de quantização também. A versão de 2 bilhões parâmetros que a gente rodou tinha 6 bits, um pouquinho mais, e o LFM tinha 8 bits. Esse modelo
+
+aqui já vai ser bem mais inteligente, né? Mas como eu acho que aí não vai ter um tempo de processamento muito grande, eu quero pedir para ele resumir alguma coisa, mas eu não quero dar um texto tão longo assim para ele. Então o que que a gente vai fazer? Eu vou aqui no Hug and Face, eu tô na página do Fire Red Tham, tá? Fire Red Image Edit, que é um modelo muito legal pra edição de imagem que a gente fez aqui no canal também. Também
+
+vou deixar no card e eu vou copiar tudo que tiver nessa página aqui para ele se virar lá. Eu copiei todo esse texto e vou colocar aqui, ó, me explique esse modelo. E aí, agora sim, a gente vai ver o tempo que ele vai levar para processar esse prompt aqui. Talvez esse prompt estore o nosso contexto, porque a gente carregou ele com contexto só de 4000 tokens. Mas vamos ver, ó. tá processando
+
+lá o nosso prompt. É, foi mais rápido do que eu imaginava. Lá o resumão detalhado do Fire Red Image Edit 1.1. E ó, tá certinho aqui, ó. Versão 1.1, uma
+
+atualização da 1.0 com mais consistência, performance. A licença dele é a parte 2.0. Isso daqui é muito interessante, consegue juntar vários elementos, ele preserva a identidade da pessoa. Se tiver uma pessoa na imagem,
+
+isso daqui é muito legal porque alguns modelos trocam completamente tua cara. e alguns testes que eu fiz com esse Fire Reddit, ele realmente é bom nisso. Tipografia também achei bom pra tipografia. E aí ele fala um pouco mais aqui sobre o modelo 30 GB V RAM. É isso que precisa? Pô, achei que era menos. Eu
+
+acho que dá para rodar uma versão quantizadinha com 16, mas tudo bem. Eu fiz um vídeo sobre ele aqui no canal e eu rodei ele no Confi muita gente pediu para eu falar mais sobre o Confi, só que a verdade é que nem os vídeos de imagem eles vão muito bem aqui no canal, tá? Se eu fizer um vídeo de tutorial, tutorial vai pior ainda. Eu fiz um vídeo sobre o tutorial do LM Stúio. Vou deixar aqui no card também, quase ninguém viu. Mas eu
+
+tô pensando em fazer o seguinte, eu abri a área de membros aqui do canal e eu talvez faça ali o básico, pelo menos, instalação, primeiros passos, como que funciona de forma geral o confi e coloque dentro da área de membros. Assim a gente consegue gerar um valor também pros membros. Vai ser tipo um mini cursinho e também vai iniciar ali só pra galera que de fato tá interessada nesse tipo de coisa. Mas tá em aberto isso, né? a gente vai conversando também, principalmente entre os membros, a gente vai decidindo o que fazer. Se você tiver
+
+interesse em se tornar um membro do canal, apoiar o canal para que a gente possa trazer maluquícies feito essa daqui, se inscreve aqui na nossa área de membros que eu já tô pensando em alguns conteúdos interessantes para lá. Então, funcionou muito bem aqui, ó, 16.99, também conhecido como 17, tokens por segundo, 21 segundos foi o tempo que ele levou para processar o nosso prompt. Podia ser melhor, mas também podia ser pior. Então, acho que tá de boaça. Mas
+
+agora a gente vem no que eu preparei como sendo o maior modelo, digamos assim, que a gente conseguiria rodar nessa máquina, que é o Quen 3.5 de 9 bilhões de parâmetros. A gente vai tentar rodar ele numa versão 4 bits, tá? Vou inclusive ativar isso aqui, que aí a gente consegue já saber de cara que ele não vai rodar. Quer dizer, eu eu quero que ele rode, mas vamos dar uma olhada aqui que que a gente pode mexer, ó.
+
+Vamos ligar aqui cach quantization que aí já dá uma melhoradinha. Ele não tá deixando a gente carregar, mas eu posso apertar o option e tentar carregar de qualquer jeito. Vamos ver se a gente vai ter algum problema ou não. Ó, tá tentando carregar lá. Enquanto isso, vou criando uma nova janela aqui. E travou a
+
+gente. Tá vendo? Ah, modelos MLX com visão não suportam KVCash quantization. Perfeito. OK. Vamos fazer o seguinte.
+
+Vamos carregar sem KVC quantization e vamos ver se ele vai dar algum outro erro. Carregou. Carregou. Pera aí. Oi. Tá demorando para responder
+
+aqui no oi. E ó, não deu certo. O modelo deu problema, não conseguiu responder pra gente. Vamos ver o seguinte, ó. O tamanho dele aqui é 5.57
+
+GB. Talvez esse seja o problema. Mas antes da gente tentar atacar esse problema, vamos aqui no mais fácil. Vamos aqui colocar ele relax. Só que de qualquer forma acho que não vai dar, que a nossa VR tem menos do que o tamanho do modelo. OK. Vamos tentar de novo com
+
+ele. Relaxed. Eu não vou diminuir o contexto para abaixo de 4.000 tokens, porque eu acho que 4.000 tokens é o mínimo pra gente conseguir fazer alguma coisinha, né?
+
+Vamos tentar o nosso oi de novo. Ah, nem preciso mandar novamente. Eu só pedi para me regerar aqui. Ah, quase, quase processou. Quase foi por pouco, por muito pouco. Então a gente vai ter que
+
+usar a nossa carta na manga. Se eu abrir aqui o nosso terminal e eu digitar aqui o seguinte comando, ó, sudo sis ctl iiodpu.wiwired_line limit_line mb, a gente vai ver que o limite de uso da GPU aqui tá setado para zero, que na verdade é o padrão da Apple. Por padrão, a GPU ela não tem acesso a toda a memória unificada, tá? Ela tem acesso a 75% da memória unificada, mas a gente consegue alterar isso e é isso que a gente vai fazer. Talvez o meu computador
+
+trave completamente, tá? Mas a gente tá aqui pela ciência. Eu vou aumentar para 6656. Eu tô tentando fazer múltiplos de 256 aqui. Bem, vamos ver se vai funcionar.
+
+Agora se eu tento ver qual que é o meu limite, ele me dá 6656. Vamos voltar no LM Studio e ver o que que aconteceu agora. Quando eu venho aqui em settings, deveria mudar aqui. Vamos ver. Ainda não mudou. Vou fazer o
+
+seguinte, vou fechar o LM Studio. Vou abrir de novo. Opa, olha aqui. Então agora a gente tem 6.5 GB acessível a V RAM. Isso quer dizer que agora o
+
+nosso modelo de 5.57 vai caber ali no limite, mas vai caber. O problema é só sobra 1, GB pro sistema. Será que vai travar tudo? Pode ser que sim.
+
+provavelmente. Na verdade, vamos esperar ele carregar e aí a gente vai tentar regerar esse prompt. Foi. Modelo carregado. Vamos gerar novamente.
+
+Torcer. Ó, tô de dedo cruzado aqui pr ele não travar na minha cara. Opa, respondeu lento. Tá muito lento. Tá muito lento. Mas tá respondendo. Quer
+
+dizer que funcionou. Ó, cavou tudo. Eu não consigo mexer meu mouse tá. Ele tá desesperado aqui, tá usando toda a energia para conseguir responder isso pra gente, mas ele tá respondendo. Então acho que a gente tá vendo aqui em primeira mão qual que é o limite do MacBook New, tá? A gente consegue rodar
+
+Ll mais abaixo de 9 bilhões de parâmetros. Essa aqui ficou pesadíssima para ele. Então ele não tá conseguindo dar conta de processar aqui a LLM e manter o sistema fluindo. Então ficou tudo travado, ó. Não tô mexendo aqui no mouse, ó. Nada, não mexe nada. Vamos
+
+esperar aqui pr ver se depois dele responder a gente volta a ter acesso ao nosso sistema. Duas horas depois. Opa, acabou aqui, ó. E agora o sistema tá liso. 7.51 tokens por segundo. Levou 27
+
+segundos para ele conseguir processar o nosso Oi, tá? Então, não é utilizável, digamos assim, mas roda, tá? Roda, roda. Dá para usar? Eu diria que não, mas roda. E eu acho que esse vídeo aqui já
+
+teve um aprendizado, né, da gente conseguir alterar o valor total de memória utilizável pela GPU. Isso aí vale o teu like ou não vale? Me diz aí, pô. Deixa o teu like, pô. Agora, se você tem um Mac e você acabou de aprender isso, vai alterar lá no teu Mac? Isso
+
+vai permitir que você use modelos um pouquinho maiores. No caso, se você tiver um Mac de 8 GB, esquece isso. Mas se você tiver um Mac aí de 32, né, talvez você consiga aumentar um pouquinho esse limite e rodar um modelo talvez 27 bilhões de parâmetros. interessante, ó. Se esse foro, isso ajudar sua vida de fato, deixa aquele hype que aí mais gente vai poder ter acesso a esse conteúdo. Antes da gente
+
+finalizar o vídeo, eu quero fazer mais um teste. Esse é bolado, só que eu preciso tirar o nosso modelo de 9 bilhões de parâmetros da memória, porque ele tá ocupando nossa memória inteira. Não consigo fazer mais nada se ele tiver ali. O que eu quero fazer é o seguinte, eu criei essa aplicaçãozinha aqui que ela clona voz, tá? Usando Quen 3 TTS. Eu
+
+falei mais sobre ela num vídeo aqui do canal, vou deixar aqui no card, mas ela clona a nossa voz. Já carreguei aqui o modelo Quen 3 TTS, então parece que ele carregou. Se bem se ele tava carregado, deixa eu descarregar e carregar de novo, porque se ele tava carregado na memória, como é que o outro modelo carregou? Não dá, né? Enquanto ele tá carregando aqui, a gente pode gravar a nossa voz, tá?
+
+Essa gravação aqui é que vai ser a base pra clonagem. Então, pra gente ter uma boa base de clonagem, eu preciso ter ali em torno de 20 segundos de gravação, tá? E também se eu falar assim do jeito que eu quero que a clonagem saia, eu acho que o resultado fica melhor. Eu fiz um vídeo aqui sobre o Quentinterest TTS, ficou meio que com sotaque português, mas foi porque eu não atingi ali a faixa de 20 a 30 segundos, que eu acredito ser a ideal pra gente ter um áudio para clonagem, que eu já atingi agora, então vou parar. Ele transcreve rapidamente aqui o nosso áudio usando framework de transcript, tá? E aqui eu salvo então meu nome,
+
+Igor. Salvar. E aqui tá a minha voz agora. Quando eu venho aqui em estúdio TTS, deixa eu ver se já tá carregado lá. Já tá carregado. Eu posso agora passar
+
+um texto e ele vai criar esse texto com a minha voz. A questão é: eu não testei isso aqui ainda, então pode ser que não funcione. A gente tá testando junto. Fala galera, Igor Oliveira por aqui. Espero que tenha gostado do vídeo. Esse
+
+sou eu mesmo falando e agora a gente vai gerar para ver como que o Quen 3 TTS vai gerar isso pra gente, se é que ele vai gerar, né? Porque pode ser que simplesmente não funcione. Provavelmente vai demorar um tempinho aqui, mas já já tá pronto. Ou não. Gerou. Ah, vamos ver
+
+se ficou bom. Calma lá. Deixa eu botar o meu microfone aqui, ó, pra gente conseguir gravar. Fala, galera. Igor Oliveira por aqui. Espero que tenha
+
+gostado do vídeo. >> Pô, parece comigo ou não parece? Ó, não tá com sotaque português nenhum. Realmente parece comigo. Parece uma versão minha um pouco paulista. Parece,
+
+mas ok. Só que o mais incrível é que esse modelo ele é a versão de 1.7 bilhões de parâmetros do Coin TTS e tá rodando localmente aqui no MacBook New. E eu vou te falar, levou muito menos tempo para gerar do que eu imaginava. E isso é uma notícia incrível. Então,
+
+MacBook New consegue rodar LLMs, consegue rodar lls, consegue rodar outros modelos de inteligência artificial também, como modelos de áudio, como a gente viu. E o que a gente viu foi geração de áudio, tá? Normalmente modelos de speech tox, ou seja, modelos de transcrição de áudio são ainda mais leves. Então, com certeza ele roda. Ele roda modelo de imagens?
+
+Não sei, não testei ainda. Talvez a gente teste no outro vídeo ou talvez a gente teste lá na nossa área de membros. Mas o que com certeza a gente vai testar é como ele lida bem com os modelos de inteligência artificial da Apple, o Apple Intelligence. A gente vai fazer um vídeo lá pro nosso canal iprogbr. Então, se você não é inscrito lá no canal iprog BR, já se inscreve lá, porque lá a gente vai ver como que é a performance dos modelos nativos. Por exemplo, Foundation
+
+Models, que é uma LLM local da Apple, que a gente vai conseguir rodar nele, imã de Playground, que é a geração de imagens da Apple também, que a gente também vai conseguir rodar. Então, a gente vai testar tudo isso nesse próximo vídeo. Esse aqui então hoje é o computador mais barato da Apple. O Mac Mini, na verdade, tem um preço bem parecido, mas você teria que ter também monitor, teclado, etc. Então, o computador completo mais barato acaba sendo esse. Só que a desvantagem é que
+
+ele só tem 8 GB de memória unificada. Cara, eu sempre me empolgo em rodar LMs em hardware, que são assim teoricamente mais fracos, que teoricamente não daria para rodar. Inclusive, por isso a gente fez um vídeo aqui rodando LLMs no Raspberry Piei. Vou deixar o link nesse card aqui. Agora se você quiser saber um pouco mais sobre o framework da Apple chamado MLX, que torna mais performático rodar llms em devices da Apple, incluindo esse daqui, aí eu vou deixar o link para esse card aqui, onde eu falei exatamente sobre a MLEX. E a propósito,
+
+eu queria muito testar o M5 Max, mas esse tá fora do budget do canal, infelizmente, por enquanto, quem sabe em breve, né? Mas vamos ficando por aqui, até o próximo vídeo.

@@ -1,0 +1,227 @@
+---
+video_title: "DeepSeek V4 Flash LOCAL é bom de CÓDIGO até com o thinking desligado"
+video_id: DcMkd07IEbQ
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=DcMkd07IEbQ
+video_date: 2026-05-04T23:26:45+00:00
+video_description: |
+  Testei o novo DeepSeek V4 Flash, o irmão menor do DeepSeek V4 Pro de 1.6T parâmetros, rodando 100% local no Mac Studio M3 Ultra com 256GB de memória unificada. Por ser um modelo Mixture of Experts (MoE) com apenas 13B parâmetros ativos de um total de 284B, eu consigo rodar localmente com uma velocidade utilizável.
+  
+  Nesse hands-on eu coloco o DeepSeek V4 Flash pra criar um site de teclado mecânico, criar um site de Tic Tac Toe a partir de uma página da App Store, recriar Angry Birds em Three.js e até montar um GTA San Andreas estilo LEGO em 3D. O que aconteceu foi inesperado pra um modelo com Thinking desligado o tempo todo. Tem detalhe quebrado, tem física estranha no Angry Birds, tem limitações no GTA, mas tem também resultado que faz pensar duas vezes antes de pagar API. E ainda fica a pergunta: e se eu testar  uma versão com o Think Max ligado?
+  
+  Se você curte LLM open source, modelos rodando local, MoE e quer entender se vale a pena usar o DeepSeek V4 Flash, esse vídeo é pra você.
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaideepseekv4flash
+  
+  _______
+  
+  0:00 Intro
+  0:47 Documentação
+  3:46 Teste de Velocidade
+  4:12 Site Teclado Mecânico
+  4:39 Site com clone Tic Tac Toe
+  9:00 Angry Birds 3D
+  15:55 GTA San Andreas
+  22:00 Conclusões
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Quando deepsek, [risadas] eu vou treinar umas intros diferentes aqui. Vai ser tipo quando de psic ou normal, né? Quando Deepsic lançou a versão do modelo deles V4 na semana passada com 1.6 trilhões de parâmetros, eles sabiam que a maioria das pessoas não iam conseguir rodar esse modelo em casa, né? Afinal de contas, 1.6 trilhões
+
+de parâmetros é muito parâmetro. Então, eles lançaram também um irmão menor, Deepsek V4 Flash. E é esse modelo que a gente vai ver hoje. Esse modelo teoricamente a gente consegue rodar localmente, mas obviamente não vai rodar em qualquer 5060 Ti, que é a placa que a gente tem ali, né? A gente vai ter que rodar esse modelo num computador com mais memória. Então hoje a gente vai
+
+rodar ele no Mac M3 Ultra com 256 GB de memória unificada. Vamos lá pra tela, pra gente entender um pouco mais sobre esse modelo. Deepsic V4 Flash, versão flash desse modelo, tem 284 bilhões de parâmetros e ele ativa 13 bilhões de parâmetros, ou seja, é um mixture of expert que permite que a gente consiga rodar aqui na nossa máquina que tem 256 GB de memória unificada e ao mesmo tempo vai ser um modelo que ele não vai ser lento demais porque ele não é um modelo denso, ele é um modelo que só ativa 13 bilhões de parâmetros. Em comparação de PSIC V4 Pro, né, que é o irmão maior, ele tem 1.6 bilhões de parâmetros com 49 bilhões de parâmetros ativos. Então,
+
+mesmo sendo mixture expert 49 bilhões de parâmetros ativos, se coubesse nessa máquina aqui, ainda assim seria meio lento. Então, acho que 13 milhões a gente tá ali no sweit spot, né, no ponto ótimo ali pra gente rodar esse modelo. Aqui a gente pode ver um pouco mais sobre os modelos que foram liberados. Aqui a gente tem, por exemplo, de PS5 V4 flash base, que é a versão que não só teve pré-terreinamento, tá? Ele tem um conhecimento, mas ele ainda não foi treinado para responder de determinada forma, para trabalhar bem ali com perguntas e respostas. Já a versão daqui
+
+de baixo, ela já sofreu esse pós-treinamento, digamos assim, né, que vai est dentro ali do fine tuning, reinforcement learning, etc. E aqui ele já vai conseguir responder pra gente. Eles liberaram um pouco diferente aqui. A versão base, ela tá uma versão FP8. Eles não liberaram 16 bits, liberaram 8 bits. E a versão para uso, né, que é que
+
+a gente vai usar aqui hoje, ela é um mix entre FP4 e FP8, ou seja, tem ali quantização de 4 bits e quantização de 8 bits pros pesos mais importantes. Aqui a gente tem alguns benchmarks da versão base, tá? Mas pra gente mesmo interessa mais a versão já treinada aqui, ó. Então aqui a gente tem a comparação da versão V4 flash com thinking ligado, sem thinking ligado, com thinking no max, no high, etc. E a gente tem a versão Pro também nessas três categorias de thinking também. E o que a gente pode
+
+ver aqui é que quando a gente tem o V4 flash no máximo de pensamento dele, ele chega muito perto ao V4 Pro no máximo de pensamento também, pelo menos para alguns bandmars, não para todos, tá? Esse aqui, por exemplo, fica bem longe. Vamos ver os de código aqui no Live Code Bch, por exemplo, a gente vai ter 91 versus 93, muito próximo, tá? Se a gente for aqui no Code Forces, por exemplo, 3052 versus 3206, também relativamente próximo. A gente pode ver que o V4 flash no max, ele passa o V4 Pro no high, né?
+
+Então isso é muito legal. Se a gente olhar aqui o terminal bench, aí a gente já vê um gap um pouco maior do V4 Pro V4 flash, mas quando a gente volta aqui para SWED, ó, 79.80. E considerando que a gente tá falando de um modelo que é pelo menos cinco vezes menor, isso daqui é simplesmente incrível. A versão que a gente vai rodar hoje é uma versão quantizada pelo Estference Labs. Então ele pegou o
+
+modelo que tem uma quantização misturada, né? Tem alguns pisos FP4, outros FP8 e a parte de FP4 ele só reajustou aqui sem ter que requantizar para 9 bits. E todo o resto ele quantou para 9 bits. Ele rodou no M3 Ultra com 512, a gente vai rodar no de 256. Então, a gente pode esperar aqui entre 20 e 25 tokens por segundo. Então, vamos lá. Já
+
+tô aqui, ó, com o Deepsic V4 flash MLX 9 bits e a gente tá rodando influencer proc, que é exatamente o software do Ash, onde essa versão foi testada. Então, primeira coisa que eu vou fazer aqui, eu quero ver um pouco dessa velocidade, se a gente vai conseguir ali os 25 toques por segundo. Vou mandar para ele: "Oi, tudo bom?" Ó, a gente tá conseguindo até um pouco mais, né? Nessa mensagem pequenininha aqui, a gente conseguiu 29 tokens por segundo, o que é muito interessante. Beleza? Então vou
+
+fazer o seguinte, vou pedir para ele criar um site pra gente, pra gente ter uma ideia de qualidade ele consegue entregar para um site relativamente simples. Ó, cria um site de um novo teclado de computador lançado no mercado. Esse teclado é um teclado mecânico com três opções de sutch. O site precisa ter alguma funcionalidade fora da caixa. Me surpreenda. Então é
+
+isso que eu vou pedir para ele. Enquanto isso, eu vou vir aqui no software, eu vou ligar o betting, já tá ligado. E aí aqui do lado eu já posso pedir uma mais alguma coisa para ele. Então o que eu vou pedir para ele aqui do lado é o seguinte. Esse daqui é o meu app Tic TT Infinity. Então vou pedir para ele vir
+
+aqui na App Store e ele vai uma estrela sacanagem. Alguém tá me sacaneando aqui. Não é possível. Aí ele vai pedir, ele vai pegar aqui os dados, tá? E eu quero que ele crie uma landing page baseada nesses dados. Eu vou pedir para ele
+
+implementar também o jogo Tictech Tool. Opa, baseado na página da App Store desse jogo, crie uma landing page. Implement também ticte to na página pro usuário ter um gostinho. Enquanto isso, vamos ver como é que ele tá criando, ó. Ele tá criando lá o nosso site a 27 tokens por segundo. Quando eu mandar
+
+essa requisição, essa taxa de tokens por segundo, ela vai cair porque agora ele vai estar processando dois. Mas se a gente somar os dois tokens por segundo, provavelmente vai ser muito maior do que 27. Então vou mandar aqui. Por algum motivo ele não começou essa chamada aqui. O betting parece não tá funcionando. Tudo bem, vamos esperar ele
+
+terminar aqui e aí quando ele terminar aqui ele vai começar o outro lá. Ah, tô achando que deu algo errado aqui, né? Teclado musical. Não é teclado musical troço. Teclado mecânico revolucionário.
+
+Hum. Vamos ver aqui. Tudo bem aqui. Strike pro aparece um bom nome, né? Cadê a parte do HTML? Eu tô achando que tá
+
+meio pequena aqui, né? Não tem muito conteúdo de fato. Vamos esperar pra gente ver o resultado disso. E aqui a gente pode ver que a gente ainda tá aqui com uma média de 26, 27 tokens por segundo numa quantidade boa. Até 7.000
+
+tokens quase. Acho que ele vai terminar aqui um pouco, ó, terminou um pouco abaixo de 7.000 tokens. 26.73 tokens por segundo. E aí agora ele já começou a
+
+escrever aqui pra gente a página do nosso Tictech Tool. Só que eu vou parar aqui porque, pelo visto ele não fez a chamada pro tool calling aqui. Deixa eu ver se o tool tá ligado. Então aqui os tools estão ligado sim. Eu vou pedir para ele refazer. Vou apagar isso aqui
+
+na verdade. Stop. Ok. E aí eu vou mandar novamente aqui para ele. Vou até apagar aqui de novo. Vou mandar aqui para ele
+
+de novo prompt. Deixa eu mudar o meu prompt aqui porque eu quero que ele faça a chamada do tool lá. Ele não tá fazendo a chamada do tool. Não, não, não, não, não. Quero que ele faça a chamada do tool. Vamos fazer o seguinte, mais uma
+
+vez, vou apagar aqui. Deixa eu ver se a tool tá ligada direito aqui. Tools web snipet tá enable. Web page tá enable. Mudei aqui, ó. Leia essa página usando
+
+tools. Vamos ver se assim a gente consegue forçar ele. Não, não tá fazendo. Bem, vamos ver o que que ele vai fazer pra gente. Infelizmente ele não tá usando o to calling aqui direito.Quanto isso, a gente vai
+
+verificar esse código aqui para ver o que que ele criou. Legal. Precisão que transforma cada toque. Teclado mecânico com três suitches intercambiáveis, construção em alumínio, RGB por tecla e uma surpresa que você não espera. Legal.
+
+Aqui não tem clique, né? Não é só informação. Aqui eu consigo mudar. Deixa eu ver se teve algum erro. Ah, teve algum erro aqui, ó. Tá, teve algum erro
+
+aqui. Deixa eu tentar atualizar. Então, quando eu carrego, já tem um erro ali. Então, acho que as coisas interativas não vão funcionar. Mas tudo bem. Aqui eu tenho gravar, limpar,
+
+reproduzir e eu poderia gravar alguma coisa aqui, né? Tudo bem. Eh, infelizmente o CSS não tá funcionando aqui. Eu não desgosto do design, não. Achei que tá muito simplinho, né, para uma página de um novo produto, mas não tá de todo mal não.
+
+Que ele fala as teclas, né, que elas ativariam aqui. Eu poderia pedir para ele consertar lá, mas a gente vai, vou esperar para ver o que que ele fez no nosso Tictech Tol. Ó, aqui a gente tem então nossa página do Tictech Tool, tá? Mas basicamente ele fez aqui um tictech to, né? Se bem que aqui, ué, será que ele ele tinha alguma coisa ali na no win limit, no draw limit? É, não, na verdade
+
+não. Mas aqui essa página aqui não tá ruim não, tá? Ela só não é o que a gente pediu. E aqui ele também não implementou um player versus o computador. Se eu clicar aqui também não vai para lugar nenhum, mas ok. É, essa página aqui eu
+
+eu gosto do design dela, né? Bem simples, né? Não gosto desse aqui, mas tudo bem. O único problema aqui foi que ele não foi buscar a referência. Fazer o seguinte, eu vou pedir para ele extrair os dados da página, né? Porque é uma
+
+instrução muito mais direta. E vamos ver se assim ele faz o tool calling. Ele não tá conseguindo fazer aqui não. Então, infelizmente esse modelo ele não tá conseguindo usar as tools do Inference. Vou pedir para ele criar o nosso clássico Angry Birds aqui, tá? Vamos lá.
+
+Cria um clone do jogo Angry Birds usando 3 JS. Use formas simples para criar os pássaros e inimigos. Inclua três pássaros diferentes e três fases. Vamos ver o que que ele vai criar aqui pra gente. Ó, ele já tá criando aqui o nosso código. Esse modelo aqui, ele não tá com
+
+thinking habilitado, então isso vai fazer com que a qualidade dele seja de fato menor do que o esperado, menor do que o planejado lá pelo pessoal de PSI. Então, provavelmente eu vou ter que fazer um outro vídeo em breve com alguma versão que tenha os thinking e principalmente o thinking no Max, né? habilitado, talvez passa na web, me deixa aqui nos comentários se você quiser ver uma versão de PSIC V4 Flash com o Thinking e o max thinking dele ligado e aí com certeza a gente vai ter resultados melhores do que a gente vai ter aqui. Mas sempre é bom lembrar que a gente tá rodando isso aqui localmente. Isso quer dizer que você mantém privacidade tudo que você fizer. Esse
+
+modelo, ele não é só um modelo de código, né? A gente normalmente faz código aqui porque o canal se chama AI Progbr. Mas esse modelo aqui serve para outras coisas também, não só esse, como todos os modelos que a gente testa. E às vezes a gente esquece, né? Porque aí ele não vai tão bem em código, a gente fala que modelo ruim. Na verdade, às vezes
+
+ele só tem um foco para outra coisa. Então, outra vantagem no modelo local é que ninguém vai tirar o teu acesso ali no meio de um trabalho, né? Como acontece quando a gente tá usando qualquer coisa no cloud, que dois, três prompt, acabou nossa cota, a gente tem que parar. esperar 5 horas. Então, usando localmente, normalmente vai ser até um pouco mais devagar, mas vai ser constante. Você não vai ter que parar
+
+ali no meio. E uma coisa que eu tenho percebido também é que eu acho que daqui pra frente, sempre que a gente testar um modelo grande aqui, ou melhor, um modelo médio, né, para grande, mais de 100 bilhões de parâmetros, sempre a gente vai ter que voltar e olhar como Quen 3.5 e o 3.6 são modelos incríveis, né? E o a gente pode botar o Gema 4 aqui também, porque também é um modelo de 31 bilhões de parâmetros ou de 26 bilhões de parâmetros, a versão Mixure of Expert, que é simplesmente incrível. Tudo isso
+
+rodando localmente, sem precisar de acesso à internet, sem ter nenhum tipo de limite de uso. E essas versões, o Quen de 27 bilhões de parâmetros de 35 bilhões de parâmetros e o próprio Gema, a gente consegue rodar em máquinas um pouco mais acessíveis, digamos assim, bem entre aspas, né, acessíveis, porque ainda é caro. Para rodar bem um modelo desse, você tem que ter no mínimo ali 32 GB de VR. E isso a gente estaria falando aí numa 5090 que custa aqui no Canadá $5.000 canadenses. Ainda é caro, mas
+
+para um programador aqui não é um absurdo não, tá? Porque um programador vai ganhar mais do que isso por mês normalmente. E tá começando a vir placas mais baratas também, né? A gente tem a Ark B70, que é uma placa da Intel com 32 GB de VRAM também. Ela é um pouco mais lenta do que a 5090. Tem mais ou menos
+
+metade da velocidade, 600 GB/S, mas ela custa $.000 nos Estados Unidos, um pouquinho abaixo de $000, 950. Aí já começa a ficar bem interessante, tá? Porque é uma placa de 32 GB, cabe bastante coisa e em breve a gente vai testar ela aqui se os Correios não perderem a minha encomenda, né? Eu mandei uma exatamente pra gente testar e pra gente colocar ela versus A50 90 para ver se ela é uma opção viável. Abaixo de
+
+$000 ela estaria dentro da cota. Então você poderia viajar pros Estados Unidos, comprar essa placa, voltar, se você só comprar ela, né, voltar pro Brasil, não pagar nada de imposto na volta, que ela estaria abaixo ali do limite de $000 que você pode comprar fora. Então, seria um uma excelente compra se ela funcionar. Mas espera, deixa eu testar aqui primeiro. Deixa aqui nos comentários o que que você quer que eu teste nessa placa, que assim que ela tiver nas minhas mãos, a gente faz um videozinho aqui. Enquanto isso, o nosso Depic já tá
+
+terminando aqui, ó. Então, a gente manteve uma média aqui de 26, 27 tokens. A gente tá chegando aqui nos 8.200, né? Deve acabar aqui com os 8000, 8251 tokens. Então, show de bola. 27.27. Uma
+
+velocidade boa, cara. Isso a gente não pode negar. Mas vamos ver o resultado aqui, ó. Primeira coisa, a gente tem um Ah, não, não tem erro não. Só tem aqui um um log. Legal. Gostei. Tudo bem.
+
+Vamos ver. Esses pássaros aqui estão meio esquisitos. Esse estilinho aqui é miniatura, né? De acordo com o tamanho dos pássaros aqui. Mas, ó, aqui o que que é o problema?
+
+Tá, acho que eu bati no outro pássaro. O problema aqui é que eu arrasto a fase ao mesmo tempo que eu arrasto o pássaro. Aí fica meio difícil aqui. E eu tô arrastando mesmo pássaro, pelo visto. Tá.
+
+Isso aqui eu não gostei, né? Porque fica muito difícil de jogar assim. E os outros pássaros, como eles não não se mexem ali, eu acho que a física tá fazendo com que eu bata neles. Mas tudo bem. Ó, pássaro é só esse pássaro que eu tomei bem. OK. Mas a gente vê aqui o que
+
+que tem aqui de bom, né? A gente tem os olhinhos dos pássaros, os porquinhos estão embaixo das peças ali de madeira, mas tá OK. As árvores a gente tem também, estão bonitinhas, só que estão muito pequenas. Então a escala tá meio esquisita, mas a gente tem alguma física, né? Quando a gente consegue de fato, ó, disparar, a gente tem uma física ali, a gente tá tendo a colisão.
+
+Então, OK, a gente tem alguma coisa aqui. Próxima fase. Vamos ver se muda alguma coisa. E aqui eu tenho um outro, tem um pássaro verde ali, mas eu nunca vou conseguir usar esse pássaro, né, por conta dessa lógica maluca. Deixa eu ver aqui, ó, se eu for Eita, é muito difícil de controlar. Deixa eu
+
+reiniciar essa fase. É, tá funcionando algumas coisas. Teria que pedir para ele ajustar bastante aqui, mas acredito que com vai e vem ali a gente conseguiria chegar a um resultado um pouco melhor, o que a gente não vai fazer para esse vídeo. Deixa aí pra próxima fase aqui, ó. Então, tem aqui um outro pássaro que inventou uns pássaro maluco aqui, né? Deixa eu ver se
+
+dessa vez não dá. É muito difícil, muito difícil passar aqui e principalmente com essa câmera que que ao mesmo tempo que você usa o mouse e arrasta para disparar o pássaro, você também mexe o ângulo. Eu gosto da ideia, mas eu acho que, por exemplo, para eu mexer o ângulo, eu teria que tá segurando contra ou alguma outra tecla e aí sim, aí eu tô controlando a câmera. Depois quando eu soltasse, aí eu estaria controlando o pássaro. Aí seria excelente a mecânica na minha opinião. Mas beleza, esse foi o
+
+nosso Angry Birds. Achei, eu vou te falar, vou ser bem sincero, como ele não tá com thinking ligado, eu achei que o resultado ia ser bem pior, tá? Tô tô muito feliz com esse resultado aqui. É um resultado que me permite colocar na tamb. Destruiu o chegou perto, não, não é, não é. Mas é interessante. E eu acho
+
+que eventualmente eu preciso fazer um vídeo aqui, né? Porque eu vejo muita gente achar que precisa sempre est usando o melhor modelo e tal e eu discordo disso vementemente. Ou talvez merecesse um vídeo. Se vocês quiserem, me fala aí. Próximo teste, obviamente não pode faltar o nosso GTA. Cria um
+
+jogo 3D completo inspirado no GTA San Andreas usando 3S via CDN com estética estilo Lego inclua minimap, pessoas, sistema de nível de procurado, carros e motos, mapa com diferentes áreas. Esse é o nosso prompt. Eu quero ver o que que o nosso Deepsic vai responder aqui pra gente. O que que ele vai criar? Será que ele vai conseguir criar alguma coisa interessante ou ele vai criar uma parada que nem vai rodar? Não sei. Vamos ver.
+
+De qualquer forma, ele já tá escrevendo o código aqui pra gente. Basta a gente esperar agora e já já a gente vai ver o resultado. Show de bola. Terminou aqui pra gente. Ele criou, ó, 9676 tokens a 24.70 tokens por segundo, que é
+
+uma ótima velocidade. Agora resta saber, ó, ó, o código parece bom. Vamos ver se ele funciona, né? É isso que resta saber aqui. Vamos ver. Ah, infelizmente a
+
+gente tem um erro aqui, ó. Fazer o seguinte, vou copiar esse erro para ele, essa parte aqui, e eu vou pedir para ele consertar, porque eu tô louco para ver esse resultado aqui. Fazer o seguinte, vou deixar ele corrigir o código inteiro, reescrever tudo, mas da próxima vez, se tiver algum erro, eu vou pedir para ele reescrever só o trecho, né? Porque aí fica mais fácil da gente ajustar sem ter que perder todo o tempo e gastar todos os tokens, apesar de que a gente tá rodando o local, né? Não tem essa de gastar tokens, mas principalmente se a gente tivesse usando uma PI, algo do tipo, seria interessante pra gente não gastar todos os tokens, né? a gente só teria que editar ali a
+
+parte com erro. E a propósito, esse é um dos motivos pelo qual eu acho que Vibe Coding vai ser para programadores, né? Você conseguir identificar, ler trechos, entender o que que tá acontecendo, saber indicar para ele certa parte do código ou mudar certa parte do código. Opa, temos algo aqui. Vamos dar uma olhada de novo. Cadê os controles? Tá um mouse
+
+aqui, ó. Pô, mas eu tô no meio do prédio. Que que tá vendo aqui? Tô achando que tem algo errado, hein. Deixa eu reiniciar. Eu não tô conseguindo
+
+andar não. Será que tá com algum erro? Ah, tá com outro erro. Cadê? Onde é que tá o erro agora? 730.
+
+Mesma parada aqui. Mesma parada, né? Lag swing. Tá OK. Alisar novamente. Beleza.
+
+Ainda tem algum erro aqui. 726. Aqui é player. Então aqui nessa parte do código ele tava usando player, né? E não P, como na outra parte do código lá. Vamos
+
+ver. Tá. Opa, agora sim. Pera aí, deixa eu deixar a tela cheia aqui, porque agora a gente tá andando, ó,
+
+esse bonequinho aqui. Se bem que a ele fez todo esse lance por causa da perna, mas a perna não tá funcionando não. Ó, aí tem um pulo aqui, tá? Ah, será que é porque a gente tá ali em cima? É, mas ó lá, a perna não tem nenhuma animação, que é o lance que ele tava falando ali do problema. Mas cara, esse resultado
+
+aqui não tá de todo ruim não, hein? Cadê? Dá para eu entrar no carro? Ué, eu não tô conseguindo entrar no carro. Deixa eu ver se eu consigo correr.
+
+Correr. Dá para correr. Eu tenho uma moto ali, ó. Deixa eu tentar ir lá naquela moto. É, quando eu chego perto aqui, parece que o troço fica se mexendo ao meu redor ali. Tá vendo? Ah, na verdade não é ao
+
+meu redor, não. Fica só se mexendo. Mas Ah, não, tudo tá se mexendo. Eu que achei que tava parado, mas de qualquer forma não tá funcionando. De um a quatro são as armas. Então, eu tenho aqui o
+
+punho. Aqui eu tenho a pistola, mas eu não consigo. Tô atirando. Ah, conforme eu vou atirando, vou ficando procurado, né? Vamos ver se a polícia vai vir atrás de mim. Eu tenho a
+
+metralhadora e eu tenho rifle. E eu já tô no com a com cinco estrelinhas. A gente tem algumas áreas, montanha, praia, industrial, subúrbio. Legal. Só que eu não tô conseguindo entrar nos carros.
+
+Ali tem as pessoas. Deixa eu ver se eu consigo atirar nas pessoas. Como é que eu vou mirar nelas aqui, né? Opa, atira aí. Atira aí sim.
+
+Felizmente fica difícil de ver aqui. Se eu mirar, ó, se eu mirar certinho, eu acabo tapando. Mas ó lá, pessoa sumiu. Acertei ela. Então, show de bola.
+
+Pô, não consigo pegar o carro. Até aparou os botões aqui. Não, não consigo pegar o carro. Não tô vendo a polícia também. Cadê sua polícia?
+
+Não tô vendo aquele carro ali, ó. aparece parado. Ah, mas eu chego perto dele, ele começa a se mexer. Tá vendo? Como se eu tivesse batido nele, tivesse uma colisão e eu não consigo entrar nele de jeito nenhum.
+
+Mas assim, esse daqui não é um resultado terrível, não. Não é um nível mimo, 2.5 de qualidade, mas a gente tem alguma coisa. Tô gostando desse modelo, cara. Levando sempre em consideração que ele não tá com thinking ligado, não tá ruim não. Olha só, as árvores ali tão
+
+bonitinhas, tá? Ele criou os espaços, apesar de que ele criou um degrau aqui nesses espaços, né? Que eu sempre fico com a perna para dentro do degrau, mas tudo bem. A gente tem deserto, industrial, praia, subúrbio, montanha, porto, né? Floresta. Então tem vários
+
+cenários aqui. Vamos ali no no deserto pra gente dar uma olhada, ver o que que tem lá. Tem que ir correndo aqui porque conseguir pegar os carros. E aqui nesse lugar que eu tô, fica ali aparecendo área desconhecida, né? Deixa eu mudar aqui pros punhos que eu vou tentar dar um soco. Deixa eu ver aqui, ó. Eu vou já
+
+mirando nele, ó. É. Olé, ele é muito bom desviar de mim, cara. Mas tudo bem. Deixa eu para lá. Então,
+
+aqui embaixo a gente tem o mapa. Aqui a gente tem o nível de procurado. A polícia não veio por algum motivo. Aqui a gente tem os controles e aqui a gente tem o indicador onde a gente tem a as armas. Achei bom. Bom resultado. Então,
+
+esse foi o nosso primeiro hand zone no Deep Seek V4 flash, né? Uma versão de 284 bilhões parâmetros que a gente consegue rodar localmente numa velocidade até utilizável. Provavelmente, se a gente precisar de uso agêntico dele, talvez 25 tokens por segundo seja um pouco lento, mas para vários outros usos, 25 tokens é extremamente utilizável. E eu gostei desse modelo, principalmente por conta dessa velocidade. Ele não é o melhor que a gente já viu também. Não é o pior que
+
+a gente já viu, mas sempre lembrando que ele tava com thinking desligado o tempo todo. Eu não sei se é essa versão do modelo que a gente tem aqui, se é o software. Depois eu vou tentar descobrir um pouco melhor como que eu posso ligar para usar ele no Thinking Max, que seria onde a gente conseguiria extrair o máximo de poder dele, demoraria um pouquinho mais, né? porque ele pensaria bastante ali para resolver os problemas, mas provavelmente a resposta seria muito melhor. Mas de forma geral achei um bom resultado e eu quero ver aqui também o Mimo V2.5, não a versão Pro que a gente
+
+testou aqui. Eu vou deixar o link aqui da versão Pro que foi muito bem. O Mimo V2.5, assim como DeepSic V4 Flash, é o irmão menor do Mimo V2.5 Pro. Então a
+
+gente tem um modelo menor que a gente consegue rodar localmente com uma velocidade OK também. Eu quero ver inclusive como que ele vai sair em comparação aqui com o nosso DepSIC. se ele vai ser melhor, se ele vai ser pior, porque ele vai ser um modelo de 310 bilhões de parâmetros, então pouquinho mais do que o Deep PSIC, com 15 bilhões de parâmetros ativos. Então, acredito que ele vai ter uma velocidade semelhante. Acho que vai ser uma excelente comparação. Agora, se você
+
+quer ver modelos bem menores, dá uma olhada no Quin 3.6, 27 bilhões de parâmetros, que a gente fez o vídeo aqui, ó. O modelo é menor, mas ele é muito competente. Ele é, sem dúvida, um modelo abaixo dos 30 bilhões de parâmetros que entrega o máximo de qualidade. Então, vale a pena dar uma olhada. pra maioria das pessoas.

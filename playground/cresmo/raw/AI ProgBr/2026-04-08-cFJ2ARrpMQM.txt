@@ -1,0 +1,194 @@
+---
+video_title: "ZimaBoard 2 é o melhor custo-benefício pra IA Local? Rodei 7 LLMs nele e fiquei IMPRESSIONADO"
+video_id: cFJ2ARrpMQM
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cFJ2ARrpMQM
+video_date: 2026-04-08T22:00:43+00:00
+video_description: |
+  Um comentário no vídeo do Raspberry Pi me levou a descobrir um hardware que eu nunca tinha ouvido falar, o Zimaboard. 
+  
+  O Zimaboard 2 é um mini PC que muda completamente o cenário para rodar LLMs locais. Testei 7 LLMs locais neste vídeo, desde o LFM 2.5 (350M) até o Gemma 4 26B, tudo na CPU com 16GB de RAM. Mas o ponto alto do vídeo é a adição de uma NVIDIA GeForce RTX 5060 Ti via PCIe: o mesmo modelo Gemma 4 26B que levava 6 minutos na CPU passou a responder em 21 segundos, de 4 para 79 tokens por segundo. Testei também o Qwen 3.5 35B (Q2) com capacidade de visão, chegando a 83 tokens por segundo.
+  
+  Se você está avaliando onde rodar LLMs em casa, Raspberry Pi 5, Mac mini ou Zimaboard 2, esse vídeo vai te dar números reais pra comparar.
+  
+  
+  👉 Aqui está meu link de afiliado 
+  
+   ZimaBoard 2 8GB e 16GB: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  
+  Dock para conectar a Placa de Vídeo: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  0:00 Intro
+  0:18 O Zimaboard 2
+  2:44 LFM 2.5 (350M)
+  5:32 Qwen 3.5 0.8B
+  6:51 Gemma 4 2B
+  8:24 Qwen 3.5 9B
+  9:47 Gemma 4 26B na CPU
+  14:39 Como está meu setup
+  16:00 Gemma 4 26B na GPU
+  18:00 Qwen 3.5 35B na GPU
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaizimaboard
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+---
+Hum tempo atrás, a gente gravou um vídeo aqui rodando llms no Raspber Pie. E nesse vídeo, o Renan fez a seguinte pergunta: será que aquele Zimabo ele não teria uma performance melhor? Eu falei: "Boa pergunta, mas uma pergunta melhor ainda é: o que que é um Zimaboard?" Eu não conhecia e aí eu fui pesquisar o Zimabard. Ele tá na versão dois agora, né? Zimaboard 2. E ele é um mini PC num
+
+formato diferente que ele vem com sistema operacional próprio e ele é muito focado para você fazer um mini servidor em casa. Só que o mais legal dele é que ele vem com chip X86 que te permite instalar outros sistemas operacionais Linux até Windows. E ele tem duas versões, 8 GB de RAM e 16 GB de RAM. Quando eu vi tudo isso, eu falei: "Tá aí, adoraria testar esse aparelho". E para minha surpresa, alguns dias depois a Ice Whale, que é a dona do Zimabard, me mandou um e-mail perguntando se eu não queria testar exatamente o Zimaboard 2 de 16 GB.
+
+Então, hoje é isso que a gente vai fazer. a gente vai ver como que esse aparelho aguenta rodar LMS e quais modelos vão caber nesses 16 GB. Então, tecnicamente, nesse vídeo aqui, nenhum dinheiro mudou de mãos, mas como eu recebi o aparelho, eu vou colocar aquele cardzinho de vídeo patrocinado aqui e eu vou deixar o melhor pro final, porque provavelmente vocês já viram aí no Birow que tem ali um slot, uma entradinha diferente e para rodar LM aquilo muda o jogo. A gente vai ver nesse vídeo aqui. Mas vamos lá pra tela, pra gente colocar a mão na massa. E antes da gente ver os
+
+tokens por segundo fluindo aqui, deixa eu só mostrar rapidinho aqui, ó. Essa daqui é a cara do Zima OS, que é o sistema operacional que tá rodando lá no Zimabo isso é uma coisa legal do ZIMOS também, que ele é bem focado em rede, né? Então meu Zimaboard, ele tá lá atrás e eu tô acessando ele através da rede aqui no navegador do meu Mac. Então, basicamente, eu controlo ele 100% remotamente. E o mais curioso é que a primeira coisa que eu pensei quando eu recebi esse aparelho foi, pô, isso aqui vai dar um trabalho para eu rodar lm porque eu vou ter que instalar o Linux, desinstalar esses IMOS, configurar tudo.
+
+Mas não, na verdade, foi muito mais simples do que isso. Eu acabei usando exatamente os IMOS. Ele é todo baseado em contêiner. Ele inclusive tem uma app store aqui com várias coisas para você instalar com clique, inclusive Open Claw, Tay Scale, N8N, Ohama. Então, se a gente quiser rodar LLMs no olhama, é basicamente um clique aqui na App Store, muito simples. Hoje a gente vai rodar no
+
+Lama CPP e também foi muito simples de instalar basicamente via contêiner, via Docker. Então, acabou que eu tô usando de fato o Zima OS e eu vou te falar, adorei o sistema. Tô usando até para mais do que rodar ll, estou usando também para fazer o gerenciamento dos arquivos aqui. Muitas vezes eu gravo aqui no Macstudio, mas eu não edito aqui. Então eu tinha que ficar andando com pen drive de um computador pro outro. Eu não tinha um NAS, né, que é um
+
+network attached storage e basicamente usei uma board. Agora é o meu NAS. Mas vamos lá, vamos colocar a mão na massa agora. Vou abrir aqui o Lama CPP. E basicamente ele bloqueou meu popup aqui, meu Safari. Mas pronto, tá aqui aberto
+
+já. E eu já tenho um modelo aqui, ó, que a gente vai começar com ele, tá? LFM 2.5, 350 milhões de parâmetros. É um modelo muito pequenininho, feito pela Liquid AI. Esse modelo aqui, ele não vai
+
+ser o modelo mais inteligente do mundo, mas ele consegue fazer tarefas simples e por ele ser muito pequeno, ele roda em qualquer aparelho. Aqui pro nosso Zimaboard com 16 GB de memória, a gente vai tirar de letra isso aqui, tá? Então vamos lá. Primeira coisa que eu vou fazer é vou dar um oi aqui só pra gente ver um pouco da velocidade e não deu nem para piscar, tá? Ele entregou aqui pra gente de cara toda a frase, praticamente a 63 tokens por segundo. Nada mal para
+
+um modelo que a gente tá rodando na CPU. Inclusive o processador desse device é o Intel N150. E eu confesso que eu tô achando esse processador bem capaz. Mas vamos lá. O que que a gente consegue fazer aqui com essa LLM? Eu vou pedir
+
+para ela fazer o seguinte. Essa semana o Google lançou o Gema 4, o novo modelo open source deles, né? E esse daqui é uma família de modelos incrível que a gente vai testar na Zabard também. Mas o que eu quero pegar agora é essa página aqui. Então aqui a gente consegue marcar para ver como markd. Eu vou copiar então
+
+todo esse texto aqui da página que é o model card do modelo. E eu vou pedir então pro LFM falar um pouco sobre o modelo em português pra gente baseado no que é o conteúdo do card. Então colhei aqui o texto de anúncio do modelo e eu tô pedindo me explica um pouco sobre esse modelo em PTBR, tá? Vamos ver aqui o resultado. A gente vai ver um pouco aqui sobre o a gente vai conseguir ver o tempo de processamento dele desse prompt que não é muito grande, mas não é também muito pequeno. E a gente também vai
+
+conseguir ver quantos tokens por segundo vai ter na resposta. Então aqui a gente teve uma entrada com 5449 tokens, não é tão pouco token assim não, tá? E a velocidade de processamento foi de 142 tokens/ segundo. Levou ali 38 segundos para processar e já tá respondendo pra gente. A resposta tá numa velocidade muito interessante, 25 tokens por segundo. Só que ele alucinou um pouco
+
+porque ele não respondeu pra gente em português. O que eu vou fazer agora é basicamente pegar então essa resposta, vou criar um novo chat aqui e eu vou pedir para ele traduzir para português. E aí vamos ver se ele vai traduzir pra gente. E agora a resposta é muito menorzinha, né? Eu espero que ele seja um pouco mais rápido. Então aqui ele já
+
+foi bem mais rápido porque ele só teve que processar 719 tokens, né? Então levou só 4 segundos e ele tá cuspindo ali a resposta pra gente a 50 tokens por segundo. Então a gente vê que quanto mais aumenta o contexto, mais devagar fica o processamento dos tokens. Então para pouco contexto a velocidade é simplesmente incrível aqui. E aí ele deu aqui uma resposta pra gente, tá? em
+
+português, como a gente pediu. E agora, como último teste aqui com LFM, eu vou pedir para ele conte uma história, porque assim a gente não tem nenhum prompt gigante para processar e aí a resposta é bem mais rápida, a gente consegue ali em torno de 55 a 60 tokens por segundo. Vamos pro próximo modelo agora que é o Quen 3.5 de 0.8 bilhões de parâmetros. Ah, uma coisa
+
+importante, tanto LFM quanto esse Quen aqui, a gente tá rodando ele na versão Q8. Se a gente rodar uma versão Q4, por exemplo, vai ficar mais rápido, mas vai perder um pouco de qualidade. E vamos começar com uma mensagem simples aqui, só pra gente ver a velocidade de resposta. Então, oi. Esse é um modelo que, na verdade, o o 0.8 devia vir com
+
+reasoning desativado. Não sei porque que tá ativado, mas ele é um modelo que tem a possibilidade de reasoning e ele consegue enxergar imagens também que a gente já já vai testar. Deixa eu parar aqui porque ele tá pensando muito para responder um oi. Mas ele conseguiu ali uma velocidade por volta de 20 tokens por segundo. Eu vou apagar essas mensagens aqui do meu chat e agora eu vou passar uma imagem para ele. Vou
+
+passar essa imagem aqui para ele. Aqui tem um texto. Eu vou ver se ele consegue extrair esse texto. Então, ó, processou ali a nossa imagem, levou 30 segundos, 29 tokens por segundo, tempo de processamento. E aí já tá dando aqui a resposta pra gente, ó. A resposta levou
+
+10 segundos para entregar 21 tokens por segundo. Então no topo tá escrito: "Sem a escuridão não vemos as estrelas". No canto inferior esquerdo tá escrito Sérgio Frank. E não é que tá mesmo? Aqui ó, eu nem tinha visto isso aqui. É
+
+maneiro, show de bola. Então beleza, né? Quen 3.5 0.8 rodando aqui a aproximadamente 20 tokens por segundo.
+
+Vamos pro próximo. Agora a gente vai para ele. Modelo sensação do momento Gema 4 de 2 bilhões de parâmetros Q8. Vamos começar com o nosso prompt simplão aqui do oi pra gente ver, ó, se ele tá processando, tá pensando aqui. Esse modelo aqui, ele é meio 2 bilhões de parâmetros fake, porque ele tem embedgings bem pesados que tornam ele um pouco mais difícil de rodar, mas mesmo assim o Zima Board tá tirando de letra aqui, ó. Ele tá entregando pra gente
+
+oito tokens por segundo no pensamento e já tá respondendo aqui pra gente. Acabou pensando muito para responder um oi, né? Mas ok. Assim como Quen, esse modelo ele também tem a capacidade de enxergar. Então eu vou mandar essa imagem aqui. Eu
+
+vou pedir para ele descrever. Descreva essa imagem, ó. Terminou aqui de processar, levou 28 segundos, 10 tokens por segundo para fazer o processamento da imagem. E detalhe, eu tô com mais de um modelo carregado na memória. Deixa eu descarregar aqui o Quentin 3.5 de 0.8.
+
+Como esses dois modelos são pequenos e só um tá rodando nesse momento, não vai fazer tanta diferença aqui para os nossos tokens por segundo, não, mas vai fazer diferença já já, quando a gente for carregar um modelinho um pouco maior. Então ele tá dando aqui pra gente que a imagem é um render 3D de um personagem de estilo lúdico e amigável com cores vibrantes. Personagem com estilo de mascote animado, o fundo é completamente preto e o personagem principal é de uma cor verde claro, verde limão, com uma forma bbosa e macia. E aí ele fala aqui um pouco dos elementos, do estilo e da atmosfera. E ele dá um resumão aqui. Show de bola.
+
+Mas agora o negócio vai ficar sério porque a gente vai dar um salto aqui de parâmetros. Agora a gente vai rodar o nosso Quen 3.5 de 9 bilhões de parâmetros. Ah, uma coisa legal é que enquanto tá carregando, a gente consegue ver aqui todos os dados da nossa CPU, tá? Então aqui, por exemplo, a gente tá vendo quanto tá consumindo de energia e ó, agora ele tá carregando lá na memória. A gente consegue ver essa
+
+mudança aqui, ó. Então, a CPU trabalha mais, agora já deve ter carregado, né? E ele me fala aqui quanto da RAM tá sendo ocupada nesse momento por conta do nosso modelo. Então, pronto, o nosso modelo já tá carregado, tá? Quen 3.5, 9 bilhões de
+
+parâmetros. Esse aqui a gente tá rodando Q4. Então, vou começar aqui com o nosso clássico Oi. E aqui, ó, ele tá entregando pra gente quatro tokens por segundo. Não é ruim pro modelo de 9 bilhões de parâmetros que tá rodando basicamente na CPU. Agora ele respondeu,
+
+mas ele levou 3 minutos para responder. Qual que é o problema aqui? O problema é que ele pensou demais, né? Então, os modelos do Quen eles pensam bastante. Quando a gente vai rodar ele num hardware que não tem uma GPU potente ainda, fica aqui no vídeo, hein? Ele
+
+acaba que passa muito tempo para responder coisas simples. Como que a gente resolveria isso? Desligando o modo thinking. Talvez seja skill isso, tá? Mas eu não consegui desligar aqui na interface do olhama CPP. Mas se ele
+
+tivesse desligado aqui, aí, pô, a resposta ia ser bem rapidinha. E esse modelo aqui, o Quen 3.5 de 9B, ele é um modelo muito capaz. Vamos então testar um próximo modelo, um modelo maior do que esse inclusive, só que o nosso primeiro mixture of experts. Eu tô falando aqui do GPTOSS. O GPTOSS é um
+
+modelo de 20 bilhões de parâmetros, só que ele só ativa 3.6 bilhões desses parâmetros. Então ele vai acabar que vai ser mais rápido do que o Quent. 9 bilhões de parâmetros densos. E apesar dele não ser um modelo muito novo, esse daqui também é um modelo bastante inteligente, principalmente considerando a velocidade e o tamanho que ele consegue ter. Vamos lá, vamos dar o
+
+nosso primeiro oi aqui, ó. E aqui, ó, a gente tem então o reasoning dele a sete tokens por segundo. E olha só, ele pensou muito menos para responder. Então, todo o processo acabou sendo muito mais rápido. Enquanto o Quen 3.5
+
+levou 3 minutos para responder um oi pra gente, o GPT USS respondeu em 5 segundos e ele conseguiu uma taxa aqui, ó, de 7.24 24 tokens por segundo. Vou pedir para ele criar um site sobre uma loja de pets aqui pra gente. E a gente consegue ver a CPU trabalhando legal aqui, ó. 12 W, 97, 99% agora e a 65º. Tá pensando
+
+aqui, ó, a mais ou menos 6, 7 tokens por segundo. Vamos ver em quanto tempo que ele vai criar esse site pra gente. Ó, já começou a gerar aqui pra gente, tá mantendo ali uma taxa de 6.59 tokens por segundo. Nada mal. Só que, pelo visto,
+
+ele vai fazer aqui em múltiplos arquivos e ele tá prevendo que tivesse algumas imagens que a gente não tem. Tudo bem, as imagens vão ficar quebradas, mas a gente vai conseguir ver se o se o site vai renderizar, né, como que ele vai ficar. Ó, ele tá fazendo aqui ainda uma validação de e-mail. Já tá finalizando aqui, ó. Levou mais ou menos 8 minutos para escrever todo o código e agora tá só fazendo os finalmente. A taxa de
+
+tokens por segundo caiu um pouquinho para 5.75, mas para um modelo que tá rodando na CPU, OK. E aqui a gente tem o nosso site, ó, loja de Pet, tá? Ver produtos. Vem para cá, tem um formulário de contato. Aqui tem um footer e é uma
+
+página bem simples, né? Mas a gente fez ela rodando no Zima Board. Ó, no total levou 9 minutos e 26 segundos, 5.65 tokens por segundo. E agora a gente vai dar aquela exagerada, tá? Isso daqui é
+
+improvável, tá? Não sei nem se vai rodar, a gente vai testar agora que é o Gema 4, 26 bilhões de parâmetros, mixture of experts com 4 bilhões de parâmetros ativos. Pra gente conseguir rodar esse modelo nesse device, a gente precisa rodar ele com bastante quantização. A versão que a gente vai rodar aqui é uma versão Q3, 3 bits de quantização para poder caber nos nossos 16 GB do Zima Board. O Zima Board 2, ele tem dois modelos. Ele tem um modelo com
+
+8 GB de memória RAM e um modelo com 16 GB de memória RAM. Então, hoje a gente tá rodando no dia de 16. A propósito, apesar desse vídeo não ser um vídeo patrocinado, eu vou deixar um link de afiliado aqui embaixo, tá? Se você achar que o Zimabard é para você, compra por esse link que você ajuda o canal. Ó, modelo carregado aqui. Vamos lá, vamos
+
+dar um oi. E ele tá respondendo pra gente. Cara, só desse modelo carregar e responder, mesmo que seja dois tokens por segundo, é simplesmente incrível. Ó, esse daqui é uma versão Q3 KXL do UNSOTH e ele tá respondendo a gente aqui, ó. Até tá aumentando, ó, 3.3. Que curioso,
+
+né? Normalmente todos os modelos que a gente testou, a taxa de tokens por segundo, ela vem diminuindo e o gema tá aumentando. Na verdade, olha só, cara. Ele conseguiu então entregar pra gente uma taxa de 4.13 tokens por segundo. Que
+
+maneiro. Vamos ver se ele consegue enxergar uma imagem aqui. Eu vou carregar essa imagem aqui que tem várias placas e eu vou pedir para ele descrever cada uma dessas placas. Ó, ele já começou a responder aqui pra gente. Irregularidade no pavimento, declive acentuado. Na verdade, esse daqui é o
+
+thinking dele, né? Mas a resposta final provavelmente vai seguir isso aqui. Curvas sucessivas primeira à esquerda, curvas sucessivas, primeira direita. Nossa, que esquisito, né? Bem, cruzamento, interseção em T e assim por diante. Ó, agora ele começou a responder
+
+aqui pra gente, levou uns 3 minutos ali pensando e ele tá aqui com uma média de 4.24 tokens/ segundo. Ó, ele tá dando aqui meio que o nome das placas e ainda dando uma breve descrição, né? Show de bola. Terminou aqui pra gente, então descreveu todas as placas, levou ali 6 minutos e 47 segundos a quatro tokens por segundo. E acho que a forma de
+
+pensar sobre isso aqui é que só desse modelo tá rodando nesse computador já é incrível. Talvez você esteja pensando, Igor, quatro tokens por segundo é muito lento? Na verdade não. Se a gente pensar que tá rodando na RAM e tá rodando no CPU, não é tão lento assim, mas sim, é lento comparado com outras formas de rodar. Talvez o comparativo mais simples aqui seria o Mac Mini, por exemplo, que também tem 16 GB de memória RAM e provavelmente vai rodar esse modelo mais rápido. Então, qual seria a diferença
+
+desses dois aparelhos? Bem, o MC min é incrível, só que ele não é expansível. você não consegue trocar o HD dele, por exemplo, coisa que com zimabard é natural, você consegue adicionar um novo HD tranquilamente, muito fácil. Ele inclusive é feito para isso, né? Ele naturalmente se torna um Nas, então conectar HD nele é algo muito fácil. Mas
+
+tem uma outra coisa que é muito fácil fazer nele também, que tem a ver com essa entradinha aqui, ó. O Zimabo Board ele vem com essa entrada aqui, ó, que é uma entrada PCI Express 3.0. Então aqui dá para expandir bastante esse hardware, inclusive placas de vídeo. Dá para você conectar uma placa de vídeo aqui. E sabe
+
+para que que eu tô usando essa entrada PCI Express? Deixa eu te mostrar. Esse aqui é meu setup atual com a Zima Board, tá? Que então aqui tá a Zima Board, é só esse negocinho. Ele tá preso agora num hack de HD. Eu tenho um HD mesmo e um
+
+SSD ali. E eu adicionei essa ventoinha aqui. Acho que eu tenho até um biroll colocando essa ventoinha. Mas o mais legal é que, olha só, se a gente olhar aqui, vem um cabo aqui do PCI, né, que passa para cá, que liga nessa placa, que liga nesse cabo, que liga numa GeForce RTX 5060 Ti. Então, agora a gente tem uma placa de vídeo de verdade rodando através do Zimaboard. Então essa é uma
+
+placa que eu queria trazer pro canal já há bastante tempo, porque é uma placa relativamente acessível no Brasil e eu não precisei montar um novo computador para colocar ela. Aqui a gente tem uma base, essa base aqui aguenta até 800 W, então daria para rodar, acho que a 5090 daria para rodar aqui, mas a gente tá com a 5060 Ti, que ela tem 16 GB de V RAM e uma taxa de transferência de 450, acho que 440 GB/ segundo. Então é uma taxa de transferência bem mais rápido do que a Memorial Run. E a gente vai testar agora. E basicamente primeira coisa que eu vou fazer aqui é ligar esse toggle aqui que eu tava escondendo de vocês o fato que a gente tinha uma Nvidia GeForce RTX 5060 Ti ligada no nosso Zimaboard. Então até então a gente
+
+estava rodando tudo na RAM do aparelho. Agora a gente vai rodar na Vrun. E para jogar toda a carga pra VRUN, nesse caso aqui vai ser muito fácil. Eu vou abrir aqui os settings do meu Loma CPP. Eu vou habilitar aqui enable all available NVID GPU. Salvar.
+
+E eu vou dar um restart. Ó, ele já descarregou lá da nossa memória, tá? E já vai abrir aqui pra gente. Pronto. Agora vamos logo no no monstro lá. Vamos
+
+aqui no Gema 4, 26 bilhões de parâmetros A4B. Se eu olhar aqui no Zima, ó, a gente vai começar a ver enchendo aqui, né? Quer dizer que a gente tá carregando o modelo agora na GPU. E a gente pode ver que a RAM ela não tá cheia mais porque toda a carga tá vindo pra placa de vídeo. E ó, esse modelo é grande, tá?
+
+Então vai quase no limite lá. modelo carregado. Vamos dar o nosso oi. Oi. E olha o que que a gente tá conseguindo aqui, ó. 79
+
+tokens por segundo. Cara, isso é absurdo. É um modelo Q3 ainda. A gente tá usando a versão Q3 porque mesmo rodando na placa de vídeo, essa placa de vídeo, ela tem 16 GB de V RAM, como a gente viu, ocupou quase 100%, né, da VRAM dela. Mas agora a gente tem uma velocidade muito maior, né? Então, se eu
+
+pedir a mesma coisa para ele, ó, descrevo o significado de cada placa. Olha essa velocidade de processamento aqui, ó. Muito mais rápido. Muito, muito, muito mais rápido. Ele vai acabar isso aqui, sei lá, em 30 segundos, menos. Acabou. 21 segundos. Ele leu a
+
+imagem, processou a imagem, entregou o resultado pra gente. 26 bilhões de parâmetros rodando localmente. Tá bom para você? Já vale aquele hype? Se não tiver bom, vamos um pouquinho mais.
+
+Deixa eu descarregar esse modelo aqui, senão não não dá para botar dois modelos grandes juntos, né? Deixa eu criar um novo chat. E aqui a gente vai selecionar esse modelinho aqui, ó. Estamos falando do Quen 3.5 de 35 bilhões de parâmetros, que tem 3 bilhões de parâmetros ativos.
+
+Esse modelo vai ocupar também quase 100% aqui da nossa VRAM e também é um modelo com capacidade de visão. Vamos ver se ele vai ser um pouquinho mais rápido ou um pouquinho mais lento do que o nosso Gema. Na verdade, ele acabou um pouquinho mais leve, ó. 13.5 5 GB que ele ocupou aqui, já carregou e a gente pode ver um pouco das características dele clicando aqui. E essa daqui é uma
+
+versão Q2, por isso que ele ocupou um pouquinho menos, né? A Q3, por ele ser 35 bilhões de parâmetros, ela ia ficar um pouco demais pros 16 GB. Mas vamos lá. Oi. 80 tokens por segundo, 83 tokens por segundo, tá? Esse aqui também é um
+
+modelo com capacidade de visão. E a gente tem aqui o benchmark do Quin 3.6 Plus. E eu vou pedir para ele fazer uma tabela para mim baseada nessa imagem aqui, ó. Vamos ver a velocidade de processamento dele. Então, ó, terminou de processar a
+
+imagem, tá começando a responder pra gente, ó. E ele tá então entendendo, né, o que que tá acontecendo ali. E eu quero que ele entregue pra gente uma tabela. Essa parte do thinking, ele tá fazendo aqui, ó, 78 tokens por segundo. E a gente também tá vendo aqui um aumento, né, gradativo, pequena, mas tá aumentando, provavelmente vai chegar a 79 aqui. E aqui tá o nosso resultado.
+
+Então ele criou uma tabela, tá, com todos os benchmarks que tinham ali. Inclusive, ó, aqui o Gemini Pro, por exemplo, não tava nesses daqui, só nos de baixo. GLM5 não tá nos de baixo, só nos de cima. E ficou direitinho. Tudo isso em 30 segundos. Então, realmente,
+
+quando a gente coloca uma placa de vídeo, aí o jogo é completamente diferente. Inclusive o Zimaboard com a 5060 Ti permite que a gente rode também o Confi Mas aí a gente vai deixar para rodar o Confi num outro vídeo onde a gente vai falar especificamente da 5060 Ti, que cara, eu também tô gostando bastante. Eu tô completamente alucinado com esse combo, ó. Tá aqui, ó. Aqui a placa 5060 Ti, aqui o Zima Board, tá?
+
+Então, olha só o espacinho que ocupa quase nada. E basicamente a gente tem um computador inteiro ali, tem um sistema de inteligência artificial inteiro. Daria para eventualmente até trocar aquela placa. E cara, pro que eu faço aqui pro canal, que provavelmente no futuro eu vou ter outras placas para testar, ter essa facilidade aqui para trocar as placas, né, pô, vai me ajudar muito. E fora isso, o próprio Zimabo Board tem me ajudado no canal também com a questão da transferência dos arquivos.
+
+Eu quero saber de você, o que que você achou do Zimabo? Você quer um vídeo comparando ele com o Raspberry Pie, por exemplo? Inclusive agora a gente tem vários modelos, né, pequenos que são muito inteligentes, como 3.5 também. Agora o novo Gema 4, né, que tem o modelo de dois de 4 bilhões de parâmetros. Eu quero saber se você
+
+gostaria de ver um vídeo comparando Zimabard versus Raspberry Pi frente à frente ali. Se você quiser ver esse vídeo, deixa aqui nos comentários, mas também se inscreve no canal para não perder quando ele sair. Agora, se você não quiser esperar, já assiste o vídeo onde a gente falou sobre o Raspberry Pi rodando LLMs locais. Vou deixar nesse card aqui. E se você quiser ver um Mac Mini rodando LMS locais, dá uma olhada nesse vídeo aqui. É isso aí, vou ficando
+
+por aqui, até o próximo vídeo.

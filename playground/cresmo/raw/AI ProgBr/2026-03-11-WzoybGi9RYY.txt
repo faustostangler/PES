@@ -1,0 +1,163 @@
+---
+video_title: "NVIDIA Nemotron-3-Super é MELHOR que GPT-OSS e Qwen 3.5 122B?"
+video_id: WzoybGi9RYY
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WzoybGi9RYY
+video_date: 2026-03-11T23:12:33+00:00
+video_description: |
+  NVIDIA Nemotron-3-Super-120B testado localmente: velocidade, raciocínio,  janela de contexto de 1 milhão de tokens na prática e com cutoff de conhecimento de fevereiro de 2026.
+  
+  O NVIDIA Nemotron-3-Super-120B chegou com uma promessa ambiciosa: ser inteligente e rápido ao mesmo tempo, graças à arquitetura Mixture of Experts com Mamba 2. Mas promessa no papel é uma coisa. Rodar de verdade na sua máquina é outra.
+  
+  Então peguei o Mac M3 Ultra, carreguei o modelo via LM Studio com a versão GGUF, e fui testando tudo que consegui: velocidade bruta, leitura de um PDF técnico de 51 páginas, geração de sites com e sem raciocínio ativado, e até um jogo inspirado em River Raid feito do zero em HTML e Three.js.
+  
+  Teve coisa que surpreendeu. Teve coisa que deixou a desejar. E teve um detalhe técnico sobre o treinamento em NV FP4 que muda bastante a conversa sobre quantização. Vale assistir até o fim pra entender onde esse modelo realmente brilha, e onde você ainda vai precisar de outro.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytainemotron
+  
+  _______
+  
+  0:00 Intro
+  0:52 Documentação
+  5:20 Teste de Velocidade
+  6:18 Teste com PDF
+  9:00 Landing Page sem Thinking
+  9:59 Landing Page com Thinking
+  11:18 Jogo 2D (Canvas)
+  12:29 Jogo 3D (Three.js)
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Ih, eu consigo pra frente. Ó, a Nvidia acabou de lançar um novo modelo open source, o Nemotron 3 Super. É um modelo de 120 bilhões de parâmetros com 12 bilhões de parâmetros ativos, ou seja, mixture of expert do jeito que a gente gosta. Isso faz com que a gente consiga ter um modelo que é bem inteligente, mas também bem rápido. Só que com 120 bilhões de parâmetros, ele acaba sendo um pouco grande também. Ele tem mais ou
+
+menos 80 GB. E eu adoraria est testando hoje num Didx Park, ouviu? Nvidia [risadas] mando para nós. Mas como eu não tenho acesso a um ainda, ouviu Nvidia? [risadas] O vídeo vai ser todo assim. A gente vai
+
+rodar no Mac M3 Ultra de 256 GB que eu tenho aqui. Ouviu Apple? Manda o MacBook M5 Max que nós testa também. Vamos lá pra tela, ver um pouquinho sobre o modelo e botar a mão na massa. Nvidia Nemotron 3 Super. É Nemotron ou
+
+Nemotron? Sei lá, tanto faz. 120 bilhões de parâmetros, 12 bilhões de parâmetros ativos com a versão NVFP4. E isso daqui é algo bem interessante. Já vamos falar sobre isso. Resumando o
+
+modelo a 120 bilhões de parâmetro, 12 bilhões de parâmetros ativos. Tá, já falei isso. Arquitetura mixture of expert com mamba 2. Isso daqui é importante pra gente conseguir ter um contexto bem grande. E ele tem 1 milhão de tokens de contexto. A gente chegou na
+
+era onde basicamente todos os modelos estão saindo ou a maioria deles mais ou menos desse tamanho aí, 120, 200 bilhões de parâmetros, estão vindo com 1 milhão de tokens. Que loucura. Mas também excelente. Qual que é o mínimo requerido? Uma H100 de 80 GB. Pois é, a
+
+gente não tem uma H1 de 80 GB, mas a gente tem um Mac aqui que permite que a gente rode open source disponíveis. Se a gente tivesse um DJX Spark, a gente ia testar nele também, porque o DJX Spark tem 128 GB de RAM unificada, assim como o Mac, né? Então ele também conseguiria tranquilamente rodar esse modelo por conta da largura de banda, provavelmente ele rodaria um pouco mais lento do que o Mac, mas essa versão NVFP4 aqui que é uma versão de 4 bits da Nvidia, ela ajuda legal ali o DJX Park a ir um pouco melhor. Linguagens suportadas: inglês, francês, alemão, italiano, japonês, espanhol e chinês. Não tem português aqui. Mas será que ele fala português? A
+
+gente vai ver. Então ele é bom para workflow agêntico, pensamento de contexto longo, to use, rag. Isso aqui é legal, ó. Ele tem reasoning, tá? Então é um modelo que pensa, mas que você pode ativar ou desativar. Você pode,
+
+inclusive, eu acho, que escolher se você quer ele pensando muito ou pensando pouco. E a licença dele, Nvidia Animotron Open Model License. Você consegue usar essa licença comercialmente, mas te indico sempre dar aquela lida antes de usar, que é importante. Ah, eu não falei do NV FP4, né? A Nvidia tem treinado alguns modelos já em 4 bits. Normalmente os modelos são
+
+treinados em 16 bits e para você rodar 4 bits, você faz a quantização e aí você tem um pouco de perda ali da qualidade do modelo. Quando o modelo é treinado em 4 bits, então a 4 bits você não tem nenhuma perda, o que é excelente, né? Outra coisa muito interessante desse modelo é que olha só, ele passou pelo processo de pré-training com do conhecimento dele até junho de 2025, já no pré-treino, tá? Mas o pós-treino dele adicionou mais coisas. Então, caref é de fevereiro de 2026, é muito recente, a gente não tá nem na metade de março ainda, então, pô, que legal. Modelos
+
+estão cada vez mais, né, sabendo as coisas recentes ali das fofocas. Ó, aqui, ó, aquele lance em relação às perdas. A gente vai ver em alguns benchmarks aqui o número um pouquinho menor paraa versão NV FP4, mas em alguns casos ela vai est até acima da versão FP8 e da versão 16 bits. Em todas elas, ó, ela tá basicamente na mesma faixa. Essa aqui talvez seja que tenha um gapzinho maior. A gente vê em alguns
+
+casos superioridade. Aqui, aqui. Vamos ver na parte de código. Cadê o código? Aqui, agêntico. Live code bench. Ó, para
+
+live code tá a par com a versão 16 bits. Ó, até procurei aqui para confirmar e sim, ó, ele foi treinado, então, em NVP4 e é por isso que ele não tem perdas tão aparentes. Aqui a gente tem um pouco sobre o design do modelo, né? Então, Lateni, aqui mais uma vez, ó, treinado, pré-treinado com NVFP4, então ele é o primeiro Nemotron 3, mas a gente tem alguns layers dele que foram BF16 e MX FP8, que aí dá mais estabilidade no treinamento. Legal.
+
+Então, tem alguns layers que tem mais bits e às vezes quando a gente quanto, que ele vem lá dos 16 bits para todos os layers, a gente pode quantar só alguns layers e manter os outros na precisão original, quando a gente sabe que aqueles layers ali são mais importantes para manter essa estabilidade. Dá para fazer isso também, provavelmente é isso que é feito nesse modelo, na versão de 4 bits dele. Tanto que se a gente olhar aqui no LM Stúio, quando a gente vai da versão Q8 pra versão Q4, a gente sai de 128 GB para 86 e não para em torno de 60, como seria se a gente tivesse quantizado todos os layers. Já que a gente já tá aqui, vamos começar a colocar a mão na massa. Mas a última coisa que eu queria falar sobre o modelo é que ele tem a capacidade de fazer multitoken prediction. Que que isso quer
+
+dizer? Normalmente o modelo no chamado ali feit forward dele, né, numa passada ali para prever o token, ele prevê um único token. E esse modelo aqui ele consegue prever múltiplos tokens de uma única vez, tornando ele mais rápido. E será que ele é rápido mesmo? Vamos testar ele aqui agora. Vamos começar com
+
+aquele prompt tosco, só pra gente ver um pouco de velocidade. Então, conte uma piada e eu vou já desativar aqui o modo thinking, tá? Porque eu só quero saber de velocidade. Então aí não precisa pensar pra gente não, só responder. Vamos lá, ó. Então, show de bola.
+
+Lembrando, a gente tá rodando aqui no Mac M3 Ultra com 256 GB. Esse Mac, ele tem uma largura de banda de memória de 819 GB/S, né? E trouxe pra gente então uma velocidade de 34 tokens por segundo. Eu achava que ia ser um pouco mais rápido, confesso para você, tá? Principalmente aqui também levou 1.21 segundos pro
+
+primeiro token. Para um prompt que não tem quase nada, eu achei que podia ser um pouquinho mais rápido, mas é totalmente usável 34 tokens por segundo. Agora vamos julgar a piada que ele trouxe aqui, ó. Porque o livro de matemática estava triste? Porque tinha muitos problemas.
+
+É, é uma piada. Isso aqui é lindo de ver, ó. 1 milhão de tokens. Essa é a janela de contexto do modelo. Quer dizer que cabe bastante coisa aqui dentro.
+
+Então vamos pedir para ele resumir um PDF pra gente, ó. Eu vou pegar o paper aqui do próprio modelo, tá? Vamos ver quantas páginas tem. 51 páginas. E eu vou fazer duas coisas com ele. Primeiro
+
+vou baixar, vou carregar aqui no nosso chat e vou pedir para ele fazer um resumo. E eu vou te falar, um modelo com esse tamanho de contexto vai ser excelente para isso aqui, porque cabe o documento inteiro no contexto. Então, ó, não vou nem pedir para ele pensar, não. Só quero que ele faça o resumo mesmo. E, ó, ele tá processando prompt e não é dos mais rápidos, não, mas tá indo. Vamos
+
+esperar aqui. Tá? Pra esse vídeo aqui, eu tô usando a versão GGUF desse modelo, que é a que vai dar a possibilidade da gente ligar e desligar modo thinking aqui. Então, achei que seria útil. Tô usando essa versão. Provavelmente daria
+
+para ser um pouco mais rápido se a gente usasse a versão MLX. Eu gravei um vídeo lá pro meu canal de iOS experimentando versões MLX versus GGUF dos mesmos modelos para ver se realmente tem uma diferença usar a versão MLX nos Mac. Então, principalmente se você tem o Mac, esse vídeo é bem importante para você dar uma olhada lá, vou deixar aqui no card. Se você não tem o Mac, ou ainda não tem o Mac, assiste lá também, porque vai dar para você entender como que o MLX vai ser importante aí nos próximos anos com os novos chips da Apple, M5, M5 Max, M5 Ultra. Então tá lá no card. Ah,
+
+resuma este documento. Informe technical describer. Eu não sei falar espanhol. Vamos ver como que seria eu falando aquela primeira frase lá em espanhol. A propósito, tô gerando esse áudio aqui no modelo S2 Pro. Modelo incrível pra
+
+geração de áudio que a gente fez um vídeo aqui no canal, vou deixar o link aqui no card também, você consegue ter controle da fala, fazer clone com 20, 30 segundos de áudio. Bem legal esse modelo. Vamos ouvir aqui. El informe técnico describe o modelo Nemotron 3 Super, um modelo híbrido Mamba Transformer mixture of experts em de 120.000 milhões de parâmetros totais, 12.000 1 milhões ativos disenhado para
+
+racionamento a gente. Ah, lancei o espanhol bolado. Mas não é isso que eu esperava dele aqui, não. Fazer o seguinte, deixa eu abrir aqui esse PDF. Vou procurar uma parada aqui no meio dele. Deixa eu perguntar para ele aqui,
+
+ó, quais modelos foram usados para gerar os datas de treinamento. Aqui no PDF a gente fala sobre o GPTOSS 120B, né? Quen 3 255B A22. E é exatamente isso aqui que ele passou pra gente, ó. E tem vários outros, na verdade. Deixa eu procurar pr
+
+ver se é isso mesmo, ó. Realmente tem ali, ó. Minimx. Legal. Legal. Então ele
+
+foi treinado usando todos esses modelos. Agora ele respondeu pra gente em português, né? Então, olha só, a gente consumiu aqui nesse chat 49.000 tokens, né? Então, ainda tem, ó, 95% pra gente poder usar. Então, isso daqui
+
+é um bom modelo para você conversar com documentos, por exemplo, principalmente se você tiver documentos muito grandes. E ele parece ser bom nisso, né? Vamos agora fazer um teste de web design. Vamos pedir para ele criar uma página pra gente. Cria uma landing page de um app de corrida para iOS. Vamos ver o que
+
+que ele vai fazer aqui pra gente. Vamos lá. Ger aqui nossa página. Vou copiar e a gente vai ver se ficou legal. Run Pulse, o app de corrida para iOS que transforma cada passo em progresso. Com
+
+GPS preciso, tênos personalizados e motivação em tempo real. Vamos lá. Primeiras impressões aqui, ó. OK, fez o site pra gente, tem hover, mas eu diria que esse design daqui, quem são essas pessoas? Eu diria que esse design daqui ele tá muito abaixo do que eu esperava no modelo de 120 bilhões de parâmetros. Porém, ah, eu já ia falar,
+
+pô, ele acertou todas as imagens e tal, mas pelo visto ele errou essas daqui. Mas tudo bem, de forma geral, conseguiu criar pra gente um site aqui, só que a gente usou a versão dele sem pensamento ligado. Se a gente ligar o pensamento, será que o resultado é melhor? Vamos ver. fazer o seguinte, vou ligar aqui o nosso modo thinking. Aqui nas
+
+configurações eu consigo habilitar inclusive se eu quero pouco esforço ou muito esforço. Eu acho que assim, né, desligado o low effort, quer dizer então que tá com o máximo de esforço possível. E eu vou regerar isso aqui agora. Agora ele tá pensando sobre o problema e a minha expectativa é que ele entregue pra gente um resultado um pouco melhor do que o resultado anterior. Pronto, acabou de gerar aqui pra gente, entregou pra gente 8.232 tokens a 33.64 64 tokens por
+
+segundo, que não é nada mau. Vamos copiar aqui. Corra com inteligência, não apenas com força. Ó, já gostei mais desse site aqui. Apesar de ter um cachorro no fundo, acho que não tinha muito a ver com a parada, mas eu achei que ele ficou, é, eu acho que o header tá melhor, mais clean, mas o restante tá bem parecido. Ah, aqui ficou melhor, né?
+
+Os depoimentos ficaram melhores do que no outro. É, esse site ele tá um pouco melhor do que a versão anterior, mas não é um salto absurdo não. Só que pr ser justo, esse não é um modelo feito pra código, né? Então, por exemplo, se a gente pegar esse aqui e comparar com Quent Next, por exemplo, que é um modelo de 80 bilhões de parâmetros, provavelmente o Quenter Next vai ser melhor em código, mesmo que o código seja HTML. Mas eu não vou desistir, não.
+
+Vou pedir para ele fazer mais uma coisa. Vou fazer o seguinte, vou usar e abusar dessa possibilidade de desligar o Eu ia fazer o Enduro. Você é novo demais. Enduro é um jogo de Atari, mas provavelmente você não sabe o que que é Atari também. É um videogame das antigas, da gente que é mais velho. Bem,
+
+eu fiz o enduro aqui em alguns vídeos, mas hoje eu quero fazer outro jogo. Vou pedir para ele aqui. Vamos ver. Você conhece o jogo River Raid? Vamos ver se ele conhece, né? Primeiro eu quero saber
+
+se ele conhece. Vou pedir para ele não pensar aqui, ó. Conheço. Uh, boa. Agora sim. Agora eu vou deixar ele pensar para
+
+ele criar pra gente. Ela perguntou se eu já joguei. Já joguei muito e agora vou pedir para você criar aqui para nós. Vamos lá. Vou pedir para ele criar então o nosso joguinho aqui usando HTML CSS para usar canvas ali para desenhar a interface. Eu quero um jogo bem 2D
+
+mesmo. Ele poderia usar 3JS, por exemplo. Talvez eu peça para ele na sequência, mas eu quero ver como é que ele vai fazer com essas especificações. Bom, aqui ele já lançou aquela, né? Já deu para trás aqui. Tá fazendo o básico
+
+do básico, mas tudo bem. Vamos ver o que que vai rolar. Oi. Cadê? Como é que eu controlo isso? Eita. Ué.
+
+É. Ih, eu consigo pra frente, ó. Só cadê? Não atira, pô. Tá bom. É isso aí. Deixa tonto, né,
+
+essas ondinha. Vamos pedir para ele fazer uma versão usando 3JS. Tô achando interessante essas notas que ele dá aqui, né, porque não deixa dúvida do que de fato ele tá fazendo. Esse não é um River Ray 3D, porque o jogo original ele não tem profundidade, mas sim uma reinterpretação 3D estilizada. Legal, legal. Ele tá simulando um 2D
+
+puro através de uma câmera ortográfica. Pô, que legal essa explicação, cara. Potencial de colocar uma camada Z no futuro e a lógica idêntica a versão canvas. Não, aí não. Não ficou muito boa aquela versão não. Mas tudo bem. Se tu
+
+não me botar aquelas ondinhas, eu já vou curtir já. Aqui ele tá me dando então uma explicação detalhada de tudo que ele fez. Isso aqui é bem legal. Colocou aqui algumas limitações. Beleza. Ó, o espaço
+
+teoricamente era pr tirar. No outro jogo não tava funcionando. Ah, os círculos amarelos são os combustíveis. Legal. Vamos ver se funcionou ou não. Bem que
+
+eu bati ali. Deixa eu ver. Essa aqui é a versão antiga ainda, que eu quero bater no no círculo amarelo ali para ver se vai funcionar como combustível ou não. Não funcionou nada. Vamos testar a nova versão aqui então. E eu acho que a gente
+
+tem um problema aqui. Vou pedir para ele corrigir. A gente já tá aqui com contexto de 8.000 1000 tokens e começou a ficar um pouquinho lento o prefio aqui no Mac, mas isso acho que tem mais a ver com o Mac do que com o modelo em si. Propósito, a gente fez um vídeo aqui pro canal onde a gente fala sobre o M5 e o M5 Max e como esses processadores eles a princípio resolvem ou começam a resolver esse problema do prefil no Mac, né?
+
+Normalmente o pré-processamento ou processamento dos tokens de entrada no Mac é um pouco lento, mas no M5 ficou muito mais rápido. Vou deixar o link para esse vídeo aqui no card também. Ele tá me explicando aqui o que que ele corrigiu, o que que aconteceu. Show de bola. Eu quero saber se vai funcionar.
+
+Opa. Oi. Cadê? Não tô conseguindo mexer não. Bem, dessa vez o jogo ele compilou, mas primeiro ele tá vindo ao contrário. Tá ainda
+
+simulando. Parece ainda o mesmo 2D, né? Só que os controles não tão funcionando aqui não. Eu não tô conseguindo controlar nem atirar, nem mover para um lado, nem pro outro. E ele ficou meio doidão, mas bem, pelo menos compilou. Bem, esses foram os
+
+primeiros testes com Nemotron de 120 bilhões de parâmetros. Com quem que esse modelo compete, digamos assim? Normalmente não é uma competição, os modelos eles vão ser melhores para alguma coisa, piores para outra. Então esse modelo ali, ele estaria no mesmo nível do Quen 3.5 de 122 bilhões de parâmetros ou do GPT OS de 120 bilhões de parâmetros, mas por exemplo o Quentin 3.5 ele tem capacidade de visão, esse
+
+modelo não tem. Esse modelo aqui tem nativamente 1 milhão de tokens de janela de contexto. O Quent. Até consegue chegar nesse nível de janela de contexto, só que com rope e esse é nativo. Então cada um vai ter uma vantagem. Se você tiver trabalhando com
+
+documentos ali, esse modelo vai ser muito bom. Se você quiser ele para código, provavelmente daria para eventualmente treinar uma versão. Talvez a Nvidia venha com uma versão treinada para código Nemotron Coder. Seria interessante, né? Mas não é essa versão de agora. Se você quiser ver como que o
+
+Quen 3.5 de 122 bilhões de parâmetros se sai, aí eu vou deixar o link nesse card aqui. Agora se você quiser ver um outro modelo da Nvidia, só que de voz, que é incrível, Persona Plex, vou deixar o card aqui para você assistir como que você poderia usar esse modelo aqui para treinar o seu inglês, por exemplo, que esse modelo é incrível, tá? Assiste lá que vale a pena. E é isso aí, vou ficando por aqui, até o próximo vídeo.

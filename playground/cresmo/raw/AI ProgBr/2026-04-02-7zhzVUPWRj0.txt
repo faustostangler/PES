@@ -1,0 +1,191 @@
+---
+video_title: "Bonsai 8B vs Gemma 4 2B: Será que o modelo de 1-Bit funciona na prática?"
+video_id: 7zhzVUPWRj0
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7zhzVUPWRj0
+video_date: 2026-04-02T23:47:40+00:00
+video_description: |
+  O Google acabou de lançar o Gemma 4 e ele promete mudar o jogo das LLMs locais com suporte a visão e áudio! Mas será que ele consegue bater o exótico Bonsai 8B, um modelo que usa apenas 1-bit para caber em qualquer hardware?
+  
+  Neste vídeo, eu coloco o Gemma 4 2B frente a frente com o Bonsai 8B em testes de velocidade, geração de código (HTML/JS), resumo de textos longos e tradução. O Bonsai 8B da Prisma ML bombou no Twitter prometendo inteligência com um peso baixíssimo, mas será que ele é "lobotomizado" ou realmente funcional?
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaigemmavsbonsai
+  
+  _______
+  
+  0:00 Intro
+  08:03 Teste de Velocidade
+  09:22 Teste de Criatividade
+  10:03 Teste de Site
+  12:18 Teste de Código
+  13:45 Resumo de transcrição
+  15:06 Teste de Tradução longa
+  17:48  Teste de Tradução curta
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Olá, seja bem-vindo a mais um vídeo. E hoje a gente vai comparar dois modelos que acabaram de sair. Eu tô falando aqui do bonsai de 8 bilhões de parâmetros, mas só um bit de quantização, e do Gema 4 acabou de sair, a gente estava esperando há muito tempo. Esse Gema 4 vem com visão, entende? Áudio, parece brabo. Só que o GMA4 ele foi lançado em
+
+várias versões, tá? 31 bilhões de parâmetros, 26 bilhões de parâmetros, 4 bilhões de parâmetros e a que a gente vai ver aqui hoje 2 bilhões de parâmetros. E a gente vai comparar Gema 4, 2 bilhões de parâmetros versus bonsai de 8 bilhões de parâmetros com bit quantização. Ah, e o gema 4 de 2 bilhões que a gente vai comparar tem quant bits. E talvez você esteja se perguntando, Igor, mas pô, 8 bilhões de parâmetros contra 2 bilhões de parâmetros, que comparação é essa? Vamos olhar um
+
+pouquinho esses dois modelos e talvez a gente chegue à conclusão que isso faz sentido. Ou não, sei lá. Vamos ver. Vamos primeiro falar do bonsai. 8 bilhões de parâmetros, 1 bit de quantização, bombou no Twitter. A galera
+
+me pediu para fazer vídeo sobre ele, mas por que que um modelo de 8 bilhões de parâmetros está ganhando essa repercussão toda? Porque quant novo, tá? A gente usa quantização o tempo todo. Então a gente pega modelos muito grandes, quantiza ele para ele caber em hardwares menos potentes ou mais baratos. Até aí tudo bem. Só que
+
+normalmente a gente usa modelos até Q4, até quantização de 4 bits. Por quê? Se a gente quantizar mais do que isso, até dá para quantizar. É fácil quantizar até. Só que ele fica ruim, ele fica burro, ele não consegue nem responder. E é por
+
+isso que esse novo modelo da Prism ML tem feito tanto sucesso, porque só dele conseguir te responder qualquer coisa já é vitória. E pelo visto ele consegue, a gente vai testar aqui, mas vamos dar uma olhada aqui um pouco no card dele, ó. Então ele é um modelo que ele é tão quantizado que ele consegue caber em hardwares muito muito leves. Para você ter uma ideia, o arquivo dele vai ter só 1.15 GB de tamanho. Então tecnicamente
+
+você conseguiria rodar tranquilamente isso aqui até com espaço bom ali para contexto no hardware com 4 GB. Na prática, talvez 4 GB seja pouco, mas ele consegue rodar em hardwares Labs. Ele diz aqui que é de ponta a ponta 1 bit, né, em todos os pesos, em beds, attentions, mas isso aqui não é muito verdade, não. Dificilmente você vai conseguir ter um modelo que ele tem um bits em todas as camadas. Inclusive, mesmo quando a gente quantiza modelos, uma das estratégias pro modelo não ficar muito burro, não ficar lobotomizado, né, é você quantar certas camadas e manter outras camadas com precisão completa, ou seja, 16 bits às vezes 32 bits. E aí eu
+
+queria chamar atenção para algumas coisas aqui que me deixam um pouco em dúvida, né? Esse daqui é o gráfico do benchmark do bonsai de 8 bilhões de parâmetros. E ele colocou uma comparação aqui com alguns modelos do Quen, principalmente do Quen 3. Ele é baseado no Quen 3 de 8 bilhões de parâmetros, mas ele escolheu não colocar aqui, por exemplo, Quen 3.5, né, que tem uma versão de 9 bilhões de parâmetros que provavelmente estaria aqui. Mas de
+
+qualquer forma, quando a gente olha aqui a qualidade do bonsaio de 8 bilhões de parâmetros e compara com o próprio Quin de 8 bilhões de parâmetros, o Quen 3, a gente vai ver que o Quin 3 tá bem acima, né? Só que ele quis se colocar como um modelo muito leve, com excelente qualidade, mas ele tá comparando com que 3 de 8 bilhões de parâmetros com 16 bits, né? E se a gente quantasse ele para 8 bits, ele já cairia para cá, sem muita perda, estaria mais ou menos aqui, né? Se quantizasse para quatro, estaria aqui. Talvez tivesse alguma perda, mas ainda estaria acima do bonsai. E se
+
+quantizasse para dois, será que ele chegaria mais ou menos aqui no mesmo nível com um pouquinho mais de tamanho? E aí o bonzai já não seria, né, tão incrível assim. Então esse gráfico aqui, querer comparar o bonsai de 1 bit com o Quen de 16 me parece meio estranho. A não ser que o bonsai de 1 bit tivesse tido uma qualidade superior ao Quen com 16, aí seria show de bola, tranquilo. Mas nesse caso aqui não quer dizer muita coisa, né? Eu teria que ver qual perda
+
+de qualidade a gente teria num Quen 38B quantizado a 1 ou 2 bits. Aí sim a gente teria uma comparação interessante. E o bonsai tem outras versões também, 4B e 1.7B, tá? E se a gente pegar, por exemplo, 4B e comparar com Quen 3 de 4B, pô, a distância é muito grande. Então,
+
+talvez esse Quen 3 de 4B aqui bem quantizadinho com 4 bits já ficasse talvez interessante, né? Não sei. Acho que seria uma comparação que diria mais coisas pra gente, mas essa aqui foi a que eles escolheram fazer. Aqui é a mesma coisa, né? Ele dá esse gráfico pra gente que é inteligência em relação ao tamanho, mas ele tá comparando todos esses modelos aqui sem quant. Aí fica
+
+fácil, né? Porque, por exemplo, se eu quantizar esse modelo aqui a 8 bits, ele vai ter muito pouca perda, né? Mas ele vai ter praticamente o dobro de densidade, inteligência tamanho. Não faz sentido nenhum esse gráfico. Agora, para ser justo, se esse benchmark aqui for real, ele com 1 bit. E aí eu não sei
+
+também, né? Mas se ele tiver considerando esses outros modelos aqui com 16 bits, ele estaria muito perto ali do mini straw 3 ali de 8 bilhões também. Então aí beleza, aqui a gente tem algo interessante que a gente vai ver agora na prática. E aí vamos falar rapidinho aqui do Gema 4. Gema 4 acabou de sair, provavelmente vou fazer outros vídeos falando sobre eles, pegando toda a família de modelos, mas hoje eu quero focar aqui na versão de 2 bilhões de parâmetros, porque afinal de contas o bonsai ele tá se comparando com modelos um pouco mais antigos, né? Ele não tá se
+
+comparando aí com Quenten 6.5, que é um modelo que praticamente mudou LLMs locais, né? Porque ele é muito bom pro tamanhinho que ele tem. E o Gema 4 parece que tá indo no mesmo caminho. A gente vai ver que ele se diz aqui até melhor do que o Quin 3.5 em alguns
+
+casos. Mas uma coisa interessante aqui desse modelo é que ele foi lançado várias versões, né? 2 bilhões de parâmetros, 4 bilhões de parâmetros, 26 bilhões de parâmetros com mixture of experts com 4 bilhões de parâmetros ativos e 31 bilhões de parâmetros densos, tá? mais ou menos na mesma linha que o Quen foi. Também o Quen tem mais versões, mas essa daqui abrange bastante coisa. Incluindo que as versões de 2 e 4
+
+bilhões de parâmetros, elas foram feitas para rodar em devices bem fracos, como celulares, por exemplo. E elas trazem uma coisa muito interessante, que é a capacidade de entender áudio. Ela entende não só imagem, vídeo, como áudio também. As versões maiores não entendem áudio, mas entendem imagem e vídeo também. E quando a gente olha o gráfico aqui que eles liberaram, ó, a gente teria as versões maiores, né, de 31B e de 26B 3.5. Aí sim, ó, tá se comparando com o
+
+modelo que acabou de sair, né? Quen 3.5 de 397 bilhões de parâmetros. Se bem que daqui a uma semana a gente vai ver o Quentin 3.6, tá? Que já saiu a versão fechada
+
+dele, vai sair a versão aberta em breve. E aqui embaixo, ó, seria o Quentin 3.5, 27 bilhões de parâmetros. Inicialmente eu olhei aqui e achei, pô, acho que tem uma questão de escala aqui também, né? Mais ou menos, do 27 para 1442, provavelmente aqui do de 26, mixture of expert gema 4, não é algo tão grande assim, né? Mas se a gente comparar aqui
+
+o gap, por exemplo, do gema de 31 bilhões de parâmetros pro GLM5, que é um modelo de 700 bilhões de parâmetros, é bem menor do que esse gap daqui para cá. Então, talvez essa escala aqui seja bem justa. Mas vamos agora começar a colocar a mão na massa e a gente só vai ver mais uma coisinha que é o seguinte, ó. Então, bom, sai 8 bilhões de parâmetros, 1 bit quantização, ele ficou aqui com 1.2 GB.
+
+Esse vai ser o tamanho, né, do dos pesos desse modelo na memória. Já o GMA 4, 2 bilhões de parâmetros, ele ficou com 4.4 GB, mas esse daqui é um modelo que tem visão, né, ele consegue escutar áudio. Daria para tirar 1 GB aqui, né? Mesmo assim, ele ficaria mais pesado do que o bonsai 8B. O meu plano inicial era
+
+comparar o bonsai de 8B com o Quen 3.5 2B de 2.7 GB, que aqui eu já acho que fica uma diferença pequena. Se o Quen 3.5 for melhor com 2 bilhões de parâmetros do que o bonsai 8B, aí é melhor usar o Quen. Só que por que que
+
+eu tô usando gema? Porque ele saiu hoje, né? Isso vai ficar excelente na minha tamb e no meu título. Então é basicamente só por isso. Mas de qualquer forma é uma comparação de um modelo de 2 bilhões de parâmetros com modelo de 8 bilhões de parâmetros. a gente poderia
+
+até ir a mais fundo, se for o caso, quant esse modelo aqui para ver se ele aguenta uma quantização maior, mas a princípio vamos fazer ele com 4 bits mesmo. Vamos lá. Então, do lado esquerdo aqui, eu tenho o meu bonsai, 8 bilhões de parâmetros, 1 bit de quantização. Do meu lado direito, Gema 4, 2 bilhões de parâmetros, versão instruction. Ele foi liberado com versão instruction, que é a versão que a gente usa para chat, e versão base, que é a versão se você quiser treinar ele para alguma outra coisa. No nosso caso, eu tô usando o
+
+bonsaio aqui no lama CPP porque eu tive que compilar uma versão específica da Prism, né, compatível com um bit de quantização. O lama CPP oficial ele não tá rodando aqui o nosso bonsaiide 1 bit, nem o LM Studio, mas vamos lá. Primeira coisa que eu vou ver é velocidade dos dois, tá? Então, oi, me conte uma piada. OK. E aqui agora.
+
+Oi, me conte uma piada. Ah, uma coisa legal é que o nosso gema de quatro, quer dizer, gema 4, ele tem thinking, né? Só que ele tá dando essas tags de thinking aqui. O LM Studio, por padrão, não tá mostrando direitinho, mas tá aqui, ó. Essa daqui seria a resposta.
+
+Esse aqui seria o pensamento dele. Vamos lá. Velocidade 110 tokens por segundo com 4 bits de quantização, tá? 2 bilhões de parâmetros. 120 tokens por segundo, 8 bilhões de parâmetros. Um bit
+
+quantização. Interessante. Velocidade parecida, né? Uma diferença ali de um pouco menos de 10%. Legal. Uma coisa que
+
+eu já tô reparando aqui, se a gente olhar a piada que eles criaram, né? É, eles precisam de um pico para funcionarem. Seria um bico. Eu tô achando que esse modelo aqui ele não vai ser tão bom em português, tá? Aqui já seria o primeiro é dele. Mas a gente
+
+precisa destacar o seguinte, a gente pediu uma piada, ele respondeu uma piada, tá? Então, falando do ponto de vista de que sim, o Prismelo conseguiu fazer com que um modelo de um bit de quantização respondesse pra gente de forma decente, digamos assim, só isso já é vitória. Então, é sobre esse ponto de vista que a gente vai treinar aqui. Então, eu tenho quase certeza já que o Gema 4 vai se sair melhor em praticamente tudo que a gente fizer. Então, vamos pro próximo teste que vai ser o seguinte: crie o site de uma creche, tá? Vamos pedir aqui pro Bonsai,
+
+vamos pedir aqui pro Gema também, eles vão ficar mais lentos, né? porque os dois estão rodando ao mesmo tempo. Ambos estão rodando GGUF aqui na minha máquina. O gema aqui, ele não vai entregar pra gente o HTML, a princípio, ele vai fazer um planejamento bolado. E aqui ele criou um monte de trecho de código, né? Eu vou pedir para ele me
+
+entregar tudo em um HTML só. E aqui eu vou pedir para ele criar o HTML. Pronto. Ele tá me falando aqui que ele não tem acesso a ferramentas de desenvolvimento tempo real e não pode garantir código gerado. Será perfeito para ver o seu design. Exato. Interessante. Tudo bem,
+
+vamos ver o que que ele vai criar aqui e vamos ver o que que o nosso bonsai criou pra gente. Esse aqui é o resultado do bonsai. Acogida infantil. Será que era para ser acolhida? Não sei. Acogida
+
+infantil da Cresce do Sol. Tá vendo? O português dele não é bom. Compassão, cuidado, educação infantil. Português dele definitivamente não é bom. Mas
+
+cara, me surpreendeu, tá? Ele criou um site, né? Tá tudo aqui direitinho, digamos assim, e ele conseguiu entregar pra gente. Então, tá separado aqui, né? nas suas sessões, tudo certinho. Tem um
+
+footer aqui. Legal para um modelo de um bit de quantização. Mas agora a gente vai ver a versão do gema. Essa aqui seria a versão do nosso gema. É, a versão do gema tá um pouco melhor. Criou
+
+aqui um formulário, né? Tá bem mais separado. É um site muito simples, tá quase como um formulário de fato. É, se a gente olhar aqui o português, não consigo a princípio encontrar nada que me salte os olhos, tá? De erros assim.
+
+Então, me parece que ele lida bem melhor com português. OK. E aí, eu vou trazer aqui algo que eu tinha feito antes, só pra gente ter uma ideia, tá? Esse daqui é uma versão de um site de doces artesanais que eu tinha feito com Quen 3.5 de 2 bilhões de parâmetros Q4, tá?
+
+Então esse daqui tá diferenciado, tá? Esse daqui é um modelo de 2 bilhões de parâmetros Q4 e ele fez isso daqui. Então, em comparação com o próprio Gema, que depois a gente pode fazer um vídeo, né? Gema versus Quen 3.5. O Gema ficou
+
+um pouquinho para trás aqui na minha opinião nesse teste, mas ele ficou na frente do bonsai. Então próximo teste aqui com bonsai vai ser um teste para ver se ele consegue lidar ali com HTML, CSS e JavaScript. Deixa eu zerar aqui o gema que a gente vai fazer com ele também. Cria um jogo da memória com emojis. Vamos ver aqui os dois modelos trabalhando e vamos ver o resultado de cada um deles. Pronto. Aqui o que que eu
+
+espero aqui? Eu espero que o do Gema fique bom, fique um bom jogo, fique bonitinho, fique legal. O do bonsai eu só espero que funcione. Só dele funcionar eu já acho que vai ser incrível. Vamos começar com gema. Então
+
+essa aqui é a versão do gema 4. E tem algo errado aqui, né? Ó, quando eu clico, nada acontece. Vamos ver se tá tendo algum erro aqui. Não tá mostrando nenhum erro. Bem, ele não funcionou, mas
+
+tá até que tá bonitinho. Tá, tá bonitinho. E aqui a gente tem a versão do bonsai. Infelizmente não tem cartas aqui. Vamos ver se tem algum erro.
+
+Nenhum erro. Vou pedir para eles ajustarem, né? cada um fazer um ajuste. No caso do Bonsaiar, as cartas não estão aparecendo. No caso do Gema, as cartas já estão viradas e o clique não faz nada. Vamos pedir para eles ajustarem,
+
+então é. E aqui eu vou pedir para colocar resposta em um HTML único aqui. Vamos lá. Parece que o bonsai já consertou aqui. Vamos olhar ele primeiro. Então, bem, esse aqui foi o
+
+resultado do bonsai. Então, quando eu clico em nova partida, ele até randomiza lá o coisa, mas de qualquer jeito a gente não tem as cartas. Agora a nova versão do Gema basicamente não mudou nada, então ele não conseguiu consertar o problema pra gente. Os dois falharam nesse teste, mas você deve estar pensando, nossa, que modelos ruins não são modelos. Primeiro, um tem 1 bit quantização, o outro tem 2 bilhões de parâmetros só. Não são modelos de
+
+código. M. Próximo teste que eu vou fazer é o seguinte. Eu tô pegando o transcriptiona o Turbo Quantic, que é um paper que o Google liberou mostrando uma nova forma da gente quantar KV Cash e poder ter um contexto muito maior e máquinas muito menores. Para você entender direitinho o que que é, eu vou deixar o link aqui no card, mas vou pegar aqui o transcript dele e eu vou pedir então pros dois modelos fazerem bullet points para mim.
+
+Beleza? Mandando aqui pros dois. Os dois estão processando. Ó, o Gema processou mais rápido, tá? Mas ele tá respondendo aqui em espanhol. Ai,
+
+meu Deus. Aqui ele deu uma alucinada legal, né? Ponto pro nosso bons saai. E olha só aqui o que que eu queria ver com esse teste, se ele ia alucinar, né? Se qualquer um dos dois ia alucinar, ia começar a responder qualquer coisa aleatória. E não, ambos responderam da
+
+forma esperada, com bullet points, que foi o que a gente pediu, né? E apesar dos dois estarem rodando ao mesmo tempo, eles continuaram aqui com uma taxa parecida, com esperado. E aqui a gente pode ver um pouquinho, né, do que que eles responderam. Você pode pausar aí para ver o que o resumão ou você pode assistir o vídeo lá depois de assistir esse aqui. Aqui no Gem. Eu vou pedir
+
+para ele responder em português. Pronto, agora sim tá respondendo aqui em PTBR. E aqui ele dá uma organizada melhor, né? Responde com mais detalhes algumas coisas. Interessante. Show de bola.
+
+Então, os dois conseguem resumir coisas. E aí, a próxima tarefa que eu vou dar, aproveitando esse transcript, é pedir para eles traduzirem pro inglês. Eu vou rodar um de cada vez agora pra gente poder ver o tempo de processamento de prompt e o tempo de resposta sem est um concorrendo com o outro. Vamos começar com bonsai. Ó, ele tá processando aqui a mais ou menos 1000 tokens por segundo.
+
+Esse é um texto até relativamente grande. Ele vai ter mais ou menos uns 6.000 tokens de entrada, tá? Ah, uma coisa interessante, o bonsai ele tem uma janela de contexto de 65.000 1000 tokens. Enquanto o Gema 4 ele tem uma
+
+janela de 256.000 tokens. Então a janela de contexto do gema é maior do que a do bonsai. Aqui ele deu uma alucinada, tá? Se a gente olhar aqui, ó, e a gente olhar mais para cima, ó, tá se repetindo aqui. Tá vendo? Ele já tá se repetindo.
+
+Então ele deu uma alucinada. Eu não sei se isso aqui passou do máximo de output dele. Não deveria. Vamos ver o gema agora, tá? Antes dele alucinar aqui, ele tava com uma taxa de 80 90 tokens por segundo. A gente vai saber aqui no final
+
+do gema como que ele foi. Uma coisa interessante é que ele saiu aqui, ó, cuspindo texto, né? Não tem uma divisão de parágrafo e etc, que a gente já consegue enxergar aqui no gema. Outra coisa, se a gente comparar aqui, ó, parece bem parecido, né? Pelo menos nesse início. É um pouco diferente a
+
+forma de escrever, né? Se a gente olhar aqui, ó, essa frase, por exemplo, a gente vai ver que ela tá escrita dessa forma aqui, ó. And they say this algorithm is going to revolutionize LMS. Já no gema, ele traduziu para end this algorithm comes to revolutionize LMS at least that's what they say. Essa forma aqui seria mais interessante de escrever, ao meu ver. Aqui também ele
+
+usa, ó, in this video, we will understand what turbo quant is, what used it for, and a little bit about the others, e. E aqui, ó, inbo
+
+aqui, se eu tivesse que avaliar, eu diria que aqui a gente tem uma tradução mais tentando traduzir como se fosse uma palavra por palavra. E aqui seria uma tradução mais tentando se adequar a como alguém que fala inglês falaria. Vamos ver aqui, ó. Ele terminou sem alucinação, tá? 104 tokens por segundo.
+
+Gerou aqui então 4.592 tokens. E a gente pode ver aqui pela última frase que é uma tradução esquisitona também, mas que ele chegou ao final tranquilamente. Aqui é interessante ver que todos os dois, o transcript ele pegou, a gente usa vren com e, né, e n os dois consertaram para we use the VAM, né, tanto aqui quanto aqui, ó. Isso daqui é algo que de fato a gente quer ver a LLM fazer e eles fizeram, os dois conseguiram fazer tranquilamente. Deixa eu pegar um texto
+
+um pouco menor aqui pra gente ver se o bonsai vai conseguir fazer sem alucinar. Eu tô pegando aqui um pedaço do anúncio do Quen 3.6 Plus, novo modelo da família Quen, que acabou de sair. Eu ainda nem consegui gravar um vídeo sobre ele, mas eu vou gravar já já, que supostamente melhorou bastante em relação ao 3.5, que é difícil de acreditar porque 3.5 já era
+
+incrível, né? Mas se a gente pensar em geração de código ou uso de agente, né, que provavelmente foi o foco aqui desse release, dava para ter melhorado um pouco mesmo. E eu acho que foi isso que eles fizeram. Vamos tentar traduzir aqui, ó. Então, agora a gente tá fazendo o contrário, né? Traduzindo para
+
+português. E aí eu vou pedir aqui pro nosso gema fazer também. Aqui já ficou melhor, né? Porque o texto é menor, não deu tempo dele alucinar. Então ele consegue fazer tradução de pequenos textos. Então aqui ele fala, ó, que foi
+
+melhorada a capacidade de código, né, de forma gêntica do modelo. A forma que ele escreveu aqui fica um pouquinho difícil de entender. Vamos ver daqui a pouco se o Gema fez melhor do que isso. Mas aqui a gente tem então o resumão, né, do que que é o anúncio. E se você não quiser perder esse vídeo, já se inscreve aqui no canal, né, para quando ele sair você ser notificado, tá? Que ele fala que
+
+melhorou a parte de desenvolvimento web, frontend, etc. Show de bola. Vamos dar uma olhadinha aqui, ó, no gema, nós aprimoramos drasticamente as capacidades de codificação agêntica do modelo. É mais ou menos a mesma coisa que faltou um a, então, né? E codificação agêntica ficou melhor do que código agentic, né?
+
+Fica mais fácil de entender aqui. Então o gema é um pouquinho melhor nisso, mas mais uma vez, né, a gente precisa lembrar que essa aqui não é uma comparação um para um, já que o bonsai ele ocupa menos espaço, né? Ele tem 1.25, se eu não me engano, GB de tamanho. Enquanto esse gema, mesmo sendo de 2 bilhões parâmetros Q4, ele vai ocupar quase 4 GB. Ah, aqui ele demonstra um
+
+resumo do que que ele escolheu aqui, né? Então, Anticoding ele manteve codificação agêntica, mas vibe coding ele poderia não ter traduzido. Ó, aqui ele não traduziu, tá vendo? Até porque tá em aspas, né? Poderia não ter traduzido. E aqui ele botou vibração de
+
+codificação. Aí aqui eu vou dar o ponto pro bonsai. consegui identificar que isso aqui não era para traduzir, aqui ele traduziu e ficou um negócio bizarro. Então é isso aí. Temos de fato um modelo funcional de um bit de quantização. Só
+
+que a verdade é que a Prism não liberou como que ela fez essa quanto. Isso aí ainda tá, ó, fechado as sete chaves. Se a gente conseguir trazer qualidade de fato para modelos gigantes com um bit de quantização, a gente teria o equivalente ao modelo, se ele só tiver capacidade de texto, por exemplo, de 100 bilhões de parâmetros, ocupar 10 GB. né? Então você poderia rodar teoricamente numa placa aí de 16, 24 GB um modelo de 100 bilhões de parâmetros, o que seria interessante.
+
+Por outro lado, né, fazendo essa comparação aqui que parece injusta, a gente chega à conclusão que em alguns casos rodar um modelo de 100 bilhões de parâmetros a 1 bit talvez não seja tão interessante como rodar um modelo de 20, 25, 26 bilhões de parâmetros a 4 bits, que também caberia numa placa de 24 GB com espaço para contexto. E a propósito, é isso que a gente vai fazer em breve, porque também vai ter vídeo aqui do Gema 4 de 26 bilhões de parâmetros com 4 bilhões de parâmetros ativos, o que vai fazer um modelo interessantíssimo pra gente rodar local. Será que ele vai bater de frente com Quen 3.5 de 27 bilhões de parâmetros ou até o de 35 bilhões de parâmetros mixture of experts? Se você quiser ver como o Quen 27 bilhões e o 35 bilhões se saiu nos meus testes, dá uma olhada nesse vídeo daqui, tá? Agora, se o foco é mais esses
+
+modelos pequenos igual esses dois aqui, a gente tem uma playlist de só modelos pequenininhos rodando em hardwares diversos. Dá uma olhada nesse card aqui que eu vou botar a playlist aqui, beleza? E se você gostou desse conteúdo e quiser apoiar o canal, tem duas formas de você fazer isso. Uma é se tornando um membro para ajudar a gente a continuar produzindo conteúdo, trazendo equipamentos novos e etc. E o outro é simplesmente dando um hype nesse vídeo aqui, porque ajuda a mostrar para outras pessoas. Então é isso aí, vou ficando
+
+por aqui, até o próximo vídeo.

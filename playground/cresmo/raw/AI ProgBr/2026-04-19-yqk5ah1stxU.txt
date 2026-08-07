@@ -1,0 +1,300 @@
+---
+video_title: "Qwen 3.6 35B sabor 200B (rodando local sem quantização)"
+video_id: yqk5ah1stxU
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yqk5ah1stxU
+video_date: 2026-04-19T22:16:26+00:00
+video_description: |
+  Será que o Qwen 3.6 35B, esse modelo Mixture of Experts com apenas 3 bilhões de parâmetros ativos consegue competir com modelos densos muito maiores?
+  
+  Neste vídeo, eu coloco o Qwen 3.6 de 35 bilhões de parâmetros pra rodar 100% local, sem quantização nenhuma (16 bits), no Mac Studio com 256 GB de memória unificada. A gente testa tool calling com busca na internet, geração de código com um clone de Angry Birds, criação de landing page, e ainda um projeto real de visão computacional: extrair dados de invoices e gerar um dashboard filtrado por categoria, moeda e estabelecimento.
+  
+  O Qwen 3.6 é a evolução do Qwen 3.5, focada em uso agêntico e geração de código. Com arquitetura MoE (Mixture of Experts), ele ativa só 3B dos 35B parâmetros por token, o que deixa a inferência muito mais rápida do que modelos densos equivalentes. Nos benchmarks, ele bate o Gemma 4 e chega perto do Qwen 3.5 27B em coding e reasoning, gastando uma fração do compute.
+  
+  🍎 Aqui tá o link do canal onde eu foco no universo Apple: https://www.youtube.com/@iProgbr 
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen3635b16bits
+  
+  _______
+  
+  0:00 Intro
+  0:52 Documentação
+  6:09 Velocidade e data de corte
+  6:36 Tool Calling
+  8:25 Angry Birds (Three.js)
+  11:45 Landing Page de Headphones
+  15:54 Gerador de Invoices
+  18:27 Visão e renomeação
+  21:17 Dashboard de Invoices
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Ó. Uh, quase. Opa. Algumas semanas atrás, a Alibaba lançou o Quen 3.6 Plus, o modelo até então fechado, que veio para ser evolução do Quen 3.5, que já é um modelo incrível. E
+
+a diferença entre eles é que basicamente o 3.6 é o 3.5 um pouco ajustado para trabalhar melhor com tool Colin, ou seja, ele vai ter resultados melhores quando usado de forma agêntica. E também ele teve uma evolução aí em como ele cria código, modelos como Chat EPT e até o Sonet e o Opus para usar o Quen 3.6 Plus. Só tinha um problema, esse era um
+
+modelo fechado, era no passado, porque agora eles estão começando a abrir. Há dois ou três dias atrás, a Alibaba lançou então Quen 3.6 open source com 35 milhões de parâmetros, 3 bilhões de parâmetros ativos. E é ele que a gente vai ver aqui hoje. Vamos lá pra tela, pra gente dar uma olhadinha no card dele. Ó, quando a gente vem aqui no
+
+Huging Face, a gente já consegue ver que esse modelo é importante porque ele tá aqui, ó, no trending, no segundo lugar, tá só atrás do Minix M2.7, que também é um modelo incrível, a gente fez vídeo aqui no canal, eu vou deixar aqui no card para você poder assistir e eu vou clicar aqui agora pra gente dar uma olhadinha aqui, ó. Então, a versão liberada, open source até então, daqui a pouco, provavelmente vão vir outras, tá? E a gente vai fazer vídeos sobre as outras versões também. Inclusive, eu vou fazer mais vídeos sobre essa versão aqui com outras quantos. Nesse vídeo aqui a
+
+gente vai ver sem quant nenhuma, rodando no Mac Studio M3 Ultra. Mas eu vou rodar esse modelo também numa 5060 Ti, vou rodar ele no Mac Mini, provavelmente vou rodar também na 5090. Então não deixa de se inscrever para não perder nada, tá? Ó, vamos dar uma olhada aqui, então. Então, aqui a gente tem o primeiro destaque, né, que basicamente o Quen 3.6
+
+ele é uma evolução do Quen 3.5, só que priorizando utilidade no mundo real, né? Quando ele fala em estabilidade e utilidade no mundo real, basicamente a gente tá falando aqui de uso agêntico e também oferecendo aqui a desenvolvedores uma experiência de código mais produtiva e responsiva. Então, ele melhorou também na capacidade de código dele. E isso é muito importante porque faz com que essa versão daqui seja interessante como primeira versão deles liberarem. Eles
+
+fizeram inclusive uma pesquisa lá no Twitter pedindo pra galera falar qual dos modelos médios seria mais interessante liberar primeiro. Entre eles o de 35 bilhões de parâmetros, que é esse aqui, o de 27 bilhões de parâmetros e o de 122 bilhões de parâmetros. A maioria escolheu de 27 bilhões de parâmetros, mas mesmo assim eles liberaram esse. Que que acontece? O Quen 3.5 de 27 bilhões de parâmetros é
+
+simplesmente um monstro, a ponto da comparação dele ser com modelos de mais de 100 bilhões de parâmetros. Então é por isso que a comunidade pediu essa versão. Só que por ele ser um modelo de arquitetura densa, ele fica muito lento em alguns hardwares. Quando a gente tem um mixture of experts, que é o caso do de 35 bilhões de parâmetros, como ele só tem 3 bilhões de parâmetros ativos, ele fica muito mais rápido. Então imagina que a gente conseguisse fazer com que o Quentinter. 6 de 35 milhões de
+
+parâmetros, ele fosse equiparável em qualidade, inteligência ao Quent. 27 bilhões de parâmetros, só que muito mais rápido. E exatamente isso que acontece. Então aqui, ó, a gente vai ter o Quenten 3.6, tá, com 35 milhões de parâmetros, versus o Quen 3.5 de 35 também, mas aqui
+
+a gente tem o Quen 3.5 de 27 bilhões de parâmetros, que é o que a gente quer comparar aqui. Eles colocaram também o Gema 4, tanto de 26 bilhões, que é mixture of experts, quanto de 31 bilhões de parâmetros. E a gente também vai dar uma olhadinha para ver se o novo 43.6 é melhor ou pior do que o GEMA. Quer
+
+dizer, pelo menos segundo o benchmark que tá sendo liberado pela Alibaba, né? A gente vai olhar isso aqui com aquela desconfiança, né? Mas vamos olhar. Então aqui, ó, Terminal Bench, que foi onde houve a maior evolução. Então a gente tinha aqui a versão anterior, quent. 35
+
+bilhões de parâmetros. Agora a gente tem aqui o Quentin6. Então foi um salto de 10 pontos aqui, né? E se a gente comparar com o próprio Quint. 27 bilhões de parâmetros, ó, tá muito melhor em uso do terminal. Quando a gente vai pro SWB
+
+Pro, que que acontece? a gente não tá melhor do que o de 27 bilhões de parâmetros, mas já tá muito mais próximo, né? Então, houve aqui um ganho de cinco pontos em relação a versão anterior dele, a 3.5, 35 milhões de parâmetros para 3.6, 35 milhões de parâmetros. Mesma coisa aqui no SWA
+
+Bench Verified. A gente tem também uma evolução, deixando ele mais próximo ao quent. 27 bilhões de parâmetros. Mesma coisa no SW Bent Multilingual, que também deixa ele mais próximo ao Quente. 5 de 27 bilhões de parâmetros. Em todos
+
+esses casos aqui, o novo Quen 3.6 aqui, ele bate os gemas também, né? E bate de longe. Ó, quando a gente vem para essa segunda linha aqui, que aqui também tem muita coisa gêntica, seria o Quen Claw Bentch, né? Que seria ele rodando no OpenCla, por exemplo, aqui seria ele navegando na internet aqui, nesse aqui seria ele funcionando de forma gêntica, né? De forma mais extensiva. Então, em
+
+todos esses benchmarks aqui que medem a habilidade dele de ser usado de forma gêntica. O Quen 3.6 de 35 milhões de parâmetros, bateu o Quin 3.5 de 27 e bateu todos os outros gemas também. Quando a gente vem aqui em inteligência, né, reasoning e matemática e etc, ele não bate em todos o de 27 bilhões de parâmetros, mas ele chega perto, inclusive no reconhecimento de imagem aqui, né? Esse daqui vai medir o
+
+reconhecimento de imagem. O Quin 3.5 de 35 bilhões já batia o de 27 bilhões. O Quentin 3.6 deu um pequeno salto ali.
+
+Mas vamos lá, vamos colocar a mão na massa, vamos começar a brincar com ele. E hoje eu vou utilizar essa ferramenta aqui chamada Inferencer Pro, porque a gente vai rodar a versão sem quantum. É a versão baixada direto lá do Hugin Face. Essa versão ocupa 71.9 GB. A gente
+
+tá rodando Mac Studio M3 Ultra com 256 GB de memória unificada. Então, a gente tem mais do que suficiente para rodar esse modelo com contexto completo, com mais de 250.000 tokens de contexto. Se vocês quiserem depois eu posso fazer um outro vídeo rodando uma versão quantizada, 8 bits, 4 bits, se você tiver interesse, deixa aqui nos comentários. A gente vai rodar depois uma versão de 2 e 3 bits na RTX 5060, mas eu acredito que com dois ou três bits a gente vai ter perda de qualidade aí. Por isso que eu tô fazendo esse
+
+vídeo sem quantização pra gente ter uma ideia da qualidade completa desse modelo. Então vamos lá. Primeira coisa que eu vou fazer aqui é bem simples, tá? Vamos ver um pouco de velocidade, vamos ver qual que é a data de corte desse modelo. Vamos ver se ele vai falar pra gente aqui, ó. Legal, hein? Então, a
+
+base de conhecimento dele vai até 2026. Ele não fala exatamente quando, mas a gente tá em abril agora. Então, diria que é início de 2026. Legal. Ó, a resposta veio a 63 tokens por segundo, tá? A gente tá rodando uma versão sem
+
+quantização, 16 bits. Provavelmente a gente conseguiria um pouquinho mais do que isso com 8 bits. Beleza? Essa aplicação aqui, ela me dá um conjunto de tools que eu vou ligar aqui, tá? E eu vou pedir para ele me falar quando vai ser o próximo WWDC. Vou mandar dessa
+
+forma aqui para ver se ele naturalmente vai ativar estolo, vai fazer uma busca na internet, vai trazer esse resultado pra gente ou se ele vai tentar responder aí da cabeça dele. Vamos ver. Fez a chamada aqui a busca da internet, né? Ele ficou pensando ali o que ele faria e aí ele fez a chamada, tá trazendo pra gente aqui o resultado. Ó, o próximo WWDC está agendado para ocorrente dia 8 e 12 de junho. E aí, se a gente procurar
+
+aqui na internet, é exatamente isso, 8 a 12 de junho, o WWDC 2026. Inclusive, não sei se você sabe, mas eu tenho um canal chamado iprogbr, onde a gente fala sobre desenvolvimento e até inteligência artificial focada em devices da Apple, tá? Então, provavelmente a gente vai ver um vídeo do Quen 3.6 rodando no Mac Mini nesse canal aqui. Eu vou deixar o link dele aqui embaixo. Você pode ir lá e se
+
+inscrever para você não perder quando sair lá também. Se você tiver interesse em ver modelos rodando em devices mais restritos da Apple, Mac Mini, MacBook, New, por exemplo, a gente normalmente leva para lá. Aí você pode se inscrever lá, então, para não perder nada. Mas voltando aqui, beleza, mandou muito bem, fez a chamada na tool, conseguiu a resposta, tudo certo. Agora, o próximo teste que a gente vai fazer, eu vou desligar aqui a tools, que eu não quero que ele pesquise nada na internet, até porque isso faz parte do teste, vê se ele vai trazer as coisas certas quando ele trouxer um link, por exemplo, se aquele link não tá quebrado, algo do tipo. Então, vou pedir para ele criar um
+
+Angry Birds com 3JS, que é um dos testes que a gente faz aqui com outros modelos, principalmente modelos grandes, né? a gente fez agora com Opus 4.7 e ele mandou bem em algumas coisas e mandou mal em outras. Eu vou deixar o vídeo aqui no card para você assistir, mas a gente vai ver se o Quen 3.6 destrói o Opus 4.7. Acho que não, mas vamos ver.
+
+Então, nosso prompt é cria um clone do jogo Angry Birds com 3JS. Use formas simples para criar os detalhes dos pássaros e inimigos e entregue o resultado em um único HTML. Vamos ver aqui ele escrevendo pra gente o que que ele tá pensando. Daqui a pouco ele vai começar a escrever o código já. Até que ele pensou pouco, né? Eu lembro que o
+
+Quen 3.5 ele pensa bastante. Esse aqui eu acho que tá num numa boa média ali, ó. O contexto aí tá aumentando aqui, né? A gente tá chegando ali aos 2.500 tokens
+
+quase e a velocidade que ele tá mantendo ali em torno de 55, né? Tá baixando um pouco 50 tokens por segundo. O que é 16 bits é uma boa velocidade. Ó, já passou aqui dos 10.000 tokens. Então o negócio
+
+tá tá legal, ó. Tá terminando aqui. Ficou 13.817 tokens o resultado todo, né? O código é um pouquinho menos do que isso. Então
+
+ele criou o stiling, física realista. Legal. Vamos testar. Então temos aqui, ó, a nossa versão do O porquinho tá muito maneiro, tá? Mas esse pássaro aqui ele tá com anemia, né? Vamos ver se
+
+Eita, que que aconteceu? Não deu, deu alguma coisa. Deu errado. Vamos ver se a gente tem um log, ó. Tem algum erro aqui.
+
+Então vou copiar aqui esse erro. Vou pedir para ele corrigir e eu vou falar o seguinte, ó. Me retorne apenas a função onde o erro acontece corrigida. Então aqui, ó, ele respondeu bem rapidinho aqui, tá? 600 tokens só e ele me deu a função corrigida. Vou copiar aqui e eu
+
+vou substituir lá no nosso arquivo. Vou comentar essa aqui. Vou colocar a outra. Testar novamente. Continua com erro. Ah, na verdade é no
+
+on mouse up aqui que tá tendo erro. Ele tenta pegar aqui, ó, mas pon position. Isso aqui não tá funcionando, tá? Vou tentar mais uma vez aqui. Vou descrever o que que tá acontecendo. Vamos ver se
+
+ele consegue ajustar pra gente aqui. Ó, ele modificou o código mais uma vez e a gente vai substituir novamente. Ó, agora parece melhor, né? Ok. Tá bom. Ainda não tem física aqui.
+
+Tá, tá se movendo. OK. Clique para reiniciar. Clico aonde? Deu bug aqui?
+
+Não, não deu nenhum erro. tentar de novo. Ah, eu acho que tinha um botão ali, ó. Aqui. Opa. Só que aí eu tô eu tô ali embaixo.
+
+Não sei se vai funcionar isso não, hein? Mas vamos ver. É, ai, ai, ai, ai. Ó, tem um botão de reiniciar ali. Vou reiniciar. Deixa eu
+
+ver se eu arrastar. Eu tô, eu tenho que arrastar para cá. Que loucura, gente. Já soltei. E agora?
+
+Não, soltei fora da tela, deu ruim. E ele tá indo fraquinho, fraquinho. É o máximo que ele consegue ir ali, ó. Tá bem, bem bugadinho, mas a gente tem algum movimento aqui, né? Ó.
+
+Uh, quase. Não, eu não posso deixar o mouse sair da tela ali, não, ó. ser assim, ó. Aí ele vai ficar naquela loucura ali de ir lá para cima. Quando ele tiver lá embaixo, eu sou tá zoado. Mas a gente tem alguma
+
+funcionalidade aqui. Daria pra gente continuar tentando consertar tudo. Modelo tá até bem rápido, mas não seria justo com os outros modelos que a gente não deu essa chance. Então vamos pro próximo teste. Próximo teste eu vou pedir para ele criar uma página web, tá?
+
+Uma landing page de uma empresa de headphones. e vou pedir alguma coisa surpresa ali, alguma funcionalidade fora da caixa. Eu não vou dar muitas funcionalidades, não. Ia pedir alguma coisa que fosse musical, mas eu tô direcionando muito. Eu quero que ele me surpreenda. Quero ver a criatividade
+
+dele, o que que ele vai fazer. Ó, ele tá indo ali pela linha que eu tava pensando mesmo. Vamos ver. Ó, a gente já tá aqui em quase 6.000 tokens. Ele ainda tá na
+
+parte CSS, né? Então, será que vai ser bom esse sitezinho? Show de bola, terminou aqui, ó. Ele gerou 24.000 tokens, cara. Foi bastante coisa. Será
+
+que vai funcionar? Essa é a grande questão, ó. Tem bastante JavaScript aqui. Vamos ver. Vou copiar lá em cima.
+
+Show de bola. Temos aqui o nosso site, ó. Então, é Sonic, o nome que ele escolheu. Sonic Pro Max, lançamento 2025. Produtos Sound Mixer. Hum. Quiz
+
+sonoro. Pô, ele fez várias coisas, não é possível. Vamos ver aqui, ó. Ou o mundo como nunca antes. Headphones que combinam tecnologia de ponta, design premium e som imersivo. Cada nota, cada
+
+detalhe, cada momento perfeito. Legal. Legal. 98% de cancelamento de ruído. E olha só, tem um efeito lá atrás de ondas passando, né, como se fossem ondas sonoras. Interessante. Vamos olhar aqui,
+
+ó. Ó, tem uma animação, né? Quando a gente rola, tem os cards aqui mostrando algumas opções de fones. Se eu apertar aqui no mais, ó, aparece aqui. Opa, tem um carrinho aqui, ó. E o carrinho? Um
+
+item no carrinho. Deixa eu ver. Se eu clicar aqui, vira dois. Vamos ver. Dois itens no carrinho. Legal, legal, legal.
+
+Tá, até agora tudo funcionando, né? A gente não tem nenhum erro, tudo funcionando. Vamos ver isso aqui, ó. Então, aqui a gente tem um sound mixer para misturar ações ambientes e criar uma atmosfera perfeita de foco, relaxamento ou diversão. Acho que isso daqui também é conhecido como white noise, né? Vamos ver. Hã, não tô ouvindo
+
+nenhum som aqui, não. O gráfico é legal, né? Vamos ver se tá ocorrendo algum erro. Nenhum erro. Talvez não tenha sido implementado.
+
+Ah, a gente consegue diminuir aqui, inclusive. Que aconteceu aqui? Deixa eu atualizar aqui. Eu consigo, ó, mudar quantidade, né? Legal.
+
+OK. Aqui a gente tem algumas opções pré-determinadas. Eu gostaria muito de ouvir o som, né, de dele ter som de fato, mas infelizmente a não tem som nesse momento. Vamos olhar aqui, ó, qual que seria o meu perfil, né? Vamos fazer um quiz aqui rapidamente. Sound profile
+
+quiz. Quatro perguntas e descubra qual headphone Sonic foi feito para você. Então, principal uso, trabalho. Próximo. Eu quero graves profundos. Não, pô,
+
+imersivo 360. É esse aqui. É esse. Vamos embora. Eu vou usar no escritório não, em casa. Tá bom. Que que eu quero aqui?
+
+Minha prioridade conforto não, para que conforto, né? Não, não, nada disso. Qualidade, som, não importa. Design é is não design. Bateria. Eu gosto de
+
+bateria. Vê resultado. Esse é o mais caro. Vamos olhar lá. Não, eu do meio. Gostei. Bom,
+
+tá bom. Vamos. Vamos nele. Vou. Ué, tinha que ter um botão aqui pr eu já botar no meu carrinho, né? Deram mole.
+
+Ok. Aqui a gente tem um visualizador de som interativo. Que que significa? Arraste para girar, escolha as cores e explore cada detalhe do som. Isso aqui seria o fone, né? Esse daqui é o fone
+
+depois de passar pelos rouetes do professor linguiça. Vamos lá, ó. Frontal, lateral. Lateral não dá para ver. Tá igual seu Madruga quando foi amassado pelo seu barriga. Mas vamos dar
+
+uma olhada aqui, ó. Dive. Não, nada disso funciona. Isso aqui funciona. OK.
+
+Ó, a gente tem aqui o que dizem nossos clientes, né? Os depoimentos. Bom, e um pequeno formulário aqui para você colocar o seu e-mail rodapé. Perfeito, gostei. Parabéns, Queen 3.6.
+
+Ó, esse site aqui foi feito 100% localmente, sem acessar internet, né? Faltou o som aqui. Faltou o som, mas olha essa animação aqui. Isso aqui tá muito maneiro. Provavelmente vou copiar para usar em algum app meu. Gostei
+
+bastante. Quando é um modelinho local fazendo, então é mais legal ainda. Próxima etapa é o seguinte. Olha só, eu tenho aqui um gerador de invoices, né, daquelas notinhas de supermercado, por esse é um modelo que ele tem capacidade de visão e eu quero testar junto a capacidade de visão com a capacidade agêntica dele. Então, eu queria gerar um conjunto de invoices e notinhas para ele conseguir enxergar, extrair os dados e a gente criar um dashboard a partir daí.
+
+Então, eu criei esse gerador de invoice aqui. Eu criei, não, na verdade ele mesmo criou, tá? Antes de eu começar a gravar o vídeo, eu vibe codei isso daqui e ele basicamente criou 90%, tá? Teve uns 10% ali no final que eu tive que trazer um modelo maior. Aí eu fiz com GLM 5.1 e o Quen 3.6 Plus, mas ele fez
+
+toda a parte visual, né? Ele fez a ligação com o modelo de LLM que a gente usa por baixo dos panos. Então deixa eu te mostrar aqui o que que é essa aplicação. Então gerei algumas notas aqui para gerar muito simples. Eu escolho um dos templates aqui. Tô
+
+escolhendo esse aqui agora. Vou colocar aqui o nome de uma loja. Então, a gente fez aqui a nossa loja Sonic, né, que vende equipamentos musicais. Eu posso colocar aqui uma moeda, vou colocar real e aí vou colocar aqui, ó, equipamentos musicais. E quando eu clico aqui em generate, ele chama, ó, o nosso próprio Quent. para gerar os dados dessa nota. E
+
+aí depois a nossa aplicação faz ali um reject para extrair só o Jason e popular o template da nossa nota. O único problema aqui é que esse reject não tá funcionando 100% das vezes. Então é aí que a gente vai ter que recorrer um modelo maior depois para ajustar. Mas vamos ver se dessa vez funciona. Aqui tá gerando nossa nota. E aqui ele gerou
+
+até, né, o template, mas não veio com nenhum dado. Eu vou mudar um pouco aqui equipamentos de áudio, que é na verdade mais o que a gente quer, né? seria headphones e etc. Vou tentar gerar novamente. Pronto, agora sim gerou aqui pra gente. Então, a nossa loja Sonic,
+
+ela expandiu, ela não tá mais só com headphones, tá com todos os equipamentos musicais aqui. E essa conta foi cara, hein? Isso aqui, pô, tá tudo muito caro. Pior essa tex aqui de 1800%, que na verdade tá errado, né? Isso aqui é na verdade 18%. Mas tudo bem, vamos ver
+
+como é que o nosso modelo vai lidar com esses erros aqui de invoice. Vou exportar aqui. E aqui, na verdade, eu já tinha preparado outras imagens, tá? Então, a gente tem aqui a invoice que a gente fez agora e a gente tem outras em outros formatos, né? São formatos diferentes, tipos de compras diferentes, digamos assim. Tem essas aqui mais
+
+parecendo de supermercado, posto gasosa boa, né? Um postinho de gasolina, onde alguém foi lá comprar uns cigarros malboro, largou a família e foi pro mundão aí. E a gente vai ver então como é que o nosso modelo vai lidar com essas notas aqui. Então para essa parte a gente vai usar o Quen. E eu também tive que fazer um ajuste porque o Inferencer, que é a aplicação que a gente estava usando, ele não tem capacidade de visão implementada ainda. Então eu vou usar o
+
+LM Studio, só que o LM Studio não carrega o modelo em safe tensor. Aí o que que eu fiz? Eu converti esse modelo pra MLX, só que eu mantive ele com 16 bits, então não quantizei ele, eu só converti. E é essa versão que a gente tá usando aqui. Então uma versão MLX com 16 bits. Então primeira coisa que eu quero
+
+ver é se ele vai conseguir ver as nossas imagens ali. Então vou pedir aqui, ó, descreva essa imagem. Aí aqui eu tenho minha pasta imagens, né, com várias imagens. Eu vou selecionar uma aqui. Vamos ver se ele vai conseguir descrever pra gente. Essa aqui, ó, é a 700. Então
+
+vou carregar aqui a 700, ó. Então seria a empresa Móveis Qualidade. Ela vendeu ali alguns móveis de escritório pra gente. Opa, deu um erro aqui, ó. Valid messages não deveria ter dado não. Deixa
+
+eu limpar a nossa sessão. Deixa eu pedir de novo para ele descrever. Então agora sim conseguiu descrever ali, ó. E trouxe pra gente aqui nome móveis de qualidade e uma tabela com todos os itens. OK?
+
+Beleza. Agora eu vou tentar fazer o seguinte, eu quero que ele renomeie todas as notas, porque olhando assim eu não consigo identificar o que que é o que, né? Então vou pedir para ele renomear. com o nome dos estabelecimentos, traço a categoria das coisas que são vendidas ali. E aí eu quero ver se ele vai ler a pasta, né, se ele vai conseguir carregar as imagens e etc. Ó, ele tá tentando analisar ali as
+
+imagens para entender o conteúdo de cada uma, ó. Ele leu todas as imagens, mas deu algum erro aqui na chamada da API, tá? Isso daqui eu acredito que seja um erro do LM Stú aqui antes e eu vou solucionar da seguinte forma. Vou dar um clear aqui. Vou continuar aqui dessa forma. Mas
+
+agora eu vou colocar todas as imagens que eu quero aqui, uma a uma, tá? Porque assim ele consegue ler. Pronto. Essas são todas as imagens, tá? E aí eu vou passar elas dessa forma. Vamos ver se
+
+ele vai conseguir renomear do jeito que a gente quer. Ó, agora ele leu todas as imagens, tá? E não deu aquele problema. Quando ele lê a pasta, ele manda alguma coisa na requisição que quebra a chamada. Ó, agora ele tá lendo tudo lá, já identificou, ó. E aqui a gente tá no
+
+modo plan. Ele tá falando pra gente o que que vai fazer, mas a gente ainda não fez nada. E aí ele tá perguntando se a gente pode deixar ele renomear. Vou falar que sim, pode continuar. E aí vamos ver se ele vai conseguir renomear pra gente certinho. Olha, tá dando aqui
+
+o comando. Vamos deixar ele executar o comando. E aí tá falando que já foi renomeado, né? Vamos esperar só ele dar a resposta final aqui pra gente, pra gente lá checar. Tá verificando se foi tudo renomeado mesmo, né? Então, de
+
+fato, foi. E ele tá resumindo pra gente o que que ele fez. Então, ó. E aqui a gente consegue ver qual era, né, os serviços, né, que a gente comprou em cada uma das notas. E agora, se a gente olhar aqui, todas as notas foram então renomeadas e a gente consegue identificar. Dava para melhorar isso
+
+aqui, né? Não sei se minha ideia de nomenclatura ficou muito boa, não, mas o importante é que ele consiga fazer o que a gente queria que ele fizesse. Agora eu vou dar um passo além, tá? Então, ó, pegue todos os dados e gerehboard onde eu possa filtrar para estabelecimento, moeda, categoria e etc. Vamos ver se ele vai gerar aqui pra gente um dashboard legal, né? qual que vai ser esse estilo
+
+visual, inclusive, e se vai tá funcional ou não. E essa ideia de projeto aqui, ela é uma ideia realmente útil, né? Porque imagina que você pode ir juntando as suas notas ali, né, de coisas que você compra e depois você pode gerar um dashboard com a vantagem de tudo isso tá rodando localmente, né? Então você não precisa compartilhar seu hábito de consumo com o Open AI, com o Cloud e etc. Tudo isso tá rodando localmente. Se
+
+você tem um negócio, melhor ainda, que você pode fazer isso inclusive com os dados seus clientes, né? sem correr nenhum risco de estar compartilhando aí dados que você não poderia compartilhar. Aqui, ó, ele tentou criar um agente aqui pra gente, só que deu meio que errado porque provavelmente ele tentou ler pela pasta lá, que era aquele problema que a gente estava tendo. Então, vamos deixar ele continuar aqui. Se ele não conseguir, aí eu vou pedir para ele ler novamente arquivo a arquivo, como a gente fez. Mas eu acho que não tem
+
+problema porque que ele tá falando, ele já tem tudo da conversa anterior, né? Ele já tinha extraído aquelas imagens ali, ó. Ele tá conseguindo pegar os dados, né, das imagens porque já tinha visto. Beleza, ele conseguiu extrair aqui, ó, no no thinking dele, né, e ele tá compilando todos esses dados para ele fazer um Jason e depois ele vai construir o dashboard pra gente. Opa, aqui, ó, gerou o Jason pra gente. Então,
+
+vou permitir ele que ele crie aqui o arquivo, né? Vamos dar uma olhada aqui no que que ele tá fazendo. Legal. Então, aqui, ó, ele escondeu algumas linhas ali, mas aqui tá o estilo do Jason. Então, sempre tem uma nota no final ali.
+
+Consegui extrair todos os dados. Beleza? Agora que ele já tem esses dados, ele pode começar a criar o dashboard. E aqui já tá falando um pouco de como que ele vai fazer. Vai ser single page application, vai usar o chart js para criar os gráficos, tá? Para
+
+visualizações, vai ter tabela, legal, tá? E controle de filtro, né? Que foi o que eu pedi. Ah, ele vai separar aqui também por, né, um total por moeda. Vamos ver como é que vai ficar isso. E
+
+aqui, ó, atingi o limite de token. Show de bola. escreveu aqui o arquivo pra gente, 1181 linhas. Vamos criar o arquivo, então. E aí, vamos ver se acabou pra gente ir lá testar, né? Agora ele tá fazendo o teste
+
+aqui, então, para ver se tá tudo certinho. Se a gente quiser, pode ver aqui, ó, o que que tá rolando no LM Studio, né? Enquanto ele tá gerando lá. Agora tá processando prompt e aqui, ó, tá perguntando se a gente pode abrir então o nosso index. Vamos lá.
+
+Opa, tô vendo aqui que esse design ele tá semelhante à nossa página lá de geração das invoices. Aqui, ó, nossa página de geração de invoice tá aqui. E tem esse mesmo estilo ali, né? Aqui. Mas tudo bem, legal ver o padrão dele, ó. Vamos
+
+dar uma olhada aqui primeiro. Vamos ver o que se ele acabou de responder lá, tá? Que ele ainda tá verificando, mas enquanto ele verifica, a gente verifica também. Aqui tem todos os documentos, né? São cinco invoices e quatro recibos.
+
+A gente tem total por moeda. Caramba, gastamos uma grana, hein? 65 itens, na verdade 287 documentos. Então tô confuso, não entendi. Mas beleza, deixa eu tentar filtrar. Quero filtrar aqui por moeda.
+
+Vou botar só BRL. Opa, legal. Então aqui a gente consegue ver que tem quatro documentos com BRL, né, com real. A gente consegue ver aqui a separação por categoria. A gente gastou bastante equipamento de áudio. Se eu botar
+
+categoria aqui, eu posso selecionar, por exemplo, eh, se eu botar Office, tem Office, OK? Office furniture. A gente pode botar, deixa eu botar alguma coisa que não tenha, não tem. Mostra zero. OK.
+
+Todas as categorias. Ele mandou uma mensagenzinha ali pra gente falando que acabou. Então, vamos dar uma olhada. Então, ele tá falando aqui, ó, dando um resumão do que que ele fez. A gente já tá vendo já que que você fez aqui. Aqui
+
+embaixo, ó, a gente tem, deixa eu botar todo mundo. Cadê? Que que tem aqui, ó? Reset filters. Beleza? Olha aqui, ó.
+
+Contagem de documento. Todos os documentos são do mesmo mês, né? Então, beleza. Aqui embaixo a gente tem a tabela, né, que a gente consegue ver, ó. A gente clicar aqui. Aqui é o total, né?
+
+Ok. E eu expandi, pô. Caramba, gostei. Gostei. Então, aqui tem todos os dados de fato, né, daquelas notas lá. Então você olhar qualquer
+
+item, quiser qualquer nota aqui, ó, materiais de construção. Vamos olhar. Tem aqui todos os dados, que que a gente comprou, quantidade, preço, consegue ver aqui o total, qual que foi o tex e etc. Minha câmera tá até dando chilique ali. Deixa eu ver aqui, ó. Ó, tá vendo? Ele
+
+tá mostrando aqui 18% de tex, tá? Que ele corrigiu. Era esse que tava com problema. Acho que era aqui. A a o nome da o endereço ficou tão grande que saiu avançando tudo aqui, né? Deu esse
+
+errinho, mas tudo bem. Deixa eu ver se era esse que tava com aquele erro mesmo de 1800%. E agora que as nossas notas estão nomeadas, a gente consegue identificar fácil. Só tem um problema, ele nomeou tudo errado aí. Não é, eu não tinha verificado isso. Olha só, esse
+
+aqui seria o Iker, não é? Móveis de qualidade. Ele fez tudo errado, coitado. Coitado de mim, né? Por essa eu não esperava.
+
+É mole. Vamos procurar aqui. Eu crente que, pô, não, agora tá tudo certo. A gente vai na certinha ali porque a gente vai conseguir ver. Na verdade, ele Ué, ué. Cadê a Sonic aqui? Sonic. Essa
+
+daqui, então era essa aqui, tava 1800 aqui, tá? Então ele corrigiu pra gente lá. Então aqui tá muito melhor de ver, né? 18% certinho. Beleza? Ó, tipo
+
+invoice ou recibo, tá? Aqui a gente tem então cada um dos do das categorias, OK? Estabelecimento. Vamos lá. Só Sonic aqui que eu quero. Só que tá recibo, ele não
+
+tem recibo, tem voice. E aí sim a gente tem aqui lá embaixo. A gente vai ver só ele agora, ó. pode expandir ou pode retrair aqui. E, pô, dashboard show de bola demais. Esse dashboard vale aquele
+
+teu hype aqui nesse vídeo, né, para mostrar esse vídeo para mais gente, porque isso daqui é um projeto útil, tá? Vocês pediram, eu tô trazendo, tá? Vocês falaram: "Ah, você só tá fazendo o jogo, faz projetos diferentes", tá aqui. E para ser justo, tô jogando meio safe aqui, né? porque a gente já fez um projeto parecido com esse antes. Eu vou
+
+trazer outras coisas mais diferentes, pode ficar tranquilo, mas para isso se inscreve aqui no canal para você não perder nada e deixa like nesse vídeo porque assim eu sei que esse tipo de vídeo aqui é interessante também porque a gente vai continuar fazendo o jogo, tá? Mas eu quero saber de você o que que você achou do Quen 3.6. 35 bilhões de parâmetros, 3 bilhões de parâmetros ativos, rodando aqui localmente, sem nenhuma quanto. A gente vai fazer outros vídeos sobre ele, trazendo ele quantado, talvez até tentando reproduzir algumas das coisas que a gente fez aqui, só que com modelo de 2 bits. Será que o modelo
+
+de 2 bits ia conseguir fazer exatamente o que ele fez aqui? Ou melhor, né, renomear, por exemplo, as imagens corretamente. A gente vai testar isso lá na nossa 5090, tá? rodando aqui no Zimaboard 2. Inclusive tô adorando esse meu setup aqui. A gente vai ver um pouco
+
+mais dele no próximo vídeo quando a gente falar da 5090 e do Quentin 3.6 rodando nela. A gente vai rodar no Mac Mini também. A gente vai brincar bastante com esse modelo. Isso se a Alibaba deixar a gente não lançar outros na sequência aí, né? Porque daqui a
+
+pouco vai vir o de 27, talvez o deve, o de quatro, que eu sei que você tá esperando o de quatro e o de 122, que é o que eu tô mais animado mesmo. Mas é isso aí, a gente se vê no próximo vídeo. Vou ficando por aqui. É nós.

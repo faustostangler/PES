@@ -1,0 +1,184 @@
+---
+video_title: "Testei o Trinity-Large Q4 LOCAL com TurboQuant 4-bit. Deu certo?"
+video_id: HsqCa3aPCKA
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HsqCa3aPCKA
+video_date: 2026-04-07T21:09:10+00:00
+video_description: |
+  Neste vídeo, eu testo o Trinity-Large-Thinking um modelo open source de 398B da Arcee AI rodando localmente com quantização 4-bits e KV Cache com quantização TurboQuant de 4-bits.
+  
+  O Trinity é um modelo open source de grande porte vindo dos Estados Unidos, algo que a gente raramente vê. Além de mostrar a proposta do modelo, eu testei ele em tarefas de pesquisa, criação de interface web e jogos em HTML. Os resultados ficaram abaixo do esperado, talvez pela quantização excessiva, mas acho que vale fazer mais testes pra tirar qualquer conclusão definitiva.
+  
+  👉  Se quiser experimentar o GLM e dar uma moral para o canal, usa meu link: https://z.ai/subscribe?ic=1CUTHGZM5X
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaitrinitylarge
+  
+  _______
+  
+  0:00 Intro
+  1:01 Documentação
+  4:59 Setup Local
+  6:07 Tool Calling
+  9:00 Web Design
+  12:51 Angry Birds
+  15:09 Pinball
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Eu já tô com Turbo Quant de 4 bits selecionado, porque esse modelo é um modelo muito grande. O Turbo Quant vai ajudar a gente. Hoje a gente vai testar um modelo open source de 400 bilhões de parâmetros, que tem uma característica que não se vê muito hoje em dia, não. Esse é um modelo de uma empresa dos Estados Unidos. Pois é, tô falando aqui do Trinity Large Thinking. Esse é um
+
+modelo da empresa chamada RCAI. E normalmente quando a gente vê modelos dos Estados Unidos são modelos fechados. Tem muito pouca coisa de modelo open source vindo de lá. A maioria esmagadora vem da China, principalmente nesse nível de qualidade, né? 300 bilhões de parâmetros para cima. O que a gente tem
+
+hoje dos Estados Unidos seria a Nvidia. Ela é um grande player que lança bastante coisa. Inclusive ela lançou recentemente o Nemotron Super, que a gente fez um vídeo aqui no canal, vou até deixar o card aqui. E tem também a Openea que lançou o GPT, OS, né, já há algum tempo atrás, mas ambos modelos são de 120 bilhões de parâmetros. Quando a gente vai para 400 bilhões, a gente tá falando de um jogo completamente diferente e a gente vai ver agora na prática. Vamos lá paraa tela. Então,
+
+vamos lá. Ó, RCAI já na cara aqui, eles querem fazer questão de falar que são um laboratório americano. E para muita gente isso daqui é importante. Exatamente por isso que eles destacam. E aqui eles fazem a propaganda deles que eles lançaram três modelos, né, top de linha nos últimos seis meses, todos open source. Se a gente clicar aqui, a gente
+
+vai ver, ó, Trinity Nano, tá? Que tem 6 bilhões de parâmetros, um ativo. A propósito, vou te falar, eu não testei esse modelo aqui, tá? Se vocês quiserem, deixa aqui nos comentários que eu trago ele também. Eu tô preparando um vídeo sobre o Zima Board e eu acho que ele caberia perfeitamente lá. Outro modelo
+
+que a gente tem aqui é o Trinit Mini, 26 bilhões de parâmetros, 3 bilhões de parâmetros ativos. Seria bem interessante comparar esse modelo aqui, talvez com Quent. 27 bilhões de parâmetros. Na verdade não. Na verdade ele tá mais pro gema. de 26 bilhões de
+
+parâmetros com 4 bilhões de parâmetros ativos. Ah, pois é, gema, quase esqueci, né? O Google também tem modelos open source, mas também normalmente são modelos menores ali por volta dos 30 bilhões de parâmetros. Será que eles vão lançar um GMA 4 de pelo menos 100 bilhões de parâmetros? Seria muito incrível. E aqui embaixo, ó, a versão
+
+preview e a versão thinking dele, né, que é o astro desse vídeo aqui, Trinity Larging, um modelo de 400 bilhões de parâmetros, mixture of experts com 13 bilhões de parâmetros ativos. Isso é excelente porque 13 bilhões de parâmetros, assim como o Minimx M2.7 que tem ali em torno de 10 ou 11, e o Quent. 122 bilhões de parâmetros, que também tem por volta disso aí entre 10 e 12 bilhões de parâmetros ativos, torna o modelo muito rápido para rodar localmente. A gente vai rodar localmente aqui, vai rodar no Mac Studio M3 Ultra, 256 GB de memória unificada. A memória
+
+dele tem uma taxa de transferência de 800 GB/s e sem mixture of experts vai ajudar bastante a gente quando a gente rodar localmente. Aqui a gente tem o card dele do Huging Face que fala um pouco mais, né? Então 398 bilhões de parâmetros, 13 bilhões de parâmetros ativos, um modelo que foi treinado para tarefas agênticas com reinforcement learning e um modelo com reasoning, né? Aqui a gente tem um link para você poder testar em chat. Né? Você pode fazer o login aqui, testar
+
+o modelo se você não conseguir rodar localmente. E aqui a gente tem alguns highlights, né? Então ele é feito para tarefas agênticas. A gente vai inclusive testar um pouquinho disso aqui. Depois a gente vai pros nossos testes normais. E
+
+aqui tem alguns resultados de benchmarks dele. Parecem bons números. Ele é compatível com open claw e Hermes agent. Hermis ou é Hermes, não sei. Bem, de qualquer forma, isso aqui tá bombando ultimamente, né? E aqui ele fala também
+
+do uso no open router, que é uma outra forma de você usar se você não conseguir rodar localmente. Aqui a gente tem algumas variantes. Então tem a versão base. A versão base você vai usar se você quiser fazer um treino maior nela, né? Ela já vem ali pré-treinada, mas se você quiser colocar alguns dados da sua empresa ou ensinar ele formas de responder especificamente ou de agir de determinada maneira, o base vai te permitir treinar melhor. Pelo visto tem
+
+um que é verdadeiramente base, tá? Isso aqui talvez seja uma base fake. O preview ele seria aqui, ó, pelo visto, a versão instruct, uma versão que não tem reasoning, que não tem a parte de pensamento, né? Você pergunta, ela responde. E às vezes é isso que a gente quer, né? Às vezes a gente quer
+
+velocidade, dependendo do caso, principalmente se for coisas que ele precisa mais agir do que pensar, pode ser que o modelo instructe. Agora o que a gente vai testar aqui é a versão thinking dele, tá? Vamos só dar uma olhada aqui no nosso benchmark. E aí eu tô vendo que ele tá se comparando com mini max 2.7 e não 2.5 e Opos 4.6,
+
+supostamente ele tá no mesmo nível dessa galera. E eu vou te falar, o Minimx M2.7 me surpreendeu, cara. Achei ele bom demais. Inclusive, se você quiser assistir o vídeo que a gente fez aqui pro canal sobre ele, vou deixar aqui no card. Mas supostamente a Trinity é
+
+melhor do que ele em várias coisas. Vamos ver. Eu tô inclusive esperando Minimx M2.7 7 sair open source que já foi prometido que vai sair, mas não saiu ainda pra gente testar aqui. Mas beleza, vamos agora colocar a mão na massa. Hoje
+
+eu vou usar aqui o Inferencer Pro. Esse vídeo não é patrocinado pelo Ash, que é o criador desse software aqui, mas eu gosto bastante dele e principalmente hoje a gente vai usar ele porque ele foi uma das primeiras pessoas a implementar o Turbo Quant. Então se a gente olhar aqui, ó, em modelo quant de 4 bits selecionado. Por quê? Porque esse modelo é um modelo muito grande. Ó, os arquivos dele sem quanto,
+
+tem 797 GB. É muita coisa. O nosso computador tem 256 GB, então eu preciso uma versão menor ainda do que isso e ainda preciso que sobre um espacinho para contexto. Então a versão que a gente vai usar hoje é essa aqui, ó, 224 GB, né? Meu computador tem 256, vai sobrar muito pouco para contexto, mas a gente vai ver que que dá para brincar aqui. E exatamente por isso o Turboquant
+
+vai ajudar a gente. Você nunca ouviu falar de Turboquant, ele é uma técnica para comprimir o contexto ou KVC cash, tá? Sem perder qualidade. Eu fiz um vídeo inteiro sobre isso dando uma explicação de como ele funciona. Vou deixar aqui no card também. Se você
+
+quiser saber mais, esse é o lugar. Mas basicamente ele vai ajudar a gente conseguir rodar de forma eficiente isso aqui. E a gente tá rodando versão de 4 bits, tá? senão a gente não ia conseguir rodar não. Mas vamos lá. Vamos começar
+
+então com um pequeno teste agêntico. Eu vou pedir para ele usar algumas tools, procurar alguma coisa e eu quero ver se ele vai trazer o resultado certo pra gente. Já tem um tempinho que eu não faço nenhum vídeo aqui pro canal sobre text, que é uma área que eu gosto bastante. Então vou pedir pro Trinity Large aqui me ajudar a fazer uma pesquisa para ver quem tá bombando aí nessa área de texture speitch nesse momento. Então olha só, vaiá em huginface.co co e me retorne uma lista
+
+dos 10 modelos texture speech top trending, né? São aqueles que estão bombando e é bom porque a gente vai poder conferir isso daqui a pouco. Vamos ver o que que ele vai trazer pra gente, ó. Ó, o Zor tá pedindo para eu acessar o Hugin Face, ele já tá pensando aqui o que que ele tem que fazer. E ele fez uma chamada de tool col que o próprio inferencer aqui, ele permite a gente que use tools, né? E uma das tools é
+
+exatamente fazer busca na internet. Então ele tá indo lá, tá buscando, vai fazer mais uma call, ó. fez mais uma call aqui e agora ele tá fazendo mais uma call e aí ele já botou aqui, ó, tag texture speitch, sorting. Acho que aqui ele vai conseguir achar o que a gente quer, ó. Perfeito. Tem a lista dos
+
+modelos textados por trending. E ele tá trazendo pra gente. Então ele tá trazendo aqui, ó. Primeiro lugar, Omni Voice. Segundo lugar Vox 4B. A gente fez
+
+um vídeo aqui do Vox, tá? Se você quiser assistir, eu esse vídeo aqui vai ficar cheio de card, pelo visto, né? Porque, pô, já é o quinto card que eu tô botando. Acho que eu nem posso botar mais card, mas se der, eu vou botar aqui do Voxstraw, porque o modelo é maneiro demais também. Cocoro. Cocoro modelo
+
+muito legal, cabe em qualquer lugar, cabe no celular. Esse Irodore aqui, eu acho que ele é um modelo focado em japonês, se eu não me engano, por isso a gente não cobriu. Quents, cobrimos aqui. Vibe Voice, adoro esse modelo. S2 Pro da Fish Audio, modelo muito, muito bom. Aí
+
+a gente tem Erodor com outra versão, Vibe Voice outra versão e esse round Open TTS que eu não conheço não. Então daqui ó, eu ainda não testei OMI voice, não testei esse round. São duas opções pra gente trazer aqui. Se você quiser que eu traga algum desses dois modelos, deixa aqui nos comentários. Mas e se ele alucinou? E se ele inventou tudo isso
+
+aqui pra gente? Vamos conferir agora, ó. Se eu for aqui no hug face em modelos, eu consigo adicionar o filtro aqui, ó, text to speí a gente tá aqui já ordenado por trending. E olha quem que ele trouxe pra gente. Em primeiro lugar, Omnice. Exatamente. Tá?
+
+Vox, exatamente. Cocô Coro, exatamente, Irodor. Exatamente. Ele trouxe exatamente a lista que a gente esperava. Ele parou aqui, né? Porque aqui
+
+completou 10, a gente pediu 10. Então tudo que a gente pediu, ele trouxe perfeitamente e a gente viu que ele fez múltiplas tool calls para poder chegar nesse resultado, tá? Então ele teve que primeiro entender o que que era o site, depois começar a navegar nele, ver o que que dava para fazer e chegou o resultado que a gente queria. Show de bola. Um ponto pro Trinity. Agora, como próximo
+
+teste, vamos pedir para ele criar uma página pra gente ver como são as habilidades dele em questão de web design e design de forma geral. Cria uma página web de um site de um laboratório especializado em criação de robôs. Adicione alguma funcionalidade fora da caixa e faça o visual ser surpreendente. Entregue o resultado em um único HTML. Vamos ver como que ele vai lidar com essa tarefa aqui, ó. Ele tá pensando
+
+ali, né, no que que ele tá fazendo, ó. Legal. Aqui ele tá, talvez ele traga pra gente um minijogo. Gosto. Vamos ver o resultado. Ó, uma coisa destacar aqui,
+
+ele tá criando já o nosso código, né? tá fazendo CSS e ele tá entregando aqui uma velocidade de 32, 33, 34 tokens/ segundo. Vamos ver se ele vai manter. Conforme esse contexto for aumentando, provavelmente isso vai diminuir, né? Para um modelo desse tamanho, 400 bilhões de parâmetros, eu acho essa velocidade muito boa aqui no Mac.
+
+Dificilmente você vai conseguir rodar isso num outro hardware doméstico por conta do tamanho, né? mesmo que é 4, ele ainda ocupa aí 220 e poucos gigas de memória. Então, pouquíssimos aparelhos têm essa capacidade. Você poderia ter aí talvez dois DX Parks juntos, você conseguiria rodar ele, mas se não conseguiria ter essa taxa de velocidade ou provavelmente nem perto disso, por conta da taxa de transferência do DDX Spark, que é 200 e poucos gas por segundo, enquanto do Mac é 800 na versão M3 Ultra. Pô, quando chegar o o M5 Ultra vai ser um monstro demais. Eu tô
+
+esperando que ele venha com uma taxa de transferência, se vier o M5 Ultra, né? Não vier um M4 Ultra, mas se vier um M5 Ultra, eu tô esperando uma taxa de transferência ali de 1.2 ter por segundo. A placa da Nvidia RTX 5090 e a RTX 6000 Pro, elas têm a taxa de transferência de 1.7 ter por segundo.
+
+Então, pô, se o Mac chegar a 1.2 vai ser incrível. Ó, já caiu bastante ali, então a gente já tá em 25 tokens por segundo, mas ainda considero bem utilizável aqui. Se a gente cair ali para 15 tokens por segundo, já começa a ficar bem ruinzinho. Mas por enquanto tá OK. E
+
+principalmente que se a gente levar em consideração, se ele tiver fazendo coisas menores, vai manter lá em volta aí 30, 35. Ó, fechou aqui. Ele tá me falando aqui o que que ele implementou. Não quero saber que que você implementou. Não, não me fala agora.
+
+Vamos testar que eu quero ser surpreendido. Vou copiar aqui o site Robolab, né? Crie o robô do futuro. Ah, legal esse efeito aqui, ó. Tá vendo que ele tá indo para lá e para cá assim? Um
+
+estilinho meio ícone do TikTok. Explore o nosso laboratório virtual e gere robôs personalizados com inteligência artificial. Escolha componentes, defina funções e veja seu robô ganhar vida em tempo real. Legal. Criar robô. Então aqui eu tenho criador
+
+de robô. Que que é isso aqui? Robô básico. Ele vai mudando ali, ó. Robô industrial. Robô explorador.
+
+Funcionalidade extra ativada. Gerar partículas.
+
+Bem, ele vai mudando aqui, né, o texto aqui embaixo e supostamente ele muda alguma coisa aqui. Mas eu não tô vendo não tô vendo nada diferente aqui não. Além desse efeitinho, né? Quando quando a gente troca aqui de robô, cadê? Como é que eu saio daqui? Recarreguei a página
+
+aqui. Eh, e não tem não tem barra de rolagem, né? Então não sai daqui. O que eu posso, que eu poderia navegar seria aqui por cima, mas a única coisa que funciona é criar robô ali mesmo. E também só no botão também. Não tem link
+
+aqui. Vou atualizar. Deixa eu ver aqui, ó. Tanto o explorar não vai para nada. Criar robô vem para cá. E é isso.
+
+Confesso que não me surpreendeu muito não. Tudo funciona de primeira aqui, né? Nada deu erro, mas é meio mais ou menos. Pro próximo teste, eu vou pedir para ele criar o nosso clássico Angry Birds, tá? Pra gente ver se ele vai conseguir lidar ali com 3JS, se ele vai fazer algo funcional, vai rodar de primeira, não vai? Vamos ver. Vamos lá. Cria um clone
+
+do jogo Angry Birds usando 3DS. Os pássaros inimigos devem ser feitos de formas geométricas e entregue tudo em um único HTML. Vamos ver aqui o resultado dele. Então, já tá começando a pensar aqui. Ele tá entendendo que tem que fazer aqui o lançamento do pássaro. Os
+
+inimigos vão ser porcos vermelhos. Não, mas bem aqui ele demonstra que ele entende o que que é o jogo. Ele fala de porcos, a gente não falou de porcos, ele fala sobre o mecanismo de arrastar para trás, tema de colisão, etc. Agora é só aguardar. Ó, já tá escrevendo aqui o código pra gente. Quando ele terminar, a
+
+gente volta. Já terminou aqui, ó. Então ele criou 3273 tokens. Tô achando pequeno. Ó, esse código aqui eu não acho que vai que é o suficiente não, tá? Mas vamos ver. OK.
+
+Temos um resultado aqui, ó. E eu já tô vendo que ele tá invertido, né? Eu puxo para um lado, ele vai pro outro. Mas tudo bem. Vamos ver se eu soltar aqui.
+
+É, ele tá indo pro lado errado.
+
+[risadas] É impossível acertar isso aqui. Então, ten que puxar para cá para ele ir um pouquinho. Mas tem muito pouco controle aqui. Não, não funcionou muito bem não. Mas bem, temos um resultado.
+
+Quais os pontos positivos? Eh, nenhum. Não, mentira. Funcionou de primeira, tá? Não deu erro. Ele conseguiu linkar o
+
+3DS, conseguiu fazer um pouco da física, mas ele inverteu as bolas. O o jogo tá extremamente simples em questão do do dos gráficos, né? Mas a gente precisa destacar que a gente tá usando uma versão de 4 bits só. E acho que talvez isso seja um ponto interessante do MinX, porque o Minimx M2.5 especificamente, que é o que saiu open source já, ele tem 229 bilhões de parâmetros. Então, quando
+
+a gente roda localmente, a gente consegue rodar ele Q6. Q6 tem um pouco mais de qualidade do que o Q4. Então pode ser um dos fatores desse modelo não ter saído tão bem assim nesse teste. Pro próximo teste a gente vai trazer um prompt que a gente usou quando a gente estava testando o Mimo Mimo, sei lá, V2 Pro, que é o modelo da Xiaomi, tá? Um modelo gigante, um trilhão de parâmetros e ele não conseguiu fazer esse pinball.
+
+Vamos ver se o nosso Trinity Large vai conseguir. Então, basicamente é criar um jogo de pinball, né, com HTML, CSS, JavaScript. Tô dando aqui o prompt em inglês para ver se ele pega no tranco aí em inglês ele e sai melhor. Ó, ele tá fazendo uma busca, né? Isso daqui é interessante. Esse software que eu tô
+
+usando aqui, ele dá alguns tools pro modelo e o modelo decide se ele quer usar ou não. E ele resolveu fazer uma busca aqui antes de começar o nosso jogo. Será que ele pegou um jogo pronto? Não sei. Vamos ver. Mas aqui com certeza
+
+ele viu vários exemplos do jogo, né? Então tem tem uma vantagem aqui. Vamos ver se vai sair algo legal. Pronto, tá finalizando aqui, ó. Terminou pra gente.
+
+Vamos pegar o código que é aqui, ó. E vamos ter que que que é isso? Tá aqui, ó. Ué, que coisa de maluco. A e que eu faço com isso?
+
+Tá. Uma coisa que eu tô vendo aqui é aí, se a gente olhar o site que ele fez, ele usou aqui o verde, o rosa, né? E se a gente olhar agora, a gente também tem meio rosa para vermelho e verde novamente. Então ele gosta dessas cores. Modelo mangueirense, tá? Então os
+
+controles estão funcionando. Bom, mas cadê? Tem algo errado aqui que não tá certo. Deixa eu pedir para ele tentar ajustar aqui, ó. Me parece que o posicionamento dos elementos está errado. Faço uma
+
+versão 2.0 melhorada com mais funcionalidades. Show de bola. Terminou aqui o nosso código. Pô, quantos tokens, ó? 7712
+
+tokens. Agora sim, hein? A propósito, a gente usou o Turboquent aqui nesse vídeo, mas provavelmente a gente não teve nenhum grande benefício com ele, porque os nossos contextos não são tão grandes assim, ó. 4.000 tokens anteriormente com agora 7.000 daria ali
+
+um pouco mais de 10.000 tokens. É, nessa faixa a gente começa a ter algum ganho do turbo quant, mas abaixo disso provavelmente não tem tanto benefício não. Opa, ó, ficou diferenciado. Aqui tem um negócio, ele colocou aqui que tem um launch, mas launch launch de onde? Mas ficou
+
+melhor, cara. As teclas ainda funcionam? Não. Ah, tá. Já deve ter dado game over aqui. Ah, as teclas funcionam, só que tá
+
+errado, né? Tipo, isso aqui tá meio alerto, mas tá melhor. Tá melhor, tá melhor. Ah, ué. É, sei no que que bate. Ó, tem um S aqui. É
+
+bem. Esse é o resultado aqui do nosso Trinity. Acho que tem algum potencial, sim. Bem, nos nossos testes iniciais, o Trinity não saiu tão bem quanto os modelos chineses, mas com certeza existem casos onde ele vai se destacar. Nosso papel aqui é testar os modelos, tentar trazer um pouco de entretenimento para esse teste e nem sempre tudo vai dar certo. Agora, se você quiser dar
+
+mais uma chance para ele, se você quiser ver ele no modo agêntico usando o Open Code, por exemplo, aí deixa aqui nos comentários, porque a gente coloca ele para fazer o nosso Mario Kart, né, o nosso GTA. Aí eu quero ver. A propósito, se você quiser saber como que o Quentin 3.6 Plus fez um GTA incrível, dá uma olhada nesse link aqui. E se você quiser ver modelos menores, eu tenho uma playlist só de modelos pequenininhos que eu vou deixar aqui, ó. Se você não tá
+
+inscrito, ainda se inscreve. Ainda dá tempo de se inscrever. O vídeo ainda não acabou, não, tá? Deixa aquele like e sempre que tiver um vídeo aqui no canal que você curte muito, deixa aquele hype porque ajuda a mostrar para outras pessoas também. Então é isso aí. Vou
+
+ficando por aqui, até o próximo vídeo.

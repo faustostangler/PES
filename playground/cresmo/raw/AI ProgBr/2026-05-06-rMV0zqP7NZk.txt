@@ -1,0 +1,286 @@
+---
+video_title: "Mistral Medium 3.5 128B: da confusão à SURPRESA"
+video_id: rMV0zqP7NZk
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=rMV0zqP7NZk
+video_date: 2026-05-06T20:34:16+00:00
+video_description: |
+  Neste vídeo eu testo o Mistral Medium 3.5, um modelo denso de 128 bilhões de parâmetros com janela de contexto de 256k tokens, capacidade de visão e reasoning configurável. 
+  
+  O lançamento de um modelo 3.5 me gerou bastante confusão, porque a Mistral já tem modelos na versão 4.0. No vídeo eu explico o motivo deles terem "voltado no tempo".
+  
+  A gente roda ele no LM Studio com quantização Q4 bits, compara a velocidade com a API oficial via OpenRouter, e testa desde a criação de um teleprompter web até um clone do Angry Birds em Three.js e um GTA em 3D. 
+  
+  Também entra comparativo de preço com DeepSeek e GLM-5.1, e um teste de visão com vários modelos para ver quem se sai melhor na identificação de uma foto. Se você quer saber se o Mistral Medium 3.5 vale a pena, esse vídeo te dá uma boa noção do que esperar do modelo.
+  
+  👉 E se quiser usar o meu app de Teleprompter, aqui tá o link: https://apps.apple.com/app/apple-store/id6479963418
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⏵ ZimaCube: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaimistral35128B
+  
+  _______
+  
+  0:00 Intro
+  0:29 Documentação
+  5:30 Teste Local (LM Studio)
+  6:51 Teste via API (OpenRouter)
+  7:00 Preço e Comparativo
+  8:07 Angry Birds (Three.js)
+  9:16 Resultado do LM Studio
+  11:33 Teste Angry Birds (API)
+  14:03 Teste de Visão
+  15:31 Reprodução de Página HTML
+  17:45 Teste Multi-Modelo de Visão
+  19:34 GTA 3D
+  24:20 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Toda vez que a Mistral lança um novo modelo, eu fico de olho porque eu quero muito que o modelo seja bom. Essa é uma empresa que eu já acompanho há algum tempo, é uma empresa francesa, né? E ela se apresenta como uma das empresas tops, né, de inteligência artificial. Só que tudo que eu testei do MW até hoje, nada me agradou muito. Vamos ver se esse modelo aqui vai mudar minha opinião.
+
+Hoje a gente vai ver o Mstraw 3.5 Medium, um modelo de 128 bilhões de parâmetros que assim que eu vi que eles liberaram, eu fiquei um pouquinho confuso. Vamos lá pra tela, para eu te explicar porquê. Esse aqui é o card do modelo Mstraw Medium 3.5, tá? De 128
+
+bilhões de parâmetros. Só que há algum tempo atrás a gente testou aqui no canal um modelo chamado Mstraw 4, né, que supostamente é mais novo, né, e seria o sucessor aí do Mstral 3.5. Então, por que que eles estão liberando um modelo 3.5 agora? Bem, esse modelo já existia,
+
+ele era fechado e apesar dele ser relativamente parecido em número de bilhões de parâmetros com o MSRW 4, se a gente olhar aqui, ó, o MRW 4 small, né, tem 119 bilhões de parâmetros, enquanto McL 3.5 medium tem 128. Primeiro a gente vê essa mudança aí, né, que pro 4 119 é pequeno, enquanto pro 3.5 128 é médio e não é pequeno, né, e nem é grande também. Miss 3.5 tem uma versão de 675
+
+bilhões de parâmetros, mas era uma versão que eu não conseguia rodar localmente. Então eu sempre achei que o medium seria uma versão interessante, mas depois que veio o quatro, eu meio que desapeguei, falei: "Ah, não importa mais tanto assim o medium". E cá entre nós, o quatro não foi muito bem também. Qual que é a diferença aqui? A diferença é que um Scroll Small 4 de 119 bilhões de parâmetros, ele na verdade é um mixture of experts. Então, apesar dele
+
+ter 119 bilhões de parâmetros, ele só ativa 6 bilhões de parâmetros. E como o Quin 3.5 e 3.6 ensinou pra gente, na verdade a gente já sabia, mas ele popularizou que os modelos densos são melhores do que os modelos mixtra experts em relação à inteligência. Eles são mais inteligentes, mas eles são muito mais lentos. Então aqui o medium
+
+3.5 de 128 bilhões de parâmetros, provavelmente vai ser muito mais inteligente do que um Stroll 4 de 119, mesmo sendo, digamos assim, de uma geração anterior. Pelo menos é isso que eu tô esperando aqui, tá? Então a gente vai testar para entender. Então vamos ver um pouquinho mais aqui sobre o modelo. É um modelo denso de 128 bilhões
+
+de parâmetros. Ele tem 256.000 1000 tokens de contexto, o que muita gente hoje acha pouco. Eu acho que ainda dá para usar esse contexto aqui. Acho que tá OK, mas já é comum ver aí modelos com 1 milhão de tokens de janela de contexto. Então esse é um modelo que ele
+
+tem capacidade de visão, então ele consegue enxergar imagens além de entrada de texto. E a gente consegue configurar nele o reasoning. Então dá para ligar ou desligar o reasoning nesse modelo. Aqui é um modelo multilingual, né? Então ele teoricamente vai bem em várias línguas, só que assim, eu ainda não vi nenhum modelo que eu fale: "Nossa, o português desse modelo é terrível, todos eles me atendem bem".
+
+Mas aqui a gente vai dar destaque porque ele se diz um falante de português, tá? Aqui ele também se diz bom para capacidades agênticas e a licença dele é um MIT com algumas modificações. No caso, as modificações aqui parecem ser exceções para empresas com revenue gigantesco, né? com receita grande. Deixa eu até dar uma olhada aqui. Então,
+
+por exemplo, se você fatura aí mais do que 20 milhões por mês, aí você não vai poder usar esse modelo aqui, não, ou vai ter que fazer um acordo com o pessoal do Mistral. Caso contrário, tá tranquilo. Ó, aqui a gente tem os bandmarks que a gente sempre gosta de dar uma olhada. Então, aqui, ó, a gente teria, por exemplo, em navegação do browser o Mstral Small, né, versus o nosso Mstral Medium que a gente tá vendo agora. Então, é uma diferença gigantesca aqui, tá? Quando a gente vê aqui, a diferença
+
+já é menor, mas ela também existe e é considerável. O próprio magistral medium aqui nesse caso bate o MR Small 4. Então esses daqui são benchmarks agênticos e nesse caso aqui o MW medium ele leva em todas as categorias. Quando a gente fala de código, ele tá comparando aqui com os modelos específicos de código, né? Então o Dev Stroll 2, Devstraw Small 2 e o Mcroll Medium ele também leva. Só que o
+
+Devstraw 2 é um modelo de quantos bilhões de parâmetros? Ó, o Devst 2, ele é um modelo de 123 bilhões de parâmetros, tá? Também parece ser aqui, ó, um modelo denso também. Então assim, não tá muito longe não, mas mais ou menos o mesmo número de parâmetros, né? Com um pouco mais de qualidade, vale mais a pena uma straw medium no lugar do Devstraw 2. Aqui a gente tem uma
+
+comparação com outros modelos, né, que não são da família Mstraw. Então ele compara aqui com, por exemplo, o Sonet 4.5 e o 4.6 e ele chega relativamente perto. Ele não se atreve a se comparar com Opos aqui, né? Mas se compara também
+
+com modelos como o Quen 3.5 de 397 bilhões de parâmetros, que é um modelo muito bom. Então aqui nesse benchmark, no SW Bench Verified, ele chega próximo a esses outros modelos, incluindo o Kimica 2.5, que é um modelo que eu gosto bastante, e o GLM 5.1 dessa nova level, o só o GLM 5.1 que ele trouxe aqui, ele
+
+poderia ter trazido, por exemplo, Kim K 2.6, que já existe, né? E é um pouco melhor do que o K2.5, mas tudo bem. Então aqui, ó, nesses outros benchmarks, ele fica atrás de vários deles, né? com
+
+exceção do Sonet 4.5. Então a gente poderia dizer que ele é um modelo aqui equivalente a um Sonet 4.5, próximo a um Sonet 4.6 em alguns casos, o que é interessante também, né? Aqui a gente
+
+tem mais uma comparação com esses modelos em outros benchmarks e ele se destaca aqui em alguns quesitos. Então beleza, vamos começar a colocar a mão na massa aqui. Vamos testar ele. E a primeira coisa que a gente vai fazer é testar ele localmente. Então tô aqui com Mistw Medium 3.5 128 bilhões de
+
+parâmetros versão Q4, tá? quantização de 4 bits. Rodando aqui no meu LM Studio. E a primeira coisa que eu vou fazer para ele é dar um oi aqui pra gente só ter uma ideia da velocidade dele. E a 128 bilhões de parâmetros denso, a velocidade não vai ser o ponto forte.
+
+Então, olha só, a gente conseguiu aqui oito tokens por segundo. Não é nada impressionante, mas vamos fazer o seguinte, vamos pedir para ele criar alguma coisinha aqui pra gente. Inspirado num app que eu tenho paraa iOS, que é um teleprompter, né, feito para facilitar a vida de quem cria conteúdo para que ela possa ler o script ali enquanto tá gravando, né, para não esquecer de nada. Eu vou pedir para ele implementar um mini teleprompete em uma página web onde o usuário possa inserir um texto, abrir uma webcam, controlar reprodução, dando play, pause e gravar um vídeo. Então, vou mandar aqui para ele e ele vai começar a criar aqui pra gente. E aqui eu tô rodando uma versão.
+
+Deixa eu ver se eu tô rodando MLEX, não, GGUF, mas ele não trouxe pra gente a possibilidade de eu ligar o thinking aqui. Então, a gente não tá com thinking ligado, ele tá fazendo direto, né? E ele vai levar um tempinho aqui para fazer nessa velocidade 8 tokens por segundo. Enquanto ele tá criando isso daqui, vamos testar ele lá no Open Router que vai ser muito mais rápido e a gente vai criando outros prompts. Depois a gente volta para conferir o que que ele fez pra gente. Então já tô aqui no Open
+
+Router, tá? Miscal Medium 3.5. Aqui a gente vai rodar uma versão que o provedor é a própria Miscal e ele tá entregando aqui 100 tokens por segundo. Aí sim, hein? A gente tem o preço aqui.
+
+Então 750 por 1 milhão de tokens de output. Não é pouca coisa, não. É até um modelo meio caro, né? Se a gente comparar com DeepSC Pro, por exemplo, DeepS tá servindo o modelo deles a 87 centavos a milhão de tokens. E essa é a versão pro. Se a gente olhar o GLM 5.1,
+
+vamos olhar aqui a versão da Zi. A ZI tá provendo ele a 4,40, tá? Um preço alto também. Tem alguns provedores a 3,50, provavelmente uma versão mais quantizada, né? Aqui o FP8, bem que eu não sei se é da ZFP8, mas bem. Então
+
+mesmo 440 é bem abaixo aqui dos 7,50 do MRAL Medium. Mas vamos lá. Única coisa que eu vou te pedir é para dar o hype nesse vídeo, porque assim mostra para outras pessoas e talvez o Edsense pague a conta dos tokens que a gente vai usar aqui. Mas vamos lá. Vou pedir para ele criar o nosso clone do Angry Birds. A
+
+gente teve um modelo que fez isso muito bem, que foi o Mimo V2.5 Pro. Eu vou deixar o link aqui no card porque ele mandou muito bem no Angry Birds, mas eu não quero abandonar esse projeto ainda. Eu tô com uma ideia de um vídeo que talvez seja o último vídeo que eu vou fazer sobre Angry Birds, mas hoje a gente ainda vai usar esse prompt aqui. Então o nosso prompt vai ser: crie um clone do jogo Angry Birds usando 3JS.
+
+Use formas básicas para criar os detalhes. Implement pelo menos três pássaros e três fases, tá? Então vamos mandar aqui. Eu já quero. Ah, velocidade aqui tá top, hein? Isso aqui era o que
+
+eu ia perguntar. Eu ia falar, quero ver essa velocidade aqui. Então aqui o modelo provavelmente tá melhor configurado do que a minha versão lá. E tá muito rápido. Que que eles devem estar usando para serviço aqui, né?
+
+Porque mesmo se a gente tivesse uma RTX Pro 6000, ela não seria tão rápida assim. Ela teria ali no máximo uns 30 tokens por segundo, né? E aqui tá muito rápido. A gente deve est falando aí de uma B200. Será? Será que naquele novo
+
+computador da Nvidia, o Didx Station, ele conseguiria essa taxa aqui? Pô, seria top, né? Mas o computador custa 85.000 ou mais. Algumas versões chegam a 100$.000. Eu fiz um vídeo sobre esse
+
+computador. Se você não sabe do que que eu tô falando, é um computador da Nvidia brabo demais que eles acabaram de lançar, que é feito pra IA, tá? Vou deixar o link aqui em cima onde eu falo sobre esse novo computador. Sonho de consumo, mais 85.000 aja de sense, né?
+
+Ó, já acabou. E enquanto isso o nosso LM Stúdio acabou aqui também. Então vamos fazer o seguinte, vamos começar por ele, né? Vou pegar aqui. Vou copiar. Ó, temos
+
+aqui alguma coisa. Ele tá pedindo para eu liberar aqui o microfone. OK. E a câmera tá ali. Show de bola. Então aqui
+
+é o texto onde eu vou digitar. Eu vou fazer o seguinte, eu vou pedir para ele escrever um scriptinho pra gente, ó. Ele tá criando aqui pra gente. Eu vou pegar só o primeiro parágrafo, tá? Que senão vai ficar muito grande, a gente não vai conseguir testar. Vou colocar ele aqui.
+
+Mas e aí? Cadê? Ó, tá aqui embaixo, né? Se eu der um play, ele começa a rodar ali. Pô, mas aí eu fico olhando aqui para baixo, tudo bem, né? Isso aqui
+
+teria que tá na câmera ali, mas é justo, tá? Se eu quiser voltar aqui, não dá para voltar, né? É, meu app é melhor, tá? Então, vou deixar o link aqui na descrição. Se você for um criador de conteúdo, quiser um bom teleprompter para usar, esse app tá muito bom. E ele
+
+foi todo feito com flutter usando bridge para usar coisas específicas do iOS. Então, ficou bem legal aqui. Vou ter que atualizar a minha página, então, porque eu quero gravar esse texto aqui. Vamos gravar aqui, ó. Iniciar a gravação e aí vou aqui, ó. Fundado em 2020. Tá muito
+
+rápido, não consegui fazer nada. Deixa eu parar minha gravação. Opa, gravou. Parece que gravou. Então tem que ser bem devagarzinho assim mesmo, tá? Vamos
+
+atualizar de novo mais uma vez. E agora acho que vai. Vou botar aqui a velocidade no mínimo. E agora sim vou começar a gravar. Vou começar a ler primeiro, né? Depois eu dou o play para
+
+porque senão não vai dar tempo. Fundada em 2023, a Mistral AI é uma startup francesa de tecnologia sediada em Paris, especializada no desenvolvimento de modelos avançados de linguagem LLMs. Com o foco inovador em inteligência artificial de ponta, a empresa se destaca por criar soluções robustas e eficientes para aplicações como assistentes virtuais, processamento de linguagem natural e automação de tarefas complexas. Seu compromisso com a excelência técnica e a ética na EA tem posicionado a Mistral EAI como uma das líderes no setor europeu. Perfeito.
+
+Perfeito. Então, funcionou. Vamos ver aqui, ó, se o nosso vídeo funcionou mesmo. Vou começar a gravar, ó. Vou começar a ler primeiro, né? Depois eu
+
+dou o play para porque senão não vai dar tempo. Fundado em 2000. Então, ó, perfeito. Funcionou perfeitamente. Ponto pro modelo, tá? A gente pode até fazer
+
+uma crítica que ao design, né? Ficou um design bem simplão, mas tá funcional, então tá ótimo. Ótimo. Gostei bastante. Agora resta a gente ver o nosso 3JS lá, o nosso jogo do Angry Birds aqui. Por
+
+esse código aqui consigo dizer muito, mas tá me parecendo meio simplão. Não, até que até que não, até que talvez tem alguma coisa aqui. Vamos ver, ó. Eu já espero que tenha algum erro aqui, né? Pelo visto a gente tem alguns erros aqui, ó. E como ele é um modelo de
+
+visão, vou tirar um print aqui disso daqui. Vou tirar um print disso daqui e vou mandar para ele corrigir. Isso aqui com certeza é uma correção bem simples. Cadê? Cadê? Meus arquivos não subiram,
+
+ué. Ok. Ah, não. Posso carregar duas ao mesmo tempo. É mole, tá? Vou só mandar
+
+isso aqui, não vou nem falar nada, tá? E aí eu quero que ele identifique aqui que é o erro. Isso aqui, ó. Basicamente, vamos dar uma olhada aqui no que que ele tá falando. Eita, caramba, que que foi isso aqui? Mas bem, ele basicamente a
+
+gente precisa alterar aqui essa linha. Eu basicamente preciso só trocar esse importe aqui, ó, do Canon. E é a forma como aquele arquivo ele expõe, né, pro resto do projeto o objeto. Agora eu vou atualizar aqui e não temos mais erros. Agora sim, ó. Vamos lá. Vou atualizar
+
+novamente pra gente ver o que que tá acontecendo. A gente tem alguma coisa aqui. Tem três tipos de pássaro. Não tem muitos detalhes, mas temos um jogo. Temos um jogo. Funciona.
+
+Destruímos o porquinho. Não, demoshe uma porrada, mas não funcionou. Então aqui, ó. Vamos. Opa. É, agora acho que não vai
+
+dar não. Eita. OK. Acho que eu perdi, né? Zero pássaros restantes. Aqui a gente tá na fase um.
+
+Vou reiniciar essa fase. Vou tentar novamente, mas aqui não tá parecendo que eu vou ter muito sucesso, não. A não ser que eu consiga tirar ele da Ai, meu Deus. É, isso é mais difícil. A não ser que eu consiga tirar ele da arena. Caramba, foi
+
+tão rápido que, pô, acho que eu vou começar a fazer um teste com um jogo de sinuca.
+
+Ó, acho que agora foi, hein. Cadê? Pô, era para ter valido essa aí, hein? Aqui, pelo visto, tá ao contrário, ó. Quando eu boto para cima, ele vai para cima.
+
+Quando eu boto para baixo, ele vai me para baixo. Tudo bem. Eh, eu não tô conseguindo vencer aqui, mas a gente tem um jogo. Ó, agora saiu da tela. Vamos ver se ele vai me passar de fase ou não. Não, acho que ele nem tá
+
+ligado aqui que ele tem que verificar o estado da fase, mas tudo bem, funcionou. Eu achei que nem funcionar ia. Próximo teste que eu vou fazer aqui é por ele ser um modelo de visão, vou testar com algo visual. Eu vou pedir para ele reproduzir essa página aqui, ó, essa parte dessa página. Quero ver o quão próximo ele vai chegar. Transforme essa
+
+imagem em uma página HTML. Aqui eu quero ver como é que ele vai entender ali a página, se ele vai trazer o mesmo estilo ou se ele vai trazer o mesmo conteúdo, só que de uma forma totalmente diferente. Aqui, ó, ele tá pensando bastante em como que ele vai resolver isso. E ele deu uma travada aqui. Não sei se ele travou, se ele ficou lento.
+
+Tá parecendo que ele travou aqui, mas ele não entregou nenhuma resposta pra gente. Vou pedir para regerar aqui. Pronto. E aí ele tem mais uma chance. Então, enquanto isso, vou fazer o seguinte. Ququanto ele tá gerando ali o
+
+site, eu vou criar um novo chat aqui. Eu vou pedir para ele me falar onde que essa foto foi tirada, o que que isso aqui representa. Quem é do Rio de Janeiro, talvez saiba que isso daqui é um shopping lá chamado New York City Center, fica do lado do Barra Shopping. É basicamente o Barra Shopping e tem essa estátua lá. Então que ele tá processando aí o prompt, né, por ele ser o modelo denso, ele ele demora um pouquinho, mas ó. OK. Então aqui ele tá
+
+descrevendo o que ele tá vendo. Perfeito. Mas onde é tenha sido tirada? Na Itália. >> [risadas] >> Não, não, não, não, não, não. Tá, vamos fazer
+
+o seguinte. Ele acabou de criar o site aqui pra gente. A gente vai ver esse site e depois vai pedir para ele aqui no Open Router conseguir identificar aquela imagem lá e vamos ver se ele vai identificar ou não. Mas antes, vamos ver como ficou o nosso site aqui. Então, olha só, essa daqui é a reprodução dele, né? Então, esse aqui é o original e essa
+
+é a reprodução. Nada mal, tá? Nada nada mal. Tem vários detalhes faltando, vários. Aqui no fundo a gente tem um quadriculado, né? Aqui a gente tem esse
+
+ícone, tem o nosso ícone lá também. Ele colocou alguma coisa, tá? Então justo. E colocou um ícone aqui do Fire Base. Então isso aqui tá até bom, cara. Até
+
+bom. Não tem tanto o que reclamar, não. A posição ficou errada, né? Do tipo isso daqui era não era centralizado. O logo é do lado do texto e não embaixo. A gente
+
+teve o botão aqui. Aqui também a gente tá espalhado, né? Não tá centralizado como aqui, né? Então a gente tem essa limitação aqui, caso no grid da página original e aqui ficou mais espalhado, mas tem alguma coisa aqui, né? Tem uma essência, deu para tirar. Eu diria que
+
+isso daqui foi feito por um designer e isso aqui foi feito por um programador sem saco nenhum para lidar com as firulas do design. Agora vamos voltar lá. Pera aí, pô. Ele não pode ficar assim, né? Vou pedir para ele. Vamos ver
+
+se é o problema é a nossa versão lá que tá com 4 bits de quantização e aí pode ser que seja esse o problema, né? Então vou perguntar aqui onde essa foto foi tirada. Estátua da Liberdade, Vegas, bá bá. Tinha anúncio temporário. Las Vegas é ó melhor do que Itália, tá? Acho um
+
+chute melhor do que Itália. Agora o Tiratem é o seguinte, eu vou carregar aqui o que eu considero o rei das imagens, né? O nosso Quen 3.6. E aí vamos pegar aqui a versão de 35 bilhões de parâmetros com 8 bits. Vai para dar
+
+mais chance para ele também, né? MLX. OK. tá carregando aqui. Enquanto isso, a gente já vai preparando aqui, ó, ele para responder onde essa foto foi tirada e assim que ele carregar, ele vai responder pra gente. Então, vou te falar
+
+que tô achando que tá um pouquinho mais difícil do que eu previa, mas tudo bem. Vamos ver se ele vai acertar aqui, ó. Já tá tentando ver ali. Estádio Olímpico, Beira Rio. Hum. Não, mas tá no Brasil,
+
+né? Ok. Porto Alegre. Bem, essa eu não sei. Tem uma Estátua da Liberdade lá.
+
+Qualquer forma, pelo menos ele chegou no Brasil. Isso daqui dá uma aliviada pro nosso MRW, porque tá mais difícil do que eu imaginava. Ó, peguei a imagem no outro ângulo e mesmo assim o Quen não acertou. Agora, agora eu tô desafiado aqui. Fazer o seguinte, vou criar um novo aqui, ó, e vou adicionar vários outros modelos. Vou botar o chat GPT.
+
+Caramba, chat GPT é muito caro. Não vou botar o chat GPT, não. Vou botar o Quen maior que tiver aqui. Quen 3.6 Max Preview. Inclusive vou fazer um vídeo
+
+sobre ele também. Model que eu tô louco para ver. Vamos botar o Sonet. é caro também, mas tudo bem. Hypa, hypa o vídeo aí. Vamos colocar o Kim. O Kim também
+
+tem capacidade de visão. Então, esses são os modelos que a gente vai usar para tentar identificar onde essa foto foi tirada. E vamos ver se algum deles vai acertar. E a propósito, teve já um aqui que deu para trás, que foi exatamente o nosso Quin Max lá, tá? Depois eu vou pedir pr ele retry. Então aqui, ó, essa foto foi
+
+tirado no UCI Knoplex em Del Castilho. Não, mas ok, justo, chegou mais perto. Shopping Center localizado em São Paulo. Então aqui ele também foi para São Paulo. Shopping Center 3, não sei o que que é isso. Então o Mistral ele foi
+
+firme ali em São Paulo, né? O Kim ainda tá pensando. O Sonet chutou o Del Castilho. Nova América não é. Vou tentar novamente aqui com Quen. O Quen não tá
+
+funcionando mesmo, então vou adicionar aqui pra gente o Quen 3.6 Plus. Opa, opa, temos um aqui, ó, o Kimzinho chegando lá. Essa foto foi tirada precisamente no Shopping New York City Center. Perfeito. Atualmente conhecido
+
+como Barra World Shopping. Vou te falar, não fazia menor ideia. Isso é verdade. Eu acredito que não, porque tem o Barra Road na Barra e na minha época, pelo menos, tinha era outro shopping, mas tudo bem. Ele acertou. New York City
+
+Center, tá? Então ele foi o único que acertou aqui, pelo visto dava para acertar. Então, negócio aqui de São Paulo, loucura. Vou inclusive agora mandar pro Quent. Plus, só para ver se ele também vai pro caminho certo. Não,
+
+viajou totalmente, foi pra Brasília. OK, vamos fazer o nosso teste do GTA. Então, cria um jogo 3D completo inspirado do GTA San Andreas usando 3DS via CDM com estética estilo Lego, incluia map, pessoas, sistema de nível de procurado, carros e motos, mapa com diferentes áreas, tá? A gente não tá falando aqui de armas, por exemplo, se ele colocar armas, vai ser um bônus. E aqui ele nem pensou para responder a gente, o que é um pouquinho assustador. Que que tá
+
+acontecendo? Eu já sabia que a gente ia pedir isso. Que que tá acontecendo aqui? Mas bem, vamos ver qual vai ser o resultado aqui que ele vai entregar pra gente, se vai ficar bom, se não vai, se vai funcionar, se vai rodar, se vai ter um monte de bug ou se vai est liso. Ó, show de bola, já acabou aqui. Uma coisa
+
+que eu tô achando legal é que pelo menos aqui no Open Router tá bem rápido, tá? Para rodar localmente lento, mas aqui tá rapidinho. Que que tá acontecendo aqui? Ele me mandou, pô, isso aqui é diferenciado, tá? Ele tá me dando aqui, ó, como é que é o a descrição visual aqui do jogo. Ele me deu inclusive um
+
+código. Se eu quiser adicionar um sistema de dia e noite, eu adiciono esse código. Se eu quiser carregar áudio, eu coloco isso aqui. Então, ele me deu o jogo com DLC, [risadas] tá? Vou copiar aqui o nosso HTML e vamos rodar aqui, ó.
+
+Carregando Lego San Anders. Opa, carregou, mas deu algum problema, hein? Infelizmente temos um bug aqui, ó. Vou tirar um printzinho, mandar para ele o erro, ó. E aí ele já identificou aqui que que tá acontecendo. Então ele já deu
+
+aqui um código corrigido pra gente, tem várias opções de correção. E aí ele me sugere que essa é a recomendação pro meu caso. Então aqui, ó, deixa eu ver se é isso mesmo. É, ó, eu vou substituir então isso aqui por aquele outro código e a gente vai rodar novamente aqui. Ainda tá com erro. Agora é um outro
+
+erro, ó. Mas o mapa aqui tá funcionando, tá interessante. Parece que tem arma aqui, ó. Legal. Vamos dar mais esse feedback aqui pra ele. Mais um erro. E
+
+aqui ele tá mandando eu mudar a função toda de colisão, né? Pelo visto aqui eu vou pedir pr ele reescrever tudo com todas as correções. Aí vai facilitar minha vida. Ele tá tão rápido, vale a pena fazer assim. Vou gastar um pouquinho mais, né? Não tinha pensado
+
+nisso. Rodando tudo local. Tô perdi essa essa manha de que qualquer prompte. Isso aqui tem um monte de token, né? Vai sair caro isso aqui. Vou pedir então
+
+para você deixar aquele like nesse vídeo, né? Pra gente [risadas] conseguir pagar as contas. Ai, ai, dei mole, cara. Era muito melhor eu ter substituído o código lá. Ia perder 2 minutos. Vou
+
+gastar uns dólares aqui. Mentira, não vai ser tudo isso, porque isso aqui vai ter nem 10.000 tokens, eu acho. Não, 10.000 tokens vai ter, porque o código tinha quase 2000 linhas de código. Vai,
+
+vai, vai me cobrar aí uns bons. 5, não, mas uns R$ 2, R$ 3 acho que vai. Beleza, acho que ele resolveu aqui pra gente 2006 linhas de código. Oh, agora temos alguma coisa aqui. Encontro um veículo.
+
+Pô, mas parece que eu tô numa Ih, caramba, que esquisito esse controle aqui. Como é que eu ando? Não sei como é que eu ando aqui. Tô andando pro lado aqui. Se eu boto para cima ou para baixo ali, o boneco se inclina ali. O boneco é um
+
+boneco de papel, né? Parece o Seu Madruga depois que o seu Barriga pulou em cima dele. Pera aí, deixa eu atualizar essa página aqui que algo de errado não tá certo. Não é possível. É, tá meio esquisitíssimo.
+
+Eu acho que eu vou, será que eu vou cair aqui? Não. Ah, não. Tá muito estranho isso. Ah, eu tô andando. Ah, é meio esquisito
+
+isso, hein? Tá. Caramba. É para entrar no veículo. Mas cadê? Como é que eu entro no
+
+veículo? Nossa, isso aqui tá muito maluco. Não tô conseguindo entrar no veículo. Consigo dar soco? Não sei se consigo dar soco.
+
+Cara, que controle de maluco esse troço aqui. Não, não, não dá para entrar não. Ó, tô indo de lado assim. [risadas] Ai, caramba. Que que é aquilo ali? Ih,
+
+ele dá, ele pula, ó. Não é um veículo isso. Não sei. Não sei o que fazer. Ó, tem uma pessoa ali. Vou nela. Eu tô lutando com
+
+os controles aqui, cara. É muito difícil. Como é que eu dou soco? Caramba, eu tô todo torto. Ai, caramba.
+
+É, não consigo dar soco. Ih, eu tô com uma K47, supostamente agora. Não sei como é que eu troquei. Ah, troquei. Ah, tá. Já sei como é que eu troquei. Cadê?
+
+Ó. AK47. Lançador de foguete, mas não faz nada. OK. É, tem alguma coisa aqui, né? Mas
+
+[risadas] eu fui ali, ó, andando assim, o boneco, o boneco é meio esquisitão, meio chapado, mas tá, é, é uma versão, é um jogo. Então, esse foi o nosso MRAW Medium 3.5 de 128 bilhões de parâmetros, modelo denso, que eu vou te falar, foi um pouco melhor do que eu imaginava. Eu vim aqui não esperando nada desse modelo, porque as outras experiências que eu tive, principalmente com Maraw 4, que eu botei minha expectativa lá em cima, eu me decepcionei um pouco. Então, esse aqui é um modelo, nossa, explodiu minha mente. Não, não, não, não, não.
+
+Mas foi um pouco melhor do que eu imaginei que seria, por incrível que pareça, tá? Agora tem coisa boa vindo aí, ó. O que que acabou de chegar aqui, ó, Intel Arc B70. Vou testar essa placa. Por que que essa placa aqui ela é importante? A RTX 5090, ela é uma das
+
+placas mais interessantes de você ter localmente, porque ela é muito rápida e ela tem 32 GB de V RAM. Isso quer dizer que você consegue colocar modelos ali com alguma quantização, mas modelos muito interessantes, como por exemplo Quen 3.6, 27 bilhões de parâmetros. A gente fez um vídeo aqui sobre ele, vou deixar ele aqui inclusive, só que esse modelo ele cabe na 5090, pouco quantizado, com Q4 ali, talvez até Q6. Já numa A 5060 Ti, que a gente fez um vídeo aqui no canal, vou deixar aqui também, você teria que quantizar ali para 3 bits, 2 bits, perdendo muita qualidade. Então, o legal dessa placa
+
+aqui em Tark B70 é que ela tem também 32 GB de V RAM, quer dizer que na teoria ela consegue rodar os mesmos modelos que a 5090. Ela é um pouco mais lenta. Quanto mais lenta, aguarda aí, se inscreve no canal pra gente ver num vídeo que eu vou fazer em breve, colocando uma lado a lado com a outra. O que vai ser muito interessante, levando em consideração que essa placa nos Estados Unidos custa 1.000 enquanto a R$90, custa pelo menos uns 4.000. Então,
+
+será que a gente tem finalmente uma placa acessível que consegue rodar modelos maiores? Vamos ver. Se inscreve no canal, deixa o seu like, deixa aquele hype para ajudar a mostrar para mais gente. Eu vou ficando por aqui, até o próximo vídeo.

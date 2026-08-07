@@ -1,0 +1,140 @@
+---
+video_title: "NOVO QWEN 3.5 — que RODA No Seu PC"
+video_id: Xx4Ut0X1J5I
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Xx4Ut0X1J5I
+video_date: 2026-02-25T00:21:26+00:00
+video_description: |
+  Quando a Alibaba lançou o Qwen 3.5 com 397 bilhões de parâmetros, a próxima pergunta já estava no ar: e as versões menores? Pois é, elas chegaram. E trouxeram uma surpresa: o modelo denso de 27B entregou resultados que rivalizam com o 35B Mixture of Experts em vários benchmarks, em alguns casos até vencendo. Rodei os dois lado a lado, no mesmo Mac M3 Ultra, nos mesmos prompts, para entender onde cada arquitetura brilha e onde tropeça.
+  
+  Passei por um enigma de raciocínio, geração de site completo em HTML/CSS e extração de dados de imagens. O equilíbrio entre os dois foi maior do que eu esperava, e a velocidade do 35B talvez mude sua perspectiva sobre quando faz sentido escolher MoE em vez de um modelo denso.
+  
+  Se você quer saber qual desses cabe no seu hardware e qual entrega melhor custo-benefício de qualidade por token, esse vídeo responde.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen3535bvs27b
+  
+  _______
+  
+  0:00 Intro
+  0:17 Documentação
+  9:38 Teste HTML/CSS
+  11:55 Teste de Leitura de Imagem
+  13:02 Teste Extrato Bancário
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Há alguns dias, Alibaba lançou o Quen 3.5 com um modelo incrível, gigantesco e 397 bilhões de parâmetros. A gente inclusive fez um vídeo sobre ele aqui no canal e como era de se esperar, agora Alibaba tá soltando as versões menores do Quentin 3.5 e é sobre elas que a gente vai falar hoje. Olha aqui que beleza essa tela mostrando a família toda reunida. Lá em cima a gente tem o
+
+Quin 3.5 397 bilhões de parâmetros que a gente já viu aqui. Eu vou deixar o link aqui no card. E aqui embaixo a gente tem as grandes novidades, né? A Alibaba lançou agora o Quentin 3.5 com 122
+
+bilhões de parâmetros, menos da metade do modelo total e também diminuiu aqui um pouco os parâmetros ativos, tornando essa versão bem mais rápida. Além da versão de 122 bilhões de parâmetros, a Coin liberou também uma de 35 bilhões de parâmetros, aí já bem mais acessível, né? E uma de 27 bilhões de parâmetros. A diferença aqui pra de 35 e a de 27 é que a de 35 ela é mixture of experts. Então ela tem 35 milhões de parâmetros, mas ela só ativa 3 bilhões durante a geração dos tokens. Já a versão de 27 é um
+
+modelo denso, um modelo que vai ativar os 27 bilhões de parâmetros, provavelmente entregando o resultado ligeiramente superior ao de 35 bilhões. E é isso que a gente vai ver aqui. Nesse vídeo, a gente vai comparar o M de 35 bilhões de parâmetros com a versão densa de 27 bilhões de parâmetros. Mas antes da gente fazer essa comparação, vamos só dar uma olhadinha aqui no modelo de 122 bilhões de parâmetros. Se vocês quiserem eu faço num vídeo separado, tá? Porque
+
+como a distância é muito grande, eu acho que não faz sentido comparar ele com o de 35 e o de 27. 35, 27 a gente tá bem mais próximo. Mas mesmo assim eu quero falar uma coisinha sobre ele. Eu gosto muito deles terem liberado uma versão com 122, porque a versão de 397 ela é muito grande, né? Eu fiz um vídeo aqui no canal rodando ela localmente, mas eu tive que quantar 3 bits. E quando você
+
+quantiza abaixo de 4 bits, a diminuição da qualidade começa a ser muito perceptível, tá? Então até 4 bits é o ponto ótimo. Isso que é legal dessa versão de 122 aqui, ó, porque o Anselth já liberou aqui as versões quantadas desse modelo e a gente pode ver que com 4 bits a gente tem aqui 64 GB. Então, mesmo se a gente tivesse aí uma versão com 5, 6 bits, a gente ficaria abaixo de 96 GB. E isso é importante porque 96 GB é o tamanho do Mac Studio M3 Ultra base.
+
+Ele tem 96 GB de memória unificada, tá? E no Brasil ele custa assustadoramente R$ 51.000, R$ 1.000, mas nos Estados Unidos ele custa 3.999, o que é bastante acessível para um americano e também bem mais acessível para um brasileiro que queira fazer essa viagem. Além disso, ele caberia aqui, ó,
+
+numa M4 com 128 GB, que ficaria um pouco mais barato, 3499. E no Brasil, esse M4 ele custaria provavelmente um pouquinho menos também, ó, R$ 43.000. Caríssimo ainda, né? Mas mais barato do que o 51. Nesse modelo
+
+com 122 bilhões de parâmetros caberia nesse Mac aqui. Também caberia numa RTX 6000 Pro que tem 96 GB de V RAM, mas a 6000 Pro é caro até para quem tá fora, tá? .000 é muita coisa. E ele caberia também num DDX Spark que nos Estados Unidos custa ali em torno de $.000 com
+
+uma versão da Isos um pouco mais barata, né? 3.000. Então, apesar desses equipamentos ainda serem muito caros no Brasil, eles são considerados equipamentos para consumidor. Fora a RTG, a RTX tá ali no meio termo, né, entre consumidor e PRO mesmo, né? Aquela
+
+não é uma placa para servidores, é uma placa para computadores normais, mas já começa a entrar no nível um pouco mais pro. Mas beleza, hoje a gente quer falar desses aqui, ó, 27B, 35B. E aí, vamos dar uma olhada aqui no card deles. Todos eles são a parte 2.0, então a gente pode usar à vontade aí. que todos eles também
+
+são imagem para texto, né, ou texto para texto. E aqui embaixo a gente tem um gráficozinho interessante, ó. Esse gráfico aqui ele vai comparar o Quent. 122 bilhões de parâmetros com o de 27, o de 35 e alguns modelos da versão anterior, Quen 3, né, 235B e Quen 3 VL 235B. Além disso, também GPT5 mini, GPTS 120 e o Cloud Sonet 4.5. O que é
+
+interessante aqui de forma geral é que olha só o modelo de 27 bilhões de parâmetros que é esse daqui, ele tá pau a pau com de 122. Em alguns casos ele até vence, tá? Em alguns benchmarks ele até vence. Que que acontece? Como esse modelo de 122 ele é um MOE e ele só tem 10 bilhões de parâmetros ativos, ele provavelmente vai ser mais rápido do que o de 27. Só que ele só é rápido se ele
+
+couber na máquina, né? O de 27 vai caber em muito mais opções de hardware. Em alguns benchmarks aqui a gente vê o empate entre a versão de 27 e a versão de 35, o que daria uma vantagem pra versão de 35 para ela ser mais rápida. Mas em outros casos aqui, como SW Bench Verified, a gente vai ver um ganho significativo até da versão de 27 bilhões de parâmetros em relação a G 35, inclusive passando aqui o GPT5 mini e o GPTOSS 120 bilhões de parâmetros, um modelo muito maior. A propósito, pelo menos segundo benchmark, né, até a versão de 35 milhões de parâmetros, ela bate em todos os benchmarks o GPTOSS 120B. E isso é bem interessante, tá? E
+
+ainda mais se a gente levar em consideração que todos esses modelos do Quen tem a capacidade de visão, então ele torna ainda mais útil do que o GPTOSS 120B. A proposta tá aí, hein? Podia fazer um outro vídeo comparando com GPTOS 120. Esse modelo aqui é muito bom. Então se você quiser esse vídeo, deixa aqui nos comentários. Hoje a gente
+
+vai comparar então a versão de 27 com a versão de 35. E aqui, ó, a gente já tem algumas versões de quantização. A gente ainda não tem versão MLX de grandes estúdios, como o MLX Community ou LM Studio, tá? Tem até essa daqui do Arthur Collet, só quando eu vi que ele subiu aqui a versão quantizada, eu já tava baixando para fazer minha própria quanto. Inclusive, se você quiser saber como que se converte um modelo para MLX e como faz a quantização dele, eu fiz um vídeo lá pro meu canal focado em Apple, tá? Eu vou deixar o link aqui no card. e
+
+converter e quantizar o modelo. Parece assustador, mas é bem mais fácil do que parece. E eu já tô aqui com o meu LM Stúdio aberto, tá? Eu tô com a versão de 27 e 35 milhões de parâmetros aqui, quantadas ambas em 8 bits. E a de 27 ficou então com 29.5 GB, o que quer
+
+dizer que uma versão de 4 bits ficaria ele com torno de 15 GB, caberia no limite, com quase nenhum espaço para contexto numa placa de 16 GB de V RAM. Já a de 35 milhões de parâmetros, ela ficou com 37.7 7 GB, o que também se fosse 4 bits, ficaria ali com um pouco mais de 18 GB, passando um pouco dos 16 GB de V RAM, porém ambas caberiam em 24 GB. E aqui a gente tá falando de RTX 3090, que tem 24 GB. Mac com 32 GB, por exemplo, rodariam esse modelo tranquilamente a 4 bits. Então, ambos
+
+vão ser modelos interessantes pra gente rodar localmente. Eu tô rodando hoje no Mac M3 Ultra com 256 GB, então a gente vai conseguir rodar a versão de 8 bits e inclusive carregar as duas ao mesmo tempo. O LM Studio na versão mais atual permite que a gente faça isso. Então é isso que a gente vai fazer. Então aqui na minha esquerda, eu tô com a versão 27B, aqui na minha direita versão 35. E
+
+a gente vai começar fazendo um pequeno teste de velocidade. E aí, só para fazer o nosso teste aqui, a gente vai fazer o enigma do car wash. E basicamente vamos chamar um de cada vez. Primeiro de 27, por quando a gente chama os dois juntos, a gente divide os recursos da máquina e acabam ficando os dois mais lentos. Vamos começar só com de 27 aqui. Ele tá
+
+num dilema existencial aqui, porque primeiro ele acha que é muito perto, né? Então você deve ir andando, só que aí ele começa a entender o problema, né? Você vai lá, mas onde é que você para o carro? Onde é que você estaciona? Aí ele começa a se ligar que, pô, mas pera aí, se tu tá dirigindo pro Car, você tá dirigindo o carro que precisa de lavagem. Mas o melhor é esse aqui, ó. Se
+
+você dirige o seu carro pro lavar rápido, você tá dirigindo um carro sujo. Se você anda, você deixa o carro em casa. Não, pera aí. Como é que você lava o carro se você não dirigir até lá? Vamos ver a resposta final dele. Ele
+
+ainda tá pensando, ó. [risadas] Ele tá completamente confuso. [aplausos] You should drive the car there. Oh, po shit. quer dizer que você deve dirigir o carro ou então empurrar até lá. Ele
+
+pensou bastante, pensou por 2 minutos para responder isso aqui, tá? Mas ele deu a resposta certa, ó. 20 tokens por segundo foi a velocidade do quent.527B. Vamos ver agora o 35B com apenas 3 bilhões de parâmetros ativos. E vamos
+
+ver se ele vai acertar também, né? Ah, outra coisa que é legal a gente ver que o de 27 bilhões de parâmetros, ele gastou 3.715 tokens para dar essa resposta pra gente. Vamos ver quantos tokens o de 35 milhões de parâmetros vai usar. Ele tá, ó, no mesmo nível aqui, né, de pensamento. Mais uma vez acertou
+
+aqui, ó, você deve dirigir. E ele te dá lógica bem parecida, né? E aqui ele já descarta a possibilidade de empurrar o carro, mas tecnicamente daria de fato para você empurrar. Então isso aqui não tá errado não, porque é meio insano, tá? É meio insano essa resposta aqui, me parece melhor. Quer dizer, esse aqui te
+
+mandou lavar em casa, né? É bom que você economiza, talvez. Boa opção. Boa opção também. Ó, o Quin de 35 milhões de parâmetros respondeu a gente a 60 tokens por segundo, mas ele consumiu quase o dobro, né, dos tokens. Então foi 5371
+
+tokens para chegar a nossa resposta. Uma coisa vai acabar compensando a outra, né? Porque mesmo sendo o dobro, ele conseguiu o triplo da velocidade. Então, no tempo geral, o Quem 35 milhões de parâmetros responderia pra gente mais rapidamente. Agora a gente vai testar como que esses modelos se saem criando uma página HTML CSS, tá? Então eu tô
+
+criando aqui o seguinte cenário, é um negócio de venda de açaí, o público alvo são pessoas fitness que valorizam a alimentação saudável e nós vamos ter uma loja no bairro de Madureira, no Rio de Janeiro, e o principal foco é o delivery. Então eu quero que ele crie um site pra gente. Dessa vez a gente vai rodar os dois ao mesmo tempo. Vamos ver inclusive qual termina primeiro. Show de bola. Ambos criaram aqui, ó, 4900 tokens
+
+pra versão de 27 bilhões de parâmetros. 19 tokens por segundo, 27 tokens por segundo, uma diferença ali de 35% mais ou menos. E aqui foi bem mais curto, né? 3782 tokens. Vamos ver o resultado desse site, ó. Esse daqui é o resultado da
+
+versão de 27 bilhões de parâmetros, tá? Ele criou aqui o fit açaí madureira, né? A gente tem aqui os diferenciais. Cardup pedir agora. Legal. Esse botão aqui me
+
+lembra WhatsApp. Pedir pelo WhatsApp de fato. Óça aí mais saudável de Madureira 100% natural, sem açúcar. Legal. Ok.
+
+As fotos não funcionaram. Isso aqui não é um açaí, não tem morango fresco. E o granola, nada disso aqui. OK. Ele botou alguns preços, né? E olha só, legal. Ele
+
+trouxe o roxo, que é característico de açaí, né? Ele trouxe o verde que caracteriza ali o WhatsApp, fazer o pedido. Ele trouxe aqui embaixo um footer com o link pro Instagram, Facebook. Legal. Gostei desse resultado aqui, principalmente se tratando um modelo tão pequeno, modelo de 27 bilhões de parâmetros. Vamos ver agora como que
+
+ficou de 35 bilhões de parâmetros. Essa aqui é a versão de 35 bilhões de parâmetros. Ele criou Madoreira fit açair tecido, né? Mais ou menos a mesma linha. Aqui atrás provavelmente uma imagem que o link tá errado, alguma coisa do tipo e não conseguiu carregar, mas tudo bem. Mais uma vez aqui o verde
+
+e o roxo. Característicos. Aqui já ficou um pouco mais fraco, né? Botando aqui lado a lado a versão de 27. Essa aqui era a versão do fit do de 27 e essa daqui ficou um pouquinho mais fraco, cara. Mas beleza. Aí ele vem aqui
+
+com as opções e tá tá relativamente parecido aqui nas opções, só que aqui ele botou foto. Esse daqui tá melhor objetivamente aquele lá tá melhor. Aqui botou também um um footerzinho, não tem redes sociais, então acho que dá pra gente dizer que pelo menos nesse teste aqui o de 27 bilhões de parâmetros se saiu melhor. Próximo teste que a gente vai fazer é um teste de visão. Ambos modelos tm a capacidade de visão, então eles conseguem ler imagens, identificar, extrair texto, extrair características daquela imagem. Então, a gente vai
+
+tentar usar um pouquinho disso agora. Então, eu carreguei essa imagem aqui nos dois, tá? Ela tem um texto, mas tá escrito meio de lado. A imagem foi tirada de lado para dar uma dificultada. E eu vou pedir para ele transcrever o texto dessa imagem. Nos dois eu vou dar
+
+o mesmo prompt e a gente vai rodar aqui os dois basicamente ao mesmo tempo. Ó, o 35 milhões de parâmetros já terminou e ele disse que o texto na imagem é curte esse vídeo e se inscreva no canal. Então, pô, pedindo com esse jeitinho, por que que a gente não vai fazer, né? Já curte aqui esse vídeo, já se inscreve no canal para não perder nada. E ele levou aqui, ó, 354 tokens, 27 tokens por segundo foi a velocidade dele. Já a
+
+versão de 27 bilhões de parâmetros falhou. Era curte esse vídeo e se inscreva no canal. Obviamente essa letra aqui tá terrível, né? Mas esse daqui falhou. Espero que goste esse vídeo. Não
+
+foi isso que foi dito. Ele precisou de 118 tokens e ele ainda errou nisso aqui. Vamos fazer mais um teste de visão aqui com eles. Então, dessa vez eu vou passar um extrato bancário, tá? E eu vou pedir para eles extraírem as informações dessa imagem. Vamos lá, ó. Mais uma vez o 35
+
+milhões de parâmetros saindo na frente aqui, já começou a dar as respostas pra gente, enquanto o de 27 ainda tá pensando ali sobre o que que ele vai responder. Lembrando que como a gente tá rodando os dois ao mesmo tempo, acaba que o de 35 sofre um pouquinho aqui, fica bem mais lento do que poderia ser. Aqui a gente pode conferir algumas informações. Então, nome First Bank of Week, sim, o endereço aqui parece correto. Cliente John Jones. Endereço
+
+John Jones tá certo também. período do extrato, número da conta, todos os dados parecem estar corretos. Aqui, ó, agora o de 27 bilhões de parâmetros já tá terminando de responder aqui. E a gente pode olhar lado a lado, que basicamente é muito parecido, né? Uma resposta com a outra, número da conta, período, endereço e nome do cliente, tudo certinho. Aqui a gente tem as
+
+transações, número de referência, ó, tá tudo batendo, tudo certinho. Basicamente é um uma cópia, né? A mesma resposta, exatamente igual. mais ou menos o mesmo número de tokens. Versão de 27 pensou um pouquinho mais e foi um pouquinho mais lenta. Então esse é o primeiro overview
+
+das novas versões do Quen 3.5. 27 milhões de parâmetros, 35 milhões de parâmetros. Eu pretendo usar bastante essa família, principalmente na capacidade de visão. Nesses testes aqui, eu confesso que eu não consegui ver muita diferença de qualidade entre a 27 e a 35, não. O que dá uma vantagem para
+
+de 35, porque ela é mais rápida. Mas claro, tô levando em consideração que eu consigo rodar as duas. Talvez se tivesse rodando no hardware com memória mais limitada ou de 27 fosse uma opção mais interessante por ser um pouquinho menor. Se você quiser ver um vídeo usando esses modelos de forma agêntica, criando alguma aplicação, talvez usando junto com OpenCode, deixa aqui embaixo nos comentários. E se você tem uma outra ideia de teste ou me fala para que que você usaria um modelo desse tipo aqui, desse tamanho, com capacidade de visão, mixture of experts ou denso. Qual seria
+
+a sua opção? Eu tô muito curioso para saber, beleza? E é isso aí, vou ficando por aqui, até o próximo vídeo.

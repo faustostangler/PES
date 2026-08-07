@@ -1,0 +1,148 @@
+---
+video_title: "RTX 5090 vs Mac M3 Ultra: Qual DESTRÓI na IA Local?"
+video_id: 3rT9ab3Qxac
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3rT9ab3Qxac
+video_date: 2026-03-05T23:29:11+00:00
+video_description: |
+  RTX 5090 vs Mac M3 Ultra rodando LLM local: onde cada um vence.
+  Testei os dois hardwares com modelos Qwen 3.5 de 9B a 35B de parâmetros, usando GGUF na GPU Nvidia e MLX no Mac.
+  
+  A RTX 5090 entrega 1.7 TB/s de largura de banda de memória e domina no processamento de prompts e geração de tokens em modelos que cabem nos seus 32 GB de VRAM. Já o Mac M3 Ultra com 96 GB de memória unificada tem uma vantagem clara: consegue carregar modelos muito maiores sem offload para RAM, o que muda completamente o cenário quando você quer rodar modelos acima de 30B de parâmetros.
+  
+  No vídeo, comparamos GGUF na 5090 contra MLX no Mac, testamos tempo para o primeiro token, tokens por segundo e processamento de imagens multimodal. Se você está decidindo entre os dois para rodar LLM local com privacidade total, este vídeo tem os números que você precisa.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytai5090vsm3ultra
+  
+  _______
+  
+  0:00 Intro
+  0:35 Análise de Preços
+  1:59 Qwen 3.5 9B: Prompt Curto
+  3:47 Qwen 3.5 9B: Contexto Longo
+  5:17 Qwen 3.5 9B: Imagen
+  6:11 Qwen 3.5 9B: Imagens
+  7:02 Qwen 3.5 27B: Imagens
+  8:29 Por que a 5090 é mais rápida
+  10:01 Qwen 3.5 35B: Prompt Curto
+  11:49 Qwen 3.5 35B: Imagens
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+A 5090 é que é um monstro, né? Ela só tem um problema. A vantagem dela acaba exatamente aqui, ó. Hum. Olha como o Mac tá bem mais rápido, tá visualmente mais rápido. Quando a gente quer extrair o
+
+máximo de performance de LLM local, existem dois players no mercado que são os líderes. E hoje a gente vai colocar esse gigante para brigar. Eu tô falando aqui de Apple versus Nvidia. Quem tem o melhor sistema pra gente rodar LM? Seria o M3 Ultra da Apple ou uma 5090 da Nvidia? Hoje a gente vai ver um contra o
+
+outro, mas antes vamos falar do elefante que tá aqui na sala, que é o preço. Esses dois equipamentos são extremamente caros, principalmente no Brasil. Normalmente eu vejo que quando eu trago modelos muito grandes aqui, o pessoal fica chateado. Então talvez esse vídeo chateie algumas pessoas também. Eu sei, é um pouco inacessível, mas talvez por isso que seja interessante a gente fazer um vídeo, né, comparando essas duas tecnologias que seria o melhor dos mundos. Assim a gente consegue entender
+
+mais ou menos como que tá nos dias de hoje esse nível de hardware para rodar llmente. Dito isso, vamos ver esse preço. Será que é tão caro assim mesmo? Spoiler alert. É, aqui no site do Mercado Livre, eu acho que a versão mais barata que eu achei, é essa daqui da Gigabyte. R$ 27.500.
+
+E tem outras versões aqui, ó, que chegam a 32, R$ 36.000 a versão da Asus. Quando a gente olha o Mac, a gente tem aqui, ó, 63.000 é o de 256 GB, mas tem um aqui de 36.000, que é mais ou menos a mesma faixa. Claro, tem que levar em
+
+consideração que isso aqui é só a placa de vídeo, né? Você precisaria de todo o computador para fazer isso rodar. E aqui você tem o sistema inteiro. Aqui tem uma versão mais barata, 256, mas a faixa do de 96 é mais ou menos essa, R$ 36, R$ 38.000. R$ 1.000. Então sim, a gente tá
+
+falando de um hardware bem caro. Aqui no Canadá eles também tão mais ou menos o mesmo preço, em torno de $.000 cada um. Então, mesmo comprando fora do Brasil, ainda assim é um hardware bem caro, principalmente para quem ganha real. Dito isso, vamos começar a brincadeira aqui, ó. Já tô com dois modelos
+
+carregados. A gente vai começar vendo o Quen 3.5 de 9 bilhões de parâmetros. Do lado esquerdo, eu tenho a nossa 5090. Do lado direito, eu tenho MAC M3 Ultra.
+
+Aqui na 5090 eu tô usando a versão GGUF. No Mac eu tô usando a versão MLX. A gente fez um vídeo lá para meu canal onde eu falo mais sobre devices da Apple comparando GGUF e MLX no Mac Studio para ver qual dos dois era melhor e o MLX ele sai na frente. Então, nessa batalha aqui, a gente vai colocar os dois desafiantes no melhor nível deles. Ambos os modelos tm 8 bits quantização. E
+
+vamos começar a brincar. O primeiro prompt vai ser um prompt bem simplesinho, porque o que a gente tá interessado em saber aqui é a velocidade. Então, eu quero ver um prompto, que vai gerar uma resposta curta, qual que vai ser a diferença de um para outro? Existem dois valores que o LM Studio vai dar pra gente que a gente tá interessado. O primeiro dele é a taxa de tokens por segundo, ou seja, qual que é a velocidade da geração da resposta. Já o segundo deles é o tempo
+
+pro primeiro token. É basicamente quanto tempo levou para processar o nosso prompt. Nesse caso aqui, como o nosso prompt é pequenininho, acho que não vai demorar muito, mas vamos ver. Vou começar aqui pelo Mac e na sequência vamos aqui pra 5090. A 5090, mesmo eu disparando depois, ela começou a pensar sobre a resposta antes. E a gente vai
+
+ver isso aqui nos números. Olha só a diferença. A 5090, ela levou 0.07 segundos para processar o nosso prompt. O nosso Mac levou 3.78 segundos. Essa é
+
+uma diferença absurda. Na geração de token, a 5090 levou a melhor também, 96.8 tokens por segundo, enquanto o Mac fez 63.53. Nada mal, 63, a 96 é melhor. Então,
+
+nessa daqui, ponto para R90. Para esse segundo teste, eu vou aumentar o tamanho do prompt pra gente ver a diferença. Aqui eu tô pegando um livro que é a arte da guerra. Esse livro é domínio público, então vou pegar todo o conteúdo dele e vou colocar no nosso contexto. Tomara que caiba. Já tô com texto carregado
+
+aqui nas duas janelas. Vamos começar aqui com o Mac, tá? E na sequência vamos apertar aqui pro 5090. E olha a velocidade de processamento da 5090. Olha só como ela vai subindo rápido. O Mac não tá mostrando pra gente
+
+o progresso, mas ele tá processando ali também. Só que, ó, a 5090 já começou. Agora o Mac começou a mostrar o progresso e ele tá em, olha só como ele vai subindo devagarzinho, né? Enquanto isso, a 5090 tá aqui, ó. Já começou a dar a resposta. A 5090 já acabou. O Mac
+
+ainda não terminou de processar o prompt, ainda tá ali por volta de 40%, ainda falta bastante. Esse aqui vai ter um gap gigantesco. Olha só essa diferença agora, hein? Enquanto o Mac levou 115 segundos para processar o prompt, a gente tá falando aqui de quase 2 minutos. A 5090 levou 15 segundos. É
+
+muita diferença, muita, muita diferença. Ela foi umas sete vezes mais rápida. Já na geração de token, a diferença foi a seguinte: 80 tokens por segundo na 5090, 45 tokens por segundo no Mac. A 5090 atingiu quase que o dobro da velocidade do Mac, mas 45 tokens por segundo é usável, dá para usar. Mas nesse caso aqui, quando a gente compara o tempo de processamento de token aí, não tem jeito. 5090 destruiu o Mac mais uma vez.
+
+Mas vamos pro próximo teste. Imagens. Como que é o processamento de imagens entre os dois? Eu fiz um vídeo aqui pro canal sobre LLMs pequenas que rodam até no celular. Tem uma LLM da Apple que é incrível. Você não assistiu? Vou deixar
+
+o card aqui. Só que eu quero pedir agora pro nosso Quen 3.59B extrair o texto dessa imagem e descrever ela. Vamos pedir isso, então. Vamos lá.
+
+MC primeiro. Na sequência aqui, ó, 5090. Ó, o Mac já terminou, mas ele terminou porque ele pensou muito pouco e extraiu o texto e não descreveu a imagem. Mas tudo bem, a gente vai conseguir ver o tempo de processamento e a velocidade em token por segundo. Vamos dar uma olhada aqui no tempo dele, ó. 76 tokens por
+
+segundo. A diferença já não foi tão grande assim, mas a gente tem que levar em consideração que o contexto aqui da 5090 foi maior e o tempo pro primeiro token foi 0.82 segundos, enquanto da Apple foi de 4 segundos, tá? Então é uma diferença bem grande também. O legal do Quen é que ele consegue ver várias imagens ao mesmo tempo. Vamos pedir para
+
+ele ver essas imagens dessa casa e descrever essa casa pra gente. Vamos lá. Começando aqui com o MAC na sequência 5090. E ó, mesmo a 5090 começando depois, ela já começou a responder antes. 5090 já terminou aqui enquanto o Mac ainda tava pensando. Agora o Mac começou a
+
+responder lá. A gente já tem aqui um resultado da 5090. Vamos ver agora o Mac. Ó, a diferença de geração de token não foi absurda, não. 62 tokens por segundo contra 76 tokens por segundo dá 5090. O tempo de processamento foi 1.44
+
+segundos na 5090, 7.64 segundos no Mac. Ó, também a gente tá falando aqui de cinco vezes de diferença, mas já deu uma pequena diminuída, tá? Então existem alguns casos onde não vai ser gritante essa diferença, mas esse aqui é um modelo de 9 bilhões de parâmetros. E se esse modelo fosse maior, se tivesse 27 bilhões de parâmetros, vamos testar carregados os modelos. Deixa eu só
+
+conferir aqui as configurações do nosso Quen aqui, ó. Ele tá para pouquíssimos tokens. Vamos aumentar aqui para caber. A gente tá rodando versão de 8 bits tanto no Mac quanto na 5090, tá? Diferença que na 5090 GGUF, no Mac é MLX. Ó, deu um erro aqui e não consegue
+
+aguentar tantos tokens porque a 5090 ela tem 32 GB de memória e o modelo de 27 bilhões a 8 bits de quantização e mais o contexto fica demais para ela. Então isso é um ponto que a gente já vai falar sobre, ó, vou fazer 100%. Aqui eu vou ter que diminuir um pouco, ó, pr mais ou menos esse limite aqui. Vamos ver se é o suficiente. Acho que 10.000 tokens vai
+
+ser o suficiente. Ó, agora a gente conseguiu carregar. Então, descreve essa casa. Vamos rodar aqui no Mac. Vamos rodar aqui na 5090.
+
+E olha como a 5090 processa isso rápido, mesmo com modelo de 27 bilhões de parâmetros. Ah, é, pô, até que não demorou tanto quanto eu pensei que demoraria, não, mas vamos lá. É impressão minha, porque a 5090 teve um tempo de processamento ali para ler as imagens de 2 segundos, enquanto o Mac 11.63. Já na geração de token, o Mac teve 20 tokens por segundo, enquanto a 5090 teve 38. Isso porque a gente tá rodando um
+
+modelo de 27 bilhões de parâmetros denso. Por que que isso acontece? Por que que tem essa diferença tão grande? Bem, em relação a tokens por segundo, a diferença é por causa da largura de banda da memória. A 5090, ela tem 1.7 TB
+
+por segundo de taxa de transferência, ou seja, 1700 GB/sund. Já o M3 Ultra, ele tem uma taxa de transferência de 800 GB/s, ou seja, mais ou menos a metade. E é isso que a gente vê aqui nos resultados. Ele entrega mais ou menos a metade da velocidade da 5090. Já a parte de processamento de prompt tem menos a ver com essa taxa de transferência e mais a ver com poder de processamento. E
+
+a 5090 ela tem mais poder de processamento, são os flops. Eu inclusive gravei um vídeo lá pro meu canal onde a gente fala sobre devices da Apple, sobre a novidade que é o M5 Pro e o M5 Max e como que eles estão diminuindo o tempo de processamento em relação ao M4 Max, por exemplo. Eles estão falando em quatro vezes mais rápido do que o M4. Então, se a gente imaginar o M5 Ultra quando ele sair em comparação com esse daqui, que é o M3 Ultra, talvez a gente consiga um ganho até maior do que quatro vezes. Então, se a gente dividisse aqui, ó, 11.63
+
+por 4, a gente teria ali em torno de 3 segundos, o que ficaria muito próximo ao resultado da 5090. Depois dá uma olhada lá nesse vídeo, vai tá aqui no card, que eu falo um pouco mais sobre isso, e a gente fala sobre a taxa de transferência possível do M5 Ultra. Cara, eu tô confiante que esse Mac M5 Ultra vai ser um monstro, mas por enquanto a 5090 é que é um monstro, né? Ela só tem um problema. A vantagem dela acaba exatamente aqui. A gente vai carregar o
+
+Quentin 35 milhões de parâmetros. Vamos colocar o máximo dele aqui, ó. Só que olha só, olha como ele já fica pesado pra nossa máquina. Então não posso carregar o máximo dele. E é aqui que o Mac começa a ter vantagem. Para eu
+
+conseguir rodar esse modelo aqui, eu vou ter que fazer um pouco de offload. eu vou ter que diminuir um pouco mais pr eu poder aumentar um pouco o contexto. Então, se eu quiser ter, por exemplo, 20.000 tokens de contexto, eu vou conseguir fazer no máximo, deixa eu ver, 31 aqui, quando o total seria 40, né? Então vou perder um pouco aqui.
+
+Vou carregar o modelo. Quando eu seleciono ali aquele 31, eu tô querendo dizer para ele que ele vai carregar 31 partes de 40 na placa de vídeo e o resto vai na memória RAM. Quando a gente faz isso, a gente cria um pequeno problema, que é uma latência entre a comunicação da RAM com a VRENAM. E a gente vai ver o resultado disso. Conseguimos carregar o modelo com a diferença que aqui no Mac a gente tá com contexto de 262.000
+
+tokens, tá? Na 5090 a gente conseguiu chegar próximo aos 20.000 tokens só. Então isso tem que tá claro. Vou pedir para eles contarem uma piada. Conta uma
+
+piada em cinco linhas. Podia ser conte, né? Mas tudo bem. Conta uma piada em cinco linhas. Vamos lá. Mac primeiro.
+
+Mac já tá contando lá, ó. Ó. Hum. Olha como o Mac tá bem mais rápido. Tá visualmente mais rápido. Ó, o
+
+Mac já acabou e a 5090 ela ainda tá pensando. Legal que eles estão indo pela mesma linha. Ele também tá pensando aqui na piada do elétron. Eles fizeram exatamente a mesma piada, só que quebraram as linhas de forma diferente. Olha só o nosso resultado. 19 tokens por
+
+segundo contra 66 tokens do Mac. O tempo de processamento ainda foi mais rápido, 0.36 segundos. Vamos fazer o teste das imagens. Então,
+
+tempo de processamento das imagens. Dessa vez, pela primeira vez, a 5090 perdeu. 10 segundos para processar as imagens conta 6 segundos do Mac. E taxa de tokens por segundo, 65 tokens por segundo no Mac versus 18 tokens por segundo na 5090. Esse computador que eu tô rodando a 5090 tem 48 GB de RAM. Quer
+
+dizer que então eu consigo rodar modelos maiores do que os 32 GB da 5090. Só que uma vez que passa disso e usa RAM, a gente tem esse tipo de perda aqui. E quanto maior o modelo, maior vai ser a perda. Então o que que é a conclusão que a gente tem aqui? A 5090 ela tá limitada aos 32 GB para ter o máxima performance, mas se você tá rodando um modelo abaixo disso que cabe ali dentro com contexto, com tudo, ela vai ser um monstro. Ela
+
+vai destruir qualquer outro hardware doméstico que a gente tenha, mas o Mac vai ter a grande vantagem de você conseguir carregar modelos muito maiores e rodar eles de forma bem eficaz. Se a gente pegar o GPT OSS de 120 milhões de parâmetros, que é um modelo meio estranho, todas as quant aqui no fica com 64 GB mais ou menos. Mas bem, se a gente pegar ele aqui Q8 ou Q4, porque ele foi treinado em 4 bits, a gente vai ter 62 GB. Caberia tranquilamente no MAC de 96 GB que a gente viu no início do vídeo, mas só metade do modelo caberia na 5090. Quer dizer que todo o resto você teria que fazer offload para RAM e aí ia ficar muito lento. Existe uma
+
+placa de vídeo de 96 GB que é a RTX 6000 Pro, só que ela custa R$ 118.000 só a placa. Essa placa aqui com certeza destrói o M3 Ultra de 96 GB. Só que quando a gente entra na faixa dos R$ 100.000, a gente tá falando do M3 Ultra de R2 GB. Então você conseguiria rodar modelos
+
+aqui cinco vezes maiores do que você consegue nessa RTX. E aí essa comparação foi o que você esperava? Se você trabalhasse numa empresa e tivesse que tomar a decisão de comprar um hardware para rodar LM local porque você quer privacidade ou porque você quer modificar algum modelo, você iria para qual caminho? R90, máxima performance para modelos menores de 25 bilhões de parâmetros ou Mac M3 Ultra 96 GB para você rodar modelos com até mais de 100 bilhões de parâmetros. Deixa aqui nos comentários o que que você escolheria. E
+
+se você quiser ver a diferença entre GGF e MLX, eu fiz esse vídeo aqui pro meu canal lá de iOS. Se você quiser saber a diferença de velocidade entre essas duas máquinas para gerar imagens, tem um pequeno pedacinho desse vídeo aqui que eu mostro isso. E é isso aí. Eu espero que você tenha gostado dessa comparação. Se você tiver outra ideia de comparação ou qualquer ideia de vídeo, deixa aqui nos comentários. Vou ficando por aqui,
+
+até a próxima. Valeu,

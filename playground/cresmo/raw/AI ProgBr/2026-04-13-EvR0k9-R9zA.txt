@@ -1,0 +1,298 @@
+---
+video_title: "GLM 5.1 LOCAL com 2-bits de quantização é ABSURDO (fiquei CHOCADO com o resultado)"
+video_id: EvR0k9-R9zA
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EvR0k9-R9zA
+video_date: 2026-04-13T00:14:15+00:00
+video_description: |
+  GLM-5.1 rodando localmente: vale a pena com quantização Q2?
+  
+  Testei o GLM-5.1 da Z.ai no meu Mac M3 Ultra usando a versão Q2. Com 750 bilhões de parâmetros, rodar esse modelo sem quantização exigiria 1,5 TB de VRAM, o que torna o Q2 a única opção viável pra minha máquina.
+  
+  No vídeo eu mostro diferentes projetos completos gerados com uma única instrução cada, Mario Kart com Three.js, Site, Pinball, Angry Birds e um GTA estilo Lego. Spoiler: o modelo funcionou muito melhor do que qualquer modelo de 2 bits tem direito.
+  
+  O maior problema real é velocidade, em torno de 8 a 9 tokens por segundo, o que significa que cada projeto levou entre 30 minutos e 1 hora e meia. Mas os resultados foram excelentes.
+  
+  👉  Se quiser experimentar o GLM e dar uma moral para o canal, usa meu link: https://z.ai/subscribe?ic=1CUTHGZM5X
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiglm51local
+  
+  _______
+  
+  0:00 Intro
+  0:19 Documentação
+  4:06 Mario Kart
+  9:22 Pinball
+  14:54 Site de Cosméticos
+  20:03 Angry Birds
+  23:43 GTA Estilo Lego
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Casco. Uh, capei. Deixa eu ver se eu consigo dar um soco nela aqui. E hoje um dos modelos mais interessantes que você pode baixar e rodar no seu computador localmente é o GLM 5.1. E a gente
+
+precisa aproveitar esses modelos enquanto dá tempo, porque o cenário de modelos open source tem mudado bastante. Até então, empresas como a Z, própria Minimx, Quin, todos eles anunciavam seus melhores modelos junto com a versão open source. E isso tem mudado ultimamente. A própria Zei, que abria praticamente todos os modelos, já não tem feito mais isso. Quando ela lançou o GLM 4.5, ela
+
+deixou Pensorce, lançou o 4.5 Air, que era um modelo um pouco menor do que o 4.5 full, deixou open source, fez a mesma coisa pro 4.6, 4.6V, 4.7 e GLM5
+
+também veio o open source junto com o lançamento. A partir daí, muita coisa aconteceu e parece um pouco que essas empresas estão mudando ali a sua política. Depois do GLM5, a Z lançou o GLM5 Turbo e ela deixou esse modelo fechado. Ela não abriu e não pretende abrir. E agora ela lançou o GLM5.1,
+
+inicialmente como modelo fechado, tá, mas com a promessa de abrir futuramente. E na semana passada ela cumpriu essa promessa, abriu o modelo e eu resolvi testar aqui. Mas isso é indicativo que o futuro dos modelos open source não vão ser exatamente do jeito que eram. Em breve vou trazer um vídeo sobre o Minimx M2.7 7, que também acabou de liberar os pesos do modelo open, né, deixou open weight. E nesse cenário do M2.7 tem
+
+ainda mais coisa para falar sobre esse fechamento do circo ali dos modelos open source, mas isso a gente deixa pro próximo vídeo. Vamos lá pra tela, pra gente falar do GLM 5.1 rodando localmente. Ó, a gente tá aqui no cardio GLM 5.1, tá? Do Anlof GGUF, que é a
+
+versão que a gente vai rodar. E o GLM 5.1, ele é uma pequena evolução, na verdade não tão pequena assim, do GLM5. ele foi meio que ajustado para trabalhar melhor de forma gêntica e a Z. Muito bem. Então, assim que ela lançou o
+
+GLM5, eu já falei: "Nossa, como eu quero rodar isso localmente". O problema é que o GLM5 e consequentemente o GLM5.1, eles vieram com tamanho gigante. A gente tá falando de um modelo de aproximadamente 750 bilhões de parâmetros. E pra gente ter uma ideia aí, normalmente quando o modelo ele tá em 16 bits, a gente vai ter mais ou menos 2 bits por parâmetro.
+
+E esse vai ser o tamanho que ele vai ocupar no disco, consequentemente o tamanho que ele vai ocupar na Vrunand. Então, pra gente rodar um modelo desse aqui, localmente, sem quanto, a gente teria que ter ali 1.5 TB de memória unificada ou de VREN, o que iria custar aí, talvez, sem exagero, pelo menos uma Ferrari usada ou talvez até zero. Pois é, mas eu falei como é que eu vou fazer então para rodar isso localmente? Eu tenho aqui um Mac M3 Ultra com 256 GB de memória unificada. E eu nunca pensei que
+
+ia falar essa frase, mas 256 GB de memória unificada é muito pouco para rodar esse modelo. Então, a solução é rodar uma versão quantizada. Quantização é quando você representa os pesos do modelo com menos bits, ou seja, com menos precisão. É igual você diminuir um pouco a resolução de uma foto. Se você diminui demais, aquela foto fica ruim até de você entender o que que tá ali.
+
+Agora, se você reduz só um pouco, você economiza espaço e você ainda consegue apreciar aquela imagem. Só que aí é que entra o problema. Pra gente conseguir encaixar em 256 GB, a gente precisaria da versão de 2 bits, tá? Então eu baixei essa versão aqui, ó, IQ2 XXS, que é extra small, né? Muito muito pequeno.
+
+Aqui a gente consegue ver todas as quantizações. E olha aqui, ó, 16 bits, 1.5 T. Seria o necessário. Se a gente tivesse um Mac 512 GB, daria para rodar até a versão Q4, tá? A versão Q4, ela
+
+vai ainda ter boa qualidade e normalmente abaixo de Q4 é quando a gente vê uma perda muito significativa e a gente tá indo em Q2, tá? Pior do que Q2 só se fosse Q1. E a grande questão que eu queria tentar responder para mim mesmo aqui era, será que o GLM 5.1 Q2 ele vai conseguir criar código? Será que esse modelo é tão bom assim que mesmo Q2 ainda é utilizável? Spoiler alert, a
+
+resposta é sim não. Mas é assim, vamos ver o que que a gente conseguiu fazer com ele. Então, para começar, eu pedi para ele criar um Mario Kart usando 3JS, que é um dos projetos que eu faço aqui no canal, tá? itens, inimigos e três pistas diferentes. Nesse vídeo eu fiz um pouco diferente. Normalmente eu abro
+
+aqui e vou testando o modelo, né, e sendo surpreendido basicamente ao vivo. Não deu para fazer isso com GLM 5.1 por se a gente olhar aqui, ó, ele levou 25 minutos só pensando para montar a estratégia que ele ia seguir para criar o nosso Mario Kart. Então, só isso aqui, só o pensamento foi 25 minutos, tá? Depois, se a gente olhar o código aqui, ó, o código que ele criou é um código bem interessante do ponto de vista de tamanho dele, né? Mas mais uma vez ele
+
+demorou bastante aqui, ó. A gente conseguiu 8.71 tokens por segundo, o que não é nada mau, mas se o teu projeto for grande, 8.91 vai fazer com que ele leve bastante tempo aí para gerar. No nosso caso, a gente tá falando aqui de um tempo total de 3.786
+
+segundos. Então ele levou mais ou menos 1 hora, 1 hora e meia aí para fazer desde o nosso prompté o resultado final, mas ele gerou um código e é esse código que a gente vai experimentar agora. Deixa eu copiar ele aqui. E aqui nós temos o nosso Supercart Racing, né, que é o nosso clone do Mario Kart, ó. Tem três pistas. Legal. Vamos ver se vai
+
+funcionar. Vou começar aqui pelo circuito verde. Opa. Ih, o carro tá fazendo um drift aqui, né? Cadê? Peguei o cogumelo. Beleza, o
+
+cogomelo tá funcionando. Banana. Ô, banana funcionando. Casco. Uh, capei.
+
+Vamos ver aqui, ó. Ah, uma coisa que eu tô percebendo é que os controles aqui pro lado. Hum. Eu caí na minha própria banana. Que que aconteceu?
+
+Ué, eles pararam e eu continuei. Entendi. Mas bem, ó, eu tô vendo aqui que se eu só apertar paraa frente, não virar pros lados, ele ainda assim ele consegue, ah, os caras não vão a última volta, ele ainda assim consegue fazer a curva, né, sem eu precisar fazer nada. Então, esse não é o ideal. Mas isso aqui me surpreendeu muito, por a gente está falando de um modelo de 2 bits. Não era
+
+para um modelo de 2 bits funcionar, não era para ele gerar código e o código compilar de primeira. Não era, não era para isso acontecer. Mas ele não só fez isso, ih, eu fiquei em último aqui, ó. Ele não só fez isso como ele fez um jogo funcional, né? Vamos ver se as três fases funcionam de fato. OK.
+
+Carrinho indo de lado assim é muito doideira. Cadê? Opa. Ah, opa.
+
+Agora eu tô em primeiro, tá? Agora se eu vou ganhar. Não tem jeito. Se vier alguém aqui, vou já. Ó, tô vendo. Ih,
+
+tem um mapa ali embaixo. Não tinha visto. Ó, no canto inferior direito ali, tem um mapinha. Cadê quantas voltas tem? Pô, não tô, não quero usar meu. Vou usar aqui minha
+
+estrelinha. Será que eu dou? Será que eu vou conseguir passar alguém? Não, acabou. Ganhei. Boa. Que que é isso aqui? Ué,
+
+fiquei em sexta. Como? Ah, marmelado isso aqui, cara. Eu ganhei a corrida. Eu sei que eu ganhei. Tem um outro ponto
+
+importante aqui, é que a gente fez um vídeo sobre o GLM 5.1 e eu não achei que foi tão bem. Então, só dessa desse Mario Kart ter duas fases, fases diferentes, não só com circuito oval, funcionando com todos os itens, com inimigos, OK? Com problema ali da linha de chegada, tá marcando, eu acho, a posição errada. Mas só de tá tudo funcionando já é incrível, mas tá funcionando melhor do que o online é esquisito demais. Mas vamos lá.
+
+E, ó, aqui já tem um erro porque os itens foram lá para baixo, ó. Tá vendo lá embaixo os itens lá? Eita, caramba. Ih, acho que foi para fora da pista ali, hein? Ih, é, dá para fazer um drift fora da pista.
+
+Qual que eu tô com a posição seis cravada ali. Ah, a posição não tá marcando bem, tá? Mas olha esse cenário, cara, ó. Tem os planetas, né? Cubos que representam acho que estrelas.
+
+A pista ela tem, né? Ela sobe, desce, tudo funcionando. Parabéns, GLM. Cara, muito bom. Tudo funcionou perfeitamente, muito melhor do que eu imaginava. O único problema que a
+
+gente teve de fato é a velocidade. Então, para criar isso aqui, eu tive que botar ele para fazer e eu fui fazer outras coisas, né? É, é como se fosse uma impressão 3D, né? Tipo, que vai demorar um pouco, mas o resultado você não sabe também. Às vezes vai dar ruim ali no meio, né? Às vezes vai dar bom e
+
+quando dá bom é legal demais. No nosso caso aqui, pô, Mario Kart deu muito bom. E aí eu resolvi fazer um outro projeto. Tem um jogo que eu já tentei fazer algumas vezes no canal e nenhum modelo ele conseguiu fazer uma versão funcional. E aí o Marcos deixou esse comentário aqui, ó, falando que ele conseguiu fazer o pinball no GLM5. Como
+
+eu tava para gravar esse vídeo sobre o GLM5.1, eu falei, vou pegar o prompt dele e a gente vai testar. E aí eu peguei exatamente esse prompt aqui pra gente rodar no GLM 5.1. Ele levou 52 minutos só pensando em como ele ia montar isso daqui e depois ele gerou esse código aqui pra gente. Mais uma vez
+
+a gente teve ali mais ou menos oito tokens por segundo, o que não tá na faixa que eu sinto confortável para usar ali em tempo real, né? Então, mais uma vez, bota aqui para fazer, vai fazer outra coisa, volta depois quando tiver um resultado. E o motivo dele ter uma taxa baixa de tokens por segundo é porque ele é um mixture of experts, mas ele ativa 40 bilhões de parâmetros, que é bastante coisa. Se a gente comparar, por exemplo, com o Minimx, o Minimex ativa em torno de 10, 11 bilhões de parâmetros só. Então o Minimex acaba sendo bem mais rápido do que o GM5 rodando localmente. Mas mais uma vez, só
+
+de rodar isso aqui, o modelo de 700 bilhões de parâmetro, só dele tá rodando já é incrível. Então vou copiar aqui e aqui então com o nosso pinball aberto a gente vê que não funcionou, né? O que é uma decepção no primeiro momento, a gente pode voltar lá e pedir para ele ajustar qualquer problema que tenha. Vamos ver se tem algum problema aqui, ó. Então é que ele fala que tem um token que não é esperado, tá? Na linha 899.
+
+A gente pode ir lá e ajustar, mas a oito tokens por segundo ele ter que ler todo o código, processar tudo, ajustar, escrever tudo de novo. A gente vai demorar horas para fazer isso. Então é aqui que a alma de programador ela se paga, né? Então a gente saber programação, saber entender o que que tá acontecendo aqui permite que a gente vá lá no código e possa tentar ajustar alguma coisa. E é isso que a gente vai fazer. Então vamos lá na 899.
+
+Vamos ver se é lá mesmo, né? Não é 899 nada. Aqui ele deve ter quebrado as linhas, né? Mas de qualquer forma aqui é o problema, tá? Então eu posso pesquisar por isso daqui. Vou pesquisar por essa
+
+linha lá. Achei essa linha aqui, tá? Na verdade na 778. E basicamente o problema que ele diz é que tem um parênteses a mais aqui que não deveria ter. E de fato não deveria ter esse parênteses aqui.
+
+Então vou tirar ele, vou salvar, vou voltar aqui, recarregar o nosso projeto. E a gente tem um projeto, tem aqui, ó, um pinball a princípio. Vamos ver se ele vai funcionar, tá? Então, ent. Ué.
+
+Ah, olha ele aí. Hum. Interessante isso aqui. Uma coisa vendo o nosso código é que ele resolveu fazer tudo em 2D, né? desenhando aqui no canvas. Beleza, vamos ver se funciona
+
+aqui. Eu tenho que, cadê? Shift esquerdo, eu mexo aqui. OK. Shift direito e o espaço aqui, ó. A mola tá ao
+
+contrário, né? Ela devia fechar quando eu pressiono e depois abrir, n? Tá ao contrário, mas tudo bem. Hã, tá.
+
+Tecnicamente tá funcionando, mas na prática a gente nunca vai conseguir entrar aqui, né? Só que mais uma vez a gente pode ir lá mandar comando para ele tentar consertar, o que a gente não vai fazer porque seria uma loucura, iria demorar horas ou a gente pode tentar consertar isso aqui dando uma olhada no código. Então aqui, ó, a gente tem as paredes do nosso pinball. E se a gente alterar aqui, ó, vamos alterar aqui para um número bem grande, só pra gente entender o que que tá acontecendo. Eu tô achando que essa daqui é a curva lá de cima, tá? Então vamos ver, ó. Ó como é
+
+que tá agora. Vou atualizar. E opa, isso aqui mudou bastante, mas ele veio aqui para baixo. Se ele viesse para cima, acho que já adiantava a gente, hein? Então, o que eu vou fazer? Em vez de eu
+
+somar, eu vou diminuir. Vou botar 34 pra gente ver, que aí deve ir lá para cima. Opa. Ah, pera aí. Ah, já funcionou.
+
+Ah, mais ou menos, né? Mas ok. Acho que aqui é a questão da da força, talvez. Beleza, cara. Vou te falar que eu achei que eu ia passar mais tempo ajustando ali aquele código.
+
+Se bem que agora tá fácil dele voltar para lá, né? Então, dá para fazer um ajuste fino ali ainda, bem melhor. Eita. E aqui também tô achando que tá muito grande aqui, né? Essa tô achando que aqui as paletas estão muito grandes. A
+
+bolinha não tem nem espaço para ela passar ali, então fica mais difícil da gente perder. O que também não não tô reclamando não. E agora acho que a bolinha ficou presa ali. Acho que a gente achou um macete. Tudo bem, chega bem. Então esse daqui virou o nosso
+
+pinball. Pela primeira vez, a gente tem um pinball funcional aqui nos nossos testes e é melhor pinball do mundo, não, mas funcional. E dá pra gente ajustar aqui. Se a gente ajustar as paredes aqui, simplesmente na mão mesmo, vir colocando mais segmentos e mudando isso aqui, ou até pedindo para uma outra LLM mais rápida para fazer outras fases, né, outras outras coisas, a partir daqui a gente usar um modelo menor para fazer alguns ajustes. Eu acho que dá pra gente chegar numa versão legal, hein? Tem
+
+rumores aí de que em breve a gente vai ter o Quen 3.6 de 27 bilhões de parâmetros. Seria um bom teste para ele modificar esse código aqui, em vez da gente pedir para ele criar do zero. Tá aí, se eu esquecer, me lembra de fazer esse teste. Mas esse foi o nosso pinball. Agora vamos ver se esse modelo
+
+consegue também criar algum design interessante, tá? Eu pedi para ele fazer o seguinte, ó. cria um site HTML sobre uma empresa de cosméticos e eu pedi também para ele incluir uma funcionalidade surpreendente, algo fora da caixa. E aqui eu quero ver se ele vai conseguir integrar algo interessante que tem a ver com o tema, né, que a gente pediu, que é cosméticos. Para fazer esse site, ele levou 33 minutos só pensando no que que ele poderia fazer, principalmente em relação a essa funcionalidade surpreendente que a gente pediu. E aí, depois de 33 minutos
+
+pensando, ele criou esse código aqui pra gente, ó, que é um código bem extenso. Opa, sem spoiler. Vamos ver aqui, ó. tokens por segundo, aproximadamente 34.000 tokens gerados. Então vamos ver
+
+se esse site ficou bom ou não. Ô, tá bem claçudo, né? Gosto da fonte. Bem dá um ar de um uma marca de cosmético de certo luxo, né? Até por conta das cores e etc.
+
+Aqui a gente tem os links aqui em cima. E olha só, se a gente reparar, ele tem um feche de luz, digamos assim, né? Que parece acompanhar o mouse com pequeno delay. Não sei se isso era proposital ou não, mas é um efeito interessante, né? Aqui atrás a gente tem algumas bolhas que elas vão subindo, mas elas vão com um movimento meio natural assim, né? Não
+
+muito reto. Eles estão vindo como se fossem bolhas subindo mesmo. Legal. Vamos ver aqui o restante o site. Aí tem uma setinha aqui para indicar que a gente tem mais sites depois da primeira quebra de página. Isso daqui é sempre
+
+interessante, né? Você ter um site, principalmente quando o hero da tua página, ela cobre a tela toda, né? E não dá para usuário ver que tem mais coisa. Opa, olha só, cara. Isso aqui eu preciso preciso destacar. Muitas vezes quando a
+
+gente roda modelos localmente, eles quebram todas as imagens e aqui mesmo esse modelo tendo só dois bits, todas as imagens vieram certinhas, funcionando. Então aqui a gente teria, ó, é alguns produtos. Então, seria um soro, um creme, um que que é um mist, não sei o que que é um m, é um spray, não sei. Um óleo, né? Cada um tem aqui seu nome e seu destaque. Uma coisa interessante é
+
+que Ah, não tá, que esse aqui é um spray. Eu achei que aqui tava em inglês porque eu li spray, né? Mas tudo bem, tá certo. Iluminador com água de rosa. Tá tudo em português, tudo certo. Aqui tem
+
+os preços, né? Se a gente for rolando aqui, que que é isso? Laboratório de fórmulas. Clique nos ingredientes para criar sua fórmula personalizada. Vamos ver aqui, ó. Alo Vera Rosa Mosqueta. E aí ele vai
+
+adicionando aqui. Pô, essa animação aqui tá muito legal. Fazer um app de beber água com essa animação aqui. Se eu botar, posso ir botando aqui. Que que é isso aqui? Revelar fórmula. Ih, olha só
+
+o que que ele fez. Ele pegou os ingredientes que a gente colocou e ele tem uma fórmula personalizada para esses ingredientes. Se eu colocar mais um, é que a gente botou? Vou botar karitê. Não dá para botar, mas dá para eu voltar aqui, Vou botar karê, lavanda, camomila.
+
+Ó, já é outra aqui, né? Não é o mesmo. Ah, então não é qualquer três que eu coloque lamina C. Alo vera. Não mudou. Esse é diferente, hein,
+
+pô. Legal. Legal demais. Se eu botar, dá para botar todos? Vou botar todos.
+
+Essência equilibrante, ó, R$ 349. Se eu botar aqui adicionar o carrinho, o que que acontece? Opa, adicionado ao carrinho. Legal. Deixa eu limpar aqui.
+
+Eu acho que eu vi um negócio que Pera aí, será? Tá. Se eu clicar aqui, ó. Ih, ó. Só. Olha esse botão aqui. Tá vendo?
+
+Limpar tudo. Tá rosa, né? Vou limpar ele. Vou agora apertar aqui no verde, ó. Ficou verde. Mas não só esse botão aqui
+
+em cima, ó. Tá rosa. Se eu colocar aqui, ó, vitam, ó, mudou. Tá vendo? Para essa cor aqui.
+
+E essa cor não é a da vitamina C. Então, ele vai misturando as cores ali e vai mudando as cores do site todo. Que maneiro. Então, ele vai mudando, ó. Aqui, ó.
+
+Mudou, tá vendo? Olha, olha para cá. Vou botar esse aqui, ó. Ó, mudou. Vai mudando ali, ó, de acordo com essa cor daqui. Então, se tiver verde, o site
+
+todo vai est verde, ó. Nossa, que maneiro. Se eu clicar aqui, ele volta para cá, né? E aqui embaixo a gente tem o footer. Cara, 2 bits. 2
+
+bits. Ele fez isso aqui de primeira, sem erro. Eu vou te dizer que eu acho que de todas as vezes que eu pedi para criar um site com uma funcionalidade surpreendente, essa daqui eu consigo ver isso aqui no site, por exemplo, é meio gimmico, mas daria para você, pô, alguma coisa que você conseguisse de fato, né, personalizar, montar e e a empresa vendesse isso, pô, isso aqui seria uma boa forma de implementar, cara. Muito legal, muito bonitinho. Então, tipo, se eu selecionar três ali, ele vai criando.
+
+Então, ó, esse aqui já é outro, né, cara? Muito maneiro isso aqui. Muito maneiro. Muito maneiro. Muito bom. Gostei. Gostei muito desse
+
+resultado aqui. Próximo teste que eu tentei fazer foi o nosso Angry Birds, o GLM 5.1. Ele fez um Angry Birds visualmente muito interessante quando a gente fez o primeiro teste aqui. Acho que o GLM5 Turbo também fez algo legal, só que nenhum dos dois funcionou. A
+
+minha questão era saber se com 2 bits ele ia pelo menos fazer alguma coisa. E uma coisa que eu preciso destacar aqui é que normalmente modelos de 2 bits eles tendem a alucinar no meio do caminho. Então quando o modelo desse ele te entrega qualquer coisa, já é uma grande vitória. E aqui pela terceira vez ele entregou pra gente um código, ó, completo. Novamente, se a gente olhar lá em cima, ó, 26 minutos só pensando para responder isso aqui. E lá no final a
+
+gente vê que a gente teve ali entre 8 e 9 tokens, né? E ele gerou, ó, 34.846 1846 tokens, o que é bastante coisa pro modelo 2 bits que não alucinou. Agora, a grande questão é, funciona ou não funciona? Bem, a princípio parece que carrega. Vamos ver se a gente tem algum
+
+erro aqui, ó. Quando eu boto para jogar, nenhum erro. Perfeito, então funciona. A gente já tá vendo a animação rolando, ó. Nuvens lá atrás. E mais uma vez GLM5.
+
+Cara, eu eu acho ele bom de criar interfaces. E mesmo quando ele tá usando 3JS da vida, o resultado é bom. Ó, a gente tem aqui os pássaros. Eu não consigo, eu acho que eu não tô conseguindo dar zoom aqui, mas eu vou tirar um print pra gente poder ver a imagem um pouco maior. Aqui, ó, a gente consegue ter uma ideia melhor dos gráficos. Então, os porquinhos estão
+
+quase que perfeitos, né? A gente tem aqui o passarinho vermelho, o stiling tá bom também. Eu vejo muito desses modelos fazendo um estiling meio esquisito. Aqui a gente tem cubos de gelo e OK, vamos tentar lançar o nosso pássaro. Ó, bom sinal isso aqui. Primeiro tem ali o
+
+marcador da trajetória perfeitamente e altera, ó, exatamente como a gente espera. E a gente tem a corda do Stiling também, ó. Que legal. Deixa eu soltar aqui. Ué, soltei. E aqui eu acho que a
+
+gente travou o app. Aconteceu alguma coisa. Ah, deu erro aqui, ó. Ele tá falando que ele não consegue encontrar a variável current. Então aqui, ó, nessa linha de código aqui, vamos procurar aqui. E a gente pode ver que aqui ele
+
+faz uma operação, né, de multiplicação usando current bird, né? E aqui ele tenta fazer mais ou menos a mesma coisa que ele tava fazendo aqui, mas ele usa current. Então, o próprio Gravity já tá me indicando aqui que deveria ser current bird e provavelmente deveria mesmo. Então vou salvar aqui, vou atualizar, fechar isso aqui pra gente enxergar melhor. E agora eu vou lançar ele novamente. E opa, ó, agora parece
+
+que a gente não teve erro porque as nuvens ainda estão se mexendo, mas ele parou, ele não foi lançado. Vamos olhar aqui. Não tem nenhum erro, então a gente não tem nenhuma pista do que que aconteceu de fato. Uma coisa que ele mostra aqui embaixo, ó. Arrasta, pássaro para trás para lançar. Pássaros
+
+azuis, clique no ar para dividir. Então, pelo visto, ó, tem umas bolinhas aqui. A gente teria o pássaro vermelho e a gente teria o pássaro azul também do Angry Birds, só que infelizmente a gente não consegue chegar lá, né? Tipo, a gente atira o pássaro e o pássaro não vai, não vai. Mas bem, aqui mais uma vez daria para tentar pedir para ele ajustar, mas aí vai demorar mais algumas horas. a gente não vai fazer nesse vídeo
+
+aqui. Talvez seja algo simples que desse para fazer até com uma LLM menor, mas como ponto de partida, esse resultado para mim é excelente. Talvez um dos melhores que a gente viu até agora, tá? Considerando que a não tá funcionando. Talvez você pudesse pedir agora pro Gema, que ele fez uma física muito interessante para corrigir isso pra gente. Talvez ele conseguisse. Mas agora
+
+a gente vai pro próximo projeto. E o nosso próximo projeto foi ele, né? o GTA feito de Lego. Então pedi aqui, ó, para ele criar um jogo 3D completo inspirado no GTA San Anders usando 3DS com CDN, estética estilo Lego, né, incluindo minimap, pessoas, nível de procurado, carros e motos, mapas, diferentes áreas, tudo que a gente tem direito. E dessa vez, por incrível que pareça, ele pensou só por 14 minutos. Ainda é bastante
+
+coisa, mas é menos do que Angry Birds, por exemplo, para um projeto que me parece ser muito mais desafiante, né? Aqui tá o código dele, ó. E ele conseguiu inclusive uma taxa maior de 9.78 tokens por segundo. Produziu 26.000
+
+tokens. E aqui ele dá aqui um um resumo do que que ele implementou pra gente, mas a gente já vai ver se ele implementou bem, se ele implementou mal, se funcionou, se dessa vez a gente vai precisar meter a mão no código ou não. E aqui a gente tem Lego GTA San Andreas Edition Block City. Perfeito, né? A gente tá falando de Lego aqui. Então,
+
+show de bola. Ó, aqui a gente tem os controles, tá? Então a gente consegue usar o mouse, teclas para mexer, sair do veículo, pular. Soco. Ah, ok. Vamos ver.
+
+Ah, moleque, cadê o soco? O soco não tá funcionando não. Ó, ali embaixo a gente consegue ver o mapa no canto inferior direito. Deixa eu tentar. Cadê? Como é que eu pausado? Deixa eu
+
+aumentar aqui. OK, vamos voltar. Beleza. Aí o shift ele corre. O teclado tá ao contrário aqui. Se eu apertar paraa
+
+direita, ele vai paraa esquerda. Se eu apertar para cima, ele vai para baixo. Mas tudo bem, vou conseguir me Ó o bracinho. Ó o bracinho. Ó o bracinho.
+
+Vai andando assim, ó. Cadê? Deixa eu pegar o carro ali. Parece, ó, que eu ali em cima parece que eu tenho algum din que eu tenho alguma forma de ganhar. Opa, ele pula. Tem
+
+alguma forma de ganhar dinheiro. Entrei no carro. Ah, o carro agora tá com a tecla certa. O mouse ainda é, o mouse ainda controla aqui. Show. E olha só que
+
+maneiro. Vamos ali, vamos ali, vamos ali. Ó, os prédios eles estão muito altos, não dá pra gente ver, mas todos os outros elementos eles parece que foram feitos de Eita, bati. É, caramba, acho que eu fiquei preso aqui. Deixa eu sair, vou ter que pegar outro carro.
+
+Esse a colisão não tá das melhores, não. É, deixa eu dar uma olhada aqui em volta. Tem uma pessoa ali. Deixa eu ver que que E a gente tem os olhinhos. Deixa eu ver se eu consigo dar um soco nela aqui. Ih,
+
+não tem animação do soco, mas tem o soco. E eu ganhei uma estrelinha, hein. Polícia vai vir atrás de mim. Eu tenho que achar um veículo que não esteja preso na parede rapidamente. Ali parece que temos um. Tomara que eu não prenda
+
+esse na parede também.
+
+Pô, legal que esse veículo é moderno, ele gira no mesmo lugar, né? Sem sair do lugar. Ó, aqui parece que a gente vai entrar em outra área da cidade aqui. Então, olha só, olha o telhado dos prédios pequenos aqui que eles são Lego de fato. E esse detalhe é muito legal, cara. O carrinho também, ó. as árvores.
+
+Será que eu consigo atropelar as pessoas? Tô meio enrolado com a câmera aqui, né? Eu não só atropelo as pessoas, como eu ganho dinheiro por atropelar elas para bater. Ih, bati na árvore. Ih, o cara tá vindo atrás de mim.
+
+Que que ele vai fazer? Ol,
+
+ele veio atrás de mim, hein? Deixa eu sair do veículo. Vai me bater. E aí? E agora eu tenho um sidek kickick.
+
+Ah, será que isso é a polícia? Vou bater em geral. E não dá para bater. Ah, tô achando que esses daqui são da polícia, hein. Deixa eu ver se eu ficar parado aqui, que que acontece? Nada. Tá,
+
+então vou entrar no meu carro, vou meter o pé.
+
+Tenta me pegar. Será que esses daqui são polícia também? Vou passar por cima geral. Ah, tá vendo? Eu não consigo atropelar eles. Eles
+
+devem ser da polícia mesmo, hein?
+
+Ó, aqui a gente tem a praia. Então, ele de fato fez várias áreas. Deixa eu ver se eu consigo entrar na água ali, ó. Ele fez várias áreas, fez o os carros, fez com que a gente conseguisse dar soco, fez com que a gente conseguisse roubar veículo. A gente tem ali o level de procurado. Ah, eu tenho uma barra de
+
+vida ali. Então, se eu ficasse mais tempo perto da polícia, será que eu ia ser preso, morrer, sei lá. Cadê? Vamos tentar achar. Ó, eu acho que tem um policial ali. Deixa eu tentar ir lá. Ih,
+
+eu não tô mais procurado agora. Vou ter que bater em alguém. Ó, agora já tô procurado de novo, ó. Tá meu meu minha vidinha tá caindo ali, ó. Eu fui eliminado, perdi $.
+
+Excelente versão do GTA. O mais incrível é que a gente não precisou ajustar nada aqui. Ele fez isso de primeira, de primeiríssima. Excelente, cara. Muito bom. Muito bom, muito bom. Muito bom. E
+
+eu vou te falar, esse GTA aqui vale o teu hype, hein? Deixa aquele hype para mostrar esse vídeo aqui para mais gente, porque, cara, eu tô muito impressionado. Ô, vê a polícia aqui, ó. Polícia vai me pegar. Cadê? Que que tu vai fazer? Eita,
+
+me deixa. Eu não consigo dar soco na polícia. Tá certo, tá bom, né? É. Respeita as leis, cara. Muito legal. Eu fiquei
+
+surpreso com GLM 5.1, hein. Vou te falar que eu achei incrível. Eu quero saber de você, que que você achou. Deixa aqui nos comentários. Você podia imaginar que um
+
+modelo com 2 bits de quantização ia conseguir criar projetos nesse nível de qualidade aqui? Isso demonstra como que o GLM5.1 é um monstro. Só que, infelizmente, mesmo conseguindo rodar ele localmente a oito tokens por segundo fica um pouco inviável. Apesar de preferir rodar os modelos localmente, gostar muito do GLM 5.1, eu acabo tendo
+
+que rodar ele na Z.Ii. Z.Ii tem um coding plan lá, né, que eu assinei e agora aumentou de preço, absurdamente, dobrou o preço, mas pela qualidade do modelo ainda pode ser uma opção interessante. Isso aqui não é um vídeo patrocinado, mas eu vou deixar um link aqui embaixo que se você for se cadastrar no codingplend. por esse link
+
+aqui, você ajuda o canal, eu ganho um pouco de crédito lá para eu poder continuar trazendo os modelos, principalmente quando eles não colocarem mais modelos open source, que vai ser o futuro, a gente pode continuar conseguindo cobrir aqui sem fazer com que o vídeo dê prejuízo. O próximo que a gente vai trazer, inclusive é o Minimx M2.7, 7 que para você ter uma ideia, a licença dele deu tanta treta que eu mandei um e-mail para eles, primeiro pedindo para eles mudarem a licença, o que eu não sei se eles vão fazer, mas tendo que pedir autorização para poder gravar o vídeo e monetizar esse vídeo de tão braba que a licença veio. Por isso a gente tá chegando ao fim dos modelos open source, ou melhor, open weight, né? Porque a maioria deles já não são open source de fato, mas bem, open weight do jeito que a gente conhece hoje. Mas isso
+
+é assunto que talvez valha um vídeo inteiro só para falar sobre isso. E não é só open source não, né? Porque como a gente viu, eu acabei de falar que o GLM ficou mais caro, os modelos fechados estão ficando mais caros e tá cada vez mais restrito, né? A gente consegue usar menos pelo plano que a gente contrata. Pois é, você quer ver um vídeo só falando sobre esse assunto, de para onde que isso tá indo? Porque eu tenho várias
+
+opiniões aqui. Se você quiser, eu posso compartilhar elas. Deixa aqui nos comentários, se for o caso. Se inscreve para não perder o vídeo do Minimx 2.7 rodando localmente. Esse é um modelo
+
+muito menor. A gente consegue rodar de forma muito mais direta aqui, muito mais rápida, tá? Se eu não me engano, ele vai ter aqui em torno de 30 a 40 tokens por segundo, o que já permite que a gente consiga usar em tempo real. Então, para não perder esse vídeo, se inscreve no canal. Agora, o vídeo que a gente ainda não consegue fazer hoje é o do Quen 3.6
+
+Plus, ou melhor, Quen 3.6 open source, porque esse ainda não saiu. Saiu a versão dele fechada, a gente fez vídeo aqui no canal, se você quiser assistir, eu vou deixar o card aqui, ó. Modelo muito bom. Eu tô louco para ver as versões dele rodando localmente, principalmente as versões menores, como 27 bilhões de parâmetros e até a de 122 que eu consigo rodar aqui. Mas a de 27 é
+
+mais interessante que dá para mais gente rodar. Propósito, se você quiser ver como que o Quen 3.5 de 27 bilhões de parâmetros já é bom para caramba, dá uma olhada nesse card aqui, porque a gente fez vídeo aqui no canal também. E eu sei que tem gente que ainda acha que modelos de 27 bilhões de parâmetros são difíceis de rodar, são muito grandes. Aí, nesse caso, a gente tem vídeos aqui de modelos menores também. Eu vou deixar uma
+
+playlist, ó, aqui. Dessa vez vou deixar três car. Vai ter card aqui pela tela toda. Vai ter para todos os gostos aqui. Modelos gigantes, modelos médios, modelos pequenos. E aí você vai no que
+
+mais te interessa, porque aqui a gente faz vídeo para todo mundo. E é isso aí, vou ficando por aqui, até o próximo vídeo.

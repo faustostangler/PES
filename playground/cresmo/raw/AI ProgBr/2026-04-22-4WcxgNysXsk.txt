@@ -1,0 +1,191 @@
+---
+video_title: "RTX 5060 TI + Qwen 3.6: setup \"acessível\" que roda IA de alto nível"
+video_id: 4WcxgNysXsk
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4WcxgNysXsk
+video_date: 2026-04-22T23:03:44+00:00
+video_description: |
+  Testei o Qwen 3.6 35B (Mixture of Experts, 3B ativos) com quantização 3 bits numa placa RTX 5060 TI de 16GB de VRAM para descobrir se vale a pena. Resultado: 77 tokens por segundo, visão funcionando, código funcional e a prova de que esse é um dos melhores modelos locais disponíveis custando muito menos hardware do que você imagina.
+  
+  No benchmark do Artificial Analysis, o Qwen 3.6 35B supera o Qwen 3.5 de 122B e fica bem próximo do Qwen 3.5 de 397B, que tem 10 vezes mais parâmetros. A comparação com o Kimi K2.5 de 1 trilhão de parâmetros também é impressionante. 
+  
+  _______
+  
+  ⚡ Hardware
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen35bmoe5060
+  
+  _______
+  
+  0:00 Intro
+  0:20 Documentação
+  4:37 Setup ZimaBoard
+  6:53 Velocidade de Inferência
+  8:00 Teste de Visão
+  9:05 Geração de Descrição
+  12:09 Criação de Site
+  14:28 Flappy Bird
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Alguns dias atrás, a Alibaba lançou a nova versão do modelo Quen 3.6 dela com 35 bilhões de parâmetros. Esse modelo tem sido muito falado porque simplesmente o modelo é muito bom a ponto de ser possível comparar com modelos muito maiores do que eles, 10 vezes maiores, 20 vezes maiores, 30 vezes maiores, como o caso do Kim K2.5. Deixa eu te mostrar um pouquinho, ó.
+
+Aqui no artificial análisis tem diversos benchmarks, né, sobre inteligências de modelos. A gente consegue ver aqui que no índex geral o Quen 3.6 de 35 milhões de parâmetros, ele tá muito próximo a dois pontos atrás só do Quen 3.5 de 397 bilhões de parâmetros. Eu vou fazer o seguinte, eu vou colocar aqui o Quent.5
+
+de 35 milhões de parâmetros com reasoning, tá? E a gente vai ver que ele saiu então daqui, ó, de 37 pontos para 43 pontos. Então foi um salto bem interessante. Deixa eu colocar os outros Quentes. Também pronto. Agora a gente
+
+tem aqui, ó, o Quent. 35 bilhões de parâmetros, ele fazia 37 pontos, tá? O Quenten 3.5 de 122 bilhões de parâmetros, três vezes maior, fazia 42 pontos. E o Quentin 3.5 de 27 bilhões de
+
+parâmetros, que é um modelo denso, ele já fazia ali seus 42 pontos. Então esse modelo denso, ele já era melhor do que o de 122 parâmetros mixture of experts. Só que esse modelo aqui de 122 bilhões de parâmetros, ele era mais rápido. Então se você conseguisse carregar ele ou carregar o modelo denso, como a diferença dos dois aqui é basicamente um empate técnico, eu considerava que valia mais a pena rodar o de 122 bilhões de parâmetros. Mas isso até o lançamento da versão 3.6, porque a gente pode ver
+
+aqui, ó, que o Quen 3.6, 35 bilhões de parâmetros, mixture of experts com 3 bilhões de parâmetros ativos, passou o nosso modelo denso e passou também o Quent. 5 de 122 bilhões de parâmetros, um modelo três vezes maior. Olha só que loucura. Então, esse modelo ele é muito bom, tá próximo ao Quentin 3.5 agora de
+
+397 bilhões de parâmetros, um modelo 10 vezes maior, né? E também tá relativamente próximo, tá ali quatro pontos atrás do Kim K2.5, que é um modelo de 1 trilhão de parâmetros. Então esse modelo aqui é muito bom e eu indico para todo mundo rodar ele localmente. A gente fez um vídeo aqui pro canal rodando ele localmente no Mac Studio sem quant nenhuma. Só que rodar esse modelo
+
+sem quanto. Se a gente olhar aqui no Sloth, a gente vai ver que ele sem quant ocupa 64 GB. quer dizer que você teria que ter uma placa de vídeo com 64 GB ou múltiplas placas de vídeo que tivesse mais do que isso ou algum hardware que tivesse memória unificada, como é o caso do Mac. Então, dentro da família dos Macs, você poderia conseguir usar ele sem quantização no Mac M3 Ultra de 96 GB, no M4 ou no M5 Max com 128 GB. Só que esse hardware é muito caro, né? Então, hoje
+
+eu queria me desafiar o seguinte. E se eu conseguisse rodar esse modelo numa 5060 Ti, que é uma placa de 16 GB de V RAM, que eu não vou falar aqui que ela é muito barata, mas é muito mais acessível. E é isso que a gente vai fazer hoje. Mas pra gente conseguir fazer isso, a gente vai precisar diminuir aqui um pouquinho a nossa quantidade de bits, né? a gente vai ter que mirar ou no 3 bits, no caso aqui, ó, provavelmente esses daqui a gente consegue, ou na versão de 2 bits, que aí com certeza a gente vai conseguir rodar, eu acho. Então vamos atacar primeiro a
+
+de 3 bits para ver se dá, né? Porque se der, show de bola. Só que aqui a gente tem um probleminha. Se a gente quisesse mais do que isso aí, a gente já precisaria de placas maiores. Uma placa de 24 GB poderia rodar até a de 4 bits ali, mas tem vários modelos de quantização aqui no UNSOF, então dependendo do tamanho, acabaria tendo pouco espaço ali pro KVCash. E se a
+
+gente fosse aqui para 5 bits, aí a gente já precisaria de uma placa de 32 GB. Eu tenho uma RTX 5090, mas eu já tava há um tempo querendo trazer pro canal algo que fosse mais compatível com o mercado brasileiro, porque hoje até aqui fora, essa placa, essa 5090, tá muito cara. Eu consegui por acaso comprar ela antes do aumento de preços e se eu vendesse ela hoje eu ia ganhar dinheiro nessa venda. Tô por conta disso, por vocês também terem deixado os likes. A galera tá se tornando membro do canal também. Então,
+
+se você quiser apoiar o canal, se torne um membro, porque aí a gente consegue fazer esse tipo de investimento aqui. Eu ainda tive que botar a maior parte do meu bolso, mas eu acredito que no futuro tanto o aumento de views do canal quanto o aumento de membros vai facilitar aí a gente conseguir novos equipamentos. E um outro ponto também que vai ser super importante pra gente conseguir trazer esse tipo de conteúdo são os parceiros aqui do canal. Eu fiz um vídeo aqui sobre o Zim Board 2, inclusive a gente rodou vários modelos nele. Ele é basicamente um mini computador. A versão
+
+que eu tenho aqui tem 16 GB, mas ele tem uma versão com 8 GB de memória RAM também. E a gente consegue ligar a RTX 5060 Ti nele sem eu precisar então montar outro computador. Eu tenho um computador com a 5090, só que eu tô um pouco sem espaço ali para botar mais de uma placa e aí eu ia ter que ficar trocando a placa ali. Nesse setup atual é muito mais fácil trocar essa placa. Deixa eu até te mostrar aqui. Então,
+
+isso aqui é o Zima Board, tá? É basicamente essa plaquinha aqui em cima e ele tá montado aqui em cima desse case. Dentro desse case a gente tem alguns HDs. Eh, a maior aplicabilidade dele é fazer um mini homeelab, uma rede interna dentro da casa do escritório. E ele é excelente para isso, mas ele também permite, porque ele tem aqui, ó, uma entrada PCI, a gente ligar uma placa de vídeo, tá? E aí eu ligo a placa de
+
+vídeo aqui nesse doc e eu consigo conectar nele. Então, basicamente esse daqui é o meu novo sistema e eventualmente a gente vai trazer outras placas pro canal também. Vai ser basicamente eu trocar ela aqui muito mais fácil, né? Tudo graças aos imabard. Então queria agradecer a Ice Wale pelo apoio. Se você curte essa ideia de home
+
+Lab, dá uma olhadinha no Zimaboard. Eu tô simplesmente apaixonado nesse equipamento, tá? Vou deixar o link aqui embaixo. E a propósito, esse é um link de afiliado, tem também um cupom de desconto EIP BR15, se eu não me engano, que vai te dar 15 de desconto e você também vai contribuir com o canal. Mas vamos lá, ó. Aqui eu já tô no Zimaboard.
+
+Eu tô gravando vídeo no meu Mac, mas eu vou rodar a LLM no Zim Board. E ela é toda feita para isso, pr você acessar remotamente na tua rede. E isso também facilita muito a minha vida, porque eu vou te falar, eu não sou super apaixonado por ficar configurando coisas em rede, não. Então, qualquer coisa que me facilite nisso, eu já gosto. E o Zimaboard é o caso. Inclusive, dá para
+
+instalar várias aplicações aqui com clique, incluindo open etc. E eu vou te falar, esse vídeo não é patrocinado, mas eu realmente gosto do produto, por isso que eu tô falando dele. Mas pra gente abrir o nosso lama CPP, só eu clicar aqui, ó, ele liberar aqui o popup. E pronto, já tô aqui, ó. E eu já carreguei o nosso quent. 35 milhões de parâmetros.
+
+A gente pode ver inclusive que ele já tá aqui, ó, no talo da placa de vídeo. Eu vou aproveitar para destacar também o consumo, né? Algumas pessoas perguntaram sobre o consumo. Não tem nenhuma carga agora na 5060, mas ele tá aqui com consumo de 4 W, enquanto o Zimabard é um consumo de 2.7 W. Quando a gente começar
+
+a rodar, a gente dá uma olhadinha aqui de novo. Então, vamos voltar aqui. Primeira coisa que eu vou fazer é mandar uma mensagem simples pra gente ver a velocidade inferência. Tô rodando aqui uma versão, então, que é a IQ3_line S. Essa aqui, ó, IQ3_line S. Então, ela
+
+tem 13.7 GB no total. Tem um pouquinho a mais que isso, mas na verdade se a gente for aqui, ó, além desses 13.7 7 GB. A gente tem também aqui mais 1.79, que é
+
+da capacidade de visão do modelo. A gente pode inclusive carregar esse modelo sem a capacidade de visão e assim você economiza um pouquinho, né, de memória para deixar pro KV Cash. Mas nesse caso aqui a gente carregou com a capacidade de visão, tá? Vamos dar um oi aqui só para ver a velocidade. Então, então aqui a gente tem o modelo rodando na 5060 Ti com 77 tokens por segundo. Eu
+
+acho essa velocidade muito boa. E aqui a gente tem o reasoning dele, né? E ele me respondeu em inglês, que eu acho que ele tá achando que eu tô falando oi. Não, oi. Aí eu vou perguntar para ele, você fala português? Eu não sei se você vê,
+
+acho que The Boys, né, o antiherói lá, ele fala muitas vezes oi. É muito comum na Inglaterra, acho que na Austrália também. Então, em alguns países de língua inglesa se fala oi, por isso que nem sempre ele vai responder em português, mas sim, ele fala português. E aqui a gente tem os nossos 77.46 tokens. Próximo teste que eu vou fazer,
+
+exatamente se ele vai conseguir manter a capacidade de visão dele, né? Ó, vou pegar aqui uma imagem do pelourinho. Vou salvar essa imagem, vou carregar aqui e vou perguntar para ele onde que essa foto foi tirada. Vamos ver se ele vai descobrir aqui, ó. Ele já tá pensando. A
+
+gente pode dar uma olhada para ver se tem. Ó, ele tá falando aqui de Igreja da Ordem Terceiro do Carmo. E olha só, então ele respondeu aqui pra gente. Essa foto foi tirada em Salvador, na Bahia, Brasil. Mais especificamente ela mostra a famosa rua do Amparo no centro histórico conhecido como Pelourin.
+
+Exatamente. Hein? Mas sabe o que que mais me impressiona? É que eu achava que isso daqui não deveria funcionar, não a capacidade de visão, mas simplesmente um modelo de 3 bits responder de forma tão coerente. Se ele me respondesse errado, mas de forma coerente, eu já acharia absurdo. Mas ele conseguir identificar
+
+uma imagem, acertar exatamente o local, é muito legal. Eu não experimentei exatamente essa imagem, mas a gente testou essa capacidade de visão com o Mistral 4, que é o modelo da empresa Mistral, e ele não acertou, mesmo ele tendo mais de 100 bilhões de parâmetros. Então isso aqui é muito muito legal. Próximo teste que eu vou fazer é um teste de meio que uso real, assim. Eu inclusive uso modelos de LLM para fazer isso aqui e eu tô sempre experimentando para ver qual que faz melhor. Mas
+
+basicamente eu vou pegar esse vídeo aqui, ó. Eu gravei um vídeo sobre o Opus 4.7. Vou deixar o link aqui no card também se você quiser assistir. Então ó, copiei toda a transcrição dele, vou colar aqui. Mas antes de mais nada, eu
+
+vou fazer o seguinte, eu vou vir aqui nas configurações e o lama CPP, ele me permite colocar aqui um system prompt, né, uma mensagem de sistema. E aí, basicamente, o que que eu quero aqui? Transformar ele num especialista de criar descrição para YouTube a partir da transcript. Então aqui eu tenho meu prompt, meu system prompt, que é você um especialista em YouTube, SEO e copyright de alta conversão focado em maximizar visualizações e tempo de retenção. Crie três opções distintas de descrição para um vídeo no YouTube. Criar uma lista de
+
+time stamps e criar uma lista de tags. Eu vou salvar isso aqui. E aí eu vou até fazer o seguinte, eu não peguei os time stamps, então vou pegar lá de novo agora com time stamps. Para isso é fácil, é só vir aqui e selecionar time stamps. Eu vou ter que selecionar tudo de novo, mas ok. Então beleza. Agora sim. Ó, aqui eu
+
+já tenho os time stamps. Agora não preciso nem falar mais nada, só vou mandar ele executar aqui, ó. E olha só, ele tá processando aqui, ó, a 1000 e poucos tokens por segundo, tá? Então, processou rápido. Nosso vídeo lá tem, cadê, ó? 29 minutos, um vídeo de meia
+
+hora, processou bem rápido. E agora ele tá preparando aqui pra gente, tá? E ó, ele tá inclusive identificando aqui, por exemplo, Opus, que estava na transcrição como Opus pra opus, né, que é exatamente o nome do do Cloud ali. Então ele já vai corrigir isso aqui na versão final que ele der pra gente. Ele tá pensando aqui a 71 tokens por segundo e já tem mais de 2.000 tokens de pensamento. Aí o nosso
+
+modelo tá rodando aqui com uma janela de contexto de 32.000 tokens, tá? A gente tá chegando perto aqui, 61% já. E porque esse modelo acaba ocupando tanto, né? Não sobra tanto espaço assim pro KVCh.
+
+Ó, tá dando aqui as opções pra gente, tá? Então, olha só, aqui ele deu time stamp, né? O que que a gente faz realmente a gente faz uma introdução, fala documentação e benchmark, testa Angry Birds, testa Mario Kart, simulação de GTA, desafio de pinball e lições sobre cotas. E a gente fala um pouquinho de como às vezes é difícil usar o Opus, porque acaba muito rápido. Aqui no final, ó, a gente tem os cards. Sempre
+
+que eu falo, ó, aqui eu vou colocar um card. Eu falei aqui já, inclusive, que eu vou colocar um card do vídeo do Opus. E aí ele mostra aqui quais são os minutos, né, onde eu falo sobre card e quais seriam também os vídeos da tela final. Aqui a gente tem então as nossas versões, uma versão bem minimalista, né, que é basicamente, ó, teste prático entre modelo proprietário e alternativa aberta, focando em geração de código, 3JS, ele escreveu desse jeito, mas tudo bem, e controle de tokens. Então, é bem minimalista. Tem uma versão aqui mais
+
+storytelling, né? Começamos o dia sem planos de gravar. Eu falo isso no início, inclusive, né? A gente começou esse dia sem plano. Eu tinha planos de gravar esse vídeo aqui inclusive do Quen 3.6, mas o OP saiu e aí parei tudo para
+
+testar ele. Então é é bem bem fiel ao que foi falado no vídeo mesmo, tá? Então eu resumi bem. E aí quando eu ou minha sócia vai então fazer a versão final, a gente mistura um pouquinho, pega um pouquinho de cada uma e consegue fazer algo legal. Então esse daqui é um uso real que eu uso aqui na nossa empresa de fato. Mas agora vamos testar um
+
+pouquinho a qualidade de código, entre aspas dele, né? qualidade num teste de criação de site. Cria um site para uma loja de aspiradores de pó, inclu alguma funcionalidade fora da caixa surpreendente. Acho que dá para fazer coisa bacana com isso aqui, mas vamos ver que que ele vai fazer pra gente aqui, ó. Acho que eu já sei que que ele fez aqui. Vamos ver, ó. Pô, o lama CPP
+
+ele é bem legalzinho, que dá pra gente inclusive visualizar o que que ele fez, só apertando ali no botão. Então, olha só, esse daqui foi o nosso site. Não tá tão incrível assim. Eu já vi o Quen 3.6, 35 milhões de parâmetros, fazer versões melhores, pelo menos à primeira vista.
+
+Então acho que a gente tá perdendo um pouquinho de detalhes de qualidade por conta da quantização, mas ainda assim tá um site bem clean, bem OK, tá? Então pare de apenas limpar, comece a proteger celular. Aspiradoriza inteligente com tecnologia e selagem repa, hei lá e IA de navegação. Escolha o modelo ideal para sua rotina. Legal. Dá uma olhada
+
+aqui, ó. Cadê? O que que isso aqui faz? Seleciona ambiente modelo para ver em tempo real como as partículas são capturadas e o impacto na sua saúde. Vamos iniciar a simulação aqui, ó. Acho
+
+que deu erro, hein? E aqui a gente teve um erro, ó. Então, a nossa funcionalidade surpresa aqui, ó, não funcionou. Ele deu aqui algumas coisas, né? Reiniciar, ó. Então, aqui até que
+
+trava, mas depois funciona. Mas para Ah, não, aqui, ó. Ih, tá funcionando, sim. Ah, eu tô capturando os planetas. Nossa, aqui economia anual em filtros.
+
+Isso aqui é golpe, hein? R$ 250. Legal. Quarto mesmo esquema, né? Inicio aqui. Vou capturando.
+
+Legal. Legal. OK, funcionou. Então, olha só, a gente criou um código funcional. De fato, eu achei que ele tinha errado, que por conta da quantização tinha quebrado alguma coisa em um JavaScript, mas na verdade não, cara. Tá funcionando
+
+como deveria funcionar de fato. Muito legal. Quer dizer, muito legal e forte. Legal. Eu vou fazer mais um teste aqui.
+
+Normalmente a gente faz o teste do Angry Birds, né, do GTA. Dessa vez a gente vai pegar um pouquinho mais leve. Se vocês quiserem ver um vídeo testando ele 3 bits para valer de forma gêntica, criando GTA, Angry Birds, até trazendo de volta o nosso Zelda, aí você deixa aqui nos comentários que a gente faz mais um vídeo trazendo ele agenticamente com Quencode ou Open Code ou alguma ferramenta de Cai. Mas hoje o que eu vou pedir para ele é o clássico. Faça um clone de flapps. Detalhe bem a cena e o
+
+personagem. Quero ver se vai ter o bico, se vão ter asas, se vai ter animação nele ali, ó. Tu tu tu. Pô, ele fez em Python. Não, não era meu plano esse. Dei mole, né? Eu que dei
+
+mole. Tá bom, vou rodar então esse script. Instalei aqui o P game. E aí vou rodar aqui o nosso flap.p. E aqui a
+
+gente já teve um erro, ó. Fazer o seguinte, vou pedir para ele corrigir. Aqui a gente consegue ver que, ó, o processamento de prompt, mesmo a gente já tendo aqui agora algum contexto, foi em de 1892 tokens por segundo, tá? Ele processa prompt bem rápido. As placas da Nvidia elas são muito boas para rodar LM. Inclusive, se algum de vocês
+
+conhecerem alguém da Nvidia que der para fazer uma pointe aí pra gente conseguir um DJX Park ou algum outro equipamento para testar aqui no canal, portas estão abertas. Beleza? Ó, eu tô achando que ele deu uma alucinada aqui, tá? Porque ele tá falando aqui, ó, vamos embora, vou escrever final output e nada, não tá trazendo nada. Ele tá se questionando ali sobre o que que ele deveria fazer.
+
+Então vou parar aqui, vou dar um stop, vou apagar essa mensagem aqui, vou copiar e eu vou falar corrige apenas a parte necessária. Vamos ver se assim ele vai corrigir. Pronto, agora sim, né? Então ele passou aqui. Eu vou ter que ver onde é que tá isso aqui. Eu vou
+
+procurar por clouds. Tá aqui. Então, ó, eu vou trocar pelo código que ele me deu. Pronto. Mas não mudou nada. Mudou? Ah, tá. Pera aí. Tá,
+
+agora eu entendi. Então ele trocou aqui de tupla para a race também. Vou rodar novamente. Agora sim, hein. Ó.
+
+Sou muito bom nisso, hein? Ah, tá no, tá no easy. Tá muito fácil. Mas, ó, passarinho tem ali o bico, o olho, né? As asinhas. Não tô conseguindo
+
+ver muito movimento nas asas, não. E não tá ali. Eita, cara. A gente podia fazer um dia aqui uma versão com realidade aumentada desse jogo, hein? Onde eu fico aqui igual um bocó tu tu.
+
+E aí vou controlando o pássaro. Que que vocês acham? Vocês se animam de ver um vídeo aqui onde eu vou passar vergonha? Se esse vídeo atingir 2.000 likes, eu eu faço.
+
+E ele fez tudo isso e eu tinha esquecido de tirar o system message aqui. Então para tu ver o o modelo ele é inteligente suficiente para ignorar nosso system prompt. Eu tô simplesmente impressionado com esse modelo, tá? Esse eu diria que hoje é o melhor modelo para se rodar localmente. Isso até saiu com 3.6 de 27
+
+bilhões de parâmetros, porque se esse modelo der o mesmo salto que o de 35 deu, vai ser um monstro. Um pouco mais lento, mas vai ser um monstro. Igor do futuro aqui porque não me deixam nem respirar. Enquanto eu editava esse vídeo, saiu o Quen 3.6 de 27 bilhões de parâmetros, o que é provavelmente, agora sim, o melhor modelo para se rodar localmente. Mas a gente ainda precisa
+
+ver qual a velocidade que a gente vai conseguir extrair dele. Então, já vou hoje mesmo preparar um vídeo rodando ele na 5060 Ti. Vamos ver quais versões a gente consegue rodar lá e quais velocidades a gente consegue atingir e se esse modelo é bom de fato, tá? Inclusive, se você quiser ver alguma coisa nesse próximo vídeo, ainda dá tempo de deixar aqui nos comentários. Eu fiquei muito impressionado que esse modelo rodou, mas principalmente que ele rodou tão bem desse jeito, né? Inclusive
+
+a taxa de tokens por segundo também foi muito satisfatória. 70 tokens por segundo é extremamente utilizável. Extremamente utilizável, na verdade nem a frase aqui, né? É, na verdade uma taxa muito boa. Isso inclusive me levanta a questão de como esse modelo sairia na CPU. No nosso caso, nosso Zimabard aqui,
+
+ele tem 16 GB de RAM, o que quer dizer que tecnicamente esse modelo caberia ali dentro. ficaria uma sobra muito pequena pro sistema e pro contexto, mas daria para utilizar em pequenos casos. Se a gente quantar para 2 bits, aí acho que sobra um espaço considerável pra gente fazer algumas atividades, principalmente se for uma atividade de automação que vai ficar rodando ali em background e não em tempo real, tá? Aí, vou experimentar depois, provavelmente vou postar alguma coisa aqui na aba comunidade. Então não deixa de seguir aqui o canal e se inscrever para não perder nenhum vídeo, tá? Propósito, eu
+
+já rodei alguns modelos aqui no Zimabard. Se você quiser assistir, eu vou deixar o link aqui nesse card. E se você quiser ver modelos rodando no Raspberry Pie, o Raspberry Pi ele também tem 16 GB de memória, aí você pode assistir aqui, ó, que eu também fiz aqui pro canal. E é isso aí, em breve muita novidade aqui, tá? E eu tô muito empolgado para continuar criando conteúdo. Eu vou ficando por aqui, até o
+
+próximo vídeo.

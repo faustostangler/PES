@@ -1,0 +1,248 @@
+---
+video_title: "Qwen 3.6 27B é um MONSTRO, mas dá pra rodar LOCAL? Testei na RTX 5090 e RTX 5060 TI e é TOP"
+video_id: d_2Dxs8ZlMY
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=d_2Dxs8ZlMY
+video_date: 2026-04-23T20:41:45+00:00
+video_description: |
+  Qwen 3.6 27B rodando LOCAL na RTX 5090 e RTX 5060 Ti: o modelo open source da Alibaba que empata com o Claude Opus 4.5 em benchmarks de código e agentes.
+  
+  A Alibaba acabou de liberar o Qwen 3.6 de 27 bilhões de parâmetros, um modelo denso, Apache 2.0, que cabe em placas de vídeo consumer e entrega pontuação comparável ao Claude Opus no Terminal-Bench, SWE-Bench Verified e benchmarks agênticos.
+  
+  Nesse vídeo, rodei a versão Q8 (GGUF da Unsloth) na RTX 5090 via LM Studio e também testei a versão Q2_K_XL na RTX 5060 Ti de 16GB via llama.cpp no ZimaBoard 2. Meço tokens por segundo, impacto da quantização, janela de contexto, uso de VRAM e KV Cache quantizado.No teste final, peço para as duas versões criarem o mesmo Flappy Bird a partir de um prompt detalhado para comparar qualidade entre Q8 e Q2. Se você pesquisa por LLM local, modelo open source para coding, inferência em GPU NVIDIA ou alternativa, considerando suas devidas proporções, ao Claude Opus 4.7 rodando no seu PC, esse vídeo é pra você.
+  
+  _______
+  
+  ⚡ Hardware
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen3627brtx
+  
+  _______
+  
+  0:00 Intro
+  1:06 Documentação
+  6:35 Setup dos Testes
+  7:29 Teste Q8 RTX 5090
+  11:03 Contexto Expandido
+  12:41 Teste de Visão
+  14:25 Batalha Flappy Bird
+  16:56 Teste Q2 RTX 5090
+  19:47 Teste Q2 RTX 5060 TI
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Alibaba liberou um monstro, tá? O Quen 3.6, 27 bilhões de parâmetros. Eu gravei um vídeo agora aqui pro canal falando sobre a situação atual da inteligência artificial, tanto dos modelos abertos quanto dos modelos fechados. Uma leitura minha do que que tá acontecendo, do que que vai ser o futuro. Mas nem tudo é
+
+notícia ruim, não, porque hoje, no dia que eu tô gravando esse vídeo, a Alibaba lançou o Quen 3.6 de 27 bilhões de parâmetros, um modelo que, olha só, se segura aí na cadeira, tá? que eles comparam com o Opus, tá? Um modelo de 27 bilhões de parâmetros que dá para você rodar localmente, totalmente open source, comparável com Opus. Tudo bem, é o Opus 4.5, mas a gente já vai falar
+
+disso nesse vídeo aqui. A gente vai ver ele rodando na Nvidia RTX 5090, que é outro monstro também, né? E a gente vai comparar também como que uma versão bem quantizada dele roda na 5090, mas também na 5060 Ti, que é uma placa mais acessível, entre aspas, né? Não é tipo assim, hoje eu vou deixar de comprar um pão e comprar essa placa, mas é um pouco mais acessível pro mercado brasileiro. Vamos lá pra tela, pra gente dar uma olhada nesse modelo. Então, Quen 3.6, 27
+
+bilhões de parâmetros, tá? Esse daqui é um modelo denso, quer dizer que ele ativa todos os parâmetros para gerar um token, diferente de um modelo mixture of expert, que é, por exemplo, quent bilhões de parâmetros, que só ativa 3 bilhões de parâmetros quando ele vai gerar um token. Isso quer dizer que esse modelo aqui ele é menor do que o de 35 bilhões de parâmetros, mas ele vai ser mais lento também. Será que ele é mais inteligente? Vamos dar uma olhada aqui no gráfico. Alibaba liberou esse gráfico
+
+aqui pra gente. Então aqui, ó, na primeira posição aqui, a gente tem o quent. de 27 bilhões de parâmetros. E aqui, ó, depois do pontilhado, a gente tem o Quent. 6 de 35 milhões de parâmetros. Esses daqui são os dois
+
+modelos que a gente vai olhar mais. E claro, desse lado aqui, o Opus 4.5. E eu sei que muita gente quando olha isso aqui fala: "Ah, mas eles estão comparando com 4.5 e já tem o 4.7".
+
+Irmão, estamos falando aqui de um modelo de 27 bilhões de parâmetros, sendo comparado com o rei do código. E além disso, eu preciso puxar a orelha de uma galera. Aí eu vejo uma galera extremamente dependente dos, tem que ser o melhor modelo. Se não for o melhor modelo, não presta. Só que o próprio Opus 4.7 que hoje a galera veneera aí um
+
+pouco menos depois das besteiras que aic fez, mas bem, esse modelo que a galera venena, daqui a dois meses vai ser jogado de lado por essa mesma galera. Porque se a gente olhar aqui, ó, o Opus 4.6, que já não é a versão atual, é a versão anterior, ele foi lançado em fevereiro de 2026. Eu tô gravando esse vídeo em abril, o que quer dizer que há dois meses atrás, de dois a tr meses atrás, o melhor modelo do mundo era o Opus 4.5. E hoje a gente tá comparando
+
+ele com modelo de 27 bilhões de parâmetros para você entender a importância disso daqui, tá? Muita gente fala: "Ah, porque os modelos open source eles estão se meses atrás dos melhores modelos?" Não, 3 meses. E a gente tá falando de um modelo que cabe num computador pessoal e não de um modelo que precisa aí de milhões de reais para rodar. Então vamos comparar aqui, ó. No
+
+Terminal B 2.0, o nosso Quent. 27 bilhões de parâmetros, teve aqui uma pontuação de 59.3, que é exatamente a pontuação do Opus 4.5. E isso é mais de
+
+cinco pontos na frente do Quen 3.5 de 397 bilhões de parâmetros. Então, a gente tem um modelo que em uma geração com 27 bilhões de parâmetros ele consegue bater um modelo da mesma família 10 vezes maior do que ele. Mais de 10 vezes maior, muito mais de 10 vezes maior, 15 vezes maior quase. Isso é bizarro. Essa evolução tá muito
+
+rápida. E se a gente comparar com 3.6 de 35 milhões de parâmetros, é uma diferença significativa, tá? O de 35 milhões de parâmetros ainda é muito bom. A gente consegue ver esse ganho aqui também. Ficou muito próximo ao modelo 10
+
+vezes maior do que ele. Mas o 27 é brabo mesmo, hein? Ó, quando a gente vai aqui pro SW Bent Pro, ele já perde pro Opus. Tudo bem, tá liberado, tá liberado perder pro Opus, tá tranquilo. Mas ele chega perto, 53 pontos contra 57 do Ops.
+
+Mais uma vez ele bate aqui os irmãos de 35 milhões de parâmetros e o 3.5 de 397. Não bate com uma folga absurda, né? O próprio Quin 3.5 de 27 bilhões de parâmetros já era um monstro, principalmente nesse benchmark aqui. Mas
+
+qualquer evolução aqui é evolução, né? Já no SW Bench Verified, mesma coisa. Ele bate por pouco a versão anterior, 3.5, e bate por um pouquinho também os modelos maiores do que ele. Quando a gente fala aqui, ó, de agênticos, ele mais uma vez batendo aqui no Quen Claw Bentch, que é um benchmark de agente do mundo real. E ele bate inclusive o Opus
+
+nesse aqui. Mas aqui é interessante porque o próprio Quent. 35 milhões de parâmetros já bate o opos nesse benchmark aqui. Aqui, ó, nesse daqui ele dá uma perdida, que seria tarefas muito longas, né? Aqui ele acaba não indo tão bem quanto o Opus. Opos vai ser melhor
+
+do que ele, mas ainda assim ele é melhor do que os outros modelos com os quais ele tá sendo comparado aqui, incluindo, ó, esse daqui do Google, né, que eu nem falei, é o Gema 4 de 31 bilhões de parâmetros, que também é um modelo denso, que muitos questionou se ele seria ou não melhor do que o Quen. E pelo benchmark aqui, pelo menos em nenhum deles, ó, ele chegou, em alguns ele não chegou nem perto do Quen, em outros ele chegou perto aqui, mas em nenhum deles ele passou. Então aqui a gente tem mais um benchmark passando opus aqui. Mais um benchmark passando opus aqui. Mais um benchmark passando opus mais um benchmk passando opos. Mais
+
+um benchmark passando opos. Se eu colocar na tamb queen 3.6 27 bilhões de parâmetros destrói o Opus nos benchmarks? Não tô mentindo. Mas vamos lá. Outra coisa que a gente vai ver aqui
+
+é o tamanho desse modelo, ó. 55 GB sem quantização. Isso quer dizer que se você quiser usar ele a 16 bits, você vai ter que ter aí uma placa de vídeo com mais do que 55 GB de memória. E se for contar com contexto também o KVCh, aí a gente tá falando aí provavelmente de uma RTX 6000 que tem 96 GB de memória unificada. Ou você pode também dividir, botar o modelo na memória VRAN, né, na placa de vídeo e botar ali o KVCash na rank, que a gente vai fazer aqui para ver se tem muita perda ou não. No nosso caso, a
+
+gente não vai rodar a versão full, né? A gente vai rodar uma versão Q8 e depois vai rodar uma versão Q2. E antes de continuar, só dando destaque aqui que esse é um modelo a parte 2.0, quer dizer que você pode usar ele comercialmente sem nenhum problema, tanto modelo quanto o que o modelo gera. Eu vou deixar aqui no card, então, o vídeo onde eu falo sobre licenciamento e o futuro aí do open source, mudança de preço. Tá tudo
+
+uma loucura, cara. Mas pelo menos a gente tem o nosso coenzinho aqui. Mas vamos lá, vamos colocar a mão na massa. E para eu conseguir fazer isso funcionar, eu tô fazendo da seguinte forma. Eu tô gravando esse vídeo no meu Mac, mas eu tô rodando o modelo na 5090 que tá no meu computador ali com Linux.
+
+Lá eu tenho o LM Studio rodando e ele tá linkado a essa instância do LM Studio que tá rodando aqui no meu Mac. Então, basicamente, a gente vai operar pelo Mac, mas tudo tá sendo executado na 5090. Ah, quase que eu esqueço um negócio importante. A 5090, ela tem 32 GB de memória GDDR7, tá? Tem ali uma interface de 512 bits e uma largura de banda. Isso aqui é a coisa mais
+
+importante de 1796 GB/s também conhecido como 1.7 TB/ segundo. Então, tudo que a gente vir de velocidade aqui da 5090 é por causa disso daqui. Então, vamos lá. A primeira versão que a gente vai carregar aqui é a versão Q8, tá? A
+
+versão Q8 que eu tô usando aqui foi feita pelo Anlof. É um GGUF e ela tem aqui no disco 28.35 GB, o que quer dizer que ela cabe no limite ali da nossa placa que tem 32 GB de V RAM. Então vamos clicar aqui e vamos fazer algumas configurações. A primeira delas é a seguinte, eu não quero que esse modelo vá pra CPU, eu quero que ele seja carregado totalmente na GPU. Então vou
+
+aumentar aqui no máximo e a gente vê que a gente já chega aqui bem próximo do limite, tá? Vou aumentar aqui a barra do CPU thread pull size também. E por enquanto vou deixar aqui com o tamanho de contexto de 4.096 tokens. Eu posso vir aqui e quantizar o KVCash. Eu vou
+
+quantar agora porque depois eu vou quantar também e a gente fica aqui com o mesmo padrão. E a gente vê que diminui um pouquinho aqui. Então tô abaixo dos 32, mas tô chegando no limite. Vou carregar o modelo. E o que eu quero nesse momento é ver a velocidade desse modelo carregado totalmente na VRAN, mesmo que a gente tenha um contexto pequeno. E essa vai ser a nossa linha
+
+base, porque esse aqui provavelmente vai ser o melhor resultado em termos de velocidade que a gente vai conseguir. Show de bola. modelo carregado. A gente pode vir aqui e eu vou começar com um simples oi pra gente ver mais ou menos a velocidade e já tá pensando aqui no na resposta, né? Pronto. Oi, como posso
+
+ajudar? A gente conseguiu ali 43.54 tokens por segundo. Se eu mandar uma mensagem na sequência aqui, vamos ver se essa velocidade se mantém. Conte uma piada. Vamos ver qual piada se vai
+
+trazer. Uma piada boa ou uma piada toscona. Vamos ver. Tá pensando aqui. Ah, vai trazer a piada da do livro de matemática. Por que o livro de
+
+matemática ficou triste? porque tinha muitos problemas. Ó, 43.51 tokens. Então essa é a velocidade básica. Só que se a
+
+gente olhar aqui embaixo, ó, só com esses dois mini prompts a gente já consumiu 13% do nosso contexto. 4.000 tokens de contexto é muito pouco, quase que inutilizável, tá? E a propósito, tem muita gente chegando agora. Seja muito bem-vindo. E quando eu falo aqui que
+
+consumiu 13% do nosso contexto, não é a mesma coisa de quando o OPS consome nossa cota, não. A gente não paga nada para rodar um modelo localmente além do custo de energia e do custo de hardware, né, que já foi pago. Mas a gente pode rodar quanto a gente quiser. Aqui o que a gente tá consumindo é a janela de contexto, mas agora a gente vai aumentar ela um pouco. Então, para isso vou começar aqui ejetando o nosso modelo, tá? porque eu vou carregar ele
+
+novamente, só que eu vou mudar as configurações. Vou continuar carregando o modelo todo placa de vídeo, na GPU, na VRAN. Vou aumentar aqui o CPU também. E antes de eu mexer aqui no KVCh, olha o que que acontece se eu aumentar tudo aqui, ó, ficou vermelhinho lá. Tá vendo?
+
+Por quê? Porque o meu computador, esse computador ali onde eu tô rodando, onde tá 5090, ele tem 48 GB de memória RAM, tá? A memória que a gente tem lá é uma DDR4, não é a memória mais veloz, mas a gente tem ali uma quantidade, OK? e 48 GB de memória. 48 GB + 32 GB dá 80 GB.
+
+Só que o sistema entendeu que a gente precisaria de 88 GB. Então é mais do que a nossa memória combinada, a memória RAM mais a Ven. Então se a gente diminuir aqui, ó, vamos botar aqui para 64.000 tokens. Aqui já é uma quantidade OK, dá para usar, não é o ideal, não é o melhor dos mundos, mas dá para usar. A gente
+
+desce pr 44 GB. É mais do que os 32 de V Run que eu tenho. Vai vazar pra memória RAM, mas ainda vai sobrar bastante memória RAM ali pro sistema. A gente não vai ter grandes problemas. Como eu aumentei essa barrinha aqui até o final, o nosso modelo ele vai ser prioridade para ocupar a GPU. Então a gente vai
+
+usar memória RAM mais pro KVCh, pro contexto, tá? Inclusive a gente pode dar uma facilitada aqui vindo aqui agora e diminuindo de F16 para Q8. A gente vai ver que aqui vai diminuir também, ó. Q8. Q8. Pronto, ó. Foi para 38, deu uma
+
+aliviada. Agora vamos carregar o modelo. Vou abrir uma nova janela aqui. Pronto, consegui carregar aqui o meu modelo com aproximadamente 64.000 tokens, tá? E
+
+vamos ver se a velocidade mudou por enquanto. Oi. Então, por enquanto, ó, a velocidade não mudou. Ele deu um erro aqui. Vamos ver se ele descarregou o nosso modelo. Descarregou o nosso
+
+modelo. Vou carregar novamente. Vou botar um pouco menos. Vou botar 54. OK.
+
+Então, agora a gente pode começar os trabalhos. 43.72 72 é mais ou menos o que a gente estava tendo antes, tá? Vou pedir para ele contar a nossa piada lá. Conte uma piada. E ele contou exatamente
+
+a mesma piada. Ainda temos ali 43.82 tokens, né? Vamos por volta de 43 44. Mas isso aqui a gente tá falando de geração de token. Vamos ver a velocidade
+
+dele em prefw, ou seja, em ele ler ali o nosso prompt, né? O processamento do prompt. Ó, vou pegar todos os dados aqui dessa página, vou pedir, ó, faça um resumo e vou colar aqui o nosso texto pra gente ver em quanto tempo, olha só, foi mais, não deu nem tempo de eu falar o que que a gente ia fazer, ele já processou todo o contexto lá. Então, olha só quantos tokens tinha aqui, ó. Bastante coisa, tá? Não é absurdo, mas é
+
+considerável, tá? Aqui embaixo a gente consegue ver o número certinho, foram 7.372 tokens, então, e ele processou muito rápido. Agora ele tá pensando ali no que que ele vai responder pra gente, como é que vai ser esse resumo e agora já tá escrevendo o resumo. Então aqui, ó, ele fala que é a primeira variante openweight da série Quen 3.6,
+
+desenvolvida com foco em estabilidade, produtividade real e experiência intuitiva para desenvolvedores. É, tecnicamente a primeira é a de 35 milhões de parâmetros, né? Aqui, ó, ele traz então um bom resumo pra gente e manteve ali a velocidade 43.74. 74 tokens por segundo. Mas esse é o modelo,
+
+é um modelo capacidade visão. Então eu vou pegar aqui, ó, e pedir para ele interprete esse gráfico e me diga em quais benchmarks o Quen 27B é campeão. E aqui tem uma pegadinha, digamos assim. Eu quero ver como é que ele vai se comportar, porque a gente tem dois Quen de 27 bilhões de parâmetros nesse gráfico ali, tá? tem o 3.5 e o 3.6, mas
+
+só um deles vai ser campeão aqui, né, nas modalidades. Ó, aqui ele já teve um probleminha, né, quando ele tava vendo a imagem, ele travou. Vou tentar carregar o modelo de novo. Pode ser que seja erro do meu LM Studio, tá? Do link. Vou
+
+manter aqui, só diminuir um pouquinho, tá? Vou botar 54.000 tokens. Eu não vou precisar dos 60, assim dá mais uma aliviadinha lá na memória. Vou recarregar, vou pedir pr ele regerar.
+
+Mais uma vez ele deu um erro. Fazer o seguinte, vou diminuir bem aqui para 20.000 tokens. Qual que seria o mínimo ali abaixo de 32? Não, vamos, vamos botar aqui, ó, 30.000 tokens. Se não
+
+funcionar dessa vez, aí eu tento ir para abaixo do limite lá. Pronto, agora ele conseguiu e ir processou rápido quando processou, hein? Mas então, com 30.000 tokens ele conseguiu processar a imagem. Se você souber porque deu esses erros aqui, deixa aqui nos comentários. Eu não
+
+acho que seja esse o problema, mas eu também não sei o que que foi, ó. Então ele levou em consideração que seria o Quent. 6, né, que eu me referia. E ele me fala aqui, então, em quais benchmarks o Quent. Ganhou. Então a gente vê que
+
+ele sempre leva em consideração aqui o Cloud ao comparar os valores dessa barra com as demais, especialmente a última barra verde do Cloud 4.5 Opus e as outras variações do Quen, Quentin 3.627B, é o campeão, tem a maior pontuação no seguinte benchmark. Então, perfeito, perfeito, perfeito, perfeito. Nosso tempo de processamento aqui, time to first token, 1.32 segundos. Então,
+
+foi o tempo que ele levou para processar a imagem e o prompt bem tranquilo, bem rápido. Próximo passo que a gente vai fazer aqui vai ser pedir para ele criar um projeto que a gente vai comparar com a versão Q2. Então, vou pedir para ele criar aqui um clássico flapd, mas antes eu vou fazer o seguinte. Então, eu vou dar um prompt para ele criar um prompt pra gente usar esse prompt nas duas variantes do modelo, tá? Então, cria um prompt para uma batalha de LLMs. O
+
+Prompt deve ter o máximo de detalhes com objetivo das duas LLMs criarem a mesma versão do jogo Flappy Bird. E ele já tá pensando aqui no que que ele precisa ter nesse jogo, nesse prompt e daqui a pouco ele vai entregar pra gente. Então, já tá finalizando aqui o prompt pra gente, tá? Então, com o nosso prompt aqui, ó. Eu vou inclusive parando aqui para se vocês quiserem pausar e ler totalmente prompt, é só pausar o vídeo e ver o que que a gente tá pedindo aqui. Beleza? Vou
+
+copiar. Vou abrir aqui uma nova janela. Eu vou inclusive aumentar um pouquinho que eu tô com medo desse limite aqui de 30.000 tokens não ser o suficiente, por incrível que pareça. Eu tô carregando o modelo agora com 52.000 tokens, que é o
+
+suficiente. E aí já vou botar aqui o prompt. Basicamente, vou colocar aqui e mandar pro modelo. Então aqui o nosso modelo Q8 tá pensando em como vai criar o nosso Flapbird, mas ele tem todas as instruções, tá? Então, basicamente a ideia é que tanto a versão Q8 quanto a versão Q2 eles tentem criar exatamente o mesmo jogo. E aí a gente vai ver se vai
+
+est muito longe, se um dos dois vai funcionar, por exemplo, ou se vai ter coisas muito esquisitas. É isso que a gente quer comparar aqui. Não é uma forma muito científica, mas vai dar uma ideia pra gente se a versão Q2 vai perder muita qualidade. Então, basicamente essa do Q8 aqui é o nosso gabarito e já tá criando aqui, ó. Pronto, criou aqui pra gente. Mas esse
+
+código aqui não tá muito muito extenso não, ó. Ia caber até quase que caberia ali nos 4.000 tokens. Então, aqui nós temos a nossa versão Flapburd. Será que vai funcionar?
+
+Opa, tá funcionando. Ah, tá, tá justo. Tá OK. Tá bom? Então, a gente tem um pássaro ali que é quadrado, que é retangular. Eita,
+
+caramba. Mas ele tem todo um estilo, né? Ele tem ali o mergulho, né, da do Flap Bird. A gente, opa, é o Achei que o a colisão tá mais ou menos ali que eu me que eu me safei de uma colisão ali que não era para ter me safado. Mas bem, ó, ali era para ter batido. Essa colisão
+
+não tá das melhores não, mas ok. Ele tá colidindo, eu acho que com essa parte daqui, mas não com a ponta. Mas esse daqui então é o nosso flapd da versão de 8 bits. Agora o que a gente vai fazer é carregar uma versão Q2. Por quê? Porque
+
+essa versão Q2 a gente consegue rodar em placas mais fracas e a gente depois vai comparar, vai rodar ela na 5060 Ti. Tá aqui a versão que a gente vai carregar é K2 KXL, também do Sloth e ela ocupa 12.75 GB. Quer dizer que esse modelo cabe numa placa de 16 GB e deixa até um espacinho de sobra ali para contexto, né? No nosso caso, a gente tem aqui uma 5060 Ti de 16 GB e a gente já vai rodar nela. Por enquanto eu tô carregando
+
+ainda na 5090, tá? Então aqui, ó, vou colocar isso aqui no máximo. Aqui eu nem precisei mexer, né? Porque o modelo acaba sendo tão pequeno pra placa que ele já entende que dá para carregar tudo na placa. E aqui, ó, eu posso subir à vontade, posso colocar lá em 262.000
+
+tokens. Posso mesmo? Ó, ele estourou aqui minha memória. Mas se eu for lá em KVCh e diminuir para Q8, aí ó, diminui para 44, então eu posso botar o contexto todo. Preciso do contexto todo, não.
+
+Então vou diminuir aqui, né, para economizar um pouquinho de memória. E assim vai caber tudo na minha placa de vídeo, né? Vai sobrar ainda 10 GB da placa de vídeo. Primeira coisa que a gente vai fazer é aquele clássico oi, né, que a gente tem testado. E aqui eu já consigo ver uma velocidade maior, 70 tokens por segundo, tá? Então é uma
+
+velocidade muito maior, não chega a ser o dobro, mas é próximo disso. Então vamos lá, vamos ver se é isso mesmo. Conte uma piada. Vamos ver se ele vai contar a mesma piada, né, da matemática lá. E não, escolheu outra, ó. Porque o
+
+esqueleto não briga com ninguém porque ele é muito leve. Bem, tá 72 tokens por segundo. Então ficou muito veloz o modelo. Mas será que ele consegue fazer o nosso flapd? Vamos experimentar.
+
+Então, vou colar aqui o nosso prompt, vou mandar para ele e vamos ver ele criando aqui, ó. já tá cpindo o código aqui, né, no aos seus 70 tokens por segundo. Pô, 70 tokens por segundo é uma velocidade muito legal. E já terminou aqui, ó, 73 tokens por segundo. Foi muito rápido. Vamos copiar. É, aqui, ó,
+
+a gente teve algum problema, porque o jogo não inicia, mas também não dá nenhum erro. Na verdade, aqui no reset game não era para ser start, era para ser play. Então, eu vou ajustar. Então, com esse pequeno erro ajustado, essa daqui é a versão de 2 bits. Ah, o espaço não tá funcionando, mas o clique tá.
+
+Então aqui a gente tem uma versão realmente muito parecida com a de 8 bits, tá? Só que quando a gente diminui a qualidade, ó, inclusive o a colisão ali tá muito parecida, só que quando a gente diminui a qualidade, ou seja, quando a gente quanta, a gente começa a abrir brecha para ter mais erros e talvez precisar de mais prompt para corrigir ali ou precisar de mais conhecimento e dedicar um tempinho para caçar quais são os bugs que ele tá criando. Agora vou fazer o seguinte, eu tô aqui no lhama CPP que tá rodando agora no meu Zima Board conectado numa 5060 Ti. Eu vou carregar aqui o a nossa versão Q2 do modelo, né? Quen 3.6 27 bilhões de
+
+parâmetros Q2 KXL. E a gente vai experimentar aqui, ver qual velocidade a gente consegue atingir e pedir para ele gerar também esse flapd e ver se ele vai cometer o mesmo erro. Então aqui são as estatísticas do mesma board, né? Então tô aqui com a 5060 Ti, né? Eu tenho 16 GB de RAM nesse aparelho. A memória do
+
+Zima Board são 16 GB LPDDR5. Numa memória melhor do que a memória que eu tenho lá junto com a 5090. E aqui, ó, a gente vai basicamente ocupar 97% da 5060 Ti com esse modelo e não tá ocupando quase nada mais aqui da memória RAM. Então, o nosso modelo tá carregado aqui, a gente configurou ele para 64.000 1000 tokens e na configuração do meu contêiner do lama CPP, eu tô passando aqui então as flags pro meu KVCh sequentizado a Q8. Beleza, vamos mandar
+
+aqui o nosso oi. E ele já tá pensando ali, ó. Então aqui a gente já consegue ver uma queda considerável em relação a RTX 5090. A RTX 5090, esse modelo aqui, ela tava fazendo 70 tokens por segundo. A 5060 Ti já faz ali em volta de 26 tokens/ segundo. Isso porque enquanto a
+
+5090 tem 1.7 TB/ segundo de largura de banda, a 5060 Ti tem 448 GB/s ou seja, a 5090 tem mais ou menos três vezes mais, um pouquinho mais até do que a 5060 Ti. Inclusive, se a gente olhar aqui, ó, 3 x 26 vai dar um pouco mais de 75. Então, é mais ou menos uma proporção direta aqui. Vou mandar aqui, ó, o nosso prompt e vamos ver se ele vai executar aqui pra gente. Tá processando, processou muito
+
+rapidamente também. Tá pensando aqui sobre o que que ele tem que fazer, né? Tá detalhando aqui, fazendo uma lista de todos os requisitos. Pô, será que ele alucinou aqui? Por quê? Não, ele tá
+
+escrevendo o código lá no no thinking dele, tá? Então ele vai pensar o código todo e então ele vai acabar escrevendo duas vezes esse código aqui. Mas tudo bem, ele já gerou aqui mais de 3.000 tokens nessa resposta. Agora ele tá se questionando aqui, questionando o trabalho feito. Vamos ver se ele termina
+
+de pensar logo. Já ocupou ali, ó, 10% do contexto e ainda não terminou de pensar. Essa é uma característica do Quen 3.5 também, tá? 3.5, 3.6. São modelos que
+
+acabam muitas vezes pensando muito. Pô, ele tá escrevendo o código de novo aqui no pensamento dele. Eu vou fazer o seguinte, enquanto ele tá escrevendo aqui o código, vou testar. Ah, mas tem um headsetter aqui. Eu ia testar essa versão aqui, mas não, não vai dar. A
+
+gente pode ver aqui que a versão Q2 ela insere a funcionalidade de síndrome do impostor, né? Porque toda hora ele fica ali, ó. Vou vou escrever o código. Não, mas pera aí, será que eu fiz tudo certo? Deixa eu ver isso aqui. Tem um erro
+
+aqui. Acho que eu fiz um erro aqui. Deixa eu rever. E aí ele fica revendo aqui o código dele várias e várias vezes. Mas vamos ver se no final ele vai acertar. Deixa eu finalizar o código. Na
+
+verdade, pera aí, eu lembrei aqui que eu tenho que checar também toda hora. Ah, não é possível. O pior é que ele não tá no loop ainda, né? Ele só tá inseguro. Minha vontade é falar: "Vai, vai, vai dar certo, vamos embora".
+
+Começou a escrever nosso código aqui, ó. Então, até agora ele já pensou por quase 17.000 tokens. demorou bastante pensando, refez os cálculos várias vezes, tá? Mas a gente ainda tá com uma taxa de 24 tokens por segundo, então não teve uma queda significativa na taxa, não. E vamos ver se ele vai acertar aqui
+
+o resultado. Oh, terminou aqui, ó. Pensou bastante, tá? Levou muito tempo, levou 13 minutos para fazer esse jogo. E vamos ver se ele funciona. Então aqui,
+
+oh, funcionando perfeitamente e com o mesmo defeito, digamos assim, né, das outras versões. Então, olha só que legal, com um prompt bem detalhado, ele seguiu as instruções a risca. Aqui funcionou de primeira, tá? Porque ele não deu chance pro erro também. Ele analisou e reanalisou todas as possibilidades, tudo onde ele podia errar. Ele refez o próprio trabalho,
+
+revisou o próprio trabalho várias e várias vezes e no final do dia valeu a pena porque ele conseguiu gerar um resultado basicamente igual à versão Q8. Então o que que eu queria trazer com esse vídeo aqui? Dá para rodar o Quen de 27 bilhões de parâmetros numa placa de vídeo relativamente comum? Tá? Chamar uma 5090 de uma placa relativamente comum é um certo exagero. Vamos lá. Mas
+
+dá para rodar, dá para rodar ele bem, tá? Dá para rodar ele até em Q8. A gente viu também que se a gente diminuir a quantização, o modelo fica muito mais rápido. Então, na 5090 a gente teve ali 40 tokens por segundo a Q8. E quando a gente foi para Q2, que é um outro extremo também, a gente teve 70 tokens por segundo. Então, provavelmente um Q4,
+
+talvez um Q5, um Q6, possa ser o ponto de equilíbrio ideal. A gente também viu que quando a gente quant, o modelo tende a errar mais ou a pensar demais. Então é uma troca, né? Você vai conseguir rodar ele em placas muito mais baratas, mas em troca você vai ter que abrir mão de velocidade e de precisão. Então possivelmente você vai ter que revisar mais o código ou pedir para ele ajustar uma ou mais vezes além do normal, mas dá para usar também. Mas esse modelo é
+
+muito novo, saiu hoje, a gente ainda vai testar mais, vai trazer mais vídeos sobre ele aqui no canal, quero testar ele de forma gênica, quero testar mais a versão de 2 bits para encontrar mais pontos fracos ali se houver. E quero também te pedir para dar o hype nesse vídeo aqui, porque isso ajuda a chegar em mais pessoas. Também deixa o like, porque aí eu sei que você curte esse modelo e eu posso trazer mais conteúdo sobre ele, seja sobre o modelo, seja sobre a placa também. Eu já vi que tem muita gente aí que tem a placa da MD, a RX9060 XT. Se você tiver essa placa aí, tiver rodado esse modelo Q2, por exemplo, deixa aqui nos comentários qual velocidade você conseguiu com ela. Se o
+
+canal continuar crescendo nesse ritmo, quem sabe a gente não traz uma dessa pra gente fazer uma batalha 5060 Ti versus RX 9060 XT. Seria legal essa batalha aí, hein? Daqui a pouco o escritório aqui vai est cheio de placa de vídeo, né? Tanto que a gente vai testar. Eu tô precisando de mais patrocínio aqui pro canal. A propósito, um agradecimento a
+
+Ice Whale que mandou pra gente o Zima Board 2, que se não fosse isso, a gente não ia conseguir rodar. Então vou inclusive deixar o vídeo aqui do Zima Board 2. A gente fez um vídeo sobre ele. Se você curte o Zima Board 2, eu vou deixar o meu link de afiliado aqui embaixo. Comprando por esse link você apoia o canal. E também tem um
+
+cuponzinho de desconto, 15. Agora, se você quiser entender mesmo porque um modelo como 3.6 de 27 bilhões de parâmetros é importante, dá uma olhada nesse vídeo aqui, onde eu falo sobre o futuro da inteligência artificial, porque todas as grandes empresas estão aumentando seus preços e vai ficar muito caro rodar IA. Então, se a gente tem um modelo que é bom e roda localmente, a gente tem que, ó, bater palma. Mas dá uma olhada nesse vídeo aí que você vai entender do que que eu tô falando. E é
+
+isso aí, vou ficando por aqui. Até o próximo vídeo.

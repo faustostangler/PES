@@ -1,0 +1,233 @@
+---
+video_title: "Eu rodei 7 LLMs no RASPBERRY PI (para você não ter que fazer isso)"
+video_id: -Hp7X8Sd7vs
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-Hp7X8Sd7vs
+video_date: 2026-03-01T07:58:43+00:00
+video_description: |
+  LLMs no Raspberry Pi 5: é possível rodar LLM local em 16GB de RAM sem GPU? Neste vídeo eu testo 7 modelos no Raspberry Pi 5 com 16GB de RAM, rodando 100% na CPU via llama.cpp no LM Studio. Sem placa de vídeo, sem Mac, sem hardware caro.
+  
+  Os modelos testados incluem LFM 2.5 VL 1.6B, Qwen3 VL 2B, Gemma 3 Gaia PT-BR 4B, Qwen 2.5 Coder 7B, GLM 4.6V Flash, GPT-OSS 20B (Mixture of Experts) e Qwen3 Coder 30B-A3B em Q2. Medimos tokens por segundo, tempo pro primeiro token e qualidade das respostas em cada um. Pelos resultados, deu pra ver que modelos pequenos (1B a 4B parâmetros) rodam com 5 a 7 tokens/segundo, o que já é utilizável para tarefas simples. Modelos MoE como o GPT-OSS surpreendem ao ativar só 3.6B de parâmetros por token, entregando velocidade acima do esperado para um modelo de 20B. Já visão computacional e modelos acima de 7B viram um gargalo sério na CPU do Pi.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytai7llmsrapberry
+  
+  _______
+  
+  0:00 Intro
+  0:31 Hardware e Setup
+  2:06 LFM 2.5 VL 1.6B
+  6:33 Qwen3 VL 2B
+  7:55 Gemma 3 Gaia
+  8:49 Qwen 2.5 Coder 7B
+  10:53 GLM 4.6V Flash
+  14:54 GPT-OSS 20B
+  18:43 Qwen3 Coder 30B-A3B
+  23:15 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Eu tô numa missão de desmistificar rodar localmente LLMs. E normalmente quando a gente pensa em rodar localmente LLMs, a gente pensa em um hardware caro, uma placa de vídeo com bastante Van ou algum equipamento como um Mac com muita memória unificada. Então o que eu quero fazer hoje é ver quão potente seria um hardware bem mais fraquinho do que esses. Hoje a gente vai tentar rodar LMS num Raspberry Pi. Quais será que são os modelos que a gente consegue rodar? E
+
+será que tem velocidade suficiente para ser algo que faça sentido? É isso que a gente vai ver. Vamos lá pra tela. Então, o Raspberry Pie ele é um hardware bem limitado, tá? Mas nos dias de hoje a gente tem aí o Pie 5, que ele tem 16 GB de memória e exatamente ele que a gente vai testar hoje. Então, com 16 GB de
+
+memória, tecnicamente a gente conseguiria rodar algo até o GPTOSS. E é isso que a gente vai ver se a gente consegue fazer hoje. São esses modelos aqui que a gente vai tentar rodar, tá? Vai começar lá pelo LFM 2.5 VL, que é um modelo com visão e com capacidade de to calling, tá? vai ver o Quen 3 VL2B, que
+
+é um pouquinho maior, mas simplesmente o Quen faz modelos incríveis, né? Vamos ter a oportunidade de ver também o GMA3 GA, é um modelo que foi treinado no Brasil para falar português. Que 2.5 Coder, 7 bilhões de parâmetros. GLM 4. V
+
+flash. Esse daqui é um modelo de 9 bilhões de parâmetros, muito interessante também com visão e tocing. Depois a gente vai pro GPTOS 20 bilhões de parâmetros. E por último, a gente vai tentar o Quenter. O Quenter, eu não tô apostando muito nele, não. A gente
+
+baixou uma versão de 2 bits de quantização, tá? Mas mesmo assim ela ocupa 11 GB. Eu acho que vai ser demais para esse equipamentinho. Mas vamos ver se vai rodar ou não. Antes da gente começar a brincar, vamos aqui nos settings ver aqui a parte do nosso hardware. Então aqui a gente tem uma
+
+capacidade de memória de 15.6 GB, mas tem zero de V. Isso quer dizer que a gente vai rodar 100% na CPU. E vai ser interessante ver se esses modelos conseguem rodar e qual que é a performance deles. Aqui, olha, ele não identificou nenhuma GPU. E se a gente
+
+olhar aqui no runtime, a gente vai rodar usando lama CPP, tá dentro da CPU que tá instalado aqui, atualizado. A gente tá rodando no LM Studio, versão ARM dele. Sem mais delongas, vamos lá, porque eu tô curioso para ver aqui, ó. Primeiro modelo que a gente vai rodar, então, é esse LFM 2.5 VL 1.6. A gente pode ver
+
+aqui, ó, que ele tá carregando e ele tá carregando aqui atrás. Deixa eu abaixar isso aqui pra gente poder ver. E ele acabou de carregar aqui atrás. Vou criar um new chat. Deixa eu esconder isso aqui pra gente ter mais espaço. E vamos lá
+
+selecionar o nosso modelo carregado. Basicamente o que eu quero ver nesse teste aqui é mais a velocidade, se ele vai conseguir gerar alguma coisa e qual que é a velocidade dele. A gente tá rodando ele com uma janela de contexto de 4.096 tokens e tá consumindo 2 GB de memória. Como a gente tem 16, daria para ter uma janela muito maior, mas pro nosso teste 4.000 vai ser o suficiente.
+
+Eu vou pedir para ele começar contando uma história. Conte uma história. Será que ele vai responder? Opa, respondendo aqui pra gente, ó. A ventoinha dele aqui já começou a gerar mais forte. Terminou
+
+aqui, ó. Conseguiu, contou a história até o final, só que ele não tá mostrando a velocidade aqui. Aqui é show token count. Vou ativar ele aqui. Ah, isso aqui é interessante, hein? Vamos ver
+
+aqui. Resource consumption. Bem, agora a gente consegue ver aqui. Então, a gente conseguiu gerar aqui, ó, 6.28 tokens por segundo e levou 1.23 segundos pro
+
+primeiro token. Ok? Mas esse modelo aqui, ele é um modelo com visão. Então, vamos ver quanto tempo ele levaria para ele conseguir enxergar uma imagem. Essa aqui é uma imagem que eu gerei no confio. Então vamos ver se que que ele
+
+consegue descrever aqui pra gente. O que eu quero ver aqui é o tempo de processamento do prompt. Ó, ele tá processando ali, tá em 1%, eu quero ver o tempo de resposta também. Também vamos ver se o que ele vai responder de fato bate com a nossa imagem. O LFM que eu tô rodando aqui é a versão Q8, né? Então
+
+provavelmente por isso ela tá um pouquinho pesada demais. Nosso aqui já tava me incomodando. Bem melhor agora, ó. Eu achei aqui a versão Q4 quando ele tava processando. Tá demorando muito.
+
+Vamos ver se a Q4 vai ser mais rápido, mas vamos deixar esse aqui acabar primeiro. Opa, começou a responder aqui. É uma tela dividida com duas indivíduos em configurações parecidas, né? Então, do lado direito tem um homem vestindo um boné vermelho da Puma, camisa cinza e ele parece que tá falando no microfone, tipo num podcast ou numa live stream. Lá atrás tem uma mesa, na verdade uma estante, uma planta indicando um ambiente como se fosse em casa. Do lado
+
+direito a gente tem um robô vestido também com um boné vermelho, porém com o logo N. Um óculos preto e ele tem um corpo branco com partes pretas. Vamos dar uma olhada aqui, ó. É isso mesmo. Esse robô também tá com o microfone sentado numa mesa, imitando, espelhando a postura da pessoa do lado esquerdo.
+
+Background é mais neutro. E aí no final ele ainda deu uma filosofada aqui dizendo que essa imagem do homem com o robô, né, ela destaca ali o tema de inteligência artificial na mídia ou na comunicação, mostrando que a tecnologia ela pode imitar os homens em vários cenários. Não era nada disso, era só uma imagem de TAM que eu tava tentando fazer, mas a ideia é boa. Vamos lá. Que que a gente tem aqui de dados? Tá 5.75 tokens por
+
+segundo, nada mal. Porém, 545 segundos pro primeiro token. Quer dizer que para ele conseguir avaliar essa imagem, ele levou quase 10 minutos. Então, para esse tipo de tarefa, visualização de imagens, o Raspber Pi vai ser um pouco lentinho. Quer dizer, pelo menos usando um Q8. Será que com Q4
+
+isso melhora? Vamos ver. O que eu vou fazer aqui, ó, é carregar então a nossa versão Q4 do mesmo modelo. E agora que eu vi que eu baixei a família anterior LFM2 e não 2.5, mas ok, a gente vai conseguir ter uma ideia aqui da velocidade assim mesmo, ó, carregou bastante rápido na memória e aí eu vou pedir para ele gerar esse prompt novamente. Agora a gente tá usando a
+
+versão Q4, então pode ser que seja mais rápido. Show de bola. Acabou aqui, ó. E olha só, dessa vez foram 447 segundos, então melhorou um pouco, mas ainda assim demorou bastante. Uma coisa que melhorou bem aqui foi o tokens por segundo, né? 7.93, então melhorou ali em
+
+uns 30%. E a resposta tá bem coerente, tá uma tela dividida, dois pessoas do lado esquerdo, um homem vestindo um boné Puma. Óculos sentado numa mesa com um microfone na direita, um robô vestido de forma similar também com boné, com logo branco, óculos. E aqui ele sugere que a gente esteja falando sobre a interação entre humanos e robôs nos ambientes profissionais. Show de bola. Tô com
+
+conclusão aqui, se a gente diminuir para Q4, a gente não perde tanta qualidade assim, mas a gente ganha um pouco de velocidade. Ainda assim, 400 segundos para ler uma imagem acaba sendo demais. Agora a gente vai pro próximo modelo que é o Quen 3VL. de 2 bilhões de parâmetros. Então vamos começar pedindo para ele fazer aquela pegadinha do lava-jato. Eu quero lavar o meu carro e
+
+o carro acho que fica 40 m da minha casa. Devo ir de carro ou a pé? Lançou aqui que é melhor eu ir a pé o que é esperado, né? Modo de 2 bilhões de parâmetros. Mas ó, tá entregando aqui uma resposta que é coerente a partir do erro dele. Inclusive manda a gente tomar
+
+cuidado ao cruzar a rua aqui, ó. E vamos ver a velocidade que ele tá escrevendo pra gente. Então, então, Quen 2B gerou pra gente aqui esse resultado a 5.36 tokens por segundo. Ele levou 4.74
+
+segundos pro primeiro token. Essa versão que a gente tá rodando é a versão Q4, então ela já é a versão mais rapidinha aqui. Vou pedir para ele descrever a imagem também, né, já que ele é um modelo de imagem. Vamos ver aqui. Essa imagem que eu tô dando para eles também acaba que ela é meio grande assim. Ela
+
+tem 2.3 MB. tá muito tempo já em 0%, então vou parar isso aqui e eu vou dar para ele uma imagem menor. Ó, essa aqui é uma imagem bem menor, de 900 by, mais ou menos. Bem, já passou mais de 1 minuto aqui e ele não passou do 1% aqui do processamento de prompt. Então a
+
+gente vai encerrar e por enquanto vamos declarar que pros modelos com visão, o Raspberry Pi não vai sair tão bem assim não. Mas o que a gente teve aqui pro Quen foi uma média ali de 5.36 tokens por segundo. Vamos ver o nosso próximo aqui. O próximo que a gente tem na lista é o Gema 3 Gaia, tá? Ele é uma versão
+
+feita por brasileiros em cima do Gema 3 de 4 bilhões de parâmetros. A ideia é que o Gema 3 Gaia, ele tenha um conhecimento maior de português. Se eu não me engano, o foco dele é um pouco mais o português mais culto, né? Vai ser focado em ajudar professores a corrigirem provas, servidores públicos quando precisam lidar ali com documentos. Então esse é mais ou menos o tipo de caso. Vamos ver se ele funciona
+
+aqui no nosso Raspberry Piei. Conte uma história inusitada sobre o Brasil. Bem, ele resolveu contar pra gente a história do Zé do Mar. Eu vou parar por aqui que já dá pra gente ter uma ideia da velocidade, tá? Então o G ele entregou pra gente aqui dois tokens por segundo.
+
+Ele levou 5 segundos pro primeiro token. E lembrando, esse aqui é um modelo de 4 bilhões de parâmetros. Ele é treinado em cima do Gema 3. O Gema 3 tem capacidade de visão, mas a versão do Gaia não tem, porque esse não era o foco dele. A gente pode então pro próximo modelo, que é o Quen 2.5 Coder. Esse já é um modelo de 7
+
+bilhões de parâmetros, já tá começando a ficar pesado aqui pro nosso pequeno hardware. E como ele é um modelo coder, eu vou pedir para ele criar uma página web pra gente. Cria uma página web de uma cafeteria, tá? Prompt extremamente simples e ficou p. Eu tô usando teclado maluco aqui. Vamos
+
+ver o resultado aqui do nosso Quen 2.5 Coder 7B. Acho que esse eu vou deixar ele escrever até o final pra gente ver se essa página vai funcionar ou não. Normalmente modelos de 7 bilhões de parâmetros, apesar dele ser coler, ele não é focado em criar código do zero, criar código completo, não, tá? Ele é focado em auto complete quando ele te sugere ali o qual é a próxima coisa que você vai escrever no seu código ou até pequenas funções ele consegue criar de boa. Uma página inteira. Vamos ver o
+
+resultado. Você pode perceber que quando a gente fala aqui sobre modelos pequenos, normalmente aparece muitos modelos do Quen. É porque o pessoal lá da Alibaba quando cria o Quen, normalmente libera várias versões dele. E vai muito além disso. Muitas empresas pegam o Quen e fazem Fine Tun em cima dele, geram novos modelos que são baseados no Quen. Assim como o Gaia, por
+
+exemplo, é baseado na gema, acontece muito esse tipo de coisa com o Quen. Show de bola. Ele terminou aqui, ó, e vamos ver o resultado. Ele deu pra gente aqui todos os passos que a gente deveria pensar ou se preocupar, né, na hora de criar uma página. E na hora de criar mesmo, essa aqui eu nem vou rodar porque criou algo muito básico, não tem nem CSS, né? Só criou uma pequena estrutura.
+
+O que dá para destacar aqui é que ele usou algumas tags semânticas, né? O que é interessante de ver um modelo de coder, OK? Deveria trazer algo do tipo mesmo, então é legal, mas não tem uma página completa em si. Como eu falei, esse é um modelo muito pequeno, esse não é o foco dele mesmo. Vamos ver aqui a velocidade dele. Então, 1.62 tokens por
+
+segundo e 18.98 segundos para entregar o primeiro token. Então, a gente pode perceber que conforme a gente vai aumentando aí o tamanho do modelo, vai ficando tudo um pouco mais pesado, né, e mais lento. Mas talvez, talvez daqui a pouco acelere um pouco. Vamos ver. GLM 4.6V Flash.
+
+Carregou. Eu tava em dúvida se esse modelo ia carregar aqui. Esse é um modelo de 9 bilhões de parâmetros. dele também tem capacidade de visão. Ele é baseado no GLM 4.6, que é um modelo de
+
+mais de 300 bilhões de parâmetros. Na verdade, ele é baseado no 4.6 V, que é um modelo de 100 bilhões de parâmetros. Então ele é uma versão menorzinha desse modelo com nove. E ele é um modelo bem interessante, tá? Eu acho que aqui ele
+
+vai ficar muito lento, mas no Mac, por exemplo, ele roda muito bem. Vamos dar uma olhada aqui e eu vou pedir aqui, ó, fale sobre você. Ah, e esse daqui é o nosso primeiro modelo com reasoning que a gente tá vendo aqui. É o modelo que pensa antes de responder. Os outros modelos eram do tipo instruct. É modelo
+
+de instrução. Ele é bom para você fazer. Faça isso, ele vai lá e faz. Modelo com reasoning. Você vai usar quando você quer uma resposta um pouco mais estruturada, um pouco mais planejada, um pouco melhor também. Ah, tanto Quen 2.5
+
+Coder quanto GLM4V, a gente tá usando Q4, tá? 4 bits de quantização. O Gaia, a gente usou ele Q8. Vamos dar uma olhadaão no que que ele tá pensando aqui, ó. E ele tá achando que eu quero informações sobre a palavra você. Falei,
+
+fale sobre você. Ah, detalhe, porque meu teclado aqui tá maluco. Eu mandei um você com um acento errado, né? Com trema. Então vai ver. Por isso que ele
+
+se confundiu. De qualquer forma, essa daqui é só a linha de pensamento. Vai ver a resposta, vai para um outro caminho. Só que agora eu já tô preocupado, achando que isso vai demorar bastante. >> Botar roupa para secar ali, que acho que não botei. Ó, uma coisa interessante
+
+dele tá gerando aqui tão devagarzinho é que a gente consegue ver bem o conceito de tokens. Ó, polite, tá vendo? Ou politeness, na verdade, ele dividiu em polite, depois nesse, né? Então ficou separado porque o pedaço do token, ele não é exatamente uma palavra, ele é um pedaço de palavra. E eu tô partindo do princípio que você já ouviu a palavra token, né? Porque lls elas são baseadas
+
+em prever o próximo token, prever a próxima palavra ou o próximo pedaço de uma palavra. E é basicamente assim que ela funciona. O que a gente tá vendo aqui é isso na prática, ele prevendo cada pedacinho e aí sim montando todo o texto que ele vai entregar pra gente. No nosso caso, ele ainda tá no thinking, ele ainda não tá escrevendo a resposta em si. Ele vai pensar bastante, a resposta, provavelmente vai ser uma linha ou duas. Ele pensou por 24
+
+minutos. Pô, 24 minutos. Você tem noção do tempo que eu tô aqui para gravar esse vídeo? Eu só vou te pedir uma coisa, deixa um like, quem sabe se inscreve aí no canal. fazer mais nada, nada, nada.
+
+24 minutos pensando para me falar sobre sobre mim, sobre você, sobre a palavra você. Obviamente não era isso que eu tava falando, meu filho. O conceito de aritmética, o conceito de você e o tu, eu devia ter cancelado quando tava em 10 minutos. Se chama realizar o prejuízo. Eu não realizei o prejuízo, eu tive prejuízo triplicado. Quadruplicado
+
+porque você não deixou o seu like, né? ou deixou o like, não se inscreveu. Que duplicada. Se você deixou seu like, se inscreveu, já me salvou um pouquinho, pelo menos. Será que ele vai ficar mais 24 minutos para escrever essa resposta?
+
+Eu já entendi o conceito de você e tu. Eu juro que esse modelo é legal, tá? Eu juro pr você, modelo é bom, mas às vezes faz umas papagai dessa aqui. Logo hoje que eu tô rodando Raspberry Pie, você ou melhor tu mete essa. Pronto, agora o modelo quer me ensinar quando usar você e quando usar tu. Até parece que ele
+
+sabe que eu sou carioca e eu uso tudo no lugar de você. Tu tá maluco, rapaz. A palavra você é pronunciada com ênfase na primeira sílaba. Você. Vamos lá com o mouse aqui, ó. Primeira, segunda. Essa é
+
+a segunda sílaba. O plural não chega. Desisto. Eu vou realizar meu prejuízo agora. Vou dar um stop aqui e a gente vai ver aqui, ó. Ele levou 8 segundos
+
+pro primeiro token. Mas o que que a gente quer saber exatamente isso aqui, ó. Um token por segundo foi a velocidade do GLM 4.6V. Lembrando que esse é o modelo com 4 bits de quantização. Versão
+
+que a gente tá rodando é uma Q4 e ele tem 9.4 bilhões de parâmetros. Tá arredondando 10 bilhões de parâmetros. Próximo modelo que a gente vai tentar ver agora o GPTOS. tem 20 milhões de parâmetros, é o dobro do GLM, mas o nosso LM Studio não tá deixando a gente carregar ele, porque a gente tá muito próximo ao total de memória do sistema e pode ser que trave tudo. Como a gente
+
+gosta de viver perigosamente, a gente vai aqui, ó, e deixar o guard rayos um pouco mais relaxado. Vamos ver se é o suficiente, senão a gente desliga ele de vez. Vai ter que desligar, talvez trave tudo. Vamos lá. Vamos lá. Vamos torcer
+
+para dar tudo certo. Ó, se o meu mouse parar aqui é que tá voa, hein? Não, tô só brincando. Não parou. Não tá, tá funcionando aí. Vai, vai, só mais um
+
+pouquinho. Deixa eu ver aqui, ó, quanto de espaço aí tá ocupando aqui, ó. Já tá aqui, ó. 11 de 16. Já ficou amarelo e travou. Ah, não voltou. Já ficou aqui
+
+amarelo. Beu 16 aqui. 93% carregou. Aê, vamos lá. E agora o que a gente vai presenciar é pura magia negra, tá? Olha
+
+só, eu vou eu vou dar só um oi dessa vez, tá? Porque se não quero ficar um tempão aqui pr ele me responder, não. Oi. Esse daqui também é um modelo com reasoning. Vamos ver se ele vai pensar para responder o nosso oi ou se ele vai só responder mesmo ou se ele vai deixar a gente no vácuo. É uma opção também,
+
+né? Tô achando que ele escolheu essa. Começou a responder a gente, ó, o usuário falou o que é português, é um greeting. Oi, também conhecido como Koer. Ó, ele pensou só por 18 segundos.
+
+Que bom que a não ficou 24 minutos pensando. E olha só a resposta que ele me deu. 2.3 tokens por segundo. Mais do que o dobro do que o GLM. Por que que isso acontece?
+
+Porque esse modelo aqui ele é um é o o Firefox não aguentou, né? Por que que eu tava com o Firefox aberto também? Assim eu tô dificultando tudo. Fecha isso. Esse é um modelo do tipo mixture of experts. Quer dizer que ele não ativa os
+
+20 bilhões de parâmetros de uma vez só. Ele só ativa 3.6 bilhões de parâmetros por token. Então, quando ele vai prever o próximo token, esse token só passa ali por 3.6 bilhões em vez dos 20. Então,
+
+esse modelo ele sempre vai ser muito mais rápido do que o GLM 4.6, que é um modelo chamado denso. Ele ativa todos os 9.4, 9.6 bilhões de tokens que ele tem.
+
+Então, ele acaba sendo mais lento. Vou até pedir para ele me contar uma história aqui, ó. Ó, ele tá pensando aqui sobre a nossa história, né? ali, a, os seus incríveis dois tokens por segundo. E ele tá ali, ó, crafting. Ele
+
+tá mirabolando. O que que ele vai responder pra gente? Ó, pensou ali por 42 segundos. OK, bom tempo para pensar. E agora vamos ver ele escrevendo a nossa história aqui, ó. Lenda do relógio das
+
+estrelas. Ah, >> olha que interessante, esse modelo. Ele acaba sendo mais rápido do que vários modelos muito menores do que ele, né? Exatamente por causa do MOE mixture of experts. E, e vou te falar, esse modelo é muito bom. O GPT USS é um modelo que
+
+ele cabe em hardware bem limitado. Então aqui a gente tá vendo uma velocidade que para dependendo do que que você quer, poderia ser até ser caracterizada como usável. E isso é um modelo de 20 bilhões de parâmetros. Esse modelo ele consegue até criar algum código, não vai ser nunca o melhor código, muitas vezes vai ter alguns erros, mas ele consegue criar alguma coisa de código. E sempre é bom lembrar que a gente tá rodando no CPU, né? A gente não tá rodando nem numa
+
+placa de vídeo. Se você tem uma placa de vídeo aí de 16 GB, você conseguiria rodar esse modelo aqui basicamente voando. Mas mesmo que você não tenha, se você tem um CPU um pouco melhor do que o do Raspberry Pie e você tem mais de 16 GB de memória, você também consegue rodar esse modelo aqui. E com certeza num CPU de desktop moderna e vai rodar muito mais rápido do que aqui. Então olha só, tempo pro primeiro token, 6.66,
+
+super de boa, né? 814 tokens. Nossa história aqui, 2.53 tokens por segundo. Eu vou te falar que essa velocidade aqui não tá tão mal assim, não, tá? Mas agora
+
+vem o momento que todos esperavam, quando eu digo todos, eu digo eu mesmo, que é saber se a gente vai conseguir rodar o Quen 3 Coder de 30 bilhões de parâmetros. Pra gente cogar essa loucura, o que que eu tive que fazer? Vou até injetar antes aqui o GPTOSS. Eu tive que baixar uma versão Q2, tá? Q2 é uma versão muito quantizada, mas qualquer coisa acima disso ficava muito grande. Aqui ele tem 10.55 GB, tá? A
+
+gente vai precisar carregar esses 10 GB na memória e vamos ver se o Raspberry Pi vai aguentar. Esse Quentinter Escoder, ele também é MOE mixture of experts e ele tem 30 bilhões de parâmetros de total, só que ele só ativa 3 bilhões desses 30. Uma outra diferença do GPTOSS, por exemplo, é que esse é um modelo instruct, quer dizer que ele não vai ter o reason, ele já vai começar respondendo ali o que a gente quer. Em alguns casos, ter o reasoning é interessante, mas quando a gente basicamente já sabe ou já direcionou muito bem o modelo e a gente só quer que ele execute, um instruct vai ser o teu cara. Carregou? Vou te falar que por
+
+essa eu não esperava, mas ok. Que bom, que bom. Vou pedir para ele criar a nossa página da cafeteria lá, que o Quen de 7 bilhões de parâmetros só criou o esqueleto, né? Cria uma página web de uma cafeteria. Vamos ver se Quentar aqui, ó. Vamos dar uma olhada enquanto
+
+isso. Enquanto que ele tá ocupando ali, ó, 10.87. OK. A gente tá carregando todos os contextos 4096. E olha só, ele
+
+já começou. Ele não só começou, como eu tô achando a velocidade muito boa. Diferente do Quin 2.5 Coder de 7 bilhões de parâmetros, ele parece estar criando uma página completa. Inclusive, ó, ele até já importou aqui fontes diferenciadas pra gente. Não sei se tão
+
+diferenciadas assim, mas ok. Talvez seja o fato dele ser um modelo instruct, né? E aí ele não ficou ali nemum segundo na parte pensamento, mas eu tô com um pouco da impressão que ele tem sido um dos modelos mais rápidos que a gente viu até agora. Claro, os pequenininhos foram até mais rápidas a seis, sete tokens por segundo, mas a partir ali dos 7 bilhões de parâmetros, esse é o modelo mais rápido, o que faz sentido, né, já que ele só ativa 3 bilhões de parâmetros por todo. Ó, tá importando imagem.
+
+Normalmente, quando esses modelos importam essas imagens, elas vêm quebradas, muito porque esses links podem mudar e tal. E o conhecimento do modelo pela natureza de como ele ele funciona, ele não muda. Uma vez que ele é treinado, esse conhecimento é congelado e aquilo que ele sabe, ele sabe e aquilo e acabou. Então, pode ser que esse link funcione, que ele ainda esteja ativo, pode ser que o link tenha mudado e aí essa imagem vai estar quebrada. Não seria culpa do modelo, né?
+
+É mais da forma como o Ll funciona. Ó, uma coisa interessante, agora que o contexto tá um pouco maior, ele tá ficando bem mais lento. Não aceito nada menos do que um barril nessa imagem aqui do Splash, né? Acabou. Vamos lá. Ele levou então aqui, ó, dois
+
+tokens por segundo e ele gerou a página inteira pra gente. Resta a gente saber se vai funcionar ou não, né? Ó, uma coisa interessante, ele gastou 110% do contexto dele. Então, pode ser que alguma coisa esteja quebrada aqui, mas ele gerou tudinho. Ó, o total teve 4494 tokens e ele levou 2201 segundos para terminar. 600 segundos
+
+seria o quê? 10 minutos. Deu 30 minutos para fazer essa página, pouco mais, 35. Resta agora a gente avaliar, né, se essa página aqui ficou top ou não. Vamos ver.
+
+Café Bela Vista. Então, o nome da nossa cafeteria. Ele escolheu aqui a cor de café. Ele escolheu não centralizar esse header aqui. Ok. Olhar aqui embaixo
+
+sobre nós. Hum, interessante. E esse negócio aqui esquisito. Mas bem, aqui tem um sobre nós, né, desde 2015, que teria Bela Vista é o destino ideal para quem busca um ambiente acolhedor e uma experiência gastronômica única. Legal.
+
+Nosso cardápio tem até um rover, ó. Tem uma animação interessante, mas podia ter um respiro um pouco maior, né? Tem os preços. É, gosto. Legal. Ó, aqui, ó, tem
+
+uma transparência aqui, tá vendo? No no navebar. Por que escolher nós? Por que escolher nós? Estranho, ó. Tá precisando
+
+mais aulas com Gaia, hein? Mas bem, que escolher nós? Por que nos escolher? Não sei. Bem, é nós que tá. Ingredientes
+
+naturais, café artesanal, ambiente acolhedor e serviço personalizado. Aqui embaixo a gente tem um footer, que também podia ter um pading maior aqui, né? Ou melhor, pading algum, não tem nenhum. A gente tem as redes sociais também com animação e tem aqui um botãozinho que volta lá pro topo com animação também e tá tudo funcionando. Se a gente olhar aqui no Inspect, a gente vai ver que a gente não tem nenhum erro de compilação, tá? Então perfeito,
+
+funcionou. A gente conseguiu criar a nossa página no Raspberry Pie. Levou meia hora? Levou meia hora. Conseguimos criar aqui. Conclusão. Chegamos aqui. Dá
+
+para rodar ll no Raspberry Pi? Tecnicamente dá. É viável para coisas grandes? Não, se você quer gerar um pequeno texto, uma pequena frase, algo muito específico, muito pequenininho, é uma opção. Dá até para usar, sim.
+
+Principalmente se tudo que você precisa são as LLMs menorezinhas. Elas vão gerar ali quatro, cinco tokens por segundo. Pode ser o suficiente para criar algumas brincadeiras ou até alguma coisa que seja bem pequenininha. Dá para programar com Raspberry Pi utilizando LLMs? Não, de jeito nenhum. Nem é essa proposta. O
+
+que a gente quis fazer aqui foi entender um pouco como que esse hardware limitado consegue rodar lms, mas de forma limitada. E foi exatamente isso que a gente viu. Daqui pra frente os computadores e o hardware em si, ele vai ser muito mais potente e muito mais direcionado a rodar LMs localmente. A gente pode ver que os Macs já são máquinas incríveis. A propó, se você quiser ver um vídeo parecido com esse no Mac Mini, que também tem 16 GB, nesse caso de memória unificada, só deixar aqui nos comentários que eu trago aqui.
+
+Agora, se você quer ver uma LLM pequenininha, que é boa de verdade, que dá trabalho até pras LLMs de 30 bilhões de parâmetros, pode ver o vídeo do Nenbadge clicando aqui. Se você quiser ver uma playlist de LLMs locais, aí eu vou deixar o card aqui, ó. Então é isso aí, vou ficando por aqui, até o próximo vídeo.

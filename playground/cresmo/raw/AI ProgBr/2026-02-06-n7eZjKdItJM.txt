@@ -1,0 +1,189 @@
+---
+video_title: "Qwen3-Coder-Next, o MELHOR modelo Open Source para programadores?"
+video_id: n7eZjKdItJM
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=n7eZjKdItJM
+video_date: 2026-02-06T00:32:27+00:00
+video_description: |
+  Sabe aquela frustração de tentar rodar um modelo de IA gigante e ele ficar super lento ou precisar de tanta compressão (aquele Q2 sofrido) que acaba perdendo a inteligência? Pois é, a Qwen acabou com esse drama. Nesse vídeo eu testo o Qwen3-Coder-Next, o modelo open source que finalmente acertou o equilíbrio que a gente precisava. Com 80 bilhões de parâmetros totais, mas usando uma arquitetura genial com apenas 3B ativados para ser super leve, ele preenche com maestria o vácuo entre os modelos pesados de 480B e os básicos demais de 30B. Você vai ver que o Qwen3-Coder-Next consegue entregar geração de códigos rodando liso na minha máquina local.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen3codernext
+  
+  _______
+  
+  0:00 Intro
+  1:34 Documentação
+  3:52 Setup do teste
+  5:05 Flappy Bird
+  8:19 Paint Brush
+  18:14 Comparando custos
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Vou te falar que tem quase 200 dias que eu tô esperando esse modelo. E parece que foi há muito mais tempo que a Quen lançou o Quen 3 Coder de 480 bilhões de parâmetros. Isso foi há 6 meses atrás já. E esse daqui era o melhor modelo open source do momento para lidar com código. E ele de fato era incrível. Só
+
+tinha um problema. 480 bilhões de parâmetros era o que dava inteligência para esse modelo, mas ao mesmo tempo o que tornava ele praticamente impossível de rodar em qualquer máquina. Eu até consegui rodar uma versão dele aqui no meu Mac Studio com 256 GB de memória, mas era uma versão Q2. O que que é uma versão Q2? Normalmente esses modelos eles têm 16 bits para representar os dados e uma versão quantizada e daí vem o nome Q8, Q4, Q3, Q2. é uma versão que
+
+pega aquele dado de 16 bits e tenta representar ele ocupando menos espaço, só que com isso perde um pouco de precisão. Então o modelo Q2 naturalmente vai errar muito mais do que um modelo 16 bits ou até um modelo Q8. O Q8 ele é muito parecido ali com o 16 bits, tem pouquíssima perda, tá? Então sempre que a gente puder rodar um modelo Q8, esse é o melhor dos mundos. Se não der, um Q4 é satisfatório. Abaixo disso, você já
+
+começa a sentir ele ficando um pouco mais borro. Então esse era o grande problema do Quenter. Modelo incrível, incrível, mas difícil de usar localmente. Mas meus problemas acabaram porque a Quen lançou hoje o Quent Coder Next. E era exatamente isso aqui que eu tava esperando. Quenter Next é um modelo
+
+com 80 bilhões de parâmetros. A gente já tinha uma versão do Quentinter Escoder de 30 bilhões de parâmetros, que é muito legal também, mas 30 bilhões de parâmetros não é o suficiente quando a gente quer geração de código, principalmente de códigos mais complexos. Ele quebra um galho, mas ele não é tão inteligente assim. Então, algo na faixa dos 100 bilhões de parâmetros, eu acho que seria o ideal. Talvez a Quin tenha conseguido o melhor dos mundos, porque se a gente olhar aqui o benchmark deles, ó, eles comparam o Quentincoder, que tem 80 bilhões de parâmetros, com modelos muito maiores, como por exemplo deck, que tem 650 bilhões de parâmetros, o GLM 4.7 que tem 355 bilhões de
+
+parâmetros, e até o Minimx, que se eu não me engano, tem por volta de 200 bilhões de parâmetros. Então, a gente tá na mesma competição aqui com modelo de 80 bilhões de parâmetros e 3 bilhões de parâmetros ativos, o que quer dizer que vai ser um modelo muito rápido? É simplesmente incrível. Em algum desses benchmarks aqui, ó, por exemplo, no SW Bentch Pro sem o agente, né? O Quen inclusive bate esses outros concorrentes. Em outros cenários ele
+
+perde aqui, mas fica bem próximo. Nesse daqui ele consegue bater o GLM, o Minimx, o GLM 4.7 é o meu modelo preferido atualmente, tá? Então se a gente conseguir de fato ter o mesmo resultado do GLM com modelo de 80 bilhões de parâmetros muito mais rápido, o Quen vai passar a ser meu favorito. É muito cedo para eu falar algo sobre isso, porque ainda não testei o suficiente, mas a gente tem um forte candidato aqui, tá? Aqui, se a gente
+
+olhar, ó, a relação bilhões de parâmetros versus a performance no SWE Bentch, a gente vai ver que o Quen ele tá numa ótima posição. Aqui a gente tem um pouco mais sobre arquitetura do modelo, né? Então, como eu falei, um modelo de 80 bilhões de parâmetros com apenas 3 bilhões de parâmetros ativos. Isso torna ele um modelo muito, muito, muito rápido. A gente vai ver quão rápido ele é. E aqui a gente tem outras
+
+informações. É um modelo do tipo mixture of experts, né? 512 experts com 10 ativos. Mas o que a gente quer mesmo é brincar com ele, né? Colocar a mão na massa, pedir para ele fazer coisas aqui pra gente. Então, vamos fazer isso. Para
+
+rodar ele aqui, eu já baixei na minha máquina. Eu tô rodando a versão MLX, que é uma versão feita especialmente pra hardware da Apple, tá? Então, como a gente tá rodando o Mac Studio, o MLEX ele vai ter uma pequena vantagem em relação a, por exemplo, uma versão quantizada como GGUF. Então, MLX vai sair um pouquinho melhor. Aqui, ó, eu baixei ele, carreguei ele na versão de 8 bits. Então, como eu falei, em questão
+
+de quantização, 8 bits é o mais próximo que a gente vai ter do 16 bits. E nesse caso, dava até para eu carregar um de 16 bits, tá? Porque 16 bits ele ocuparia mais ou menos 160 GB de memória. E aqui na minha máquina eu tenho 256, então sobraria bastante espaço pra gente colocar um contexto muito grande. E falando em contexto muito grande, o máximo de contexto dele aqui é 262.000
+
+tokens, o que é bastante, tá? Suficiente pra gente colocar todo o nosso código ali e gerar muito código também. No meu caso, eu carreguei aqui exatamente com esse contexto gigantesco e a gente pode começar a brincar. A gente não vai usar esse contexto todo aqui pros exemplos que a gente vai trazer, mas é sempre bom ter um contexto grande. Vamos começar aqui com um exemplo simples, né? Pedir
+
+para ele fazer o nosso Flapbird, que a gente sempre pede aqui. Então, crie um Flapbird com HTML, CSS e JavaScript.
+
+Ó, ele já começou. Ah, esse é um modelo sem thinking, né? Sem pensamento. Ele é um modelo instruct. Então, o que você pede, ele já começa a te responder. Isso
+
+é bom por um lado, pode ser ruim por outro. O bom é que ele fica ainda mais rápido, né? Ele não tem aquele tempo ali que ele tá pensando, então ele já começa a escrever código. O ruim é que pode ser que ele faça um código com muito pouco planejamento. Então, às vezes você ter um planejamento maior do modelo vai resultar num código melhor no final das contas, o que normalmente é o que a gente quer, tá? Então, nesse caso,
+
+modelo GLM 4.7, por exemplo, vai ser um modelo com thinking, então talvez ele traga resultados melhores em alguns cenários, mas a gente vai ver conforme a gente for testando mais aqui. Então, eu tenho meu código HTML, CSS, JavaScript todo escrito num arquivo só, que pra gente aqui é excelente, porque eu só preciso copiar ele aqui e testar. Ele fala um pouquinho aqui, ó, do que que ele fez, né? Então ele explica aqui com bullet points o que que ele fez e como que a gente pode jogar. Então, no caso,
+
+ele colocou a tecla de espaço ou o clique do mouse pra gente poder jogar. E olha só que interessante, ele gerou 3.420 tokens, tá? O tempo primeiro token foi de 1 segundo, o que não é extremamente rápido, mas ok, porque o tempo de saída foi de 55 tokens por segundo. Pra gente fazer uma comparação aqui nesse meu Mac, o GLM 4.7 com 4 bits
+
+de quantização. E aí tá uma vantagem, né? Eu não consigo rodar o GLM aqui com 8 bits, só com 4 bits. Ele faz a geração de texto por volta ali de 20 tokens por segundo, um pouquinho mais, um pouquinho menos. Então 55 é um ganho absurdo, mas o que a gente quer ver é o resultado.
+
+Então vou colar o código aqui, ó, e a gente Opa, já gostei. Flapjs. Pressiona espaço ou clique para pular. E olha só o bonequinho que ele fez aqui, ó. Tem todo um estilo. Ele tem o olho, tem o bico.
+
+Eu achei que ficou muito legal. Vamos ver se funciona. Opa, funciona. Ah, o Quem é incrível, cara. Funcionou de primeira. De primeira. A
+
+gente testou modelos aqui mais ou menos do mesmo tamanho que não conseguiu gerar um resultado desse. Foi o caso do Long Catch Flash, ó. Vamos perder funcionando aqui a colisão. Então, foi o caso do Long Cat Flash, que a gente fez um vídeo aqui pro canal, você pode assistir aqui. É um modelo feito por uma empresa de entrega de comida, tipo o iFood da China. E eles
+
+entraram no mundo da inteligência artificial de forma pesada. Então a gente fez aqui o teste do modelo, o irmão menor deles, que é um modelo de 68 bilhões de parâmetros, 70 bilhões de parâmetros, tá? E o curioso é que quando eu tava gravando aquele vídeo, eu falei: "Eles estão comparando esse modelo com Quin Next e eu queria muito ver um Quincoder Next ou um Quincoder de 80 milhões de parâmetros, 100 bilhões de parâmetros e veio." Agora esse aqui é o modelo que a gente teria que comparar com aquele lá pra gente ver se e mas ele perderia fácil, porque esse aqui tá sensacional. A gente pode continuar pedindo para ele fazer coisinhas aqui pra gente, só que como é um modelo coder, a gente vai querer mesmo é rodar ele com a gente, certo? Alguma coisa que
+
+seja mais autônoma, que possa escrever código, verificar o código, consertar o código, tudo de uma vez só. Não é o caso do LM Studio aqui. Então para isso a gente vai usar uma outra ferramenta. Eu criei uma pasta aqui, Quentincoder, que é uma pasta para esse vídeo aqui. E a gente vai abrir aqui, não se confunda, tá? A gente vai abrir o Quen Code. Quen
+
+Code é a ferramenta de linha de comando, né? O agente de linha de comando da própria Quen. Então, nada melhor do que um produto da própria empresa para testar esse modelo aqui, né? Então vou aqui, ó, quen e pronto, a gente começou o nosso projeto aqui na nossa pasta, tá? E eu vou pedir para ele fazer um negocinho. O que que eu vou pedir? Vou
+
+pedir o projeto pra gente comparar com o Codex App. Codex App é o agente da Open AI que a gente testou aqui no canal também, foi lançado no momento que eu tô gravando esse vídeo ontem. Então eu vou pedir para ele criar um paint. Vou inclusive, ó, aqui, esse aqui é o nosso Codex app. Vou pegar o mesmo prompt. Já
+
+tem até update. Os cara tão chipando e chipando. Mas vamos lá. Vou colocar aqui o mesmo prompt, tá? Só vou definir porque pode ser que ele comece com qualquer linguagem. Então vou falar para
+
+ele que é usando HTML, CSS e JavaScript puros, sem framework, sem nada, tá? Aqui a gente tá executando a partir do LM Studio, tá? Desse lado aqui o que a gente tá vendo é o LM Studio. Então a gente tá vendo que ele tá processando ali o prompt e agora ele começou a escrever, né? Então, ó, ele já fez ali um planejamento do que que ele quer fazer, ó. Então, ele vai criar
+
+estrutura, né, com a toolbar, com canvas, vai implementar depois o CSS, vai implementar as funcionalidades. Então, olha só, ele tá botando aqui as funcionalidades mais básicas, né? Depois que ele criar, a gente vai testar e a gente vai pedindo para ele botar mais coisa, assim como a gente fez lá com o Codex. A diferença de do que tá acontecendo aqui pro Codex é que o Codex tava usando os modelos da Openi, né, o chat EPT 5.2 e etc. E aqui a gente tá
+
+usando o nosso modelo local. A gente tá usando o nosso modelo que tá rodando aqui no LM Studio. Ó, ele tá perguntando se eu quero deixar ele criar esse arquivo aqui. Então vou falar que sim. E ele continua, né? Então aqui ele já tá
+
+criando separado, né? Ele criou só o HTML. Ó, agora ele tá me pedindo para escrever o CSS. Eu poderia liberar para ele escrever tudo, mas vamos aqui um a um. Ó, aqui ele criou agora a parte do JavaScript, né, com as funcionalidades.
+
+Vamos deixar ele salvar aqui, ó. E agora a gente vai abrir aqui o arquivo para testar. E foi isso aqui que ele fez, ó. Não sei se eu tô gostando muito do visual aqui, porque tem tanto espaço aqui. Ele botou, ficou um scroll aqui, mas bem. Aqui a gente tem então o brush
+
+normal, né? Tá funcionando bem. Posso escolher a cor. Show de bola. Aqui o tamanho do pincel funcionando aqui. Ah, legal. Se eu deixo o mouse por
+
+cima aqui, ele me mostra o que que é. Não consegui entender muito bem a diferença desse para esse. Me parece exatamente igual. Aqui a gente tem a borracha. Opa, a borracha fez um A borracha tá fazendo uma maluquice, mas ok. Aqui tem a linha.
+
+A linha faz a linha reta. Beleza. Quadrado. Ah, olha só, daqui para cá. Engraçado, porque o codex ele deu esse problema também que eu conseguia criar o retângulo para cá, mas para cá eu não conseguia. Deixa eu limpar a tela aqui,
+
+ó. E será que eu tô com essa mesma problema aqui? Não. Aqui eu consigo criar para todos os lados, mas a nossa linha também, mas o retângulo não. Ó, não consigo criar para cá. O
+
+círculo, ah, o círculo ele coloca no meio, né? Então, o meu anchor point, né? O meu ponto ancora é o meio ali. E eu não consigo movimentar nada disso daqui, tá? Que também foi o caso lá do Codex. Então, vou voltar
+
+aqui, vou pedir para ele fazer alguns ajustes, tá? Ajuste a interface. Tem muito espaço vazio lá em cima. Coloque funcionalidades como filtros e camadas. Coloque as opções, a opção, né, que eu botei, mas tá bom. De desfazer e
+
+refazer. Acho que tá bom. Vamos ver. Ó, achei que ele foi bem rápido aqui na na hora de fazer o pré-processamento, então achei interessante. E aí ele já tá preparando aqui, ó. E o Quen Code, ele
+
+tem essas piadinhas aqui, né? sempre tem uma frasezinha diferente aqui conforme ele vai executando. Gers, será que vai ficar mais bonito? Vamos ver. Show de bola. Ajustou JavaScript. Tô achando que
+
+ele tá demorando um pouquinho mais para ajustar do que para fazer, que é normal, né? Ajustar o código dos outros ou às vezes o próprio, às vezes dá mais trabalho do que fazer. Mas pronto, acabou aqui, ó. Pô, agora é outra parada. Eu não tô entendendo o que que é isso aqui. Ah,
+
+tá. Isso aqui é Hum. Tá, eu tô confuso aqui com isso daqui, mas cara, agora gostei, hein. Sei nem onde é que eu vou ficar aqui. Vou ficar para cá, ó. É, esse daqui é o meu canvas, né, que
+
+tá descentralizado, mas ok. tá aqui. Beleza. Vamos ver se o retângulo. Ah, agora o retângulo cria pros dois lados.
+
+Isso aqui eu nem pedi para ele corrigir, tá? Mas ele foi lá e corrigiu. Excelente trabalho. Aqui a gente tem mais umas paradinhas. Ó, isso aqui é legal porque eu boto o mouse em cima, ele mostra, né?
+
+Eh, então ele usa ícones, mas ainda assim a gente consegue entender. Esse troço aqui não tá funcionando não. Esse aqui era aquele baldezinho de preencher. Os ícones não estão muito bons, né? Não dá para entender algumas coisas, mas isso aqui não tá funcionando. Vamos
+
+botar um círculo aqui e vamos ver se o balde vai preencher. Não, se eu clicar em cima aqui, não, não, não tá funcionando isso. Ah, não, isso aqui não é o Isso aqui é o acho que era para pegar a cor. Bem, também não tá funcionando. Aqui a gente tem mais um ícon. Que que é
+
+isso aqui? Adicionar camada. Mas ele adicionou uma camada.
+
+Hum. Ele adicionou uma camada em branco, não transparente, né? Aqui a gente tem o desfazer. Eu posso ir desfazendo aqui, tá? Não sei se tá funcionando, não.
+
+Deixa eu desenhar aqui pra gente ver. Opa. né? Tem algo que tá errado aqui. É, a gente tá conseguindo desenhar nessa camada, mas como quando eu adiciono outra, a nova camada não tá funcionando.
+
+Mas tudo bem, deixa eu tirar ela então. Eh, ó, vou desenhar aqui, vou fazer o desfazer. Funcionou? Então, tá funcionando desfazer. Aqui a gente tem os filtros.
+
+Vamos ver que que a gente tem, ó. sem filtro, mas eu posso mexer no brilho. Contraste. Nada funciona? Nada não. Tá. É porque tá sem filtro, né? Se
+
+eu adicionar esse filtro aqui, esse filtro é o quê? Inverter cores. Não inverteu nada. Sépia. Não botou sépia e nada. Tá. Ah, uma coisa que ele
+
+adicionou aqui, ó, é o control Z. Então, o contrl Z tá funcionando. Apesar de eu tá no no Mac, deveria ser comand Z, mas o contrl Z e o contrl Y. tá funcionando aqui, tá desfazendo e refazendo, o que é legal. Isso daqui não tinha no do no Codex.
+
+Vamos fazer uma pequena comparação aqui. Então, essa daqui é a nossa versão com Quentin Coder rodando localmente, tá? Um modelo de 80 bilhões de parâmetros. E essa aqui é a nossa versão com o Codex da Open AI, utilizando o modelo fechado deles. Esse daqui não tem como não dizer que tá melhor. Eh, não tem os ícones,
+
+etc., mas acabou, obviamente, a gente foi um pouquinho mais naquele vídeo lá, mas acabou com mais funcionalidades. As funcionalidades elas estão um pouquinho mais polidas, né? Mas esse daqui é um ótimo ponto de partida, levando em consideração que o modelo da Openei tem pelo menos aí 1 trilhão, provavelmente mais do que 1 trilhão de parâmetros, né? Esse modelo aqui com 80 bilhões de parâmetros, cabendo no Mac Studio, rodando a 60 tokens por segundo, tá excelente. É sempre uma troca, né? é
+
+muito mais barato rodar esse modelo aqui, só que a gente acaba tendo que trabalhar um pouquinho mais, tendo que pedir um pouquinho mais dele. E claro que a indicação nunca é você criar um código dessa forma, né? Você direcionar muito mais, você vai ter muito mais especificações para ele seguir e com as especificações certas ele vai conseguir ir ajustando e corrigindo os erros que porventura vierem. E deixa eu sair aqui do meu quantidade
+
+de tokens que a gente usou, tá? Então a gente usou 500.000 tokens de entrada e 23.000 tokens de saída. Isso daqui é uma característica muito importante quando a gente tá utilizando alguma ferramenta de agente, tá? seja de agente de uso geral,
+
+como por exemplo o agora chamado OpenClaw, ex MTB, ex Cloudbot, né? É um agente que consome muito token, principalmente tokens de entrada. Na verdade, ele não consome muito token, ele empurra muito token pro modelo e o modelo precisa processar muito token. Isso tem um custo também. O custo do token de entrada normalmente é mais barato do que o token de saída, que aqui é pequenininho, 23.000 tokens de saída.
+
+Vamos pegar aqui, ó, 500.000 de entrada, 20 de saída. Vamos fazer uns cálculos de quanto custaria isso com esse modelo e com outros modelos. Então, se a gente for aqui na Open Router, a gente consegue ver quanto custa cada modelo. Então, aqui, por exemplo, a gente tem um custo de 20 centavos de dólar por cada 1 milhão de tokens de entrada, tá? Input
+
+tokens. E a gente tem o custo de 1,50 para cada 1 milhão de tokens de saída. Tá? Que basicamente a gente teria gasto 10 centavos com os tokens de entrada, porque a gente teve 500.000 tokens de entrada e pros tokens de saída eu vou ter que fazer uma conta aqui 0.02,
+
+né? Vezes 1,50. A gente gastaria aqui uns 3 centavos. Então, para criar ali o nosso paint, que obviamente a gente precisaria de muito mais iterações até ter um produto, de fato, a gente gastaria provavelmente umas 10 vezes mais tokens do que isso, mas nessa versão que a gente fez, a gente teria gasto 10 centavos de tokens de entrada e 3 centavos de tokens de saída. Ele teria custado pra gente 13 centavos. Como a gente rodou ele
+
+localmente, ele não custou nada, tá? Se a gente tivesse feito algo semelhante e, digamos, tivesse tido um resultado também semelhante com um modelo fechado como da Open AI, o GPT 5.2 ou até mesmo os modelos da Antropic como Cloud Opus, tá? Vamos ver aqui quanto seria com Cloud Opus. Tá aqui, ó, Cloud Opus 4.5. Aí ele já
+
+custa $ por 1 milhão de tokens de entrada, tá? e por 1 milhão de tokens de saída. Então só de entrada aqui a gente já teria metade disso. Seria o custo de entrada e de saída a gente vai pegar lá o nosso 0.02 vezes 25 + 50 centavos, tá? Então o custo, como a
+
+entrada aqui ficou muito maior do que a saída, o custo maior sempre é o de entrada. Então seria 2,50 + 50 seria 3, né? A gente teria gasto 3 para fazer aquele pente com o Cloud Ops. Obviamente quando a gente tá falando do modelo fechado, que é o chamado aí Sota, né, State of Art, eles vão consumir provavelmente menos tokens, gerar menos tokens e gerar resultados melhores também, tá? Mas só por questão de comparação, essa seria a comparação.
+
+Seria uma diferença de 13 centavos para $ para tu ver como esses modelos fechados são muito mais caros do que os modelos abertos. Última comparação, GPT 5.2 Codex, tá? O 5.2 Codex 1,75 aqui de entrada. Então a gente gastaria ali por
+
+volta de 80, 90 centavos de dólar. Então, por si só, isso já é seis vezes mais vai do que o outro modelo gastou no total. E levando em consideração a saída, a gente teria 0.02 x 14 28 centavos. Então, seria uns 90 centavos mais 28 um pouquinho mais do que dó, né? 1,10 1,20 ali pra gente
+
+fazer o nosso pain. E aí, por que que eu tô compando aqui um modelo aberto com modelos fechados? Porque eu vou te falar como que eu te indicaria, como que eu gosto de usar os modelos aqui, tá? Então, hoje, por exemplo, saiu o novo agentic aqui do Xcode, que é criação de aplicativos para celular, né? E eu já comecei a testar, comecei a brincar aqui criando um appinho pra minha filha. E aí
+
+o que que eu fiz? Eu usei o Open Code. Open Code é tipo Quen Code, tá? Só que ele é um outro agente e eu utilizei ele, ó. Aí ele já pede aqui para linkar com o meu Xode. Então ele consegue controlar o
+
+Xode. Eu tô usando o mesmo modelo, usei o Quin 3 Coder para criar esse app. E eu só usei o open code em vez do Quin Code porque ele eu acabei conseguindo fazer essa conexão com Xode melhor com OpenCode, tá? Inclusive, eu vou gravar um vídeo lá pro meu canal Iprogbr, mostrando como fazer essa conexão e provavelmente eu vou separar, não sei se vou fazer um vídeo só ou dois, mas eu vou fazer um vídeo falando sobre o Adentic, que é a novidade do Xcode, e um outro mostrando como que a gente pode linkar com Open Code, como que a gente pode usar o modelo local para através do MCP, né, poder controlar o Xcode e gerar código de forma mais agêntica, tá? Mas basicamente foi isso que eu fiz hoje. E
+
+a minha sugestão e o que eu fiz um pouquinho foi, eu usei o Quencoder para criar basicamente todo o app, só que no final ele começou a se confundir, se repetir e ele teve alguns probleminhas só para finalizar. E aí essa finalização eu fiz com o Codex, não o Codex app, mas sim a própria implementação que a Apple liberou aqui no Excode, que também se chama Codex. Tudo é Codex da Open AI. Eu me confundo todo. Mas bem, e aí ele foi lá e finalizou tudo para mim. Não sei se
+
+ele tá integrado com XCode. Facilitou, eu ainda preciso testar muito mais para chegar alguma conclusão sobre isso. Mas de qualquer forma, obviamente é o modelo maior, o modelo mais inteligente. Só que no final do dia eu achei que o Quinter Escoder ele saiu ainda melhor do que eu imaginava que ele sairia. Eu acho que eu consegui achar aqui um modelo que vai rodar muito bem no Mac, que vai ser bastante inteligente e que se precisar aí eu vou para um GLM 4.7, 7, que é um
+
+modelo muito maior, né, para finalizar ou até mesmo pro modelo fechado como Codex ou o próprio Dantopic. Só que o resultado final disso é uma economia de custo gigantesca, né? Porque em vez de eu consumir todos esses tokens com modelo caríssimo, eu faço tudo com modelo de graça que tá rodando a minha máquina e só no final eu vou consumir ali poucos tokens para poder finalizar e ajustar os últimos erros. Então essa seria a forma como eu abordaria o uso dessas ferramentas aqui. Isso serve para você mesmo se você não tiver uma máquina para rodar na tua casa, tá? Como a gente
+
+viu lá no próprio Open Router, a diferença de preço é gigantesca, né? Então a gente tá falando de 13 centavos para alguns dólares ali, às vezes 3 dependendo do modelo. Então você pode sim usar um modelo na Open Router e esse vídeo não é patrocinado, pode ser em qualquer outro serviço desse tipo, mas usa o modelo barato, né? faz ali o as primeiras partes que ele vai fazer bem e depois partes mais complicadas, você muda pro modelo mais caro, resolve e volta pro barato de novo e vai fazendo assim. Mas é isso aí, quero saber de você, tá animado pro Quencoder? Cara, tô
+
+animado. Vou usar bastante aqui, já vou começar a fazer mais um monte de coisa. Deixa aqui nos comentários qual a tua opinião se você quiser ver como que integra o LM Studio ou qualquer outro servidor compatível com Open AI, com o OpenCloud, se o vídeo já tiver gravado, vai tá aqui e eu vou deixar algum outro vídeo legal do canal aqui também, beleza? É isso aí. Vou ficando por aqui, até o próximo vídeo.

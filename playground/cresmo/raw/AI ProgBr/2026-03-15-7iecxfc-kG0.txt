@@ -1,0 +1,274 @@
+---
+video_title: "Rodei 4 LLMs no ASUS ROG Ally e DEU CERTO (mais ou menos...)"
+video_id: 7iecxfc-kG0
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7iecxfc-kG0
+video_date: 2026-03-15T23:00:09+00:00
+video_description: |
+  Eu sempre quis saber: dá pra rodar LLM no ROG Ally? Hoje a gente vai descobrir.
+  
+  O ROG Ally tem AMD Ryzen Z1 Extreme e 16 GB de memória unificada, mas reserva só 8 GB pra GPU. Em teoria, era suficiente pra rodar vários modelos da família Qwen 3.5. Na prática, eu não sabia até onde ia conseguir chegar.
+  
+  Comecei com o modelo de 0,8B e fui subindo, 2B, 4B, 9B, sempre no limite da memória, ajustando KV Cache, contexto e quantização em tempo real no LM Studio. No meio do caminho o sistema travou, precisei atualizar o firmware, e aí tudo mudou: até leitura de imagem começou a funcionar em todos os modelos.
+  
+  O resultado do experimento foi melhor do que eu esperava. Tem falha, tem trava, tem RAG terrível do LM Studio, e tem um modelo de 9B rodando com janela de 70 mil tokens num videogame portátil. Assiste até o fim pra ver o que realmente dá e o que não dá.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytairogallyqwen35
+  
+  _______
+  
+  0:00 Intro
+  0:43 Hardware e Setup
+  2:10 Qwen 3.5 0.8B
+  7:15 Qwen 3.5 2B
+  9:36 Qwen 3.5 4B
+  14:42 Revisão 0.8B e 2B
+  16:42 Qwen 3.5 9B
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Já tem um tempo que eu quero matar uma curiosidade. Eu tenho aqui um Rog ROG, Rog al e eu quero saber, será que ele roda LM? A gente vai descobrir hoje isso juntos. O Rogal, ele vem com AMD Ryzen Z1 Extreme e ele tem 16 GB de memória unificada. Isso em teoria é suficiente pra gente rodar alguns modelos de LLM, principalmente hoje que a Quen lançou aí toda uma família de 0.8 8 bilhões de
+
+parâmetros até 397. Só que uma característica do Roger ele não vai disponibilizar todos os 16 GB para GPU. Ele disponibiliza no máximo oito. E oito talvez já seja o suficiente pra gente começar a brincar. É isso que a gente vai ver. Vamos lá pra tela. Já
+
+estamos aqui no ROG ROD AL, tá? E eu tô no modo turbo. E a gente pode ver aqui que pro GPU settings tá em 8 GB de memória aqui no nosso GPU. Esse é o máximo que a gente consegue alocar. Que que acontece? Esse daqui é um sistema
+
+que tem 16 GB de memória unificada, onde a gente pode setar de 1 a 8 GB para se tornar assim uma memória reservada pra GPU. E quanto mais memória paraa GPU, melhor vai ser o resultado da LLM. Então a gente tá botando o máximo que a gente pode aqui, que é oito. E vamos lá para nosso LM Studio. Aqui no LM Studio, o que a gente quer ver primeiro é o seguinte, ó. Vou aqui em settings, vou
+
+habilitar o modo developer e ele vai liberar essas duas abinhas aqui embaixo para mim. Se eu for em hardware, eu consigo ver que a gente tá rodando, então, no AMD Ryzen Z1 Extreme, tá? É o processador do nosso Rogal. E aqui a gente consegue ver a capacidade de memória. Então, o LM Studio tá reconhecendo os 8 GB dedicados a Ven.
+
+Aqui a gente pode ver aqui que também tá ligado o uso, né, dessa Van, então a gente vai conseguir rodar no GPU e vai rodar através do Vulcan. Nesse momento não tem nada sendo utilizado e a gente tá no modo balanceado. Quer dizer que se a gente tentar ir muito próximo a esse limite aqui, provavelmente ele não vai deixar a gente carregar. Aqui em runime a gente tá usando Vulcan com lama CPP. A gente tem lama CPP no CPU e a gente não tem acesso ao CUDA, né? CUDA é uma
+
+biblioteca da Nvidia. A gente não tá usando Nvidia, então não tem acesso ao CUDA também não tem acesso ao Rock M, que é da MD, mas por algum motivo acho que não é compatível com esse processador. Vamos lá nos nossos modelos. aqui nos nossos modelos, então eu separei modelos da família Quent. Excelentes e que agora a gente tem essas versões pequenininhas dele, de 0.8 a 9
+
+bilhões de parâmetros. Na verdade, tem maiores do que isso, tem 27 bilhões de parâmetros, 35 bilhões de parâmetros. Só que para esse sistema aqui, provavelmente nove vai ser o que a gente vai conseguir rodar. Se a gente conseguir rodar, a gente poderia tentar uma versão muito quantizada de 27 bilhões de parâmetros, mas primeiro ficaria uma quantização Q2 ou Q1, o que perde muita qualidade do modelo e ele ficaria provavelmente acima dos 8 GB de V RAM. Então a gente teria que fazer offload pro restante da memória e acabaria rodando no CPU e não na GPU, o que tornaria lento demais. Então vamos
+
+ver se pelo menos a gente consegue até o 9B, tá? Vamos começar a carregar aqui o nosso modelo, começar com o de 0.8 8 bilhões de parâmetros e eu vou botar o contexto inteiro para ver se a gente consegue carregar ele. Offload da GPU aqui tá no máximo, né? 24 CPU tradu para Q8. E se a gente mudasse aqui, ó,
+
+pro padrão, seria F16. Olha como a gente chega próximo ao nosso limite de memória aqui, ó, quase os 8 GB. Então, quando a gente coloca Q8, normalmente as quant q tem uma perda muito pequena e a gente diminui bastante o consumo de memória aqui, ó. Então, posso carregar o modelo aqui. Vamos ver se ele vai carregar.
+
+Foi. Carregou o 0.8 com o contexto full, com 260.000 tokens de contexto. Vamos agora começar a brincar aqui, ó.
+
+Primeiro vou dar um oi só para ver qual que vai ser a velocidade de resposta, esse tipo de coisa. Ó, oi. Foi muito pequenininho para ele entender que a gente estava falando português, mas ele respondeu pra gente com hello e 63 tokens por segundo. OK. Esse é um modelo pequenininho, mas essa velocidade aqui é simplesmente incrível, tá? Vamos ver o que que dá pra gente
+
+fazer. Então, a gente tem um contexto de 260.000 tokens, o que quer dizer que a gente consegue colocar PDFs inteiros aqui, talvez livros inteiros. E é isso que a gente vai fazer. Essa semana eu gravei sobre o Step 3.5 Flash e aqui a
+
+gente tem o tech report dele, que é um PDF, uma explicação completíssima sobre o modelo. E se a gente rolar até aqui embaixo, a gente vai ver que são 52 páginas de conteúdo, tá? Então, vou salvar isso aqui e a gente vai abrir aqui no nosso LM Studio. Vou carregar o nosso step. aqui e eu vou pedir para ele fazer um resumo para mim, ou melhor, me explique sobre esse modelo. E aí vamos
+
+ver aqui quanto tempo ele vai levar para mostrar pra gente o resultado. Ó, ele usou então inject full context, quer dizer que o contexto ele é grande suficiente para caber todo o conteúdo desse PDF, o que não vai fazer com que ele precise fazer um rag ou algo do tipo. O que a gente pode ver é que mesmo a gente rodando um modelo de 0.8 bilhões de parâmetros, o prefield dele não é tão rápido assim, ó. tá subindo ali a porcentagem do processamento do prompt, mas não é bem bem devagarinho, mas ok, não tem como esperar tanto assim de um processador que não foi feito para rodar inteligência artificial. A gente é
+
+maluco só de est experimentando isso aqui, mas a graça desse canal é exatamente a gente poder fazer esse tipo de coisa. A propósito, eu tô abrindo aqui a área de membros do canal. Se você quiser contribuir com o canal pra gente aumentar o budget, para ter mais equipamento, para testar mais coisa diferente como essa daqui, você pode se juntar ao nosso grupo de membros e apoiar o canal. E lá também a gente vai ver alguns outros experimentos que eu acho que não iria tão bem assim pro canal aberto e a gente vai poder brincar lá. Então espero também sua sugestão de conteúdo para aquele espaço. A gente vai
+
+construir uma comunidade ali juntos. Aí ó, ele tá acabando de processar o nosso prompt ali 100%, beleza? começou a responder e a resposta tá numa boa velocidade. Então aqui a gente já consegue ver, ó, que ele me fala, então, que é um modelo de 196 bilhões de parâmetros. De fato, é, ele tá falando que ele alcança resultados competitivos contra modelos como GPT 5.2 e Gemnight 3
+
+Pro. E eu achei que consegue mesmo, 11 bilhões de parâmetros. Eu fiz um vídeo sobre o step 3.5 flash, vou deixar aqui no card para você conferir, porque eu realmente achei que esse modelo é muito bom. Aqui ele terminou então tudo, ó, e a gente vai ver o tempo dele, ó. 33
+
+tokens por segundo. Ele levou 128 segundos para entregar pra gente o primeiro token. Quer dizer que ele levou 128 segundos para conseguir ler todo o conteúdo do nosso PDF lá. Se a gente olhar aqui, ó, a gente vai ver que o nosso PDF ele tinha então 61.837 tokens. É bastante coisa, tá? Lembrando,
+
+o nosso contexto tem 262.000 tokens, então é uma boa parte, ó. Ele ocupou 24% do nosso contexto. Show de bola. Perfeito. Próximo teste ainda com esse
+
+modelo é se ele consegue enxergar imagens. Ó, eu tô carregando essa imagem aqui e eu quero saber quais animais ele consegue identificar na foto ou na imagem. Quais animais você consegue identificar? Eu não sei onde tá a interrogação nesse meu teclado maluco aqui. Vamos ver se ele vai conseguir processar a imagem. E olha só, ele
+
+crashou aqui. Eu vou tentar pegar uma imagem menor. Essa aqui tem 170 por 197. Vamos ver se é o tamanho da imagem é o problema. Vou criar um novo chat aqui.
+
+Carregar a nossa imagem. List os animais dessa imagem. Não, ó, por algum motivo a gente não tá conseguindo ler imagens aqui, mesmo modelo sendo capaz de ler. O que leva a gente para então tentar carregar o nosso próximo modelo. Vamos carregar o modelo de 2 bilhões de parâmetros. Mais uma vez aqui, ó, a
+
+gente vai botar então o contexto inteiro. Vamos tentar colocar, ó. Se a gente tentar colocar o contexto inteiro, estoura magnificamente aqui, ó. Vamos trocar aqui para um. Vou aumentar aqui de novo o CPU. A gente vai ligar o nosso
+
+KV cash com quantização antes da gente modificar lá o tamanho do nosso contexto. Então aqui, ó, quase consegue mais para garantir, eu vou deixar o contexto aqui em torno de 100.000. Carregar o nosso modelo. Vamos ver se ele vai carregar. A gente conseguiu
+
+carregar o modelo de 2 bilhões de parâmetros. Vamos ver se ele vai responder pra gente aqui, ó. O nosso Olá. Nossa, foi rápido, hein? 0.16
+
+de tempo pro primeiro token. 42.29 9 tokens por segundo. Bem bem rápido em mandu 2 bilhões de parâmetros. Vamos ver se ele consegue fazer o resumo lá do nosso arquivo. Step resume para mim. E
+
+ó, injetou o contexto inteiro. Tá processando aqui. E eu não tô achando que ele tá muito mais lento do que o de 0.8 bilhões de parâmetros, não, hein. Ó, com 2 bilhões de parâmetros, a ventoinha dele aqui já começou a ligar. Eu tô com
+
+esse doc aqui que ela tem uma ventoinha também. Vou ligar a ventuinha do doc. Vamos ver se ele vai manter aqui. Terminou de processar ali, ó. Tá começando a escrever o resultado pra gente numa velocidade interessante até.
+
+E aqui eu tô achando que ele já tá dando um resultado até um pouco mais detalhado. Então ele possui 126 bilhões de parâmetros. Ele é, ele ativa apenas 11 bilhões de parâmetros. Ele fala aqui, ó, da janela de atenção, predição de múltiplos tokens, balanceamento dos expertos. Balanceamento dos experts.
+
+Legal, ó. Fez um resumão bom. 24 tokens por segundo e levou 158 segundos pro primeiro token. Lembrando que a versão de 0.8 bilhões de parâmetros levou 128 segundos, tá? Então ele levou 30
+
+segundos a mais, mas é um modelo muito maior, muito mais potente. Vamos ver se esse modelo aqui conseguiria ler a nossa imagem lá. Então, tô aqui já com uma nova conversa. Vou colar a nossa imagem e liste os animais nessa imagem. Ó, mais uma vez ele travou por algum motivo, mas tudo bem. que a gente conseguiu testar é
+
+que ele consegue, então, apesar de demorar um pouquinho, ler uma grande quantidade de tokens, né? E ele consegue responder pra gente, mesmo com contexto relativamente cheio, a uma velocidade extremamente utilizável, pelo menos a 2 bilhões de parâmetros e a 4 bilhões de parâmetros. Será que ele consegue também? Vamos ver. Vamos carregar lá o nosso modelo 4 bilhões de parâmetros.
+
+Vamos colocar o CPU no máximo, tentar aumentar a janela de contexto de token. Vamos colocar 100.000. 100.000 não vai dar, ó. Vamos colocar, quer dizer,
+
+talvez dê. Vamos colocar 100.000 e aí vamos ajustar lá o KVCh para Q8. E ó, vai dar sim ou não? Tá bem no limite aqui, tá? Vamos tentar. Vamos tentar ver
+
+se ele vai carregar. E tô achando que travou aqui em 60%. Cadê? Vai carregar ou não vai carregar? Será que deu ruim?
+
+Tá dando umas travadas aqui, ó. Acho que eu não devia ter colocado o sistema para ficar relaxado. Acho que relaxou demais. Tô tendo que reiniciar aqui, mas já se inscreve nesse canal para não perder nenhum vídeo tipo esse, que isso aqui é coisa de maluco. Só aqui você vai ver esse tipo de coisa porque ninguém é doido de tentar colocar um Rog al para rodar LLM. Faz o menor sentido, mas aqui
+
+a gente faz. Vamos lá, carregando aqui o modelo de 4 bilhões de parâmetros. Se a gente tentar colocar o contexto todo, olha quantos gigas ele pede. 25 GB, bastante coisa. Mas a gente vai lá habilitar o nosso cash Q8.
+
+E aí dá uma diminuída, mas ainda assim não é suficiente pra gente. Vamos fazer o seguinte, vamos diminuir esse contexto, então, ó, para mais ou menos 62.000 tokens. Vou manter aqui em seis. Vamos ver se a gente consegue então carregar com 62.000 tokens. 4B carregado, 62.000
+
+tokens. Vamos lá testar a velocidade, então. Mandar aquele olá. Olá. Ô, não carreguei aqui no chat.
+
+Vamos lá. Ó, aqui a gente já vê uma velocidade um pouco mais baixa, né, mas me parece ainda ser utilizável. Olá, tudo bem? Como posso te ajudar? Uma coisa interessante que a gente pode perceber é que esse modelo aqui de 4 bilhões de parâmetros, ele vem com thinking ativado. Os modelos de 2 e 0.8
+
+não, o modulo de pensamento pode ser ativado, só que ele tem o risco de entrar em loop infinito, em alucinar. Inclusive a própria Quen diz isso, mas ele tem o modo thinking também aqui, ó. 18 tokens por segundo, 18.2 tokens por segundo e o tempo pro primeiro token foi um pouco abaixo ali de 1 segundo. Para esse modelo aqui eu vou fazer um pouco diferente. Deixa eu fechar aqui. Em vez
+
+de eu pegar lá o PDF que é muito grande, talvez nem caiba aqui no contexto, eu vou pegar o conteúdo de uma página do Hugin Face, que vai ser bem menor, mas vai dar pra gente ter uma ideia do tempo de processamento de prompt. E eu vou pegar desse modelo aqui, ó, que é o Fire Rad Image Edit 1.1, que eu gravei um vídeo aqui pro canal, vou deixar aqui no card também. Então, vou copiar e vou pedir aqui, ó. Vou colar aqui. Copiei de
+
+qualquer jeito, tá? Eu quero ver se ele vai entender legal ou não. No final a gente vai conseguir ver quantos tokens tem esse prompt e aí a gente vai entender qual foi o tempo aqui para processar. Ó, já pensou aqui, ele pensou por 38 segundos, tá começando a responder pra gente, tá falando exatamente o que a gente esperava. Então, o nome do modelo é Fire Red Image Edit 1.1. Ele é desenvolvido pela Fire
+
+Red Team. Esse é um modelo de imagem, de edição de imagem. Então você entra com uma imagem, você pede o que que você quer que ele modifique e ele consegue modificar. E eu vou te falar, eu achei esse modelo muito bom, tá? Ele se compara inclusive com Nano Banana, ele mesmo, né? Se compara com o Nano Banana.
+
+E eu posso falar que eu acho que eu prefiro ele em algumas ocasiões. Não em todas. banana é excelente, mas a capacidade dele de mudar só o que eu quero é muito boa. Depois você assiste o vídeo lá para você entender do que que eu tô falando. Ó, ele fala mais um pouco aqui sobre o modelo e a gente consegue ver aqui os dados. Então, primeiro, 7.6
+
+segundos é o tempo pro primeiro token, mas aqui a gente precisa saber quantos tokens tem o nosso prompt. Aqui, ó, o nosso prompt teve então 2243 tokens, tá? Então ele processou 2243 tokens em 7 segundos. Totalmente utilizável aqui para esse nível. Se você precisar processar 50 páginas, igual era o caso do nosso PDF, aí ele vai demorar bem mais, deve demorar uns 3, 4 minutos.
+
+Só que no caso aqui a gente não conseguiu alocar tantos tokens quanto precisava para aquele PDF lá. É um tradeoff, né? Mas beleza, até aqui, ó, 18 tokens por segundo, dá para usar tranquilo. Vamos ver se ele consegue ler a nossa imagem. Ó, essa imagem aqui, ela é 740 pixels por 1032. Não é tão grande
+
+assim. E eu vou, pô, que que bicho é esse aqui? Eu ia pedir para ele me descrever quais animais tinham aqui nessa imagem. Mas bem, vai ser difícil. Vou pedir só descreva. Escreva, não,
+
+descreva essa imagem. Opa, o 4B conseguiu ler a nossa imagem e não demorou tanto, hein? Aqui a gente pode ver um pouco da utilização da Ven aqui, tá? E da CPU, inclusive, e ele tá produzindo aqui o nosso resultado. Ele não consegue identificar os animais, né?
+
+Tá falando que tem um urso marrom subindo lá no topo da árvore. À direita tem um panda deitado numa galha. Eu chamaria de um galho, mas tudo bem. Ali, ó, na base, sentada à esquerda, há um grande búfalo com chifres curvos e um pequeno ao seu lado. Na frente dele senta-se um panda ruivo, teria um red panda, né, com pelagem avermelhada e calda listrada, mas tá meio esquisito, tudo bem. No centro da direita atrás a
+
+árvore senta-se um urso preto. À direita dele, um orang tango, está sentado no tronco ou pedra. E no primeiro plano, ocupando a parte inferior direita da imagem, há outro orangut tango grande deitado na grama. Ele tá deitado? É, tá meio deitadão mesmo, meio assim. É, né?
+
+Pô, ele identificou que esse orangut tango tá sentado num tronco. Caramba. Sentado num tronco ou pedra, gente. Ele identificou também aqui, ó, os cogomelos vermelhos visíveis perto do rangutango deitado. Excelente descrição, tá? Ele levou 5 segundos só para
+
+conseguir ler a imagem. Então, cara, muito bom. 4B. Vou até fazer o seguinte, eu vou carregar novamente aqui, vou carregar com 600.000 tokens o de 2B, porque não é possível. Deixa eu tentar
+
+de novo aqui com o de 2B, que agora eu fiquei de bobeira, hein. Vou pedir agora pro 2B regenerar essa imagem aqui. Vamos ver se ele vai conseguir. Conseguiu. Eu já sei o que que aconteceu. Eu tava com
+
+problema de carregar o 4B e aí eu descobri que eu precisava fazer uma atualização do Rog Ali. Depois que eu atualizei, eu consegui não só carregar o 4B, como o 2B começou a ler imagem também. OK, excelente. Tá, então o 2B também tá lendo e provavelmente o nosso 0.8 lá, vou deixar ele fullzão assim, né? Com token completo, ele
+
+provavelmente vai ler também. Então, ó, regerar aqui e beleza. O de 0.8B também tá lendo a imagem, só que ele vê um pouco menos, né? Ele tá achando aqui que é um gato pequeno, uma pandegrada branca e preta. Eu não sei o que que é uma
+
+pandegrada não. Então, ó, aqui o 0.8 não conseguiu enxergar. Legal, mas ele conseguiu ler a imagem. Excelente.
+
+Então, até agora, que que a gente tem? Tem o 0.8 conseguindo ler a imagem, carregando o contexto inteiro, 262.000 tokens. O de 2 bilhões de parâmetros também. Ambos conseguiram também ler as
+
+imagens. A velocidade do 0.8, Ó, tá em 62 tokens por segundo. Cara, isso é absurdo, hein? Muita coisa. Mas o
+
+0.8 ele é um pouco mais fraquinho também, tá? Então, essa velocidade aqui é boa, mas tu vai perder um pouco aí na capacidade do modelo. Eu fiz inclusive um vídeo aqui mostrando o 0.8 e o 2 bilhões de parâmetros, alguns exemplos de onde esses modelos se destacariam.
+
+Vou deixar aqui no card também. Agora, o que a gente quer saber é, dá para rodar um modelo de 9 bilhões de parâmetros nesse Rogal aqui com 8 GB de RAM? É isso que a gente vai ver. Então, vou ejetar aqui o meu 0.8 e vou carregar o 9 bilhões de parâmetros, o maior que a gente vai testar hoje aqui. Que que eu
+
+vou fazer, ó? Ele tá me sugerindo que eu faça offload da GPU só em 28 de 32. Eu vou fazer 32 mesmo. Primeiro vamos fazer o seguinte, vamos lá no nosso KV para dar aquela diminuída aqui na memória. E aí ele vai ficar bonito, ó. Ó, 6.89 GB é
+
+o total. Eu vou nesse momento carregar 4.000 tokens só, tá? É bem pouquinho, mas é o que eu acho que ele vai conseguir. Se eu tentar aumentar muito, a gente vai aumentar lá. Talvez a gente
+
+consiga, ó. Tá? Depois, se a gente conseguir a quatro, a gente tenta 16. Mas vamos começar com 4.000 mesmo.
+
+4.096. Carregar. Será que vai? 80%.
+
+Vamos ver se vai carregou. Boa. 9 bilhões de parâmetros rodando no Rogine. Vamos ver a velocidade dele. Tô achando que a velocidade dele vai ser fraquinha, fraquinha, mas tá carregado. Vamos no
+
+nosso clássico. Olá. Me surpreendendo, hein? Tá me surpreendendo. Essa velocidade aqui não tá muito abaixo da de 4 bilhões, não. Tô
+
+achando que aqui a gente deve estar em 13 tokens por segundo. Talvez 11.74 74 tokens por segundo. Quase que acerto, né? Ó, 0.51 segundos para primeiro
+
+token. Excelente. Será que com uma janela de 4000 tokens ele consegue ver a nossa imagem lá? Ó, eu vou pegar essa outra imagem aqui e eu vou pedir para ele descrever. Descrevar não, descrever.
+
+Descreva. Descreva essa imagem. Quando ele descreve, a gente dá uma olhada na imagem, né? A imagem essa aqui. Parece uma girafa de duas cabeças, mas não. São
+
+duas girafas separadas. A gente tem aqui, ó, uma zebra bonachona aqui deitada, tranquilona. Tartaruguinha. Tem outra zebra bolada. Vamos ver que que ele vai falar pra gente. Ó, ele
+
+conseguiu ver a imagem. Ele tá pensando ali que que ele vai responder pra gente e daqui a pouco vem a resposta. Ó, começou a responder aqui pra gente. Então, uma ilustração colorida e vibrante que retrata um grupo diversificado de animais. Show de bola.
+
+Olha, consegui identificar que são duas girafas lá atrás. Elefante cinza à esquerda. Macaco marrom balançando a cabeça para baixo lá em cima. Tem, tem aqui, ó, no centro aqui na frente a gente tem um leão com uma juba marrom volumosa. Abaixo dele tem um urso pequeno. O urso estaria segurando a
+
+tartaruga verde. É, segurando é forte, mas tá ali junto com a tartaruga verde. Ao lado deles um sapo verde sorridente. Não tem nenhum sapo sorridente aqui, não. O sapo seria ele, a tartaruga, não sei. No chão, no canto inferior
+
+esquerdo, um filhote de zebra pequeno, está deitado na grama. No canto inferior direito, uma cobra verde está enrolada no chão. Ah, poli essa aqui, né? Uma zebra em pé está do lado de um cero de com laranja. Sentado no chão perto das patas do Parece haver um macaco preto ou um gorila. E no canto superior
+
+direito, uma águia ou um falcão está voando. Há um pássaro azul pequeno, parecido com tucano papagaio voando perto do pescoço das girafas e uma borboleta pequena perto da cabeça da outra girafa. Esses eu nem vi. Vamos ver. Tem de fato um pássaro azul aqui, a borboleta aqui. Ele não falou desse
+
+coração, mas tudo bem. Excelente descrição. Modelo de 9 bilhões de parâmetros rodando aqui pra gente. Vamos agora fazer o teste do resumo. Eu acho que ele vai falhar aqui porque ele tá com contexto só de 4.000 tokens. Mas
+
+vamos ver para esse teste, eu vou pegar esse modelo aqui chamado Sarvan de 105 milhões de parâmetros. Eu tô de olho nesse modelo aqui. Eu quero ver se eu vou gravar um vídeo sobre ele ou não. Inclusive, se você tiver interesse em ver um vídeo sobre esse modelo, deixa aqui embaixo nos comentários. Ele é um modelo que ele foi treinado com 22 línguas da Índia, tá? Então ele é um
+
+modelo indiano, só que se a gente olhar o benchmark dele aqui, ó, a gente vai ver que ele bate de frente aqui com modelos como GPT, SS 120 e até o Quin Next 80B. Esse aqui não é o Quin Next Coder, tá? Podia ter posto o coder aqui. GLM 4.5R. Eu gosto muito desse modelo.
+
+Então ele bate de frente com esses modelos aqui, sendo mais ou menos do tamanho do GLM, vai. E se bem que o Quin Next é bem menor, né? 80 milhões de parâmetros, 20% menor. Mas tudo bem. Vamos fazer o seguinte, vamos pegar tudo isso aqui, vamos pedir lá pro nosso Quen falar com a gente sobre ele. Me explique
+
+sobre esse modelo e me fale onde ele se destaca. Ó, tá processando aqui, tá processando bem rapidamente, porém a gente não sabe quantos tokens tinha ali. No final a gente vai saber. Começou a responder aqui pra gente. Então, o que que é esse Sarvan aqui de 105 milhões de parâmetros? É um modelo MOI e ele tem
+
+105 bilhões de parâmetros com um total ativo de 10. parâmetros. Eu tô gostando muito desses modelos que tem 10 bilhões de parâmetros ativos, como é o caso do Step 3.5 Flash, que a gente gravou um vídeo aqui pro canal, e do Minimx M2.5 que a gente também gravou aqui no canal.
+
+Então, onde é que ele se destaca? Ó, modelo foi projetado especificamente para superar desafios complexos e competir com modelos fechados, como GPT4 ou Quen 3 Next. Quent não é fechado, tá? Só para você saber, quem no máximo tu tá fechado com nós. Mas tu não é fechado, não, tu é aberto. Ui,
+
+lá ele fala aqui do benchmarktico, contexto longo, 128.000 tokens, não é tão longo assim. Nesse momento a gente tá rodando um modelo de 9 milhões de parâmetros com capacidade de ir até 262.000 tokens sem rope, tá? Isso daqui seria o rope desse modelo. E ele tem foco em
+
+idiomas indianos. Mas o que eu quero saber é se ele entende português e inglês. Português talvez não muito, né? Mas inglês tem que entender, pô. Que ele dá uma resumida. 11.42 tokens por
+
+segundo. Não é veloz, mas ok. Ele levou 8.83 segundos para lançar o primeiro token aqui pra gente. E vamos ver quantos tokens ele processou nesse tempo. Tá falando aqui, ó, de 1590
+
+tokens. A gente quase bateu a janela de contexto, ó. Chegou bem perto. Tá aqui, ó, 99% da nossa janela de contexto. Agora, para finalizar, eu só quero ver se eu consigo carregar ele com uma janela um pouco maior. Deixa eu ver o máximo que eu
+
+consigo carregar aqui, ó. Vou tentar jogar muito próximo. Quero aqui no GPU offload botar tudo. Mas aqui eu vou ligar o meu cash KV e eu vou tentar chegar o mais próximo ali de 8 GB, tá? Mais abaixo, ó. 7.98.
+
+Vai. 19.000 tokens. Será que vai carregar? Ó, acho que tá indo, hein?
+
+Carregando devagarzinho, mas tá carregando. Carregou. Aê, vamos ver se ele responde pra gente. Conte uma piada. Não pense muito. Vamos ver se ele vai se
+
+ele vai aceitar essa instrução de não pensar tanto. Tá pensando demais já, hein? Eu vou parar ele aqui, porque ó o tanto que ele já pensou aqui, ó. Mas a já vai conseguir ver um pouco da velocidade dele, mesmo parando que ele vai falar pra gente. 11.43 43 tokens por
+
+segundo. Então a gente manteve ali, né, a mesma velocidade. E se eu aumentar um pouquinho mais? Vamos agora ver, ó. Primeiro deixa eu botar lá nossa quantização Q8. E aqui eu vou botar tudo aqui e eu
+
+vou aumentar o máximo que eu puder até ele ficar vermelhinho ali, ó. Até aqui, ó. 70.000 tokens. Bastante, hein? Vamos
+
+carregar o modelo. Vamos ver se vai carregar agora. Tô na dúvida. Será que vai carregar? Carregou. Vamos ver se a
+
+gente vai perder velocidade. Eu vou fazer o seguinte, vou dar só aquele olhar, tá? E eu acho que para um para um prompt tão pequenininho desse, a gente não vai perder velocidade, não. Se a gente for perder, vai ser mais quando o contexto for aumentando muito, ó. Então, exatamente aqui, ó, a gente teve mais ou menos os mesmos 11.56 tokens por
+
+segundo. E como a gente tem agora uma janela grande, eu vou carregar lá o nosso arquivo do step. Ó, tá começando a dar umas travadas aqui, tá? O sistema não tá gostando muito desse contexto grande não. Mas deixa eu perguntar aqui, ó. Quantos, ó, tá vendo? Tô digitando
+
+aqui, ele tá demorando. Quantos parâmetros ativos tem esse modelo? Eu tô digitando aqui, ele não tá, ó, agora foi. Tô com medo aqui. Eu acho que vai, acho que vai dar ruim. Bem, a gente tá
+
+aqui para isso. Vamos. Eu quero ver se ele vai conseguir achar essa informação dentro do nosso PDF. Esse PDF tem uns 60.000 tokens de contexto, mais ou menos. Ele tá decidindo como é que ele
+
+vai lidar com isso. E ele resolveu fazer retrival, ele resolveu não colocar o nosso PDF inteiro no contexto. Até que faz sentido porque eu tô fazendo uma pergunta muito específica. O problema é que agora ele vai ter que indexar todo o PDF lá, fazer o retrieval, gerar o reank, embedar. Tá embedando ali, ó. A
+
+propósito, tá aí uma parada legal, hein, de fazer lá pra nossa área de membros. Um rag retrieval augmented generation, uma geração aumentada por busca, né? Ó, ele achou aqui algumas citações. Deixa eu ver se ele vai conseguir achar isso lá no PDF, né? Eu não acho que esse Rag aqui do LM Studio funciona muito bem não, mas acredito que esse é uma pergunta simples. Se bem que eu acho que
+
+ele pegou as coisas totalmente aleatória ali, ó. No final vai dar pra gente ver as citações, ó. Ele não achou nos dados que foram pegos do PDF. Esse rag do do Ali Stud é meio ruim. Começando a dar umas travadinha aqui, hein? Ele tá
+
+pensando aqui, tá meio confuso, mas tá chegando a uma solução. Vamos dar uma olhada na quantidade de pensamento aqui que ele tem, ó, para resolver o que a gente pediu, ó. Olha como ele pensou, cara. Pensou muito. Chega, vou parar ele aqui. Mas aí já chegou à conclusão de
+
+que não tem esse dado que eu perguntei nas citações que ele recebeu do LM Studio, né? O LM Studio, ele vai lá, pega uns trechos do nosso PDF, entrega pro modelo e nos trechos que ele entregou não tinha isso. Ele já sabe disso, mas ainda não tá conseguindo parar e responder pra gente. Então vou parar aqui. A gente vai ver que ele respondeu então com 8.94 tokens por
+
+segundo. Aqui a gente consegue ver quais foram as citações, né? Então basicamente ele pegou aqui o a as referências lá do paper, né? Tem nada a ver com o que a gente perguntou. um rag terrível do LM Stúio, mas isso não é culpa do modelo, não. Conclusão, dá para rodar LLM no
+
+Rogal? Bem, dá, dá para rodar o LM Studio, dá para rodar LLM. A gente conseguiu rodar aqui o Quen de 0.8 bilhões de parâmetros, 2 bilhões de parâmetros, 4 bilhões de parâmetros e até 9 bilhões de parâmetros. É o melhor device para você rodar LLMs? Não, claro
+
+que não. Ele não é feito para isso, mas dá. Legal. Então, se você quiser ver outros experimentos malucos como esse, já se inscreve aqui no canal, porque eu vou tentar rodar LLM em todo pedaço de hardware que eu conseguir colocar minhas mãos. A propósito, a própria Asus, ela tem esse computadorzinho aqui, ó. Esse
+
+aqui é o brabo. 128 GB de memória unificada, feitas não só para você rodar, como você treinar modelos. E o bom é que ele usa um chip da Nvidia GB10, então ele tem acesso a CUDA e todo o conjunto de software da Nvidia, que é hoje a base da inteligência artificial. Eu quero muito testar esse brinquedinho aqui, mas infelizmente o budget do canal ainda não comporta isso. Assim que der eu vou fazer uma loucura e vou trazer aqui pra gente. Ó, ele diz que dá para
+
+fazer fin tun em modelo de 200 bilhões. Caramba, hein? 200 bilhões de parâmetros, ó. Maneiro. Mas numa próxima oportunidade a gente fala um pouquinho mais desse aparelho quando a gente conseguir colocar as mãos em um. Por
+
+enquanto, se você quiser ver modelos gigantes de 200 bilhões de parâmetros rodando localmente, você pode dar uma olhada nesse vídeo aqui que eu fiz do Minimx M2.5. Se você quiser saber qual hardware roda LM melhor, o Mac M3 Ultra ou uma RTX 5090 da Nvidia, aí você assiste esse vídeo aqui que a gente também trouxe isso aqui no canal. E é isso aí. Eu espero que você tenha gostado desse vídeo. Se você gostou,
+
+deixa aquele hype, porque eu tô a horas de gravando isso aqui. E na verdade é a segunda vez que eu tento gravar. Tive que atualizar tudo aqui, mas no final do dia funcionou. Tô muito feliz. Eu espero que você tenha gostado também. Deixa seu
+
+like, se inscreve, deixa comentário e estamo junto. Valeu, até o próximo vídeo.

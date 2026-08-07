@@ -1,0 +1,176 @@
+---
+video_title: "Gemma 4 12B: o modelo PERFEITO para rodar localmente?"
+video_id: e9WblQN2rmU
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=e9WblQN2rmU
+video_date: 2026-06-04T23:54:06+00:00
+video_description: |
+  Quando o Google lançou o Gemma 4 12B, a primeira coisa que passou pela minha cabeça foi: será que finalmente a gente tem um modelo sério pra rodar numa placa de 16GB de VRAM?
+  
+  Então coloquei ele pra rodar na minha RTX 5060 Ti, via llama.cpp, e fui testando cada capacidade desse modelo, uma por uma. Visão, áudio, código. E em cada teste a gente aprende algo diferente sobre o que significa um modelo ser "inteligente" vs. simplesmente "grande".
+  
+  Tem uma cena aqui no vídeo que talvez te faça mudar a forma como você pensa em modelos pequenos. Não vou entregar antes do tempo, mas diz muito sobre como a gente tá subestimando o que cabe em 16GB. Se você acompanha LLMs locais, esse vídeo vale até o fim.
+  
+  _______
+  
+  ⚡ Hardware
+  ⏵ ZimaCube: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAigemma412b&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira 
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAigemma412b&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAigemma412b&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⏵ ZimaBlade: https://shop.zimaspace.com/products/zimablade-single-board-server-for-cyber-native?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAigemma412b&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaigemma412b
+  
+  _______
+  
+  0:00 Intro
+  0:24 Documentação
+  3:08 Teste de Visão
+  6:33 Teste de Áudio
+  9:09 Flappy Bird
+  10:32 Paint Brush
+  13:47 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+O Google acabou de lançar o Gema 4 de 12 bilhões de parâmetros. E na hora que eu vi que eles lançaram esse modelo, eu falei, será que finalmente a gente vai ter um modelo incrível que roda numa placa de 16 GB de VRAM? E é isso que a gente vai testar aqui hoje. Hoje a gente vai testar na minha 5060 Ti, que tem 16 GB de Vrun e uma largura de banda de 450 GB/ segundo. Vamos lá pra tela, pra gente ver do que que esse modelo é capaz. Gema 4, 12 bilhões de parâmetros.
+
+Esse é um modelo denso, tá? não é mixture of experts e normalmente isso quer dizer que ele empacota ali uma grande quantidade de inteligência. A gente inclusive vai dar uma olhadinha no benchmark pra gente ver com quem que ele se compara. Mas uma coisa que eu quero destacar aqui é o seguinte, esse modelo ele é multimodal. O que que isso significa? Que ele consegue enxergar
+
+imagens até vídeos. E diferente da maioria dos modelos que só faz isso, ele também consegue escutar áudios e isso é bem interessante, tá? Ó, vamos aqui embaixo e a gente tem esse benchmark aqui, ó. E o Google tá comparando o GMA 4 de 12B com o Gema 4 de 26 bilhões de parâmetros. A diferença aqui é que o de 26 bilhões de parâmetros, ele é um mixture of experts. Quer dizer que ele
+
+só ativa 4 bilhões de parâmetros. E é por isso que a gente vê nos gráficos eles estão próximos, tá? O mais claro é o 12B, o mais escuro o 26B. Então a gente vê que em todos esses benchmarks o GMA 4 12B ele chega muito próximo ao de 26 e em alguns casos até passa. E isso é incrível porque o modelo de 12 bilhões de parâmetros, ele vai caber com muito mais folga numa placa com pouco ven. Ou
+
+seja, agora a gente consegue ter um nível de inteligência do GMA 4 de 26B, só que ocupando muito menos espaço, sobrando muito mais espaço para KV Cash. Uma outra comparação que ele faz é inclusive com Gema 3, que é a geração passada do Gema, só que com de 27 bilhões de parâmetros, que é um modelo denso também. E olha só o salto que a gente teve de uma geração para outra. Os modelos estão ficando cada vez mais inteligentes. E a gente tem visto isso com modelos, por exemplo, como quent. 27
+
+bilhões de parâmetros, sendo comparado com modelos de 100 bilhões de parâmetros, alguns até de 200 bilhões de parâmetros. Então, esse é um momento muito incrível para quem curte rodar LM localmente. Aqui no Hugin Face a gente tem acesso ao modelo e a gente tem mais algumas informações, como por exemplo, o tamanho do contexto, né? Então, diferente dos outros modelos menores, o de dois e o de 4 bilhões de parâmetros, que tinham também multimodalidade com áudio, os maiores não tm áudio, de 31 e o de 26 não tem áudio, só os pequenininhos. Agora o de 12 bilhões de parâmetros tem áudio também. E ele fez
+
+um upgrade aqui no tamanho do contexto. Então agora o contexto é de até 256.000 tokens também, assim como os modelos maiores, né? e diferente dos modelos menores. Então vamos lá, vamos colocar a mão na massa. Tô aqui, ó, com GMA 4, 12
+
+bilhões de parâmetros. Hoje a gente vai testar a versão Q4 dele. E como eu falei, a gente vai rodar numa 5060 Ti com 448, quase 450 GB/sundo de largura de banda. Falando nisso, vamos ver a velocidade que a gente tá atingindo aqui. Olha lá, a versão Q4 tá batendo aqui 50 tokens por segundo pra gente. E eu quero
+
+começar testando a capacidade visual dele. E eu vou começar com uma que eu acho que é fácil para ele, tá? Ó, eu vou subir essa imagem aqui, tá? Que é uma imagem de Toronto, uma cidade aqui no Canadá. Tem a bandeira do Canadá aqui, inclusive. E eu vou perguntar para ele
+
+onde foi tirada essa foto e vamos ver a resposta dele aqui pra gente. Errou. Bem, essa foto foi tirada em Seatol, no estado de Washington, Estados Unidos. Não, cara, tem a bandeira do Canadá aqui. Isso daqui é a CN Tower, a torre que tem lá em Toronto, não é Space Neid, mas tudo bem. Isso daqui é interessante
+
+pelo seguinte, no final do dia ele é um modelo de 12 bilhões de parâmetros. Existem normalmente duas coisas que a gente quer no modelo. Primeiro é conhecimento. Então quanto maior o modelo, mais conhecimento a gente consegue colocar nele. Nesse caso aqui é um modelo pequenininho, ele conhece menos as coisas. Mas o outro é a
+
+capacidade. Capacidade, por exemplo, de chamar ferramentas, né, de conseguir controlar agentes e esse tipo de coisa. Nesse caso aqui, a gente vai fazer um outro teste pra gente ver se essa capacidade visual dele, mesmo ele não tendo tanto conhecimento aqui, como é o caso, confundindo Seato com Toronto, mesmo assim se essa capacidade visual ela é útil ou não é. Então, dessa vez eu vou passar essa imagem aqui e eu quero ver se ele consegue descrever pra gente com precisão. Quero que ele fale do bonê, talvez do óculos, da arma que ele tem na mão aqui. Vamos ver o que que ele
+
+consegue fazer. Descreva essa imagem em detalhes. Ó, ele já reconheceu que é um boneco no estilo Lego. Ele tá vendo aqui que tá num estilo pós-apocalíptico, né? Que tá num lugar totalmente destruído.
+
+Então, excelente. Vamos ver o resultado final aqui. Ó, figura. É uma figura de Lego clássico, com detalhes realistas. Na cabeça, o personagem. Eita, não tô
+
+nem conseguindo ler que aí tá escrevendo tão rápido aqui. Tá pulando demais. Pera aí, vamos voltar. É uma figura Lego clássica, mas com detalhes realistas. cabeça. O personagem tem uma expressão
+
+séria. Usa óculos de armação preta e tem uma barba curta e clara. Ele usa um boné de beisebol vermelho. De fato, isso daqui é um boné de beisebol vermelho. Eu aceitaria até que ele falasse um capacete, por exemplo, mas é tecnicamente um boné. Ele fala que o
+
+boneco tá usando uma camisa de manga curta, verde escuro, pernas e calçadas. As pernas são de cor cinzentas com palavra Lego impressa nas cores. Pera aí. Ah, ó, cara, ele tá conseguindo enxergar muito bem. Então beleza, Lego escrito nas coxas, sapatos cor semelhante, personagem segura uma arma futurista, tipo blaster, seria uma arma de laser, né? Com as duas mãos, a arma é
+
+translúcida mais ou menos, né? É, de fato, tem um, poderia dizer que sim, translúcida com tons azuis cinzentos e parece ter detalhes mecânicos internos. Ele continua aqui falando sobre ambiente, ó, pós-apocalíptico, vegetação selvagem e trepadeira, trepadeuras. Achava que era trepadeiras. Tudo bem. A
+
+crescer aqui lançou um português de Portugal, né? a crescer nas paredes dos edifícios e no chão, sugerindo que a cidade foi abandonada há muito tempo. Muito, muito, muito legal. Então, olha só, essa é a diferença de capacidade para conhecimento. O modelo ele pode ser muito útil, mesmo se ele não for gigante, mesmo se ele não tiver todo o conhecimento possível. Se ele tiver,
+
+melhor ainda, né? Mas a gente precisa saber fazer essa diferenciação aí. Então esse modelo é muito capaz, só que se você perguntar coisas específicas, provavelmente ele vai errar por falta de conhecimento. E agora eu quero testar uma outra funcionalidade que é a questão do áudio, porque eu acho uma das coisas mais interessantes desse modelo. Normalmente, se a gente quer usar um áudio para alimentar uma LLM, a gente precisa de um modelo de transcrição de áudio, um speitch to text, que é o modelo que vai transformar a fala num texto, né? Nesse caso aqui a gente não
+
+precisa, teoricamente. Vamos testar. Eu tô usando lhama CPP e ele não me dá a opção de eu gravar um áudio diretamente, ele só permite que eu suba um arquivo de áudio. Então o que eu vou fazer o seguinte, eu vou gerar um áudio com uma aplicação que a gente tá criando aqui, que em breve vai est disponível pra Mac, quer dizer, se a Apple aprovar, né? Tá em aprovação ainda. Mas olha só, vou
+
+criar esse texto aqui, ó. Vou gerar o meu speit com a minha voz, ó. Eu ali, ó. Vamos ver aqui o resultado, ó. Fala, galera. Não esquece de se inscrever e
+
+dar aquele hype no vídeo. Eu escrevi se inscrever mesmo. Vamos ajustar. Fala galera, não esquece de se inscrever e dar aquele hype no vídeo. Ele falou hype, né? Em vez de hype, eu vou fazer o
+
+seguinte, eu vou mudar aqui, ó, para ver se ele fala direitinho. Fala, galera. Não esquece de se inscrever e dar aquele hype no vídeo. Beleza? Assim tá ótimo.
+
+Vou baixar ele aqui. E aí eu vou pedir agora pro nosso Geminha transcrever esse áudio, tá? Eu não vou falar mais nada, eu quero que ele, ó. Fala, galera. Não esquece de se inscrever e dar aquele like no vídeo.
+
+Errou um pouco ali no like, mas tudo bem. Eu vou gerar de novo, mas dessa vez em inglês, porque eu tô achando que a identificação de áudio dele é melhor em inglês. Eu vou mudar aqui. Eu tenho uma voz minha mesmo em inglês e vai ficar melhor ali. Vamos ver. Hey guys, don't
+
+forget to sign up and give that hype in the video. Eu fiz uma tradução aqui que não tá certo. Subscribe for that in the video. Ok. Ok. Acho que dá
+
+para escrever aquela frase melhor, mas tudo bem. Vou pegar aqui novamente. Transcreva o áudio. E aqui, olha só, por algum motivo ele deu um bug. Eu tô achando que isso daqui é um bug do lama CPP, tá? Então, o que eu vou fazer é o
+
+seguinte, vou criar um novo, vou atualizar a página e vou tentar de novo. Pronto, agora sim. E aqui, ó, já parece que tá perfeita a transcrição. Eu tô com o pensamento ativado aqui no máximo e aí ele tá pensando para caramba. Ele não precisava pensar tanto assim. E o lama
+
+CPP agora ele me dá a opção de eu dar um skip aqui no pensamento. Eu acho que já tá alucinando ali. Eu vou dar um skip. E ele entregou a resposta perfeita aqui, ó. Hey guys, don't forget to subscribe and give that hype in the video. Então
+
+não esquece de se inscrever, dar aquele like e dá um hype nesse vídeo aqui pro YouTube mostrar para mais pessoas. Então beleza, transcrição em inglês vai funcionar muito melhor. Então vou fazer o seguinte, eu vou pegar agora um áudio e esse áudio ele vai ser uma instrução pro modelo. Como a gente viu que ele consegue entender áudio em inglês melhor, a gente vai gerar esse áudio em inglês também. Então vai ser aqui para criar um clone do Flappy Bird usando HTML CSS. Create a clone of the Flappy
+
+Bird Game with HTML and CSS. É isso. Vamos baixar aqui. E aí, mais uma vez, vou criar um novo, vou atualizar. Vou dessa vez só mandar o meu áudio.
+
+Pronto. Vamos ver, ó. Entendeu o comando, tá? e já tá escrevendo aqui. Isso daqui é muito interessante. Se, por
+
+exemplo, esse modelo tiver rodando num tablet, né, ou num notebook, você quiser falar com ele para ele tomar ações. Então, esse modelo permite isso. O lhama CPP que não tá permitindo aqui que a gente mande um comando de áudio direto do microfone, mas isso é só questão de ajustar o harness, né? OK. Criou aqui pra gente o nosso flapd, ó. E ele criou
+
+um flapd bem bem simplão, né? Vamos ver se funciona bem.
+
+Muito difícil. Vamos de novo. Cadê? Tem que atualizar aqui, né?
+
+Ele tá caindo muito rápido. Ah, não. Bem, tá funcionando bem. Só é bem bem bem simples. Pro próximo teste, eu vou fazer o seguinte. Eu tô rodando gema
+
+numa 5060 Ti que tá ligada aqui no meu Zima Cube, que é um network attached storage, né? É um computador feito pra gente conectar vários HDs nele, ele se tornar basicamente um Google Drive, só que com todos os nossos dados privados e locais. E esse computador permite que eu consiga ligar uma placa de vídeo externa através de um doc. Mas o que eu quero testar aqui é o seguinte. Essa aqui é a interface do ZIMAOS OS, que é o sistema operacional que roda nesse computador. E
+
+eu quero ver se ele consegue reproduzir essa interface aqui. Então eu tô passando aqui, ó, um print da interface e eu vou pedir para ele reproduzir. Reproduz essa interface com HTML e CSS. Vamos lá, ó. Ele tá lendo aqui, então, todos os dados da tela, né? E aqui,
+
+principalmente, quero ver se ele vai reproduzir esses widgets aqui. Como é que ele vai fazer aqui? Provavelmente ele vai botar um emoji, mas tudo bem. né? Se ele conseguir reproduzir esse círculo aqui, vai ser bem legal. Ó, já
+
+tá escrevendo código aqui pra gente. Vamos esperar ele terminar. Ó, gerou aqui pra gente. Vamos dar uma olhada. Aqui ele fez o círculo, né? Bem
+
+interessante. Ficou mais simples, ficou sem muitos detalhes, né? Aqui tá bem mais bonito. A gente tem inclusive um background que ele teria que criar de forma procedural, né? Porque não tem nenhuma imagem. Mas a essência ela tá
+
+aqui, tá? Não tá tão bom, mas tem alguma coisa aqui. Esse relógio aqui podia pelo menos estar com a hora correta, né? Mas tudo bem. Aqui ele pegou uma outra RTX, né, que não era a nossa lá. Então não
+
+sei se ele só ignorou ou se ele leu errado. Aqui também pegou outros valores, mas ele pegou a essência como um todo. Tem aqui a barra de search, tem os ícones aqui embaixo, ó. Se você reparar aqui a gente tem também aqui normalmente tem uma mensagem que fica mudando. Ele botou aqui também um status. E eu sei que muita gente
+
+procura, principalmente nesses vídeos de modelos pequenos, algo para substituir o Opos, né? Só que não faz muito sentido. A gente tá falando de modelo de 12 bilhões de parâmetros que roda numa placa de 16 GB, né? Ele não vai ter o nível de um OPOS, mas não é de se jogar fora, não. Dá para fazer alguma coisinha com ele aqui. Inclusive, deixa eu dar
+
+uma outra tarefa para ele. Eu não vou fazer nesse vídeo aqui um clone do Angry Birds, tá? Se vocês quiserem, deixa aqui nos comentários, porque eu trago um novo vídeo sobre esse modelo. Eu vou fazer o clone do paint com HTML. É o pior prompto. Para ver se ele vai conseguir
+
+resolver de fato e quais as funcionalidades ele vai trazer, né? Quero ver um pouco dessa criatividade desse modelo aqui, ó. Já tá escrevendo o código pra gente. Código complecio, tá? O cara tá fazendo um código complecio aqui. Olha lá, temos aqui um paint. Tá
+
+funcionando bem até, ó. Tá funcionando bem. Limpa a tela. Bom, deixa eu botar aqui um boné, uns olhinhos a boca. Salvar essa imagem. Quer dizer,
+
+salvou. Não sei onde é que ele salvou. Acho que não salvou não. Cor dá para mudar. Funciona. Tamanho aqui, ó, do
+
+tamanho não mudou nada. É, o tamanho não funcionou também. Show de bola. Bem simplão, né? Mas fez pra gente. Então é
+
+isso aí. Esse aqui foi o nosso primeiro contato com Gema 4, 12 bilhões de parâmetros, modelo multimodal, com capacidade de visão, capacidade de ouvir áudio. Que que eu gostei dele aqui? Gostei muito da capacidade de visão, não do conhecimento que ele não tem tanto, mas da capacidade de escrever uma cena excelente para isso. No entendimento de áudio, eu acho que eu preciso testar um pouco mais, mas eu diria agora que ele é muito bom em inglês. Em português ele é
+
+mais ou menos. Não sei como sairia inclusive em outras línguas, mas o que a gente percebeu que português às vezes ele erra uma palavra ou outra e o inglês ele acerta mais direitinho. Eu acho que esse modelo consegue criar alguma coisa de código se for muito básico, mas com 12 bilhões de parâmetros não seria a minha aposta não. Talvez para um auto complet, algo desse tipo, ainda tenha uma boa utilidade. E também se você for criar ali uma função, algo simples, né, como exatamente um auxiliar, até pode funcionar. agora como um agente de
+
+código que vai criar arquivos completos e etc. Não acho que essa seria a minha escolha. Inclusive seria bem interessante testar ele versas versões do, por exemplo, Quen 3.6 com maior quantização. A gente inclusive já rodou uma versão do Quen bem quantada aqui na nossa 5060 Ti. Eu vou deixar o card aqui
+
+para você assistir. E aí a grande questão é, será que esse modelo bate o Quen 3.5 de 9 bilhões de parâmetros? A gente fez um vídeo aqui no canal sobre ele também. Vou deixar o card aqui também. E eu quero saber de você. Você
+
+vai testar esse modelo? Você testou esse modelo, você consegue rodar esse modelo localmente? Como que tem sido a sua experiência? Deixa aqui embaixo nos comentários. É um bom modelo? É um
+
+modelo mais ou menos? É um modelo ruim? Eu quero saber a sua opinião. Vou ficando por aqui, até o próximo vídeo.

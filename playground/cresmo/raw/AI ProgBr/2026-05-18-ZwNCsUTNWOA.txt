@@ -1,0 +1,185 @@
+---
+video_title: "Rodei o Qwen 3.6 35B em 8GB de VRAM a quase 20t/s (TUTORIAL COMPLETO usando llama.cpp)"
+video_id: ZwNCsUTNWOA
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZwNCsUTNWOA
+video_date: 2026-05-18T21:33:22+00:00
+video_description: |
+  Rodar LLM localmente sem gastar milhares de dólares em hardware é possível. Neste vídeo eu rodo o Qwen 3.6 35B, numa GTX 1070 com só 8GB de VRAM. A regra de ouro diz que o modelo precisa caber 100% na VRAM para ter boa performance. Mas aqui a gente quebra essa regra usando offload de camadas para a memória RAM e mantendo os experts do Mixture of Experts na CPU.
+  
+  O teste roda no ZimaCube, um NAS com Intel i5 de 12ª geração e 16GB de DDR5. Mostro o passo a passo no llama.cpp: compilação, número de GPU layers, quantização do contexto com KV cache Q4 e ajuste da janela de contexto.
+  
+  O resultado final: 18 tokens por segundo com 132 mil tokens de contexto. 
+  
+  Configuração excelente para quem quer IA local barata, rodar modelos quantizados e aproveitar placas de vídeo antigas.
+  _______
+  
+  ⚡ Hardware
+  ⏵ ZimaCube: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira 
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytai35bem8gb
+  
+  _______
+  
+  0:00 Intro
+  1:55 Escolha do Modelo
+  2:46 Largura de Banda
+  3:39 Compilando o llama.cpp
+  4:08 Primeiro Teste
+  6:30 Janela de Contexto
+  7:33 Ajustando GPU Layers
+  9:06 Offload de Experts
+  11:38 Quantizando o Contexto
+  13:42 Contexto de 64k
+  14:33 Tentando Contexto Total
+  15:51 Ajuste Final
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Quando a gente pensa em rodar lm localmente, e há de forma geral, né, se a gente pensa em rodar em casa, muitas vezes a gente pensa em computadores caríssimos, placas de vídeo de milhares de dólares, mas não necessariamente precisa ser assim. Hoje a gente vai na direção contrária, a gente vai rodar um modelo de mais de 30 bilhões de parâmetros numa placa de vídeo com 8 GB. Pois é, eu tinha uma placa de vídeo aqui, ó, que tava pegando poeira. Outro dia eu tava olhando ela ali, eu falei: "Pô, eu preciso gravar alguma coisa lá pro canal, talvez rodar um modelinho de 2 bilhões de parâmetros, de 4 bilhões de parâmetros que cabe ali dentro da VRUN, né? Afinal de contas, para você ter o máximo de performance no melhor dos mundos, você precisa fazer com que todos os pesos do modelo, que quanto maior, mais pesado é, eles caibam 100% dentro da VR. Isso quer dizer que numa placa de
+
+8 GB você consegue rodar um modelo de 2 bilhões de parâmetros até sem quantção, mas modelos quantizados você consegue ir um pouquinho além, consegue rodar aí 4 bilhões de parâmetros, talvez 6 bilhões de parâmetros. Então essa é a regra de ouro que hoje a gente vai quebrar. Por quê? Se o teu modelo ele não couber 100% na Vrun, você consegue dividir ele com a memória do seu sistema, com a memória RAM. Quando você faz isso, você perde um pouco velocidade, mas você consegue rodar. Então hoje o nosso objetivo aqui
+
+é não só rodar dessa forma, fazendo essa divisão, a gente vai rodar numa GTX 1070 que tem 8 GB de VR e ela tá ligada ao meu Zima Cube, que é na verdade o NAS Network Attached Storage, que é um computador feito para ser um armazenamento, né? Você ter como se fosse ali o seu próprio Dropbox, digamos assim. E apesar desse ser o objetivo desse computador, ele é bem potente. Ele tem um i5 de 12ª geração e ele tem 16 GB de memória DDR5 e isso vai ser muito útil pra gente. Então, com 16 GB de memória RAM mais 8 GB de RAM, a gente tem mais ou menos aí 24 GB no nosso sistema. A gente não vai conseguir usar
+
+tudo porque tem sistema operacional, etc. Mas a gente vai tentar carregar um modelo aí de 20 GB. Vamos lá pra tela pra gente entender um pouquinho mais. Modelo que a gente vai tentar rodar no nosso sistema hoje é o Quent. você 35 bilhões de parâmetros com 3 bilhões de parâmetros ativos. Quando eu tava
+
+pensando em fazer esse vídeo aqui pro canal, eu me deparei com um vídeo de um canal chamado Kodacos. E no vídeo dele, ele roda esse modelo aqui numa placa de 6 GB. Eu falei: "Ah, se ele roda em seis, eu vou rodar em oito". A diferença é que ele tinha 24 GB de RAM, a gente só tem 16, mas vamos ver se vai dar certo. Primeira coisa é escolher o modelo, tá?
+
+a gente não conseguiria, por exemplo, nesse nosso caso, que a gente tem 24 GB de sistema, a gente não conseguiria carregar esse modelo Q6, porque só os pesos dele tem 28, mas no limite a gente consegue rodar esse modelo Q4 aqui, porque ele tem 21.2. E pra gente fazer isso, a gente vai excluir a parte de visão dele, que é essa parte aqui embaixo, que daria mais 900 MB. Então, nesse nosso caso, a gente só vai rodar a parte de texto do modelo. E aí, só por curiosidade, a nossa 1070, ela tem aqui, ó, 256 GB/s de largura de banda. Quanto
+
+maior esse número, mais rápido é a geração de tokens. Pra gente ter uma ideia aqui, a 5090 tem 1.7 TB, quase 1.8 na verdade TB/ por segundo. Ela tem 32 GB de RAM, mas mesmo que ela tivesse 8, comparando com essa placa aqui, ela seria muito mais rápida. Esse número é
+
+muito importante. E o computador que a gente tá rodando é o Zima Cube Pro, tá? Ele tem um i5 de 12ª geração, 16 GB de DDR5. Cara, eu tô apaixonado aqui nesse computadorzinho porque ele tá me ajudando bastante não só a fazer testes, rodar coisas aqui, mas também se agora o armazenamento pro meu Mac Studio. Inclusive a Zima me mandou uns produtos, me mandou o Zima Cube, o Zima Board e o Zima Blade. Eu vou deixar o link para
+
+eles aqui embaixo, são links de afiliado. Se você tiver interesse comprar por esses links, você ajuda o canal. Mas bem, hoje a gente vai usar o Lama CPP e a minha sugestão é você compilar ele de acordo com o teu sistema. Então vai na sua favorita Chat GPT, Cloud, GLM, Kim e pede para ele te ajudar a instalar pro seu sistema. Então eu tive que instalar aqui os drivers para essa placa, né? E eu compilei uma
+
+versão então do lama CPP que a gente tem aqui. Com isso feito, a gente já tem aqui alguns dados da nossa 1070, né? Ela tem 8 GB, tá tudo liberado aqui. Aqui embaixo a nossa memória RAM. E a gente vai começar fazendo um teste muito simples. Eu vou tentar rodar o
+
+modelo sem fazer muita coisa, deixando o sistema descobrir o que que ele tem que fazer lá. Então, ó, lama server, que é o que a gente tá iniciando. Passo aqui o caminho do modelo host 00 para eu poder acessar de outras máquinas. Então, nesse momento, por exemplo, eu tô gravando no meu Mac, mas eu tô conectado via SSH lá no meu punto que tá rodando aqui no Zimacube. Então, como eu vou querer acessar do Mac, eu boto esse host 00 porque vai ficar disponível para todos os computadores da minha rede interna. E
+
+a porta 8083 para eu saber onde que eu vou acessar aqui, ó. Vou dar um enter. Ele vai começar a carregar o modelo. A gente vai ver que esse número aqui, ó, ele vai subir aqui, tá? Já já. Aqui a
+
+gente vê que ele dá umas dicas e a gente vai mais pra frente falar um pouco dessas dicas que ele dá aqui, porque isso daqui vai ser importante pra gente. Bom, uma coisa que ele fez aqui foi diminuir o contexto. Esse modelo ele tem 262.000 tokens de janela de contexto, mas para ele conseguir carregar, ó, já carregou aqui uma parte na placa de vídeo, para ele conseguir fazer a mágica dele, ele teve que diminuir para 4.096.
+
+Tudo bem? A gente vai inclusive manter isso aqui durante boa parte do nosso projeto, porque a princípio o que eu quero é aumentar a velocidade, fazer com que ele consiga entregar um máximo de tokens por segundo. Depois a gente vai ajustando para aumentar o contexto. Então ó, tudo carregado aqui. Vamos testar. Então ó, nosso modelo tá
+
+carregado aqui com 4.000 tokens de contexto. E aí eu vou dar um oi aqui para ele, ó. Tá processando rapidamente aqui, vai começar a me responder. Ó, começou a responder ali, ó. E a gente vê
+
+que tá variando um pouco, ó. Seis tokens, cinco tokens por segundo, mas já já ele vai pegar no tranco. A gente vai conseguir ver isso, ó. Tá começando a pegar no tranco aqui, ó. Tá aumentando seis tokens por segundo, 10 tokens por segundo. E eu confesso que isso daqui já
+
+é mais do que eu esperava, tá? Principalmente sem fazer nenhuma modificação, conseguir 10 tokens por segundo tá muito bom. Só que eu vou te falar, eu acho que ele tá rodando mais do que 10 tokens por segundo. Vamos fazer mais um prompt aqui, ó. Conte uma piada. Olha lá, 14 tokens, 15 tokens por
+
+segundo. Vamos ver se ele vai chegar a 16. Não sei. 16 tokens por segundo. Boa.
+
+Será que será que chega 17? 17 tokens por segundo. Boa. 18. Bateu 18 tokens por segundo. Pronto, pode encerrar o
+
+vídeo. Eu não esperava isso. Eu esperava trabalhar um pouquinho mais para chegar nesses 18 tokens por segundo. Mas tem uma pegadinha aqui. A gente tá com 4.000
+
+tokens de janela de contexto só. A gente depois vai ter que aumentar essa janela de contexto. 18 tokens por segundo. Então, ó, ele gerou 1693 tokens. Deixa eu dar mais um oi aqui pra gente ver se ele vai mais rápido ainda.
+
+Ó, 19. começou com 19 ali, a gente vê que ele vai aumentando, né? Por que que isso acontece? Ó, chegamos a 20 tokens por segundo. Isso acontece porque quando a gente começa a carregar o modelo, nem todas as camadas dele estão carregadas na memória RAM, tá? Ele carrega 6.8 GB
+
+aqui. Ele carregou na placa de vídeo, inclusive tem uma sobra aqui que a gente vai tentar aproveitar, mas na memória RAM ele vai carregando enquanto ele vai precisando ali das camadas. Aí ele carrega e aí por isso que ele vai ficando mais rápido conforme a gente vai usando. Uma forma de evitar isso seria usar aquele no MAP, que ele mesmo indica assim, ele força com que o modelo todo seja carregado na memória RAM, mas porque a gente tem pouca memória aqui, eu não vou fazer isso, pelo menos não por enquanto. O que eu vou fazer agora é o seguinte, ó. Tá vendo que a gente
+
+tinha uma memória sobrando ali, né? Tinha 6.8 de 8 GB. Então o que eu vou fazer é fazer com que o modelo seja o máximo possível carregado na viewarm, carregado na placa de vídeo. Então para fazer isso, eu vou fazer a seguinte flag aqui, ó, traço NGL, que é number of GPU layers, ou seja, o número de camadas que a gente quer carregar dentro da GPU. E
+
+aí, só pra gente ter uma ideia, o número de camadas ela vai variar de modelo para modelo, tá? a gente consegue normalmente ver no card do modelo. Então, se a gente for aqui no card do modelo original, a gente tem aqui, ó, o número de camadas dele são 40 camadas, mas a gente também poderia ver, se não tivesse ali no card, a gente poderia ver aqui, ó, em config.jonjon e a gente pode procurar por layers. E a gente vai ver aqui, ó, número de layers escondidos, 40 layers.
+
+Então, esse daqui é o valor de layers que tem no modelo. Nesse caso aqui, eu poderia botar 40, né? Mas como uma prática de querer dizer que eu quero todas as camadas lá, normalmente a gente bota 99, porque aí mesmo se o modelo tiver mais camadas ou menos, a gente não precisa ficar olhando tanto ou até 999 para garantir, digamos, entendeu? Qualquer número grande que você coloque aqui, que seja maior do que o número de camadas, vai indicar que você quer todas as camadas dentro da GPU. Deixa eu dar um clear e vamos tentar rodar isso aqui agora pra gente ver o que que vai acontecer. Ó, deu ruim, né? Por eu
+
+tentei carregar o modelo de 20 GB dentro da placa de vídeo e não cabe. Não cabe. A nossa placa de vídeo tem 8 GB de VBRAM só. Então, como que a gente pode resolver isso? Eu quero carregar o máximo possível dentro da placa de vídeo, mas eu vou ter que carregar um pouco na CPU também, um pouco na memória RAM. Então, para fazer isso,
+
+principalmente por esse modelo aqui ser um modelo mixture of experts, a gente consegue carregar aquelas camadas de experts na CPU. Então, nesse caso aqui, ó, se a gente fizer uma conta de padaria, digamos que nosso modelo tem aproximadamente 20 GB, eu quero carregar 8 na VAM, 8 para 20 seria 40%. Ou seja, 60% eu preciso carregar na CPU. Como nosso modelo tem 40 camadas, eu preciso carregar aí pelo menos 24 camadas na nossa CPU. Então, vou usar a tag aqui, ó, N de número, CPU, MOI, né, que são os experts. Passar até um pouco mais. Vou
+
+passar aqui 28 pra gente ver, tá? E aqui vamos ver se vai carregar agora. Então eu tô tentando carregar o máximo possível na placa de vídeo, mas eu tô indicando para ele, ó, carrega primeiro esses aqui na CPU, garante esses aqui e o resto que sobrar, aí sim tudo você carrega na GPU. Ó, mais uma vez, ele jogou a, eu não pedi, ele jogou automaticamente o contexto para 4096. Tudo bem pra gente, mas a gente pode ver que olha aqui, ó, 7948, né? Antes tava 6.8 GB, agora tá 7.9 GB.
+
+Ainda tem uma sobrinha, mas essa sobrinha bom de deixar. Então aqui a gente tá usando ao máximo agora a nossa placa de vídeo. Mais uma vez vou começar lá com o nosso oi, tá? E ó, na primeira rodada aqui a gente já tá conseguindo 14, 15 tokens por segundo. 16, 17.
+
+Então, já tá mais rápido. Ó, quando a gente mandou o nosso primeiro oi antes, a gente conseguiu 10 tokens por segundo. Agora a gente já conseguiu 16 no nosso oi. Vamos pedir ali para ele contar uma piada, pra gente ver se isso daqui vai ficar um pouco maior. Ó, 17, 18. Vamos
+
+ver se a gente consegue passar dos 20 tokens. E eu acho que vai conseguir, tá? Vamos ver. 20 tokens por segundo. Será que a gente consegue 22? Ó, a gente
+
+conseguiu 21 tokens por segundo. Talvez se eu der mais um prompzinho, a gente chegue a 22. Ó, a gente conseguiu, passou dos 22 tokens por segundo. Então agora as camadas já estão bem carregadas ali, ele tá um pouco mais ágil. Se você tiver mais memória do que eu tenho, você pode usar o no MAP, né? Porque aí você
+
+vai carregar tudo na memória RAM primeiro e você já vai conseguir a velocidade de cara aqui. Pra gente vai ficar muito no limite, então não vou usar agora. Beleza, 22ens por segundo numa placa de 8 GB, um modelo de 35 bilhões de parâmetros. É incrível. Eu já acho isso aqui incrível, tá? Só que
+
+agora a gente tem um problema. A gente tá com 4.000 tokens de contexto só. Isso aqui é muito pouco. Mais umas mensagens aqui a gente bate o nosso contexto todo.
+
+Então vamos tentar resolver isso e de quebra ganhar mais uma velocidade. Que que acontece aqui? A gente tá carregando 7.9 9 GB, né, na nossa placa de vídeo. Só que dentro dessa memória aqui, a gente tem pesos do modelo, mas também espaço para contexto. Então, se a gente
+
+tiver um contexto maior, a gente vai ter menos camadas carregadas aqui na nossa memória e vai diminuir a nossa velocidade. Mas o que eu vou fazer antes de aumentar a janela de contexto é pegar esse contexto, essa janela que a gente tá usando e quantizar ela, transformar ela numa representação mais leve. Assim a gente vai conseguir representar mais dados com menos memória. Mas por enquanto vamos manter 4.000 tokens de janela de contexto pra gente ver se a gente consegue um pouquinho mais de velocidade. Então vamos lá. Que que eu
+
+vou fazer? Primeiro eu vou forçar a minha janela de contexto context size para 4096. Tá? Por quê? Porque como eu vou quantar o KVC cash, que é o contexto, ele vai ocupar menos espaço.
+
+Se eu não colocar essa flag aqui para forçar o contexto para 4.000, automaticamente pode ser que o lama CPP queira botar mais contexto dentro da nossa VRUN. E nesse momento a gente não quer, a gente quer aproveitar para diminuir o quanto tá ocupando o contexto na VRUN e botar mais layers do modelo lá. Então a flag para o KVCh é cash type e a gente tem o K e o V, né? Então cash type K. Se você tiver rodando uma versão
+
+do Neama CPP que tem acesso a turbo quant, turbo quant seria a melhor opção. Aqui a versão que eu tô rodando não tem turbo quant implementado, então vou usar Q4. Q4 você já começa a ter uma perda, tá? Mas como o nosso modelo ele também é Q4, a perda talvez não seja tão significativa assim. Então Q4_line 0, traço traço cash, traço type, traço V, Q4 também. Então aqui, ó, eu não mexi
+
+ainda na quantidade de layers, provavelmente eu vou ter que mexer, mas eu tô mantendo, forçando o meu context size para 4 e eu quero que ele ocupe menos espaço. Tô show de bola. Carregou aqui. Vamos testar novamente o nosso modelo, começar com o nosso oi, continuar com a nossa piada. OK. A gente
+
+ainda tem ali em torno de 20 tokens por segundo. Beleza? Então, até agora tá funcionando bem. O que a gente quer agora é aumentar esse contexto. É um contexto muito baixo. Então vamos tentar
+
+modificar aqui, ó, para 64.000. Vamos rodar. E olha só, não rodou. Porque mesmo a gente tendo utilizado aqui KVCh Q4, a nossa memória tava muito próxima do limite já. Então aumentar
+
+esse contexto aqui fez com que a gente tivesse um overflow de memória, a gente não conseguisse carregar tudo na nossa viran. Então, o que a gente vai fazer é o seguinte, a gente vai pegar desses 28 layers que estão sendo carregados na CPU, a gente vai aumentar esse número, vai carregar um pouquinho mais na CPU para liberar mais espaço na GPU. Então, vou colocar aqui, ó, 30, por exemplo. Vamos ver se 30 vai funcionar. Então, com 30 layers carregando na CPU, a gente conseguiu e ainda sobrou, ó, sobrou um pouco menos do que 1 GB aqui, né? Então,
+
+a gente ainda tem espaço para mais contexto. Então, vou nem testar aqui, já vou aumentar esse contexto e vamos na gan aqui, ó. Vamos tentar o contexto inteiro, né? 262.14 tokens. Vamos ver se a gente consegue
+
+carregar o contexto inteiro aqui. Se a gente tivesse mais memória RAM, a gente conseguiria carregar esse contexto inteiro tranquilo. Agora, com 16 GB, eu tô achando que talvez não dê. Vamos ver. Cruzando os dedos aqui, ó. Uh, não
+
+carregou tudo. A gente pode tentar jogar um pouquinho mais pra memória. Provavelmente a gente vai ter uma perda de velocidade, porque tá começando a ficar no limite aqui. Ele talvez comece a causar swap, né? Que é você a memória usar o HD como se fosse uma memória?
+
+Vamos tentar 31. Agora a gente vai de um em um aqui para tentar extrair o máximo. Uh, ainda não. 32. Se não der 32, a gente provavelmente vai ter que diminuir o nosso contexto. Ó, tá indo, tá? Acho
+
+que agora tá indo, hein. Acho que eu acho que já carregou. Carregou. Ah, agora vamos testar lá. Vamos ver a nossa taxa de tokens por segundo. Oi. Ah, lá
+
+deu uma queda legal agora, hein? O que tá acontecendo é que agora a memória run não é o suficiente e ele tá fazendo swap. Ele tá usando HD como se fosse memória RAM. E aí a taxa de transferência do HD é muito baixa, então fica muito muito lento. Cara, tomamos um bac, eu nem vou continuar aqui, ó. Tá
+
+muito muito abaixo do esperado. Então a solução vai ser a gente diminuir aqui novamente, tá? Então vou diminuir aqui pra 30 e aqui eu vou diminuir pr, vamos tentar metade, 132.000. Ó, com 132.000 a gente tá conseguindo
+
+carregar. E sobrou um pouquinho de memória aqui, tá? Talvez a gente consiga. Vou fazer o seguinte, vou parar ele aqui porque eu vou tentar tirar mais um mais um layerzinho ali, ó. Vamos ver se 29 des a gente volta para 30 e usa com 132 mesmo. É, não deu 29 não deu,
+
+não foi. Então a gente vai com 30 mesmo, tá? 132.000 tokens de contexto aqui. Oi, ponte uma piada. Então aqui a gente
+
+conseguiu 15 tokens por segundo para 132.000 1000 tokens de contexto. E agora, se você quiser com 132.000 tokens de contexto, dá pra gente carregar uma reunião inteira, por exemplo, para fazer um resumo. Dá para fazer bastante coisa.
+
+Ó, dei mais um oi aqui e a gente tá conseguindo então 18 tokens por segundo com 132.000 tokens de contexto. Então, no início ele começa meio lentinho, ó, nove tokens, mas conforme ele vai se aquecendo, ele vai ficando mais rápido. Então, 18 tokens por segundo a 132.000 1000 tokens de contexto. É simplesmente
+
+incrível. Nesse sistema aqui, a gente tá falando de um computador com i5, 16 GB de RAM e uma placa de vídeo de 8 GB de VRAM apenas. E é isso aí, se esse vídeo foi útil para você, deixa aquele hype, tá? Porque ajuda a mostrar para outras pessoas. Deixa o seu like também para eu saber que você gosta desse tipo de conteúdo. Por acaso, eu acho que eu
+
+tenho uma placa AMD mais antiga que essa ainda. E se vocês quiserem, eu posso trazer esse conteúdo. A forma de eu saber isso é através do like, beleza? E é claro, não deixa de se inscrever também. Se você também tem uma placa um pouco mais antiga e vai usar isso aqui, deixa aqui embaixo quantos tokens por segundo você conseguiu, qual que é o teu sistema, qual que é o teu processador e etc. Vamos criar uma comunidade legal
+
+pra gente trocar essa ideia. Agora, se você tem uma placa mais potente, quiser saber um pouco mais sobre treinamento de modelo, eu fiz um vídeo lá pra minha área de membros, que eu vou deixar o link aqui, ó. E se você quiser ver um modelo rodando sem placa de vídeo nenhuma, eu fiz um vídeo sobre o Zima Board, vou deixar o link aqui para você. O Zimbabord tem 16 GB de RAM, então dá para carregar uns modelinhos, dá para fazer uma brincadeira. Dá uma olhada lá.

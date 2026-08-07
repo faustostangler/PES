@@ -1,0 +1,190 @@
+---
+video_title: "QWEN 3.5 122B - OPEN SOURCE rodando LOCAL (bem MELHOR do que eu pensava)"
+video_id: Que1pb2shRQ
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Que1pb2shRQ
+video_date: 2026-02-25T07:40:07+00:00
+video_description: |
+  Qwen 3.5 122B rodando localmente com MLX: testes completos de velocidade, visão em vídeo e geração de código.
+  
+  A Alibaba lançou as versões menores do Qwen 3.5 e o modelo de 122 bilhões de parâmetros virou o sweet spot pra quem quer rodar um LLM open source poderoso sem precisar de hardware absurdo. Com arquitetura Mixture of Experts (MoE) e apenas 10 bilhões de parâmetros ativos, ele cabe em 130 GB com quantização a 8 bits, rodando a quase 40 tokens por segundo no Mac Studio.
+  
+  Nesse vídeo a gente testa ele direto no LM Studio e via linha de comando com MLX, incluindo o recurso de análise de vídeo que ainda tá em beta. Também passamos pelos benchmarks no Hugging Face, comparando com Qwen 3, GPT 5 mini e outros modelos na mesma faixa de parâmetros.
+  Se você não tem hardware pra rodar localmente, a gente ainda cobre os preços de API direto na Alibaba Cloud Model Studio: entrada a $0.40 e saída a $1.20 por milhão de tokens para o 122B, uma das opções mais competitivas do mercado open source hoje.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen122b
+  
+  _______
+  
+  0:00 Intro
+  1:37 Documentação
+  4:43 LM Studio
+  7:10 Teste de Velocidade
+  8:10 Visão em Vídeo
+  11:02 Preços e API
+  13:46 Criando Jogo
+  17:10 Criando Site
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Hoje é um dia muito especial para quem gosta de LLM Open Sóce, porque o pessoal da Alibaba começou aí a lançar as versões menorzinhas do Quen 3.5, o mais novo modelo deles. Quem acompanha aqui o canal sabe que eu já subi até um vídeo sobre o Quentin 3.5 de 397 bilhões de parâmetros e até para rodar aqui no meu Mac Studio que tem 256 GB, foi quase impossível. Eu tive que quantizar ele a 3 bits, mas deu para rodar e deu um resultado legalzinho, tá? Se você quiser
+
+assistir, eu vou deixar o link aqui no card ou na descrição, em algum lugar, vou deixar esse link. Então, esse é de fato um modelo muito difícil de rodar. Para rodar com um pouco mais de folga, teria que ter aí um Mac com 512 GB ou então teria que ter uns 2 trilhões de dólares em placas de vídeo. Mas se você não tem essa grana sobrando ali embaixo do colchão, seus problemas acabaram, porque a Alibaba tá lançando as versões menores desse modelo que é tão novo, mas que a gente já gosta tanto. Eu tô falando do Quentin 3.5 de 122 bilhões de
+
+parâmetros, do Quentin 3.5 de 35 bilhões de parâmetros e do Quentin 3.5 de 27 bilhões de parâmetros. Tanto a versão de 122 quanto a de 35, elas são mixture of experts, quer dizer que elas não ativam todos os parâmetros ao mesmo tempo. No caso da de 122, ela ativa 10 bilhões de parâmetros. E no caso da de 35, ela
+
+ativa 3 bilhões de parâmetros. Já a versão de 27 bilhões de parâmetros, ela é densa, quer dizer que ela ativa todos os parâmetros. Ela acaba sendo um pouquinho mais lenta, mas em alguns cenários ela vai ter uma qualidade maior do que a de 35, por exemplo. Inclusive, se você quiser ver um pouco mais sobre isso, eu também fiz um vídeo aqui pro canal. Quintas. 5, 35 bilhões versus 27
+
+bilhões. Quem foi que saiu melhor? Dá uma olhada. Vou deixar o card aqui também. Mas hoje a gente não tá para falar aqui dos pequenininhos, não. Tá
+
+para falar do médio, do de 122 bilhões de parâmetros. A gente vai ver vídeo com ele, vai rodar ele localmente, vai ver onde que dá para rodar. Se você não tiver uma máquina que dê para rodar um modelo de 100 bilhões de parâmetros, porque ainda assim é parâmetro, né? Muito parâmetro. 100 bilhões de parâmetro é muito parâmetro. Então, onde
+
+que dá para rodar isso aí via API? Porque pode ser interessante. Vamos lá pra tela, pra gente ver isso. Então, Quen 3.5 122B A10, quer dizer que são 122 bilhões de parâmetros no total com 10 bilhões de parâmetros ativos. Aqui no
+
+card diz que é 125, tá bem? É por aí, 122, 125. Tá tudo ali na mesma faixa. O card do Huging Face vai ser muito parecido com os outros modelos, porque a mesma família eles têm as mesmas características, tá? É um modelo com licença 2.0, um modelo com 200, cadê?
+
+262.000 tokens por janela de contexto nativamente, mas com rope você consegue estender isso até 1 milhão de tokens na janela. É muito token. E aqui embaixo aí sim a gente tem uma tabela que é bem interessante, tá? A gente tá falando agora do Quentin 3.5 122 bilhões de
+
+parâmetros. E aqui é como ele se compara com outros modelos, incluindo a versão anterior da família Quen, que é a Quen 3, que tinha 235 bilhões de parâmetros no modelo maior. E ele era um pouquinho mais lento, né, porque ele era 22 bilhões de parâmetros ativos. Mas compara também com o GPTOS 120, que é um excelente modelo, tá? Principalmente para esse nível de tamanho. Então tá bem
+
+comparável aqui, 120, 122, tá bem na mesma faixa. E compara também com o GPT5 Mini, que aí a gente tá falando de um modelo fechado de uma das grandes empresas que é Open Rai. E ó, entre todos esses modelos aqui nos benchmarks de conhecimento, o Quen 3.5 de 122 bilhões de parâmetros, a gente nem tá falando do irmão maior, de 397, ele bate todos esses outros modelos em todas essas categorias, tá? Só nessa daqui se evol é que ele perde um pouquinho pro Quen 3, que tem o dobro de parâmetros dele, mas ele perde por um pouquinho, 0.2 pontos. Inclusive, não dá para
+
+ignorar que aqui do lado a gente tem o de 27 bilhões de parâmetros mandando muito bem também. Ó, quando a gente fala de seguir instruções, aí a gente tem também ele batendo em quase todos os outros, perdendo por muito pouco aqui pro GPT5, que é um modelo fechado, mas dando um banho aqui no modelo que tem o dobro de parâmetros dele. Mesma coisa que Long Context, ele perde também pro GPT5, mas ele ganha dos outros. E na verdade pra gente é isso aqui que a gente quer, código. Então ele empata com GPT Mini lá em código. Não que o GPT
+
+Mini seja o melhor modelo de código, né? Mas é um modelo razoável, digamos assim. E no caso GPTOSS 120, que tá aqui nessa coluna, ele também não é modelo de todo ruim, não. Inclusive, ele ganha aqui, ó, em alguns dos benchmarks, né? Mas em outros o Quent.5 leva. E aí quando a
+
+gente fala aqui, ó, de agentes, né? Olha isso aqui, olha essa diferença. Ele dá um banho no GPTOSS, dá um banho no GPT5 mini, né? Então os resultados são muito melhores. Tem aqui também os dados sobre linguagens, mas se a gente quiser, a gente pode ficar aqui analisando o númerozinho o dia inteiro. Não é para
+
+isso que a gente tá aqui, não. Vamos colocar a mão na massa, vamos brincar com esse modelo aqui. Eu já tô aqui com o meu LM Stúio, tá? E eu tô com a família inteira junta, juntei todo mundo, menos o modelo básico. Tem o modelo base também, 35 milhões de parâmetros. Es se a gente não trouxe,
+
+porque senão a gente vai ficar falando com as paredes. Modelo base não responde nada direito, tá? Então nem vou testar aqui no canal, mas é bom pra gente treinar em cima dele. Se você quiser treinar em cima de um modelo base, é sempre um caminho interessante. Aqui a gente tem então o nosso astro do vídeo, que é a versão MLEX do Quin 3.5, 122
+
+bilhões de parâmetros, 10 bilhões de parâmetros ativos. E esse modelo aqui eu mesmo converti e eu mesmo quantizei, porque quando eu fui procurar lá no Huging Face ninguém tinha convertido ainda. Então eu falei: "Pô, quero gravar esse vídeo logo, vou eu mesmo converter, vou eu mesmo quantizar". Se você quiser saber como que se converte um modelo, como que se quantiza um modelo, eu fiz um vídeo lá pro meu canal onde eu falo sobre Apple, porque a gente usou o Mac Studio para fazer essa conversão de um modelo lá do Hugin Face pra MLEX. E aproveitando e no mesmo balaio de gato, já faz logo ali a quantização, que é diminuir o tamanho dele, né? Diminui um
+
+pouco a precisão também, mas nesse caso aqui a gente tá usando 8 bits, o que vai ter quase nenhuma perda perceptível. E falando em 8 bits, olha só essa comparação que interessante. A gente vai rodar aqui o modelo de 122 bilhões de parâmetros a 8 bits e o espaço que ele ocupa é de 130 GB. Se a gente comparar com o irmão maior dele lá, o Quentin 3.5, 397 bilhões de parâmetros, a gente vai ter 174 GB. Só que com 3 bits. Essa é a
+
+diferença. E 3 bits aí você já perde muita qualidade. E é por isso que eu acredito que essa versão aqui ela é um sweet spot para quem é maluco. Digo, quem é entusiasta, que tem um hardware um pouco mais potente como um DDX Spark, ele rodaria uma versão Q6. Daria para rodar também uma versão dele Q4 num MAC Studio com M3 Ultra base, que é aquele que vem com 96 GB. Quem também tem 96 GB
+
+é a RTX 6000 Pro, mas aí a gente já tá falando um hardware que nos Estados Unidos custa $.000. Vamos lá, vamos carregar o modelo. E hoje eu tirei o dia para gravar sobre os modelos Quen 3.5.
+
+Então, nesse momento que eu tô carregando esse modelo aqui, é a primeira vez que eu tô carregando ele, eu não faço ideia dos resultados que a gente vai ter, tá? Vocês vão est vendo pela primeira vez e eu também. Já deve ter uns 20 minutos de bruto aqui. Eu não sei nem se vai rodar, na verdade, mas a gente vai saber. Agora eu quero ver aqui, ó, qual que é a velocidade de entrega dele com esses 10 bilhões de tokens ativos. Ó, eu pedi aqui uma
+
+história, ele tá pensando lá, toda a parte de pensamento dele é em inglês, mas a história ele vai entregar em português, pelo menos assim espero. A loja dos sons perdidos. Hum, show de bola. Ele criou aqui a história pra gente. Se você quiser ler essa história, pode dar um pause aí no vídeo, né? E
+
+aqui a gente tem 36.94 tokens por segundo. Lembrando que esse modelo aqui tá com a conetização de 8 bits, tá? O que torna ele um pouquinho mais lento. Se ele tivesse 4 bits, ele seria ainda mais rápido, mas quase 40 tokens por segundo é super utilizável.
+
+Então 37 tokens por segundo é a velocidade desse modelo aqui. O Quent. Ele é um modelo com capacidade de visão, tá? E com 100 bilhões de parâmetros. Acredito que ele vai ser muito bom nisso, em identificar imagens e vídeos.
+
+Então eu quero saber como que esse modelo é identificando vídeos. Só tem um problema. Se eu criar um novo chat aqui, carregar um vídeo aqui no LM Studio, ou melhor tentar carregar esse vídeo, porque ele não deixa eu carregar vídeo no LM Studio, a gente vai ficar chupando o dedo se a gente tentar isso. Então o que que eu vou fazer? Vamos rodar direto no MLEX, porque o MLEX tem uma funcionalidade relativamente nova, que é pra gente pedir para ele gerar uma resposta a partir de um vídeo. Para
+
+isso, a gente tem que ir lá pro terminal. Então, já tô aqui, ó, com meu comando preparado, MLX VLM, pronto para rodar aqui o vídeo generate. Eu preciso passar onde que tá o meu modelo, que ele vai carregar o modelo aqui, inclusive eu preciso descarregar lá do LM Studio. Tô passando aqui o máximo de tokens. Qual que é o meu prompt? Eu vou passar para
+
+ele esse vídeo aqui, que é o vídeo de um joguinho, né? Então eu quero que ele consiga descrever esse jogo aqui com o detalhe necessário para que um game developer fosse capaz de recriar esse jogo. Então é basicamente o jogo são dois etzinhos lá em cima que vão lançando essas amebinhas e os monstinhos aqui embaixo tem que pegar com a cor certa, né? E eles flipam, ele mudam de um lado pro outro. E no final ainda tem essa telinha aqui. Vamos ver se ele vai
+
+reconhecer isso também. Então, mandei meu prompt, falo onde que tá o vídeo, dou mais algumas configurações e vamos ver o resultado. Beleza, modelo carregando. Ele me diz aqui que essa versão de entender vídeo tá em beta, no MLEX. Vamos ver qual que vai ser o resultado. Ó, tá começando a ler lá o
+
+vídeo, ó. Já entendeu aqui que é um catcher game, mas aí deu uma viajada aqui de flapird do jump. Primeiro que flapird do jump tem nada a ver um com outro, mas ó, já tá reavaliando aqui. Vamos ver. Aqui tem um detalhe, eu passo para ele qual que é o FPS. Então, se eu
+
+passar um FPS muito baixo, ele não vai ver o boneco girando e não vai entender nada, né? Ó, ele tá achando que o personagem ele vai pra esquerda ou pra direita, ele não tá entendendo bem. Bem, isso aqui é só o pensamento. Vamos focar na resposta final dele. Show de bola.
+
+Ele gerou um resultado aqui pra gente. Ele usou 131 GB de memória. Foram 19.000 tokens, tá? Ele pensou bastante aqui e ele entregou pra gente a 34.459 4 59
+
+tokens por segundo. Só que beleza, ele identificou várias coisas certas e uma coisa errada. Então aqui tem todo uma linha de pensamento dele e a resposta dele tá aqui. Ele identificou um jogo como lane switch in game, que seria pra gente trocar um personagem o da esquerda para da direita e etc. Não é isso o jogo, né? O jogo você gira o personagem,
+
+você faz um flip no personagem. Mas ele trouxe uma coisa interessante. Olhando novamente o jogo aqui, a gente tem Tap to switch e talvez o correto aqui seria Tap to Flip, né? Porque você flipa ali o bonequinho. Todo o resto foi quase tudo certo. Aqui é o inimigo, né? Ele tem
+
+duas dois objetos não identificados alienígenas, os itens que caem, os elementos aqui, tudo isso tá certinho, só a mecânica mesmo que ele errou. Mas tem um motivo dele ter errado. Quando eu dou o meu prompt aqui, eu passo para ele o FPS, tá? Então, provavelmente esse FPS tá muito baixo e ele não tá conseguindo ver o personagem gerar. Eu não sei se isso aqui vai estourar minha memória, mas eu vou tentar passar para ele 30 fps. Vamos ver se ele vai conseguir
+
+processar 30 fps e se isso vai mudar a resposta dele. Quanto ele tá pensando aqui, definindo o que que ele vai responder pra gente, vamos ver como que a gente poderia rodar esse modelo se a gente não tivesse capacidade computacional para rodar ele localmente. Normalmente eu uso como referência o Open Router, né, inclusive pra gente ver preço de API, etc. Só que dessa vez o Quen não liberou aqui o modelo. Ainda tem o 3.5 397, tenho o 3.5 Plus, mas não
+
+tem o de 122, nem o de 35, nem o de 27. Então a gente precisa ir aqui, ó, na Alibaba Cloud Model Studio, que é a fonte, né? É de onde vem o modelo de fato. Quen é uma família de modelos da Alibaba. Então aqui a gente consegue ver tudinho. Modelo de 35 bilhões de
+
+parâmetros, mixture of experts. Você conseguiria rodar ele através da própria Alibaba. a um preço de 25 de dólar o input, o output. Quando a gente vai pro de 27 bilhões de parâmetros, ele é um pouquinho mais caro, teoricamente um pouquinho mais inteligente também. 30 centavos, 1 milhão de tokens de entrada, 2,40 1 milhão de tokens de saída. Aí
+
+quando a gente vai pro de 122 tem um saltinho bem de leve, né? 40 centavos, 1 milhão de tokens de entrada, 3,20 1 milhão de tokens de saída e por último o de 397. Aí o salto é um pouco maior. 60 centavos 1 milhão de tokens de entrada, 3.60 1 milhão de tokens de saída. Então você
+
+não precisa ter um Mac Studio de Jack Park para rodar esses modelos, não. Você pode rodar via API. E eu vou te falar aqui, se a gente considerar aqui o de 122, por exemplo, que a gente ainda tá testando, a gente não sabe se ele é bom, mas se ele for bom, não é tão caro não. Uma coisa que eu tenho visto bastante é as pessoas indo pro melhor modelo para fazer tudo, mas nem sempre você precisa o melhor modelo. Então acho que o segredo, a magia é você saber diferenciar quando você precisa de um modelo maior, quando que você pode usar um modelo menor e aí você vai conseguir o melhor dos dois mundos. Você usa o
+
+modelo menor, que vai ser muito mais barato quando você precisa de algo mais simples. E aí você usa o modelo caro só para aquela parte ali, só pro core onde você precisa dele. E assim você também não gasta tokens à toa. Vamos ver aqui, ó. Nosso modelo já respondeu agora com muito menos tokens, 4188. Vamos ler a
+
+resposta dele, mas tô achando que o FPS fez um milagre. E o pico de memória nem foi tão maior, não. Vamos dar uma olhada aqui, ó. Alien switch run. Run. Esse
+
+daqui é um jogo two player, não é to player do Endless Runner, não é Runner, tá? Mas ele entende. O objetivo é coletar as red apples to increase your score a void. Não, ele errou, tá? Ele entendeu que só tem uma vida, mas acho que ele não entendeu direito. Ah, não tá
+
+tão ruim não, na verdade, porque ele tá levando em consideração que tá todo mundo se movendo, né, para cima. Não é o caso tá todo mundo parado, mas poderia ser. Ó, como as nuvens lá estão paradas, ele não tá correndo nada. Se as nuvens estivessem se mexendo, aí poderia até pensar que tá uma caçada aqui, né, correndo, mas não é o caso. Mas ok. Aí
+
+ele continua achando que tocar no monstro troca eles de posição, mas não é o caso. Eu vou fazer o seguinte, eu vou pedir para ele criar esse jogo aqui, então, e a gente vai ver qual que vai ser o resultado. E eu vou mudar aqui também o máximo de pixels pro valor lá do vídeo. O FPS acho que 30, tá bom? Vamos pedir para ele recriar esse jogo aí. Quanto ele tá criando um código aqui
+
+pra gente, só um comentário pertinente aqui. Normalmente essa forma de executar MLEX via linha de comando, por exemplo, é mais eficiente. Ele consegue fazer mais coisas do que o LM Studio. Mas normalmente você me vê aqui usando LM Studio, porque pro vídeo, principalmente, para quem é iniciante, ele é mais fácil de você pegar e ele tem toda uma ferramenta ali que te ajuda a fazer algumas coisas, mas aqui acaba sendo mais eficiente muitas vezes. Pronto, aí terminou aqui 7.000 1000
+
+tokens de geração. Vamos ver se nosso HTML aqui se vai funcionar ou não. Mais uma vez ele foi na linha do trocar os personagens, mas ok. Até gostei aqui do visual. Ó o que que aconteceu aqui, ó. Ué,
+
+o que que era para eu fazer? Então não tem nenhum jeito de ganhar aqui, pelo visto. Bem, eu gostei bastante da tela de restart ali. Aqui ele identificou o score, recriou o score. Não é exatamente como funciona lá, porque não é pelo tempo, é quando você pega um item. Ele
+
+identificou aqui os itens que não são exatamente estrelas lá, mas tem alguma semelhança como a estrela. Então, OK. Aqui a gente tem os monstros que ele tentou fazer alguma coisa, não é a melhor execução não, mas beleza. As nuvens aqui atrás ele representou de uma forma bem simples, mas quer dizer que ele conseguiu identificar lá na imagem. É o background roxo, né, com degradê, ele implementou colisão. Então assim, é
+
+um bom ponto de partida. Agora eu vou fazer o seguinte, vou voltar lá pro meu LM Stúio, vou carregar aqui ele e vou falar o seguinte, tá? Eu tô passando aqui o código que ele gerou e eu tô dando mais instruções para ele, dizendo um pouco melhor como que o jogo funciona, porque eu quero ver se ele vai consertar. Então, basicamente, eu tô explicando que personagem, na verdade, ele gira, 180º, é, eles não trocam de pista e o jogo termina se a estrela da cor vermelha tocar parte verde do personagem e vice-versa. E a pontuação também só aumenta quando ele come uma estrela. Vamos ver se ele consegue
+
+ajustar. Ó, ele entendeu bem a minha instrução, tá? E agora vamos ver qual que vai ser o resultado. Pronto, terminou aqui. Vamos ver agora o resultado modificado se teve alguma alteração ou não.
+
+Então, ó, teve alteração. Beleza. Ô, que que aconteceu?
+
+É, ó, não tá funcionando ainda. Então, o que que ele fez aqui? Primeiro ele corrigiu o monstro, né? Tá muito mais parecido com o nosso monstro lá. Se vier uma estrela verde aqui, funciona, mas se vier vermelha não. Desse lado aqui não
+
+funciona de jeito nenhum. Mas, ó, aqui vai funcionar, ó. Ele não vai perder. Beleza. Deixa eu, deixa eu tentar novamente, ó.
+
+Beleza, ó. Vai funcionar. Virei. Então, sempre que bate estrela vermelha tá dando game over. Mas é um bom start. Vou
+
+fazer mais um teste aqui. Vou pedir para ele criar um site. Crie um site de uma loja de DVDs usados, tá? Seja criativo. Eu vou fazer o seguinte aqui, ó. Vou
+
+aumentar a temperatura. A gente tá com a temperatura zero, o que muitas vezes para código pode ser interessante, só que como eu quero ele um pouquinho mais criativo, vou botar 0.25. Vamos pedir para ele gerar aqui, ó. Que interessante essa resposta, hein? Para criar algo
+
+realmente criativo, vamos fugir do padrão Amazon ou Mercado Livre. Vamos abraçar a nostalgia. O conceito é o arquivo. Legal. O design será inspirado na estética Y2K. Não sei o que que é
+
+isso. Cyberpunk Retrô, anos 90, 2000, com fontes monoespaçad. Legal. Cores neon. Uma interface que simula um antigo terminal de computador ou um player de mídia antigo. Não apenas assista, toque,
+
+sinta, colecione. Gostei, cara. Gostei. E olha só que legal. Ele trouxe uma ideia boa, hein? Se a gente tivesse
+
+mesmo uma loja de DVDs usados. Aqui a venda de caixas misteriosas, né? Que é aquela mystery box onde você vende, mas a pessoa não sabe o que que ela tá comprando. Legal, show de bola. Ó, 4556 tokens e 300 linhas de código aqui no nosso. Olha só que legal. Opa, deixa eu
+
+aumentar aqui, ó, o arquivo. O streaming é passageiro, plástico é eterno. Não sei, isso é uma coisa boa, né? Mas bem, curadoria de DVDs usados, raros e cult, sem compressão, sem anúncios. Cara, essa cópia é legal. Nossa, olha
+
+aqui, ó. O estilo, cara. Ficou com estilinho de terminal, né? Caramba, olha só, tem um glow. Eu gostei desse resultado diferente.
+
+Gostei, cara. Deixa eu botar. Ah, pera aí. Opa, atualizou aqui meu carrinho, ó. Adicionei ao meu carrinho.
+
+Show de bola. Tá lá, ó. Gastar 50 créditos. Sistema de loteria iniciado. Aguarde o sorteio porque seria lootbox.
+
+Estranho. Legal demais, cara. Simples, né? Pequenininho, mas bem interessante. Achei que conseguiu ser criativo. De
+
+fato, foi diferente. Mas é isso aí. Eu vou encerrar esse teste aqui agora, porque eu preciso ir buscar minha filha na escola. Mas eu vou voltar aqui e vou continuar brincando com esse modelo. Então, em breve vai ter mais novidades aqui da família Quen 3.5, porque eu tô
+
+curtindo, tem modelo pequenininho, tem modelo gigante. E como que seriam 122 bilhões de parâmetros a 8 bits versus um 397 com 3 bits? Qual que será que seria melhor? Melhor você ter mais parâmetros, só que muito quantado, ou ter menos parâmetros com menos quantização? A gente podia ver isso aqui, hein? Que que
+
+você acha? Bem, já se inscreve aí para você não perder nada. Se você ainda não testou os modelos menores 2735, eu fiz um vídeo aqui, ó. 27 versus 35.5.
+
+Muito legal. E se ainda assim esses modelos são grandes demais para você, eu fiz um vídeo sobre o NEG, um modelo de 3 bilhões de parâmetros, que é melhor do que modelos de 30 bilhões de parâmetros. Será que ele é melhor do que modelos de 27? Podíamos ver também. Mas é isso aí.
+
+Eu vou ficando por aqui, até o próximo vídeo.

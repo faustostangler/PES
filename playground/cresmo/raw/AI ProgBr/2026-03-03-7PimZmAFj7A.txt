@@ -1,0 +1,163 @@
+---
+video_title: "QWEN 3.5 - 4B e 9B: IA pequena que BATE em modelos GIGANTES"
+video_id: 7PimZmAFj7A
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7PimZmAFj7A
+video_date: 2026-03-03T00:28:11+00:00
+video_description: |
+  Eu não esperava me surpreender com um modelo de 4 bilhões de parâmetros. Mas aconteceu. Quando a Alibaba liberou o Qwen 3.5 nas versões 0.8B, 2B, 4B e 9B, fui direto ao Hugging Face esperando modelos medianos pra rodar localmente. O que encontrei nos benchmarks mudou o plano: o 9B se comparando de igual pra igual com modelos de 80B e 120B em tarefas de visão.
+  
+  Os benchmarks divulgados no Hugging Face mostram o Qwen 3.5 9B competindo com o Qwen3-235B-A22B e até com o GPT-4.5 120B em tarefas de visão. Coloquei isso à prova pedindo para ele ler notas fiscais reais, extrair dados estruturados e gerar dashboard.
+  
+  O Qwen 3.5 4B atingiu 98 tokens/s e o 9B chegou a 61 tokens/s no Mac Studio M4 Ultra. Ambos têm visão multimodal embutida e as variantes base liberadas permitem fine-tuning pela comunidade, o que coloca esses modelos num patamar diferente dos lançamentos anteriores.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen354Be9B
+  
+  _______
+  
+  0:00 Intro
+  0:31 Modelos lançados
+  1:57 Configuração Local
+  2:46 Teste com 1 nota fiscal
+  4:25 Teste com 11 notas fiscais
+  9:59 Teste de Código
+  11:08 Dashboard Python
+  13:47 Dashboard HTML/CSS
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Essa aqui é a versão do de 4B. Eu tô achando incrível. Vou te falar, hein. O pessoal na Alibaba tá trabalhando. Dessa vez eles lançaram os irmãos menores ali, as versões com menos de 10 bilhões de parâmetros do Quen 3.5. E tem uma coisa
+
+lá no Huging Face que me assustou um pouco positivamente. Eu me preparei aqui para testar a versão de 9 bilhões de parâmetros, mas depois de ver o que eu vi, eu vou testar de quatro também. E aí, os menorezinhos a gente deixa para um outro vídeo, se vocês quiserem, deixa aqui nos comentários, se for o caso. Vamos lá pra tela, pra gente já colocar a mão na massa. Então, só um review rápido aqui, que que a Alibaba liberou hoje. A gente tá falando do Quen 3.5, 9
+
+bilhões de parâmetros, 4 bilhões de parâmetros, 2 bilhões de parâmetros e uma versão miudinha que cabe em qualquer lugar. 0.8 bilhões de parâmetros. Isso daqui vai virar ouro na mão da comunidade, principalmente porque eles liberaram também as variantes base desses modelos. O que quer dizer que a galera vai poder treinar em cima dessas versões e criar modelos completamente novos. O Quen 3 é a base de vários
+
+modelos sensacionais. O 3.5 vai levar isso para um outro patamar. Lembrando que todos esses modelos eles têm capacidade de visão embutida. Dessa vez a gente não tem versões separadas, é uma versão só que é texto e imagem. Mas o
+
+que me surpreendeu tá aqui, ó, no card do modelo de 9 bilhões de parâmetros. E eu tô falando desse benchmark aqui. Normalmente as empresas quando eles mostram benchmark assim, eles querem sair como top, né, como bonzão. E aí às vezes eles comparam para baixo. Eu vi outro dia um modelo de 80 bilhões de parâmetros comparando com modelos de 30, mas o Quen fez exatamente oposto. Então
+
+a gente tem aqui, ó, o Quen 3.5 de 9 bilhões de parâmetros e também o de 4 bilhões de parâmetros se comparando com Quent Next de 80 bilhões de parâmetros. O GPT OOSS, não só o de 20, mas o de 120 bilhões de parâmetros e até GPT5 nano e Gemn 2.5 flash. O mais incrível é que tem benchmarks onde eles batem basicamente todo mundo, principalmente quando tá relacionado à visão. Já tô
+
+aqui no LM Studio, carreguei o Quentin 8.5 de 9 bilhões de parâmetros e o de 4 bilhões de parâmetros também. Ó, eu tô rodando no Mac Studio MTs Ultra. Então, esse computador aqui tem uma largura de banda da memória de 800 GB/s. Esse dado é importante pra gente entender as velocidades que a gente vai atingir aqui. Outra coisa importante é que a
+
+gente tá rodando os dois modelos em 8 bits de quantização. E aí o de 9 bilhões de parâmetros tá ocupando, então, 10.45 GB e o de 4 bilhões de parâmetros 5.16. O que quer dizer que você conseguiria rodar o modelo equivalente GGUF de 4 bilhões de parâmetros com 8 bits numa placa de vídeo de 8 GB. e o de 9 bilhões
+
+de parâmetros, você conseguiria rodar ali em 12 GB de V RAM, mas também rodaria tranquilamente no Mac Mini que tem 16 GB, por exemplo. Tá aqui do lado esquerdo eu tenho 4 bilhões de parâmetros, do lado direito eu vou ter o de 9 bilhões de parâmetros. Chegar para cá. E como eu falei, esses daqui são modelos capacidade de visão. Então vamos começar testando isso neles porque eu tenho um pequeno plano. Tomara que dê
+
+certo. Eu tenho aqui uma nota fiscal e eu vou pedir para eles extraírem os dados dessa nota fiscal. Inclusive, essa daqui tá fácil porque ela já tá categorizando os itens aqui dentro, tá? Aqui a gente tem um resultado basicamente idêntico, né? Só que aqui ele traduziu as categorias e deu resultado pra gente todo. Quanto de
+
+quatro, traduziu só os detalhes adicionais. Vamos comparar agora as velocidades, tá? Esse daqui é o de 4 bilhões de parâmetros, esse daqui é o de 9 bilhões de parâmetros. Esse aqui entregou pra gente um resultado a 98 tokens por segundo, quase 100 tokens por segundo. E ele terminou de pensar mais rápido também. Ele pensou por 27
+
+segundos. Se a gente olhar a quantidade total de tokens e comparar, a gente vai ver que ele pensou menos de fato. Já o de nove, ele pensou um pouquinho mais, mas entregou pra gente 61 tokens por segundo. E 61 tokens por segundo é uma velocidade muito legal, só que a gente vai ver modelos maiores que vão conseguir essa velocidade também. Isso por tanto modelo de 4 bilhões quanto de 9 bilhões, eles são densos. Se a gente
+
+comparar com o próprio Quint. 35 bilhões de parâmetros, que tem só 3 bilhões de parâmetros ativos, que é o mixture of experts, a gente provavelmente vai ter uma velocidade maior usando de 35 do que usando de 9. A diferença é que pra gente conseguir rodar o de 35, principalmente a 8 bits de quantização, a gente vai precisar de uma máquina muito mais potente ou uma placa de vídeo com muito mais bun. Então aqui os dois modelos saíram muito bem. Se o caso fosse esse daqui, eu provavelmente preferiria o de quatro, só porque ele é mais rápido em todos os sentidos e ele gerou um resultado tão bom quanto de nove. Mas a
+
+gente vai dificultar um pouquinho as coisas agora. Eu não tenho só uma, eu tenho várias notas fiscais. Então eu vou pedir para ele extrair todos os dados aqui, organizar por datas, definir as categorias, fazer tudo que a gente precisaria fazer no app de finanças pessoais, por exemplo. Imagina só, você só tira a foto ali do que você comprou, pronto, já vai pro teu app, já tá tudo organizado e tudo certinho feito através de uma LLM que consegue enxergar exatamente o que tá ali. Isso que a gente quer ver, se esses modelos estão prontos para fazer. Então eu vou pedir
+
+para ele gerar uma tabela com os dados extraídos dessas notas e eu quero que ele junte os itens por data de compra e inclua também uma coluna pra gente ter a categoria ali de cada item. Lembrando aqui do lado esquerdo 4B, aqui do lado direito 9B. Aqui uma coisa que a gente vai querer ver é o tempo pro primeiro token, porque como a gente tá passando várias imagens, são 11 imagens aqui, ele precisa de mais tempo para conseguir enxergar, né, o que que tá ali e processar todos os tokens das imagens. Olha só que interessante. Então ele resolveu juntar todos os itens que supostamente ele deve ter feito somatório aqui. Se esse foro, eu não sei
+
+se dá para confiar, LLMs não são boas de somatório, mas isso seria muito fácil de resolver. Era só dar um tool para ele onde ele tivesse ali uma calculadora. Bem, a gente vai poder conferir com a versão do de 9 bilhões de parâmetros aqui que a gente vai pedir para gerar agora. Quando ele tá pensando ali, vendo as imagens, a gente pode analisar alguns dados aqui, ó. que esse modelo levou 14 segundos pro primeiro token, quer dizer que ele levou 14 segundos para processar todas essas 11 imagens. Ele entregou pra
+
+gente um resultado a 92 tokens por segundo, né? Muito próximo do 100 ali, ó. Agora o de 9B começou a responder a gente. Depois a gente vai ver também quanto tempo ele levou para entregar o primeiro token. Agora eu tô percebendo aqui que o que eu pensei e o que eu pedi são coisas diferentes. Eu queria um item
+
+por linha, mas que eles tivessem meio que ordenados pela data. Também o que eu pedi não foi isso. Eu pedi errado mesmo. Eu pedi para juntar os itens por data de compra. Ele juntou os itens por data de compra. E aí vamos ver como que o 9
+
+bilhões de parâmetros vai fazer, se ele vai fazer exatamente a mesma coisa ou vai fazer um pouco diferente. Ó, ele tá indo pelo mesmo caminho, só que isso daqui é o thinking dele, né? O resultado pode ser diferente. Vamos ver. Mas não parece que vai ser não. Ó, foi
+
+exatamente pelo mesmo caminho, o que é bom porque vai dar pra gente ver se todos os números vão bater aqui certinho, né? Então, até agora, ó, já tô acompanhando aqui todos os números, menos esse daqui, né? Todos os outros bateram certinho. E aqui o de 4B explicou melhor, né? Por que que deu 96.4
+
+aqui, não 100. Então diria que o de 4 bilhões de parâmetros foi mais correto nessa tarefa. Em relação aos dados aqui, ó, 22 segundos pro primeiro token, então não levou tão mais tempo não. Se a gente pensar em porcentagem é bastante, só que se a gente pensar em tempo em si, para esse caso também não eram tantas imagens assim, foi um pouquinho a mais, 8 segundos a mais, é 50% a mais, é bastante coisa. 58.99,
+
+59 tokens por segundo, quase 60 tokens. E olha só, ele também pensou um pouquinho mais aqui, ó. 6977 tokens gerados contra 4513. Acho que ainda não dá para bater o martelo, mas a gente tá seguindo aqui o caminho, onde o de 4B ele consegue entregar um bom resultado, às vezes melhor, gastando menos tokens, o que no final do dia isso é o ideal. Vamos lá. Ainda aqui, eu vou pedir para
+
+eles então agora abrirem um pouco mais essa planilha. Então agora eu vou pedir certo para que tenha um item por linha ordenado pela data de compra e eu quero que ele inclua também. Ah, apesar de que já tem aqui mais ou menos o local do estabelecimento, só que ele botou junto com a categoria. Eu quero que seja separado, colocar aqui uma coluna separada. E agora eu mandei rodar os dois ao mesmo tempo, tá? A gente vai ver
+
+o que que vai acontecer, como que isso vai afetar a velocidade de cada um deles. E um dado técnico aqui, a gente tá rodando ambos com uma temperatura de 0.25. Normalmente, quando a gente quer algo criativo, a gente aumenta um pouco essa temperatura, né, para ele poder viajar um pouco mais. Quando a gente quer algo mais direto, como código, até extrair dados, eu gosto de trabalhar com temperaturas menores. Eu achei que eles
+
+começaram a responder com tempo muito parecido, então não vai ter uma diferença muito grande entre tempo pro primeiro token de um e de outro, não. Pode ser que tenha sido a impressão minha, mas eu acho que vai ser parecido. Ó, o de 4B já respondeu aqui pra gente, ó. A velocidade caiu bastante porque os dois estão rodando ao mesmo tempo. Isso é muito importante. Às vezes você tem
+
+muita memória, quer dizer que você pode rodar mais de um modelo ao mesmo tempo. Só que isso derruba a velocidade de token por segundo. Mas se a gente fizer uma conta básica e pegar o total de tokens vezes a velocidade um, o total de tokens do outro vezes a velocidade do outro e calcular de fato quanto tempo levou para aquela quantidade de tokens, a média de rodar junto vai ser melhor. Ou seja, se você rodar dois modelos juntos, você vai ter o resultado final dos dois modelos mais rápido do que se você rodasse um e depois rodasse o outro. Ia levar mais tempo pr isso. E
+
+aqui, ó, o de 4B ajustou ali, né, que a tinha falado da outra vez que era 96 e não sei o quê, mas aqui já tá falando que, na verdade, o total foi 100, incluindo as taxas. Olha só que legal. Aqui a gente já tem um resultado diferente. Dessa vez a gente já conseguiu ver uma grande diferença. O nosso modelo de 9 bilhões de parâmetros, ele acabou tando aqui com uma velocidade maior, mas isso daqui é porque como o outro modelo acabou antes, esse daqui ficou livre para ir pra velocidade total dele, né? Então boa parte o tempo ele
+
+tava processando sem concorrência, mas ele trouxe um resultado muito mais de acordo com o que a gente esperava. Eu queria exatamente isso aqui, ó. Exatamente isso aqui. Então aqui ele separou cada item com seu preço respectivo. A gente poderia agora até fazer um somatório por cada loja para ver se dava o que ele falou lá, né? Que
+
+por exemplo, ele falou que deu 24,20. Se a gente somar tudo isso aqui, teria que dar 24,20. Mas a gente não vai fazer isso agora não, porque isso vai est dentro do meu próximo desafio para esses modelos. Como esse daqui se saiu melhor, eu vou pegar esse resultado dele. E aí, como esses modelos se consideram no nível do Quent Next de 80 bilhões de parâmetros e do GPTOSS de 120, eu vou botar eles para criar código. Apesar
+
+desses outros modelos não serem de código, eles são modelos que se saem bem nisso. Então, vamos ver se o 9 bilhões de parâmetros e o 4 bilhões de parâmetros vão conseguir criar um codiguinho pra gente. Então eu vou pedir pros dois criarem um dashboard pra gente conseguir enxergar esses dados aqui de uma forma melhorada, né? E até com filtros que a gente possa selecionar, ó, quero todas as compras que forem em mercado, quero só nessa loja. Vamos ver como é que eles vão sair. E olha só que
+
+interessante, como eu não dei mais de nenhuma instrução, eles escolheram as steack e ambos escolheram Python para fazer isso aqui. Python é uma boa biblioteca para lidar com dados, né? Então a gente vai rodar esse código aqui, ó, que eles geraram. Então aqui o 4B colocou os dados direto no script. O de 9B ele separou os dados no CSV e criou o código aqui embaixo. Ele
+
+conseguiu criar o código todo. Show de bola. Ambos t basicamente as mesmas dependências. Então a gente vai preparar um ambiente aqui e vai rodar esses dois dashboards. Eu criei um ambiente aqui com pra gente separar as nossas dependências. E aí eu posso seguir
+
+exatamente as instruções aqui sem alterar nada no meu sistema principal, né? ou quando ele vai criar um ambiente separado, tudo que a gente vai instalar só vai estar aqui nesse ambiente dashboard. Então posso instalar tranquilo. Se não me engano são as mesmas dependências pros dois projetos. Então o mesmo ambiente vai servir para os dois de boa. Outra coisa que eu fiz
+
+foi colocar aqui, ó, em arquivos separados. Então tenho aqui o app 4B, app 9B e dados CSV pra gente poder usar o comando para rodar esse aqui, ó. Streamlit app 4B. Vamos começar pelo 4B. Não quero não. Obrigado.
+
+Opa, que que ele que ele tá fazendo aqui? Pô, infelizmente a gente teve um erro aqui. Eu vou copiar isso aqui. Esse daqui foi o nosso de 4B. Eu vou pedir para ele tentar ajustar. Ele alterou
+
+então o script pra gente. Vamos modificar aqui. Beleza. App modificado. Vamos rodar aqui novamente. E
+
+infelizmente a gente tem mais um erro, tá? Não dá para ficar aqui também pedido para ele trocar toda hora. Vamos ver se o de 9B vai funcionar. Então agora vou rodar aqui, ó, com o arquivo 9B. E o de 9B deu pra gente um erro também, ó. Ele
+
+botou a culpa na gente aqui, falou que o nosso CSV tá errado e deu um código aqui pra gente gerar um CSV. Vamos embora. Criou então aqui, ó, um arquivo pra gente corrigido, supostamente. É, talvez. E agora eu preciso ajustar aqui.
+
+Cadê? Onde que ele tá carregando? Vou carregar agora dados corrigidos. Vamos rodar novamente. E ó, tivemos uma melhora, mas aqui a gente ainda tem um erro. Eu vou pedir para ele mais uma vez
+
+só porque eu quero muito ver isso aqui funcionando. Ó, ele tá me falando aqui tudo que ele fez. De fato, ele encontrou ali o que seria supostamente o problema. Vamos testar. Opa, temos um dashboard, só que não me parece certo. É, ainda tem
+
+um erro aqui. E aqui, se eu mudar, ó, ele não tá pegando tudo não. Ele só tá pegando 12 transações. Ah, porque tá filtrado por loja. Ah, ó o filtro aqui funcionando, ó. Mas eu quero todos. Não tem todos. Aí
+
+tu me quebra, né? Tinha que ter todos aqui. Mas alguma coisa. Mas vou te falar, ficou legal, hein? Aqui embaixo ainda tem algum erro. A gente poderia
+
+ficar aqui ajustando, mas só da gente ter alguma coisa rodando aqui já é interessante. Eu tô me sentindo meio mal porque eu só dei uma chance pro de 4B e dei duas chances pro de 9B. Então vou dar mais uma chance para de 4B. É, mesmo depois da terceira tentativa, de 4B não conseguiu chegar lá. Não queria terminar esse vídeo com esse gostinho de falha.
+
+Pera aí. Pra gente tentar ver alguma coisa, eu pedi então pro de 4B e o de 9B criarem usando HTML, CSS e JavaScript. Por algum motivo, o de 9B, ele só entregou pra gente a linha de pensamento, mas aqui a gente tem um código, então vamos experimentar com esse código que ele pensou aqui. Ele não respondeu, mas ele pensou. Vamos ver se vai ser o suficiente. Essa aqui é a
+
+versão do de 4B. Eu tô achando incrível. Então aqui, ó, a gente tinha essa grocery store aqui. Vamos tentar separar só ela. E o total gasto era de R$9,20.
+
+Então, esse aqui foi lá o do zucchini, né? Banana, special, potatoes, brócoli, banana, ó. dois special potatos br. Só que aqui tem um special a menos. Quanto é o special? 99 centavos. Bem, o valor
+
+deu bem diferente, ó. R,20. E aqui deu 24,20. Eu vou confiar mais nesse aqui, tá? Vamos ver outra loja. Tinha aqui CCO
+
+3848. Aqui deu certinho e são três itens. Então aqui ele somou direitinho. Tem 848. Show de bola. Aqui a gente pode
+
+separar então por categoria. Quero eletrônico de todas as lojas. A gente tem mais de uma loja? Não, só uma loja. Deixa eu ver o que que tem mais de uma loja aqui. Não, hotelaria. Ah, ele tem,
+
+mas ele separou. Ligeiramente diferente. Talvez pudesse passar aqui. Aqui ficou igual mercado. Tem várias lojas e ele tá mostrando, tá filtrando bem. Então,
+
+filtro tá funcionando, tudo funcionando muito bem, cara. Esse daqui é o de 4 bilhões de parâmetros. O de 9 bilhões de parâmetros foi um pouquinho acima, né? Lançou aqui um gráfico rosquinha. Vamos ver os filtros eletrônicos. Mercado.
+
+Então, mercado tem aqui, ó, três estabelecimentos. Dá para ver separado por cada um deles. Aqui embaixo a gente tem a lista. Vamos fazer o seguinte, vamos botar aquela loja lá com a nossa grocery store 39,20. Pois é, não sei porque que eles chegaram aqui a 24,20.
+
+Lembra que eu falei que LLM não faz conta bem? Pois é. Então, não dá para confiar mesmo. A não ser que ela tenha um tool, né? Se tiver ali uma calculadora que ela possa usar, aí dá para confiar. Fácil de resolver. Ou só
+
+mandar ela fazer um dashboard aqui. E aqui tá show de bola. Isso aqui, cara. Ficou muito legal. Então, acho que a gente pode afirmar aqui, tá? Quen 3.5,
+
+tanto de 4 bilhões de parâmetros quanto de 9 bilhões de parâmetros, sabe programar. Ó que loucura. A gente tá chegando aí num nível sensacional, onde a gente tem LLMs que realmente conseguem fazer coisas interessantes, não só interessantes como úteis, rodando em hardwares cada vez menores. Obviamente, de um lado, a gente tem também Kim K2.5, GLM5, precisando de máquinas muito potentes e muito caras. Mas esses
+
+modelos aqui rodam até no Mac Mini. Então tá chegando. Inteligência artificial LLM daqui a pouco vai estar rodando localmente na mão de todo mundo. Se você quiser ver os modelos menorezinhos, você deixa aqui nos comentários. Mas eu fiz um vídeo de modelos muito pequenos rodando no Raspberry Piei. Eu vou deixar o link
+
+aqui, ó. E nesse vídeo aqui eu mostrei uma LLM com capacidade de visão da Apple, que muito pouca gente conhece. Então, dá uma olhada lá que ficou bem legal também. É isso aí. Vou ficando por aqui, até o próximo vídeo.

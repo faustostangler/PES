@@ -1,0 +1,144 @@
+---
+video_title: "DiffusionGemma: 4X MAIS RÁPIDO com 10% de perda de qualidade"
+video_id: _uYLuAEQLPo
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_uYLuAEQLPo
+video_date: 2026-06-11T01:22:24+00:00
+video_description: |
+  DiffusionGemma é o novo modelo experimental do Google que usa difusão de texto no lugar da geração autorregressiva tradicional, chegando a mais de 1000 tokens por segundo em hardware dedicado.
+  
+  Nesse vídeo eu instalo e rodo o DiffusionGemma localmente no Mac M3 Ultra usando llama.cpp, mostrando em tempo real como o modelo reescreve e refina a própria resposta durante a geração. Testei desde a criação de um clone do Flappy Bird em HTML até uma landing page completa.
+  
+  Se você quer entender como a arquitetura de difusão funciona na prática, por que ela é até 4x mais rápida que o Gemma 4 autorregressivo e o que isso significa para quem roda modelos de IA localmente, esse vídeo é pra você.
+  
+  👉 Aqui tá o link de instalação: https://unsloth.ai/docs/models/diffusiongemma#run-diffusiongemma-tutorials
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaCube: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira 
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⏵ ZimaBlade: https://shop.zimaspace.com/products/zimablade-single-board-server-for-cyber-native?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaidiffusionGemma
+  
+  _______
+  
+  0:00 Intro
+  0:34 Documentação
+  3:39 Testes iniciais
+  5:53 Flappy Bird
+  7:05 Pinball
+  8:22 Landing page
+  9:31 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Isso aqui que a gente vai ver hoje já não pode mais ser chamado de inferência de inteligência artificial, tem que ser chamado de bruxaria. The Fusion Gema. Esse é o modelo que a gente vai ver hoje. Ele é basicamente o Gema 4, mas em vez dele ser autorreessivo, ou seja, ele ficar prevendo o próximo token baseado em todo o histórico, não, ele não faz isso. Ele vai prevendo tudo de uma vez e mudando aqui, mudando ali. É uma loucura. E a
+
+gente vai conseguir ver ele fazendo isso em tempo real. O que é mais loucura ainda. Vamos lá pra tela, pra gente falar desse Gema 4 novo. The Fusion Gema é o mais novo modelo do Google, tá experimental ainda, mas ele promete aí quatro vezes mais velocidade na hora da inferência, na hora de gerar as respostas aos nossos promptes. Quanto mais rápido ele é, você pode estar se perguntando. E é, ó, esse tanto aqui, ó,
+
+olha só, Gema 4, 26 bilhões de parâmetros. A4, esse aqui é o auto regressivo, tá? Ele atinge ali uma velocidade aproximadamente 300 tokens por segundo numa H1 da Nvidia. E levando em consideração esse benchmk aqui, ele atinge um pouco mais de 75%. O nosso deffusionem, que é o que a gente está vendo hoje, ele também é 26 bilhões de parâmetros, também tem 4 bilhões de parâmetros ativos, mas ele fica um pouco abaixo em questão de qualidade em relação à versão autorregressiva também de 26 bilhões de parâmetros. Ele fica
+
+baixo inclusive a versão autorreessiva de 12 bilhões de parâmetros, que é uma versão densa. Mas olha essa velocidade, né? Acho que o slogan dele aqui é: "Se for para errar, erre rápido". Porque, cara, o bicho é rápido, hein? Aqui tá falando de mais de 1000 tokens por segundo na hora da geração numa H1.
+
+Detalhe que a gente tá comparando aqui com modelos com MTP ligado, tá? Multien prediction. Então eles já prev múltiplos tokens, por isso eles já são mais rápidos do que a versão CMTP, mas mesmo assim eles são muito mais lentos do que a versão com difusão. Uma coisa interessante dessa arquitetura de fusão em relação à arquitetura autorregressiva é porque na arquitetura normal autorregressiva, ele fica tentando prever o próximo token. E normalmente o que vem pro modelo é uma lista de possibilidades onde você tem a possibilidade mais provável, mas dependendo da sua temperatura, ele pode escolher uma outra opção. E essa outra
+
+opção pode não ser tão boa assim. O problema é que uma vez que a opção escolhida não é a melhor possível, você começa a desviar do objetivo e pode ser que você erre muito lá na frente e uma vez que errou não tem como voltar e consertar. Na versão de difusão tem, ele vai toda hora modificando todas as partes do texto. Então mesmo que ele identifique que alguma coisa lá no início não não tá muito certa, ele pode ir lá e modificar. E isso é muito legal.
+
+Então aqui tem um pouco sobre essa arquitetura, né? E aqui tem mais um gráfico. Aqui é uma comparação direta do diffusion Gema com o Gema 4 do mesmo tamanho, né? 26 bilhões de parâmetros, 4 bilhões ativos. E aqui é o salto de velocidade absurdo, com um pouco de perda, tá? A gente tem um pouco de perda
+
+em todos os benchmarks, então essa é uma questão ainda, ó. No Live Code Bench a gente sai de 77 para 69, é quase 10% de perda. É uma grande perda, mas um grande aumento de velocidade também. A questão é saber se ele é inteligente o suficiente para você conseguir com bons promptes, com boas especificações, fazer com que essa perda não seja tão relevante assim, principalmente levando em consideração que ele é três vezes mais rápido. A minha imagem ela vai travar aqui de vez em quando, tá? Porque
+
+eu atualizei o meu sistema operacional e esse daqui é um software que a gente mesmo fez internamente, então ter que adaptar ele, tá com algum probleminha, mas como a versão atual do sistema tá em beta, provavelmente é problema desse beta. Mas vamos lá, vamos colocar a mão na massa. Ó, eu instalei aqui o deffision gema, segui as instruções de como rodar pelo próprio eu tô rodando no Mac M3 Ultra, seria muito mais rápido se a gente tivesse rodando na Nvidia, mas nesse momento, para sair o vídeo mais rápido, eu tô rodando aqui no Mac porque eu tô com acesso a ele mais fácil. Então aqui tem as instruções de instalação, tá? Vou deixar o link aqui embaixo para essa página de instruções. Mas agora
+
+vamos embora. Lhama CPP. Vou mandar aqui, ó, meu comandinho. Tô colocando aqui uma janela de contexto de 64.000 tokens. E tô colocando pra gente
+
+conseguir visualizar a difusão, porque essa é a parte mais legal. Não importa se ele vai acertar nada, pode errar tudo. Tô nem aí. Só de eu ver ali os tokenzinhos mudando. Top. Vamos lá.
+
+Carregando. Beleza, já carregou. Vou começar aqui com o nosso solar. E olha o que que acontece. Olha essa maluquí.
+
+Parece que vai dar tudo errado e no final dá certo. Só que eu não sei ainda exatamente o que que é a resposta aqui. Acho que isso daqui é o pensamento, né? E isso aqui é a resposta. Mas ficou também com com mais alguma coisinha aqui, ó, que eu ainda não sei exatamente o que que é. Mas tá tudo bem. Vamos
+
+continuar aqui a nossa conversa. Vamos fazer aqui o clássico teste do lava rápido pra gente ver o funcionamento dele ali, ó. Ele imaginando o que que ele tem que fazer. Cara, isso aqui, isso é bruxaria. Isso é muito maneiro.
+
+Olha só, ele tá pensando ali, né? Como eu falei aqui no Mac, ele acaba não sendo tão rápido quanto seria numa Nvidia, mas é até melhor porque a gente consegue ver tudo que ele fez. Ó, eu ainda tô um pouquinho confuso com a identção aqui, ó. Ele falou que aqui é o pensamento. Onde é que termina o pensamento? Acredito que seja aqui, né?
+
+Porque aqui ele muda de inglês para português. Aqui já deve ser a resposta. Considerando a distância de apenas 50 m, o ideal é andando. Errou. Tô rouco até, cara. É muito vídeo para
+
+gravar. Tá difícil. Aqui ele dá alguns motivos, né, do por que você deve ir andando, mas bem, pra gente não importa isso. O que eu vou fazer é o seguinte, vou dar aqui um clear, vou começar aqui uma nova conversa porque agora eu quero ver se ele consegue criar algumas coisinhas pra gente, tá? Vamos começar.
+
+Tá baixo. Vamos começar devagar. Vamos começar com Flapbird. Cria um clã de Flapbird com HTML, CSS e JavaScript. Tá lá, ó. Ele criando. Ele tá vendo que ele
+
+vai mudando aqui, ó, os textos mesmo de lá de cima. Ele vai mudando tudo que já passou, que tá vindo. É uma loucura. E dale dale fazendo aqui, ó, escrevendo nosso textinho. Acho que vai ficar bom esse jogo, hein? Tô achando que vai
+
+ficar bom. Ó, terminou. E aqui tá o texto final. Vai copiar esse jogo aqui. Achei que ficou pequeno, tá? Será que
+
+vai funcionar? Eu acho que vai ser uma versão bem bem básica. Ó, aqui eu já consigo ver um pequeno erro, tá? Que ele colocou isso aqui. Não era para tá aqui, era para tá assim. Mas tudo bem. Vamos
+
+ver aqui o resultado, ó. Opa, ficou um texto ali na tela, mas tanto espaço quanto clique funcionam. E tá funcionando bem. Tá funcionando direitinho. Boa. Mandou
+
+bem. Então, beleza. Temos um flapd. Deixa eu jogar um pouquinho aqui antes de de ir pro próximo. Fazer 10 pontos pelo menos.
+
+Ah, fiz nove. Não, droga. A gente fez aqui um vídeo sobre o novo modelo da Antropic, o Fable. E nesse vídeo a gente pediu para ele criar um jogo de pinball. Ele não foi muito bem não, você vai ter que ver o vídeo lá para ver como que ele saiu. Vou deixar o link aqui em cima.
+
+Mas eu vou pedir agora pro nosso geminha como que o gema vai sair contra o melhor modelo do mundo. Vamos ver, ó. Tá criando aqui o nosso pinball. Ele tá pensando como é que ele vai fazer, pensando na estrutura, pelo visto aí vai usar, ó, Matter JS. Já tá escrevendo código pra gente e eu tô torcendo muito para que ele mande muito bem aqui, ó.
+
+Tivemos um erro, pelo visto, porque não acabou aqui, né? Então, vou falar para ele, ó. Continue. Beleza. Então ele entendeu o que que tem que fazer. Vamos ver se ele vai escrever
+
+do zero. E tá travando. Esse modelo tem uma janela de contexto de 264.000 tokens, mas tá travando aqui. Será que é o problema é a janela? Fazer o seguinte,
+
+vou tentar aumentar aqui. Vou colocar 200.000. Ele arredondou aqui para 222.000.
+
+Vamos pedir o nosso joguinho e vamos ver se agora sai. Pode ser também o seguinte. Essa versão que eu tô usando do lama CPP, ela é uma versão que foi ajustada hoje pelo pessoal do, então ela pode não estar redondinha ainda, né? Eu tive que compilar aqui pro meu Mac e, ó, tá dando esse problema de fato. Talvez ele não esteja conseguindo manter uma janela de contexto muito grande, infelizmente. Vamos tentar um outro
+
+teste, tá? Crie uma landing page para uma empresa de jardinagem. Faça um design moderno. Não cometa erros. Vamos embora. Vamos ver o que que ele
+
+vai fazer aqui pra gente, ó. Tá usando Til Wind, OK? Tá pensando já ali em como que vai escrever. Show de bola. Vamos, vamos esperar. Vamos ver o resultado
+
+final. Ele já tá fazendo o código final, mas ele tá indo e voltando ali, ó. Isso é muito doido. Que estranho, né? Porque aqui ele já tá há bastante tempo escrevendo o código e lá no nosso jogo de pinball, ele parou muito rápido. Não
+
+sei se foi alguma coisa ali no travou em relação a Guard Rail, né? Mas esse daqui com certeza gerou. Cadê? ainda não terminou e tá finalizando, mas aqui com certeza ele gerou mais tokens do que lá, eu acho. Vai ver não. Olha só. Então
+
+aqui ele usou teu wind para fazer o design. Tá bem simples, né? Mas tá OK. Tá. Fez aqui a nossa página do início ao fim. Não tem nenhuma imagem. Quer dizer,
+
+tem essa aqui que veio quebrada, mas ok. Ok. É um sitezinho, sitezinho bem bem de de empresa, né? bem direto ao ponto, mas não tá de todo ruim, não. Então é isso aí. Eu queria trazer aqui no canal
+
+rápido esse de Fusion Gemma pra gente brincar, né? Mas isso daqui é só o primeiro passo. Vamos esperar sair uma versão oficial do Lema CPP para conseguir encaixar ele em algum workflow, poder fazer mais testes e quem sabe trazer mais um vídeo aqui para vocês sobre isso. Se você tiver interesse em mais um vídeo sobre o defanjem, deixa aqui embaixo nos comentários. Se você quiser ver o melhor modelo do mundo, que não se deu muito bem no nosso teste, tá, que não quer dizer nada, só que ele foi abaixo do que eu esperava. Dá uma olhada nesse vídeo
+
+aqui. Coloquei ali um pouquinho sobre a minha forma de pensar em relação a modelos, tokens, etc. Então, vale a pena assistir esse vídeo, tá? Agora, um outro vídeo que eu acabei de subir, eu subi lá pro meu canal de iOS, mas ele tem tudo a ver com esse canal aqui, foi eu testando o novo modelo de imagem da Apple. A Apple ela renovou todos os modelos de inteligência artificial dela, desde a LLM que rodava local fazendo parte do Apple Intelligence até o modelo da nuvem que agora ele é acessível pros usuários e ele também consegue enxergar imagens e o modelo de imagem. De fato, antes a
+
+Apple usava um modelo de edição de imagens que rodava dentro do celular ou dentro do aparelho do usuário. Isso é um pouco limitante, só que agora eles usando um modelo na nuvem ficou muito melhor. Esse vídeo também ficou bem legal. Vou deixar o link dele aqui, ó. Ah, e também se inscreve lá no nosso canal Hyperogbr, se você tiver interesse em desenvolvimento mobile, especialmente se for para iOS. Não esquece de deixar o
+
+like antes de sair. Eu vou ficando por aqui. Até o próximo vídeo.

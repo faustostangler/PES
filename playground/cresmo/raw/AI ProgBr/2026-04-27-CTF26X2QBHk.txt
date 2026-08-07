@@ -1,0 +1,183 @@
+---
+video_title: "Qwen 3.6 27B: um modelo LOCAL pode SUBSTITUIR APIs Pagas? (Teste no OpenCode)"
+video_id: CTF26X2QBHk
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CTF26X2QBHk
+video_date: 2026-04-27T18:52:01+00:00
+video_description: |
+  A Alibaba lançou o Qwen 3.6 com 27 bilhões de parâmetros, Open Source, e os benchmarks oficiais mostram ele superando o Claude 4.5 Opus em Terminal Bench 2.0. Será que isso se confirma na prática?
+  
+  Neste vídeo eu testo o Qwen 3.6 27B Local com 5 bits de quantização rodando no OpenCode em projetos reais de programação na minha RTX 5090. Vamos ver se um modelo local consegue criar uma landing page completa com leitura de imagens, um clone do Angry Birds em Three.js e o clássico Zelda em 3D.
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen27b5bit
+  
+  _______
+  
+  0:00 Intro
+  0:40 Setup
+  1:00 Projeto Landing Page
+  4:45 Projeto Angry Birds
+  9:55 Projeto Zelda 3D
+  14:09 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Agora vai, pá, ganhei. Olá, seja bem-vindo à temporada do Quen aqui no canal, né? Quando Quen lança uma família de modelos nova, pode ter certeza que dá para maronar aqui, que a gente vai fazer muito vídeo sobre isso. E hoje a gente vai fazer mais um vídeo sobre o Quen 3.6 de 27 bilhões de parâmetros. Eu já fiz
+
+um vídeo mostrando ali ele rodando na 5090, na 5060 Ti, mudando ali a quantização dele pra gente ver qual a diferença de velocidade. Mas hoje a gente vai ver o que que ele consegue fazer de fato. Eu vou utilizar ele numa versão Q5 junto com Open Code pra gente criar alguns projetos aqui. Vamos lá pra tela. Então, já tô aqui no LM Studio com o nosso modelo carregado. O LM Studio
+
+vai ser o servidor pro nosso Open Code. E apesar de eu estar gravando no Mac, esse modelo tá rodando lá no meu punto, lá na minha máquina, onde tem a 5090. Então a gente tá utilizando uma versão Q5, rodando na 5090. E vamos começar então. E o primeiro projeto que a gente vai fazer aqui é uma landing page, mas é uma landing page desse app aqui, Astering Headshot AI Generator. Ele é um
+
+app nosso e ele serve para transformar uma foto caseira, aquela foto que você tira de qualquer jeito, numa foto profissional tirada em estúdio, tá? O profile business headshot ou a foto de LinkedIn. Ele faz muito mais do que isso. Tem aqui outros estilos, né? Mas esse é o foco principal, foto pra rede social. Nessa página a gente tem algumas
+
+informações e eu vou passar pro nosso modelo algumas fotos de referência que eu acabei de gerar aqui com app para ele poder criar landing page. Então, a partir dessa foto aqui que eu acabei de tirar, a gente gerou essas daqui, ó. Essa, [risadas] essa aqui, essa aqui ficou meio esquisita, mas tudo bem. Essa aqui que seria para ir pro LinkedIn lá, ó. E essa aqui também. E se eu fosse um personagem
+
+da Turma da Mônica? Aqui, ó. Então, já tô aqui no meu Open Code. A propósito, se você quiser ver o primeiro vídeo que eu falo um pouco mais sobre o modelo, dou uma olhada ali nos gráficos de benchmark, etc., eu vou deixar o link aqui no card, tá? Esse aqui a gente tá
+
+mais mão na massa, indo logo ao que interessa aqui. Então, vou pedir para ele criar a página pra gente. Então, meu prompt aqui é o seguinte: cria uma landing page para o seguinte app, tem o link do app, o nome do app, as headshot generator. Pegue imagens do site, ícone, imagens do app, né? E use também as imagens geradas usando o app que estão em @images. Esse vai ser meu prompt.
+
+Vamos ver o que que ele vai gerar pra gente aqui, ó. E já deu uma olhada ali na parte onde a gente tem as imagens geradas. Agora ele tá fazendo a extração dos dados do site. Tá pegando as imagens ali. Show de bola. Vamos ver o resultado
+
+disso. Ó, ele já tá conseguindo ver ali o que que é cada imagem e aí ele vai ser capaz de usar na nossa página. Tá extraindo agora as informações, né, o texto, descrição, features, etc. Show de bola. Ela criou aqui pra gente uma landing page index HTML. Vamos dar uma
+
+olhada lá, ó. Aqui tá a nossa página. Legal. Ele escolheu o light mode, pegou o ícone lá, colocou aqui aing, que é o nome do app, professional headshots powered by AI. Legal. Aqui tem o
+
+subtítulo, né? Transforme uma única selfie em um retrato de qualidade estúdio. Mais de 370 estilos para LinkedIn, currículo e redes sociais. Aqui ele pegou uma das imagens que eu coloquei para ele e aqui tem o link de download da App Store. Vamos ver aqui se o link funciona. E perfeito, chamou aqui
+
+a nossa App Store. Vamos aqui para baixo. Mais 370 estilos únicos, menos 60 segundos de geração, 4K 100% privado seguro. Ó aqui, ó, antes e depois. Então faça upload de qualquer foto clara, né?
+
+E assista ali o Asterin transformar numa foto com qualidade de estúdio. Show de bola. Aqui tem outros exemplos, né? Uma galeria. E aqui tem as imagens que eu mandei para ele.
+
+Aqui tem as features. E aqui tem um passo a passo, ó. Passa pelo da foto, escolha o estilo, gere, salve, share. Exatamente isso. Perfeito.
+
+Aqui tem as screenshots que tem lá na App Store. No final tem alguns exemplos de uso. E por último a gente tem aqui um footer e um link para fazer o download. Ficou bom, hein? Acho que eu vou usar esse site. Vou publicar. Cara, gostei
+
+muito desse site aqui. Acho que estaria praticamente pronto para usar. Única dúvida que eu tenho é: será que é responsivo? Vamos ver, ó. É isso aqui. Não sei se eu gosto aqui
+
+assim. Acho que tinha que mudar um pouco, mas aqui a setinha mudou. OK. Então, sim, tem responsividade, sim. Legal, show de bola. Então, aqui seria a
+
+versão do celular desse site, funcionando também perfeitamente. Como é que eu faço aqui? Consigo? Ah, ó, dá para dá para rodar aqui. Legal. Gostei.
+
+Lembrando que isso daqui é um modelo, né, local, rodando localmente aqui, eu achei esse resultado melhor do que muitos modelos grandes que a gente já fez. Obviamente eu dei mais dados para ele, né? Eu mandei o link, tem imagens lá, ele trouxe imagens reais e basicamente ele fez o site final de uma vez só. Mas no final do dia é um modelo local, criando algo muito legal. Vamos pro próximo projeto. Agora a gente vai
+
+ver como que ele sai criando o nosso clássico Angry Birds, tá? Eu tenho criado Angry Birds normalmente One Shot. Nesse caso aqui, a gente tá usando open code, então é bem possível que a gente tenha um resultado muito interessante aqui. Então o prompt vai ser cria um clone do jogo Angry Birds usando 3DS, use formas simples para criar os pássaros e inimigos. Crie pelo menos três pássaros e três fases. A gente tá
+
+começando no plan mode, tá? Para ele planejar o que que ele vai fazer antes dele executar. Vamos lá, ó. Já tá dando uma olhada aqui no que que ele precisa fazer. Já viu que o diretório não tem absolutamente nada, então ele vai planejar tudo desde o zero. Ó, já me fez
+
+algumas perguntas aqui. Então eu vou querer um HTML sozinho. A gente vai usar Canel JS porque eu já vi outros modelos usando e achei que o resultado foi bom. 3D isométrico. É, 3D isométrico. Tá bom.
+
+Então a gente escolheu tudo que ele recomendou aqui e vamos embora. Ó, tá começando a criar aqui pra gente. Já criou uma to list e tá preparando a lógica já. Ó, já fala aqui dos pássaros. Então vai ter um pássaro vermelho, um azul e um amarelo. Olha só. Então ele
+
+preparou aqui um plano bolado pra gente. Então vai ser 3JS, Canon JS, webGL, bá. Mouse Touch Drag. OK. Steaming. Ó aqui
+
+que eu quero ver. Ele não tá falando nada dos pássaros diferentes terem comportamentos diferentes, mas deveria ter, né? Então vamos ver se ele vai implementar pra gente. Ele falou: "Sei go". Então vou colocar aqui no modo build e vou falar go. Terminou aqui, ó.
+
+Então ele criou aqui nosso index HTML, tá falando aqui pra gente o que que ele criou. Então a gente vai ter o red, o blue e o yellow. E eles são diferentes aqui, mas a não tá falando aqui da diferença de comportamento, mas tô achando que vai ter, porque aqui tá falando que é pequeno, rápido e leve, né? Esse daqui seria um con, que é bem o estilo mesmo. Então talvez tenha os comportamentos, talvez não. Vamos ver.
+
+Então, a gente tem três níveis, tem o sling shot, tem física, score visuals. Vamos dar uma olhada no jogo. Hum, acho que tem algum erro aqui. Eu vou tirar um print aqui e a gente vai aproveitar e testar se o nosso open code tá funcionando com a imagem aqui. Eu acho que não vai tá. Vamos ver que o nosso
+
+modelo não vai conseguir ver essa imagem, ó. Não consegue ver a imagem que eu precisava modificar lá no nosso Jason. Ó, vou colocar aqui no modelo, né, depois de name aqui na configuração dele. Modalidades, tá? Texto e imagem. e
+
+tirar isso aqui. Pronto. Agora eu vou sair, vou entrar novamente aqui no nosso Open Code, continuando essa sessão. E aí agora eu vou tirar outro screenshot e vou passar para ele. E agora vamos ver se ele vai conseguir ler. Ó, agora ele
+
+conseguiu ler. Show de bola. Agora tá configurado porque esse modelo é um modelo capacidade de visão. Mas o arquivo de configuração do Open Code, ele precisa est configurado para que ele consiga entender as imagens. Então, ó, ele tá mudando aqui o link do CDN, tá?
+
+Porque provavelmente o anterior ele não tava expondo a variável canon. Agora a gente vai atualizar aqui. Ah, agora a gente tem algum. Pô, o porquinho tá muito maneiro, hein? Mas que que aconteceu aqui? O steeling tá voando.
+
+Vamos ver. Eita, caramba. Ih, tá, tá posicionado pro lugar errado, eu acho. Mas tá, a princípio funcionando. Só que, pô, ficou uma bola vermelha simplona, né? Mas tudo bem. Cadê o porquinho? Tá
+
+lá embaixo agora, ó. Ih, entrou. Tá, agora o azul aqui, ó. Vou acertar. Vou. Ah, quase.
+
+Hum, quase que eu acerto agora o amarelinho que é um cone bolado. Esse aqui não tá muito bonito não, mas tudo bem. Ih, o cone virou para cima. Hum. Não.
+
+Tá bom. Vamos dar um restart aqui, pô. Ele tá zoadaço aqui, né? Vamos ver. Cadê a sombra? Ali, ó. Não,
+
+nada, ó. Pô, aqui se tivesse mais mais espaço aqui, acho que dava para ir melhor, hein? Deixa eu tentar pedir para ele fazer um zoom out aqui. Pronto, ele já mudou aqui rapidinho. Vamos ver se melhorou.
+
+Isso aqui não vai melhorar todos os nossos problemas, mas, ó, já tá bem melhor aqui, né? Ó, aqui, ó. Ah, ó, tá vendo? Agora já chegou lá com um pouco mais de força. Vamos ver se esse levinho aqui a gente consegue.
+
+Ah, ele tá meio capando ali, né? Não tá. Uh, quase. É, não tá, não tá nem no mesmo ângulo ali, mas, ó, ele entendeu que todos os pássaros acabaram, então tem o retry ali, né? Vamos tentar novamente.
+
+Vou fazer o seguinte, eu vou dar um restort. Ah, quase. Uh, agora vai. Ah, não tá, tá, tá fora. Não tá não tá certinho. Mas tudo bem. Esse
+
+daqui foi o nosso resultado pro Angry Birds. Então, não é um resultado muito longe de modelos gigantes que a gente viu por aí, não. Inclusive GLM 5.1, o próprio Opus, tá? Se você quiser ver esses vídeos, eu vou deixar aqui no card uma playlist onde tem vários modelos que a gente fez esse prompt aqui. O John
+
+Wilker falou o seguinte: "Faz mais um vídeo, quero ver o Zelda com a 5060 Ti." Hoje a gente tá usando a 5090, mas é o Quem 3.6, 27 milhões de parâmetros. E eu vou fazer o Zelda, então atendendo a pedidos. Deixa eu entrar aqui na pasta que eu já preparei. E aqui a gente tem
+
+um arquivo do prompt já. O nosso prompt é esse aqui, tá? Então, basicamente, a gente vai criar um Zelda só que com 3JS, tá? Eu quero que ele tenha elementos 3D ali. Vamos ver como é que o nosso Quenzinho de 27 bilhões de parâmetros vai sair. Vamos começar aqui no modo de
+
+planejamento, tá? E basicamente o que eu preciso fazer aqui é mandar ele olhar o nosso arquivo zeldaprompt.txt, porque lá já tem o comando, né, do que que ele precisa fazer. E pronto, agora ele vai começar aqui a fazer o nosso plano. Vai verificar se a gente já tem algum arquivo ali, né? Vai ver que não.
+
+E beleza. Ah, tem um erro no prompt aqui. Legal que ele pegou isso. Por ele tá falando sobre ser 16 por 16 pixel porque eu fazia esse projeto com 2D, né? E agora que eu mudei para 3s, ele ficou um pouco confuso, mas tudo bem. Então eu
+
+vou aqui no que ele tá sugerindo. Eu posso ir para esse estilo Voxel aqui. São blocos coloridos em 3D, tá? Vamos para esse aqui. Vamos para esse estilo aqui mesmo. E aí ele tá confirmando
+
+aqui, ó. Nenhum outro modelo fez isso, tá? Ele tá confirmando se a lógica do jogo é isso que tá escrito ali mesmo. E na verdade é, mas eu vou escrever aqui para ele. Então vou falar que é como tá escrito, o boss só aparece depois de ser desbloqueado. Vamos confirmar. Show de
+
+bola. Vamos embora. Já tá, ó, continuando o nosso planejamento e ele tá pronto para implementar. Então aqui ele tá falando pra gente o que que ele vai fazer. Agora eu vou dar aqui um go para ele implementar pra gente. Já mudei
+
+pro modo build e vamos embora. Beleza, criou aqui pra gente a zeldagame. HTML. Tá verificando se tá completo. Contou um bug aqui na transição. Bom, já tá
+
+consertando. Pronto, fez a alteração aqui. Agora tá dando uma limpada e tá encontrando mandro. Bom, bom, essa é a hora mesmo. E quando a gente for testar, tem que funcionar isso aqui. [risadas]
+
+Quê?
+
+Pô, mas o chefe já tá ali. Venci o chefe. Zerei o jogo. [risadas] Jogo mais fácil do mundo. Que que tá acontecendo aqui? Eu tô
+
+parece que eu tô preso ali na porta. Eu não consigo me mexer muito bem. Uma cara.
+
+Pá, ganhei. É, o boneco tá preso aqui, né? O que eu tô achando aqui é que todas as fases foram carregadas ao mesmo tempo, tá? Vou dar esse feedback para ele. Então, tô falando para ele que me parece que todas as salas foram carregadas ao mesmo tempo, inclusive o boss já aparece desde o início, que não deveria acontecer e os controles eles funcionam, mas o personagem não sai do lugar. E aí, vamos
+
+ver se ele vai conseguir corrigir aqui pra gente. Uou, agora o boneco tá se mexendo. Ih, ah, essa sala aqui tá zoada, tá vendo? Mas pera aí, deixa eu voltar aqui. Deixa eu mexer um pouquinho mais para cá, ó.
+
+Ah, ó. Eita. Tá. Tá vendo? Então, aqui seria uma sala, ali seria outra. Deixa eu tentar
+
+aí. Aqui fui para essa daqui, mas agora os inimigos não estão aparecendo. As portas também estão no lugar errado. E tô apanhando aqui, só não sei de quem.
+
+isso aqui tá muito maneiro. Tem muito potencial isso aqui. Eu acho que eu não vou conseguir no vídeo deixar isso aqui top. Mas os inimigos não estão aparecendo, mas eles estão aqui, ó. Acho que eu vou perder, ó. Ó meus coraçõezinhos aqui, ó.
+
+Vamos ver. Tá caindo. Game over. Eu vou te falar o seguinte, cara. Considerando que tem um monte de erro para ser ajustado, esse daqui é o melhor Zelda que a gente já fez em questão de gráfico, né, de apresentação e tal. Eu acho que ele tem um potencial
+
+de ser ajustado e eu vou continuar ajustando ele offline e vou trazer num próximo vídeo para mostrar para vocês. Então, se você quiser ver como que esse Zelda vai ficar top, sendo feito aqui com Queen 3.6 de 27 bilhões de parâmetros, já se inscreve aqui nesse canal para não perder esse vídeo e me diz aqui o que que você achou desse modelo. Eu sei que muita gente vê as coisas de forma binária, né? Ou funcionou 100% ou não presta. Eu não
+
+acredito que seja assim. Esse modelo aqui, lembrando, tem 27 bilhões de parâmetros, tá rodando localmente e nem tá rodando na quantização total, nem mesmo Q8, tá rodando em Q5 e mesmo assim ele foi capaz de fazer coisas muito interessantes. Claro que precisa de um pouco mais de trabalho, de um pouco mais de direcionamento, mas se você der uma olhada nesse vídeo aqui que eu vou deixar aqui, que é sobre o Opus 4.7, a gente vai ver que nem ele é perfeito. E se você quiser saber um pouco mais sobre o que que eu acho do futuro, tanto das fechadas quanto das IA open source, dá uma olhada nesse vídeo aqui, ó. Em um
+
+dia ele bateu 50.000 views. Absurdo aqui pro canal. Então, muito obrigado para quem já assistiu e se você ainda não assistiu, assiste ele aqui, porque a ideia que tem ali é muito interessante e já tá acontecendo. Ah, se você também quiser criar fotos profissionais, eu vou deixar o link do meu appi na descrição.
+
+E é isso aí, vou ficando por aqui, até o próximo vídeo. Valeu,

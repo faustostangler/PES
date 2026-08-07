@@ -1,0 +1,217 @@
+---
+video_title: "Como usar MTP no llama.cpp pra aumentar ABSURDAMENTE a velocidade da sua IA local"
+video_id: Xh8RmqPtN3k
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Xh8RmqPtN3k
+video_date: 2026-05-21T20:04:32+00:00
+video_description: |
+  Se você roda LLM local, esse vídeo mostra como ativar o Multi-Token Prediction (MTP) no llama.cpp pra aumentar muito a velocidade de geração da sua IA local sem perder qualidade.
+  
+  No vídeo eu mostro a diferença de tokens/segundo com e sem MTP para o Qwen 3.6 27B denso e o Qwen 3.6 35B MoE.  E mostro na prática como configurar as flags no llama.cpp.
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaCube: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira 
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaimtp
+  
+  _______
+  
+  0:00 Intro
+  0:57 Como Funciona MTP
+  3:46 Setup Inicial
+  5:34 Flags do llama.cpp
+  8:02 Qwen3.6 27B Baseline
+  9:17 Teste com 4 Tokens
+  11:25 Teste com 6 Tokens
+  13:20 Qwen3.6 35B-A3B Baseline
+  15:55 35B-A3B com MTP
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Quando a gente fala de rodar LM local, principalmente modelos densos, um dos grandes vilões é a velocidade. E muitas vezes é isso que faz com que fi inviável usar esses modelos localmente. A gente já tem modelos muito interessantes, como quen 3.6 de 27 bilhões de parâmetros, que é um modelo denso e ele é comparável aí com modelos às vezes 10 vezes maior do que ele em termos de qualidade. Só que ele também é muito lento. A não ser
+
+que você tenha uma RTX 6000 ou uma RTX 5090, você vai atingir velocidades ali de 20, talvez 30 tokens por segundo. Mas agora a gente tem uma solução para isso chamada MTP, Mult token prediction. Em português, previsão de múltiplos tokens. Nesse vídeo aqui, você vai entender o que que é e como funciona MTP. A gente vai comparar o modelo rodando com e sem MTP ativado. E eu vou te mostrar também
+
+como que você pode configurar o seu lhama CPP para ativar o MTP dos modelos que são compatíveis. Vamos lá pra tela. Então, pra gente entender porque que o MTP é importante, a gente precisa entender que o modelo normalmente ele funciona prevendo o próximo token, como nesse exemplo aqui. Então, se o modelo tem ali o gato subiu, ele vai calcular que o próximo token provável é o no. Depois telhado, depois para, depois ver, depois a, depois a lua. Isso quer dizer
+
+que para cada um desses tokens, ele vai precisar passar por todas as camadas. Então ele faz um processamento muito pesado para conseguir calcular a probabilidade dos próximos tokens e escolher aquele que é mais provável. E exatamente por isso que modelos densos são mais lentos que modelos mixture of experts, porque nos modelos mixture of experts você só vai ativar certos experts para prever o próximo token. Então você tem menos processamento ali. Então, por exemplo, um Quen 3.6 de 35
+
+bilhões de parâmetros, mas que só tem 3 bilhões de parâmetros ativos, ele só vai passar por essas camadas para poder prever o próximo token. E ele passa por três camadas, muito mais rápido do que passaria por 27, que é o caso do modelo denso 53.627B. Para resolver isso, uma das soluções é o MTP, multien prediction, como o nome diz, é uma previsão de múltiplos tokens de uma vez só. Basicamente funciona desse jeito aqui, O modelo ele vai prever vários tokens de uma vez e depois ele vai avaliar quais estão certos, quais estão bons e quais não estão.
+
+Então aqui, por exemplo, ele negou o último, mas ele reaproveita os outros três. E esse MTP aqui você pode ativar para ele prever dois tokens ao mesmo tempo, 3, 4, 5, 6. Quanto mais você prevê, provavelmente mais vai ser a taxa de erro. E quanto mais o modelo erra, maior é o custo, né, de processamento. Então, às vezes faz sentido você diminuir quantos tokens ele tá prevendo para você aumentar a taxa de acerto.
+
+Isso daqui é muito parecido com outra técnica chamada decodificação especulativa, onde você usa um outro modelo para poder prever os tokens e aí você tem o modelo principal avaliando ali e aceitando ou não esses tokens. A grande diferença é que muitas vezes quando você tá usando modelos diferentes, a tua taxa de erro ela vai ser muito alta e aí você perde um pouco dessa vantagem. Nesse caso do MTP é um pouco diferente. O modelo ele já foi treinado com a habilidade de prevê múltiplos tokens, né? Então é basicamente o mesmo modelo ali prevendo, né? E avaliando. Isso faz com que você
+
+tenha uma taxa de acerto muito alta e você não tem esse custo ali de ter que lidar com erros. modelos como o Quen 3.6 de 27 bilhões de parâmetros e até o de 35 milhões de parâmetros, eles têm MTP ativo. Então você consegue hoje usar versões dele com MTP que você basicamente vai ativar ali através do Lema CPP, que é o que a gente vai fazer agora. Existem outros modelos também, por exemplo, o Gema 4 também tem MTP, mas a primeira versão que saiu, ele não tava embutida no modelo, então não dava para usar. E agora há pouco tempo eles
+
+liberaram ali uma versão assistente que funciona ali no esquema do MTP. E agora vamos ver isso em prática, ó. Para começar, eu tô rodando aqui o Quen 3.6, 27 bilhões de parâmetros, Q6. Essa é a quantização dele e a quantização que cabe na minha placa de 32 GB. Eu tô
+
+rodando agora numa 5090, que é uma placa que já é muito rápida. Então, a gente já vai ver aqui uma velocidade muito interessante, mas dá para ficar melhor. E eu vou te falar, me surpreendeu bastante porque eu esperava ali um ganho de 10, 15%, mas eu não vou dar spoiler não. Vamos ver qual ganho que a gente consegue. Primeira mensagem que eu vou dar aqui, aquele clássico oi. Tá, vamos
+
+ver aqui, ó. Ó, estamos falando aqui de torno de 56 tokens por segundo. Nada mal para um modelo denso. Só que, mais uma vez, a gente tá rodando numa placa que é uma placa absurda. A 5090 em termos de velocidade, se o modelo col, ela é uma das melhores placas para consumidor que existem hoje, tá? A gente teria ali a
+
+RTX 6000, que ela é muito parecida em questão de arquitetura com a 5090, só que ela tem 96 GB. Aí ela roda modelos maiores. Acima disso, a gente já entra nas placas profissionais, nas placas empresariais, e aí o custo também vai lá para cima. Beleza? Vou dar mais uma mensagem aqui pra gente ver se a gente se mantém ali nessa faixa dos 56. E ó,
+
+tá bem estável, tá? Se você viu o meu vídeo onde eu rodo o Quen 3.6 de 35 milhões de parâmetros numa placa de 8 GB, você vai ver que lá a gente teve um ganho na segunda vez que a gente roda. Isso porque lá a gente tá dividindo o modelo entre a VRAM e a RAM, tá? E é o modelo, ele vai carregando na RAM ali conforme a gente vai usando. Nesse caso
+
+aqui não, o modelo já tá todo carregado na VRAN, por isso que a gente não vê uma variação tão grande. Mas beleza. Então olha só, a gente tem aqui em torno de 55 56 tokens por segundo. Isso com MTP desligado, tá? Agora a gente vai ativar o MTP. Para você conseguir ativar o MTP,
+
+a primeira coisa que você precisa é você tá rodando um modelo que tem o MTP embutido dele. Então, no nosso caso, a gente tá usando a versão do lot. 627B MTP GGUF, tá? Se você tentar rodar a versão anterior, que é essa aqui, que não tem o MTP, não vai funcionar. E a gente vai rodar no lhama CPP. Então, a
+
+gente precisa também de uma versão do lama CPP que já tenha o MTP implementado. Todas as novas versões já estão com MTP implementado. Inclusive, já tem uma versão mais nova aqui. Se eu não me engano, eu tô usando a B922. Já tem a B9245 aqui. Mas a partir da B9200, qualquer
+
+uma acima dessa já tem MTP. implementado. Então, basicamente, você vai rodar o lama CPP com as flags, né, que você quiser. Aí, no meu caso, tô passando aqui o modelo que é o Quent. 627B, host 00, porta 8083, contexto eu tô passando 200.000 de contexto.
+
+Poderia, esse modelo tem 260.000 tokens de contexto. 200 para mim tá bom. Tô passando aqui o número de GPU layers, né? Eu quero que vá o máximo possível pra GPU. Então tá 999 aqui, quer dizer
+
+que eu quero carregar o modelo completamente na GPU. KVCh Q8, tá? E agora começam as flags do MTP. Primeiro é o seguinte, spec type, que seria de especulação, né? O tipo de especulação, e a gente tá falando de draft MTP, tá?
+
+Então você vai passar flag spec type e o valor dela vai ser draft MTP. Depois você vai passar traço traço spec, traço draft N max. Isso daqui é o número máximo de tokens que vão ser previstos por cada passada. A gente vai começar com dois, mas depois a gente vai subir um pouquinho isso aqui para ver se tem algum ganho. Então vamos lá. Vou salvar
+
+aqui. O meu sistema vai reiniciar o meu contêiner aqui, ó. Ele tá descarregando o modelo da memória. Vai carregar novamente. Quando ele tiver carregado, a gente pode ir lá e testar. Se você tiver
+
+curioso, isso daqui é o Zima OS. O pessoal da Ice Wale me mandou um Zima Board, um Zima Cube e um Zima Blade. Todos eles usam Zima OS. E eu fiquei apaixonado por esse sistema e instalei no meu PC. Eu tô rodando em um i9 9900K, né, com 48 GB de memória DDR4, uma memória um pouco lenta até GPU RTX 5090.
+
+Então esse é o sistema que a gente tá rodando hoje. Eu instalei o ZOS nele, inclusive com ZOS eu consigo acessar ele de qualquer lugar. Isso é muito legal. Mesmo que eu não esteja em casa, eu consigo ter acesso à minha 5090. Pronto, já carregou aqui. A gente pode ir lá.
+
+Vou abrir aqui, ó. E pronto, já tô aqui carregado. Vou dar agora aquele nosso clássico. Oi. Vamos, ó, 56 era a nossa linha base, tá? Vamos ver se vai ser
+
+melhor que isso.
+
+Eu falei, cara, eu pensei, não, isso aqui a gente vai ganhar 10%, 15%. Eu achei que de 56 eu ia conseguir chegar a 70. 103 tokens por segundo. Olha que bizarro. Isso é quase um ganho de 100% por enquanto. Por enquanto, tá? Vamos
+
+ver aqui, ó. C Ah, ele foi lá em cima. Depois, ó, tá vendo que ele tá descendo? E a gente vê aqui uma variação maior. Por que que isso acontece? Exatamente por conta dos
+
+tokens que são previstos, né, e são negados, né? E aí ele perde ali um pouco a estabilidade, ele não fica tão estável assim quanto o modelo 100 MTP, mas não é uma variação absurda também. A gente chegou a quase 110 tokens, finalizou com uma média de 99,78, o que é um ganho absurdo. Mas lembra que a gente configurou para ele prever dois tokens por passada? Dá para aumentar isso. Vamos ver. E aqui para mim é muito
+
+fácil, é só vir aqui settings. Eu vou mudar esse número aqui para quatro agora, tá? Salvar e pronto. Aí já vai recarregar aqui o modelo para mim. Modelo recarregado. Vamos lá. Vamos
+
+atualizar a página aqui. E agora eu vou dar um novo oi.
+
+112. 112 tokens. Agora a gente já tá ali na área do dobro de velocidade de fato, né? Era 56, agora 112. Exatamente. O
+
+dobro. Vamos pedir agora para ele criar uma página web, né? que assim a gente vai ter um contexto maior, vai dar para dar uma ideia melhor. Vamos lá. Cria uma página web sobre modelos de ll source.
+
+Pra gente, o que importa aqui não é nem o conteúdo nem nada. Eu só quero ver a velocidade aqui, ó. E eu quero ver se ele vai manter essa média aí de 110 tokens por segundo. A gente pode ver que tem uma pequena variação ali. Às vezes, ó, caiu para 114, 112, 110, mas tinha chegado a 118, né? Isso mais uma vez é
+
+por conta daqueles erros ali, ó. Agora tá voltando a subir, né? Então, no pensamento parece que ele tava errando mais e agora quando ele tá construindo parece que ele tá acertando mais aqui, ó. E aí, ó, tá chegando a 116, talvez chegue aos 118, tá? Talvez chegue aos 118 tokens, mas 116 já tá excelente, né?
+
+Ó, acabou tendo uma queda aqui. A gente finalizou com 112 tokens por segundo, que é exatamente 100% de ganho de velocidade. Cara, absurdo. Vamos olhar aqui o que que ele fez, ó. Esse daqui ficou o nosso site, então, tá? modelos
+
+open source. Deixa eu ver, será que esse link tá funcionando, ó? Não, os links não estão levando para lugar nenhum. Na verdade, tão sim, só não estão levando pro modelo certo, mas tudo bem. Tem uns modelos antigos aqui. Ele fala aqui um
+
+pouquinho de como rodar, recurso da comunidade. Show de bola. Esse é o nosso site aqui que a gente gerou então com o nosso Quentas. 27B com MTP. Confesso que não gostei muito da qualidade desse site não, mas a princípio esse método com MTP não tem perda de qualidade. A qualidade
+
+gerada é igual a do modelo 100 MTP. Será que é mesmo? Vamos fazer mais um teste. Mas antes eu vou fazer o seguinte, a gente tá prevendo quatro tokens. Vamos aumentar mais. Vamos colocar seis. Então
+
+vou vir aqui, vou mudar para seis, vou salvar e pronto. Ó, com seis tokens ele começou a colocar muita pressão na minha viran e o Docker não tava subindo aqui. Então diminuiu o contexto para 100.000 tokens, tá? E aí agora ele carregou.
+
+Então agora a gente vai testar ele aqui com seis tokens de MTP, tá? de de previsão. E aí a gente pode ver, ó, a princípio a gente começou a ter perda, começou a não ter tanto ganho assim. Vamos pedir para ele criar mais alguma coisa. Ó, 96.
+
+Tá vendo? Não tá muito estável. Agora subiu bastante, né? Mas aí no início não tava tão bom assim. Mas agora tá muito bom. Nosso contexto tá em 100.000
+
+tokens. E ó, mas já caiu bem agora. Tá vendo? Tá vendo? É meio instável assim.
+
+ele não fica ali muito estabilizado. Vamos ver se aumenta de novo. Então aqui a gente conseguiu então 116 tokens por segundo. Acabou ficando um pouco mais rápido do que com quatro tokens, mas dependendo pode ser que não fique. E a gente teve que diminuir o contexto também. Eu diria que quatro, pelo menos
+
+pelos poucos testes que eu fiz, seria o ideal. Eu vou testar muito mais essa semana. Eu tô pensando em trazer um projeto aqui pro canal, onde eu vou criar um app do zero até inicialmente o primeiro protótipo bem funcional dele, escrevendo o mínimo de código possível usando 100% de a local. Eu ainda tô em dúvida se eu vou usar a Arc B70 ou a 5090, mas provavelmente vai ser uma dessas duas placas e aí vai dar para testar bastante isso, porque com certeza eu vou usar MTP. Vamos dar só uma olhada rápido para ver o resultado que ele fez aqui do nosso Flap Bird.
+
+E ó, perfeito, perfeito.
+
+Deixa eu só ver a frase ali. Fim do jogo, clique para reiniciar. Muito bom, boa qualidade. Antes de encerrar, vamos testar como que vai funcionar aqui com o nosso Quint 3.6 de 35 bilhões de parâmetros, tá? Esse daqui é um mixture
+
+of experts. Então, não sei se a gente vai ter ganjo na mesma ordem de grandeza, é isso que a gente quer ver. Então, primeiro vamos rodar sem MTP. Nesse caso aqui, eu tô rodando uma versão Q4, tá? E a gente continua ali com 100.000 tokens de contexto. Ó, ele
+
+tá carregando aqui e esse modelo vai conseguir te mostrar como que a 5090 é um monstro. Então você vai ver uma velocidade aqui, não se assusta, tá certo? É isso mesmo. E é 100 MTP, tá? Primeira vez que a gente rodar sem MTP, você vai se assustar. Você vai se
+
+assustar. Show de bola. Modelo carregado. 43.6, 35 bilhões de parâmetros. 3 bilhões de parâmetros
+
+ativos, tá? Versão Q4. Vamos começar com aquele Oi. Oi. Pois é, isso aqui é 100 MTP ativado, tá?
+
+184 tokens por segundo. E a gente pode ver que ele me respondeu em inglês aqui, porque oi é um já tipo um é um tipo um oi mesmo. Se eu não me engano, acho que é usado na Austrália ou na Inglaterra, mas é em inglês britânico. Tem esse lance aí do Oi. Vamos pedir para ele criar aqui um clone do jogo da cobrinha.
+
+E olha só como é que esse modelo é rápido, cara. Batendo aqui, ó, 190 tokens por segundo. Eu já consegui um pouquinho mais com ele. 198. tá sem MTP ativo e é bizarro. Bizarro a ponto de
+
+muitas vezes eu preferi usar o Quentas. 6 35B do que o 27, mesmo 27 sendo melhor, mas por conta dessa velocidade diferenciada, eu às vezes prefiro 35. Agora com MTP entre 191 e 120 eu iria pro de 27. Mas lembrando que esse daqui também ainda vai ainda. Vamos ver ele com MTP. Vamos lá, ó. Jogo da cobrinha.
+
+Vamos ver se tá funcionando. Ih, tá com algum bug. Infelizmente tá com bug aqui, mas é bom até ele dar esse bugzinho porque a gente podia achar que o problema era o o MTP. Pior que eu tô achando que o problema, na verdade é o o lhama CPP. Isso daqui tá rodando num visualizador do lama CPP. Mas se eu
+
+baixar esse código aqui e rodar direto no navegador, ó, funciona. Então tá funcionando, o código tá funcionando. Caramba, tem até uma animação. Tá vendo? Esse modelo é bom, cara. Às
+
+vezes a galera foca muito no 27, mas eu gosto do 35 também e por conta da velocidade é ele faz sentido, faz sentido usar ele. Mas ó, aqui, ó, tá funcionando perfeito, tá? Tá muito maneiro. Beleza, deixa eu bater aqui, ó. Pronto, game over. Tem até a caveirinha. Agora a
+
+gente vai voltar lá, vai mudar aqui os settings para colocar aquelas nossas flags,
+
+spec type draft MTP. E aqui é spec draft N max, né? O máximo que a gente quer aqui. A gente viu lá que no 27B4 foi legal. Vamos começar com quatro aqui, tá? Vou salvar. Ele vai recarregar aqui
+
+pra gente. Agora vou vir aqui, ó. É um novo atualizar. Vou dar o nosso oi. E olha só, a gente teve um ganho, né?
+
+Mas agora sim foi um ganho de 5%. Vai, vamos ver se calma. No segundo prompt seja mais, né? Vamos ver. Cria o nosso jogo da cobrinha com HTML. Agora sim.
+
+Agora, ó. Agora sim. 270 tokens por segundo. Absurdo. É, agora eu tô em dúvida. Que que eu uso? Uso o 27B
+
+que é mais inteligente, 120 tokens por segundo, 112 a 120 tokens por segundo, ou uso esse daqui, que é também bem inteligente, a 270 tokens por segundo. O que a gente pode ver aqui é o seguinte, houve um ganho, né? E um ganho muito significativo. Aqui a gente tá falando de 40% de ganho mais ou menos, tá? Mas no de 27 a gente basicamente dobrou, foi 100% de ganho, tá? Então existe essa diferença. O
+
+modelo Mixure of Expert, ele não vai escalar tão bem nesses ganhos quanto o modelo denso, mas ainda assim você subir de 190 para 267, absurdo. Vamos ver aqui o nosso joguinho, ó. E aqui, mais uma vez não funciona muito bem aqui dentro dessa aplicação, mas aqui fora, ó, o jogo, cadê? Funciona muito bem e tá muito parecido com a versão, ó. Tá exatamente, tá até melhor, porque agora tem uma estrela. O que que essa estrela faz? Não
+
+faço a menor ideia, mas agora tem essa estrelinha aqui e então quer dizer que tá melhor do que a versão original, versão CMTP. Ah, a estrela ela some, eu tenho que ir lá rápido nela, ó. E aí eu acho que eu ganho mais ponto. Bom demais, cara. Então, a gente pode ver que não existe uma perda de qualidade significativa, tá? ou melhor, não tem
+
+perda nenhuma de qualidade. Eh, teve até uma melhoria no caso aqui, mas teve um aumento absurdo de velocidade. E esse é a aqui não mostrou o game over, né? Não teve a caveirinha, mas tudo bem também. Então esse é o poder do MTP. Vamos fazer o seguinte, só
+
+para finalizar. Vamos colocar aqui seis pra gente ver se a gente vai conseguir ainda mais do que o que a gente conseguiu, que foi 267 tokens por segundo. Beleza, já carregou aqui. Vamos dar aquele oi. Hum hum. Vamos lá. Cria um Flap Bird com
+
+HTML. começou devagar, né, para enganar a gente, para achar que tava tudo perdido, mas mesmo assim a gente pode ver que pelo menos aqui nessa média, vamos ver no final, né, que às vezes surpreende, mas pela média aqui teve uma queda em relação a quatro tokens. Com previsão de quatro tokens, ele foi bem mais rápido, né? Foi 10% mais rápido do que com quase 10% vai com seis tokens, tá? Então eu diria que quatro tokens é o ideal.
+
+Carac, tá muito bonito isso aqui, cara. Será que vai funcionar? Tá bom demais. Ah, não. O pássaro ainda dá uma mijada ali, ó.
+
+Ele cada cada vez que ele sobe, ele dá uma cagadinha na cabeça de alguém que tá passando. Cara, eu vou, olha só que loucura. Isso daqui é o Quen 3.6, 35 bilhões de parâmetros, rodando localmente e ele fez o melhor flapd. que eu já vi um modelo fazer aqui. Olha
+
+lá atrás, tem a lua, tem o sol, olha o detalhe do sol, olha o detalhe, tem a lua, tem as nuvens, tem o sol, olha o detalhe do sol, olha o detalhe das nuvens. Absurdo, absurdo. Talvez o espaço entre os, como é que é o nome disso? Meu Deus, os tubos esteja grande demais, porque eu tô indo muito fácil aqui, muito fácil. Mas cara, muito bom. Olha o detalhe da fonte
+
+ali, ó, né? Que ela tem um um outline ali. Um cara muito legal, muito legal. Melhor flap bird, com certeza. Uh, agora ele tentou me dificultar, mas eu fui, fui mais veloz que ele.
+
+Beleza, uma hora depois. Pronto, perdi. Foi só eu comemorar. Achei que eu ia ficar aqui um tempão aqui. O chão podia ter parado, tá? Podia, só para dar
+
+aquela criticada de para ser chato. Podia ter parado esse chão, mas fora e ainha também tá ali, ó. Só p, mas tá tudo bem. Esse é o poder do MTP. Pode cancelar seu Opos, pode cancelar seu chat EPT, porque chegou a hora, a gente consegue usar agora e a local para programar. Quer dizer, vamos ver, vou
+
+fazer um vídeo sobre isso e na verdade vou ter que fazer mais do que um, né? Porque se eu fizer com a 5090, basicamente tudo que você tem que ter uma 5090. Aí com toda a razão vai vir aquela galera do pô a realidade o brasileiro não é essa. E é verdade. Por isso que a gente trouxe aqui Arc B70, uma placa que nos Estados Unidos custa $. 1.000 e tem 32 GB de V RAM, que é
+
+exatamente quanto a nossa 5090 tem. Se você quiser ver um vídeo, a gente fez um vídeo sobre essa placa, vou deixar o link aqui. Nesse vídeo a gente não tá rodando com MTP, então só imagina com MTP como que ela sairia. Agora, se você quiser ver um vídeo que a gente roda também MTP, muito importante, esse mesmo modelo que acabou de criar esse Flapbd, quent 3.6, 35 bilhões de parâmetros, Q4, tá? Que é exatamente essa mesma versão,
+
+só que numa placa de oitos, eu disse oito, oito, não é 38, 8 GB de V RAM. Aí você dá uma olhada nesse vídeo aqui e a gente conseguiu quase 20 tokens por segundo lá com MTP. Quanto que deve dar para conseguir? Não sei, mas em breve talvez eu traga aqui no canal. Vai me cobrando aí, tá? Se esse vídeo mudou tua
+
+vida, deixa o seu hype, deixa o seu like. Vou ficando por aqui. Até o próximo vídeo. Valeu. Cara, esse vídeo mudou minha vida com certeza. Yeah.

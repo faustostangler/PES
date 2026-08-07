@@ -1,0 +1,140 @@
+---
+video_title: "Quantizei e rodei o Qwen 3.5 LOCALMENTE (e o resultado me impressionou)"
+video_id: 8M4bNTetzF8
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8M4bNTetzF8
+video_date: 2026-02-22T01:04:22+00:00
+video_description: |
+  Quando o Qwen 3.5 foi lançado, a primeira coisa que pensei foi: preciso rodar isso aqui. A segunda coisa que pensei foi: matematicamente, isso é impossível. Um modelo com 397B parâmetros ocupa quase 800 GB, e meu Mac M3 Ultra tem 256 GB de RAM unificada.
+  
+  Mas existe a quantização. Comprimindo os pesos do modelo de 16 bits para 3 bits no formato MLX, eu consegui chegar a 174 GB e carregar tudo no LM Studio. Fiz quatro testes pra entender o que ainda funciona depois dessa compressão toda: escrita, código, visão e até geração de imagem via Nano Banana usando um prompt gerado pelo próprio Qwen 3.5.
+  
+  O resultado foi razoável, tem coisas que impressionam e coisas que decepcionam. E acho que você vai querer saber exatamente quais são quais antes de passar horas baixando 174 GB na sua máquina.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen3bitlocal
+  
+  _______
+  
+  0:00 Intro
+  0:15 O problema
+  3:29 Geração de Descrição para YouTube
+  6:01 Jogo Peg Solitaire (Resta Um)
+  8:40 Jogo Flappy Bird
+  9:26 OCR de Texto Manuscrito
+  10:54 Descrição de Imagem
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Quando eu vi que o Quen lançou a versão 3.5, a primeira coisa que veio na minha cabeça foi: "Eu preciso gravar um vídeo sobre isso agora". E eu gravei, gravei um vídeo aqui pro canal. O link vai est inclusive aqui no card. Mas logo a segunda coisa, a segunda ideia que veio aqui na cabeça foi: "Eu preciso rodar isso localmente." Só que eu já esbarrei
+
+no primeiro problema, porque o Quen 3.5 ele veio dessa vez com 397 bilhões de parâmetros. E para quem já tá um pouquinho acostumado com essa nomenclatura, normalmente o modelo ele ocupa em gigab o dobro dos bilhões de parâmetros. Então o modelo de vamos botar aqui, ó, 400 bilhões de parâmetros, ele ocuparia ali 800 GB. E pra gente rodar um modelo localmente, a gente precisa que ele inteiro caiba ou na VR, ou na memória unificada em sistemas como DJX Spark e nos Macs. E eu
+
+tenho um Mac aqui, um M3 Ultra com 256 GB de memória unificada. O problema é que 256 GB é muito menos do que 800. Paraa nossa sorte, existe uma coisa chamada quantização. E a gente pode pensar na quantização da seguinte forma. Um modelo de LLM, ele basicamente é um conjunto de números e esses números têm uma precisão ali normalmente 16 bits.
+
+Quantar é a gente representar esses mesmos números com menos precisão. Então quando a gente diminui essa precisão, a gente diminui também o tamanho dele e assim a gente consegue rodar esse modelo em hardwares menos potente. Pois é, eu nunca pensei que eu ia falar que um Mac de 256 GB de memória unificada é um hardware menos potente, mas nesse caso ele é. Então eu já fui lá pro Huging Face procurar um modelo que cabe aqui na minha máquina. Vamos lá ver se eu achei.
+
+Então quando eu chego aqui no Huging Face, primeira coisa que eu vejo é exatamente a gente precisaria de 800 GB para usar o modelo sem quant nenhuma. Como isso é impossível no nosso caso, a gente vai vir aqui, ó, em quantização e vai ver quem já quantizou esse modelo. Olot normalmente ele faz quant pequenas até 1 bit, tá? Então ele teria aqui a versão de 3 bits, que seria a versão que cabe no nosso computador com folga. A versão de 4 bits daria para tentar, mas provavelmente com 224 GB a gente teria pouco espaço para contexto. E se a gente
+
+tivesse outras aplicações abertas também no computador, poderia ter aí um gargalo. Então eu queria mesmo rodar uma versão de 3 bits. Só que no Mac existe uma versão melhor do que essa daqui pra gente rodar. Em vez de GGUF, o ideal seria a gente rodar uma versão do MLX Community, né? uma versão em MLX, só que quando eu venho aqui no MLEX Community e vou lá embaixo no Quen 3.5, a versão
+
+mais leve que ele tem a de 4 bits, tá? Vamos ver qual o tamanho dessa de 4 bits. 224 GB vai ficar demais aqui pra minha máquina. Então o que que eu resolvi fazer? Eu resolvi eu mesmo pegar a versão oficial, baixar ela, converter para MLEX e quantizar para 3 bits. E eu
+
+fiz isso lá no meu canal de iOS passo a passo. Então, se você quiser saber como que você converte e quantiza um modelo para rodar no seu Mac, e não precisa ser um modelo gigante como esse aqui, não, tá? Esse passo a passo funciona pra grande maioria dos modelos de LLM. Então você pode conferir lá e deixar de ficar dependente de alguém, fazer essa transformação para você. Com o meu modelo Quen 3.5 de 3 bits de
+
+quantização, a gente conseguiu então um tamanho de 174 GB, o que vai caber com muita folga aqui no nosso computador e isso é perfeito pra gente. Agora a grande questão é toda vez que você quantiza o modelo, você perde precisão, perde qualidade. Com 3 bits, a gente consegue usar o Quin 3.5. É isso que a gente vai ver. Já tô então com ele
+
+carregado aqui no meu LM Studio. E o primeiro teste que eu vou fazer é o seguinte. Eu gravei ontem um vídeo sobre o Jamini 3.1, né, a nova versão do Jamini. Inclusive, vou deixar o card aqui em cima também. E eu quero pegar o
+
+transcript e vou pedir pro Coin 3.5 me ajudar a criar descrição para esse vídeo. Eu tô pedindo aqui para ele criar descrição para esse vídeo do YouTube e para ele separar os capítulos mais importantes, incluindo o time stamp com precisão de segundos. Isso daqui é só um teste porque se é o vídeo bruto, então esse timeestamp estaria completamente errado. Mas eu quero ver se ele vai conseguir fazer essa tarefa aqui, porque aí daria para fazer com o vídeo depois de editado. Ele tá pensando aqui, mas eu
+
+quero saber se ele vai responder em português, se ele vai responder com coerência, né? Ou se ele vai falar qualquer coisa maluca. Uma outra coisa interessante da gente ver aqui, ó, que lá no início meu app de transcrição, ele entendeu Gemini dessa forma aqui, tá? E aí eu quero ver o que que ele vai escrever pra gente. Ó, em cada lugar tá diferente. Então quero ver se ele vai
+
+entender que isso aqui é o Gemini. Vamos ver. Já tá, ele tá falando de Gemini aqui enquanto ele tá pensando. Então pode ser que ele tenha entendido sim, o que seria muito legal. [aplausos] Ó, ele entendeu que é o Gemini 3.1 Pro,
+
+o novo modelo do Google em testes reais. Olha só que legal. Google acabou de liberar o mais novo integrante à família de Minai. OK, né? Ele fez a correção aqui, mas realmente estava escrito desse jeito lá no transcript. Isso daqui é o
+
+problema do da ferramenta de transcript, não do Quen. Nesse vídeo fizemos um review completo, colocamos a mão na massa para entender se esse modelo é bom mesmo ou se é apenas mais um lançamento. E exatamente isso, ó. Aqui ele fala ainda sobre testes que eu fiz. Eu fiz um teste do lava rápido lá e aqui ele ele não não devia ter posto isso aqui, né?
+
+Porque isso daqui é mais uma parada do do pensamento dele. Não devia estar aqui. Ele criou aqui os capítulos, tá? Criou muitos capítulos, mas ok. A gente pode testar isso aqui, inclusive, ó.
+
+Aqui, vamos olhar esse benchmark estaria em 3,14. Aqui na minha ferramenta de transcrição, se eu for lá em 3,14, ó, realmente aqui a gente tem um benchmark. É o momento do benchmark de fato. Então ele tá trazendo perfeitinho os time stamps, tá? Se o vídeo já tivesse editado, seria ainda mais preciso.
+
+Destaque do vídeo, chamada para ação, OK? E ele ainda colocou algumas tags que tem tudo a ver. Gemini, Google AI, Tech Review, IA, Gemini 3.1 Pro, Opus, eu falo sobre o Opus, GPT. falo sobre o GPT, Google. Perfeito. Obviamente,
+
+independente do que for, sempre dou uma revisada, uma modificada nisso aqui, mas, pô, não tem que ficar ali, ó, quebrando cabeça para entender que que a gente vai falar ou não. E eu poderia também pedir para ele trocar algumas coisas que eu quisesse aqui, mas gostei, fez o trabalho bem feito, mesmo sendo uma versão de 3 bits. Agora vamos testar um pouquinho o código do Quen 3.5 rodando o local. Esses dias eu subi um vídeo aqui pro canal sobre um modelo pequenininho de 3 bilhões de parâmetros que ele disse é melhor do que o Quen 3 de 30 bilhões de parâmetros. Eu pedi
+
+então para esse modelo de 3 bilhões de parâmetros e pro Quen 3 de 30 bilhões de parâmetros criar um has que é um joguinho que eu jogava na infância e os dois falharam. Vamos ver se o Quen 3.5 consegue fazer esse resta um pra gente. E para esse teste eu vou fazer o seguinte, eu vou pedir para ele criar o jogo resta um. Vou até colocar entre aspas para eu entender de fato que esse daqui é o nome do jogo, tá? Com HTML
+
+CSSJS. E eu não vou falar o nome em inglês porque talvez ele não conheça esse jogo em português. Talvez ele conheça o nome em inglês que é Peg Solitaire. Vamos ver aqui, ó. Identificou que é Peg Soliter o nome do jogo. Pensou por pouquíssimo tempo, 3
+
+segundos, o que é excelente. Acho que não tem muito mistério, né? É um jogo relativamente fácil para um modelo, deveria ser pelo menos para um modelo de 400 bilhões de parâmetros, 397 para ser mais preciso. Ele acabou de criar aqui, ó. Vamos ver um pouquinho das estatísticas, ó. Ele gerou 2127 tokens.
+
+A velocidade dele foi 33.99, mais conhecido como 34 tokens por segundo, o que é excelente para um modelo de 397 bilhões de parâmetros. E ele só consegue fazer isso porque ele ativa só 17 bilhões de parâmetros desses 397. Então isso torna ele um modelo muito rápido. Levou aqui 5 segundos para o primeiro token, né, porque ele pensou muito pouco tempo. E aqui embaixo a
+
+gente tem mais alguns dados. Ó, o total de tempo para ele criar esse jogo foi 62 segundos, um pouquinho mais de 1 minuto. Resta saber se ele funciona ou não. E não tá funcionando não. Ó, ele tem um erro aqui, linha 121. Eu vou consertar
+
+aqui para ele porque isso daqui foi um mole grande que ele deu. Se fosse só isso aqui, tá de boa. Aqui faltou um. Na verdade, ele ainda tem um erro. 159. É,
+
+ele tá dando uns moles aqui que não era para ele dar. Eu vou fazer o seguinte, vou copiar esse erro aqui e vou dar a chance dele corrigir. Vou até falar na linha 159. E aí, como eu corrigi o outro erro na mão, vamos ver se ele vai botar aquele outro erro aqui de novo ou se ele vai se corrigir. Ó, acho que foi. Acho
+
+que o problema era ali, né? E ali ele não botou o erro de novo, não. Show de bola. Ó, aí foi o erro, tá? Passou também. OK. Show de bola. Agora vou
+
+copiar aqui, atualizar nosso código. E dessa vez, ó, ele esqueceu de fechar essa função aqui. Se ele tá cometendo pequenos erros, pode ser que tenha perdido precisão por conta dos 3 bits. Bem, infelizmente mesmo assim nosso hashta 1 não funcionou. Ó, agora ele não tá mostrando nenhum erro aqui. Se eu
+
+colocar reiniciar, ele fala que não consegue encontrar reset game. É, ó. Então, infelizmente o nosso jogo ficou quebrado aqui. Eu vou dar mais uma chance para ele, para ele conseguir fazer alguma coisa pra gente que funcione. Eu vou pedir para ele criar um Flap Bird, né? Flap Bird normalmente até
+
+modelos menores conseguem e aí a diferença normalmente fica no design, né? Modelos maiores tendem a ter um design melhor no Flapbird. Show de bola. Temos aqui o nosso Flap Bird, tá? Vou copiar. Será que ele vai rodar de
+
+primeira? Não sei. Ó, aqui, ó. Vamos ver. Opa, aí sim, hein.
+
+Ó, uma vitória, uma vitória pro nosso Quentin 3.5. O Flap Bird, ele conseguiu rodar. Não tá com gráfico muito complexo, tá com gráfico bem simples, mas pelo menos tá funcionando aqui. Tá identificando colisão. O tentar de novo
+
+tá quebrado. Vamos atualizar aqui. É, ó, tem algum erro lá no código. Então, eu não indicaria rodar uma versão de 3 bits para fazer código, porque vai ficar ali um tempo consertando bug. Mas tem uma coisa que os modelos do Quen destacam, que é a capacidade de visão. E o Quen
+
+3.5, diferente dos modelos anteriores que você tinha, um focado em código e um focado em visão, agora eles juntaram as duas coisas num modelo só. Então, Quentin 3.5 ele tem capacidade de visão também. Eu peguei uma imagem aqui no Google, provavelmente uma criança aprendendo a escrever e eu quero ver se ele consegue pegar esse texto aqui pra gente. Vou pedir para ele transcrever
+
+esse texto da imagem, né? Ó, terminou aqui. Ele pensou bastante, pensou por 1 minuto e 26 segundos, porque ficou confuso ali com muito e muitos. Mas vamos ver aqui o resultado, ó. Os melões e as maçãs que a mamãe do João comprou não estavam muito maduros. Os melões e
+
+as maçãs que a mamãe do Jo, que ele trocou. Não, mãe. Tá certo. Falei mamãe. Mãe do João comprou, não estavam muito maduros. Perfeito. Inclusive, ó, ele
+
+quebra a linha exatamente no mesmo momento aqui que a quebra de linha tá no bilhete. Ó, Cherches viu um peixe roxo. Cherches vi um peixe roxo. Seu Tavares caçou um tatu. Seu Tavares caçou um tatu. E a pulga picou o pepeu. A pulga
+
+picou pepu. Errou um pouquinho aqui, mas ok. De forma geral, acertou bem. Acertou bem, mesmo sendo um texto escrito à mão. E um outro teste que eu fiz aqui foi pedir para ele descrever essa imagem, tá? E aí ele foi descrevendo ali, ele
+
+falou sobre o pódium. sobre o apresentador. Aí eu pedi para ele fazer o seguinte, gera um prompt detalhado para que um modelo de imagem possa reproduzir essa thumbnail. E ele gerou esse prompt aqui para mim, tá? Eu peguei esse prompt, eu joguei lá no Nano Banana. Lembrando, essa daqui é a imagem
+
+original, tá? Esse aqui foi o resultado que o Nano Banana me deu. Então, olha só, a partir dessa imagem ele gerou uma descrição. Eu mandei a descrição pro Nano Banana e ele gerou essa imagem aqui. Castelo lá no fundo, a pista de corrida, o morro aqui atrás. tá com
+
+estilo diferente. Esse aqui tá até com estilo mais interessante para thumbnail, confesso eu. Inclusive, saturação, iluminação, tá tudo muito melhor. Ele só errou os logos aqui, né, que ele não identificou como os logos do Cloud, da Z.AI e da Open AI, mas mesmo assim ele tentou fazer alguma coisa nesse sentido aqui. E eu confesso que tem suas
+
+semelhanças, vai. Eu achei que aqui ele fez um bom trabalho. E eu vou continuar brincando com esse modelo, mas o que eu posso extrair desse pequeno teste é que com três bits, de fato, o modelo ele perde um pouco qualidade. Então, provavelmente eu não vá usar ele para criar nenhum tipo de código, porque vai me dar dor de cabeça. Só que para analisar imagem, para gerar texto, para fazer resumo, para fazer tradução, provavelmente esse modelo vai ser muito interessante. Eu quero brincar bastante
+
+com ele. Tô louco para sair os próximos modelos da família Quen 3.5. Modelos muito menores que provavelmente vão vir aí logo logo. E modelos especialistas como por exemplo Quentins.5 Coder, que
+
+eu já tô achando que ele vai vir grande pra minha máquina, mas aí a gente quantiza, nem que seja em um bit e a gente vê aqui o resultado também. Tomara que ele erre um pouquinho menos no código, mas de forma geral achei que o Quen 3.5 tá mandando muito bem e achei o resultado excelente, levando em consideração que ele tá só com 3 bits. E eu tenho certeza que se a gente conseguisse rodar ele a 4 bits, a gente já veria um ganho de performance bem significativo, como a gente viu quando a gente rodou o Minimx, que é um modelo de 229 bilhões de parâmetros, mas a gente conseguiu rodar ele com mais de 6 bits de quantização. E ele mandou muito bem, principalmente nos testes do Mario Kart e do Zelda que a gente fez aqui pro canal e deixou aqui, ó. Você pode
+
+conferir agora. E se você quiser ver como se converte o modelo para MLX e como se faz a quantização dele, aí você pode conferir nesse card aqui. E deixa aqui nos comentários qual o próximo modelo que a gente pode testar. É mais interessante a gente testar modelos pequenininhos de até 30 bilhões de parâmetros ou modelos gigantescos como esse daqui. E é claro, depois de comentar, não deixa de se inscrever para quando sair o próximo vídeo você não perder. Vou ficando por aqui, até o
+
+próximo vídeo.

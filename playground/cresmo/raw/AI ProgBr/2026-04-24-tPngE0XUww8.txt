@@ -1,0 +1,255 @@
+---
+video_title: "GPT 5.5 é MELHOR que o Opus 4.7? Testei os MESMOS prompts e descobri."
+video_id: tPngE0XUww8
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=tPngE0XUww8
+video_date: 2026-04-24T23:15:17+00:00
+video_description: |
+  GPT-5.5 chegou como o novo modelo flagship da OpenAI. Mas será que ele realmente supera o Claude Opus 4.7 nos testes práticos de código? 
+  
+  Nesse vídeo eu coloco o GPT-5.5 pra trabalhar nos mesmos prompts que usei com o Claude Opus 4.7: Mario Kart, Angry Birds, GTA San Andreas em 3D com Three.js e pinball clássico. Dá pra comparar lado a lado o que cada modelo entrega de verdade.
+  
+  Além dos testes, a gente passa pelos benchmarks oficiais, incluindo o Terminal-Bench 2.0 e o SWE-bench Pro, pra entender onde o GPT-5.5 lidera e onde ele perde. Spoiler: não é tão simples quanto parece na página de anúncio. E no final eu falo sobre por que modelos open source como Qwen 3.6 e GLM-5.1 estão chegando cada vez mais perto dos modelos fechados, e o que isso significa pra quem escreve código hoje.
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAiprogbr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaigpt55
+  
+  _______
+  
+  0:00 Intro
+  0:43 Documentação
+  5:16 Mario Kart
+  9:01 Angry Birds
+  13:29 GTA San Andreas
+  18:49 Pinball Clássico
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Oh, ih, poirado. Todo dia eu acordo com plano de gravar um vídeo aqui pro canal e aí eu abro o Twitter e meu plano vai por água baixo. Mas também eu tinha que ter me preparado melhor para isso aqui, por toda vez que Antropic lança um modelo novo, um novo Opos, a Open AI demora ali alguns dias para lançar a versão dela também ou vice-versa, né? Mas bem, dessa vez foi nessa ordem e hoje a gente tá aqui para falar do GPT 5.5, o novo modelo flagship da Open AI.
+
+Vamos lá pra tela pra gente conversar sobre ele que a gente vai descobrir as coisas juntos, porque não deu tempo de eu pesquisar muito sobre isso aqui, não. Mas também o que eu quero é testar. Então, tá valendo. Vamos lá. GPT 5. É
+
+uma nova classe de inteligência ali pro trabalho real. Que que é trabalho real para OpenI? Isso aqui que eu faço, né? Vídeo pro YouTube é um trabalho real? Não, não é. Não é. Apesar de eu estar
+
+emendando gravar um vídeo atrás do outro igual maluco, isso aqui provavelmente não é o que eles chamam de trabalho real. Mas eu não posso então sair desse vídeo aqui com a expectativa lá no alto. Se o GPT5 não sair daqui carregando cinco sacos de cimento, isso aqui é mentira, né? Vamos começar o vídeo já botando os pingos nos aqui. Mas bem, vamos lá. Nosso melhor e mais brilhante
+
+modelo, né? A gente já espera isso no no site de anúncio. E de fato é, tá? Às vezes a galera brinca: "Ah, mas toda semana você bota que o melhor modelo do mundo é porque os modelos estão evoluindo." Então, se um novo modelo, principalmente de um desses grandes laboratórios, ele vem, ele vem para bater o anterior e também o que saiu há três dias atrás, pelo menos isso que eles tentam fazer. Então, às vezes a
+
+gente tem o melhor modelo mesmo. Talvez não em tudo, mas nas coisas que eu testo muitas vezes a gente tem. E eu quero ver se é o caso do GPT 5.5 ou não. Bem, vamos dar uma olhada aqui nesse benchmark que ele separou pra gente e eu passei nessa página rapidamente, então já vou te falar, ó. Presta bastante
+
+atenção nisso aqui, ó. Primeiro benchmark dele é o Terminal Bench 2.0, né? Ele botou aqui. Então, 82.7
+
+GPT 5.5 contra 75 GPT 5.4. Então é uma boa subida aqui, né? Melhorou bastante, mas se a gente olha lá o Cloud Opus 4.7,
+
+a gente vai ter 69.4. Então isso daqui é uma diferença muito grande. Nesse vídeo aqui a gente não vai testar ele de forma gêntica, mas eu posso fazer um outro vídeo usando ele de forma génica, tá? Só você deixar aqui o seu like e falar aqui nos comentários que você quer ver aqui.
+
+Agora a gente já tem alguma coisa que eu gosto mais, né, que é um benchmark de software, né? 73 pontos, 68 5.4 e o Ah, não tem nesse aqui, não tem, tá? Aqui tem umas outras coisas, tem aqui o two eton, né, que é tipo uma olimpíada, né, de tool collen, 55 pontos contra 54. Também não temos aqui do opus.
+
+Basicamente aqui ele bate o em tudo, né? Deixa eu ver se tem alguma coisa que ele perde pro aqui. Não, ele não perde pro nada. E isso aqui é muito suspicious. Don't be suspicious. Don't be
+
+suspicious. Don't be suspicious. Don't be suspicious. Por que que isso aqui é suspicious? Porque ele continua falando aqui das capacidades do modelo. Como ele
+
+é incrível. Ele vem falando aqui sobre a genicing. Então esse daqui é o modelo mais forte em operações agênticas. E a propósito, queria fazer um comentário aqui. Parece que a galera, sei lá, no último mês aprendeu a palavra harness, que eu nunca tinha visto harness tantas vezes aqui no comentário, né? E agora
+
+tudo é harness. Eu achei até que eu tava ficando meio maluco. Aí eu fui fazer a coisa mais maluca que tem, que é pesquisar isso. E cheguei aqui à conclusão de que eu não tô maluco não. Ó aqui, ó. Último ano, né? Mundialmente,
+
+Harness. Ele vem aqui, ó, aqui lá no no meio do ano passado, 45 no Google Trends. Quando chega aqui, ó, janeiro de 2026, 51, mais fevereiro dá uma subida e aqui, ó, ele atinge o topo. Então, realmente a galera aprendeu essa palavra aí nas últimas semanas e se é para usar, vamos usar. Então, agora todos os modelos que estão saindo, eles são treinados pra harness. Ó, aqui a gente
+
+tem alguns exemplos, tá? Isso aqui eu vou te confessar que eu não parei muito para ver. Não sei nem exatamente o que eu tô vendo aqui, mas tudo bem. Tem um tracker de earthquake, ou seja, de terremoto. Isso aqui é absurdo. Ah,
+
+aqui, ó, ele tá falando os personagens, né, e as texturas foram criadas numa outra ferramenta. OK, pô. Tá aí, hein? Qualquer dia eu vou fazer um projetinho desse aqui pra gente testar aqui no canal. Game 3D. OK. Esse daqui é mais o
+
+que a gente espera, né? Mais tranquilo. Legal, hein? Dá para fazer isso aqui para VR. a gente fez aqui no canal, inclusive usando Quen, se eu não me engano. Vou deixar o card aqui em cima
+
+para você assistir depois. Mas então, por que que eu falei lá do benchmark, do terminal bench? Por que que ele era suspicious? Porque se a gente for rolando aqui para baixo, ó, bem escondido, tá vendo? Tô rolando, rolando, rolando. E aqui embaixo, cadê?
+
+Não chega nunca, nunca, nunca, nunca. Mas aqui embaixo a gente tem mais um benchmark. E aí, quando a gente olha aqui, SW Bench Pro 58. fez legal, um pontinho acima aqui do GPT 5.4, mas bem atrás do que o Cloud, como a gente viu lá no início, né? Ganhava em tudo do
+
+Opus. E aqui a gente já começa a ver ele perder, né? Aqui embaixo, mais uma vez, ó, o GPT 5.5 perde aqui no agente financeiro aqui, ó, praticamente empata aqui no OS World Verified, mas de fato ganha nas outras coisas, né? Então não é tão loucura assim, não, mas é meio suspicious, tá bom? Mas vamos colocar a
+
+mão na massa e vamos ver se ele é bom mesmo. Inclusive, eu vou fazer os mesmos testes que eu fiz com o Opus 4.7, porque assim, dá pr você assistir o nosso vídeo lá do Opus. Ó só, o Opus 4.7 ele fez aqui um um GTA bem maneirinho. E o
+
+título lá do nosso vídeo é o Ops 4.7 porque ele é muito bom, muito bonito, mas ele é caro, né? Então bom, bonito e caro. Aqui o que a gente precisa garantir é que cadê, pô, cadê meu modelo aqui, né? Vou aqui em configuração.
+
+Então, tô aqui com o 5.5 corretamente. Perfeito. Cria o Mario Kart Control J. Inclua itens, oponentes e três circuitos. Vamos lá. Esse é o nosso
+
+prompt. Vamos começar aqui e vamos ver qual que vai ser o resultado dele, tá? Uma coisa importante, opa, ele não pensou em nada, ele tá com thinking aqui ligado. Bem, a gente pode ver que ele é rápido aqui e era exatamente o que eu ia falar. Era que a gente tá aqui com o Thinking Effort no Standard, tá? Então,
+
+vou começar aqui no Standard. provavelmente o GTA ou algum outro eu vou fazer no Higher. Cara, não consigo nem chegar no final aqui de tão rápido que ele tá escrevendo código, o que é um excelente sinal sempre. Bem, vou esperar ele terminar aqui porque não consegui acompanhar. Show de bola. Ele já acabou
+
+aqui, tá? Então aqui tá todo o código. Código até bem grandinho. Vamos dar uma olhada aqui no preview. Olha. Ué, cadê?
+
+Pera aí, pera aí, pera aí. Pô, o carro tá dando ré sozinho. Ah, vai tá acelerando, pô. tá com esse troço esquisito ali. Ih, ah, pô, tem até umas moedinhas, hein, pô. Mas olha só, meus inimigos estão tão
+
+parados. Eu acho que eu acabei aqui. Tô em primeiro lugar, não apareceu nada aqui pra gente. Stop. Deixa eu baixar.
+
+Beleza, agora eu tô em tela cheia aqui. Caramba, tem que clicar e bora, banana. Ó, os meus inimigos parados. Que que aconteceu? Deu ruim. Bati na banana. Parei. Não tem
+
+como eu sair daqui. Não dá para fazer nada. R. Eu reinicio aqui, então. Ah, eles bateram numa num cone ali, ó.
+
+Batia no cone. Acabou. Acabou. Con não, na verdade era para ser uma banana, né? Então, você caiu na banana, não consegue mais sair lá. ele. Tá, vamos de novo
+
+aqui. Mas, ó, eu não eu não selecionei nenhuma fase, né? Não selecionei nenhuma fase aqui. Tem ali a parada de tem um turbozinho. Eita, caramba, esse troço aqui nessa parte da fase tá esquisito. Tem um
+
+turbo. Ih, agora bati, mas não tem, não tem outras fases. Deixa eu ver se tem aqui, ó. Ah, 1 2 3. Ali muda de circuito, tá?
+
+Então eu tenho que apertar 1 2 ou três. Mas como que eu como que eu faço? Tá beleza. Agora esse é outro outro circuito, mas é igual. É outro. É
+
+diferente, mas é igual.
+
+E eu posso por fora aqui? Ah, por fora eu vou vou devagarzinho. Que que aconteceu aqui? Ah, ih, agora sim consegui sair. Boa. Cadê? Deixa eu,
+
+deixa eu tentar sair aqui, ó. Não dá para sair, tá? Vamos ver a terceira fase, então. Terceira fase, temos prédios, prédios no meio da pista, só que ainda ainda assim a pista é exatamente igual, né? Mesmo estilão.
+
+E deixei cair a banana aqui do lado da outra. OK. Mas não tá não tá de todo ruim não. Mas aqui eu acho que eu vou dar o ponto pro pro. Se bem que eu gosto da interface aqui. Achei que ficou
+
+legal. Um que meio glass. Bonzinho. Ok, vamos lá. O nosso próximo teste é a criação do nosso Angry Birds, tá? E eu
+
+também vou colocar aqui o Thinking como Standard, porque esse jogo aqui não é tão complexo assim, né? Mas vamos fazer o seguinte, se ele falhar, eu vou botar no máximo, porque eu quero ver esse jogo funcionar. Crio um clone de Angry Birds usando 3DS. Faça os pássaros e inimigos com formas básicas e o jogo precisa ter três tipos de pássaro e três fases. Esse é o nosso prompt. Vamos ver o que que
+
+ele vai fazer pra gente. Ó, supostamente tá pensando aqui, mas já pensou muito rápido também. Já lançou aqui o que que ele vai fazer. Não explicou muito não. Só o bagulho dele é trabalho do mundo real mesmo, ó. Tá trabalhando. Então vou
+
+esperar que ele terminar pra gente verificar se funciona ou não. Enquanto isso, vamos relembrar aqui o que que o Opus fez pra gente em questão de Angry Birds. Ó, esse aqui foi então o nosso Angry Birds do OPS e o nosso chat GPT. Vamos ver o tamanho desse código aqui, ó. Bastante código já, hein? Tá acabando. Beleza,
+
+acabou. Vamos baixar. E não funcionou. [canto] Fazer o seguinte, deixa eu vir aqui em preview. Deixa eu ver aqui, ó, o console, ó.
+
+Então, aqui ele já tá achando pô legal esse negócio aqui, hein? Esse harness. Então, deixa eu parar aqui. Eu vou mandar ele consertar o bug. E aí, ele já tá trabalhando aqui em cima do bug.
+
+Gostei. Gostei desse harness. Agora ele tá pensando, né? Agora sim. Beleza, acho que ele terminou aqui, só foi corrigido e eu vou dar o play aqui, ó. Ah, agora
+
+sim. Não consigo ver isso em tela cheia, não. Código. Cadê? Aqui vai dar para baixar. Deu para baixar. Beleza. Agora
+
+ele em tela cheia. Aqui já caiu tudo, né? Mas vamos ver se Ó, não, não, aí não. Algo de errado não está certo aqui. Pera aí, deixa eu, deixa eu começar de novo. Vamos começar tudo de novo. Eu não
+
+sei se ele tá achando que os troços ali caíram. O que que aconteceu? Mas, ó, por que que deu level clear? Os porquinhos estão aqui ainda. Tudo bem, vamos pro próximo.
+
+Ó, agora o azulzinho. Ah, mas esse azulzinho não vira dois, né?
+
+Eu não sei o que que tá acontecendo. Será que os troços deviam ter saído? Não, não devia ter saído ali. Estão ali ainda. Tá, esse aqui eu não consegui.
+
+Vamos tentar de novo, então. Beleza. Agora eu acho que eu só preciso acertar esse aqui pela lógica. Ih, não consegui. Ah, ó, consegui. É, [risadas]
+
+então, basicamente aqui os porquinhos todos morreram sem eu precisar fazer nada. Ó, agora algum ficou, eu não sei qual é. Eu vou chutar que é esse daqui. Então, vou tentar acertar ele lá. É, consegui. Acho que era esse. Tá meio
+
+mandraque, mas não tá de todo ruim não. Mais uma vez, eu não sei porque que esses modelos fazem o estiling meio que como se essa parte aqui tivesse de cabeça para baixo, mas não é o primeiro que faz isso. Eu tô achando aqui, ó, toda a parte de interface legalzinho, né? Bem minimalista, mas bem legal. As nuvens parecem croaçãs, o que acaba de me dar uma fome. E se deu fome em você
+
+também, me desculpe. Os porquinhos não estão muito detalhados não. A gente teve modelos muito menores fazendo mais detalhes aqui nos porquinhos. Os pássaros não tm ah, deixa eu tentar de novo um negócio aqui. Os pássaros não tm os poderes, né, do dos pássaros do Angry Birds. Então não tá, isso aqui não tá
+
+funcionando não. Esse aqui parece uma aquelas abóboras de Halloween. Esquisito, mas tudo bem. Ó, pum, consegui agora. Legal. É, é
+
+alguma coisa, tá? E aqui a gente precisa trazer pra consciência uma parada. Obviamente, né? Isso aqui não é o uso real de um código. A gente tá fazendo uma brincadeira, é um entretenimento, mas que tem um fundo de verdade ali, porque a gente quer comparar como que esses modelos lidam, mesmo que seja com prompt simples. E o fato da gente ter
+
+modelos muito menores, trazendo resultados às vezes comparável, alguns casos melhores que desses modelos gigantes fechados, é um sinal incrível que os modelos menores estão chegando muito longe, né? E uma parada que eu bato muito aqui na tecla do canal é que muitas vezes as pessoas elas ficam cegas achando que elas precisam a todo momento e para tudo usar o melhor modelo que existe. E nada é assim na vida. A empresa que ganha mais dinheiro muitas vezes não é a que tem o melhor gênio profissional num determinada área. Então nem sempre você vai precisar do melhor modelo do mundo, mas a gente vai continuar procurando ele aqui. Uma coisa
+
+importante, nessa altura do campeonato, a Antropic já tinha travado minha conta porque já teria acabado todos os meus créditos lá. Então pra gente tentar acabar com o crédito aqui também, a gente vai colocar aqui agora no modo estendido e a gente vai pedir aquele nosso promptim. E eu tô falando aqui dele, ó, o nosso, ih, dá para eu já copiar o prompt daqui direto. Esse daqui é o nosso vídeo do Opus 4.7, bom, bonito e caro. E olha só
+
+como é que ele fez aqui o nosso GTA San Andreas. Não, pera aí, vamos pedir lá primeiro pro GPT fazer, depois se for o caso a gente compara. Então, ó, vou colar aqui o nosso prompt e garantindo aqui que a gente tá com a versão estendida, né, de pensamento, cria um jogo 3D completo inspirado de GTA San Anders usando 3JS via CDN, estética, estilo Lego, inclua a miniap, pessoa e sistema de nível de procurado, carros, motos, mapa com diferentes áreas. Pô, depois posso melhorar esse promp tá mal escrito, que dá dó, mas vamos embora. Mesmíssimo promp que a gente mandou pro Opus. Vamos ver se o resultado vai ser
+
+próximo ou não. Então aqui a gente já tá no modo estendido e já tá pensando muito mais, tá? Vamos ver se isso vai se traduzindo numa alta qualidade do resultado. Não pensou tanto assim não. Já tá mandando ver aqui no código. Vamos
+
+ver. Ah, é uma coisa que é importante lembrar que talvez você já tenha se esquecido aí que tá assistindo e que você só usa modelos fechados gigantes. É só OPOS, só chat GPT. E se falar os modelos abertos não chegam perto dos modelos fechados. Nosso GPT 5.5 aqui é
+
+Rodou Angry Birds, tá? A gente precisou mandar ele corrigir um bug, não saiu de primeira, tá? Resultado achei que foi bom, mas é importante sempre lembrar, não fez de primeira. Eu gravei hoje o nosso vídeo testando inclusive o Angry Birds no Quen 3.6 de 27 bilhões de parâmetros denso, que na verdade era para entrar na frente desse vídeo, mas como eu acabei de subir um vídeo sobre o Quen 3.6 27 bilhões parâmetros já,
+
+caramba, tá difícil falar isso, eu resolvi intercalar, vou jogar ele para amanhã e hoje eu tô subindo esse vídeo aqui. Pronto, ele acabou aqui de criar o nosso GTA. Vamos ver se vai funcionar primeiro fazer o download aqui. Olha só nosso cabeçudinho aqui. Então, ó, a tecla para baixo, tá indo pra frente. O
+
+mouse controla aqui, ó, para um lado e pro outro. Ah, para cima, para baixo aí não controla. Vamos ver aqui que mais que dá para fazer. Shift corre, né? Então, tô aqui, ó. Uh, cadê? Vamos para
+
+lá para dar para ver, ó. Uh, uh. Beleza. É, entra e saí de veículos. Pô, por que que a polícia me atropelou? Eu sou um
+
+cidadão de bem. Tô aqui caminhando, caminhando pela rua. Eu consigo dar soco nos outros? Não, né, pô? Os caras estão me atropelando aqui.
+
+Não fiz nada, cara. Pô, a polícia tá na minha cola, parece que sabe, né? Tá. Eu vou roubar um veículo agora. Qual veículo que eu vou roubar? Esse aqui
+
+mesmo. Tô dando ré. Opa, bati, bati no muro invisível ali. E vamos embora agora. Ah, cadê?
+
+Ah, tem uma moto aqui. Deixa eu pegar essa moto ali. Tem uma moto ali na frente, ó. A moto branca. Eita. Ai, meu Deus. Que que tá vendo?
+
+Ih, a moto acho que tá presa aqui na parede. Essa moto não deu bom não. Vou roubar o carro da polícia. Não. Ih.
+
+Deu. Pera aí. Dá para roubar o carro da polícia? Dá, dá para roubar o carro da polícia. Ih, meu Deus, eu atropelei o carinha ali. Sai, sai da frente que eu
+
+não quero atropelar ninguém não. Pô, essa cidade ela tá Se bem que se você pensar em Lego, né, eu acho que ela não tá numa escala absurda, não. Tá numa escala boa. Mas é meio estranho porque parece que a rua não cabe nenhum carrinho. Aqui a gente tem a praia, né?
+
+Cadê o mapa? Ah, o mapa tá lá em cima, ó. De fato, temos o mapa lá. Sai, sai, sai. Deixa eu ver que que acontece se eles me prenderem. Não me
+
+prende não. Ih, não tão me prendendo. Eu vou roubar o carro da polícia, vou sair, vou roubar de novo e vou roubar novamente. E aí vocês t que me prender, né? Não me prendem não. As estrelinhas
+
+vão caindo ali. É, ó. É um resultado. Diria que esse aqui não estaria no meu top cinco não, mas funcionou de primeira. Tem algumas funcionalidades, muitas das coisas que a gente pediu.
+
+Então, deixa eu tentar pegar a moto agora lá, ó. Mas se bem que a moto, as motos são como os carros, né? E a moto vai meio que para trás também, meio esquisito. Ó, o guidom dela é atrás. Parece, sei lá, o que que parece.
+
+Ô, essas casinhas ficaram maneiras, hein? Essa arrvorezinha, essa casinha, isso aqui ficou maneira. Ih, fiquei preso. Ih, fiquei preso. Consegui me prender. E não foi a
+
+polícia, me prendi sozinho. Essa daqui é a nossa versão do Opos, tá? A escala eu acho que tá melhor do que a escala do GPT, só que todos os veículos aqui andam de lado e aí fica meio engraçado. Talvez lá esteja mais fiel, né, a as construções, por exemplo, ao que seria de Lego de fato. E aqui nessa versão a gente consegue ser preso e tudo. Também
+
+criou aqui as áreas, não é? melhor das criações que a gente já viu, mas funciona. E o último prompt que a gente vai testar aqui é o nosso pinball clássico. Muitos modelos não conseguem fazer esse pinball. A última vez que eu fiz o pinball foi com Opus 4.7, mas eu
+
+fiz aí também com o Minim Max, que achei que fez um bom trabalho. Fiz aí também com o GLM 5.1, que também achei que foi muito bom. Só que teve uma pessoa que foi lá e comentou que claramente o Opus foi muito melhor do que os outros. Então vou deixar o link aqui do card do Minimx e também do GLM5. Você pode ir lá dar
+
+uma olhada. Minimx GLM5. Depois você olha o do Opus e aí você me diz aqui nos comentários desse vídeo qual que foi melhor. Mas a gente vai incluir também o GPT 5.5 pra gente ver se ele vai fazer um resultado claramente melhor do que os outros ou ali mais ou menos a mesma coisa. E como nenhum modelo foi muito
+
+bem nesse teste, a gente vai colocar pensamento estendido também aqui para ele ter uma vantagem. Pensou quase nada, né? Então ele falou: "Isso aqui é muito mole para nós, vou fazer direto, quero ver se vai ficar bom". E o nosso prompt aqui foi um promptado por um dos inscritos, tá? Então se você quiser ver o teu prompt aqui num vídeo, deixa aqui embaixo nos comentários, porque pode ser que eu traga aqui para um dos vídeos.
+
+Cria um jogo de pinball clássico inspirado no cadete espacial para ser executado em navegador web. Caprich, capriche nos elementos gráficos. Vamos ver se ele vai caprichar se não vai ou se ele vai caprichar. Pronto, terminou aqui. Tá, já vou baixar po irado. Tá,
+
+até agora isso aqui é o melhor que a gente tem em termos. Isso aqui provavelmente não vai funcionar, tá? Já vou baixar minha expectativa, mas toda essa interface aqui é o melhor que eu já vi agora, tá? Então a gente tem aqui toda uma interface bem trabalhada. Legal. Vamos ver aqui, ó. A e D. Opa, A
+
+e D. Pô, o troço tem um animação meio esquisita ali, mas legal. OK. Tilt, tem tilt. Esse, ó, ele dá um empurrão na máquina. Legal. Vamos aqui com espaço,
+
+ó. Mandar a bola. E a bola não sai, né? Não sai. Ó, vamos tentar de novo aqui, ó. Segurei tudo. Não, segurando tudo não
+
+funciona. Segurando metade também não. Então, não funciona, infelizmente. Mas a interface ficou bem maneira. Eu vou pedir pr ele ajustar, já que a gente já tá aqui, né? Ih, caramba, ficou tudo
+
+caixa alta. Parece que eu tô gritando com ele. Então tá bom, vai assim mesmo. Ô seu GPT, a bola não tá chegando na parte do jogo, não. Havia uma tampa no topo do corredor. Não, ele não chegava
+
+nem no topo do corredor, meu amigo. Não é esse o problema. Vamos olhar aqui mesmo. Tá aqui. Lá, ó. Vai, vamos
+
+embora. Então, beleza. Aí falou que corrigiu aqui. Não corrigiu. Foi nada.
+
+Não tá funcionando, ó. Não consegue lançar a bola, infelizmente. Mas gostei bastante dessa interface aqui. Felizmente isso aqui tinha cara que não tinha como funcionar. Então, ainda nenhum modelo gabaritou o nosso pinball.
+
+A gente vai continuar tentando aí. E eu quero saber de você, GPT 5.5 destrói Opus 4.7 ou Opus 4.7 destrói GPT 5.5 ou
+
+não tem nada disso? Ninguém destrói ninguém, tá ali mais ou menos no mesmo pário. Eu vou te falar com toda a sinceridade, eu sinto que os modelos open source, modelos chineses, estão chegando bem perto aqui desses modelos aqui, State of the Art. Inclusive, eu quero usar ainda mais, mas depois de usar um pouquinho o Quen 3.6 de 35 milhões de parâmetros e o de 27 bilhões de parâmetros, eu tô achando que tá chegando a hora onde a gente já vai começar a conseguir usar modelos localmente para serem bons assistentes de código. Vai ser bom assistente de
+
+código paraa Vibe Coder que não sabe o que tá fazendo, não. Vai ser bom assistente de código para programador que vai conseguir direcionar muito bem, né? E se ele cometer algum erro, vai saber verificar onde é o erro, o que que tá acontecendo, por que ele tá errando para direcionar ele, como que ele precisa consertar. Vibe Coder vai continuar pagando Antropic lá e daqui a pouco não vai mais conseguir pagar $ não, porque eles voltaram atrás na decisão de tirar a parte de código do plano mais barato, mas eu tenho certeza, pode anotar aí que já já eles vão dar um jeito de aumentar esse preço ou diminuir a cota e para usar de verdade vai ficar caro, vai ficar $ 200 ou algo parecido. Então nunca foi tão bom ser programador, tá? poder usar os modelos pequenos, os
+
+modelos baratos para criar coisas muito interessantes. E se você quiser ver o vídeo onde eu rodo o Quen 3.6 de 35 bilhões de parâmetros numa 5060 Ti, dá uma olhada nesse card aqui. Agora, se você quiser entender um pouco mais do que que eu tô falando, de por que tudo vai ficar tão mais caro e por que a gente vai ver licenças mais restritivas daqui pra frente no mundo open source, dá uma olhada nesse vídeo aqui, ó. Esse vídeo aqui, no momento que eu tô gravando agora, já bateu 50.000 1000
+
+views, que é o recorde aqui do canal, tá? Então assiste porque o vídeo ficou bravo. Aí claro, se você curtiu esse vídeo, dá aquele hype para ajudar a mostrar para outras pessoas. Beleza? Vou ficando por aqui, até o próximo vídeo.

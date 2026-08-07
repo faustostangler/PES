@@ -1,0 +1,191 @@
+---
+video_title: "5 modelos LOCAIS pra quem não tem computador da NASA (e que são EXCELENTES)"
+video_id: UfBhyOaXl0Q
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UfBhyOaXl0Q
+video_date: 2026-02-23T07:44:41+00:00
+video_description: |
+  Nas últimas semanas saíram vários modelos open source incríveis: GLM-5, Qwen 3.5, MiniMax. Mas todos gigantescos e impossíveis de rodar localmente sem gastar rios de dinheiro. Então eu resolvi ir atrás dos modelos que qualquer pessoa com um computador normal consegue rodar hoje, sem pagar um centavo de API.
+  
+  No vídeo eu mostro 5 modelos pequenos e faço testes de como eles podem ser usados para diferentes tarefas. Desde um Qwen 3 de 4B que roda em 4 GB de VRAM até o Devstral Small 2 da Mistral AI com 24B de parâmetros e capacidade de visão. Os modelos foram testados em análise de documentos longos, leitura de imagens, geração de landing page e Tool Calling com busca na internet, entre outras coisas. Se tiver afim de ver o poder de modelos pequenos, dá uma olhada nesse vídeo.
+  
+  → E deixa aqui nos comentários: qual é o seu hardware? Você tem placa de vídeo ou Mac? Quantos GB? Isso vai me ajudar a criar conteúdos mais focados para o seu setup.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytai5modelospequenos
+  
+  _______
+  
+  0:00 Intro
+  1:52 Qwen 3 4B 
+  6:20 Qwen 3 VL 8B
+  9:28 GPT-OSS 20B
+  14:20 Qwen3-Coder 30B
+  18:10 Devstral
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Na última semana, a gente teve aí a oportunidade de ver vários modelos incríveis saírem, foi um atrás do outro. GLM5, Minix, M2.5, Quen 3.5, todos modelos incríveis, só que todos eles tm um problema, são gigantescos e muito difíceis de rodar localmente. Eu sei disso e eu tô ouvindo vocês. Por isso,
+
+nesse vídeo daqui, eu vou trazer cinco modelos bem menores que eu curto bastante. E você não vai precisar de 200 GB de memória para poder rodar esses modelos, não. Pode ficar tranquilo. Vamos lá pra tela que eu vou te mostrar. E nesse vídeo aqui a gente vai rodar todos os modelos numa aplicação chamada LM Studio. O que eu gosto desse app é
+
+que ele tá disponível para Mac, para Windows, para Linux, seja qual for seu sistema operacional, você vai conseguir vir aqui em lmstudio. E fazer o download pra sua máquina. Essa daqui é a cara dele e você pode baixar os modelos direto aqui de dentro, tá? Basta vir aqui embaixo nesse robozinho, procurar pelo modelo que você quer. E o primeiro que a gente vai ver aqui hoje é o Quen 4B thinking, tá? Essa versão aqui, se
+
+você tiver rodando no Mac, dá prioridade pra versão MLX, porque ele vai rodar melhor no teu Mac. Se você tiver rodando numa placa da Nvidia, por exemplo, você pode baixar a versão GG UEFA. E aqui, ó, ao clicar, você consegue selecionar inclusive qual a quantização desses modelos. Quantização é o quão preciso tá sendo a representação dos números que compõem o modelo. Então, normalmente um modelo sem quantização, ele tem 16 bits.
+
+Aí 8 bits ele é pouco quantizado. 4 bits, por exemplo, ele já é bastante quantizado. E aí você vai perdendo um pouco da precisão. Se você puder rodar o modelo de 8 bits é sempre bom, mas se não der baixar aqui um pouco para 6, 5 ou até 4 bits. Então, olha só, se você tiver uma placa de vídeo com 4 GB de V RAM, você já consegue rodar aí o modelo de 5 bits do Quen 3 VL4B. Se você tiver
+
+uma placa de 8 GB, você consegue rodar até a versão de 8 bits desse aqui. Depois que você baixar, você vai vir aqui, ó, e você vai poder selecionar ele. Você vai ver que eu tenho um monte baixado aqui. Eu ten que fazer uma limpa, inclusive. Então, posso procurar ele aqui, ó, com 4B thinking, tá? Eu tô
+
+com a versão de 8 bits MLX. E aí eu vou carregar ela aqui. Aqui a gente vai ter qual que vai ser a janela de contexto para esse chat. que a gente vai criar aqui. Vamos botar no máximo. E a regra
+
+normalmente é o seguinte. Se você tiver no limite do teu VAM, por exemplo, esse modelo aqui a 4 5 bits, ele vai ter mais ou menos 3 GB G. Se você tiver uma placa de quatro, você vai estar muito próximo do limite dela. Aí você tem que ter uma janela de contexto muito pequenininha, tá? Se você tiver uma placa de oito, por exemplo, pode botar o contexto máximo, 262.000
+
+tokens. Isso aqui é bastante, cabe livros inteiros aqui e dá pra gente fazer bastante coisa. Então vou carregar aqui o modelo com a capacidade de token máximo por contexto. E aí depois de carregado a gente já pode falar com ele aqui, ó. Vou mandar uma mensagem aqui.
+
+Oi, tudo bom? Só pra gente ter uma ideia aqui da velocidade dele. Esse não é um bom prompt, nem pra gente ver velocidade, mas só pra gente ter uma ideia, eu tô rodando no Mac M3 Ultra e a velocidade que a gente tá atingindo é de 100 tokens por segundo. E aí, dependendo de onde você esteja rodando, se você tiver rodando numa RTX, por exemplo, você pode atingir velocidades maiores do que essa, dependendo da largura de banda da memória da sua placa. Mas vamos a uma demonstração mais interessante aqui.
+
+Deixa eu criar aqui, ó, um novo chat. E eu fiz o seguinte, eu vi aqui, ó, nesse vídeo do YouTube que foi o Metact 2025, onde o Mark apresentou os novos óculos da meta e eu peguei todo o transcript apresentação, tá? Tem aqui mais ou menos 1 hora meia, só que na verdade é 1 hora de apresentação basicamente porque a primeira meia hora é basicamente musiquinha, mas eu peguei todo o transcript e eu joguei nesse arquivo aqui, ó. Então aqui nesse arquivo a gente tem o transcript apresentação inteira. E aí eu vou usar esse transcript aqui, eu vou carregar ele no meu chat e eu vou pedir pro meu Quen 3 de 4 bilhões de parâmetros, ele me falar o que que aconteceu nessa apresentação.
+
+Então tô falando aqui, ó, me diz quais produtos foram apresentados nessa apresentação e liste as principais características deles. Aqui ele tá analisando, né? Esse daqui é um modelo thinking, então ele faz a análise, pensa um pouco no que que vai responder e dá a resposta pra gente. Então olha só, os produtos apresentados foram RBAM Metaglasses, próxima geração, já tinha uma versão dele, então foi atualizado. É um como se fosse o Metaglasses 2, sei lá. E aqui ele fala o que que teve de
+
+diferente, né? Duração da bateria maior, gravação de vídeos com 3K, algumas outras funcionalidades, cores, etc. Aí ele fala do Oakley Metavenguard, que é um outro modelo de óculos também lançado, fala inclusive o preço, quais são as características. E aí vem o Metray Bund Display, que na verdade é a grande novidade desse evento, né, que ele tem uma tela, você consegue navegar ali no Instagram, por exemplo, você consegue ver coisas na lente dos óculos, o que é interessantíssimo. E aí ele fala aqui, ó, quanto de brilho tem, qual que é a especificação de pixels e etc.
+
+Depois ele fala do Metaural Band, que é a interface, como que você controla inclusive o Metray Band. Isso aqui já sai agora dos óculos, né? Mas também foi falado Meta Horizon Studio, Meta Horizon Engine, que seria para criar novos mundos provavelmente pro Quest. E aqui Horizon TV, que provavelmente também é uma aplicação pro Quest. Então aqui ele trouxe a lista de produtos e a descrição do que que tem em cada um desses produtos, né? Isso daqui foi feito pro
+
+modelo de 4B. ele conseguiu gerar esse resumão de mais de uma hora de evento de uma forma extremamente simples. Uma outra coisa que eu posso perguntar para ele é o seguinte: "Eu sei que nessa apresentação foi mencionada uma funcionalidade de tradução em tempo real. Qual foi o time stamp onde isso foi falado?" Lá no nosso arquivo, ó, a gente tem junto com a fala o time stamp, né, de quando aquilo ali aconteceu. Ah,
+
+uma coisa legal, todo o nosso texto transcript em inglês, né? e ele trouxe o resultado todo em português. Então esse modelo ele também é capaz de traduzir. Existem outros modelos melhores para isso, mais direcionados, mas esse modelo é capaz de traduzir também. Então vamos pedir aqui esse time stamp, ó. E só pelo
+
+thinking dele ali, eu já vi que ele já achou alguma coisa, ó. Ó, 58 e 48 é o tempo que ele tá me falando aqui. Vamos dar uma olhada. >> Foi na verdade um pouquinho antes, ó. Foi aqui, ó, em 5750 começa.
+
+Então, tipo, ele errou. por muito pouco. Com isso daqui seria suficiente pra gente encontrar. Então aqui se a gente for, ó, 58 e 48, ó, é quando ele termina de falar sobre a tradução. Então esse modelo aqui, apesar de ser pequenininho, ele é bastante poderoso. O próximo
+
+modelo que a gente vai ver é o Quen 3VL de 8 bilhões de parâmetros, tá? Esse modelo aqui, se você rodar a versão de 8 bits, ele roda em 8 GB também, porque ele tem 5.78. Ele conseguiria ser carregado em 8 GB e sobraria ainda um espaço pra janela de contexto. Aqui a gente tem outras opções, ó. O de 8 bits
+
+já ficaria demais para uma placa de 8 GB, mas caberia tranquilamente numa placa de 16. Eu tenho aqui baixado versão de 4 bits, vamos a ela. Qual que é a grande diferença do Quen 3ing, por exemplo, Quen 3VL? Bem, o Quin 3V não é thinking, ele não tem ali o pensamento, mas ele tem capacidade de visão, quer dizer que ele consegue enxergar imagens. Então aqui, ó, eu vou carregar essa nota de supermercado e eu vou pedir para ele criar uma tabela com esses itens aqui.
+
+Crio uma tabela a partir da imagem. Vamos conferir aqui, ó. Então, ó, total 41,12, certo? 6,99 ali o pano. 1,49 1,49 6,99 1,49,49 6,29 10,39. Perfeito. Olha só que
+
+interessante. Aqui ele ainda pegou outros dados, né? E aí eu vou pedir o seguinte, eh, categorize os itens. Olha só que interessante. Tá vendo aqui? Ele
+
+errou, né? Goma de mascar, não é escova de dente, mas ok. Chocolate doce. Então aqui, ó, higiene pessoal, alimentos, bebidas, não teve. Aqui ele separou por higiene pessoal e alimentos. Então, ó,
+
+dá para fazer tranquilamente um aplicativo de gerenciamento de finanças pessoais, usando esse modelo aqui, onde você manda ali a foto das notas que você tira e ele faz todo o resto. Aqui ele ainda destaca algumas observações, ó. Itens repetidos. No caso, ele marcou como um só, mas ele levou em consideração a quantidade. Então, perfeito. E uma outra coisa na qual o
+
+Quen 3 Velha é muito bom é conseguir ver fotos, por exemplo, e descrever essas fotos. Então, vou pegar essa foto aqui, que é uma thumbnail do Mr. Beast e eu vou fazer o seguinte, ó. Olha, escreva essa imagem em inglês com um alto nível de detalhamento para que o modelo de geração de imagem consiga reproduzi-la com a maior precisão possível, incluindo composição, iluminação, cores, textura perspectiva e atmosfera geral. Então esse é o pedido que eu tô fazendo aqui pro Quen, ó. Ele não só detalhou aqui
+
+como ele reconheceu o Neymar, tá? Ele não reconheceu o Mr. Beast, mas ele reconheceu o Neymar. E olha só, isso daqui é uma excelente descrição. Vamos pegar tudo isso aqui, ó. A gente vai vir
+
+aqui no Nano Banana, vai colar essa descrição, vai trocar aqui pro pro só para ter o melhor resultado possível. Vamos ver o que que ele vai gerar. Olha isso aqui. Então essa daqui é a imagem original, né? Essa daqui é a imagem que ele gerou. Uma coisa interessante é que,
+
+ó, aqui ele tem o 10 na camisa e aqui ele tem o 19 na camisa, que é exatamente os números que eles tinham aqui. De fato, tem o Neymar na imagem, né? E essa outra pessoa, ela não parece com Mr. Beast de forma geral, mas tem algumas características como cor do cabelo e etc. Lembrando que isso daqui é um modelo de 8 bilhões de parâmetros, tá?
+
+Então, ele foi capaz de entender aquela imagem e definir uma descrição. E eu achei que, apesar do ângulo do rosto não tá igual, eu achei que capturou os principais elementos, né? Cor da camisa, é o estádio lá no fundo, etc. e tal, até a iluminação um pouco. Próximo modelo que a gente vai ver é o GPT OSS 20 bilhões de parâmetros, tá? Não é esse
+
+aqui de 120, não, é o de 20. O modelo de 20 bilhões de parâmetros, ele tem uma característica interessante. Ele foi treinado a 4 bits. Normalmente os modelos eles são treinados com precisão de 16 bits. E aí, pra gente rodar em máquinas menores, mais fracas, a gente precisa quantizar esses modelos e ele perde precisão. Como esse modelo aqui
+
+ele já foi treinado em 4 bits, essa é a maior precisão que ele tem. E ele só ocupa 12 GB de memória, o que é um modelo perfeito para rodar em placas que tenham 16 GB ou até no Mac Mini. No Mac Mini, como tem memória unificada e ele precisa dividir a memória com o sistema operacional e outras aplicações, talvez você não consiga uma janela de contexto tão larga, não. Mas numa placa de vídeo com 16 GB dedicados de VRAM, aí você vai conseguir uma boa sobra aí para ter um contexto maior. Esse modelo aqui, ele tem aqui até 131.000 tokens de janela de
+
+contexto. É um pouco menos do que 260.000, 1, ainda é bastante. E uma característica dele é que ele tem aqui a opção para você colocar se você quer baixo, médio ou alto nível de thinking, né, nível de pensamento ali, se ele vai raciocinar mais ou menos para responder. Ah, uma coisa que eu não comentei é que esses modelos tm a capacidade de chamar ferramentas, né, o é o chamado tool calling, né? Então aqui a gente tem
+
+algumas ferramentas e a gente vai usar nesse caso daqui, ó, um modelo que saiu na semana passada foi o GLM5, né, que é o novo modelo da Z.Aaii. ai. Eu vou fazer o seguinte, eu vou pegar o link desse post aqui do blog, vou colar esse link aqui e eu vou pedir pro GPTOSS me explicar um pouco sobre esse modelo. Então, ó, faça um resumo das principais características desse modelo. Eu tô
+
+passando o link aqui, eu quero ver como que vai ser com o Tool calling. Ele vai ter que ir lá visitar o site, extrair os dados e aí sim gerar pra gente esse conteúdo. Ele é um modelo bem mais antigo do que o Gl5, então ele não tem nada no conhecimento dele sobre esse modelo que a gente tá pedindo. Então tudo que ele vai responder pra gente é baseado na interpretação dele do que ele vai ler lá no blog. Eu vou colocar aqui, ó, a quantidade de reasoning para high, pra gente ter uma resposta melhor.
+
+Então, ó, ele já me pede aqui para fazer a busca do website. Eu vou liberar agora. Ele resolveu fazer uma busca no Duck Duck Go. É tipo um Google, né? Então ele vai expandir ainda mais o conhecimento dele além do blog que a gente passou. botão, ó, ele voltou lá no
+
+blog, veio agora aqui procurar isso no Duck Duck Go, encontrou ali o paper. Deixa eu ver se esse paper aqui que ele tá pedindo, que paper é esse? Então, ó, realmente ele foi no paper do GLM5, ó. Ó, ele fez várias buscas, então, né? Ele conseguiu puxar bastante conteúdo, pensou bastante sobre a resposta e agora ele tá entregando pra gente uma tabela, ó, com várias características. E olha
+
+só, tudo em português aqui, né? sobre o modelo, qual que é o objetivo do modelo? Quais são as características dele? Arquitetura, alinhamento, desempenho. Aqui, ó, que ele tem o poder de geração documento. Interessante isso aqui. E
+
+aqui uma comparação. Então, olha só, ele fez um resumão pra gente do que que é o GLM5. E lembrando, tudo isso tá rodando localmente, offline. O modelo ele acessa a internet para pegar informação, mas o modelo em si ele tá rodando na nossa máquina. Eu vou pedir o seguinte ainda, ó. Transforme os dados sobre desempenho
+
+em uma tabela. E aí, ó, ele gerou aqui pra gente a nossa tabela comparando GLM5, né, com GLM4 e com outros modelos. Passando aqui todos os dados de comparação. Ainda tem algumas notas aqui. Show de bola. Esse é o GPTOSS 20
+
+bilhões de parâmetros. E ele fez tudo isso entregando pra gente, ó, 83.77 77 tokens por segundo. Mais uma vez, eu tô rodando aqui no M3 Ultra, né, que tem 800 GB de bandwid, que é mais ou menos a mesma coisa que tem, por exemplo, uma RTX 5070 Ti. Ela tem 16 GB de Vren e 896 GB/s então ele entregaria mais ou menos essa velocidade também com uma pequena vantagem que as placas da Nvidia elas têm uma velocidade de pré-processamento muito maior do que o Mac, então seria ainda mais rápido na parte que tá processando, por exemplo, os promptis, uma 5060 Ti seria uma placa mais barata, né? Mas ela teria metade da velocidade,
+
+metade do bandid, então seria um pouco mais lento, mas ainda assim 40 tokens por segundo, provavelmente essa placa atingiria ainda é bastante utilizável. E como é que o GPT USS consegue esse nível de velocidade aqui, 80 tokens por segundo nesse Mac? Bem, porque ele é um modelo do tipo mixture of experts, tá? Apesar dele ter bilhões de parâmetros, ele não ativa esses 20 bilhões de parâmetros ao mesmo tempo. Ele ativa 3.6
+
+somente. Então ele consegue chegar a velocidades muito parecidas do que o Quen 3 de 4 bilhões de parâmetros, né? Porque ele vai ter mais ou menos o mesmo número de ativos. O Quen, tanto o de 4 bilhões de parâmetros quanto o que a gente viu aqui, o 8 bilhões de parâmetros BL, eles são chamados modelos densos. Eles ativam todos os parâmetros que eles têm. O GPTOSS não ativa só uma
+
+parcela, por isso ele consegue ser tão mais rápido, mas ainda assim o total de parâmetros dele dá para ele uma inteligência superior. Próximo modelo que a gente vai ver aqui é o Quenter, a versão dele de 30 bilhões de parâmetros. Esse daqui também é um modelo MOE, mixture of experts, né? E ele tem 30 bilhões de parâmetros com 3.3 bilhões de parâmetros ativos. A arquitetura dele
+
+tem 128 experts com oito experts ativos. O que interessa aqui é que ele também é um modelo bem rápido, mas por ter 30 milhões de parâmetros, ele vai precisar de uma máquina um pouquinho mais potente. Esse modelo aqui não vai caber em 16 GB, você vai ter que ter pelo menos 24. Mas eu acredito que muitos desenvolvedores que já tenham, por exemplo, um Mac que tem 32 GB de memória, vão poder rodar esse modelo aqui tranquilamente, principalmente essa versão dele aqui, que é a versão de 4 bits, tá? Que cabe em 17 GB, né? Então,
+
+com 32 você teria aí uma boa sobra para um contexto bem grande. Falando em contexto, esse modelo também tem aqui uma janela de contexto 262.000 tokens, o que faz ele conseguir enxergar ali uma boa base de código, né? Mesmo se a sua base de código for grande, ele vai conseguir enxergar. E essa é a especialidade dele. Esse é um modelo
+
+coder feito para criar código. O GPTOSS ele também consegue criar coisas, tá? Mas esse aqui é melhor. Primeira coisa que eu vou pedir para ele fazer aqui é uma página. Inclusive, nos últimos vídeos que eu fiz, eu pedi pro Quen 3.5
+
+criar uma página. Pedir pro Minim Max M2.5 criar uma página. Então, vou pedir a mesma coisa para ele aqui e a gente vai ver o resultado. Ah, um outro vídeo que a gente pediu esse mesmo prompt foi o vídeo do Gemini. Eu achei que ele não
+
+foi tão bem não, tá? Eu vou deixar o card aqui em cima para você mesmo assistir. Depois você me fala se ele foi bem ali, gerando uma página, uma landing page pra gente. Eu não gostei muito do resultado, mas vamos ver o Quenter 30 milhões de parâmetros como que ele sai. Então o prompt é o seguinte: cria uma landing page para uma agência de a especializada em automação. Cite
+
+exemplos projetos possíveis, coloque depoimentos e crie uma FAC. Show de bola, terminou aqui pra gente. Vou copiar aqui. Vamos testar. Então, ó, esse aqui é o nosso resultado em telebot, né? Serviços. Ó, os links
+
+funcionam. Projetos, depoimentos, FAC, tá? FAC tem aqui o nosso acordeon perfeitamente implementado. OK, vamos voltar lá para cima. Faltou essa imagem aqui, né? Provavelmente ele pegou algum
+
+link de uma imagem que não tá mais disponível, mas todo o estilo aqui, ó, tem um detalhezinho aqui no final. Vamos ver se tá responsivo. Vamos diminuir aqui a tela, ó. Ó, design responsivo, tá? Então, a gente tem aqui os cards do de quais são os serviços. Não sei se eu
+
+gosto tanto desses ícones, mas se a gente pensar que é um modelo de 30 bilhões de parâmetros rodando localmente, eu acho que tá mais do que justo. Aqui mesma coisa aqui para essas ilustrações, né? Podia ser um pouquinho melhor, mas aqui ele botou umas tags, né? Automação atendimento a cliente, automação de faturamento, depoimento de cliente. Gostei bastante aqui dos cards de depoimento, acho que tá legal, perguntas frequentes. E aqui embaixo
+
+solicite uma demonstração, um link que obviamente não faz nada, mas olha só. Esse footer, vamos aumentar aqui. Esse footer aqui tá show de bola. Tá provavelmente um dos melhores, incluindo os modelos grandes. Isso daqui é muito legal. Olha só, ele não deixou muito a
+
+desejar ao resultado dos modelos grandes que a gente viu aqui. Não, eu vou te falar que eu prefiro esse resultado aqui do que o que a gente viu com Gemini. Não que Gemini seja ruim, só que no nosso teste ele não saiu tão bem. Inclusive, se você assistir o vídeo lá, você vai ver que ele se negou a criar uma landing page. Quando a gente deu exatamente esse mesmo prompt, ele criou somente a copy da página. A copy da página não é a
+
+página. Esse modelo aqui também vai se destacar em tool calling e vai te permitir por conta disso, usar ele com agente, como Quencoder ou Open Code ou até o Cloud Code, quando você liga ele a um modelo local, você pode usar esse modelo aqui junto com eles e não pagar nada em custos de API e etc. Lembrando que aqui a gente tá rodando a versão de 4 bits desse modelo. Essa versão aqui não rodaria no Mac Mini base, né, que é aquele que tem 16 GB, mas ele já rodaria se você quiser o upgrade para 24. Eu sei que no Brasil tudo isso é muito caro, mas ele rodaria no Mac Mini com 24 GB de memória unificada. E o último modelo que
+
+eu vou trazer hoje é de uma empresa francesa chamada MSWOL. E o modelo que eu tô falando é o Dev Straw Small 2. Esse é um modelo que saiu agora em dezembro de 2025, modelo de 24 bilhões de parâmetros. A diferença dele pro Quen, por exemplo, é que esse é um modelo denso. Quer dizer que todos os 24 bilhões de parâmetros são ativos a cada geração de token. Mas ele tem uma
+
+vantagem que esse daqui é um modelo com capacidade de visão. Isso vai permitir que a gente faça algumas coisinhas interessantes. Vamos carregar ele aqui, ó. E o maior tamanho de contexto que ele deixa a gente selecionar aqui é 393.000.
+
+É muita coisa. Apesar de que ele fala aqui que esse modelo tem uma janela de contexto de 256.000 tokens. Meio estranho, mas ok. Vamos lá. Essa versão
+
+aqui é a versão MLX, 4 bits e ela ocupa, ó, 14 GB de espaço, tá? Então, esse Devstraw aqui com 24 bilhões de parâmetros, ele caberia em quantização 4 bits numa placa de 16 GB, mas se fosse o Mac por ele tá muito próximo ali dos 16 com 14 GB ficaria um pouco pesado para um Mac de 16 teria que ter aí pelo menos 24. Mas vamos lá, já que a gente tá aqui, a gente acabou de testar um modelo de código, vamos ver então como o Devstross se compara com Quenter, passar para ele o mesmo prompt que a gente passou e vamos ver o que que ele gera aqui pra gente, qual velocidade que ele atinge e etc. Tanto Quent, eles são do tipo instruct, quer dizer que eles não fazem aquele reasoning, eles não fazem o pensamento antes de responder, eles só respondem. E uma coisa interessante aqui é que ele não gerou pra gente código. Esse é um
+
+comportamento que a gente viu lá noemini, o que é um pouco estranho, porque uma landing page ela é tecnicamente código, senão é copy, né? A cópia da landing page. Mas vamos pedir para ele escrever aqui o código. Show de bola. Vamos copiar aqui o resultado. E
+
+uma coisa que a gente pode destacar aqui é que, apesar dele ser um modelo de 24 bilhões de parâmetros denso, ele gerou esse código aqui a 40 tokens por segundo. Nada mal. Agora, se a gente comparar lá com Quenter, o Quenter gerou a 72.7 tokens por segundo. Então essa é a diferença de um mixture of experts para um modelo denso, tá? Em termos de
+
+velocidade. Mas o que a gente vai ver agora é a qualidade do resultado. Aqui a gente tinha então a versão do Quentão do Dev Straw. A gente já pode dizer que o Devstraw ele não é um modelo muito focado em design, né? Então assim, ele fez o básico, né? Tudo aqui tá
+
+funcionando, tem o que a gente pediu, tem os cards aqui, etc. Depoimentos, tem aqui, ó, o nosso, mas nem uma animação nem nada, o trso é estritamente código. Esse modelo aqui, você vai querer usar ele um pouco mais com back end, né? Um pouco mais na criação do código em si, da lógica e não muito no design, não. Deixa eu dar mais uma tarefa para ele.
+
+Pera aí. Não vamos desistir dele ainda não. E se a gente der uma referência, quem sabe. Então, o bom dele é que ele é um modelo com capacidade de visão. Eu vou passar aqui esse screenshot, eu vou pedir para ele reproduzir essa interface, tá? Vamos ver como é que ele
+
+vai sair. Ó, ele montou aqui pra gente, tá? Então vamos copiar aqui e vamos ver o resultado, ó. Essa aqui era a referência e esse aqui é o resultado. É, ainda acho que tá bem bem basicão, né? Bem
+
+quadradão. Não tá tão parecido não. Não trouxe gráficos. parecidos com esse, nada do tipo, mas a gente consegue ver aqui um pouco dos cards, né, da sombra. Então tem tem alguma coisa aqui, sim, ó.
+
+A gente tem alguma interação aqui, mas nada muda de fato na tela. OK. Eu vou fazer mais uma coisinha, mais uma coisinha antes de finalizar aqui com Devstck. que é o seguinte, eu peguei essa imagem aqui de referência, eu vou passar para ele para ele alterar aquela página da agência de A para ter esse estilo aqui. Vamos ver o que que ele vai conseguir extrair daqui. Beleza, ele
+
+modificou aqui o código para se adaptar ao estilo que a gente pediu. Vamos ver o resultado. Então, essa aqui é a nova versão. E agora sim a gente tem algo um pouco mais divertido, tá? Independente disso daqui ter, ele jogou um inglês com francês aqui, mas independente a que ele trouxe daqui, né? Tudo bem, mas o que eu
+
+tava falando é que independente isso aqui ter avião ou não com uma agência de a, ele conseguiu de fato extrair um pouco dessa brincadeira aqui dessa página, né? Essa página é menos quadrada, né? Então ele conseguiu extrair isso de fato, ó. Aqui ele continuou com aqueles cards meio quadrados, OK? Os depoimentos também, mas a gente teve uma pequena melhoria. E
+
+eu quero saber de você quais desses modelos você já conhecia, deixa aqui nos comentários. Eu confesso que o modelo da Mistral Devstraw, ele é o modelo que eu menos usei e é o que eu menos uso. Eu tô louco para ver a próxima geração deles. É uma empresa que eu tô sempre de olho. Eu tô até mais interessado nos modelos médios dele, né? Principalmente se vier
+
+alguma coisa aí eu tô louco para ver. Mas por ter capacidade de visão, é um modelo que tem o seu espaço ali, se você der um prompt muito bom para ele, ele com certeza consegue acompanhar. Me fala aqui embaixo qual modelo você tem usado para eu testar, né, e talvez trazer aqui pro canal, compartilhar com as pessoas. E eu vou te pedir mais uma coisa, tá? Para eu conseguir criar um conteúdo aqui mais direcionado para você, me deixa aqui embaixo nos comentários qual que é o teu hardware. Você tem placa de vídeo?
+
+Se você tem placa de vídeo, qual modelo que você tem, se você roda modelos no Mac, quantos gigas de memória unificada você tem, tudo isso vai ser importante para eu não ficar só trazendo aqui modelos de 200 bilhões de parâmetros que ninguém consegue rodar, né? E se você quiser ver uma playlist inteira de modelos rodando localmente, é só você clicar aqui, tá? Se você tiver interesse mais nos modelos grandes das grandes empresas, os modelos fechados, aí eu vou botar uma playlist aqui. Mas é isso aí, vou ficando por aqui, até o próximo vídeo.

@@ -1,0 +1,191 @@
+---
+video_title: "Já pode CANCELAR o Opus 4.6? Qwen 3.5 27B LOCAL na RTX 5090 criando Mario Kart, Zelda e Paint"
+video_id: JBjZE6kNzAk
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JBjZE6kNzAk
+video_date: 2026-03-13T23:00:21+00:00
+video_description: |
+  Agora chegou a vez de desafiar o Qwen 3.5 27B a criar o Mario Kart, o Zelda e o Paint Brush. Será que um modelo de 27 bilhões de parâmetros consegue competir com gigantes como o GPT 5.4 e o Opus 4.6?
+  
+  Nesse vídeo, eu rodo o Qwen 3.5 27B localmente na RTX 5090 (32GB de VRAM) usando o Qwen Code e mostro até onde ele chega em três testes práticos de código. A configuração foi feita no LM Studio com quantização Q4 e KV Quantization Q8, o que permitiu uma janela de contexto de 122 mil tokens e uma velocidade de 53 tokens por segundo. Com essa combinação, a 5090 mostra sua grande vantagem sobre o Mac M3 Ultra: velocidade de processamento de prompt.O
+  
+  Os resultados geraram diferentes sentimentos. O Paint ficou impressionante, o Mario Kart funcionou de primeira, e o Zelda trouxe alguns erros lógicos. Tudo isso rodando 100% local, sem API, sem nuvem.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiqwen3527bmario
+  
+  _______
+  
+  0:00 Intro
+  1:35 Configuração no LM Studio
+  3:52 Qwen Code
+  4:06 Teste do Paint Brush
+  8:31 Teste do Mario Kart
+  13:01 Teste do Zelda
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Eu sou simplesmente um aficcionado por rodar modelos localmente. E é por isso que eu gosto tanto de criar conteúdo para esse canal, porque me dá a permissão de testar tudo que sai por aí. E nessa minha loucura, eu fiz altos investimentos aqui. Eu tenho um Mac M3 Ultra com 256 GB de memória unificada, que é um monstro para rodar LM. E eu tenho uma 5090 com 32 GB de V Ren que é um monstro para rodar modelos de imagem, modelos de áudio e LLM quando cabe nela também. O problema é que com 32 GB de
+
+VRAM a gente consegue sim encaixar nela muita coisa legal, mas como eu tenho Mac, eu consigo rodar modelos de centenas de bilhões de parâmetros nele e eu acabo usando mais ele para LLM. Mas eu acho que agora o jogo mudou. Isso porque o Quen 3.5 veio com uma versão de 27 bilhões de parâmetros que bate de frente com modelos de centenas de bilhões de parâmetros. Centenas é forte, né? com uma centena de bilhão de
+
+parâmetros, como por exemplo GPTOSS ou até o próprio Quin 3.5 de 122 bilhões de parâmetros. Isso quer dizer que agora tem um modelo que cabe na 5090 nos 32 GB dela e que eu vou conseguir extrair então a grande vantagem dessa placa que é o tempo de processamento de prompt. Esse é o ponto fraco do Mac. A gente fez um vídeo aqui comparando o Mac com a 5090 e lá você pode ver que o Mac é um monstro quando roda os modelos que não cabem na 5090. Mas se o modelo couber
+
+tanto num quanto no outro, a 5090 sempre ganha. Então hoje a gente vai fazer o meu teste agêntico com o modelo Quen 3.5 de 27 bilhões de parâmetros. Vamos lá pra tela, pra gente começar a organizar as coisas. Aí eu te falo de quantização e numerozinho e bá bá. Vamos lá. Então
+
+eu tô aqui já na minha máquina Linux. A gente vai usar o LM Studio e eu vou carregar o nosso modelo lá que é o Quent. 27 bilhões de parâmetros. A gente vai usar uma versão Q4 porque com essa versão Q4 a gente vai poder ter contextos mais longos. Nos testes que eu fiz aqui no canal da 5090 versus a M3 Ultra, a gente usou a versão Q8 e foi muito top na 5090, só que a gente não conseguiria um contexto tão grande com a versão Q8. Com a versão Q4 a gente vai
+
+conseguir um contexto maior. Então, a primeira coisa que eu vou fazer é o seguinte. Eu quero colocar aqui, ó, tudo de CPU e a gente vê que a gente já tá ocupando aqui, ó, 18.50 GB. Se eu aumento esse contexto pro full, aí estó, né? A gente fica com 75. Eu quero manter
+
+em 32, porque se eu for acima de 32, aí eu já vou est colocando carga na minha memória brand e aí vai gerar latência, vai ficar muito lento. Então vou fazer o máximo que dá para fazer colocando aqui, ó, abaixo dos 32. Mas olha só, 63.000 tokens, eu acho que vai ser pouco pra gente, mas dá pra gente aumentar isso mexendo aqui no KV quantization. Propósito, essa foi uma dica do Thiago, tá? Então se você tiver alguma sugestão,
+
+se você tiver falando: "Igor tá fazendo tudo errado, bota desse jeito aqui que vai dar bom, deixa aqui nos comentários". Então aqui a gente vai colocar como que é oito. E quando eu coloco esses dois aqui como que é oito, ó, já cai lá para 25 GB, tá? Então quer dizer que a gente pode aumentar o nosso contexto bastante, quase o dobro. Ah, passou um pouquinho menos. Vamos aqui,
+
+vamos tentar ir no no limite. 122.000 tokens. Agora eu já acho que é uma janela de contexto considerável. Então é aqui assim que a gente vai rodar ele, vamos carregar ele aqui na memória.
+
+Outra coisa que eu vou fazer, ó, é ligar o nosso server, tá? Porque eu vou querer conectar com o open code, provavelmente eu vou usar o Quin Code, tá? Eu vou conectar com Open Code aqui no LM Studio. Uma coisa importante é, eu vou rodar o meu Q Coincode no Mac. Então eu preciso fazer com que o Mac se conecte no computador que tá rodando a 5090 nesse Linux aqui. Então eu preciso
+
+ativar aqui, ó, para ele servir na LAN, né? Servir aqui na rede local. Agora sim a gente vai conseguir conectar. E aqui, pronto, tá tudo carregado, tudo certo. Só pra gente dar uma olhada aqui. Vamos
+
+ver qual é a velocidade que a gente tá tendo aqui com o nosso Quin 3.527 milhões de parâmetros. Então, a gente tá conseguindo aqui nessa versão que é 4 53 tokens por segundo, que eu acho que é excelente. E o processamento de prompt vai ser incrível, eu acho. Vamos lá testar.
+
+Então, já tô aqui com Quin Code aberto, né? Como a gente tá rodando o modelo do Quen, eu achei melhor usar o Quin Code e não Open Code. É basicamente a mesma coisa final do dia. E a gente tá usando aqui então o nosso Quin 3.5, 27 bilhões de parâmetros, rodando na nossa 5090.
+
+Primeiro projeto que a gente vai fazer aqui é o nosso clássico paint, né? A última vez que a gente fez esse projeto, inclusive foi com o GPT 5.4 e ficou muito bom. Será que o Quem faz algo parecido? Vamos ver. Tá mandando fazer
+
+update aqui, mas vou fazer depois que eu gravar o vídeo. Então, meu prompt é o seguinte: crie uma aplicação que tenha todas as funcionalidades do Paint. Faça um app web, inclua extras modernos e faça sem framework, apenas HTML, CSS e JavaScript. E aqui o que a gente vai fazer é, como esse é um projeto relativamente simples, a gente não vai usar o Plan Mode, a gente vai direto pra execução, tá? Então vou deixar ele criar aqui pra gente e a gente vai ver o resultado. Ó, a gente pode dar uma
+
+olhada aqui no que que ele tá planejando fazer. Então ele vai aplicar aqui um CSS moderno, criar as funcionalidades de desenho, mas também os de shape, color picker, ferramenta de texto, undu e redo e gradiente, patterns, layers também. Legal. Eu vou deixar ele aplicar todas as modificações que ele quiser. Aqui já criou o HTML, tá no CSS agora. Show de
+
+bola. Tá terminando aqui pra gente. Falou que implementou tudo. Vamos ver se ficou bom, cara. Se ficar bom isso aqui, vai ser um monstro, porque não demorou tanto não. Ó, para criar tudo, ele
+
+gastou então 181.000 input tokens e 19.000 output tokens, tá? Foram nove requests pro modelo. Pô, o Quen Code é muito maneirinho porque ele dá essas estatísticas aqui. Opa, cara,
+
+vou te falar, nada mal, nada mal. Tem aqui um monte de atalho, ó. Legal. Então, pera aí, deixa eu dar um zoom aqui. Ah, o zoom não tá funcionando.
+
+Será que nada tá funcionando? Nada tá funcionando. Não tem um pequeno erro aqui, ó. Bem, vou copiar aqui, então. Vou mandar pra ele. Ah, aqui, ó. Era
+
+para ser um ponto e vírgula, tá? Um dois pontos aqui. Beleza, pode modificar. Vamos atualizar aqui, ó. Ó, agora já parece que melhorou, hein? Vamos, então,
+
+ó. Brush funcionando. Perfeito. Pencil eraser. Ok. Como é que eu aumento o
+
+tamanho dela aqui? Que é o size da eraser. Então, não aumentou nada. Deixa eu pegar o brush aqui novamente. Ah, pro brush tá funcionando o tamanho, né? Vou diminuir
+
+aqui. Vai fazer um negócio assim. Vai tentar preencher aqui. Eu tenho ali, ó. Sline.
+
+Isso aqui tá meio confuso para mim. Eu não devo estar entendendo alguma coisa, mas beleza. Isso aqui tá funcionando. Texto. Como é que ele botou o texto? Ó,
+
+onde é que ele adicionou? Num lugar aleatório. Deixa eu ver se ele vai adicionar aqui, ó. Ele tá adicionando no lugar aleatório, né? Tudo bem. Color picker. Deixa eu ver
+
+se ele mudou ali. É, o color picker tá funcionando. A gente tem algumas propriedades aqui. Se a gente mudar aqui, eu acho que o nosso brush não era para ele ficar quadrado, né? Bem, isso aqui acho que não tá funcionando. Vamos ver se ele
+
+salva. OK, tá salvando retângulo. Ele tá funcionando, mas aí não mostra o retângulo até a gente ter ele pronto. Eu não consegui mudar esse outline ali. Ah, não, isso aqui é Ah, tá. Agora eu
+
+entendi. Eu quero ele preenchido ou só outline. Beleza. E aí eu posso diminuir aqui, né? Ah, estranho. Talvez aqui,
+
+talvez aqui controle. Ah, beleza. Aqui contrrole então das formas. Pouco confuso, mas funciona. Vamos ver aqui, ó. Gradiente.
+
+Então, tem os gradientes. Andu, load image, canvas size. Nossa, bem completo, cara. Scale inverten. Ó, se eu for dando sharpen aqui, ó.
+
+Blur, cara, bem completo, bem completo. Ah, olha só que legal. Pera aí. Então, se eu vier aqui, criar um texto, será que eu consigo mover esse texto aqui, ó? Selection tool, não é o selection tool, não.
+
+Posso adicionar uma layer, cara. Assustador isso aqui porque tá muito maneiro, hein? Deixa eu fazer aqui. Eu tô com essa cor tosca, né? Verdão. Ó.
+
+Beleza. Aí eu quero sumir com esse layer. Venho aqui no olhinho. É, isso não tá funcionando, não adiantou muito, mas tudo bem, cara. Muito bom, muito bom. Isso aqui tá rodando
+
+localmente, não demorou muito para criar. Tô achando muito, muito, muito bom. Agora a gente vai pro próximo teste que é o Mario Kart. Aí fica um pouquinho mais difícil. Pro Mario Kart a gente começa no plan mode porque eu quero que ele planeje bem antes de executar e a gente vai dar o prompt inglês também.
+
+Então o plano aqui, ó, é criar um jogo jogável, um jogo jogável da um web game validando tudo com Playwright e é um Mario Kart Clone usando Trade JS, tá? Essa é a ideia. Vamos ver o que que ele vai fazer aqui pra gente. Primeiro ele tá verificando se tem alguma coisa aqui no nosso diretório. Ele já viu que não tem absolutamente nada, então ele vai começar do zerão. Normalmente todas as
+
+LLMs fazem isso aqui primeiro. Nossa, já lançou um plano pra gente? Vamos dar uma olhada, ó. Ele vai gerar então um track com terra generation, né? Com geração de terreno. Vai ter asfalto, vai ter meio
+
+fio, vai ter grama. Legal. Eu quero saber se ele vai colocar aqui os cascos, as paradas, ó. Beleza. Power upups e itens tem que ter. Então, mushroom star
+
+shell, cara. Perfeito. É isso. Vamos embora. Manda ver. Dou o poder dele
+
+fazer tudo que ele quiser aqui ou não, hein? Ah, quer saber? A gente tá aqui para isso mesmo, né? Eu faço isso para você não ter que fazer e só se vive uma vez. Vamos embora. Vamos. Instala.
+
+Instala tudo aí. Instala o Chromium, instala o Play Wright. Deu tudo errado. Vai ajustar. Calma. Deixar o loop
+
+detection enable. Então aqui, ó, ele deu. Verdade. Vou mandar ele continuar. Deixa eu tentar de novo que ele eu acho que ele tava chegando em algum lugar.
+
+Pronto, foi de outra forma. Deixa, deixa uma vez só por enquanto. Agora vai eco, vai eco. Pode, pode fazer sabia bora. Deixa, deixa. Não faça isso em
+
+casa, hein. Não faço isso com projetos que tenham alguma coisa pronta também, porque pode tá dando opção aí dele apagar coisas. E presta bastante atenção, lê o que ele tá falando, não dá mole. Ó, já tá pedindo para remover coisa aqui. Remover, vou deixar uma vez só, tá vendo? Não vou deixar ele remover
+
+o que ele quiser. Não. Quiser remover, me pergunta. Já tá tentando buildar aqui, ó. É rápido mesmo, cara. Ah, não.
+
+Oval track não. Ah, tudo bem. O GPT 5.4 ele fez um track oval e foi bom. Vai, vamos, vamos torcer para ser bom aqui também. Bem, quase lá, quase pronto.
+
+Falta só os efeitos de partícula e os sons. E aí é nós. Vamos testar. Quero saber se vai ser um lixo ou se vai ser top demais. Opa, tudo pronto. Vamos ver.
+
+Aqui tá dando sugestões pro futuro, ó. Tô de bobeira aqui. Tô muito empolgado para ver se isso aqui vai funcionar. Lembrando, a gente tá rodando esse modelo localmente Q4, tá numa 5090. Antes de eu me empolgar, vamos ver se não tem nenhum erro lá no console. Não
+
+parece ter nenhum erro. Vamos lá. Eita,
+
+caramba, a câmera é muito louca. Tu que acontece bater nos outros ali? Deixa eu.
+
+o carrinho é muito rápido, hein? Eita! Ó, terminei em primeiro, não sei nem como.
+
+Caramba, já terminou. Mas eu ainda tô aqui brincando, ó. Ó o cogumelo, como é que fica? Ó, aquela ali é o cogumelo. Tu tu tu.
+
+Ah, isso aqui é a estrelinha, né? Ó, vamos dar uma olhada aqui no carrinho. Carrinho não fica parado não. Temos um jogo Mario Kart, não tá no nível do GPT 5.4, não tá no nível do Minimx M2.5 fez
+
+um trabalho incrível aqui, mas tudo bem, esses são modelos muito maiores. O Minimex tem 229 bilhões de parâmetros, né? A gente rodou aqui uma versão Q6.5, 5. Então, de fato, seria muito difícil do Quen de 27 bilhões de parâmetros Q4 chegar muito próximo, mas só dele ter construído tudo, ter funcionado de primeira já é incrível. Vai para fazer
+
+esse jogo. Então, ele levou aqui, ó, 4.66.000 tokens de entrada e ele cuspiu 41.000 tokens, tá? Foram 132 requisições do
+
+Coincode pro modelo, 109 tool calls com uma taxa de sucesso de 92%. Bem interessante, tá? A gente levou uns 23 minutos, 20 minutos para poder criar esse jogo. Esses são dados legais de saber. E para completar agora a gente vai criar o nosso Zelda. Ó, esse aqui é
+
+o prompt nosso Zelda. Então, basicamente a gente entrega esse arquivo para ele e fala: "Se vira". E a gente vai ver qual que vai ser o resultado dele. O que fez o melhor trabalho até agora foi o GPT 5.4, foi melhor do que o Ops 4.6, foi
+
+melhor do que o Codex 5.3, foi melhor do que o Minimx também. Então, de todas que a gente rodou esse prompt, o GPT 5.4 foi o melhor até agora, né? Porque agora a gente vai ver como que o Quen vai sair aqui. Eu só vou fazer o seguinte, eu só
+
+faço um link pro arquivo e acabou porque lá já tem as instruções começando no plan mode. Vamos ver o que que ele vai fazer pra gente, ó. Já tá lendo aqui nosso arquivo, né? E tá criando então o nosso plano. E parou aqui. Tá me falando
+
+aqui que ele vai analisar e aí ele para. Vou pedir para ele fazer o plano de ação, então, e me apresentar, ó. Beleza. Agora sim. Que que ele vai fazer aqui, ó? Um core game system, uma engine de
+
+renderização, sistema de entidades, level design, áudio e a lógica. Gostei. Tudo vai est dentro de um arquivo só. Beleza, vamos embora. Agora sim. Vamos
+
+embora. Ele criou a lista dele e já acabou aqui. Eu pisquei e ele acabou. Vamos lá. Vamos ver se vai funcionar ou não vai. A lenda da espada perdida. Hum.
+
+Show de bola. Primeira coisa que a gente vai ver é se não tem nenhum erro aqui, né? Nenhum erro. Nenhum show. Assim que eu gosto. Valeu, cozinho. Espaço, ó.
+
+Ih, que que é isso aqui? Mas o que que tá acontecendo? A espadinha. Eu vou, eu não vou conseguir passar de um. Ué, não fez nenhuma sala. Ops,
+
+faltaram as portas, né? Deixa eu pedir para ele implementar. Ah, ele não tá fazendo. Nossa, fiquei um tempão aqui. Show de bola. Disse aqui que resolveu todos os
+
+problemas. Vamos ver. Opa, temos ali alguma coisa. Ai, meu Deus, que que aconteceu?
+
+Algo de errado não está certo aqui. Deixa eu voltar. Ele botou a porta no meio da sala e aqui eu fico preso aqui no meio com o chefe. Que loucura. Quen 3.5, 27
+
+bilhões de parâmetros, rodando na 5090 Q4. Mandou muito bem no Pain, mandou bem no Mario Kart, não foi no nível dos grandes modelos, obviamente, mas tudo funcional. E aqui no Zelda eu esperava um pouquinho mais dele. Até conseguiu fazer, ficou bonitinho, os controles todos funcionando. Não deu nenhum erro de código, mas tinham alguns erros lógicos ali, começando por não ter porta na primeira vez e depois por colocar uma porta no meio da sala. A gente poderia
+
+continuar pedindo para ele ajustar aqui, mas aí a gente vai perder o intuito do vídeo. Quero exatamente saber até onde que ele conseguia com as mesmas chances que a gente deu pros outros modelos. E eu quero saber de você, Coin 3.5, 27 bilhões de parâmetros rodando localmente, é um monstro? Eu acho que ele é um monstro. É comparável com
+
+modelo de 200 bilhões de parâmetros, como por exemplo Step 3.5? E a gente fez um vídeo aqui no canal. Se você quiser ver um vídeo sobre Step 3.5, eu vou deixar o link aqui, ó. ou comparável com
+
+Mini Max, modelo de 229 bilhões de parâmetros, que também fizemos vídeo aqui. E o card vai est aqui. Bem, ele não é comparável com esses dois modelos, mas ainda assim é muito bom, principalmente considerando que ele é um modelo que cabe em 32 GB de V RAM e ele rodou muito bem. Mas é isso aí. Ah, eu quero te perguntar uma coisa. Me deixa
+
+aqui nos comentários qual placa de vídeo que você tem, que eu tô querendo comprar uma placa de vídeo de 16 GB aqui pro canal e eu não sei exatamente qual modelo que eu vou. Deixa aqui uma sugestão pra gente, beleza? É isso aí. Vou ficando por aqui, até o próximo vídeo.

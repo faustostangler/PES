@@ -1,0 +1,132 @@
+---
+video_title: "Nemotron-3 Nano 4B da NVIDIA é MELHOR que o QWEN 3.5 4B?"
+video_id: p942F3CS0Kk
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=p942F3CS0Kk
+video_date: 2026-03-21T13:01:22+00:00
+video_description: |
+  Nemotron 3 Nano 4B da NVIDIA: será que um modelo de 4 bilhões de parâmetros dá conta do recado?
+  
+  Nesse vídeo eu testo o novo small language model da NVIDIA, o Nemotron 3 Nano 4B, rodando 100% local na RTX 5090. Começo mostrando a velocidade absurda dele, passo por testes de geração de código com HTML/CSS, extração de dados de um PDF e criação de questões de estudo. Tudo rodando local pelo LM Studio. Depois levo ele pro modo agêntico no OpenCode pra ver se ele consegue ler notas fiscais em PDF, extrair dados e renomear arquivos automaticamente. Spoiler: ele tropeça feio nessa parte.
+  
+  Aproveito e mostro como o Mimo V2 Pro resolve o mesmo problema sem dificuldade, pra você ter um comparativo real entre modelos de tamanhos diferentes. Se você quer entender os limites e os pontos fortes de um SLM de 4B parâmetros com arquitetura híbrida Mamba-Transformer rodando no seu próprio hardware, esse vídeo é pra você.
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytainemotronnano4b
+  
+  _______
+  
+  0:00 Intro
+  0:32 Documentação
+  4:03 Teste de Velocidade
+  4:46 Teste de Código
+  6:06 Extração de PDF
+  8:04 Questões de Estudo
+  8:42 Modo Agêntico
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Essa semana a gente foi agraciado aí com modelos incríveis. Teve o Minimx M2.7, cara, que modelo bom. A gente teve também o modelo de 1 trilhão de parâmetros, que foi o Mimo V2 Pro. Teve o Mimo V2 OMI também que eu ainda nem consegui testar, mas a gente não pode falar aqui só de modelos gigantescos, né? Vamos falar dos modelos
+
+pequenininhos também. Então, nesse vídeo aqui a gente vai falar do modelo da Nvidia, que é o Nemotron 3 de 4 bilhões de parâmetros. Ele seria aí considerado não um large language model, né, mas um small language model. Vamos lá pra tela, pra gente saber um pouquinho mais sobre esse modelo. Nvidia Nemrone 3 Nano de 4 bilhões de parâmetros. Esse é o modelo
+
+que a gente vai ver hoje. E olha só, só de cara aqui, eu já acho uma coisa legal, que é quando o laboratório ele destaca qual que é a data de corte daquele modelo. Quer dizer que esse modelo foi treinado com dados até setembro de 2024. Se você quiser falar com ele sobre algo que aconteceu depois daí, você vai precisar dar o contexto, seja via RG, seja colocando todo o arquivo ali dentro da janela de contexto, o que cabe, porque esse aqui é um modelo com uma janela de contexto de 262.000 tokens, quer dizer que é grande suficiente pra gente botar bastante conteúdo lá dentro. Mas é isso,
+
+conhecimento dele então vai até 2024, mais especificamente setembro. E uma coisa que é legal destacar aqui é que a Nvidia, né, ela tá agora treinando seus próprios modelos do zero. Existem algumas versões aí que eu fico até confuso às vezes quando eu olho, eu não sei qual é qual, mas existem algumas versões do Nemotron, por exemplo, que ele é baseado no lhama 3. Então, basicamente a Nvidia pegava o modelo open source e ela retreinava ou ela adicionava ali um fine tuning para tornar aquele modelo mais capaz. Dessa vez não, ela fez o treinamento do zero.
+
+Isso é muito legal. Esse é o modelo com capacidade de pensamento, né? Então ele tem o reasoning que você pode ativar ou desativar. E isso é sempre bom também, porque às vezes você só quer a resposta direta ali, né? Você não quer que ele fique pensando porque não tem muita importância. Então, nesses casos, é
+
+sempre bom a gente desativar o reasoning e economizar alguns tokens. Mas ele diz aqui que quando você desativa o reasoning, pode ser que as respostas fiquem um pouquinho pior. Tudo bem? É uma troca aí, ó. Esse modelo, nessa versão de 4 bilhões de parâmetros, é, na verdade uma versão comprimida do de 9 bilhões de parâmetros, tá? A gente não
+
+testou aqui o de 9 bilhões de parâmetros. Eu não sei se vai dar tempo de trazer, tem tanta coisa acontecendo, tantos modelos legais que nunca dá pra gente fazer vídeo de todos, né? Aqui a gente tem o benchmark, né, com reasoning off e aqui embaixo com reason on. No modelo de 4 bilhões de parâmetros, eu não olho tanto assim pro benchmark, não. Principalmente benchmarks que não estão comparando ele a nada, né? Se bem hoje
+
+em dia quando você olha os modelos maiores que se comparam inclusive a outros modelos, eles no benchmark estão muito próximos a modelos incríveis e quando você vai estar na prática, às vezes eles não entregam tudo aquilo. Então não sei se dá para confiar muito em benchmark, mas eu acho legal sempre usar como ponto de partida ali para ter uma ideia. Aqui continua com benchmark dele. E aqui eles destacam que a ideia do nemron é ser usada em devices locais de forma agêntica, tá? E eles dão exemplo aqui de devices como Jetson Tor, GeForce RTX, DDX Spark e etc. Pô, o DDX
+
+Spark tem 128 GB de memória unificada, tá? Dá para rodar modelos maiores do que o Nemotron 3 nano de 4 bilhões de parâmetros. Ó, eles também falam que um dos usos interessantes seria para colocar ali dentro de games, né, para criar conteúdo para NP6. Só que eu acho que 4 bilhões de parâmetros talvez seja muito para isso, porque você vai ocupar boa parte da memória para carregar esse modelo. Então, talvez modelos menores de dois ou até de 1 bilhão de parâmetros talvez dê conta do recado, mas não sei, teria que testar. Outros usos seriam
+
+assistente de voz e internet das coisas, né? Automação de devices. Show de bola. Vamos colocar a mão na massa. Vamos testar ele lá no nosso LM Studio. Vamos
+
+carregar ele aqui. Todo modelo agora tá com janela de 1 milhão de tokens, né? Mas esse modelo ele tem nativamente 262.000 tokens de janela de contexto. A gente vai botar aqui próximo. 250 e
+
+pouco, tá bom? Eu tô rodando aqui numa 5090, tá? Então provavelmente a gente vai ver boas velocidades, inclusive vamos começar testando isso. Conte uma boa piada. Cara, foi rápido, eu nem consegui falar o qual era o prompt. 193 tokens por segundo. Bom,
+
+bonzinho. Pra gente ter uma base aqui, a gente rodou o Quem 3.5 de 27 bilhões de parâmetros e a gente teve na 5090 mais ou menos ali 40 tokens por segundo. Então 193 é brabo, cinco vezes mais, excelente velocidade. Se você não viu o nosso vídeo sobre o quent. 27 bilhões de
+
+parâmetros, eu vou deixar aqui no card. E aquele modelo, ele é incrível, tá? Ele dá pau em modelos de 100 bilhões de parâmetros porque ele é denso. Então, cara, brabo, depois assiste lá. Vamos lá. Por que que o livro de matemática
+
+foi ao psicólogo? Porque ele tinha muitos problemas. Ai ai. Tão espirituoso. Vamos lá. Vamos
+
+começar fazendo o que ele não deveria saber fazer, que é criar um site. Então, meu prompt é cria um site para uma empresa de engenharia. Adicione alguma funcionalidade fora da caixa. É bem básico, tá? Eu gosto de testar com uns prompts bem básicos aqui pra gente entender como é que o modelo vai se comportar. Muita gente comenta, né? Ah,
+
+você devia testar todos os modelos de código via gente? A gente vai testar inclusive esse aqui via gente, mas não para código, mas pros vídeos, principalmente. Primeiras impressões, eu gosto de testar no chat. Muitas vezes eu faço um segundo vídeo sobre o modelo, quando o modelo é muito bom. Aí sim a gente faz de forma agêntica, que é pra gente ter os melhores resultados daquele modelo ali. Mas o primeiro contato, o
+
+chatzinho é melhor. Vamos lá. Criou pra gente. Deixa eu ver. Cara, que que é isso? Pera aí, deixa, deixa eu
+
+entender que que ele tá fazendo aqui. ele fez uma grande descrição aqui, ó. Ficou muito mais complexo do que eu imaginei. Vamos melhorar a nossa instrução. Então, crie algo com HTML, CSS, use CDN se precisar, que aí ele pode linkar um 3JS que eu já vi que ele quer fazer ali. Me
+
+entregue o código em um arquivo. Vamos ver o que que ele botou aqui. É, não botou nada absurdo aqui, não. É, tô achando que é bem básico esse site que ele criou, mas vamos dar uma olhada, ver que que ele fez. Então, beleza, foi isso aqui que ele criou pra gente. Eh, mas
+
+ok, porque ele é um modelo pequeno, então não dá para esperar muito em termos principalmente de design, etc. Não, eu peguei esse livro aqui, é um livro de Python e ele tem sempre uns exemplos, mas o legal dele é que ele diz aqui onde estaria esse exemplo num gitub da vida, né? Então, qual arquivo estaria? Então eu vou pegar esse arquivo aqui, eu vou passar o livro inteiro lá pro nosso Nemotron e eu vou ver se ele consegue retornar pra gente esse exemplo especificamente. Esse é um livro de 117 páginas, então acho que vai ser um exercício interessante para saber como que ele trabalha ali com extração de dados de um arquivo. Aqui no nosso PDF
+
+ele fala aqui, ó, save as, né? Então no meu prompt eu vou falar, me retorne um exemplo que foi salvo como e aí o nome lá do arquivo onde estaria aquela função. Vamos ver se ele vai achar isso no nosso livro. Beleza? Então, o LM Studio ele injetou todo o conteúdo do PDF no contexto, né? Então, basicamente
+
+tá tudo aqui só pro nosso modelo procurar e ele retornou algo aqui pra gente, ó. Vamos ver. Então, esse daqui foi o exemplo que ele retornou. Vamos dar uma olhada lá no nosso livro. Deixa eu colocar aqui, ó, o conteúdo aqui do lado. E olha só, exatamente o exemplo
+
+que a gente pegou. Então, pra gente conseguir extrair dados de um PDF, etc. E isso daqui tá no meio do livro, tá? Tá lá no meio, ó, página 58 de 117. Então, ele conseguiu achar exatamente o que a gente queria. E é legal a gente ver
+
+porque hoje em dia tá muito mais possível você fazer isso, né? Antigamente, para um caso desses aqui, a gente necessariamente teria que fazer um rag. Rag vem de retrieval aumentation, né, que seria a geração ali aumentada por uma extração, digamos assim. E é um processo onde você prepara aquele dado, separa em pedacinhos, transforma em vetores e depois quando você faz uma busca, você também transforma em vetor aquilo que você tá buscando, teu prompt e você vai checar lá o que que tá mais próximo. Você vai retornar tudo que tiver mais próximo e aí sim você pega isso, injeta no contexto e ele trabalha ali com só aquele pedacinho do texto todo. Provavelmente nesse caso daria
+
+para fazer assim também, mas se a gente tem contexto sobrando, essa forma aqui vai ser bem melhor, porque aí a gente consegue colocar todo o conteúdo ali dentro. Então, pô, mandou muito bem, né, Motron? Eu vou fazer mais o seguinte, então eu tô falando pr ele, ó, eu tô estudando esse livro e eu quero que ele crie então cinco questões, múltipla escolha sobre esse livro aqui, ó. Então, ele criou as nossas cinco perguntas e a gente tem quatro respostas possíveis para cada uma delas e ele deu pra gente as respostas corretas também. Show de bola. Isso aqui pode ser uma excelente
+
+ferramenta de estudo, tá? E a gente tá agora com contexto bem cheio. 36% do contexto tá ocupado, 93.000 tokens e mesmo assim a resposta dele foi super rápida, 143 tokens por segundo. A Nvidia diz que esse modelo é bom para tarefas agênticas, então agora a gente vai testar ele exatamente em tarefas agênticas. Eu tô aqui no nosso Open Code
+
+já com Nematron rodando localmente configurado. Deixa eu dar um oi aqui para ele pra gente ver se tá tudo funcionando. Tudo funcionando. Beleza, show de bola. Vou criar uma nova sessão.
+
+E é o seguinte, nessa pasta aqui eu tenho um conjunto de invoices, tá? Que seriam notas fiscais. Qual que é o meu problema? Eu não consigo identificar facilmente essas notas, né? O que que tá em que ou em qual loja que eu comprei, por exemplo. Então, se eu abrir aqui, ó,
+
+invoice 5, eu vou ver aqui, ó. Esse aqui é o nome da loja. Esse daqui seria o item comprado. Todas essas invoices aqui eu gerei automaticamente, né? Não é uma invoice real, é uma invoice simulada pra gente fazer esse teste aqui. Então o que
+
+que eu vou pedir pro nosso Nemotron para ele fazer? Eu quero que ele varra aqui as nossas notas e ele renomeie cada uma delas baseado no nome do estabelecimento e ele vai ter que adivinhar que isso aqui é o nome do estabelecimento e no tipo de coisas que foram compradas ali, tá? Vamos ver se ele consegue fazer isso pra gente. Então, eu tenho aqui a minha pasta dos não nomeados, dos sem nome e eu tenho um conjunto de invoices que eu preciso renomear. O critério de nome deve ser estabelecimento underline categoria dos itens ponf. Eu vou dar
+
+aqui o comando para ele renomear para mim, então, e vamos ver se ele vai conseguir completar essa atividade. Putz, ele não conseguiu fazer pra gente. Ele criou um arquivo em branco chamado categoria, estabelecimento categoria dos itens, não é isso, tá? Vou tentar passar um promptiso para ele, né? Tô falando que nessa pasta a gente tem 10 arquivos nomeados como invoice 1 2 3.pdf. Eu
+
+preciso que ele leia cada arquivo, extraia o nome do estabelecimento, os itens comprados e os classifique em categorias. Depois ele tem que renomear o arquivo no formato nome do estabelecimento underline categoria. Vamos ver se assim ele vai conseguir entender melhor, tá? Vamos lá. Qual foi o resultado dele aqui? Ele falou que ele
+
+não tem tools para conseguir ler os PDFs. Ele só tem tools para ler arquivos de texto. Vamos fazer o seguinte, vou sugerir para ele instalar uma biblioteca de leitura de PDF e ler os arquivos usando Python. Ele tá falando que ele não consegue instalar a biblioteca de ler PDF. Ele consegue, mas ele não sabe como fazer. Então vou pedir para ele
+
+converter os arquivos para TXT para ver se vai funcionar. É, infelizmente a não tá conseguindo navegar muito bem aqui no terminal, não. Vamos fazer o seguinte, vou criar aqui uma nova sessão, vou trocar de modelo, vou usar o Mimo V2 Pro que tá grátis aqui no Open Code. E é o seguinte, a gente fez um vídeo sobre o Mimo V2 Pro, tá? Se você ainda não assistiu, assiste aqui e a gente vai aproveitar e vai fazer um pequeno teste aqui para ver como é que ele vai ser com tool Colin aqui com o a programação agêntica. Vamos
+
+lá. Eu tenho uma pasta chamada unnamed que contém 10 PDFs. Eu quero que ele extrai então os dados deles e gere arquivos TXT equivalentes. Vamos ver se o Mimo vai ser capaz de fazer, tá? Ó, ele tá conseguindo ler os 10 PDFs, OK?
+
+Ó, ele já achou lá uma biblioteca Python que consegue fazer a leitura e transformar em TXT e tá gerando pra gente aqui os TXTs. Show de bola. Vamos dar uma olhada. Deixa eu, ó, ele mesmo já conferiu aqui que tá tudo certo. Eu ia lá conferir, mas tudo bem. Aqui tá um
+
+exemplo então de como ficou a nota, tá? e tudo certo? Beleza? Então agora vamos ver se o Nemotron consegue ler. O que eu vou fazer é o seguinte, ó. Eu vou mudar
+
+aqui o modelo pro nosso Nemotron e eu vou tentar resumir a nossa sessão. Então aqui, renomear arquivos, show de bola. Pronto, criei os arquivos TT com os mesmos dados da Invoice. Use eles e renomei seguindo o critério que combinamos. Esse vai ser meu comando aqui pro nosso Nemotron.
+
+Vamos ver agora. É, ele tá com bastante dificuldade de usar as tools aqui do Open Code, então acho que ele não vai conseguir fazer isso pra gente. Bem, eu tinha planos de depois dele renomear as nossas invoices, ele criar uma planilha pro Excel, mas como ele não tá conseguindo usar tools no Open Code, acho que nem adianta ficar insistindo. Achei um modelo bem interessante quando a gente usou ali no chat. Achei que ele falhou bastante no modo agêntico, mas pode ser só uma questão da ferramenta.
+
+Talvez em outra ferramenta ele funcione melhor. Eu vou continuar testando e provavelmente mencionar isso em outros vídeos. Se você teve sucesso usando ele de forma gênica, deixa aqui nos comentários qual ferramenta você usou, o que que você fez. Vai ser bem interessante entender o que que aconteceu de errado aqui. Se você viu também alguma coisa aí, você fez isso ou de errado, deixa aqui nos comentários também. Agora, se você quiser ver o
+
+vídeo do modelo que conseguiu extrair os dados, o Mimo V2 Pro, dá uma olhada nesse card aqui, tá? E se você quiser ver o irmão maior do Nemotron 3, o Nemotron 3 super de mais de 100 bilhões de parâmetros, aí você dá uma olhada nesse card daqui. Se você gosta desse conteúdo, não deixa de se inscrever para não perder nada e vem muito mais coisa legal por aí. Agora eu vou lá que eu preciso dormir um pouco que tá braba, não consigo nem dormir mais. E é isso aí, vou ficando por aqui, até o próximo vídeo.

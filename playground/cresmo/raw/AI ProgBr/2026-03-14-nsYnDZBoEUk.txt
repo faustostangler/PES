@@ -1,0 +1,194 @@
+---
+video_title: "TREINEI uma LLM de 1.2B para PROGRAMAR como uma LLM de 200B (Fine-Tuning SURPREENDENTE)"
+video_id: nsYnDZBoEUk
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nsYnDZBoEUk
+video_date: 2026-03-14T23:00:57+00:00
+video_description: |
+  Fine-tune com destilação de modelo: usei o Step 3.5 Flash (196B parâmetros) pra treinar o LFM2.5-1.2B da Liquid AI e criar sites melhores rodando 100% local.
+  
+  Será que um modelo de 1.2 bilhão de parâmetros consegue aprender a criar páginas web bonitas se o professor dele for um modelo gigante? Nesse vídeo eu mostro na prática como funciona o processo de knowledge distillation (destilação de conhecimento), onde você gera dados sintéticos com um modelo grande e usa esses dados pra fazer fine-tune num modelo pequeno.
+  
+  A diferença entre o LFM2.5 puro e o LFM2.5 após o treinamento é absurda. O modelo que antes entregava praticamente um HTML cru passou a gerar páginas com cards, formulários, fontes estilizadas e copy bem estruturada. 
+  
+  
+  📌 Se quiser acompanhar o que anda passando pela minha cabeça, me segue lá no Substack: https://progbr.substack.com/
+  
+  👉 E se você ainda tá por fora sobre LLMs, dá uma olhada nesse vídeo onde eu explico tudo o que você precisa saber para dar o primeiro passo nesse universo: https://www.youtube.com/watch?v=YYBow2bVCm0
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaifinetunlfm25
+  
+  _______
+  
+  0:00 Intro
+  1:05 Step 3.5 Flash e LFM2.5
+  1:39 Campeonato de Sinuca (sem treinamento)
+  5:02 Console Retrô (sem treinamento)
+  8:19 Modelo Treinado
+  10:10 Campeonato de Sinuca
+  10:54 Agência de Turismo
+  12:24 Console Retrô
+  14:01 Portfólio Programador
+  15:31 Imobiliária Alto Padrão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito 
+  - iOS: https://apps.apple.com/app/apple-store/id6504455490
+  - Android: https://play.google.com/store/apps/details?id=com.iplodev.tic_tac_toe&hl=en_CA
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+---
+Rodar LM local muitas vezes é um desafio, né? Porque de um lado você tem os modelos pequenininhos que rodam em qualquer máquina, mas às vezes te dá a impressão ali de que eles não fazem nada direito. E do outro lado tem os modelos gigantes, que esses sim são bons em código, em texto, em tudo, mas precisam de um hardware extremamente caro pra gente conseguir rodar localmente. E se a gente tivesse ali um meio termo, se a gente conseguisse usar um modelo gigante para treinar um modelo pequenininho e aí sim poder rodar ele em qualquer lugar de uma forma que ele tivesse aprendido a fazer coisas com um modelo maior? Bem, foi exatamente isso que a gente fez e hoje eu tô aqui para testar um modelo que eu mesmo treinei. Quer dizer, eu não
+
+treinei ele do zero, eu fiz um fine tuning. E a forma de fazer isso é a gente gerando uma quantidade gigante, no meu caso nem tão gigante assim, de dados a partir de um modelo grande. E aí esses dados, ou seja, esse modelo, ele funciona como um professor pro modelo pequenininho. O nome desse processo é distilo ou destilação, onde a gente passa o conhecimento de um modelo para outro. Só que tem uma parada, eu ainda não vi os resultados do modelo que eu treinei e a gente vai ver aqui juntos.
+
+Então o vídeo é exatamente esse. Eu peguei o modelo Step 3.5 Flash, que é o modelo que a gente viu aqui no canal. Vou até deixar o card aqui, que eu achei ele muito criativo e muito bom para criar páginas web. E aí eu peguei um outro modelo que é o LFM 2.5 de 1.2
+
+bilhões de parâmetros que eu confesso que naturalmente ele não é um modelo que faz páginas web muito bem não. E eu escolhi exatamente fazer esse teste. E se a gente conseguisse fazer com que o step 3.5 flash conseguisse ensinar ao LFM 2.5 de 1.2 bilhões de parâmetros,
+
+será que ele se tornaria melhor na criação de páginas? Será que não faria nenhuma diferença? Bem, vamos lá pra tela, pra gente descobrir. Então, o primeiro passo é carregar os dois modelos puros aqui, né? Então eu tenho aqui o Step 3.5 Flash MLX 6 bits. Essa é
+
+a quantização que a gente tá usando para ele, porque a que cabe no meu computador com uma pequena folga e o LFM 2.5 com 1.2 bilhões de parâmetros a 8 bits. Então, pra gente ter uma base de comparação, vou pedir para esses dois modelos criarem um ou dois sites pra gente entender o gap de diferença entre eles. Show de bola. Os dois modelos
+
+carregados, eu vou colocar eles aqui lado a lado. Então, do lado esquerdo aqui, a gente vai ter o step 3.5 flash. Do lado direito, a gente vai ter o nosso LFM 2.5 1.2. E aí eu vou começar pedindo
+
+então para cada um criar um site. Na verdade, os dois vão criar o mesmo site, tá? É um site de um campeonato de sinuca com prêmio em dinheiro. Vou começar com LFM porque eu sei que ele vai criar mais rápido, então a gente já vai olhando o site que ele criar enquanto o Step tá criando dele lá. Primeiro que o LFM já não me criou o site de cara, né? Eu vou
+
+pedir então crie o HTML e CSS. Agora sim ele criou. Mas olha só o tamanho disso aqui, tá? Então, claramente vai ser algo extremamente básico. Vamos pedir lá pro step criar o dele enquanto a gente analisa esse daqui. Então aqui a gente
+
+tem a nossa página do LFM, tá? Campeonato Sinuc. O evento nosso celebra excelência no esporte e recompensa os melhores atletas com prêmio em dinheiro. Prêmio em dinheiro, o campeão ganha 5.000 ou mais pra sua equipe, mas só tem um prêmio, pô. Aí é vacilo, hein? Então
+
+esse aqui foi o site dele. Esse é o nível de site. E tudo bem, a gente tá falando de um modelo de 1.2 bilhões de parâmetros, tá? Esse é normalmente o estilo que esse modelo aqui faz. Ó a
+
+diferença do step, tá? Só que no tamanho do CSS que ele tá preparando, a gente já consegue imaginar que vai vir algo muito melhor. E se a gente olhar aqui na primeira resposta dele, tudo que ele sugeriu, ele simplesmente não seguiu nada quando ele foi criar o HTML, né? Ele sugeriu que a gente fizesse tudo isso aqui, mas no HTML dele não veio nada disso. Quando digo ele, tô falando aqui do LFM 2.5. Show de bola. Aqui
+
+agora ele tá descrevendo tudo que ele fez e olha só o nível de detalhe. Vamos copiar lá. Ó o resultado aqui, ó. Campeonato nacional de Sinuca. Maior torneio do Brasil, prêmio muito maior, R$ 10.000. O outro era cinco. Aqui, ó, a
+
+gente tem a página completa. Obviamente essa imagem aqui do fundo, apesar de legal ali, tem nada a ver com o nosso campeonato em Sinuca, né? Mas tudo bem. Aqui ele tem a descrição do evento, tá? Aqui, ó, a gente tem os cards com regras e formato, cronograma do evento ele fez e um formulário de inscrição. No final,
+
+ele descreveu como que o prêmio vai ser distribuído. E, pô, ficou bem distribuído isso aqui. Legal. Patrocinadores. Ele colocou patrocinadores aqui. As imagens,
+
+infelizmente, não vieram, mas a ideia é bem legal. E um footer muito interessante. Esse modelo aqui é muito bom de criar sites. Então, ó, o contraste. Tá, exatamente o mesmo prompt. E uma
+
+coisa que eu queria destacar é que não é só design nesse caso também como cop, né? Aqui não tem quase nada de copia, não tem muito conteúdo aqui não. Aqui tem todo um conteúdo bem estruturado inclusive, né? Então essa também é uma informação importante que a gente vai avaliar. Inclusive aqui, ó, tem experiência na hora que você vai se cadastrar. Legal. E ó, tá sabendo legal?
+
+Pix, né? Então, a gente mandou a parada para ele em português. Pix é um método de pagamento que só existe no Brasil. Então ele ter esse conhecimento aqui é incrível. Agora a gente vai fazer mais um teste antes da gente ver o nosso modelo treinado, porque beleza, eu dei um prompt muito simples, uma única linha e se esse prompt fosse mais detalhado, será que o LFM sairia um pouco melhor? É
+
+isso que a gente vai ver. Então aqui eu tô passando toda uma descrição sobre um site para um console de games retrô. Copiar aqui. Vou começar mais uma vez aqui com LFM. E agora ele tá criando aqui pra gente, ó. E a gente já pode ver
+
+que existe uma melhora. Mas ainda assim não é algo bem. Vamos ver o resultado. Enquanto a gente vê o resultado, o step vai criando dele ali, ó. Esse aqui é o resultado então do LFM. É interessante até isso
+
+aqui. OK. Ah, aqui imagem quebrada, que é de se esperar, né? O modelo é pequenininho e não tem tanto conhecimento. Às vezes a imagem que ele tinha ali, ou ele botou alguma coisa errada ou não existe mais.
+
+Mas olha só, não é melhor do que aquele outro. Melhor do que esse é melhor até, né? Biblioteca de jogos. Mas ainda assim a gente vê que ele é tá mais para HTML só, né? Do que do que para HTML com CSS. A própria explicação
+
+do design dele aqui, ó, pequenininha, enquanto a explicação do que que o STEP implementou é muito mais elaborada, tá? Vamos ver o resultado do step aqui, ó. Esse aqui, caramba, olha esse efeito aqui. Esse aqui é o site do step, tá? Não gosto tanto do design, mas esse efeito aqui me pegou, hein? Como é que
+
+ele fez isso? Nossa, muito legal. Então, OK. Ele trouxe aqui um joystick, né? Um controle de videogame. Então, tá dentro do tema.
+
+Aqui ele fala um pouco sobre o console. Infelizmente não veio a imagem aqui, ó. Mas a gente tem aqui uma lista. Sistemas compatíveis, ó. Nossa, que legal. Ele trouxe os nomes certinhos,
+
+né, dos videogames. Biblioteca de jogos. Que que são esses ícones? Eita, caramba. Olha esse efeitinho. Mas, ó, ele trouxe exatamente
+
+os nomes mesmo. Super Mario World, Legends of Zelda, Sonic, Street Fighter, Mario Kart, Castlevania. Pô, será que que esses são os anos mesmos dos jogos? Interessante. Se for, eu não vou confirmar agora. Ah, o filtro aqui não
+
+tá funcionando, mas ok. Recursos do console. Pô, olha só, até essa cópia aqui é muito mais detalhada, né? Controles, interface do sistema. Pô, ele fez até a interface do sistema. Comunidade Mes.
+
+Olha que detalhado esse site, preço e compra. Ó, três opções. Pô, isso aqui ficou maneiro, hein? Ficou maneiro. Perguntas frequentes.
+
+Retroation. Então, olha a diferença do nível de design, né, de um modelo de 200 bilhões de parâmetros, tecnicamente 196, para um modelo de 1.2 bilhões de parâmetros. Então é um abismo absurdo. Agora a gente vai ver se a gente conseguiu diminuir esse abismo treinando o nosso modelinho.
+
+Então o nosso modelo está aqui, ó, LFM 2.5 1.2B, né? 1.2 bilhões de parâmetros thinking, destilado pelo step 3.5. Ele
+
+tá falando que eu não tenho memória para carregar isso aqui. Eu vou fazer o seguinte, a gente já viu que o step tá muito acima, né? Então eu vou descarregar ele lá e a gente pode comparar o modelo treinado com o modelo sem treinamento. Pronto, agora eu vou conseguir carregar. Não é possível.
+
+Agora sim. Vamos carregar ele aqui. Step é gigantesco. Então vamos lá. Vamos selecionar o nosso Thinking Con steel.
+
+Eu tô um pouco nervoso porque eu não testei esse modelo. Aí vou chegar aqui, vou falar: "Pô, treinei o modelo e aí vou rodar, vai ficar uma droga ou vai ficar igual o outro modelo sem treinamento?" E eu vou te falar que esse não é nenhum dos casos do que se você tiver vendo esse vídeo é porque deu tudo certo, porque eu vou subir esse vídeo mesmo se der tudo errado. Vamos ver junto aqui. Então, primeiro é nosso site do campeonato em sinuca.
+
+Aqui, ó. Péssimo sinal. Eu tô nem acreditando que isso tá acontecendo. Deixa eu ver aqui, ó. Deixa eu ativar meu ambiente. Conda
+
+activate MLX quantization. Ops, é um traço. Esse é um ambiente que eu uso para quantizar os meus modelos, que ele tem o MLX mais novo. Então, MLX_line ali m. Model.
+
+Se eu dou oi aqui pro meu modelo destilado, ele me responde com esse troço maluco. Mas se eu dou oi, tudo bom? que ele tá me respondendo certo. Ele parou aqui só por causa do token. Então, meu modelo tá funcionando. Vamos
+
+tentar de novo. Aqui eu vou fazer o seguinte, eu vou sair, vou recarregar ele, vou rodar novamente, vou mandar um oi. Tudo bom? Tá, então aí tá funcionando. Ele só não responde oi. Tá
+
+meio quebrado, né? Isso aí a gente vai ver depois, porque tô aprendendo a fazer esse troço. Então vamos aproveitar essa janela de chat aqui que ele já respondeu pra gente e eu vou pedir então para ele criar o nosso site do campeonato de sinuca com prêmio em dinheiro, tá? Ele me respondeu basicamente com todo o HTML aqui, sem muita formatação, demonstrando que o nosso modelo tá meio quebrado, mas vamos ver esse resultado aqui. Opa, Sinuca Elite, hein? Venha jogar e ganhar
+
+campeonato Sinuca. Aqui a gente já tem um cardzinho, ó. Já tem aqui os prêmios, melhor jogador. A gente pode ver que isso aqui é muito diferente isso aqui, né? Então, houve aqui uma melhora gigantesca pra gente garantir que não é por acaso. Eu vou fazer o seguinte, eu
+
+vou carregar aqui o nosso modelo LFM 2.5 1.2 sem o treinamento, né? Então, desse lado eu tenho sem treinamento, desse lado com treinamento e a gente vai fazer o mesmo prompt pros dois. Cria uma página web para uma agência de turismo.
+
+Vou mandar aqui. Vou mandar aqui. E aqui a gente tá com esse probleminha. Fazer o seguinte, vou dar aquele oi. Tudo bom?
+
+Primeiro, ele ele não gosta de gente mal educada e aí só de dar o oi. Tudo bom? Ele já lançou aqui o site pra gente. É algo que eu vou ter que aprender para entender o que que acontece aqui. Então aqui a gente pode ver o resultado do modelo não treinado. Olha o tamanhinho
+
+dele. E olha o tamanho do resultado do nosso modelo treinado. Vamos ver a diferença na prática. Esse aqui é um modelo puro. Então, mais uma vez, a gente vê um estilo de design que é praticamente um HTML sem quase nadas.
+
+Esse aqui é o não treinado. E agora a gente vai ver o modelo que pegou as manhas com o nosso Step 3.5 flash. Olha, o contraste não tá bom, mas mais uma vez a gente tem um estilo de design que, pô, isso aqui é uma página, entendeu? É uma das melhores páginas do mundo, não, mas já é um excelente ponto de início. Ó, a
+
+gente tem o header separadinho aqui. Pô, isso aqui tá muito legal, ó. Agora olha, olha essa cop. Ele fez uma COP, né? Exatamente como Step faz. E como o
+
+modelo sem treinamento não faz. Pô, podia ter a imagem. Se tivesse essa imagem aqui, tava top demais, ó. Ó, aqui ele trouxe uns cards, né, com os serviços, preços. Olha isso, cara. Olha, olha essa
+
+diferença. Tem noção disso? Agora vamos pedir para ele fazer aquele site lá com prompt maiorzão, né, que era o site do console retrogame. Eu esqueço que eu tenho que dar o oi para ele, senão ele não responde pra gente. Uma coisa interessante é que ele foi treinado para ele responder só com HTML direto. Apesar
+
+dele ter esse negócio aí de que a gente tem que ser educado com ele, ele não é educado com a gente. A gente pergunta e responde logo. Não tem nenhum: "Opa, claro, vou fazer". Não tem nada disso. Ele responde com o código puro. E uma
+
+coisa interessante, ó, 4.000 229 tokens a 294 tokens por segundo. O modelo sem treinamento fez 1784 tokens a 310. Tem uma diferença, mas não é uma diferença tão grande não. Principalmente se a gente considerar que ele usou três vezes mais da janela de token que esse aqui. O
+
+nervoso aqui. Será que esse agora vai ficar bom? Vamos ver. Pô, uma coisa que eu tô vendo é que ele erra bem nos contrastes, né? Tipo, isso aqui não tá bom, esse contraste. Aqui não tá bom,
+
+mas ó, a gente já vê um uso de botões arredondados que o modelo normal, sem treinamento, não faz normalmente. Ó, vamos aqui, ó, mais uma vez, pô, esse estilo aqui, onde você tem imagem, conteúdo e e a escolha dessa fonte aqui, cara, sensacional. Criado para preservar nostalgia dos anos 90, o Retro Station é um console que une a simplicidade das consolas clássicas com a potência de hoje. Nossa, que legal. Aqui, ó, compatibilidade de jogos compatíveis. E
+
+aí ele traz aqui os jogos, assim como Step trouxe pra gente. Legal demais, ó. Pô, olha só. Isso aqui tá muito legal. Mais uma vez a fonte é bem bem escolhida, cara. Aqui podia ter um
+
+alinhamento melhor, né? Mas até o footer ele tem o seu estilo. Vou pedir para eles criarem um site portfólio para um programador especialista em inteligência artificial. Ah, vamos botar os dois para rodarem ao mesmo tempo. E o nosso educado ali precisa do Oi. Mas ok. Já tô
+
+aprendendo a lidar com ele já, ó. Então, aqui o nosso modelo não treinado, não criou nada pra gente, né? Então, vamos pedir para ele criar. Crie o HTML disso. Ele vai criar aqui pra gente. Olha o que
+
+que ele criou, cara. Vamos ver esse primeiro. Ah, não. Esse aqui foi o nosso resultado, ó. Chatbot de atendimento.
+
+Desenvolvi um chatbot que responde legal, né? Tá dentro do tema que a gente pediu. Ele fala aqui de Python Intensor Flow, que de fato tem a ver. OK. Então, ele tem um pouquinho de conhecimento sobre o assunto NLP e tal. Mas vamos lá
+
+ver o modelo treinado, né? Ó, o modelo treinado já criou um código bem mais bolado. Eu tô curioso aqui para ver, ó. Agora a diferença nem foi tão grande assim, ó. 276 tokens por segundo contra 262. Se bem que os dois estavam rodando
+
+juntos, então isso aqui não dá para tirar absolutamente nada disso aqui. Hum. É, não tá muito bonito, mas ó, tem muito mais informação, né? Eu diria que esse daqui tá um meio termo entre o que o modelo conseguiria fazer sozinho e o que o treinamento de fato traria para ele. Mas tá melhor. Não, não tem como
+
+comparar com aquele outro resultado ali, não. Mas não tá no nível dos outros exemplos que a gente viu. E agora pra gente fechar, vou pedir para ele criar uma página de uma imobiliária. Eu vou dar um oi para ver se o outro lá pega no tranco. Então meu prompt vai ser oi crie uma página com HTML CSS de uma imobiliária design moderno focado em um público de alto padrão. Vamos lá. Agora
+
+eu vou mandar um de cada vez pra gente conseguir ver a velocidade. Começar com o nosso pequenininho aqui que vai fazer em duas linhas. Ó, não, ele foi além. Oh, agora eu gostei. Esse aqui é o modelo básico, tá? Fez algo diferente.
+
+Velocidade dele 310 tokens por segundo. O nosso lá precisa do nosso Oi mesmo. Sem o oi depois ele não faz nada. Mandeira tá muito exigente, ó. Eu tô achando que esse aqui fez algo maior que esse, mas vamos ver. Pô, surpreendeu
+
+agora. Esse é o modelo sem treinamento. Legal. Ok. Tem os cards com rover. Bom,
+
+e acabou aqui. Bonzinho, mas não muito bom. Mais ou menos. Ah, eu já vi isso em algum lugar.
+
+Ué, tá um pouco semelhante, né? Se bem que não, só aquela parte ali, o resto tá diferente, mas é provavelmente a escolha das cores. Esse aqui tá melhor, né? Mas tá com as mesmas cores lá, o azul e o amarelo. Mas bem, a comparação, na verdade, aqui agora entre esse e esse aqui, modelo sem treinamento, modelo com o treinamento. O
+
+que que pode ter acarretado aqui a gente ter tido dois designs relativamente parecidos? Primeiro, talvez uma base de treinamento muito pequena. Para treinar esse modelo, o que que eu fiz? Eu gerei 200 sites com step 3.5. Peguei todas as
+
+partes do thinking, da resposta da geração, coloquei tudo num Jason em linha, separei, na verdade, 20% desses 200 para ser validação e aí comecei o treinamento. Pode ser que tenha sido poucos dados, mas é bem interessante a gente ver que mesmo com poucos dados a gente já consegue ver um ganho, que eu diria absurdo de qualidade entre o modelo sem treinamento e o modelo com treinamento, tá? Isso daqui de treinamento é um mundo. Ainda tem muito. Olha só que que ele botou aqui, ó.
+
+Apartamento, casa, apartamento comercial, videocâmera, escritura. Pô, top demais, entendeu? Como eu tava falando, esse negócio de treinamento é o mundo, tá? Eu só botei meu pezinho na água. ainda tem muita coisa para aprender. Se vocês quiserem que eu
+
+compartilhe um pouco desse bastidor, de como que eu tô tentando aprender um pouco mais sobre treinar modelos pequenos, principalmente, dá uma olhada lá na nossa área de membros, porque esse é um tipo de conteúdo que eu acho que não faz sentido trazer aqui pro canal, porque pouquíssima gente teria interesse e até porque provavelmente o que eu vou levar lá pra área de membros é bem bastidor, bem cru assim, é um monte de erro que vai acontecer, então não seria o caso de trazer pro canal pelo menos ainda. Quando eu souber exatamente o que eu tô fazendo, aí sim, aí a gente traz aqui, abre pro público geral. Mas quem quiser acompanhar esse bastidor, quem quiser acompanhar esse processo, área de membros tá aí. Eu quero saber de você, assim como eu, você ficou impressionado com o que que dá para fazer treinando o modelo com poucos dados e como que um modelo consegue de fato aprender alguma coisa com outro? Eu vou te contar que eu não tava botando ferra quando eu comecei esse processo, não. Eu falei: "Pô, isso
+
+aqui vai funcionar, não vai sair a mesma coisa. Os dois vão continuar conseguindo fazer um site, mas eu diria que o modelo treinado traz algo que, pô, se a gente quiser modificar ali, por exemplo, os ícones, muitos deles eu não gostei muito, mas, pô, fácil trocar um ícone, né? Tô levando em consideração que esse é um modelo de 1.2 bilhões de parâmetros que roda em qualquer lugar, roda na CPU, roda no celular e roda até no MacBook New, o novo computador da Apple, que a gente já testou aqui no canal para ver se ele rodava LLM. Eu vou deixar o link para esse vídeo aqui, ó. E eu vou te
+
+falar, ele rodou melhor do que eu imaginava. Agora, se você ainda não viu o Step 3.5 Flash grandão, 196 bilhões de parâmetros em ação, criando umas paradas boladas, aí eu vou deixar esse card aqui para você porque você tem que ir lá conferir. É isso aí, vou ficando por aqui, até o próximo vídeo. Valeu,
