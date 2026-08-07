@@ -1,0 +1,130 @@
+---
+video_title: "China Just Open-Sourced Humanlike Memory for AI Agents (Tencent DB)"
+video_id: 5AkurBDSYwo
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5AkurBDSYwo
+video_date: 2026-08-02T20:00:11+00:00
+video_description: |
+  Are your AI agents suffering from severe context rot as their token usage skyrockets into the hundreds of millions? Discover why simply expanding an LLM's context window actually degrades model accuracy, and how Tencent Cloud's newly open-sourced memory plugin for the OpenClaw runtime solves this by doing the exact opposite: deliberately throwing data away.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this technical breakdown, we analyze how compressing intermediate execution logs into locally stored Mermaid graphs and utilizing a 4-layer psychological memory architecture (from L0 raw data to L3 persona) cuts SWE-bench token usage by 61% while actually boosting pass rates. We dive into the physical architecture of local SQLite-vec hybrid retrieval, the hidden API caching costs of prompt prefix injection, and why building stateful, cross-session memory assets—like code graphs and wikis—is permanently replacing massive prompt hoarding.
+  
+  If you found this deep-dive into AI infrastructure and software engineering architecture helpful, drop a like and subscribe for more content on system design and machine learning deployment!
+  
+  🔗Resources: 
+  Tencent DB: https://github.com/TencentCloud/TencentDB-Agent-Memory
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 221 Million Token Agent Problem
+  00:28 - Chroma's Context-Rot Study
+  00:39 - Tencent's Open-Source Memory Solution
+  02:42 - Idea 1: Compressing Logs into Mermaid Graphs
+  04:51 - Idea 2: The 4-Layer Psychological Memory Architecture
+  06:40 - Local Infrastructure: SQLite-vec & OpenClaw
+  07:24 - The Catches: SWE-bench Math & Prompt Cache Busting
+  10:29 - Version 2: Wikis, Skills, and Code Graphs
+  11:36 - The Final Verdict on Agent Memory
+  
+  #aiagents #systemdesign #machinelearning #softwareengineering #tencent #openclaw #llm #artificialintelligence 
+  
+  User Queries:
+  how to fix llm context rot in ai agents
+  tencent openclaw memory plugin tutorial
+  sqlite vec hybrid search local ai memory
+  building long term memory for ai coding agents
+  why do large context windows reduce llm accuracy
+  reduce token costs for swe bench agent runs
+  mermaid graph state management for ai loops
+  mem0 vs letta vs memos ai memory frameworks
+  how episodic and semantic memory works in ai
+  openclaw agent runtime context window limit
+---
+Aqui está um agente. 40 se transforma em um emprego. O programa leu nove arquivos, executou 12 comandos e ainda está funcionando. E agora, está prestes a lhe fazer exatamente a mesma pergunta que já lhe fez na quarta rodada. A cada uma dessas iterações, arraste todo o histórico de volta para o prompt. Observe o medidor de fichas subir. 221
+
+milhões de tokens. Trata-se de uma única execução de teste de desempenho. Apenas 200 perguntas. A solução óbvia é uma janela de contexto maior. Dê mais espaço ao modelo e pare de se preocupar com ele. No entanto, a
+
+equipe de pesquisa da Chroma testou 18 modelos da Frontier e descobriu o contrário. A precisão diminui à medida que a entrada aumenta e começa a diminuir muito antes de a janela estar sequer perto de ser preenchida. Assim, em abril, a equipe de banco de dados da Tencent Cloud publicou uma resposta diferente no GitHub sob uma licença MIT. 10.400 estrelas em 117 dias e uma tabela de referência com duas colunas que não deveriam estar se movendo simultaneamente. O mesmo parâmetro de referência do
+
+medidor que você acabou de observar. A taxa de aprovação subiu de 33% para 50%, enquanto o uso de tokens caiu 61%. Resultados melhores em menos da metade dos tokens, o que é estranho. Isso não ajudou o agente a se lembrar de mais coisas. Isso ajudou a que ele se lembrasse menos. Então, duas perguntas.
+
+De que forma descartar informações torna um agente mais inteligente? E esses números são reais? Verifiquei ambos. Comecemos por definir o que é, de fato, um agente. Um modelo sem memória mais um loop que continua passando a transcrição para ele. Nada persiste por si só
+
+. Entre as sessões, seu agente é um novo contratado que leu o documento de transição e nada mais. Assim, o loop compensa colando tudo de volta nos arquivos: saída da ferramenta, erros, tudo. Na bancada de testes SWE, a execução do comando `run 10-centent` utilizou 50 tarefas de codificação em uma sessão contínua, queimando 3 bilhões e meio de tokens para fins de escalabilidade. Isso corresponde a cerca de 3 milhões e meio de janelas de contexto de tokens gastas em um único benchmark. E os
+
+tokens são a metade barata do problema. A parte cara é o que todo esse texto faz com o modelo. Em 2025, a Chroma realizou seu estudo de taxa de contexto com 18 modelos da Frontier, incluindo GPT 4.1, Claude 4, Gemini 2.5 e Quinn 3, em tarefas que uma criança poderia realizar. Copie este texto.
+
+Encontre esta frase. À medida que a quantidade de informações aumentava, o desempenho deles piorava, alguns em 30 a 50%. Uma janela de 200.000 tokens pode começar a apresentar degradação por volta de 50.000. O número na
+
+caixa não é o número que você obtém na prática. Assim, um agente que memoriza acumulando informações torna-se mais lento, mais caro e menos preciso, tudo ao mesmo tempo. E é aqui que a geografia mencionada no título justifica sua importância. Atualmente, as equipes que estão contribuindo com infraestrutura de memória para o código aberto são, em sua maioria, chinesas. A Tencent duas vezes e memorandos de um laboratório chinês. Os
+
+laboratórios de vanguarda estão vendendo janelas maiores. Essas equipes estão disponibilizando gratuitamente a camada que faz as janelas pequenas funcionarem. O mecanismo Tensent ataca isso com duas ideias. A primeira diz respeito à tarefa em que você está se encontrando agora, e é a que causou mais problemas . Em uma tarefa longa, os tokens de coleta de recursos não representam suas instruções. São os
+
+troncos intermediários. Resultados da pesquisa, rastreamentos de pilha, despejos de arquivos. Assim, o plug-in os remove. A saída completa da ferramenta é gravada em arquivos Markdown no disco. O que permanece no prompt é um diagrama, um gráfico de sereia que representa o que aconteceu, com um ID em cada nó. Mermaid é aquela pequena sintaxe de texto
+
+dos arquivos README do GitHub, com setas e caixas escritas como linhas simples. Centenas de milhares de tokens de log se reduzem a algumas centenas de tokens de shape. E quando o agente encontra um erro e precisa dos detalhes, ele obtém o ID do nó e recupera o texto bruto diretamente. Essa foi a restrição que eles mantiveram. Comprima, mas nunca perca de vista o caminho de volta às evidências. Nada disso é um resumo.
+
+Um resumo é uma das maneiras. Este é um diagrama dobrado que você pode abrir novamente. Dois limiares controlam o dobramento. Com metade da janela de contexto, a compressão é leve. Com 85%, de forma agressiva. E a
+
+própria tela está limitada a 20% do orçamento total. Assim, o mapa nunca consome o espaço que está economizando. Agora, os números. A manchete vem de uma busca ampla, um indicador da equipe de sementes da Bitteance. 200 perguntas, metade em inglês, metade em chinês, e todas elas amplas em vez de aprofundadas. Nem um fato concreto escondido em
+
+algum lugar engenhoso. Uma pilha de fatos simples que precisam estar todos corretos ao mesmo tempo, que é exatamente o tipo de tarefa que preenche a janela de contexto com informações irrelevantes. A versão básica do OpenClaw resolveu 33% deles com o plug-in de memória 50, um aumento relativo de 51%. O número de tokens caiu de 221 milhões para 86 milhões. Essa economia, por si só, representa 136 milhões de tokens. Isso equivale a aproximadamente 100
+
+milhões de palavras. Cerca de 170 exemplares de Guerra e Paz foram produzidos e nunca lidos. Os indicadores mais rigorosos apresentaram menor variação. O SWEBench passou de 58,4 para 64,2 com um terço a menos de tokens em um teste de raciocínio sobre documentos longos, baseado em análise artificial. 100 perguntas sobre documentos financeiros e jurídicos reais. 44
+
+a 47. 12 ganhos menores à medida que a tarefa se torna mais difícil. Guarde isso. A segunda ideia é aquela que dá título ao livro e se baseia em um argumento da psicologia de 50 anos atrás . Em 1972, Endel Toving dividiu a memória humana em duas. Episódico, os
+
+eventos que você vivencia com horários associados. E semanticamente, os fatos que você conhece são desconsiderados pelo evento que os ensinou . Você sabe que Paris é a capital da França. Você não faz ideia de em que tarde aprendeu isso. Essa é a divisão. E a parte interessante é
+
+a seta entre eles. Os episódios são reprisados. Padrões são identificados. O episódio em si desaparece aos poucos. Os psicólogos chamam isso de consolidação. E não se trata apenas de um
+
+modelo. A reprodução do hipocampo durante o sono é um dos mecanismos que a neurociência já observou acontecer. Ebinghouse mediu a outra metade disso em 1885. Sem revisão, aproximadamente dois terços do que você aprende hoje se perdem em um dia. O esquecimento não é o problema desse sistema. É a etapa de compressão. A
+
+estratégia de longo prazo da Tencent é representada por uma seta dividida em quatro camadas. L0 é a conversa bruta. Tudo exatamente como foi dito. L1 extrai átomos, um fato, uma preferência, uma restrição. Por padrão, ele é executado a cada cinco turnos. L2 agrupa esses
+
+átomos em cenas. este projeto, este tipo de tarefa, esta situação recorrente. L3 é a persona. Seus hábitos, suas convenções, seus padrões são reconstruídos a cada 50 novas memórias. O agente começa lendo o perfil do cliente de cima para baixo porque isso é barato e geralmente suficiente. A análise se concentra no
+
+nível atômico apenas quando um fato específico é relevante, e chega ao nível L0 quando exige a sua formulação exata. Tem o mesmo formato da flecha de Telving. Corra para trás quando precisar. O parâmetro de comparação para essa metade é a memória da persona, e é um parâmetro bem desagradável. Conversas sintéticas com múltiplas sessões, onde as preferências do usuário mudam ao longo do tempo. A pergunta é
+
+se o modelo acompanha a mudança. Linha de base 48% com as camadas 76 28 pontos. O sistema de encanamento sob tudo isso é propositalmente sem graça. SQLite com a extensão SQLite vec em execução em sua máquina. Sem chave de API, sem endpoint do fornecedor, nada sai do laptop a menos que você dê a ordem . A instalação no OpenClaw requer apenas
+
+um comando (node ​​22 ou superior) e funciona sem qualquer configuração. A recuperação de dados é uma combinação de busca por palavras-chave BM25 e busca vetorial, com fusão de classificação recíproca. Cinco resultados por recall. Um tempo limite de 5 segundos. E se for lento, ele pula a injeção em vez de atrasar sua vez. E cada camada é um arquivo que você
+
+pode abrir. A persona está anotada. As cenas estão anotadas. A tela da tarefa é uma sereia. Quando a memória falha, você lê em vez de forçar a vista para uma lista de pontuações de cossinatura. Então,
+
+hora de resolver os problemas. São três, e o primeiro está sentado em sua própria mesa. Divida você mesmo as colunas de tokens de bancada SFDE. De 3.474 milhões para 2.375.
+
+Isso representa um corte de 31,6%. Na linha ao lado está escrito 33,1. Pequeno e provavelmente uma escolha de normalização, e não um erro. Mas é a aritmética deles, e é a única linha que não resulta em divisão. A longa linha de contexto se divide no número impresso exato, que é o ponto principal aqui. Esses números podem ser verificados, então
+
+verifique-os. Em segundo lugar, todos esses resultados foram produzidos pelo fornecedor. Nenhuma reprodução independente foi publicada ainda. Isso é normal nessa área e ainda assim é um problema. Mem publicou um artigo classificando sistemas de memória uns em relação aos outros. A Zep publicou uma
+
+refutação afirmando que seu sistema havia sido configurado incorretamente e obteve uma pontuação cerca de nove pontos superior à atribuída pelo jornal . Cada pessoa utiliza um conjunto de dados diferente para realizar o teste de desempenho , permitindo que cada uma seja a primeira. Terceiro, e este é o que aparecerá na sua fatura, edição 120. Injetar memória significa alterar a frente do prompt a cada iteração. Os provedores oferecem esse prefixo e tokens de abertura idênticos são criados a uma fração do preço. Mude a abertura a cada
+
+turno e o dinheiro para de entrar, e parte da sua economia em fichas desaparece . Os responsáveis ​​pela manutenção deixaram o problema aberto, dividido em duas etapas subsequentes, movendo os blocos de persona e cena para um prefixo estável ainda não resolvido. Abra o aplicativo publicamente com o argumento anexado enquanto estiver lá. 405 questões em aberto. A mais discutida é uma consulta de pesquisa que não escapa seus operadores, permitindo que a entrada do usuário reescreva a consulta. 177
+
+comentários nesse único tópico. Um repositório com quatro meses de existência, em rápido crescimento, com a desordem visível. Interprete isso como um sinal de maturidade, não como um escândalo. Vale a pena saber quem está pagando por isso. O repositório possui licença MIT e funciona inteiramente em ambiente local. Ele também inclui um
+
+backend de banco de dados vetorial em nuvem de 10 centavos e um serviço de memória de agente gerenciado que foi lançado 4 dias antes da existência do repositório. A imagem Docker utiliza por padrão o endpoint de modelo próprio da Tencent, executando o DeepS v32 open core com um recurso adicional de venda na nuvem. É uma prática padrão e vale a pena analisá-la cuidadosamente antes de construir uma empresa com base nela. O mais estranho é com quem eles estão competindo. Semanas depois, a equipe da Tensuan lançou um plug-in de memória concorrente para a mesma estrutura de host. Seis camadas em vez de quatro,
+
+um sistema dual rápido e lento, 35% menos tokens em termos numéricos, duas equipes dentro de uma empresa, dois plugins de memória, uma estrutura de hospedagem, o que demonstra o quão instável essa camada ainda está. Esse host é o OpenClaw, o ambiente de execução de agentes que conquistou 384.000 estrelas no GitHub a partir de um ponto de partida do zero no final de 2025. Ele possui um slot para plug-in de memória, e é por isso que todos os projetos de memória ativos agora estão escrevendo um adaptador para OpenClaw. O campo aproximadamente MEM0 em 62.000 estrelas. Deixe os
+
+mem GPT pessoas em 24. Memorandos de um laboratório chinês em 10 mil e quinhentos construídos ao longo de 13 meses. A Tencent atingiu o mesmo número em menos de quatro anos, com 89 estrelas por dia, e em julho mudou de formato. A segunda versão move a memória de um cache privado para um recurso compartilhado em quatro tipos: habilidades de memória de bate-papo, uma wiki e um gráfico de código. Uma habilidade ali não é um trecho de código. Ele
+
+contém arquivos de recursos de versão, limites de acionamento, etapas de execução e regras de validação, mais próximos de um pacote do que de uma nota, sendo privado por padrão e compartilhado com a equipe somente após revisão. A wiki é uma ideia de Carpathy, de abril. As páginas de entidades Markdown e os agentes as escrevem e mantêm interligadas, de modo que o conhecimento se acumula em vez de se dissipar entre as sessões. O grafo de código indexa a estrutura da base de código, permitindo que um agente inicie uma tarefa já sabendo como as partes se conectam. E existe um caminho de inicialização a frio, que é a parte que importa se você já possui uma base de código.
+
+Aponte para um repositório existente, uma pasta de documentos ou suas antigas sessões de agente, e ele preencherá o grafo, o wiki e as habilidades antes mesmo que seu novo agente tenha feito qualquer coisa. Cada recurso possui um proprietário, uma versão e permissões, que podem ser privadas, de equipe ou de uma lista de acesso nomeada. E essa é a mudança que vale a pena acompanhar. A memória deixa de ser um registro e se torna um artefato com uma placa de identificação. Então, você deveria instalá-lo? Se você
+
+executar sessões de agente longas, trata-se de um único comando, que por padrão utiliza um ambiente totalmente local. Portanto, a desvantagem é que isso acontece à noite. Se você quiser a versão comprovada, espere que alguém de fora da 10-centent reproduza essa tabela. Mas a ideia central é a parte duradoura, e não custa 10 centavos. Todos os sistemas de memória sérios que estão sendo construídos atualmente estão convergindo para o mesmo formato. Mantenha o esboço dentro do contexto. Guarde
+
+as evidências em disco. Mantenha o caminho entre eles intacto, que é o que sua própria cabeça faz todas as noites enquanto você dorme. Isso deixa uma questão em aberto, que o plano deles não respondeu. Quando a memória se torna um ativo seu, o que acontece quando você muda de framework ou sai da equipe que o desenvolveu? A memória portátil é o primeiro item desse roteiro, e essa etapa ainda não foi concluída. Diga-me onde você vai parar.

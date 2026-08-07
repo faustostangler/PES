@@ -1,0 +1,113 @@
+---
+video_title: "Python vs TypeScript: Which One for AI?"
+video_id: H_HjjSow69M
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=H_HjjSow69M
+video_date: 2026-08-01T19:30:16+00:00
+video_description: |
+  Is Python actually losing popularity, or are programming language rankings like TIOBE completely broken in the AI era? In this data-driven deep dive, we break down why search engine hits for Python and JavaScript have crashed by 78% since ChatGPT launched—even as PyTorch and Hugging Face shatter GitHub contributor records and cross 43 million weekly npm/PyPI installs.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  We analyze the massive shift in AI software engineering, explaining why Python’s newly released free-threaded GIL and massive library ecosystem give it total dominance over model training and inference servers like vLLM. But on the application layer, plain JavaScript is being rapidly replaced. Discover why GitHub reports TypeScript overtaking Python as the fastest-growing language, how "agent-assisted vibe coding" requires strict static typing to prevent runtime hallucinations, and how the release of TypeScript 7 (rebuilt in Go) dropped type-checking compile times from 125 seconds down to 10 seconds.
+  
+  If you found this technical deep-dive into AI infrastructure and software engineering trends helpful, drop a like and subscribe for more content on system design, LLM architecture, and backend engineering!
+  
+  ⏱️ TIMESTAMPS:
+  ⏱️ TIMESTAMPS:
+  00:00 - The TIOBE Index Lie: Is Python Dying? 
+  00:39 - Why Stack Overflow Traffic Crashed 
+  01:34 - The Real AI Metrics: PyPI vs npm Installs
+  02:29 - Why Python Dominates Model Infrastructure 
+  03:27 - Python 3.14: The End of the GIL
+  03:58 - TypeScript Passes Python on GitHub
+  04:49 - "The Convenience Loop": Why AI Agents Prefer TypeScript 
+  06:13 - Model Context Protocol (MCP) & AI SDKs 
+  07:00 - TypeScript 7: Rebuilt in Go (10x Faster) 
+  07:44 - WebGPU & Transformers.js (Browser AI) 
+  08:43 - The Verdict: Python (Model) vs TypeScript (Product) 
+  09:07 - The Real Casualty: Plain JavaScript
+  
+  #python #javascript #typescript #softwareengineering #machinelearning #artificialintelligence #systemdesign #programming
+  
+  User Queries:
+  python vs javascript for ai machine learning
+  python vs typescript which is better for ai agents
+  why typescript is growing faster than python github
+  typescript 7 go compiler performance benchmark
+  python 3.14 free threaded gil optional performance
+  webgpu transformers js run local llm in browser
+  why tiobe index is wrong about python popularity
+  best programming language to learn for ai in 2026
+  python pytorch hugging face vs npm javascript
+  anthropic mcp model context protocol python vs typescript
+---
+Dois números, ambos deste mês. O Python acaba de sofrer sua pior queda anual no índice TIOBE, despencando oito pontos. E não é um mês ruim. Em julho passado, o Python estava em 27%, em fevereiro, em 22% e agora está em 18,9%. O JavaScript ocupa o sexto lugar nesse mesmo índice, com 2,72%, e continua em queda. Na
+
+classificação que é citada na maioria dos artigos sobre linguagens de programação, as duas maiores linguagens em software parecem estar ultrapassadas. Exatamente no mesmo período de 12 meses, ambos estabeleceram recordes no GitHub. O maior número de colaboradores que qualquer uma das plataformas já publicou. Ambas as afirmações são verdadeiras ao mesmo tempo, e essa contradição é a visão mais clara de como a IA está separando essas duas perspectivas. Comece explicando por que a classificação está errada.
+
+TIOBE não contabiliza código. Ele contabiliza os resultados de busca para o nome de um idioma . Durante 25 anos, isso funcionou perfeitamente. Se você programou em Python numa terça-feira, provavelmente pesquisou " Python" no Google 40 vezes antes do almoço. Então o comportamento que ele monitorava parou. O
+
+Stack Overflow atingiu um pico de quase 200.000 perguntas por mês em 2014. Nos primeiros cinco dias de janeiro deste ano, todo o site registrou cerca de 300 perguntas. Não 300.000, 300. Isso representa uma queda de
+
+cerca de 78% desde o lançamento do ChatGPT. Em maio passado, o site já estava registrando volumes que não via desde 2009. E as solicitações não paravam. Eles migraram para uma janela de bate-papo , que não deixa nenhuma página, nenhum link, nada para rastrear. Assim, um ranking de busca agora mede bem uma coisa: com que frequência uma linguagem confunde alguém a ponto de fazê-lo abandonar seu editor.
+
+Paul Jansen, da TIOBE, defendeu o método novamente em março. Seu argumento é que a busca ainda rastreia o interesse. Os dados de volume contradizem sua opinião. Essa é uma ótima métrica. Não se trata apenas de popularidade. Se você
+
+quiser saber o que estará sendo escrito em 2026, conte as instalações e conte os colaboradores. Aqui está a semana que termina em 30 de julho, retirada diretamente dos registros. PyTorch, 21,7 milhões de instalações em 7 dias. Hugging Face Transformers, o jogo de tabuleiro que praticamente todos os jogos de tabuleiro vendem, arrecadou 43,4 milhões naquela mesma semana. A Hugging Face disponibiliza uma versão em JavaScript dessa mesma biblioteca. Atraiu 1,8 milhão de pessoas. Mesma
+
+biblioteca, 23 para 1. O cliente Python da OpenAI obteve 97,7 milhões. O mesmo cliente no NPM obteve 31,8 milhões de acessos, aproximadamente 3 para 1. O SDK da Anthropic segue a mesma tendência, embora não tão acentuadamente. 45,1 milhões no PyPI contra 28,8 milhões no NPM. Essa lacuna reflete algo físico.
+
+É onde os modelos são criados e onde reside o código que manipula os pesos brutos , e isso não se limita ao treinamento. Os servidores que executam os modelos em produção, vLLM e SGLang, são Python externamente, com kernels C++ e CUDA por baixo. Python é um plano de controle para o hardware mais caro do prédio. Os próprios números do GitHub confirmam isso. No ano passado, foram criados 582.000 repositórios de IA escritos em Python, um aumento de 50% em 12 meses.
+
+Os notebooks Jupyter apareceram em 2,42 milhões de repositórios, um aumento de 75% em 1 ano. Esse é o som de uma linguagem de pesquisa em desenvolvimento. Até mesmo o formato do arquivo conta a história. O SafeTensors, método utilizado pela maioria dos novos modelos abertos para distribuir seus pesos, foi entregue à Fundação PyTorch em abril. A revista IEEE Spectrum classificou o Python em primeiro lugar geral para 2025 e em primeiro lugar no ranking de empregos. No primeiro ano, Python liderou as
+
+contratações de empregadores. Na mesma lista, o JavaScript caiu da terceira para a sexta posição. O índice de IA de Stanford constatou que o Python foi mencionado em 258.000 anúncios de emprego nos EUA, um aumento de quase 30% apenas em relação a 2024, e a linguagem continua a evoluir rapidamente. O Python 3.14 foi lançado em
+
+outubro passado e tornou oficialmente suportada a compilação com suporte a multithreading. O bloqueio global do interpretador agora é opcional , depois de 30 anos de insistência de que jamais seria. A versão 3.15 será lançada em 1º de outubro com importações preguiçosas, uma ABI estável com suporte a multithreading e um JIT mais rápido. Seja lá o que for, não se trata de uma língua que se acomoda. Então, o Python vence, e terminamos em
+
+4 minutos. Só que, em agosto de 2025, a contagem de contribuidores do GitHub colocou uma nova linguagem no topo, e não era o Python . O GitHub contabiliza os colaboradores distintos por idioma por mês. Em agosto daquele ano, o TypeScript atingiu a marca de 2.636.000 usuários.
+
+Para se ter uma ideia da dimensão, o GitHub ultrapassou a marca de 180 milhões de desenvolvedores no ano passado, e 36 milhões deles se cadastraram somente em 2025. Python, 2.585.000. Cerca de 50.000 pontos separam a Python da segunda colocada, que lidera o
+
+ranking há 16 meses consecutivos. O JavaScript ficou em terceiro lugar, com 2,16 milhões. A linguagem que deu nome ao ecossistema agora está por trás de um superconjunto de si mesma. Eis o contraponto justo. Na própria pesquisa do Stack Overflow, o JavaScript continua sendo a linguagem mais usada no mundo, com 66%, à frente do Python, com 58%. Em termos de número de usuários, o
+
+JavaScript não perdeu nada, mas as taxas de crescimento são o dado mais impressionante. O TypeScript cresceu 67% em um ano, o Python 49%, o JavaScript 25%, e o motivo declarado pelo GitHub é o que faz desta uma história sobre IA, e não sobre moda. Linguagens tipadas tornam a codificação assistida por agentes mais confiável em produção. Veja o que um assistente realmente faz quando escreve código. Ele tenta adivinhar a assinatura de uma função, o formato de retorno e o nome de um campo.
+
+Em TypeScript, o compilador verifica essa suposição antes que uma única linha seja executada. Em Python, você descobre isso em tempo de execução. Na frente de um usuário, se você tiver sorte; em um registro às 3h da manhã, se não tiver. Existe um segundo motivo financeiro que é igualmente importante. Next.js, Astro,
+
+Remix, SvelteKit, os frameworks que as pessoas usam para iniciar projetos agora incluem TypeScript na estrutura padrão. Você recebe os tipos de texto antes mesmo de escrever uma linha. A InfoQ deu um nome ao que acontece a seguir: um loop de conveniência. O assistente é melhor em TypeScript, então as pessoas escrevem mais TypeScript, então o próximo modelo é treinado com mais TypeScript, então o assistente fica melhor nisso novamente. Isso significa que a era da IA ​​está escolhendo uma linguagem por impulso, não por mérito. Ele potencializa aquele que
+
+já gerenciava melhor, na velocidade de um ciclo de lançamento de modelo. Você pode observar esse efeito cumulativo. O SDK de IA da Vercel obteve 19,4 milhões de instalações do NPM na semana passada, a partir de um pacote que praticamente não existia há 3 anos. O GitHub contabilizou 1,1 milhão de repositórios públicos que importaram um SDK do LLM no ano passado, um aumento de 178%. A maioria desses não são códigos de pesquisa.
+
+São produtos, e os produtos são desenvolvidos onde a interface reside. O teste mais claro é o protocolo de contexto do modelo, o padrão de como um modelo chama uma ferramenta, porque a Anthropic lançou o SDK para Python e o SDK para TypeScript no mesmo dia. Nenhum dos lados conseguiu sair na frente. Na semana passada, foram 79,6 milhões de instalações do Python contra 49,4 milhões do TypeScript. Python ainda lidera, mas essa não é a vantagem de uma linguagem com monopólio sobre agentes. Ambos os SDKs já
+
+ultrapassaram a marca de um bilhão de downloads cada. A camada que decide como os modelos usam as ferramentas foi construída de forma bilíngue propositalmente. Em seguida, verifique em que linguagem os laboratórios de IA escrevem suas próprias ferramentas. O código de Claude é em TypeScript, executando React dentro do seu terminal. A CLI do Codex da OpenAI começou em TypeScript e migrou para Rust para melhorar a velocidade de inicialização.
+
+Esse repositório agora é composto por cerca de 96% de código Rust. A decisão foi tomada em prol do desempenho, não do Python. E em 8 de julho, o TypeScript removeu sua própria maior reclamação. A versão 7 foi lançada com o compilador totalmente reconstruído em Go. A verificação de tipos da base de código do VS Code passou de 125,7 segundos para 10,6 segundos. Ao abrir um arquivo e
+
+ver o primeiro erro, o tempo de resposta, de 17 segundos e meio , cai para menos de 1,3 segundos. E não foi apenas um repositório de sorte. A Sentry reduziu seu tempo de 140 segundos para 16. A Bluesky, de 24 segundos para menos de três. O imposto que você pagava por ter tipos de letra foi reduzido em cerca de 10 vezes no mesmo ano em que o assistente começou a depender deles. Essa coincidência de datas
+
+não é mera casualidade. Há ainda uma última mudança por trás de tudo isso, e é ela que decidirá os próximos 5 anos. Onde é que a inferência realmente acontece? Em janeiro, o WebGPU foi totalmente implementado no Chrome, Edge, Firefox e Safari. Todos os principais navegadores agora conseguem se comunicar diretamente com a GPU , o que pôs fim a uma era de 15 anos de soluções alternativas com o WebGL. O transformers.js
+
+pega um modelo do Hugging Face, converte-o para ONNX e o executa em uma aba. Sem servidor, sem chave de API, e os dados nunca saem da máquina. Modelos quantizados com menos de 2 GB agora são executados em velocidade interativa em um laptop comum. 70 a 80% da taxa de transferência nativa dentro de uma aba do navegador. Python tem uma resposta para isso, e é uma resposta verdadeira.
+
+Pyodide compila CPython para WebAssembly, e o JupyterLite é executado sobre essa base. Mas para chegar lá, você precisa primeiro enviar um interpretador completo pela rede. NumPy, Pandas, SciPy e scikit-learn foram todos adaptados, então o conjunto de ferramentas científicas realmente funciona dentro de uma aba do navegador. É um ambiente de ensino em um caderno, e é excelente nisso . Não é o ambiente de execução que você coloca diante de 10 milhões de usuários. O cliente é
+
+um local que o Python pode visitar, não um local onde ele reside. Então, qual deles sairá vitorioso na era da IA? Os números fornecem uma resposta clara, e não se trata de um empate diplomático. Python se destaca no treinamento, ajuste fino, avaliação, disponibilização e pesquisa de modelos. PyTorch e Transformers não estão sendo substituídos por nada no lado do JavaScript, e a diferença de instalações está longe de diminuir. TypeScript vence a disputa
+
+pelo produto. O loop do agente, as chamadas da ferramenta, a interface de streaming, a coisa que um usuário realmente toca, o que deixa uma vítima real, e não é aquela a que o título se refere. JavaScript puro, sem tipagem. O JavaScript perdeu o primeiro lugar dentro do seu próprio ecossistema para um superconjunto de si mesmo por um motivo específico. Quando uma máquina escreve a maior parte do seu código, um compilador que verifica a máquina vale muito mais do que as teclas que você digita.
+
+Então, a versão prática. Se você estiver construindo ou ajustando modelos, é Python, e não há comparação. Se você estiver desenvolvendo o aplicativo em torno de um modelo, ele será desenvolvido em TypeScript e, cada vez menos, em JavaScript. A formulação da questão em "versus" estava errada desde o início . Esses dois pararam de competir pela mesma vaga por volta de 2023, e grande parte da internet ainda não atualizou suas informações anteriores. Se você for escolher
+
+uma linguagem para aprender este ano, escolha primeiro a camada em que deseja trabalhar e, em seguida, aprenda a linguagem que essa camada já utiliza. Essa decisão já foi tomada por você. O ranking continuará indicando que ambos os idiomas estão em declínio. Os registros publicam a verdade toda segunda-feira de manhã, e dizem o contrário.

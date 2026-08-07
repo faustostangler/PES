@@ -1,0 +1,109 @@
+---
+video_title: "PocketBase + HTMX: A Whole Production App Built in One File"
+video_id: MbkDloawTf4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MbkDloawTf4
+video_date: 2026-07-23T16:00:39+00:00
+video_description: |
+  Are you tired of paying 5 different SaaS bills to run a Next.js frontend, a Postgres database, an Auth0 login service, and a separate API layer? Discover the ultimate "No-Build" architecture: combining HTMX with PocketBase to run your entire production web app from a single, self-hosted Golang binary file.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf 
+  
+  In this video, Cloud Codes breaks down the system design of the leanest tech stack on the internet. We explore how PocketBase acts as an all-in-one backend—providing an embedded SQLite database, a generated REST API, file storage, and OAuth authentication in a single Go file. 
+  
+  Then, we dive into how HTMX handles the frontend using "HTML Over the Wire," allowing you to build real-time search, live data streams (Server-Sent Events), and dynamic forms without ever writing a line of JavaScript or compiling a Node.js bundle. Finally, we give an honest verdict on the limits of SQLite concurrent writes, and exactly when you should (and shouldn't) use this 1-file architecture in production.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The 5-Bill Problem (The Bloated Web Stack) 
+  0:29 - What is PocketBase? (The 1-File Backend) 
+  1:34 - Inside the File: SQLite, APIs, & Storage 
+  2:05 - Auto-Generated APIs & Migrations 
+  3:21 - What is HTMX? (HTML Over the Wire)
+  3:49 - No Build Step Required 
+  5:13 - Live Demo: Building a CRUD App without JS 
+  5:42 - Built-in Auth & Realtime Streams
+  7:06 - Serving 10,000 Concurrent Connections 
+  7:20 - The Ultimate Deploy: Just Move One File 
+  8:29 - Replacing Firebase, Auth0, & Next.js 
+  8:43 - The Catch: SQLite Write Limits & Ergonomics 
+  9:49 - The Honest Verdict: When to Use This Stack 
+  
+  #pocketbase #htmx #golang #webdevelopment #softwareengineering #systemdesign #cloudcodes #javascript #backend #sqlite #saas #react
+  
+  User Queries:
+  pocketbase htmx go tutorial
+  pocketbase vs firebase vs supabase
+  how to deploy pocketbase app
+  htmx html over the wire explained
+  build saas app in one file
+  golang embedded sqlite tutorial
+  stop using react js alternative
+  system design single page application alternative
+  best tech stack for solo founders 2026
+  pocketbase concurrent connections limit
+---
+Este é um aplicativo completo para produção, com banco de dados, logins de usuários, painel de administração, atualizações em tempo real, e é distribuído como um único arquivo. Você baixa um arquivo binário, o executa e o servidor já está em funcionamento. Sem instalador, sem serviços para interligar. Compare isso com a maneira usual de fazer isso: um aplicativo React, uma API separada, um banco de dados gerenciado e um serviço de autenticação. São cinco partes móveis, cinco coisas para implantar, cinco compilações para executar o que é basicamente alguns formulários e uma tabela. A
+
+metade traseira é PocketBase. Um arquivo Go de código aberto, SQLite, contas, armazenamento de arquivos, uma interface de administração e uma API REST. A parte frontal é HTML, com cerca de 14 kilobytes e uma tag de script sem dependências. Isso dá vida ao HTML puro . Junte tudo e o aplicativo inteiro se torna um único binário Go. Sem Node, sem
+
+node_modules, sem bundler, sem etapa de compilação. Parece um brinquedo. Não é. Um único arquivo PocketBase pode atender mais de 10.000 conexões simultâneas e é facilmente compartilhado. O PocketBase
+
+tem cerca de 60.000 estrelas, o HTMX cerca de 48.000. Serei franco com você. Isso não é mágica e não funciona para todos os aplicativos. Na maior parte do que construímos, serve
+
+. Então, deixe-me explicar tudo, o arquivo em si, como o HTML se comunica com ele, autenticação, atualizações em tempo real , implantação e onde ocorre o problema. Comece pela parte administrativa. Você baixa o binário do PocketBase, executa o comando PocketBase serve e, em cerca de um segundo, você tem um servidor em execução na porta 8090 com um painel de administração esperando em . Não é necessário instalar nenhum banco de dados primeiro, e o arquivo em si não é pequeno.
+
+Em seu interior, você encontrará um banco de dados SQLite integrado, uma API REST gerada automaticamente, logins por e-mail e OAuth, uploads de arquivos com miniaturas, um fluxo de dados em tempo real e toda a interface administrativa. Funcionalidades que você normalmente contrataria como serviços separados já estão disponíveis. Abra o painel de controle e você terá acesso a um verdadeiro escritório administrativo. Você clica em nova coleção, nomeia-a como "posts", adiciona um título e um campo de texto, e define os tipos, tudo no navegador. Você simplesmente projetou uma tabela com uma migração por trás dela e nunca mexeu com SQL. No PocketBase,
+
+uma coleção é a sua tabela. No momento em que você cria uma, ela lhe fornece uma API REST completa . Liste, visualize, crie, atualize, exclua, além de filtrar, classificar e paginar sem que você precise escrever uma única linha de código nos endpoints. O controle de acesso reside na própria coleção. Em vez de uma camada intermediária separada, cada regra é uma pequena expressão, como por exemplo, o ID do proprietário ser igual ao usuário conectado. O
+
+banco de dados verifica isso a cada solicitação, portanto, um guarda esquecido não pode vazar dados. E cada alteração de esquema é registrada como um arquivo de migração versionado diretamente no seu repositório. Ao implantar o novo binário, ele executa quaisquer migrações pendentes na inicialização e atualiza o próprio arquivo de dados, de modo que sua máquina de desenvolvimento e sua máquina de produção nunca fiquem desalinhadas. Você também pode estendê-lo sem recompilar nenhum código Go. O PocketBase inclui um mecanismo JavaScript, então você coloca arquivos de gancho em uma pasta, executa o código após a criação de um registro, adiciona uma tarefa cron agendada, envia um e-mail de boas-vindas e o binário os reconhece na próxima inicialização. Agora, a interface. O
+
+formato de aplicativo de página única é pesado. O navegador baixa uma estrutura, inicializa-a, busca o JSON, transforma esse JSON em HTML em JavaScript e, em seguida, renderiza novamente. É muita maquinaria e muito código ruim só para mostrar uma lista de linhas. O HTML inverte essa situação. Um clique ou um formulário dispara uma solicitação diretamente de um atributo. O servidor
+
+envia de volta o HTML finalizado, e o HTMLMX insere esse HTML na página. O servidor continua sendo a fonte da verdade, e há muito menos código do lado do cliente para ser quebrado. Tudo se resume a um punhado de atributos em tags normais. A HX-Post indica para onde enviar . HX-Target indica qual elemento deve ser atualizado. HX-Swap explica como. Não há
+
+componentes, biblioteca de estado ou DOM virtual para memorizar. E não há etapa de compilação. Você adiciona uma tag de script, escreve o HTML e o navegador o executa exatamente como foi escrito. Nada para compilar, nada para empacotar, nenhuma pasta node_modules ocupando um gigabyte de disco antes mesmo de você lançar uma funcionalidade. E como tudo é feito apenas via HTTP, os recursos básicos da web continuam funcionando. O botão Voltar, os favoritos e o
+
+cache normal funcionam como sempre funcionaram. E um mecanismo de busca enxerga HTML real, aquilo que os aplicativos de página única muitas vezes lutam para reconquistar. É aqui que as duas metades se encontram. PocketBase não é apenas um aplicativo, é também uma biblioteca Go. Você importa o aplicativo, mantém todos os recursos integrados e registra suas próprias rotas ao lado das que ele já oferece . O HTML enviado por essas rotas provém
+
+do pacote de modelos HTML padrão do Go . Uma página é um modelo, um fragmento é um modelo menor, e o HTML solicita apenas a parte que foi alterada. Você está renderizando strings no servidor, nada de extraordinário. Então, você adiciona uma rota que preenche um modelo e retorna o fragmento. Sua página solicita isso com HX get. O PocketBase executa a consulta em
+
+seu próprio banco de dados SQLite, renderiza o HTML e o envia de volta. Os dados e a marcação vêm do mesmo lugar, em uma única requisição. E agora a divisão acabou. Um único processo é responsável pelo banco de dados, pela autenticação, pelo armazenamento de arquivos e pelo HTML que seus usuários veem. Não existe um servidor front-end que se comunique com um servidor back-end através da rede.
+
+É tudo o mesmo programa binário em execução. Assista a um loop real. Você digita a tarefa e clica em adicionar. O navegador HX publica isso. O PocketBase salva a linha e renderiza apenas esse novo item da lista, e o HTMX o insere na lista. Sem recarregamento de página, sem
+
+análise de JSON e sem escrever um único código JavaScript. A busca mostra a combinação da melhor forma. A API de listas do PocketBase aceita um filtro diretamente na URL, então você direciona um campo de entrada para ela com HX get, adiciona um pequeno atraso para que seja executada enquanto você digita e direciona para a lista de resultados, uma caixa de pesquisa em tempo real, e tudo isso sem usar JavaScript. Agora, pegue as peças pelas quais as pessoas normalmente pagam por um serviço. A autenticação já está disponível, com e-mail e senha, além de OAuth com Google, GitHub e outros, incluindo sessões e redefinições de senha . O painel de administração também gerencia esses
+
+usuários para você. Um login funcional consiste em um formulário HTML curto que envia dados para a raiz do seu site, uma chamada ao PocketBase para verificar a senha e um redirecionamento. Não há painel de autenticação de terceiros , nem tokens para gerenciar manualmente, nem um microsserviço de login separado para executar. O recurso de tempo real também está integrado. O PocketBase envia as alterações de registro para o navegador por meio de eventos enviados pelo servidor, e o HTMLMX possui uma extensão SSE que escuta e insere o novo HTML no lugar.
+
+Transmissão ao vivo com praticamente nenhum código do lado do cliente para manter. Abra o aplicativo em duas janelas, adicione uma linha em uma delas e a outra será atualizada automaticamente em instantes. Você não configurou um servidor WebSocket nem uma fila de mensagens para isso. O fluxo de dados vem diretamente do mesmo arquivo binário. Até mesmo o gerenciamento de arquivos é abordado.
+
+Faça o upload de uma imagem e o PocketBase a armazenará e gerará as miniaturas nos tamanhos que você solicitar, diretamente da API. Sem serviço de processamento de imagens, sem CDN separada. Ele grava em disco local ou no S3, dependendo da configuração, e até mesmo utiliza TLS. Aponte um domínio para o servidor, execute o binário com a flag HTTPS e o PocketBase obterá e renovará seu próprio certificado Let's Encrypt. Uma nova máquina virtual é enviada para um aplicativo seguro em execução, sem nenhum proxy reverso na frente. Eis
+
+o número que me surpreendeu. O projeto afirma que uma única instância do PocketBase pode atender mais de 10.000 conexões ativas em tempo real, mesmo antes de qualquer ajuste. Trata-se de um único arquivo em uma máquina comum que realiza o trabalho de uma pequena plataforma, distribuindo as correspondências para o restante. Você copia o arquivo binário único para um servidor e o executa. Não há
+
+cluster para configurar, nenhum grafo de contêineres para orquestrar, nenhum banco de dados separado para provisionar primeiro. Toda a história das operações se resume a mover um arquivo, e você pode expandir ainda mais a ideia de um único arquivo. Com o recurso de incorporação do Go, você inclui seu HTML, CSS e imagens diretamente no binário durante o processo de compilação. Assim, até mesmo os recursos estáticos viajam dentro dele. O aplicativo se torna, de fato, um único arquivo para copiar . Todo o seu banco de dados consiste em um único
+
+arquivo SQLite localizado ao lado do arquivo binário. Um backup copia esse arquivo, e o painel de administração pode executar backups agendados e enviá-los para o S3 automaticamente. Portanto, você não está escrevendo scripts cron para se manter seguro. Somando tudo, a conta cai por terra. Um pequeno servidor VPS executa o banco de dados, a API, a autenticação e o aplicativo em conjunto.
+
+Você não precisa mais pagar uma mensalidade separada para banco de dados, cache, fornecedor de autenticação e hospedagem de front-end. E como você mesmo hospeda o serviço, não há dependência de fornecedor nem contas com valores fixos que podem aumentar repentinamente. Seus dados são um arquivo que você possui em uma máquina que você controla, não linhas que você aluga dentro do console de nuvem de outra pessoa. Pense em como tudo isso se encaixa. Uma configuração típica inclui Postgres, uma camada REST por cima, um fornecedor de autenticação, um serviço em tempo real e um servidor front-end.
+
+Cinco produtos, cinco painéis de controle, cinco contas. Aqui temos um binário e um processo. Então, onde exatamente ocorre a falha? Porque sim, e fingir o contrário seria apenas uma perda de tempo. Existem dois limites reais que você deve conhecer antes de apostar um projeto nessa pilha de tecnologias. Primeiro, o SQLite permite apenas um
+
+escritor por vez. As operações de leitura são baratas e abundantes, mas uma enxurrada de gravações simultâneas irá gerar filas de espera, e o PocketBase é executado em um único nó por padrão. Você dimensiona essa pilha em uma caixa maior, não a distribuindo por várias. Em segundo lugar, uma nota honesta da fonte. O próprio autor afirma que o PocketBase como framework, juntamente com o caminho HTML, é viável, mas a ergonomia ainda precisa ser aprimorada.
+
+Funciona, e as pessoas o utilizam, mas ainda não é um caminho perfeito e sem complicações. Então, para quem é isso? Aplicativos CRUD, ferramentas internas, dashboards, painéis de administração e MVPs. Qualquer coisa que seja basicamente composta de formulários, listas e logins. E, honestamente, isso descreve a maior parte do software que a maioria de nós realmente desenvolve. Quem deve se
+
+afastar? Um aplicativo de classe Figma com uma tela interativa enorme ou um sistema com foco na lateral direita que precisa abranger várias regiões desde o primeiro dia. Recorra à grande pilha distribuída . Você realmente precisará de todas essas peças móveis. Mas para o aplicativo de uso diário, essa combinação é a configuração de produção mais enxuta que já utilizei. Um único sistema binário representa seu
+
+banco de dados, sua autenticação, seu painel de administração e sua interface, e você pode ter todo o sistema em sua mente simultaneamente. Então, esse é o quadro completo. O PocketBase fornece o back-end em um único arquivo, o HTMX fornece um front-end interativo sem nenhum arquivo, e juntos eles formam um único binário Go que você copia para um servidor e executa. Se você gostou dessa forma de construir , inscreva-se. É aí que essas análises aprofundadas acontecem.

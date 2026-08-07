@@ -1,0 +1,115 @@
+---
+video_title: "Go + SQLite + Stripe: The \"Boring\" Tech Stack Behind $10K/mo Side Projects"
+video_id: udBL9zW4Gm4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=udBL9zW4Gm4
+video_date: 2026-07-22T09:00:24+00:00
+video_description: |
+  Are you still over-engineering your side projects with Kubernetes, microservices, and expensive Postgres clusters? Discover why solo founders and indie hackers are abandoning complex architectures for the "Boring Stack": Golang, SQLite, and Stripe.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  In this video, Cloud Codes breaks down the system design behind highly profitable, $10K/mo side projects. We explain why compiling a single static Go binary completely eliminates DevOps, how running an in-process SQLite database deletes network latency entirely, and why Litestream makes S3 continuous backups practically free. 
+  
+  We also reveal the 2026 AI Twist: why LLMs like Claude and ChatGPT write flawless code for "boring" technology on the very first try, but hallucinate when using brand-new frameworks. Finally, we look at the real-world receipts from Pieter Levels (making $138K/mo solo on PHP/SQLite) and explain the "Innovation Token" rule that proves you should spend your energy on your product, not your plumbing.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The $10K/mo Side Project Stack
+  1:00 - Layer 1: Go (Eliminating DevOps)
+  2:35 - Layer 2: SQLite (The Database in a File)
+  3:37 - Litestream Backups & The SQLite "Catch"
+  4:56 - Layer 3: Stripe (Outsourcing the Money)
+  6:25 - The 2026 Twist: Why AI Loves Boring Tech
+  7:52 - The Receipts: Pieter Levels ($138k/mo)
+  9:05 - When Should You Graduate to Postgres?
+  9:33 - Summary: Pick the Boring Stack
+  
+  #golang #sqlite #systemdesign #softwareengineering #indiehacker #stripe #cloudcodes #webdevelopment #backend #microservices #saas
+  
+  User Queries:
+  best tech stack for solo founders 2026
+  golang sqlite stripe tutorial
+  why use sqlite for web apps
+  pieter levels tech stack explained
+  litestream sqlite backup s3
+  stop using microservices monolithic architecture
+  go vs nodejs for side projects
+  how to build a saas app alone
+  choose boring technology dan mckinley
+  how ai writes code for old frameworks
+---
+Três ferramentas tediosas estão executando projetos paralelos que rendem mais de US$ 10.000 por mês. Vá, SQLite, Stripe. Essa é a pilha inteira. Uma pessoa, um servidor pequeno, sem faturas de banco de dados na nuvem, sem Kubernetes, sem cluster PostgreSQL, sem framework front-end que precisa ser reescrito a cada 18 meses. E aqui está a parte que irrita as
+
+pessoas. Isto não é um acordo. A monotonia é a vantagem. Um único desenvolvedor consegue compreender todo esse sistema em sua mente. Experimente isso com uma malha de microsserviços. Cada uma
+
+dessas três ferramentas remove uma camada inteira da sua pilha. Observe o que desaparece. Go elimina a complexidade do ambiente de execução. O SQLite elimina a camada de banco de dados. A Stripe remove a conformidade com os pagamentos. O que
+
+resta é pequeno o suficiente para ser compreendido e barato o suficiente para funcionar pelo preço de um café. Há também um novo motivo pelo qual o tédio está vencendo em 2026. E ele envolve a IA escrevendo seu código. Mas toda pilha de pilhas tem um porém, e esta é real. Chegaremos a isso em um minuto.
+
+Então, aqui está o roteiro. Uma linguagem entediante, um banco de dados entediante, uma camada de pagamentos entediante. Comece com um idioma. Comece com o Go. Ele compila para um único binário estático, não para uma pasta de dependências que você espera que estejam instaladas. Um único
+
+arquivo, desative o cgo e ele será compilado de forma cruzada do seu laptop para um computador Linux no qual você não fez login. Implantar significa copiar o arquivo e executá-lo. Fica ainda melhor com o Go Embed. Seu HTML, seu CSS, seu JavaScript, até mesmo o esquema do banco de dados, tudo compactado dentro desse mesmo arquivo binário em tempo de compilação. O aplicativo completo é distribuído como um único artefato, geralmente com menos de 50 megabytes, e não há ambiente de execução para instalar no sistema. Sem Node.js, sem Python,
+
+sem versão de interpretador compatível. O kernel executa seu binário diretamente, e o compilador é seu primeiro revisor de código. O programa se recusa a compilar quando os tipos não correspondem. Portanto, toda uma categoria de bugs de produção que surgem às três da manhã simplesmente não embarca no avião. Você os encontra na sua mesa, não em um e-mail de um usuário irritado. O
+
+servidor web já está na biblioteca padrão net/http. Sem estrutura para aprender. Sem nenhum framework para ser abandonado e reescrito sob seu controle. O Go trata a retrocompatibilidade como uma promessa. Assim, o código que você escrever hoje ainda compilará sem alterações daqui a anos.
+
+A concorrência é basicamente gratuita. As rotinas do Guru são tão baratas que uma pequena caixa consegue gerenciar milhares de conexões ativas. Você supera a capacidade do seu servidor de 12 dólares muito antes de superar a linguagem de programação. E aumentar a escala significa usar uma caixa maior, não reescrever o código. O período de implantação também continua sendo entediante.
+
+Um serviço systemd ou uma pequena imagem Docker baseada em scratch e um gancho pushto deploy. Não há camada de orquestração para monitorar porque não há nada para orquestrar. Todo o aplicativo é um único processo. Agora, a parte que faz os engenheiros mais experientes estremecerem: o banco de dados. O SQLite não é um servidor ao qual você se conecta por meio de uma rede. Trata-se de um
+
+único arquivo localizado no disco, ao lado do seu código, que é lido e gravado dentro do mesmo processo. Esse único arquivo exclui uma camada inteira. Sem servidor de banco de dados para executar, sem porta aberta para proteger, sem pool de conexões para otimizar, sem senha armazenada em variável de ambiente pronta para vazar. Uma das causas mais comuns de interrupções simplesmente não existe para quebrar. E é rápido de uma forma que um banco de dados em rede não consegue igualar. Uma leitura pela
+
+chave primária termina em cerca de 20 microssegundos porque não há salto de rede. É uma chamada de função. Uma única máquina consegue realizar mais de 100.000 leituras por segundo antes de começar a apresentar qualquer sinal de sobrecarga. As escritas também são rápidas. Dezenas de milhares por segundo.
+
+Eles simplesmente publicam em série através daquele único escritor. A configuração que a torna pronta para produção é o modo de operação. Registro antecipado de atividades. Ao ligá-lo, você terá um número ilimitado de leitores simultâneos, além de um único escritor. Para um aplicativo com grande volume de leitura, que é praticamente qualquer aplicativo que suporte confortavelmente o tráfego que você realmente verá. Antigamente, os backups eram a
+
+parte assustadora de um banco de dados com um único arquivo. Lightream resolveu isso. Ele transmite continuamente todas as alterações para o S3, adiciona menos de um milissegundo de latência e custa cerca de 50 centavos de dólar por mês por gigabyte. É também um ponto no tempo. Você pode restaurar para qualquer segundo, não apenas para o instantâneo da noite passada , e mal percebe que está funcionando. Um detalhe importante que vale a pena saber.
+
+Use o driver SQLite T puro para Go moderno, não o C1. Não há compilador C na sua versão. Nenhuma imagem Alpine corrompida no momento da implantação. A promessa binária única permanece intacta. Uma pequena escolha pode evitar uma tarde realmente ruim . Eis a verdade nua e crua.
+
+Porque toda pilha tem um. O SQLite permite exatamente uma única gravação por vez. Se tarefas em segundo plano, webhooks e usuários tentarem escrever ao mesmo tempo, eles entram em fila e aguardam. Existe um modo concorrente experimental, mas ele ainda não foi incorporado à versão principal. Portanto, a regra é simples. O dia em que seus direitos forem de fato
+
+contestados, e não o dia em que você imaginar que possam ser , será o sinal para você migrar para o Postgress. A maioria dos projetos paralelos nunca chega a esse ponto . Não pague a taxa de complexidade antes da fatura chegar. E como o banco de dados é apenas um arquivo, sua história de backup e inspeção é encantadora. Você pode copiar a produção para o seu laptop, abri-la em qualquer navegador SQLite e ler os dados em tempo real com as ferramentas que você já possui. Sem
+
+despejos, sem credenciais, sem cerimônia. Terceira ferramenta: dinheiro. Os pagamentos são o ponto em que muitos projetos paralelos acabam emperrando, porque lidar com cartões por conta própria envolve auditorias PCI, regras antifraude e as redes de cartões. A proposta da Stripe é ser a empresa de pagamentos para que você não precise ser uma. A integração é menor do que as pessoas temem. O
+
+Stripe Checkout processa o pagamento com cartão em sua própria página hospedada. Quando o pagamento for processado, um webhook enviará um ping para o seu servidor Go. Você verifica a assinatura. Altere uma linha no SQLite de "não pago" para "pago" e pronto. O Stripe tenta novamente acessar esse webhook até que você o confirme. Assim, uma mensagem não enviada
+
+não se traduz em uma venda perdida. Você não toca, armazena ou sequer vê o número bruto do cartão. A mensagem nunca chega ao seu servidor. A Stripe se encarrega da conformidade, para que seu projeto de fim de semana não herde o ônus regulatório de um banco . Só isso já vale cada centavo da taxa. Falando em
+
+taxas, nos EUA são de 2,9% mais 30 centavos por cobrança, sem valor mínimo mensal. Fazendo as contas, com uma receita de 10.000 dólares por mês, o Stripe fica com aproximadamente 440 dólares . Você fica com os outros 95% ou mais. A única coisa que incomoda é a questão das disputas. Uma
+
+contestação de pagamento custa US$ 15, independentemente de você ganhar ou perder. Orçamento para alguns. Considere isso como um imposto sobre aceitar dinheiro de estranhos na internet. E é um imposto barato para tudo o que o Stripe remove. Mais um motivo pelo qual o Stripe se encaixa na filosofia do "chato". Os documentos são enormes.
+
+Existe um exemplo em cada idioma e um modo de teste completo que você pode usar à vontade antes de receber uma única carta de verdade. Essa previsibilidade é exatamente o motivo pelo qual um modelo o gera corretamente. Então, por que uma pilha tão antiga está ganhando novamente em 2026? Não é nostalgia. Algo realmente mudou em relação a quem escreve a maior parte do código atualmente, e cada vez mais não é um humano digitando cada linha.
+
+Modelos de linguagem aprendidos a partir de toda a internet pública. Vá para SQL, SQLite ou HTTP simples. Esses modelos contêm milhões de exemplos, tutoriais e trechos de código testados em batalha, incorporados diretamente aos seus pesos. Cada resposta no Stack Overflow e cada repositório antigo do GitHub sobre o assunto são sinais de treinamento, e opções exóticas simplesmente não existem. Ao solicitar um manipulador de webhook do Stripe em Go, o modelo o escreve corretamente na primeira tentativa, pois já viu esse manipulador exato 10.000 vezes. O código compila e
+
+executa. Não apenas parece plausível na análise das diferenças. Agora, peça a mesma coisa em um contexto de 3 meses atrás. Ele inventa com confiança funções que nunca existiram de verdade, e você perde a tarde depurando seu assistente em vez de lançá-lo no mercado. Na era da IA, a tecnologia tediosa tornou-se uma característica de correção. Existe um princípio antigo
+
+por trás de tudo isso. Regra de Dan McKinley de 2015: cada projeto recebe cerca de três fichas de inovação. Um novo banco de dados, uma nova linguagem, uma nova estrutura. Cada um gasta uma ficha e você só tem três antes que tudo fique frágil. Go, SQLite e Stripe não custam tokens. São
+
+comprovados, documentados e propositalmente entediantes . Isso significa que você só precisa usar suas três fichas no único lugar onde a novidade realmente compensa. O produto em si, aquilo pelo qual o cliente passa o cartão . Será que alguma dessas características resiste ao contato com dinheiro de verdade? Peter Levelvels é a prova disso. Ele usa um stack ainda mais plano do que este
+
+. Utiliza PHP puro, jQuery e SQLite em um único servidor e trata suas ferramentas de forma propositalmente tediosa. No final de 2025, seus poucos aplicativos faturavam cerca de US$ 138.000 por mês sem nenhum funcionário. A maioria das tarefas é realizada exclusivamente por meio do Photo AI, essencialmente um grande arquivo de índice, com o Interior AI e o processamento remoto, por sua vez, complementando o restante, tudo sob a mesma disciplina de servidor único . Uma pessoa, um servidor,
+
+dinheiro de verdade. Somando tudo, chega a ser cômico. Um VPS pequeno por alguns dólares. Armazenamento de objetos medido em centavos. E o Stripe só cobra sua comissão quando você realmente ganha dinheiro. Seu custo mensal fixo
+
+arredonda para aproximadamente zero. E foram necessários mais de 70 projetos fracassados ​​para que ele conseguisse os vencedores. Qual é a verdadeira lição escondida por trás dos números? A pilha nunca foi o gargalo. Enviar algo que as pessoas realmente pagariam era o que faltava, as ferramentas simplesmente deixaram de ser um problema. Esse é
+
+o padrão por trás de quase todos os projetos paralelos que geram 10.000 dólares por mês. Elas não são construídas sobre uma infraestrutura inteligente que impressione outros engenheiros. São construídas sobre infraestrutura já consolidada que impressiona os clientes simplesmente por funcionar todos os dias sem problemas. Portanto, mantenha o bar honesto em vista. Você deixa de usar essa estrutura quando
+
+realmente se depara com um destes três obstáculos: um segundo servidor de aplicativos, escritores verdadeiramente simultâneos ou uma equipe tão grande que um único arquivo compartilhado se torna um problema de coordenação. Nem um dia antes disso. até você se deparar com uma parede. Cada hora que você não gasta lutando contra o Kubernetes ou cuidando de um cluster de banco de dados é uma hora que você dedica a novos recursos e aos clientes. Essa profissão, que consiste em fazer o trabalho de encanamento para obter um produto final, é o que move todo o processo. Opte pelo binário. SQLite para os
+
+arquivos, Stripe para o pagamento. Três ferramentas que ninguém consideraria empolgantes, uma pessoa para operá-las e um negócio completamente real. Navios, afinal, são entediantes. Escolha a pilha sem graça. Envie o produto interessante.

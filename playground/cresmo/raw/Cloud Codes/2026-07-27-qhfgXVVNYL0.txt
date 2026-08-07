@@ -1,0 +1,134 @@
+---
+video_title: "HTMX 4.0 Is Here - And There's No HTMX 3 (Here's Why)"
+video_id: qhfgXVVNYL0
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qhfgXVVNYL0
+video_date: 2026-07-27T16:00:01+00:00
+video_description: |
+  Did you hear that htmx 3.0 was just released? Here is the secret: htmx 3.0 doesn't exist! Creator Carson Gross promised there would never be a version 3, so he kept his word on a technicality and skipped straight to htmx 4.0—and it completely overhauls the framework by deleting 15KB of legacy code.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the technical architectural changes inside htmx 4.0.0-beta6. We explore why XMLHttpRequest was completely excised from the codebase in favor of native fetch and async/await, shrinking the minified bundle size from 50KB down to 35.4KB. You will learn about the major breaking changes that will crash existing htmx 2 apps—including the end of implicit attribute inheritance, deleted DOM history caching, and mandatory 4xx/5xx error swapping—as well as brand-new core features like built-in Idiomorph DOM morphing, streaming SSE swaps, and the new hx-partial element.
+  
+  If this helped you understand web architecture, front-end performance, and modern framework design, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  0:00 - The htmx 3.0 Myth (Skipping to Version 4.0)
+  0:44 - The Fetch Engine: Goodbye XMLHttpRequest
+  1:21 - Why Carson Gross Rewrote the Internals (fixi.js)
+  2:36 - Breaking Change #1: Implicit Inheritance is Dead
+  4:07 - Breaking Change #2: 400 & 500 HTTP Errors Now Swap
+  5:28 - Event & Attribute Renames (24 Events Dead)
+  7:15 - History Caching Deleted (Back Button Behavior)
+  8:09 - New Features: Idiomorph, SSE, hx-partial & View Transitions
+  10:30 - Should You Upgrade? (The Migration Tool)
+  11:35 - Why Deleting Code Makes Better Frameworks
+  
+  🔗 Repositories & Sources Mentioned:
+  • HTMX Essay ("The Fetchening"): https://htmx.org/essays/the-fetchening/
+  • HTMX Official Repository: https://github.com/bigskysoftware/htmx
+  • Fixi.js (The HTMX 4 Prototype): https://github.com/bigskysoftware/fixi
+  • Idiomorph (DOM Morphing Algorithm): https://github.com/bigskysoftware/idiomorph
+  • HTMX Migration CLI Tool: npx htmx.org@4.0.0-beta6 upgrade-check
+  
+  #htmx #javascript #webdevelopment #frontend #systemdesign #html #cloudcodes
+  
+  User Queries:
+  htmx 3.0 what actually changed
+  htmx 4.0 beta 6 fetch migration
+  htmx 4 breaking changes carson gross
+  htmx fetch vs xmlhttprequest performance
+  htmx idiomorph dom morphing core
+  htmx implicit inheritance disabled
+  htmx 4 error swapping 400 500 status
+  htmx upgrade tool npx htmx org
+  why htmx skipped version 3
+  htmax js bundle explained
+  cloud codes htmx breakdown
+---
+Aqui está toda versão do HTML já publicada. 1.x, 2.x e depois quatro. Não existe HTML3 e nunca houve a intenção de existir . Carson Gross, criador do
+
+HTMX, disse isso publicamente, então ele cumpriu sua palavra por uma questão técnica. Com base nessas palavras, eu disse que não haveria uma versão 3 do HTMLX. Mas tecnicamente, eu não disse nada sobre uma versão 4. O que significa que a resposta para o que mudou no HTML3 é esta. Nada mudou no HTML3.
+
+Tudo migrou para o HTML4 e, há quatro dias, tornou-se realidade. 23 de julho de 2026, beta 6 no npm. Seu gerenciador de pacotes irá lhe entregar o arquivo hoje com a tag "next", e dois itens dentro dele irão quebrar um aplicativo HTML2 em funcionamento no primeiro carregamento da página. Vou mencionar os dois e mostrar as linhas de configuração que os desfazem. Comece por aquela que você não pode desfazer. Agora, todas as requisições
+
+feitas pelo HTML passam pelo processo de busca (fetch). O objeto de referência XML do navegador, que impulsionou o HTMLX desde 2020, foi removido do código-fonte, e sua exclusão tornou a biblioteca menor. O HTMLX 2.10 minificado tem 50 kilobytes, enquanto o beta 6 tem 35,4 kilobytes, com os mesmos quatro atributos principais, menos 15 kilobytes de soluções alternativas acumuladas. Essa é a forma deste lançamento, uma versão principal que, em sua maioria, subtrai elementos. Aqui está a
+
+lista completa do que foi removido, do que foi adicionado e se você deve ou não fazer alguma alteração. Para entender por que os componentes internos foram removidos, volte a janeiro de 2025. Carson escreveu uma biblioteca de brinquedo chamada fixy.js por impulso. Um pequeno arquivo HTML, com algumas centenas de linhas, construído com fetch e async/await desde o primeiro commit. Possui cerca de 1.300 estrelas e
+
+não estava previsto para ser enviado. Mas escrevê-lo lhe ensinou algo que ele não havia planejado aprender. A API HTML funcionou perfeitamente. HX recebe HX, HX posta, HX direciona, HX troca, tudo funcionando perfeitamente. A implementação subjacente era o resultado de 5 anos de soluções alternativas acumuladas em um objeto de solicitação projetado para o Internet Explorer. Então a questão deixou de ser se
+
+deveríamos adicionar funcionalidades? A questão passou a ser: se estamos mudando para o fetch e isso acaba quebrando tudo, o que mais podemos consertar enquanto o problema está sendo resolvido? Três respostas surgiram disso, e todas as outras mudanças neste vídeo dependem de uma delas. Fetch substitui exomlasierish. A herança de atributos torna-se explícita em vez de automática e o histórico deixa de armazenar suas páginas em cache. Guarde esse
+
+terceiro. É o mais estranho dos três e foi o que apagou mais código. A versão Alpha 1 foi lançada em 3 de novembro de 2025. A versão Beta 6 foi lançada em 23 de julho de 2026. 14 pré-lançamentos em menos de 9 meses, com atualizações a cada quatro a seis semanas.
+
+Seja lá o que for, não é um projeto paralisado. Agora, a mudança que vai quebrar seus modelos. Carson considera a herança implícita de atributos o maior erro do HTML 1 e 2. Palavras dele, não minhas. E ele enviou duas vezes. Eis o que significa implícito. Você
+
+coloca hx confirm em uma div. Todos os elementos abaixo dessa div a herdam, em toda a árvore de elementos . Você não pediu isso. O div nunca disse: "Estou compartilhando isso." Ele se propaga pelo seu código HTML da mesma forma que uma propriedade CSS, o que é poderoso quando você quer e irritante quando não quer. Um botão para níveis
+
+mais profundos começa a perguntar: "Tem certeza?" E o atributo que causa isso reside em um arquivo que você não estava analisando. O HTML2 introduziu dois atributos inteiros, hx inherit e hx disinherit, apenas para desfazer isso. O HTML4 inverte o padrão. Nada é herdado a menos que você assim o deseje. E você afirma isso com um
+
+modificador de dois pontos herdado no próprio atributo. Escreva `hxtarget::column inherited` na div e os botões abaixo compartilharão o mesmo destino. Deixe desligado e eles não farão nada. Existe também um segundo modificador. O operador de dois pontos (`::`) permite que um elemento filho adicione um valor herdado em vez de substituí-lo. Assim, um formulário pode importar
+
+a lista de inclusão global e, em seguida, adicionar seus próprios campos ao final. As funções hx inherit e hx disinherit foram ambas excluídas porque não há mais nada que possam fazer. E se você tem um aplicativo grande e não está com vontade de fazer isso hoje, uma única linha resolve o problema . A herança implícita em htmx.config.imp é igual a verdadeira. E o
+
+htmx4 herda da mesma forma que o htmx2. Essa válvula de escape é o motivo pelo qual a maioria dos aplicativos inicia na primeira tentativa. A segunda alteração que quebra a compatibilidade é menor na leitura, mas maior no impacto. No HTML 2, uma resposta 400 ou 500 não era trocada. A biblioteca tratou um status de erro como algo que não precisava ser renderizado e deixou seu alvo intacto. No HTML 4, todas as
+
+respostas são invertidas, exceto as de código 204 e 304. Na maioria das vezes, é isso que você deseja. Seu servidor retorna um formulário com erros de validação e um status 422, e ele chega ao destino sem nenhuma configuração. No HTML2, era necessário escrever um bloco de configuração para tratamento de respostas para obter isso. A falha ocorre na direção oposta. Se o seu manipulador de erro 500 retornar uma
+
+página de erro HTML completa, o HTMX4 irá substituir toda essa página por uma div dentro do seu layout. No HTML 2, a mesma resposta foi ignorada. Mesmo servidor, mesmo manipulador, tela completamente diferente. Você tem duas alavancas. O status HX define o comportamento por código de status em um único elemento. E a
+
+troca de htmx.config.nos aceita uma lista. Portanto, restaurar os códigos 204, 304, 4xx e 5xx repõe as regras antigas em todo o aplicativo. Ou ignore ambas e carregue a extensão de compatibilidade com htmx2. Uma única
+
+tag de script restaura a herança implícita. Os nomes antigos dos eventos e as antigas regras de erro juntos. Esse é o caminho de migração recomendado pela documentação. Faça o aplicativo iniciar e, em seguida, remova a camada de compatibilidade uma de cada vez. Agora, a parte que aparece nos seus resultados do GP.
+
+Todos os eventos em HTMLX foram renomeados porque o fetch finalmente permitiu que eles adotassem uma gramática adequada. O sistema lê a fase htmx antes de uma solicitação, que é htmx antes da solicitação. Após uma troca, o HTML (dois pontos após dois pontos) é alterado para 24 eventos: htmx após onload, htmx após settle, htmx antes da troca e solicitação de configuração htmx para todos eles. Se você tiver JavaScript escutando eventos HTML, e a maioria dos aplicativos reais faz isso, esse código para de ser executado na atualização e não gera nenhum erro. Simplesmente para de funcionar. Quatro eventos de erro
+
+se condensam em um só. Erro ao enviar HTML. Erro de troca de HTML. Os erros de destino HTML e de tempo limite HTML se tornam erros de dois pontos HTML, e os quatro eventos HXR simplesmente desaparecem porque não há mais nenhum erro externo para relatar nas barras de progresso de upload construídas em HTML. O progresso HHR é o único item aqui sem substituto direto; os atributos são piores porque dois deles trocam de nome. `hx disable`
+
+no HTML2 significava ignorar o processamento HTML neste elemento; no HTML4, essa tarefa pertence a `hx ignore`, e `hx X disabled` agora significa o que `hx disabled ELT` costumava significar. Renomeie o HX desabilitado primeiro, ou os dois entrarão em conflito durante a migração. Oito atributos foram removidos completamente. HX varss, HX params, HX prompt, HXXT, HX disinherit, HX inherit, HX request e HX history. A maioria tem algum lugar para ir. O prompt HX
+
+retorna como uma extensão. O parâmetro hx passa a fazer parte do evento de solicitação de configuração e o hxxt desaparece porque você simplesmente inclui o script de extensão no objeto de configuração. Cinco opções foram renomeadas e cerca de 15 foram excluídas. Duas alterações nos valores padrão que você perceberá no primeiro dia. Agora, as solicitações expiram após 60 segundos, em vez de ficarem travadas indefinidamente, e o atraso de estabilização diminui de 20 milissegundos para um. Terceira mudança simplificadora,
+
+e aquela à qual sempre retorno. O HTMX2 acelera a navegação com o botão Voltar, capturando um instantâneo do DOM no armazenamento local. Parece uma ideia inteligente. Na prática, capturar um instantâneo do DOM em tempo real é frágil porque scripts de terceiros já o modificaram e metade do seu estado não está na marcação. A resposta do suporte do projeto foi desativar o cache do histórico, e isso geralmente resolve o problema. Quando a solução para
+
+um problema é desativar essa funcionalidade, então o problema está na funcionalidade em si. Portanto, o HTML4 não utiliza cache. Ao pressionar o botão Voltar, uma solicitação de rede é enviada e a página é renderizada novamente da maneira como a web funcionava em 1999. Você perde a navegação instantânea para trás. Você obtém um histórico que se comporta sempre da mesma maneira e um bloco de armazenamento de sessão sobre o qual ninguém precisa se preocupar. O antigo recurso de cache
+
+era uma extensão opcional, o hxistory cache, que podia ser ativado e desativado. O atributo hxistory foi excluído. Então é tudo isso que quebra. Eis o que você recebe em troca. E foi nesse ponto que parei de me ressentir da atualização. A
+
+metamorfose está no cerne da questão. Idiomorph, o algoritmo de mesclagem DOM que Carson escreveu há três anos e que o HotWire adotou, agora é um estilo de troca que você pode simplesmente nomear. A metamorfose é importante por causa daquilo que ela não toca. Uma troca normal substitui sua marcação, então o foco sai do campo de entrada onde alguém está digitando e a reprodução de mídia é reiniciada. Uma função de morfologia percorre ambas as árvores e edita apenas as partes que diferem.
+
+O cursor permanece onde estava. Em seguida, as trocas fora da banda são substituídas por uma etiqueta real. No HTML2, você marcava um elemento com o comando `hx swap ubo equals true` e ele era realocado para qualquer elemento que compartilhasse o mesmo ID. Então, as pessoas começaram a querer adicionar elementos ao início e ao fim, além de selecionar classes como critério de direcionamento, e a sintaxe desenvolveu um dialeto próprio. O HTML4 introduz o formato hx parcial. Internamente, trata-se de um
+
+elemento de modelo que carrega atributos HTML comuns. O atributo `hx target` indica onde o conteúdo deve ser inserido. O comando hx swap indica como ele aterrissa. Sem sintaxe especial. E se uma resposta for apenas parcial, o alvo principal permanece intocado.
+
+Trocas fora da banda permanecem. Retomar o trabalho inicial. Substitua o elemento por este ID, mas a ordem foi invertida. No HTML 2, o elemento fora de banda foi trocado primeiro. Em HTML4, o conteúdo principal é exibido primeiro e todo o restante o segue na ordem do documento. Os eventos enviados pelo servidor
+
+retornam ao núcleo. O HTML1 tinha SSE integrado. O HTML2 o removeu para uma extensão e o HTML4 o trouxe de volta porque, uma vez que você está em modo de busca (fetch), você obtém fluxos legíveis gratuitamente e o SSE é um fluxo com um formato adicional. As mudanças no streaming chegam com ele. O servidor insere o conteúdo no DOM em partes à medida que o gera, em vez de reter tudo até que a resposta esteja concluída. As transições de visualização são
+
+enfileiradas. O HTMLX 2 oferece suporte à API de transição de visualização desde abril de 2023. E a falha grave ocorreu quando duas transições se sobrepuseram e se cancelaram no meio da animação. O HTMX4 os sincroniza para que cada um termine antes que o próximo comece. E existe um pacote chamado HTMX.js.
+
+Isso é HTML mais as 10 extensões que a maioria das pessoas acaba instalando de qualquer forma. Eventos enviados pelo servidor, websockets, pré-carregamento, atualizações otimistas, downloads, vinculações em tempo real , compatibilidade com Alpine, um único arquivo e os atributos funcionam no momento do carregamento. Então, você vai atualizar? Eis exatamente em que ponto o projeto se encontra hoje. 27 de julho de 2026 no npm. A versão mais recente
+
+ainda é o HTML 2.10. A versão 4.0 está sob a próxima tag. A versão Beta 6 não é uma versão final. O
+
+plano publicado prevê uma implementação plurianual, com a versão 4.0.0 sendo a mais recente, em algum momento do início de 2027. O HTML2 terá suporte permanente. O mesmo compromisso foi assumido pelo htmx1 e pelo intercooler, e ambos ainda estão em produção em algum lugar neste momento. Existe
+
+uma ferramenta para o trabalho de GP, npx htmx.org, na versão 4.0 beta 6, que verifica a atualização e aponta para a rota do seu projeto. Ele lê arquivos HTML, PHP, JavaScript, TypeScript, Ginga, ERB e Handlebars. Encontra atributos removidos, nomes de eventos antigos e padrões de herança, e imprime o arquivo e a linha lidos. Se o HTML2 estiver executando seu
+
+aplicativo e nada estiver causando problemas, continue usando. Não há prazo final nem risco de segurança. Se você for começar algo novo nos próximos meses, comece com a versão quatro, pois o ritmo beta se mantém e você evita a etapa de renomeação posterior. E observe o que significava uma versão principal aqui. Alunos de React adicionam, alunos de Angular adicionam. Esta versão
+
+removeu um objeto de requisição, uma camada de cache, oito atributos e 15 opções de configuração, e o arquivo ficou 15 kilobytes mais leve, o que nos leva de volta à versão que não existe. Não existe HTML 3 porque seu autor prefere pular um número inteiro a voltar atrás em algo que disse. O que realmente mudou é que o HTML4 foi aprimorado e se tornou uma biblioteca melhor para isso. O ensaio chama-se "fetch ending" no htmx.org e vale a pena lê-lo na íntegra. Se isso foi útil,
+
+inscreva-se. Mais disso.

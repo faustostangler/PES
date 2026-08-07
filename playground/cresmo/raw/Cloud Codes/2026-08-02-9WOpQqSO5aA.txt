@@ -1,0 +1,113 @@
+---
+video_title: "Real AI Agent Stack: Harness → Loop → Graph"
+video_id: 9WOpQqSO5aA
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9WOpQqSO5aA
+video_date: 2026-08-02T09:00:28+00:00
+video_description: |
+  🔥 Try TestSprite AI here: https://www.testsprite.com/?via=cloud-cd
+  Generate, run, and automate your software testing with AI.
+  
+  Are your AI coding agents trapped in infinite doom loops or failing to check their own work? Discover why the AI industry has shifted away from prompt engineering and moved towards Harness, Loop, and Graph engineering. We break down the exact LangChain middleware architecture that boosted an AI agent's SWE-bench score by a massive 13.7 points using the exact same GPT-5.2 Codex model—proving that the model is no longer the variable; the environment you build around it is.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this architectural deep dive, we explore why building multi-agent Directed Acyclic Graphs (DAGs) in AutoGen or CrewAI is the wrong place to start. We break down the 5 critical parts of Loop Engineering (Automations, Worktrees, Skills, Connectors, and Sub-agents), and expose why Harness Engineering—building tool orchestration, verification loops, and sandboxed guardrails—is the mandatory foundation to prevent your agent from hallucinating thousands of security vulnerabilities into your codebase.
+  
+  If you found this technical breakdown of AI infrastructure and software engineering architecture helpful, drop a like and subscribe for more deep dives into system design and machine learning deployment!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 13.7 Point Benchmark Hack
+  01:03 - Act 1: Graph Engineering (Multi-Agent Routing)
+  02:46 - Act 2: Loop Engineering (The 5-Part Cycle)
+  04:00 - Sponsor Segment (TestSprite)
+  05:31 - Act 3: Harness Engineering (The Environment)
+  06:34 - The LangChain Fix: Planning, Verification & Fixes
+  07:22 - The Cost of AI Agents: Security & Doom Loops
+  08:40 - The Final Verdict: The Correct Build Order
+  
+  #aiagents #systemdesign #softwareengineering #langchain #machinelearning #artificialintelligence #graphengineering #claude
+  
+  User Queries:
+  graph engineering vs loop engineering ai agents
+  how to build ai agent harness orchestration
+  langchain ai coding agent benchmark scores
+  building multi agent systems autogen crewai
+  ai agents infinite loops doom loop fixing
+  how to build ai sub agents and verification loops
+  prompt engineering vs context engineering vs graph
+  ai generated code security vulnerabilities
+  how to design ai agent middleware hooks
+  directed acyclic graph dag orchestrators vs agents
+---
+Em fevereiro, a LangChain pegou um agente de codificação que estava fora do top 30 do Terminal Bench e o colocou entre os cinco primeiros. Eles não alteraram o modelo. Funcionou com GPT-5.2 Code X durante todo o tempo. 52,8% contra 66,5%.
+
+13 pontos de tudo que envolve o modelo. Isso equivale a comprimir o ano de 2026 em uma única execução de benchmark. O modelo deixou de ser a variável. O que você constrói em torno disso começa a determinar o resultado. Já estivemos aqui duas vezes. A Prompt
+
+Engineering era proprietária dos contratos de 2022 e 2023, quando a redação era a alavanca. A engenharia de contexto era responsável pelos anos de 2024 e 2025, quando o que o modelo conseguia enxergar era a alavanca. Em 2026, a alavanca se moveu novamente para além da janela de contexto, e três palavras diferentes surgiram para descrever esse trabalho. Engenharia de grafos, engenharia de loops, engenharia de chicotes elétricos. As pessoas discutem sobre eles como se fossem uma competição. Não. São três
+
+camadas de uma mesma pilha e chegaram em uma ordem específica por um motivo específico. Aqui está o que cada camada pode controlar, qual delas alterou o parâmetro de referência e a ordem em que você deve implementá-las. Comece com aquela que iniciou a discussão. No dia 18 de julho, Peter Steinberger publicou seis palavras. Ainda estamos falando de loops ou já passamos a falar de grafos? 575.000
+
+visualizações em poucas horas. A engenharia de grafos é a solução quando um único agente executando um único loop não é mais suficiente. Os nós realizam o trabalho. As arestas criam rotas entre eles. O estado compartilhado flui pelas arestas e você está executando dois grafos simultaneamente.
+
+O grafo organizacional é o estável. Funções permanentes e quem é o responsável por cada zona do código-fonte. O gráfico de trabalho é o gráfico em tempo real. O que está sendo construído neste momento e do que isso depende. Os loops tornaram um dos agentes programável. Os grafos tornam a
+
+organização dos agentes programável. Se você já usou o Airflow, provavelmente vai me dizer que isso é um DAG. Não é, e a diferença é justamente o ponto principal. Os orquestradores de DAG proíbem ciclos por definição. Isso é adequado para um pipeline de dados onde uma etapa é executada uma única vez e não retorna ao ponto anterior.
+
+Os agentes iteram. Eles voltam. Em um grafo de agentes, o ciclo é a característica. LangGraph, CrewAI, AutoGen, Google ADK, agentes de gerenciamento antrópico, todos existem para desenhar esse quadro explicitamente. O padrão que a maioria das equipes adota inicialmente é a defesa por zona, com um agente de segurança, um agente de dados e um agente de front-end, cada um responsável por um território a longo prazo. O roteamento deixa de ser uma
+
+frase que você escreve em um prompt e se torna uma topologia que você mantém. A vantagem são estágios paralelos e feedback que percorre uma única extremidade em vez de todo o ciclo. O preço a pagar é a honestidade. Um gráfico obriga você a admitir o quanto do seu fluxo de trabalho você ainda não modelou. Um laço tolera imprecisão. Um gráfico não. Existe uma
+
+segunda vantagem que as pessoas não percebem, o roteamento baseado no custo. O nó de planejamento pode ser executado em um modelo dispendioso, enquanto os nós de trabalho são executados em um modelo econômico. O que nos leva a um nível mais profundo, àquilo sobre o qual os gráficos foram construídos. A engenharia de loops recebeu esse nome em 7 de junho, quando Addy Osmany publicou o ensaio que a popularizou. A ideia é direta.
+
+Você deixa de ser o elemento que aciona o agente. Steinberger, mais uma vez, você não deveria mais ficar instruindo os agentes de codificação, você deveria estar projetando os loops que instruem seus agentes. E Boris Cherny, criador do Claude Code, descreve seu próprio trabalho assim: "Eu não dou mais comandos ao Claude . Eu tenho loops que executam comandos para o Claude e descobrem o que fazer. Meu trabalho é escrever loops." Osmany divide
+
+um ciclo de trabalho em cinco partes, e cada uma delas é pouco glamorosa. Automações são tarefas agendadas que procuram o trabalho antes mesmo de você fazê-lo. Árvores de trabalho, checkouts isolados, para que dois agentes editando ao mesmo tempo não entrem em conflito no mesmo arquivo. Habilidades, suas convenções, são escritas uma única vez em um formulário que o agente reutiliza em todas as execuções. Conectores, a extensão para suas ferramentas e APIs reais. E subagentes,
+
+separando o criador do revisor, de modo que quem revisa o trabalho não seja quem o escreveu. Além disso, a memória é mantida fora do modelo porque o modelo não se lembra de absolutamente nada entre as sessões. A divisão de subagentes não é gratuita, e Osmani afirma isso claramente. Um segundo agente verifica os tokens de custo. Você troca gastos por um cheque que não está corrigindo a própria lição de casa. É aí também que os
+
+loops falham. Um loop sem regra de parada não termina. Ele continua funcionando até você olhar por acaso. Junte essas cinco partes , adicione a memória, e você terá o ciclo que agora rege tudo neste espaço . Então, isso é engenharia de loops. Planejar, editar, executar, verificar,
+
+corrigir, e quatro desses cinco blocos estão basicamente resolvidos. A IA executa o trabalho perfeitamente. O problema está em verificar o trabalho. É essa lacuna que Addy Osmani, Peter Steinberger e Boris Cherny sempre voltam a abordar. Verificação, o único bloco no loop que tem permissão para dizer não. Então, deixe-me mostrar o que eu realmente
+
+uso para esse bloco. Teste o Sprite, uma CLI de código aberto, Apache 2.0. Eis o que ele realmente faz. Você o direciona para seu aplicativo, o aplicativo em funcionamento, não para simulações, e ele executa sessões reais, clicando, digitando e realizando os fluxos que um usuário normalmente executaria. Quando algo quebra, não fica
+
+apenas vermelho. Isso entrega ao seu agente um pacote de falhas. A etapa exata que falhou, uma captura de tela do momento, a causa raiz e uma solução sugerida. Seu agente lê esse pacote, corrige o código e executa novamente um conjunto de testes sem supervisão. Você não está nesse ciclo. Eu coloco tarefas na fila
+
+à noite, e o ciclo de planejar, editar, executar e verificar simplesmente continua se repetindo. Dois detalhes que me convenceram. Cada execução é armazenada, de modo que o histórico se torna memória permanente. Seu agente sabe o que deu errado na última terça-feira, mesmo depois que a janela de contexto se esqueceu disso. E é genuinamente aberto. Apache
+
+2.0, a CLI completa no GitHub, além de um projeto de referência público, o Coder Cup, onde você pode inspecionar execuções reais e pacotes de falhas reais antes de instalar qualquer coisa. Ele continua rodando enquanto eu durmo, e eu acordo com um loop que se fechou sozinho. Links na descrição. Construa o único bloco do seu loop que tenha permissão para dizer não. O que nos leva à terceira camada
+
+da pilha. Engenharia de arrasto. Um arnês é tudo o que envolve o modelo . As ferramentas que ele pode alcançar, o que ele tem permissão para tocar, como ele se recupera quando uma chamada falha e se alguém pode dizer posteriormente se o resultado foi bom. Mitchell Hashimoto estabeleceu a regra que norteia toda a disciplina, e ela se resume a uma frase.
+
+Sempre que você descobre que um agente cometeu um erro, você cria uma solução para que o agente nunca mais cometa esse erro . Trata-se de um cronograma de manutenção, não de uma filosofia. O agente não fica mais inteligente, o ambiente ao seu redor é que se torna mais difícil de falhar. Uma infraestrutura de produção tem cinco camadas, e a maioria das equipes construiu duas delas, e isso já é medido em grande escala. A Faros elaborou seu relatório de 2026 com base em dados de 22.000 desenvolvedores em
+
+4.000 equipes. Orquestração de ferramentas: como elas são selecionadas e encadeadas, e o que acontece na chamada que apresenta erro. Ciclos de verificação, testes e autocrítica executados durante o desenvolvimento, não após a entrega. Contexto e memória, o índice da base de código e o histórico da sessão que ele pode efetivamente acessar .
+
+Corrimãos, áreas de convivência, limites orçamentários e os mecanismos de aprovação que ainda dependem de seres humanos. E observabilidade, rastreamento e registros de auditoria para que uma execução ruim possa ser explicada em vez de apenas conjecturada. Voltando agora à execução do LangChain, porque o que eles mudaram é a parte útil. Três coisas. O prompt do sistema, as ferramentas e os hooks de middleware. O modelo, mais uma vez, permaneceu inalterado.
+
+O enunciado foi reestruturado em quatro etapas denominadas: planejamento e descoberta, construção, verificação e correção. Um middleware força o agente a continuar trabalhando exatamente no momento em que deseja declarar vitória. Outro mapeamento estabelece o diretório de trabalho na inicialização, para que o agente saiba onde está antes de agir. Um terceiro monitora as edições de arquivos e sinaliza loops infinitos, ou seja, o agente reescreve o mesmo arquivo repetidamente, sem chegar a lugar nenhum. São os 13 pontos, não um modelo maior. Três peças
+
+de encanamento. Mas o número mais útil nesse texto é o que diminuiu. Eles tentaram usar o raciocínio ao máximo em cada etapa. Obteve a pontuação de 53,9. O raciocínio máximo foi obtido apenas no planejamento e na verificação, com raciocínio padrão no meio do processo, alcançando uma pontuação de 66,5.
+
+Pensar demais em tudo só piorou a situação. O fato de pensar com mais afinco exatamente em dois momentos fez com que funcionasse. Existe um motivo para tudo isso ter se tornado urgente em vez de acadêmico. A Apriori descobriu que o código gerado por IA estava produzindo mais de 10.000 novas descobertas de segurança por mês até junho de 2025, aproximadamente 10 vezes mais do que em dezembro do ano anterior. A produção aumentou.
+
+A capacidade de revisão não foi alterada. O arnês é o que a indústria criou para preencher essa lacuna. Então, de qual dos três você realmente precisa? Não são alternativas, e escolher uma delas é o que faz as equipes ficarem estagnadas. Eles se empilham. A
+
+engenharia de chicotes elétricos é o ponto de partida. Se o seu agente não consegue visualizar o ambiente, recuperar-se de uma chamada de ferramenta com falha ou comprovar o próprio trabalho, nada do que você construir acima dele terá validade. A engenharia de loops é o que você constrói depois que a estrutura básica se torna confiável: o gatilho, o verificador e a regra de parada que decide quando o agente terminou. A engenharia de grafos é a que deve ser adiada. Você recorre a isso quando um único ciclo deixa de ser suficiente para o trabalho, com etapas paralelas, responsáveis ​​especializados e dependências reais entre elas. A maioria das equipes que recorrem a
+
+gráficos, na verdade, têm um problema de estrutura. Mais agentes não resolverão o problema de um agente que não consegue se autoverificar. A indústria descobriu isso em uma única ordem: laços em junho, gráficos em julho e o arnês por baixo de ambos durante todo o ano. Você deve construí-los na ordem inversa daquela em que seguiram a tendência. Primeiro, crie o circuito de arrasto; depois, o loop; e só faça o gráfico quando o trabalho realmente se ramificar. Uma observação sincera antes do
+
+fim. Nenhuma dessas três substituiu a engenharia de prompts ou de contexto. Eles ficam em cima de ambos. Um sinal fraco dentro de um sistema de suporte excelente continua sendo um sinal fraco. E a corrida que abriu este vídeo é o argumento para tudo isso. 13
+
+pontos, mesmo modelo, tudo ao redor .

@@ -1,0 +1,120 @@
+---
+video_title: "NVIDIA vs AMD for Local AI: Why Vulkan is Finally Winning the War"
+video_id: ywHYY0zKeBo
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ywHYY0zKeBo
+video_date: 2026-07-30T16:00:36+00:00
+video_description: |
+  Are you about to waste $4,300 on an NVIDIA RTX 5090 just to get enough VRAM for local AI models? Discover why developers are abandoning NVIDIA's CUDA monopoly and using the Vulkan gaming API to run massive Mixture of Experts (MoE) models on $670 AMD Radeon GPUs at 2.5x the speed of AMD's own compute stack.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this technical breakdown, we explain the "Wave32 vs Wave64" wavefront scheduling mismatch that causes ROCm kernels—built for data-center CDNA chips—to choke on consumer RDNA 3 and RDNA 4 silicon. We benchmark dense architectures against Mixture of Experts (MoE) models like DeepSeek and Qwen to show exactly when Vulkan dominates memory bandwidth constraints. We also expose the brutal economics of the GDDR7 VRAM shortage, and how AMD's massive 128GB unified memory APU (the Ryzen AI Max Plus 395) is reshaping the entire LLM hardware market.
+  
+  If you found this technical deep dive into GPU architecture and machine learning systems helpful, drop a like and subscribe for more content on software engineering and AI infrastructure!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The $4,300 NVIDIA Tax vs $670 AMD Radeon
+  01:03 - llama.cpp Backends: ROCm vs Vulkan
+  02:34 - KHR Coopmat & RDNA 3 WMMA Instructions
+  03:50 - 7900 XTX & 9070 XT Benchmark Results
+  05:06 - Wave32 vs Wave64: Why ROCm Fails on Radeon
+  05:55 - Dense vs Mixture of Experts (MoE) Models
+  07:05 - VRAM Pricing: GDDR7 Shortage vs GDDR6
+  07:50 - Ryzen AI Max Plus 395 (128GB Unified Memory)
+  08:33 - When to Actually Use CUDA (Prompt Processing)
+  09:31 - The Final Verdict on Local AI Hardware
+  
+  #amd #nvidia #vulkan #llamacpp #localai #gpuarchitecture #rocm #machinelearning #cloudcodes
+  
+  User Queries:
+  amd vs nvidia for local ai models 2026
+  vulkan vs rocm llama cpp benchmark
+  how to run deepseek on amd rx 9070 xt
+  rdna 4 wave32 vs wave64 compute architecture
+  rtx 5090 vs rx 9070 xt local llm performance
+  llama cpp vulkan backend khr cooperative matrix
+  ryzen ai max plus 395 local ai unified memory
+  mixture of experts vs dense model gpu performance
+  how to bypass cuda for local ai inference
+  amd hip rocm vs vulkan text generation speed
+---
+Atualmente, em julho de 2026, uma GeForce RTX 5090 custa cerca de US$ 4.300. Uma Radeon RX 9070 XT é vendida por US$ 670. Mesmas lojas, mesma semana, 16 GB de memória. Durante 3 anos, o conselho nunca mudou. Compre a
+
+placa da Nvidia porque CUDA é a única tecnologia que permite que a IA local funcione bem. Essa recomendação agora está errada, e o que a tornou inadequada não foi a pilha de computação da AMD. A pilha de computação da AMD foi a parte que perdeu. O vencedor é o Vulkan, a API gráfica. Aquela que foi construída para desenhar videogames.
+
+Então, aqui está a questão que este vídeo responde. Em uma placa gráfica AMD, uma API de jogos consegue superar a pilha de computação que a AMD desenvolveu para esse silício específico? Na GPU para desktop mais recente da AMD, o backend Vulcan processa um prompt de 500 tokens a uma taxa de 2.888 tokens por segundo. O ROCm, na mesma placa, no mesmo modelo, atinge 1.149.
+
+Duas vezes e meia mais lento em seu próprio hardware. Vou mostrar-lhe por que isso acontece e qual é a única carga de trabalho em que a situação se inverte imediatamente. Retorno rápido porque toda a luta acontece em um só lugar. Quase todos os modelos locais que você executa através de um Llama, do LM Studio ou de um terminal simples, estão executando o arquivo llama.cpp internamente. É um dos
+
+repositórios mais movimentados do GitHub. 122.000 estrelas, e o último commit foi realizado ontem. Este não é um projeto que você verifica uma vez por ano. E o arquivo llama.cpp não possui um
+
+backend para GPU. Possui nove deles. CUDA para Nvidia, HIP para ROCm da AMD, SYCL para Intel, OpenCL para Qualcomm, Metal para Apple e, por fim, Vulkan, que se comunica com todos esses chips. Abra a versão lançada ontem e a assimetria estará lá, bem na lista de arquivos. O CUDA precisa de quatro pacotes separados para Windows porque o ambiente de execução precisa corresponder à versão instalada em sua máquina. O
+
+Vulcan é distribuído em um único arquivo zip, compatível com todas as GPUs disponíveis no mercado, e você já possui o driver, pois seu ambiente de trabalho precisa do Vulcan para renderizar suas próprias janelas. Portanto, instalar uma versão do Vulkan é simples: baixar, descompactar e executar. Compare isso com fazer o Rock M funcionar. Um SDK, uma lista de distribuições suportadas com quatro entradas, duas versões do Ubuntu e duas do Red Hat, e variáveis ​​de ambiente que mentem sobre o modelo da sua GPU para que as bibliotecas sejam carregadas . O Vulcan funciona em placas gráficas Nvidia, AMD, Intel e Adreno da Qualcomm, presentes no seu celular, e em um Mac através do MoltenVK. Um back-end,
+
+cinco fornecedores, três sistemas operacionais. Essa parte é verdade há anos. Portanto, a portabilidade sempre foi o argumento de Vulcano . O desempenho era o argumento pelo qual o projeto perdia feio até o surgimento dos núcleos matriciais. Há dois anos, o backend do Vulcan realizava suas multiplicações de matrizes com shaders de computação comuns, enquanto o CUDA alimentava os núcleos tensores diretamente. Em teoria, é uma
+
+luta justa. Na prática, não foi nem perto disso. Em seguida, a Khronos lançou uma extensão chamada matriz cooperativa. E o driver RADV da Mesa o conectou diretamente às instruções WMMA do RDNA 3. As unidades de matriz que a AMD vem colocando em placas de vídeo para jogos desde 2022. Iniciar lhama. cpp em uma 7900 XTX
+
+hoje. E imprime uma linha durante a inicialização. Núcleos de matriz KHR copemat. Essa única frase é a razão pela qual este vídeo existe. A API de jogos agora pode acessar o mesmo silício que o CUDA. Ruben Ortland é o responsável pela parte traseira do time
+
+. Em janeiro, ele apresentou uma palestra no FOSDEM intitulada " API Vulcan para aprendizado de máquina". Competindo com CUDA e Rock M em llama.cpp. O ponto de interrogação é dele, não meu. Seu
+
+resumo da atenção repentina dada à AMD assim que a matriz cooperativa foi lançada, com relatos de pessoas atingindo um desempenho quatro vezes maior. Quatro vezes, não 4%, e ele foi igualmente direto sobre o custo disso. Vulcan é muito sensível ao driver. Suas palavras. Há todo tipo de discrepâncias comportamentais entre os fornecedores e nenhum perfilador que se compare ao Nsight da Nvidia. Otimizar um
+
+shader é um processo de tentativa e erro. Então, o que ele mede exatamente? Comece com a placa que a maioria dos desenvolvedores de IA locais possui. Radeon 7900 XTX, 24 GB, usada por cerca de US$ 600, a melhor memória em termos de custo-benefício no mercado de segunda mão . Mesmo modelo de 7 bilhões, mesmos pesos de 4 bits medidos em abril. Vulcan
+
+gerou 191 tokens por segundo. O ROCm atingiu 167. A pilha própria da AMD ficou 14% atrás de uma API para jogos. Não se trata de uma má constituição física de uma única pessoa. Em março, um bug foi identificado no rastreador Llama CPP, intitulado "ROCm: desempenho de geração de tokens significativamente menor em comparação com Vulcan em RX 7900 XTX". Seis versões do ROCm
+
+foram testadas. A resposta é sempre a mesma. O tempo de processamento foi um empate, em torno de 3500 tokens por segundo para cada lado. A lacuna reside inteiramente na geração, que é a parte em que você se senta e assiste a uma palavra de cada vez. Então, o RDNA 4 foi lançado e a lacuna se transformou em um abismo. Na 9070 XT, o Vulcan
+
+processava 288 tokens por segundo através de prompts. O percurso do quadril atingiu 1149, duas vezes e meia. Isso foi em março. Um artigo de maio reproduziu o resultado em 14 a 30% na geração, e ambos chegaram à mesma explicação, um número que nenhum engenheiro de drivers consideraria surpreendente. Uma GPU não executa apenas um thread. Ele executa uma
+
+frente de onda, um grupo bloqueado de threads que percorrem a mesma instrução simultaneamente. Os chips para data centers da AMD executam 64 threads por onda. Sua placa de vídeo Radeon para jogos roda em 32 bits. A arquitetura RDNA foi lançada na onda 32 em 2019. As bibliotecas do kernel do ROCm foram otimizadas e ainda estão amplamente otimizadas para processadores de data center de 64 bits. Portanto, metade de cada
+
+programação de frente de onda ampla funciona quando não existe. O motorista do Vulcan nunca carregou esse histórico. O RadV emite kernels Wave 32 porque Wave 32 é o que o hardware à sua frente utiliza . Você pode conferir no relatório de erros. Tamanho de onda 32 no Vulcan, 64 no ROCm. M. A
+
+AMD não está lançando uma placa de vídeo mais lenta. A AMD está lançando uma biblioteca de computação escrita para um formato de chip diferente, e o driver gráfico de código aberto chegou primeiro ao silício para jogos. Agora, a parte que é omitida porque prejudica a manchete. Vulkan não ganha todas as batalhas na AMD. Ela ganha em um formato específico de modelo, mas perde no outro. Em junho, os
+
+benchmarks atingiram 7.900 XTX, seguindo o mesmo padrão, com uma média de cinco execuções. Um modelo denso de 27 bilhões, Rock M 34,6 tokens por segundo, Vulkan 28,1. Rock M ganha essa disparadamente. Ao mudar para um modelo misto de especialistas, com um total de 35 bilhões, sendo 3 bilhões ativos por token, a situação se inverte. Vulkan 71.4, Rock
+
+M 63.8. Os modelos densos consistem em uma multiplicação de matriz uniforme após a outra, que é exatamente para o que os kernels HIP ajustados manualmente são projetados . A mistura de especialistas causa oscilações na memória, e o caminho da matriz cooperativa absorve isso melhor. Então, qual formato você vai baixar em 2026? Qwen, GPT-OSS,
+
+Nemotron, Busca Profunda. Os modelos que as pessoas realmente executam em casa são uma mistura de especialistas, e isso decide o argumento final para a maioria de nós. Isso também não é por acaso. Em casa, você está limitado pela largura de banda da memória, não pela matemática. Menos pesos lidos por ficha significa mais fichas por segundo no mesmo cartão.
+
+O que nos leva ao fator que define a IA local mais do que qualquer outro parâmetro de avaliação nesta página. Não são tokens por segundo. Quanta memória você pode colocar no aparelho? Uma placa de vídeo 5090 oferece 32 gigabytes por cerca de US$ 4.300. Isso equivale a 135 dólares por
+
+gigabyte. Uma 9070 XT oferece 16 GB pelo preço de uma 670, a US$ 42 por gigabyte, três vezes mais barata por gigabyte, e a diferença está aumentando. Há escassez de memória GDDR7. 16 gigabytes de armazenamento passaram de custar cerca de US$ 80 por cartão para mais de US$ 200 em um ano. A 5090 foi lançada em 1999. A
+
+GDDR6, que a AMD usa na 9070, escapou em grande parte disso. Atualmente, em uma placa de vídeo 5090, apenas a memória representa cerca de US$ 820 do preço total. E depois há a máquina que faz com que toda a comparação pareça estranha. O Ryzen AI Max Plus 395 da AMD oferece 128 GB em um único pacote, compartilhado entre a CPU e a GPU integrada. Nesse dispositivo, por meio do Vulcan, um modelo com 120 bilhões de parâmetros é executado a 18 tokens por segundo. Um
+
+modelo de 284 bilhões roda a 13 com 90 GB alocados à GPU. Um modelo com 30 bilhões de programadores opera a 101 tokens por segundo. Trata-se de uma pequena caixa em cima de uma mesa que contém pesos que nenhuma placa de vídeo da Nvidia para o consumidor consegue suportar, independentemente do preço. E o backend que o guia recomenda para essa máquina é o Vulkan, não o ROCm, que é o próprio hardware da AMD funcionando melhor com uma API gráfica da Khronos. Antes que isso se transforme em propaganda, as evidências contrárias, e são fortes, mostram que no hardware da Nvidia o CUDA ainda está à frente. E,
+
+em termos de processamento imediato, não está perto. Na mesma tabela de benchmarks, uma 5090 em CUDA processa 14.000 tokens por segundo em prompts. A mesma placa no Vulcan atinge 10.400. O
+
+Vulcan está utilizando 74% da capacidade do CUDA. Na geração, ele praticamente fecha. 290 contra 264, cerca de 91%. Mas se você tiver uma placa GeForce, execute o CUDA. Vulcan não é motivo para trocar de equipe, e a AMD está corrigindo seus problemas. O
+
+ROCm 7.2 agora oferece suporte oficial ao RDNA 4. O XT, toda a linha. E desde a CES deste ano, ele é distribuído como um pacote único que abrange Windows e Linux. Existe também uma ressalva importante no lado vulcano.
+
+É o código do driver. Portanto, uma regressão no Mesa pode distorcer sua saída, e existem bugs conhecidos em placas Radeon mais antigas neste mês. Portátil não significa à prova de balas. Então, o que significa vencer neste contexto? Não que o Vulcan tenha superado o CUDA. Não aconteceu.
+
+Significa que o segundo fornecedor de GPUs finalmente pode ser usado sem o pacote de software próprio desse fornecedor. Um aplicativo chamado Llama passou a oferecer suporte experimental ao Vulcan após um problema permanecer em aberto por um ano e meio. O LM Studio inclui um ambiente de execução Vulcan no Windows. As preferências estão mudando, e são as preferências que influenciam o que as pessoas compram. A área de inteligência também é importante aqui. A Arc não tem
+
+CUDA e nem mesmo uma Rock M que faça jus ao nome. Então, o Vulkan é o sistema operacional que uma placa da série B usa para executar qualquer coisa. Trata-se de um terceiro fornecedor que utiliza a mesma infraestrutura. Nada disso afetou o mercado até o momento. A Nvidia foi responsável por 90% do envio de todas as placas de vídeo dedicadas vendidas no último trimestre. A AMD teve
+
+8%. A Intel tinha uma. Essa é a guerra e ela está longe de terminar. Mas o motivo para comprar o chip verde era o software, não o chip em si. Remova o bloqueio de software e o que resta é memória por dólar. E
+
+em termos de memória por dólar, a AMD está três vezes à frente. Então, na prática, se você tiver uma placa AMD, pare de compilar o Rock M primeiro. Baixe a versão Vulcan, execute seu modelo e só volte ao Hip se o modelo que você estiver usando for denso. Se você for comprar este mês, considere o valor da memória, não da marca. E se o que você estiver executando for uma mistura de especialistas, a API de jogos é o caminho mais rápido no hardware da equipe vermelha . Esse é o vídeo. Todas as
+
+fontes e todos os parâmetros de referência estão listados abaixo. Faça o teste no seu próprio cartão e me diga qual número você obteve.

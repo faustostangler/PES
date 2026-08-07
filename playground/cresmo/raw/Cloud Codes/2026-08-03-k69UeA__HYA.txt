@@ -1,0 +1,172 @@
+---
+video_title: "Top 10 AI Repos You Should Know"
+video_id: k69UeA__HYA
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=k69UeA__HYA
+video_date: 2026-08-03T06:46:56+00:00
+video_description: |
+  Are your AI coding agents racking up massive API bills, or worse, quietly uploading your entire local Git repository to the cloud? Discover the top 10 fastest-growing open-source AI GitHub repositories right now, including how codebase-memory-mcp uses tree-sitter and LSP to replace context-heavy RAG, and why JetBrains proved that the 74,000-star Rust Token Killer (RTK) actually makes your OpenAI and Claude API bills more expensive.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this technical breakdown, we expose the reality of the AI engineering stack in 2026. We look past the massive star counts to find out which scaffolding tools actually work. From running a 26B Gemma 4 Mixture-of-Experts model on an 8GB MacBook Air using turbo-fieldfare's SSD streaming, to uncovering the xAI Grok Build privacy scandal where gigabytes of untracked secrets were sent to Google Cloud. We also explore Y Combinator's qm multiplayer harness, OpenAI's new Codex Security scanner, and Andrew Ng's OpenWorker.
+  
+  If you want to know which AI middleware, local inference runtimes, and security harnesses are actually worth your time, drop a like and subscribe for more deep dives into software architecture and AI system design!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 170,000 Star Illusion (Scaffolding vs Models)
+  00:42 - 1. RTK (Rust Token Killer) & The JetBrains Study
+  03:32 - 2. codebase-memory-mcp (LSP Graph Indexing)
+  05:48 - 3. Grok Build (The xAI Git Privacy Scandal)
+  08:06 - 4. qm by Y Combinator (Multiplayer Agent Harness)
+  09:22 - 5. OpenWorker by Andrew Ng (Strict Permission Modes)
+  11:27 - 6. turbo-fieldfare (Gemma 4 26B on an 8GB Mac)
+  13:11 - 7. Nativ (Local MLX Inference Server)
+  14:22 - 8. OpenAI Codex Security Scanner
+  16:24 - 9. T3MP3ST (Offensive Security Meta-Harness)
+  18:09 - 10. no-ai-slop (Fixing AI Writing Tropes)
+  19:15 - The Final Verdict on Open Source AI
+  
+  #aiagents #github #opensourceai #softwareengineering #machinelearning #systemdesign #developerproductivity #cloudcodes
+  
+  User Queries:
+  top ai github repositories for coding agents 2026
+  rust token killer rtk jetbrains benchmark test
+  how to run gemma 4 26b on 8gb macbook air
+  xai grok build cli git privacy leak explained
+  codebase memory mcp tree sitter lsp ai agents
+  openai codex security scanner github tutorial
+  y combinator qm multiplayer ai agent harness
+  andrew ng openworker local ai agent setup
+  t3mp3st offensive security ai meta harness
+  how to reduce ai api token bills context window
+---
+Dez repositórios do GitHub. Oito deles não existiam há um mês, e nenhum deles disponibiliza um modelo. Sem pesos, sem treino de corrida, nada que se possa apontar e chamar de inteligência. Todos são andaimes, construídos em torno de um modelo que já funciona para evitar que seu dinheiro, seu contexto ou sua reputação sejam desperdiçados. O maior deles tem 74.000 estrelas para
+
+reduzir sua conta de fichas. Quando a JetBrains realizou o teste controlado, a conta aumentou. Aqui está a lista na ordem em que os números a indicam. E, no final, a única pergunta que apenas dois desses 10 podem responder. Comecemos pelo dinheiro, porque os dois repositórios mais populares desta lista existem pelo mesmo motivo.
+
+Seu agente lê demais. Número um por estrelas, RTK, Assassino de Tokens de Ferrugem. 74.200 estrelas, Apache 2, em ascensão desde janeiro. A ideia cabe em uma frase. O RTK fica
+
+entre o seu agente de codificação e o seu shell, comprimindo o que é retornado antes mesmo que o modelo o veja. Uma listagem de diretório retorna 4.500 linhas, até o RTK 12. Um comando `git push` reduz o número de linhas de 15 para apenas uma. Um teste de carga com falha reduz o número de linhas de mais de 200 para cerca de 20. As
+
+informações são as mesmas, o contexto é muito menor e o tempo de processamento é inferior a 10 milissegundos . Mais de 100 comandos são abordados. Git, Docker, kubectl, AWS CLI, Jest, Pytest, Cargo e um gancho reescrevem suas chamadas bash para a versão RTK, então isso acontece quer você se lembre ou não. 15 agentes enviam integrações. Claude Code, Co-pilot, Cursor, Codex, Gemini CLI, WinSurf, Klein, Open Code. A manchete na primeira
+
+página diz que há de 60 a 90% menos fichas. Role a página para baixo no mesmo arquivo readme, e os responsáveis ​​pela manutenção farão uma recomendação mais cuidadosa. O RTK reduz em até 90% a saída do bash lida pelo seu agente. É isso que o RTK mede, e não é a mesma coisa que reduzir sua conta em 90%. Essa distinção tornou-se o argumento mais interessante em ferramentas para desenvolvedores neste verão. Em julho, a JetBrains executou o programa
+
+corretamente. Teste de habilidades, 86 tarefas, quatro execuções em pares, 425 tentativas de compilação no Claude Sonnet 5 em ambientes Docker. Com o RTK ativado, a tarefa mediana ficou 7,6% mais cara. P = 0,004. 13,8% mais giros. 14,3% mais leituras em dinheiro. A
+
+qualidade da tarefa era uma questão de sorte. Cinco melhores, quatro piores, 71 empates. Portanto, a ferramenta não quebrou nada. Simplesmente custava mais para manter. O mecanismo é entediante, mas vale a pena compreendê-lo. A maior parte da
+
+entrada de dados em uma sessão longa consiste em releituras em cache , geradas a um custo aproximadamente dez vezes menor . E as próprias ferramentas de leitura e grep do agente ignoram completamente o RTK. O gancho recebe apenas cerca de um quinto da saída. Comprima um quinto do contexto, adicione 14% mais turnos, e a aritmética se volta contra você. Uma publicação no Hacker News chamou isso de ilusão de compressão de token e obteve 121 pontos. Um dos desenvolvedores
+
+já havia desistido. Economizamos US$ 4,96 em uma conta de US$ 926 . Nada disso torna o RTK inútil. Se o seu agente estiver sobrecarregado com a saída do kubectl, isso ajudará. Isso significa que o número na caixa mede a produção, não as faturas. E, para seu crédito, os
+
+responsáveis ​​pela manutenção registraram isso antes dos críticos. E esse quinto é o limite máximo de toda a abordagem. Se a ferramenta só vê a saída do shell, e a saída do shell representa a minoria do que seu agente lê, então comprimir ainda mais o sistema tem um limite que você pode calcular antecipadamente. É exatamente por isso que o segundo repositório desta lista não comprime nada . Número dois, codebase memory-mcp da Dayus Data. 36.900 estrelas, escrito
+
+em C, licenciado sob a licença MIT. Aborda o mesmo problema por uma extremidade oposta. O RTK reduz o tamanho da área que o agente lê. Esta elimina o motivo da leitura. Ele indexa todo o seu repositório em um grafo de conhecimento persistente, incluindo funções, classes, cadeias de chamadas, rotas HTTP e links entre serviços. O agente consulta o mapa
+
+em vez de abrir arquivos. 158 linguagens foram analisadas com tree-sitter, além de uma camada LSP híbrida que realiza resolução com reconhecimento de tipos em 11 delas. Python, TypeScript, Go, Rust, Java, C, C++, C#, Kotlin, PHP e Perl. A velocidade é o fator que as pessoas costumam capturar em uma imagem. O kernel do Linux possui 28 milhões de linhas distribuídas em 75.000 arquivos. Indexado em 3 minutos em
+
+4,8 milhões de nós e 7,7 milhões de arestas. O Django leva cerca de 6 segundos. Depois disso, torna-se um banco de dados. Uma consulta em um grafo responde em menos de um milissegundo. Busca por nome com expressão regular, menos de 10. Rastreamento de um caminho de chamada em
+
+cinco níveis de profundidade, menos de 10. Código morto em todo o repositório, cerca de 150 milissegundos. O exemplo no arquivo readme, com cinco perguntas estruturais, custou aproximadamente 3.400 tokens na busca no grafo, contra 412.000 tokens na busca arquivo por arquivo. Isso representa uma
+
+redução de 99,2%. Ele é executado inteiramente em sua máquina e não envia nenhum dado de telemetria. Agora, a parte que torna este repositório mais confiável do que a maioria da lista. Existe um artigo pré-publicado por trás disso. arXiv:2603.27277.
+
+Submetido em 28 de março por Vogel, Meyer, Eschenbach, Kular, Grunewald e Balzar. Eles executaram o teste em um agente que simplesmente lê arquivos em 31 repositórios reais. O agente gráfico obteve uma pontuação de 0,83 na qualidade da resposta. O agente de leitura de arquivos obteve uma pontuação de 0,92. 2,3 chamadas de ferramentas por pergunta contra 4,8.
+
+Aproximadamente 1.000 fichas por pergunta, num total de 10.000. Portanto, o que você está comprando é uma transação, não um lucro. Você sacrifica nove pontos na qualidade da resposta para gastar um décimo dos tokens em um repositório grande que é facilmente respondido com um "sim". Observe que o artigo
+
+testou 66 idiomas, enquanto o repositório agora afirma 158. As evidências estão uma versão atrás da versão divulgada, o que é normal e importante saber. Número três, Grok, desenvolvido pela xAI. 23.700 estrelas e o repositório tem 18 dias.
+
+Cerca de 1.300 novas estrelas por dia, a ascensão mais rápida desta lista. Trata-se de um espaço de trabalho Rust que inclui a mesma CLI Grok que executa a pilha de codificação agentiva do xAI. Quatro crates, um paginador de terminal, o ambiente de execução do shell, as implementações das ferramentas e a camada de espaço de trabalho que efetivamente interage com seus arquivos. Uma interface de usuário orientada a texto (TUI) em tela cheia controlada por mouse, um modo sem interface gráfica para criação de scripts e integração contínua (CI), e incorporação do editor por meio do protocolo cliente-agente.
+
+Trata-se de um projeto de engenharia sério, distribuído sob a licença Apache 2, com as ferramentas e a camada de espaço de trabalho integradas à árvore de repositórios. Não inclui pesos. Você pode apontar um arquivo de configuração para qualquer provedor que desejar, incluindo um que não seja deles. Como versão, esta é uma boa versão de código aberto. O motivo pelo qual isso aconteceu é a história. No dia
+
+13 de julho, um pesquisador que publica sob o pseudônimo de cereb lab disponibilizou online as capturas de sinais vitais. A versão 0.2.93 da CLI de compilação do Grok empacotava repositórios Git locais completos dos desenvolvedores e os enviava para um bucket do Google Cloud chamado Grok code session traces. Não era o arquivo que você estava editando. Histórico completo de commits,
+
+arquivos não rastreados e variáveis ​​de ambiente com os segredos ainda contidos nelas . Uma sessão transferiu 5,1 gibibytes, quando cerca de 192 kilobytes teriam sido suficientes . Isso representa aproximadamente 26.000 vezes mais dados do que a tarefa exigia. E a CLI tinha uma opção para desativar a possibilidade de seus dados melhorarem o modelo.
+
+A investigação apurou que isso não teve qualquer efeito nos uploads. Os uploads ocorreram mesmo quando os usuários instruíram o modelo a não ler esses arquivos. O próprio material de marketing da xAI afirmava que nada do seu código-fonte era transmitido para os servidores da xAI durante uma sessão. No dia 14, o xAI desativou o servidor de upload e adicionou uma opção para desativá-lo. Musk publicou que tudo o que já havia sido carregado seria apagado. A
+
+OCDE registrou o ocorrido como um incidente formal de IA naquela mesma semana. O registro de data e hora de criação do repositório é 14 de julho de 2004 UTC. Um dia após a divulgação pública, todo o código-fonte estava disponível no GitHub sob a licença Apache 2. E é isso que a leitura do código proporciona, algo que um comunicado de imprensa não consegue transmitir. O caminho de upload ainda está na árvore. Ele é desativado por um
+
+parâmetro no servidor, não removido, para que possa voltar a funcionar sem que seja necessário enviar uma atualização para ninguém. Abrir o código-fonte não resolveu o problema . Significava que alguém podia ver. Em quarto lugar, e de longe a novidade mais recente , o QM da Y Combinator. O repositório foi criado no dia 29 de julho. Três dias depois, já tinha 3.300
+
+estrelas. A descrição da YC se resume a quatro palavras: ferramenta para agentes multiplayer no trabalho. Isso significa que o agente deixa de ser seu assistente pessoal e passa a ser um colega de trabalho com uma mesa. Cada pessoa tem direito a um espaço de trabalho para escultura, assim como cada sala. Possui memória própria, sistema de arquivos próprio, visão própria do chaveiro, permissões próprias, tarefas cron e ambiente de teste. Por baixo dos panos,
+
+TypeScript no Fastify, Postgres para persistência. Cada turno do agente é roteado através de um núcleo. Slack e web, tudo obra da mesma mente. Você hospeda o sistema na sua própria nuvem e troca a camada do modelo, Pi, código aberto, Codex, Cloud Code, sem reescrever nada acima dela. A YC afirma que gerencia tudo internamente, abrangendo as áreas de contabilidade, jurídico, eventos e engenharia, incluindo a própria criação do QM . Licenciado pelo MIT. Para uma
+
+empresa deliberadamente pequena que se comporta como uma grande, esse é o tipo de endosso mais direto que se pode esperar . Uma ideia que vale a pena roubar, mesmo que você nunca a instale. A memória esculpe um ambiente, não uma pessoa. A maioria das configurações de agentes ainda pressupõe que o trabalho seja algo que uma única pessoa faz sozinha e encerra a sessão no momento em que uma segunda pessoa entra. Trabalho é algo que várias pessoas fazem com o mesmo objeto. Número cinco, Open
+
+Worker, de Andrew Ng. Repo foi criado em 20 de julho, anunciado em 23 de julho e já contava com 11.400 estrelas em 1º de agosto, aproximadamente 950 por dia. A proposta se resume em uma palavra: entregáveis. Não se trata de uma janela de bate-papo descrevendo um relatório, mas sim de um arquivo no seu disco que contém o relatório. Documentos,
+
+planilhas, páginas da web, coisas que você pode abrir e enviar. Ele funciona no seu computador, possui licença MIT e utiliza sua chave de API em vez de vender inferência. 119 arquivos Python, cerca de 32.400 linhas, 149 arquivos TypeScript para a interface e 78 módulos de teste de back-end. Tauri em torno do React, com uma API rápida por trás. Mais de 25
+
+integrações prontas para uso. GitHub, Slack, Jira, Notion, Linear, Gmail, Google Calendar, Outlook, HubSpot, monday.com, além do seu terminal, seus arquivos locais e qualquer outro aplicativo compatível com MCP. A matriz do modelo possui 30 entradas. OpenAI, Anthropic, Gemini, Inkling da Thinking Machines, GLM, DeepSeek, Kimmy, Quinn, MiniMax, Mistral, Grok ou Allama, se você quiser que tudo permaneça na máquina à sua frente. O modelo de permissões
+
+é a parte que eu copiaria para as minhas próprias ferramentas. Cada ação é classificada como leitura, gravação local, execução ou externa. Em seguida, você escolhe um modo. As seções "Discutir" e "Planejar" são somente para leitura. O sistema interativo pergunta antes de qualquer coisa sair da máquina. O modo automático permite
+
+tudo, mas permanece dentro do caminho que você especificou. E quando funciona sem supervisão durante a noite, não faz suposições. O sistema armazena suas perguntas em uma caixa de entrada e aguarda sua resposta. Todo corretor que já te surpreendeu às 3 da manhã estava deixando passar exatamente essa única decisão. É uma versão beta aberta, e isso está bem claro.
+
+As versões para Windows ainda não possuem assinatura digital , portanto o SmartScreen exibirá um aviso. Por um repositório com 12 dias de existência e que já envia 78 módulos de teste, eu aceito essa troca. Já estamos no quinto repositório e, como você deve ter notado, todos eles partem do pressuposto de que o modelo está correto. Toda a engenharia se concentra no que o modelo tem permissão para ver e tocar. Número seis, Feira de Campo Turbo. Uma única linha de
+
+descrição e já é a afirmação mais audaciosa da lista. Gemma 4, 26 bilhões de parâmetros rodando em cerca de 2 GB de RAM em qualquer MacBook da série M. O segredo começa com o modelo. Gemma 4 26B é uma mistura de especialistas. Existem 26 bilhões de parâmetros no total, mas apenas cerca de 3,88 bilhões deles são acionados para um determinado token. A maior parte desse arquivo permanece ociosa
+
+em todas as etapas. Então, Andrey Mikhailov, um engenheiro de iOS e Metal, escreveu um ambiente de execução que nunca carrega o modelo. 1,35 GB de memória compartilhada principal permanece residente junto com o cache de valores de chave. Todo especialista transmite conteúdo do SSD assim que o roteador solicita e, em seguida, desconecta-se novamente. Os pesos são afins de 4 bits com tamanho de grupo 64.
+
+O roteador permanece em 8 bits propositalmente, pois um roteador que arredonda incorretamente envia o token inteiro para o especialista errado, e o erro se agrava a partir daí. 14,3 GB em disco, cerca de dois GB em memória, o restante é largura de banda. Decodificação medida: cinco a seis tokens por segundo em um MacBook Air M2 de 8 GB. 31 a 35 em um M5 Pro de 24 GB. O número de 8 GB é o que importa, porque esse laptop nunca foi projetado para executar esse modelo. É Swift
+
+e feito de metal manuscrito do começo ao fim. Não é um wrapper para MLX. Não se trata de um wrapper sobre llama.cpp, e esse é o problema. Ele foi projetado para um modelo específico, somente texto, somente silício da Apple , com opção de metal ou sem metal. 3.200 estrelas
+
+para um único tempo de execução do modelo, e o motivo é o teto que ele atinge. Se o custo operacional de um modelo com uma grande mistura de especialistas for seu núcleo compartilhado, em vez da quantidade de parâmetros, o preço de entrada para uma IA local séria passa a ser o preço do laptop que você já possui. Número sete, nativo do Príncipe Canuma. 1.050 estrelas, o menor número desta lista, e a primeira coisa que eu instalaria se você tiver um Mac. Canuma não é
+
+novato nisso. Ele é responsável pela manutenção do MLX VLM, MLX audio e MLX embeddings, publicou mais de mil modelos e bibliotecas no ecossistema MLX e trabalhou com o Google DeepMind para garantir o bom funcionamento do Gemma 4 no Apple Silicon. Nativo é toda essa pilha executando um aplicativo nativo, Swift, MIT, macOS 26 ou mais recente. Ele reúne o servidor MLX VLM, encontra os modelos já presentes no seu cache Hugging Face e oferece chat, visão computacional, geração de imagens, análise de velocidade de decodificação e um monitor de GPU em uma única janela. Mas o que a transforma em infraestrutura, e não em um brinquedo, é o servidor. Ele expõe endpoints compatíveis com OpenAI
+
+e endpoints compatíveis com Anthropic, incluindo a contagem de tokens. Portanto, Claude Code, CodeX, Zed, Cursor, Aider, Goose e Continue apontam para localhost e continuam funcionando como se nada tivesse mudado. Esse é o primeiro argumento local em sua forma mais forte. Não é uma forma diferente de conversar. As mesmas ferramentas que você já usa todos os dias, com a inferência transferida para o hardware que você possui e uma aba de rede que permanece vazia. Número oito,
+
+segurança CodeX da OpenAI. TypeScript, Apache 2, 7.800 estrelas, repositório criado em 13 de julho. Este tem história. Começou como Aardvark, entrou em fase de pré-visualização para pesquisa em março como um agente de segurança para os planos empresariais do ChatGPT, e o que foi disponibilizado foi a CLI e o SDK TypeScript associado. Antes de iniciar
+
+qualquer busca, ele lê seu repositório e gera um modelo de ameaças que você pode editar. Em seguida, a busca é feita com base no seu modelo do sistema, em vez de usar uma lista genérica de regras para encontrar padrões, e o resultado é classificado de acordo com o impacto no mundo real, em vez da gravidade do cenário. Os números de março são o motivo pelo qual as pessoas prestaram atenção. Ao longo de 30 dias, analisou mais de 1,2 milhão de commits em repositórios externos. 792 achados críticos, 10.561 de
+
+alta gravidade. Em OpenSSH, GnuTLS, libssh, PHP e Chromium, entre outros. A CLI realiza varreduras completas do repositório, varreduras de escopo de caminho, comparações de solicitações de pull e histórico de varreduras, para que você possa comprovar que uma correção foi realmente implementada. O resultado é gerado em formato Markdown, JSON, Serif ou CSV, o que significa que ele entra diretamente na integração contínua sem que ninguém precise escrever um analisador sintático primeiro. O modelo padrão é o GPT 5.6 Saul com
+
+raciocínio extra alto, com uma opção mais leve disponível caso deseje. E existe um indicador de custo máximo porque o que você paga aqui é pelo esforço de raciocínio e pela quantidade de trabalhadores, não por linhas de código. O enquadramento que surgiu da cobertura é o correto. Trate-o como um revisor sênior que ocasionalmente tem alucinações. Uma descoberta feita a partir disso é uma pista, não um veredicto.
+
+Poderoso, mas não onisciente. Um pequeno detalhe que diz muito sobre julho. A própria publicação da OpenAI sobre o lançamento começou admitindo que o Hacker News encontrou o repositório antes que eles tivessem tempo de anunciá-lo. Uma ressalva que a equipe de segurança levantou imediatamente. Ele lê o código, então encontra o que está visível no código. Desvio de configuração, um
+
+balanceador de carga com roteamento incorreto, uma verificação de autenticação que falha apenas em um endpoint ativo. Ainda falta algo que estimule o sistema em funcionamento. Uma primeira versão muito boa, não o programa completo. Número nove, T3 MP3ST do pesquisador que publica sob o pseudônimo de Elder Plinius. 5.300 estrelas em 30
+
+dias, AGPL3, e é a entrada mais incômoda aqui. É um arnês meta. Não requer uma chave de API nem uma conta na nuvem. Ele controla um agente de codificação que você já está executando e o organiza em uma equipe de segurança ofensiva para testar sistemas que você possui ou para os quais tem permissão por escrito para testar. Oito operadores mapeados para as táticas MITRE ATT e CK . Recon, scanner, explorador,
+
+infiltrador, exfiltrador, fantasma, coordenador, analista. 36 ferramentas por padrão, 109 com o arsenal completo. Os resultados relatados mostram que 90,1% dos testes do XBOBAYOU, com 104 desafios no conjunto XBN, foram aprovados com uma nota de 1, enquanto o próprio XBOBAYOU relata uma taxa de aprovação de cerca de 85%. Além disso, foram resolvidas 23 das 40 questões sem dicas no Cybench. E das 10 CVEs divulgadas este ano em sete idiomas, oito apontam para a linha exata do arquivo e para a CWC EE. O
+
+repositório é mais cuidadoso do que as manchetes a seu respeito sugeriam. Apenas o mecanismo de reconhecimento e o ciclo de agente único foram considerados estáveis ​​e avaliados. Todo o resto está rotulado como experimental. A licença restringe o uso a testes autorizados e declara claramente que o operador possui responsabilidade legal. Ele também inclui algo que nenhum outro repositório desta lista oferece. Execute o comando `npm run verify claims` e
+
+todos os números de benchmark serão recalculados a partir dos dados armazenados em sua máquina. Em uma lista onde a taxa de evidência é uma porcentagem em um arquivo leia-me, esse único comando vale mais do que uma página inteira. E o motivo pelo qual merece estar em uma lista dos 10 melhores, em vez de um post de alerta, é simples. As ferramentas nesse nível agora são baratas para ambos os lados. A resposta útil é executar uma verificação no seu próprio código antes que o agente de outra pessoa o faça. Número 10, sem erros de IA
+
+de Peter Yang. 3.700 estrelas, licença MIT e praticamente sem código . É uma habilidade, um conjunto de regras de edição que você instala no código Claude ou no Codex, e que nomeia mais de 20 padrões que identificam a escrita como sendo feita por máquina e, em seguida, remove esses padrões, mantendo sua voz original intacta. A lista mencionada é desconfortavelmente precisa. Contraste binário,
+
+frases de efeito para pigarrear, falsas revelações , revelações sobre o cólon, exagero de importância , atribuição evasiva, especialistas concordam, estudos mostram, verbos fortes falsos, ciclo de sinônimos, listagem negativa, fragmentação dramática. Existe também um modo de detecção que não sobrescreve nada. Ele devolve seu rascunho com todos os padrões citados, o que é uma experiência consideravelmente pior e muito mais útil. Serei franco com você: este roteiro passa por um processo de seleção rigoroso, baseado na mesma ideia, antes de ser dublado. O próprio fluxo de trabalho de Yang é a parte que vale a pena copiar. Primeiro quarto de um rascunho
+
+sem nenhum modelo, metade do meio com o modelo e a habilidade, último quarto linha por linha à mão. O Substack lançou a detecção de erros de escrita neste verão e usou seu texto como exemplo de como fazê-la corretamente. 10 repositórios, 170.871 estrelas, dois escritos em Rust, três em TypeScript, dois em Swift, dois em Python e um em C. Zero pesos de modelo; nenhum desses 10 contém o item sobre o qual todos discutiram durante quatro anos. Essa é
+
+a forma que este ano reserva. A inteligência deixou de ser a parte difícil e a dificuldade passou a ser tudo o que a rodeava. O que o modelo pode ler, o que ele pode tocar, onde ele é executado e quem verifica o que ele produziu. Oito dos 10 foram criados em julho. A build do Grok está recebendo 1.300 estrelas por dia, a do QM 1.100 e a do
+
+Open Worker 950. Esses números medem a atenção, e a atenção chega muito antes das evidências, porque apenas duas das dez builds tiveram suas alegações principais verificadas por alguém sem nada a ganhar com isso. O código-fonte do NEFCP contém um preprint relatando uma perda de nove pontos na qualidade das respostas. Um estudo da JetBrains sobre o RTK afirma que ele custa mais do que economiza e que existe uma maneira mais barata de detectar informações do que a contagem de estrelas. Cinco desses dez veículos colocaram um número de manchete na primeira página. Exatamente um
+
+deles envia um comando que recalcula isso. Se você estiver escolhendo entre duas ferramentas esta semana, essa proporção lhe dirá mais do que qualquer ranking, e ambos os repositórios devem subir na sua avaliação, não cair. Um número que sobreviveu ao contato com um teste controlado vale mais do que um número que nunca passou por um. Mesmo quando o teste correu mal, especialmente nessas situações. Portanto, escolha com base no que você realmente paga. Se for contexto, analise
+
+o gráfico sobre o compressor. Se forem dados saindo do prédio, use Open Worker ou Native e monitore a aba de rede você mesmo, em vez de confiar em uma opção ativada/desativada. Se for uma equipe que precisa se explicar novamente todas as manhãs, então é QM. Se for um laptop que alguém descartou por ser pequeno demais para um modelo de verdade, Turbo Field Fair. E se você estiver distribuindo código que não escreveu uma única linha, execute a verificação de segurança CodeX hoje à noite. Então, quando o próximo repositório aparecer
+
+com 60 a 90% de ocupação na página inicial, faça a pergunta que esta lista inteira não consegue responder. Quem fez a medição e o que descobriram?

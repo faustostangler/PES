@@ -1,0 +1,118 @@
+---
+video_title: "Graphify vs GitNexus vs CodeGraph: Stop Wasting API Tokens"
+video_id: zIiiu8hS1To
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zIiiu8hS1To
+video_date: 2026-07-26T22:30:14+00:00
+video_description: |
+  Are your AI coding agents racking up massive API bills just to answer a single question about your codebase? Discover why the industry is moving away from traditional Vector RAG and switching to Code Knowledge Graphs—and how to choose the right one for your project. 
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design and architecture of the three biggest open-source graph tools on GitHub: CodeGraph, Graphify, and GitNexus. We expose the truth behind their 200,000+ GitHub stars, including why GitNexus's PolyForm Noncommercial license makes it illegal for most companies to use, and why CodeGraph's Rust rewrite (v1.5) allowed it to index the entire Linux kernel in just 12 minutes. 
+  
+  We also explore the fundamental differences in how these tools parse your code (using Tree-Sitter) versus how they handle multi-modal context like PDFs and videos (Graphify). Finally, we provide an honest, data-backed verdict on which Code Graph you should actually use to save up to 60% on your Claude and ChatGPT API bills.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The $1.41 AI Question (Why Code Graphs Win)
+  1:03 - Tool 1: CodeGraph (The Fastest Rust Indexer)
+  2:59 - The Linux Kernel Benchmark
+  4:26 - Tool 2: Graphify (The YC Multi-Modal Graph)
+  6:16 - Graphify's Honest Benchmarks (LOCOMO vs Mem0)
+  7:09 - Tool 3: GitNexus (The Deep Cypher Engine)
+  8:19 - The GitNexus Catch: Drifting Docs & Broken Licenses
+  9:50 - Head-to-Head Comparison: Cost, Code, and Lock-In
+  10:47 - The Final Verdict: Which One Should You Pick?
+  
+  #graphengineering #aiagents #codegraph #graphify #systemdesign #softwareengineering #machinelearning #cloudcodes #langgraph #artificialintelligence #rag
+  
+  
+  User Queries:
+  graphify vs codegraph vs gitnexus
+  how to use codegraph rust tree sitter
+  how to give claude code codebase context
+  best code knowledge graph ai agents
+  what is graphify y combinator
+  gitnexus neo4j cypher tutorial
+  polyform noncommercial license explained
+  stop using rag for coding agents
+  system design ai agent memory graph
+  how to index a large codebase for llm
+---
+Seu agente de codificação acabou de gastar 40 chamadas de ferramentas respondendo a uma única pergunta sobre o repositório do VS Code. Uma pergunta, US$ 1,41, e 17 arquivos lidos antes mesmo de começar a pensar. Mesma pergunta, mesmo modelo, com um gráfico de código à frente. Duas chamadas, 36 centavos. Três ferramentas de código aberto permitem que você faça esse serviço. Graphify, Git
+
+Nexus, Code Graph. Juntos, eles somam 200.000 estrelas no GitHub, sendo que a maior parte foi conquistada este ano. A contagem de estrelas é a pior maneira possível de escolher um deles. Você escolhe respondendo a três perguntas. O que
+
+é indexado, quanto custa, a que você fica vinculado. Uma dessas três proíbe o uso comercial em sua licença. 44.000 estrelas que você não pode enviar no trabalho. Outro arquivo readme descreve um produto cujo próprio pacote afirma que ele não é distribuído. Comece
+
+pelo que eles têm em comum, porque é mais do que você imagina. Os três analisam seu código com o tree-sitter. Nenhum modelo nessa etapa, nenhum embedding, nada saindo da máquina. O gráfico resultante também tem o mesmo formato. Funções, classes e arquivos como nós, chamadas, importações e herança como arestas. Tudo o que vem depois
+
+disso é onde eles discordam, e é aí que você escolhe. Em primeiro lugar, o Code Graph, porque é o único dos três que publica um benchmark que você pode executar novamente . 62.000 estrelas, licenciado pelo MIT, 6 meses de idade. Colby McHenry criou o repositório em janeiro e, em maio, ele alcançou o segundo lugar nos assuntos mais comentados do GitHub, com 2.400
+
+estrelas em um único dia. Ao abrir a página do projeto no GitHub, o selo de idioma indica "C". Isso é tecnicamente verdade, mas completamente enganoso. O repositório contém 21 arquivos C. Duas delas são tabelas de análise sintática tree-sitter geradas , Scala e Kotlin, e essas duas sozinhas ocupam 58 megabytes. O
+
+código escrito por um humano consiste em 341 arquivos TypeScript e 26 arquivos Rust. Esses arquivos Rust contam toda a história da versão 1.5, lançada em 21 de julho. Vinte das 34 linguagens do Code Graph agora são analisadas em Rust compilado com apenas uma passagem de limite por arquivo. Os outros 14 métodos recorrem ao web assembly tree-sitter, e o projeto afirma que ambos os caminhos produzem grafos idênticos em nível de byte. O resultado é salvo
+
+em um arquivo SQLite, .codegraph/codegraph.db, com a pesquisa de texto completo FTS 5 no topo. Sem armazenamento vetorial, sem modelo de incorporação, sem chave de API e nada sai da sua máquina. Todo o índice é um arquivo que você pode excluir quando se cansar dele. Em seguida,
+
+monitora eventos do sistema de arquivos no macOS, inotify no Linux e lê alterações de diretório (W) no Windows. Ao salvar um arquivo, o gráfico atualiza em cerca de 0,3 segundos em um projeto com 4.000 arquivos e em 0,4 segundos no compilador Swift com 27.000 arquivos. Ele nunca reescaneia a árvore. E quando não consegue acompanhar,
+
+diz isso em voz alta. A resposta da ferramenta exibe um aviso no início, nomeando o arquivo desatualizado e instruindo o agente a lê-lo diretamente e confiar no restante. Uma ferramenta que admite quando está atrasada é mais rara do que deveria ser. Há também um comando que eu não esperava gostar tanto. Envie um diff do Git para o codegraph affected, e ele retornará os arquivos de teste que sua alteração realmente consegue alcançar. Quatro linhas de shell, e seu
+
+conjunto de testes para de executar tudo a cada commit. Aqui está o parâmetro de referência. Sete repositórios reais, sete linguagens, uma questão de arquitetura para cada uma. Média de quatro corridas, revalidada em 21 de julho contra Claude Opus 4.8. VS Code: duas chamadas de ferramentas em vez de
+
+40. Django: duas em vez de 29. Tokyo: três em vez de 57. Leituras de arquivos: zero em todas as sete. Em termos monetários, a cotação de Tóquio caiu de US $ 3,04 para US$ 0,40. Excalidraw de $1,81 para
+
+$0,40. Em média, considerando os sete repositórios, houve 89% menos chamadas de ferramentas, 69% menos tokens e uma redução de 60% no custo. Mas leia as notas de rodapé, pois eles incluíram as perdas. No Excalidraw, a execução do gráfico levou 36 segundos, enquanto o grep simples levou 23. No OKHTTP, custou 3 centavos a mais. A
+
+explicação deles: em um repositório pequeno, o Opus grep é rápido o suficiente para vencer a concorrência, gastando de cinco a dez vezes mais tokens. O número que me convenceu foi o kernel do Linux: 70.000 arquivos, 2 milhões de símbolos, 6,4 milhões de relações, indexado completamente em menos de 12 minutos em uma máquina de dois núcleos com 6 GB de memória, enquanto um projeto que prioriza a memória se esgota antes de atingir 1%. Você abre mão de tudo que não seja código. Sem PDFs, sem documentos de projeto, sem anotações.
+
+E as próprias instruções alertam que, se o seu agente delegar a exploração a um subagente, esse subagente lerá os arquivos de qualquer maneira e o grafo de código se tornará pura sobrecarga. Só ajuda quando é perguntado diretamente. Graphify é aquele que você já viu na sua linha do tempo, com 95.600 estrelas. O repositório foi criado no dia 3 de abril deste ano. Isso significa 113 dias
+
+para alcançar 95.000 estrelas, uma taxa que quase nada consegue sustentar. É uma empresa da Y Combinator, turma de verão de 2016, com um documento "Leia-me" traduzido para 35 idiomas e uma lista de espera de empresas de grande porte. Um produto financiado com uma interface de código aberto, algo que vale a pena saber antes de desenvolver sua base. O formato do pitch é diferente do formato do gráfico de código.
+
+Você digita {slash} graphify no seu assistente e ele mapeia o projeto, e não apenas o código. Markdown, PDFs, planilhas, capturas de tela e vídeos, tudo aparece no mesmo gráfico que suas funções. Isso divide a ferramenta ao meio. O código passa pelo tree-sitter localmente, de forma determinística, sem tokens, nada sai da sua máquina e um repositório somente com código não precisa de nenhuma chave de API. Todo o resto se resume a um modelo. Vídeos e áudios
+
+são transcritos localmente, com prioridade para o Whisper. 36 gramáticas de controle de árvores, 79 extensões de arquivo e, depois, uma longa cauda com a qual ninguém mais se preocupa. Salesforce Apex, Terraform, manifesto de pacote, arquivos de configuração MCP. Forneça uma string de conexão e ela lerá um esquema Postgres ativo diretamente no gráfico. Cada borda possui uma etiqueta. "
+
+Extraído" significa que está escrito na fonte. Inferir significa que o gráfico resolveu o problema . Ambíguo significa que não há certeza. Você pode apontar para qualquer conexão e saber se ela foi acertada ou não, que é o que eu mais quero de uma ferramenta como essa. São gerados três arquivos: um gráfico HTML interativo, um gráfico JSON que pode ser consultado semanas depois sem precisar reler nada e um relatório em Markdown listando o que chama de " notas divinas", os conceitos de mais alto grau pelos quais tudo no projeto passa. Agora, a parte que não
+
+aparece: o número principal do antigo README era 71 vezes e meia menor em termos de tokens por consulta, medido em um conjunto de 52 arquivos. Procure esse número no arquivo README atual; ele não está lá, não foi revisado e foi removido. O que a substituiu foi uma verdadeira tabela de referência. Locomo, 300 perguntas, recall em 10 de 0,497 contra Mem0 em 0,048 e Super Memory em 0,149. Uma diferença de dez vezes na recuperação da informação, avaliada por um juiz com 90,6% de concordância em relação a um segundo juiz. E depois a linha que a maioria das
+
+empresas teria eliminado. Em relação à precisão nas respostas às perguntas, o Graphifi obteve 45,3% e o Super Memory, 49,7%. Perde essa. Em MemEval longo, ele empata com a recuperação densa simples. Publicar sua própria linha perdedora me garante muita confiança, o que revela o que o Graphifi realmente é: uma camada de memória que por acaso é muito boa em código, comparada a sistemas de memória em vez de indexadores de código.
+
+Se a sua resposta estiver metade no repositório e metade em uma pasta de PDFs, esta é a única das três que sequer tenta. O Git Nexus é o mais antigo dos três, criado em agosto de 2025, 5 meses antes do Code Graph e 8 meses antes do Graphifi. 44.600 estrelas e, por uma ampla margem, a maior superfície de ferramenta aqui. 17 ferramentas MCP, onde o Code Graph inclui deliberadamente uma: impacto (para raio de explosão), rastreamento (para o caminho mais curto entre dois símbolos), detecção de alterações (que mapeia um diff do Git nos fluxos de execução que ele afeta) e renomeação (que coordena edições em todos os arquivos que fazem referência a um símbolo).
+
+Abaixo, 15 fases de pipeline, 44 tipos de nós e 21 tipos de relacionamento. Ele executa o algoritmo de clusterização de Leiden para encontrar comunidades no seu código, rastreia os fluxos de execução desde os pontos de entrada até a cadeia de chamadas e os armazena como nós de processo que você pode consultar pelo nome. E é a única das três que você consulta em Cypher. Encontre uma autenticação com rótulo de comunidade , encontre tudo que a acessa e filtre para arestas com confiança acima de 0,8 . Se você já escreveu uma consulta Neo4j, já sabe como fazer isso. Agora, vamos ao que interessa. O
+
+arquivo readme afirma que a interface web funciona inteiramente em WebAssembly, o tree-sitter foi utilizado, o banco de dados foi usado, incorporações no navegador foram feitas e nenhum código é enviado para qualquer servidor. Então, abra o arquivo do pacote de aplicativos da web. Sem monitoramento de árvores web, sem banco de dados wasm, sem transformers.js. O único arquivo em seu diretório de serviços é um cliente HTTP. Analise todos os 6.500 arquivos
+
+no repositório, e cada referência a WebAssembly está presente na ferramenta de linha de comando do Node.js. O site em produção está de acordo com o código, e não com o arquivo readme. Acesse a página do GitNexus hoje e você verá um assistente de três etapas que o instruirá a executar o comando `NPX GitNexus serve` e aguardar na porta 4747. Trata-se de uma interface WebGL para um servidor Node local . Isso é deriva, não engano.
+
+A arquitetura mudou, mas a documentação não acompanhou. Mas, se você escolheu essa ferramenta porque ela funcionava em uma aba do navegador sem precisar instalar nada, você a escolheu para algo que não é mais comercializado. Depois, há a licença. O detector do GitHub não imprime nenhuma asserção, então quase ninguém abre o arquivo. Abra o arquivo, PolyForm Não Comercial 1.0. Qualquer finalidade não comercial
+
+é permitida. O uso comercial não é um deles. Escolas, instituições de caridade, laboratórios de pesquisa, governo, seu projeto de fim de semana , tudo bem. O monorepo do seu empregador não está bom, a menos que alguém compre uma licença comercial. Compare isso com a licença MIT do Code Graphs e a licença Apache 2.0 do Graphify
+
+, e você verá que essa é a maior diferença desta lista. Mais uma coisa. O GitNexus não publica absolutamente nada. Sem tempo de indexação, sem contagem de nós, sem armazenamento de tokens, sem latência. O produto inclui um chicote de bancada SVE com três modos e oito modelos conectados, mas sem nenhum resultado. O sistema de
+
+automação apresenta uma hipótese, o repositório nunca a responde. Em uma comparação direta , o que é indexado? Gráfico de código, 34 linguagens, somente código, além de extração de rotas para 17 frameworks web. Graphifi, 36 gramáticas, além de documentos, PDFs, imagens e vídeos. Git Nexus, 14 linguagens, código mais seções em Markdown. Qual o custo de funcionamento? O
+
+gráfico de código indexa zero tokens, mas a telemetria anônima está ativada por padrão e você pode optar por desativá-la. O Graphifi não utiliza tokens para código e as chamadas de modelo para todo o resto, sem qualquer tipo de telemetria. O Git Nexus indexa gratuitamente, mas seu gerador de wiki e seu agente de bate-papo exigem uma chave de API. Aquilo em que você fica preso. MIT, Apache 2.0,
+
+Polyform não comercial. Se você trabalha em uma empresa, essa terceira pessoa já tomou a decisão por você. E o que cada um deles lhe provará. O Code Graph publica sete repositórios com comandos de clonagem e custos em dólares por execução. A Graphifi publica benchmarks de memória de terceiros com uma pontuação de concordância entre os avaliadores. O Git Nexus
+
+publica uma hipótese. Então, aqui está como eu escolheria. Grande base de código, agente gastando dinheiro em descobertas, considere o gráfico de código. É o único que mostra recibos, possui licença MIT e, por ser compatível com o kernel do Linux, não apresentará problemas em seu monorepo. Um contexto que não se resume apenas a código, onde a resposta reside metade no repositório e metade em uma pasta de PDFs e capturas de tela, é o caso do Graphifi.
+
+Nada mais aqui tenta isso, e o caminho do código ainda é executado localmente e sem custos adicionais. Se você busca a superfície de consulta mais profunda e não está realizando envios comerciais, opte pelo Git Nexus. 17 ferramentas, Cypher, análise de contaminação, fluxos de execução. Dentre as três ferramentas, esta é a principal ferramenta do pesquisador , e a licença confirma isso . Uma coisa que vale a pena dizer em voz alta: esses três não estão realmente disputando uma única vaga. Um índice é
+
+rápido no código, um índice é tudo, uma consulta é mais profunda. Executar duas delas simultaneamente é uma solução perfeitamente sensata. Escolha aquela que corresponde à pergunta que você continua fazendo ao seu agente. Em seguida, abra o arquivo de licença antes de confirmar a licença. Esse é o vídeo.

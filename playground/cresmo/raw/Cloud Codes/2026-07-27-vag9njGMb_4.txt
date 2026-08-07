@@ -1,0 +1,137 @@
+---
+video_title: "HTMX + Rust is Insanely Fast (Axum)"
+video_id: vag9njGMb_4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vag9njGMb_4
+video_date: 2026-07-27T19:30:36+00:00
+video_description: |
+  Are you tired of slow React builds and massive JavaScript bundles? Meet the ultimate web architecture for 2026: combining the raw speed of Rust (Axum) with the front-end simplicity of HTMX to serve HTML directly over the wire.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of the HTMX + Rust web stack. We explore the TechEmpower benchmarks to reveal how the Axum framework handles over 1.1 million database-backed responses per second, and why the Askama template engine compiles HTML down to pure Rust source code for nanosecond rendering speeds. You will see real-world case studies of companies deleting 67% of their React codebase, learn how HTMX swaps HTML fragments without a Virtual DOM, and understand the 3 brutal "Walls" where you actually STILL need to use React.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  0:00 - The 1.1 Million Requests/Second Benchmark
+  1:09 - What is HTMX? (No Virtual DOM)
+  1:36 - The Rust Backend: Axum & Tokio
+  3:31 - How Askama Compiles HTML into Rust
+  5:48 - The Receipts: Deleting 67% of a React Codebase
+  8:58 - The Real Cost of Rust (Compile Times)
+  9:22 - The 3 Walls: When You Actually STILL Need React
+  10:59 - How to Start: Axum + Askama + SQLx
+  11:14 - Final Verdict: HTMX + Rust
+  
+  🔗 Repositories & Sources Mentioned:
+  • HTMX: https://htmx.org/ | https://github.com/bigskysoftware/htmx
+  • Axum (Rust Web Framework): https://github.com/tokio-rs/axum
+  • Tokio (Async Runtime): https://github.com/tokio-rs/tokio
+  • Askama (Compiled Rust Templates): https://github.com/djc/askama
+  • SQLx (Async SQL for Rust): https://github.com/launchbadge/sqlx
+  • Alpine.js (for client-side state): https://github.com/alpinejs/alpine
+  • TechEmpower Web Benchmarks: https://www.techempower.com/benchmarks/
+  • Contexte Case Study (React to HTMX): https://htmx.org/essays/a-real-world-react-to-htmx-port/
+  
+  #htmx #rust #axum #react #webdevelopment #systemdesign #cloudcodes
+  
+  User Queries:
+  htmx rust axum
+  rust backend tutorial
+  htmx vs react performance
+  is next.js overkill
+  how to use htmx with rust
+  axum rust web framework
+  askama template engine rust
+  why developers are leaving react for htmx
+  html over the wire explained
+  react spa vs ssr htmx
+  best tech stack 2026 web dev
+  cloud codes software engineering
+---
+Sétimo lugar. Entre mais de 500 projetos inscritos no ranking TechEmpower, um framework Rust chamado Axum ficou em sétimo lugar no mundo na categoria de serviços de HTML com suporte a banco de dados . 1,1 milhão de respostas por segundo. Não são blocos JSON, mas sim páginas HTML reais renderizadas a partir de linhas no Postgres em uma única máquina. Agora role essa mesma tabela para baixo até a posição 409. 38.700 por
+
+segundo. Mesmo parâmetro de comparação, mesmo teste, mesmo Axum. 29 vezes mais lento com a estrutura mantida constante. A única coisa que mudou foi o driver do Postgres, que foi trocado por aquele que você realmente usaria numa terça-feira. Então, quando alguém diz que HTML com Rust é absurdamente rápido, a pergunta que vale a pena fazer é qual desses dois números será o seu. Três
+
+coisas nos próximos 12 minutos. De onde vem fisicamente a velocidade, qual número seu aplicativo realmente obtém e as três barreiras que impedem as equipes de progredir. Comece pela pilha, pois ela é menor que o ruído ao seu redor. Duas partes móveis e um formato de conexão que o navegador entende desde o início. HTML é uma tag de script.
+
+16.532 bytes compactados. Baixei o arquivo do CDN esta manhã e medi pessoalmente. O que esses bytes compram é um punhado de novos atributos HTML. HX get, HX post, HX target, HX swap. Coloque um desses dispositivos em um botão e
+
+esse botão poderá se comunicar com o seu servidor por conta própria. O servidor responde com HTML, a marcação finalizada, e não com uma carga útil que seu cliente precisa montar. O HTML encontra o elemento que você nomeou, substitui o fragmento e para. Não existe um DOM virtual para comparar e nem uma árvore de estado do cliente para acompanhar. Do outro lado está Axum, da equipe de Tóquio, as mesmas pessoas que escreveram o ambiente de execução assíncrono que a maioria dos servidores Rust já utiliza.
+
+Versão 0.8.9 licenciada pelo MIT. 399 milhões de downloads do crates.io, 26 mil e quinhentas estrelas. Alguém
+
+enviou uma alteração para o repositório há dois dias. Este não é um projeto para um fim de semana, e a peça que une tudo é uma pequena caixa chamada Axum HTMX. Ele lê o cabeçalho da solicitação HX, portanto, uma rota pode enviar uma página inteira para um navegador e um fragmento simples para o HTMLX. Em seguida, vem Tóquio, com 827 milhões de downloads. Hiper, 792 milhões. Você
+
+não é quem está encontrando os erros nessa camada. Agora, a velocidade. Quero ser preciso aqui porque "absurdamente rápido" engloba três afirmações diferentes em um único casaco. Quantas requisições um servidor consegue responder, quanto tempo leva para uma página ser construída e quanta carga de trabalho o navegador permanece retendo depois. Prioridade à produtividade. O teste
+
+que importa nesse tabuleiro se chama " Fortunes" (Fortunes), e é o único que faz o que seu aplicativo faz: ler linhas do Postgres, classificá-las, renderizar uma tabela HTML e enviá-la. Rodada 23, hardware físico. A entrada otimizada de Axum registrava 1 milhão e 114.000 respostas por segundo. Nó bruto com um cliente Postgres escrito manualmente, 283.000.
+
+Expresso, 172.000. Escolha Gin, 110. API rápida, 109. Rails, 42. Django, 31. Laravel, 16 mil e quinhentos
+
+. Então, onde um servidor Rust encontra essa margem de segurança? Comece por aquela que as pessoas param de notar. Não há coletor de lixo, nenhuma pausa e nenhuma varredura de heap chegando no meio da solicitação de alguém . Tokio distribui o trabalho por todos os núcleos e rouba tarefas de threads ocupadas. O
+
+Hyper analisa o HTTP sem copiar os bytes. E quando um manipulador retorna, sua memória já se foi. Nenhum colecionador precisará procurá-lo posteriormente. O segundo lugar é o mecanismo de templates, e é aqui que os números deixam de se parecer com números da web. Askama não lê seu modelo em tempo de execução.
+
+Ele lê o arquivo enquanto o Rusty está em execução e transforma seu HTML em código-fonte Rust , que então é otimizado como qualquer outra função em seu binário. O parâmetro de comparação deles resulta em uma página pequena, com quatro equipes e suas respectivas pontuações. escapando, uma condicional. Askama termina em 109 nanossegundos. Nanossegundos. A mesma página processada pelo mini
+
+ninja leva 2,6 microssegundos. Tera, 3.9. Guidão, 5,3. Aproximadamente 48 vezes mais trabalho para uma marcação idêntica. Amplie a escala.
+
+Tabela 100 por 100, com 10.000 células. Askama, 70 microssegundos. Guidão, 3 milissegundos e meio . Você, renderizando a mesma grade no servidor, 3.1. E agora tenho que
+
+tirar isso de você, porque 109 nanossegundos é um número bonito que não vai mudar a sua tarde. Coloque isso ao lado de um pedido real. Alguém ao celular a duas cidades de distância. DNS, um handshake TLS, a viagem de ida e volta, uma consulta durante o percurso. Digamos que sejam 30 milissegundos e isso já é um bom dia. 30 milissegundos equivalem a
+
+30 milhões de nanossegundos, o que significa que o tempo de renderização do seu modelo é inferior a 4/10.000 de 1% do tempo que essa pessoa espera. Portanto, o modelo rápido não é o que torna uma pilha rápida. O que isso faz é impedir que a renderização se torne um problema para você. Uma promessa menor, mais monótona, porém mais útil. O
+
+tempo real reside na consulta, na rede e em tudo o que o navegador faz depois que os bytes chegam. É aí que o HTML mostra sua utilidade, porque veja o que uma página React faz quando o HTML chega. Baixe o pacote, analise-o, reconstrua a árvore de componentes em JavaScript e, em seguida, percorra a marcação que já está na tela e anexe manipuladores a ela. Essa última etapa é a hidratação, e o usuário está olhando para uma página que parece pronta enquanto isso acontece. Uma página HTML ignora toda a sequência. O HTML que chega é
+
+o HTML que será renderizado. O analisador sintático que realiza esse trabalho foi escrito em C++ e vem sendo otimizado há 30 anos. A diferença de tamanho também é real. O React mais o React DOM, compactados, têm 47.066 bytes. O HTML é 16.532,
+
+cerca de um terço. E isso antes mesmo de você configurar seu roteador, sua biblioteca de estado e qualquer código próprio. Nada disso é teoria. Em 2022, uma empresa francesa chamada Context descartou dois anos de React, reconstruiu o mesmo produto usando templates Django e HTML, e apresentou os resultados no palco da DjangoCon. 21 mil e quinhentas linhas se transformaram em 7.200.
+
+255 dependências de JavaScript foram reduzidas para nove. O tempo de compilação caiu de 40 segundos para cinco. O tempo de carregamento inicial para a área interativa caiu de dois a seis segundos para um a dois segundos, e o consumo de memória do navegador diminuiu 46%. Meu número favorito daquela palestra não tinha nada a ver com velocidade. Antes da migração para outra plataforma, eles tinham um desenvolvedor front-end, dois desenvolvedores back-end e um que podia fazer os dois. Depois disso, toda a equipe
+
+estava totalmente capacitada. Mantenha a escala proporcional. O HTMX recebe cerca de 774.000 downloads do NPM por mês e 48.000 estrelas no GitHub. O Next.js possui 141.000
+
+estrelas. Este é o lado pequeno da internet, e ele sabe disso. Em janeiro, um engenheiro chamado Rodolphe Trujillo descreveu o que construiu com base nessa arquitetura. Sistema de configuração portuária para a rede olímpica de Paris 2024. Milhares de switches Cisco, feeds de câmeras e links de backup em toda uma cidade. A
+
+estimativa inicial era de 18 meses. Ele o desenvolveu sozinho em 9 semanas usando Django e HTML, e depois reutilizou o mesmo aplicativo para o Tour de France no ano seguinte. Essa é a parte da hipermídia que é subestimada. A vitória raramente se resume à capacidade de produção bruta. É uma contagem de pessoas. Uma única base de código em vez de duas, e
+
+uma única pessoa capaz de concluir uma funcionalidade do início ao fim. Os números da pesquisa concordam, pelo menos em relação ao gosto. Na pesquisa do Stack Overflow de 2025, o Axum ficou em segundo lugar entre os 28 frameworks web mais admirados, com 76,4%. Phoenix ficou em primeiro lugar com 79. React ficou em 52 e Next.js em 45. Agora, observe o uso na
+
+mesma pesquisa. React, 44,7% dos desenvolvedores. Axum, 2.8. Três quartos das pessoas que já experimentaram o produto querem continuar usando. E menos de três em cada
+
+cem o tocaram. Isso me leva de volta aos dois números com os quais comecei, porque ainda lhe devo uma resposta. Axum aparece no tabuleiro de Fortunas quatro vezes. 1.114.000
+
+com um cliente Postgres desenvolvido manualmente. 336.000 no MongoDB. 67.000 com a aposta Deadpool. 38.700
+
+com SQLx, o crate que praticamente todos os aplicativos Axum em produção utilizam. Uma estrutura, quatro fileiras, 29 vezes entre o topo e a base delas. Quase nada nessa reportagem é sobre Axum. Sua taxa de transferência é determinada pelo seu driver, seu pool, seu plano de consulta e quantas viagens de ida e volta uma página custa. E 38.000 por segundo ainda é um número enorme.
+
+Isso equivale a 3,3 bilhões de visualizações de página por dia em um único dispositivo. Se o seu produto precisa de mais do que isso, você já tem uma equipe de performance e não está aceitando conselhos de arquitetura de um vídeo. Há uma nota de rodapé, e é uma nota triste. A TechEmpower arquivou esse repositório de benchmarks em março. A 23ª rodada é a última , então o placar que foi alvo de discussões na indústria durante uma década parou de se mover. Isso deixa a medição do seu próprio
+
+aplicativo no seu próprio hardware como o único número que realmente importa. Rust também te ajuda a construir, e constrói em segundos. A equipe de compiladores realizou uma pesquisa de desempenho com mais de 3.700 respostas. 55% deles esperam mais de 10 segundos para uma reconstrução incremental após uma alteração de código.
+
+Pior ainda, entre as pessoas que pararam de usar Rust completamente, 45% citaram o tempo de compilação como um dos motivos. Tudo o que você economiza no servidor, parte disso é devolvido à sua mesa todos os dias. Agora, as três paredes que eu prometi. Essas não são minhas opiniões, elas vêm da própria documentação do HTMLX, escrita pelas pessoas que a mantêm. A primeira parede representa um estado interdependente. Quando a alteração de um
+
+elemento altera outros 12, e quais desses 12 elementos dependem dos dados, você está enviando um mecanismo de diferenças via HTTP. O exemplo que eles mesmos dão é o Google Sheets. Digite um número em uma célula e as fórmulas serão recalculadas automaticamente em toda a grade. Perguntar a um servidor quais células foram movidas é abordar o problema de uma forma inadequada . A segunda parede representa a interação que ocorre a cada quadro. O Google Maps redesenha a imagem
+
+enquanto o cursor do mouse ainda está em movimento, e nenhum orçamento de requisição na Terra sobrevive a um manipulador de arrastar. Se a interação for contínua, ela pertence ao cliente. A terceira parede nunca aparece em um teste de referência, sua equipe. Sua equipe de recrutamento programa em React. Todas as bibliotecas de componentes "copiar e colar" disponíveis na internet são voltadas para o React. Lutar contra isso tem
+
+um custo real, e fingir que é gratuito é o que leva essas migrações ao fracasso no quarto mês. Fora isso, o leque de opções é amplo, monótono e lucrativo. Formulários, tabelas que classificam e filtram, painéis de controle que realizam pesquisas, buscas instantâneas, painéis de administração. A maior parte daquilo que a maioria de nós é paga para construir. E se uma tela realmente precisar de estado do cliente, coloque o Alpine nessa tela. O
+
+HTMLX não exige que você faça um juramento. Uma coisa que você precisa saber antes de começar: o HTML5 4 está chegando. A versão Beta 6 foi lançada em 23 de julho, três dias antes de eu gravar este vídeo, e o site tem como objetivo um lançamento no verão. Ele reconstrói toda a camada de requisição na própria API fetch do navegador, move a mesclagem do DOM para o idiamorph e adiciona um seletor de status para que um erro 404 possa ser redirecionado para um lugar diferente de um erro 200. Os atributos que você aprender hoje permanecem válidos nessa transição. Começa com quatro caixas e uma
+
+tarde. Axum, Tóquio, Askama, SQLx. Um arquivo main.rs, uma pasta de modelos, uma tag de script no seu layout e um contêiner que ocupa entre 5 e 12 megabytes, pois o Rust utiliza um único binário estático. Na minha opinião, depois de tudo isso, essa pilha de tecnologias é absurdamente rápida exatamente naquilo para o qual foi criada: transformar uma linha de banco de dados em HTML e depois não atrapalhar mais.
+
+Não irá resolver consultas lentas e não irá desenhar mapas do Google. Tudo o mais nessa lista é feito com cerca de um quinto do código. Portanto, escolha uma pequena ferramenta interna, construa-a em Axum e HTMLX e faça as medições você mesmo, pois esse é o único parâmetro de comparação que realmente importa para o seu aplicativo. Obrigado por assistir.

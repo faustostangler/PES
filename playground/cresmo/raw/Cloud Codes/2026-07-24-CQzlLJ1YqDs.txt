@@ -1,0 +1,111 @@
+---
+video_title: "C++ is Dying : Why Microsoft & Google Are Switching to Rust"
+video_id: CQzlLJ1YqDs
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CQzlLJ1YqDs
+video_date: 2026-07-24T12:00:09+00:00
+video_description: |
+  Is C++ finally dying, or is the US Government overreacting to the "Memory Safety Crisis"? Discover why tech giants like Google and Microsoft are abandoning C and C++ for new projects, and why they are actively rewriting billions of lines of legacy code in Rust to prevent memory leaks and zero-day exploits.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  In this video, Cloud Codes breaks down the system design of the Rust vs C++ debate. We explore the terrifying reality of "Use-After-Free" and Buffer Overflow bugs (like the Heartbleed exploit), and why decades of tools like address sanitizers and fuzzers completely failed to solve the problem. We dive deep into Google's "Safe Coding" strategy for Android, how Rust's Borrow Checker literally prevents code from compiling if it's unsafe, and why Microsoft is replacing the ancient Windows Kernel (Win32k) with Rust.
+  
+  Finally, we look at the monumental mandate from CISA, the FBI, and the White House to phase out memory-unsafe languages by 2026, and give an honest verdict on whether Bjarne Stroustrup's C++ "Profiles" can actually save the language, or if Rust has officially won the systems programming war.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Memory Safety Crisis (C++ vs Rust)
+  1:10 - Use-After-Free & Buffer Overflows Explained
+  2:39 - Why Address Sanitizers & Fuzzers Failed
+  3:14 - Google's Proof: The Android Rust Migration
+  4:48 - Microsoft Replaces the Windows Kernel (Win32k)
+  6:26 - The US Government Mandate (CISA & FBI)
+  7:39 - Why Discord and Amazon Moved to Rust
+  8:02 - Is C++ Actually Dead?
+  8:22 - Bjarne Stroustrup's Defense: C++ Profiles
+  9:08 - Summary: The New Default for Systems Code
+  
+  #rust #cplusplus #cybersecurity #softwareengineering #systemdesign #cloudcodes #microsoft #google #programming #backend #infosec
+  
+  User Queries: 
+  rust vs c++ memory safety performance
+  why the us government banned c++ cisa
+  what is use after free buffer overflow explained
+  microsoft rewrites windows kernel in rust
+  google android safe coding rust migration
+  how the rust borrow checker works
+  is c++ dying 2026
+  bjarne stroustrup c++ profiles explained
+  system design systems programming language
+  cybersecurity memory safety vulnerabilities
+---
+Aqui está um bug escrito duas vezes. Em C++, isso entrega sua máquina de bandeja para um atacante. Em Rust, o programa simplesmente trava. Essa é a história de 2026. C++ não é apenas uma linguagem obsoleta, é um passivo agora, e as maiores empresas de tecnologia já a abandonaram. Um tipo de
+
+erro causa a maioria desses problemas: bugs de segurança de memória . Os deslizes que C e C++ permitem cometer. A Microsoft contabilizou que 70% das falhas de segurança que corrigiu desde 2006 pertencem a essa única classe de bugs. O Google também foi contabilizado. No Android, 76% das piores vulnerabilidades eram exatamente a mesma coisa. Então, eles pararam de apenas aplicar
+
+remendos. Eles começaram a mudar a linguagem subjacente para Rust e funcionou. O Google observou uma queda inédita nos bugs de memória do Android, de 76% para menos de 20%. A Microsoft afirmou categoricamente: eliminar todas as linhas de C e C++ da empresa até 2030. Em seguida, o governo dos EUA estabeleceu um prazo: publicar um plano para abandonar o código que não seja seguro em termos de memória até janeiro de 2026. E esta
+
+pode ser a maior migração forçada de linguagens pela qual a programação de sistemas já passou. Então, aqui está a verdadeira questão. O C++ está realmente finalizado? Resposta curta: não, mas está sob aviso prévio. Deixe-me mostrar exatamente como chegamos até aqui.
+
+Comecemos por definir o que significa segurança de memória . Em C e C++, você gerencia a memória manualmente. Você solicita um bloco, usa-o e tem a confiança de que o liberará exatamente no momento certo. Perder esse momento significa abrir uma porta. Um uso após liberação de memória, um estouro de buffer, uma brecha que um atacante explora facilmente. E
+
+essa é a parte desconfortável. Não é um problema para iniciantes. Os melhores engenheiros de C++ do planeta, na Microsoft e no Google, com décadas de experiência, ainda lançam produtos com esses bugs porque a linguagem te entrega uma arma carregada e pede que você tenha cuidado para sempre. A eternidade é muito tempo e os números se recusam a mudar. O Chromium, o mecanismo por trás do Chrome, analisou 900 de suas piores falhas de segurança.
+
+Aproximadamente 70% eram seguros para a memória e metade deles eram de um sabor específico, para uso após o período de validade. Na Microsoft, a mesma situação se repete: os mesmos 70% se mantêm estáveis ​​há 20 anos consecutivos. E você provavelmente já sentiu uma dessas coisas sem nem perceber. O Heartbleed, a falha de segurança que expôs senhas e chaves privadas em metade da internet em 2014, era uma falha de segurança de memória na linguagem C. Bastava uma simples verificação que determinava quantos bytes deveriam ser lidos. Um único erro, naquela única
+
+língua, colocou toda a internet em alerta. Agora veja com que afinco eles lutaram . Ferramentas de higienização de endereços, Valgrind, fuzzers rodando em milhares de máquinas, analisadores estáticos gritando a cada commit. Milhões de dólares e décadas de desenvolvimento de ferramentas, e a taxa de erros de memória praticamente não se alterou. Não é possível resolver um problema de design de linguagem apenas com ferramentas.
+
+Essa é toda a argumentação contra o C++ em uma única frase. Engenheiros cuidadosos não são a solução, porque a linguagem permite que o erro exista em primeiro lugar. O compilador aceita sem problemas código que corromperá a memória durante a execução, e somente seus usuários ficarão sabendo. A ferrugem faz um acordo diferente. Uma parte do compilador chamada verificador de empréstimos rastreia quem é o proprietário de cada bloco de memória e quando ele é liberado. Quebre as regras e seu
+
+código não será compilado. Não foi um aviso, foi uma parada brusca. E consegue isso sem coletor de lixo, na mesma velocidade que o C++. Essa última parte é importante porque um coletor de lixo é inviável em um kernel ou em um driver de dispositivo. A ferrugem oferece segurança sem o custo adicional.
+
+O Google nos forneceu a prova mais clara, e não é o que você imaginaria. Eles não reescreveram o Android. Existem dezenas de milhões de linhas de código C e C++ ali, e revisar tudo isso levaria uma década que ninguém tem. Em vez disso, eles criaram uma única regra. A regra se baseia em uma simples observação. Novas vulnerabilidades surgem
+
+de novos códigos. Códigos antigos, em execução há anos, já foram testados e aprovados em diversas situações. Assim, o Google deixou o C++, já ultrapassado, de lado e escreveu todo o novo código em Rust. Eles chamam isso de programação segura. Corrija a entrada de água e a inundação seca sozinha. Em seguida, eles
+
+publicaram o gráfico, e é impressionante. Em 2019, a segurança da memória representava 76% dos piores bugs do Android. Ano após ano, o preço caía. E em 2025, caiu abaixo de 20% pela primeira vez na história do Android. Em números absolutos, foram registrados 223 desses insetos em 2019, contra menos de 50 no ano passado. O
+
+número da densidade foi o que fez as pessoas pararem de rolar a tela. Na mesma base de código, o código antigo em C e C++ apresentava, em média, cerca de 1.000 erros de memória por milhão de linhas. O código Rust foi introduzido por volta da versão 0.2. Isso
+
+é aproximadamente 1.000 vezes mais seguro, considerando as medições feitas dentro do mesmo edifício. E esta é a parte que os aficionados por planilhas adoram. O Rust não apenas se tornou mais seguro, como essas mudanças resultaram em quatro vezes menos reversões, reduziram em 25% o tempo gasto em revisão de código e necessitaram de cerca de 20% menos revisões. Mais seguro e mais rápido enviar tudo de uma vez.
+
+Essa combinação é o motivo pelo qual isso deixou de ser um debate. O resultado principal é quase inacreditável. Em todo o novo Rust implementado no Android, o número de vulnerabilidades de segurança de memória é praticamente zero. Nem piorou, nem melhorou, simplesmente desapareceu como categoria. A Microsoft atacou na direção oposta, diretamente no código mais assustador que possui: o kernel do Windows.
+
+Especificamente o Win32k, a antiga camada gráfica que tem apresentado falhas de escalonamento de privilégios praticamente todos os meses, há anos. O diretor de tecnologia (CTO) deles, Mark Russinovich, descreveu isso perfeitamente no palco. Era como um reservatório subterrâneo de petróleo , vazando algumas gotas de cada vez, de forma constante e ininterrupta. Você nunca o conecta à tomada . Você simplesmente continua esfregando o chão. Então,
+
+eles pararam de esfregar e reescreveram. 36.000 linhas do kernel do Windows agora em Rust e já incluídas no Windows. Além disso, 152.000 linhas de DirectWrite, o mecanismo de renderização de texto , foram convertidas em aproximadamente 6 meses.
+
+Então, um pesquisador encontrou um bug nesse novo código do kernel Rust, que é o verdadeiro teste. No C++ antigo, esse mesmo bug causava uma escalada de privilégios, uma tomada de controle total do sistema . Em Rust, o mesmo erro produzia exatamente o mesmo resultado. O computador travou. Uma tela azul limpa em vez de uma máquina invadida. Isso já vinha se acumulando há algum
+
+tempo. Em 2022, Russinovich disse a toda a indústria para parar de iniciar novos projetos em C e C++. Então ele transformou isso em política interna do Azure. Nas palavras dele: "Chega de componentes em C e C++. Tudo o que for novo será em Rust." E no final de 2025, a ambição
+
+tornou-se nuclear. Um engenheiro da Microsoft declarou o objetivo sem rodeios: "Eliminar todas as linhas de C e C++ da empresa até 2030." Isso corresponde a cerca de um bilhão de linhas traduzidas, com agentes de IA realizando o trabalho pesado. A taxa de sucesso interna deles é quase cômica. Um engenheiro, um mês, 1 milhão de linhas de código.
+
+Independentemente de cumprirem ou não o prazo, o simples fato de apontarem para esse objetivo já indica para onde isso está caminhando. E é aqui que deixa de ser uma preferência da empresa e se transforma em algo mais próximo de uma política, porque o governo dos EUA interveio e não está sendo nada sutil. A CISA e o FBI, as entidades que se preocupam com ataques a redes elétricas e hospitais, classificaram as línguas que representam risco para a memória como um problema nacional. Eles marcaram uma data concreta. Até 1º de janeiro de 2026, espera-se que qualquer empresa que desenvolva software crítico publique um roteiro de segurança de memória . Um plano concreto para abandonar o
+
+C e o C++. A única exceção é o software que já está programado para ser desativado antes de 2030. Ignorá-lo, nas palavras deles, significa aumentar significativamente o risco à segurança nacional. Essa é uma sentença severa de uma agência federal. A Casa Branca havia dito praticamente a mesma coisa um ano antes, em um relatório intitulado literalmente "De Volta aos Elementos Básicos". A
+
+recomendação para um documento governamental foi direta: "Adotar linguagens que não prejudiquem a memória". Eles identificaram o risco e a solução, e isso vai muito além dessas duas gigantes. Amazon, Cloudflare, Discord e Dropbox reescreveram seus trechos de código mais populares em Rust e divulgaram os resultados. O Discord tentou solucionar um pico de lag durante meses em uma linguagem com coleta de lixo, mudou esse serviço para Rust e o pico simplesmente desapareceu. E agora o Rust é executado dentro do próprio kernel do Linux, o software que está por trás da maior parte da internet.
+
+Quando a Microsoft, o Google, o governo dos EUA e o Linux se movem na mesma direção ao mesmo tempo, toda a indústria muda de rumo. Podemos chamar isso de maré. Então, para ser sincero, o título tem um ponto de interrogação por um motivo. Será que C++ é um problema? Para novos códigos, cada vez mais, sim. O C++ está morto? Nem de
+
+perto. E quem disser o contrário provavelmente está tentando vender alguma coisa. Eis a realidade. Existem bilhões de linhas de código C++ sendo executadas neste exato momento. Seu banco, seu carro, seu sistema operacional, o jogo que você jogou ontem à noite, aeronaves, plataformas de negociação, navegadores, bancos de dados, a infraestrutura da vida moderna é em C++ e você não reescreve isso em um slide.
+
+Será mantido e bem remunerado por décadas. E o C++ está revidando. Bjarne Stroustrup, o homem que criou o idioma, está se opondo veementemente ao que ele chama de ataques graves contra ele. A resposta dele é um recurso chamado perfis, uma forma de ativar garantias de segurança dentro do próprio C++. É um esforço considerável e espero que dê certo, mas há um problema. Os perfis não atendiam ao padrão C++ 2026
+
+. Eles ainda estão parcialmente em papel. Entretanto, o Rust já implementa essa segurança em produção no Google e na Microsoft. Numa corrida pela segurança, o transporte marítimo supera as promessas. Portanto, o veredicto honesto não é que o C++ perde. Acontece
+
+que a configuração padrão foi invertida. Para um projeto de sistemas totalmente novo em 2026, a escolha segura, tediosa e que não prejudica o currículo é Rust. C++ tornou-se algo que você mantém, não algo que você procura primeiro. Essa é a mudança em uma frase. Antigamente, a linguagem mais segura era aquela que você conhecia melhor. Agora, é aquela que não vai
+
+deixar você cometer o erro mais antigo do mundo. Se você escreve código de sistemas que vale uma tarde da sua semana.

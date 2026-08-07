@@ -1,0 +1,118 @@
+---
+video_title: "$5 VPS That Replaced My Entire AWS Bill"
+video_id: KNkhpKghoDU
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KNkhpKghoDU
+video_date: 2026-07-28T12:00:39+00:00
+video_description: |
+  Are hidden AWS fees for NAT Gateways, Application Load Balancers, and outbound egress traffic racking up massive monthly bills for a simple web app? Discover why the industry is moving away from complex public cloud architectures and switching back to $5 bare-metal VPS deployments—and how modern control panels make it easier than ever.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the line-by-line system architecture and cost comparison between a $223.60/mo AWS stack and a $5.99/mo Hetzner VPS. We expose the truth behind this 37x price gap, including why AWS charges 90x more for the exact same outbound bandwidth and $3.65/mo just for idle IPv4 addresses. We also explore the open-source tooling driving this cloud repatriation movement—like Coolify, Dokploy, Kamal, and Caddy—and how 37signals used this exact strategy to drop a massive $3.2M cloud bill and save $2,000,000 a year without hiring a larger ops team.
+  
+  We also explore the fundamental differences in single-core vs multi-core throughput, why Prime Video abandoned serverless for a monolith, and the harsh reality of AWS's "four nines" SLA refunds. Finally, we provide an honest, data-backed verdict on the three "walls" of self-hosting, and exactly when you should cheerfully pay AWS instead of managing your own infrastructure.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The $223 AWS Bill vs The $6 VPS
+  1:10 - The 4 Hidden Costs (Egress, NAT, ALB, IPv4)
+  3:05 - The 37:1 Price Ratio Explained
+  3:56 - Tooling: Coolify, Dokploy, Kamal & Caddy
+  5:52 - 37signals' $2M Cloud Repatriation Exit
+  7:41 - Prime Video & GEICO Leave the Cloud
+  8:50 - Wall 1: The VPS Throughput Illusion
+  9:42 - Wall 2: The Truth About AWS SLAs
+  10:39 - Wall 3: Compliance, Regions & Managed Data
+  11:13 - The Final Verdict: When to Switch
+  
+  #cloudcomputing #aws #hetzner #devops #systemdesign #softwareengineering #coolify #cloudcodes #docker #selfhosting #cloudrepatriation
+  
+  User Queries:
+  aws egress fees vs hetzner bandwidth pricing
+  how to use coolify to replace aws ec2
+  deploy web app on $5 vps with kamal
+  37signals leaving the cloud architecture
+  stop using aws for small projects
+  system design migrating from cloud to bare metal
+  aws application load balancer vs caddy reverse proxy
+  cloud repatriation geico and prime video
+  dokploy vs coolify vs kamal control panel
+  how to lower aws nat gateway monthly bill
+---
+$ 223,60. Essa é a fatura mensal da AWS para um pequeno aplicativo web. Um servidor, um banco de dados, um balanceador de carga. Nada de exótico, nada em grande escala. Este é o mesmo aplicativo, disponível em um aparelho de 6 dólares na Alemanha. Mesmo código, mesmo
+
+tráfego. E essa diferença quase não tem nada a ver com poder computacional. O serviço de computação é o item mais barato nessa fatura da AWS. Outras quatro linhas causam o dano. Então, vou calcular o preço de cada item linha por linha, com base nas tarifas publicadas hoje. Em seguida, mostrarei a
+
+vocês as três barreiras que os levam de volta diretamente para a AWS. Acertar um deles significa que todo o plano vai por água abaixo. Comece pela parte que gera discussão. Uma assinatura t4g.small sob demanda custa US$ 12,26 por mês. A caixa alemã custa US$ 5,99, o dobro
+
+do preço. Essa é toda a história da computação. "Twice" não é um vídeo, "37 vezes" é. Então, de onde vieram os outros 211 dólares ? Quatro serviços que a maioria das pessoas para de ler depois que eles começam a ler, e um deles é maior do que todos os outros juntos.
+
+Transferência de dados de saída. A AWS oferece 100 GB gratuitos por mês e, em seguida, cobra 9 centavos por gigabyte. Forneça 1 TB aos seus usuários e essa única linha custará US$ 83,16. US $ 83 para enviar bytes que você já pagou para computar e armazenar para fora de um prédio e através de um cabo. A Hetzner inclui 20 TB de tráfego de saída em seus servidores em nuvem na UE por US $ 5,99. Depois disso, a cobrança é de
+
+1 euro por terabyte. 9 centavos por gigabyte contra um décimo de centavo, 90 vezes em bytes idênticos. Segunda linha, o gateway NAT. É um dispositivo que permite que um servidor em uma sub-rede privada acesse a internet, e seu custo de funcionamento é de quatro centavos e meio por hora. US$ 32,85 por mês antes mesmo de enviar um único pacote. Em seguida, a
+
+AWS cobra mais quatro centavos e meio por cada gigabyte que passa por ela. Seu próprio tráfego foi contabilizado duas vezes. Terceiro, o balanceador de carga da aplicação . Dois centavos e vinte e cinco centavos por hora, o que dá US$ 16,43 por mês antes da primeira solicitação, mais as unidades de capacidade adicionais . Digamos que custe US$ 22 para colocar TLS na frente de um aplicativo. No VPS,
+
+essa tarefa pertence ao Caddy, e toda a configuração do Caddy para ela tem quatro linhas . Quarto, e este é recente. Desde 1º de fevereiro de 2024, a AWS cobra meio centavo por hora para cada endereço IPv4 público em sua conta, esteja ele em uso ou ocioso, independentemente de estar ou não. US$ 3,65 por mês por endereço. A Hetzner cobra 50 cêntimos de euro pelo mesmo endereço. Em seguida,
+
+os extras gerenciados. Um servidor db.t4g.micro executando Postgres custa 11,68 por mês, mais 11,5 centavos por gigabyte de armazenamento. O CloudWatch cobra 50 centavos por cada gigabyte de logs que você ingere, o que significa que seu próprio registro de depuração custa cinco vezes mais por gigabyte do que enviar um vídeo para um cliente. Somando tudo, 12,26 de
+
+computação, 3,20 de disco, 13,98 de banco de dados, 22,27 de balanceador de carga, 78,93 de gateway NAT, 83,16 de saída, 7,30 de endereços IP, 2,50 de logs, totalizando US$ 223,60 por mês, para sempre. A mesma carga de trabalho em um CX23 é de 5,99. Dois núcleos, 4 GB de RAM, 40 GB de NVMe, 20 TB de tráfego, 37 para um. E repare no que não mudou para chegarmos lá. Não o código, não o tráfego, mas a arquitetura que o envolve. E com 5 dólares
+
+você compra uma máquina de verdade hoje em dia. A Digital Ocean vai te vender um droplet por quatro dólares. Tanto a Vultr quanto a Akamai começam com cinco dólares para transferências de um terabyte. Contabo oferece quatro núcleos por praticamente o mesmo preço. O mercado melhorou bastante enquanto o resto de nós estava aprendendo Terraform.
+
+Antes de cancelar sua conta, porém, saiba que essa proporção é real, e também é apenas a parte fácil da história. A parte mais dura é a que quebra. Mas para chegar lá, preciso explicar por que tudo isso funciona em 2026, sendo que era uma má ideia em 2015 e uma pior ainda em 2018. Há 10 anos , executar seu próprio servidor significava possuir as configurações do Engine X, as unidades do sistema D, os cron jobs do Certbot e um script de implantação que funcionava perfeitamente até o dia em que parou de funcionar. As pessoas migraram para a gestão de serviços para deixar de fazer tudo isso, não para economizar dinheiro. A alternativa era um segundo emprego pelo qual
+
+você não seria remunerado. O que mudou foi a camada superior. O Coolify é um painel de controle de código aberto que você instala em seu próprio servidor. Ao pressionar para obter, o sistema constrói o contêiner, busca um certificado e substitui a versão em execução subjacente. 59.000 estrelas no
+
+GitHub, mais de 280 serviços de instalação com um clique e a versão 4.1.2 lançada em junho. O Deploy faz o mesmo trabalho, mas com uma abordagem diferente, e já conta com 36.000 estrelas após 2 anos de existência.
+
+2 anos. Vale a pena prestar atenção nessa parte, pois ela indica que essa ferramenta é nova. A situação econômica não mudou, mas a ergonomia sim. Se um painel de controle ainda parecer ocupar muito espaço, existe o Kamal. É assim que a 37 Signals funciona na prática em produção, e é tão simples quanto possível a implementação de um sistema. Ele acessa
+
+seus servidores via SSH, inicia sua imagem Docker e redireciona o tráfego. Sem plano de controle, sem Kubernetes, 14.000 estrelas. E o balanceador de carga que você acabou de excluir volta como Caddy, com 74.000 estrelas. E o
+
+HTTPS automático é o comportamento padrão, em vez de um plugin que você adiciona. Você digita o nome de domínio, ele obtém um certificado e o renova automaticamente. Esse é o seu ALB em um arquivo de texto. Portanto, toda a pilha de substituição consiste em um arquivo Compose e um Caddyfile. Aplicativo, Postgres, Redis, proxy reverso, TLS. Aproximadamente 40
+
+linhas de YAML que você pode ler de uma só vez, localizadas no mesmo repositório que o código, em uma máquina à qual você pode acessar via SSH e visualizar. Agora, tenho receio desse gênero porque geralmente é nesse ponto que o vídeo se transforma em propaganda. Então, vamos encontrar a maior empresa que de fato fez isso em uma escala onde os números foram publicados e os comprovantes existem. Em 2022, a 37 Signals, empresa por trás do Basecamp e do High, investiu US$ 3,2 milhões em nuvem, e a infraestrutura já estava otimizada. Compromissos de longo prazo, dimensionamento adequado e cuidadoso, toda a rotina de FinOps.
+
+Em junho de 2023, David Heinemeier Hansson publicou um artigo intitulado "Deixamos a nuvem: sete aplicações saíram da AWS em 6 meses". O que os substituiu foram dois paletes de servidores Dell, 4.000 vCPUs, 7,5 terabytes de RAM, 384 terabytes de NVMe, cerca de meio milhão de dólares em hardware inicial, aproximadamente 700.000 dólares quando tudo foi concluído, e todo o custo foi recuperado durante 2023. A fatura da nuvem caiu de 3,2 milhões de dólares por ano para 1,3 milhão, uma economia de 2 milhões de dólares por ano , e o detalhe ao qual continuo voltando é o mais tedioso. A equipe de operações permaneceu
+
+exatamente do mesmo tamanho. Sua frase foi: "Não há dragões ocultos de carga de trabalho adicional." E essa é uma afirmação que a maioria dos engenheiros presume ser mentira. Os 1,3 milhão restantes eram quase todos S3, vinculados a um contrato de 4 anos , 10 petabytes brutos, 5 petabytes após a deduplicação, 5 bilhões de objetos. Eles migraram tudo para seus próprios sistemas de armazenamento dedicados, e a conta anual caiu de cerca de 1 milhão e meio de dólares para menos de 200 mil. Um detalhe dessa
+
+migração diz mais sobre o preço de saída do que qualquer gráfico que eu possa desenhar para você. A AWS dispensou a taxa de rescisão. A transferência de dados no valor de US$ 250.000 foi cancelada sob a condição de que o serviço fosse encerrado completamente em até 60 dias, e que não fosse possível utilizar conexão direta para esse fim. A transmissão ocorre pela internet pública. 10 petabytes, ou seja, 5 bilhões de
+
+objetos transferidos pela internet pública por um aplicativo Rails. O programador principal deles resumiu tudo em quatro palavras. Não houve tempo de inatividade, a economia projetada ao longo de 5 anos é superior a 10 milhões de dólares, e não são apenas pessoas de fora que dizem isso. Em 2023, a equipe do Prime Video, serviço pertencente à Amazon, publicou um artigo sobre a qualidade de vídeo oferecido por ele . Eles simplificaram uma arquitetura distribuída sem servidor, transformando-a em uma única tarefa do ECS, e reduziram o custo da infraestrutura em 90%. A
+
+versão sem servidor atingiu um limite de escalabilidade rígido com 5% da carga esperada. A Geico foi ainda mais longe. Mais de 300 milhões de dólares por ano em nuvem, agora com a meta de repatriar pelo menos metade de suas cargas de trabalho até 2029, com uma redução de 50% no custo por núcleo de computação e de 60% por gigabyte de armazenamento. Mas leia o resto. Tiveram que contratar engenheiros de firmware, especialistas em integração de BIOS, pessoal para validação de hardware, e agora é possível mensurar o progresso. Uma
+
+pesquisa realizada em fevereiro de 2026 com 212 tomadores de decisão de TI revelou que 75% já haviam retirado algum recurso da nuvem pública. 84% ultrapassaram o orçamento de armazenamento. 46% apontaram as taxas de saída como a causa. A Flexera constatou, no mesmo ano, que 29% dos gastos com nuvem são desperdiçados, o primeiro aumento em 5 anos. Portanto, esta não é uma opinião marginal defendida por três pessoas no Hacker News.
+
+É uma quantia considerável de dinheiro circulando em uma única direção, o que me leva ao impasse. A primeira parede é a de capacidade de processamento. O VPS benchmarks executa um aplicativo Rails com uso intensivo de banco de dados em todos os testes do Planet e, nos últimos 12 meses, o resultado médio é de 70 solicitações por segundo. Um dispositivo Hetzner CX 22 atingiu o pico de 35. Um droplet de 2 GB da Digital Ocean conseguiu 15, o que parece fatal até você analisar o que está sendo medido. Trata-se de uma
+
+solicitação vinculada a um banco de dados sem cache, executada em um único núcleo. Sirva uma página em cache ou um recurso estático da mesma máquina e isso fará milhares de coisas. O número que define isso é o seu próprio P99 no seu próprio trânsito, não uma linha em uma tabela de referência. Aliás, existe uma piada escondida nesses dados. O serviço mais lento de toda a tabela foi o Amazon Lightsail. 2 GB, dois núcleos, 10
+
+requisições por segundo em fevereiro. A AWS também vende um VPS por US$ 5. Não é muito bom. A segunda questão é o tempo de atividade, e é aqui que o marketing se torna complicado. Os quatro noves que você vê citados para o EC2 são o SLA de nível regional e só se aplicam se você estiver executando em duas ou mais zonas de disponibilidade. Uma única
+
+instância tem cobertura de 99,5%, com um tempo de inatividade permitido de 3 horas e meia por mês. Enquanto isso, a Digital Ocean se compromete com quatro noves (noves de nove centavos) em cada droplet individual, com 100% de crédito caso não atinja essa meta. E a documentação da Hetzner resolve o exemplo para você. 185 minutos de inatividade rendem 87 cêntimos de euro, 87 cêntimos. Todo SLA é uma política de reembolso, não uma garantia. E antes que alguém use
+
+o tempo de atividade como motivo para ficar parado, em 9 de outubro de 2025, o US East 1 ficou fora do ar por cerca de 14 horas e meia. Uma condição de corrida latente na automação de DNS por trás do DynamoDB. Um serviço interrompido, 141 afetados. Não é possível comprar tempo de atividade. Você só pode comprar a versão de outra pessoa. A
+
+terceira parede encerra a discussão mais rapidamente. Regiões, conformidade e dados gerenciados. Se você precisa de evidências SOC2 que não produziu você mesmo, ou de residência de dados em seis países, ou de um Postgres que possa ser restaurado para uma tarde de terça-feira específica, você não vai reconstruir isso por 6 euros. Você está comprando, e vale o preço que custa. E a conta que você começa a pagar é denominada em horas. Correções de kernel
+
+, restaurações de backup que você realmente ensaia, porque um backup não testado é um boato. A Hetzner oferece backups automáticos por cerca de 1,20 euro por mês, o que é barato até você precisar de um pela primeira vez e descobrir que nunca o testou. Duas coisas mudaram este ano, e em direções opostas. A Hetzner aumentou os preços dos serviços em nuvem em 15 de junho de 2026. A linha CX teve um aumento de apenas cerca de 30%, o que explica o preço final do CX 23, de 5,99. A fila da CPX aumentou até
+
+3,1 vezes, e a AWS fechou a rampa de acesso. Desde julho de 2025, uma nova conta recebe um crédito de US$ 100, podendo chegar a mais US$ 100 se você usar os serviços certos, e o plano gratuito expira após 6 meses. A conta então se encerra automaticamente. Aquela pista de decolagem de 12 meses, na qual toda uma geração de engenheiros aprendeu, desapareceu. Então, aqui está a regra que eu realmente lhe entregaria. Com
+
+um aplicativo, um banco de dados, algumas centenas de solicitações por segundo e mais de 100 GB enviados mensalmente aos usuários, o plano de US$ 5 vence, e com folga. Multirregional, com conformidade auditada, ou um banco de dados onde perder uma hora acaba com a sua empresa, pague à AWS e pague com prazer. E se você estiver em algum ponto intermediário, verifique um número antes de qualquer outra coisa. Abra o Explorador de Custos, filtre para transferência de dados de saída e visualize um único mês. Se essa linha for maior que sua linha de processamento, o dinheiro não está sendo investido em servidores. Isso se refere à largura de banda, e a
+
+largura de banda é a única coisa que este plano oferece gratuitamente.

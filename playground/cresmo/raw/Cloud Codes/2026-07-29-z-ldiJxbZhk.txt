@@ -1,0 +1,135 @@
+---
+video_title: "oLLM vs llama.cpp: Run an 80B Model on an 8GB GPU"
+video_id: z-ldiJxbZhk
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=z-ldiJxbZhk
+video_date: 2026-07-29T16:00:12+00:00
+video_description: |
+  Are you hitting the VRAM wall running local LLMs because your KV cache and 16-bit weights exceed your 8GB GPU? Discover why streaming transformer layers and attention cache directly from a PCIe NVMe SSD using oLLM allows you to run an 80B Qwen model locally, and why llama.cpp's GGUF 4-bit quantization and --n-cpu-moe offloading still destroys it in token-per-second benchmarks.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  This technical deep-dive breaks down the physical hardware gap between GPU VRAM (448 GB/s) and SSDs (5 GB/s), causing a massive 129x speed difference between llama.cpp and oLLM on a standard RTX 3060. We explore why long context windows silently crash 8GB cards (a 100k context cache requires 52GB of memory alone), how memory mapping (mmap) limitations bottleneck CPU offloading, and the harsh reality of GitHub repository maintenance (frequent commits vs abandonware) that ultimately decides which inference engine you should install.
+  
+  If you found this local AI hardware and software breakdown helpful, drop a like and subscribe for more deep dives into software engineering, system architecture, and machine learning scaling!
+  
+  🔗 Resources :
+  llama.cpp (by Georgi Gerganov): https://github.com/ggerganov/llama.cpp]
+  oLLM (by Anuar Sharafudinov): https://github.com/Mega4alik/ollm
+  Hugging Face Models: https://huggingface.co/
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 129x Speed Gap: 64.5 vs 0.5 tok/s
+  01:06 - llama.cpp & GGUF: The 4-Bit Quantization Wall
+  02:25 - oLLM Explained: Streaming 80B Models from SSD
+  04:17 - VRAM vs NVMe: The 90x Bandwidth Bottleneck
+  06:33 - llama.cpp mmap & CPU MoE Offloading
+  08:23 - The KV Cache Trap: 100k Context on 8GB VRAM
+  09:57 - The GitHub Reality Check (Commits vs Abandonware)
+  11:45 - Final Verdict: Which Engine Should You Install?
+  
+  #llamacpp #ollm #localllm #vram #machinelearning #artificialintelligence #systemdesign #softwareengineering 
+  
+  User Queries:
+  llama cpp vs ollm performance benchmark 2026
+  how to run 80b model on 8gb vram local llm
+  stream llm weights from ssd pcie bandwidth
+  ollm memory mapping vs llama cpp mmap
+  kv cache memory size calculation 100k context
+  why does llama cpp crash out of memory 8gb gpu
+  n cpu moe offloading llama cpp tutorial
+  ollama vs ollm vs llama cpp differences
+  best local ai inference engine for huge context
+  4 bit gguf quantization vs 16 bit full precision local llm
+---
+64 tokens e meio por segundo, um modelo de 8 bilhões de parâmetros de 4 bits em uma RTX 3060 usada. Isso é o llama.cpp. Agora, a outra opção é distribuir uma ficha a cada 2 segundos para cartas da mesma classe. Isso é uma lhama. Os mesmos 8 GB de memória de vídeo,
+
+129 vezes diferentes. E antes que comecem os comentários , ollama não é lhama. Projeto diferente, autor diferente, ideia diferente. O Ollama transmite o modelo do seu SSD uma camada de cada vez. Um modelo com 8 bilhões de parâmetros em uma placa de vídeo barata, o que levanta uma questão que eu não conseguia deixar de lado.
+
+Por que algo tão lento tem 2.700 estrelas? Então, medi ambos. Você obtém o número real, o único trabalho em que o mais rápido não pontua, e o que eu instalaria. A primeira coisa que eu entendi errado é que esses dois números não medem o mesmo modelo. Um deles foi comprimido.
+
+Três coisas determinam isso: largura de banda, contexto e commits. A terceira opção é a que realmente responde à pergunta do título. Se você errar nessa escolha, acabará comprando uma placa de vídeo desnecessária ou terá que esperar a noite toda por uma resposta. Vamos começar com o motor que você provavelmente já executou sem saber, o llama.cpp.
+
+Georgi Gerganov iniciou o projeto em março de 2023 como uma experiência de fim de semana para executar um modelo em um MacBook. Agora são 121.000 estrelas, e é o motor que está por trás do Ollama, do LM Studio e da maioria dos aplicativos de IA locais em sua máquina. É escrito em C e C++, sem ambiente de execução Python, e carrega apenas um arquivo, um GGUF. Toda a premissa do projeto é a compressão.
+
+Você pega um modelo armazenado com 16 bits por peso e arredonda cada peso para quatro. Um modelo com 8 bilhões de parâmetros passa de cerca de 16 GB em disco para 4,9 GB. Eis o que isso lhe proporciona. Um indicador de desempenho publicou uma tabela completa em maio deste ano. RTX 3060, 12 GB, 13 modelos, mesma máquina, mesmas configurações.
+
+Meta's 8B em 4 bits, 64 tokens e meio por segundo. QN3, 8B, 59 e 1/2. Um modelo 3B, 128. E então a mesa para. O modelo GPT-OS de 20 bilhões de parâmetros, de 4 bits, no mesmo cartão de 12 GB, falha. Não
+
+carrega. 11,5 GB de peso, mais um cache, não cabem em 12. E o llama.cpp não tem um plano B. É essa barreira que está em jogo nesta comparação, não a lentidão. Uma situação crítica em que o modelo é
+
+maior que o cartão e o motor gráfico simplesmente se recusa a iniciar. ollm ignora a parede. É uma biblioteca Python construída com base em Hugging Face Transformers e PyTorch. E faz algo que o llama.cpp não faz. Ele
+
+carrega as camadas do transformador do seu SSD uma de cada vez, executa cada uma e a descarta antes de carregar a próxima. O modelo nunca existe completamente na memória. O cache de atenção também é armazenado na unidade com precisão total. E também utiliza atenção instantânea com softmax online, portanto a matriz de atenção completa não é materializada. As grandes projeções de MLP são divididas em partes menores. O resultado é que o pico de
+
+memória de vídeo permanece abaixo de 7,5 GB, independentemente do tamanho do modelo. A tabela no arquivo "Leia-me" foi a parte que me fez olhar duas vezes. Qwen 3 next, 80 bilhões de parâmetros, 160 GB de peso com precisão de 16 bits , 50.000 tokens de contexto, 7,5 GB de memória de vídeo e 180 GB de disco. Uma das linhas dessa tabela está de cabeça para baixo. E é um indicador útil. O
+
+modelo com 20 bilhões de parâmetros é mais lento que o modelo com 80 bilhões de parâmetros. O autor explicou o motivo no Hacker News. O GPT-OS carrega todos os seus especialistas na GPU, enquanto o Qwen 3 Next transmite apenas os especialistas para os quais um token realmente direciona a chamada. Foi escrito por Anwar Sharapudinov, um engenheiro de Astana, no Cazaquistão. O motivo está no projeto que ele submeteu ao hackathon em setembro de 2025. E é
+
+surpreendentemente conciso. Ele queria analisar suas próprias conversas com os clientes em particular. E ele tinha 8 GB de memória de vídeo e 16 GB de RAM. É por isso que as estrelas estão lá. 2.700 pessoas não
+
+iniciaram um mecanismo de inferência rápido. Eles destacaram a única coisa que responde a uma pergunta específica e irritante. O que devo fazer quando a maquete for maior que meu computador? Então, voltando a 64 contra 0,5. Essa comparação não é justa e não é injusta na direção que eu esperava. O arquivo
+
+llama.cpp obteve seu número reduzindo o modelo a um quarto do seu tamanho original antes de executar qualquer função. A quantização de 4 bits pega um peso que era um número de 16 bits e o arredonda para 4 bits. 16 valores possíveis em vez de 65.000. Ao
+
+abrir mão de uma pequena quantidade de precisão, o arquivo fica cerca de quatro vezes menor. Quase todos os modelos locais que você já executou foram quantizados. Ollama não faz isso, e não por descuido. Ele utiliza pesos de 16 bits e mantém o cache com precisão total propositalmente, pois o arredondamento é exatamente o que ele tenta evitar. Então, um mecanismo está transferindo 4,9 GB por token e o outro está transferindo 160. Agora, a física, que é
+
+onde reside a verdadeira resposta. Uma placa de vídeo 3060 Ti lê sua própria memória de vídeo a uma velocidade de aproximadamente 448 GB por segundo. Um SSD NVMe PCIe 4 rápido tem uma taxa de leitura de cerca de cinco. Isso corresponde a uma proporção de aproximadamente 90. Cada token precisa percorrer todo o modelo. Portanto, qualquer que seja a proporção do seu
+
+armazenamento, seus tokens por segundo a herdarão. A diferença de 129 vezes nunca teve realmente a ver com o código. Trata-se de um barramento de memória conectado a um cabo de disco, que aparece como um número que você pode visualizar na tela. Verifiquei a lhama. O lado C++ apareceu duas vezes porque 129 parecia um erro aritmético nas minhas anotações.
+
+Não era. É isso que custa uma viagem de carro. Você pode observar isso no gráfico de utilização. Durante a decodificação do Ollama, a GPU passa a maior parte do tempo ociosa, aguardando que o disco rígido lhe forneça a próxima camada. A parte mais cara da sua máquina está estacionada. Alguém no tópico do Hacker News
+
+fez a pergunta óbvia e a fez melhor do que eu teria feito. Nesse caso, por que se preocupar com a GPU? O desempenho da CPU seria o mesmo se o gargalo estivesse na largura de banda do SSD. O autor respondeu na discussão: "A GPU ainda realiza os cálculos aritméticos muito mais rápido do que uma CPU, e carregar dados da RAM é melhor do que carregar de um disco rígido. Portanto, você deve aproveitar ao máximo todos os recursos disponíveis. O
+
+gargalo mudou de lugar. Ele não desapareceu." O contra-argumento mais contundente naquela discussão veio de alguém com um M2 Max e 64 GB de memória unificada. Modelo comparável de 4 bits usando MLX 42 tokens por segundo. Mesma ideia, conclusão oposta.
+
+Integre o modelo à memória rápida e você ganhará 80 vezes. Tudo bem. Que seja uma luta justa. Entregue o arquivo llama.cpp à tarefa para a qual o OLM foi criado. Um modelo muito maior do que
+
+qualquer coisa que você possua, reproduzindo conteúdo de um disco. Será que sequer tenta? Sim, de certa forma, e principalmente por acidente. Por padrão, o arquivo llama.cpp mapeia a memória do arquivo GGUF.
+
+Quando o modelo é maior que a sua RAM, o sistema operacional carrega os pesos do disco conforme eles são acessados. Não foi concebido como uma estratégia de descarregamento. É exatamente isso que o mapeamento de memória faz. Existe uma boa forma de medir isso. Em janeiro de 2025, alguém executou o DeepSeekR1 em 2 bits, com um arquivo de 212 GB em 96 GB de RAM e uma placa de vídeo 3090 transmitindo dados de um drive PCIe 5 a 8.000 tokens de contexto,
+
+cerca de um token por segundo. Executar oito gerações simultaneamente elevou a média para 2,08 tokens por segundo, porque enquanto um fluxo aguarda no disco, outro está sendo processado. Essa sobreposição é um recurso que o OLM não possui atualmente. Assim, mesmo no ambiente nativo do OLM , o llama.cpp é de duas a quatro vezes mais rápido. Mas veja o que foi preciso fazer para chegar
+
+lá. O modelo foi comprimido para dois bits por peso, e não quatro, mas dois. E o acidente tem limites rígidos. Em uma discussão em janeiro deste ano, um dos responsáveis ​​pela manutenção do arquivo afirmou categoricamente: "O arquivo llama.cpp não descarrega a carga para o disco deliberadamente."
+
+Desative o mapeamento de memória em um modelo maior que a sua RAM e ele não ficará lento. O programa para devido a um erro de falta de memória . A bandeira que as pessoas realmente procuram é a n c p u m o e, incorporada em agosto de 2025. Ela mantém uma combinação de modelos de especialistas na GPU e carrega os pesos dos especialistas na RAM do sistema. RAM, não disco.
+
+Problema diferente e números muito melhores do que esses dois. O arquivo llama.cpp também possui uma opção para configurar o cache. Defina o tipo de cache K e o tipo de cache V como Q8 e você terá aproximadamente a mesma quantidade de memória com uma pequena perda de qualidade. Até mesmo o problema de memória tem uma resposta de compressão daquele lado, o que nos leva à coluna onde o l l m tem um número e llama.cpp está em branco. Não era o tamanho do modelo,
+
+o que me surpreendeu. Comprimento do contexto. Considere um modelo com 8 bilhões de parâmetros e 100.000 tokens de contexto com precisão total. Os pesos são de 16 gigabytes. O
+
+cache de atenção tem 52,4 gigabytes. O cache tem mais de três vezes o tamanho do modelo e cresce a cada token gerado. o l l m executa isso. 6,6 gigabytes de memória de vídeo, 69 gigabytes de disco. O cache reside na unidade, sendo lido e gravado conforme a necessidade, com total precisão e sem cortes na parte inicial. O arquivo llama.cpp em 8 gigabytes
+
+tem um limite máximo de capacidade muito menor. Dois artigos independentes publicados nesta primavera chegam à mesma conclusão. Considere 32.000 tokens como sua meta em um cartão de 8 gigabytes. Isso já corresponde a cerca de 6,8 gigabytes em um modelo de 4 bits ou 8 bits. É provável que 64.000 pessoas entrem em
+
+colapso. Existe, portanto, um tipo de trabalho em que a comparação de velocidade deixa de funcionar porque um dos lados não o termina de todo. Um documento enorme, com precisão total, 8 gigabytes de memória de vídeo, sem nuvem porque o documento não pode sair do prédio. É exatamente para isso que o autor diz que serve. Contratos, registros regulatórios, histórico do paciente, um ano de arquivos de registro. Leia tudo
+
+de uma só vez e ganhe 500 fichas de resposta em menos de uma hora. Como descrição de produto, é excepcionalmente simples. O objetivo não é o bate-papo, e ele mesmo afirma isso na reportagem. Este é um caminho de execução para grandes passagens de contexto offline , não um substituto direto para o serviço. Uma ferramenta que indica onde ela não funciona está lhe fazendo um favor, o que nos leva a uma terceira métrica, e é essa que eu realmente usaria para responder à pergunta do título, não tokens por segundo, mas commits. Baixei os dois repositórios esta
+
+manhã. O arquivo llama.cpp havia sido marcado em cinco compilações diferentes nas últimas 48 horas, cinco. A versão mais recente foi lançada algumas horas antes de eu escrever esta linha, e a anterior a ela adicionou suporte à decodificação especulativa para um modelo lançado este ano. Ollama teve exatamente uma única alteração em todo o ano de 2026, há dois dias, a versão 1.0.4,
+
+descrita na mensagem como uma pequena atualização. Altera uma linha no arquivo do projeto, fixando a versão da biblioteca. A última alteração que mudou o comportamento do sistema ocorreu em 29 de novembro de 2025. Ou seja, há 8 meses. O roteiro que o autor publicou no lançamento, com 100.000 tokens de contexto em 12 GB e um
+
+algoritmo de cache melhorado para modelos de mistura de especialistas, nada disso foi implementado. 2.700 estrelas, e o trabalho parou. Há também uma questão que o projeto não respondeu. Alguém perguntou o quanto esse tratamento reduz a vida útil de um SSD (Sensorial de Superfície da Vida).
+
+O autor respondeu, e eu respeito a resposta: "Boa pergunta. Preciso pesquisar sobre isso." Quase um ano depois, ainda não há nenhum dado sobre amplificação de escrita em toda a documentação. Um artigo de agosto de 2025 apresentou um argumento mais amplo contra toda a abordagem, e o título já diz tudo: "Descarregamento de SSD para Mistura de Pesos de Especialistas Considerado Prejudicial à Eficiência Energética". Remover pesos de um disco rígido consome mais energia (em joules) do que a economia que você faz com o hardware barato. Então, qual
+
+é realmente mais rápido? llama.cpp em todos os trabalhos onde ambos os mecanismos produzem um número, mesmo que por margens entre duas vezes e 130. Essa é a resposta, e nenhuma quantidade de ajuste de contexto a altera . Ollama nunca competiu nesse quesito.
+
+É uma prova funcional de que o dinheiro recebido por meio de chamadas telefônicas pode ser armazenado em um disco, e isso é algo útil de se comprovar. A ideia é mais interessante do que a taxa de transferência e, mais cedo ou mais tarde, alguém a implementará corretamente em C++. Eis como eu decidiria na prática. Se você quiser interagir com um modelo, instale o llama.cpp, quantize para KM de 4 bits, limite seu contexto a 32.000 tokens e pare de ler
+
+tabelas de benchmark. Se o modelo não se ajustar, ainda assim use llama.cpp. Experimente primeiro o ncpu-moa, depois deixe o mapeamento de memória paginar a partir de uma unidade NVMe e acostume-se com 1 a 2 tokens por segundo. Se você precisa de 100.000 tokens com
+
+precisão total em 8 GB e pode esperar, o OLM é atualmente a única opção disponível . Esse último grupo é pequeno. Isso também é real e, enquanto o llama.cpp não colocar o cache de atenção no disco corretamente, esse grupo é a única razão da existência deste projeto . Os dois repositórios estão linkados abaixo.

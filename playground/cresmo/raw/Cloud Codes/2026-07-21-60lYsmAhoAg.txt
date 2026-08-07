@@ -1,0 +1,150 @@
+---
+video_title: "Best Local Coding Model Right Now"
+video_id: 60lYsmAhoAg
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=60lYsmAhoAg
+video_date: 2026-07-21T16:26:17+00:00
+video_description: |
+  Are you still paying monthly subscription fees for cloud coding agents when the best local AI coder now fits on a single used RTX 3090 GPU? Discover why the new Qwen3.6 27B model is the ultimate free, private, and highly reliable alternative to Claude Sonnet and GitHub Copilot.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system architecture of the ultimate local coding stack. We explore the 2026 r/LocalLLaMA consensus: why "Dense" models like Qwen 27B perform more reliably than massive Mixture-of-Expert (MoE) models on long, agentic coding tasks. We dive deep into how 4-bit GGUF quantization (via Unsloth) crushes massive models so they fit perfectly into 24GB of VRAM, and why "Agent Swarms" (running 12 smaller models in parallel via vLLM) is replacing single-model inference. 
+  
+  Finally, we give you the brutal truth on hardware: why MacBooks struggle with memory bandwidth, why dual AMD R9700s are the new budget kings, and exactly how to wire Qwen3.6 directly into your IDE using Ollama, Aider, and Claude Code to build an air-gapped, zero-cost AI pair programmer.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Free Cloud-Beating AI Model
+  1:03 - The Reliable Default: Why "Dense" Models Win
+  2:21 - GGUF & 4-Bit Quantization Explained (Unsloth)
+  3:23 - The Big Context Pick: Qwen 3.5 A3B & Expert Offloading
+  4:34 - AI Agent Swarms & Parallel Processing (vLLM)
+  6:03 - The Rivals: Gemma 4, MiniMax, & DeepSeek
+  7:30 - Multi-Modal: Qwen3-VL & PaddleOCR
+  8:13 - The Harnesses: Pi & Hermes
+  8:44 - The Hardware Truth: Macs, VRAM & The PCIe Bottleneck
+  10:11 - Used RTX 3090s vs AMD R9700s
+  11:00 - The Honest Limits of Local AI
+  12:01 - Tutorial: How to Run it (Ollama, llama.cpp, vLLM)
+  13:12 - Why Local AI is the Only Option for NDAs
+  14:23 - Summary: The Ultimate Local AI Stack
+  
+  #localai #qwen #softwareengineering #machinelearning #rtx3090 #ollama #systemdesign #cloudcodes #artificialintelligence #llm
+  
+  User Queries: 
+  how to run qwen 3.6 27b locally
+  best local llm for coding 2026
+  qwen 3.6 vs claude 3.5 sonnet coding
+  how to use aider with local models ollama
+  rtx 3090 local ai setup tutorial
+  claude code local model proxy vllm
+  how gguf 4-bit quantization works unsloth
+  swe bench verified local models
+  stop paying for github copilot local alternative
+  macbook unified memory vs nvidia vram bandwidth ai
+---
+O melhor modelo de codificação local em 2026 não é aquele com o maior número ao lado do nome. É o modelo de 27 bilhões ao qual as pessoas que trabalham com isso o dia todo continuam voltando. Quinn 3.6, o 27B. Suficientemente pequeno para acomodar uma placa gráfica usada.
+
+Suficientemente bom para confiar em trabalhos reais. No subreddit r/o llama, as pessoas que testam a ferramenta em situações reais continuam usando as mesmas duas palavras: "mais confiável", mas "melhor" é uma armadilha. Depende do que está instalado no seu computador e do que você está fazendo com ele. Então, li uma semana daquele subreddit e selecionei a melhor opção para cada tipo de configuração. E a manchete é esta. Em 2026,
+
+não há uma única resposta. Vários modelos são realmente bons. Agora, Quinn, Gemma, Miniax, DeepSeek, todos locais, todos gratuitos para baixar, todos bons em coisas diferentes. Vou mostrar onde cada um se destaca, o hardware necessário e onde tudo ainda falha. Tenha quatro coisas em mente enquanto prosseguimos. o próprio modelo, o
+
+grau de quantização, o dispositivo que o envolve e o cartão por baixo. Todas as opções neste vídeo são, na verdade, uma dessas quatro. Comece com aquele que continua ganhando. O Quinn 3.627B é um modelo denso, e essa característica é o motivo pelo qual ele continua superando modelos muitas vezes maiores que ele em uso real. Uma palavra
+
+vai se repetir neste vídeo. Confiável. Não se apegue a isso. Envie as capturas de tela dos testes de benchmark. A confiabilidade é o que realmente diferencia esses modelos no trabalho prático. Dense significa que cada um
+
+desses 27 bilhões de parâmetros é acionado em cada token. O modelo pensa com todas as suas forças em cada palavra. Um usuário o executa com precisão de 8 bits para ler diagramas de circuitos complexos e o considera, de longe, o modelo mais confiável que já experimentou para obter resultados corretos. É isso que significa confiável na prática. Não é o resultado de teste mais impressionante, mas é um resultado em que você pode confiar quando configura uma tarefa, se afasta e volta mais tarde. E quando essas
+
+pessoas falam em programação, não estão se referindo ao recurso de autocompletar. O modelo lê seus arquivos, escreve uma edição, executa seus testes, vê o que falhou e tenta novamente. Um verdadeiro loop. Esse ciclo é o motivo pelo qual um modelo local agora pode realizar um trabalho significativo por conta própria. Muitos modelos mais rápidos cortam esse caminho. Eles disparam apenas uma fração de
+
+si mesmos por token mais rapidamente, mas apresentam problemas em questões longas com várias etapas, onde um modelo denso se mantém preciso. Nada disso era verdade há alguns anos, quando os modelos locais eram brinquedos. O que mudou foi que os modelos abertos alcançaram o hardware que as pessoas já possuíam e as ferramentas acompanharam ambos. E o 27B cabe em uma única placa de 24 gigabytes, uma 390 usada. A versão de 4 bits ainda deixa espaço para cerca de 128.000 tokens de contexto. Um
+
+módulo inteiro de código armazenado na memória de uma só vez. Você baixa tudo como um único arquivo, um GGUF, sem instalador, sem conta, sem tela de login. Aquele arquivo no seu SSD é o modelo inteiro, pronto para ser carregado. O truque que faz com que funcione é a quantização. O modelo bruto armazena cada peso em 16 bits. A quantização de 4 bits
+
+comprime cada peso para aproximadamente um quarto do seu tamanho original. E um bom plano praticamente não perde qualidade ao fazer isso. Você verá rótulos como Q4, Q6, Q8. É assim que a pressão é forte. 8 bits para máxima precisão. Use
+
+4 bits quando quiser que aquela janela de contexto grande caiba ao lado do modelo. E você não está quantificando isso por conta própria. Um grupo chamado Unsloth publica builds prontos de quatro e cinco bits no Hugging Face na semana em que um modelo é lançado e que o desenvolvedor do Quinn 3 5 A3B1 jura ser exatamente um desses. Agora imagine que seu trabalho é maior do que um único cartão pode conter. É aqui que a comunidade muda para uma Quinn diferente.
+
+A família 3.5 possui um modelo de 35 bilhões chamado A3B. Existem 35 bilhões de parâmetros de conhecimento, mas apenas cerca de 3 bilhões deles são ativados em um determinado token. Trata-se de uma mistura de modelos de especialistas. Imagine uma grande equipe onde apenas os dois ou três especialistas realmente necessários aparecem para cada palavra. A parte inteligente é onde
+
+o resto da equipe espera. Os recursos ociosos ficam armazenados na memória RAM comum do sistema, e apenas a pequena parcela ativa precisa estar na sua GPU. Portanto, um modelo muito grande para a sua placa ainda pode funcionar nela. Os especialistas transmitem dados pelo barramento à medida que são chamados, e a GPU permanece alimentada em vez de ficar sobrecarregada. E a memória RAM do sistema é barata. Aumentar a capacidade para 64 GB
+
+pode ser o investimento mais inteligente de US$ 50 que você fará aqui. É isso que permite que um modelo grande funcione bem em um cartão pequeno. Um dos desenvolvedores foi bem claro. Executando Quinn 3 5 A3B em dois 3090s. Nenhuma outra opção que caiba em 64 gigabytes funciona tão bem para o projeto deles. E se você construir agentes com base nisso,
+
+uma configuração se torna mais importante que as outras. Chamadas de ferramentas paralelas. O mesmo usuário escreve tudo em letras maiúsculas. Para o trabalho de agente, essa é a diferença. Para ser franco, em relação à velocidade, um modelo local único não é instantâneo. Em 13.090,
+
+você está vendo cerca de 37 tokens por segundo. Legível enquanto digitado, mas não tão rápido quanto o que se obtém da nuvem. O motivo pelo qual se arrasta é quase engraçado. O modelo escreve um token e, em seguida, relê tudo o que escreveu para produzir o próximo, estritamente uma palavra por vez. Assim, sua placa de vídeo cara passa a maior parte de cada etapa aguardando na memória em vez de processar os dados. É extremamente potente e,
+
+na maior parte do tempo, funciona em marcha lenta. Os profissionais param de lutar contra isso. Em vez de um único modelo responder lentamente, um usuário inicia 12 pequenos agentes Quinn simultaneamente por meio do VLLM. Enquanto um agente fica aguardando na memória, os outros processam os dados. A placa que estava ociosa de repente fica ocupada o tempo todo. Cada agente
+
+individualmente ainda processa 37 tokens por segundo. Juntos, eles chegam a 150. Você não acelerou nenhuma resposta. Você executou vários testes em paralelo e deixou o resultado final ser exibido. A contrapartida é que cada agente recebe uma pequena parcela do contexto, e não o quadro completo.
+
+Para uma dúzia de subtarefas de foco executadas simultaneamente, isso vale a pena. Para uma refatoração profunda, não. Existe também uma aterrissagem de manobra mais recente. Previsão de múltiplos tokens ou MTP. Em vez de tentar adivinhar uma única ficha, o modelo seleciona as próximas de uma só vez . Em seguida, ele verifica esse pequeno
+
+rascunho em uma única passagem e mantém cada token que acertou. Há pessoas que já o utilizam com o Quinn 3.6 em configurações personalizadas. Mesma resposta, com muito menos tempo de espera. E o ganho é maior em modelos densos como o 27B, precisamente aqueles que estavam deixando a GPU ociosa em primeiro lugar. Quinn é a opção padrão. Mas esse não é
+
+o único jogo. Outros três nomes surgem repetidamente nessas discussões. O Gemma 4 do Google. Os usuários consideram a versão 31B equivalente à Quinn 3 527B, e ela é realmente mais nítida em alguns aspectos. Leitura de caligrafia difícil, as tarefas complexas de OCR onde cada caractere conta. Mas existe uma pegadinha honesta.
+
+Uma pessoa utilizou a Gemma 4 durante uma semana e depois voltou para a Quinn. A qualidade era boa. Os travamentos e a formatação incorreta das chamadas da ferramenta foram o que destruíram a confiança deles. Esse é o verdadeiro teste para um modelo local. Será que vai funcionar sem supervisão durante a noite e ainda estará funcionando pela manhã?
+
+A estabilidade supera uma pontuação ligeiramente maior sempre que você não mexe no que não está fazendo. Depois, Miniax. O modelo 2.7 conquista o título de melhor avaliação em toda a discussão. De longe, o melhor modelo local que um usuário já havia executado . A versão 3.0, a maior, é de
+
+qualidade de ponta, custando mais de 200 bilhões . Realmente excelente e com muito hardware para instalar. O que as pessoas gostam no Miniax é a sensação ao toque. Versões menores que respondem com um refinamento semelhante a um soneto, sem a necessidade de uma conta de memória gigantesca. E o Deepseek V4, um dos favoritos no Vision e em sistemas de agentes. Uma pessoa utiliza a
+
+versão flash V4 e executa o código Claude inteiramente em modelos locais, por baixo da fiação que já conhece. Portanto, isso inverte o conselho habitual. Um modelo de mistura grande parece mais rápido no papel, mas para trabalhos com agentes de longa duração, o modelo denso 27B permanece visivelmente mais preciso. Dense é a escolha que as pessoas sempre voltam a fazer. Se o seu trabalho for visual, a escolha muda novamente.
+
+Para imagens e vídeos, as pessoas consideram o Quinn 3VL o melhor que já testaram. Sua vantagem reside na compreensão temporal, em acompanhar as mudanças entre os quadros, e não apenas em analisar uma única imagem estática. Essa é a parte difícil do vídeo. E continua a funcionar. E é uma família, não um modelo único. Quinn 3VL
+
+mais as variantes de visão 3.6. Assim, o mesmo ecossistema abrange tanto o seu trabalho com texto quanto o seu trabalho com imagens. Para documentos, existe uma combinação inteligente. Execute o OCR (Reconhecimento Óptico de Caracteres) próximo ao modelo para obter uma leitura literal do texto real na página. A
+
+ferramenta OCR impede que o modelo de linguagem invente o que ele acha que a página dizia. Em seguida, você deixa Quinn estruturar tudo a partir de uma leitura limpa. Duas ferramentas, um sistema de comunicação confiável. Um modelo representa apenas metade da configuração. O que você coloca ao redor dele, o chicote de fios que o alimenta com arquivos, executa suas ferramentas e lê os resultados, determina o quão bem ele realmente funciona. Dois
+
+nomes se destacam. Pi, que as pessoas simplesmente chamam de o melhor. Na Hermes, um usuário a utiliza em conjunto com a Quinn 3.627B para programação e para manter todo o sistema em ordem. Outros executam o Lumara de código aberto ou seus próprios pipelines em Python. O modelo
+
+é o motor. O chicote de fios é o carro que você constrói em torno dele. Um ótimo motor num carro ruim não leva a lugar nenhum. Em um Mac, você não fica excluído de nada disso. Gemma 4B funciona rapidamente em processadores Apple Silicon sem qualquer quantização. Um usuário afirma que esse
+
+pequeno modelo de 4 bilhões de usuários tem um desempenho acima do esperado para tarefas de agentes em comparação com o MCP. Modelo pequeno, trabalhos pequenos, mas um agente local de verdade, trabalhando com um laptop sem placa de vídeo. E a parte que mais me surpreendeu foi o hardware. A configuração que a comunidade realmente recomenda não é aquela que você imaginaria. Seu cartão escolhe seu modelo, e não o contrário . Portanto, antes de se deixar levar por qualquer
+
+modelo, veja o que realmente vem na caixa. Quem usa os modelos mais potentes quer de 32 a 64 GB de VRAM e não tem papas na língua sobre como conseguir isso, distribuindo a memória entre várias GPUs, em vez de investir tudo em uma única placa gigante e cara. O motivo é a largura de banda da memória. A geração de texto não depende da capacidade computacional. Está limitado pela memória. O modelo inteiro é
+
+lido para cada token. Portanto, a velocidade com que você consegue mover dados define sua velocidade. É por isso que uma memória unificada máxima, por mais conveniente que seja, muitas vezes funciona muito lentamente e por que a memória dedicada de GPU de alta velocidade, em várias placas , tende a vencer a disputa de desempenho. Aqui existe uma aresta afiada. No momento em que um modelo ultrapassa a VRAM e entra no barramento PCIe, a velocidade cai drasticamente porque o barramento é muito mais lento do que a própria memória da placa.
+
+O objetivo principal é manter o modelo dentro da VRAM. E a placa que faz tudo isso pode ser uma GPU para jogos de 5 anos atrás , daquelas que as pessoas vendem depois de fazer um upgrade. Essa é a mudança silenciosa. A placa gráfica de ontem é a estação de trabalho de programação pessoal de hoje. A escolha em termos de custo-benefício me surpreendeu. Duas placas de vídeo AMD R9700, com
+
+32 GB cada, totalizando 64 GB, são consideradas a melhor opção em termos de custo-benefício para um computador doméstico. O problema é o pacote de software RockM da AMD , que ainda apresenta algumas arestas a serem aparadas. Se você quer que simplesmente funcione, a escolha continua sendo a Nvidia. Duas placas 590S ou um conjunto de 30090S usadas em CUDA. É daí que vêm as sequências mais estáveis ​​e menos complicadas . E a opinião
+
+contrária foi expressa categoricamente por um usuário. Não compre MacBooks ou Mac minis para isso, a menos que goste de desperdiçar dinheiro. A comodidade é real. A largura de banda necessária para suportar isso geralmente não existe. Não é que um Mac não consiga executar esses modelos. Pode. E
+
+para algumas pessoas, a simplicidade compensa. Em termos de custo-benefício, um computador com múltiplas GPUs simplesmente executa esses jogos mais rápido. Então, quando é que os 3,627 bilhões de dólares da Quinn realmente não são suficientes? A comunidade aqui é lúcida e a resposta é um tanto brutal. Para melhorar de forma mensurável suas habilidades de programação, você não precisa dar um pequeno passo adiante.
+
+Você chega a modelos com mais de 300 bilhões de parâmetros. E isso significa hardware empresarial, que fica caro rapidamente. Para a maioria das pessoas, esse salto não vale a pena. A maioria das pessoas nem consegue carregar um modelo desse tamanho em casa, e esse é justamente o objetivo deste vídeo. O ponto ideal não é a fronteira. É um
+
+modelo de 27 bilhões em um cartão que você realmente pode pagar, operado por alguém que sabe como alimentá-lo. Seja honesto sobre onde ocorre a quebra . As refatorações entre repositórios mais complexas , aquelas que abrangem 10 arquivos e exigem um planejamento prévio sólido, ainda favorecem claramente os modelos de nuvem de vanguarda. Mas os 80% que você realmente faz o dia todo — uma correção de bug, um teste rápido, uma função auxiliar, explicar um arquivo que você herdou — são tratados de forma limpa, localmente e sem custo algum . E local não significa sem supervisão. Você ainda lê a diferença
+
+antes de aceitá-la, o que é exatamente verdade para os modelos em nuvem. O modelo é elaborado, você decide. A configuração é menos trabalhosa do que você imagina. Existem, na verdade, três portas dianteiras para o mesmo modelo. Ola é um programa para baixar e executar com apenas um comando. O Llama.cpb oferece todas as
+
+opções de configuração de baixo nível, incluindo os novos sinalizadores MTP. E o VLLM é a solução ideal para atender toda uma equipe ou gerenciar um grande número de agentes. Um aviso: o primeiro carregamento lê aquele arquivo de vários gigabytes do seu disco. Então, aguarde alguns segundos para que ele acorde. Depois disso, ele permanece residente na memória, ativo e instantâneo, até que você o descarregue. E fique de olho
+
+naquela janela de contexto. Esses 128.000 tokens não são gratuitos. Todos os elementos carregados ficam armazenados no cache KV e consomem VRAM. Forneça ao modelo o módulo em que você está trabalhando, e não todo o seu repositório. As
+
+pessoas perguntam sobre a conta de luz. Uma placa como essa consome algumas centenas de watts, e somente enquanto está gerando energia ativamente. Use-o algumas horas por dia e o custo será irrisório comparado a uma assinatura mensal. O principal motivo para se preocupar é que seu código nunca sai da máquina. Nenhum repositório carregado, nenhum prompt registrado em um log no servidor de outra pessoa, nenhum e-mail de política no próximo mês alterando o que você pode fazer. Para
+
+trabalhos com clientes sob um acordo de confidencialidade, isso deixa de ser uma preferência e se torna a única escolha defensável. O código não pode vazar de uma máquina. Ele nunca desaparece e é um custo único. Um cartão usado, pago uma única vez, referente a uma assinatura que será cobrada mensalmente para sempre. Dentro de alguns anos, a operadora local simplesmente fica mais barata e nunca altera seus termos. Então, alinhe
+
+todo o campo e ele ficará limpo. Deseja a máxima qualidade e tem o hardware e o orçamento necessários. Você aluga um gigante na nuvem ou executa o Miniax 3.0 em casa. Trabalhando com visão ou documentos? Como usar o
+
+Quinn 3VL com o Paddle OCR em um laptop Mac? Gemma 4B construindo agentes em duas placas Quinn 3 5A 3B com chamadas de ferramentas paralelas ativadas, mas o padrão honesto para programação em hardware real, aquele ao qual a comunidade sempre retorna, é Quinn 3.627B 6 27B a 4 bits em um único 30090 encapsulado em um chicote como Pi ou Hermes. Voltando àqueles quatro elementos — modelo, quantitativo, estrutura e cartão — combine-os entre si e com seu trabalho real, e uma configuração local deixa de ser um compromisso e passa a ser a escolha óbvia. Aviso: esta classificação tem validade medida em semanas. Quinn
+
+já possui uma versão 3.7 em pré-visualização, baseada em uma API com pesos abertos previstos para uso posterior. No dia em que esses dados forem divulgados, toda a lista será reorganizada. Mas é exatamente essa rotatividade que faz com que a Local esteja vencendo. Você não precisa mais da permissão de ninguém nem de uma mensalidade para ter um assistente de programação profissional trabalhando na sua mesa. Se isso te poupou um
+
+fim de semana de testes, inscreva-se. Acompanho a dinâmica da pilha local, que ultimamente tem mudado toda semana. A seguir,

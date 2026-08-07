@@ -1,0 +1,150 @@
+---
+video_title: "Run \"Kimi K3\" on a Laptop With 32 GB Ram (No GPU Needed)"
+video_id: Et_I4fj1etk
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Et_I4fj1etk
+video_date: 2026-08-01T16:00:52+00:00
+video_description: |
+  Is it actually possible to run a 2.78-trillion parameter frontier AI model on a single consumer laptop with only 29 GB of RAM? Meet WASTE, a 6,000-line pure C engine built by SQLite Cloud founder Marco Bambini that streams Moonshot's Kimi K3 model directly off an NVMe drive at 0.50 tokens per second.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the storage architecture and systems engineering behind streaming 2.8-trillion parameter Mixture-of-Experts (MoE) models on consumer hardware. We explore how Kimi K3 activates under 4% of its weights per token (16 out of 896 experts per layer), how WASTE pins a 27 GB resident trunk in RAM while fetching 17 GB of expert weights off the NVMe drive for every single generated word, and why bypassing the OS page cache with O_DIRECT prevents catastrophic memory paging cliffs. You will see the physical bandwidth limits of Gen5 NVMe drives, learn why 3-bit Residual Vector Quantization (RVQ) keeps logits accurate without destroying drive endurance, and discover why this architecture changes the economics of overnight AI agent execution.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  0:00 - The 2.8 Trillion Parameter Laptop Experiment
+  0:56 - Introducing WASTE: 6,000 Lines of C
+  1:10 - What is Kimi K3? (Parameters & API Costs)
+  2:53 - How SQLite Architecture Solved Local LLMs
+  4:26 - 1,472 Disk Reads Per Token (17GB Per Word)
+  5:41 - Bypassing OS Page Cache & KV Compression
+  7:13 - The Memory Cliff: Why More RAM Makes it Slower
+  8:49 - The NVMe Physical Speed Ceiling (Gen5 vs USB)
+  11:00 - Does Reading 17GB Per Token Destroy Your SSD?
+  15:08 - Final Verdict: What Is This Actually Useful For?
+  
+  🔗 Repositories & Sources Mentioned:
+  • WASTE Engine (C Inference Engine): https://github.com/sqliteai/waste
+  • Deltafin Engine (Apple Silicon Port): https://github.com/gavamedia/deltafin
+  • Moonshot AI Kimi K3 Model Card: https://huggingface.co/moonshotai/Kimi-K3
+  • SQLite Cloud Project: https://sqlitecloud.io/
+  • Hacker News Launch Thread: https://news.ycombinator.com/
+  • Kingston SSD Endurance & TBW Specs: https://www.kingston.com/
+  
+  #kimik3 #waste #localai #cprogramming #nvme #systemdesign #cloudcodes
+  
+  User Queries:  
+  waste c engine kimi k3 local setup
+  run kimi k3 2.8 trillion parameter model on laptop
+  moe expert streaming nvme ssd local llm
+  sqlite cloud marco bambini waste inference engine
+  how to run large moe models with low vram ram
+  o_direct fnocache page cache bypass llm inference
+  residual vector quantization 3bit kimi k3
+  nvme sequential read bandwidth limit local ai
+  kimi k3 waste vs deltafin performance benchmark
+  cloud codes waste kimi k3 local ai breakdown
+---
+2,78 trilhões de parâmetros, o maior conjunto de pesos abertos já publicado e executado em um único laptop, não uma cópia reduzida, nem uma cópia editada. O ponto de verificação real que a Moonshot divulgou, mostrando o funcionamento real em um MacBook Pro. Ele precisa de 29 GB de RAM para iniciar, menos do que muitos computadores para jogos têm ociosos neste momento , e é lento. Meio token por segundo, cerca de 30 segundos para pronunciar a frase que você acabou de me ouvir dizer. Então, por que esse repositório conseguiu 400 estrelas em 4 dias e chegou à página principal do Hacker News? Três números explicam tudo.
+
+29, 17 e 0,5. Guarde-os. 29 é o piso RAM, o número que o título vende. 17 é o número que o título omite , 17 GB. Essa é a quantidade de dados que esse mecanismo lê do seu SSD para produzir uma única palavra por token, não por prompt, não por sessão. 92 camadas, 16 especialistas em cada uma, tudo
+
+obtido do disco. O motor gráfico é chamado de "lixo", 6.000 linhas de C. Sem Python, sem CUDA, sem BLAS, apenas um binário e um arquivo no seu disco rígido. Um desenvolvedor escreveu isso em 4 dias, começando 2 dias depois que os pesos foram divulgados publicamente. Deixe-me
+
+mostrar como funciona. Comece pelo modelo, porque é por causa dele que tudo isso é difícil. Kimmy K3 é uma mistura de especialistas, com um total de 2,8 trilhões de parâmetros, mas apenas cerca de 104 bilhões deles são acionados para qualquer token específico. 93 camadas, 896 especialistas por camada, dos quais o roteador escolhe 16. A Moonshot anunciou isso em 16 de julho e divulgou os pesos em 27 de julho.
+
+Um milhão de tokens de contexto e uma licença personalizada com uma cláusula de receita incluída; portanto, chamemos de pesos abertos em vez de código aberto. O download tem 1 terabyte e meio, distribuído em 118 arquivos. E não é uma mera curiosidade. Em termos de compatibilidade de navegação , lidera o ranking com 91,2. O Terminal Bench 2.1, com 88,3 pontos, está a meio
+
+ponto dos melhores modelos fechados. Perde a coroa da programação para Fable 5 e GPT 5.6, mas está na disputa, e é isso que faz a conta do hardware pesar no bolso. Para executar o K3 da mesma forma que o Moonshot o executa, você precisa de 8 placas B300S, cerca de 2,3 terabytes de memória de vídeo. As próprias notas de implantação sugerem 64 aceleradores. O
+
+orçamento do pessoal do andar é de 8 H100S. Alugue 16 H200S pelo preço de mercado e você gastará cerca de US$ 66 por hora, ou cerca de US$ 48.000 por mês, ou dispense o hardware e pague pela API deles a US$ 15 por milhão de tokens de saída. Os pesos chegaram no dia 27 de julho. Este repositório foi criado no dia 28 às 21h UTC. Um
+
+dia depois, quatro dias depois disso, estava na página principal, e o código ainda estava sendo reescrito por baixo. Aqui está o cartão, exatamente como o GitHub me forneceu, Apache 2.0, escrito em C. Três colaboradores. Essa descrição é toda a proposta, e o vídeo inteiro é um teste para verificar se ela se sustenta. Marco
+
+Bambini escreveu 127 dos 130 commits. Ele fundou o SQLite Cloud e o SQLite.ai, então estamos falando de um especialista em bancos de dados que está entrando no mundo da inferência, o que acaba sendo importante, porque todo o projeto é um projeto de armazenamento. Agora, o segredo, que começa com algo verdadeiro em qualquer grupo de especialistas. O modelo ativa cerca de 4% de si mesmo por token. Ter 16 especialistas
+
+em um total de 896 representa menos de 2% dos especialistas em qualquer camada. Os outros 880 ficam lá sentados sem fazer nada. O arquivo readme explica isso melhor do que eu conseguiria. Quase todo esse peso está ocioso a qualquer instante, e o peso ocioso não precisa estar na memória. Essa frase representa o produto inteiro. Tudo o que vem depois disso é
+
+engenharia, então o motor divide o modelo em duas partes. 27,28 GB permanecem residentes na RAM permanentemente. Os embeddings, as camadas de atenção, os roteadores, o cabeçalho de saída, quantizados para 4 e 8 bits. Todo o resto fica armazenado no disco rígido e é acessado assim que o roteador solicita. E esse tronco residente ocupa quase todo o andar da RAM. 29,05 GB com 4.000 tokens de
+
+contexto, sendo 27 deles o tronco principal. O motor se recusa a ligar abaixo desse nível, o que é uma atitude incomumente disciplinada para um software. Uma ressalva que o título omite. Esse piso equivale a 4.000 fichas. Aumente
+
+para 128.000 e passa a ser 35,6. Para usar todos os milhões de tokens de contexto que o K3 anuncia, você precisa de 83 GB de RAM. O número 29 GB vem com uma breve conversa anexada. Aqui está um token de ponta a ponta. O roteador é executado, seleciona seus
+
+16 especialistas, o mecanismo os lê do disco, multiplica e passa para a próxima camada. Em seguida, repete esse processo mais 92 vezes antes que um único caractere apareça na sua tela. 16 especialistas * 92 camadas = 1.472 leituras. Cada uma delas é uma verdadeira viagem ao SSD. Somando os bytes, obtemos 17
+
+GB. Esse é o preço de uma palavra. É aqui que o instinto para lidar com bancos de dados se manifesta. Cada registro especialista armazena suas matrizes de abertura e fechamento de portões adjacentes umas às outras, alinhadas a 4 KB. Assim, o encaminhamento para um especialista custa exatamente uma leitura, não três, nem uma busca por matriz.
+
+Essa decisão de layout vale mais do que qualquer engenhosidade na montagem das linhas. Os especialistas são comprimidos ao máximo para reduzir o tamanho da leitura. Quantização vetorial residual . Três estágios de 256 livros de códigos de entrada em vetores de oito dimensões, resultando em três bits por peso. O projeto Moonshot treinou o modelo com treinamento que leva em consideração a quantização nos especialistas, e é por isso que ele sobrevive . E a matriz completa não é reconstruída
+
+na memória. O motor multiplica diretamente a partir dos livros de códigos. Crie uma pequena tabela de produtos escalares parciais uma única vez, e cada linha de especialista se tornará três consultas à tabela e duas adições. Não há etapa de descompressão a ser paga. Em seguida, faz exatamente o que iniciou a discussão no Hacker News. Ele rejeita o
+
+cache de páginas do sistema operacional. F, sem cache no macOS, O_DIRECT no Linux, sem buffer no Windows. Cada leitura contorna o kernel, deliberadamente. Vale a pena citar o raciocínio. Com um contêiner menor que a RAM, o kernel armazenaria tudo em cache, e as taxas de acerto medidas dessa forma são uma ficção que não resiste ao contato com um modelo de 982 GB . Teste os resultados em um modelo pequeno, envie o produto
+
+para um modelo enorme, e seus números descreverão uma máquina que ninguém está usando. Resumindo, um cache que você não controla não é um cache; um mecanismo deve parar de solicitar memória antes que o sistema operacional comece a liberá-la . Se você já viu uma máquina começar a operar às 3h da manhã, já sabe por que essa linha está ali. A atenção exige a mesma disciplina. Ao incorporar uma projeção nos caminhos de consulta e saída, o mecanismo armazena em cache uma variável latente de 512 elementos em vez de chaves e valores completos. 11,25 GB de cache
+
+se tornam 0,21 GB, 53 vezes menores, e sem eles, a memória RAM não caberia na parte superior de um laptop . Então, no dia 31 de julho, um compromisso. Leia o próximo especialista enquanto calcula este. Duas threads leem antecipadamente, então o disco e a aritmética se sobrepõem em vez de se alternarem. Essa única alteração fez com que o K3 passasse de cerca de 0,32 tokens por segundo para 0,5, um aumento de 60% em um dia, graças à sobreposição de E/S com computação. Se
+
+você ler a postagem do blog do dia 30 e o arquivo readme do dia 1º, verá que eles divergem, e este commit explica o motivo. Isso indica exatamente que tipo de carga de trabalho é essa. 82,5% do tempo de decodificação é gasto no caminho do especialista. 53,5 % corresponde apenas à leitura do disco. A multiplicação de matrizes propriamente dita representa 20%, e toda a atenção é inferior a três.
+
+Então, este é um problema de armazenamento disfarçado de aprendizado de máquina, o que significa que os instintos usuais estão errados, e eu errei o próximo também. Dê mais RAM, armazene mais recursos em cache, leia menos o disco e aumente a velocidade. É óbvio que é assim que deveria funcionar. A tabela de benchmarks no repositório mostra o contrário, e é a tabela mais interessante de todo o projeto. 32 GB de orçamento te dão meio token por segundo. 46 resulta em 0,54,
+
+o melhor resultado do tabuleiro. 52 GB equivalem a 0,04. 58 resulta em 0,02. Leia aquela curva novamente. Aumentar o orçamento em dinheiro de 46 para 58 GB melhora a taxa de acerto, mas torna o motor do jogo aproximadamente 25 vezes mais lento. Mais memória, dramaticamente pior.
+
+Porque, a partir desse ponto, o sistema operacional recupera a memória. O macOS começa a paginar para o tronco (trunk), e os 27 GB que nunca devem sair da RAM acabam saindo da RAM. E agora cada token falha em sua própria atenção, aguardando no mesmo disco que já está saturando. Assim, o mecanismo reduz seu próprio orçamento em conjuntos de trabalho de 17 GB por vez, até que tudo caiba em 7/8 da memória física. Isso significa contornar um precipício que o sistema sabe que existe, em vez de otimizar o percurso para o melhor cenário.
+
+E, abaixo do conjunto de trabalho de um token, o armazenamento em cache deixa de ter qualquer significado. O cache de especialistas para este token é removido antes que o próximo token o solicite. Como o arquivo readme indica, a taxa de acerto não é baixa, é zero. Agora, a aritmética que define o limite máximo é minha, não deles. 17 GB por token significa que um token por segundo requer 17 GB por segundo de leitura sequencial contínua.
+
+Esse é o valor mínimo para uma ficha por segundo, não uma meta, um valor mínimo. Os SSDs NVMe mais rápidos que você poderá comprar em 2026 atingem cerca de 15 GB por segundo. Assim, mesmo com tempo de computação zero e um cache completamente vazio, o melhor disco rígido do mercado atinge um limite inferior a 9/10 de um token por segundo. O limite de hardware está exatamente onde o limite de software já está. Deseja 10 tokens por segundo, o que é mais ou menos legível? 170 GB por segundo. Isso significa que
+
+11 ou 12 unidades de armazenamento Gen 5 de última geração precisam entrar em ação simultaneamente antes mesmo de você comprar um único módulo de memória RAM. E nesse ponto você já montou um computador estranho e caro só para evitar comprar uma placa de vídeo. E tem que ser interno. Coloque o mesmo contêiner em uma caixa USB externa a 0,94 GB por segundo e um token levará 18 segundos. Essa é a diferença entre meio token por segundo e três tokens por minuto, e é por isso que o título diz NVMe em vez de SSD. No laptop em que a medição foi feita
+
+, o disco rígido interno processa 12,78 GB por segundo e o processador está utilizando cerca de 9,9 GB dessa quantidade, o que representa 77% da capacidade do hardware . Há muito pouco a ser explorado em termos de desempenho no código. Multar. Mas será este o modelo verdadeiro ou apenas uma imitação de má qualidade que se passa por outro modelo? Cada camada foi validada em relação a uma implementação de referência do PyTorch. Os
+
+logits finais concordaram em 3,6 * 10 elevado a menos seis. A torre de visão corresponde ao seu Oracle 2.3. Essas são diferenças de arredondamento de ponto flutuante . Tudo o que sair deste motor é o mesmo que sairia do original. Um revisor independente
+
+leu o código no Hugging Face e escreveu que os cálculos estão corretos, a conversão é precisa e o conjunto de testes valida os dados em relação aos oráculos do PyTorch. Sem chamadas de rede em nenhum lugar do mar. Para um projeto com apenas quatro dias de existência e que lida com um download de um terabyte e meio, isso é reconfortante. O mesmo crítico encontrou o outro lado da moeda. Esses especialistas de três bits apresentam um erro de cerca de 19,4% em relação aos pesos originais, contra 4% do formato próprio da Moon Shots. Os pesos
+
+realmente causam perda de peso. As respostas medidas nos logits sobrevivem de qualquer forma. Depois, há o próprio fio. 235 pontos, 96 comentários e duas objeções que merecem ser levadas a sério. A primeira foi direta.
+
+Um comentarista considerou a afirmação do título totalmente absurda e fez as contas. 115 GB de parâmetros densos com precisão nativa, mais 25 GB de especialistas ativos: não há como isso caber. Ele estava precificando um modelo não quantizado. O tronco é armazenado em quatro e oito bits, e é assim que 115 GB se tornam 27. E os especialistas ativos não seriam residentes.
+
+Esse é exatamente o objetivo. A objeção era aritmética contra um projeto que ainda não havia sido lido. A segunda objeção dizia respeito ao seu hardware, e é essa que você ouvirá sempre que esse assunto surgir. O argumento é que transmitir essa quantidade de dados vai destruir a vida útil do disco rígido. Não vai acontecer, e vale a pena saber o motivo. As
+
+classificações de resistência, TBW e DWPD, são definidas com base nos direitos, sendo derivadas dos ciclos de apagamento do programa que danificam a célula. As leituras não os consomem. Kingston, Kioxia e o artigo da CMU concordam. E outro comentarista na mesma thread chegou lá primeiro. Os pesos do modelo representam a carga de trabalho de leitura, não a de escrita. A questão da eletricidade é uma
+
+reclamação justa, sem dúvida. Um estudo de 2025 argumenta que o descarregamento de dados em SSD (Single Storage and Datalock) a partir de uma combinação de especialistas consome aproximadamente 12 vezes mais energia por token do que manter os pesos em memória de alta largura de banda. Você está trocando o custo de capital de outra pessoa pela sua própria conta de energia. Um comentarista calculou o custo do laptop em cerca de US $ 5 por milhão de tokens em eletricidade, considerando um consumo contínuo de 42 W. A API cobra US $ 15 por milhão de tokens de saída. Portanto, é
+
+mais barato se você atribuir valor zero a 550 horas de espera, porque meio token por segundo equivale a 22 palavras por minuto. Você lê a uma velocidade aproximada de 238 palavras por minuto. Uma resposta de 500 palavras leva 22 minutos para chegar, e você verá a maior parte do processo acontecer, palavra por palavra. O mesmo modelo na API própria da Moonshot processa cerca de 35 tokens por segundo, 70 vezes mais rápido. Essa lacuna representa todo o comércio, falando de forma clara e direta. Você
+
+não está comprando velocidade, está comprando o fato de que o programa roda em um hardware que você já possuía, sem precisar sair do computador. Um detalhe humano antes do veredicto. Metade da thread se acumulou no arquivo readme para que ele fosse lido como se um modelo de linguagem o tivesse escrito. O autor respondeu que escreveu uma linguagem de programação manualmente e agora usa modelos para escrever um código melhor e mais rápido. O fato de ambas as coisas serem verdadeiras ao mesmo tempo é muito típico de 2026.
+
+E agora, a parte que o título pulou, que eu acho que é a parte mais útil. Este não é o primeiro projeto a fazer isso, e não é o único. O Deltafin tem mais estrelas que o Waste e também executa o K3 completo em um único dispositivo, com cerca de 114 GB residentes e 25,8 GB lidos por passagem. Obteve uma média de 0,266 tokens por segundo em um M1 Max. Assim, o Waste lê 34% menos por token e funciona aproximadamente duas vezes mais rápido em chips mais recentes. Mais rápido
+
+e mais enxuto, não em primeiro lugar. O arquivo readme aborda a questão com cautela, e o tópico encontrou um contraexemplo em poucas horas. O cenário geral é mais complexo do que um único tópico pode sugerir. O OLLM atinge exatamente a mesma taxa de meio token por segundo ao transmitir um modelo de 80 bilhões de parâmetros para uma placa gráfica de 8 GB. Mesmo número, um modelo 35 vezes menor, gargalo completamente diferente . O K Transformers obtém 13,7
+
+tokens por segundo em um modelo de 671 bilhões de parâmetros, o que parece ser a melhor opção até você analisar as especificações do hardware. 382 GB de DRAM e duas CPUs de servidor. O arquivo llama.cpp consegue executar quatro instâncias e meia nessa mesma máquina. Essa também não é uma ideia nova. Em
+
+2023, a FlexGen executou um modelo com 175 bilhões de parâmetros em um único T4 de 16 GB a uma taxa de aproximadamente um token por segundo, e na época as pessoas também chamaram isso de truque de mágica. Três anos depois, este modelo é 16 vezes maior e opera com metade da velocidade. Os modelos cresceram 16 vezes e a técnica se mostrou eficaz. Essa linha de tendência é o que realmente importa aqui, e aponta para algum lugar, não sendo específica do K3. O autor utiliza o mesmo mecanismo em um modelo com 48 bilhões de parâmetros e obtém 10,7 tokens por segundo em um contêiner de 19 GB usando 1,87 GB de RAM.
+
+Essa não é uma demonstração. Você poderia usar isso hoje. Então, para que serve exatamente? Não é bate-papo. Algo para o qual você envia uma pergunta difícil e lê pela manhã. Um
+
+agente que tem a noite toda livre. A própria descrição do autor é o resumo mais justo. O interessante não é a velocidade, mas sim o fato de que tudo está ao alcance . Só mais uma coisa, porque diz muito sobre tudo isso. Ele publicou este repositório no Hacker News duas vezes. A
+
+primeira vez, dois dias antes, com um título que descrevia a ideia. Obteve sete pontos e três comentários. Mesmo código, mesmo autor, mesma semana. A segunda postagem começou com os números em vez da ideia e obteve 235 votos. Um comentarista da postagem anterior escreveu: "Que pérola que não apareceu na página principal." O modelo que precisa de 64
+
+aceleradores agora também funciona em um laptop. Seriamente. Ambas as afirmações são verdadeiras ao mesmo tempo, e apenas uma delas era verdadeira há um mês. Se o seu computador tiver 32 GB de espaço livre e um disco rígido interno rápido, o obstáculo será um download de 1,5 TB e algumas horas de paciência. Isso é um desperdício. Os links para o
+
+repositório, o tópico e o cartão do modelo estão na descrição. Diga-me o que você executaria durante a noite com meio token por segundo.

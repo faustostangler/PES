@@ -1,0 +1,107 @@
+---
+video_title: "CUDA on AMD (ZLUDA): How a Weekend Project Broke Nvidia's Monopoly"
+video_id: TRoOflwNagg
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TRoOflwNagg
+video_date: 2026-07-30T19:30:12+00:00
+video_description: |
+  Paying the massive Nvidia hardware tax just to run CUDA-dependent AI models like llama.cpp and vLLM on your local machine? Discover how ZLUDA v6, an open-source Rust compiler, dynamically translates unmodified CUDA 13.1 binaries and PTX instructions to run natively on AMD Radeon GPUs using ROCm equivalents like rocBLAS and MIOpen.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this architectural breakdown, we expose how a single developer's weekend project cracked Nvidia's 19-year software moat, allowing AMD cards to run large language models at near-native speeds without recompiling the source code. We dive into the physical mechanics of the ZLUDA patched LLVM compiler, the reality of running 32-bit PhysX and Blender on AMD hardware, and the brutal truth about why PyTorch support is still incomplete (and why unoptimized math libraries can cause a 1000x performance drop).
+  
+  Whether you are pricing out a 24GB GPU for local machine learning or waiting for AMD's unified UDNA architecture, this guide reveals exactly what ZLUDA can run today and when you still need to pay the Nvidia tax. If you found this technical deep-dive into GPU architecture and AI infrastructure helpful, drop a like and subscribe!
+  
+  ⏱️ TIMESTAMPS:
+  ⏱️ TIMESTAMPS:
+  00:00 - The Nvidia Tax & ZLUDA's Promise
+  00:53 - The Wall (7.5 Million Locked Developers)
+  01:45 - The Translator (How ZLUDA Converts PTX)
+  03:06 - The Proof (llama.cpp, Blender & PhysX on Radeon) 
+  04:25 - Three Lives (Intel, AMD, and Open Source) 
+  05:24 - The Catches (PyTorch, Katago & Legal Threats) 
+  06:46 - The Verdict (SCALE, UDNA & The Future of AMD) 
+  
+  🔗 Resources Mentioned:
+  ZLUDA Repository: https://github.com/vosen/ZLUDA
+  
+  #zluda #cuda #amd #nvidia #rocm #llamacpp #machinelearning #gpuarchitecture
+  
+  User Queries:
+  how to run cuda code on amd radeon gpu
+  zluda v6 setup tutorial for llama cpp
+  nvidia cuda vs amd rocm performance benchmark
+  run pytorch vllm natively on amd graphics card
+  zluda ptx compiler llvm explained
+  best cheap 24gb gpu for local ai models
+  bypass nvidia cuda tax for local machine learning
+  amd udna architecture vs nvidia server gpus
+  spectral compute scale vs zluda cuda translation
+  compiling cuda 13.1 binaries for amd hardware
+---
+O verdadeiro diferencial da Nvidia nunca foram os chips. É CUDA. Um projeto de código aberto chamado ZLuda executa programas CUDA sem modificações em placas AMD. Sem recompilação, sem portabilidade. Você coloca os arquivos do ZLuda ao lado do aplicativo e ele funciona. A versão 6 foi lançada em 29 de junho e é compatível com
+
+CUDA 13.1, o kit de ferramentas mais recente fornecido pela Nvidia. O principal deles, o llama.cpp, funciona praticamente na mesma velocidade que o próprio back-end nativo da AMD. O Blender está funcionando agora. O jogo antigo com PhysX funciona, mais ou menos.
+
+PyTorch está a caminho. É mais um projeto de fim de semana de um dos desenvolvedores. O financiamento acabou em março. Ambas as coisas são verdadeiras. Se você já pesquisou o preço de uma GPU para IA local, sabe o custo adicional. Mesma lembrança,
+
+fatura completamente diferente. Esta é a primeira rachadura real naquela parede. O que ZLuda executa, onde quebra, quem deveria se importar. O fosso, o tradutor, a prova, a desarticulação e as armadilhas. Começando pela parede. O CUDA foi lançado em
+
+2007. E venceu por um motivo banal. Foi a primeira, era gratuita e as universidades a ensinavam. Uma geração de pesquisadores aprendeu programação de GPUs nos termos da Nvidia , e seu código se tornou a base da IA ​​mundial. Os próprios registros da Nvidia contabilizam 7 milhões e meio de desenvolvedores CUDA, todos escrevendo código que roda exclusivamente em chips da Nvidia. O retorno representa cerca de 86%
+
+do mercado de GPUs para IA em data centers. Não porque todos os chips da Nvidia sejam superiores em especificações técnicas, mas sim porque o software que os executa tem a vantagem de jogar em casa. Eu diria que essa é a vantagem competitiva mais sólida do setor de tecnologia. As pessoas fazem portos. O PyTorch é fornecido com uma estrutura sólida e uma compilação que funciona depois de você enfrentar os drivers, as versões e as lacunas nas bibliotecas da AMD . A maioria das equipes analisa essa conta
+
+e acaba comprando a placa da Nvidia. Esse é o imposto. Reescreva metade dos seus kernels ou pague os preços da Nvidia e fique por aqui. Essas eram as duas opções. ZLuda é o terceiro. Então,
+
+o que é ZLuda fisicamente? No Windows, trata-se de um pequeno conjunto de arquivos DLL que você copia para a mesma pasta do aplicativo. No Linux, trata-se de uma biblioteca que o carregador detecta. O aplicativo ainda acredita que está chamando CUDA. Dentro de cada binário CUDA está o PTX, o conjunto de instruções portáteis da Nvidia . O compilador do ZLODA lê esse arquivo PTX e
+
+o recompila para a placa Radeon do seu computador em tempo real. Esse compilador é a parte mais complexa da engenharia, escrita principalmente em Rust. O ZLODA agora inclui sua própria versão corrigida do LLVM porque o compilador padrão da AMD tinha bugs que causavam falhas em código PyTorch real, e o ZLODA precisa de otimizações que a AMD não fornece. CUDA não é uma biblioteca única, é uma família. cuBLAS, cuDNN, cuFFT. O
+
+ZLODA mapeia cada um para o equivalente da AMD: ROCm BLAS, MIOpen, hipFFT. O aplicativo nunca percebe a substituição. Existe até uma ferramenta de pré-compilação que analisa uma pasta e traduz cada kernel dentro dela em paralelo, além de um cache, para que o custo da tradução seja pago apenas uma vez, e não a cada inicialização. No Windows, o programa principal é um carregador chamado ZLODA.exe, e fazer com que aplicativos reais aceitassem DLLs CUDA externas exigiu uma única solicitação de pull request que reescreveu 19.000 linhas de código. O ciclo de feedback é
+
+inteligente. O ZLODA pode registrar um rastreamento do seu aplicativo ao encontrar uma instrução não implementada . Você envia pelo correio e a peça que falta recebe prioridade. A maior parte dos avanços recentes do PyTorch ocorreu exatamente dessa forma. Agora, a prova. Desde
+
+janeiro, o llama.cpp é totalmente suportado, praticamente na mesma velocidade que seu próprio backend ROCm nativo. Isso funciona porque os cálculos matriciais complexos são executados nas bibliotecas da AMD de qualquer maneira. A camada de ZLODA acrescenta pouco em termos de custo. Essa frase importa mais do que parece. A forma mais popular de
+
+executar modelos locais, aquilo para o qual você realmente compraria a placa, agora funciona por meio do CUDA em hardware que nunca foi autorizado a executá-lo. O Blender entrou para a lista neste trimestre. O ZLODA passou a oferecer suporte básico a texturas, o suficiente para que o renderizador CUDA do Blender funcionasse em uma placa Radeon. E o mais estranho, o PhysX de 32 bits. Jogos antigos como Mafia 2 conseguem rodar os efeitos de física da Nvidia em uma placa AMD, em versão pré-alfa, com fluidos instáveis ​​e detritos reais.
+
+Existe uma lista completa de jogos com PhysX na PC Gaming Wiki e uma boa parte dela está disponível para compra. O processo de teste para o arquivo llama.cpp está documentado. Compile o arquivo llama.cpp com seu backend CUDA, aponte-o para Zloda e sua placa Radeon será tratada como uma placa compatível. Também acompanha o ritmo da
+
+Nvidia. O suporte para CUDA 13.1 foi incluído nas versões de janeiro, meses depois do próprio kit de ferramentas. O alvo se move, e Zloda se move com ele. PyTorch ainda está em desenvolvimento. A versão 6 traz uma série de
+
+correções para o PyTorch, incluindo funções de host para o VLLM, mas a equipe afirma categoricamente que o suporte robusto ao PyTorch ainda não está disponível. Zloda já morreu duas vezes. Tudo começou em 2020 como um projeto individual para executar CUDA em placas gráficas Intel, e funcionou, mais ou menos, antes de parar. Então a própria AMD financiou a desenvolvedora e a direcionou para a Radeon. Essa versão executava aplicativos reais, Blender, renderizadores e fotogrametria. Então a AMD
+
+desistiu e, em agosto de 2024, o código financiado pela AMD foi removido. A maioria dos projetos termina aí. Este retornou dois meses depois, com o código revertido para a versão anterior à AMD, recompilado do zero e direcionado para um novo objetivo: aprendizado de máquina. A versão 4 foi lançada na véspera de Ano Novo de 2024. A versão 5, em outubro passado, contava com um compilador offline e kernels traduzidos antecipadamente, não no lançamento. Versão 6 lançada em
+
+junho, totalmente compatível com CUDA 13.1. Então, em março, o dinheiro foi embora novamente. Zloda voltou a ser o projeto de fim de semana de Andre Nanex , a mesma pessoa que o iniciou em 2020. O repositório nunca parou de se movimentar.
+
+Simplesmente progredia em ritmo de hobby, em qualquer direção que ele achasse divertida. O que não funciona, comece com o KataGo, o motor de jogo de Go. Funciona milhares de vezes mais lento do que na Nvidia. Uma convolução possui um caminho rápido no cuDNN e um caminho ingênuo no MIOPEN da AMD, e Zloda não pode reescrever os cálculos da AMD para elas. PyTorch, como você já deve ter ouvido, é parcial. O VLLM
+
+é um alvo, e partes dele são incorporadas a cada versão, mas hoje você está compilando, coletando rastreamentos e enviando relatórios de erros. Isso é trabalho de entusiasta, não de produção. O ray tracing foi removido. O código óptico antigo foi apagado e não será restaurado. As placas Radeon anteriores a 2020 já estão disponíveis.
+
+E o suporte ao PhysX abrange apenas a versão mais antiga de 32 bits. Os jogos modernos da GameWorks são uma história diferente. O Windows funciona, mas a AMD causa problemas. As bibliotecas matemáticas oficiais do Windows estão uma versão atrasadas, e misturá-las com o runtime mais recente costumava causar travamentos sem aviso prévio . O ZLUDA agora resolve esse problema para você. E "quase nativo" descreve o arquivo
+
+llama.cpp, não todos os aplicativos. Quanto mais exótico for o seu uso de CUDA, maior a probabilidade de encontrar uma instrução não implementada e, consequentemente, registrar um problema no sistema de rastreamento de incidentes. O suporte é feito por meio de um servidor do Discord, não por um sistema de tickets. Se o seu aplicativo apresentar problemas, você poderá receber uma correção em uma semana, ou poderá se tornar a pessoa que o corrige. É assim que funcionam os
+
+projetos de fim de semana. Acima de tudo isso paira a questão legal. Os advogados da AMD já fizeram o ZLUDA desaparecer por 2 meses. Nada impede a Nvidia de testar a mesma alavanca. ZLUDA não é a única saída. Uma empresa chamada Spectral
+
+Compute vende o Scale. Ele recompila seu código-fonte CUDA nativamente para AMD. Mais claro no papel, mas você precisa da fonte. O ZLUDA executa o arquivo binário que você já possui. Quem deveria se importar hoje? Se
+
+você usa modelos locais e está procurando uma placa de vídeo, uma Radeon com ZLUDA acaba de se tornar uma opção viável. Se você precisa do PyTorch em produção, continue aguardando e acompanhando o repositório. Mais uma porta poderia se abrir. A AMD está unindo suas linhas de GPUs para jogos e data centers em uma única arquitetura, a UDNA. Um único alvo simplifica o trabalho do ZLUDA e pode permitir que as grandes placas de servidor voltem a ser consideradas. Ao diminuir o zoom,
+
+o ponto se torna maior do que um repositório. A vantagem competitiva da CUDA se manteve por 19 anos porque operar em qualquer outro lugar era impensável. Não é mais. Um desenvolvedor, durante os fins de semana, conseguiu colocar o arquivo llama.cpp lá. Fique de olho em duas coisas este ano:
+
+se o PyTorch deixará de ser um projeto que exige esforço para simplesmente funcionar, e se alguém voltará a financiar o projeto. Qualquer uma das opções altera os cálculos para quem compra uma placa de vídeo. Números para guardar na memória: CUDA 2007, 7 milhões e meio de desenvolvedores, uma única remoção, três vidas e uma versão seis que fala o CUDA mais recente em placas que nunca foram feitas para ouvi-lo. Resumindo, a IA local em sistemas AMD acaba de se tornar uma escolha sensata. O repositório está disponível no link abaixo. Assine a próxima
+
+atualização e confira o preço daquele cartão de 24 GB. Você já sabe qual.

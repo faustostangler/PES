@@ -1,0 +1,109 @@
+---
+video_title: "Run a 27B AI Model on Your Laptop & Phone (Bonsai 27B)"
+video_id: X5ku8GgfSj8
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=X5ku8GgfSj8
+video_date: 2026-07-20T09:00:10+00:00
+video_description: |
+  Can you run a massive 27-billion parameter AI model entirely offline on a smartphone? Normally, a 27B model (like Qwen 3.6) takes up 54GB of RAM and requires an expensive Nvidia GPU. But a new open-source model called Bonsai 27B uses "Ternary Weights" to crush the model down to just 4GB - allowing it to run at full speed on an iPhone with zero internet connection.
+  
+  🔔 Subscribe: 
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  In this video, Cloud Codes breaks down the system design of extreme AI model compression. We explore how PrismML replaced 16-bit floats with 1.5-bit Ternary values (-1, 0, 1), and why this method retains 95% of the model's intelligence compared to traditional 2-bit or 4-bit quantization. 
+  
+  We also dive deep into the hardware realities: how iOS memory limits force developers to get creative, how DSpark speculative decoding speeds up local inference, and why running an AI Agent locally on your phone is infinitely cheaper (and more private) than paying for an OpenAI or Anthropic API key. Finally, we give an honest verdict on what Bonsai 27B is actually good at, and where it still falls short.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The "Impossible" Smartphone AI
+  1:11 - The VRAM Wall: Why 27B Normally Can't Fit
+  1:52 - iPhone Hardware Memory Limits
+  2:34 - The 1.5-Bit Ternary Trick (-1, 0, 1)
+  3:35 - Why 2-Bit Quantization Usually Fails
+  5:27 - Bonsai 27B Benchmarks (Does it actually think?)
+  6:29 - Inference Speed: Tokens per Second on a Phone
+  7:17 - How DSpark Speeds Up Inference
+  7:52 - Why Local AI Agents are the Future
+  8:58 - The Honest Catch: Coding & Multi-File Tasks
+  
+  #localai #bonsai27b #qwen #machinelearning #systemdesign #artificialintelligence #softwareengineering #cloudcodes #llminference #hardware #apple #iphone
+  
+  User Queries: 
+  how to run ai on iphone offline
+  bonsai 27b local ai model
+  qwen 3.6 27b local tutorial
+  what is ternary quantization ai
+  how to shrink llm weights 2 bit
+  best local ai model for macbook m3
+  run large language models on phone
+  dspark speculative decoding tutorial
+  system design llm inference speed
+  stop paying for openai local alternative
+---
+Veja isto. Um telefone, em modo avião, sem nuvem, alguém lhe faz uma pergunta complexa de raciocínio, e ele pensa e responde. O modelo que faz isso possui 27 bilhões de parâmetros. O tamanho total do arquivo é de 54 GB. Está ocupando cerca de 4 gigabytes no telefone. Este é o Bonzai 27B.
+
+A ideia é quase ridícula. Ele armazena cada peso no modelo como simplesmente mais um, zero ou menos um. Ele é comercializado em dois tamanhos: uma versão de 7 GB para laptop e uma versão de 4 GB, compacta o suficiente para um celular. E aqui está a parte que não deveria funcionar. Ele mantém cerca de 95% da inteligência do modelo original porque não foi treinado um modelo novo. Eles pegaram o Qwen 3.6, um dos melhores
+
+modelos abertos, e recodificaram seus pesos para ocupar muito menos espaço. Os pesos são gratuitos, possuem licença Apache e foram disponibilizados em 14 de julho. Você pode baixá-los agora mesmo . Por que você deveria se importar? Os comandos nunca saem do dispositivo, não há fatura mensal e funciona mesmo sem sinal. E é o primeiro modelo com
+
+essa capacidade que realmente comporta um telefone. Não é uma demonstração de brinquedo, é o produto real no seu bolso. Então, deixe-me mostrar como eles conseguiram colocar 54 gigabytes no seu bolso e, em seguida, se essa coisinha ainda consegue pensar. Comecemos por definir o que é um modelo . Por dentro, são bilhões de números chamados pesos, os minúsculos botões que ele ajusta durante o treinamento. Pergunte
+
+algo a ela, e a resposta será apenas uma tempestade de cálculos aritméticos sobre esses números. Normalmente, cada peso é um número de 16 bits . Alinhando 27 bilhões deles, cada um com 16 bits, o arquivo fica com cerca de 54 GB. Isso é território de data center , nada que você possa simplesmente instalar em um laptop e totalmente inviável em um celular que vem com 8 ou 12 gigabytes de memória. As pessoas já reduzem o tamanho dessas coisas.
+
+A opção mais comum é a chamada versão de 4 bits , e para este modelo, isso ainda resulta em cerca de 17,6 gigabytes. Melhor, sem dúvida, mas pesado demais para um celular, pesado demais para a maioria dos laptops, e mal resolve o problema real. E um telefonema é uma porta de entrada muito mais perigosa do que o número bruto sugere. O iOS permite que um único aplicativo acesse apenas cerca de metade da memória física. Portanto, um iPhone de 12 GB na verdade oferece ao seu aplicativo cerca de 6 GB para funcionar. Tudo, o
+
+modelo, o espaço de trabalho temporário, precisa caber dentro disso. Fazendo esses cálculos, nenhum modelo completo de 27 bilhões jamais havia atingido o objetivo. Os bons eram de quatro a nove vezes maiores do que o orçamento permitia. Essa lacuna entre um modelo que valha a pena usar e um dispositivo que consiga suportá-lo é a barreira que a Bond Size se propôs a superar. A equipe por trás disso é uma startup chamada Prism ML, um grupo do Caltech, apoiado por Khosla, Google e Samsung. E eles vêm
+
+ruminando sobre um problema específico há anos. Como derrubar uma rede sem comprometer seu raciocínio interno . A ideia deles começa com uma pergunta direta. Qual a precisão necessária para medir um peso? Um número de 16 bits pode armazenar 65.000 valores diferentes. E
+
+acontece que, para a maioria desses pesos, você quase não precisa de nada disso. Então, eles descartam o número exato. Cada peso assume três opções: menos um, zero ou mais um. Considere isso como um não, um encolher de ombros e um sim. Trata-se de uma construção ternária, e aquele zero do meio está realizando mais trabalho do que aparenta. Três opções
+
+carregam apenas cerca de 1,6 bits de informação. Adicionando um número de escala compartilhado para cada grupo de 128 pesos, o custo real se estabiliza em 1,71 bits por peso. Compare isso com 16, e você estará armazenando o mesmo modelo em aproximadamente um nono do espaço. Concretamente, essa única alteração reduz o modelo de 54 gigabytes para cerca de 6 gigabytes de tamanho ideal, chegando perto de 7 gigabytes quando compactado para o hardware atual. Essa é a configuração do laptop, com 27 GB ocupados na memória comum. Isso também
+
+significa que agora é possível ter 27 módulos de qualidade Classe B em uma única placa de vídeo de 24 GB, com folga de sobra. Quer que seja ainda menor? Elimine completamente a opção intermediária. Que cada peso seja apenas menos um ou mais um, puro sim ou não, um único bit. Isso equivale a 1,125 bits por peso. O arquivo é compactado para
+
+3,9 gigabytes, e essa é exatamente a versão que cabe no telefone. E eles fazem isso em toda a rede, nas camadas de atenção, nos grandes blocos de propagação direta , nos embeddings e na camada de saída. Não existe nenhuma camada secreta de alta precisão escondida na parte de trás para sustentar a pontuação. Quando dizem "um bit", querem dizer que o cérebro inteiro é um bit. O que mantém isso vivo é essa pequena escala compartilhada. Os sinais de mais e menos indicam a
+
+direção em que cada peso exerce força. O número de 16 bits por grupo de 128 restaura o volume que todo o grupo deveria ter. Os manuais são baratos de armazenar. A divisão do volume sonoro é o segredo. Mais uma peça que as pessoas deixam passar. Ele consegue ver. Existe uma pequena
+
+torre de visualização aparafusada a 4 bits. Assim, o mesmo modelo de bolso lê capturas de tela, documentos e fotos tiradas com a câmera, não apenas texto. Ele só carrega quando uma imagem de fato aparece. Portanto, uma conversa fiada nunca compensa. Agora, o medo que você deveria ter. Aperte um modelo com tanta força que ele
+
+deve se desfazer. Uma secretária eletrônica com voz confiante que erra nas questões mais difíceis, mas soa exatamente tão segura quanto quando acerta. Portanto, este é o verdadeiro teste de tudo. E esse colapso é exatamente o que as compilações comuns de 2 bits fazem. Eles economizam espaço e depois esvaziam o raciocínio. O mais surpreendente é
+
+como eles conseguem esconder bem os danos em uma análise superficial. Em testes fáceis e curtos, eles ainda ficam ótimos. Uma compressão típica de 2 bits desse modelo atinge uma pontuação próxima de 89 em um teste de conhecimento popular. Você experimentaria por 2 minutos e acharia que estava tudo perfeitamente bem. Então você entrega trabalho de verdade . Em provas de matemática de nível competitivo, essa
+
+mesma configuração cai para 57 de 100. Em problemas de programação ao vivo, a pontuação é de 56. O teste de conhecimento permaneceu alto e mascarou o problema, mas o raciocínio em si já havia despencado. Bontai não racha ali, e esse é exatamente o objetivo. A mesma prova de matemática brutal, com média de 88. Programação ao vivo, na casa dos 80.
+
+Chamada de ferramentas, seguir instruções, visão, tudo isso em poucos pontos do original completo de 54 gigas. Isso preserva exatamente as habilidades que a negociação barata descarta. É também surpreendentemente honesto quanto ao seu próprio tamanho. Muitas construções rotuladas como de 4 bits são, na verdade, de 5 bits quando medidas. Muitos dos de 2 bits são quase de três. A
+
+versão de 1 bit do Bon Sai realmente tem uma média de cerca de 1 bit. O nome coincide com o arquivo, pela primeira vez. Existe até uma maneira simples de calcular isso: inteligência por gigabyte. Considere a inteligência da construção e divida pelo espaço que ela ocupa. Nessa métrica, o Bon Sai apresenta um desempenho mais de 10 vezes superior ao do modelo de precisão total e mais que o dobro do melhor squeeze convencional.
+
+Cada compra que você faz aumenta muito o seu nível de detalhamento . Dito de outra forma, é quase inacreditável. Isso permite obter 27 bilhões de respostas de classe em menos memória do que um modelo de precisão total de 2 bilhões exigiria. O modelo pequeno e meticuloso agora supera o grande e desleixado, show por show. E como todo o modelo reside na memória rápida, ele é muito rápido. Não se trata
+
+daquele outro truque local em que um modelo gigante transmite de um disco uma palavra dolorosa a cada poucos segundos. Todo o peso necessário já está ali. Assim, responde em um ritmo normal de conversa. Os números comprovam isso. Em um laptop Apple recente, a velocidade de digitação é de cerca de 26 a 66 palavras por segundo. Em uma placa de vídeo para jogos de alta qualidade
+
+, mais de 150. E no próprio iPhone, uma taxa constante de 11 por segundo, rápida o suficiente para ler confortavelmente enquanto a resposta é digitada. Eles chegaram a medir o custo da bateria. Em um iPhone, a compilação de 1 bit produz aproximadamente 672 palavras de saída para cada 1% de carga. Por palavra, executar o programa em um laptop resultou em uma eficiência energética cerca de 10 vezes maior do que responder a partir de uma GPU de um data center. Um modelo robusto que você pode
+
+deixar funcionando no trem sem se preocupar com o consumo da bateria. E não é um peixinho dourado. Ele possui uma janela de contexto de 262.000 tokens no dispositivo, o suficiente para inserir uma base de código inteira ou uma pilha de relatórios extensos de uma só vez. Isso mantém o preço acessível porque a maioria das suas camadas de atenção utiliza um design linear mais leve que não se expande à medida que a conversa avança.
+
+Ele também inclui um recurso de velocidade chamado DeepSpark. Um pequeno modelo auxiliar tenta adivinhar as próximas palavras em um bloco, e o modelo maior verifica todas elas de uma só vez, mantendo as que correspondem. Em uma placa de servidor com velocidade cerca de um terço maior, e considerando que o modelo principal ainda verifica cada token, a resposta é comprovadamente idêntica. Mas a maior recompensa são os agentes. O valioso trabalho em IA agora não se resume a uma única resposta. É um modelo que repete
+
+uma tarefa, chamando ferramentas e executando por um tempo antes de retornar qualquer resultado. Na nuvem, cada uma dessas centenas de etapas representa uma solicitação tarifada que transporta seus arquivos privados pela rede. Quando um modelo tão capaz como esse está instalado no dispositivo, essa matemática se inverte. Um ciclo de 100 etapas não lhe custa nada a mais, e nenhuma dessas etapas sai da máquina. Assistentes integrados que funcionam offline, que raciocinam sobre seus arquivos privados por meio de lógica, essa é a porta que o 4-gig 27B realmente abriu. E você não precisa
+
+escolher um lado. O padrão que as pessoas estão percebendo é uma divisão. Deixe que o modelo local lide com as etapas rotineiras, privadas e de grande volume gratuitamente, e ligue para um modelo de fronteira caro apenas para as duas ou três etapas realmente mais difíceis . Mais barato e mais privado ao mesmo tempo. E executá-lo não é nada de exótico. Os
+
+pesos são carregados por meio de ferramentas que você já conhece. llama.cpp, MLX da Apple, LM Studio, uma lhama em um Mac, um iPhone, um iPad ou uma caixa Nvidia. E existe uma API de pré-visualização gratuita, caso você queira apenas dar uma olhada antes de baixar qualquer coisa. Agora, deixe-me ser direto sobre a pegadinha, porque ela existe. Tarefas de codificação longas e com vários arquivos
+
+, o processo repetitivo de executar, testar e corrigir, ainda não são seu ponto forte. A equipe afirma que uma versão otimizada exatamente para isso é o próximo passo no planejamento. Mas, analisando a situação de forma mais ampla, fica claro que a linha divisória mudou. Um modelo moderno completo, com raciocínio, visão e uso de ferramentas reais, agora cabe no laptop em sua mesa e no celular em seu bolso, funcionando offline gratuitamente com 90 a 95% do desempenho original. Há um ano, isso era motivo de piada. Atualmente, a pequena
+
+estrutura está sendo utilizada mais de um milhão de vezes por mês. Se você quer mais vídeos de desmontagem completa que mostrem o funcionamento da caixa dessa forma , este é o canal certo. Eu li o relatório técnico, então você não precisou. Agora, vá lá e execute o programa você mesmo.

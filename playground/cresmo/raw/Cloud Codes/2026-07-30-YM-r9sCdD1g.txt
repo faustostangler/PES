@@ -1,0 +1,117 @@
+---
+video_title: "Run the \"KIMI K3\" on Your Laptop Locally (No GPU Needed)"
+video_id: YM-r9sCdD1g
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YM-r9sCdD1g
+video_date: 2026-07-30T09:00:02+00:00
+video_description: |
+  Can you actually run the largest open-weights AI model on Earth—the 2.8-trillion parameter Kimi K3—on a consumer M1 Max MacBook? Discover how the Deltafin open-source project slashed inference time by 82x in just two days, bringing token generation down to 14.6 seconds by streaming 1.45TB of routed experts directly off an NVMe SSD.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this technical breakdown, we analyze the architecture of Moonshot AI's Kimi K3, exposing how Kimi Delta Attention (KDA) allows a 1-million token context window by ditching traditional KV caches for recurrent states and forget gates. We dive deep into the math behind the MXFP4 4-bit block floating point precision, why Unsloth's 1-bit quantization causes severe accuracy degradation, and how the "memory wall" is forcing developers to rely on HTTP range requests and chunked SSD reads just to squeeze 25.8GB of memory traffic into a single generated token.
+  
+  If you found this technical deep dive into AI infrastructure, sparse models (MoE), and hardware limits helpful, drop a like and subscribe for more content on software engineering and system design!
+  
+  🔗Resource: 
+  Deltafin Repository (M1 Max port): https://github.com/gavamedia/deltafin
+  Kimi K3 Official Blog/Announcement: https://www.kimi.com/blog/kimi-k3
+  Kimi K3 Technical Report (AlphaXiv Paper): https://www.alphaxiv.org/abs/2607.24653
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 2.8 Trillion Parameter Download 
+  01:06 - Kimi K3 Specs & Kimi Delta Attention (KDA) 
+  01:51 - Benchmarks: Kimi K3 vs Claude & GPT-5.6 Sol 
+  03:20 - MXFP4 & Quantization-Aware Training (QAT) 
+  04:24 - The Unsloth 1-Bit Quantization Ladder 
+  05:22 - Deltafin: Running K3 on an M1 Max 
+  06:15 - The Hard Math: 25.8GB of I/O per Token 
+  08:05 - The Hacker News Debate: Is 14s/token Useful? 
+  10:01 - Apple's Unified Memory Shortage (Mac Studio) 
+  11:35 - The Final Verdict: Permission vs Engineering 
+  
+  User Queries:
+  how to run kimi k3 2.8 trillion parameter model on mac
+  kimi delta attention vs kv cache explained
+  unsloth 1 bit quantization kimi k3 open weights
+  deltafin kimi k3 mac m1 max local inference
+  mxfp4 4 bit block floating point precision llm
+  moonshot kimi k3 vs deepseek v4 benchmark
+  best laptop for running local ai models 2026
+  mixture of experts ssd streaming vram requirements
+  how much ram do you need for 2.8t llm
+  frontend code arena kimi k3 claude fable 5
+---
+2,8 trilhões de parâmetros, pesos abertos, disponíveis para download gratuito em uma página pública neste momento. Esse é o maior modelo de peso aberto que alguém já enviou e chegou há três dias. 48 horas depois, alguém estava escrevendo tokens em um laptop. Um M1 Max de 2021 com 64 GB de RAM. A velocidade medida é de 14,6 segundos, não fichas por segundo, mas segundos por ficha individual. Uma palavra equivale a cerca de um minuto
+
+de espera. Um pequeno parágrafo ocupa quase uma tarde inteira, e você fica lá assistindo, enquanto o tópico de notícias sobre hackers se transforma imediatamente em uma guerra sobre se aquilo é impressionante ou completamente inútil. O motivo pelo qual tudo funciona é que uma mistura de modelos de especialistas afeta apenas uma pequena fração de si mesma por token. Kimmy K3 possui 896 especialistas por camada. Dispara 16 vezes 1,8%. Mas 16
+
+especialistas em 92 camadas ainda significam 25,8 GB de RID por token. Portanto, há três coisas a acertar aqui. O que foi efetivamente enviado, quanto custou armazená-lo e se alguma parte dele é útil. Comece pelo arquivo, porque o arquivo é a história. 1.56 aba
+
+de pesos disponível para download público. Kimmy K3 é uma combinação de modelos de especialistas da Moonshot AI em Pequim, com um total de 2,8 trilhões de parâmetros, 104 bilhões de tokens ativos em qualquer aplicação, 93 camadas, um codificador de visão integrado e uma janela de contexto de 1 milhão de tokens. Dessas 93 camadas, 69 executam algo chamado atenção delta de Kimmy. Em vez de um cache de chave-valor que cresce a cada token inserido, ele mantém um estado recorrente de tamanho fixo com mecanismos de esquecimento por canal . As outras 24 camadas são de atenção latente controlada. Essa combinação é o motivo pelo qual uma
+
+janela de um milhão de tokens está sendo considerada neste tamanho. Três em cada quatro camadas de atenção impedem que o cache exploda. Assim, a limitação de memória deixa de estar no cache e passa a afetar os próprios pesos. Guarde isso. Tudo será decidido mais tarde. Na área de desenvolvimento front-end
+
+, pessoas reais votam em qual modelo construiu a melhor interface. K3 ocupa o primeiro lugar com um ELO de 1.679. Claude Fable 5 está em segundo lugar com 1631 pontos. GPT 5.6 Saul está em terceiro com 1618 pontos. Ele conquistou o primeiro
+
+lugar em seis das sete categorias de front-end que avalia. Trabalho de marca, design baseado em referências, dados e análises, simulações de produtos para o consumidor e ferramentas de conteúdo. A única categoria em que perdeu foi a de jogos, onde Fable 5 ainda leva vantagem. Nos testes de desempenho mais exigentes, o resultado é mais próximo de um lançamento de moeda. GPQA Diamond, o conjunto de notas de ciências de nível de pós-graduação, 93,5 para K3, 94,1 para Saul. Bancada terminal 2.1, que consiste em
+
+agentes realizando trabalho real de shell, 88,3 contra 88,8. Mas no teste de compatibilidade de navegação, onde o modelo precisa acessar e encontrar informações na web em tempo real, o K3 vence disparado, com 91,2 contra 90,4. A licença não é MIT, e vale a pena ler isso antes de construir uma empresa com base nela. A Moonshot redigiu seu próprio documento. Você pode baixá-lo, executá-lo e ajustá-lo, mas a comercialização acima de US$ 20 milhões em receita anual exige um acordo separado com eles. 99.000 downloads em um mês, 8.000
+
+curtidas na página do modelo. Para arquivos, a grande maioria dessas pessoas não tem condições de armazená-los fisicamente. Para se ter uma ideia da escala, a Kimmy anterior tinha cerca de um trilhão de parâmetros. Este é o salto mais acentuado já visto em uma única geração na tabela de peso aberto . Então, por que um modelo com 2,8 trilhões de parâmetros ocupa apenas 1,56 terabytes em disco? Em Bflat 16, com dois bytes por
+
+parâmetro, seria aproximadamente 5,6. O formato é MXFP4 de ponto flutuante de bloco de 4 bits, onde um grupo de pesos compartilha um fator de escala e cada peso mantém quatro bits próprios. É nativo dos silícios Blackwell e da classe MI355, razão pela qual existe e é aplicado seletivamente. Os pesos dos especialistas, que constituem a maior parte do modelo, são atribuídos a quatro bits. A ativação permanece em MXFP8. Os roteadores e a
+
+projeção de atenção permanecem em níveis mais altos porque são nessas partes que um erro de arredondamento se transforma em uma resposta errada, em vez de uma resposta ligeiramente pior. A parte que você considera mais importante. O projeto Moonshot não quantizou isso posteriormente. Eles o treinaram dessa maneira. Treinamento com reconhecimento de quantização executado por meio de ajuste fino supervisionado e aprendizado por reforço. Assim, o
+
+modelo aprendeu a funcionar com quatro bits em vez de ser comprimido para eles no final, o que significa que o arquivo de 4 bits que você baixa tem a mesma precisão que a API paga oferece. Os cofundadores confirmaram exatamente isso em uma sessão de perguntas e respostas no subreddit local de perguntas e respostas no dia em que os pesos foram instalados. Em seguida, a Unsloth adicionou uma escada quantitativa, que é o que transforma um artefato de data center em algo que uma pessoa muito determinada pode tentar fazer em casa. A versão mais compacta é a UDIQ1_S, com 594 GB. 1 bit M tem 649 bytes. 2 bits XXS têm
+
+711 bytes. 2 bits XL têm 861 bytes. 4 bits chegam a 1,51 TB e 8 bits a 1,56 TB, o mesmo tamanho do arquivo original, e você paga por cada tamanho adicional . A versão de 1 bit S concorda com o modelo completo em 78,9% das escolhas de tokens NEX. O 2bit XL eleva isso para 90,4. 4 bits é, na prática, o original.
+
+Assim, o arquivo menor é também o que mais entra em conflito consigo mesmo. Já que estamos aqui, só quero fazer uma correção. Em alguns lugares, você verá 555 GB mencionados para a versão de 1 bit . Procurei e não consegui encontrar na tabela publicada. O número de hoje é 594. O tédio supera o erro.
+
+O que nos leva de volta ao laptop. O projeto chama-se Deltafin. Foi publicado há dois dias por um desenvolvedor que se identificou como GAA Media. Possui licença MIT e, no momento em que escrevo isto, conta com 274 estrelas . Divide o modelo ao meio.
+
+Conceitualmente, existe uma espinha dorsal residente, as camadas de atenção, os especialistas compartilhados, as projeções latentes, os embeddings de cerca de 114 GB quantizados para 60 em N8 lidos camada por camada do armazenamento local para cada token individual. E depois há todo o resto. 82.432 especialistas roteados, totalizando aproximadamente 1,45 terabytes . Portanto, o Deltapin não os carrega. Para cada token, o roteador nomeia
+
+16 especialistas por camada e lê exatamente esses, uma solicitação de intervalo HTTP por especialista, 17 megabytes por vez, em um cache de disco que cresce conforme você o utiliza. Faça esse cálculo e você obterá o número que determinará o sucesso ou o fracasso de todo o projeto . 16 especialistas, 92 camadas, 25,8 GB de leitura para um token de um SSD local, que leva cerca de 4 segundos para ser transmitido pela rede. São 3 minutos. Agora, a parte que me fez parar de rolar a tela. A primeira versão funcional
+
+levou 24.429 segundos para gerar o primeiro token. 40 minutos por uma ficha. O tempo de resposta atual na mesma máquina é de 28 segundos. A decodificação estável seguiu o mesmo caminho. O tempo de carregamento de um token, que antes era de aproximadamente 20 minutos, caiu para
+
+14,6 segundos, cerca de 82 vezes mais rápido. E esta é a primeira versão de um projeto que tem apenas 2 dias. Os aumentos de velocidade são discretos e específicos, e é assim que você sabe que são reais. Um kernel de fusão que desquantiza o MXFP4 e executa a multiplicação de matriz por vetor em uma única passagem. Neon no Apple Silicon AVX2 em x86, uma espinha dorsal in8 que reduz pela metade a E/S por token, uma cabeça de saída compacta que, por si só, representa 17% do desempenho. E permanece
+
+exato, decodificação gananciosa, especulação de ungramas sem perdas . O mesmo prompt produzindo os mesmos tokens, execução após execução. As limitações são claramente indicadas, o que eu aprecio. Apenas gananciosos. A temperatura e o top_P são completamente ignorados. Um pedido
+
+de cada vez. Uma segunda solicitação simultânea resulta em um código 429. Além disso, solicitações longas são custosas porque o preenchimento automático (prefill) precisa acessar muito mais especialistas do que a decodificação (decode). Você também precisa da aba de disco 1.7 para a instalação local completa e de 5 a 10 horas para baixá- la, ou 215 GB se mantiver o cache pequeno e transmitir o restante sob demanda a cada 3 minutos por token. Alguém da
+
+comunidade executou o mesmo código em um NVIDIA DGX Spark. O Bloat 16 na CPU levou 865 segundos. In8 em CUDA levou 221. Então, voltando àquele tópico. 136 pontos, 90 comentários, e quase tudo se resume a um único argumento que se repete indefinidamente. Um
+
+comentarista chamado See a Realist apresentou os argumentos contra essa ideia da forma mais direta possível. Ninguém jamais conseguirá tirar um veículo utilitário de modelos em funcionamento a essa velocidade. Dê-me um exemplo de uso. Me dê a contagem de tokens. E a aritmética está do lado dele. A geração de 1.000 tokens de saída a
+
+cada 14,6 segundos equivale a 4 horas de inatividade do seu computador . Os mesmos mil tokens obtidos através da API da Moonshot custam cerca de 1 centavo e meio e chegam antes que você termine de ler esta frase. A resposta do autor é a frase que continuo revendo. Ele disse que a interface importa mais do que a taxa bruta e acrescentou que provavelmente só consegue escrever cerca de mil bons tokens por dia , o que é ou uma evasiva ou a frase mais útil da discussão. Um terceiro comentarista, SXX, reformulou completamente a questão. É divertido e responde à
+
+pergunta: o que acontece se você acordar amanhã e os centros de dados tiverem desaparecido? Os pesos no seu próprio disco são a única versão de um modelo que não pode ser desativada em outro lugar. E o responsável pela manutenção se recusa a exagerar na propaganda. O arquivo readme afirma claramente que este é um artefato de pesquisa e não uma configuração de bate-papo prática. Ele chama isso de prova de existência e plataforma de testes para inferência de fluxo contínuo. Essa é a
+
+afirmação correta a ser feita. Entretanto, na página do modelo, alguém fez a pergunta óbvia. Posso executar isso no meu MacBook? As primeiras respostas foram uma pilha de talvez oito H200, depois 12 H200S ou 9 B200. A terceira resposta apontou diretamente para a Deltafin e observou que o autor havia feito muito progresso em cerca de 12 horas. Se
+
+você quiser servi-lo adequadamente, um nó B300 de 8 vias oferece cerca de 2,3 tabulações de memória, o que comporta os pesos mais o cache de um milhão de tokens de contexto em uma única máquina. Mesmo a menor quantificação de um bit requer 610 GB de RAM e VRAM combinados para ser carregada. O 2-bit XL exige 880. E aqui está o problema de sincronização. Em março, a Apple removeu completamente a opção de 512 GB do configurador do Mac Studio e aumentou o preço do upgrade para 256 GB em US$ 400.
+
+Falta de memória. O limite para o consumidor agora é de 256. Assim, a única máquina que uma pessoa poderia razoavelmente possuir e que quase comportava esse modelo deixou de ser possível encomendá-la no mesmo ano em que o modelo foi lançado. O Frontier passou a ser disponibilizado para download e o hardware necessário para executá-lo ficou mais difícil de comprar. Ambas as afirmações são verdadeiras ao mesmo tempo.
+
+K3 não foi o único lançamento desta semana . A SK Telecom colocou o AXK2 em uma posição favorável. 688 bilhões de parâmetros de pesos abertos construídos na Coreia, direcionados diretamente para os setores de manufatura, defesa e biotecnologia. Em 14 indicadores de desempenho nacionais e internacionais , o modelo supera em média o anterior em 32 pontos, e suas pontuações de contexto longo e de agentes aumentaram em cerca de 84 pontos. Afirmaram que o próximo modelo visa atingir a marca de um trilhão. Ao alinhar as
+
+prateleiras, percebe-se que elas não se parecem em nada com o que eram na primavera. Kimmy K3 com 2,8 trilhões de usuários, DeepSeek V4 Pro com 1,6 trilhão, GLM 5.2 com 744 bilhões de usuários e 40 bilhões de usuários ativos, menor que o K3, mas ainda assim com pontuação superior no índice de inteligência agregada. Há algum tempo que a contagem de parâmetros deixou de ser o fator determinante, mas o gargalo mudou de lugar, e isso é o ponto positivo a ser destacado. Antigamente, obter o Frontier Weights era a parte difícil, mas agora basta um link para download. A
+
+parte difícil é ter onde armazenar um terabyte e meio e largura de banda de leitura suficiente para baixar 26 GB para cada token. 14,6 segundos: um token não é um produto. É um recibo. Diz que o modelo é um arquivo. O arquivo está no seu disco. E
+
+tudo o que há entre isso e um assistente utilizável é questão de engenharia, e não de permissão. E a engenharia foi o elemento que evoluiu 82 vezes mais rápido no Fortnite. Delta Finn, os quants de despreguiça e o cartão modelo estão todos linkados abaixo. Se você tiver o disco, o arquivo readme leva pelo menos uma hora. Obrigado por assistir.

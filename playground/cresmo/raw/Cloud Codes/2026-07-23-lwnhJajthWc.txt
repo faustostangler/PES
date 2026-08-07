@@ -1,0 +1,112 @@
+---
+video_title: "DuckDB: The 20MB Database Killing Your Snowflake Bill"
+video_id: lwnhJajthWc
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lwnhJajthWc
+video_date: 2026-07-23T12:00:16+00:00
+video_description: |
+  Are you paying massive cloud bills to Snowflake or AWS Redshift just to run basic analytics? Discover why data engineers are ripping out expensive, clustered Data Warehouses and replacing them with DuckDB a blazing-fast, 20MB in-process analytical database that runs completely locally (or at the edge).
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of DuckDB and MotherDuck. We explore why traditional Data Warehouses suffer from the "Idle Tax," and how DuckDB uses Vectorized Execution and Columnar Storage to process hundreds of gigabytes of Parquet and CSV files up to 7x faster directly on a laptop. We also dive into the new DuckLake v1.0 Lakehouse architecture, explaining why it abandons the metadata-heavy approach of Apache Iceberg and Delta Lake for a simpler SQL-based catalog. 
+  
+  Finally, we look at the real-world receipts: how companies are slashing their cloud analytics bills by 77%, the reality of "Big Data is Dead," and the honest truth about when you actually *do* still need a massive Snowflake or BigQuery cluster. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The 20MB Database Eating Snowflake
+  1:06 - The Warehouse Tax (Paying for Idle Compute)
+  2:25 - How DuckDB Works: Vectorized Execution & Columnar Storage
+  3:16 - Out-of-Core Queries (Data Bigger than RAM)
+  4:06 - Direct Querying: PostgreSQL, MySQL, & S3 Parquet
+  4:22 - The Receipts: 77% Cheaper & 7x Faster
+  5:57 - DuckLake 1.0: The Serverless Lakehouse Architecture
+  7:34 - The Honest Catch: When Snowflake Still Wins
+  8:19 - Summary: Match the Tool to the Workload
+  
+  
+  #duckdb #snowflake #dataengineering #systemdesign #softwareengineering #bigdata #cloudcodes #machinelearning #sql #motherduck #apacheiceberg
+  
+  User Queries:
+  duckdb vs snowflake performance benchmark
+  what is duckdb tutorial python
+  how to use motherduck serverless
+  ducklake 1.0 vs apache iceberg delta lake
+  stop using snowflake data warehouse
+  how vectorized query execution works
+  query s3 parquet files with duckdb
+  big data is dead motherduck
+  system design analytical database olap
+  data engineering trends 2026
+---
+Veja isto. Uma única consulta SQL em um arquivo de 50 gigabytes em um laptop. Sem cluster, nada girando. 04 segundos. E todo o mecanismo que acabou de fazer isso ocupa 20 megabytes. Esse é o DuckDB, e ele está
+
+dominando o mercado de data warehouse em nuvem de baixo custo. Sem servidor, sem cluster. Ele funciona dentro do seu programa como uma biblioteca. O ESQLite foi desenvolvido para análise de dados. Em cargas de trabalho reais, o custo de implementação é de 55 a 77% menor do que o de um dispositivo do mesmo tamanho . E no painel de controle, as consultas das
+
+equipes são executadas de seis a sete vezes mais rápido. 37.000 estrelas no GitHub, 20 milhões de downloads por mês. Isto já não é um brinquedo . Eis a ideia subjacente.
+
+A maioria das consultas mal aborda o big data. Eles atingiram uma pequena fatia recentemente. A fundadora da Mother Duck foi bem direta. O poder computacional massivo está morto para 99% das cargas de trabalho. E em 2026, cresceu. Duck Lake transforma este
+
+pequeno motor numa verdadeira casa à beira de um lago nas nuvens. Seja honesto desde o início. Snowflake ainda ganha no quesito de grandes propriedades com tráfego intenso. Nós chegaremos lá . O plano, o imposto sobre o armazém, como o pato é tão rápido, os recibos e para onde ele se encaminha agora. Então, por que o
+
+fundo do mercado está repentinamente fraco? Comece por analisar como um serviço de armazenamento em nuvem cobra por seus serviços. O Snowflake separa o armazenamento do processamento, um design inteligente. Mas para executar uma consulta, você inicia um data warehouse virtual e a contagem de usuários começa no instante em que ele é ativado. Você está pagando para que a máquina esteja ligada, não pela resposta. Eis a
+
+armadilha em que a maioria das equipes cai. Você escolhe o tamanho do armazém, escolhe um que lhe pareça seguro e o deixa lá definitivamente. Aumente um tamanho e os créditos por hora simplesmente dobram. Estudos sobre notas de dinheiro reais com o símbolo do floco de neve continuam a chegar à mesma conclusão. Cerca de 40% dos gastos correspondem ao armazém ocioso, sem fazer nada. Depois,
+
+há o mínimo. Contas de floco de neve, 60 segundos completos cada vez que um armazém é ativado. Sua consulta levou 2 segundos. Você pagou por um minuto. E a história clássica de terror é a de um armazém que alguém deixou funcionando durante um feriado prolongado. A fatura
+
+chega na segunda-feira e ninguém sabe dizer de quem foi a responsabilidade. A partir daí, os preços aumentam . Os recursos serverless, o pipeline de ingestão automática, as visualizações materializadas e a otimização de pesquisa não são suspensos automaticamente da mesma forma que um data warehouse. Eles continuam consumindo créditos em segundo plano até que alguém se lembre de desligá-los . E esse é o imposto real, não o preço de tabela. O fato de existir toda uma
+
+indústria artesanal apenas para impedir que seu armazém perca dinheiro. Painéis de custos, consultores de otimização, uma planilha que nenhuma equipe quer ter. Você está alugando complexidade. Agora vem a parte divertida. Como é que um arquivo de 20 megabytes consegue superar um cluster na nuvem? Primeiro movimento. Está
+
+em andamento. Não há servidor, nem salto de rede, nem login. A consulta é executada exatamente na mesma memória que o seu programa. O SQLite comprovou esse modelo para transações décadas atrás. O Duct DB faz isso para análises. Em segundo lugar, ele armazena seus
+
+dados em colunas, não em linhas. Ao solicitar a soma de uma coluna em um bilhão de linhas, um armazenamento em linhas precisa percorrer cada linha individualmente. Um armazenamento em colunas lê apenas aquela coluna específica do disco e ignora o resto. Para a área de análise de dados, isso por si só já é uma grande vitória. Terceiro, e este é o mais inteligente, execução vetorizada.
+
+Em vez de processar um valor por vez, ele captura um lote de cerca de mil valores e executa a operação em todo o lote dentro de um loop compacto e otimizado para o cache. Os chips modernos são construídos exatamente para isso, e o sistema de dutos DB fornece a eles o que eles precisam. Quarto, ele utiliza todos os núcleos disponíveis. O motor do jogo divide o trabalho em pequenas partes e as distribui automaticamente por todos os seus núcleos . Sem configuração, sem ajustes.
+
+Aquele laptop que você acha modesto é, na verdade, uma pequena máquina paralela, e o pato finalmente a coloca para funcionar. E antes que você pergunte, não, não é apenas um truque de memória. Seu gerenciador de buffer utiliza o disco quando necessário, permitindo processar conjuntos de dados muito maiores do que a sua memória RAM. As pessoas executam consultas em centenas de gigabytes em um laptop de 16 gigabytes . Termina mais lentamente, mas termina. Junte tudo isso e você terá
+
+algo quase injusto. Um único arquivo binário, sem dependências, compila em qualquer lugar, desde um Raspberry Pi até um servidor com 100 núcleos. Ele lê arquivos parate, CSV e JSON diretamente do seu disco ou de um bucket S3. Sem etapa de carregamento , sem tarefa de importação. Você aponta para os dados e realiza a consulta no local. E não se
+
+limita apenas a arquivos. Ele lê seu Postgres ou MES XL em execução diretamente por meio de um analisador léxico e o combina com um arquivo Parquet no S3 na mesma consulta. Seus dados nunca precisam ser transferidos para outro sistema primeiro. O pato vai até os dados, e não o contrário. Vamos tornar isso concreto, porque as coisas abstratas são baratas. Pegue uma carga de trabalho idêntica, execute-
+
+a em uma VM de nuvem simples com Duck DB e, em seguida, em um data warehouse Snowflake de tamanho equivalente . A diferença de preço medida é de 55 a 77% mais barata no pato. As mesmas respostas, por uma fração do preço. A velocidade conta a mesma história em consultas de painel de controle com uso intensivo de varreduras em tabelas únicas, que é o que a maior parte da análise de negócios realmente é. Mother Duck, o DuckDB hospedado, apresenta desempenho de seis a sete vezes mais rápido em benchmarks do que um servidor Snowflake ou Red Shift de preço similar. e uma
+
+conta real, não um valor de referência. Uma equipe financeira migrou suas análises para o DuckDB hospedado e viu seus custos mensais computacionais caírem de US$ 1.800 para cerca de US$ 620, ou US$ 14.000 por ano. Perdido. O tempo de resposta dos painéis de instrumentos passou de 4
+
+a 8 segundos para menos de meio segundo. O formato da fatura é o motivo silencioso disso. A Mother Duck cobra por segundo, com um mínimo de 1 segundo no plano gratuito, que se transforma em uma assinatura de US$ 25 por mês. O Snowflake arredonda cada ativação para até 60 segundos. Isso é 60 vezes mais grosso.
+
+E para consultas curtas e rápidas, essa lacuna é crucial. Nada disso é mágica. Aliás, é mais barato porque não há armazém ocioso para manter aquecido nem imposto de aglomeração a pagar. A máquina funciona enquanto uma consulta está em execução e, assim que esta termina, ela para. Você paga por respostas, não por uma máquina estar ligada. E se você está esperando encontrar o
+
+porém de que se trata de uma versão beta frágil, não é o caso. A Duck DB lançou a versão estável 1.0 em 2024. Atualmente está na versão 1.5 e a versão 2.0 está prevista para este outono. Três milhões de pessoas
+
+consultam esses médicos todos os meses. Isso é produção. Agora, a objeção óbvia, e é uma objeção válida. Em um laptop, tudo bem, você pode dizer, mas meus dados estão armazenados em um data lake na nuvem. Terabytes disso, compartilhados por toda a empresa. Durante anos, esse foi
+
+o verdadeiro limite do DuckDB. Era exatamente aqui que costumava parar. Não mais. Em abril deste ano, Duck Lake chegou à sua primeira versão. Pronto para produção com retrocompatibilidade garantida. É
+
+um formato de casa de campo à beira de um lago. Seus dados permanecem exatamente onde estão, pois o Parket os armazena em um sistema de armazenamento de objetos de baixo custo e consulta o banco de dados diretamente no local. Sem cópias, sem necessidade de armazenamento proprietário para carregar o arquivo primeiro. Eis aqui a parte que é verdadeiramente inteligente. Todos os outros formatos lakehouse, iceberg, delta, hoodie, rastreiam suas tabelas com uma pilha de pequenos arquivos de metadados espalhados pelo bucket. Para planejar uma única consulta, o
+
+mecanismo precisa percorrer e ler centenas delas. Ducklake descarta completamente essa abordagem. Em vez disso, ele mantém todos esses metadados em um banco de dados SQL simples, PostgreSQL, Esqolite, ou até mesmo no próprio DuckDB, como catálogo. Uma única consulta ao catálogo em vez de uma busca exaustiva no armazenamento de objetos. E como se trata apenas de ESQL, você obtém snapshots, viagens no tempo, alterações de esquema e particionamento praticamente de graça. Em seguida, Mother Duck encapsula
+
+tudo e torna o processo sem servidor. O mesmo pato que agora vive na nuvem, compartilhado com toda a sua equipe, construído a cada segundo com sua casa no lago ao fundo . Esta é a peça que realmente enfrenta o desafio no armazém, não em um laptop na linha de produção. Então, siga o arco. Em três anos, o sistema evoluiu do SQLite para análises, um truque inteligente em um laptop, para um servidor Lakehouse completo que lê dados armazenados em escala de pabytes no mesmo mecanismo de 20 megabytes.
+
+Exatamente aí, no meio do mercado, é a parte que está sendo afetada, Snowflake. Mas eu prometi a você a metade honesta. Então, aqui está. O Duck DB, em sua essência, possui um único gravador e um único nó. Um processo detém a caneta. Essa é uma
+
+negociação deliberada. É isso que torna tudo tão simples e tão rápido. Mas é um limite real e você deve saber exatamente onde ele se aplica. Quando você tem pabytes reais sendo processados ​​constantemente, milhares de analistas acessando um repositório compartilhado simultaneamente e equipes de conformidade que precisam de governança em nível de função e trilhas de auditoria integradas, isso é território de consultas complexas e de grande escala. Eles são muito bons nisso. E o pato não está tentando vencer
+
+essa briga. Portanto, a lição não é que o armazém seja ruim e o laptop bom. É a versão correta, embora sem graça. Escolha a ferramenta adequada à carga de trabalho. O problema é que a indústria vendeu o data warehouse como a solução padrão para todas as equipes, e a maioria das cargas de trabalho raramente era grande o suficiente para precisar dele. Então, um arquivo de 20 megabytes está acabando com uma
+
+empresa de 50 bilhões de dólares? Não. Está fazendo algo mais interessante do que isso. Está a aproveitar a parte mais fraca do mercado, o dinheiro fácil, as cargas de trabalho que estavam a pagar preços exorbitantes por problemas de tamanho dos portáteis . Eis o que eu realmente faria. Obtenha seu próprio histórico de consultas e observe
+
+a consulta mediana. Se ele analisar alguns gigabytes, e eu apostaria que sim, você está alugando um centro de dados para responder a perguntas que seu laptop poderia responder. O pato é pequeno de propósito, e, quando bem feito, o tamanho pequeno é exatamente o suficiente. Confira sua fatura e depois me diga o que sua consulta de mediana realmente abrange. Banco de dados de patos de 20 megabytes devorando o armazém por baixo.

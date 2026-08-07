@@ -1,0 +1,99 @@
+---
+video_title: "Litestream + SQLite: Scale to 1M Users Without Postgres or Cloud Bills"
+video_id: QOBXFCYYMvk
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=QOBXFCYYMvk
+video_date: 2026-07-26T12:00:28+00:00
+video_description: |
+  Are you paying massive cloud bills for a managed Postgres server when you could be running the exact same workload for $0.03 a month? Discover why elite engineering teams (like Expensify, handling 4 Million QPS) are abandoning heavy database clusters and moving back to SQLite.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of the ultimate single-node database architecture using SQLite and Litestream. We explore the massive performance difference between a network hop (Postgres taking 1+ milliseconds) and an in-process query (SQLite answering in 20 microseconds), and how "Write-Ahead Logging" (WAL mode) allows unlimited simultaneous readers.
+  
+  We also dive deep into the genius of Litestream (created by Ben Johnson, now at Fly.io). Learn how it completely solves the "Single Point of Failure" problem by continuously streaming SQLite database changes to an S3 bucket for literal pennies, allowing for point-in-time recovery. Finally, we discuss the honest catches: why you still can't have multiple concurrent writers, and when you should actually stick with a managed PostgreSQL cluster. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The $744 Postgres Bill vs the 3¢ SQLite File
+  1:13 - The Cost of Amazon RDS
+  1:56 - How Litestream Works (Continuous S3 Backups)
+  3:54 - Network Latency: Why Postgres is "Slow"
+  4:50 - The N+1 Query Problem Disappears
+  5:55 - Does SQLite Scale? (Expensify's 4M QPS)
+  7:36 - Who Built Litestream? (Ben Johnson & Fly.io)
+  8:57 - The Honest Catch: Single Node & Recovery Time
+  10:02 - Summary: The Death of the Database Server
+  
+  #sqlite #postgres #database #softwareengineering #systemdesign #cloudcodes #backend #litestream #aws #programming #webdevelopment
+  
+   User Queries:
+  sqlite vs postgresql performance benchmark
+  how to use litestream tutorial
+  can sqlite scale to a million users
+  how expensify uses sqlite 4 million qps
+  stop using postgres for side projects
+  system design database replication litestream
+  what is write ahead logging wal mode sqlite
+  how to backup sqlite to s3
+  fly io litestream ben johnson
+  best database for solo founders 2026
+---
+Aqui está uma fatura do banco de dados, no valor de 744 dólares. Isso corresponde a 1 mês para um servidor Postgres. Agora, aqui está exatamente o mesmo banco de dados rodando como um único arquivo em um único servidor, com backup feito por cerca de 3 centavos. Esse é o vídeo completo. SQLite mais uma pequena ferramenta chamada Litestream. Um único arquivo, um único servidor
+
+e leituras que escalam muito além de um milhão de usuários. Sem Postgres, sem serviço de banco de dados gerenciado , sem nenhuma fatura mensal de banco de dados na nuvem . A recomendação usual é que você precisa de camadas: um servidor de banco de dados, um cache na frente dele, uma réplica de leitura ao lado e backups atrás dele. O SQLite do lado do servidor integra toda essa pilha de volta ao seu próprio processo de aplicação. Então, por que nem todo mundo faz isso? Existe uma
+
+razão honesta, e é uma razão verdadeira. O SQLite reside em uma única máquina. Se você perder essa máquina, perderá o banco de dados. Para a produção, isso foi um fator decisivo. O Litestream resolve esse problema. Ele
+
+transmite todas as alterações feitas no seu banco de dados diretamente para o S3 enquanto seu aplicativo continua em execução. Ele funciona em segundo plano, ao lado do seu aplicativo, monitorando o SQLite e processando todas as gravações. Vamos falar de dinheiro, porque é aqui que a coisa fica um pouco absurda. Um Postgres de nível de produção no Amazon RDS custa cerca de US $ 744 por mês, incluindo armazenamento físico, uma instância de espera para failover e backups. Ao aumentar a escala sob carga, as equipes relatam abertamente gastos de 10 a 12 mil dólares por mês apenas com o banco de dados . A conversão de Litestream para S3 custa praticamente
+
+nada, pois você paga apenas para armazenar alguns arquivos pequenos. Os desenvolvedores executam bancos de dados replicados reais por cerca de 3 centavos de dólar por mês, realizam gravações constantes o dia todo e, mesmo assim, o custo máximo chega perto de 13 dólares. Você está trocando uma fatura recorrente por troco. Então, como isso funciona na prática? O SQLite já mantém um log de escrita antecipada , um registro contínuo de cada página que ele modifica antes que essas alterações sejam incorporadas ao arquivo principal. Normalmente, o SQLite limpa
+
+esse registro automaticamente. O Litestream entra em ação, assume essa tarefa e lê cada alteração do log no instante em que ela ocorre. Ele compacta essas páginas em pequenos arquivos de transação numerados e os carrega para o S3 em ordem rigorosa. Cada arquivo recebe o próximo número em uma sequência ininterrupta. Portanto, se ao menos um deles desaparecesse, a Litestream detectaria a falha imediatamente e se recusaria a devolver um banco de dados corrompido. O objetivo principal é a correção
+
+. Para agilizar as restaurações, um processo em segundo plano mescla esses pequenos arquivos em arquivos maiores de acordo com uma programação de aproximadamente 30 segundos, 5 minutos e uma hora, e então tira um instantâneo completo do banco de dados uma vez por dia. O histórico recente permanece detalhado para uma recuperação precisa, enquanto o histórico antigo é condensado em alguns arquivos compactos. A recuperação nada mais é do que essa sequência reproduzida. O Litestream captura o instantâneo mais recente e, em seguida, reproduz cada arquivo de transação em ordem até que seu banco de dados esteja completo novamente. Como
+
+os arquivos são numerados, você pode retroceder para praticamente qualquer segundo no histórico retido, não apenas para o último backup noturno, e o destino é inteiramente sua escolha. S3, Backblaze, Azure, Google Cloud, até mesmo um simples servidor SFTP num armário. Seus dados ficam armazenados onde você já confia, em vez de ficarem presos em um serviço de banco de dados de um único fornecedor, o que torna a migração cara por natureza. Além disso, também significa menos coisas para administrar. O manual do PostgreSQL 14 tem quase 3.000
+
+páginas. Com o SQLite, não há servidor para firewall, nem autenticação baseada em host para depurar, nem limites de conexão para ajustar, nem ninguém para contatar às 3h da manhã. Você obtém janelas, expressões de tabela comuns, pesquisa de texto completo e JSON, o que representa cerca de 99% do que um aplicativo normal utiliza. E aqui está a mudança que passa despercebida. O hardware ficou absurdamente rápido.
+
+Um banco de dados de 1 GB agora carrega na memória em menos de um segundo a partir de uma unidade NVMe, e a maioria dos aplicativos nunca chegará a um terabyte, mesmo que se tornem realmente populares. Continuamos recorrendo a britadeiras para cravar pregos de acabamento. Agora, vamos à parte que realmente muda a forma como você constrói. O Postgres é um software genuinamente rápido e bem projetado. O problema é que ela se propaga por meio de uma rede, e a velocidade da luz não é negociável. Em 1 milissegundo, a luz
+
+viaja de Filadélfia a Nova York e volta, e isso antes de considerarmos switches e firewalls. Assim, uma consulta Postgres dentro de uma única região na nuvem custa cerca de um milissegundo apenas em tempo de transmissão. O SQLite é executado dentro do seu processo, na mesma memória que o seu código, e responde em 10 a 20 microssegundos. Isso é micro com M, um milésimo de milissegundo. Faça os cálculos, e isso será de 50 a 100 vezes mais rápido em cada consulta. Não há sockets, nem
+
+pool de conexões, nem serialização, nem comunicação de ida e volta através de um centro de dados. O planejador de consultas e seu código compartilham o mesmo cache da CPU. Existe um número mágico nos aplicativos. Para um ser humano, menos de 100 ms parece instantâneo . Em um banco de dados em rede, uma dúzia de pequenas consultas em uma única requisição pode consumir 10 milissegundos apenas em tempo de transmissão antes que seu código consiga renderizar algo. É
+
+aí que os aplicativos ágeis vão parar. Inverta essa perspectiva e algo libertador acontece. Quando cada consulta é praticamente gratuita, você para de se preocupar com o clássico problema N + 1 , em que uma página dispara 100 pequenas buscas, e simplesmente escreve as consultas que realmente deseja. O banco de dados deixa de ser aquele elemento frágil em torno do qual você o projetou. Isso até acelera o seu próprio dia. Ao usar o
+
+SQLite na memória para seus testes, todo o conjunto de integração é executado em segundos, em vez dos minutos que um banco de dados cliente-servidor real leva localmente e que são cobrados novamente na integração contínua a cada envio de dados. Mas será que uma única caixa pode realmente servir um milhão de pessoas? Para leituras confortáveis. No modo de log de escrita antecipada (write-ahead log), o SQLite lida com muitos leitores simultaneamente sem que eles se bloqueiem mutuamente, e você pode distribuir essas leituras por quantas cópias do banco de dados desejar, executando-as por trás de um balanceador de carga. É para lá que a Litestream está se dirigindo em seguida.
+
+Como uma réplica nada mais é do que arquivos em um bucket, você pode criar cópias de leitura próximas aos seus usuários em todo o mundo e permitir que cada uma envie solicitações ocasionais de volta para um único servidor principal. A maioria dos aplicativos são predominantemente de leitura, então esse modelo é bastante escalável. A versão reescrita do Litestream já dá um primeiro passo nessa direção. Ele pode fornecer leituras diretamente do S3 por meio de uma camada de arquivo virtual, buscando apenas as páginas específicas que uma consulta precisa, sem nunca precisar baixar e restaurar todo o arquivo de banco de dados primeiro. A escrita é a única restrição honesta.
+
+Apenas um escritor pode trabalhar por vez. Isso parece apertado até você medir e observar um banco de dados SQLite absorver dezenas de milhares de gravações por segundo. Para a grande maioria dos aplicativos, esse limite é muito maior do que qualquer coisa que eles jamais alcançarão. E aqui está o número que põe fim à maioria dessas discussões. O Expensify, aplicativo de controle de despesas que milhões de pessoas usam no trabalho, executa 4 milhões de consultas por segundo ao SQLite em um único servidor. Não se trata de um cluster com
+
+cem nós, mas sim de uma única máquina com uma fina camada construída sobre ela, chamada Bedrock. Portanto, esta está longe de ser uma base de dados inicial que você supera em um trimestre e substitui. Atualmente, essa tecnologia impulsiona empresas reais em grande escala. Ele está arquivado pela Biblioteca do Congresso como um formato de armazenamento e conquistou essa confiança ao longo de mais de 20 anos. Você já confia no SQLite mais do que em quase qualquer outro banco de dados, quer perceba ou não. Está presente no seu
+
+celular, nos dois navegadores que você usa, no painel do seu carro e na sua smart TV. Todos os dispositivos Android e todos os iPhones são enviados com ele instalado, sendo executado bilhões de vezes. Somando tudo, existem mais de um trilhão de bancos de dados SQLite em uso ativo neste momento. De longe, é o mecanismo de banco de dados mais utilizado no planeta e um dos softwares mais exaustivamente testados já criados, com milhões de casos de teste por versão. O próprio Litestream foi criado por uma única pessoa, Ben Johnson. Antes disso, ele escreveu o Bolt
+
+DB, o pequeno mecanismo de armazenamento que fica na base do Kubernetes e seu armazenamento etcd. Portanto, ele passou anos pensando exatamente nesse problema. Agora, ele trabalha em tempo integral no desenvolvimento do Litestream na fly.io. É totalmente de código aberto, com mais de 13.000 estrelas no GitHub, e acaba de
+
+lançar sua maior reformulação em anos como versão 0.5, com dezenas de lançamentos subsequentes. Isto não é uma experiência de fim de semana que poderá desaparecer no mês que vem. Essa reescrita removeu os componentes internos antigos, a complexa rede de IDs de geração e arquivos de log de sombra, e os substituiu por arquivos de transação limpos e numerados. Essa nova base é exatamente o que torna possível o fornecimento de leituras diretamente do S3 .
+
+Nada disso é mágica, e Ben é o primeiro a dizer isso. Como uma restauração reproduz todas as alterações em ordem, um banco de dados grande pode levar minutos para ser totalmente restaurado, e não milissegundos. Portanto, dimensione seu tempo de recuperação esperado com base no banco de dados que você realmente possui e faça snapshots com mais frequência se cada minuto for importante para você. E é construído em torno de um único nó. Plataformas efêmeras e sem servidor, e implantações contínuas, onde toda a máquina pode desaparecer no meio de uma operação de escrita, ainda não são seu habitat natural, embora as versões mais recentes e seu projeto irmão, o LightFS, estejam diminuindo essa diferença. Na verdade,
+
+usá-lo é quase entediante, e esse é justamente o objetivo. Você aponta um pequeno programa binário para o seu arquivo de banco de dados em um bucket e vai embora. Essa é toda a configuração. Não há um esquema para projetar, nenhuma migração para executar e nenhuma biblioteca de cliente para adicionar. Seu aplicativo continua se comunicando com o SQLite padrão, usando qualquer biblioteca que você já utilize em qualquer linguagem. O
+
+Litestream funciona em paralelo como um processo separado e não interfere no processo principal . Seu código nem precisa saber que ele existe. Então, aqui está o veredicto sincero. Se você é um fundador solo ou uma pequena equipe desenvolvendo um aplicativo web comum, essa combinação é o mais próximo que se pode chegar de um código de trapaça em termos de infraestrutura. Você elimina um nível inteiro da sua pilha e uma grande parte da sua conta em um único movimento. Você obtém
+
+um arquivo que pode restaurar por centavos, consultas que respondem em microssegundos em vez de milissegundos e muito mais espaço livre do que você realmente usará por um longo, longo tempo. A opção mais simples acaba sendo a mais poderosa. Não irá substituir um cluster gigante com várias regiões e grande volume de gravações simultâneas em diferentes continentes, e não foi projetado para isso. A Litestream visa diretamente os 99% dos aplicativos que nunca precisaram desse tipo de infraestrutura e mesmo assim acabaram comprando-a. Portanto, antes de optar por um banco de dados gerenciado no seu próximo projeto por hábito, lembre-se da opção mais simples. Um arquivo,
+
+cerca de 3 centavos por mês, e muito mais espaço do que parece. Às vezes, a ferramenta mais antiga na prateleira é a mais afiada .

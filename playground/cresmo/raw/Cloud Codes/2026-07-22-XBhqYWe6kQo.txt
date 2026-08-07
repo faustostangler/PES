@@ -1,0 +1,142 @@
+---
+video_title: "Rust is Quietly Eating JavaScript's Backend"
+video_id: XBhqYWe6kQo
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XBhqYWe6kQo
+video_date: 2026-07-22T12:03:02+00:00
+video_description: |
+  Is Rust actually replacing JavaScript? No, you aren't going to write your next React app in Rust—but Rust has quietly eaten the entire JavaScript backend toolchain from the inside out. Discover how the "Two-Language Problem" is solving the massive performance bottleneck of the V8 JavaScript engine.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of the modern JS toolchain. We explore why single-threaded, garbage-collected tools like Webpack and ESLint are being replaced by compiled, multi-threaded binaries written in Rust (Turbopack, SWC, Biome, and Oxc) that are up to 100x faster. We dive into the massive June 2026 Cloudflare acquisition of VoidZero (the company behind Rolldown and Vite), and how `napi-rs` allows you to `npm install` Rust binaries without even knowing it.
+  
+  Finally, we deliver an honest reality check on the "Rust vs Everyone" debate: why the creator of TypeScript (Anders Hejlsberg) explicitly chose Golang instead of Rust for the new TypeScript 7 compiler, why esbuild still uses Go, and why Bun's 11-day rewrite from Zig to Rust proves that the "Memory Safety" debate is far from over.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - Rust is Replacing the JavaScript Toolchain
+  1:29 - Why Webpack and Babel are So Slow (The V8 Engine)
+  2:16 - Why Rust Wins (Memory Safety & Multi-threading)
+  3:26 - The `napi-rs` Trojan Horse
+  4:13 - The New Stack: SWC, Turbopack & Rspack
+  5:30 - Biome & Oxc (100x Faster than ESLint)
+  6:22 - Cloudflare Acquires VoidZero (Vite & Rolldown)
+  8:10 - The Honest Catch: Esbuild & TypeScript 7 use GO (Not Rust)
+  12:03 - The Zig vs Rust Debate (Bun's Rewrite)
+  13:08 - Summary: You Don't Actually Need to Learn Rust
+  
+  #rust #javascript #webdevelopment #softwareengineering #systemdesign #typescript #react #nextjs #cloudcodes #golang #backend #vite
+  
+  User Queries:
+  rust vs javascript performance
+  why developers are leaving webpack for turbopack
+  biome vs eslint and prettier
+  what is voidzero evan you
+  typescript 7 rewritten in golang
+  how to use swc compiler nextjs
+  napi-rs tutorial rust javascript
+  is rust replacing javascript
+  frontend web development trends 2026
+  why bun rewrote in rust zig
+---
+Você executou uma compilação, o React foi integrado, um pacote para navegador foi gerado, e a ferramenta que realizou o trabalho de fato não foi escrita em JavaScript. Está escrito em Rust. Seu transpilador, SWC, é Rust. Seu bundler, Turbopack, também é Rust. O JavaScript é apenas a entrada de dados. Então, aqui
+
+está a verdadeira mudança. Rust não está substituindo o código que você escreve. Está substituindo as ferramentas que o constroem, verificam e executam. Leve seu fiapo. O Oxlint faz o trabalho do ESLint de 50 a 100 vezes mais rápido. Um
+
+minuto inteiro de verificação se transforma em milissegundos. O Biome é um pequeno binário que combina formatador e analisador de código, substituindo o ESLint, o Prettier e mais de 100 outros pacotes. Seu bundler, o Rolldown, acaba de chegar à versão 1.0 e o Vite o tornou o padrão, descontinuando o Rollup, o antigo mecanismo JavaScript subjacente . Seu framework, Next.js 16, agora vem com o
+
+Turbopack como padrão para desenvolvimento e produção. O Webpack está com os dias contados , e os responsáveis ​​por isso não são nenhum mistério. Evan You, que tornou Vue e Vite, os criadores de SWC e Ox, nomes reais públicos. Isso também não é mais um hobby . Em junho, a Cloudflare comprou a empresa que desenvolvia a maioria dessas ferramentas em Rust. Para sermos honestos
+
+, não se trata apenas de Rust. Go também está nessa luta e acaba de vencer uma rodada importante. Nós chegaremos lá. Você poderia passar toda a sua carreira sem escrever uma única linha de Rust. Você já está executando. Cada construção, cada salvamento,
+
+cada implantação. Então, deixe-me mostrar o que realmente está acontecendo nos bastidores do seu JavaScript, por que isso está acontecendo e onde realmente está o limite. Comece por descrever o que essas ferramentas realmente fazem, porque o "porquê" surge naturalmente a partir daí. Um bundler lê seu código, o analisa e o transforma em uma árvore de milhões de pequenos nós, percorre essa árvore, reescreve o código e junta tudo de volta em um único arquivo. Nada disso é inteligente. É simplesmente uma montanha de
+
+trabalho mecânico e repetitivo, que se repete a cada vez que o jogo é salvo. E esse é exatamente o tipo de trabalho em que a linguagem em que a ferramenta foi criada importa mais do que qualquer outra coisa. Eis o problema de construir essas ferramentas em JavaScript puro. JavaScript é executado em uma única thread . Seu laptop tem oito núcleos, talvez 16, e uma ferramenta JavaScript pode realmente usar um deles por vez. Mas, analisar 100
+
+arquivos são 100 tarefas independentes que podem ser executadas simultaneamente. Rust simplesmente entrega a cada núcleo uma pilha de arquivos e os deixa executar suas tarefas. Essa única diferença representa a maior parte da velocidade que você está observando. Depois, há a memória. O JavaScript gerencia isso para você com um coletor de lixo e, de tempos em tempos, pausa tudo para realizar a limpeza.
+
+Em um aplicativo pequeno, você mal percebe. Em uma árvore sintática gigante com milhões de objetos em constante processamento, essas pausas se acumulam e resultam em um atraso real e visível. Rust não possui coletor de lixo. Libera memória instantaneamente ao ser executado, seguindo uma programação previsível. Sem pausas, sem interrupções, sem surpresas no meio da construção. E, além disso, o JavaScript é
+
+interpretado. Ele é compilado em tempo real durante a execução por um mecanismo muito inteligente que ainda precisa fazer suposições e aquecer primeiro. Rust é compilado antecipadamente, convertendo-se diretamente em código de máquina, antes mesmo de ser executado. Para uma ferramenta que você inicia, utiliza ao máximo e fecha, esse aquecimento em JavaScript é puro desperdício. Rust simplesmente ignora isso. Então, por que Rust
+
+especificamente e não apenas qualquer linguagem rápida? Porque Rust oferece velocidade bruta sem o preço usual. Em linguagens de sistemas mais antigas, acessar esse nível tão baixo significa que você pode corromper a memória e travar todo o sistema. Rust possui um verificador de empréstimos que detecta esses erros durante a compilação, antes que alguém execute o código. Com cinto de segurança, você atinge a velocidade de um piloto da classe C.
+
+Para uma ferramenta da qual milhões de desenvolvedores dependem diariamente, esse cinto de segurança é essencial. E você não precisa sair do Node para obter nada disso. Existe uma ponte chamada Napi-RS que permite escrever um código em Rust, compilá-lo e chamá-lo a partir de JavaScript como qualquer pacote normal. Você instala com o NPM e importa como qualquer outro programa. A ferrugem é invisível. Essa ponte
+
+é como o SWC, o Rollup e metade desta lista chegam até você disfarçados de pacotes NPM comuns que você já possui. Mais uma pergunta que vale a pena responder. Por que agora e não há 5 anos? Duas coisas tinham que se alinhar . O próprio Rust precisava amadurecer e a ponte para o Node.js precisava ficar boa o
+
+suficiente para que distribuir uma ferramenta Rust fosse tão simples quanto distribuir qualquer pacote NPM. Por volta de 2020, ambos os problemas ocorreram e a dor finalmente se tornou insuportável. As compilações em JavaScript estavam ficando tão lentas que as equipes estavam perdendo minutos preciosos a cada salvamento. A lentidão é uma motivação fantástica. Deixe-me mostrar a fila de espera, porque ela é maior do que a maioria das pessoas imagina. Comece com o SWC, o
+
+compilador web veloz. É a ferramenta Rust que transforma seu JavaScript e TypeScript modernos em código que os navegadores entendem, função que antes era desempenhada pelo Babel. É cerca de 20 vezes mais rápido que o Babel em um único núcleo e muito mais em vários. O Next.js adotou essa configuração como padrão há anos. Se você publica um aplicativo React, é
+
+provável que o SWC já tenha modificado seu código hoje. O SWC foi criado por um desenvolvedor conhecido como kdy1 e, após sua criação, Vercel o contratou para desenvolver o próximo projeto, o Turbopack. O Turbopack é o bundler criado para substituir o Webpack e, a partir do Next.js 16, é o padrão tanto para desenvolvimento quanto para produção. O número que as pessoas consideram como atualização rápida, ou seja, o intervalo entre salvar um arquivo e ver a alteração. O Turbopack faz isso até 10
+
+vezes mais rápido que o Webpack, com builds de produção de duas a cinco vezes mais rápidos. E a Vercel não é a única gigante nisso. A ByteDance, empresa por trás do TikTok, criou seu próprio bundler em Rust chamado Rspack. A sacada genial foi torná-lo praticamente idêntico ao Webpack, permitindo que as equipes migrassem sem precisar reescrever sua configuração. O Real Migrations Reports compila aproximadamente nove vezes mais rápido, utilizando cerca de um terço da memória. Ele está em
+
+produção no TikTok e no Discord, e é utilizado em ferramentas da Microsoft e da Amazon. Isso não é ferramenta de ponta. Agora, aquela que chama a atenção. O Oxc, o compilador de oxidação, é uma família completa de ferramentas Rust e seu linter, o Oxlint, foi estabilizado em 2025. A verificação de uma grande base de código pelo ESLint pode levar um minuto ou mais. O Oxlint realiza as mesmas verificações em um
+
+piscar de olhos, de 50 a 100 vezes mais rápido, e fica ainda mais rápido quanto mais núcleos forem adicionados. Shopify, Airbnb e Mercedes já utilizam essa tecnologia. O velho limpador de fiapos não dá conta disso. Bem ao lado fica o Biome, que realiza a verificação e formatação de código em um único binário Rust, com as tarefas do ESLint e do Prettier divididas entre eles, além da centena de pacotes que eles utilizam. Biome é um download único. A versão 2.0
+
+conseguiu algo que as ferramentas JavaScript tinham dificuldade em fazer: linting com reconhecimento de tipos sem precisar reiniciar todo o compilador TypeScript. Ele funciona de 10 a 25 vezes mais rápido do que a combinação ESLint e Prettier, e é realmente agradável de usar. E então, a novidade mais recente, e talvez a mais importante, é o Rolldown, um bundler em Rust criado por Evan You, o mesmo criador do Vue e do Vite. A versão 1.0 foi lançada em maio e o Vite 8 agora a utiliza por padrão.
+
+Isso é importante porque o Vite é o material inicial de uma grande parte dos novos projetos atualmente. O Rolldown é de 10 a 30 vezes mais rápido que o Rollup, o bundler de JavaScript que ele substitui, e essa diferença só aumenta conforme seu projeto cresce. Não se trata apenas das ferramentas de compilação. O ambiente de execução também entra em jogo. Deno é uma alternativa ao Node, e seu núcleo é escrito em Rust.
+
+Durante muito tempo, a principal crítica era que ele não conseguia executar os pacotes NPM existentes . Isso acabou. O Deno 2 executa a grande maioria do ecossistema NPM, lê seus arquivos de pacote normais e se comporta como o Node onde importa, em uma base Rust em vez da base C++ do Node . Nem mesmo seu CSS está a salvo disso . O Lightning CSS, escrito em Rust, analisa, transforma e minimiza folhas de estilo muito mais rápido do que as ferramentas JavaScript que costumavam fazer isso. A Parcel usa
+
+isso. Vite estende a mão para pegá-lo. A história se repete um nível abaixo: uma tarefa tediosa e repetitiva foi delegada a uma linguagem compilada enquanto o resto de nós discutia sobre frameworks. E esses não são números de referência para um projeto de brinquedo. Uma empresa chamada Muse reduziu o tempo de inicialização do seu processo de compilação de 3 minutos para 10 segundos ao trocar de bundler. A Ramp
+
+reduziu seu tempo de construção em mais da metade . Quando o tempo de compilação cai de 3 minutos para 10 segundos, isso não é algo desejável. Isso significa que dezenas de vezes por dia você recupera o foco, em vez de entregá-lo a alguém que está girando a tela. E veja quem está por trás dessas ferramentas, porque a lista parece um verdadeiro guia de personalidades importantes . A Vercel desenvolve SWC e Turbopack. A ByteDance criou o Rspack. A Void
+
+Zero, agora Cloudflare, desenvolve o Rolldown e o Ox. Os usuários leem da mesma maneira. Shopify, Airbnb, Discord, Mercedes, Microsoft. Quando os maiores nomes do desenvolvimento web se unem em uma mesma direção, geralmente significa que algo concreto está acontecendo. E repare no padrão que está se formando, porque essa é a parte que me surpreendeu.
+
+Não se tratam de 10 projetos independentes. Ox e Rolldown compartilham exatamente o mesmo analisador sintático em Rust. Rolldown alimenta Vite. O plano é um núcleo Rust compartilhado, um analisador sintático, um conjunto de componentes internos com um bundler, um linter, um formatador e um executor de testes, todos construídos sobre essa base. Em vez de uma centena de ferramentas JavaScript pouco interligadas, um único mecanismo rápido que integre todas elas. Alguém está
+
+realmente adotando isso ou é apenas uma moda passageira? A pesquisa State of JS é o que a comunidade tem de mais próximo a uma contagem de participantes. E em um ano, o Rolldown passou de 1% de uso para 10%, com o maior interesse de todas as ferramentas de compilação da lista. O Vite agora tem 98% de satisfação, contra 26% do Webpack. A tendência é clara.
+
+Então, quem está pagando por tudo isso? Grande parte disso se concentra em uma única empresa, a Void Zero, fundada por Evan You em 2023. Seu principal objetivo é construir uma cadeia de ferramentas unificada para JavaScript. Vite, Vitest, Rolldown e Ox, todos sob o mesmo teto e compartilhando o núcleo de Rust. A empresa levantou uma rodada inicial de investimento e, em seguida, 12 milhões e meio em uma rodada Série A. Essas são ferramentas de código aberto
+
+com financiamento de capital de risco real por trás delas agora. E então, em junho, veio a mudança que fez as pessoas se endireitarem na cadeira. A Cloudflare, uma das maiores empresas de infraestrutura da internet, adquiriu a Void Zero por completo. A cadeia de ferramentas Rust que constrói a web moderna agora pertence a uma empresa que já opera uma grande parte da web moderna. A Cloudflare também investiu um milhão de dólares para manter a independência do Vite, e Evan You continua liderando o lado do código aberto . Por que uma empresa como a
+
+Cloudflare iria querer um agregador de serviços? Porque quem controla as ferramentas que criam todos os aplicativos controla um ponto de estrangulamento. Se a cadeia de ferramentas for rápida, integrada e sua, você poderá moldar a forma como todo o ecossistema implementa, testa e distribui seu software. Na verdade, não se tratava de economizar alguns segundos na compilação. Trata-se de dominar o terreno onde todo o mundo JavaScript se encontra.
+
+Os números monetários também correspondem aos números de código . O SWC recebe mais de 40 milhões de downloads por semana. A Rollup, com pouco mais de um ano de existência, já fatura mais de 20 milhões. Esses não são experimentos que um punhado de entusiastas realiza nos fins de semana. São componentes essenciais da infraestrutura da internet, baixados dezenas de milhões de vezes por semana, principalmente por pessoas que não fazem ideia de que Rust existe . Dê um passo para trás e a forma ficará
+
+clara. Um único motor Rust bem no fundo. Um conjunto de ferramentas familiares sobrepostas: o bundler, o linter, o compilador e o formatador. Cada um deles é um nome JavaScript que você já conhece. Cada um deles agora roda em código de máquina que você raramente vê. Os nomes permaneceram exatamente os
+
+mesmos. O motor que estava embaixo deles foi trocado enquanto você estava implementando as funcionalidades. Agora, a parte honesta, porque muitos vídeos de Rust param antes disso, e também estão errados. Não é só o Rust que faz isso. A ferramenta que, sem dúvida, deu início a todo o movimento, o esbuild, foi escrita em Go, não em Rust. E o esbuild
+
+é brutalmente rápido. Em diversos testes comparativos, ele supera o SWC, que é o teste para Rust. Portanto, a lição é mais simples do que idolatrar Rust. Uma linguagem paralela compilada é superior a uma linguagem interpretada de thread única, independentemente da sua escolha. E a maior novidade em jogos de velocidade de 2026 não tem nada a ver com Rust. A
+
+Microsoft reescreveu o compilador TypeScript, responsável pela verificação de tipos em praticamente todos os projetos JavaScript sérios , e lançou-o em julho deste ano com uma velocidade cerca de 10 vezes maior. Eles escreveram em Go, não em Rust. A ferramenta que está no centro de todo o universo TypeScript escolheu a outra linguagem, e isso representa um duro golpe em qualquer vitória do Rust puro. E o motivo pelo qual escolheram o Go é realmente interessante. Anders Hejlsberg, criador do TypeScript, afirmou que o compilador existente estava repleto de estruturas de dados com uso intensivo de ponteiros mutáveis ​​compartilhados, e que esse estilo pode ser portado quase diretamente para o Go, mas enfrenta problemas com o verificador de empréstimos do Rust a cada passo. Adaptar o jogo para Rust teria significado
+
+redesenhar tudo do zero. Às vezes, a segurança que a ferrugem proporciona é exatamente o atrito que você não deseja. Trocas honestas, em ambos os sentidos. E depois há o Bun, o sistema de execução completo e rápido que as pessoas tanto mencionam . Durante anos, foi o contraexemplo perfeito . Bun é rápido e foi escrito
+
+em Zig, uma terceira linguagem, não em Rust. Mas até isso está mudando. Em 2026, a equipe Bun começou a reescrevê-lo de Zig para Rust devido à segurança de memória, o mesmo verificador de empréstimo de cinto de segurança. Assim, o contraexemplo está lentamente aderindo à própria tendência que antes tentava refutar. Deixa eu mostrar o outro lado mais uma vez, como um verdadeiro homem de aço. Um cético
+
+poderia dizer que isso é apenas uma questão de as pessoas escolherem ferramentas mais rápidas e que o texto subjacente é uma nota de rodapé que os usuários não escolheram de propósito. E há verdade nisso. Um desenvolvedor muda para o Vite porque ele é rápido, não porque ele usa Rust internamente. Mas esse é exatamente o objetivo. Quando a opção mais rápida acaba sendo repetidamente a opção do Rust , a nota de rodapé se torna a história. Mas aqui está a frase que
+
+realmente importa. Nada disso afeta o código que você escreve. Seus componentes, suas rotas, sua lógica de negócios, tudo isso permanece em JavaScript e TypeScript. Você não precisa aprender Rust para criar um aplicativo web. A ferrugem vive debaixo do assoalho, nas ferramentas. Você obtém toda a velocidade sem
+
+pagar o custo de aprendizado. Essa é exatamente a razão pela qual isso pôde se espalhar tão longe e tão rápido. E, para ser preciso, pois a precisão é o ponto crucial aqui, o próprio Node não está sendo reescrito em Rust. O núcleo do Node ainda é baseado em C++, V8 e muito JavaScript, e não há nenhum esforço significativo para mudar isso. Quando as pessoas dizem que Rust está "comendo" o backend do JavaScript, elas se referem ao conjunto de ferramentas em torno do Node.js, os
+
+construtores, os verificadores, os tempos de execução, e não às entranhas do próprio Node.js. A sala de máquinas continua sendo a mesma de sempre. Então, qual seria a manchete honesta? Linguagens de sistemas compiladas estão dominando a cadeia de ferramentas JavaScript, e Rust é a principal candidata, embora não represente todo o campo. O Go está bem ali ao lado. Zig
+
+também apareceu. Mas, quando se leva em conta as novas ferramentas que estão sendo criadas agora, como os bundlers, os linters e os formatadores, a maioria delas é escrita em Rust , e o ímpeto está claramente apontando para uma direção. Então, o que isso realmente significa para você? Na maioria das vezes, suas ferramentas ficam drasticamente mais rápidas enquanto você praticamente não faz nada. Atualize o Next.js e o
+
+Turbopack já estará instalado. Inicie um projeto Vite e o Rollup estará dentro dele. Troque o ESLint pelo Oxlint ou pelo Biome em uma tarde ociosa e veja uma verificação de um minuto se tornar instantânea. O processo de atualização aqui é quase tediosamente indolor, e há uma ideia maior que vale a pena considerar por um instante. Durante uma década, a resposta em JavaScript para uma ferramenta lenta foi escrever uma ferramenta em JavaScript melhor. Essa era está chegando ao
+
+fim. A nova solução é descer um nível, escrever a parte crítica em uma linguagem criada para velocidade bruta e devolvê-la como um pacote npm . Seu ecossistema está sendo reconstruído de dentro para fora, uma ferramenta de cada vez. Você deveria aprender Rust por causa de tudo isso? Para a maioria dos desenvolvedores web, sinceramente, não, não por esse motivo. Você
+
+aproveitará todos os benefícios sem escrever uma única linha. Mas, se você já teve curiosidade de saber o que realmente fica embaixo das suas ferramentas, este é o momento mais oportuno dos últimos anos para dar uma olhada. O substrato do seu ecossistema está sendo substituído e, pela primeira vez, você pode observar isso acontecer. Sinceramente , depois de passar por tudo isso, essa é a mudança mais saudável, aquela que você sente que simplesmente está melhorando, sem precisar migrar nem reescrever a sua vida. Rust, assim como seus primos Go e Zig, não estão aqui para o seu emprego ou para a sua linguagem. Eles estão aqui
+
+para as partes mais lentas da sua cadeia de ferramentas, e nessa batalha específica e restrita, eles estão vencendo. Se suas compilações ficaram mais rápidas ultimamente e você não conseguia descobrir o porquê, agora você sabe o que mudou nos bastidores . Qual a última ferramenta do seu conjunto de ferramentas que você esperaria ver reescrita em Rust? Tenho um palpite. Diga-me a sua.

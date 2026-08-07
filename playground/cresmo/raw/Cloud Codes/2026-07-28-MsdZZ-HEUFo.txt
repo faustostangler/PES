@@ -1,0 +1,128 @@
+---
+video_title: "SGLang + Qwen: Fastest Way to Serve Local Models Right Now"
+video_id: MsdZZ-HEUFo
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MsdZZ-HEUFo
+video_date: 2026-07-28T19:30:12+00:00
+video_description: |
+  Are your local LLM coding agents stalling under concurrent load? In this technical benchmark, we expose why serving Qwen models with llama.cpp flatlines past 20 concurrent requests due to monolithic KV cache allocation, and why switching to SGLang’s RadixAttention or vLLM’s PagedAttention unlocks massive throughput scaling. We dive deep into the GPU architecture of continuous batching and how SGLang uses a radix tree to natively share prefix context across thousands of agentic tool calls, bypassing expensive prefill computations entirely.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  Whether you're running FP8/INT4 quantized GGUFs on a single RTX 3090, compiling finite-state machines for structured JSON output, or scaling H100 clusters, this head-to-head comparison reveals exactly which inference engine you should deploy based on your real-world traffic. We test Qwen3.5-35B-A3B against unique prompts, shared system prompts, and high-concurrency loads to show why the industry's folklore about "the fastest AI server" is completely misunderstood.
+  
+  If you found this technical deep-dive on LLM architecture and inference scaling helpful, drop a like and subscribe for more content on software engineering and system design!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 3-Server GPU Benchmark 
+  01:02 - llama.cpp: The Perfect Single-User Engine 
+  02:07 - The KV Cache Wall & Why Ollama Flatlines 
+  03:10 - vLLM: PagedAttention & Continuous Batching 
+  05:05 - SGLang: The Radix Tree & Shared Prefix Cache 
+  06:30 - Structured Output (JSON) & Finite-State Machines 
+  08:35 - Benchmarking Qwen 35B: The Setup 
+  09:03 - Round 1: The Unique Prompt Test 
+  09:29 - Round 2: Agentic Load & Shared Context 
+  09:49 - Round 3: High Concurrency Load 
+  10:10 - The Time-to-First-Token (TTFT) Difference 
+  10:50 - The Final Verdict: Which Engine to Choose? 
+  12:15 - Quantization (GGUF, FP8, INT4) 
+  13:01 - Recap & Final Thoughts 
+  
+  #sglang #vllm #llamacpp #qwen #systemdesign #softwareengineering #machinelearning #gpucompute #cloudcodes
+  
+  User Queries:
+  sglang vs vllm vs llama cpp performance benchmark
+  how radixattention improves local llm inference speed
+  fixing llama cpp concurrent requests bottleneck
+  best server for qwen3.5-35b-a3b on rtx 3090
+  vllm pagedattention vs sglang radix tree explained
+  how to serve local llm for multiple concurrent users
+  accelerating ai agents structured json output sglang
+  time to first token ttft optimization vllm
+  running concurrent ai coding agents locally
+  hugging face llm inference engine comparison 2026
+---
+Três servidores, uma GPU, um modelo QN. Observe o aumento no número de fichas por segundo. Mesmo peso, mesmo cartão. A única coisa que muda é o servidor à sua frente. Um deles serve QN mais rápido que os outros dois, e não por erro de arredondamento.
+
+SG Lang é a maneira mais rápida de oferecer um modelo local neste momento. Tem um porém, e eu vou te mostrar qual é. Em uma única pergunta, ele vence por uma margem mínima. Sob carga real, ele se distancia e não olha para trás. llama.cpp é o arquivo
+
+com o qual a maioria das pessoas começa. Um comando, um usuário, cerca de 35 tokens por segundo em um 3090. O LLM é o motor de trabalho. Atenção paginada, desenvolvida desde o início para processar centenas de usuários simultaneamente. SG Lang tem um truque que os outros não têm: atenção Radix. Ele reutiliza o prefixo que todos
+
+recalculam. Então, executei o teste de desempenho. Mesma GPU, mesmo QN, mesmas versões na tela. Eis o que realmente aconteceu. A resposta para a pergunta "Qual deles vence?" depende
+
+de uma única questão. Seus pedidos incluem algum texto? Comece com o arquivo llama.cpp porque é a coisa mais fácil do mundo. Você configura o servidor Llama para apontar para um único arquivo GGUF e obtém um endpoint no estilo OpenAI em localhost. Sem
+
+Python, sem CUDA toolkit, sem dependências complexas, apenas um binário C++ que roda em um laptop, um Mac em um PC, um computador antigo , até mesmo um Raspberry Pi. Essa portabilidade é a principal razão de sua existência. Para uma pessoa, é ótimo. Um QN 27B em um GGUF de 4 bits ocupa cerca de 17 gigabytes em uma 3090 usada e transmite cerca de 35 tokens por segundo, mais rápido do que você consegue ler. E mantém essa velocidade desde um breve estímulo até mais de 200.000 tokens de contexto, porque seu
+
+núcleo em C é otimizado para um único fluxo. Como modelo pessoal, isso é mais do que suficiente. Em seguida, uma segunda pessoa acessa o mesmo servidor, e depois uma terceira. É aqui que a história muda. O arquivo llama.cpp
+
+foi desenvolvido para executar um fluxo por vez, portanto a taxa de transferência total praticamente não se altera. Dois usuários não compram dois usuários de trabalho. Eles geralmente fazem fila e esperam a sua vez. O motivo é o cache KV, a memória de execução da conversa que o modelo mantém na VRAM. llama.cpp reserva
+
+um bloco plano disso. Assim, quando as solicitações se acumulam, esse bloco se enche e o servidor não consegue processar mais trabalho. Em um A10G, um engenheiro mediu que o sistema travava com 26 solicitações simultâneas antes de ficar sem espaço. Uma reescrita da mesma página com o mesmo código, dimensionada para 247. E é por isso que uma lhama bate na mesma parede. Ele encapsula o arquivo llama.cpp,
+
+portanto herda o mesmo limite de fluxo único . Os testes de desempenho mostram que ele se mantém estável em torno de 22 requisições por segundo, independentemente da quantidade de usuários conectados. No momento em que sua ferramenta deixa de ser apenas para uso individual e passa a ser para uso em equipe, você está procurando um servidor de verdade. A Red Hat colocou os motores em um H200 e aumentou a carga. Em um pico de desempenho, o vLLM forneceu mais de 40 vezes mais tokens por segundo do que o llama.cpp no ​​mesmo
+
+cartão. llama.cpp não é lento. Foi projetado para um único assento e o defende de forma brilhante. Ele nunca teve a intenção de ser um servidor para frotas. O vLLM corrige o
+
+problema de cache com atenção paginada. Em vez de um grande bloco reservado, ele divide o cache KV em pequenas páginas fixas, exatamente como a memória virtual em um sistema operacional, e as libera somente quando uma solicitação realmente precisa delas. Sem solicitações, o espaço não fica em uso, então quase nada é desperdiçado e muito mais usuários podem usar o mesmo cartão. Além disso, existe o processamento contínuo em lotes. Assim que uma requisição termina de processar um token, uma requisição em espera preenche o intervalo, de modo que a GPU nunca fica ociosa entre as etapas.
+
+Sob carga pesada, o vLLM mantém a placa de vídeo ocupada entre 85% e 92%, enquanto servidores mais antigos deixavam um terço dela ocioso. E silício ocioso é dinheiro que você já pagou. E aqui está a parte em que a internet se engana sobre o SGLang. Quando cada solicitação é diferente, o vLLM não fica nada para trás. Ao processar 5,35 bilhões de solicitações do Qwen3 em uma GPU com 32 requisições simultâneas, o vLLM gerou 1.743
+
+tokens de saída por segundo, contra 1.661 do SGLang . Em tarefas específicas, o modelo mais robusto leva vantagem, e muitos dos mitos sobre o SGLang ser simplesmente mais rápido ignoram esse detalhe. O vLLM também funciona em praticamente qualquer lugar: Nvidia, AMD, Intel, TPUs, Trainium, Gaudi, com uma base de colaboradores várias vezes maior que a de qualquer concorrente. A versão 0.20 trouxe suporte para DeepSeek-V4
+
+poucos dias após a redução dos pesos. Se o seu tráfego for uma mistura de solicitações não relacionadas , ou se o seu hardware não for uma placa Nvidia comum, esta é a configuração padrão segura. Assim, o vLLM é o mais generalista, com o hardware mais abrangente, a lista de modelos mais ampla, a maior comunidade e uma curva de desempenho que escala perfeitamente com a carga. Para muitas equipes, a história pode terminar aqui. Mas observe com mais atenção o que seu servidor realmente precisa fazer o dia todo, porque a maior parte do tráfego real de servidores não é um amontoado de solicitações desconexas. Observe o que um agente realmente
+
+envia: a mesma longa mensagem do sistema, a mesma lista de ferramentas, o mesmo histórico de bate-papo, repetidamente, com apenas alguns novos tokens no final de cada vez. O início de cada solicitação é praticamente idêntico. A atenção radix é a ideia de que você deve calcular esse início compartilhado exatamente uma vez. O SGLang armazena cada prompt que viu em uma árvore radix, uma árvore de prefixos de cache KV. Uma nova solicitação percorre a árvore, encontra o ramo mais longo que ela já compartilha, reutiliza esse cache gratuitamente e computa apenas a cauda totalmente nova. O preenchimento automático que todos os
+
+outros repetem, o SGLang ignora. O vLLM também possui cache de prefixos, mas o estilo mais antigo de chaves exige uma correspondência exata de todo o prefixo. Uma árvore radix combina ramos parciais e lida com bifurcações. Assim, quando um agente explora a opção A, recua e tenta a opção B, o SGLang reutiliza tudo até a divisão, em vez de recalcular toda a jogada do zero. Foi desenvolvido para refletir a forma como os agentes realmente pensam. Imagine um
+
+enxame de 100 agentes em um único servidor. Todos eles usam o mesmo modelo e as mesmas ferramentas, cada um com milhares de tokens de prefixo idênticos . Sob o sistema de atenção Radix, esse contexto compartilhado é computado uma única vez, e cada agente lê do mesmo ramo armazenado em cache. Quanto mais as suas solicitações se sobrepõem, mais dados pré-preenchidos o servidor precisa descartar. Existe um segundo truque que a maioria das pessoas desconhece. Quando você
+
+solicita JSON ou um esquema fixo, o SGLang compila essa gramática em uma máquina de estados finitos e decodifica vários tokens de restrição em uma única etapa. A saída estruturada, essencial para todas as chamadas de agentes e ferramentas, é gerada praticamente de graça, em vez de token por token. Os números são proporcionais à sobreposição. No histórico de bate-papo compartilhado, a taxa de transferência é aproximadamente três vezes maior . Em cargas de trabalho de agentes com ferramentas, cerca de cinco vezes.
+
+No artigo original de Stanford e Berkeley, em cargas de trabalho estruturadas mais pesadas, observou-se um aumento de até 6,4 vezes na taxa de transferência e uma redução de um terço na latência em comparação com os sistemas da época. E isso se mantém em escala de data center. Em testes realizados em 2026 em um H100 atendendo a um modelo de 8 bilhões sob carga simultânea, o SGLang processou aproximadamente 16.200 tokens por segundo, contra 12.500 do vLLM, uma vantagem de cerca de 29% na taxa de transferência total, proveniente diretamente da reutilização de prefixos. Isso
+
+também aparece em equipamentos para hobby. Em um relatório que utilizava QN3 54B em uma única placa 4090, o SGLang transmitiu cerca de 180 tokens por segundo, enquanto uma configuração padrão do vLLM conseguiu apenas 40. Mesma placa, mesmos pesos, a reutilização realiza o trabalho enquanto o outro servidor o refaz. A atenção dada à Radix é apenas uma manchete. SGLang v0.5. A versão
+
+15 também divide o preenchimento automático e a decodificação em processos separados, de modo que um único prompt gigante não possa interromper os tokens de todos os outros, e ativa a decodificação especulativa, o Spec v2 e o kernel Nudlash por padrão. Ele quantiza até FP8, Int4 e até mesmo FP4, então o modelo ainda cabe no seu cartão. Isto não é um brinquedo de laboratório. O SGLang surgiu de um artigo de 2023 de Zheng, Sheng e do grupo LMSYS, as mesmas pessoas que construíram o cenário dos chatbots, e agora administra algumas das maiores implementações de LLM (Learning Learning Management) do mundo. Quando uma frota precisa atender milhões de usuários com um modelo compartilhado, é muito comum que essa seja a essência do problema. Então, vamos tornar
+
+isso concreto. Uma GPU, um modelo, QN3, 535, BA3B, uma combinação de especialistas que mantém a qualidade elevada, processando apenas alguns bilhões de parâmetros por token. Três servidores, versões bloqueadas, SGLang 0.5.15, vLLM 0.20.1
+
+e llama.cpp na versão mais recente. O mesmo fluxo de requisições passa por cada um, e lemos tokens por segundo diretamente da rede. Primeira rodada, cada pergunta é única, nada é compartilhado. vLLM lidera com 1.743
+
+tokens por segundo. O SGLang vem logo atrás, com 1.661, e o llama.cpp, criado para um único fluxo, fica bem abaixo dos dois quando as requisições se acumulam. Sem sobreposição alguma, simplesmente não há nada para a árvore Radix reutilizar, então o modelo principal assume o controle. Na segunda rodada, atribua a
+
+todas as solicitações o mesmo prefixo longo do sistema , da mesma forma que um agente real ou um aplicativo de bate-papo faz. Agora, a linha do SGLang se distancia do vLLM à medida que o prefixo compartilhado cresce, porque ignora o preenchimento que os outros continuam repetindo. Quanto mais longo o contexto compartilhado, maior se torna o abismo. Essa é a curva que é o tema central de todo o vídeo. Na terceira rodada, aumente a concorrência para 100 usuários simultaneamente. Os dois servidores com GPUs
+
+continuam a escalar. Tanto o vLLM quanto o SGLang absorvem a carga e mantêm seus tokens por segundo. Lhama. A fila do CPP fica plana e, em seguida, forma-se uma grande acumulação atrás dela. Essa é a diferença de 44 vezes em relação ao sorteio anterior, realizado ao vivo, no mesmo cartão. Observe o tempo até o
+
+primeiro token enquanto a carga aumenta. No vLLM e no SGLang, a demanda permanece praticamente estável, mesmo com o aumento constante de usuários devido aos seus agendadores que continuam aceitando tarefas. Em Lhama. CPP, sobe uma escadaria. Cada nova solicitação entra na fila atrás da anterior.
+
+Portanto, o tempo de espera para sequer começar a elaborar sua resposta é proporcional ao tamanho da multidão. Coloque os três lado a lado na carga de trabalho que realmente importa. Contexto compartilhado, concorrência real e contadores separados. SGLang na frente, vLLM logo atrás, llama.cpp mantendo sua única faixa. Mesma
+
+GPU, mesmos pesos, mesmos comandos. O servidor intermediário faz toda a diferença. Então, qual você realmente escolhe? Recorra ao arquivo llama.cpp quando estiver apenas você e seu modelo.
+
+Um laptop, um Mac, um computador com processador, um GGUF quantizado que você quer que responda em 30 segundos . Para um assento individual, nada supera o quão pouco ele exige de você. Sem servidor para monitorar, sem dependências para combater. Recorra ao vLLM quando as instruções forem todas diferentes e o hardware não for uma placa Nvidia comum. Tarefas em lote, classificação única, geração offline, AMD ou uma TPU na combinação.
+
+É a opção mais abrangente e segura, e em trabalhos únicos, iguala ou supera o SGLang de forma absoluta. Recorra ao SGLang assim que sua solicitação começar a compartilhar texto, agentes conversam com histórico, utilizam o recurso de rastreamento (rag) com um contexto fixo e geram saída estruturada com um esquema fixo. É assim que o serviço de produção realmente funciona durante todo o dia, e é exatamente essa a carga de trabalho que faz com que a atenção da Radix se desvie do campo. Essa é a verdadeira resposta para a maneira mais rápida de servir. Nunca foi apenas um número em um gráfico. É uma questão relacionada ao seu próprio
+
+tráfego. Quanto mais seus pedidos se sobrepõem, mais o SG Lang vence. E para tudo que envolva agentes, há muita sobreposição, e experimentar não custa quase nada. Basta instalar o SG Lang com o pip, executar um comando de inicialização do servidor apontando para um modelo QN do Hugging Face, e você terá um endpoint compatível com OpenAI em seu próprio servidor. Configure seu cliente existente para acessar o localhost, e nenhuma linha do seu aplicativo precisará ser alterada. Um fator que torna a
+
+comparação justa é que os três utilizam os mesmos pesos quantizados. O arquivo llama.cpp lê GGUF de dois bits até oito bits, enquanto vLLM e SG Lang aceitam FP8, int4, AWQ e GPTQ. Portanto, o modelo não é a variável neste caso. O mesmo QN de quatro bits é executado em todos os servidores. Apenas o motor
+
+muda. Combine o modelo com o seu cartão. Em 24 gigabytes, um QN4B voa. Uma mistura de 30 bilhões de especialistas permanece rápida porque apenas cerca de 3 bilhões de parâmetros são acionados por token, e uma mistura densa de 32 bilhões cabe em quatro bits se o contexto for mantido coerente. Para agentes de codificação locais, o QN3 Coda 30B processa cerca de 130 tokens por segundo em uma 3090, o que é mais do que suficiente para trabalho real. Três servidores, uma
+
+GPU, uma divisão limpa. O arquivo llama.cpp é o proprietário da licença individual e do laptop. A vLLM é proprietária do exclusivo sistema de mangueira de incêndio e do hardware peculiar. E a SG Lang detém a carga de trabalho de prefixos compartilhados que realmente compõe o serviço, razão pela qual ela se destaca no serviço de QN. Se você pretende oferecer um
+
+modelo local para um público maior do que apenas você, SG Lang mais QN é a solução mais rápida que você pode implementar hoje. Pegue os números, execute o teste no seu próprio cartão e me diga quantos tokens por segundo você consegue. Eu li os comentários.

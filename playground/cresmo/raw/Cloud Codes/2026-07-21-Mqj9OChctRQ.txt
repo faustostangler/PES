@@ -1,0 +1,108 @@
+---
+video_title: "DuckDB Is Quietly Killing Pandas (SQLite for Analytics)"
+video_id: Mqj9OChctRQ
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Mqj9OChctRQ
+video_date: 2026-07-21T12:00:17+00:00
+video_description: |
+  Are you still crashing your Python kernels with "Out of Memory" errors in Pandas, or paying massive cloud bills to Snowflake for tiny analytical workloads? Discover why Data Engineers are abandoning heavy frameworks and turning to DuckDB: the lightning-fast, open-source, in-process analytical database that acts exactly like SQLite, but for OLAP.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/GcbnWVVp4
+  
+  In this video, Cloud Codes breaks down the system design of DuckDB. We explore why traditional Pandas struggles with massive datasets (single-threaded execution, memory bloat, no query optimizer) and how DuckDB solves this by using vectorized, columnar execution across all your CPU cores. We dive deep into its "Out-of-Core" architecture, which allows it to query 100GB Parquet files straight from your SSD—or directly from an AWS S3 bucket—without ever blowing up your laptop's RAM.
+  
+  We also explore the business side: why MotherDuck raised $100 Million on the premise that "Big Data is Dead," and how you can seamlessly combine DuckDB's "Friendly SQL" with your existing Pandas DataFrames (Zero-Copy) to build the ultimate, serverless data pipeline. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Pandas "Out of Memory" Problem
+  1:07 - Why Pandas Fails at Scale (The Memory Wall)
+  2:47 - Why DuckDB is 5x Faster (Vectorized Execution)
+  4:00 - Out-of-Core Queries: Querying Data Bigger Than RAM
+  5:19 - Friendly SQL & Direct S3 Parquet Querying
+  6:25 - DuckDB vs SQLite (OLAP vs OLTP)
+  7:09 - The MotherDuck Startup & The "Big Data is Dead" Myth
+  8:23 - The Honest Verdict: Is Pandas Actually Dead?
+  8:39 - The Ultimate Data Stack: DuckDB + Pandas
+  
+  
+  #duckdb #pandas #python #dataengineering #systemdesign #softwareengineering #cloudcodes #sql #bigdata #machinelearning #database
+  
+  User Queries:
+  duckdb vs pandas performance benchmark
+  what is duckdb tutorial
+  pandas out of memory error fix
+  how to query s3 parquet files duckdb
+  sqlite vs duckdb explained olap oltp
+  big data is dead motherduck jordan tigani
+  how to use duckdb with python dataframe
+  system design analytical database
+  duckdb webassembly browser tutorial
+  pandas alternative for large datasets
+---
+Você aponta o Pandas para um arquivo CSV grande e o Python trava. Memória insuficiente, kernel corrompido. Se você trabalha com dados, com certeza já se deparou com esse obstáculo. Agora, altere uma linha, envie esse mesmo arquivo para o DuckDB e a consulta retornará em cerca de um segundo. Isso é o DuckDB.
+
+Pense nisso como o SQLite, mas reconstruído para análises em vez de transações. Mesmo computador, mesmo arquivo, mesma consulta. Uma ferramenta demora um minuto para responder, a outra demora menos que você perceba. E está assumindo a função que os pandas desempenhavam há 15 anos: a de processar números no dia a dia. Ele é executado diretamente dentro do seu processo Python. Sem
+
+servidor para iniciar, sem conta, uma instalação do pip e pronto. A proposta é simples. Mais rápido que o pandas, consumindo uma fração da memória, e capaz de processar dados maiores que a sua RAM. Quase 40.000 estrelas no GitHub, e surgiu de um laboratório de pesquisa público em Amsterdã. É
+
+rápido por um motivo principal. Ele lê seus dados em colunas, em lotes, nunca linha por linha. Ele também utiliza todos os núcleos do seu computador simultaneamente. Os pandas são famosos por usarem exatamente um. Aqui está a história completa. O limite de memória que o pandas
+
+enfrenta, por que o DuckDB é mais rápido e onde o pandas ainda se destaca. Primeiro, um pouco de história, porque é importante. Wes McKinney criou o pandas em 2008 enquanto trabalhava em um fundo de hedge, e isso basicamente transformou o Python na linguagem dos dados. Durante 15 anos, foi o método padrão para carregar, limpar e processar uma tabela. Mas foi projetado para um mundo onde seus dados cabiam confortavelmente na memória, e esse mundo não existe mais. Aqui está a primeira rachadura.
+
+Seu laptop provavelmente tem 8, 12 ou 16 núcleos de CPU. O Pandas usa exatamente um deles. Você envia um grupo grande de máquinas, e as outras 15 ficam completamente ociosas enquanto você fica olhando para uma barra de progresso. Todo esse equipamento que você comprou , e não está fazendo nada. O problema maior é a memória. O Pandas carrega todo o
+
+conjunto de dados na RAM e, em seguida, precisa de espaço para copiá-lo . A regra prática do próprio McKinney é manter de 5 a 10 vezes o tamanho do seu conjunto de dados na memória. Assim, um arquivo CSV de 2 GB pode exigir 15 ou 20 gigabytes de RAM antes mesmo de concluir uma junção. E quando você cruza essa linha, não existe fracasso elegante. O Pandas gera um erro de memória, o kernel do Python é encerrado, seu notebook apaga todas as variáveis ​​que você havia carregado e a análise simplesmente termina. Sem flags e sem
+
+tamanho de chunk definido no Pandas, você consegue ultrapassar os limites da sua RAM. Também não há nada relacionado ao planejamento do seu trabalho. Um banco de dados real possui um otimizador de consultas que reordena e ignora tarefas. O Pandas faz exatamente o que você digita, linha por linha. Dez operações encadeadas significam dez varreduras completas dos dados, mesmo quando o programa poderia ter filtrado primeiro e analisado apenas um décimo das linhas. Então, um único núcleo,
+
+tudo comprimido na RAM e sem otimizador. Em conjuntos de dados pequenos, você nunca percebe nada disso. Em trabalhos analíticos reais , com milhões de linhas e algumas junções, esses três limites se acumulam rapidamente, e o peso acaba ocupando toda a sua tarde. Essa é exatamente a lacuna que o DuckDB foi criado para preencher, e ele a preenche muito bem. Em outubro passado, o KDnuggets comparou as três ferramentas em uma tabela com um milhão de linhas, somando uma coluna, agrupando por categoria, filtrando e realizando agregações de múltiplos campos. do que o Pandas, e
+
+quando um pipeline do Pandas é forçado a transbordar, a diferença se torna constrangedora. Os mesmos dados, o mesmo laptop, mas a velocidade bruta representa apenas metade da vantagem. Observe a memória. O Pandas oscila entre ser a ferramenta mais leve e a mais pesada, dependendo da consulta, sendo extremamente imprevisível. O DuckDB mantém-se baixo e estável em todas as categorias. A capacidade
+
+de prever a trajetória da memória é o que permite confiar nela em uma tarefa importante. Por que é tão mais rápido? O motor. Pandas e SQLite processam dados uma linha por vez. O DuckDB é colunar e vetorizado.
+
+Ele extrai seus dados em blocos de aproximadamente 2.000 valores e executa cada operação em todo o bloco enquanto ele permanece no cache da CPU. Muito menos custos indiretos por valor, muito mais produtividade. Mesmo só lendo um arquivo, ele ganha. O Pandas analisa um arquivo CSV em Python usando apenas um núcleo da biblioteca, tudo na memória. O DuckDB possui um
+
+leitor paralelo de CSV e Parquet que transmite dados por todos os núcleos da biblioteca. Assim, carregar um arquivo grande costuma ser várias vezes mais rápido antes mesmo de você executar uma única consulta. As junções mostram isso da melhor forma. A fusão de duas tabelas grandes no Pandas é o fim da linha para os notebooks. Ela materializa ambos os lados e a memória explode. O DuckDB executa uma
+
+junção hash de streaming adequada, mantém apenas o que precisa e une arquivos que são muito maiores do que a RAM que você realmente possui. O que nos leva à parte que realmente encerra a luta. Quando seus dados ultrapassam a capacidade da RAM, o DuckDB não trava. O conteúdo é gravado no disco e continua sendo gravado. Consultar um arquivo Parquet de 100 GB em um laptop com 16 GB de RAM é algo completamente normal. Os
+
+pandas não conseguem fazer isso. De forma alguma lentamente . Funciona a partir do núcleo, conforme projetado. Ele lê em partes, usa seu SSD como buffer e classifica e agrega os dados sem nunca manter o conjunto de dados completo de uma só vez. Existem artigos científicos revisados ​​por pares que comprovam a eficácia da agregação externa de hashes.
+
+Pandas não tem equivalente. Ou tudo se encaixa perfeitamente, ou não funciona. E a interface para tudo isso é SQL puro, não um novo dialeto de dados com mil métodos para memorizar, o mesmo select, where e group by que basicamente todo analista e engenheiro já conhece. Você já domina a API. Ele também lê seus arquivos diretamente. Aponte o
+
+DuckDB para um arquivo Parquet, CSV ou JSON e simplesmente faça uma consulta. Selecione a estrela no nome do arquivo, pronto. Sem etapa de carregamento separada, sem importação, sem definição manual de esquema. Ele identifica as colunas e os tipos lendo o próprio arquivo. Eis o passo que torna a adoção indolor. O DuckDB consegue consultar um dataframe do Pandas
+
+que já está na memória, pelo nome, no mesmo local, sem precisar copiá-lo. Portanto, você não precisa reescrever seu projeto. Você insere uma consulta DuckDB na parte lenta de um script Panda existente e mantém todo o resto exatamente como está. Também corrige cortes. O DuckDB vem com recursos que eles chamam de E-SQL amigável, como agrupar por todos, selecionar com asterisco, excluir uma coluna e vírgulas finais que não geram erros. Pequenos detalhes, mas que,
+
+juntos, fazem com que escrever uma consulta pareça moderno, em vez de algo que parece de 1999. Precisa guardar seus resultados? O DuckDB também é um banco de dados completo. Tudo reside em um único arquivo no disco, contendo transações de ativos reais e índices secundários. Foi exatamente esse modelo de um único arquivo, sem servidor, que fez do SQLite o banco de dados mais utilizado no mundo. E acontece sempre da
+
+mesma maneira. O mesmo mecanismo funciona no seu laptop, em um servidor de 100 núcleos, em um pequeno dispositivo de borda e, por não ter dependências, diretamente dentro de uma aba do navegador por meio do WebAssembly. Um único arquivo binário, sem necessidade de instalação, em qualquer lugar onde haja uma CPU. Ela também se estende por toda a rede. O DuckDB consegue consultar um arquivo Parquet armazenado em um bucket do S3 e recuperar apenas as colunas e linhas necessárias para a consulta, e não o arquivo inteiro.
+
+Você pode executar análises reais em um conjunto de dados na nuvem sem precisar baixá- lo completamente para sua máquina, e ele é extensível. Um núcleo pequeno com extensões carregáveis ​​para HTTP e S3, para JSON, para pesquisa de texto completo e até mesmo consultas geoespaciais. A comunidade publica as suas próprias versões através de um índice de pacotes. Assim, o mesmo pequeno arquivo cresce e se transforma no que sua análise realmente precisar. Isto já não é uma experiência científica. Em
+
+setembro de 2025, o DuckDB lançou sua primeira versão com suporte de longo prazo, a versão 1.4, com criptografia de banco de dados, uma instrução de mesclagem e um ano inteiro de suporte garantido. Já passou para a versão 1.5. Este software já está em produção. O resto da pilha percebeu rapidamente.
+
+DBT, Python, R, Rust, Java e Node agora são compatíveis com DuckDB. E uma startup de Seattle chamada MotherDuck arrecadou 100 milhões de dólares com uma avaliação de 400 milhões de dólares para construir uma nuvem gerenciada diretamente sobre o mesmo mecanismo, que já está integrado às ferramentas que você usa. O Hugging Face permite executar SQL em 200.000 conjuntos de dados diretamente no seu navegador. Esse console SQL é o DuckDB compilado para WebAssembly. Ferramentas como DBT, Rill e
+
+Evidence se baseiam nisso. Você provavelmente já consultou o DuckDB sem nem mesmo saber. Vale a pena ouvir a fundadora da Motherduck aqui. Ele ajudou a construir o Google BigQuery, o exemplo máximo de big data, e depois escreveu um ensaio intitulado "Big Data está morto". Seu argumento é que os dados da maioria das empresas têm apenas alguns gigabytes e uma única máquina executando o DuckDB consegue lidar com isso sem problemas. O enorme volume de equipamentos que lhe disseram ser
+
+necessário acabou sendo superestimado para a maioria das equipes. Então, os pandas estão realmente mortos? Sinceramente, não, e qualquer um que lhe diga isso está exagerando. O Pandas continua sendo a melhor biblioteca em Python para plotagem, para alimentar o scikit-learn e o PyTorch, e para pequenas alterações rápidas em tabelas pequenas. A base instalada é enorme e não vai diminuir tão cedo. A divisão honesta se parece
+
+com isto. Deixe que o DuckDB faça o trabalho pesado: carregue os arquivos, filtre, junte e agregue os grandes volumes de dados. Em seguida, passe o pequeno resultado para o Pandas com uma única chamada {dot} df para gráficos e modelos. DuckDB é o motor. Pandas é a última milha. Juntos, eles superam
+
+qualquer um deles sozinho. Uma regra simples para o seu próximo projeto: use o DuckDB quando os dados forem grandes, o trabalho for analítico ou você simplesmente precisar de SQL. Use o Pandas quando os dados forem pequenos e a lógica for executada linha por linha em Python. Na maioria dos casos, os oleodutos reais acabam precisando de ambos. O custo para experimentar isso é praticamente zero. Instale o DuckDB com o pip,
+
+importe-o e, com uma única linha, execute SQL diretamente sobre seu arquivo CSV ou dataframe. Sem servidor, sem conta, sem arquivo de configuração. Pegue o script Pandas mais lento que você possui e configure o DuckDB para analisá-lo esta semana. É aqui que eu aterrisso. Para trabalhos analíticos complexos, como carregamento, junção e agregação, o DuckDB tornou-se o novo padrão. O
+
+Pandas finalmente tem o backend colunar rápido que sempre mereceu . Se você programa para desenvolvimento de dados, vale a pena dedicar uma tarde a isso. Essa é a história do DuckDB e do Pandas. Se isso foi útil, inscreva-se. Analiso as ferramentas que estão remodelando a forma como construímos software.

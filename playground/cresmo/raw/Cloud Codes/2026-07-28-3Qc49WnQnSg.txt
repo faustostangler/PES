@@ -1,0 +1,131 @@
+---
+video_title: "Redis vs Valkey: Stop Overengineering Your Cache Architecture"
+video_id: 3Qc49WnQnSg
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3Qc49WnQnSg
+video_date: 2026-07-28T16:00:33+00:00
+video_description: |
+  Are you paying thousands of dollars for Redis clusters just to cache simple database queries? Meet the ultimate backend architecture decision for 2026: picking between the cloud-backed speed of Valkey, the newly re-licensed Redis, and the shocking performance of running SQLite directly inside your application process.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of modern caching infrastructure. We explore why Redis abandoned open source, how the Linux Foundation launched Valkey to slash AWS ElastiCache bills by up to 33%, and why Rails 8 completely deleted Redis in favor of Solid Cache powered by SQLite. You will see real-world case studies of firewall engines checking 1.2 million IP ranges 3x faster without network socket overhead, learn how Valkey 9.0 uses SIMD instructions and memory prefetching to boost throughput by 40%, and understand the 3 brutal "Walls" where you actually STILL need a central cache server.
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  • Valkey (Linux Foundation Fork): https://valkey.io/ | https://github.com/valkey-io/valkey
+  • Redis (In-Memory Data Store): https://redis.io/ | https://github.com/redis/redis
+  • SQLite (In-Process Database Engine): https://sqlite.org/ | https://github.com/sqlite/sqlite
+  • Solid Cache (Rails 8 DB Cache): https://github.com/rails/solid_cache
+  • Wafris WAF Case Study (Redis to SQLite): https://wafris.org/
+  • Linux Foundation Valkey Announcement: https://www.linuxfoundation.org/
+  • 37signals / Basecamp Infrastructure Essays: https://37signals.com/
+  
+  ⏱️ Video Chapters:
+  0:00 - The Day Redis Stopped Being Open Source
+  0:55 - The Licensing War: BSD vs AGPLv3
+  1:44 - Valkey: The AWS & Linux Foundation Fork
+  3:19 - Valkey 9.0 vs Redis 8.8 Benchmarks
+  5:26 - AWS ElastiCache Pricing: Valkey vs Redis
+  6:02 - Just Use SQLite: Eliminating Network Overhead
+  7:22 - Case Study: How Wafris Got 3x Faster with SQLite
+  8:38 - The 3 Walls: When You STILL Need a Cache Server
+  10:36 - Final Verdict: Valkey vs Redis vs SQLite
+  
+  #redis #valkey #sqlite #backend #systemdesign #database #aws #softwareengineering  #cloudcodes
+  
+  User Queries
+  valkey vs redis performance benchmarks
+  replace redis with sqlite in production
+  rails 8 solid cache vs redis latency benchmark
+  aws elasticache valkey vs redis cost breakdown
+  redis agpl license commercial use rules
+  why use sqlite for web application caching
+  wafris waf sqlite replace redis case study
+  valkey 9.0 throughput SIMD memory optimization
+  sqlite write ahead log concurrent read write limits
+  when not to use sqlite for caching three walls
+---
+Em 20 de março de 2024, o Redis deixou de ser de código aberto. Dois dias depois, este repositório já existia. Mesmo código, nome novo e a licença que o Redis acabara de abandonar. Chama-se Valkey. 26.600
+
+estrelas, governado pela Linux Foundation com AWS, Google, Oracle e Alibaba financiando seus mantenedores. Então, qual você vai instalar em 2026? Essa é a pergunta em todas as discussões. Há uma melhor escondida embaixo dela, e é por isso que eu fiz esta. Você precisa mesmo de um servidor de cache? Atualmente, os navios da Rail não possuem um
+
+. Uma empresa de firewall removeu o Redis e obteve um desempenho três vezes mais rápido. Eles o substituíram por um arquivo. Eis o que você recebe. Valkey contra Redis em questões de licença, velocidade e preço, com um veredicto definitivo.
+
+Em seguida, a questão do SQLite, respondida com números precisos e três obstáculos, três coisas específicas que fazem o arquivo dar uma resposta errada. Eu menciono os três antes do final, e se você acertar um deles, precisa do servidor. Começará em 2024, pois as licenças são o único motivo para a existência de duas dessas unidades. O Redis foi BSD por 15 anos. Qualquer pessoa poderia pegar esse código-fonte, executá-lo como um serviço gerenciado pago e não ter que pagar nada em troca. A Amazon fez exatamente isso em uma
+
+escala enorme, enquanto a Redis Incorporated assistia o dinheiro passar. Assim, a Redis Incorporated alterou os termos. A versão 7.4 foi distribuída com duas licenças simultaneamente, e ambas exibiam a mesma mensagem. Você não pode vender isso como um serviço gerenciado.
+
+Nenhuma das duas se enquadra na definição de código aberto , e essa palavra tem mais peso do que parece. O Fedora aceitou isso como verdade absoluta. O comitê de engenharia votou pela remoção do Redis e, a partir do Fedora 41, a instalação do Redis resulta na instalação do Valkey com uma camada de compatibilidade adicional. Toda uma distribuição Linux substituiu o pacote porque não conseguia mais chamar a versão licenciada de forma gratuita. Os engenheiros que escreveram esse código não ficaram para discutir o assunto.
+
+Madeline Olson, uma das principais mantenedoras do Redis e engenheira principal de bancos de dados em memória da AWS, pegou o último commit do BSD e o enviou para outro lugar. Dois dias entre o anúncio e um fork funcional, o que demonstra o quão preparadas as pessoas estavam. O Valkey foi para a Linux Foundation sob a mesma licença BSD de 3 cláusulas que o Redis havia abandonado, e os provedores de nuvem apareceram imediatamente porque todos eles tinham o mesmo problema. Até mesmo Alibaba, ByteDance, Digital Ocean, Ericsson, Google, Heroku, Oracle, Percona, Tencent. Essa é uma lista de concorrentes, e todos eles estão financiando o mesmo repositório. Então o Redis fez algo que poucas
+
+pessoas esperavam. Em maio de 2025, o Redis 8 adicionou a AGPL versão 3 como uma terceira opção de licença, e a AGPL é aprovada pela Open Source Initiative. Se você hospedar o Redis por conta própria, ele volta a ser de código aberto, de acordo com a definição original. Isso não é um detalhe técnico, e a maior parte da cobertura jornalística ignorou esse ponto. Isso enfraquece o argumento sobre a licença, mas não o resolve. AGPL é
+
+copyleft. Crie um serviço usando Redis modificado e você deverá disponibilizar esse código-fonte aos seus usuários. BSD não te pediu absolutamente nada . Se você distribuir um produto hospedado em um Redis com patches aplicados, a AGPL exige que seus patches sejam devolvidos junto com o produto . E em dezembro de 2024, Salvatore Sanfilippo, também conhecido como Antirez, a pessoa que escreveu Redis originalmente, voltou a trabalhar lá.
+
+Independentemente da sua opinião sobre a licença, a engenharia não parou. O Redis 8.8 foi lançado este ano com um novo tipo de array, um limitador de taxa de comando único e notificações em nível de campo nos hashes. Velocidade, então. O Valkey 9.0 chegou em outubro de 2025, oferecendo
+
+até 40% mais capacidade de processamento do que a versão 8.1 em hardware idêntico. Isso resultou de três mudanças pouco glamorosas: pré-buscar memória antes que ela seja necessária, pular uma cópia em respostas grandes e usar instruções SIMD para contar bits. O número do teto é mais alto. Um cluster Valkey 9.0
+
+opera com 2.000 nós e processa um bilhão de requisições por segundo. Você não vai construir isso. Isso é importante porque indica que o motor não será a primeira coisa na sua pilha a falhar. A Redis respondeu com 8,6, o que atinge 3 milhões e meio de operações por segundo com o pipeline ativado. O Redis mede
+
+isso em mais de cinco vezes o que a versão 7.2 conseguiu, e a 7.2 é a última versão BSD lançada. Mesmo projeto, com quatro anos de diferença, a maior parte dele em um único núcleo. Ambos são benchmarks de fornecedores em hardware escolhido pelo próprio fornecedor. Não
+
+vou comparar dois comunicados de imprensa e chamar isso de teste. O que posso comparar é o que cada projeto realmente entregou e quando foi lançado. A memória é onde tudo se torna concreto, porque a memória é algo que você aluga. O Valkey 9.1, com lançamento previsto para maio de 2026, reduziu a memória por tecla em até 10% sem qualquer alteração de configuração. O Redis 8.6 reduziu a memória hash
+
+em quase 17% e os conjuntos ordenados em 30%. Ambas as equipes estão focando no tamanho da sua instância . A lista de funcionalidades praticamente convergiu. O Valkey 9.0 implementou a expiração de campos hash e a migração atômica de slots em outubro de 2025. O Redis 8.4
+
+implementou a migração atômica de slots em novembro do mesmo ano. Com um mês de diferença. Duas equipes trabalhando na mesma lista, mas em lados opostos da bifurcação. A compatibilidade é o ponto em que as pessoas ainda erram. Valkey segue o mesmo protocolo. Seu Redis P,
+
+seus Jedis, seu Go Redis se conectam sem nenhuma alteração de código, e o Redis Gears and Light se comunica com um servidor Valkey. O Fedora inclui o shim, então até mesmo o nome do binário continua funcionando. A quantidade de estrelas diz menos do que aparenta . O Redis tem 75.000 deles e uma vantagem de 16 anos . A Valkey tem 26.600
+
+após dois anos. Em vez disso, consulte a lista de colaboradores. Mais de 80 pessoas contribuíram com código apenas para o Valkey 9.1. Portanto, a verdadeira diferença não está no motor, mas sim na fatura. Na Amazon ElastiCache, o Valkey
+
+custa 20% menos que o Redis em clusters baseados em nós e 33% menos em ambientes sem servidor, a partir de US$ 6 por mês. Ao reservar um nó, você mantém a reserva pelo preço mais baixo, o que quita a primeira metade do título. Recomeçando do zero em 2026, escolha ValKey. Licença BSD, governança da Linux Foundation, mais barato em todas as plataformas gerenciadas e todos os clientes que você já usa continuam funcionando. Continue usando o Redis quando seu produto for construído com módulos Redis, e em um minuto mostrarei o módulo que o ValKey acabou de encontrar.
+
+Agora, a segunda parte do título, e esta é uma pergunta séria. Basta usar o SQLite. Essa mensagem é publicada em todos os tópicos sobre cache no Hacker News, geralmente sem nenhum conteúdo adicional. Existem números associados a ele. Aqui estão eles. Comece por analisar o custo real de uma leitura de cache
+
+, pois não se trata da busca na memória. A ValKey anuncia uma latência inferior a 100 microssegundos, e o Redis está em uma faixa semelhante. Essa parte da operação não é onde você gasta seu tempo. A 37 Signals registrou a versão com os cálculos aritméticos quando desenvolveu o Solid Cache. A memória é muitas vezes mais rápida que o disco, mas o acesso à memória leva apenas uma fração do tempo que uma operação de cache leva. O resto é rede,
+
+serialização e compressão. Esses três são os valores da conta. O SQLite explica isso de uma forma mais complexa do que eu explicaria. Segundo a própria documentação, o SQLite não compete com bancos de dados cliente-servidor. O SQLite compete com o FOP. Não há
+
+sockets, pool de conexões, etapa de serialização, nem um segundo processo para manter ativo, monitorar e notificar alguém às 2h da manhã. Sua consulta é executada dentro do seu próprio processo, em um arquivo que o kernel já está armazenando no cache de páginas. WAF é um firewall de aplicações web que é instalado como middleware do Rails. A versão 1 permitia que você executasse seu próprio Redis em paralelo. Michael Buckbee escreveu um artigo em setembro de 2024 explicando por que descartaram essa opção, e o texto é excepcionalmente direto sobre o fato de seu próprio parâmetro de comparação ser tendencioso de propósito. O caminho mais difícil para eles
+
+é uma questão, e é uma questão desagradável. Cada solicitação recebida é verificada em relação a 1,2 milhão de intervalos de IP pré-computados , listas de permissão, listas de bloqueio, mapeamento de países e reputação. Mesmo conjunto de dados em ambos os lados, mesma ordem de solicitação, um MacBook Air, média de cinco execuções. O SQLite apresentou um desempenho aproximadamente três vezes mais rápido que o Redis na mesma máquina. Redis local, sem nenhuma rede envolvida na medição.
+
+E Buckby levanta uma questão que realmente importa. Mesmo que o SQLite tivesse perdido essa disputa de dois para um, eles ainda teriam mudado. O número que mais importava para eles não era a latência. O número de instalações bem-sucedidas triplicou porque ativar o firewall deixou de exigir a execução prévia de um banco de dados. Essa é uma métrica do produto, e é por isso que a migração aconteceu.
+
+Não se trata de uma única empresa sendo esperta. O Rails 8 tornou o Solid Cache o armazenamento de cache padrão. Portanto, um novo aplicativo Rails em produção é distribuído sem o Redis. O Basecamp executa a mesma coisa, e o resultado relatado por eles é um cache seis vezes maior em um armazenamento que custa 80% menos. O padrão se estende além do cache. A 37signals
+
+construiu uma fila sólida com base na mesma ideia e migrou um terço dos 18 milhões de trabalhos diários para ela antes mesmo de chegar à versão um. Tarefas, cache e WebSockets, tudo no banco de dados, tudo incluído no Rails por padrão. Sete gemas se transformaram em zero. Então, por que alguém ainda paga por um servidor de cache? Três paredes. Eu disse que daria nomes a
+
+eles. Na parede um, há mais de uma caixa. Um arquivo na máquina um é invisível para a máquina dois. Dez servidores de aplicativos significam dez caches separados, dez inicializações a frio em cada implantação e dez cópias do mesmo valor que se distanciam umas das outras. E quando um valor muda, você não tem como saber os outros nove. Waffle Reese
+
+evitou isso ao se recusar a invalidar qualquer coisa . Quando as regras mudam, o cliente baixa um arquivo SQLite completamente novo. Isso funciona perfeitamente para regras de firewall. Experimente com um carrinho de compras. Parede dois, à direita. O SQLite permite apenas uma
+
+gravação por vez. As leituras são aceitáveis, milhares delas simultaneamente no modo de log de escrita antecipada, mas um limitador de taxa nada mais é do que um recurso. Um contador de sessões também funciona assim. Assim como uma fila de tarefas, uma tabela de classificação e um bloqueio distribuído. O Redis 8.8 adicionou um único comando para o
+
+caso do limitador de taxa. Em SQL, essa é a transação que você precisa acertar. Existem também provas concretas contra o processo, e estou a incluí-las. Um teste de desempenho do Rails publicado no início de 2025 mediu que a busca em cache era aproximadamente duas vezes mais lenta no Solid Cache do que no Redis. A transferência para um banco de dados separado reduziu essa diferença.
+
+Não fechou. Parede três, as estruturas de dados. Conjuntos ordenados com incrementos atômicos, fluxos com grupos de consumidores, publicação/assinatura, remoção quando a memória fica cheia. Você pode construir cada uma dessas funcionalidades em SQL e você mesmo as construirá em código de aplicação às 3h da manhã. E a diferença está aumentando no topo da pirâmide. A busca do Valkey
+
+atingiu a versão 1.2 em maio de 2026. Busca de texto completo, filtragem por tags e busca vetorial executadas no mesmo processo que armazena seu cache. O Redis inclui conjuntos de vetores desde a versão 8. Seu arquivo não faz isso e não fará.
+
+Uma coisa pode ter dois lados antes do veredicto. A Valkey corrigiu duas falhas de execução remota de código em 21 de julho deste ano. Redis 8.8 patch três. Esta é uma infraestrutura real com uma superfície de ataque real , e o arquivo armazenado no seu disco não tem nenhuma porta aberta.
+
+Portanto, aqui está uma regra de decisão, e ela é muito mais curta do que o argumento que a originou. Tudo se resume a uma única pergunta. Será que mais de um processo precisa visualizar o mesmo valor no mesmo instante? Talvez um dia. Isso está acontecendo hoje em dia, naquilo que você está realmente executando? Se a resposta for não, um
+
+processo, uma máquina, principalmente leitura, um cache que você pode reconstruir a partir dos dados de origem, usar o arquivo, SQLite, modo de log de gravação antecipada ativado. No Rails, você já tem isso porque o Solid Cache é o padrão, e você pode excluir uma dependência em vez de adicionar uma. Se a resposta for sim, vários servidores de aplicativos, um limitador de taxa, sessões, uma fila, qualquer coisa em que duas máquinas precisem concordar, você precisa do servidor, e em 2026, esse servidor é o Valkey. BSD, certificado pela Linux Foundation, 20% mais barato no ElastiCache, mesmo protocolo, mesmos clientes. O Redis funciona corretamente quando seu produto é construído com módulos Redis, e essa é a parte em que realmente acreditamos. A maioria das
+
+equipes adiciona um servidor de cache antes mesmo de realizar qualquer medição, porque foi isso que o tutorial fez. Primeiro, meça o caminho da corrente quente. Se couber em um arquivo na mesma máquina, a chamada de rede mais rápida é aquela que não acontece. Diga-me qual das três paredes você atingiu.

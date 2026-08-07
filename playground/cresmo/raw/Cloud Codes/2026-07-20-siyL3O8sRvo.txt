@@ -1,0 +1,104 @@
+---
+video_title: "HTMX + Go Is All You Need (Next.js Is Overkill)"
+video_id: siyL3O8sRvo
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=siyL3O8sRvo
+video_date: 2026-07-20T19:30:25+00:00
+video_description: |
+  Are you exhausted by massive Node.js dependency folders, complicated Webpack builds, and React hydration errors? Discover why developers are moving away from heavy SPA frameworks like Next.js, and adopting the ultimate "No-Build" architecture: HTMX paired with a Golang (Go) backend. 
+  
+  🔔 Subscribe: 
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  In this video, Cloud Codes breaks down the system design of "HTML over the wire" (Hypermedia-Driven Applications). We explore why Go is the perfect backend for HTMX—compiling down to a single, lightning-fast binary with zero dependencies, handling tens of thousands of concurrent connections using Goroutines.
+  
+  We also provide the hard receipts from the famous Contexte case study: how a startup completely deleted React, switched to HTMX, dropped their code size by 67%, slashed npm dependencies from 255 down to 9, and improved their first-load speed by 50%. Finally, we give an honest verdict on the "Other 10%" of apps—like Figma or Google Docs—where you still absolutely need a heavy framework like React. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Problem with Next.js & React
+  1:01 - What is HTMX? (HTML Over the Wire)
+  3:26 - JSON APIs vs HTML Fragments
+  4:22 - Why Golang is the Perfect Backend for HTMX
+  5:59 - The Receipts: Deleting 67% of a React Codebase
+  6:27 - Dropping from 255 Dependencies to 9
+  7:26 - Can HTMX Handle Rich Interactivity?
+  7:43 - The Catch: When You STILL Need React
+  8:37 - Summary: The Perfect Web Stack in 2026
+  
+  #htmx #golang #react #nextjs #webdevelopment #softwareengineering #systemdesign #cloudcodes #javascript #backend #go
+  
+  User Queries: 
+  htmx and golang tutorial for beginners
+  htmx vs react 2026
+  why developers are leaving next js
+  build a web app with go and htmx
+  hypermedia driven application explained
+  contexte htmx case study
+  what is locality of behavior htmx
+  golang goroutines performance
+  single page application alternative
+  frontend web development trends 2026
+---
+A maioria dos aplicativos da web são bastante simples em sua estrutura interna. Alguns formulários, uma tabela e alguns botões que acessam um banco de dados. Para renderizar tudo isso, a pilha padrão inicializa todo o ambiente de execução do React e um bundler JavaScript primeiro, depois centenas de pacotes npm, uma etapa de compilação e uma etapa de hidratação, apenas para mostrar uma lista de linhas. Uma empresa de verdade olhou para toda aquela pilha de coisas e fez aquilo que a maioria das equipes só faz de brincadeira. Eles deletaram o React. Sua
+
+base de código diminuiu em 67%. E, de alguma forma, o aplicativo foi lançado mais rápido do que antes. O que a substituiu foi uma biblioteca de 14 kilobytes chamada htmx, executada em um servidor Go simples . Sem bundler, sem pasta de módulos do Node . Um arquivo binário compilado envia o HTML finalizado diretamente pela rede. Então,
+
+aqui está a afirmação que eu realmente quero testar com vocês hoje. Para aproximadamente 90% dos aplicativos que desenvolvemos, o Next.js é um exagero. Não está errado. Exagerado. É como
+
+alugar um guindaste de construção para pendurar um único quadro. Deixe-me mostrar-lhe porquê, com números reais de uma empresa que de facto deu este salto. Comecemos por definir o que esses aplicativos realmente são. Você faz login, vê uma lista, clica em um botão, uma linha é alterada no banco de dados e a página exibe o novo estado. Esse ciclo representa o produto completo. Para deixar claro, o React
+
+conquistou seu lugar. Foi desenvolvido para interfaces verdadeiramente complexas. E para essas pessoas, é excelente. O problema é que, em algum momento, isso se tornou o padrão para tudo, inclusive para uma página de configurações com quatro campos e um botão de salvar. Afinal, o que é HTML?
+
+Trata-se de um único arquivo JavaScript com cerca de 14 kilobytes, compilado sem nenhuma dependência. Está estável na versão 2 desde 2024 e possui quase 48.000 estrelas no GitHub. Não se trata de uma estrutura totalmente nova e brilhante . É uma tecnologia acabada, porém entediante, no melhor sentido possível, e a ideia por trás dela é antiga. Finalmente, feito da maneira
+
+correta. O HTMX surgiu a partir de uma biblioteca chamada intercooler-jez, escrita há mais de uma década por um desenvolvedor chamado Carson Gross. A filosofia central é estender o HTML puro com os recursos que sempre lhe faltaram, em vez de substituí-lo por JavaScript. Veja como é simples na prática. Você pega um HTML normal e adiciona alguns atributos que permitem que qualquer elemento faça uma requisição HTTP por conta própria.
+
+Um botão, um formulário, um link, uma div simples, qualquer um deles. Você escreve `htx get` em um botão ou `hx post` em um formulário e o direciona para uma URL no seu servidor. Quando o usuário clica, o htmx dispara essa solicitação em segundo plano e o navegador nunca realiza uma recarga completa e abrupta da página. Eis aqui uma funcionalidade completa em uma única linha. Em um botão "curtir", você escreve `hx post` apontando para ` /like` e `hx target` apontando para a contagem. O usuário clica, seu servidor Go
+
+retorna a nova contagem como HTML e o HTMX a insere no local. Sem chamada de busca, sem gancho de estado, sem renderização novamente. Agora, aqui está a parte que remodela toda a sua estrutura. O servidor não responde com um bloco de dados JSON. A resposta é um pequeno trecho de HTML já renderizado, o fragmento final da página. O HTMLX
+
+pega esse fragmento e o insere na página, exatamente onde você indicou . Sem renderização no lado do cliente, sem reidratação, sem uma segunda cópia do estado da sua aplicação residindo no navegador e ficando dessincronizada com o servidor. E não se limita à troca de apenas uma caixa. Uma única resposta pode atualizar várias partes da página simultaneamente. O total do carrinho, a lista de itens e uma pequena notificação, tudo em uma única solicitação. Isso
+
+abrange uma quantidade surpreendente daquilo que normalmente recorremos ao React para lidar. Coloque as duas viagens de ida e volta lado a lado, porque esse é realmente o ponto central da discussão, do jeito React. O navegador solicita JSON, o servidor envia os dados brutos e, em seguida, o navegador realiza uma segunda tarefa, transformando esses dados em HTML que uma pessoa pode de fato visualizar. Você criou a tela duas vezes, em dois idiomas diferentes. O método HTML simplesmente elimina essa segunda tarefa. O servidor
+
+envia o HTML já finalizado e o navegador o exibe. Você renderiza a tela uma única vez no servidor, na linguagem que já definiu, e o navegador volta a funcionar como um navegador. Você também recupera algumas coisas que a pilha pesada levou embora. O HTML renderizado pelo servidor funciona mesmo antes de qualquer JavaScript ser carregado, o que é melhor para celulares lentos, conexões fracas e para os mecanismos de busca que querem ler sua página. E essa simples mudança elimina toda uma categoria de trabalho. Sem API JSON para projetar e
+
+versionar. Sem armazenamento do lado do cliente para manter sincronizado. Sem megabytes de JavaScript para empacotar, distribuir e depurar às 2 da manhã. Agora, o HTML precisa de um servidor que possa gerar HTML rapidamente. E é exatamente aí que o Go se encaixa perfeitamente. Você
+
+compila um programa Go em um único binário estático. Não há ambiente de execução para instalar no servidor, nenhum interpretador, nenhuma pasta de dependências. Você copia um único arquivo para a máquina, executa-o e o Go já inclui tudo o que essa pilha precisa em sua biblioteca padrão. O pacote net/http é um servidor web de nível de produção real. O pacote html/template renderiza suas páginas e as protege automaticamente contra ataques de injeção. Você pode construir
+
+tudo sem usar nenhum framework. E imagine o que um destacamento se torna. Com o pacote pesado, você instala o Node.js, restaura um arquivo de bloqueio com centenas de pacotes, executa uma compilação e torce para que as versões estejam corretas. Com este método, você cria um único arquivo binário e o copia. Ele se comporta da mesma maneira em todas as
+
+máquinas porque não carrega nada externo consigo. E depois há a parte pela qual o Go é famoso: as rotinas de Go. Um único servidor Go pode suportar dezenas de milhares de conexões simultâneas em hardware comum. Porque cada uma delas consome alguns kilobytes de memória em vez de um thread completo do sistema operacional. Ele se mantém ágil sob carga sem que você precise pensar muito . E essa eficiência se reflete na
+
+conta. Um binário Go compilado ocupa poucos megabytes de memória em modo ocioso. Assim, um servidor pequeno e barato que teria dificuldades com uma pilha Node pesada pode executar a versão em Go sem problemas. Menos máquinas, instâncias menores, uma linha de hospedagem mais leve a cada mês. Assim, toda a arquitetura cabe em uma única frase. O Go renderiza o HTML. O
+
+HTML o insere na página. É isso aí . São duas partes móveis e você pode segurar ambas na cabeça ao mesmo tempo. Nada disso importa se funcionar apenas em uma demonstração de fim de semana. Aqui estão, portanto, os comprovantes de uma empresa de produção real. Uma empresa francesa de SaaS
+
+chamada Context pegou todo o seu front-end em React e o migrou para HTML, e seus engenheiros se levantaram em uma conferência e leram todos os números em voz alta depois. Comece com a manchete que eles não previram. A interface do usuário passou de cerca de 21.500 linhas de código para 7.200.
+
+Isso representa um corte de 67%. Dois terços do código front-end simplesmente desapareceram. A contagem de dependências foi a parte que me fez sorrir. Eles reduziram de 255 dependências de JavaScript para 9. Isso significa que você não precisa mais auditar, corrigir ou se preocupar em quebrar toda uma cadeia de suprimentos de MPM em uma terça-feira qualquer. E a velocidade se manifesta
+
+onde você a sente todos os dias. O tempo de desenvolvimento do site deles caiu de 40 segundos para cinco. E o tempo de carregamento da primeira página, o número pelo qual seus usuários o avaliam sem dizer uma palavra, caiu de 2 a 6 segundos para 1,2 segundos. Até o próprio navegador ficou mais leve. O uso de memória por página caiu de cerca de 75 megabytes para 45, porque não havia mais uma estrutura de cliente pesada ocupando espaço em cada aba aberta, mantendo sua própria cópia completa do aplicativo. Mas eu prometi recibos, não uma
+
+proposta de venda. Aqui está a conta. O código de backend em Python cresceu de cerca de 500 linhas para 200, porque o trabalho de renderização voltou a ser feito no servidor. A complexidade não desapareceu no ar. Foi transferido para um local que a equipe considerou muito mais fácil de analisar. Agora, já consigo ouvir a objeção que
+
+você está formulando. E quanto à rica interatividade? Pergunta pertinente, mas o HTML abrange muito mais do que as pessoas imaginam. Edição em linha, busca ao vivo com filtros conforme você digita, rolagem infinita, validação instantânea de formulários — nada disso exige que você escreva uma API personalizada onde realmente não há mais espaço para melhorias — é o que compõe os outros 10%. Uma tela de design como o Figma, um editor de documentos como o Google Docs, uma planilha, um mapa interativo, um jogo, qualquer coisa em que o navegador seja um aplicativo em tempo real em vez de uma pilha de páginas. Enviar dados de ida e volta para o servidor a
+
+cada tecla pressionada é muito lento. Portanto, esse trabalho realmente exige React e merece cada kilobyte. Portanto, a questão honesta nunca foi HTML versus React. Trata-se de adequar a ferramenta ao formato do aplicativo, seja um painel de controle, uma loja ou uma ferramenta interna que opera sobre um banco de dados. Envie HTML a partir de um binário Go, uma tela colaborativa em tempo real . Escolha a estrutura robusta de
+
+propósito, porque você realmente precisa dela. E este não é um experimento frágil que você será obrigado a reescrever no ano que vem. O HTML tem se mantido estável por anos. A versão 4 já está em desenvolvimento e o fato de não ter dependências, sem nada para atualizar a cada 6 semanas, é o seu grande diferencial, não uma desvantagem. Então, aqui está a resposta direta que o título lhe deve. Para a
+
+maior parte do que construímos, os formulários, as tabelas, os botões, o banco de dados, o HTML transmitido pela rede, tudo servido por um binário Go, é realmente tudo o que você precisa. 14 kilobytes, um idioma, um pequeno processo para implantação. A pilha pesada é uma ferramenta genuína para um problema genuíno. Simplesmente não é necessário com tanta frequência quanto as configurações padrão pressupõem. Portanto, antes de instalar 200 pacotes para renderizar uma tabela, pare e faça uma pergunta honesta. Este aplicativo é
+
+realmente um documento ou é uma tela interativa? Responda de forma clara e, na maioria das vezes, a abordagem mais simples vence, com menos código, menos bugs e uma conta de hospedagem menor . Este é o Cloud Codes e continuarei trazendo para vocês o conteúdo.

@@ -1,0 +1,100 @@
+---
+video_title: "Run Local Real-Time Voice AI at 1,800+ Tokens/Sec"
+video_id: ZzQKg2wjS4I
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZzQKg2wjS4I
+video_date: 2026-07-31T09:00:37+00:00
+video_description: |
+  Are you still paying massive token costs for the OpenAI Realtime API to run your conversational voice agents? Hugging Face just open-sourced the speech-to-speech real-time voice AI pipeline, allowing you to drop-in replace OpenAI's Python client with a local, Apache 2.0 licensed cascade featuring NVIDIA Parakeet TDT for transcription, Qwen3-TTS for voice cloning, and Silero VAD for interruptible voice detection—all by changing your base URL to 127.0.0.1.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this architectural breakdown, we expose the brutal economics of OpenAI's audio token billing ($32/1M input, $64/1M output) and how to completely eliminate it by running your language models locally via llama.cpp or Apple's MLX. We also explore the incredible 35x latency speedup achieved by pairing this open-source modular pipeline with Cerebras wafer-scale hardware, streaming Gemma 4 (31B) at 1,851 tokens per second to eliminate the dreaded LLM "thinking" delay. Whether you are building local robotics like the Reachy Mini or a high-volume customer support queue, this voice loop lets you swap Whisper for Parakeet, or Meta MMS for Kokoro, to perfectly control your time-to-first-token.
+  
+  If you found this technical deep-dive into AI infrastructure and open-source system architecture helpful, drop a like and subscribe for more content on software engineering and machine learning scaling!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - Hugging Face's Real-Time Voice Loop
+  00:23 - The 1-Line OpenAI Realtime API Hack
+  01:17 - Silero VAD & Interruptible AI
+  01:55 - Speech-to-Text: NVIDIA Parakeet TDT vs Whisper
+  02:35 - LLMs & TTS: Qwen3-TTS, Kokoro & Apple MLX
+  04:04 - Solving Latency: Gemma 4 on Cerebras Wafer-Scale
+  05:11 - Running Local Voice AI (llama.cpp & CPU-Only)
+  05:56 - The OpenAI Cost Trap (32/64 Per Million Tokens)
+  06:36 - Reachy Mini Robots & Pipeline Caveats
+  07:09 - Final Verdict: Measure Your Audio Bottleneck
+  
+  #huggingface #openai #voiceai #machinelearning #systemdesign #softwareengineering #llamacpp #artificialintelligence
+  
+  User Queries:
+  hugging face speech to speech pipeline tutorial
+  how to replace openai realtime api with open source
+  run local voice ai with llama cpp and mlx
+  nvidia parakeet tdt vs whisper transcription benchmark
+  silero vad version 5 voice detection python
+  qwen3-tts voice cloning hugging face pipeline
+  cerebras gemma 4 31b tokens per second speed
+  openai realtime audio api pricing alternative
+  build open source ai voice agent python client
+  kokoro text to speech local ai cpu only
+---
+Hugging Face disponibiliza o código aberto para todo o ciclo de voz em tempo real. Microfone conectado, resposta falada transmitida e todos os palcos intercambiáveis. O repositório chama-se speech-to-speech, possui licença Apache 2.0 e é instalado com um único comando pip. O sistema é controlado por quatro etapas . Detecção de voz, conversão de
+
+fala em texto, um modelo de linguagem e, em seguida, conversão de texto em fala. O que realmente me chamou a atenção foi a porta da frente. Ele utiliza o protocolo de tempo real da OpenAI. Você aponta o cliente oficial do OpenAI em Python para o seu próprio computador. Mesmo código de cliente, mesmos eventos. A única linha que você precisa alterar é a
+
+URL base. Agora está escrito 127.0.0.1.
+
+Seu aplicativo não tem ideia de que parou de se comunicar com a OpenAI. Ele apenas recupera o áudio. E cada palco abaixo é uma bandeira. Reconhecedor diferente, modelo diferente, voz diferente, o que levanta uma questão honesta. Qual dessas quatro etapas está fazendo a pessoa esperar? Essa resposta
+
+avançou 35 vezes no dia 1º de julho, totalizando 7.500 estrelas, com 9.000 robôs já em execução. Deixe-me mostrar os números. Um breve contexto, já que o nome é mais antigo que o objeto em si. Este repositório foi publicado em agosto de 2024
+
+como uma demonstração divertida. Desde então, foi reconstruído , e a versão lançada esta semana é completamente diferente. Um servidor websocket, um modo de socket de áudio bruto e um modo de microfone simples para quando você só quer falar com seu laptop. Comece onde o áudio começa. O sistema de detecção de voz Salero, versão cinco, fica posicionado na frente de tudo e decide quando você começa a falar e quando para.
+
+Parece ser problema de encanamento. É o principal motivo pelo qual um agente de voz se sente educado ou rude. Você também recebe os mostradores . O tempo mínimo de silêncio antes de o jogo anunciar a sua vez é de 64 milissegundos, por padrão. Levante a chave e o assistente aguardará enquanto você pensa. Solte-o e ele
+
+saltará nas suas pausas. Esse único número resume a maior parte da sua personalidade. Ele também lida com interrupções. Ao ativar a resposta a interrupções, falar por cima do assistente cancela o que ele estava dizendo no meio da frase, da mesma forma que uma pessoa pararia. Experimente isso com uma API de solicitação-resposta. A segunda etapa
+
+é a transcrição, e o padrão aqui não é mais o Whisper. É a versão 3 dos parâmetros do NVIDIA Parakeet TDT com 600 milhões de recursos, compatível com 25 idiomas europeus e capaz de identificar qual idioma você está falando sem que seja necessário informar. Taxa média de erro de palavras de 6,34% no ranking Open ASR, em aproximadamente 3.000 simulações em tempo real. Dez minutos de áudio gravado, transcritos em cerca de um quinto de segundo de processamento a partir de um modelo com 600 milhões de parâmetros . Whisper ainda está na caixa, caso
+
+você queira a versão Transformers ou uma Whisper mais rápida. Em um Mac, há um Whisper relâmpago no MLX, voltado para o público chinês; o Performer está a apenas uma flag de distância. Mesmo canal, ouvidos diferentes. A terceira etapa é o cérebro, e é aqui que o sistema se recusa categoricamente a escolher por você. Qualquer endpoint compatível com OpenAI funciona. A
+
+própria OpenAI, os provedores de inferência da Hugging Face , o Open Router, um servidor vLLM, um servidor Llama.cpp funcionando embaixo da sua mesa ou, se preferir, pode-se ignorar o servidor e executar o modelo em processo por meio de Transformers em uma GPU ou MLX LLM em um chip da Apple. O palco é uma tomada. O que você coloca lá dentro é problema seu. A quarta etapa é a voz, e a configuração padrão recebeu uma grande melhoria. O
+
+QN3TTS, modelo de voz personalizado de 12 Hz e 1,7 bilhão de caracteres, foi disponibilizado como código aberto pela Alibaba sob a licença Apache 2 em janeiro. Com 3 segundos de áudio de referência, ele clona uma voz. A transmissão ocorre em pacotes de cerca de 320 milissegundos, e o primeiro pacote chega em menos de 120 milissegundos. Esse número importa mais do que o total, porque no momento em que a primeira sílaba é pronunciada, a pessoa deixa de se sentir ignorada. E você pode trocá-lo por algo menor sem hesitar. Coco-Ro,
+
+Pocket TTS, Chat TTS ou Meta MMS são opções disponíveis caso você precise de um idioma que as outras não ofereçam. Qualquer ouvido, qualquer cérebro, qualquer boca. Então, voltando à pergunta inicial. Somando tudo , a detecção leva milissegundos. Parakeet, a escala de tempo é efetivamente milissegundos. A voz
+
+começa em menos de um décimo de segundo. Três dos quatro estágios são quase livres, o que deixa o modelo de linguagem arcando sozinho com todo o atraso. Numa cascata, nada pode ser dito até que o modelo tenha produzido algo a dizer. E quer pensar primeiro. No dia 1º de julho, a Hugging Face publicou uma receita com Cerebras que vai direto ao ponto. Periquito na frente, Qwen 3 TTS
+
+atrás e, no meio, Google DeepMind Gemma 4 com 31 bilhões de parâmetros rodando em hardware Cerebras em escala de wafer. 1.851 tokens de saída por segundo, medidos por Análise Artificial, cerca de 35 vezes mais do que um endpoint de GPU típico. O primeiro token retorna em 1 segundo e meio, e esse tempo já inclui o raciocínio do modelo antes da resposta. E este não é um modelo pequeno comprado barato. Gemma 4 fica
+
+ao lado de Claude Haiku 4.5 no Índice de Inteligência Artificial Analítica, enquanto roda cerca de 18 vezes mais rápido nesse chip. Aqui, você não está trocando inteligência por velocidade. A forma de ligá-lo é através de uma única bandeira. O nome do modelo google/gemma-4-31b-it:cerebras apontava para o roteador Hugging Face.
+
+Nada mais em seu pipeline se move. É para isso que serve o modular, na verdade. E o enquadramento usado em Hugging Face é mais preciso do que a velocidade pura. Eles estão à procura do percentil 95, não da média. São as paradas ocasionais de 3 segundos que fazem um assistente se sentir derrotado. Sua
+
+mediana estava boa. O problema era o seu rabo . Agora, inverta a situação, porque nada disso te arrasta para a nuvem de alguém. Execute o servidor Llama com Gemma 4e4b no gguf, aponte o pipeline para 127.0.0.1
+
+na porta 8080, e essa é toda a configuração. Em um Mac, tudo se resume a uma única opção, que representa as configurações ideais para o Mac local. Metal para os três modelos, Parakeet para os ouvidos, MLX LM para o pensamento, QN3 TTS através do áudio MLX para a boca. Funciona em modo avião. Utilizando apenas a CPU, Kokoro possui 82 milhões de parâmetros com 54 vozes e roda em tempo real cerca de seis vezes mais rápido em um laptop sem nenhuma GPU. Ou um
+
+TTS de bolso do tipo Q, com 100 milhões de parâmetros, produzindo o primeiro bloco de áudio em aproximadamente 200 milissegundos, o que nos leva à parte que interessa à sua equipe financeira. O modelo de IA em tempo real da OpenAI constrói áudio por meio de tokens. US$ 32 por milhão de tokens de entrada, US$ 64 de saída. Sua fala é construída com um token a cada 100 milissegundos. Em conversas, a taxa de conversão é de um para cada 50. Portanto, um minuto de conversa custa 600
+
+tokens e um minuto de conversa respondendo custa 1200. As sessões medidas variam entre 5 e 46 centavos de dólar por minuto de conversa. Agora multiplique isso por uma fila de suporte que funciona o dia todo. E antes que você considere isso um projeto de fim de semana , saiba que mais de 9.000 mini servidores estão usando essa configuração neste exato momento. Esse é um
+
+robô de mesa de US$ 299 que abraça rostos, construído com produtos da Pollen Robotics. 10.000 unidades vendidas até maio. Serei direto sobre o custo disso . Trata-se de um modelo em cascata, não de um modelo de áudio único de ponta a ponta. Então você tem quatro
+
+componentes móveis e quatro maneiras de falhar, sem nenhum contrato de suporte para nenhum deles, e tudo acontece muito rápido. A programação de 2024, Parlor TTS, Mel T's e Distill Whisper, foi removida do arquivo "Leia-me". Fixe suas versões. Eis o que eu faria numa noite livre. Instale o programa, execute o comando com a opção de configurações máximas ou a receita llama.cpp
+
+e cronometre cada uma das quatro etapas no seu próprio hardware. O principal argumento a favor deste repositório é que finalmente é possível medir qual etapa está lenta. Um sistema completo de loop de voz, licenciado pela Apache, compatível com a biblioteca cliente da OpenAI. Troque uma das flags e você estará trabalhando com silício em escala de wafer. Troque por outro e você estará offline em um laptop. Vá identificar
+
+o gargalo. Cloud compila a pilha OpenAI semanalmente.

@@ -1,0 +1,108 @@
+---
+video_title: "Tokenization Just Got 1,000x Faster! (Gigatoken)"
+video_id: vFtJeZ7ifTA
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vFtJeZ7ifTA
+video_date: 2026-07-24T16:30:04+00:00
+video_description: |
+  Are your Large Language Models (LLMs) bottlenecked by slow data preprocessing? Discover how a Stanford PhD student built "Gigatoken"—an open-source tokenizer that processes up to 24 GB of text per second, running hundreds of times faster than OpenAI's `tiktoken` and the HuggingFace `tokenizers` library.
+  
+  In this video, Cloud Codes breaks down the system design of Gigatoken. We explore how Byte-Pair Encoding (BPE) actually works under the hood, and the fatal flaw of traditional tokenizers: using slow Regular Expressions (Regex) to split words. We dive deep into how Gigatoken achieves its insane speed by deleting Regex in favor of SIMD (Single Instruction, Multiple Data) processing on the CPU, and how it uses intelligent caching to skip repetitive work. 
+  
+  Finally, we look at the real-world benchmarks on AMD servers and Apple M4 MacBooks, how this drastically cuts the cost of pretraining AI models from scratch, and give you a tutorial on how to use Gigatoken as a drop-in replacement for your existing Python code. 
+  
+  🔗 Check out Gigatoken on GitHub: https://github.com/marcelroed/gigatoken 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The 100x AI Speed Upgrade
+  1:06 - The 24 GB/s Benchmark vs Tiktoken
+  2:03 - The Massive Performance Gap Explained 
+  3:53 - Tokenizing the Entire Internet in 6 Hours
+  4:25 - How Byte-Pair Encoding (BPE) Works
+  5:15 - The Problem: Why Regular Expressions (Regex) are Slow
+  5:33 - The Fix: SIMD CPU Instructions & Caching 
+  7:23 - The Catch: SentencePiece & Windows WSL 
+  8:46 - Who Built It? (Stanford CS336) 
+  9:28 - Why Tokenization Speed Actually Matters 
+  9:59 - Summary: The Death of the Preprocessing Tax 
+  
+  
+  #gigatoken #openai #artificialintelligence #machinelearning #systemdesign #softwareengineering #cloudcodes #python #rust #llm #huggingface
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  User Queries:
+  gigatoken vs tiktoken performance benchmark
+  what is byte pair encoding bpe tokenizer
+  how to speed up llm training preprocessing
+  huggingface tokenizers library alternative
+  simd instructions python optimization
+  how to use gigatoken python tutorial
+  stanford cs336 language modeling from scratch
+  openai tiktoken rust performance
+  system design large language model training
+  how to tokenize large text datasets fast
+---
+Digite uma frase em um modelo de IA e, antes que ele possa fazer qualquer outra coisa, isso acontece. Suas palavras são fragmentadas em tokens. Ele é executado a cada comando enviado e a cada modelo treinado. É o sistema de encanamento em que a maioria das pessoas raramente pensa , e esse sistema tem sido mais lento do que deveria. Converter texto em tokens é um gargalo real e mensurável.
+
+Esta semana, um desenvolvedor lançou um tokenizador que funciona 100 vezes mais rápido que o tiktoken da OpenAI. Não é um truque de benchmark, são 24 GB de texto por segundo em um servidor comum. E a pegadinha que você estava esperando não está lá. A saída é idêntica, token por token. Chama-se Gigatoken, é de código aberto, possui licença MIT e é instalado com um único comando . Instale o gigatoken com o pip e ele se
+
+encaixa perfeitamente no código que você já escreveu. Por que se importar com a velocidade de execução de um tokenizador ? Porque é a primeira etapa que todo trabalho de treinamento espera, e as ferramentas que ele utiliza, tiktoken e Hugging Face, já são Rust multithreaded rápido . A pessoa por trás disso ministra um curso em Stanford sobre a construção de modelos de linguagem do zero. Eis o número que causou alvoroço no r/LocalLlama esta semana. Pegue 11,9 GB de
+
+texto real da web, um corpus de treinamento real, não uma sequência de caracteres fictícia, e tokenize-o com o tokenizador do GPT-2. Em um servidor AMD de grande porte, o gigatoken processou o arquivo inteiro em menos de meio segundo. Isso equivale a 24,5 GB por segundo. É difícil visualizar um número tão grande, então ancore-o. Um romance típico tem cerca de meio megabyte de texto. Com uma taxa de 24 GB por
+
+segundo, isso equivale a cerca de 50.000 romances tokenizados por segundo em uma única máquina. Para entender por que isso é incrível, você precisa saber o que isso superou. A biblioteca de tokenizadores da Hugging Face é a padrão que acompanha quase todos os modelos abertos . O Tiktoken é o tokenizador que a OpenAI desenvolveu para o GPT-4 e seus modelos mais recentes . Essas não são linhas de base preguiçosas.
+
+São ferramentas rápidas, confiáveis ​​e que seguem o padrão da indústria. Então, coloque-os exatamente na mesma tarefa de GPT-2. A Hugging Face conseguiu atingir cerca de 25 MB por segundo. TikToken ficou em torno de 36. Observe bem as unidades. Esses são megabytes, enquanto o
+
+GigaToken está lidando com gigabytes. Não é uma barra muito alta no gráfico. É um eixo diferente do gráfico. Execute a divisão e ela deixa de soar real. Nessa carga de trabalho, o GigaToken é aproximadamente 900 vezes mais rápido que o Hugging Face e 680 vezes mais rápido que o TikToken. Mesma entrada,
+
+mesmos IDs de token sendo gerados. Três ordens de magnitude completas situadas no meio. E você não precisa de um chip de data center para ver isso. Em um laptop Apple M4 Max, esse mesmo tokenizador GPT-2 atingiu uma taxa de processamento de quase 9 GB por segundo. Nessa máquina, isso é quase 1.300 vezes
+
+mais rápido do que na Hugging Face. O maior múltiplo individual em toda a tabela veio de um MacBook. Também não se trata de um tokenizador que, por sorte, coincidiu com o código. Llama, Qwen, DeepSeek, GLM, Phi, Nematron, GPT-OSS, as famílias de modelos que você está executando, cada uma delas consome 20 GB por segundo nesse servidor. Percorra a tabela de benchmarks e o resultado será o mesmo, linha após linha.
+
+Três chips muito diferentes, uma história. Um servidor AMD de 144 núcleos, um laptop Apple e uma CPU para jogos de consumo foram testados, e os três apresentaram taxas de transferência na faixa de gigabytes por segundo. A velocidade é medida pelo código que ele escreveu, não pelo preço do hardware em que você o executa. O resultado que mais importa é o mais barato. Em um Ryzen 9800X3D, o chip presente em muitos PCs gamers, o GPT-2 realiza a tokenização a uma taxa de 6 GB por segundo.
+
+Isso ainda é 68 vezes mais rápido do que o TikTok em um computador que talvez já esteja embaixo da sua mesa. Eis a estatística que me chamou a atenção. Considerando a velocidade do servidor , seria possível tokenizar todo o Common Crawl, aproximadamente a internet legível, cerca de 130 trilhões de tokens em menos de 6 horas e meia. Toda a internet pública foi consumida em uma única tarde. Então, como um estudante de doutorado consegue vencer duas equipes de especialistas por uma proporção de 100 para 1? A
+
+resposta surpreendente é o que ele não fez. Não há nenhum algoritmo novo e exótico escondido aqui, nem nenhum hardware secreto. É a mesma matemática que todo o campo já utiliza. O método é a codificação por emparelhamento de bytes, o mesmo esquema que todos usam. Esse é o padrão desde o GPT-2, e o GigaToken o deixa completamente intacto. Mesmas regras de mesclagem,
+
+mesmo vocabulário, mesmos IDs de token. Compare a saída com a do Hugging Face e verá que é idêntica, byte a byte. A codificação de emparelhamento de bytes em si é quase simples demais. Você começa com caracteres brutos, encontra o par que aparece com mais frequência, junta-os em um novo token e repete isso algumas milhares de vezes. É assim que um modelo aprende que as letras t h e devem se condensar em um único token para a palavra "the".
+
+Mas antes que qualquer fusão ocorra, o texto bruto precisa ser pré-dividido em partes aproximadas: palavras, espaços, pontuação e números. E é nessa etapa anterior à divisão , e não na fusão inteligente que recebe toda a atenção, que quase todo o tempo de execução é gasto. Quase todos os analisadores léxicos executam essa divisão com um mecanismo de expressão regular porque o código original do GPT-2 fazia isso. Expressões regulares são flexíveis e fáceis de configurar corretamente, por isso raramente são reescritas. Além disso, é lento porque percorre o texto um caractere por vez. O GigaToken
+
+descartou a expressão regular e dividiu o texto manualmente usando SIMD. Essas são as instruções de CPU de uso amplo, AVX-512 em Intel e AMD, Neon em Apple e ARM, que processam um lote inteiro de bytes de uma só vez, em vez de um de cada vez. Enquanto a expressão regular lê um caractere por passo, esta lê 32 ou 64 bytes em uma única instrução. Então, ele se recusa a fazer o mesmo trabalho duas vezes. Na primeira vez que encontra uma determinada palavra, ela a tokeniza e arquiva a resposta. Depois disso, sempre que é executado,
+
+ele simplesmente busca a resposta. O texto real consiste nas mesmas milhares de palavras repetidas infinitamente, portanto, o cache começa a dar retorno quase que imediatamente. Parece óbvio, mas é realmente a parte difícil. A linguagem tem uma longa cauda. Sempre surge alguma palavra nova e rara . Assim, o cache continua crescendo
+
+e pode acabar ocupando todo o espaço da pequena e rápida memória da sua CPU. Projetar essa hierarquia de cache para que ela permaneça rápida é a maior parte do trabalho de engenharia propriamente dito. O resto é uma série de pequenas vitórias sem glamour . Elimine as previsões incorretas de ramificação. Impeça que as threads fiquem interagindo umas com as outras e raramente voltem a usar o Python, que é mais lento. Nenhuma dessas características, isoladamente, é
+
+dramática. Empilhados uns sobre os outros, eles se multiplicam por 100. E o critério de comparação nem sequer está manipulado a seu favor. O Gigatoken lê o arquivo inteiro de 11 GB e encontra todos os pontos de divisão por conta própria, enquanto as outras duas bibliotecas recebem partes pré-divididas para começar . Ela realiza um volume de trabalho estritamente maior do que seus concorrentes, e mesmo assim vence por três ordens de grandeza. O ponto crucial ao qual sempre
+
+retornamos é a correção. Ele comparou o algoritmo com o da Hugging Face em todos os 20.400 documentos daquele conjunto de dados, e cada token correspondeu. Aqui, você não está trocando precisão por velocidade. O resultado é exatamente o mesmo, só que produzido muito mais rapidamente. É justo perguntar onde ele
+
+falha, e ele mesmo lhe dirá. Os tokenizadores de fragmentos de frases mais antigos, nos quais Gemma e alguns modelos Mistral se baseiam , ficam apenas de 10 a 20 vezes mais rápidos, não mil. O WordPiece ainda não é suportado, e o Windows funciona melhor através do WSL por enquanto. Ele deixa tudo bem claro no arquivo leia-me. Há também uma nota honesta sobre IA logo no arquivo leia-me. Ele afirma que a maior parte
+
+do código foi escrita manualmente, e isso pode ser verificado no histórico de commits, com a IA sendo incorporada perto do final para ampliar a compatibilidade e extrair os últimos 4x de desempenho. É um nível de transparência revigorante. Na verdade, usá-lo é quase anticlimático, no melhor sentido possível. Você encapsula seu tokenizador existente em uma única chamada de função e, a partir desse ponto, ele se comporta exatamente da mesma maneira, com os mesmos métodos e os mesmos resultados. Simplesmente funciona muito mais rápido por baixo.
+
+Há uma linha de código para fazê-lo funcionar como um tokenizador de rosto, uma linha para fazê- lo funcionar como o TickToken ou uma API nativa de token Gigabit que lê seus arquivos diretamente do disco e ignora completamente o Python para atingir esses números de gigabytes por segundo . E já compreende praticamente todos os tokenizadores comuns que você possa usar. Dezenas de famílias de modelos funcionam a partir de uma única instalação em versões do Python de 3.10 a 3.14, tanto em chips x86 quanto arm . É improvável que você encontre um que ele
+
+não consiga processar. O desenvolvedor é Marcel Rad, um estudante de doutorado em ciência da computação do terceiro ano em Stanford. Ele ajuda a lecionar CS 336, o conhecido curso de modelagem de linguagem do zero, juntamente com Percy Liang e Tatsunori Hashimoto. Ele estudou física e matemática em Oxford e na NTNU, na Noruega, passou um tempo no MIT e no CERN e venceu um hackathon de kernel de GPU no ano passado. Essa pessoa é especialista em sistemas . Ele publicou isso há alguns dias e
+
+a reação foi imediata. Já ultrapassou a marca de mil estrelas no GitHub. Está em alta no r/localllama e o próprio orientador de doutorado dele está apoiando publicamente a ideia. Para uma biblioteca de tokenização de baixo nível, esse é um lançamento realmente impactante. Para entender por que a velocidade é tão importante nesse contexto, pense no treinamento.
+
+Ao construir um modelo do zero, que é exatamente o que o curso dele em Stanford faz com os alunos, você processa centenas de bilhões de tokens através do tokenizador. Com os ritmos antigos, só essa preparação prévia poderia durar dias, e não se trata apenas de treinos. Sempre que um modelo humano responde, ele precisa transformar sua pergunta em tokens antes de poder pensar. Multiplique isso por milhões de solicitações por dia, e até mesmo o tempo de inferência para tokenização se torna um custo recorrente que vale a pena cortar. Então, é por isso que isso chega até você, mesmo que você nunca treine um modelo. Antigamente, a
+
+tokenização era um custo adicional para todos os projetos. Horas de pré-treinamento antes mesmo de um único passo do treinamento poder começar. Ao aumentar a taxa de transferência de 20 megabytes por segundo para 20 gigabytes, o imposto praticamente desaparece. Uma preparação de dados mais barata significa experimentos mais rápidos e novas tentativas mais ágeis, o que é crucial quando se está treinando ou ajustando um modelo com orçamento limitado, em vez de contar com uma enorme quantidade de GPUs. A primeira etapa invisível de todo o processo deixou de ser a mais lenta, e essa é a lição que eu levarei comigo. A
+
+parte mais tediosa do sistema hidráulico, aquela que a maioria de nós nunca se preocupa em analisar, é muitas vezes onde se escondem os maiores ganhos de desempenho . Vá encontrar um. O link para o Gigatoken está na descrição.

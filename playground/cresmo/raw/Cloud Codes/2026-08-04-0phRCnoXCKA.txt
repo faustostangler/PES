@@ -1,0 +1,122 @@
+---
+video_title: "Nvidia’s Moat Just Cracked: On AMD Kimi K3 Is 3.8x Faster"
+video_id: 0phRCnoXCKA
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0phRCnoXCKA
+video_date: 2026-08-04T16:00:08+00:00
+video_description: |
+  Did AMD really crush Nvidia's flagship B200 by 3.8x on Moonshot's 2.8-trillion parameter Kimi K3 model, or is this benchmark hiding a massive VRAM bottleneck? Meet the engineering reality behind the headline: how a 24GB memory shortage forced Nvidia to span two server nodes over network cables while AMD ran locally inside one box.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this deep dive, Cloud Codes breaks down the system design, hardware topology, and pricing breakdown behind the viral Hacker News benchmark comparing AMD's Instinct MI355X against Nvidia's Blackwell B200 and B300 GPUs. We examine why Kimi K3's 1.56TB MXFP4 footprint outgrew B200's 1,536GB 8-GPU node capacity by just 1.5%—triggering slow RoCE inter-node interconnect hops—while AMD's 2,300GB node capacity handled the entire 2.8T model on a single chassis using Tensor Parallel 8.
+  
+  Furthermore, we audit the head-to-head metrics against Nvidia's 288GB B300 (where Nvidia takes back the speed crown by 1.65x), dissect ROCm's 12-to-16 head padding issue that caused a 51-second cold prefill latency penalty, and evaluate whether GPU rental pricing ($2.50/hr vs $6.00/hr) makes AMD the true cost-per-token winner in enterprise AI datacenters.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  • Wafer AI Original Post ("Is Memory the Moat?"): https://wafer.ai/blog/kimi-k3-mi355x
+  • Hacker News Benchmark Discussion: https://news.ycombinator.com/
+  • Moonshot AI Kimi K3 Repository: https://huggingface.co/moonshotai/Kimi-K3
+  • SemiAnalysis InferenceX Platform: https://inferencex.semianalysis.com/
+  • SGLang Inference Engine: https://github.com/sgl-project/sglang
+  • vLLM Serving Framework: https://github.com/vllm-project/vllm
+  
+  ⏱️ Video Chapters:
+  0:00 - The 3.8x Benchmark Claim
+  1:11 - Kimi K3 Footprint: The 1.56TB VRAM Problem
+  2:35 - Why Nvidia B200 Missed Node Capacity by 24GB
+  3:55 - AMD MI355X vs Nvidia B300 Head-to-Head
+  5:17 - The GPU Rental Pricing Controversy ($2.50/hr vs $6.00/hr)
+  6:55 - Cold Prefill Penalty: 51s vs 23s Latency
+  8:47 - The Real Moat: Memory Capacity & Day-Zero Support
+  10:12 - Final Verdict: Is VRAM Memory the New Moat?
+  
+  #amd #nvidia #b200 #mi355x #systemdesign #gpu #cloudcodes
+  
+  User Queries:
+  amd mi355x vs nvidia b200 kimi k3 benchmark
+  why amd ran kimi k3 faster than b200
+  nvidia b200 vram limit 1536gb interconnect bottleneck
+  nvidia b300 vs amd mi355x tokens per second
+  wafer inference optimization mi355x b200 pricing
+  rocm tensor parallel 8 head padding prefill latency
+  semianalysis inferencex mi355x vs b300
+  is memory the moat local ai hardware
+  kimi k3 mxfp4 1.56tb vram requirements
+  cloud codes amd mi355x nvidia b200 breakdown
+---
+Uma publicação de referência foi feita há dois dias. Um servidor AMD executando o maior modelo aberto do planeta. 952 tokens por segundo provenientes de um único nó com 8 GPUs . Essa é toda a alegação. O mesmo modelo na placa B200 da Nvidia conseguiu atingir 249 por nó. Uma diferença de 3,8 vezes, não 3%, não 30,
+
+quase 400, exatamente na carga de trabalho que a Nvidia deveria dominar completamente. A publicação tinha o título: "A memória é o fosso?" Essa é uma pergunta estranha para se fazer no meio de uma disputa de fichas. Até esta manhã, a publicação tinha 207 pontos no Hacker News e 101 comentários. A maioria desses comentários eram discussões. Então, eu
+
+mesmo puxei a tabela, e o número principal confere. O que esse número realmente significa é onde a coisa fica interessante. Três coisas que quero te entregar hoje. Primeiro, como a AMD venceu por quase quatro vezes sem possuir um chip mais rápido, simplesmente porque não possui um chip mais rápido. Segundo, a linha desse mesmo benchmark em que a AMD perde feio, aquela que não chegou a ser notícia em nenhuma manchete. Terceiro,
+
+se o preço em que toda essa alegação se baseia é um preço que você realmente pode pagar hoje. Se o terceiro cair, a manchete cai junto. Então, começamos onde tudo começou, no modelo. Kimmy K3 foi enviada no dia 16 de julho pela Moonshot AI. 2,8 trilhões de parâmetros e pesos publicados abertamente e, segundo sua própria descrição, o primeiro modelo aberto com três trilhões de classes já divulgado. Ele encaminha 16 dos
+
+896 especialistas por token, armazena um milhão de tokens de contexto e lê imagens nativamente. No GDP Val, ele fica em terceiro lugar, atrás de Claude Fable 5 e GPT 5.6. Na arena principal do LM Arena, ela está atualmente em primeiro lugar, mas o número que importa hoje é o do modelo, não o da tabela de classificação. Só o peso total é de 1,56 TB. Ao ativar o contexto de um milhão de tokens
+
+para um usuário, você chega perto de 1,59, aumentando cerca de 30 gigabytes para cada pessoa adicional que se conecta. Empilhe isso em discos Blu-ray e você terá aproximadamente 330 filmes de altura. E tudo isso precisa estar na memória da GPU ao mesmo tempo, antes mesmo que o primeiro usuário tenha digitado um único caractere. Normalmente isso não é um problema, porque normalmente você o encolhe. Pegue os pesos de 16 bits, quantize para quatro, repita o processo e, de repente, tudo cabe em um hardware que você pode pagar. A
+
+Moonshot já usou essa estratégia. K3 foi treinado com reconhecimento de quantização e vem com o pacote MXFP4. Já está em 4 bits no caminho do especialista. Não há nenhuma construção menor escondida atrás de uma bandeira esperando para ser encontrada. Faça o mesmo com os cálculos. A Nvidia prefere que você
+
+ignore isso. Um B200 possui 192 GB de memória. Oito deles em um nó fornecem 1536. O modelo exige 1560. Falta cerca de 24 GB para atingir esse limite em uma máquina que custa mais que uma casa. 1
+
+e 0,5% a menos. E tudo o mais neste vídeo está fora desses 1,5%, razão pela qual o índice de referência é apresentado da forma como é. Um MI355X possui 288 GB de armazenamento. Oito desses são 2300. Portanto, o K3 entra em cena com aproximadamente 700 GB restantes para o cache de contexto, o que significa que a AMD pode executá-lo da maneira mais simples. Oito
+
+GPUs, um chassi, Tensor Parallel 8. Cada componente permanece dentro da caixa, na rápida malha interna, onde deve estar. O B200 não pode. A solução precisa abranger dois nós e 16 GPUs. Assim, cada camada de cada token agora emite um sinal coletivo através do cabo de rede que os conecta.
+
+Wafer mediu essa conexão em cerca de 195 Gbits sobre ROSE, uma velocidade muito alta para uma rede extremamente lenta próxima à estrutura interna do chassi. E a decodificação é o pior lugar possível para pagar, porque você gera um token por vez, então esse salto ocorre em cada camada, por token, para toda a resposta. Aqui está a versão correta da manchete. A AMD não superou o chip da Nvidia. O modelo ultrapassou a capacidade do chip da Nvidia e, por acaso, o gabinete da AMD era o único que ainda cabia nele. Esse
+
+é um resultado de engenharia real e é completamente diferente daquele que estava sendo celebrado no tópico. Isso também levanta a questão óbvia: o que acontece contra um chip da NVIDIA que seja compatível? Porque existe um. O B300 possui 288 GB, exatamente a mesma capacidade do MI355X. Segue a tabela completa da postagem.
+
+E esta é a parte que viajou muito menos longe. Decodificação por fluxo AMD18, B3001 172, pico agregado AMD 952, B3001,568. Por GPU, 119 contra 196, três linhas, três perdas em velocidade bruta. O nó B300 executa cerca de 1,65 vezes o nó AMD, e o destaque de 3,8 vezes compara um nó AMD com um sistema de dois nós e 16 GPUs B200, medido por nó e por usuário. Essa diferença é de 1,3. Existe uma quarta fila. É a
+
+única que a AMD vence e é sobre ela que o post realmente trata. Taxa de transferência máxima por dólar investido em horas de GPU: 48 para a MI355X, 33 para a B300 e 7 para a B200. Portanto, a alegação nunca foi de que a AMD é mais rápida. A alegação é que a AMD é mais barata por token quando um modelo é grande o suficiente para precisar de memória. Esse é um argumento melhor. É
+
+também muito mais frágil. Frágil devido a uma linha de texto em itálico que está embaixo daquela mesa. Relação desempenho/custo-benefício a US$ 250 por hora de GPU para o MI355X. US $ 6 para o B300, US$ 425 para o B200. O Hacker News foi direto ao ponto. Não
+
+os grãos, não a metodologia, o aluguel. um comentarista chamado GPreg. Só consigo encontrar um MI355X por US$ 2,50 e o preço mais baixo que encontro em qualquer outro lugar é US$ 265. Já o Swift Coder, o preço sob demanda mais barato que vejo online, é de US $ 14, e a maioria dos fornecedores cobra muito mais caro. RG, isso simplesmente não pode ser verdade. A Motorola
+
+aluga uma RTX 6000 Pro por um valor superior a esse. Então Vilgax foi verificar. Eu acessei o site GPUs.io e agora está custando 295 por hora. É como comparar o preço sugerido pelo fabricante (MSRP) com o preço real de mercado.
+
+Um programador de inferência citou a suposição de volta e escreveu: "Esta não é uma comparação de preços precisa em termos reais. Consulte os anúncios e verá que eles têm razão. A capacidade do MI355X hoje varia de US$ 259 a US$ 860 por hora, dependendo do fornecedor. O B200 está em torno de US$ 625 na mediana. O B300 em torno de US$ 823. Portanto,
+
+a tendência se mantém. A AMD realmente aluga mais barato. O multiplicador não se mantém ao se deparar com uma página de pagamento. Se o preço da AMD cair de US$ 250 para US$ 5 por hora, 48 tokens por dólar se tornam 24 e a linha AMD1 volta para o B300. Também vale a pena saber quem está cronometrando. A Wafer é uma startup da Y Combinator
+
+que vende otimização de inferência. E esta postagem é de um de seus engenheiros. Isso não significa que as medições estejam erradas. Significa que o benchmark e o argumento de venda são o mesmo documento. Então, fui procurar alguém que não tivesse nada escrito na resposta. A Semi Analysis executa o Inference X,
+
+um benchmark público que continua rodando em ambos os fornecedores em configurações idênticas." cargas de trabalho. A resposta deles é irritante e provavelmente correta. Depende do modelo. No Miniax M3, o MI355X é 68% mais barato por milhão de tokens. Nos modelos de código K2 da própria Kimmy,
+
+65% mais barato. No GLM5, 51%. Mas no Miniax M2.5, o B300 é 24% mais barato. E no GLM5, a 60 tokens por segundo por usuário, os dois ficam dentro de 1% um do outro, US $ 110 contra US$ 9. Mesmo silício,
+
+veredictos opostos, dependendo do modelo que você estiver usando. Esse padrão também apareceu em maio em uma pilha diferente, executando GLM5 com a linguagem SG. O Inference X mostrou o MI 355X a 22 centavos por milhão de tokens contra 30 centavos no B200, e o próprio artigo de inferência distribuída da AMD o colocou a 16,9 centavos com 24 GPUs, enquanto o B200 precisava de 48. Há mais uma ressalva e crédito para Wafer por publicar contradiz o próprio argumento deles. O preenchimento a frio de 172.000 tokens levou 51
+
+segundos no MI 355X e 23 segundos no B300. Esse é o tempo até o primeiro token e é mais que o dobro da lentidão em um modelo cujo principal diferencial é um milhão de tokens de contexto. Qualquer pessoa que utilize esse dispositivo com um grande repositório sente essa diferença imediatamente, muito antes de ver um gráfico de throughput. E o motivo disso é a melhor ilustração da verdadeira posição da AMD. O Rockm estava recorrendo a um kernel de atenção genérico lento porque o caminho rápido exigia um número de threads de 4, 8 ou 16, enquanto o K3 com paralelismo tensorial exigia 8 threads com 12. A
+
+solução foi preencher 12 threads até chegar a 16 e descartar as extras posteriormente. O preenchimento passou de cerca de 4.000 tokens por segundo para 13.000. Não era uma falta de capacidade, mas sim uma incompatibilidade de formato. A
+
+primeira requisição já havia falhado devido a um simples erro de nome em Python dentro do caminho de amostragem do Rockm. E essa correção foi apenas uma função. Ambos os problemas eram reais. Ambos foram corrigidos em uma Boa tarde. Esse é um tipo de problema muito diferente daquele que a AMD costumava apresentar. E isso nos leva
+
+diretamente à pergunta do título: a vantagem competitiva da Nvidia foi quebrada? Isso depende inteiramente de qual vantagem você considera . Não eram os flops. Uma B200 atinge aproximadamente 9 pedaflops de FP4 denso. Uma MI355X atinge 9,2. E ambas operam com cerca de 8 tabulações por
+
+segundo de largura de banda de memória. Essa disputa em particular está empatada há cerca de um ano. A vantagem era o tempo. Dois anos atrás, um novo modelo aberto na AMD significava esperar por patches da comunidade e procurar por flags de compatibilidade enquanto seus concorrentes já estavam atendendo o tráfego. Desta vez, a AMD tinha o K3 rodando no dia zero, validado no Tensor Parallel 8, e a publicação de lançamento da VLLM listava a MI355X ao lado da B300. Isso é o que
+
+realmente fez a diferença, não o silício, mas o calendário. O que não mudou foi o resto . A Nvidia ainda detém entre 80% e 95% dos aceleradores de data center, dependendo de quem você consultar. E A base de desenvolvedores do CUDA é contada em milhões. A AMD está respondendo com mais memória. O Helios utiliza 72 milhões de processadores 455X, totalizando
+
+cerca de 31 TB de HBM4. O Vera Rubin da Nvidia comporta aproximadamente 20,7 milhões de processadores, e a AMD já vendeu 6 GW para a OpenAI e mais 6 GW para a Meta. Essa é a estratégia em uma frase: não ultrapasse a capacidade do chip. Construa a infraestrutura que o modelo comporta e espere que os modelos cresçam e se adaptem a ela. E eles estão crescendo. O K3
+
+foi desconectado do processador quase um milhão de vezes em um mês. E o próximo não será menor. Então, a memória é o diferencial competitivo? Ainda não. Mas, pela primeira vez, a resposta é um argumento baseado em benchmarks, em vez de um encolher de ombros. O que mudaria
+
+sua estratégia?

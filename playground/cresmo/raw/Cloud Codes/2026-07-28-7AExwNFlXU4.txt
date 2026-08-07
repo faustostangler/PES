@@ -1,0 +1,120 @@
+---
+video_title: "Running a 22GB AI Model on a 6GB GPU, FAST (llama.cpp Guide)"
+video_id: 7AExwNFlXU4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7AExwNFlXU4
+video_date: 2026-07-28T09:00:18+00:00
+video_description: |
+  In this deep-dive tutorial, we explore how to run the Qwen3.6-35B-A3B Mixture of Experts (MoE) model on a standard 6GB VRAM GPU using llama.cpp by leveraging CPU offloading and memory bandwidth architecture. By properly tuning five critical flags—including --n-cpu-moe to park idle routed experts in system RAM and optimizing the --load-mode (mmap vs mlock) scheduler—you can achieve 17 tokens per second on a 10-year-old GTX 1060 without buying expensive AI hardware.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  We break down the exact memory traffic mechanics of sparse models versus dense LLMs, and why the "VRAM wall" is now just a budget problem. We also explore the harsh realities of speculative decoding thrashing the memory bus on MoE architectures, how TurboQuant drastically reduces Key-Value (KV) cache size using 3-bit quantization, and why beginner tools like Ollama and LM Studio hide the exact micro-batch tuning you need to unlock local coding agents.
+  
+  If you found this technical breakdown on local LLMs and hardware optimization helpful, drop a like and subscribe for more deep dives into software architecture and AI systems!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 35B Model on a 6GB GPU
+  00:28 - Qwen3.6-35B & MoE Architecture Explained
+  01:16 - Dense Models vs Sparse Memory Traffic
+  01:52 - Flag 1: The Magic of --n-cpu-moe
+  03:08 - Flags 2, 3 & 4: Mmap, Mlock, and GPU Layers
+  04:31 - The System RAM Bandwidth Bottleneck
+  05:12 - Fixing Prompt Processing (Micro-Batch Tuning)
+  06:45 - The Context Problem & TurboQuant (3-Bit KV Cache)
+  09:09 - Why Speculative Decoding Fails on MoE Models
+  10:16 - 4-Bit Quantization Quality & Final Verdict
+  
+  #llamacpp #localllm #machinelearning #gpu #qwen #artificialintelligence #systemdesign #softwareengineering 
+  
+  User Queries:
+  how to run 35b model on 6gb vram local llm
+  llama cpp n-cpu-moe flag explained
+  qwen 35b mixture of experts vram requirements
+  how to optimize llama cpp for slow old gpu
+  turboquant kv cache llama cpp pull request
+  why is speculative decoding slow on moe models
+  ollama vs lm studio custom expert offloading
+  mmap vs mlock vs load mode llama cpp
+  local coding agent system ram vs vram bandwidth
+  mixture of experts vs dense llm memory traffic
+---
+O arquivo do modelo tem 22 GB. A placa gráfica tem seis núcleos e ainda processa 17 tokens por segundo, mesmo sendo uma placa lançada em 2016. Isso é possível graças a um detalhe no nome do modelo: 35B, ou seja, 35 bilhões de parâmetros no total. 3 bilhões deles disparam por token. Aqui está o vídeo completo. Cinco flags no arquivo llama.cpp que
+
+aumentam a taxa de amostragem de três tokens por segundo para 17, e então os três pontos onde o truque para de funcionar. O modelo é QN3.6 35B A3B. A Alibaba enviou o produto em 15 de abril de 2026, com Apache 2.0, e ele obteve uma pontuação de 73,4 no teste SWE Benchverified, o que é uma coisa estranha de se ter na sua mesa. A versão de quatro bits da Unsloth tem
+
+22,36 GB. Um cartão de 6 gigabytes comporta cerca de um quarto desse espaço. Abra esse arquivo e você encontrará 256 especialistas. Para qualquer token, o roteador ativa oito deles, mais um compartilhado. Os outros 248 permanecem imóveis. Segure
+
+isso ao lado de um modelo denso por um segundo. Um 35B denso lê cada um de seus 35 bilhões de pesos para produzir um único token. Com quatro bits, isso representa aproximadamente 20 GB de tráfego de memória por token. QN3.6 lê abaixo de um. O mesmo conhecimento no
+
+papel, um vigésimo do movimento. Portanto, a questão deixa de ser se o modelo se encaixa e passa a ser quais partes dele precisam ser rápidas. A atenção é processada em cada token individualmente, portanto, a atenção é direcionada para a GPU. Incorporações, especialista compartilhado, cache de chave-valor, tudo na GPU. Os especialistas em rotas ficam ociosos na maior parte do tempo. Processos ociosos
+
+podem permanecer na memória RAM do sistema. Até meados do ano passado, você fazia isso manualmente com uma expressão regular, sobrescrevendo o tensor, barra invertida.ffn_.*_exps = CPU. Funcionou. Era também o tipo de bandeira que
+
+você copia de uma postagem de fórum à meia-noite e espera colar corretamente. Então, em 31 de julho de 2025, um mantenedor do llama.cpp incorporou uma flag chamada CPU-MOA. Quatro dias depois veio o N-CPU-MOA. Mantenha os pesos especialistas das primeiras N camadas na CPU. Essa solicitação de pull request ficou
+
+aberta por 80 minutos antes de ser aceita. Essa é a primeira flag, e representa a maior parte da vitória. Em uma GTX 1060 de 6 GB, o QN3.6 começa com cerca de três tokens por segundo. Adicione N-CPU-MOA-30 e o resultado será 10. Você não comprou
+
+hardware. Você não reduziu ainda mais a quantização. Você informou ao agendador quais pesos mereciam a memória rápida. Escolher a letra N é como selecionar um dial, não como uma fórmula. Comece por cada camada da CPU e, em seguida, percorra o número de cima para baixo. 28, 26, 24.
+
+Continue até que o carregador informe que ficou sem VRAM. Então, dê um passo para trás. O valor correto é o último que se encaixa. E é aqui que as ferramentas se tornam complicadas, porque você não pode fazer nada disso no Ollama. A solicitação de recurso foi feita em agosto de 2025 e ainda está em aberto.
+
+Um dos avaliadores observou o Ollama dividir um modelo em 17% CPU e 83% GPU, sem que fosse possível contestar. O LM Studio pelo menos oferece uma caixa de seleção. Ou todos os especialistas em CPU, ou nenhum. O pedido de número de telefone está aberto há o mesmo tempo. A segunda bandeira é menor e mais estranha. Sem MMAP. Por
+
+padrão, o llama.cpp mapeia os pesos diretamente do disco e deixa que o kernel decida o que permanece residente. Desligue isso, carregue tudo na RAM de uma vez, e 10 se torna 13 e meio. Exceto ao compilar o arquivo llama.cpp, que utiliza essa flag para imprimir um aviso de obsolescência.
+
+Em março, MMAP, No-MMAP e MLOCK foram unificados em uma única opção chamada modo de carregamento, com quatro configurações. Nenhum, MMAP, MLOCK, DEO. O mesmo comportamento, o mesmo local, e muitos guias online agora estão errados. Há um segundo porém . Se o modelo for maior que a sua RAM, No-MMAP é a resposta errada. Os
+
+responsáveis ​​pela manutenção descobriram que modelos de mistura de especialistas, utilizando 100% ou até mesmo 150% da memória do sistema, funcionam mais rápido com o mapeamento de memória ativado, porque o cache de páginas está realizando trabalho real. A terceira bandeira é aritmética. Assim que os especialistas forem embora, a maior parte dos seus 6 gigas ficará vazia novamente. Então, empurre as camadas para trás com n_gpu_layers até que a VRAM esteja cheia. 13 e 1/2 se transforma em 17.
+
+3 para 17 em uma placa de 2016 e 32 gigas de RAM de desktop comum em três bandeiras. A quarta opção só importa se você deixar o servidor em execução. Ao longo de algumas horas, o kernel decide que essas páginas especializadas estão obsoletas e as remove para dar lugar a outra coisa. mlock diz para não fazer isso. Seu primeiro token após o almoço deixa de levar 4 segundos, mas existe um limite máximo a partir do qual nenhuma bandeira se moverá. No momento em que
+
+esses recursos residem na memória RAM do sistema, seus tokens por segundo deixam de ser um número da GPU e passam a ser um número de largura de banda da memória . A memória DDR4 de canal duplo a 3200 MHz oferece cerca de 51 GB/s. A própria VRAM da 1060 chega a 192. Você move o trabalho para a via lenta de propósito, e a via lenta é quase quatro vezes mais lenta, razão pela qual os números escalam da maneira que escalam. Uma GTX 1070 com 8 GB executa o mesmo modelo a cerca de 18 tokens por segundo com 132.000
+
+tokens de contexto. Coloque tudo dentro de uma 3090 e você terá 105. Uma 5090, 183. Agora, se você já tentou isso, provavelmente chegou ao mesmo ponto que eu. A geração parece funcionar bem, mas depois que você cola um arquivo, ele simplesmente fica parado.
+
+Ler o enunciado e escrever a resposta não são a mesma tarefa, e o arquivo llama.cpp não as executa da mesma maneira. Na parte interna do CUDA, existe uma única constante, op_offload_min_batch_size. Seu valor padrão é 32, e você pode alterá-lo com uma variável de ambiente. Cada multiplicação de matrizes realizada por especialistas é comparada com esse número, e o lado em que o resultado for definido determina quem fará o trabalho. A escrita de uma
+
+resposta ocorre um token por vez, portanto o tamanho do lote é um. Um deles tem menos de 32 bits, então a CPU realiza a multiplicação usando a RAM do sistema a uma taxa de 51 GB por segundo. Isso equivale a 17 tokens por segundo. A leitura de um prompt envolve centenas de tokens simultaneamente. Isso dá mais de 32, então o llama.cpp copia os
+
+pesos do especialista através do PCI Express para a VRAM e passa a tarefa para a GPU . Mesmo modelo, mesmas bandeiras, uma máquina completamente diferente por baixo, que lhe entrega uma alavanca que a maioria dos tutoriais ignora. O micro lote padrão é de 512 tokens. Aumente-o. No teste de desempenho realizado pelo próprio mantenedor em um modelo similar com descarregamento de tarefas , o aumento de 128 para 2048 tokens levou o processamento imediato de 22 tokens por segundo para 345. Isso ocorreu
+
+15 vezes a partir de uma única flag, e o desempenho melhorou novamente depois disso. Em agosto de 2025, foi lançada uma atualização com um título que indica exatamente o que ela corrige. Ao descarregar o processamento imediato, copie apenas os especialistas utilizados . Antes disso, todos os especialistas fizeram a viagem, todos os 256. Então, essa é a metade da velocidade. O contexto é uma questão à parte. O QN
+
+3.6 é fornecido com 262.000 tokens de contexto e, se você estiver apontando um agente de codificação para um repositório, usará todos eles. Eis o custo disso para este modelo específico. 20.480 bytes de cache de valor-chave por
+
+token por sequência, 20 KB. Assim, o total de 256.000 tokens corresponde a cerca de 5 GB, o que é pouco, e a razão para isso é o formato do modelo. 40 camadas, mas apenas 10 delas realmente chamam a atenção. Os outros 30 são DeltaNet com controle de acesso, um modelo de atenção linear que mantém um estado de tamanho fixo em vez de um cache que cresce a cada token. 3/4 deste modelo não possui nenhum
+
+cache de chave-valor. Coloque ao lado um modelo de especialistas com atenção plena normal da mesma classe, e esse exigirá 98.000 bytes por token. 4,8 vezes mais memória para a mesma conversa. O contexto mais barato que você jamais obterá é aquele que a arquitetura nunca aloca. Mesmo assim, 5 gigabytes de
+
+dinheiro não cabem ao lado de 5 gigabytes de dados importantes em um cartão de 6 gigabytes, então o guia recorre ao Turbo Quant. O Google Research e a NYU publicaram o artigo no arXiv em abril de 2025, onde permaneceu por 11 meses até que uma postagem no blog do Google em março incendiou toda a comunidade científica. O objetivo é chegar à ICLR 2026. O segredo é a rotação. Transforme cada vetor de chave e valor em uma base onde as coordenadas se comportam, e então quantize em relação a um dicionário de códigos fixo.
+
+3 bits, sem calibração, tipo de dinheiro K Turbo 3, tipo de dinheiro V Turbo 3, atenção ao flash ligada. O Google registrou uma redução de pelo menos seis vezes no uso de memória para valores-chave, mantendo intactos os resultados dos testes de desempenho . No guia, esse mesmo cartão de 6 gigabytes passa de 64.000 tokens de contexto para 256.000.
+
+E aqui está a parte que os textos omitem . Turbo Quant não está em llama.cpp. 75 solicitações de pull e problemas nesse repositório mencionam isso. Todas as solicitações de pull request foram fechadas e não mescladas, duas delas marcadas como violação da política de IA . Para digitar Turbo 3, você cria um
+
+fork que está 300 commits à frente do upstream. Além disso, em algum momento deixou de ser uma vitória baseada na velocidade . Quando o projeto upstream reescreveu a mistura de kernels de atenção de especialistas , o modelo simples de 16 bits ficou quatro vezes mais rápido e o caminho turbo não foi seguido. Em um modelo do Ministério da Engenharia, o Turbo 2 agora decodifica a 45% do F16. O veredito do próprio Threads: trata-se de memória, não de velocidade, o que me leva à flag que não entrou na lista, a decodificação especulativa, onde um modelo pequeno adivinha vários tokens à frente e o modelo grande os verifica em uma única passagem em um modelo denso que é quase gratuito.
+
+[bufa] Aqui caiu. A razão é elegante de uma forma ligeiramente irritante. Um token desperta oito especialistas. Adivinhe quatro fichas à frente e você não estará mais acordando oito, mas sim a maioria delas. Um estudo de 2025 mediu isso no Mixtral. Um token atraiu dois especialistas.
+
+Oito fichas renderam mais do que sete. Com uma movimentação de dados três vezes e meia maior, seus especialistas estão sobrecarregados pela CPU. Assim, cada especialista adicional representa mais uma travessia no ônibus da memória. Esse estudo constatou que a verificação era duas a três vezes mais lenta e que a especulação tornava todo o sistema até uma vez e meia mais lento do que não especular . A solução alternativa é a previsão de múltiplos tokens , um modelo preliminar treinado no próprio modelo, compartilhando seu contexto e seu cache, em vez de executar um segundo modelo. Isso ajuda. Um pouco menos do que você
+
+gostaria. Aproximadamente de 1,4 a 2 vezes em modelos densos e de 1,15 a 1,25 em uma mistura de especialistas. A escassez dá com uma mão e tira com a outra. Só resta uma pergunta, e ela decidirá se tudo isso valeu a pena . A versão de 4 bits ainda é o modelo que obteve 73,4 pontos? Os
+
+números publicados pela Unsloth sobre a geração anterior indicam que a divergência KL de 4 bits era de 0,0137, contra 0,0026 para 8 bits. Cinco vezes uma deriva. A perplexidade, por sua vez, varia menos de 1%. O aviso deles é a parte útil. A perplexidade e a divergência KL são ambas influenciadas pelos dados de calibração e nenhuma delas prevê de forma confiável se o modelo conseguirá concluir a tarefa.
+
+Execute-o em seu próprio repositório por um dia. Esse é o parâmetro que se aplica a você. Portanto, defina o padrão onde ele deve estar. 17 tokens por segundo é mais rápido do que você lê, mas muito lento para um agente que esteja processando um código-fonte sem supervisão. Este é um excelente assistente local para o hardware que você já possui. Não é algo que se integre diretamente
+
+à API. Mas o que vale a pena guardar não é a lista de bandeiras. Durante dois anos, a regra era que a VRAM era uma barreira intransponível. O modelo serve ou não serve, e a única solução é um cartão maior. Modelos esparsos transformaram aquela parede em um orçamento.
+
+Você parou de comprar capacidade e começou a decidir quais pesos merecem a memória rápida. 6 GB, um cartão de 2016, 35 bilhões de parâmetros respondendo em tempo real. Execute o programa e depois me diga quantos tokens você conseguiu por segundo e a velocidade da sua RAM. Esses dois números juntos contam toda a história. Até a próxima!

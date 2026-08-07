@@ -1,0 +1,107 @@
+---
+video_title: "Graphs vs Vectors: The Real Shift Happening in RAG"
+video_id: yqEekIQSVzQ
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yqEekIQSVzQ
+video_date: 2026-08-05T00:00:37+00:00
+video_description: |
+  Why is traditional vector similarity search failing on multi-hop questions, and why are Microsoft, Stanford, and Anthropic abandoning flat vector databases for Graph Engineering? Meet the technical paradigm shift replacing similarity search with knowledge graph traversal.
+  
+  In this deep dive, Cloud Codes breaks down the system design, benchmarks, and production mechanics of GraphRAG, LazyGraphRAG, and HippoRAG. We analyze why traditional vector embeddings fail on multi-hop reasoning (scoring 42.9 vs 53.4 for graphs on GraphRAG-Bench), how Microsoft reduced GraphRAG indexing costs from $33,000 down to $50 using LazyGraphRAG query-time community summarization, and how Ohio State's HippoRAG uses Personalized PageRank walks to run 30x cheaper than iterative retrieval.
+  
+  Furthermore, we dissect Stanford's KGGen entity resolution algorithm (recovering 66% of document facts), examine Anthropic's 4-stage extraction pipeline in Haiku and Sonnet, and explain the exact paradox of why Claude Code deleted its vector database while Anthropic published knowledge graph pipelines—revealing the fundamental rule: index what you cannot naturally traverse.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  • Microsoft GraphRAG Engine: https://github.com/microsoft/graphrag
+  • Ohio State HippoRAG Framework: https://github.com/OSU-NLP-Group/HippoRAG
+  • Zep Graphiti (Temporal Knowledge Graphs): https://github.com/getzep/graphiti
+  • Anthropic Knowledge Graph Cookbook: https://github.com/anthropics/anthropic-cookbooks
+  • Stanford KGGen & MINE Benchmark: https://github.com/stair-lab/kg-gen
+  
+  ⏱️ Video Chapters:
+  0:00 - Why Vector Search Fails at Multi-Hop Queries
+  0:54 - What is Graph Engineering?
+  1:09 - Microsoft GraphRAG: $33,000 Indexing Cost Problem
+  2:33 - LazyGraphRAG: 700x Cheaper Query Summarization
+  3:34 - GraphRAG-Bench (ICLR 2026): Vector vs Graph Performance
+  5:04 - HippoRAG: Personalized PageRank Walk Over Graphs
+  5:50 - Stanford KGGen & Entity Resolution Breakthroughs
+  6:42 - Anthropic's 4-Stage Knowledge Graph Pipeline
+  7:48 - Why Claude Code Deleted Its Vector Database
+  8:37 - Architectural Decision Rule: When to Use Graphs vs Vectors
+  
+  #graphengineering #graphrag #rag #vectordatabase #systemdesign #ai #cloudcodes
+  
+  User Queries:
+  graph engineering replacing rag microsoft stanford anthropic
+  graphrag vs vector rag benchmarks iclr 2026
+  microsoft lazygraphrag indexing cost query time summarization
+  hipporag personalized pagerank knowledge graph retrieval
+  stanford kggen mine benchmark entity resolution
+  anthropic knowledge graph pipeline haiku sonnet
+  why claude code deleted its vector database
+  graphiti zep temporal knowledge graph memory
+  multihop rag knowledge graph retrieval recall
+  cloud codes graph engineering breakdown
+---
+Faça à sua IA uma pergunta que esteja contida em um único parágrafo e a recuperação da resposta funcionará exatamente como prometido na demonstração. Pergunte a ele quais são os temas recorrentes ao longo de dois anos de reclamações e ele desmorona. Não porque o modelo seja fraco, mas sim porque nenhum trecho de texto isolado contém essa resposta. A busca por similaridade encontra trechos que soam como a sua pergunta. Não pode juntá-los. Essa lacuna agora tem um nome
+
+e, no mês passado, dominou a linha do tempo. Engenharia gráfica. A ideia é simples. Armazene o que você conhece como entidades e relacionamentos tipados, não como texto simples. Então, deixe o agente percorrer as conexões em vez de tentar adivinhar qual parágrafo parecia mais relevante. A Microsoft definiu o preço disso.
+
+Stanford fez essa medição. Anthropic descreveu todo o processo de produção de gasodutos. E o mesmo laboratório que publicou esse protocolo já havia apagado seu próprio banco de dados de vetores. Ambas são reais. Ambos os casos ocorreram este ano. E juntos eles explicam
+
+o que está mudando. Aqui está, portanto, a versão fundamentada com os números, incluindo aqueles que argumentam contra ela. O termo tem cerca de um mês. Um pesquisador chamado Josh Simmons escreveu que estávamos entrando na fase de engenharia de grafos no início de julho. Duas semanas depois, Peter Steinberger perguntou ao cronograma se já tínhamos passado de loops para grafos. E em dois dias, já
+
+existiam três definições concorrentes. O argumento subjacente é mais antigo. A Microsoft Research publicou a versão definitiva em abril de 2024, em um artigo intitulado "Do local ao global". A posição deles sobre a recuperação comum foi direta. Tem dificuldade em conectar os pontos. Então, eles criaram um sistema
+
+que extrai um grafo de entidades dos seus documentos e, em seguida, resume cada cluster desse grafo antecipadamente, comparando-o com a recuperação vetorial simples em cerca de um milhão de tokens de transcrições de podcasts. A versão em grafo obteve sucesso em abrangência entre 72% e 83% dos casos e em diversidade entre 75% e 82%. Em um corpus de notícias maior, o padrão se manteve e os resumos de comunidades de nível superior precisaram de mais de 97% menos tokens do que o resumo do texto bruto. melhores respostas no momento da consulta com uma fração dos tokens. O que levanta a questão óbvia: se os gráficos estavam ganhando terreno dessa forma em 2024, por que alguém ainda está discutindo isso agora? Porque construir o gráfico
+
+foi brutal. Cada documento passa por um modelo de linguagem para extrair entidades e relacionamentos, e então múltiplas chamadas resumem cada comunidade encontrada. O valor apresentado no gráfico gira em torno de US $ 33.000 para indexar um conjunto de 5 GB de processos judiciais no início de 2024. US$ 33.000 antes mesmo de uma
+
+pessoa fazer uma única pergunta. Isso equivale, aproximadamente, a um engenheiro em tempo integral durante um trimestre, dedicado exclusivamente ao pré-processamento. Para a maioria das equipes, isso encerrou a conversa na reunião de orçamento muito antes de alguém chegar à revisão da arquitetura. Portanto, a Microsoft focou no preço em vez da proposta. Em novembro de 2024, três dos mesmos pesquisadores lançaram o lazy graph rag, e o segredo está no nome. Não constrói
+
+nada antecipadamente. Em suas próprias palavras, os custos de indexação são idênticos aos do vetor rag. 0,1% da área total do gráfico. O resumo passa a ser feito no momento da consulta, quando acessa apenas a fatia do gráfico que sua pergunta realmente precisa. Em sua meta de 5.500
+
+artigos de notícias, isso representou um custo de consulta mais de 700 vezes menor do que a busca global que substituiu. Dois anos depois, essa objeção desapareceu. Uma análise prática publicada esta semana estima que a indexação de grafos em um corpus de trabalho custe cerca de US $ 50 com o modelo atual. Conjunto de dados diferente . Portanto, não se trata de uma comparação direta com os 33.000, mas a ordem de
+
+grandeza é o ponto principal. E o projeto não é uma peça de museu. O repositório da Microsoft lançou a versão 3.11 em 18 de julho, conta com 35.000 estrelas e teve commits publicados ontem. Assim, a objeção relativa aos custos foi descartada,
+
+e a discussão passou para um rumo mais interessante. Quando o preço baixou, as pessoas finalmente puderam testar se era melhor. E o artigo que o testou com mais cuidado começa com uma frase que você não encontrará na propaganda. Estudos recentes, segundo eles, relatam que o algoritmo GraphRag frequentemente apresenta desempenho inferior ao VanillaRag em muitas tarefas do mundo real. Esse é o modelo de prova gráfica aceito no ICLR 2026, que divide as questões de acordo com o que elas exigem de você. Na recuperação de fatos simples, a pontuação do bloco de texto foi de
+
+60,9 e a pontuação do gráfico foi de 60,1. Isso é um empate. Você pagou pela estrutura e não recebeu nada em troca. Mas em raciocínio complexo, os gráficos pontuam 53,4 contra 42,9, uma diferença de 10 pontos. E ao resumir o contexto em todo o corpus, 64,4 contra 51,3, 13 pontos. Quanto mais difícil a
+
+questão, mais a estrutura se beneficia. Uma avaliação separada da Michigan State e da Meta, atualizada novamente em março, aponta na direção oposta. Em questões de salto único , a recuperação de planos atinge uma pontuação de 64,8 e o melhor método gráfico, 63. Em questões fáceis, o uso de um gráfico piora ligeiramente o desempenho do sistema. Ao alternar para multihop, a imagem se inverte. 70,3 contra 67 no
+
+rag multihop. E na recuperação de informações, a versão guiada por gráficos alcança 87,8%, enquanto a versão ingênua alcança 73,4%, uma diferença de 14 pontos percentuais no mesmo documento. Nos cenários construídos especificamente para necessitarem de dois ou três fatos de fontes diferentes, as lacunas se tornam grandes. 31 pontos em música, 28 em dois wiki multihop. Essas são as perguntas que a busca por similaridade não foi concebida para responder. A questão da eficiência
+
+também não é teórica. O Hipparag, desenvolvido pela Universidade Estadual de Ohio em 2024, integra um grafo de conhecimento a uma análise personalizada do PageRank. O sistema apresenta uma precisão multihop até 20% melhor, sendo 10 a 30 vezes mais barato e 6 a 13 vezes mais rápido do que a recuperação iterativa. Uma ressalva: antes de confiar em qualquer tabela neste campo, clique aqui. A revisão que reuniu esses números analisou os modelos de linguagem usados ​​como juízes e constatou que o viés de posição valia mais de 30 pontos. Um dos métodos lidos obteve sucesso em 67%
+
+das comparações após a correção 39. Portanto, um gráfico não é uma atualização que você ativa. É um instrumento direcionado, e toda a habilidade reside em saber quais perguntas merecem ser respondidas. Por isso, o trabalho interessante deste ano não é a discussão sobre o cronograma. Foi isso que três laboratórios realmente enviaram. Stanford
+
+focou na parte que a estrutura ignorou. se o gráfico que você extraiu é bom. Uma equipe do Stair Lab, em parceria com a Universidade de Toronto e a Far AI, criou um extrator chamado KGEN e um benchmark chamado Mine para avaliar o quanto de um artigo sobrevive à sua transformação em um gráfico. Nesse teste, a KGEN recupera 66% dos fatos. O extrator de grafos da Microsoft recupera 47,8%, enquanto a extração clássica de dados abertos atinge 29,8%. Aproximadamente 18 pontos separam os dois
+
+sistemas gráficos que funcionam com o mesmo texto. A diferença reside na resolução de entidades. Se uma pessoa aparece quatro vezes com quatro grafias diferentes, você obtém quatro nós isolados e nenhum caminho entre eles. Portanto, a travessia pela qual você pagou não acontece. O KGEN os agrupa em um só. Mas
+
+leia o segundo teste deles e verá que são cautelosos. Ao responder às perguntas subsequentes, os dois apresentaram resultados comparáveis. A Anthropic publicou a terceira parte em março como um pipeline de grafo de conhecimento funcional em seu próprio livro de receitas. A explicação deles sobre o porquê é a frase mais clara que alguém já escreveu sobre isso. Eles escrevem que nenhum documento isolado contém a resposta. A recuperação de trapos não lhe revelará
+
+os fatos. O projeto consiste em quatro etapas e é propositalmente pouco glamoroso. O Haiku realiza a extração de alto volume, uma chamada por documento. Extraindo entidades tipadas e triplas de objetos predicado-sujeito . O soneto lida com a resolução e o resumo porque decidir que duas grafias se referem à mesma pessoa exige discernimento, e não mera correspondência de palavras. Seis
+
+artigos da Wikipédia produziram 36 entidades brutas e 34 relações que foram resolvidas em 22 nós em um único componente conectado, e publicaram um relatório de falha juntamente com isso. Precisão de 1,0, recall de 0,55. Tudo o que foi extraído estava correto. Falhou quase metade. Isso se estende além da recuperação e incorporação à memória. O Gravity, o
+
+mecanismo de grafo de conhecimento temporal por trás do Zep, possui 29.000 estrelas, com uma versão lançada na semana passada, e seu artigo relata uma precisão até 18,5% melhor na avaliação de conversas longas com uma latência 90% menor. Agora, a parte que complica tudo. Em fevereiro, o engenheiro que criou o código do Claude publicou que as primeiras versões usavam Rag e um banco de dados vetorial local, e que essa funcionalidade foi descartada porque a busca por agentes geralmente funciona melhor. Mais simples, disse ele, sem os mesmos problemas relacionados à segurança, privacidade, obsolescência e confiabilidade. Assim, um laboratório
+
+removeu seu índice vetorial e publicou um pipeline de grafo de conhecimento com cerca de 7 semanas de intervalo. Várias outras ferramentas de codificação supostamente seguiram o primeiro passo, o que dá a impressão de uma empresa discutindo consigo mesma, até que se analise o que cada sistema realmente está procurando. O código já possui um grafo, arquivos, importações, locais de chamada e um histórico de commits. A estrutura está montada em um disco e um clínico geral bem direcionado a percorre gratuitamente. A categoria Pros não possui essa estrutura. Então, se você quiser atravessá-
+
+lo, alguém constrói as arestas primeiro. Essa é a regra em ambas as decisões. Indexe aquilo que você não pode percorrer, que é o que a palavra "substituindo" realmente abrange aqui. A recuperação de dados não vai desaparecer. O que está sendo substituído é o valor padrão.
+
+A suposição de que a primeira coisa a fazer com qualquer pilha de documentos é fragmentá-la, organizá-la em um único documento e torcer para que o documento vizinho mais próximo contenha a resposta. E a estrutura tem um custo que as apresentações de vendas não incluem. A resolução de entidades não está isenta de erros, e os erros se acumulam. Com uma precisão de 85% por salto, uma cadeia de cinco saltos acerta em cerca de 44% das vezes. Longas travessias exigem verificação, não fé, e é por isso que os números de operações continuam a ser impressionantes.
+
+Pesquisas do setor indicam que menos de 15% dos projetos de grafos de conhecimento corporativos passam da fase piloto, e o motivo alegado para o abandono geralmente não é o custo. Há uma escassez de pessoas que possam servir de modelo. Quando aterrissa, aterrissa com força. O LinkedIn reconstruiu a recuperação de informações de suporte ao cliente com base em um gráfico de problemas anteriores e relatou um aumento na precisão da recuperação de 77,6%. O tempo médio de resolução caiu de 7 horas para 5, e o décimo dos casos mais lentos, de 87 horas para 47. Isso foi
+
+publicado em 2024. Portanto, na prática, isso se aplica a qualquer projeto que você esteja desenvolvendo esta semana. Se suas perguntas forem consultas, seus embeddings estão corretos e um grafo é um custo adicional. Se o assunto for como as coisas se conectam, quem interagiu com o quê, o que mudou e quando, quais descobertas se contradizem, então a análise fragmentada não será suficiente. E essa estrutura agora custa cerca de um milésimo do que custava antes . As equipes que estão se dando bem com isso
+
+não são as que estão criando gráficos de tudo. São eles que podem dizer quais perguntas merecem um gráfico. Essa é a verdadeira habilidade a que a expressão " engenharia de grafos" se refere, por trás de todo o ruído na linha do tempo.

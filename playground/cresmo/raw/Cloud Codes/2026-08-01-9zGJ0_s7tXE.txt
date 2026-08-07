@@ -1,0 +1,114 @@
+---
+video_title: "Zig + WebAssembly Is Coming for C++ and Rust"
+video_id: 9zGJ0_s7tXE
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9zGJ0_s7tXE
+video_date: 2026-08-01T09:00:15+00:00
+video_description: |
+  Is Zig actually a threat to C++ and Rust, or is the lack of a 1.0 release holding it back? In this technical breakdown, we analyze why the Bun runtime famously abandoned 535,000 lines of Zig and ported their entire codebase to Rust in just 11 days using 64 parallel Claude AI agents.
+  Discover why memory safety and garbage collector boundaries forced Bun's exit, and why Zig creator Andrew Kelley responded by banning AI-generated code from the language entirely.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  But against C++, Zig is already winning the war. We explore how zig cc acts as a drop-in cross-compiler replacement for Clang and GCC, allowing you to compile massive C projects (like Postgres) without writing a single line of Zig yourself. We also dive into WebAssembly (WASM), explaining how Zig produces tiny, 600-byte freestanding binaries without garbage collectors or hidden allocators—perfect for zero cold-start latency on edge networks like Cloudflare Workers.
+  
+  If you found this deep-dive into software engineering, system architecture, and programming language design helpful, drop a like and subscribe for more technical breakdowns!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The Unfinished Language Running Modern Apps
+  01:05 - WebAssembly (WASM) at the Edge (Cold Starts vs Size)
+  02:00 - The 600-Byte Binary & Rust Comparisons
+  03:24 - zig cc: The Drop-in C/C++ Cross Compiler
+  04:36 - The Rust Wall: Why Bun Left Zig
+  05:17 - How 64 AI Agents Rewrote 535k Lines in 11 Days
+  06:21 - The Results: Rust vs Zig Memory Leaks
+  07:09 - Andrew Kelley's Response & The AI Ban
+  08:06 - Who Stayed? Ghostty Terminal & TigerBeetle
+  09:15 - The Final Verdict: Zig vs C++ vs Rust
+  
+  🔗 Resources Mentioned:
+  Zig Software Foundation: https://ziglang.org/
+  Bun (Rust Rewrite Details): https://bun.sh/
+  WebAssembly (WASM) Component Model: https://webassembly.org/
+  
+  #ziglang #rustlang #cplusplus #webassembly #softwareengineering #systemdesign #bun #programming #cloudcodes
+  
+  User Queries:
+  zig vs rust programming language comparison 2026
+  zig cc drop in c compiler for c++ projects
+  why bun rewrote zig to rust
+  webassembly wasm edge computing cold starts
+  zig webassembly binary size benchmark
+  tigerbeetle zig memory allocation static
+  andrew kelley zig ai code ban
+  how to cross compile c projects with zig cc
+  zig programming language release date 1.0
+  rust borrow checker vs zig memory safety
+---
+Três softwares que você pode estar usando neste momento foram escritos em uma linguagem que ainda não chegou à sua primeira versão. Um terminal, um banco de dados e, até esta primavera, o ambiente de execução subjacente ao Cloud Code. A língua é Zig. Aponte o Zig para o WebAssembly e ele produzirá os binários mais compactos e simples que qualquer ferramenta convencional consegue criar. Essa combinação é o motivo pelo qual as pessoas continuam dizendo que o Zig está chegando para o C++ e o Rust. Quero
+
+resolver as duas partes disso. Contra o C++, a ameaça é real e já está em produção. Contra o Rust, o Zig perdeu feio porque, em maio, a maior base de código Zig do planeta deixou de ser uma base de código Zig. Bun converteu 535.000 linhas de código Zig para Rust. Levou 11 dias.
+
+Nenhuma linha disso foi digitada à mão. Foram executadas 64 instâncias na nuvem em paralelo e a fatura totalizou US$ 165.000. Duas semanas após a fusão ser concluída, o criador do Zig baniu completamente o código escrito por IA da linguagem. Então, um projeto apostou tudo em máquinas que escreveriam código, e a linguagem subjacente respondeu apostando tudo contra isso. Guarde
+
+essa informação, pois ela explica o final. Primeiro, o argumento técnico, porque é mais forte do que a narrativa dramática faz parecer. WebAssembly finalmente chegou este ano. 67% dos desenvolvedores entrevistados afirmam usá-lo em produção, um aumento em relação aos 47% registrados em 2024. E ele deixou de ser usado apenas no navegador. 52% das
+
+implementações de WebAssembly em produção agora têm como alvo algo que não é um navegador . Só a Cloudflare relata mais de 10 milhões de solicitações por segundo baseadas em WASM, e um terço das implantações de servidores agora incluem um módulo WASM, um aumento em relação aos 12% em 2023. Essa mudança altera o que importa no seu binário. Em um navegador, o tamanho do módulo é um download pelo qual você paga uma única vez. Na borda, o tamanho do módulo representa a latência de inicialização a frio, e você paga esse custo em cada invocação que atinge um worker frio, e é aí que o Zig se torna interessante. O alvo não era um sistema
+
+independente de 32 bits e não há coletor de lixo, alocador oculto, tabelas de desenrolamento de exceção ou tempo de execução aguardando inicialização. O módulo contém apenas o que você escreveu. Eis o que isso compra. Uma biblioteca matemática com 20 funções exportadas, compilada no modo de versão compacta (release small), resulta em menos de 600 bytes. Não 600 kilobytes, mas sim 600 bytes para todo o módulo.
+
+A comparação que as pessoas citam a seguir é a de um " Olá, mundo!", que ocupa aproximadamente 100 bytes em Zig e cerca de 200 kilobytes em Rust, numa proporção de 2.000 para 1. Essa comparação é tendenciosa, então deixe-me analisá-la por mim mesmo. O Rust number é uma compilação wasm não otimizada que inclui o JavaScript Glue e a biblioteca padrão.
+
+Compile para lançamento, remova os símbolos, execute o wasm opt no modo de tamanho reduzido e você economizará mais 10 a 30%. A diferença é real. A diferença não chega nem perto de 2.000 para 1. E em termos de velocidade de execução pura, os dois estão no mesmo nível. Nenhum deles possui um
+
+coletor de lixo que pare quando você estiver usando o serviço. Portanto, se tamanho e velocidade basicamente se anulam após uma otimização adequada, o tamanho nunca seria o fator decisivo . Aquilo que poderia acontecer é muito menos glamoroso. Esta é a construção completa. Um comando, uma flag para o alvo, sem imscripter, sem cadeia de ferramentas para instalar, sem pacote que baixe um compilador sem o seu conhecimento, e o potencial continua a crescer. A versão
+
+0.3 do Wait AZ foi lançada em fevereiro com suporte nativo async, futures reais e streams que atravessam o limite do componente. O modelo de componentes 1.0 está previsto para o final deste ano ou início do próximo. É nesse momento que módulos de diferentes linguagens começam a ser compostos sem a necessidade de código de ligação. Agora, a parte que
+
+realmente ameaça o C++, o compilador Zig, tem uma segunda função. Zig CC é um substituto direto para GCC e Clang. Ele aceita as mesmas flags porque o Clang está embutido nele, e a compilação cruzada é feita alterando-se apenas um argumento. O Zig inclui cerca de 45 megabytes, abrangendo todas as arquiteturas que suporta, além de múltiplas versões do glibc e o Windows. As cadeias de ferramentas equivalentes para processamento muscular ocupam cerca de 85 megabytes cada, por arquitetura.
+
+Isto não é uma demonstração. As pessoas usam isso para construir o Postgres . Você pode configurar um projeto C existente para usar o Zig como compilador e nunca precisar escrever uma única linha de código Zig. Essa é a ameaça e não tem nada a ver com sintaxe. Zig não pede que você reescreva nada nem treine ninguém novamente. Ele substitui
+
+a cadeia de ferramentas subjacente ao código que você já possui, e a compilação cruzada deixa de ser um projeto de fim de semana. C++ pode sobreviver a uma linguagem concorrente. É muito mais difícil sobreviver a uma história de construção bem-sucedida. A linguagem subjacente também está fazendo algo incomum. Zig executa o Zig comum em tempo de compilação. Genéricos, reflexão e
+
+geração de código são todos implementados em tempo de compilação, sem nenhuma linguagem de macros adicionada posteriormente. Sem fluxo de controle oculto, sem alocações ocultas, sem sobrecarga de operadores. Aviso aos desenvolvedores. Na pesquisa mais recente do Stack Overflow, Zig foi considerada a linguagem mais admirada, com 64% dos votos, mesmo ainda em desenvolvimento. Rust ficou em primeiro lugar com 72% pelo décimo ano consecutivo, o que nos leva à metade mais difícil do título. Rust vende
+
+algo que Zig se recusa deliberadamente a vender: um compilador que não gera código capaz de corromper a memória. Zig oferece ferramentas para você ficar seguro. Rust torna isso o padrão e cobra uma taxa de verificação de empréstimo por isso, e é exatamente por isso que Bun saiu. Jared Sumner foi explícito ao afirmar que não se tratava de velocidade nem de ecossistema. A lista de erros que ele cometeu foi: uso após liberação, liberação dupla e esquecimento de liberar em um caminho de erro. Em Rust, ele
+
+destacou, a maioria desses são erros de compilação. A causa principal foi uma costura. O Bun utiliza um mecanismo JavaScript com um coletor de lixo que opera sobre uma memória gerenciada manualmente e, como Sumner afirmou, essa combinação é tão incomum que nenhuma linguagem foi projetada especificamente para ela. Zig não fez isso, e nada mais faz. O que tornou possível uma reescrita desse porte foi o conjunto de testes. 1,4 milhão de
+
+asserções, 60.000 testes, 4.000 arquivos de teste, e o produto foi lançado sem que nenhum deles fosse ignorado ou excluído. A suíte tornou-se a especificação que o porto tinha que satisfazer. Vale a pena conhecer o método.
+
+Para cada agente que escrevia código, outros dois eram direcionados para a diferença (diff) e instruídos a encontrar erros, revisando a alteração sem entender o raciocínio por trás dela. Revisão adversarial em velocidade de máquina. Em seguida, os números. Após 2.000 compilações repetidas na versão Zig, o tamanho do arquivo chegou a 6,7 ​​GB e continuou aumentando, um vazamento linear. A
+
+versão em Rust estabilizou-se em 609 MB e permaneceu assim. A Prisma colocou ambos em produção e os analisou de forma independente. A versão estável ultrapassou os 900 MB na iteração 96. A reescrita atingiu um pico de cerca de 118 MB em 4.000 iterações.
+
+Todo o resto se seguiu. O binário do Linux teve seu tamanho reduzido de 88 MB para 70 MB, representando uma melhoria geral de 2 a 5% . E o tempo de inicialização do Cloud Code caiu de 517 ms para 464 ms. Antes que alguém escreva o elogio fúnebre, leia as letras miúdas. Essa reescrita contém cerca de 13.000 palavras-chave inseguras
+
+em 27.000 linhas. 4% das operações da base de código descumprem a garantia que a reescrita completa visava obter. E aqui está o detalhe que a maioria das manchetes omitiu. Durante todo esse período, o canal estável de Bun ainda estava distribuindo a versão Zig. A versão em Rust foi lançada
+
+no Cloud Code, dentro do Cloud Code, e na plataforma Prisma. A versão mais instalada foi a Zig. A resposta de Andrew Kelly foi direta. Ele chamou isso de trabalho malfeito e questionou a premissa subjacente, de que um conjunto de testes, por melhor que seja, pode substituir um milhão de linhas de código que nenhum ser humano leu. Seu argumento mais incisivo era que, na verdade, isso nunca foi uma discussão sobre linguagem. Ele
+
+afirmou que a divisão ocorreu entre dois projetos com sistemas de valores divergentes. Uma pessoa encara a contribuição como mentoria, enquanto a outra a encara como produção. Ele tem sido consistente quanto a isso. A Zig migrou seu repositório do GitHub para o Codeberg, em parte devido à integração contínua (CI) e em parte por desconforto com a direção que o GitHub estava dando à IA. E a proibição se resumiu a uma questão aritmética: aproximadamente 200 solicitações de pull request abertas e um número insuficiente de revisores humanos para lê-las. Então ele fez
+
+algo que eu não esperava. Ele reescreveu sua própria conclusão em um repositório público, disse que o ressentimento nela contido era óbvio para todos os leitores, exceto para ele mesmo, e pediu desculpas aos usuários do Zig por tê- los submetido a isso. Entretanto, observe o que não se moveu. Ghosty, o terminal de Mitchell Hashimoto, fundador da HashiCorp, é escrito inteiramente em Zig na sua série 1.3, Cocoa nativo no macOS e GTK4 no Linux, sem qualquer menção ao Electron. E a TigerBeetle escolheu Zig em vez de C
+
+e de Rust em 2020 por um motivo específico. O projeto exigia alocação estática, seguindo as regras da NASA de potência de 10, sem nenhuma memória dinâmica após a inicialização. Em Rust, isso é o modo difícil. Em Zig, é simplesmente como você escreve. Em outubro passado, a TigerBeetle e a Synadia prometeram, cada uma, doar um quarto de milhão de dólares à Zig Software Foundation.
+
+Meio milhão de dólares pagos mensalmente ao longo de dois anos para uma fundação que opera com um orçamento de aproximadamente 670 mil dólares por ano. Isso representa quase o dobro do orçamento. O runtime do Bun Zig nem sequer morreu. Uma versão modificada chamada Crawler foi adotada no Zig 0.16 e reduzida à parte que atende às solicitações. HTTP,
+
+WebSockets, renderização do lado do servidor. Sem empacotador, sem gerenciador de pacotes, sem executor de testes, e tudo isso baseado em uma linguagem que não tem data de lançamento para a versão 1.0. A versão 0.17 está atrasada, bloqueada em trabalhos no sistema de compilação , e Kelly se recusa a informar o ano.
+
+Observadores atentos apostam em 2027, e ele prefere acertar na entrega do que lançá-la cedo demais. Então, aqui está o placar. Contra C++, o Zig já está ganhando onde importa, e você pode adotá-lo amanhã sem reescrever uma única linha. Contra Rust, acabou de perder seu projeto principal. O motivo não era a velocidade, nem o tamanho binário. É que o Rust detecta um tipo de
+
+bug que o Zig, por princípio, deixa para você corrigir. O que o Zig realmente ameaça é a suposição de que substituir o C significa adotar uma nova linguagem. Não. Significa substituir um compilador. E as equipes que declaram isso apoiam isso com seus recursos financeiros.

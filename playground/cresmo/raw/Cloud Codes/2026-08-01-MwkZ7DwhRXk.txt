@@ -1,0 +1,159 @@
+---
+video_title: "Run \"DeepSeek V4 Flash 0731\" on Laptop Locally (No GPU Needed)"
+video_id: MwkZ7DwhRXk
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MwkZ7DwhRXk
+video_date: 2026-08-01T12:36:05+00:00
+video_description: |
+  DeepSeek V4 Flash 0731 just dropped as a massive 284B parameter Mixture-of-Experts (MoE) model, natively trained in MXFP4, allowing it to run locally via Unsloth's GGUF quants on llama.cpp. But before you wire it into Claude Code or OpenAI Codex using the Anthropic Messages API, you need to understand why independent auditors like Datacurve are exposing DeepSeek's vendor-run Terminal-Bench and DeepSWE agent scores as massive memorization failures.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this architectural deep dive, we break down how the model uses hashed routing and compressed sparse attention to hit a 1M token context window, and why running a 110GB 3-bit quant locally requires a 128GB M5 Max or Mac Studio. We explore the DSpark draft module for speculative decoding throughput, the illusion of 8-bit quantization on a natively 4-bit model, and the brutal hardware reality: global DRAM prices are exploding and Apple killed the 512GB Mac Studio just as open-weights models finally fit on our desks.
+  
+  If you found this technical deep-dive into AI infrastructure and software engineering architecture helpful, drop a like and subscribe for more content on system design and local inference!
+  
+  🔗 Resources Mentioned:
+  Unsloth (GGUF): https://unsloth.ai/docs/models/deepseek-v4 (0731 Updated) 
+  DeepSeek Official Hugging Face: https://huggingface.co/deepseek-ai
+  llama.cpp (Inference Engine): https://github.com/ggerganov/llama.cpp
+  Artificial Analysis (Independent Leaderboards): https://artificialanalysis.ai/
+  Datacurve (Benchmark Audits): https://datacurve.ai/
+  Claude Code Documentation: https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview
+  OpenAI API / Codex: https://platform.openai.com/docs/
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 284B DeepSeek Drop & Unsloth Quants
+  01:03 - The Benchmark Lie (Terminal-Bench & DeepSWE)
+  03:28 - Independent Tests & Artificial Analysis
+  04:17 - Architecture: MoE, Hashed Routing & MXFP4
+  05:26 - DSpark Draft Module & API Pricing
+  07:03 - Unsloth's Quantization Ladder & The 8-Bit Secret
+  08:56 - Hardware Limits: Mac M5 Max & KV Cache
+  11:34 - Wiring DeepSeek to Claude Code & Codex (llama.cpp)
+  13:20 - The Global DRAM Shortage & Apple's Ram Squeeze
+  14:48 - Final Verdict: Local Inference vs API
+  
+  #deepseek #localllm #machinelearning #systemdesign #softwareengineering #llamacpp #apple #artificialintelligence 
+  
+  User Queries:
+  deepseek v4 flash unsloth gguf local inference
+  how to run deepseek v4 284b on mac studio m3 max
+  terminal bench ai coding agents deepswe benchmark
+  mixture of experts mxfp4 4 bit quantization
+  wire llama cpp to claude code and openai codex
+  dspark draft module speculative decoding deepseek
+  deepseek v4 flash vs claude 3.5 sonnet coding benchmark
+  how to fix llama cpp kv cache out of memory
+  apple mac unified memory vs nvidia dgx spark local ai
+  why are llm agent benchmarks unreliable datacurve
+---
+Ontem, dois arquivos foram parar no mesmo lugar . O DeepSeek enviou os pesos às 7h30 da manhã UTC. A Unsloth lançou a versão que você pode executar em casa às 12h24, 4 horas e 54 minutos depois. Essa lacuna é a história. Um modelo de codificação de ponta passou de ser lançado para estar na sua mesa antes do almoço. O
+
+modelo é o DeepSeek V4 Flash, versão de 31 de julho. 284 bilhões de parâmetros, 13 bilhões de disparos por token. A própria avaliação da DeepSeek indica que ela supera a principal ferramenta da empresa. Essa plataforma principal carrega 1,6 trilhão de parâmetros, mesma arquitetura que a de abril, mesma quantidade de parâmetros. Eles refizeram a etapa pós-treinamento e as pontuações dos agentes melhoraram. O Deep's SWE, um
+
+benchmark de codificação agentiva, que era 7.3 em abril, agora está em 54.4. Mesmas cargas, novo treino . E o arquivo local sem perdas tem 162 GB. 3 bits cabem em 110. Portanto, há
+
+três coisas a resolver: o que foi enviado, o que é necessário para executá-lo e se esses números são reais. Comece pela terceira, porque ela influencia as outras duas. Todos os números de telefone que acabei de citar vieram de uma ferramenta que a DeepSeek não divulgou. Terminal Bench é o ranking público para agentes de terminal. 89 tarefas, um ambiente de teste ( sandbox) e um script de teste que ou é aprovado ou reprovado. As tarefas são
+
+trabalho real: engenharia de software, administração de sistemas, processamento de dados, treinamento de modelos, segurança. Sem crédito parcial. O script é aprovado ou a execução resulta em zero. E o número da versão importa mais do que parece. A versão 2.1 existe porque as tarefas da versão 2.0
+
+apresentavam erros. 28 delas foram reescritas. Um benchmark é um software, e softwares recebem atualizações. Retirei a placa 2.1 esta manhã. Claude Code, em conjunto com Fable 5,
+
+ocupa o primeiro lugar com 83,8. O Codex com GPT 5.5 vem logo atrás, com 83,1. A placa modelo da DeepSeek afirma ter alcançado 82,7 pontos nesse mesmo teste de benchmark. Ao ser colocada no tabuleiro, ela cai em terceiro lugar, à frente de todos os outros pares de Opus. Não está no
+
+quadro. A Deep Seek realizou o teste de benchmark internamente, utilizando uma infraestrutura que, segundo suas próprias notas de rodapé, será lançada em breve. Portanto, hoje ninguém fora da Deep Seek consegue reproduzir nenhum dos nove números de agentes presentes naquela tabela. Não é Terminal Bench, nem Cyber ​​Gym, nem Deep's SWE. Todas as nove são administradas por fornecedores. Essa seria uma
+
+ressalva comum, exceto pelo fato de que a diferença entre a pontuação de um fornecedor e uma pontuação externa já foi medida anteriormente. Em maio, uma equipe de quatro pessoas chamada Data Curve publicou uma auditoria de benchmarks de agentes. O argumento deles é que, uma vez que um modelo memoriza as respostas, um parâmetro de avaliação deixa de medir a codificação e passa a medir a capacidade de recordar. Então, eles criaram o Deep SWE. Tarefas escritas do zero em 91 repositórios em cinco idiomas, nada extraído de solicitações de pull antigas e um verificador que apresenta falsos positivos em três execuções a cada mil. Em seguida, eles executaram os
+
+modelos. O GPT 5.5 obteve 70%, o Opus 4.7 54%, o Gemini 3.5 Flash 28% e o Deep Seek V4 Pro, o carro-chefe com trilhões de parâmetros, alcançou 80,6% em sua própria plataforma, com uma pontuação de oito. 8% não é um erro de arredondamento
+
+em 80,6. Ou o arnês independente está avariado, ou o número anunciado foi medido em tarefas que o modelo já tinha realizado. O argumento principal da Data Curve se baseia no segundo ponto, e a Deep SWE foi a ferramenta utilizada para testá-lo. Não estou dizendo que as novas pontuações são falsas. O streaming de repositórios melhora o desempenho do agente, e isso está bem documentado. O que estou dizendo é que você tem
+
+um dado da empresa que vende o modelo e nenhum de qualquer outra pessoa. Neste modelo existe exatamente um número independente, e não se trata de uma pontuação de agente. A Artificial Analysis aplicou seu Índice de Inteligência e obteve 50 pontos. Isso a coloca em terceiro lugar entre 101 modelos em sua categoria, contra uma mediana de 25. Portanto, o modelo é real. Mas esse índice mede o raciocínio
+
+e o conhecimento, não se um agente consegue concluir uma tarefa em um terminal, que é o que está sendo questionado. E a mesma corrida revelou algo mais. Foram queimados 210 milhões de tokens de saída para finalizar o índice, que tinha uma mediana de 100 milhões. A análise artificial também executa sua própria placa de bancada de terminais 2.1, com 27 dos 182 modelos que monitora. O DeepSeek V4 também não está presente
+
+nessa versão. Considere isso como uma hipótese. Essa é a verdadeira razão pela qual o dia de ontem importa. Quando os pesos são baixados, você para de esperar pelo arnês de outra pessoa. Você aponta para o seu próprio repositório. Então, o que é isso? O DeepSeek V4
+
+Flash é uma mistura de modelos de especialistas. Cada camada contém um especialista compartilhado mais 256 especialistas roteados, e o roteador escolhe seis desses 256 por token. Dois detalhes do relatório técnico que a maioria das reportagens ignora. Cada especialista é pequeno, com uma dimensão intermediária de 2048. E as três primeiras camadas de mistura não aprendem seu roteamento de forma alguma. Eles fazem um
+
+hash disso. Atribuição fixa, sem roteador para treinar. Adicionando o especialista compartilhado e a atenção, aproximadamente 13 bilhões de parâmetros atuam em qualquer token. O resto permanece na memória, à espera de ser escolhido. É por isso que um modelo com 284 bilhões de modelos responde na mesma velocidade que um com 13 bilhões.
+
+A atenção é híbrida, com uma atenção esparsa comprimida sobreposta a uma atenção altamente comprimida, e é isso que garante a janela de tempo. 1 milhão e 48.000 tokens de contexto, dos quais até 384.000 são retornados como saída. O treino também é incomum.
+
+Eles substituíram as conexões residuais por algo chamado MHC. Executou o otimizador Muon em vez do AdamW e realizou o pré-treinamento com mais de 32 trilhões de tokens. Esse último número é o que você deve considerar . 32 trilhões. Existe um segundo modelo acoplado que a maioria das análises ignora. DeepSeek Spark é um pequeno
+
+módulo de rascunho que propõe um bloco de tokens para o modelo principal verificar em uma única passagem. A DeepSeek tornou o código aberto em junho, e isso aumenta a velocidade de geração por usuário em 60 a 85%. Há dois números naquele artigo da DeepSeek, e as pessoas estão citando o número errado. A velocidade de geração por usuário aumenta de 60 a 85%. A taxa de transferência total entre todos os usuários no dispositivo aumenta em cerca de 51%. O primeiro número é o que você
+
+sente. A segunda questão é o que o centro de dados paga. Na prática, isso se traduz em cerca de 20 bilhões de parâmetros extras presentes no mesmo repositório. É por isso que a página indica 304 bilhões quando o relatório técnico menciona 284 bilhões. Na API da DeepSeek, isso custa 14 centavos por milhão de tokens de entrada e 28 centavos por milhão de tokens de saída. Um acerto em dinheiro reduz a entrada
+
+para um quinto de centavo. 50 vezes mais barato que um erro. Compare isso com o irmão ou irmã. O V4 Pro possui 1,6 trilhão de parâmetros, cerca de 49 bilhões ativos, e cobra 43,5 centavos por milhão de entradas e 87 centavos por milhão de saídas. Três vezes o preço e um quinto do limite de concorrência. E no dia
+
+31 eles o integraram ao Codex. Um arquivo de configuração, uma URL base e a API de respostas. O que suscita uma questão pertinente. Se o custo em servidores deles é de 14 centavos por milhão , por que gastar 162 gigabytes do seu próprio disco para isso? Três respostas que as pessoas realmente dão.
+
+A API hospedada processa seus dados em servidores na China, sob a legislação chinesa, e para muitas bases de código isso encerra a discussão. Não há limite de taxa de transferência para o hardware que você possui. E um modelo que você baixou não pode ser descontinuado sem o seu conhecimento. Então, o arquivo. Unsloth publicou 13 quantizações. A
+
+versão mais compacta, de um bit, tem 82 gigabytes e meio. Os valores de dois bits ficam em torno de 91. Os de três bits variam de 104 a 128. O anúncio informava que valores menores seriam disponibilizados naquele dia. Eles vieram.
+
+Contei as pastas no Hugging Face esta manhã. Há 13 versões disponíveis, a menor com 82,5 gigabytes. Quatro bits equivalem a 155 gigabytes. Oito bits é 162. Algo nessa escala está errado.
+
+Oito bits normalmente têm o dobro do tamanho de quatro bits. Aqui está, 7 gigabytes maior. 7 gigabytes em um arquivo de 155 gigabytes. O motivo é que o DeepSeek não treinou isso em 16 bits e comprimiu os dados posteriormente. Os especialistas em roteamento foram treinados em MXFP4, 4 bits, e é assim que eles são enviados.
+
+O checkpoint da Hugging Face já é um modelo de 4 bits em todos os aspectos importantes. Você pode verificar isso sozinho, sem baixar um único byte. A Hugging Face publica uma análise detalhada dos tensores para cada repositório. Neste caso, são armazenados 296 bilhões de parâmetros compactados em 4 bits, 6 bilhões em FP8 e 1 bilhão e meio em BF16. 97% disso já é de baixa precisão no disco. Portanto, a versão de 8 bits não está
+
+comprimindo nada. Ele reempacota os especialistas de 4 bits bit por bit e permite que o FP8 se expanda para o BF16, que é exato. A Unsloth afirma que todos os 1.328 tensores são idênticos aos da DeepSeek, sem perdas, e essa é a palavra deles, não de terceiros. Nenhum laboratório externo analisou isso ainda. Então, qual
+
+você escolhe? Se você possui a memória, a versão de 8 bits é a única que pode ser considerada "sem perdas" . Caso contrário, 3 bits com 110 GB é a resolução que a maioria das mesas consegue alcançar, e tudo isso é licenciado pelo MIT. Ambos os repositórios, os pesos do DeepSeek e as conversões do Unsloth. Você pode executá-lo comercialmente, modificá-lo e redistribuí-lo sem precisar escrever código C e sem ter que pedir permissão a ninguém. Agora,
+
+o número que determina se você realmente pode executá-lo não é o tamanho do arquivo. Você precisa de pesos, cache KV e um sistema operacional. A mesa particular de Unsloth . Um sistema de 3 bits requer cerca de 110 GB, um de 4 bits cerca de 162 GB e um de 8 bits cerca de 169 GB. No entanto, esses valores referem-se apenas ao tamanho do arquivo. A
+
+versão de 2 bits ocupa cerca de 96,5 GB em uma máquina de 128 GB, o que deixa aproximadamente 30 GB para o cache KV e o sistema operacional. Isso é suficiente para um contexto de trabalho, não para um milhão de tokens. Eis o que isso significa na prática. Um único motor, testes individuais, publicado no dia do lançamento, portanto, considere isso como uma primeira impressão. MacBook Pro M5 Max de 128 GB a 2 bits, gerando 34 tokens por segundo e preenchendo 87 previamente. Considere essas informações
+
+como uma primeira impressão, não como um parâmetro de comparação. São execuções únicas, decodificação gulosa, um único motor, publicadas no mesmo dia em que o modelo foi enviado. Ninguém as repetiu ainda, e esse é o argumento principal deste vídeo. Faça você mesmo. Uma M3 Max no mesmo arquivo, 26 e 1/2. Um Mac Studio de 512 GB
+
+em 4 bits, 35 e 1/2. Esses são números utilizáveis. Processar cerca de 30 fichas por segundo ultrapassa sua velocidade de leitura. Mas fique atento à coluna de preenchimento automático, pois é aí que a inferência local causa problemas. No M5 Max, 11.700 tokens de contexto
+
+reduziram a geração de 34 para 26. Seu repositório é muito maior que 11.000 tokens. O recurso que permite a execução de conteúdo de longa duração em um dispositivo pequeno foi lançado no dia 7 de julho. Correções no cache KV quantizado em llama.cpp.
+
+O cache é o que cresce com a sua conversa e diminui, o que lhe dá espaço para o modelo. O DGX Spark, o computador de mesa da Nvidia que custa aproximadamente US$ 4.700, é o único que destoa. 343 tokens por segundo de pré-carregamento, 13 e 3/4 de geração. Sou bom em ler seu repositório, mas mais lento em responder sobre ele. Um teste
+
+independente realizado em abril com dois cartões Blackwell de 96 GB resultou em uma geração próxima a 36 , ​​com os cartões operando com apenas 30 a 40% de sua capacidade. Na mesma faixa de preço do Max, mas com um preço muitas vezes superior. Mais uma coisa sobre o intervalo entre abril e julho. No final de abril, a opinião predominante era de que esse modelo não poderia ter menos de 4 bits . Os especialistas já estavam no FP4, sem mais margem de manobra. O resultado seria
+
+incoerente. A Unsloth lançou uma versão de 1 bit com 82 GB. O que mudou foi o método. Em vez de usar uma largura de 1 bit para todo o arquivo, o Unsloth escolhe a largura por tensor a partir de pesquisas de sensibilidade em 150 benchmarks e calibra em codificação de contexto longa e chamadas de ferramentas, em vez de texto enciclopédico. A parte que mudou este ano foi a integração com um agente . O servidor llama.cpp agora utiliza
+
+dois dialetos simultaneamente: os endpoints de chat e respostas da OpenAI e, desde janeiro, o endpoint de mensagens da Anthropic. O suporte não chegou como uma opção de configuração. A solicitação de pull 24162 adicionou um caminho de atenção comprimido completo ao llama.cpp, além de uma nova operação de tensor chamada lightning indexer. Alguém escreveu os kernels para essa arquitetura manualmente.
+
+Um processo local pode estar por trás do código Codex e do código Claude simultaneamente. Para o código Claude, você deve apontar anthropic_base_url para o seu próprio localhost e iniciá-lo. Essa é toda a integração. Para o Codex, você adiciona um bloco de provedor ao arquivo config.tml direcionado à porta do seu servidor Llama com a API Wire definida como "responses", já que o chat está obsoleto. Em seguida, execute o Codex com o
+
+perfil desativado. As configurações importantes para este modelo são: temperatura 1.0, potência máxima 1.0 para bate-papo e 0.95 para trabalho do agente. O
+
+esforço de raciocínio é alto por padrão. Max existe, mas precisa de 384.000 tokens de contexto antes de se tornar útil . E o Max tem um custo que vale a pena conhecer antes de ligá-lo. São necessários 384.000
+
+tokens de contexto para que seja útil. E em uma máquina de 128 GB, isso ultrapassa em muito o seu limite de memória. Na maioria das configurações locais, "Max" é uma configuração que você não consegue acessar. E uma dica importante que você precisa saber antes de perder uma tarde inteira. V4 sem modelo de bate-papo Ginger.
+
+Em vez disso, utiliza um codificador Python em uma pasta separada. A Unsloth reconstruiu o modelo e o testou em 4.000 conversas. Se a sua corrida local começar a dar errado na terceira curva, geralmente é isso. Primeiro, atualize o arquivo llama.cpp; em seguida, baixe novamente o
+
+GGUF; e, por último, identifique o modelo. Agora, a parte que o anúncio omite . 162 GB de memória não são gratuitos este ano. Em março, a Apple removeu a opção de Mac Studio com 512 GB e aumentou o preço do upgrade para 256 GB para US$ 2.000. O momento certo para
+
+isso merece uma segunda análise. A Apple retirou a opção de 512 GB em março. Quatro meses depois, um modelo que exige 162 GB é enviado como download. O único modelo de mesa que conseguia acomodá-lo confortavelmente deixou de ser encomendado antes mesmo de existir. O motivo é que os fabricantes de DRAM migraram a produção de wafers para memórias de alta largura de banda destinadas a aceleradores de IA. O
+
+preço da DDR5 praticamente dobrou em relação ao final de 2025. A previsão da Gartner para o crescimento combinado de DRAM e SSD é de 130% até 2026. Novas fábricas são uma história para 2027, e esse crescimento se estende para níveis mais baixos. A Gartner prevê um aumento de 17% nos preços dos PCs este ano e uma queda de 10,4% nas remessas. Aproximadamente um quinto da produção mundial de DRAM destina-se a aceleradores de IA. A previsão é que o produto seja descontinuado no
+
+final de 2027. A Micron descontinuou sua marca de produtos para o consumidor, Crucial, em fevereiro. A Framework aumentou os preços da memória de seus laptops em cerca de metade. Três empresas produzem mais de 95% da memória DRAM do mundo e todas as três estão investindo em inteligência artificial. Assim, o modelo ficou pequeno o suficiente para funcionar em casa no mesmo ano em que a memória necessária para executá- lo ficou cara. 162 GB era uma
+
+compra modesta há 18 meses, mas agora é uma compra real. A memória é a barreira, não o peso e nem a licença, que é MIT em ambos os repositórios, o que permite uma troca direta. Na API, você paga 14 centavos por milhão, envia seu código para servidores na China e utiliza o critério de confiança como referência. Em seu próprio dispositivo, você paga uma única vez pela memória, recebe cerca de 30 fichas por segundo e pode medir o dispositivo você mesmo. Na minha opinião, retire o arquivo se você já possui a memória. Caso contrário,
+
+utilize a API. De qualquer forma, parem de tratar um cartão modelo como prova. Execute o script em 10 tarefas do seu próprio repositório, onde você já conhece a resposta correta. Trata-se de um arnês, e hoje em dia é o único que alguém consegue reproduzir. O guia, o repositório GGUF e a documentação do Codex estão disponíveis nos links abaixo. Se você executar o teste, informe a
+
+velocidade de pré-enchimento nos comentários. Esse é um número que quase ninguém divulga.

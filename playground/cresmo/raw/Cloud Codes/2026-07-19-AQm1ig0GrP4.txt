@@ -1,0 +1,104 @@
+---
+video_title: "OmniRoute + OpenCode is INSANE (Why I Dropped Claude Code)"
+video_id: AQm1ig0GrP4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AQm1ig0GrP4
+video_date: 2026-07-19T12:01:20+00:00
+video_description: |
+  Are you tired of hitting Anthropic's 5-hour rate limit while using Claude Code? Discover why developers are dropping expensive, proprietary AI agents for a new open-source stack: OpenCode paired with OmniRoute. 
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  In this video, Cloud Codes breaks down the system design of the ultimate local, model-agnostic coding agent. We explore how OpenCode (by Anomaly) perfectly replicates the read-edit-run-fix loop of Claude Code right inside your terminal, while letting you choose from 75+ different LLMs. 
+  
+  Then, we dive deep into the secret sauce: OmniRoute. This free, local AI gateway sits on your machine (`localhost:20128/v1`) and connects your agent to over 230 API providers—including 50+ free tiers. We explain how OmniRoute's auto-fallback strategy means your agent will "never stop coding," and how its Caveman and RTK algorithms compress massive tool payloads by up to 95%, saving you millions of tokens. 
+  
+  Finally, we give an honest verdict on when you should still pay for Claude Opus, and when this free open-source stack is the better choice for your daily workflow.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - Why I Stopped Using Claude Code
+  0:58 - The Problem with Claude's 5-Hour Rate Limit
+  2:15 - What is OpenCode? (The Agent Half)
+  3:04 - Model-Agnostic Agents & Local SQLite Storage
+  4:06 - What is OmniRoute? (The Gateway Half)
+  4:56 - The 95% Token Compression Trick (Caveman & RTK)
+  6:11 - Tutorial: How to Wire OpenCode & OmniRoute Together
+  7:15 - The Power of Auto-Fallback (Never Stop Coding)
+  7:58 - The Honest Catch: Free Tiers vs Claude Opus
+  8:42 - Summary: The Agent & The Model Finally Separated
+  
+  #claudecode #opencode #omniroute #aiagents #softwareengineering #machinelearning #systemdesign #cloudcodes #opensource #localai
+  
+  User Queries:
+  why i dropped claude code
+  opencode vs claude code
+  how to use omniroute tutorial
+  open source alternative to claude code
+  how to run ai coding agents locally
+  model context protocol mcp omniroute
+  how to bypass claude rate limits
+  best free api gateway for llms
+  how to compress tokens in ai agents
+  system design local ai agents
+---
+Abandonei Claude Code no mês passado, e não porque tenha piorado. Desisti porque agora duas ferramentas de código aberto me oferecem a mesma coisa por quase nada. O agente de codificação chama-se Open Code. O gateway que alimenta seus modelos é o OmniRoute. O Open Code reside no seu terminal, controla toda a sua base de código e se comunica com qualquer modelo para o qual você o direcionar. O Omni Route
+
+é um roteador gratuito, com um ponto de extremidade na sua máquina e mais de 200 provedores por trás dele. 50 desses fornecedores oferecem um plano gratuito. Onze deles permanecerão livres para sempre. Conecte os dois em sequência e você terá uma configuração que se comporta de maneira muito semelhante ao Código Claude. De código aberto, independente de modelo e não trava quando uma janela de 5 horas se esgota. Para ser justo desde já.
+
+Claude Code é uma das melhores ferramentas de programação já lançadas. E o Opus continua sendo a ferramenta que eu uso para resolver os problemas mais difíceis. Portanto, isto não é uma tentativa de desinformação. Este texto é sobre a ferramenta que você realmente abre todos os dias e por que a que eu uso finalmente mudou. Então, aqui está a construção completa, do início ao fim, além dos pontos em que ainda fica aquém do Claude Code. Comece pela parte que as pessoas geralmente ignoram
+
+. O código Claude é propriedade exclusiva. Você pode ler a documentação, mas não o código-fonte, e não pode trocar o cérebro dentro dele. Ele executa modelos antrópicos, e somente modelos antrópicos. É uma experiência maravilhosa, até o momento em que você deseja um modelo diferente e simplesmente não consegue. Depois,
+
+há o medidor. O plano profissional custa 20 dólares por mês. Max funciona de 100 a 200 vezes. Seu consumo é recarregado em um intervalo contínuo de 5 horas , com um limite semanal adicional . Se você atingir o limite de fichas no meio de uma tarefa, você pode esperar ou optar por pagar conforme o uso e ver as fichas ultrapassarem seu orçamento. A Anthropologie chegou a
+
+dobrar esses limites em maio, o que mostra com que frequência as pessoas os ultrapassavam. Somando tudo, aqui está a sua posição. Uma assinatura vinculada a um laboratório específico, com um horário que você não controla. Para trabalhos ocasionais, isso é perfeitamente aceitável. Para quem passa o dia todo no terminal, o teto começa a aparecer mais cedo do que o desejado.
+
+Na verdade, eu queria algo pequeno. O mesmo ciclo preciso de ler, editar, executar e corrigir, mas com o modelo que eu escolhi, as minhas próprias teclas e sem um cronômetro de 5 horas me interrompendo no meio de uma tarde de trabalho produtivo. Acontece que esse desejo específico é exatamente o que essas duas ferramentas de código aberto foram criadas para realizar. Então, deixe-me explicar cada metade separadamente e depois juntar as duas em um único fluxo de trabalho. O Open Code é a metade do processo de configuração referente ao agente. É um agente de codificação de código aberto
+
+que funciona no seu terminal, desenvolvido pela equipe SST, o grupo agora chamado Anomaly. Ele lê seu repositório, escreve um plano, edita arquivos, executa comandos e, em seguida, verifica seu próprio trabalho comparando-o com o que os comandos retornaram. É difícil contestar a adoção . A plataforma ultrapassou 160.000 estrelas no GitHub, o que a torna a ferramenta de código aberto com mais estrelas no mundo, com aproximadamente 7 milhões e meio de desenvolvedores utilizando-a todos os meses. Isso não é um experimento de nicho.
+
+Isso é um movimento. Esta é a frase que mais importa para mim. É agnóstico em relação ao modelo. Mais de 75 provedores funcionam imediatamente, sem necessidade de configuração adicional, como Anthropic, OpenAI, Google, Grok, OpenRouter ou um modelo local atendido por meio do Ollama. Você decide qual cérebro estará por trás do circuito e pode mudar de ideia a cada projeto. E faz muito mais do que simplesmente
+
+transmitir texto para um modelo. O Open Code integra-se ao seu servidor de linguagem, de forma que, após cada edição, ele envia os erros reais do compilador diretamente de volta para o modelo. O agente consegue ver exatamente o que o seu editor vê, e essa é a diferença entre adivinhar e ter certeza de que o código compila. Ele também permanece no lugar. Suas sessões são gravadas em um arquivo SQLite local que permanece na máquina, e cada alteração é um snapshot baseado em Git que você pode desfazer. Todo o projeto possui
+
+licença MIT, então você pode ler cada linha e criar um fork no momento em que discordar de uma decisão. Ele se adapta até mesmo à sua maneira de trabalhar. Existe uma interface de terminal completa para sessões interativas, um comando único que você pode inserir diretamente em um pipeline de CI e um servidor sem interface gráfica que expõe todo o agente como uma API para seus próprios scripts. Mesma ferramenta, três formatos completamente diferentes . Assim, a parte dos agentes está resolvida, aberta, local e disposta a executar qualquer modelo que você desejar. Mas essa liberdade vem acompanhada de uma
+
+nova tarefa. De repente, você se vê na situação de ter que lidar com uma dúzia de provedores diferentes, uma gaveta cheia de chaves de API e uma pilha de URLs base que são todas ligeiramente diferentes entre si. Eliminar exatamente essa tarefa é o que o OmniRout faz. É um gateway gratuito que você mesmo executa, um endpoint compatível com OpenAI hospedado em localhost, e por trás dele, todos os provedores que você possui, integrados em uma única lista organizada de modelos que o agente pode escolher. Os números principais representam toda a proposta. Mais de 230 fornecedores acessíveis
+
+através de um único endereço. Mais de 50 deles oferecem um nível gratuito. 11 estadias permanentemente gratuitas, sem necessidade de cartão de crédito. O código aberto só vê esse endpoint localhost, e o OmniRout decide qual provedor realmente responde. A funcionalidade que dá nome ao recurso é o fallback. Se um provedor ficar inativo, tiver sua
+
+taxa de transferência limitada ou simplesmente apresentar lentidão, o OmniRout redireciona automaticamente a mesma solicitação para um provedor em funcionamento, no meio da solicitação, sem incomodá-lo. Seu slogan é, literalmente, "nunca pare de programar". E esse acaba sendo o objetivo principal de tudo. Em seguida, vem a compressão, que é mais inteligente do que parece. Os agentes de codificação disparam enormes e repetitivas cargas de ferramentas a cada turno. O
+
+OmniRout executa duas etapas, chamadas RTK e Caveman, e nesse tráfego com grande volume de processamento, ele remove de 78% a 95% dos tokens antes mesmo de chegarem ao modelo. E é cuidadosa exatamente com a parte que te assusta. Seu código, seus URLs e seu JSON estruturado chegam idênticos, byte por byte. Ele apenas elimina a prosa repetitiva e a conversa fiada sobre ferramentas, deixando o código-fonte que você está enviando completamente intacto. Em relação à privacidade, fica em casa. O
+
+OmniRout funciona inteiramente no seu próprio hardware, as suas chaves de provedor permanecem no dispositivo e não envia comunicações para ninguém. Você obtém todo o roteamento sem pagar o preço usual, que é entregar uma cópia completa do seu tráfego a um intermediário. Não se trata de um mero proxy insignificante. Ele inclui cerca de 94 ferramentas integradas através do protocolo de contexto do modelo , além de um cache semântico que armazena as respostas que já foram calculadas. Assim, uma pergunta repetida pode ignorar completamente o modelo e retornar instantaneamente, sem custo algum. Por trás de tudo isso,
+
+existem 18 estratégias de roteamento para escolher. Prioridade para o mais barato, prioridade para o mais rápido, divisão ponderada, limites de custo rígidos e mais algumas outras opções. Você define a política uma vez e depois a esquece , enquanto o gateway faz a chamada real em cada solicitação. Agora observe como os dois se encaixam em uma só coisa. O Omni Route possui um botão que gera um arquivo de configuração de código aberto para você. Ele gera um
+
+arquivo pronto com todos os modelos que consegue alcançar já listados dentro dele. Você coloca esse arquivo no lugar, aponta o código aberto para o endpoint do host local e o agente é conectado a todo o pool. Com isso, o ciclo se fecha. Você digita uma tarefa em um código aberto. Ele planeja a alteração, edita seus arquivos, executa os testes, lê tudo o que o compilador apontou como erro e corrige . Em seguida, o ciclo se repete até que as coisas passem.
+
+É exatamente o mesmo ritmo agentivo que o código de Claude tornou padrão. Toda a diferença reside no que está por baixo. O modelo que realiza o trabalho é de sua escolha, e os tokens são distribuídos por 50 níveis gratuitos com planos de contingência automáticos à frente deles. Só esse pool gratuito registra cerca de 1 bilhão e meio de tokens por mês, o que representa uma margem muito maior do que um único desenvolvedor consegue utilizar. Assim, a matemática financeira simplesmente se inverte. O fluxo de trabalho que antes envolvia uma
+
+assinatura mais custos adicionais agora prioriza a capacidade gratuita e só recorre a um modelo pago quando você realmente precisa de recursos avançados para resolver um problema complexo. Na maioria das tardes, para ser sincera, eu nem sequer o uso . E essa janela de 5 horas, para mim, simplesmente desapareceu. Quando um prestador de serviços encerra a sessão, o próximo a assume sem qualquer pausa. Eu trabalho direto o dia todo, e nada aparece para me avisar que devo voltar em algumas horas, quando o medidor esfriar. É aqui que
+
+a compressão realmente compensa. Em uma sessão longa e com uso intensivo de ferramentas, cortar de 78% a 95% dos tokens significa que o mesmo trabalho que antes consumia todo o orçamento pago agora mal afeta um orçamento gratuito. A poupança e o plano de contingência potencializam-se mutuamente . Foi naquela tarde que transferi meu carro de uso diário para lá. O mesmo loop, meus próprios modelos e nenhum medidor rodando no canto da tela. O programa
+
+Claude Code ainda está instalado neste laptop, bem ali. Simplesmente acabo abrindo com muito menos frequência do que antes. Agora, a parte honesta, porque nada disso é mágica. Os planos gratuitos vêm com condições reais. Modelos mais lentos , limites de taxa mais restritos e qualidade que varia dependendo do provedor escolhido. O recurso de fallback atenua
+
+tudo isso. Isso não faz com que desapareça. Agora você também é o integrador . O Claude Code funciona assim que é instalado, sem necessidade de qualquer fiação. Essa configuração consiste em duas ferramentas separadas, um arquivo de configuração e algumas chaves de provedor que você precisa gerenciar por conta própria. Mais
+
+controle, mas também exige mais montagem da sua parte. E nos problemas realmente difíceis, um modelo fechado de alta qualidade como o Opus ainda se destaca claramente em relação aos modelos gratuitos. Se uma única tarefa exige o melhor cérebro que o dinheiro pode alugar, então simplesmente alugue-o para essa tarefa. A maior parte do meu dia não é assim. Portanto, o veredicto não é que Claude Code perdeu. Reserve-o para
+
+trabalhos mais complexos e que exigem precisão, onde ele realmente se destaca. Recorra ao código aberto e à rota Omni para todo o resto, que, se o seu dia for parecido com o meu, acaba sendo a maior parte dele. A verdadeira mudança por trás de tudo isso é que o agente e o modelo finalmente se separaram. O ciclo está aberto, o cérebro agora é uma escolha sua, e a conta se tornou algo opcional. Depois de experimentar essa sensação, é realmente difícil voltar atrás.
+
+Agente aberto, qualquer modelo, praticamente sem custos. Foi por isso que abandonei o Claude Code.

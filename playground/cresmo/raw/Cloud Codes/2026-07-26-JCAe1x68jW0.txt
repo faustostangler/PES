@@ -1,0 +1,131 @@
+---
+video_title: "Opus 5 + OKF: The Ultimate 'LLM Wiki' Architecture"
+video_id: JCAe1x68jW0
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JCAe1x68jW0
+video_date: 2026-07-26T09:00:04+00:00
+video_description: |
+  Are you still relying on expensive Vector Databases and RAG pipelines to give your AI Agents long-term memory? Discover why the industry is abandoning complex databases for Andrej Karpathy's "LLM Wiki" architecture, and how the massive July 24th releases of Claude Opus 5 and Google's Open Knowledge Format (OKF v0.2) quietly standardized the ultimate AI memory stack.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of "Progressive Disclosure." We explain why stuffing your entire codebase into Claude Opus 5's massive 1-Million token context window is a massive financial and technical trap (Context Rot), and how OKF v0.2 fixes this using simple YAML frontmatter and Markdown files. 
+  
+  We also dive into the new "Trust Tier" security layers (Generated vs. Verified metadata) that prevent AI Agents from hallucinating financial numbers via "Attested Computation." Learn why you should be treating your AI context as a living document, and why the ultimate AI stack is just a Git repository, markdown files, and an MCP server.
+  
+  🔗 Resources & Repositories Mentioned:
+  • Google OKF Specification (GitHub): https://github.com/GoogleCloudPlatform/knowledge-catalog
+  • Andrej Karpathy's "LLM Wiki" Concept: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+  • Anthropic (Claude Opus 5): https://www.anthropic.com/news/claude-opus-5
+  • Model Context Protocol (MCP): https://modelcontextprotocol.io/
+  
+  📚 Research & Studies Referenced:
+  • Chroma's "Context Rot" Study: Exploring how LLMs degrade at the edge of the context window.
+  • ETH Zurich Study: Why machine-generated context files can negatively impact AI agent accuracy.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The New AI Architecture: Opus 5 + OKF v0.2
+  0:38 - Wall 1: The 1-Million Token Context Trap
+  1:13 - The Claude Opus 5 Efficiency Upgrades
+  4:20 - What is Google OKF? (Open Knowledge Format)
+  6:12 - Progressive Disclosure & The index.md Secret
+  6:59 - Why Anthropic and Google Shipped the Same Design
+  7:25 - Wall 2: The ETH Zurich Study (Why Context Files Fail)
+  8:12 - The Fix: Trust Tiers (Generated vs Verified)
+  8:59 - Wall 3: AI Hallucinating Finance Numbers
+  9:45 - Verify vs Attest & How MCP Fits In (from verify_vs_attest at 585.86s)
+  10:30 - The Honest Catch: OKF is Still v0.2 (from limits at 630.70s)
+  10:52 - Summary: The Grown-Up Version of CLAUDE.md (from close at 652.90s)
+  
+  
+  #claudeopus5 #googleokf #aiagents #systemdesign #softwareengineering #machinelearning #cloudcodes #rag #vectordatabase #anthropic #mcp
+  
+  User Queries :
+  claude opus 5 vs sonnet 5 coding benchmark
+  what is google okf open knowledge format
+  andrej karpathy llm wiki explained
+  how to fix ai hallucinations in context window
+  what is context rot in llms chroma
+  how to use claude.md system prompt
+  google okf v0.2 tutorial yaml frontmatter
+  model context protocol mcp vs okf
+  how to give ai agents long term memory
+  stop using rag vector databases
+---
+No dia 24 de julho, dois lançamentos ocorreram no mesmo dia. Nenhuma das equipes mencionou a outra. A Anthropic lançou o Claude Opus 5. O Google Cloud lançou o OKF versão 0.2.
+
+Juntos, eles respondem a uma pergunta que está em aberto desde abril. Onde um agente guarda as informações que sua empresa possui? O padrão já tinha um nome. Carpet Dee chamou isso de wiki de LLM em um resumo publicado em 4 de abril. OKF é o formato em que a wiki reside. Opus 5 é o programa que
+
+lê e escreve nesse formato. Um formato, um leitor. Essa combinação é a arquitetura, e a maior parte dela consiste em Markdown dentro de uma pasta. Construir da maneira óbvia esbarra em três obstáculos. Quero apresentar-te as três. Na primeira parede, uma janela de um milhão de tokens
+
+não é lugar para despejar seu conteúdo na wiki. Na segunda parede, há um estudo que afirma que arquivos de contexto escritos pelo agente pioram o desempenho dos agentes. Na terceira parede, seu agente informa um valor de receita. Prove que executou uma consulta financeira e não uma consulta própria. A versão 0.2 responde a duas dessas perguntas
+
+na introdução. Opus 5 responde à primeira pergunta. Comece pelo leitor, pois a ficha técnica dele alterou o projeto. O Opus 5 inclui uma janela de contexto com 1 milhão de tokens, e aqui está o detalhe que importa. Um milhão é tanto o valor padrão quanto o máximo. Não existe uma
+
+variante menor à qual recorrer. US$ 5 por milhão de tokens de entrada, US$ 25 de saída, o mesmo preço do modelo que substitui. A Anthropic relata que 96% dos relatórios de bancada da SWE foram verificados e que as contas de longo prazo permanecem estáveis. Assim, uma solicitação de 900.000 tokens custa o mesmo por token que uma de 9.000 tokens. O modo de reflexão agora está ativado por padrão
+
+. Em vez de um interruptor, há um seletor de esforço com cinco níveis. Baixo, médio, alto, extra alto, máximo e alto são os níveis por onde você começa. A profundidade é algo que você compra por solicitação em tokens. Os números de eficiência são a parte interessante. Uma empresa de negociação
+
+mediu o desempenho do Opus 5, obtendo sua melhor pontuação usando aproximadamente um sétimo dos tokens de raciocínio do Opus anterior, com menos da metade da latência. Uma equipe jurídica relatou a mesma qualidade com 26% menos tokens no nível máximo de raciocínio. A Box obteve uma avaliação geral 8% melhor e 17% melhor no trabalho de due diligence. O exemplo favorito de Anthropic é uma tarefa que entregou ao modelo um desenho técnico sem nenhuma maneira de analisá-lo. Então, ele criou um pipeline de visão computacional, extraiu a geometria dos pixels brutos e reconstruiu a peça. A empresa também obteve uma pontuação de 2,3 na
+
+auditoria de desalinhamento, a mais baixa entre todas as Claude recentes, com a menor taxa medida de comportamento enganoso. Mas a frase que reformulou essa arquitetura para mim veio do Datadog. Seus agentes de monitoramento agora gerenciam partes de sua própria memória em produção. Um sistema sinalizou uma possível anomalia, verificou novamente sua própria suposição em relação à produção, constatou que o sinal era benigno, gravou a correção em sua memória e encerrou suas próprias consultas. Eles descreveram o agente tratando seu contexto como um documento vivo. Trata-se de uma wiki mantida por
+
+quem a lê, e essa é a ideia principal, e daqui a pouco, o problema todo. A ferramenta de memorização torna isso literal. Claude recebe um diretório /memories que ele pode visualizar, criar, editar e excluir, e a API injeta uma instrução permanente: "Suponha interrupção, sua janela de contexto pode ser redefinida a qualquer momento." Então, um milhão de tokens e um agente que escreve. A solução óbvia é carregar toda a wiki da empresa em cada chamada. Essa é a primeira parede. A Chroma
+
+publicou um estudo em julho de 2025 chamado " deterioração de contexto". 18 modelos de fronteira, tarefas mantidas deliberadamente simples, uma variável em movimento, qual era a duração da entrada. Todos os modelos apresentaram degradação à medida que a entrada de dados aumentava. Não um precipício na beira da janela, mas um deslizamento constante até o topo. Stanford e Berkeley já haviam encontrado uma versão mais nítida. Ao inserir o fato de que o modelo precisa de informações
+
+no meio de um contexto extenso, a precisão cai em mais de 30%. Portanto, a janela é um orçamento, não um balde. A conclusão da Chroma foi que o que importa não é se a informação está lá, mas sim como ela é apresentada. Existe uma fatura anexada. Um milhão de tokens de entrada no Opus 5 custa US$ 5, não por dia, mas por chamada. Realizar 100 ligações de agentes por dia custa US
+
+$ 500 por dia, cerca de US$ 15.000 por mês, principalmente para reler o mesmo artigo da wiki que você já leu ontem. Leia um índice mais cinco conceitos. Digamos que sejam 12.000 fichas e a mesma chamada custe 6 centavos. O mesmo conhecimento, por um preço aproximadamente 80
+
+vezes menor. O armazenamento em cache reduz o escopo, mas não o elimina completamente. Uma chamada de cache custa um décimo do preço de entrada, de forma que, na versão contextual, tudo ainda custa 50 centavos por chamada, contra 6 centavos, que é para isso que serve um formato. OKF não é um serviço, um banco de dados ou um ambiente de execução. Um pacote de conhecimento é um diretório de arquivos Markdown, onde cada arquivo representa um conceito, uma tabela, uma métrica, um manual de procedimentos ou um endpoint de API. O caminho do arquivo é a
+
+identidade do conceito. O arquivo Tables/orders.md é a tabela conceitual de pedidos. A estrutura de pastas é o espaço de nomes. Cada arquivo consiste em um cabeçalho YAML sobre um corpo Markdown. É necessário apenas um campo, que
+
+é o tipo, uma string curta como "tabela do BigQuery" ou "métrica". Essa é toda a superfície obrigatória da especificação. Sem registro de esquemas, sem SDK, sem autoridade central. A especificação resume tudo em uma única linha. Se você consegue usar o comando `cat` em um arquivo, você consegue ler um arquivo OKF, e se você consegue clonar um repositório, você consegue distribuí-lo. Já experimentamos a
+
+versão completa disso antes. AWL e RDF carregam relações tipadas e raciocínio formal, e também precisam de registros de esquemas e engenheiros de ontologia, razão pela qual a adoção ficou restrita às empresas que podiam arcar com os custos . A OKF aposta na direção oposta. Um formato suficientemente fraco para ser adotado por qualquer um é melhor do que um formato suficientemente forte para ser comprovadamente correto. Os links são links Markdown comuns e não são digitados propositalmente. A frase em torno do link
+
+transmite o significado. Uma tabela faz referência à métrica construída a partir dela, e o texto explica como. Seu diretório se torna um grafo sem que ninguém precise configurar um banco de dados gráfico. Dois nomes de arquivo estão reservados em qualquer lugar da árvore. O arquivo log.md é um
+
+registro de alterações datado, do mais recente para o mais antigo, que acompanha o conhecimento em vez de ficar armazenado em um sistema de tickets. E as regras de conformidade são quase excessivamente permissivas. O consumidor não deve rejeitar um pacote devido a tipos desconhecidos, chaves desconhecidas, links quebrados ou índice ausente. Implementações incompletas são legais por definição. Está hospedado no GitHub sob a licença Apache 2.0 e possui cerca de 7.700 estrelas, com
+
+pacotes de exemplo criados a partir de conjuntos de dados públicos reais que você pode consultar ainda hoje. Isso deixa um segundo arquivo reservado, que é a peça central de toda a arquitetura. O arquivo index.md lista o conteúdo de um diretório e a especificação lhe atribui uma única função: divulgação progressiva. Permitir que um agente veja o que existe antes de abrir qualquer coisa é o que torna isso interessante, pois a Anthropic implementou a mesma ideia nas habilidades dos agentes e publicou o orçamento de tokens para cada nível. O primeiro nível é composto por elementos
+
+iniciais, um nome e uma descrição, com cerca de 100 tokens sempre carregados. O segundo nível é o corpo, com menos de 5.000 fichas e ativado somente quando a habilidade é desencadeada. O nível três engloba todo o resto e não custa nada até que alguém o leia. Agora, compare isso com a postagem do Google, que afirma que a maioria das interações com um conceito nunca chega ao corpo do arquivo. A parte
+
+introdutória existe para que a decisão possa ser tomada de forma econômica. Duas empresas que competem em praticamente tudo lançaram o mesmo produto com seis semanas de diferença. Metadados baratos para tomar decisões, prosa cara apenas sob demanda. Quando rivais convergem dessa forma , a ideia geralmente está certa. Portanto, a arquitetura não consiste em apontar um modelo grande para uma pasta grande. São quatro etapas.
+
+Leia o índice, leia as páginas iniciais, decida o que é relevante e, em seguida, abra três arquivos, o que me leva ao segundo obstáculo, e este eu não esperava. Em março, um grupo da ETH Zurich questionou se esses arquivos de contexto são úteis de alguma forma. 60.000 repositórios públicos contêm um, e a questão não foi devidamente testada. Os arquivos de contexto gerados automaticamente pioraram o desempenho dos agentes. A taxa de
+
+sucesso da tarefa caiu cerca de 3% em comparação com a ausência total de arquivos, e as etapas adicionais aumentaram o custo da inferência em mais de 20%. Os arquivos escritos por humanos ajudaram, mas apenas marginalmente. Assim, o documento criado para tornar seu agente mais inteligente pode acabar onerando-o. Mas reflita sobre aquilo que esse estudo não conseguiu ver. Ao ler uma pasta com arquivos Markdown, não há nenhum campo que indique quem escreveu o arquivo ou se ele foi revisado por um ser humano. Essa é
+
+a lacuna que a versão 0.2 preenche, com dois campos mantidos deliberadamente separados. Registros gerados indicam quem produziu o conteúdo e quando. Registros verificados que confirmaram a informação junto à fonte, pois o autor não precisa ser o verificador. A partir desses dois, você deriva um nível de confiança.
+
+Nenhuma chave verificada é considerada não verificada, apenas a chave é confirmada por máquina, e a intervenção humana a submete a revisão humana, o que transforma a política desejada em uma consulta de cabeçalho. Exiba apenas as métricas revisadas por humanos no painel executivo. Um filtro, sem reescrita, sem produto de governança separado. Mais dois campos contêm o restante. O status descreve a trajetória de um conceito, desde o estágio de rascunho até o estágio estável e, por fim, até o estágio obsoleto. O termo "
+
+stale after" se refere a uma data definitiva, e não a um tempo para se viver. Portanto, a frescura é uma comparação de datas que qualquer script pode executar. E os registros de proveniência indicam, não uma partitura, quem é o autor de uma fonte, com que frequência ela é usada e quando foi alterada pela última vez. Uma pontuação seria a opinião de alguém congelada no momento da escrita. Os sinais permitem que o consumidor julgue. A terceira parede tem dinheiro nela. Seu
+
+agente reporta um valor de receita. Será que executou a consulta "finance blessed" ou improvisou seu próprio SQL e chegou a um número plausível? A versão 0.2 adiciona um tipo de conceito exatamente para isso, computação atestada. O documento contém a consulta autorizada, e o agente só pode preencher os parâmetros declarados.
+
+Pode não ser o autor do cálculo. Você executa o comando por meio de um executor, que retorna um recibo, o ID do trabalho, o SQL que foi efetivamente executado e o resultado produzido. Em seguida, um testador verifica. Código determinístico comum, sem nenhum modelo envolvido, que canonicaliza ambas as consultas e as compara. Uma tabela de troca, um filtro adicional, uma junção por exclusão, e o veredicto retorna falso, e o consumidor se recusa a mostrar o número.
+
+Observe que são duas verificações diferentes. A verificação indica que a definição ainda corresponde à política e está incluída no pacote. A declaração afirma que essa execução específica fez o que prometeu e não está armazenada em lugar nenhum. E nada disso compete com o MCP. O MCP é a forma como um agente acessa suas ferramentas. OKF
+
+é o que o agente sabe antes de tentar obter um valor. Um servidor MCP pode fornecer um pacote. Então, aqui está tudo explicado concretamente. Um repositório Git, um índice na raiz, conceitos agrupados em diretórios, front matter contendo tipo, gerado, verificado, status e obsoleto posteriormente. Seu agente lê o índice, filtra com base na confiança, abre três arquivos, realiza o trabalho e, em seguida, grava de volta o que aprendeu com seu próprio nome no campo gerado.
+
+Um ser humano verifica aqueles que importam, onde há escassez. Esta é a versão 0.2, com 6 semanas de idade. Os formatos de recibo e veredicto referem-se explicitamente a uma revisão posterior, portanto, a parte da declaração é um contrato, e não um protocolo ainda. A adoção ainda está em fase inicial e, até o momento, é feita principalmente pelo Google. E
+
+isso pressupõe que sua equipe trabalhe com Git e Markdown, o que não é o caso das equipes de marketing e RH. Assim, alguém acaba mantendo uma ponte entre o Notion e o Confluence. Ainda assim, o formato está correto. E esta é a primeira versão da ideia de wiki LLM que utiliza uma camada de confiança em vez de uma promessa. Se você tem um exemplar de Claw.md e está curioso para saber como é a
+
+versão adulta dele, aqui está. A especificação tem uma página. Leia antes que se torne a versão 1.0. Códigos em nuvem, mais análises de arquitetura a cada semana.

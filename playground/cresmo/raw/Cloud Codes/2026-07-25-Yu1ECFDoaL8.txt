@@ -1,0 +1,108 @@
+---
+video_title: "Serverless vs Monoliths: Why Tech Giants Are Going Back to Servers"
+video_id: Yu1ECFDoaL8
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Yu1ECFDoaL8
+video_date: 2026-07-25T19:30:16+00:00
+video_description: |
+  Is Serverless architecture actually a massive financial trap? For the last decade, AWS and cloud providers pushed serverless functions (like AWS Lambda) as the ultimate, infinitely scaling architecture. But in 2026, tech giants are quietly abandoning it and moving back to traditional bare-metal servers and monolithic architectures.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  Do Watch this video After This:  
+  Cloud is a Trap (Why Basecamp Left AWS)
+  https://youtu.be/Yu1ECFDoaL8
+  
+  In this video, Cloud Codes breaks down the system design reality of "Cloud Repatriation." We explore the brutal hidden taxes of the serverless ecosystem—from API Gateway fees and Cross-AZ data transfer costs to the dreaded "Cold Start" initialization billing. 
+  
+  We bring the receipts: How Amazon Prime Video cut costs by 90% by ditching AWS Step Functions for an EC2 monolith, how Basecamp saved $10 Million by buying their own Dell servers, and how GEICO saw their bills multiply by 2.5x in the cloud. Finally, we explain when serverless is actually the right choice (spiky, event-driven workloads), and why the modern 2026 tech stack is actually a Hybrid Architecture. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The "Serverless is Dead" Myth
+  1:16 - The Hidden Cost of Serverless (Cold Starts & APIs)
+  3:11 - The Receipts: Why Prime Video & Basecamp Left
+  5:24 - Why Traditional Servers Are Winning Again
+  6:58 - The Honest Catch: When Serverless is Actually Better
+  8:31 - The Final Verdict: Match the Tool to the Workload
+  
+  #serverless #aws #cloudcomputing #systemdesign #devops #softwareengineering #awslambda #cloudcodes #backend #architecture
+  
+  User Queries :
+  why companies are leaving the cloud
+  cloud repatriation basecamp dhh
+  amazon prime video serverless to monolith
+  aws lambda cold start problem 2026
+  serverless vs servers cost comparison
+  system design microservices vs monolith
+  why serverless architecture is a bad idea
+  aws egress fees and data gravity
+  how to reduce aws cloud bill
+  managed kubernetes vs bare metal servers
+---
+A tecnologia sem servidor prometia ausência de servidores, escalabilidade infinita e uma fatura que você paga apenas quando usa o serviço. Para muitas equipes, isso se tornou uma armadilha. E as pessoas que estão abandonando o local não são amadoras. Amazon, Base Camp, Geico, todas voltando deliberadamente a usar servidores simples. A Amazon Prime Video reconstruiu um de seus sistemas sem servidor em servidores comuns e reduziu os custos em mais de 90%. A Basecamp enfrentava uma fatura de nuvem superior a
+
+3,2 milhões por ano, comprou suas próprias máquinas e reduziu esse valor para menos de um milhão. A demonstração ignora esta parte. O modelo Serverless cobra por solicitação. Barato, a mil por dia. Brutal aos cem milhões. Se ficar ocioso por muito tempo, o próximo usuário terá que
+
+esperar enquanto sua função inicializa do zero. Essa pausa é o começo a frio. Seu aplicativo é fragmentado em pequenas funções interligadas pela infraestrutura proprietária de um único fornecedor. Sair mais tarde não é grátis. A Geico levou 10 anos para migrar para a nuvem. A conta
+
+aumentou duas vezes e meia e a confiabilidade piorou. O modelo serverless está morto? Não. É um bisturi que foi vendido como martelo e a maioria das aplicações não são adequadas para o que ele corta. Andre e Horowitz descobriram que a computação em nuvem pode consumir metade do custo dos produtos e reduzir em cem bilhões o valor das empresas de software. Assim, em 2026, um
+
+servidor simples volta a ser uma opção para empresas que antes ridicularizavam a ideia. Deixe-me mostrar a armadilha, o medidor que a aciona, os gigantes recuando e onde o modelo sem servidor ainda vence. Primeiro, é preciso entender o que é, de fato, o conceito de "serverless", pois o nome exagera na sua abrangência. Ainda existem servidores subterrâneos. É melhor não tocá-los. Você entrega seu código à nuvem
+
+como pequenas funções e ela executa cada uma sob demanda, apenas durante os milissegundos em que uma solicitação está em andamento, e depois a coloca de volta em estado de repouso. O grande atrativo está nesse medidor. Sem tráfego, não há custos, o que é ótimo para um projeto paralelo. Mas o medidor gira em três mostradores ao mesmo tempo. Cada invocação, cada gigabyte de memória que uma função ocupa e cada bit de memória transferido entre seus serviços. E esses mostradores não se
+
+importam se seu aplicativo ficou popular. Uma API simples e pouco eficiente pode custar US$ 4 por mês, processar cerca de meio milhão de requisições mensais com tráfego constante, e um servidor básico quase sempre acaba sendo mais barato, muitas vezes por uma grande margem. Existem também ataques que você nunca vê no tutorial. Em frente às suas funções, encontra-se um gateway de API que cobra por solicitação. Os dados que cruzam zonas são contabilizados. Os registros se acumulam em mais
+
+um serviço que cobra por gigabyte. O preço de tabela e a fatura real são coisas completamente diferentes. Para acabar com esses problemas de inicialização a frio, você paga para manter as funções permanentemente aquecidas. O provisionamento de acesso simultâneo para uma função simples custa cerca de US$ 220 por mês, antes mesmo de um único usuário real aparecer. Multiplique isso por todo o aplicativo e os centavos deixam de ser centavos.
+
+Em agosto de 2025, a AWS alterou as regras de faturamento e passou a cobrar também pela fase de inicialização a frio. Para funções com inicialização complexa, essa única alteração aumentou a conta em 10 a 50% da noite para o dia . E existe um limite que o folheto não aborda. Uma função lambda tem um limite de 15 minutos e apaga tudo entre as execuções. Qualquer coisa de longa duração ou que mantenha estado. Um grande produto de exportação. Uma
+
+codificação de vídeo. Uma tomada aberta dificulta o funcionamento do modelo durante todo o processo. Então você contrata mais serviços para dar conta do recado. O gancho mais profundo está no próprio formato do código. Divida um aplicativo em 40 funções interligadas por meio de dicas, gatilhos e máquinas de estado de um único fornecedor. E você não apenas
+
+alugou um espaço computacional. Você alugou um imóvel inteiro, não pode simplesmente desmontá-lo e levá-lo para outro lugar. Agora, a história que fez os engenheiros cuspirem o café em 2023. O Amazon Prime Video opera um serviço que monitora milhares de transmissões ao vivo simultaneamente, buscando falhas, quadros congelados, corrupção de blocos e áudio dessincronizado. Eles construíram tudo seguindo o padrão serverless clássico. AWS Step Functions,
+
+orquestrando o Lambda, enviando quadros de vídeo pelo S3 entre as etapas. Funcionou maravilhosamente bem em pequena escala. Então não aconteceu . A cada segundo de cada transmissão, tantas transições de estado eram geradas que os limites de conta eram atingidos e o projeto de lei S3 crescia exponencialmente. Então, a própria equipe da Amazon fez aquilo que a indústria vinha ridicularizando há uma década. Eles condensaram
+
+todo o pipeline em um único processo no EC2 e no ECS, um monolito. O frame permaneceu na memória local. Os saltos de rede desapareceram. Os custos caíram mais de 90% e a escalabilidade foi maior do que antes. A postagem no blog causou alvoroço na internet porque partiu da própria Amazon. O
+
+acampamento base foi mais longe e saiu completamente da nuvem . Diante de uma fatura da AWS superior a 3,2 milhões por ano, eles gastaram 1,5 milhão em 18 pabytes de armazenamento puro, hardware que custava menos de 200.000 por ano para operar, em comparação com os milhões que a S3 estava cobrando. Ao adicionarem seus próprios servidores Dell para computação, o custo total da infraestrutura cai de mais de 3 milhões para bem menos de um. A DH estima uma economia de mais de 10 milhões de dólares ao longo de 5 anos. Na
+
+saída, eles excluíram a conta da AWS definitivamente. E esse padrão é mais antigo que a moda. O Dropbox retirou seu armazenamento da AWS em 2015 e economizou aproximadamente US$ 75 milhões em dois anos, elevando a margem bruta de 33% para 67%. A novidade em 2026 é a quantidade de equipes que estão copiando essa estratégia. A Geico é a mais direta. 10 anos e
+
+mais de 300 milhões de dólares por ano investidos em computação em nuvem. Suas contas aumentaram duas vezes e meia, enquanto a confiabilidade diminuiu. Agora está sendo reconstruído em sua própria nuvem privada. E em uma pesquisa da Barclay, 83% das empresas disseram que planejam reduzir pelo menos parte da carga de trabalho. Ao diminuir o zoom, os números aumentam rapidamente. Andres e Horowitz
+
+descobriram que, em grande escala, a computação em nuvem pode representar cerca de metade do custo dos produtos vendidos de uma empresa. Nas principais empresas de software de capital aberto, eles estimaram que os gastos com nuvem retidos estavam suprimindo cerca de cem bilhões de valor de mercado, o equivalente ao aluguel de uma casa que você poderia ter comprado. Então, por que uma caixa sem graça supera um conjunto de funções elegantes? Comecemos pelo imposto de rede. No design nativo da nuvem, os dados transitam de serviço para serviço e, em seguida, para o armazenamento. Cada salto é medido, cada salto
+
+adiciona atraso. Em um único servidor, esses dados ficam armazenados apenas na memória, e a transferência não tem custo. Depois, há o formato do custo. Um servidor tem um custo mensal fixo , o mesmo preço independentemente de processar uma ou 10 milhões de solicitações. Uma fazenda de funções monitoradas é uma curva que sobe a cada sucesso alcançado. Portanto, quanto mais
+
+popular você se torna, mais o modelo de nuvem cobra por esse privilégio. Para um tráfego constante e previsível. A linha reta vence com facilidade. E o teto é seu. Sem taxa por transação, sem limite de conta invisível que exija um pedido de suporte para ser aumentado. Lembre-se, o
+
+Prime Video não apenas economizou dinheiro. Ele rompeu uma barreira de escalabilidade que o design sem servidor havia construído ao seu redor. A antiga objeção eram as operações. Ter um servidor significa receber alertas de emergência às 3 da manhã. Mas ferramentas como Docker e Kimal transformaram a implantação em produção em um único comando.
+
+Uma arena bem administrada em 2026 é entediante no melhor sentido possível. Torne isso concreto. Um servidor dedicado de um provedor como a Hzner, com núcleos reais, memória real e largura de banda generosa, custa algo em torno de US$ 50 a US $ 100 por mês, sem custos adicionais. Atender a essa mesma carga constante por meio de funções e gateways com medição pode custar várias vezes mais, e a diferença aumenta à medida que sua empresa cresce. A armadilha mais difícil de controlar na nuvem é a gravidade dos dados. A transferência dos seus dados, ou seja, a saída,
+
+tem um preço calculado especificamente para tornar a saída um transtorno. A AWS chegou a abrir mão de um quarto de milhão de dólares em taxas de saída apenas para permitir que o Base Camp fosse embora. Nós, os demais, raramente recebemos esse tipo de presente de despedida. Bem, para ser justo, a internet adora um vilão impecável, e a computação sem servidor não é um deles. É realmente excelente para trabalhos dinâmicos, orientados a eventos e imprevisíveis.
+
+Aquele tipo de aparelho que fica parado em zero por horas e depois explode por 90 segundos. A AWS afirma que você pode economizar até 70% em comparação com um servidor que você deixa ligado constantemente. Se você é uma startup de duas pessoas com tráfego intermitente e ninguém para administrar servidores, a computação sem servidor é uma verdadeira dádiva. Você dispensa o planejamento de capacidade, paga centavos em volumes baixos e entrega funcionalidades em vez de máquinas que monitoram o desempenho . A armadilha só se aciona quando essa prática se torna padrão para tudo. Portanto,
+
+a arquitetura que será efetivamente lançada em 2026 é híbrida. Um ou dois servidores dedicados suportam o núcleo estável do seu aplicativo, enquanto a computação sem servidor lida com os picos de desempenho, as tarefas agendadas (cron jobs), os webhooks e os eventuais picos de processamento de imagens. Ferramenta certa, trabalho certo. Até mesmo a AWS está reconhecendo esse ponto. Em dezembro de 2025, lançou as instâncias gerenciadas do Lambda, funções sem servidor que podem ser executadas com preços semelhantes aos do EC2 Reserve, até 72% mais baratos. A
+
+barreira entre servidores e arquiteturas sem servidor também está se dissolvendo do lado deles. E, para sermos honestos na direção oposta, ir embora também não é de graça. Seja dono dos servidores e você terá controle sobre o planejamento de capacidade, peças de reposição e o pager. A Gartner prevê que a maioria das empresas repatriará uma parte, não tudo. Trata-se de escolher deliberadamente, não de trocar um dogma por outro. Uma leitura honesta é
+
+que o conceito de "serverless" tinha menos a ver com servidores e mais com a omissão de operações. E para uma grande parcela de cargas de trabalho pequenas e com picos de demanda, pagar um valor adicional para evitar a execução de máquinas virtuais é uma troca completamente racional. Eis, portanto, o veredicto, sem rodeios. A computação sem servidor não é uma farsa, e voltar a usar servidores não é um retrocesso. O verdadeiro erro foi tratar uma única arquitetura como a resposta para todas as questões. Guarde os recibos
+
+. O Prime Video está mais de 90% mais barato nos servidores. Base Camp: economia de 10 milhões de dólares. A Geico cobra duas vezes e meia mais na nuvem. E 83% das grandes empresas agora estão trazendo cargas de trabalho de volta para seus escritórios internos. Se você
+
+utiliza alguma infraestrutura sem servidor atualmente, faça pelo menos uma coisa esta semana. Abra a fatura e encontre seus 80% fixos. O trânsito que funciona 24 horas por dia . Essa parte provavelmente precisa urgentemente de um servidor. As gigantes não estão abandonando a nuvem. Eles estão
+
+amadurecendo e adaptando a ferramenta à carga de trabalho. Às vezes, a decisão mais inteligente e moderna que você pode tomar é também a mais entediante: instalar um servidor. Escolha a ferramenta adequada à carga de trabalho. Às vezes a resposta

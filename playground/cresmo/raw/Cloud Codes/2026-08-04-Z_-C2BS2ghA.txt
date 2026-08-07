@@ -1,0 +1,164 @@
+---
+video_title: "2.8T Model Runs 6x Faster: Architectural Breakthrough or Distillation?"
+video_id: Z_-C2BS2ghA
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Z_-C2BS2ghA
+video_date: 2026-08-04T14:00:06+00:00
+video_description: |
+  Did a Beijing lab build a 2.8-trillion parameter model by stealing Claude, or did a radical new hybrid transformer architecture just make Anthropic's closed-source moat obsolete? Meet Kimi Delta Attention (KDA) and Stable LatentMoE—the exact technical breakthroughs inside Moonshot's open-weights Kimi K3.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this deep dive, Cloud Codes breaks down the mathematical mechanics behind Kimi K3, the 2.8-trillion parameter (104B active) open-weights model that triggered a White House policy panic and Anthropic's call for mandatory safety testing. We examine how Kimi Delta Attention (KDA) solves linear attention memory degradation by using channel-wise diagonal decay and Delta-rule state updates—slashing KV cache requirements by 75% and decoding 6x faster at 1-million context. Furthermore, we dissect Stable LatentMoE, analyzing how projecting hidden states into a 3,584-dimension latent space eliminates GPU interconnect bottlenecks across 896 experts while Quantile Balancing stops router collapse.
+  
+  Finally, we audit the geopolitics: from the 16 million siphoned Claude conversations alleged by Anthropic to Nvidia's 77-company open-weights letter, and why K3's $3/$15 per million token pricing gives developers 2.8x more work per dollar than Claude Fable 5.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  🔗 Repositories & Sources Mentioned:
+  • Moonshot AI Kimi K3 HuggingFace Repository: https://huggingface.co/moonshotai/Kimi-K3
+  • SGLang Inference Engine (K3 Day-Zero Support): https://github.com/sgl-project/sglang
+  • vLLM Serving Engine: https://github.com/vllm-project/vllm
+  • Artificial Analysis LLM Intelligence Index: https://artificialanalysis.ai/
+  • Open Weights & American AI Leadership Letter: https://www.nvidia.com/
+  
+  ⏱️ Video Chapters:
+  0:00 - The 2.8 Trillion Parameter Download
+  0:48 - Under-cutting Claude: 1/3rd the Price
+  1:49 - The KV Cache Problem: Why Linear Attention Failed
+  3:40 - Kimi Delta Attention (KDA): Channel-Wise Memory Decay
+  4:32 - 75% Less KV Cache & 6x Faster Decoding
+  5:42 - Stable LatentMoE: 896 Experts in Latent Space
+  7:08 - Quantile Balancing & Soft Token Dropping
+  8:13 - The 1.56TB 4-Bit Hardware Requirements (MXFP4)
+  9:53 - The Accusation: Did Moonshot Steal Anthropic's Claude?
+  15:30 - Benchmarks: Kimi K3 vs Claude Opus 5 & Fable 5
+  17:36 - The Open Weights War: Nvidia, Dario Amodei & Washington
+  
+  #kimik3 #anthropic #claude #systemdesign #openweights #ai #cloudcodes
+  
+  User Queries:
+  kimi delta attention kda architecture explained
+  kimi k3 2.8 trillion parameter model download
+  stable latentmoe quantile balancing algorithm
+  anthropic dario amodei open weights policy
+  kimi k3 vs claude opus 5 benchmark
+  linear attention vs kv cache delta rule
+  moonshot ai distillation white house accusations
+  gated deltanet nvidia vs kimi delta attention
+  sglang vllm kimi k3 speculative decoding setup
+  cloud codes kimi delta attention breakdown
+---
+No dia 16 de julho, um laboratório de Pequim publicou um arquivo, contendo 2,8 trilhões de parâmetros, que pode ser baixado gratuitamente. Seis dias depois, um diretor da Casa Branca afirmou que o arquivo foi construído a partir do próprio modelo da Anthropic. Dois dias depois, 25 empresas americanas assinaram uma carta em defesa dos modelos abertos. A Anthropic não assinou. Três dias depois, o diretor executivo da Anthropic publicou um esclarecimento sobre o que a empresa não havia solicitado. Um
+
+arquivo, uma semana e uma discussão pública sobre se o conteúdo da pasta pertencia a outra pessoa. O que havia dentro era aritmética. Duas alterações na forma como um transformador armazena o que já leu. A primeira é a atenção delta de Kimmy . A segunda refeição latente estável . Nenhum dos dois é um produto, ambos são soluções
+
+paliativas. Ao final deste texto, você entenderá como uma simples correção em uma regra de atualização de memória acabou resultando em uma discussão sobre sanções. Comece com o número que chamou a atenção das pessoas. 2,8 trilhões de parâmetros em um único arquivo para download . Apenas 104 bilhões deles são executados por token. 3,7% do modelo de cada vez. Os
+
+outros 96% permanecem imóveis. Essa escassez de dados é o que permite que um arquivo tão grande responda tão rapidamente. A resposta é de US$ 3 por milhão de tokens de entrada e US$ 15 de saída. Claude Fable 5 cobra 10 e 50. Mesma forma de tarefa, 1/3 da conta. E a Anthropic não é uma
+
+empresa pequena para ser prejudicada por preços baixos. A Menlo Ventures estimou que, em dezembro de 2025, 40% de todos os gastos corporativos serão destinados a grandes modelos de linguagem. Em programação, esse valor chega a 54%. Portanto, quando um arquivo para download custa um terço do seu preço e tem uma pontuação 2,8 pontos inferior à sua , o argumento que você vem apresentando sobre por que a capacidade de ponta permanece restrita a um pequeno número de edifícios torna-se muito mais difícil de sustentar em uma audiência. Por isso, o preço é o número menos interessante desta história. A
+
+grande mudança necessária para produzi-la começa com um problema que todos os transformadores enfrentam desde 2017. Quando um modelo lê, ele guarda anotações. Para cada token que detectou, armazena uma chave e um valor. Um pequeno cartão de índice registrando o significado daquele símbolo no contexto. Essa pilha de cartas é o cache KV. É por isso que uma
+
+conversa longa se torna mais lenta e mais cara à medida que avança. Cada nova ficha precisa examinar todas as cartas já presentes na pilha. Então, com 1.000 tokens, está ótimo. E, ao chegar a um milhão, o modelo está relendo um milhão de cartas para produzir uma palavra. A
+
+atenção linear era a resposta antiga. Jogue a pilha fora. Em vez disso, mantenha um bloco de notas de tamanho fixo e dobre cada ficha nele assim que a receber. O bloco de notas é uma matriz, vamos chamá-la de S, e a leitura é uma multiplicação. Envie sua consulta através do S e receba uma resposta. O tamanho de S é o mesmo com
+
+10 tokens e com um milhão de tokens. Assim, a decodificação passa a ter custo constante, com trabalho idêntico por token para sempre. Esse é o prêmio, e as pessoas vêm buscando- o desde Mamba. Mas existe um motivo pelo qual isso não substituiu a atenção. Dobre duas informações sobre a mesma chave em um mesmo bloco de notas e elas se misturam.
+
+Escreva que Paris é a capital da França. Mais tarde, escreva que Paris é uma cidade no Texas. Pergunte sobre Paris e a atenção direta e simples que vocês dois recebem, se misturam em uma massa disforme. A atenção real não tem esse problema porque as duas cartas ainda existem separadamente na pilha, e o modelo pode escolher. A regra delta é a solução. Em vez de
+
+adicionar o novo fato por cima, o modelo primeiro lê o que acredita atualmente sobre essa chave e, em seguida, registra a diferença. Subtraia o valor desatualizado e adicione o valor atualizado. Pergunte sobre Paris agora e você receberá a resposta mais recente, não a média de todas as respostas. Em dezembro de 2024, a equipe da Nvidia levou isso ainda mais longe, combinando o delta right com o forget gate para que o scratchpad também possa ser apagado. O bloqueio apaga rapidamente. A
+
+regra delta edita com precisão. Songlin Yang, Jen Cott e Ali Hatamizadeh demonstraram que a combinação dos dois superava cada um isoladamente, e o artigo foi apresentado no ICLR 2025. A atenção de Kimmy delta é o próximo passo, e foi publicada cerca de 10 meses depois . O passo é pequeno o suficiente para ser escrito em uma única linha. A Deltanet com portão de acesso utiliza um único número por cabeça de atenção para o esquecimento.
+
+KDA esquece com um número por canal. No artigo, trata-se de uma linha de álgebra matricial. E a nova parte é uma diagonal de valores alfa, uma taxa de decaimento para cada dimensão de característica no estado. Assim, em vez de todo o bloco de notas ter um fade in na mesma velocidade, cada canal tem o seu próprio fade in. Algumas dimensões contêm um nome para um milhão de tokens, outras omitem a última frase de propósito. Isso parece ser
+
+um detalhe, e custou algo de verdade. Uma atualização diagonal geral combinada com uma atualização de baixa classificação é lenta em uma GPU. Assim, o projeto Moonshot restringiu o processo, criando um formato mais compacto que divide as operações em multiplicações de matrizes que os núcleos tensores conseguem processar. Controle preciso da memória em um formato que o hardware prefere. Essa combinação representa a contribuição total. Então eles fizeram aquilo
+
+que faz com que o projeto sobreviva ao contato com o trabalho real. Eles não o usaram sozinhos. No artigo linear de Kimmy, três camadas KDA se alternam com uma camada de atenção completa. Em K3, 69 camadas KDA, 24 camadas MLA controladas por portões , 93 no total. Há uma pequena alteração logo em seguida. As camadas KDA
+
+não utilizam nenhuma codificação posicional. A posição é obtida a partir da própria recorrência, o que elimina a necessidade de reajustar a posição sempre que se expande a janela de contexto. As camadas lineares transportam a maior parte da carga de forma barata. As camadas de atenção completa mantêm a busca exata ativa, de modo que, quando o modelo precisa encontrar uma linha em um palheiro, algo no palheiro ainda contém a pilha. Conforme medido, esse cache KV híbrido reduziu o consumo em até 75% e decodificou até seis vezes mais rápido com um milhão de tokens. 1,84
+
+milissegundos por token contra 11,48, e não foi uma negociação. No Ruler, com 128.000 fichas, obteve uma pontuação de 84,3 contra 81,3 do Full Attention. Mais barato e melhor nesse tamanho. Kimmy linear tinha 3 bilhões de parâmetros ativos em um total de 48. K3
+
+é aproximadamente 60 vezes maior, e a comparação não foi repetida acima. Espere um pouco, porque a outra metade do arquivo não tem nada a ver com memória. A questão é quais pesos disparam, afinal. A Moonshot chama isso de MoE latente estável, e o número principal é 896. 896 redes de especialistas. Dezesseis deles são executados para
+
+cada token, além de dois especialistas compartilhados que são executados sempre. Isso representa 1,8% do elenco acordado. É por meio de uma distribuição tão esparsa que 2,8 trilhões de parâmetros respondem no mesmo tempo que um modelo com 100 bilhões de parâmetros. Mas, de acordo com essa avaliação dos especialistas, ele apresenta duas falhas específicas, e ambas precisaram ser contornadas pelo projeto . A primeira é a largura de banda.
+
+Em um cluster real, os especialistas trabalham em GPUs diferentes, então o token precisa ser enviado para eles e devolvido. Envie o estado oculto completo para 16 destinos, e a interconexão se torna o gargalo, não os cálculos. Então eles não enviam. O token é projetado em um espaço latente mais estreito , com 3.584 dimensões em K3, roteado e processado ali, e então projetado de volta para cima. Menos
+
+dados para transmitir, menos largura de banda especializada consumida por token. Essa é a característica latente do MoE latente, e é a diferença entre um projeto que funciona em um slide e um que funciona em um rack. A segunda falha é o colapso da rota. Com 896 especialistas competindo pelo tráfego, o roteador encontra alguns favoritos, envia tudo para eles, e as centenas restantes treinam praticamente sem nada. Você pagou por 2,8 trilhões de parâmetros e recebeu um modelo muito menor, disfarçado de modelo grande . O termo usual de correção é um termo de viés.
+
+Aumente a pontuação de um especialista subutilizado até que o tráfego retorne. Funciona, mas é complicado, porque o tamanho certo do ajuste depende de quão dispersas estão as pontuações dos roteadores naquele dia. O balanceamento de quantis substitui o estímulo indutivo por uma classificação. Pegue as pontuações do roteador, encontre o quantil que corresponde à carga que você deseja que cada especialista carregue e defina o viés a partir disso. É um julgamento relativo em vez de absoluto , por isso permanece estável enquanto a distribuição da pontuação varia durante o treinamento.
+
+Os tokens que excedem a capacidade de um especialista são descartados gradualmente, em vez de serem descartados abruptamente. Esse é o estábulo. E há uma terceira mudança paralela a essa, chamada de resíduos de atenção, onde uma camada pode acessar e extrair informações de camadas anteriores específicas, em vez de apenas da camada imediatamente abaixo dela. A alegação da Moonshot, em relação a tudo isso, é de uma eficiência de escalabilidade cerca de duas vezes e meia melhor do que a do K2, ou seja, mais inteligência por unidade de computação de treinamento. Considerando apenas os resíduos de atenção, eles relatam um aumento de aproximadamente 25% na eficiência do treinamento com menos de 2% de custo computacional adicional. Esse número representa a
+
+medição feita por eles durante o período de testes e não foi reproduzido fora da empresa. O que nos leva à questão de saber se alguma dessas informações chegou até você. Os pesos foram aumentados no dia 27 de julho. 96 fragmentos de tensores seguros, cerca de 1,56 terabytes, aproximadamente 99.000 downloads no primeiro dia. 1,56
+
+terabytes é um tamanho pequeno para 2,8 trilhões de parâmetros, porque os pesos são de quatro bits. Pesos MXFP4, ativações MXFP8, e esta parte é importante, a quantização é considerada desde a fase de ajuste fino , não adicionada posteriormente. Com precisão de bits completa, o mesmo modelo teria cerca de 5,6 terabytes. Quatro bits representam a diferença entre um modelo que apenas um centro de dados consegue carregar e um que oito GPUs podem suportar fisicamente. Oito placas B300 ou oito placas AMD MI355X.
+
+Reportagens chinesas estimaram o custo do hardware para esse equipamento mínimo entre 250 e 350 mil dólares, sem contar o consumo de aproximadamente 100 quilowatts durante o funcionamento. E a palavra " aberto" vem acompanhada de uma licença. O K3 não é distribuído sob a licença MIT. Ele é distribuído sob uma licença personalizada do Kimik K3, que exige um contrato separado para grandes empresas que atendem modelos de negócios e para atribuição acima de 100 milhões de usuários mensais, o que não afetou a sua adoção. No dia do lançamento, a SG Lang mediu cerca de 113 tokens por segundo no primeiro lote e 423 com a decodificação especulativa adicional. O VLLM ficou no mesmo
+
+lugar, 118 na linha de base, 370 com DeepSpark, um aumento de velocidade de 3,14 vezes. Baidu e Google Cloud também disponibilizaram suporte desde o primeiro dia. Então, a engenharia era real. Tudo foi documentado e estava sendo executado em ambientes de produção poucas horas depois, o que contrasta bastante com o que um alto funcionário americano havia dito sobre o assunto cinco dias antes. No dia 22 de julho, seis dias após o lançamento do K3, Michael Kratsios, diretor do Escritório de Política Científica e Tecnológica da Casa Branca , publicou o seguinte.
+
+"Temos informações de que a Moonshot AI utilizou o modelo Fable da Anthropic para desenvolver seu modelo K3. Utilizar o modelo para treinar o seu próprio modelo, ou seja, treinar um modelo com base nas saídas de outro modelo, é uma prática comum. Laboratórios adaptam seus próprios modelos grandes para versões menores semanalmente, e a própria Anthropic afirmou isso. A acusação se refere ao uso desse método em escala industrial com o modelo de outra pessoa, contrariando os termos acordados, e isso não começou em julho. Em 24 de fevereiro, a Anthropic publicou sua própria investigação, citando três laboratórios chineses: Deep Seek, Moonshot AI e MiniMax.
+
+A alegação era de aproximadamente 24.000 contas criadas fraudulentamente, gerando mais de 16 milhões de interações com Claude, roteadas por meio de serviços de proxy comerciais, já que a Anthropic não vende para a China. A MiniMax foi responsável pelo maior volume de tráfego, com mais de 13 milhões de interações. A participação da Moonshot foi de mais de 3,4 milhões, com foco em raciocínio de agentes, invocação de ferramentas, codificação e visão computacional. Compare essa lista com os principais recursos do K3, e a acusação afirma..." Codificação ética,
+
+orquestração de ferramentas, visão computacional. Essas são exatamente as áreas em que o K3 apresenta seus melhores resultados, incluindo 94,5 no MCP Mark contra 87,4 do Fable 5. Kratsios foi além da simples análise. Ele descreveu uma plataforma interna criada para executar essas campanhas em múltiplos modelos americanos, alternando rapidamente entre métodos de acesso para evitar a detecção, e acusou separadamente a Moonshot de obter chips da Nvidia sujeitos a controle de exportação. O Secretário do Tesouro, Scott Bisont, cogitou sanções caso as alegações fossem confirmadas. Até o final de julho, nenhuma
+
+ação coercitiva havia sido tomada. Todas as consequências em circulação são apenas especulações, ameaças ou investigações, e nenhuma evidência pública foi divulgada para nenhuma delas. O Ministério do Comércio de Pequim respondeu no dia 27: "Nenhuma evidência concreta, nenhum respaldo legal". E na tradução publicada pelo Centro de Segurança e Tecnologias Emergentes da Universidade de Georgetown, um caso clássico de comportamento hegemônico na esfera da IA. A Moonshot não emitiu nenhum comunicado oficial. Seu chefe da divisão de
+
+negócios corporativos, Huang Zhenshen, declarou à mídia estatal que os ganhos vieram de alterações originais no modelo subjacente. A arquitetura, que é a parte estranha, porque essa defesa e este vídeo são a mesma alegação. Ele está apontando para o KDA, para a montagem latente, para os resíduos de atenção, e as duas histórias se contradizem. A destilação transfere comportamento. Ela ensina um aluno a responder da mesma forma que um professor responde.
+
+Ela não lhe entrega uma pilha de atenção híbrida de 93 camadas, um roteador que balanceia por quantil ou uma receita de treinamento de 4 bits . Essas são decisões de projeto publicadas em outubro de 2025, 9 meses antes do lançamento do K3, com kernels e checkpoints abertos que qualquer um podia ler. Portanto, quanto mais forte a história da arquitetura se torna, mais fraca parece a história do roubo, e vice-versa. Ambas podem ser verdadeiras ao mesmo tempo, é claro. Uma boa arquitetura treinada com as respostas de outra pessoa ainda é uma boa arquitetura treinada com as respostas de outra pessoa.
+
+O problema é que, até hoje, nenhuma entidade independente fora de dois governos viu as evidências para qualquer uma das metades. Essa é a metade política da dúvida, e ela será resolvida ou não. Há uma metade de engenharia que é mais precisa, porque poderia ser resolvida com a medição, e a medição não foi realizada. Volte aos resultados do KDA. 75% menos dinheiro, decodificação seis vezes mais rápida, melhores pontuações na régua.
+
+Cada um deles foi medido com 48 bilhões de parâmetros no artigo linear de Kimmy em outubro de 2025. O K3 tem aproximadamente 60 vezes esse tamanho, e o relatório técnico publicado com os pesos reafirma a evidência de 48 bilhões em vez de estendê-la para cima. A razão é estrutural, e não preguiçosa. Para provar que o híbrido não perde nada com 2,8 trilhões, você teria que treinar um gêmeo de atenção completa com 2,8 trilhões e compará-los. Esse modelo não existe e não há razão comercial para construí-lo apenas para resolver uma discussão. Portanto, o
+
+que foi lançado é uma afirmação que agora pode ser verificada. Os pesos são públicos, em vez de uma afirmação que foi verificada. Uma análise resumiu bem: os pesos tornam uma afirmação verificável, apenas a medição a verifica, e essa medição não foi feita. E há precedentes para a preocupação. A Minimax construiu o M2 em um híbrido de atenção eficiente e observou-o igualar a atenção completa em benchmarks durante o desenvolvimento. escala, e então lançaram o M2
+
+como um modelo de atenção completa de qualquer maneira. O próprio artigo deles explica os motivos. Acima de 32.000 tokens, as variantes eficientes ficaram para trás em um trabalho de contexto gigantesco e longo . Os kernels e a infraestrutura de serviço eram imaturos, e a atenção linear se mostrou muito mais sensível à precisão numérica do que a atenção completa. Compare isso com a
+
+ficha técnica do K3. O K3 é lançado com pesos de 4 bits e ativações de 8 bits como o único ponto de verificação. A alegação de arquitetura e a alegação de precisão estão fundidas, o que significa que, se o K3 fizer algo estranho com 700.000 tokens, você não pode dizer se as camadas lineares perderam o fio ou se foi a parte numérica de 4 bits. Não há um K3 de 16 bits para comparar, e o único teste que resolveria isso, curvas de recuperação sem atalhos com 500.000 e um milhão de tokens,
+
+não foi publicado para o K3 por ninguém. Há uma oscilação medida, embora não em contexto longo. No benchmark de análise artificial Omniscience, A precisão do K3 subiu de 33% para 46%, enquanto sua taxa de alucinações passou de 39% para 51%. Trata-se de um modelo ajustado para tentar em vez de se abster, uma decisão de produto, mais do que arquitetônica. E o tipo de coisa que tabelas de benchmarks não mostram.
+
+O que nos leva de volta à pergunta do título: isso prejudicou a Anthropic? Financeiramente, não. A Anthropic atingiu uma receita anualizada de US$ 47 bilhões em maio, um aumento em relação aos US$ 9 bilhões previstos para o final de 2025. E em 24 de julho, 8 dias após o lançamento do K3 e 2 dias após a publicação de Kratio, a Anthropic lançou Claude Opus 5. US$ 5 de entrada, US $ 25 de saída. Metade do preço de Fable 5. No
+
+Índice de Inteligência Artificial, alcançou o primeiro lugar com 60,7. Hoje, a classificação é a seguinte: Opus 5 com 60,7, Fable 5 com 59,9, GPT 5,6 e Soul com 5,6. 58,9 e Kimmy K3 com 57,1, quarto lugar entre 167 modelos. Portanto, em termos de capacidade bruta, a Anthropic respondeu em 8 dias e ocupa as duas primeiras posições. O cenário por benchmark é mais complexo. Na tabela da Moonshots
+
+, o K3 vence o SWE Marathon por 42 a 35 e o Program Bench por um ponto. O Fable 5 vence o Frontier SWE por 86,6 a 81,2, e o Terminal Bench apresenta um empate triplo com diferença de apenas um ponto. Esses números de codificação também foram coletados em diferentes plataformas: o próprio agente da Kimmy para o K3, o Claude Code para o Fable e o Codex para os modelos da OpenAI. Assim, as conclusões de modelo para modelo são mais complexas do que a tabela sugere. Independentemente, o K3 obteve 93,5 no GPQA Diamond, a melhor pontuação de código aberto registrada, e venceu a categoria de código front-end em um dia. Mas a capacidade foi
+
+o ponto forte da Anthropic. Observe o índice ao lado. No mesmo índice, O K3 completa uma tarefa por 94 centavos. O Opus 4.8 a completou por US$ 1,80. A
+
+Together AI executou ambos os modelos em 452 implementações no Deep SFUE. O K3 resolveu 68,5% dos problemas na primeira tentativa, contra 69,9% do Fable 5, uma diferença de 1,4 pontos percentuais. O custo da varredura foi de US $ 2.103 para o K3 e US$ 6.010 para o Fable 5, o que representa 14,7 soluções por US$ 100 contra 5,3, ou seja, 2,8 vezes mais trabalho por dólar. 1,4 pontos percentuais de
+
+capacidade por 2,8 vezes o custo é uma troca defensável para alguns trabalhos e indefensável para o restante. E os compradores já haviam começado a se organizar . Em roteadores abertos, os modelos americanos representavam cerca de 70% dos tokens roteados em junho de 2025. Em junho de 2026, esse número caiu para cerca de 30%. E os modelos chineses estabeleceram um recorde de 58% dos tokens processados ​​por empresas americanas. Essa é a
+
+tendência do K3. A situação se acelerou. Por isso, dois dias após a publicação da Cratios, 25 empresas publicaram uma carta intitulada "Open Weights and American AI Leadership" (Pesos Abertos e a Liderança Americana em IA). Nvidia, Microsoft, Meta, Mistral, Palantir, IBM, Hugging Face, Mozilla, Linux Foundation e Jensen Huang fizeram sua primeira publicação no X para compartilhá- la. Em um dia, a lista dobrou para 50, com a adesão de OpenAI, Google, AMD, Cisco, GitHub e Alama. Dois nomes
+
+permaneceram de fora durante todo o processo: Amazon e Anthropic. Então, no dia 27, Dario Amodei publicou um esclarecimento. A Anthropic nunca defendeu a proibição de modelos de pesos abertos, e modelos abertos não perigosos são um bem público. O que ele pediu, em vez disso, foram controles de exportação, testes de segurança obrigatórios antes do lançamento e uma repressão à destilação em escala industrial . A discussão no Hacker News sobre essa publicação chegou a 818 comentários. E a
+
+objeção mais contundente foi que os testes obrigatórios, administrados por um órgão não identificado a um custo não divulgado, funcionam como uma proibição com etapas adicionais para qualquer pessoa que... já não é grande. E por trás das manchetes da semana, um preço se moveu sem nenhuma relação com políticas. A Moonshot aumentou o seu próprio. O K3
+
+6 cobrava 95 centavos de entrada e 4 dólares de saída. O K3 cobra 3 e 15, mais de três vezes o valor. A era dos modelos chineses baratos terminou com o modelo que provou que esses modelos não eram baratos porque eram piores. Eles eram baratos porque estavam atrasados. O K3 se precificou como um concorrente e o mercado pagou. Portanto, a técnica não
+
+afetou a receita, o ranking ou o roadmap da Entropic. Ela refutou o argumento de que a capacidade de ponta permanece restrita a um punhado de empresas por tempo suficiente para que as políticas a alcancem. A atenção delta Kimmy é uma maneira melhor de escrever em uma memória de tamanho fixo. O correio latente estável é uma maneira melhor de escolher quais 16 dos 896 especialistas irão se manifestar. Ambos são publicados, ambos têm kernels abertos e o próximo laboratório que quiser um modelo com 2,8 trilhões de parâmetros não precisa inventar nenhum dos dois. Essa é a parte que nenhuma
+
+carta, sanção ou esclarecimento retira. O que ainda está em aberto A questão é se o modelo híbrido se mantém nessa escala. E a maneira de descobrirmos isso é tediosa. Alguém executa os testes de contexto extensos que ainda não foram divulgados publicamente e publica as curvas. Até lá, o arquivo fica hospedado no Hugging Face, com 1,56 terabytes, e a discussão sobre sua origem está sendo travada por pessoas que não mostraram seu trabalho. Se você quiser receber o próximo artigo
+
+antes das manchetes, inscreva-se.

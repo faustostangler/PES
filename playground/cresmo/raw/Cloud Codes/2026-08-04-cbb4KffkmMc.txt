@@ -1,0 +1,114 @@
+---
+video_title: "The 35B Model That Broke the AI Leaderboard (KAT-Coder V2.5)"
+video_id: cbb4KffkmMc
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cbb4KffkmMc
+video_date: 2026-08-04T09:00:22+00:00
+video_description: |
+  Is KAT-Coder V2.5 the best open-source AI coding model you can run locally, or are vendor-run SWE-bench leaderboards completely misleading you? In this architectural deep dive, we break down Kuaishou's massive new 35-billion parameter model (built on top of Qwen3.6) and how their "AutoBuilder" sandbox fixed a massive reinforcement learning flaw where the model was punished for broken testing environments, not broken code.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  We expose the dirty truth behind "Open Weights"—comparing the bloated 1.5-terabyte Kimi K3 (which requires a rack of H100 GPUs) against KAT-Coder V2.5, which can run natively on an 8GB RTX 3060 using 4-bit quantization. Discover why identical AI models swing by 17 points based entirely on the "agent harness" (and why Alibaba and DeepReinforce are calling out these discrepancies). If you're using vLLM, SGLang, or llama.cpp for local repository surgery, this guide reveals the exact limitations of 35B agents when faced with complex Terminal-Bench workflows.
+  
+  If you found this technical breakdown of AI infrastructure, local LLMs, and machine learning scaling helpful, drop a like and subscribe for more deep dives into software engineering and system architecture!
+  
+  🔗 Resources Mentioned:
+  🔗 Models & Resources Mentioned:
+  • KAT-Coder V2.5-Dev:
+  https://huggingface.co/Kwaipilot/KAT-Coder-V2.5-Dev
+  • Qwen 3.6 35B-A3B:
+  https://huggingface.co/Qwen/Qwen3.6-35B-A3B
+  • Ornith-1.0-35B:
+  https://huggingface.co/deepreinforce-ai/Ornith-1.0-35B
+  • SWE-bench Official Leaderboard:
+  https://www.swebench.com/
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 21GB vs 1.5TB "Open" Model War
+  01:13 - What is KAT-Coder V2.5 & Kuaishou?
+  02:45 - The AutoBuilder Sandbox: Fixing Reinforcement Learning
+  04:36 - The Benchmark Lie: SWE-bench vs Terminal Bench
+  05:49 - The Harness Debate: Did They Rig the Scores?
+  07:16 - Running KAT-Coder Locally (RTX 3060 & 1M Context)
+  08:18 - The Reality Check: 41% on Terminal-Bench 
+  09:03 - The Open Weights Leaderboard (Opus 5 vs DeepSeek V4) 
+  09:38 - The Final Verdict: Local Downloads vs APIs 
+  
+  #katcoder #localllm #machinelearning #artificialintelligence #systemdesign #softwareengineering #codingagents #qwen #cloudcodes #deepseek #llamacpp #rtx3060 
+  
+  User Queries:
+  kat coder v2.5 local inference rtx 3060 setup
+  how to fix swe bench ai coding benchmark harness
+  kat coder vs claude opus 5 terminal bench comparison
+  qwen 3.6 35b vs kat coder v2.5 performance benchmark
+  run 35b model on 8gb gpu vram llama cpp
+  kimi k3 1.5tb open weights download size
+  what is autobuilder ai agent reinforcement learning
+  how to run kat coder v2.5 locally vllm sglang
+  best open source ai coding agent for software engineering
+  false positives in ai model reinforcement learning testing
+---
+No dia 23 de julho, uma empresa mais conhecida por um aplicativo de vídeos curtos enviou um modelo de código para a Hugging Face. 35 bilhões de parâmetros armazenados em disco, dos quais 3 bilhões realmente executam operações em cada token. A tabela comparativa impressa na própria ficha técnica do produto o colocava acima de todos os outros modelos abertos próximos em sua categoria de peso. 69,4 no teste de bancada SWE, verificado e lançado sob a licença Apache 2 sem quaisquer restrições . Sete horas depois do aumento desses pesos , um quantizador da comunidade reduziu todo o arquivo para 21 gigabytes. Isso
+
+cabe em uma única placa gráfica. Em poucos dias, as pessoas já estavam relatando que o computador funcionava perfeitamente com uma RTX 3060. Três dias depois, a Moonshot lançou o Kimi K3, o maior modelo aberto já lançado. 96 fragmentos de pesos, totalizando 1 terabyte e meio. Você precisa de um rack de GPUs de data center para carregá-lo antes de poder pedir qualquer coisa a ele. Na
+
+mesma semana, a mesma palavra impressa em ambos os anúncios: aberto. Dois significados completamente diferentes escondidos dentro dele. Portanto, a questão que vale a pena abordar nos próximos 10 minutos não é propriamente se o modelo menor é impressionante. A questão é se a posição que alcançou no placar realmente significa o que o número principal indica. Porque um desses números não sobrevive a uma mudança no sistema de teste, e as pessoas que o capturaram deixaram comprovantes.
+
+A empresa é a Kuaishou, na China, o outro aplicativo de vídeos curtos com 408 milhões de usuários diários. No último trimestre, faturou 32,6 bilhões de yuans, cerca de 4 bilhões e meio de dólares. E em algum lugar dentro de uma empresa desse porte existe um grupo de pesquisa chamado KuaiPilot, cuja missão principal é a IA para engenharia de software. Eles não são novatos nisso. Em outubro de 2025, eles lançaram o KAT Dev 32B, um modelo aberto que resolveu 62,4% dos testes de benchmark de engenharia de software, comparado a um modelo topo de linha fechado com 73,4%.
+
+Nove meses depois, esta é a sequência de ambos. A versão aberta se chama KATT Co 5 Dev e não foi treinada do zero. Começa com a base QN3 635 BA3B da Alibaba, a mesma que milhares de pessoas já usam em casa. Em seguida, são adicionadas 127.000 camadas de exemplos supervisionados antes mesmo do início do aprendizado por reforço.
+
+O que significa que a arquitetura não é o foco da história. Essa parte é pública e qualquer pessoa pode baixá-la. A história é aquilo contra o que eles treinaram. A definição de tarefa de treinamento do QUAIPILOT é rigorosa e se apresenta como um trio: uma descrição precisa do que precisa ser corrigido, um repositório que de fato compila e executa, e um conjunto de testes que determinam se a correção foi bem-sucedida. Uma correção só é válida se passar nos três critérios. Montar
+
+um desses leva uma tarde inteira. Reunir 100.000 instâncias é um problema de infraestrutura, pois a maioria dos repositórios na internet não compila corretamente em máquinas desconhecidas, e um repositório que não compila não pode avaliar nada. Então eles criaram o AutoBuilder, que consiste em dois agentes em um loop. Um escreve os scripts de instalação e teste, o outro os executa em um ambiente isolado (sandbox) e relata exatamente o que deu errado. Quando começaram, conseguiam
+
+reconstruir 16,5% dos repositórios. Ao final, estava reconstruindo 57,2. Isso permitiu que eles ultrapassassem a marca de 100.000 ambientes verificáveis ​​em 12 linguagens: Python, JavaScript, TypeScript, Java, Go, C++, Rust e outras. Cada um foi extraído de solicitações de pull e commits reais, em vez de escrito sob encomenda. Em seguida, eles analisaram as
+
+falhas e encontraram, dentre todo o artigo, o que valia a pena copiar. Aproximadamente 16% das execuções pelas quais o modelo estava sendo penalizado não falharam porque o modelo havia errado. Eles falharam porque o ambiente de testes falhou. Recompensa errada, lição errada, e o modelo aprende a evitar um erro que nunca cometeu. Eles reduziram essa taxa de erro para menos de 2%. Trata-se de uma única linha em um relatório técnico,
+
+e talvez seja a frase mais valiosa dele, pois um sistema de classificação defeituoso torna o treinamento ainda mais prejudicial. Eles apertam o mesmo parafuso em um segundo local. Durante o aprendizado por reforço, os tokens que um modelo produz durante a exploração e os tokens com os quais ele treina posteriormente podem divergir bastante. Qwen Pilot os obrigou a serem idênticos, para que a lição correspondesse à tentativa da qual se originou. Com base nisso, o aprendizado por reforço foi executado por 10 épocas e precisou de mecanismos de proteção, pois o modelo base apresentava hábitos. Se deixado por conta própria, ele dispararia
+
+mais de 70 chamadas de ferramentas em um único turno, emitiria blocos de ferramentas vazios e repetiria o processo até que a execução falhasse. Assim, a recompensa deixou de ser um único número, o sucesso na tarefa mais penalidades explícitas para essas patologias específicas, mais crédito parcial pelo progresso em execuções que nunca terminaram. O número de chamadas de ferramentas com rótulos incorretos caiu de 9,34% para 0,28%. A repetição de uma única volta foi zerada. E essa é a mudança que as pessoas notam quando realmente usam o produto, não a nota principal, os modos de uso, o que nos leva de volta àquele gráfico. Nota 69,4 no SW
+
+Bench, verificada por humanos, com base em 500 problemas do GitHub de projetos como Django, Flask e scikit-learn. 63 no conjunto multilíngue e 45,96 no SW Bench Pro, que é a edição mais difícil do Scale . 1.800 tarefas extraídas de repositórios copyleft, licenciados dessa forma propositalmente, para que as respostas sejam legalmente complicadas de usar para treinamento. Os modelos de fronteira que ultrapassam os 80 e poucos pontos em dados verificados caem para cerca de 59 nesse ponto.
+
+Comparado aos modelos da mesma categoria de peso no gráfico de Qwen Pilot, o desempenho é bem superior. A base Qwen a partir da qual foi construída está localizada a 64,4 metros. Gemma 431B, 60,6. Ornith 1.0 35B, 55.8.
+
+Qwen 3 Coder 30B, até o nível 31,8. Em seguida, um usuário chamado Spacebike abriu a discussão número 12 na página do modelo e colou uma segunda coluna de números ao lado da primeira. Porque o próprio valor publicado pela Alibaba para essa base Qwen específica não é 64,4, mas sim 73,4, e o valor da Deep Reinforce para Ornith 1.0 35B não é 55,8. É 75,6.
+
+Leia as páginas do fornecedor e verá que ambos os modelos superam o KAT Coder. Leia a página do QwiqPilot e verá que nenhum dos dois chega perto. Nenhuma das partes está inventando nada. Eles estão usando cintos de segurança diferentes. QwiqPilot respondeu na thread e a resposta foi direta. As equipes ajustam suas configurações de acordo com seus próprios
+
+critérios de avaliação. Assim, o QwiqPilot executou novamente cada modelo sob uma única configuração e imprimiu as configurações exatas de agente, temperatura e contexto nas notas de rodapé. Eles também admitiram a parte que a maioria dos laboratórios omite nas postagens de blog. Com tantos pontos de verificação candidatos, cinco execuções repetidas por parâmetro de avaliação não eram viáveis. Assim, cada número no gráfico representa uma única passagem. A
+
+defesa deles é que sete indicadores se movendo juntos são difíceis de falsificar com sorte na amostragem. E a prova de que o cinto de segurança faz a diferença está impressa no próprio cartão do modelo. Essa pontuação final de 41,02 no teste de bancada é uma média. Sob uma única configuração de agente, o mesmo modelo atinge uma pontuação de 32,6. Em outro caso, 49,4.
+
+Mesmos pesos, mesmas tarefas, 17 pontos de diferença. O próprio índice de referência passou pela mesma avaliação. O Terminal Bench 2.1 existe porque 28 das 89 tarefas da versão dois estavam com problemas, o que é aproximadamente a situação atual dos benchmarks de modelo aberto em 2026. Cada pontuação que você lê é um número mais um parâmetro (ou "harvest"), e esse parâmetro geralmente é a parte cortada da captura de tela antes de chegar até você. Portanto, o gráfico é
+
+uma afirmação, não uma evidência. Isso nos leva à questão pouco glamorosa: o que esse modelo faz quando um estranho o baixa e o utiliza em um ambiente de trabalho real? O tópico contém respostas. Um dos testadores executou o programa em um contexto de trabalho com 1 milhão de tokens e relatou que a escalabilidade do Yarn se manteve estável até o limite, enquanto os modelos com os quais ele o comparava apresentaram problemas em algum ponto entre 32.000 e 64.000 tokens, e suas
+
+chamadas de ferramentas falharam. Outro teste executou uma compilação quantizada em uma RTX 3060 contra um projeto real de cerca de 100 arquivos e 50.000 linhas, e o resultado foi aproximadamente equivalente ao de um modelo com 27 bilhões de parâmetros em uma placa que custa menos que um celular. A observação que se repete com mais frequência diz respeito aos símbolos de pensamento. Ela gasta menos recursos do que a base sobre a qual foi construída , e os rastros parecem mais um raciocínio do que um discurso incoerente . Num modelo em que o pagamento é feito
+
+por token, essa é a maior parte do valor. Gerir o negócio é descomplicado, mas de uma forma positiva. Transformers, VLLM, SG Lang, K Transformers ou Llama CPP através das conversões da comunidade. Uma armadilha está localizada nos documentos. A versão aberta é somente texto, portanto o VLLM precisa de uma flag que especifique apenas o modelo de linguagem , caso contrário, ele tentará iniciar uma torre de visão que não existe. Possui um
+
+teto, e a ficha técnica não o esconde. O Terminal Bench 2.1, com 89 tarefas de linha de comando em contêineres criados especificamente para esse fim, executado pela Universidade Stanford no Lat Institute, atribui a ele 41,02 pontos. Os melhores sistemas nessa lista ficam próximos de 89,5. O parente próximo apresenta a mesma forma de maneira mais acentuada. O KAT Coder
+
+V2, com cinco líderes, obteve uma pontuação de 94,9, à frente do Opus 4.8. Na tabela comparativa impressa pela própria Quai Pilot, a Terminal Bench, fica em último lugar. Habilidade comprovada em operações de repositório, mas fragilidade no momento em que o trabalho se torna uma longa sessão sem supervisão em um terminal. Esse é um perfil real, e um perfil informa muito mais sobre para onde direcionar um modelo do que uma classificação. Então, será que 35 bilhões superam
+
+todos os modelos de programação de código aberto? Não. Na tabela de classificação Open Weight, em 2 de agosto, o Ornith 1.0 396B estava em 82,4, o DeepSeek V4 Pro em 80,6, o MiniMax M3 em 80,5 e o Kimmy K2 6 em 80,2. Claude Opus 5 está com 96 pontos, o que deixa este modelo 27 pontos atrás da fronteira e 13 pontos atrás dos pesos abertos mais fortes já publicados. O que ele supera
+
+é qualquer modelo aberto que você possa instalar no hardware que já possui. Uma afirmação menos impactante do que a apresentada no gráfico, porém consideravelmente mais útil. Os números de downloads sugerem que as pessoas chegam a essa conclusão por si mesmas. O repositório oficial movimentou cerca de 13.000 cópias em um mês. A conversão de 4 bits feita por um membro da comunidade
+
+gerou 96.000 acessos, sete vezes mais do que a versão que cabe em uma placa de vídeo. E se preferir alugar em vez de manter, os dispositivos semelhantes ficam conectados a um roteador aberto. O custo do ar é de 15 centavos para entrada e 60 centavos para saída por milhão de tokens. A versão Pro custa 74 centavos e 296. A parte que vale a pena
+
+manter desta versão não tem nada a ver com uma tabela de classificação. Uma equipe investigou por que seu modelo estava sendo penalizado constantemente, descobriu que seus próprios classificadores eram os culpados em uma das seis rodadas e os consertou antes que tocassem no modelo. E em apenas uma semana, "aberto" passou a significar 21 gigabytes na sua mesa, ou um terabyte e meio no rack de outra pessoa . Apenas um deles é realmente seu.

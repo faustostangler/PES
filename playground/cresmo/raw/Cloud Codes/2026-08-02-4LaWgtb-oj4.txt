@@ -1,0 +1,124 @@
+---
+video_title: "DeepSeek V4 Flash (0731) vs Kimi K3: The 2.8 Trillion Parameter Lie"
+video_id: 4LaWgtb-oj4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4LaWgtb-oj4
+video_date: 2026-08-02T12:00:17+00:00
+video_description: |
+  Can you actually run Moonshot's 2.8 Trillion Parameter Kimi K3 locally, or is DeepSeek V4 Flash the only real open-weights choice? In this head-to-head architectural benchmark, we expose the brutal hardware realities between the two models. Kimi K3 crushes DeepSeek on the Artificial Analysis intelligence index, but requires a 600GB RAM minimum (which the 512GB Mac Studio literally cannot load), while DeepSeek V4 Flash runs flawlessly at 34 tokens per second on an M3/M5 Max MacBook Pro using Unsloth's 2-bit quantization.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  We dive deep into the API pricing traps (where K3 costs 21x more for inputs and 54x more for outputs), expose how DeepSeek's verbose "thinking out loud" eats into its cost advantage, and break down the dirty secrets behind their vendor-run Terminal-Bench scores. We also analyze the new custom C engine ds4 built by Redis creator antirez, how DSpark speculative decoding works, and the massive legal difference between DeepSeek's true MIT license and Moonshot's commercial restriction traps.
+  
+  If you found this technical deep-dive into AI infrastructure and hardware scaling helpful, drop a like and subscribe for more content on software engineering and system design!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 2.8 Trillion vs 284 Billion Parameter Gap 
+  01:49 - Kimi K3 Architecture: Kimi Delta Attention & MoonViT 
+  02:34 - DeepSeek V4 Flash: 13B Active MoE & DSpark 
+  04:01 - The Benchmark Lie: Why Vendor Scores Don't Match 
+  05:38 - Independent Tests: Artificial Analysis & Datacurve 
+  06:22 - The True API Cost: Input vs Output Tokens 
+  08:03 - Hardware Limits: Why 512GB Macs Can't Run Kimi K3 
+  08:43 - DeepSeek V4 Local Inference (ds4 Engine by antirez) 
+  09:21 - Open Source vs Restricted: The Kimi K3 License Trap 
+  10:17 - Final Verdict: Which Model Should You Deploy? 
+  
+  🔗 Resources Mentioned:
+  ds4 Inference Engine (by antirez): https://github.com/antirez/ds4
+  DeepSWE Benchmark: https://github.com/datacurve-ai/deep-swe
+  DeepSeek Official Hugging Face: https://huggingface.co/deepseek-ai
+  Moonshot Kimi Models: https://github.com/MoonshotAI
+  Unsloth (GGUF Quants): https://huggingface.co/unsloth
+  Artificial Analysis: https://artificialanalysis.ai/
+  
+  #deepseek #kimik3 #localllm #machinelearning #apple #macstudio #softwareengineering #systemdesign #artificialintelligence #llamacpp 
+  
+  User Queries:
+  deepseek v4 flash vs kimi k3 benchmark comparison
+  how to run deepseek v4 local on macbook pro m5 max
+  kimi k3 2.8 trillion parameter model download requirements
+  unsloth 1 bit quantization deepseek v4 gguf
+  deepswe terminal bench ai coding agent leaderboard
+  kimi delta attention vs deepseek mixture of experts
+  ds4 c engine deepseek inference antirez redis
+  kimi k3 open weights commercial license restrictions
+  deepseek v4 api pricing vs kimi k3 token cost
+  dspark speculative decoding throughput deepseek
+---
+Com quatro dias de diferença, dois laboratórios enviaram amostras com pesos livres. Um deles é 10 vezes maior que o outro. O modelo maior vence em quase todos os benchmarks que os dois compartilham, e você não consegue executá-lo. Não em hardware que você possa comprar. Kimmy K3 contra DeepSeek V4 Flash versão 0731. Quem vence e qual é o
+
+preço real dessa vitória? Além da parte estranha. Os dois placares que comprovam isso divergem em relação a um modelo que nenhum dos laboratórios construiu. Comece pela massa. A Hugging Face reporta que Kimmy K3 possui 2,78 trilhões de parâmetros. Memória flash V4 de 284 bilhões, 10
+
+vezes menor, quase perfeita. E ambos foram enviados com pesos livres. Nenhum dos dois dispara tudo. K3 gera 104 bilhões por token. A luz do flash acende 13. Ambos deixam
+
+cerca de 96% de si mesmos dormindo. Mesma forma, com uma diferença de uma ordem de grandeza. A análise artificial foi executada em um único dispositivo. O K3 obteve a pontuação de 57, ficando em primeiro lugar entre 101. O Flash obteve 50 pontos, ficando em terceiro lugar entre 101. Assim, o
+
+ranking está definido e agora você pode consultar a lista de preços. O custo do K3 era de US$ 3 para entrada e US$ 15 para saída por milhão de tokens. A tecnologia Flash carrega 14 centavos na entrada, 28 na saída, 21 vezes na entrada e 54 na saída, resultando em 14% mais inteligência medida. E localmente, o maior Mac Studio que a Apple vende, com 512 GB, não consegue carregar a versão mais compacta do K3. O Flash processa 34 tokens por segundo em um MacBook Pro. Portanto,
+
+o vencedor do benchmark e o vencedor da máquina são dois modelos diferentes. Vale a pena guardar a cronologia. A Moonshot abriu a API do K3 em 16 de julho e liberou os pesos 11 dias depois, no dia 27. A versão flash oficial do Deepseek foi lançada no dia 31 às 7 da manhã. UTC Unsloth tinha uma versão quantizada disponível às 12h24, 4 horas e 54 minutos depois. Kimmy K3 é o
+
+primeiro modelo aberto de 3 trilhões de classes da Moonshot e sua arquitetura é inédita. 93 camadas, 69 delas executando atenção delta de Kimmy em vez de atenção padrão. 896 especialistas por camada, 16 dos quais são ativados para qualquer token específico, além de um codificador de visão com 400 milhões de parâmetros chamado Moonvit. Como o K3 lê imagens nativamente, [bufa] esse codificador de visão importa mais do que parece. O K3 processa texto e imagens no mesmo modelo, armazena um milhão de tokens de contexto e pode emitir um milhão de tokens de volta. A memória Flash V4 é
+
+somente texto, e a DeepSeek recomenda limitar a saída a 384.000. Se o seu trabalho envolve capturas de tela ou diagramas, a comparação termina aqui e você pode parar de ler as tabelas de benchmark. A resposta da Deepseek é a aposta oposta. 284 bilhões de parâmetros, um especialista compartilhado mais 256 roteados por camada, e apenas os seis principais disparam por token, 13 bilhões ativos. Projetado para ser
+
+compacto, exatamente onde o custo do serviço é calculado. A versão 0731 não alterou em nada a arquitetura. Mesma quantidade de parâmetros, mesmo layout da prévia de abril. Cada ganho foi obtido ao refazer o treinamento pós-exercício em profundidade. Isso elevou a pontuação de 7,3 para 54,4.
+
+Mesmo peso, mesmo formato, ensinados de forma diferente. E funcionou tão bem que chegou a envergonhar seu próprio carro-chefe. Em todos os nove benchmarks publicados pela Deepseek, a versão flash 0731 supera o Deepseek V4 Pro, um modelo com 1,6 trilhão de parâmetros e 49 bilhões de parâmetros ativos, sendo 13 bilhões deles superando os 49 do modelo com 1,6 trilhão de parâmetros ativos. Essa é toda a tese da Deepseek, impressa em sua própria tabela. Ele também vem com um módulo de decodificação especulativa acoplado, chamado DSpark. É por isso que a
+
+HuggingFace reporta 304 bilhões de parâmetros para um modelo de 284 bilhões. Cerca de 20 bilhões de modelos preliminares são utilizados para fazer suposições, permitindo que o modelo principal confirme vários tokens simultaneamente, em vez de apenas um. Há mais uma coisa que os dois têm em comum, e é por isso que qualquer um deles funciona. Ambos foram treinados propositalmente com baixa precisão. O K3 armazena 98% de seus pesos compactados em 4 bits. O armazenamento em Flash funciona de
+
+maneira 97% idêntica. Nenhum dos dois é um modelo grande comprimido posteriormente. Eles nasceram comprimidos. Agora a luta no Terminal Bench 2.1. A ficha técnica da Moonshot
+
+classifica o K3 em 88,3. A análise da Deep Seek coloca o Flash em 82,7, ou 5,5 pontos. Caso encerrado? Não. Esses dois números foram produzidos por duas empresas diferentes, que avaliaram seus próprios trabalhos em dois sistemas de segurança diferentes. O sistema de segurança do Deepseek
+
+é descrito em suas próprias notas de rodapé como algo que será lançado em breve. Uma forma educada de dizer que ninguém fora do Deepseek possui essa informação. [bufa] Mas existe uma maneira de verificar e está bem à vista em ambos os documentos. Cada cartão compara seu modelo com os mesmos dois modelos externos, GLM 5.2 e Claude Opus 4.8. Nenhum dos laboratórios
+
+fabricou nenhum desses produtos, então os números devem coincidir. Não. No Terminal Bench, o Moonshot obteve uma pontuação GLM de 5,2 a 82,7. A Deepseek obteve a mesma pontuação de 81,0 no mesmo teste de benchmark para o mesmo modelo. No Opus, a Moonshot indica 84,6. Deepseek
+
+diz 85,0. Os mesmos modelos, réguas diferentes, então meça a diferença em uma moeda. Ambos citam Anchor no Opus. Moonshot coloca K3 3,7 pontos acima dele. O Deepseek coloca o Flash 2,3 pontos abaixo . Isso eleva a diferença para seis pontos, e não cinco
+
+pontos e meio. Agora, use como âncora o GLM. K3 está 5,6 posições acima dele na tabela da Moonshot. O Flash está 1,7 acima dele em buscas profundas. Essa diferença é de 3,9 pontos. Os mesmos dois modelos, o mesmo
+
+parâmetro de comparação, duas respostas defensáveis: 3,9 ou 6. Sinceramente, Kimmy K3 está com uma vantagem de quatro a seis pontos no Terminal Bench. E qualquer fonte que cite uma casa decimal está vendendo uma certeza que ninguém tem atualmente, razão pela qual a única comparação que realmente vale a pena é aquela em que uma terceira parte realizou ambos os testes. Análise artificial realizada nos seis benchmarks que eles publicam, comparando-os diretamente. Navegue por comp, GDP, Val, GPQA, o último exame da humanidade, MCP Atlas, Tulle Athalon, Kimmy K3 ganha todos os seis. A mais larga é a Tulle Athalon, com 73,2
+
+contra 47,8. Um desenvolvedor chamado Filipe executou ambos no mesmo prompt, no mesmo ambiente. Uma única foto de uma página de destino para um objeto conceitual de US$ 10.000. A conclusão dele foi que o K3 venceu no mercado polonês. Melhor
+
+hierarquia tipográfica, espaço negativo mais impactante . Flash acertou na estrutura, no texto e na lógica do layout, mas se perdeu na finalização. É assim que quatro a seis pontos se parecem para o olho humano. Portanto, o K3 é melhor. Isso nunca esteve realmente em dúvida. A questão é: quais são os melhores
+
+custos? E o adesivo é brutal. 21 vezes mais para entrada, 54 vezes mais para saída. Só que o preço de tabela é uma armadilha. Executando o mesmo índice de inteligência, o Flash gerou 210 milhões de tokens de saída. A K3 precisava de 130 milhões. Flash
+
+pensa em voz alta com muito mais frequência. Então, calcule o preço do trabalho em si. 130 milhões de tokens K3 a US$ 15 equivalem a US$ 1950. 210 milhões de tokens Flash a 28 equivalem a US $ 58,80. 33 vezes, não 54. A verbosidade consumiu um terço
+
+da vantagem do Flash. Ainda são 33 vezes. Compare isso com 14% a mais de inteligência medida e você terá todo o argumento econômico em uma única frase. Você não está comprando um modelo melhor. Você está comprando os 14% melhores de um ativo por um preço aproximadamente 30 vezes maior, e mesmo a diferença de sete pontos merece uma ressalva. O Bench LM atribui um índice de
+
+79,9 ao K3, contra 59,9 ao Flash, e observa que seus intervalos de confiança de 90% se sobrepõem. Uma pista que você não consegue separar do ruído é uma pista que vale a pena usar com cautela. A velocidade segue na mesma direção. Análises artificiais indicam que o K3 produz 35 tokens de saída por segundo, com uma espera de 3,9 segundos para o primeiro. Os testes indicaram que a velocidade de flash ficou entre 112 e 118, três vezes mais rápida no modelo que custou uma fração do preço. Há mais uma linha em ambas as
+
+listas de preços. Um acerto em dinheiro reduz o preço do K3 de US$ 3 para US$ 30, um desconto de 10 vezes. Isso reduz o preço do Flash de 14 centavos para um terço de centavo, uma redução de 50 vezes. Se sua carga de trabalho repetir uma mensagem longa, o que acontece com a maioria das cargas de trabalho de agentes, a lacuna aumentará em vez de diminuir. Agora, a parte que decide para a maioria das pessoas que assistem. Você consegue executar estes? Unsloth
+
+quantizou K3 até um único bit. O arquivo tem 594 GB. Você precisa de aproximadamente 610 GB de memória para carregá-lo. O maior Mac Studio que a Apple comercializa possui 512 slots. Ele não consegue abrir a versão menor possível desse modelo. O cenário ideal para o K3
+
+é um nó com 8 GPUs e paralelismo tensorial, que não é uma mesa, mas sim um rack. A memória flash V4 de 1 bit tem 82,5 GB. Unsloth recomenda 110 GB e diz que a Sensible começa em 128 GB. É uma máquina na qual você pode comprar um MacBook Pro ou um cartão de memória de 196 GB para workstation, e as pessoas estão usando. Salvatore Sanfalippo Anti-Rez, o criador do Reddus, construiu um motor dedicado para ele em C chamado DS4 em um M5 Max de 128 GB com 2 bits, pré-carregamento de 87 tokens por segundo e geração de 34 tokens por segundo. em um M3 Max
+
+26. Há uma linha naquele repositório que não sai da minha cabeça . A Anti-res revela que o DS4 foi construído com forte auxílio do GPT 5.5, 5.6 e Claude Fable, com humanos liderando as ideias e a depuração. O motor que liberta um
+
+modelo aberto foi escrito com modelos fechados. Essa é a última diferença, e para uma empresa, talvez seja a única que importa. Deepseek lança versão 4 do Flash sob licença MIT. Faça o que quiser. A Moonshot comercializa o K3 sob a licença Kimmy K3, que, segundo análises de inteligência artificial, tem seu uso comercial restrito. Os detalhes. Se você
+
+oferece serviços de inferência ou ajuste fino e sua receita ultrapassa US$ 20 milhões em qualquer período de 12 meses, você precisa de um contrato separado com a Moonshot. Após atingir 100 milhões de usuários mensais, você deve exibir as palavras Kimmy K3 em sua interface. Isso não é o MIT. E chamar ambos de abertos elimina uma diferença real. Aqui está um pequeno sinal, e também vou te dar a outra metade que argumenta contra mim. O vídeo "Unslaught quantized K3"
+
+está no ar há 5 dias e tem 238 curtidas. A versão flash quantizada está disponível há um dia e já conta com 254 downloads. O K3 ainda apresenta uma vantagem de 41.000 downloads contra 4.000 do K3. Então, ainda é
+
+cedo, mas a versão executável está se destacando na métrica que custa um clique. Em suma, se você estiver acessando uma API e a tarefa for complexa, envolver visão computacional, trabalho de agência profundo e pesquisa extensa, o modelo Kimmy K3 é a melhor opção e justifica seu preço nas tarefas que realmente precisam dele. Para todo o resto, e para qualquer coisa que você hospede por conta própria, o V4 Flash é a resposta, porque é o que se encaixa. Planeje por tarefa, não por classificação. Por padrão, use Flash; utilize K3 somente quando a tarefa realmente justificar . e trate cada tabela de benchmark de fornecedor
+
+como uma reivindicação até que alguém que não construiu o modelo o execute novamente. Esta semana nos deu a prova.

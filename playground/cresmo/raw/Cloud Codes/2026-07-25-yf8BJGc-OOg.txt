@@ -1,0 +1,121 @@
+---
+video_title: "Tailwind v4 + HTMX: A Whole Frontend, No Build, No JS"
+video_id: yf8BJGc-OOg
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yf8BJGc-OOg
+video_date: 2026-07-25T16:30:33+00:00
+video_description: |
+  Are you exhausted by massive Node.js dependency folders, complicated Webpack builds, and React hydration errors? Discover why developers are abandoning heavy SPA frameworks like Next.js and adopting the ultimate "Zero-JavaScript" frontend architecture: HTMX paired with the new Tailwind v4.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  In this video, Cloud Codes breaks down the system design of "HTML over the wire" (Hypermedia-Driven Applications). We explore how HTMX eliminates the need for JSON APIs and React state management by swapping pre-rendered HTML fragments directly over the wire. We also dive deep into the massive speed upgrades of Tailwind v4's new "Oxide" Rust engine—which compiles CSS 182x faster than previous versions, without the need for a JavaScript config file. 
+  
+  We provide the hard receipts from a real-world case study: how a startup completely deleted React, switched to HTMX, dropped their code size by 72%, and improved their Lighthouse performance score from a 34 to a 94. Finally, we give an honest verdict on the "3 Walls" of HTMX—like offline mode and live collaboration (Figma)—where you still absolutely need a heavy framework like React. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The "Zero-JavaScript" Frontend Stack
+  1:23 - What is HTMX? (HTML Over the Wire)
+  2:04 - React JSON APIs vs HTMX Fragments
+  2:42 - Locality of Behavior (Why Developers Love HTMX)
+  3:25 - HTMX 4.0: Native Streaming & View Transitions
+  4:29 - Tailwind v4 Explained: The New Oxide Rust Engine
+  5:32 - 182x Faster CSS Builds (No Config File)
+  6:32 - The Receipts: Deleting 72% of a React Codebase
+  8:02 - The Catch: The "Zero-JS" Asterisk
+  9:00 - The 3 Walls: When You STILL Need React
+  9:54 - Summary: Why Next.js is Overkill for 90% of Apps
+  
+  #htmx #tailwindcss #react #nextjs #webdevelopment #softwareengineering #systemdesign #cloudcodes #javascript #frontend #css #html
+  
+  
+  User Queries: 
+  tailwind v4 new features oxide engine
+  htmx and tailwind tutorial for beginners
+  htmx vs react 2026
+  why developers are leaving next js
+  hypermedia driven application explained
+  what is locality of behavior htmx
+  single page application alternative
+  frontend web development trends 2026
+  htmx 4.0 release native view transitions
+  build a web app without javascript react
+---
+Veja isto. Uma caixa de pesquisa com filtros conforme você digita, uma lista que carrega mais linhas sob demanda, um formulário que salva as informações no mesmo lugar sem recarregar a página. Tudo isso é interativo e funciona ao vivo, e não escrevi uma única linha de JavaScript para que isso acontecesse. A interface principal é composta por duas partes. Uma folha de estilo e uma tag de script.
+
+Tailwind versão 4 e HTMLX. O Tailwind pinta a página, o HTML a faz mover. Você escreve HTML, o servidor envia HTML de volta, e essa troca constitui todo o aplicativo. Duas ressalvas antes de começarmos. A frase "zero JavaScript" contém um asterisco.
+
+E existem três paredes onde essa pilha se interrompe. Primeiro o HTML, não é um framework e não há uma semana de aprendizado. São alguns atributos que você adiciona ao HTML simples. Você coloca hx get equals /messages em um botão. Quando alguém clica, o navegador solicita o URL ao servidor em segundo plano.
+
+O servidor responde com um bloco de HTML. O HTML insere o código na página exatamente onde você o indicou. Sem necessidade de recarregar a página completamente, sem JSON para analisar, e toda a biblioteca tem cerca de 14 kilobytes. Para efeito de comparação, um aplicativo React típico utiliza de 2 a 400 kilobytes de JavaScript. Em seguida, o Tailwind versão 4 realiza o estilo.
+
+Você descreve a aparência com nomes de classe curtos, posicionados ao lado da marcação à qual se aplicam. Aqui está o plano, o que cada ferramenta realmente faz, os resultados de reescritas reais, depois as três paredes e um veredicto direto no final. Então, o que o HTMLX realmente faz? Isso traz de volta a ideia sobre a qual a web nasceu. O servidor envia HTML simples com links e formulários, e o navegador apenas o renderiza .
+
+Não existe uma segunda aplicação em JavaScript que dependa exclusivamente dela. A maior parte disso é composta por quatro atributos. hx get ou hx post indica para onde a requisição será enviada. O gatilho hx indica qual evento o dispara: um clique, uma tecla pressionada ou um envio. `hx target` define qual elemento será substituído, e `hx swap` define como o novo HTML será inserido.
+
+Este último é mais flexível do que parece. Você pode substituir o conteúdo interno de um elemento , trocar o elemento inteiro ou adicionar novas linhas ao final de uma lista. A rolagem infinita se torna um único atributo e um pequeno código no servidor. Aqui está uma caixa de pesquisa real e funcional. HX post para /search, gatilho HX configurado para keyup com um atraso de 500 ms, para que espere até você parar de digitar, e alvo HX apontado para a lista de resultados.
+
+Essa é toda a funcionalidade escrita na marcação. À medida que você digita, o servidor executa a consulta e retorna um bloco de linhas da tabela. O HTML os adiciona à lista. Você não escreveu uma chamada fetch. Não há estado a declarar nem indicador de carregamento a esquecer de desligar.
+
+Carson Gross, criador do HTMX, chama isso de localidade de comportamento. Tudo o que um elemento faz está escrito nesse elemento. Você lê o que um botão envia e o que ele altera. Sem precisar vasculhar cinco arquivos diferentes. Compare isso com um aplicativo React moderno.
+
+Antes mesmo de mexer em uma funcionalidade, você já está gerenciando seis camadas: um metaframework, uma biblioteca de estado, uma biblioteca de busca de dados, um pipeline de compilação, TypeScript e uma configuração de testes. O HTML remove a maior parte disso da interface e não se importa com o que está por trás dela. Qualquer coisa que retorne uma string funciona. Django, Rails, Go, Laravel, Flask, ASP.NET.
+
+Se a sua linguagem consegue imprimir HTML, o front-end já está resolvido. Isso também não é algo marginal. Na pesquisa State of JS de 2025, divulgada em fevereiro deste ano, o React ainda lidera o uso com 83,6%, mas a satisfação com ele continua caindo, e o HTMLX está entre as ferramentas mais admiradas pelos desenvolvedores. E acaba de receber a sua maior atualização em anos. Em abril, foi lançado o HTML5 4.0,
+
+reconstruído com base na moderna API fetch do navegador, substituindo o objeto de requisição de 20 anos que utilizava anteriormente. Essa única mudança possibilita o streaming nativo. O servidor pode enviar sua resposta em partes, e o HTML processa cada fragmento à medida que ele chega, em vez de esperar pela resposta completa. A mesma ideia dos componentes de servidor React, porém em 14 KB. A versão 4 também incorpora duas coisas ao núcleo.
+
+Idiomorfos, que comparam o HTML recebido com o que já está na tela e alteram apenas o que realmente mudou, e transições de visualização nativas, para que as páginas desapareçam e deslizem sem código adicional. Agora, até mesmo as falhas acontecem com elegância. Na versão 4.0, os códigos de status são definidos diretamente no HTML, um código 404 é enviado para um elemento específico e qualquer código 500 é exibido em um banner de erro. Dessa forma, uma requisição com falha mostra um feedback real em vez de uma tela congelada.
+
+Um detalhe que eu adoro. Gross havia prometido publicamente que nunca haveria um HTML 3.0. Assim, a equipe pulou a versão três completamente e lançou a 4.0.
+
+Sua declaração oficial foi uma única palavra: "Ops". Agora, a tinta. Tailwind prioriza a utilidade. Em vez de escrever CSS e inventar nomes de classes, você constrói o design a partir de pequenas classes pré-definidas, como flex, gap-4, text-lg e rounded, diretamente no HTML. Parece confuso até você experimentar .
+
+Você para de alternar entre dois arquivos. Você para de dar nomes às coisas. Você para de percorrer uma folha de estilo, se perguntando se alguma regra antiga ainda está sendo usada em algum lugar. O estilo reside no elemento que ele estiliza, e os mesmos nomes de classe carregam as regras de responsividade e modo escuro . Um prefixo como MD ou dark, e o estilo só se aplica em telas mais largas ou no modo escuro.
+
+Todo o seu sistema de design cabe na marcação, sem necessidade de escrever media queries. A versão 4 repensou a configuração. O antigo arquivo de configuração JavaScript foi removido. Você define cores, fontes e espaçamento diretamente no CSS , dentro de um bloco de tema, e eles se tornam variáveis ​​CSS reais. Uma única linha de importação e funciona.
+
+Por baixo do capô, há um novo motor gráfico chamado Oxide, reescrito em Rust. A versão 3 utilizava Node e PostCSS. Este é um binário nativo e altera os números completamente. Segundo o próprio benchmark do Tailwind, uma compilação completa teve seu tempo reduzido de 378 milissegundos para 100. E uma recompilação sem novas adições passou de 35 milissegundos para 192 microssegundos, isso mesmo, microssegundos.
+
+Isso é 182 vezes mais rápido. A construção deixa de ser algo que você espera . Você salva o arquivo e os estilos já estão na tela antes mesmo de seus olhos voltarem para o navegador. E ele só envia as classes que você realmente usou em qualquer parte do projeto. Uma página de produção completa gera cerca de 18 kilobytes de CSS após a compressão gzip, menor que a versão três que substituiu, e com mais recursos adicionais.
+
+Ainda está se movendo rapidamente. A versão atual, 4.3, de maio, adicionou estilos de barra de rolagem de primeira classe e propriedades mais lógicas. E utiliza o CSS que o navegador executa nativamente. Consultas de contêiner, camadas em cascata, mistura de cores.
+
+Eis o porquê de estes dois pertencerem um ao outro. Ambos estão contidos no seu HTML. O servidor renderiza as classes Tailwind e os atributos HTML no mesmo modelo, em uma única passagem. Não existe um aplicativo de interface separado para manter a sincronização. Assim, a arquitetura consiste em um único loop simples.
+
+O navegador faz uma requisição, o servidor renderiza um fragmento HTML já estilizado com Tailwind. O HTML insere esse fragmento na página. Clique novamente e o loop será executado mais uma vez. Veja o que está faltando nesse ciclo. Sem roteador do lado do cliente , sem API JSON para projetar, versionar e documentar, sem armazenamento que mantenha uma segunda cópia dos seus dados.
+
+O banco de dados permanece como a única fonte de verdade, do início ao fim. E se você já conhece o sistema interno, a curva de aprendizado é praticamente plana. Sem DOM virtual, sem reconciliação, sem ganchos para memorizar. Você depura o código usando a aba de rede do seu navegador, observando o tráfego HTML de ida e volta. Os recibos são válidos?
+
+Considere uma reconstrução de concreto. Em novembro passado, um desenvolvedor reconstruiu um painel de administração React de produção exatamente com essa estrutura e mediu as duas extremidades. A versão em React tinha 3.200 linhas de código, um pacote de 847 kilobytes e um tempo de carregamento de 2,4 segundos. A reconstrução resultou em 890 linhas, um pacote de 14 kilobytes e um tempo de carregamento de 180 milissegundos .
+
+Mesmo aplicativo, mesmas funcionalidades. Isso representa 72% menos carregamento de código, mais de 10 vezes mais rápido. Em um celular 3G com velocidade reduzida, a pontuação de desempenho do Lighthouse subiu de 34 para 94, a diferença entre uma experiência ruim e uma instantânea. Alinhe os pontos de partida . Um exemplo "Hello World" novinho em folha do Next.js
+
+16 inclui cerca de 184 kilobytes de JavaScript antes mesmo de você escrever uma única funcionalidade. O mesmo caractere inicial em branco no HTMLMX é 14. No HTML puro do servidor, é zero. Mais uma vitória que é fácil de passar despercebida. Fragmentos HTML são armazenados em cache de forma eficiente em uma CDN porque são apenas documentos.
+
+O JSON dinâmico é muito mais difícil de armazenar em cache. O servidor renderiza um pouco mais, mas a rede transmite muito menos. O padrão se repete em aplicativos comuns. As equipes que migraram funcionalidades CRUD para essa pilha relatam uma redução de 40 a 60% no código front-end, e a maior parte do código excluído servia apenas para gerenciar o estado que agora reside no servidor. Agora, o asterisco que eu prometi.
+
+Para que eu possa ser preciso. HTML é JavaScript. Esse arquivo de 14 kilobytes é uma biblioteca JavaScript e funciona no seu navegador. O Tailwind, por sua vez, compila tudo para CSS puro, sem nenhum tempo de execução. Portanto, zero JavaScript não significa que o navegador não execute nenhum.
+
+Significa que você não deve escrever nada. Você distribui uma pequena biblioteca estável que raramente é alterada, e o resto é HTML e CSS . Sem framework, sem etapa de compilação para seu próprio código. O que nos leva às três paredes, os locais reais onde você fecha este arquivo e abre o React . Parede um, edição colaborativa em tempo real.
+
+Google Docs, Figma, uma página do Notion com dois cursores se movendo simultaneamente. Isso requer que o estado do cliente seja medido em microssegundos. Um tempo de resposta de 200 milissegundos a cada pressionamento de tecla é inaceitável. Parede dois, offline. O HTMLX precisa de um servidor ativo para cada interação.
+
+Sem conexão, sem aplicativo. Se sua ferramenta precisa continuar funcionando em um avião ou metrô, o estado precisa residir no cliente, e esse é o domínio do React . Parede três, interação intensa com o cliente . Telas com recurso de arrastar e soltar, interfaces baseadas em animações, gestos complexos, desenvolvimento nativo para dispositivos móveis com React Native. Quando a própria interação é o produto, você precisa de um ambiente de execução de cliente real, mas a maioria das equipes ignora essa medida óbvia.
+
+Não é uma questão de "ou um ou outro". O GitHub renderiza HTML puro para quase tudo e usa JavaScript apenas onde ele se justifica , como no editor de código. Ilhas de interatividade em um mar de HTML. Portanto, tenha uma visão realista do que você está construindo. A grande maioria da web consiste em criar, ler, atualizar e excluir.
+
+Você clica em um botão, algo muda no servidor e uma parte da página é atualizada. Esse é todo o trabalho. Para isso, que representa a maior parte do que qualquer um de nós envia, essa pilha de tecnologias é mais rápida para escrever, dramaticamente mais rápida para carregar e, simplesmente, exige muito menos manutenção. O servidor executa a função para a qual tem sido eficiente há décadas. Dois arquivos, uma tag de script que você quase não altera e nenhum código JavaScript que você precise escrever.
+
+Aprenda onde estão as três paredes e você recorrerá a uma estrutura pesada com muito menos frequência do que hoje. Códigos em nuvem, onde desmontamos tudo e entregamos a você a solução pronta e funcional que realmente funciona.

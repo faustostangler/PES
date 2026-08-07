@@ -1,0 +1,135 @@
+---
+video_title: "MTP: The Trick That Makes LLMs 85% Faster (Speculative Decoding)"
+video_id: wgDryFT9ZXI
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=wgDryFT9ZXI
+video_date: 2026-08-04T12:00:07+00:00
+video_description: |
+  Is your expensive H100 GPU actually sitting idle while your AI models generate tokens? Discover the architectural secret behind Multi-Token Prediction (MTP)—the machine learning trick that trains small, embedded draft heads to predict multiple tokens at once, forcing your massive LLM to verify several words in a single forward pass.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this system design breakdown, we expose the reality behind the "85% faster" MTP headline. We analyze how Google's Gemma 4 and DeepSeek-R1 use MTP to achieve up to 3.8x faster inference speeds on NVIDIA hardware using vLLM—but only under strict conditions. We dive deep into the 4 fatal flaws of speculative decoding: why instruction-tuning destroys base-model draft acceptance, why batch sizes over 64 turn MTP into a massive slowdown, the brutal reality of the 100k context window "half-life," and why MTP tanks Time-To-First-Token (TTFT) latency by 800%.
+  
+  If you found this technical deep-dive into AI hardware scaling, software architecture, and LLM inference optimization helpful, drop a like and subscribe for more content on backend engineering and system design!
+  
+  📚 Papers & Resources
+  • Better & Faster Large Language Models via Multi-Token Prediction (Meta)
+  https://arxiv.org/abs/2404.19737
+  • DeepSeek-V3 (Official Repository)
+  https://github.com/deepseek-ai/DeepSeek-V3
+  • vLLM (Official)
+  https://github.com/vllm-project/vllm
+  • NVIDIA TensorRT-LLM (Official)
+  https://github.com/NVIDIA/TensorRT-LLM
+  • SWE-bench Leaderboard
+  https://www.swebench.com/
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The GPU Bottleneck (Why H100s Sit Idle)
+  01:03 - Multi-Token Prediction (MTP) Explained
+  02:12 - The MTP Drafter: DeepSeek, Qwen3 & Nemotron
+  03:35 - Google Gemma 4 MTP & vLLM Benchmarks
+  04:52 - Condition 1 & 2: Base Models & Batch Size Saturated GPUs
+  06:11 - Condition 3 & 4: Deep Drafts & Long Context Decay
+  07:27 - The Law of Inference: Bandwidth vs Bytes
+  08:28 - FastMTP & AngelSpec: The Next Generation of Drafters
+  09:03 - The Final Verdict on MTP Claims
+  
+  🔗 Resources Mentioned:
+  vLLM Inference Engine: https://github.com/vllm-project/vllm
+  Google Gemma 4: https://huggingface.co/google
+  DeepSeek Models: https://huggingface.co/deepseek-ai
+  Qwen Models: https://huggingface.co/Qwen
+  
+  #mtp #speculativedecoding #localllm #machinelearning #gpu #artificialintelligence #systemdesign #softwareengineering  #cloudcodes
+  
+  User Queries:
+  multi token prediction mtp vs speculative decoding explained
+  how to run gemma 4 mtp vllm local inference
+  fix slow vllm time to first token ttft mtp
+  deepseek r1 multi token prediction benchmark
+  why is llm inference memory bound h100 gpu
+  how does speculative decoding draft head work
+  qwen3 next vs nemotron 3 super mtp architecture
+  long context window performance degradation mtp
+  fastmtp tencent angelspec speculative decoding
+  how to quantize llm draft head down to 2 bit
+---
+O chip que está gerando sua resposta neste momento está praticamente ocioso enquanto processa a informação. Não quebrado, não sufocado, faminto. Durante a decodificação, um transformador realiza aproximadamente de uma a dez operações aritméticas para cada bit lido. Um H100 precisa de cerca de 600 antes que suas unidades matemáticas fiquem ocupadas. Assim, a maior parte desse silício evapora. O motivo
+
+é o formato da obra. Para gerar um token, a GPU lê todos os pesos do modelo. Em seguida, repete o processo para o próximo token. Um token removido, uma passagem completa por todo o modelo a cada vez. 7 bilhões de pesos em 16 bits equivalem a 14 gigabytes. Um A10 transfere 600 GB por segundo.
+
+Dividindo, obtemos 23 milissegundos por token, um número sobre o qual a inteligência do modelo não teve qualquer influência. Portanto, uma solução é óbvia. Mover menos bytes. Isso é quantização. E você já sabe como essa história termina. Quatro bits em vez de 16. Quatro
+
+vezes menos bytes na rede e aproximadamente quatro vezes mais tokens. A segunda correção é mais estranha. Mova os mesmos bytes, mas faça com que cada viagem pague dois tokens em vez de um. Isso é MTP de previsão de múltiplos tokens. E o número gravado em cada rosca é 85%, exceto que 85% nunca foi uma velocidade. Ao
+
+retornar à fonte, descobre-se que se trata de uma taxa de acerto. A Deepseek fez essa medição em dezembro de 2024. O modelo deles adivinhou o token seguinte, e esse palpite se manteve após a verificação em 85 a 90% das vezes. Uma taxa de acerto tão alta comprava 1,8 vezes mais tokens por segundo. Mesmo modelo, mesmas GPUs, mesmas respostas. O mecanismo
+
+é mais antigo que o número. Um algoritmo de palpite rápido e barato propõe os próximos tokens, e toda a proposta é enviada ao modelo real em uma única passagem direta. O modelo principal verifica todos os resultados de uma só vez, mantém a sequência mais longa correspondendo ao que teria indicado e descarta o restante. A verificação é o que garante a segurança. A verificação custa o equivalente a uma única viagem pela rede, que por sua vez custa o mesmo que um único token, e um token aceito precisa corresponder à distribuição do alvo . Você não está trocando
+
+precisão por velocidade. Você está utilizando recursos computacionais ociosos pelos quais já pagou. O que levanta a questão de onde veio esse palpite, e se ele surgiu por acaso. A previsão de múltiplos tokens começou como um truque de treinamento. A Meta publicou isso no final de abril de 2024. E o foco
+
+não era a velocidade. O fato é que os modelos treinados dessa maneira se tornam mais inteligentes. Preveja os próximos quatro tokens em vez de um e você fornecerá ao modelo quatro sinais de supervisão por posição. A versão de 13 bilhões de cálculos do Meta resolveu 12% mais problemas de avaliação humana e 17% mais problemas de MVP (Produto Viável Mínimo) do que o mesmo modelo treinado normalmente. A velocidade era até três vezes maior, como nota de rodapé. A
+
+Deepseek levou essa nota de rodapé a sério, remodelando a cabeça extra em uma cadeia causal, um pequeno bloco transformador que lê o estado oculto do modelo principal e incorpora o embedding do próximo token para prever o seguinte. Treine-o juntamente com o modelo. Reutilize-o como desenhista. Portanto, o programa de desenho deixou de ser um download separado. Ele é enviado dentro do posto de controle. Abra o arquivo de configuração de um modelo
+
+. Encontre o campo chamado num next end predict layers. E esse número inteiro indica quantas fichas futuras vieram na caixa. Zero significa nenhum. A partir daí, é disseminado pelos laboratórios de peso livre. QN3. O Next treina seu
+
+caminho MTP para elaboração de várias etapas propositalmente. A versão 3.5 do flash envia três cabeças e chama isso de MTP3. O Neatron 3 Super da Nvidia treina duas camadas que compartilham um conjunto de pesos, permitindo que a cabeça de processamento execute o processamento recursivamente. Veja o que esse compartilhamento compra no benchmark da Nvidia . O Neatron 3 Super aceita 3,45
+
+tokens por etapa de verificação com um rascunho de tamanho 7, contra 2,7 do Deepseek R1 e 3,33 do QIN 3. Além disso, há um token extra de alcance, mas isso ainda era algo específico da Frontier Lab. O que transformou o MTP em um botão que qualquer um podia apertar foi o Google. Gemma 4 foi lançado em 2 de abril de 2026. Quatro tamanhos, Apache 2 e, segundo a própria contagem do Google, 60 milhões de downloads em semanas. 33 dias depois veio o segundo
+
+lançamento. No dia 5 de maio, o Google disponibilizou os processadores MTP para todos os quatro tamanhos do Gemma 4, checkpoints complementares que compartilham a tabela de incorporação de destino e leem suas ativações da última camada. A solicitação foi processada até três vezes mais rápido, sem perda de qualidade, e a infraestrutura foi instalada em horas, não em trimestres. Um engenheiro do Google abriu a solicitação de pull request do VLLM às 4 da tarde UTC. Um usuário desconhecido com um DGX Spark realizou testes de desempenho e registrou dois relatórios de erros até as 6 da tarde. Um dos responsáveis ​​pela manutenção aprovou
+
+a alteração antes das 10 da noite. Portanto, a questão deixou de ser se o MTP funciona e passou a ser quanto ele compra em hardware que você pode alugar. O laboratório Jarvis Labs realizou esse teste em um único H100 com VLLM e o SpeedBench da Nvidia . 880 perguntas em 11 categorias foram executadas com decodificação gulosa. Gemma 431B denso, uma solicitação por vez, 40,3 tokens por segundo sem um desenhista, 125,3 com um, 3,11 vezes o tempo por token de saída caiu de 24,4 milissegundos para 8, mas a média esconde a parte interessante: a execução por categoria e programação resulta em 3,82 vezes, matemática em 3,37, raciocínio em 3,09 e escrita criativa em 1,96. O modo de jogo de interpretação de papéis, o pior,
+
+obteve 1,56, que é exatamente o que se esperaria se a aceitação fosse o fator determinante. A sintaxe e os nomes das variáveis ​​são previsíveis. Um parágrafo aberto tem uma dúzia de palavras seguintes razoáveis; o autor escolhe uma, e o leitor discorda. A previsibilidade é o produto que você está comprando. Agora, o título número em um desktop DGX Spark, Gemma 4's 26B mixture of experts in 8bit rodou 40.85 85 tokens por
+
+segundo. Adicione o jogador que realiza o draft com dois tokens especulativos e o tempo de resposta sobe para 74,51, 82% mais rápido. Dois sistemas não relacionados, com 17 meses de diferença, aterrissam na mesma faixa de frequência. Uma taxa de acerto de 85% na profundidade 2 compra cerca de 80% mais tokens por segundo. Aumente o número de tokens especulativos na área de trabalho para quatro e ele atingirá 108,78 2,66 vezes, escalando lateralmente. Com
+
+oito usuários simultâneos, o mesmo computador processou um total de 674 tokens por segundo, com cada usuário visualizando 84. Oito pessoas em um mesmo computador e cada uma percebendo o dobro da velocidade que um único usuário obtinha com o recurso de desenho desativado. Portanto, a atitude óbvia é ligá-lo em todos os lugares, e é aí que isso deixa de ser um comercial. Quatro condições específicas tornam essa funcionalidade mais lenta, e três delas não estão documentadas nos locais onde você esperaria procurar. O primeiro custou meio dia de trabalho a um engenheiro. Mesmo projetista, mesma
+
+arquitetura, mesmo hardware, mas com foco em um ponto de verificação básico em vez de um ponto de verificação otimizado por instruções. A taxa de transferência de tokens em linha de base foi de 41,25 tokens por segundo, com o MTP ativado, chegando a 25,37 tokens por segundo, uma redução de 38%. A causa não consta em nenhuma nota de lançamento. O programa de edição de código do Google foi treinado com base na distribuição de saída do modelo ajustado por instruções, que apontava para os pesos básicos, e os logits que ele aprendeu a imitar não estão presentes. A aceitação desmorona e o passe para frente do desenhista se torna um passe por cima da cabeça.
+
+Segunda condição: outras pessoas. Uma equipe de IA para documentos da Reducto aumentou a simultaneidade de 1 para 256 em um modelo de 9 bilhões de documentos em apenas uma hora. MTP1 sob carga baixa e moderada em todas as cargas de trabalho. Entre 64 e 80 requisições simultâneas, o serviço falhou em todas elas. O perfilador deles mostra o porquê. De 128 requisições simultâneas para
+
+256. O processamento de rascunhos ficou 42% mais caro, de 62 milissegundos para 88. A verificação quase triplicou, de 427 para 1272. Com um tamanho de lote de 1, a GPU fica sobrecarregada e a especulação preenche a lacuna com trabalho gratuito. Com um lote de tamanho 64, já está saturado. Assim, conferir uma pilha de palpites
+
+deixa de ser gratuito e passa a ser a conta. O VLLM envia um sinalizador para desativar a especulação acima de um limite de lote. Mas a escotilha de escape tem um buraco. Em 23 de julho, um engenheiro registrou um problema no VLLM com especulação de que ele se desativaria a partir do lote 4. O número de requisições simultâneas caiu de 232 tokens por segundo para entre 24 e 157. O problema ainda está em aberto. Terceira condição:
+
+ganância. Propor mais tokens parece que deveria significar mais velocidade na concorrência 32. Rascunhos de um e dois tokens. Avançou duas e 2,9 posições por verificação. Quatro drafts de tokens avançaram por 3,2 a quatro.
+
+16 avançaram da mesma forma. As propostas adicionais foram rejeitadas e não eram gratuitas. A taxa de aceitação de rascunhos caiu para 27% e depois para 13%. De um token de rascunho para 16, a taxa de transferência da tabela caiu de 2486 por segundo para 607, e a latência de 9 segundos para 35. É possível observar o mesmo colapso em um único monitor. No Gemma 4 12B drafter, a
+
+aceitação de tokens em texto livre é de 0,8 na profundidade 1, 0,54 na profundidade 2 e 0,43 na profundidade 3. Cada passo adicional é uma questão de sorte, com probabilidades piores. Quarta condição: sua própria conversa. Em uma RTX Pro 6000 rodando Gemma 431B, a especulação gerou 52,5 tokens por segundo em um contexto vazio. Com 50.000 fichas
+
+históricas, 27 com 100.000, 19,1 contra 18,4, um empate técnico. Com 120.000 tokens, a especulação foi mais lenta, 16,6 contra 18. A vantagem tem uma meia-vida medida no seu cache KV. Toda longa execução de agentes
+
+percorre essa curva, e a flag que você ativou no início acaba jogando contra você no final. Existe também um custo que nunca aparece em um gráfico de tokens por segundo. Nesse teste H100 com 16 requisições simultâneas, o tempo até o primeiro token passou de 192 milissegundos para 1551. Digitação mais rápida, maior tempo de silêncio antes do início da digitação e a margem de erro sem perda de dados é menor do que a indicada no título. O próprio teste Gemma 4 MTP da VLLM exige que 80% dos prompts produzam resultados idênticos e que a precisão matemática do ensino fundamental permaneça acima de 80% (semelhante sem perda de dados, não idêntico em detalhes), o que é importante se você armazenar em cache strings. Assim, por trás de quatro
+
+modos de falha diferentes, existe uma lei, e é a lei que rege a quantização. Tokens por segundo é a largura de banda dividida pelos bytes transferidos por passagem, dividida pelo número de passagens necessárias por token. A quantização ataca o termo médio. O MTP ataca o último. Portanto, eles se multiplicam. Na mesma plataforma DGX Spark, a
+
+de 4 bits processou 30,23 tokens por segundo, enquanto a de 8 bits processou 40,85, uma diferença de 30% apenas devido à quantização . Adicione o desenhista. 76,88 e 108,78. A lacuna persiste. Os dois botões também interagem a seu favor de uma forma que surpreendeu a pessoa que fez a medição . Um desenvolvedor reduziu a resolução do cabeçalho de rascunho do Gemma 4
+
+de 8 bits para dois em uma GPU de laptop de 8 GB e a taxa de aceitação caiu de 55% para 49%. O cabeçalho é praticamente insensível à resolução em bits. É nessa lacuna que reside a receita. Requantizar o cabeçalho publicado para seis bits. Reduza a alocação de solicitações paralelas para uma, liberando o orçamento KV, e um modelo de 12 bilhões em um cartão de 8 gigabits passará de 27,4 tokens por segundo para 40,4 sem perdas em um laptop. Mas
+
+existe uma linha que você não deve cruzar. No momento em que o modelo deixa de caber na VRAM, o descarregamento total simples supera todas as configurações MTP que ele tentou. Trocar camadas por uma cabeça de draft é uma jogada perdedora. E no Windows, o driver não apresenta erros. Isso se espalha pela memória compartilhada e ocupa 30%. A última reviravolta é que o MTP tradicional
+
+já é o que está sendo superado. Um artigo chamado fast MTP retreinou uma única cabeça compartilhada para corresponder à forma como ela é realmente usada na inferência e obteve um desempenho 2,03 vezes melhor do que a decodificação simples, superando o MTP tradicional em 82%. No final de julho, a Tencent tornou público o código-fonte da estrutura que realiza isso em grande escala. A Angel Spec eleva a taxa média de aceitação dos cabeçalhos MTP de 52,8% para 66,4%. A primeira posição do rascunho praticamente não se altera.
+
+O terceiro valor passa de 0,29 para 0,71. E o seu programa de draft paralelo em blocos supera o MTP de forma absoluta, com 4,79 tokens aceitos por passo contra 3,0 na variante de especialistas mistos da Gemma 4 . Um programa de difusão em blocos já superou os 306 tokens por segundo do próprio Google, contra 264. Portanto, o veredicto é menos impactante do que a manchete sugere e mais útil. MTP é o primeiro truque de toda uma classe. O desenhista agora é um
+
+componente integrado ao modelo fornecido com os pesos, e mais de 20 famílias de modelos já o incluem somente na VLLM . O próximo chegará da mesma forma. O que permanece é a forma de interpretar a afirmação. 85% foi a taxa de acerto. Velocidade é o que uma taxa de acerto proporciona em uma determinada profundidade, com o tamanho do lote, o comprimento do contexto e a quantidade de bytes por peso. Leia o
+
+número de aceitação e você poderá prever o aumento de velocidade antes de baixar o arquivo.

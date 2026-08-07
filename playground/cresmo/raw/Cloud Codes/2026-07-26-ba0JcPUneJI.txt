@@ -1,0 +1,113 @@
+---
+video_title: "Nativ vs MLX: The New Way to Run Frontier Models Locally on Mac"
+video_id: ba0JcPUneJI
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ba0JcPUneJI
+video_date: 2026-07-26T16:30:19+00:00
+video_description: |
+  Are you tired of paying massive API bills to use AI coding agents like Claude Code? Discover Nativ, a brand new, MIT-licensed open-source app that allows you to run frontier open-weight models (like Gemma 4, Cohere, and Liquid AI) entirely locally on your Apple Silicon Mac. 
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of Nativ and why it is outperforming popular local runners like LM Studio and Ollama. We explore how Nativ leverages Apple's Unified Memory architecture and the MLX VLM framework (built by Nativ's creator) to achieve 2x faster token generation speeds than traditional `llama.cpp` builds. 
+  
+  We dive deep into Nativ's killer features: running multi-modal Vision and Audio models natively, tracking real-time GPU/RAM bottlenecks with live metrics, and seamlessly wiring your local models directly into Claude Code via Anthropic's v1 messages endpoint. Finally, we provide an honest reality check: what "Frontier" actually means for open-weight models, and why you still need 32GB+ of RAM to run the giants.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Free Local AI Machine (Nativ)
+  1:12 - Why Macs Dominate Local AI (Unified Memory)
+  2:22 - MLX VLM: Beating `llama.cpp` on Speed
+  3:12 - Inside Nativ: Multimodal Chat & Live GPU Metrics
+  5:19 - System Design: Wiring Local Models to Claude Code
+  6:53 - The Models: Gemma 4, Cohere 30B & LFM2.5
+  8:48 - The Honest Catch: Nativ vs LM Studio vs Ollama
+  9:38 - What "Frontier" Actually Means in Open Source
+  10:20 - Summary: The Death of the API Bill
+  
+  #localai #apple #macbook #artificialintelligence #systemdesign #softwareengineering #machinelearning #cloudcodes #ollama #mlx #claudecode
+  
+  User Queries:
+  how to run local ai on mac m3 m4
+  nativ app vs lm studio ollama
+  apple mlx vlm framework tutorial
+  claude code local model proxy anthropic endpoint
+  gemma 4 vision model local mac
+  cohere north mini code benchmark
+  best open source ai app for mac 2026
+  unified memory apple silicon local llm
+  how to run an ai agent without api keys
+  system design local inference speed
+---
+Veja isto. Um modelo aberto de vanguarda rodando em um MacBook. Sem nuvem, sem chave de API, sem conta para fazer login. Isto é nativo. Ele executa modelos de IA abertos localmente no seu Mac e foi lançado há apenas 3 dias . Cada token que você está visualizando é
+
+gerado na própria máquina. Nada sai do laptop. Essa é toda a proposta. Foi desenvolvido por Prince Kanuma, a pessoa por trás do MLX VLM, a biblioteca que executa modelos de visão em um Mac. Aponte um agente de codificação para ele. Código Claude,
+
+Codex, código aberto, todos se comunicando com um modelo em seu próprio hardware. A notícia surgiu no Hacker News e atingiu 375 pontos em um único dia. As pessoas perceberam. Gratuito, de código aberto, licenciado pelo MIT, sem assinatura, sem necessidade de comprar créditos, nenhum dado é coletado jamais. E é realmente rápido por causa de uma coisa que a Apple fez no Mac que a maioria das pessoas nunca leva em consideração. A
+
+pegadinha, e existe uma, está escondida dentro da palavra "fronteira". Chegaremos lá , com certeza. Converse com ele, atenda-o, acompanhe suas estatísticas, integre-o às suas ferramentas, tudo a partir de um pequeno aplicativo nativo. Se você tiver um Mac com processador Apple Silicon, poderá executar isso hoje mesmo. Deixe-me mostrar como funciona. Eis o plano. Por que o
+
+Mac é bom nisso, o que o sistema nativo realmente faz e onde ele deixa a desejar. Comecemos pelo hardware, pois é ele que torna tudo isso possível. Um PC para jogos armazena o peso de seus componentes na memória dedicada da placa de vídeo, a VRAM, e mesmo uma placa de vídeo de alto desempenho chega a ter, no máximo, 24 GB. Se você carregar um modelo maior do que esse, ele simplesmente não funcionará. Esse número é um obstáculo intransponível. O Apple Silicon
+
+não funciona dessa maneira. Em um chip da série M, o processador, a placa gráfica e o mecanismo neural não possuem memórias dedicadas. Eles compartilham uma grande piscina. A Apple chama isso de memória unificada. E para executar modelos localmente, isso mudou toda a situação, mesmo que esse não fosse o objetivo inicial ao projetá- lo. Eis o que isso significa na prática.
+
+Em um Mac, sua RAM é sua VRAM. Um MacBook de 64 GB pode acomodar um modelo de cartão de memória que um cartão de jogos de 24 GB não comporta fisicamente. Um modelo com 70 bilhões de parâmetros, que faria uma GPU de computador de desktop rodar sem problemas, simplesmente carrega e executa. O mesmo dinheiro, um teto completamente diferente, e compartilhar a mesma piscina tem uma segunda vantagem que as pessoas esquecem. Em um PC, o chip gráfico precisa copiar os pesos através de um barramento lento antes de poder acessá-los. Em um Mac,
+
+eles já estão lá. Sem cópias, sem esperas, e essa viagem salva aparece como velocidade gratuita em cada ficha gerada pelo modelo. Acima do hardware está o MLX, a estrutura de aprendizado de máquina própria da Apple, escrita especificamente para este chip. É o motor gráfico que a maioria dessas ferramentas para Mac usa atualmente, e no Apple Silicon ele supera a opção multiplataforma usual, llama.cpp, em cerca de 30 a 50%. Isso
+
+não é um erro de arredondamento. Quer um número concreto? Quando a Ollama migrou seu backend para Mac com o MLX em março, a velocidade de decodificação em Macs compatíveis saltou de cerca de 58 tokens por segundo para 112. Mesmo laptop, mesmo modelo, quase o dobro da velocidade simplesmente por usar o mecanismo correto por baixo dos panos. E a MLX tem mais um truque que importa aqui. Ele executa modelos de visão, áudio e vídeo
+
+nativamente, não apenas texto. Essa é a única razão pela qual o código nativo consegue fazer coisas que um programa que usa apenas texto simplesmente não consegue, e é o elemento que une todo o aplicativo . Então, esse é o cenário: um Mac capaz de suportar modelos grandes e uma estrutura que os executa de forma rápida e multimodal. O Native é o aplicativo que reúne tudo isso em
+
+uma única janela nativa, que você pode deixar aberta o dia todo: bate-papo, monitoramento e conexão com agentes. E é baseado no MLX VLM, a mesma biblioteca que o próprio Kanuma mantém. Isso importa mais do que parece. Não se trata de uma mera camada protetora aplicada sobre o tempo de execução de outra pessoa. A pessoa que projetou o motor projetou o carro em torno dele. Quando o
+
+modelo apresenta mau funcionamento, um único autor pode corrigir ambas as partes. Ao executá-lo pela primeira vez, ele realiza uma ação atenciosa. Ele verifica o cache do seu site Hugging Face. Todos os modelos MLX que você já baixou aparecem na biblioteca, prontos para conversar, sem precisar baixar nada novamente. Willison considerou isso um toque de classe, e depois de anos de ferramentas que ignoram seus arquivos existentes, ele tem razão. A conversa em si é
+
+propositalmente previsível, o que considero um elogio. Respostas em tempo real conforme o modelo digita, Markdown adequado, realce de código preciso, e você pode arrastar uma imagem diretamente para a caixa e perguntar sobre ela porque os modelos abaixo realmente a enxergam. Mas eis aqui a parte que ninguém esperava de um aplicativo na versão 0.0.1.
+
+Enquanto o modelo está processando as informações, o Native mostra o que seu Mac está realmente fazendo sob carga. Não é um indicador giratório, são números reais atualizados ao vivo várias vezes por segundo. Tokens em tempo real por segundo, para que você possa sentir um modelo acelerar ou ficar mais lento. Pressão da memória, para que você saiba quando está prestes a ficar sem. Estado térmico, tempo até o primeiro token.
+
+Esta é a leitura que indica claramente se um modelo tem o tamanho certo para sua máquina. Essa última é subestimada. A parte mais difícil de executar modelos localmente é adivinhar o que realmente funcionará. O Native transforma essa estimativa em um indicador que você pode acompanhar, e só isso já evita uma dúzia de tentativas de carregamento malsucedidas e um laptop muito quente e irritado. Mais um pequeno luxo.
+
+É um aplicativo Mac de verdade, não uma aba de navegador fingindo ser um. Controles da barra de menus, janelas nativas. Começa rápido e não atrapalha . Após uma década de ferramentas locais de IA que pareciam experimentos científicos, esse nível de refinamento conta muito. Agora, a funcionalidade que transforma o Native de um bom aplicativo de bate-papo em algo que você pode desenvolver.
+
+Ele não apenas se comunica com você, como também executa um servidor local diretamente em sua máquina, utilizando as mesmas APIs que suas outras ferramentas já esperam. Ative a opção na barra de menus e seu Mac se transformará em um sistema de inteligência artificial. Primeiro, ele fala OpenAI. O recurso de autocompletar chats, a API de respostas, uma lista de modelos e até mesmo endpoints de imagem e áudio permitem que qualquer aplicativo, script ou extensão criada para acessar o OpenAI seja direcionada para o seu computador. Você altera apenas um URL base.
+
+Então, faz algo que eu realmente gosto. Ele também utiliza o Anthropic, um endpoint de mensagens V1 adequado, exatamente no formato que o código Claude foi desenvolvido para fazer chamadas. A maioria dos corredores locais simplesmente ignora essa prova. O nativo o trata como um cidadão de primeira classe. Imagine a seguinte situação . Você executa o código Claude, o
+
+agente de codificação de terminal próprio da Anthropic, e o direciona para um modelo em execução no seu Mac. Ele edita, executa e corrige, completamente alheio ao fato de que o cérebro que o controla está localizado no seu próprio SSD, em vez de um centro de dados. Esse truque ainda me faz sorrir. E não é apenas o código Claude, Codex, Pi, Hermes, Open Code, Native escreve a configuração e executa cada um deles em seu modelo local. Todo o seu loop de edição e correção, a parte que consome mais tokens, agora é executado em hardware que você já pagou.
+
+Se você já viu a fatura da API subir durante uma longa refatoração, com cada nova tentativa, cada arquivo enorme, cada retrabalho custando dinheiro de verdade, essa única funcionalidade é o principal motivo para levar isso a sério. Local significa que o medidor para de funcionar. Um corredor só é tão bom quanto a carga que você consegue colocar nele. Então vamos falar sobre modelos. A Native exibe três exemplos em sua página inicial, e juntos eles explicam exatamente para que serve essa ferramenta, que não é exatamente o foco da maioria das ferramentas locais . Primeiro, o Google Gemma 4.
+
+A versão E2B compacta tem cerca de 10 GB, comporta 128.000 tokens de contexto e é nessa parte que ele lida com visão e áudio, não apenas com texto. Um modelo de 10 GB que consegue visualizar e ouvir comandos em um laptop. Em segundo lugar, o Mini Código Cohere North. Este é um modelo de codificação real , com 30 bilhões de parâmetros no papel, mas uma combinação de projetos de especialistas que ativa apenas cerca de 3 bilhões por vez. Portanto, o raciocínio se comporta como algo grande,
+
+enquanto o carregamento e a execução se comportam como algo pequeno. A Cohere enviou o produto totalmente aberto em junho. A Cohere o construiu para competir de igual para igual com modelos abertos muito maiores em benchmarks de codificação, SWE-bench e tarefas de terminal, mantendo-se competitivo e, ao mesmo tempo, sendo muito mais econômico. Num Mac com memória suficiente, você tem um cérebro de programação realmente capaz que permanece inteiramente na sua mesa. Terceiro, o LFM-2 da Liquid AI. Five, um minúsculo
+
+modelo Vision de 3 GB que cabe em praticamente qualquer Mac com chip Apple Silicon, até mesmo nos modelos básicos. Texto, imagens e vídeo, tudo em um arquivo menor que o download de um filme. Esse é o limite inferior da faixa de valores, e é surpreendentemente útil. Consegue perceber o padrão? Pequena e multimodal, de médio porte e inteligente, e especialista em código. A maioria dos
+
+corredores locais te entrega a mensagem e para por aí. O Native prioriza recursos de visão, áudio e vídeo porque a biblioteca MLX VLM subjacente foi projetada exatamente para isso desde sua concepção. E não se trata apenas de modelos de bate-papo. O Native também executa modelos de incorporação, os principais mecanismos por trás da busca e recuperação de dados. Assim, você pode construir uma base de conhecimento privada que não envia um único documento para ninguém. Trata-se de
+
+uma categoria inteira de aplicativos que funciona totalmente offline no seu computador. OK. Prometi que seria sincero com vocês, então vamos direto às críticas, porque o Hacker News não se conteve, e este vídeo também não deveria. A pergunta mais ouvida foi direta: "Não é simplesmente o LM Studio ou o Ollama?" E, de fato , executar modelos abertos localmente em um Mac não é novidade. A página inicial da Native
+
+se esforçou um pouco demais para ser a primeira, e o público percebeu isso em poucos minutos. Então, o que é realmente diferente? É estreito, mas é real. Multimodal nativo através do MLX VLM, onde a maioria dos executores prioriza o texto. Um endpoint antropológico integrado para o código Claude.
+
+E é totalmente de código aberto sob a licença MIT. A LM Studio, a concorrente mais próxima em termos de qualidade, não é. E depois há a palavra que está bem no título: fronteira. E é aqui que eu preciso ter cuidado, porque o público do Hacker News também teve cuidado . Eles reagiram com veemência a essa questão.
+
+Você não está executando o GPT-5, o Claude Opus ou o modelo mais potente da Gemini em um laptop. Esses pesos estão trancados em um cofre que você não pode baixar. Aqui, "fronteira" significa os melhores modelos abertos: Gemma, Cohere, Liquid, Quinn. E por melhores que esses modelos tenham se tornado, eles ainda ficam atrás dos principais laboratórios fechados. Essa diferença é real e fingir o contrário seria mentir para você. É realmente muito
+
+cedo. A versão 0.0.1 foi lançada há 3 dias. É necessário o macOS 26 e a verdade incontestável sobre a IA local.
+
+Uma modelo de grande porte quer um Big Mac. 32-64 GB de memória unificada, mesmo nos modelos maiores, são suficientes para uma experiência confortável. Em um computador com 8 GB de RAM, você fica com pouca memória. Então, para quem é realmente destinado? Se você possui um Mac com processador Apple Silicon e se preocupa com a privacidade, trabalha offline ou simplesmente está cansado de pagar por token para realizar iterações, esta é uma das formas mais simples de começar a usar o software atualmente, pois, ao executá-lo em sua máquina, ele se torna seu.
+
+O modelo, os dados, a fatura, nada é enviado para fora da empresa, nenhum comando é registrado no servidor de terceiros. Para uma quantidade surpreendente de trabalho real, um bom modelo aberto no seu próprio Mac já ultrapassa o nível de "bom o suficiente". Não vai superar os laboratórios de tecnologia de ponta nos problemas de raciocínio mais difíceis, e nem pretende fazê-lo. O que ele faz é colocar uma quantidade significativa de informações valiosas à sua disposição, de forma privada, offline e gratuita, e depois sair do seu caminho para que você possa desenvolvê-las. O Native tem apenas 3 dias e já recebeu essa resposta da pessoa que escreveu o motor gráfico em que ele roda. Então, pegue o programa, carregue um modelo,
+
+configure seu agente para acessar o localhost e veja até onde seu Mac pode te levar. Acho que você vai se surpreender.

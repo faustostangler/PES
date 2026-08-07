@@ -1,0 +1,193 @@
+---
+video_title: "AI Got 22,000x Bigger Here's What Actually Changed"
+video_id: CvJVRxKd758
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CvJVRxKd758
+video_date: 2026-07-30T12:00:12+00:00
+video_description: |
+  Have you ever wondered how large language models scaled 22,580x from GPT-2 (124M) to Kimi K3 (2.8 Trillion)? It wasn't just parameter count—it was a complete redesign of how LLMs handle memory. Discover how standard Transformer attention built massive, bloated KV caches that bottlenecked generation, and how Kimi K3 solved it by shifting 75% of its architecture to Kimi Delta Attention (KDA) using recurrent states, forget gates, and fixed-capacity associative memory.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this architectural deep dive based on ali (@waterloo_intern)'s incredible breakdown, we explore the mechanical evolution from basic quadratic attention to Linear Attention, DeltaNet, Gated DeltaNet (Mamba-2), and Multi-Head Latent Attention (MLA). We break down why simply adding to an LLM's memory state causes catastrophic interference, how the delta rule acts as a "learned eraser," and why chunking Householder-style transition matrices is required to make recurrent architectures trainable on GPUs.
+  
+  If you found this technical deep-dive into AI infrastructure and LLM architecture helpful, drop a like and subscribe for more content on software engineering and machine learning scaling!
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The 22,580x Scale Up: GPT-2 to Kimi K3
+  01:08 - GPT-2 Architecture & The KV Cache Problem
+  03:19 - Linear Attention & The Fixed State Solution
+  05:08 - DeltaNet: The Model Gets a Memory Eraser
+  07:07 - Parallelizing Recurrent Attention on GPUs (Chunking)
+  09:19 - Mamba-2 & Gated DeltaNet (Decay)
+  10:25 - Hybrid Stacks & Multi-Head Latent Attention (MLA)
+  11:50 - Kimi K3 Architecture: KDA, SiTU & MoE
+  12:56 - AttnRes: Fixing Residual Stream Bloat
+  14:19 - The Final Verdict: Scale vs Eviction Policies
+  
+  🔗 Resources Mentioned:
+  Original Thread & Code by Ali (@waterloo_intern): https://x.com/i/status/2081762065392541951
+  Attention-residuals section credit: chloey
+  
+  PAPERS, IN ORDER
+  
+  1. GPT-2 (2019)
+  https://github.com/openai/gpt-2
+  
+  2. Linear attention — Katharopoulos, Vyas, Pappas, Fleuret (ICML 2020)
+  https://arxiv.org/abs/2006.16236
+  https://proceedings.mlr.press/v119/katharopoulos20a.html
+  https://linear-transformers.com/
+  
+  3. FlashAttention — Dao, Fu, Ermon, Rudra, Ré (NeurIPS 2022)
+  https://arxiv.org/abs/2205.14135
+  
+  4. Delta rule / Fast Weight Programmers — Schlag, Irie, Schmidhuber (ICML 2021)
+  https://arxiv.org/abs/2102.11174
+  https://proceedings.mlr.press/v139/schlag21a.html
+  
+  5. Chunkwise parallel DeltaNet — Yang, Wang, Zhang, Shen, Kim (NeurIPS 2024)
+  https://arxiv.org/abs/2406.06484
+  https://neurips.cc/virtual/2024/poster/93040
+  
+  6. Mamba-2 / scalar decay — Dao & Gu (ICML 2024)
+  https://arxiv.org/abs/2405.21060
+  
+  7. Gated DeltaNet — Yang, Kautz, Hatamizadeh (NVIDIA, Dec 2024)
+  https://arxiv.org/abs/2412.06464
+  
+  8. Multi-head Latent Attention — DeepSeek-V2 (2024)
+  https://arxiv.org/abs/2405.04434
+  
+  9. Kimi Linear / KDA — Kimi Team (2025)
+  https://arxiv.org/abs/2510.26692
+  https://github.com/MoonshotAI/Kimi-Linear
+  https://huggingface.co/moonshotai/Kimi-Linear-48B-A3B-Instruct
+  
+  10. Attention Residuals — Kimi Team
+  https://arxiv.org/abs/2603.15031
+  
+  11. Kimi K3: Open Frontier Intelligence — Kimi Team
+  https://arxiv.org/abs/2607.24653
+  https://www.kimi.com/blog/kimi-k3
+  https://huggingface.co/moonshotai/Kimi-K3
+  
+  FURTHER READING
+  https://www.interconnects.ai/p/kimi-k3-the-open-weights-escalation
+  https://acingai.com/articles/linear-attention-kimi-k3
+  
+  #llm #machinelearning #kimik3 #gpt2 #artificialintelligence #softwareengineering #systemdesign #transformer #deeplearning 
+  
+  User Queries:
+  kimi k3 vs gpt 2 architecture comparison
+  how linear attention solves kv cache limits
+  deltanet vs mamba 2 gated deltanet explained
+  multi head latent attention mla deepseek kimi k3
+  kimi delta attention kda long context window
+  how mixture of experts routing works kimi k3
+  llm architecture explained token embedding residual stream
+  fast weight programmers paper delta rule explained
+  llm kv cache memory size calculation
+  transformer attention mechanism householder transition matrix
+---
+22.580. Essa é a quantidade de modelos GPT-2 que cabem dentro do Kimi K3. O GPT-2 foi lançado em 2019 com 124 milhões de parâmetros. O K3 foi enviado este mês com 2,8 trilhões de unidades. Em 7 anos, houve um aumento de
+
+escala de 22.580 vezes. Portanto, a pergunta pertinente é se algo mudou além do tamanho. Sim, aconteceu. O que realmente mudou foi a forma como um modelo lida com sua própria memória: o que ele grava, o que ele sobrescreve, o que ele deixa se deteriorar e como ele recupera o que descartou. Cada
+
+etapa arquitetônica intermediária entre esses dois modelos representa uma solução para um problema específico de memória. Vou analisar todos eles com o código em cerca de 15 minutos. Crédito antecipado. Este trabalho foi desenvolvido com base em um registro de atividades de Ali, que se identifica como estagiário da Universidade de Waterloo no fórum X. Ele passou aproximadamente 48 horas analisando o código de modelagem do K3 e documentou toda a sua estrutura. Links abaixo. O caminho é o seguinte
+
+: cache KV, atenção linear, rede Delta, gating, atenção Delta de Kimi, K3. Seis ideias, e cada uma existe porque a anterior ficou sem espaço. O mais estranho é que o esqueleto mal se mexia. Os blocos K3 ainda se parecem com os blocos GPT-2. Então, GPT-2, somente decodificador, e a passagem direta tem cerca de oito linhas de comprimento. Incorporações de tokens, incorporações de posição
+
+, 12 blocos em um loop, uma norma de camada final e um cabeçalho linear que produz logits. A entrada recebe duas coisas somadas: um vetor de incorporação de token, que indica qual é a palavra, e um vetor de incorporação de posição, que indica onde ela se encontra. Essa soma se torna o fluxo residual e, a partir daí, é o único lugar onde a informação reside. Em seguida, cada bloco executa os mesmos dois movimentos: normaliza, aplica a atenção, adiciona o resultado de volta ao fluxo, normaliza novamente, executa uma pequena rede neural feedforward e adiciona esse resultado de volta também. Empilhe 12 dessas e você terá o GPT-2. O K3 ainda faz exatamente
+
+isso. A atenção em si é uma projeção dividida em três partes: consultas, chaves e valores. Redimensione para que as cabeças se encaixem na dimensão do lote. Multiplique Q por K transposto, dimensione pela raiz quadrada da dimensão da cabeça, mascare o futuro com infinito negativo, aplique softmax e, em seguida, multiplique por V. No final, a cabeça do modelo de linguagem transforma esse estado oculto em uma pontuação para cada um dos aproximadamente 50.000 tokens. Durante a
+
+geração, você utiliza apenas as pontuações da última posição. Todo o resto é processado e descartado, o que é uma situação estranha quando se pensa nisso em voz alta. O modelo constrói uma representação completa para cada posição no prompt, e uma etapa de decodificação consome exatamente uma delas. O restante serve de andaime para essa única coluna. O cache KV decorre dessa observação. Você acabou de gerar um
+
+token, o anexa e, em uma implementação ingênua, as projeções de chave e valor seriam recalculadas para cada token anterior. Então, você os guarda. Esse repositório de chaves e valores antigos é o cache. Agora, conte o tráfego de memória. Cada etapa de decodificação lê um cache inteiro da memória de alta largura de banda e grava uma nova linha nele. A
+
+aritmética é trivial. A movimentação de bytes não ocorre, e o cache cresce. Uma entrada por token anterior durante toda a duração do contexto, sem que nada saia dele. A partir de um certo ponto, deixa de ser uma otimização e se torna o gargalo. Essa é a primeira barreira, e as próximas seis ideias são todas ataques a ela. Para se ter uma ideia da escala, são 12 camadas, 12 cabeças, uma
+
+largura de incorporação de 768, um vocabulário de cerca de 50.000 termos e 124 milhões de parâmetros. Esse é o modelo completo que estamos usando como comparação. Observe onde reside a não linearidade. A função softmax é executada após o produto Q.K, portanto, cada
+
+consulta é vinculada a cada chave e não é possível reagrupar os cálculos. Essa combinação é exatamente o que te obriga a guardar todas as chaves antigas. A atenção linear antecipa a não-linearidade. Aplique um mapa de características ELU mais um a Q e a K separadamente, antes mesmo de eles se encontrarem. Agora, o produto é reassociável e você pode alterar a ordem das multiplicações. Essa simples permissão
+
+muda completamente a imagem que as pessoas têm dela. Em vez de armazenar N chaves e N valores, você os compacta em uma única matriz fixa S mais igual a K transposta vezes V. Uma soma acumulada D por D, e ela tem o mesmo tamanho após 10 tokens ou 10 milhões. A leitura é uma multiplicação matemática contra esse estado dividida por um normalizador que você acumula juntamente com ele. O cache para de funcionar dependendo totalmente do comprimento da sequência. Duas
+
+leituras enormes por etapa se condensam em uma pequena, e o estado nunca cresce. Simplificando, são apenas três etapas. Torne as pontuações das chaves de consulta não negativas. Divida pela soma deles. Calcule a média ponderada dos valores.
+
+Softmax executa o primeiro passo com uma exponencial. A atenção linear faz isso com um mapa de características. Mesmo contrato, ferramenta diferente. Este é o artigo de 2020, " Transformers are RNNs", de Katharopoulos e coautores. O mesmo artigo relata uma decodificação autorregressiva até 4.000 vezes mais rápida
+
+em sequências muito longas . O Diário de Trabalho tem um comentário à parte aqui que eu gostei. O artigo descreve a atenção padrão como sendo proporcional ao quadrado do comprimento da sequência, o que hoje parece incorreto porque o FlashAttention corrigiu isso. Então ele verificou a data: 2020. O FlashAttention ainda estava a dois anos de distância. No entanto, existe um
+
+preço real a pagar, e o jornal é transparente quanto a isso. ELU mais um é uma aproximação mais grosseira do kernel Softmax, portanto as pontuações são menos expressivas. O grau de perda de qualidade depende da arquitetura e da carga de trabalho. Agora, leve esse estado fixo ao seu limite. Uma matriz finita não pode atribuir um único espaço para cada token . O token 500 é adicionado à mesma
+
+grade D por D que o token um, sobre tudo o que já está escrito lá. As consultas não conseguem mais retornar uma cópia limpa de nenhum dos dois. Schlag expressou isso muito bem no artigo "Fast Weight Programmers". Quando a sequência ultrapassa a capacidade de armazenamento, o modelo entra em um regime de sobrecapacidade e deve decidir quais pares chave-valor manter e quais excluir. Adicionar indefinidamente a uma memória finita atinge um limite. Essa é a
+
+situação delicada que está por trás de tudo isso. O regime que torna a atenção linear útil, sequências muito mais longas do que a largura do estado, é o mesmo regime em que as associações começam a se misturar . E o acréscimo que causou isso é de onde veio o aumento de velocidade. A regra delta corrige o erro. Antes de guardar qualquer coisa, leia a placa nesta tecla. O resultado obtido será aquilo que
+
+o modelo já acredita sobre essa chave. Subtraia esse valor do valor que você realmente deseja armazenar e escreva apenas a diferença. Em código, são quatro linhas. V antigo é igual a K vezes S. U é igual a beta vezes V menos V antigo. S mais é igual a
+
+K transposto vezes U. Então, leia com Q vezes S e não há mais denominador. Esse beta na frente é uma função sigmoide da projeção da entrada. Para cada ficha, para cada cabeça, o modelo decide a força com que pressiona a caneta. Sinal fraco, fraco à direita, sinal forte, sobrescreva o que estava lá.
+
+A razão para qualquer uma dessas viagens de ida e volta reside em duas linhas de álgebra. Escreva K transposto vezes V. Leia de volta com o mesmo K e você obterá K.K vezes V. Normalize K para comprimento unitário e esse escalar será um. Assim,
+
+V retorna exatamente como entrou e a consulta é um ponteiro aprendido. WQ e WK leem o mesmo fluxo residual. Assim, a consulta por um fato acaba direcionando-se para a direção principal na qual esse fato foi escrito. O modelo cria seu próprio esquema de endereçamento e ninguém o projeta manualmente. Assim, o valor antigo é removido e o novo entra em seu lugar, em vez de os dois serem misturados. Mesma
+
+memória fixa, com muito menos interferência. Essa é a DeltaNet e é a primeira vez que o modelo recebe uma borracha de verdade. Em seguida, vem uma seção que, segundo o autor, levou cerca de sete horas para ser compreendida completamente. Ele não está exagerando, e é justamente essa parte que torna tudo isso treinável em larga escala. O problema é o pré-enchimento. Escrita literalmente, a
+
+regra delta é um loop em Python sobre tokens. Leia o estado, calcule a correção, escreva o estado e passe para o próximo. Uma placa de vídeo detesta isso. Milhares de pequenos passos dependentes e nenhum grande matmul para cravar os dentes. A solução é o particionamento em blocos.
+
+Divida a sequência em blocos de tamanho C e calcule cada bloco a partir de duas variáveis. O estado resultante do bloco anterior e as consultas, chaves e valores deste bloco. Sequencial entre os blocos, totalmente paralelo dentro deles, e os dois níveis usam ordens opostas. Dentro de um bloco, você presta atenção de forma real e disfarçada . Q vezes K transposto vezes V pontua primeiro. Em blocos, você executa a
+
+ordem recorrente. K transposto vezes V dobrado no estado, estado primeiro. Os mesmos cálculos matemáticos reagrupados transformam C em um valor variável em vez de uma constante. Defina C com o comprimento total da sequência e você terá recuperado a atenção quadrática comum. Defina-o para um e você retornará à atenção linear simples. Tudo que é útil
+
+fica em algum lugar entre esses dois extremos. O custo se divide claramente em duas partes. Uma peça fixa, 2 LD ao quadrado, que é uma obra de estado e não se importa com C, e uma peça crescente, 2 LCD, com os blocos de pontuação situados na diagonal. Igualando C a L, o segundo termo torna-se 2 L ao quadrado D, novamente uma equação quadrática. Portanto, um valor menor de C significa menos operações de ponto flutuante (flops), e C igual a um é o mais barato de todos, embora ainda não seja o mais rápido. Na prática, C é
+
+64 ou 128 porque esse é o formato que as instruções principais do tensor realmente exigem. Menos operações e menos tempo são questões diferentes. Tem um porém, e é um porém grande. Esse termo de correção precisa de todos os estados intermediários, um por token, então você não pode simplesmente dividi-lo em partes. A versão aditiva é paralelizada. A
+
+versão delta, escrita da maneira óbvia, recusa. O artigo da NeurIPS de 2024 reescreve a atualização. Estado vezes identidade menos beta KK transposto mais beta VK transposto. Essa é uma matriz de transição do tipo Householder e, com uma pequena inversa triangular calculada por substituição direta, todas as correções C desaparecem de uma só vez. DeltaNet pode substituir um fato. O que não pode fazer é esvaziar a
+
+mesa. Ele só esquece uma associação quando tem uma substituta específica para sobrescrevê-la, o que não ajuda em nada quando o assunto muda e metade do estado fica obsoleto. Para atenção puramente aditiva, o esquecimento é uma linha. Multiplique o estado antigo por alfa antes de adicionar o novo. Ao deteriorar tudo ligeiramente a cada passo, o estado para de crescer indefinidamente.
+
+Essa é a contribuição do Mamba 2. Mas um único escalar trata todas as associações armazenadas como igualmente descartáveis. Peça para remover um fato e ele atenua todos os outros na mesma proporção. Assim, precisão e esquecimento estavam em dois documentos separados, cada um sem o que o outro continha. A DeltaNet com portão os une por meio de soldagem. Um alfa por etapa. Defina-o como
+
+um e você terá de volta a regra delta pura . Ao definir para zero, a memória é apagada e, nesse intervalo, ocorre um desvanecimento controlado. A Nvidia publicou isso em dezembro de 2024. A contabilidade é um produto cumulativo. Um token escrito na etapa X e lido T etapas depois foi multiplicado por cada letra intermediária, o que resulta em uma soma de prefixos com multiplicação no lugar da adição. Foi complicado de fazer rapidamente, mas
+
+eles fizeram rápido. Por aqui, as pessoas pararam de escolher um único tipo de atenção. Aparecem pilhas híbridas. Em sua maioria, são camadas lineares simples com algumas camadas de atenção completa intercaladas, para que a precisão da recuperação ainda seja possível quando o modelo precisar. As camadas de atenção completa geralmente são de atenção latente multi-cabeças, que comprime as chaves e os valores em um pequeno vetor latente antes de armazená-los em cache. Assim, mesmo as camadas mais caras
+
+carregam um cache menor do que o GPT-2 carregaria. Kimmy Linear chamou a atenção por uma afirmação mais ousada do que simplesmente velocidade. Em comparações controladas em escala de partida, superou a atenção plena. Não consegui igualar, mas consegui superar. Em contextos de curto prazo, contextos de longo prazo e execuções de aprendizado por reforço . Os números que comprovam isso são: 48
+
+bilhões de parâmetros, com 3 bilhões ativos, três camadas lineares para cada camada de atenção completa, até seis vezes mais capacidade de decodificação e 75% menos cache KV com um milhão de tokens. A contribuição real parece menor do que realmente é. Em vez de um único decaimento escalar para todo o estado, aprenda um decaimento separado para cada canal. Algumas dimensões da memória retêm dados por milhares de tokens, enquanto outras são liberadas quase que imediatamente. Ao lado de um transformador DeltaNet comum, três coisas são diferentes.
+
+Camadas de atenção latente se intercalam ao longo da pilha, uma mistura de especialistas onde antes havia a MLP, e aquela projeção alfa extra que proporciona controle por canal . E esse é o argumento que todo o diário de trabalho está defendendo. A capacidade adicional tem uma função. As leis de escala ainda são válidas, mas os parâmetros precisam estar em um nível que o sistema possa efetivamente usar. Kimik3 é essa arquitetura em sua forma final. 23 macrociclos,
+
+cada um com quatro camadas. Três das quatro camadas executam a atenção Kimidelta, e a quarta é uma camada de atenção latente. 92 camadas com uma camada de recuperação exata a cada quatro. A primeira camada mantém uma rede feedforward densa . A partir dessa camada, cada troca é feita por uma combinação de especialistas que operam em um espaço latente comprimido, o que reduz o tráfego entre as GPUs quando o modelo está distribuído por um centro de dados. Há
+
+898 especialistas lá dentro. Dois são compartilhados e visualizam cada token individualmente. Dos 896 restantes, o roteador seleciona 16. Menos de 2% do modelo é acionado para qualquer palavra dada. A atenção latente também ganhou um portão. Uma
+
+projeção da entrada multiplica as características recuperadas elemento por elemento. Assim, a camada decide quanto daquilo que acabou de pesquisar realmente chega ao fluxo residual. O lado da consulta também passa por uma projeção de baixa classificação. A ativação também mudou para algo chamado Sitchu, um portão tanh fixado multiplicado na projeção ascendente. Sem um kernel fundido, ele roda cerca de três vezes mais lento que o caminho antigo, e os especialistas em espaço latente quase conseguiram os flops. Portanto, a transação ainda resulta em
+
+lucro. Em seguida, a parte que achei mais interessante: resíduos de atenção. Normalmente, uma camada recebe o vetor de incorporação mais a saída de todas as camadas anteriores, todas somadas com o mesmo peso. Uma camada linear e uma camada de atenção recebem a mesma sopa, e as camadas posteriores precisam gritar cada vez mais alto para serem ouvidas em meio à pilha. Em vez disso, ajuste os pesos que somam . Cada termo recebe um valor alfa a partir do
+
+produto escalar de uma chave de consulta com uma consulta aprendida por camada, e as chaves são extraídas de estados residuais anteriores e suavizadas para somar um. Uma camada pode recorrer a camadas anteriores e escolher de quais camadas anteriores deseja receber informações. Fazer isso em todas as camadas custaria muito caro, então acontece nos limites dos blocos uma vez a cada 12 camadas, o que resulta em oito blocos ao longo da pilha. Em contrapartida, isso resulta em um aumento de cerca de 2% na latência de inferência e aproximadamente um quarto a mais na eficiência do treinamento. E repare na simetria. As camadas lineares
+
+operam em um estado de tamanho constante e precisam descartar elementos. A atenção latente estende-se para além do contexto. Attenrees estende seu olhar para as profundezas. O mesmo buraco remendado por duas direções. Ao juntar tudo isso, você obtém um milhão de tokens de decodificação de contexto várias vezes mais rápido do que a atenção completa conseguiria nesse mesmo comprimento, no maior modelo de peso aberto lançado até o momento. Aterrissou em 16
+
+de julho de 2026. E depois de tudo isso, olhe para o bloco novamente. Normalizar, participar, adicionar. Normalizar, antecipar, somar. O fluxo residual que o GPT-2 enviou em 2019 ainda é a espinha dorsal. O que mudou foi o que está
+
+pendurado nele. Então, voltando aos 22.580. Será que era apenas uma questão de escala? A escala representa a maior parte da contagem de parâmetros e praticamente nenhuma do projeto. Cada etapa nessa cadeia alterava
+
+o que era armazenado, como era atualizado ou como era lido de volta. Resumindo toda a linhagem, ela se resume a uma frase. Uma memória associativa de capacidade fixa precisa de uma política de expulsão porque um direito puramente aditivo eventualmente entra em conflito consigo mesmo. Controle de acesso, roteamento e decaimento são todas respostas aprendidas para isso. Tudo isso remonta a Ali, estagiário da Universidade de Waterloo no projeto X, cujo registro de trabalho está linkado na descrição, juntamente com todos os artigos que mencionei. Ele atribui a Chloe o mérito pela
+
+atenção residual na seção. Vá ler o original. Possui o código executável. Uma pergunta que não me sai da cabeça. Se um estado maior apenas avançar o muro, quanto do tempo dos próximos sete anos será dedicado a novas construções e quanto a uma política de despejo mais eficaz?

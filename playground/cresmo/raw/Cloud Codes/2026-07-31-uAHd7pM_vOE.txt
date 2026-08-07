@@ -1,0 +1,109 @@
+---
+video_title: "Run 118B AI Model on a Laptop (100% Offline)"
+video_id: uAHd7pM_vOE
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uAHd7pM_vOE
+video_date: 2026-07-31T16:00:04+00:00
+video_description: |
+  Can you run a 118 Billion parameter AI model on a MacBook Pro with the Wi-Fi completely turned off? Yes—at 64 to 88 tokens per second, with zero API fees, zero rate limits, and zero data leaving your machine. 
+  
+  In this technical breakdown, we explain the mechanics of Mixture-of-Experts (MoE) models (why only 8B parameters fire per token), benchmark top 120B models (gpt-oss-120b, Laguna S 2.1, Qwen3.5 122B), and walk through the exact runtime setup in MLX, llama.cpp, and LM Studio.
+  
+  We also tackle the three major walls: Apple's recent DRAM memory cutbacks, prompt processing bottlenecks, and the critical sysctl terminal command every Mac setup guide skips.
+  
+  🔔 Subscribe: 
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - Running a 118B Model Offline at 64 tok/s
+  01:05 - Mixture of Experts (MoE): 8B Active Params Explained
+  02:17 - The Top 120B Models (Laguna, gpt-oss, Qwen)
+  02:53 - Quantization Cliffs & MXFP4 4-Bit Rules
+  03:47 - VRAM Math: KV Cache & System Memory
+  04:27 - Wall 1: Apple’s RAM Crisis & Discontinued Studios
+  05:40 - The Missing Sysctl Command (Bypass 75% GPU Cap)
+  06:18 - M5 Max vs M3 Ultra Benchmarks
+  06:32 - Runtimes Tested: LM Studio, MLX, llama.cpp, Ollama
+  07:53 - Wall 2: Prompt Processing & Context Decay
+  08:54 - The Real Economics: Is a $5,300 Mac Worth It?
+  10:09 - The Final Hardware Verdict & Recommendations
+  
+  🧠 COMMANDS & SYSCTL FIX:
+  Raise macOS GPU Memory Limit:
+  sudo sysctl iogpu.wired_mem_limit=122880  (Adjust based on RAM)
+  
+  #localai #macbookpro #m5max #mlx #llamacpp #ai #applesilicon #gptoss #hardware #deepseek
+---
+Este é um modelo com 118 bilhões de parâmetros, gerado em um laptop com o Wi-Fi desligado, a uma taxa de 64 tokens por segundo. Sem chave de API, sem cobrança por token, sem limite de taxa, nada saindo da máquina. Funciona por causa de um número: 8 bilhões. Essa é a quantidade de parâmetros que são efetivamente acionados por token. O modelo é o Laguna S 2.1 da Poolside. Os pesos foram
+
+divulgados em 21 de julho, há 9 dias. Em 4 bits, são 59 GB de pesos. Isso cabe em um MacBook Pro que você pode encomendar esta tarde. Então, aqui está a receita: qual modelo, qual quantização, qual tempo de execução e a linha de comando sysctl que o guia omite. Então, três obstáculos, porque me deparei com todos eles: memória, processamento de comandos e um abismo de quantização que destrói o modelo. A primeira parede tem
+
+uma surpresa. A Apple removeu as configurações de memória que facilitavam isso em março e novamente em maio. Comecemos por explicar por que 118 bilhões de parâmetros se encaixam. Um modelo denso lê cada peso em cada token. Este aqui lê cerca de 3% deles. 3% é
+
+o que transforma um modelo de data center em um modelo de laptop. Laguna é uma mistura de especialistas: 256 redes de especialistas por camada, um roteador que seleciona 10 delas e um especialista compartilhado que está sempre em execução. Cada token ativa cerca de 8 bilhões de parâmetros e deixa os outros 110 permanecendo intocados na memória. Todos os pesos são residentes, o trabalho não. Isso altera os cálculos aritméticos que determinam sua velocidade. A
+
+geração é limitada pela largura de banda. Tokens por segundo é aproximadamente a largura de banda da memória dividida pelos bytes lidos por token. 8 bilhões de parâmetros em 4 bits correspondem a cerca de 2,7 GB. Um M5 Max transfere 614 GB por segundo, portanto o limite máximo fica em torno de 220 tokens por segundo. Execute a mesma divisão em um modelo denso de 120 bilhões e você obterá 60 GB para cada token. Mesmo laptop, mesma
+
+memória, 13 tokens por segundo. O modelo esparso é 22 vezes mais rápido em silício idêntico, e essa diferença é o motivo principal da existência deste vídeo. Os limites máximos são teóricos, portanto, aqui estão números medidos. Um testador executou o GPT-OS 120B em 8 bits em um M5 Max de 128 GB, com 1.325 tokens por segundo no prompt e 88 na geração com 4.000 tokens de contexto,
+
+publicado em 11 de março. Você tem quatro opções importantes nesta aula. Laguna S 2.1, 118 bilhões com oito ativos. O GPT-OS 1 da OpenAI possui 20 bilhões de instâncias, sendo 117 bilhões com cinco instâncias ativas e 4,3 milhões de downloads.
+
+Qwen 3, 5 122B da Alibaba a partir de fevereiro. O NeMo-3 Super da Nvidia, lançado em março. Eu começaria pelo GPT-OS por um motivo que você pode conferir no próprio repositório dele. A OpenAI lançou uma pasta chamada metal. Dentro dele, um arquivo de pesos de 165 GB criado para a GPU da Apple. As pessoas que treinaram esse
+
+modelo esperavam que você o executasse em um Mac. A quantização é onde a maioria das compilações dá errado. Os mesmos 118 bilhões de parâmetros são distribuídos em 96 GB no arquivo llama.cpp em MLX de 4 bits e em 34 GB em 2 bits. Não se trata de um único arquivo com três níveis de compressão diferentes.
+
+São três quantidades diferentes de modelo. E existe um chão sob seus pés. Um laboratório publicou a perplexidade em cada erro para um modelo de 120 bilhões em 4 bits e meio, 1,33, 92% de concordância de tokens. Reduzindo para 3 bits e meio, a perplexidade é 168 e a concordância é de 43%. Isso não é degradação. O modelo deixa de ser o
+
+modelo. O GPT-OS contorna esse argumento. Seus pesos especializados foram treinados em MXFP4, portanto, 4 bits é o formato nativo, não uma adaptação de algo melhor. O responsável pela manutenção do arquivo llama.cpp afirma claramente: "Use os arquivos originais. Nenhuma quantização
+
+é necessária." Agora, a parte que decide se você pode fazer isso ou não. A memória unificada armazena três coisas simultaneamente: os pesos, o cache KV para a conversa e o próprio Mac OS. 59 GB de pesos, mais seis para 128.000 tokens de contexto, e de 10 a 12 para o sistema. 96 GB é confortável, 64 GB não é.
+
+O tamanho desse cache é uma escolha de arquitetura, e vale a pena verificar isso antes de baixar 70 GB. O GPT-AOS precisa de 4,5 GB em seu contexto completo porque 2/3 de suas camadas se dedicam apenas a uma janela deslizante. O GLM 4.5 Air, de tamanho semelhante, atende totalmente a todas as camadas e precisa de 23. Enquanto que há 5 meses a Apple vendia um Mac Studio com 512 GB de memória unificada. No
+
+dia 5 de março, eles retiraram essa opção. No dia 5 de maio, eles retiraram 256 unidades. Hoje, o M3 Ultra é comercializado em exatamente uma configuração de memória: 96 GB. O preço se moveu na direção oposta. Esse estúdio custava US $ 3.999
+
+em fevereiro. Agora custa US$ 5.299, e o prazo de entrega para a configuração com 32 núcleos é de 13 a 14 semanas. Um MacBook Pro de 16 polegadas com todas as configurações máximas custava US $ 10.000 em junho. A causa não é a Apple
+
+estar dificultando as coisas. Os preços contratuais da DRAM subiram 98% no primeiro trimestre deste ano, devido à mudança no fornecimento de memória para HBM para aceleradores de IA. Cook disse aos investidores que o Mac Studio pode levar vários meses para atingir o equilíbrio de fornecimento. O boom local da IA elevou o preço do seu próprio hardware. Portanto, três máquinas conseguem fazer isso atualmente. Mac
+
+Studio M3 Ultra, 96 GB, 819 GB por segundo, US $ 5.300. MacBook Pro M5 Max, 128 GB, 614. E o Mac Studio M4 com 64, que é muito apertado para 100 bilhões e bom para 80. Então a linha que guia pula. O
+
+macOS aloca cerca de 75% da memória unificada para a sua GPU e se recusa a liberar mais do que isso. Portanto, uma máquina de 128 GB trava em 96 GB. Assim que o CCT Val aumentar o limite de memória cabeada , defina-o para 120 GB, deixe 8 GB para o sistema e a carga que apresentou falha agora caberá. Eis o resultado que eu não esperava. O Studio transfere 819 GB por segundo. O laptop processa 614.
+
+Nessa carga de trabalho, o Studio registrou 74 tokens por segundo, e o laptop, 88. Quando apenas 8 bilhões de parâmetros estão ativos, a largura de banda deixa de ser o fator limitante e os kernels assumem o controle. Quatro ambientes de execução carregarão este modelo, e eles não são intercambiáveis. A versão 0.4.20 do LM Studio
+
+é o caminho gráfico. MLX all M é um design próprio da Apple. O arquivo llama.cpp foi lançado em uma versão hoje. Uma lhama atualizada há 3 dias. Se
+
+você quer que isso funcione em 10 minutos, use o LM Studio. Pesquise o modelo, escolha a versão MLX em vez da GGUF, carregue-a e você terá um servidor compatível com OpenAI na porta 1234 do localhost. Seu mecanismo MLX também cria pontos de verificação no cache KV, o que é importante na terceira vez que você enviar o mesmo prompt longo. Se preferir observar o que está acontecendo, instale o MLX LM com o pip e, em seguida, execute o comando MLX LM.generate com um modelo e um prompt. Adicione um tamanho máximo de KV para limitar o
+
+cache, para que conversas longas parem de consumir muita memória. Ignorar versão 0.31.0. Foi retirado devido à contaminação cruzada de lotes de caches KV. Pegue 0,31,3.
+
+E se o seu Mac for muito pequeno, o arquivo llama.cpp tem uma solução alternativa. Execute o servidor Llama contra o GGUF da organização GGML com o comando `ncpu mo 35`. Isso aloca 35 camadas de processamento avançado na memória da CPU, mantendo a atenção na GPU. Mais lento, mas uma máquina com 64 GB de RAM executa um modelo com 120 bilhões de parâmetros. A primeira tentativa é
+
+o momento em que a bola aterrissa ou não. Os pesos são transmitidos em cerca de 90 segundos. A pressão da memória aumenta, então o primeiro token aparece. Observe a pegada, não a velocidade. Em seguida, execute o teste prometido no título. Desligue o Wi-Fi, desconecte
+
+o cabo Ethernet, e os tokens continuarão chegando porque a inferência lê os pesos da sua própria memória e não acessa mais nada . A segunda parede é para processamento imediato. A mesma execução que registrou 88 tokens por segundo de geração mediu a fase de prompt em um quarto do desempenho de uma RTX Pro 6000, 1300 contra 6500. A geração está apenas duas vezes e meia atrás. Então, o chat se assemelha bastante ao uso de uma GPU, enquanto colar 40.000 linhas de
+
+código não. O contexto agrava a situação de uma forma que o número principal não consegue disfarçar. Mesmo modelo, mesma máquina. 88 tokens por segundo com 4.000 tokens de contexto, 76 com 16.000 e 65 com 32. Um modelo de codificação
+
+testado com 64.000 tokens perdeu 39% de sua velocidade e cinco gigabytes e meio desapareceram no cache KV. Também não é um produto pronto para uso. Existe um relato aberto de que o processamento imediato em um Mac está apresentando falhas. O consumo de energia da GPU cai para 10 W com metade da utilização e o pré-carregamento é executado sete vezes mais lentamente até que você envie uma mensagem curta primeiro. O chassi também importa.
+
+Sob carga contínua, o M5 Max de 14 polegadas reduz a potência em cerca de 25% na configuração de potência padrão . O compartimento de 16 polegadas. Há dois dias, alguém resolveu a questão do dinheiro com um medidor de parede. GPTOs 120B em um M3 Ultra geram 74 tokens por segundo a cerca de 94 W. A 31 centavos de dólar por quilowatt-hora, isso equivale a 11 centavos de dólar por milhão de tokens. Um modelo denso de 27 bilhões de pixels
+
+na mesma caixa custava 55 centavos, cinco vezes mais para um quarto da velocidade. Agora, a comparação que acaba com a fantasia. Grok e Together seguem o mesmo modelo, com uma taxa de 60 centavos por milhão de tokens emitidos. O Open Router encaminha a transação por 17 centavos. Com base em 17 centavos, seu Mac de US$ 5.300 se
+
+paga após 87 bilhões de tokens, o que equivale a cerca de 37 anos de funcionamento contínuo. Portanto, não compre para economizar em tokens, compre porque o modelo não pode ser descontinuado sem que você perceba. O código nunca sai da sala. Não há limite de preço a ser atingido e a conta é a mesma em dezembro que é hoje. Em comparação com APIs de preços de mercado, o retorno do investimento é de cerca de 6 meses. Contra
+
+hospedagem de commodities, jamais. Concretamente, com 96 ou 128 GB, execute o Laguna ou o GPTOS em 4 bits. Aos 64 anos, execute o QN3 Coder em seguida. 80 bilhões de parâmetros, 45 GB em disco, 79 tokens por segundo. Um Mac mini tem um limite de 48 GB e não consegue armazenar esse conteúdo de forma alguma. A
+
+receita tinha quatro linhas. Um modelo esparso de 100 bilhões, uma compilação MLX de 4 bits, um sys CTL e LM Studio ou MLX LM. O modelo nunca foi a parte difícil. O problema é que a máquina que melhor executa o programa é justamente aquela que a Apple parou de vender.

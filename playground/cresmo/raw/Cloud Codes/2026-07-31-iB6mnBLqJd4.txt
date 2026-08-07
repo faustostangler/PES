@@ -1,0 +1,139 @@
+---
+video_title: "Go + HTMX + SQLite : The $6/mo AI Tech Stack"
+video_id: iB6mnBLqJd4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=iB6mnBLqJd4
+video_date: 2026-07-31T19:30:35+00:00
+video_description: |
+  Are you paying thousands of dollars for Next.js on Vercel and complex cloud architectures just to host a simple AI wrapper? Discover why developers are abandoning bloated React SPAs and massive AWS bills for a minimalist $5 VPS stack built entirely on Go, HTMX, and SQLite.
+  
+  🔔 Subscribe: 
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this system design breakdown, we expose the brutal economics of AI app development: your server spends 99% of its life waiting for LLM tokens, meaning the actual compute required to run a full web server, queue, and database fits on a $5 Hetzner box.
+  
+  We dive deep into how Go's 2KB goroutine stacks handle 10,000 concurrent LLM API connections without breaking a sweat, why HTMX completely removes the need for client-side state and hydration, and how SQLite (paired with Litestream for real-time backups) can easily handle production workloads up to 20,000 writes per second. We also break down the hidden costs of AI API billing—why caching your system prompt drops your OpenAI bill by 72%, and how limiting output tokens is the highest-leverage performance tuning you can do.
+  
+  If you found this technical deep-dive into AI infrastructure and software engineering architecture helpful, drop a like and subscribe for more content on system design and scaling applications!
+  
+  ⚙️ CORE SQLITE PRAGMAS COVERED:
+  PRAGMA journal_mode = WAL;
+  PRAGMA synchronous = NORMAL;
+  PRAGMA busy_timeout = 5000;
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - The Economics of AI Hosting (Waiting is Free)
+  01:12 - The Stack: Go, HTMX, SQLite on a $5 VPS
+  02:04 - Goroutines: Solving the 10,000 Concurrent User Problem
+  02:40 - HTMX v2: The End of Hydration & Bundlers
+  03:51 - SQLite in Production: WAL Mode & Benchmarks
+  05:27 - Caching, Vector Search, and the 1-Writer Limit
+  07:07 - AI API Billing Math: Input vs Output Tokens
+  08:19 - Real-World Proof: PhotoAI & The Vercel Tax
+  09:09 - The 4 Catches: Where This Stack Fails
+  10:10 - Deployment Setup (Caddy, Litestream, Cloudflare R2)
+  11:01 - The Final Verdict on AI Infrastructure
+  
+  #golang #htmx #sqlite #systemdesign #softwareengineering #vps #hetzner #webdevelopment #artificialintelligence  #localai #architecture #systemdesign 
+  
+  User Queries:
+  golang htmx sqlite web app architecture
+  how to deploy go app on hetzner $5 vps
+  replace react with htmx for ai applications
+  sqlite wal mode concurrent writes benchmark
+  litestream sqlite backup to cloudflare r2
+  golang goroutines vs threads memory usage
+  openai api pricing caching input tokens vs output
+  server sent events vs websockets for llm streaming
+  nextjs vercel bandwidth pricing overage
+  sqlite vec vector search benchmark mac mini
+---
+Dois números se moveram em direções opostas neste verão. Em 15 de junho, a Henner aumentou em um terço o preço de seu servidor em nuvem mais barato. Então, ontem, a OpenAI reduziu o preço do seu plano mais barato do GPT 5.6 em 80%. Um dólar por milhão de tokens passou a ser 20. Assim, o servidor ficou mais
+
+caro e a inteligência, mais barata. Isso parece uma nota contábil. Trata-se da estrutura básica de um aplicativo de IA, pois o instinto ao inserir um modelo em um produto é que o produto deve ser pesado. Os modelos são pesados. Portanto, a hospedagem deve ser feita por duas pessoas. Funciona no sentido oposto
+
+. O modelo é executado na GPU de outra pessoa , no centro de dados de outra pessoa, com a conta de energia de outra pessoa. Seu servidor recebe um formulário, grava uma linha, abre uma conexão com uma API e então aguarda. A espera é a parte que geralmente tem o preço errado. Uma solicitação a um modelo de linguagem passa a maior parte do tempo sem fazer nada. O tempo até o primeiro token nos
+
+modelos rápidos fica abaixo de 600 milissegundos. A resposta é exibida por alguns segundos depois disso. Durante todo esse período, sua CPU ficará ociosa. E uma arquitetura projetada em torno de um custo que arredonda para zero resulta em um tamanho muito pequeno. Suficientemente pequeno para que toda a aplicação, o servidor web, o banco de dados, a fila e as sessões caibam em um único dispositivo que custa menos que um almoço.
+
+Quatro partes. Vá em direção ao servidor. HTML para o navegador. SQLite para os dados. Uma única máquina virtual para tudo. Analise-os
+
+um de cada vez, pois cada um desempenha uma função específica. Primeiro, uma correção. o título merece. Aquele servidor de 5 dólares agora custa 549 euros. Aqui, o preço do CX23 subiu de US$ 3,99 para US $ 5,49 no dia 15 de junho. Por isso, você recebe
+
+duas CPUs virtuais, 4 GB de memória, 40 GB de armazenamento NVMe e 20 canais de tráfego . Guarde esse número, pois ele será retornado mais tarde. E é a linha mais cara em toda a plataforma de outra empresa. A versão atual do Go é a 1.26.5, lançada em
+
+7 de julho. Versão 1.26. A versão 26 ativou por padrão um novo coletor de lixo chamado chá verde e reduziu a sobrecarga de chamadas à biblioteca C em cerca de 30%. O que importa no momento em que você conecta um driver de luz CSQ é a espera. Uma guiné
+
+começa com uma pilha de 2 quilos. Um thread do sistema operacional reserva cerca de um megabyte. Essa proporção constitui todo o argumento. Alguém mediu 100.000 deles funcionando ao mesmo tempo.
+
+Cada um possui 2.115 bytes e leva cerca de um microssegundo e meio para ser criado. Portanto, 10.000 usuários, todos em meio a uma conversa, aguardando um modelo, custam aproximadamente 21 megabytes de pilha em uma máquina de 4 GBTE, o que é um erro de arredondamento dentro de um erro de arredondamento. Esse é o truque, e não se trata de código sofisticado. O jogo Go transforma 10.000
+
+pessoas em espera devido a um problema de infraestrutura em uma mera nota de rodapé na memória. A parte do HTMX é o fio. Seu servidor já sabe como renderizar a página. O HTML permite que um botão solicite um fragmento de HTML e o substitua sem enviar uma segunda cópia do seu aplicativo para o navegador. 16 kilobytes foram omitidos pela própria contagem do projeto . React e react together são
+
+cerca de 42 antes de um roteador antes do estado antes da etapa de construção que os produziu. Uma correção, pois esta frase aparece em muitas postagens de blog. Não existe HTML3. A versão estável atual é a 2.0 10 e a próxima versão principal é a 4. O
+
+mantenedor disse que não haveria uma versão 3, então, quando a reescrita foi feita, eles simplesmente a ignoraram para cumprir a promessa. A versão 4 está em fase beta, com previsão de lançamento para o verão de 2026. O que muda no quatro está debaixo do piso. O método `fetch` substitui o `x` no Salamish, o que altera o modelo de eventos, e a herança de atributos torna-se explícita em vez de implícita. Seus modelos geralmente não se importam com isso. Para usar em qualquer
+
+lugar, combine com um acessório de templo. Seu HTML se transforma em código Go, é compilado e verificado quanto aos tipos. Portanto, um campo struct renomeado quebra a compilação em vez de renderizar uma div em branco às 3 da manhã. Essa é a interface principal. Sem bundler, sem hidratação, sem diretório de módulos do Node que pese mais do que a máquina onde será implantado. A
+
+parte problemática das luzes doentes são os dados, e é aí que as pessoas ficam nervosas. É um arquivo. Não há servidor de banco de dados, nenhuma porta, nenhuma string de conexão, nenhuma segunda máquina. Ative o registro de gravação antecipada (write-ahead logging), defina o modo síncrono para normal e defina um tempo limite de ocupação. Essas três pragmas representam a maior parte da conversa sobre desempenho, com base em benchmarks do Go em hardware comum, atingindo cerca de 150.000 leituras por segundo e cerca de
+
+20.000 gravações por segundo quando você serializa os escritores por trás de um único mutex. Uma decisão a ser tomada logo no início é a escolha do driver SQLite. O modelo Cback é o mais rápido. A versão moderna em Go puro roda a cerca de 75% da sua velocidade e não precisa de nenhuma cadeia de ferramentas C, que é como você mantém uma compilação que realiza a co-compilação cruzada em um binário estático.
+
+E os números de referência merecem uma nota de rodapé. Tekken Power, o benchmark de frameworks que resolveu discussões por uma década, arquivou seu repositório em março. A última rodada de testes é de fevereiro de 2025 e foi executada em um Xeon de 32 núcleos, não no seu computador com 2 CPUs, realizando 20.000 gravações por segundo. Pergunte a si mesmo qual é a taxa real de aprovação do seu aplicativo. Para a
+
+maioria dos produtos, a resposta tem três dígitos e um valor por minuto associado a ela. A Expensify levou um único servidor Equalite a atingir a marca de 4 milhões de consultas por segundo. Esse número precisa da ressalva de que se trata de uma tabela de 10 bilhões de linhas totalmente armazenada em cache na RAM em uma máquina grande, somente para leitura. Mas as ressalvas são a parte útil. O teto não fica onde o folclore diz . E o que te impede é um
+
+limite específico, não uma sensação. Aqui está o limite específico. O SQLite permite um número ilimitado de leitores simultâneos e exatamente um gravador por vez. Mesmo no modo de operação normal, toda conversa séria sobre a pilha acaba nessa frase. Agora, vamos aos elementos que a transformam em uma pilha de IA em vez de uma pilha web. Três deles.
+
+Transmissão, armazenamento em cache e recuperação. Primeiro em streaming. A extensão de eventos enviados pelo servidor HTML mantém uma resposta HTTP aberta e encaminha vários eventos por ela. Seu manipulador Go grava tokens à medida que eles chegam do modelo. O navegador os anexa. Essa é toda a interface de bate-papo
+
+. Os eventos enviados pelo servidor são unidirecionais, o que parece uma limitação até você perceber que uma resposta no chat também é unidirecional. Websockets resolvem um problema que você não tem. Em segundo lugar está o armazenamento em cache, e é aí que está o dinheiro. A Anthropic cobra 1 e 4 vezes o valor da entrada base para gravar um cache de 5 minutos e 1/10 do valor da entrada base para lê-lo de volta. A Deepseek precifica um acerto em dinheiro em
+
+0,2 centavos por milhão de tokens, contra 14 centavos para um erro. 50 vezes mais barato para a parte do seu pedido que nunca muda. E quando o trabalho não precisa ser realizado enquanto alguém está observando, resumos noturnos, incorporação de um backlog, resumos noturnos, os endpoints em lote têm uma redução fixa de 50% na entrada e na saída em comparação com a recuperação de dados semelhante à da OpenAI, Anthropic e do Google . Terceiro, o Cichlite Vec coloca a busca vetorial dentro do mesmo arquivo que suas linhas. Um milhão de vetores em 128 dimensões respondem a uma consulta de vizinho mais próximo em cerca de 17 milissegundos em um Mac Mini, e isso representa uma vantagem real. Expanda esses
+
+vetores para 372 dimensões e a mesma consulta de um milhão de linhas levará 8 segundos e meio. A quantização binária reduz esse tempo para cerca de 124 milissegundos. Portanto, a regra são as dimensões, não as linhas. Pequenas porções ou porções quantizadas permanecem dentro de um arquivo. Incorporações vetoriais de grande escala são o ponto em que um banco de dados vetorial separado justifica seu uso. Agora, elabore um projeto de lei,
+
+porque esta é a parte que altera o que você vai construir. Considere 1.000 usuários diários, 10 mensagens cada, 300.000 solicitações por mês, digamos 1.500 tokens de entrada por solicitação, prompt do sistema mais histórico e 400 tokens de volta no modelo que a OpenAI descontinuou ontem. Isso representa um investimento de US$ 90 e um
+
+resultado de US$ 144. 234 dólares em tokens contra um servidor de 6 dólares . Sua infraestrutura representa 2,5% da fatura, e o modelo é 39 vezes maior que a máquina pela qual é executado. Agora, execute a ação solicitada pelo sistema. 1.200 dessas 1.500
+
+fichas se transformam em dinheiro a um décimo do preço. A entrada caiu de US$ 90 para US$ 25. A conta total, de US$ 234, caiu para US$ 169. Valeu a pena. Mas observe o que não se moveu. Saída.
+
+Nesse modelo, o custo da produção é seis vezes maior que o custo dos insumos, e o recebimento de caixa não pode afetá- lo. Reduza suas respostas de 400 para 250 tokens e você economizará US$ 54, mais do que se tivesse sacado todas as respostas solicitadas pelo sistema, o que é uma situação estranha. A ação de maior impacto no desempenho de um aplicativo de IA é uma frase no prompt do sistema pedindo ao modelo que seja breve. Isso não é teoria. Peter Levels administra um sistema de IA para fotos que custa cerca de US$ 100.000 por mês, usando apenas um
+
+dispositivo Hzner, um único arquivo PHP de 40.000 linhas e o banco de dados SQLite. PHP, não Go, e esse é o ponto. A linguagem é intercambiável. A forma não é. Um processo, um arquivo,
+
+uma máquina, sem camada de orquestração. Por outro lado, 37 serviços deixaram a nuvem, reduzindo seus gastos mensais de US$ 180.000 para menos de US$ 80. Uma economia de aproximadamente dois milhões em um ano. E o caso de falha que financia este vídeo, um aplicativo Nex.js na Verscell com 500.000
+
+visualizações de página mensais, custa mais de US$ 7.000 por ano, com a largura de banda custando 15 centavos de dólar por gigabyte após o primeiro terabyte. 15 centavos por gigabyte. Seu dispositivo de 5 Hz inclui 20 terabytes. Considerando a taxa adicional da Versel, essa gratificação sozinha seria de US $ 3.000. Agora, a parte que esses vídeos
+
+geralmente pulam. É aqui que essa combinação realmente causa problemas. E você deve conhecer todos os quatro antes de se comprometer. Um, o escritor solitário. Se sua carga de trabalho envolver milhares de pequenas gravações simultâneas por segundo, o Iscoite as colocará em fila atrás de um único bloqueio, e você sentirá isso. Esse é um
+
+limite real, não um problema de ajuste. Duas máquinas, uma é uma máquina. Se ele morrer, você está perdido. Light a stream versão 0.5. 15 unidades
+
+enviadas há 10 dias. Transmite continuamente seus logs em tempo real para o armazenamento de objetos . Assim, você perde segundos em vez de tudo. Em caso de falha, você ainda estará acordado digitando. Três implantações reiniciam o processo. Uma troca binária em Go é rápida, mas
+
+não é zero. Se você precisa de implantações com tempo de inatividade zero real, volta a usar duas máquinas e um balanceador de carga, e o argumento da simplicidade perde força. Quatro, o teto vetorial de antes. Incorporações grandes, com mais de um milhão de linhas, são o limite para o tamanho do arquivo. Nenhuma dessas é razão para começar em outro lugar. São as quatro condições que
+
+indicam a hora de partir, o que é muito melhor do que ter um palpite. Como será o processo de implantação. Crie um binário Go estático com CGO desativado. Incorpore seus modelos e recursos nele. Copie um arquivo para o servidor e execute-o no systemd. Coloque o caddie na frente. Com apenas duas linhas
+
+de configuração, ele busca e renova seu certificado Let's Encrypt automaticamente. O fluxo mais leve replica o arquivo de banco de dados para o Cloudflare R2. O R2 armazena um gigabyte por um centavo e meio e não cobra nada para ler os dados de volta. O mesmo terabyte saindo do S3 custa cerca de US $ 90. Restaurações são raras e a única vez que você precisa de uma é no pior momento possível para pagar uma fatura de banda larga. Essa
+
+é toda a história da operação. Um binário, um arquivo, um proxy, um demônio de backup. Sem cluster, sem plano de controle, sem YAML que descreva outro YAML. E quando os fornecedores de modelos reduzirem os preços novamente, como fizeram ontem e farão novamente, nada na sua arquitetura precisará ser alterado. Você edita uma única string. A inferência representa de
+
+80 a 90% dos gastos das empresas de IA. Empresas de software focadas em IA estão destinando de 40 a 50% de sua receita a fornecedores de modelos. Em relação às margens brutas, os investidores esperam começar com uma nota sete. Os preços dos tokens caíram aproximadamente 280 vezes em 2 anos, e as contas de IA ainda aumentaram 320%. Porque o volume cresceu mais rápido do que os preços caíram. Essa é a argumentação a favor dessa
+
+pilha em uma única linha. A conta que realmente vai te prejudicar é aquela que você não consegue otimizar com um servidor maior. Então pare de gastar sua atenção com isso. Coloque as partes chatas em uma caixa que custe 6 dólares. Mantenha tudo em um único processo onde você possa raciocinar sobre ele e concentrar seus esforços de engenharia nos tokens. Essa é a
+
+pilha.

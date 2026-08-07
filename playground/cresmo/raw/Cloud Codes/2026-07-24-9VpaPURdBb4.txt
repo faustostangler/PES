@@ -1,0 +1,119 @@
+---
+video_title: "Train Local Model on Your Own Codebase (Unsloth: Local & Private)"
+video_id: 9VpaPURdBb4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9VpaPURdBb4
+video_date: 2026-07-24T19:30:26+00:00
+video_description: |
+  Do you want an AI coding assistant that perfectly understands your personal coding style, variable naming, and repository structure? Discover how to fine-tune a local Large Language Model (LLM) on your own codebase for free, using nothing but Unsloth and a consumer GPU (or a free Google Colab).
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  
+  In this video, Cloud Codes breaks down the system design of LLM Fine-Tuning. We explore the critical difference between RAG (Retrieval-Augmented Generation) and Fine-Tuning: why RAG is for "facts" and Fine-Tuning is for "form/style." We walk you through the entire Unsloth pipeline: downloading a base model in 4-bit, configuring a LoRA adapter (QLoRA), generating a JSONL dataset directly from your git commits, and running Supervised Fine-Tuning (SFT).
+  
+  Finally, we show you how to merge your custom LoRA adapter back into the base model, export it as a GGUF file, and run it completely offline using Ollama. We also cover the honest catches: how to avoid "overfitting" and catastrophic forgetting by keeping your epochs low.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Custom AI Coding Assistant
+  1:10 - RAG vs Fine-Tuning (Facts vs Form)
+  2:35 - The Toolkit: Unsloth & Small Open Models (Qwen3)
+  4:15 - Step 1: Building a Dataset from Your Codebase
+  5:09 - Step 2: Loading Unsloth & QLoRA Adapters
+  5:53 - Step 3: Supervised Fine-Tuning (Learning Rate & Epochs)
+  6:37 - Step 4: Exporting to GGUF & Running in Ollama
+  7:37 - The Receipts: Jumping from 1% to 90% Accuracy
+  8:16 - The Catch: Overfitting & When You SHOULDN'T Fine-Tune
+  9:06 - Summary: Your Model, Your Code, Offline Forever
+  
+  #finetuning #localai #unsloth #softwareengineering #machinelearning #cloudcodes #lora #qlora #ollama #artificialintelligence #python
+  
+  User Queries:
+  how to fine tune a local llm on your own data
+  unsloth qlora fine tuning tutorial
+  train ai on my codebase local
+  rag vs fine tuning explained
+  how to use unsloth to train an llm
+  export lora to gguf ollama
+  train qwen 3 local machine
+  how to prevent overfitting in llm fine tuning
+  system design fine tuning vs retrieval augmented generation
+  stop paying for github copilot build your own
+---
+Imagine um modelo de codificação que escreva código da mesma forma que você. Sua nomenclatura, seus padrões, sua pilha de tecnologias, não a média da internet, seu código-fonte integrado diretamente ao modelo e executado em sua própria máquina. Hoje vamos construir exatamente isso usando a ferramenta mais simples para a tarefa, o Unsloth. É grátis. Ele funciona na placa gráfica que você já possui. E
+
+se você não tiver nenhuma, uma colaboração gratuita funciona. A receita inteira está anotada em um caderno. Carregue um modelo, adapte-o, treine-o e exporte- o. Esse é o vídeo. O truque que torna isso barato se chama Laura. Você
+
+treina cerca de 1% do modelo, não o modelo inteiro. Empilhe 4 bits por cima, Q Laura, e um modelo de 8 bilhões de ajustes finos em uma única placa de 12 gigabits. O Unsloth faz com que essa execução seja duas vezes mais rápida, usando 70% menos memória, sem perda de qualidade. Agora, a parte honesta, sem rodeios. Isso ensina à modelo seu estilo e padrões, não fatos que mudam. Aproximadamente uma hora de treinamento
+
+e o resultado é um arquivo no seu disco rígido, que você poderá usar offline para sempre. Você começa com um modelo de código aberto e simples. Pense nisso como a argila que estamos prestes a moldar. Eis o plano. Por que se dar ao trabalho? Em seguida, vêm os dados, o
+
+código, o treinamento e as capturas. Vamos construí-lo. Primeira pergunta: por que fazer ajustes finos? Por que não colar todo o seu repositório no prompt e deixar o modelo lê-lo? Você pode até conseguir um pouco, mas contexto tem um preço. Ele acaba sendo esquecido
+
+em sessões longas e você acaba reenviando o mesmo código a cada requisição. É uma solução alternativa, não uma memória. O ajuste fino é a ação oposta. Em vez de fornecer seus padrões ao modelo a cada solicitação, você os incorpora aos pesos de uma só vez. Depois disso, o modelo simplesmente sabe como sua equipe escreve um serviço, lida com um erro, nomeia uma variável, sem reprogramação, sem prompts gigantescos, sem custo adicional por requisição, e você não precisa reeducar todo o cérebro para fazer isso. O
+
+ajuste fino completo reescreve cada peso que está no caminho H100, que varia de 60 a 100 gigabytes . Laura congela o modelo e treina duas pequenas matrizes aparafusadas na lateral. O resultado será o mesmo para o seu propósito, utilizando um hardware que você possa comprar. Mas aqui está a regra que te mantém longe de problemas, e é a frase mais importante deste vídeo. O ajuste fino serve para melhorar a forma, não os fatos. Use-o para moldar o
+
+estilo, o tom, a estrutura e o formato do resultado. Se o que você precisa muda toda semana — preços, documentação, uma API em tempo real —, isso é trabalho para recuperação, para o Rag, não para treinamento. Então, em que é realmente excelente? Ensine a uma modelo o estilo da sua casa. Seu método padrão para tratamento de erros . A maneira como seu código estrutura uma
+
+rota, um teste ou uma configuração. O formato repetitivo e tedioso do seu código, as coisas que um modelo genérico faz de forma sutil e irritantemente errada. Você precisa exatamente de três coisas. um modelo base para começar, um conjunto de dados extraído do seu próprio código e o Unsloth para juntar tudo. Essa é a lista de compras completa. Vamos pegar cada um deles. Uma
+
+breve explicação sobre por que Unsloth e não uma dúzia de outros treinadores. Reescreveu manualmente as partes lentas do treinamento, com kernels de GPU personalizados, sem atalhos, sem perda de precisão. É daí que vem o dobro da velocidade e a economia de memória de 70%. E por que uma tarefa que antes exigia um servidor de 50 mil dólares agora roda na placa de vídeo do seu computador? 60.000 estrelas do GitHub concordam que isso pode
+
+acontecer de duas maneiras. Ali está o caderno, um pouco de Python, o caminho que vamos percorrer porque ver o código desmistifica tudo. Ou então existe o Unslaw Studio, um aplicativo web noode que executa exatamente o mesmo mecanismo no seu navegador. Arraste e solte os arquivos, clique em treinar e exporte o modelo. Se você não tem facilidade com programação, essa é a opção mais fácil de todas. O modelo base é a argila.
+
+Comece pequeno e abra o jogo. Um modelo de codificação de parâmetros de quatro ou oito bilhões, algo como o QN3 em tamanhos pequenos. Aqui, são coisas pequenas. Um modelo de 4 bits e 8 bilhões de bits cabe em uma placa de 16 gigabits, e um modelo de 3 ou 4 bilhões de bits cabe em uma placa de 8 gigabits. Existe um monstro no topo desta família. O codificador Quinn 3, com os próximos 80 bilhões de
+
+parâmetros, obteve uma pontuação de 70% no SDE Benchmark. Magnífica, mas completamente a ferramenta errada para este caso . São necessários 46 gigabytes apenas para carregar. Você não pode ajustar isso em casa e não precisa combiná-lo com seu hardware. 8 gigabytes de VRAM são suficientes para um modelo pequeno. 12
+
+a 16 gigabits lidam com 8 bilhões¹. E se o seu laptop não tiver nenhuma GPU dedicada, uma colaboração gratuita do Google lhe oferece um T4 de 16 GB , a opção verdadeiramente gratuita. Primeiro passo, e o passo que de fato decide o resultado, os dados. Você vai transformar seu repositório em exemplos de treinamento. É aqui que tudo se ganha ou se perde. O formato é simples. Cada exemplo
+
+consiste em um par: uma pergunta e a resposta que você deseja que o modelo forneça. Em relação ao código, essa resposta é o seu código real. Crie um pequeno arquivo contendo essas linhas em formato JSON, um exemplo por linha no modelo de chat que o modelo espera. Nada mais sofisticado do que isso. De onde vêm os pares? Seu
+
+repositório já está cheio deles. A assinatura de uma função e seu corpo, uma string de ancoragem e o código que ela descreve, uma mensagem de commit e suas diferenças. Título da solicitação de pull request e a alteração. Alguns pequenos scripts podem coletar centenas deles automaticamente. De quantos você precisa?
+
+Menos do que você imagina. Algumas centenas de exemplos limpos e corretos sempre serão melhores do que um amontoado confuso de 5.000. O modelo copia tudo o que você lhe fornece. Então, forneça a ele seu melhor trabalho, não todo o seu histórico do Git. Passo dois, o código, e ele
+
+é mais curto do que você imagina. Duas linhas carregam o modelo de linguagem rapidamente a partir de um modelo pré-treinado, com a opção "load in 4bit" definida como verdadeira. Essa única bandeira é a colara. O modelo já vem compactado em 4 bits. Em seguida, conecte o adaptador. Obtenha o
+
+modelo PEFT com classificação 16 e alfa 16 e aponte-o para as sete camadas lineares, o valor da chave de consulta e as projeções de saída, além do controle de acesso (up e down). Essa é a Lara sentada em cima da maquete congelada. Somente essas pequenas matrizes permitirão que dois mostradores compreendam a situação. A classificação representa a capacidade de aprendizado do adaptador. 16 ou 32 é o ponto ideal. O tamanho maior apenas aumenta o
+
+risco de memorização. Alpha indica o volume da voz do adaptador. Igualar o valor à classificação ou dobrá-lo e prosseguir. Etapa três, treinamento. Essa é a parte que todos esperam ansiosamente, e Unsloth a torna quase entediante.
+
+Você entrega seu conjunto de dados a um treinador SFT, realiza o ajuste fino supervisionado e clica em executar. O ciclo de treinamento já está escrito para você. Três configurações são importantes. A taxa de aprendizagem 2 * 10 theus4 é o valor padrão seguro. Os e-books percorrem seus dados de uma a três vezes . Não ultrapasse esse limite, pois isso pode causar
+
+sobreajuste. O tamanho do lote deve ser dois, com acumulação de gradiente, para que caiba na memória. Essa é toda a configuração. Agora você observa um número, o da perda. Deveria deslizar para baixo e ficar plano em uma placa usada da série 3000 ou naquela T4 de colaboração gratuita. Um modelo de 8 bilhões termina
+
+em uma a duas horas. Vá fazer café. Volte a um modelo que tenha lido seu código-fonte. Passo quatro: envie. Neste momento você tem duas peças: a base congelada e seu pequeno adaptador, que tem apenas cerca de 100 megabytes. A Alama quer um modelo, então
+
+primeiro você junta o adaptador de volta à base. Uma única chamada de função e eles são fundidos. Em seguida, exporte para GGUF, o formato de arquivo único. Lhama, CPP e Alama, ambos RID. O Unsloth possui uma chamada de salvamento para GGUF que também quantiza o sinal para 4 bits na saída. Você termina com um
+
+arquivo portátil, de alguns gigabytes, que pode ser executado em qualquer lugar. Último movimento: Alama cria, depois Alama corre. Seu modelo ajustado agora é um ponto final local, igual a qualquer outro, exceto que este foi treinado em você. Sem chave de API, sem fatura, sem upload. Responde apenas à sua máquina. E é esse momento que
+
+faz a hora valer a pena. Dê a mesma instrução ao modelo base e ao seu modelo. A base escreve código genérico de livro didático. O seu programa escreve da mesma forma que o seu repositório. O auxiliar certo, o padrão certo, a nomenclatura que você realmente usa. A mesma pergunta.
+
+Sua voz. Isso realmente faz alguma diferença ? Em um documento escrito, um desenvolvedor ajustou um pequeno modelo local para produzir um formato estruturado rigoroso que era usado em sua base de código. O modelo padrão acertou em menos de 1% das vezes. Após um breve ajuste fino, atingiu a marca de 90 e poucos anos. Esse é o padrão de vento que se pode
+
+esperar. Não é uma genialidade nova, apenas o seu formato está perfeito. E uma análise honesta e imparcial antes de confiar nisso. Reserve alguns exemplos que o modelo nunca usou para treinamento e teste-os com base nesses exemplos. Se o modelo acertar nos conjuntos de dados estudados, mas errar nos conjuntos reservados, você está com overfitting. Reduza a concentração de epóxi
+
+. Evolve é um pequeno script, e é ele que faz a diferença entre um resultado real e uma mera impressão. Antes de sair por aí ajustando tudo nos mínimos detalhes, é preciso estar atento aos problemas, porque eles existem de verdade. A principal você já ouviu falar: forma, não fatos. Não ajuste um modelo para memorizar a documentação da sua API. Elas mudam, os pesos ficam
+
+desatualizados e você não tem como citar uma fonte. Isso é território de trapos. A segunda armadilha é o sobreajuste e sua prima feia, o esquecimento. Treinar por muito tempo com pouco conteúdo fará com que o modelo pare de aprender seu estilo. Ele simplesmente memoriza seus exemplos palavra por palavra e perde a capacidade de codificar qualquer coisa fora deles.
+
+Conserve a resina epóxi. Um modelo que repete seus dados de treinamento é pior do que aquele com o qual você começou. E a avaliação honesta e direta que os profissionais lhe darão. Na maioria das vezes, você não precisa disso. Primeiro, corrija o seu prompt . Tente a recuperação em segundo lugar. Busque o
+
+ajuste fino em terceiro lugar. Quando você deseja especificamente que o modelo adote um estilo ou formato específico, ele continua a apresentar resultados incorretos. Ferramenta certa, trabalho certo. Essa é a receita completa. Recolha algumas centenas de exemplos do seu repositório. Carregue um
+
+modelo pequeno em 4 bits. Anexe uma Laura. Treine por uma hora. Fusão. Exporte para GGUF e execute no Lama. Cinco etapas, uma tarde,
+
+uma placa gráfica. Há um ano, isto era um projeto de pesquisa com um cluster associado. Hoje, é um caderno que você pode terminar antes do jantar. Sua máquina, seu modelo treinado com seu código, e ela nunca se conecta a um servidor remoto. Agora vá ensinar seu estilo, sua base de código, seu

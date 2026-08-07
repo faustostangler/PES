@@ -1,0 +1,108 @@
+---
+video_title: "HTMX + PHP + CSS Is Insanely Fast (No Javascript Required)"
+video_id: dl25OUcWj2k
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=dl25OUcWj2k
+video_date: 2026-07-21T19:30:18+00:00
+video_description: |
+  Are you tired of shipping 700KB of JavaScript just to render a basic web application? Discover the ultimate "No-JS" web stack: using PHP 8.5 on the backend, HTMX to swap HTML over the wire, and Modern CSS to handle complex UI states without a single line of JavaScript.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the system design of the "Zero-JS" architecture. We explore how HTMX completely eliminates the need for JSON APIs and React hydration errors by sending finished HTML directly from the server. We also dive into the massive resurgence of PHP (powered by OpCache), and how it is the perfect engine for server-side rendering.
+  
+  Finally, we look at the quiet revolution happening in Modern CSS. Discover how new native browser features like the `:has()` selector, the `dialog` element, Popover API, and View Transitions have officially replaced the need for heavy UI frameworks like jQuery, Alpine.js, or React DOM. Learn how one startup used this exact stack to delete 67% of their frontend codebase!
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The JavaScript Weight Problem (Hydration)
+  1:53 - Why PHP is the Perfect Server (PHP 8.5 & OpCache)
+  3:03 - HTMX Explained: HTML Over the Wire
+  3:58 - Eliminating the JSON API Layer
+  4:32 - HTMX Features (Live Search, hx-boost)
+  5:29 - Why Modern CSS Replaced Frontend Frameworks
+  6:06 - The `dialog` Element & Popover API
+  6:49 - CSS View Transitions (SPA Feel Without JS)
+  8:00 - The Truth About the "Zero JS" Claim
+  9:06 - The Receipts: Deleting 67% of a Codebase
+  9:28 - The Catch: Where HTMX Completely Fails
+  10:06 - Summary: The Perfect Web Stack
+  
+  #htmx #php #css #webdevelopment #softwareengineering #javascript #cloudcodes #systemdesign #html #react #backend
+  
+  User Queries: 
+  htmx and php tutorial for beginners
+  build web app without javascript htmx
+  modern css has selector tutorial
+  html dialog element vs react modal
+  why developers are leaving react for htmx
+  php 8.5 opcache performance
+  hypermedia driven application explained
+  css view transitions single page app
+  what is locality of behavior htmx
+  frontend web development trends 2026
+---
+Atualmente, uma página da web média carrega 697 kilobytes de JavaScript apenas para ser exibida, e na metade das vezes a página renderizada é basicamente um documento, algum texto, alguns botões e um formulário. Essa é exatamente a função que o PHP já desempenhava em 2004, sem toda essa complexidade. Então, aqui está a pilha de tecnologias usada neste vídeo: PHP, HTML e CSS moderno, e nenhum JavaScript que você tenha escrito. E para uma ampla gama de aplicativos, ele carrega mais rápido do que a versão React. Essa é toda a alegação. Comece com HTML. Trata-se de
+
+uma única tag de script, com cerca de 16 kilobytes, e não possui dependências. Você não está escrevendo JavaScript com isso. Você escreve os atributos diretamente no seu HTML. O PHP permanece no servidor, transforma seus dados em HTML finalizado e envia isso diretamente pela rede. E o CSS moderno agora lida com menus suspensos, modais e abas que antes exigiam um framework. Nada disso requer uma
+
+etapa de compilação, portanto não há nada para instalar ou compilar antes do lançamento. Deixe-me mostrar qual componente executa qual função e exatamente por que eliminar todo esse JavaScript torna o processo mais rápido. Vamos começar por nomear o inimigo. Em 2025, uma página da web mediana pesa cerca de 2,3 megabytes, e a maior parte desse conteúdo é composta por JavaScript, com 697 kilobytes, localizado bem no centro da web. Esse é o código que seu telefone precisa baixar, analisar e executar antes que a página esteja realmente utilizável, e você sente isso como tempo. O pacote é baixado, a
+
+estrutura é inicializada, o aplicativo é compilado na memória e somente então o botão que você está olhando responde. Em um celular de gama média com dados móveis reais, essa lacuna pode representar vários segundos de uma página que parece pronta, mas não está. O que é frustrante é que a maior parte desse trabalho consiste no navegador refazer o que o servidor já fez. Ele baixa um pacote, reconstrói a página na memória e, em seguida, reconecta todo o comportamento em uma etapa que o mundo React chama educadamente de hidratação. Seu processador está ocupado reconstruindo uma página que poderia ter acabado de ser finalizada, o que me leva à ferramenta menos popular no desenvolvimento web: o PHP. Tem uma função na qual
+
+sempre foi bom. Pegue alguns dados e transforme-os em HTML. E apesar de uma década de opiniões controversas sobre sua morte, o PHP ainda é executado em cerca de 70% dos sites cujo back-end podemos de fato ver. E voltou a ficar realmente bom . O PHP 8.5 foi lançado em novembro de 2025
+
+com um operador de pipe limpo e uma sintaxe realmente moderna. E o opcache, a peça que torna tudo rápido, deixou de ser opcional. Agora ele já está compilado diretamente no arquivo binário e ativado por padrão. E o modelo mental não poderia ser mais simples. Uma página PHP é basicamente HTML com alguns espaços onde seus dados são inseridos. Você percorre
+
+os pedidos em um loop, exibe uma linha da tabela para cada um e entrega ao navegador a página completa. Não existe uma API intermediária, e nada cuja forma você precise aprovar duas vezes. O modelo é a resposta. É por isso que a velocidade é importante. A verdade sobre seu aplicativo, os usuários, os pedidos, os preços, reside no banco de dados localizado ao lado do servidor. Então, você renderiza a página
+
+onde os dados já estão e envia ao navegador HTML puro. Não há necessidade de uma requisição adicional para buscar o JSON que o cliente precisa reconstruir posteriormente. Mas uma página feita exclusivamente com HTML do servidor parece rígida. Clique em algo e a tela inteira recarrega. É essa lacuna que o HTML preenche. A questão é direta:
+
+por que apenas links e formulários deveriam ter permissão para se comunicar com o servidor? Com o HTMLX, qualquer elemento pode, em qualquer evento, usar qualquer verbo HTTP que você desejar. Essa é a ideia principal, e ela está na página inicial do HTMX. Pegue um botão e atribua a ele um único atributo HX-post direcionado para uma rota chamada {slash}clicked. Ao clicar, o HTML, em segundo plano, envia a solicitação, captura o HTML retornado e o insere na página.
+
+Todo o comportamento se resume a uma única linha de marcação. E é esse detalhe que deixa as pessoas que trabalham com frameworks desconfortáveis. O que o servidor retorna não é um bloco de JSON, mas sim um arquivo HTML pronto para uso. E o HTML o coloca exatamente onde você pediu. Nada no cliente renderiza novamente a imagem porque não há mais nada para renderizar. A página já havia sido
+
+montada anteriormente. Observe o que desaparece junto com isso. Assim que suas respostas forem em HTML, toda aquela camada JSON deixa de existir. Os serializadores no back-end, juntamente com as chamadas de busca e o cache do lado do cliente, que você normalmente monitoraria no front-end. A camada mais propensa a erros em um aplicativo moderno simplesmente não está presente. Você
+
+ainda decide exatamente o que vai mudar. Aponte o HX-Target para o elemento que deve capturar a resposta e configure o HX-Swap para indicar como ela deve ser recebida. Substituído, acrescentado ou encaixado nas bordas. Repinte uma única linha da tabela, atualize um painel, e o resto da página nem sequer pisca. E o alcance disso é maior do que parece à primeira vista. A busca em tempo real, que filtra conforme
+
+você digita, é um atributo da solicitação e outro do gatilho. Além disso, possui um sistema anti-rebote integrado que mantém o som desligado até você parar de digitar. Edição em linha, rolagem infinita, painéis com carregamento lento, cada um desses recursos é um pequeno projeto JavaScript em um aplicativo típico e se resume a alguns atributos. Existe até mesmo uma melhoria de um único atributo chamada HX-Boost. Adicione-o aos seus links e o HTMLX converterá as navegações comuns de página inteira em transições de fundo. Um
+
+site comum com várias páginas começa a se comportar como um aplicativo de página única, exceto pelo histórico do navegador e a barra de endereços, que continuam funcionando normalmente. E se o script nunca carregar, cada link ainda funcionará como um link normal. As pessoas perceberam. O HTMX possui quase 48.000 estrelas no GitHub. Construído por uma
+
+equipe minúscula como o sucessor mais maduro de uma biblioteca mais antiga chamada Intercooler. E o apoio é sério, não são gorjetas de 5 dólares. A lista de patrocinadores inclui tanto a JetBrains quanto o GitHub. Portanto, o PHP hospeda o servidor e o HTML carrega o HTML. Isso nos leva aos pequenos momentos do lado do cliente, como a abertura de um menu, a troca de abas ou o aparecimento de uma janela modal. A antiga solução para esses problemas era
+
+Alpine, jQuery ou uma camada de React. Em 2026, a resposta é que o próprio CSS amadureceu. Escolha aquela que todos diziam ser impossível. Durante 20 anos, o CSS não conseguia estilizar um elemento pai com base em seus elementos filhos, então você recorria ao JavaScript. Agora existe o seletor "has", um formulário que contém um campo inválido, um cartão que contém uma imagem, um rótulo cuja caixa de seleção está marcada. O CSS consegue ver tudo e reagir.
+
+Isso é o mercado imobiliário sem nenhum roteiro por trás . Antigamente, "modal" se referia a uma biblioteca, como React modal, Bootstrap ou jQuery UI. Agora o navegador inclui um de verdade. O elemento de diálogo oferece um plano de fundo adequado, captura de foco, tecla Escape para fechar e acessibilidade, tudo integrado. Ele funciona nos principais navegadores desde 2022.
+
+O mesmo se aplica a menus suspensos, dicas de ferramentas e menus de contexto . O atributo popover permite que você clique fora dele para fechar e corrigir o empilhamento de todos os outros elementos sem precisar escrever uma única linha de JavaScript. Esse modelo já foi enviado para todo o mundo desde 2024. Acordeões são quase engraçados. As tags de detalhes e resumo proporcionaram a você uma seção expansível, totalmente acessível e compatível com teclado desde 2011.
+
+Passamos 15 anos reconstruindo isso com manipuladores de cliques, e isso permaneceu no navegador durante todo esse tempo. Os truques de layout também deram resultado. As consultas de contêiner permitem que um componente se estilize com base no espaço em que está realmente localizado, em vez do tamanho da tela inteira. E a nidificação em espécies nativas eliminou o principal motivo pelo qual alguém recorreria à Sass. Ambos são CSS puro agora, sem pré-processador ou etapa de compilação.
+
+Existem também animações controladas por rolagem . Uma barra de progresso que se preenche à medida que você lê, um elemento que surge gradualmente ao entrar na área visível, efeitos que antes exigiam um observador de interseção e um trecho de JavaScript agora são executados a partir de algumas linhas de CSS no navegador, diretamente vinculadas à rolagem. O que realmente me surpreendeu foram as transições de visualização. Com algumas linhas de CSS e a transição entre duas páginas comuns, obtém-se uma animação suave de transição gradual, exatamente a sensação de página única pela qual as pessoas instalam frameworks inteiros. A versão que abrangia várias páginas tornou-se utilizável no Chrome e no Safari durante 2026. Agora, veja
+
+o que foi incorporado ao próprio navegador. Modais e pop-ups nativos, acordeões, seletor de elemento pai, transições de página animadas . Cada uma dessas funcionalidades era uma dependência do JavaScript no ano passado, e hoje é um recurso integrado que você já possui. Isso significa que você recebeu todo o pacote de clientes gratuitamente. Para ser sincero, o título é importante porque a escolha das palavras importa. Sem JavaScript, significa que
+
+você não deve escrever nenhum código JavaScript. O próprio HTML tem cerca de 16 KB de JavaScript, mas é uma tag de script que você insere uma vez e depois deixa como está. No dia a dia, você vive em meio a HTML, PHP e CSS. Esse arquivo não atrapalha sua tarde. Então, voltando à promessa. Por que isso é tão rápido?
+
+Principalmente porque não há quase nada para enviar. O navegador recebe o HTML finalizado e aproximadamente 16 KB de HTML, em vez dos mais de 600 KB de estrutura que um site comum entrega. Menos arquivos para baixar significa menos tempo de espera. E o que chega não precisa de uma segunda passagem. O navegador não está hidratando um pacote, comparando um DOM virtual ou inicializando uma árvore de componentes.
+
+A primeira imagem exibida é simplesmente o conteúdo finalizado que o servidor já enviou. A página está pronta para uso no momento em que é carregada, não um segundo e meio depois. As interações também são baratas por um motivo sutil. Quando uma caixa de diálogo é aberta ou um menu aparece, é o CSS que está sendo executado no compositor do navegador, e não o JavaScript competindo pela thread principal. Assim, a interface permanece fluida mesmo enquanto o restante da página está ocupado realizando outra tarefa. E isto não é um
+
+exercício de imaginação. Uma equipe pegou um front-end React real em produção e o reconstruiu exatamente com essa abordagem. Mesmo produto, mesmas funcionalidades, nada foi alterado para tornar a demonstração mais atraente. Ao final do processo, a parte frontal ficou 67% menor. Duas em cada três linhas não são mais necessárias. E o
+
+artigo completo está disponível na página inicial do HTMX, caso queira lê-lo você mesmo. Muito bem, onde essa pilha se encaixa? Porque sim, e fingir o contrário seria desonesto. Se você estiver desenvolvendo para o Figma, um editor colaborativo em tempo real ou qualquer outro sistema onde uma grande quantidade de dados é alterada no cliente várias vezes por segundo, o HTMLX oferecerá resistência em todos os aspectos. Essa é exatamente a função que um framework robusto desempenha, e é nesse caso que você definitivamente deveria usar um. Então, quem deve optar
+
+por isso? Comece com qualquer coisa renderizada no servidor, Laravel, Rails, Django, Go, qualquer back-end cuja saída nativa já seja HTML. Em seguida, adicione os desenvolvedores individuais e as pequenas equipes que preferem lançar um recurso esta semana em vez de perder tempo configurando um bundler para chegar ao mesmo resultado. Então, na minha opinião , isso não é um caso de "o React está acabando" e quem quer que esteja vendendo essa manchete está vendendo alguma coisa. O ponto principal é menor e mais útil.
+
+Para uma grande variedade de sites, toda aquela infraestrutura, o pacote, a hidratação, toda a camada JSON, era um peso que você realmente não precisava. Se isso mudou a forma como você avalia um front-end, os recibos são o próximo passo natural. Comparei HTML e React lado a lado com números reais. Essa está bem aqui. Vá descobrir quem realmente ganha.

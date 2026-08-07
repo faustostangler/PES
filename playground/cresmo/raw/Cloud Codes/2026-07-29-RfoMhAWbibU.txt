@@ -1,0 +1,127 @@
+---
+video_title: "Everything That Actually Matters for Local AI (Hardware, VRAM & Speed Specs, Etc)"
+video_id: RfoMhAWbibU
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=RfoMhAWbibU
+video_date: 2026-07-29T09:00:17+00:00
+video_description: |
+  Are you buying $2,000 GPUs based on FLOPS, only to get terrible token speeds on local LLMs? Meet the real physics of local AI hardware in 2026: why memory bandwidth dominates generation speed, why parameter count is a lie, and how KV cache explodes your VRAM requirements at high context lengths.
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/4kJqEBMMf
+  
+  In this video, Cloud Codes breaks down the exact system mechanics that govern local LLM performance across NVIDIA RTX GPUs, Apple Silicon (M5 Max), and unified RAM architectures. We benchmark real-world inference math—explaining why a 5-year-old GPU with 360 GB/s bandwidth beats newer cards at text generation, how Mixture-of-Experts (MoE) architectures like Qwen 3 and DeepSeek trade sparsity for speed, and why offloading even 10% of model layers to system RAM creates a 15x performance cliff. You will learn the exact degradation rates of 4-bit vs 8-bit quantization on reasoning benchmarks, how 8-bit key / 4-bit value cache quantization saves 60% memory, and the breakeven math between local hardware vs cloud APIs.
+  
+  If this helped you understand backend architecture, system design, and how to build faster software, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  0:00 - Why Old GPUs Beat $2,000 Cards
+  0:56 - Rule #1: Memory Bandwidth Is Everything
+  2:44 - Rule #2: Parameter Count Is a Lie (MoE & Sparsity)
+  3:51 - Rule #3: The VRAM Offloading Cliff & Quantization
+  5:38 - Rule #4: The KV Cache Memory Trap
+  7:44 - Rule #5: What Are You Actually Running It For?
+  8:46 - The Real Cost: Local Hardware vs Cloud APIs
+  9:46 - When Local AI Wins (And When It Fails)
+  10:43 - The Local AI Hardware Buying Checklist
+  
+  🔗 Repositories & Sources Mentioned:
+  • llama.cpp (Local Inference Engine): https://github.com/ggerganov/llama.cpp
+  • Ollama (Local AI Runtime): https://ollama.com/ | https://github.com/ollama/ollama
+  • Apple MLX (Silicon Framework): https://github.com/ml-explore/mlx
+  • vLLM (High-Throughput Serving): https://github.com/vllm-project/vllm
+  • Qwen Models (Alibaba Cloud): https://huggingface.co/Qwen
+  • DeepSeek Open Models: https://huggingface.co/deepseek-ai
+  • Hugging Face Model Hub: https://huggingface.co/models
+  
+  #localai #ollama #gpu #llm #systemdesign #hardware #localllm #llamacpp #gpu #machinelearning #artificialintelligence #softwareengineering #deepseek
+  #cloudcodes
+  
+  User Queries:
+  local llm gpu buying guide 2026
+  memory bandwidth vs flops local ai
+  ollama llama cpp performance benchmark
+  rtx 5090 vs apple silicon m5 max llm
+  quantization 4bit vs 8bit reasoning loss
+  kv cache memory calculation 128k context
+  mixture of experts moe local inference speed
+  how to choose gpu for local llm
+  local ai cost vs openai deepseek api
+  cloud codes local ai hardware breakdown
+---
+Duas placas gráficas. Uma delas tem 5 anos e 12 GB de memória. A outra é mais recente, tem 16 GB e custa 60% a mais. No mesmo modelo, no mesmo teste, com as mesmas configurações, a placa antiga e barata escreve texto mais rápido, 42 tokens por segundo contra 34. A placa mais nova tem mais poder de processamento. A questão é que
+
+tem menos largura de banda de memória, 288 GB por segundo contra 360. Esse é o segredo. Quando um modelo escreve uma frase para você, ele mal está fazendo cálculos aritméticos. É leitura, e a leitura é limitada pela memória. Cinco fatores determinam se a IA local funciona na sua máquina. Quatro delas não estão
+
+impressas na caixa que você estava comparando. A velocidade da sua memória, a quantidade de bytes lidos por token, se o conteúdo é compatível, a quantidade de contexto solicitada e o propósito real da execução do programa . Acerte nesses pontos e um cartão de crédito de US$ 250 será melhor do que um de US$ 4.000 que você tem no trabalho. Se você errar na configuração, vai gastar dois mil dólares para executar algo pior do que uma API gratuita. Então, em primeiro lugar, a
+
+largura de banda da memória e por que o número em todas as fichas técnicas acaba sendo o errado. Eis o que é, fisicamente, a geração. Para gerar um token, a máquina lê todos os pesos do modelo da memória e realiza uma única passagem. Em seguida, descarta esse valor e repete o processo para o próximo token. Então, o limite superior é uma operação aritmética que você pode fazer de cabeça. Tokens por segundo
+
+é aproximadamente a largura de banda da sua memória dividida pelos bytes lidos por token. Os motores reais pousam entre metade e três quartos disso. Um modelo com 8 bilhões de parâmetros em 4 bits ocupa cerca de 5 GB. Naquele cartão antigo, 360 dividido por 5 é 72. Medido, atinge 55, ou seja, 77% do teto. Execute o mesmo modelo na
+
+escada e a linha permanecerá reta. Um 3090, 936 GB por segundo, 115 tokens. Um conjunto de 5090, 1792 e 200 fichas. Agora retire o cartão . A memória dual channel para desktops opera a cerca de 96 GB por segundo, 18 vezes menos que a placa de vídeo de ponta, o que se traduz em aproximadamente 11 tokens por segundo em um modelo de 7 bilhões. A
+
+Apple contorna toda a discussão colocando um único conjunto de memória rápida por trás de tudo. Um M5 Max transfere 614 GB por segundo em 128 GB de armazenamento. Foi assim que um Mac Studio executou um DeepSeek com 671 bilhões de parâmetros a cerca de 17 tokens por segundo, consumindo menos de 200 W. Sem rack, sem problemas de refrigeração, sem nuvem. Mas a largura de banda só controla metade do trabalho.
+
+Ler o que você pediu é uma tarefa diferente. Essa parte ocorre em paralelo, portanto é limitada pela capacidade computacional. Observe o que isso faz com nossos dois cartões. Em caso de processamento imediato, a carta mais recente e mais fraca vence. 1.480
+
+fichas por segundo contra 1.119. As mesmas duas cartas, resposta oposta. Cole prompts enormes e você quer computação. Bate-papo e você precisa de largura de banda. O que nos leva
+
+ao segundo ponto, e ao número mais citado: a contagem de parâmetros. Por si só, não lhe diz praticamente nada sobre a velocidade. Uma placa gráfica, uma 3090. Q e 3 com 32 bilhões de parâmetros, densa, 35 tokens por segundo. Q e 3 com 30 bilhões de parâmetros, mistura de especialistas, 153.
+
+Quatro vezes e meia mais rápido em um modelo que é ligeiramente menor. Porque um modelo composto por especialistas não é completo por si só . Um roteador ativa alguns blocos especialistas por token, e o restante permanece inativo. O Alibaba realiza envios no total de 35 bilhões, com 3 bilhões de usuários ativos. O Google envia o modelo de 26 bilhões de unidades com 3,8 GHz de tela ativa e afirma na ficha técnica que ele funciona quase tão rápido quanto um modelo de 4 bilhões de unidades. O problema é
+
+que os pesos para dormir ainda ocupam espaço. Esse modelo de 35 bilhões ocupa 20 GB no seu cartão, independentemente do que os especialistas digam . A escassez de recursos proporciona velocidade. Isso não lhe compra espaço. É possível ver o teto que ele cria. A Moonshot tornou o
+
+Kimiko 3 de código aberto esta semana, com 2,8 trilhões de parâmetros, 1,4 TB de pesos, 6.800 curtidas no Hugging Face e 2.850 downloads. Terceiro ponto, e o que custa mais dinheiro às pessoas: serve? Se o tamanho do seu cartão de memória for 1 GB menor, você vai ter um grande problema. Alguém fez um
+
+teste comparativo adequado em um modelo de 14 bilhões . Tudo no processador, 2,9 tokens por segundo. Tudo na placa gráfica, 43. 15 vezes. Agora vem a parte interessante: pressione 40 das 48 camadas no cartão e você obterá 12 camadas e meia. 83% do modelo na GPU
+
+lhe proporciona 29% da velocidade. As últimas oito camadas fazem o resto, e é por isso que todo mundo usa quantização. Os pesos de precisão total têm 16 bits cada. A quantização arredonda os dados para quatro ou cinco bits em pequenos blocos, mantendo um fator de escala por bloco para que o intervalo seja preservado. Um modelo com 32 bilhões de parâmetros passa de 65,5 GB para menos de 20 GB. Essa é a
+
+diferença entre alugar uma GPU de data center e usar uma placa de segunda mão na máquina que você já possui. O custo é geralmente descrito como uma perda de qualidade de 1 a 3% , o que é uma forma generosa de dizer. Comparando com a precisão total na mesma solicitação, o algoritmo de 4 bits escolhe uma palavra diferente em seguida em 8% das vezes. Em níveis mais baixos , o formato de 8 bits é praticamente gratuito. 6 bits é barato. 4 bits é o ponto fraco. 3 bits causam
+
+danos reais. Um bit transforma uma perplexidade de seis em uma perplexidade de 60. E continua funcionando. Parou de pensar. Os danos também não estão distribuídos de forma uniforme. A
+
+redução para 3 bits custou a um modelo nove pontos em matemática do ensino fundamental e 6/10 de ponto em senso comum. A quantização elimina primeiro o raciocínio, e o raciocínio é geralmente o motivo pelo qual você está aqui. O Google está se preparando para isso agora. Os pontos de verificação com reconhecimento de quantização reduziram a penalidade de 4 bits em mais da metade e diminuíram o tamanho de um modelo de 27 bilhões de 54 GB para 14 GB. A regra da comunidade é escolher um arquivo com 1 a 2 GB a menos do que a sua VRAM permite. E essa regra está prestes
+
+a falhar, porque o arquivo do modelo não é o que preenche o seu cartão. Cada token que o modelo já leu deixa algo para trás. Uma chave e um valor por camada de atenção são armazenados em cache para que nunca precisem ser recalculados. Esse cache fica na sua VRAM, ao lado dos pesos, e cresce a cada palavra. Em um modelo de 8 bilhões, o custo por token é de aproximadamente 147 kilobytes. Com 4.000 tokens de
+
+contexto, isso corresponde a 6/10 de um gigabyte, um valor pequeno o suficiente para ser ignorado. Com 128.000 tokens, a mesma quantidade de dinheiro equivale a 19 gigabytes. O arquivo do modelo é cinco. Seu contexto agora é quase quatro vezes maior que seu modelo. Então, a calculadora que você
+
+usou antes de baixar qualquer coisa estava errada. Pesos, dinheiro, uma margem de segurança e tudo o que seu computador já tiver no cartão de memória. As pessoas reduzem o dinheiro da mesma forma que reduzem os pesos, com uma única configuração para ambas as metades. É nessa configuração que os tutoriais falham, porque chaves e valores não são igualmente frágeis. Quantizando os valores para quatro bits, a divergência da precisão total é de 1/4000. Ao quantizar as chaves para quatro
+
+bits, obtemos 5,5 e o modelo agora concorda com suas próprias respostas de precisão total em 11% das vezes. A razão é mecânica. As chaves passam por uma função softmax, portanto, um erro em uma posição se propaga por todas as outras. Os valores são simplesmente somados, então o erro permanece o mesmo. Chaves de 8 bits, valores de 4 bits, e você mantém 60% da memória. A arquitetura resolve isso
+
+melhor do que as configurações. Deep See comprime o dinheiro para 70 kilobytes por token em vez de 300. Gemma alterna atenção local e global e reduz o uso de dinheiro na memória de inferência de 60% para 15%. E agora, a parte que deve mudar o que você compra. Alguém processou 172 bilhões de tokens em 35 modelos abertos com 32.000, 128.000
+
+e 200.000 tokens de contexto. A perda mediana de precisão, de 32 para 128.000, foi de 10,5 pontos. Um modelo bastante popular teve sua taxa de acerto reduzida de 93% para 37% com 200.000 usuários, e sua
+
+taxa de acerto caiu de 7% para 72%. No mesmo estudo, com as mesmas máquinas, os pesos de 8 bits custaram menos de dois pontos percentuais. Custo de contexto 20. O cenário sobre o qual todos discutem quase não importa; o que realmente importa é o número usado no marketing . A quinta coisa, e aquela que decide se você deve fazer alguma dessas coisas, é: para que você está executando isso ? Comece por não se preocupar excessivamente com o
+
+aplicativo. Para uma pessoa fazendo uma requisição por vez, llama.cpp, uma lhama e o LM Studio chegam ao servidor com uma diferença de poucos tokens de segundo entre si. O vLLM é muito mais rápido para atender 40 pessoas simultaneamente, o que você não está fazendo. Duas coisas mudaram este ano.
+
+Em fevereiro, a equipe por trás do llama.cpp se juntou à Hugging Face. Georgi Gerganov escreveu que a inferência local está se tornando uma alternativa competitiva à nuvem e que a forma como as pessoas a implementam precisa se tornar mais simples. Em março, uma lhama trocou o arquivo llama.cpp pelo MLX da Apple no Mac. Mesma
+
+máquina, mesmo modelo, processamento mais rápido 57%, geração 93% maior. Um salto maior do que qualquer cartão que você poderia ter comprado naquele mês. O chip subjacente praticamente não afeta a qualidade. Em um H200, um MI300X e um Gaudi 2, a precisão na mesma tarefa foi de meio ponto percentual. A temperatura aumentou esse valor em até nove vezes em comparação com o hardware.
+
+Depois vem a conta. A OpenAI vai te vender um milhão de tokens de entrada por 5 centavos de dólar. Deep Seek executará um modelo competente por 14. Enquanto isso, a eletricidade americana atingiu 18,5 centavos de dólar por quilowatt-hora, um aumento de 6% em um ano, e a situação piorou, em vez de melhorar. O modelo 5090 tem um preço de tabela de US$ 2.000 e é
+
+vendido por cerca de US$ 4.300 porque os fabricantes de memória estão direcionando suas linhas de produção para componentes de data center . O ponto de equilíbrio em que as pessoas sempre acabam chegando . Com gastos em APIs abaixo de US$ 50 por mês , a nuvem vence disparado. Com um faturamento constante de algumas centenas de dólares por mês, a máquina se paga em menos de seis meses. A
+
+lacuna de competências também é real. No benchmark padrão de engenharia de software, o melhor modelo fechado alcança 89 pontos. O melhor modelo aberto com pesos alcança 79 pontos, e esse requer um servidor, não um laptop. Os agentes estão onde você sente a presença deles. Após aproximadamente 25 a 30 chamadas de ferramentas, os modelos locais perdem o fio da meada. Eles se esquecem dos
+
+resultados iniciais e refazem as etapas finais com a janela de contexto ainda meio vazia. Então, aqui está o sim. Vitórias locais em pequena escala, repetitivas, privadas e constantes. Classificação, extração, resumo dos seus próprios arquivos, preenchimento automático, tudo aquilo que você preferiria não colar no servidor de outra pessoa, e isso deixou de ser um hobby . A Allama reporta 8,9 milhões de desenvolvedores mensais, o dobro em janeiro, atuando em 85% das empresas da Fortune 500 com equipes de 14 pessoas. Os
+
+pesos livres representaram 41% dos downloads do Hugging Face nesta primavera, a maioria deles de usuários chineses. Na Vercel, os modelos abertos processaram quase um terço de todas as solicitações de IA em junho, e essa diferença agora pode ser mensurada. O Instituto de Segurança de IA do Reino Unido colocou os pesos abertos de 4 a 7 meses atrás da fronteira fechada neste mês, um atraso que era de 6 a 10 meses no ano passado. Na prática, 8 GB executam um modelo de 9 bilhões em 4 bits com contexto real. 16 executa um de 12 bilhões ou um de 26 bilhões de forma esparsa. O programa 24 executa um
+
+modelo de codificação de 27 bilhões de tokens a uma taxa de 25 tokens por segundo em um laptop. Cinco coisas: largura de banda em vez de computação, bytes ativos em vez de parâmetros, ajuste com aquele abismo atrás dele, contexto, que é maior que o seu modelo, e a tarefa, que determina todos os quatro. Contrate largura de banda, contabilize os servidores ativos, reserve dinheiro para isso e seja honesto consigo mesmo em relação ao trabalho. Essa é a lista de verificação. Todo o resto é uma questão de preferência.
