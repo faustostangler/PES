@@ -1,0 +1,80 @@
+---
+video_title: "Build a Voice-Enabled Telegram Bot with the Gemini Interactions API"
+video_id: J716eJOAnqE
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=J716eJOAnqE
+video_date: 2026-04-16T16:00:10+00:00
+video_description: |
+  Thor from Google DeepMind walks through how to build a Telegram bot that receives voice messages, reasons over them with Gemini 3.1 Flash, and responds with generated speech in a custom accent, all built with Antigravity and deployed to Cloud Run without writing the code manually.
+  What's covered: Setting up a Telegram bot with BotFather, using Gemini Flash for reasoning and Gemini TTS for voice responses, handling OGG audio from Telegram and converting output with FFmpeg, building agent, transcription, and translation modes, deploying to Google Cloud Run with Docker and Secret Manager, and using the Gemini Interactions API coding skill to accelerate the build.
+  
+  Grab your Gemini API key at Google AI Studio and your bot token from BotFather on Telegram to get started. Full code and tutorial linked below.
+  
+  Resources:
+  Find the tutorial → https://goo.gle/4cdOpJa 
+  Find the code → https://goo.gle/3Q8prCo 
+  
+  What are you building with Gemini? Drop it in the comments.
+  
+  Chapters
+  0:00 - Intro and Telegram voice bot demo
+  1:17 - Technical Setup and Prerequisites
+  1:48 - Deploying to Google Cloud Run
+  2:27 - AI-Assisted Coding with Antigravity
+  4:08 - Using Gemini 3.1 Flash Lite and TTS
+  4:51 - Bot Modes: Agent, Transcription, and Translation
+  6:32 - Voice Message Flow and Audio Conversion
+  8:31 - GitHub Repo and Next Steps
+  
+  Subscribe to Google for Developers → https://goo.gle/developers
+  
+  Speaker: Thor Schaeff
+  Products Mentioned:  Google AI, Gemini
+---
+[MUSIC PLAYING]
+
+SPEAKER: Hey, mate, I was wondering, should we use Gemini Flash-Lite and the Gemini interactions API to build a little kind of voice messages bot on Telegram?
+
+GEMINI VOICEBOT: Using the Gemini Flash API and the Gemini Interactions API for a Telegram voice message bot is definitely possible. Flash is fast and efficient for this, and the API helps manage the conversational flow. Do you want help getting started with the technical setup? SPEAKER: Yeah.
+
+GEMINI VOICEBOT: To get started, you'll need-- 1, Telegram bot token. Create your bot using @BotFather on Telegram; 2, Google AI Studio. Get an API key for the Gemini models; 3, Environment. A server, e.g.
+
+Python script, with libraries like python-telegram-bot to handle messages and the Google generative AI SDK. SPEAKER: Yeah, that's awesome. But where could I run this Python bot? Could I use Google Cloud somehow?
+
+GEMINI VOICEBOT: Yes, you can absolutely run your bot on Google Cloud. You have a few great options. 1, Google Cloud Run, perfect for this. It's a serverless platform, so it runs your code only when your bot receives a message. It's cost-effective, scales automatically, and integrates well with Python.
+
+SPEAKER: Well, that sounds fantastic. So let's do exactly that. And so basically what I did is I just used Gemini to sort of come up with some product requirements, like a product requirements doc for all the things that I want this bot to be able to do. And then I literally just went and told Antigravity to build this bot for me, including the instructions to deploy this to Google Cloud Run. And so we can see here, it kind of set up all our code.
+
+It also gave us a full tutorial of how the things work. So we'll publish that to dev.to later. And then in the readme, we also get kind of the full Google Cloud Run instructions of how to set that up. So we'll need to use the Secret Manager.
+
+We'll need to enable the build. We'll need to get our Telegram Bot token, our Gemini API key here. And then we just deploy this to Cloud Run. Important, we'll need to use no CPU throttling, because we're doing actually a couple of things here. We're replying immediately with the text.
+
+And then we're actually generating the speech later on. So this is really cool. And then once we have our deploy URL, we basically just need to upgrade. We just need to update our environment variable to have the webhook URL. And then it'll actually set that all up kind of automatically for us.
+
+So this is actually really, really neat. So for the reasoning model, we're just using Gemini 3.1 Flash-Lite Preview. Again, Flash-Lite is sort of the best trade-off in terms of thinking capabilities and reasoning and really intelligence at a very high speed and low cost. So this is great for our Telegram Bot here.
+
+And then we're using our text-to-speech model, which is just a Gemini TTS in this case. And so we're giving it a specific audio prompt. So you heard it was kind of a warm, friendly sort of South London accent. That was what I wanted here. And I also told it to have a bunch of different modes.
+
+So actually, by default, we have this agent mode. But we can actually switch through the different modes. And you can see we have the agent mode, we have the transcription mode, or we have the a translation mode. And so for example, if we switch into translation mode, by default, it's just translating everything to text. We can also change that.
+
+[SPEAKING GERMAN]
+
+And so now we're in translate mode. So rather than the agent kind of responding, you will see now it will just translate my German yapping here into English, which is really neat. And then it will also generate that. GEMINI VOICEBOT: If you now, for example, on Deutsch, then simply send a message, then that-- the bot then simply translate for us. If you now, for exam-- SPEAKER: OK, yeah, that wasn't great.
+
+So maybe that's why you shouldn't use Flash-Lite. So maybe, in that case, use Gemini Flash instead. But still pretty decent for such a cheap trade-off, cost and speed trade-off, so some trade-offs we're making here. But again, this is really neat. So I didn't write any of this code.
+
+This was kind of fully written by Antigravity here. And we're just using the reasoning model. We're basically using, I believe, FFmpeg. So actually, what we can do is, "How does the voice message get to the Gemini API? Are we using FFmpeg?"
+
+So great here with Antigravity, obviously, if we have a new code base, we can just ask questions about it. And so you can see the voice message flow here. So Telegram actually sends an OGG Opus thing. And then you can see we're getting this here. We're getting the voice file through the bot.
+
+Then we're kind of decoding it into just a Base64-- no FFmpeg for input. No, so we don't need that for the input. So we're basically just going Base64 straight to the Gemini API. But then FFmpeg is used for the output because we're generating the speech. We're getting, I believe, raw PCM kind of back.
+
+And then we need to convert that into the WAV. So we're going sort of PCM from the Gemini TTS into WAV into OGG. Again, we didn't have to worry about this. We just used the Gemini API dev skill. So we have a coding agent skill for the Interactions API, which is really, really useful here.
+
+So you can use that. And then, again, we just said we want to deploy this on Google Cloud Run. So it actually set up the whole Docker file for us. So we didn't have to worry about that. And then, literally, it set up the readme for us where it just tells us how to do the Google Cloud Run deploy-- so really, really neat.
+
+I'll link you the GitHub repository below. I recommend you check out the Interactions API. It's really, really useful here for building more agentic coding sort of systems. And it has access to everything that is available in the Gemini ecosystem, including the Deep Research agent. So if you wanted to add that to your Telegram Bot, Interactions API is your friend.
+
+So check it out. Let me know if you like this. Let me know if this is helpful for you. And thanks for tuning in, and I'll see you in the next one. [MUSIC PLAYING]

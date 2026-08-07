@@ -1,0 +1,44 @@
+---
+video_title: "How to implement Google Pay merchant-initiated transactions"
+video_id: 1skEw28hsrw
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1skEw28hsrw
+video_date: 2026-04-15T16:00:03+00:00
+video_description: |
+  Learn about the new merchant initiated transactions (MITs) available with Google Pay, designed to enhance your checkout experiences. We’ll dive into the mechanics of automatic reloads, deferred transactions, and recurring payments, highlighting API changes and lifecycle notifications. Developers will find clear explanations and an example of implementing a recurring transaction, ensuring seamless payment integration for their users.
+  
+  Resources: 
+  Get started → https://goo.gle/4mupiFv
+  
+  Connect with us:
+  Join the conversation in the #payments channel on Discord → https://goo.gle/payments-dev-community
+  Watch more Live Google Pay integrations on Android → https://goo.gle/live-google-pay 
+  Follow @GooglePayDevs on X for more content like this → https://goo.gle/GooglePayDevs  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Get support: 
+  
+  For assistance with your implementation, create a support ticket from the Google Pay & Wallet Console → https://goo.gle/4hSy658 
+  
+  Speaker: Dominik Mengelt
+  Products Mentioned: Google Pay
+---
+DOMINIK MENGELT: Hello, developer. Do you remember the video where I talked about recurring transactions with Google Pay? Well, I have some fantastic news, the Google Pay Sheet now supports various merchant-initiated transactions use cases. These include automatic reloads, deferred, and recurring transactions. This is part one out of two, where I'm going to introduce you to merchant-initiated transactions with Google Pay.
+
+[MUSIC PLAYING] With this feature, you can receive payment tokens, including, with a later release, tokens not bound to a customer-specific device. This will ensure payment continuity and prevent interruptions, even when a customer switches their device in the future or modifies their Wallet. Finally, you will be able to receive lifecycle notifications for Google Pay payment tokens for underlying credential changes. Details on how you can receive lifecycle notifications will be discussed in part two. First, let's have a look at the high-level flow on how to set up merchant-initiated transactions, and at a later stage, receive lifecycle notifications.
+
+So a user selects a card on the payment sheet, and Google Pay returns a DPAN and a merchant token ID within an encrypted payload. This payload then gets sent over to the integrator. In most cases, this is a payment service provider. The payment service provider stores the merchant token ID alongside existing payment credentials. At a later stage, when the underlying payment credentials change, for example, if the user removes their card from Google Wallet, Google sends an update lifecycle notification to the integrator with the merchant token ID.
+
+The integrator can now react to this notification. One possible way to do this would be to send an email to the user to update their payment method. Note, it is very important to understand that in most cases, lifecycle notifications are received and handled by the payment service providers instead of merchants. Let me quickly give you a high-level overview of the changes in the Google Pay API to support merchant-initiated transactions. You might be familiar with the TransactionInfo object.
+
+This object usually contains information like total price, currency, and country code of a transaction and maybe an optional label. We are adding three more transaction types to the Google Pay API payload-- RecurringTransactionInfo, DeferredTransactionInfo, and AutomaticReloadTransactionInfo. The existing TransactionInfo object is still supported. Like this, we make sure that all those changes are completely backwards compatible. All you need to do is to decide for a specific transaction type.
+
+To give you a clear understanding on how this works, let me walk you through a simple example. Let's say we run an online business where our basic package is $9.99. And the recurrence frequency is once per month. We use the RecurringTransactionInfo object and set the recurrence item.
+
+Within the RecurrenceItem, We specify the recurrence period and the recurrence period count. Once a month, in this case. Finally, we set a label and define the billing initial date and time. And just like that, Google Pay will show a different payment sheet to your users with all the important information for your recurring transaction. Now, when using one of the merchant-initiated transaction types, the decrypted payload the payment service provider receives contains a merchant token ID.
+
+The payment service provider stores this ID in order to find the right token later on when receiving lifecycle management notifications. We know that merchant-initiated transaction scenarios can be more complex than this. Make sure to check out our newly updated API reference, where you can find the new input parameters for deferred, recurring, and automatic reload transactions. We can't wait to hear how you use merchant-initiated transactions with Google Pay to upgrade your checkout experience. Stay tuned for part two of this series, where we will further explore how you can receive lifecycle notifications if the underlying payment credentials of a token change.
+
+If you are interested to chat about MITs with Google Pay or payment topics in general, make sure to join the official Google Pay and Wallet developer community in the Payments channel on Discord. Find my information and links to other resources around Google Pay in the video description. Thank you for watching and until next time. [MUSIC PLAYING]

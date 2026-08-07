@@ -1,0 +1,69 @@
+---
+video_title: "Meet DESIGN.md: A new open standard for AI-generated UI"
+video_id: W1gWIQp9k1Y
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=W1gWIQp9k1Y
+video_date: 2026-04-21T16:00:28+00:00
+video_description: |
+  DESIGN.md is a structured text file that gives AI agents a persistent understanding of a design system. Originally introduced in Stitch, it has outgrown any single tool and is now available as an open-source draft specification.  In this video, Google Labs' David East breaks down how DESIGN.md changes the way AI interacts with design. By combining human-readable reasoning (the "why") with exact code values (the "hex codes") in a single file, DESIGN.md teaches agents to treat design tokens as semantic roles rather than just variables.  You'll also see how other tools can read this format, and how the new CLI linter allows AI agents to automatically validate their own design updates against WCAG accessibility standards before writing code.  
+  
+  Resources:
+  See what you can do with Stitch → https://goo.gle/4e0yvTF 
+  See more on GitHub → https://goo.gle/4cCRtgG 
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: David East 
+  Products Mentioned:  Google AI, Google Stitch
+---
+DAVID EAST: DESIGN.md is a text file that describes a visual identity and gives agents a persistent and structured understanding of a design system. Inside, it contains everything that defines how your design works-- things like the colors and what they're for, the typography and why you're using it, and all the rules around how it all fits together. And when Stitch generates new designs for your project, this is the file it reads to know what design decisions to make. And you can see that on this canvas.
+
+This DESIGN.md describes Deep Midnight Forest Green as the primary ink for headlines. And the headlines on the screen are using that exact color. It calls Track Terracotta the accent for the buttons. And that's the color you see on the buttons.
+
+And Stitch is using all of this as context for what it generates. And that same context isn't just useful inside of Stitch, because other agents can read this file. And the use case for DESIGN.md has been growing. DESIGN.md files have been found in IDEs and other agent tools,
+
+and there's even all these GitHub repos and sites that curate and share these design systems. So we've put together a DESIGN.md update. We're introducing the first draft of a specification for the format. This is a documented definition of what a DESIGN.md actually
+
+is and sets some ground rules. So anyone who is reading one or generating one all is working from the same format. And we've given DESIGN.md a couple new capabilities and a brand new CLI to work with it. To show you what I mean, let's take a look at a DESIGN.md in Antigravity.
+
+A DESIGN.md has two kinds of information in it. There's the reasoning, like why you chose the color or what feeling you wanted the font to carry. And then there's the actual values, like the specific hex codes and the font sizes. And typically, these two kinds of information, they tend to live in separate places.
+
+So you'll have a style guide with all of the reasoning in it. And then you'll have a config file with all the tokens, like a Tailwind config. But over time, these two files are going to drift apart. So DESIGN.md now introduces a Tokens section that keeps both of this information in the same file, in context of one another.
+
+So if you take a look at this Color section, it contains all of the reasoning. And this states that the primary color is the deep ink that's used for the text and headlines. And this is the reasoning. So scrolling up to the front matter, the same value is defined as a token. And it's the same color that we saw described in the prose.
+
+But it's just expressed two different ways inside the file. And you'll see the same pattern in other sections, like Typography. The prose describes what you want the voice of the site to feel like, and the design token actually describes the font type and its size. And obviously, this isn't specific to one project. Other DESIGN.md's follow the same file structure,
+
+even when the aesthetics are completely different. And when the agent reads this file, it's getting both types of information, both the tokens and the reasoning. I've used the word "token" a lot, so let's dive in to what it actually means. Token isn't a variable in the way that we typically think about variables. It's more of a decision.
+
+So when we say primary is a color, it's true. But it's more so primary is a named decision. Primary is a role in this design system. It is the main ink, the text color of the page. And the hex value is just what fills that role at this time.
+
+And the same idea shows up in all these other sections in DESIGN.md, like, again, in typography. Body main isn't exactly a font size. It's the role of a default body copy. And right now, it's just decided that it's Noto Serif at 18 pixels, and that's what fills this role.
+
+So the DESIGN.md spec makes some baseline decisions, but it's opened to extensions and your own customizations. And one of the baseline decisions that it makes is that everyone has to have a primary color defined. And in many design systems, primary is going to serve as the primary color the user sees on the page, which will be the text and the ink, and neutral will be the color that the user is emotionally neutral to, which is the canvas or the surfaces, really the background of the page. And when you start to think about these colors as roles, you'll actually start to design a little differently because you won't be trying to match colors outright.
+
+You'll be reaching for a role that serves a purpose. The DESIGN.md spec introduces a whole bunch of sections, and these are a lot of sections that you're used to seeing. And then, now, these sections have their own associated tokens. But there is a new section that we've been working on, and it's still a work in progress.
+
+And we are very much wanting feedback and contributions on this. And this section is Components. Look at this button primary token here. It has a background color, and it isn't a hex code. It's actually a reference to a color that we've defined in the front matter.
+
+This component points at a role that we defined and it uses whatever value lives there. So when we update this role, every component pointing to that also follows along. And right below, there is another component that works the same way, a hover variant. And it just overrides one property, which is the background color. And it points at a different variant of the same role that we've already set up.
+
+Components are a work in progress, but we're very excited about their potential. So please give us your feedback, and help us shape their direction. In this update, we've defined this Token section, where you can define these values that live alongside the reasoning. The biggest part of this update isn't just the design tokens, but it's the actual specification to DESIGN.md that we've published the first draft to on GitHub.
+
+This GitHub repo holds the spec and its rules, but is also a place to file issues, respond to comments, and send in pull requests for making contributions. Anyone can read the spec and bring their own feedback and thinking back to us. The main reason why we have introduced DESIGN.md as a specification is that it has greatly outgrown its original use. There are so many tools now that are generating DESIGN.md's and other tools that are consuming them,
+
+and people are now using them in so many ways that we could have never anticipated. By establishing some core rules for a specification, everyone can work from a common ground, and there aren't just all these different variations and unexpected ways of seeing DESIGN.md in the wild. And we all can work from the same foundation, but at the same time, still allowing for extensions and customizations that fit any specific design system. Effectively, we want to provide a core set of rules and structure that everyone can rely on while still providing a whole space for flexibility and creativity.
+
+So how do agents and other tools actually work with a DESIGN.md spec? Well, we've introduced a CLI that validates a DESIGN.md against the actual spec. So when an agent is working with DESIGN.md,
+
+it can actually check its own work. Here in Antigravity, I have the same DESIGN.md open with an agent in the side panel. I'm going to ask it to add a new accent button to the Components section. The agent makes this change.
+
+It adds this button, Accent Component, with tertiary for the background and primary for the text. I'm going to ask this agent to run the CLI to lint against the file. And the linter catches something. The pair the agent picked has a contrast ratio issue, and it's well below the minimum that the WCAG requires for body text. And the agent now knows this, and it can adjust this pair.
+
+Or it can override it if there is a real reason for that choice. And that's the loop that the spec enables. An agent reads the file's context, makes a change, and has a way to validate its own work against the format. The file isn't just something that an agent just consumes anymore. It's something that an agent can actually rely on.
+
+Those are the core parts of the update, a specification, a new Tokens section, and a CLI to check the work, because the main goal of this update was to allow for DESIGN.md to be easier to use outside of Stitch and for everyone to have a common ground to work from. If you want to try DESIGN.md, start by generating one in Stitch, and then check out the specification, use the CLI, and start using DESIGN.md outside of Stitch in other agents and other tools.
+
+And if you're interested in helping out with the spec, providing feedback or contribution, please check out the GitHub repo. And we are very excited to see what you think of all of the new updates in DESIGN.md. [MUSIC PLAYING]

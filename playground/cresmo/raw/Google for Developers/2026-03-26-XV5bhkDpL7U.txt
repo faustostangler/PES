@@ -1,0 +1,144 @@
+---
+video_title: "Building Voice Agents with Gemini 3"
+video_id: XV5bhkDpL7U
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XV5bhkDpL7U
+video_date: 2026-03-26T15:47:08+00:00
+video_description: |
+  *Build real-time conversational agents with Gemini 3*
+  Thor from Google DeepMind walks through the Gemini Live API, showing how to build natural, human-like voice interactions powered by Gemini’s native audio model: speech-to-speech, no text in the middle, with emotional nuance, multilingual support, and real-time tool use.
+  
+  *What’s covered:*
+  Testing in Google AI Studio, streaming audio and video frames, configuring voices and system instructions, WebSocket integration with the GenAI SDK, session management, interruption handling, and deploying with partner frameworks like LiveKit, Daily, and Stream.
+  
+  Get started:
+  Try Gemini Live in Google AI Studio and grab your API key to start building.
+  
+  Resources:
+  ✅Live API documentation → https://goo.gle/4rObPZV
+  ✅GitHub examples → https://goo.gle/4c4sZhi
+  ✅Blog post → https://goo.gle/4m1KoLa
+  
+  What are you building with Gemini Live? Drop it in the comments.
+  
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Thor Schaeff
+  Products Mentioned: Gemini, Google AI, Google AI Studio
+---
+[MUSIC PLAYING]
+
+THOR SCHAEFF: You can now build real-time conversational voice agents with Gemini 3. Hello, everyone, I'm Thor. I work on the Developer Experience at Google DeepMind, and today I'm excited because we've released the first Gemini 3-based Flash Live model that you can use to build really rich, human real-time voice agents. So now, let's go ahead and have a look at how we can integrate these voice agents into our applications using the Gemini Live API. Now, for some example use cases, so the Live API really allows you to get these human-like interactions.
+
+So this is powered by a native audio model under the hood, which means that we're going through sound directly. So we're going from sound to sound, speech to speech naturally, so we're not losing anything going through text. But we have the full emotional understanding, the full audio understanding capabilities of Gemini 3 baked into this model. And that also means we can naturally switch between various different languages, which is really fun. If you want to get a feeling for the new model, the easiest way to try it out is here in Google AI Studio.
+
+So in Google AI Studio, we can select the Gemini 3.1 Flash Live model, and then we can kick off our session. So we can not only ingest audio in real time, we can also ingest video frames, so from our webcam, or we can share our screen. So we're just ingesting images in real time to the model. So what we can do now is-- [TONES] Hey, Gemini, how are you today?
+
+GEMINI 3 FEMALE VOICE: I'm doing great. Thanks for asking. Ready to help with whatever you need. How about you? How's your day going?
+
+THOR SCHAEFF: There we go. And we can obviously, customize this, as well. So if we go and we start a new session, so closing the stream here, we can then go and we can modify our settings. So for example, if we want to choose a different voice, there is a bunch of bass voices available. GEMINI 3 MALE VOICE: Got a project in mind?
+
+THOR SCHAEFF: So for example, we can use Puck here. And what we can do is, we can give it some system instructions. So for example here, I have something like, speak in a friendly Irish accent. So these models are special because they have the audio understanding. So we can actually direct them, almost like a human, to act in a specific way.
+
+And so now that we have our systems and structures set up here-- Hey, Gemini. [TONES] How are you today? GEMINI 3 MALE IRISH VOICE: Ah, top of the morning to ya. I'm doing grand. Thanks for asking.
+
+Just enjoying the chat. And how are things with you? THOR SCHAEFF: Can you see me?
+
+GEMINI 3 MALE IRISH VOICE: Well, as plain as day. I see you there with your short hair and beard, wearing a grand dark jacket over a blue shirt. You're even talking with your hands, so I know you're real. And is that a Google sign behind you? THOR SCHAEFF: Yes, that is correct.
+
+Fantastic. GEMINI 3 MALE IRISH VOICE: Ah, I thought so. So what brings you to the Google place today? THOR SCHAEFF: There we go. So this is our playground in Google AI Studio where we can just very quickly try out the model, give it some systems instructions, adjust the thinking level, meter resolution, function calling, kind of all these settings.
+
+So as you can probably see now from the demo, there is a bunch of different use cases where you can apply this. So, obviously, real-time shopping assistance, e-commerce, retail, and gaming because these are very interactive characters. You saw it there with the Irish accent, for example. So NPCs in gaming. Voice interfaces.
+
+You want to talk to your Waymo, for example. That is something that you can do now powered by Gemini Live. Health care, financial services, education. There's a lot of applications where real-time voice will play a very important role. Now, in terms of the key features, multilingual support, it is trained on many, many different languages.
+
+Currently in the preview we can try out these 70 different languages. We can obviously interrupt this kind of voice activity detection and the turn handling. Tool use is really, really great, as well. So we can instruct it, we can give it some tools and it can take action on our behalf. So Gemini 3 is really the era of action.
+
+Now, in terms of the technical specifications, so the input modalities are real-time audio, so as you're speaking. So that needs to be fed in as raw PCM audio at 16 kilohertz. For images, we can feed in JPEG frames at one frame per second. So that's currently the maximum. As well as text, we can feed in as a modality.
+
+In terms of the output modality, so at the moment, we can do audio output. So that is streaming out as 16-bit PCM. Again, in 24 kilohertz frequency. So in addition, we can get the audio transcript stream back, as well. And so currently, we support a stateful WebSocket connection.
+
+And so there is some session management that you need to consider with that. So when you're integrating that, you need to handle the connection of the WebSocket. If it disconnects, you need to reinitiate the session. And so there's a couple of things to look out there. When you're integrating the Live API, there is a couple of considerations that you have to make.
+
+So first of all, you have a WebSocket connection. So you can connect to that from your server. If you have a server to server integration, then your server is a secure environment, you can give it access to tools, API tool calls, connect to third party systems and all that good stuff, that powerful stuff that you want to do. Now, the trade-off is that you're going through your server, so that might be adding some latency, you're streaming kind of from your client to your server, and then going through the Live API. You can also go straight from the client to the server.
+
+So that is basically the server being the Live API on the Google side. So in this case, your front end directly connects using the WebSocket interface. So, if you're on the web, you can use the WebSocket directly from the browser. And that obviously gives you better performance. You will need to use a thermal tokens in that case to make sure that you're not leaking your API key.
+
+And then also, the client environment is kind of a less secure environment. So you will be somewhat restricted in terms of the tool calling, the updating of the system instructions and such. So that is something to watch out for. Now generally, these integrations can be somewhat complex. So if you need help and you just want to get started quickly, there is some really, really great partner integrations.
+
+So these partners are really professionals in their field. They've worked with real-time audio, video communication for many, many years. And so they have integrated the Live API and made it really, really easy for you to integrate using WebRTC. So if you're building kind of a production scale application with untethered clients-- so your mobile device or the Waymo car, kind of things like that-- you really want to be using WebRTC for that. So here, you can utilize our partner integrations from LiveKit, from Daily, which has the Pipecat open source framework, which is really great.
+
+Software Mansion, a great company, they've built a Fishjam service that allows you using TypeScript to build real-time communication services. Vision Agents is a great open source framework as well, by Stream. So Stream gets Frame.io. You can use that.
+
+Voximplant is a great, great partner, as well for telephony integration that, out of the box, is fantastic, also. Or you can use the Firebase AI SDK, as well, that integrates the Gemini Live API and has tons of different client libraries that you can use. So these are the partner integrations. If that is a path where you just want to get going really quickly and go to production really quickly, these partners can help you with that. So I recommend you check out.
+
+I'll link some tutorials from the partners down below, as well. But for our use case, we're just going to jump into this tutorial where we use a Python server to server set up with the Google Gen AI SDK tutorial. And so in this scenario, we can go through, we can clone this in GitHub. So we can see that we have the GitHub examples here. So you can see we have this setup where we have our FastAPI server, which is giving us a WebSocket endpoint.
+
+So we're kind of proxying the WebSocket through the endpoint. We then have the Gemini Live wrapper in there we can use. And then on the front end, we have a couple helpers to help us with the Web Audio API streaming and all of that. So you can dig into that. You can see how that works.
+
+And in order to get that going, all you really need is your Gemini API key. So to get your Gemini API key, again, in Google AI Studio, that's the easiest way to do. So you go to Get API key. You can create a new API key to use. For example, we can create one here.
+
+We can call it Live API Gemini 3 Demo.
+
+And so once we grab our API key, we can then find it here and we can copy it very easily to the clipboard, and then clone our application from GitHub. We can simply clone this application down, so we can do a git clone here. We can go into our Gemini Live API examples here, and then open this up in Antigravity. So in Antigravity, we can now see we have our application here. We have our main readme.
+
+We have our .env file, so this is where we'll need to copy that into a .env file and then paste in our API key. And so we can see here, in order to run this, we will want to set up a virtual environment in Python. That's always a good idea to do that, to contain that in a virtual environment.
+
+So once we have that, we can then install the requirements.
+
+And then finally, we can run our server.
+
+And so the server will now be up and running on localhost. And so here, we have our Gemini Demo. So the demo very similar to Google AI Studio, so once we connect-- GEMINI 3 MALE IRISH VOICE: Well, hello there. I'm just a little demo of the Gemini Live API. We could play around with some fun accents, chat in another language, or even try having me stay quiet till you say so.
+
+I can even change-- THOR SCHAEFF: All right. GEMINI 3 MALE IRISH VOICE: --my tone to-- THOR SCHAEFF: Can you hear me? GEMINI 3 MALE IRISH VOICE: I can hear you loud and clear, boy. THOR SCHAEFF: So that you can see, we can interrupt the agent, as well, if we need to. GEMINI 3 MALE IRISH VOICE: Ah, you can surely do that.
+
+Cuts right in on you. THOR SCHAEFF: And can you see me now? GEMINI 3 MALE IRISH VOICE: I can see you there by sitting in what looks like a fine studio, talking away with your hands. THOR SCHAEFF: Now, can you see my screen? GEMINI 3 MALE IRISH VOICE: I can see that now.
+
+You're showing me the Demo page with our whole chat there on the screen. THOR SCHAEFF: Fantastic. So that is the demo that we have. We can try that out very, very easily and we can stream in our camera and all that. So let's have a look at the code.
+
+So the way this works is, we're using the Google Gen AI SDK. And in the Gen AI SDK, we can then configure our Live session. So here, we have our Live config. Our response modalities at the moment, we can just use audio to get that back. We can configure our voice.
+
+We can give it some system instructions. Speak in a friendly Irish accent. You saw that here. And then we're enabling input, audio transcription, as well as output audio transcription. So that's what we could see happening on the side.
+
+So we saw the transcription of what was going on. And then we can give it a bunch of tools, as well, that we can call, for example, to fetch some data, set up some meetings for us. The sky is the limit really here. So with Gemini 3, the tool calling capability really has stepped up even more. So then what we need to do is with our Google Gen AI client, we then need to connect our Live session.
+
+We'll need to put in the model string. Again, we can copy that font from Google AI Studio. And so now that we have the session set up, we basically need to implement a couple of methods. So one for sending audio. We have the session send real-time input.
+
+And so with send real-time input, we can send a bunch of different things. So for example, we can send text in. We can send video frames in. We can send our audio chunks in, all that good stuff we need for the real-time interaction. So we need to put that in as an audio BLOB.
+
+So here, our data chunk that is coming in from our audio input queue. So our audio input queue is set up to receive from the WebSocket that we've set up. So in the main handler, we can look at our server here for a second. So we're creating our WebSocket here from the client. And we're basically piping through our audio from the WebSocket.
+
+We're sending the bytes, we're piping through. So as we receive our WebSocket, we can see if it's a text message, we're piping that through the payload. If it's a JSON payload, then we're trying to get that out and decoding it into our video input queue, for example. And then we're starting our session, and we're setting up our different queues coming from the client side. So then we're here, our audio, our video frames coming from the client.
+
+We're forwarding to our Gemini Live API. The same for video. So video frames, we're putting in as image JPEG frames at a maximum frame rate of one frame per second. So that is currently the maximum here to keep the context window alive. And then for sending text, again, we can send real-time input just with the text there.
+
+So we have the multi-modality available. Now in terms of receiving the audio from the Live API, we have to implement this receive loop. So in our session receive, we're getting our audio chunks back. So as we're getting them back, there's a couple different things that we have to look out for. Our transcription, we can forward that to the client, and we can render it on the client, so that you can see that.
+
+We need to handle the audio interruption callback. So if the agent is talking and we now interrupt it, we need to send in an event and we need to flush the queue. So there is a couple intricacies that we need to handle there. Yeah. And so that is a couple things.
+
+Tool response, as well, we need to handle. So if in doubt, you can jump back to the documentation. And so in the documentation, you can see Getting Started here. There's Handling Tool Calls. So you can see you get kind of response.toolCall functionCall,
+
+so this would be in JavaScript. And then in Python, similar how you implement the toolCall capabilities. OK, great. So we roughly covered some of the nuances of the Live API and how we can get started with the Gen AI SDK. You can, of course, also use raw WebSockets.
+
+So you can see how that would work if you're connecting directly from the client side. We also have an example that you can jump in on GitHub. Just remember that if you're connecting directly from the client side, you'll need your Ephemeral Tokens, which is currently in v1alpha. So there, you will need to connect to a different WebSocket URL. Now in terms of the capabilities, there is tons of capabilities available.
+
+So you can dig into those in terms of language support. There is plenty of different languages that we can jump through. So we can naturally reply back in different languages, and the model will recognize it and naturally reply back in that language. The Tool use documentation, I recommend you look into that, as well. So the built-in tooling, we have the search tool available.
+
+That is just built in. OK, great. Now lastly, things to watch out for is the session management. So the session lifetime is kind of audio-only. sessions are currently limited to 15 minutes, and audio-video sessions are limited to two minutes.
+
+Now, this is because of the context window. In order to extend these sessions for a lifetime, you will want to implement the context window compression, which will then give you a sliding context window that you can do. So even with that though, the WebSocket connection is limited to around 10 minutes. So every time you're approaching the 10 minutes, you will get kind of a go away message. So it will warn you that the session is about to drop.
+
+And then you will need to implement what we call the Session Resumption. So in order to implement the Session Resumption, there's a handler that you need to implement. While the connection reconnection is happening, you need to buffer the audio that is going locally. And then once you're connected, you can send that audio buffer through. So a bunch of things to look out for.
+
+Again, if you just want to go to production really, really quickly, you might want to look at the partner integrations that handle all of this for you. That really makes it then a lot easier. Now finally, in terms of best practices, I really recommend that you walk through this before you go into production. So really focus on your clear system and structure, define your agent persona, your conversational rules, your guardrails, your specific tool calls, and all of that. Define your tools precisely.
+
+Again, look at the tool definitions that we have there, and really recommend that you have a look at that. Clear prompts, starting commands and information kind of feeding that in. In terms of the languages, again, the model can speak many, many different languages. So if you want to limit the amount of languages or if you want for it to speak in a specific language, then you need to encode that into your system prompt. Now, in terms of streaming chunk size and latency, recommend you send chunks of 20 milliseconds to 40 milliseconds of the audio, and handle the interruption handling correctly.
+
+Context management, again, you should set the context window compression, have the sliding window and really have that available. Client buffering, resampling, all these are things that you have to look out for in a production system. Again, if that is something that you don't want to concern yourself with, we have the partner integrations and they have really, really deep knowledge in all these topics. So we recommend if that is something you want, you can look at those. And there's some examples here of how you can design your system prompts, some best practices in terms of tool definitions, as well.
+
+Now, there we go. That is how you can get started with the Gemini Live API with the new Gemini 3-based Flash Live model. For real-time conversations, really, really exciting times that we can communicate with our machines in real time. And I'm really excited to see what you will build with Gemini Live. Thanks for tuning in and do let me know in the comments below what you are building with the Gemini Live API.
+
+I'm really, really keen to explore and try it out. [MUSIC PLAYING]

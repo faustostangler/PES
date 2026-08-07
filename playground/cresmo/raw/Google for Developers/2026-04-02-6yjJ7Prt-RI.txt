@@ -1,0 +1,40 @@
+---
+video_title: "AIventure: Learning about vibe-coding, agents and Gen AI with Gemma 4"
+video_id: 6yjJ7Prt-RI
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6yjJ7Prt-RI
+video_date: 2026-04-02T19:01:11+00:00
+video_description: |
+  Learn how to create an AI-powered educational game focused on vibe-coding and agentic characters using Angular, PhaserJS, Gemini and Gemma.
+  
+  Resources: 
+  Learn more here → https://goo.gle/4maoHsf 
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Tom Greenaway
+  Products Mentioned: Gemini, Gemma, Angular, Google AI
+---
+[MUSIC PLAYING] TOM GREENAWAY: Hi. I'm Tom Greenaway, and I'm part of the Solutions team at Google. Before Google, I was an independent game developer best known for creating the award-winning video game "Duet." And at Google, a few years ago, I led the creation of a virtual conference technology we used to power Google I/O and other online events, which was called Adventure. Have you ever imagined building an educational game, one powered by AI technologies, with a focus on vibe-coding exercises, teachable agents, and AI learning puzzles?
+
+Well, then, you have found your solution. In this video, we'll take a tour of an experience my Gemini colleague, Drew Young, and I built. It's an offline-capable, AI-powered educational game built with Angular, PhaserJS, and Gemma 4. Or if you prefer, you can use Gemini. By the end of this solution, you'll understand how to leverage Google's cutting-edge technologies to create innovative, AI-powered learning experiences and how gamification can be utilized in teaching.
+
+So meet "AIventure," an open source educational game in which the user explores a retro video game dungeon, assisted with the power of GenAI prompting. The game introduces players to simple concepts, such as opening doors by typing prompts-- for example, open the red door. But the game quickly advances the complexity by introducing vibe-coding puzzles and agentic NPCs. And today, we'll be exploring the code base with Antigravity, our agentic development platform. When initially building the demo, we prototyped with the Gemini 3 Flash API.
+
+And with the launch of Gemma 4, we realized our family of open-weight models had become robust enough to successfully manage the specific vibe coding and agentic puzzles needed to power this game. And so in this open source project, you'll find the configuration options for either Gemini 3 Flash or Gemma 4 via a locally hosted server. The first video walkthrough demonstrates a user opening a door in a room using a prompt. We can see how this command is either routed to Gemma 4 locally or to Gemini 3 Flash, depending on the configuration of your game. In the prompt itself, we've given the context of the doors available in the room and the functions that are available to them.
+
+In the second walkthrough, we encounter a vibe-coding puzzle. Here, this chicken NPC asks you to help them create a to-do list web app. The twist? The chicken insists that the first version of the app only have two types of tasks you can add to-do list-- eat or sleep. After all, it is a chicken.
+
+Here, we can see Gemma's vibe-coding skills. build the code of the web app based on your prompt, and render the app inside the page using an Iframe. And furthermore, we leverage Gemma to analyze the result to see if the to-do list stays focused on just eating and sleeping. If the user has added unnecessary to-do list features, then the puzzle is not solved. In the third walkthrough, we encounter a lava pit that the player cannot cross, which is unfortunate because there is a switch we must flip on the other side of the lava.
+
+However, luckily, there is a robot NPC we can chat to. And by bumping into this NPC, the robot accepts a prompt from us, which it then repeatedly executes via Gemma in an attempt to complete that goal. The NPC sends the prompt to the model backend, which instructs the NPC to either move to a particular location or search for the switch in the game world. After completing a task, the NPC re-prompts the model for further instructions, creating an agentic thinking loop. Now let's talk about the technology behind the scenes.
+
+For this project, we've leveraged Angular for the front-end UI, but inside the Angular component is the popular web game engine PhaserJS. You'll explore how Angular can communicate across boundaries into PhaserJS, enabling us to mix a game experience with a high-quality web UI framework, such as Angular. And we achieve this through a simple event bus. When prompting in the game world or solving a vibe-coding puzzle, we can route our prompt request via multiple pathways. For example, the front end can send the request directly to a locally hosted Gemma 4 model on your machine.
+
+In this case, we recommend hosting Gemma 4 via a tool such as LLM Studio or Ollama. Or if you provide a Gemini API key, we can directly call the Gemini API from the web application frontend. And lastly, you can deploy a simple server to send prompt requests to Vertex AI on Google Cloud, which can either respond with Gemini or a Google Cloud-hosted version of Gemma 4. You can also explore the various prompts we've written for the in-game puzzles, the vibe-coding exercises, and the agentic-powered NPCs in the code. And if you play through the dungeon, you might learn a thing or two about the principles of GenAI itself in some of the puzzle rooms that Drew Young has designed.
+
+So that's "AIventure," a web-based educational game that teaches you the principles of GenAI, takes you on a vibe-coding learning journey, and demonstrates the power of agentic NPCs. What will you create next? And what educational experiences can you imagine which are not just enhanced by AI but unlocked by this new technology? Explore our solution. Inspect the full architecture.
+
+Quiz your knowledge. And we can't wait to see what AI-powered experiences you build. Let's get started. [MUSIC PLAYING]

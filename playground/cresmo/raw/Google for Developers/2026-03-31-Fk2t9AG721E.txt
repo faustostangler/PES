@@ -1,0 +1,124 @@
+---
+video_title: "Build real-time multimodal agents with Gemini and Pipecat"
+video_id: Fk2t9AG721E
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Fk2t9AG721E
+video_date: 2026-03-31T19:00:14+00:00
+video_description: |
+  Chad Bailey from the Pipecat team walks through what's possible with the new Gemini 3 multimodal real-time model: flight search, lodging lookup, Google Search grounding, trip report generation, and a language tutor agent, all in a single voice conversation.
+  
+  Note: The public string for this model is gemini-3.1-flash-live. The string used in the video is for the Early Access Partner program and is now turned down.
+  
+  What's covered: Scaffolding a bot with the Pipecat CLI, configuring Gemini 3 with minimal thinking for lower latency, writing system prompts that hold up across long conversations, defining and registering tool calls, enabling Google Search grounding, saving trip reports to disk, and running multiple agents in a single bot file with Pipecat Agents. 
+  
+  What are you building with Gemini Live API? Drop it in the comments.
+  
+  Resources:
+  Gemini Live API overview → https://goo.gle/47vg4Tc 
+  Get started at pipecat.ai → https://goo.gle/4ch4LAx 
+  Pipecat examples → https://goo.gle/4uYe93z 
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Chad Bailey from the Pipecat
+  Products Mentioned: Google AI, Gemini
+---
+Hey, I'm Chad Bailey. I'm from the team that builds Pipecat, the open source framework for real-time agent orchestration in multimodal apps. I've been experimenting with the new Gemini 3 based multimodal real-time model, and I'm excited to show you what it can do. Let's go plan a trip to Italy. - Hello. What kind of vacation are you dreaming of?
+
+- Well, it's my daughter's 18th birthday coming up and we told her she could pick somewhere to go in Europe.
+
+- That's generous. To help narrow it down, What's she interested in? Like art, beaches, history or something else? - Definitely like art and history. I think we're thinking Italy, possibly.
+
+- Italy's perfect for that. For Art and History, maybe suggest Rome or Florence? Rome's got ancient sites. And Florence is packed with Renaissance masterpieces. What do you think?
+
+- Yeah, I was going to say we're planning on spending about a week. So I was going to say maybe, like two destinations. I think Rome and Florence sounds pretty good.
+
+Great choice. A week gives you roughly four days in Rome and three in Florence. To look at flight options, what's your origin city and what dates are you considering?
+
+We'll be flying from Austin, and we're thinking probably sometime in July.
+
+- Flying from Austin in July? There are some flights to Rome, mostly with one stop. Prices are roughly between $580 and $811 per person. Did you have specific dates in mind, or would you like to look for lodging next?
+
+- We're kind of open on dates, but I'd be curious to know if you could look at a few days in either direction, see if there's a difference in airfare.
+
+- Looking around that first week of July, flights are mostly between $690 and $870. The cheapest options seem to be around the 1st or 3rd of July. Would you like to explore lodging now, or should we look at more flight options? - Yeah. Let's plan on starting the trip on the third for now.
+
+Let's talk about lodging.
+
+- Great. Starting July 3rd. - Are you looking for hotels, Airbnb, or VRBO? And for how many guests? Do you want to stay in Rome first or Florence?
+
+- I’m not sure which one we want to do first. There's going to be five of us, so I don't know if there's hotel rooms that are big enough for us, so maybe let's look for hotels, but also we can check Airbnb.
+
+For a group of five, checking both hotels and Airbnbs is a good idea. - Since you were looking at flights to Rome, how about we search there first for say, July 3rd to 7th? Then we can compare. Sound good? - Okay. Yeah.
+
+- In Rome from July 3rd to 7th for hotels, you can find some places like the Hyatt Grand Rome for around $138 per night, though its rating is a bit lower. The Four Seasons has a better rating at roughly $191. For Airbnbs, there's a penthouse for $114 per night with good reviews or larger places like a cottage for around $166. Should we look at specific areas or maybe search lodging in Florence? - I mean, let's--I probably want something like centrally located in Rome.
+
+Is that penthouse, like is the-- which of those Airbnb listings is closer to like center of town?
+
+- I've just searched again for Airbnbs, specifically in the central Rome area. You can find a modern loft for about $227 a night or a stylish flat with good reviews for around $247. Does that sound closer to what you had in mind? - Yeah. Let's do a loft. That sounds good.
+
+There's a lot of new functionality sprinkled throughout there. So let me show you how I built this bot and we'll look at some of the new things that Gemini 3 adds in along the way. Now, the easiest way to scaffold the new voice agent is with the Pipecat CLI. You can install that by running uv tool install pipecat-ai-cli
+
+Of course, I've already got it installed. Now I'll run Pipecat init to create a new bot.
+
+I’ll call it Gemini demo. And you have a lot of flexibility here. With Pipecat you can pick your transport. I'm using the web because it's an easier demo, but you can hook this up directly to your telephony provider. You can even create a WhatsApp voice business agent, all that kind of stuff.
+
+You can deploy to Pipecat Cloud if you want, but Pipecat is totally open source and vendor neutral. You can run your bot on your own infrastructure on Google Cloud platform or really whatever you want with no external dependencies. Once that's done, I'll go off screen to set up environment variables. Just for a second,
+
+I'm starting from a very standard Pipecat bot file here. If you're not familiar with Pipecat, you can visit pipecat.ai to learn all about the framework. For now, I'm going to get right into building what we just saw. First things first, we need to configure this bot to use the new model.
+
+Now I'm making one other important change here. I'm setting the thinking level to minimal. I know it sounds kind of funny to ask the model to think as little as possible when it talks to us, but this has a really big impact on how quickly the bot will answer us, and it turns out that Gemini 3 is more than smart enough to do all of this without having to think too hard about it.
+
+Now we get to the first big improvement with Gemini 3. It's way better at instruction following. That means I can drop in a gigantic system prompt and Gemini 3 will do a much better job at staying on task even in very long conversations. Pipecat has a module called Pipecat Flows that you can use to guide models through complex multi-step workflows, but as the models get better, you can get away with just telling it everything you need to do upfront in the system prompt.
+
+In fact, all the snippets you're seeing are from me having 15 minute conversations with this bot and it stays on topic the entire time. Next, another important improvement in Gemini 3, greatly improved tool calling capabilities. This is important for any voice agent that needs to do anything other than talking, which is pretty much any voice agent that's actually worth using. There are a few tools we'll need for this bot. First, searching for flights.
+
+For now, I'm going to just return hard coded data for some of this stuff. Here's how you define function call handlers in Pipecat. Now to start, I've got this generate mock flights function to make some fake data. This search flights function is what actually does the flight lookup when the LLM uses the search flights tool.
+
+This search flight schema object is how we tell the LLM. It has a tool called search flights and how to use it. Then we put that in a tool schema and we register it with the LLM down here. Now you can read a lot more about this at pipecat.ai.
+
+I'm going to go ahead and add a lodging tool as well.
+
+Same idea: mock data, because I can't be bothered with a real API in a live demo.
+
+Tell Pipecat how to do it.
+
+Describe the tool for the LLM.
+
+Then tell the LLM it can use it when it wants to.
+
+Then finally connect the LLM's idea of the tool to Pipecat's handler function. Now, in my opinion, one of the marquee features of the Gemini models is their Google Search grounding. I can add that to the bot just like this.
+
+This one is easy. Gemini already knows how to use Google. This is basically just turning it on. Now, I'd hate to spend all this time talking to this bot to plan this trip and have nothing to show for it. Fortunately, Gemini 3 is multimodal.
+
+I'm going to add a tool call to save a trip report. - Welcome back. We were looking at flights from Austin to Rome in July of 2026. Should we finalize those dates or look for lodging in Rome or Florence? - Yeah. I think based on the festival and stuff,
+
+it sounds like we're sort of orbiting around some dates we might be able to use.
+
+- Got it. Around July 21st to 28th, roughly a week? Want to solidify those dates for flight searching? Or maybe look at that downtown townhouse in Rome for lodging? - Yeah, let’s--actually, now that we know dates, let’s look at Rome lodging options.
+
+- I found some great options for your family in Rome from July 21st to 24th. For Airbnbs, there's a modern loft with a rooftop terrace for about $181 a night, and a treehouse retreat further out for $294. If you prefer a hotel, the Hyatt Harbor is around $207 a night with great reviews, or the Four Seasons offers more luxury and a pool at $380. Any of those sound interesting, or would you like me to filter by something else? - Definitely want a pool. That sounds good. It's going to be hot.
+
+- A pool is a great call for July. The Four Seasons Park Rome Hotel has one for about $136 a night. On Airbnb, there's a charming cottage with a pool for $268, though it's a bit more. Do either of those work or would you like to look more at a specific price range? - Let's do the cottage. That sounds good.
+
+And go ahead and--let's go ahead and save this out. I think, I need to go do some other stuff, so let's save what we got.
+
+- Saved. The current plan with the charming cottage in Rome is all set. Safe travels and let me know when you're ready to start planning activities or flights. - Cool, thanks. For that, I'll have the model return markdown text describing everything we've planned for the trip so far.
+
+Then when I see that text response, I'll just save it to disc. It looks like this.
+
+This is from my earlier conversation.
+
+I can even read this back into the context when I start another session. To pick up where we left off. Since I'm planning a trip to Italy, I want to practice my non-existent Italian skills Before I go. I'm going to add another agent into this bot file using a new Pipecat module called Pipecat Agents. This module lets me run multiple agents inside a single bot file and it handles things like a shared message bus between the agents for me.
+
+Let's go ahead and add that to the code now. There's kind of a lot here, but at a high level, we define a Gemini Live agent class.
+
+Each instance of this will contain its own pipeline with its own LLM service and registered tool calls and such.
+
+There's this handle transfer function that Pipecat agents will wire up for us.
+
+And then we have two subclasses: concierge agent and language tutor agent with different system prompts.
+
+And then the run bot function actually uses this agent runner to run both of those agents and connect them together with a messaging bus. This bot can do so much and we've only just scratched the surface of what's possible with Gemini 3. Head over to this Google link to learn more about what the model can do then head to pipecat.ai to start building your bot.

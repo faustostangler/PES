@@ -1,0 +1,60 @@
+---
+video_title: "ADK for Java 1.0 is now available!"
+video_id: YqABMjSho_M
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YqABMjSho_M
+video_date: 2026-03-30T19:02:57+00:00
+video_description: |
+  Learn about some of the feature highlights of ADK for Java 1.0. 
+  
+  With this generally available version of the Agent Development Kit framework, Java developers can build even more powerful and useful generative AI applications based on AI agents.
+  
+  In this video, you'll take a whirlwind tour of apps, plugins, and new services. You'll also discover how to involve humans in your agentic loop and how to tackle context engineering.
+  
+  Resource links:
+  Check out the blog → https://goo.gle/482FCqM 
+  - Documentation → https://goo.gle/4tlN5K0 
+  - Comic Trip example application code → https://goo.gle/4dYxewa 
+  - ADK for Java template project → https://goo.gle/4cgfFXa 
+  
+  Watch more videos on ADK → https://goo.gle/4uUiEfp
+  
+  Subscribe to Google For Developers → https://goo.gle/developers
+  
+  Products Mentioned: Java, Agent Development Kit, ADK, Google AI
+---
+GUILLAUME LAFORGE: Hello, Java developers. By now, you're certainly familiar with the open source Agent Development Kit framework, created by Google, which allows you to create your own AI agents. It's been available for different programming languages, including Python, Java, Go, and TypeScript. And today, we're going to focus on some big news for the Java runtime. [MUSIC PLAYING] We're happy to announce the release of ADK for Java 1.0.
+
+But before we go into code and capabilities, let me show a cool little thing I vibe coded with ADK for Java 1.0 last week. Look at this. I mean, really, how amazing is this? This is Comic Trip, an app that takes your photos from your trips and turns them into a gorgeous comic strip with description and nearby points of interest.
+
+I vibe coded the UI design with Stitch from Google, and I used Antigravity to develop the backend with the Quarkus Java framework and ADK for Java. And fear not, I'm going to show you everything. You will actually be able to do something as cool as this with ADK for Java by yourself. I'm going to share the code, the prompt, the entire thing. Ready?
+
+Let's go. Before we dive into the code, there's actually a lot to say about ADK for Java 1.0. There are a lot of new features and enhancements. I'll quickly highlight some of them with this sketch note I created with Nano Banana before diving into our Comic Trip agent.
+
+First of all, we have powerful tools to expand the capabilities of your agents. We have new grounding tools, like GoogleMapsTool, to ground agent answers in the data about locations and places from Google Maps. You can also easily fetch web content via the URLContextTool without having to create a complex web retrieval pipeline. Your agents can execute code safely, thanks to code executors running in Docker containers or in the cloud in Vertex AI. And there's also a new abstraction for making your agents more interactive with the ComputerUseTool, which offers interfaces you can implement to give your agent access to a browser or a computer.
+
+You might have used callbacks before to inject some logic at key points of your agent lifecycle-- for example, implementing guardrails, managing state for observability, and more. But now, you have a couple new abstractions at your disposal, the app that encompasses your whole agent system and plugins, which can apply your policies across all the agents of your multi-agent system. You have some built-in plugins like LoggingPlugin, ContextFilterPlugin, and GlobalInstructionPlugin, for example, if you want all the agents to speak like a pirate or maybe yell at you with all-caps answers. With richer agent interactions comes the problem of handling context. When the context becomes too big, it can confuse your LLM, and you have to apply some context engineering techniques to avoid context rot.
+
+You can use some built-in mechanisms to compact ADK events, to summarize them, limit the number of tokens, and you can, of course, implement your own strategies. Even if we give a lot of autonomy to our agents, there are times where they require the help of a human being-- for example, systems that require human approvals or if the agent needs extra information that is missing. For these human-in-the-loop scenarios, there's a tool confirmation solution you can configure, so your agent can interact with its favorite humans. Services are also core to ADK agents. There are new services for storing the session state in Vertex AI or in Firestore, as well, for longer-term memory.
+
+And for artifacts, you can now store your blobs inside Google Cloud Storage buckets. Last but not least, let me mention the integration with A2A, or agent-to-agent protocol, which allows your agents to interact with other agents in a multimodal fashion, including agents from other frameworks, programming languages, or platforms. But instead of bragging about all those features, like going through a laundry list, let's go through an example which uses some of these new features and concepts, our Comic Trip agent, which transforms your travel pictures into vintage pop art comic illustrations. Here's the interface of my Comic Trip application. It's a Java application built with the Quarkus framework.
+
+You can see past expeditions already rendered as comic strips. And you can drag and drop or click to upload new pictures. And if you're wondering, I'm not a UI designer, so I needed help from AI for the front end. So I used Google Stitch to generate the design of this application. Users upload their pictures, and after around a minute, the user is redirected to the trip details view, which shows all the vintage comic illustrations.
+
+Here, I've uploaded pictures of the Cathedral of Notre-Dame de Paris, which was recently renovated. When clicking on one of the pictures, at the bottom, you'll notice extra information about surrounding points of interest, which are agent retrieved from Google Maps. I'm sure you want to know how the sausage was made. Let's dive in. The Comic Trip agent is actually a multi-agent system.
+
+It's composed of a sequential flow that starts with Gemini 3 Flash to analyze the picture, understand what's inside, and guess the location where the photo was taken. Then there's a parallel flow that will do two things. The point-of-interest agent is using the GoogleMapsTool to find-- you guessed it-- points of interest around the location. At the same time, an agent powered by Nano Banana 2 will create the vintage comic illustration. Let's start with the first agent, who sets the stage.
+
+This agent receives an input picture and then outputs a description of the picture and guesses the location where the picture was taken. We store this information in the agent state via the output key. The point-of-interest agent uses the agent state to grab the description on location. Then, using the GoogleMapsTool, it retrieves nearby landmarks. The comic creator is the one using the Nano Banana 2 model.
+
+It takes the uploaded picture and transforms it into a vintage comic illustration. It also grabs the description of the picture to add comic captions. We configure the model to only output a picture without extra text. But we're not finished. In an after-model callback, we filter the generated response for the part that contains the generated comic image.
+
+And we save it in the artifact service in a Cloud Storage bucket. Once we have defined all our agents, we wire them inside parallel and sequential agents that compose the entire flow of this multi-agent system. Now it's time to prepare the event loop. Look at this app concept that represents our agentic app. It takes the main flow as route agent.
+
+And look, there's also the new plugin system. Here we define a LoggingPlugin, which will apply to all the subagents in the system. So everything will be logged without having to configure each agent individually. When defining the runner, we set the Artifact Service, which is the new Google Cloud Storage artifact service that saves the generated illustrations into a bucket. And that's how we build this Comic Trip app.
+
+We used a lot of cool new services like the Google Cloud Storage Artifact Service, recent models like Nano Banana 2, and tools like the GoogleMapsTool for points of interest. We defined the main app and took advantage of plugins to apply logging globally, all of that thanks to ADK for Java 1.0. If you want to dive deeper, you can check the code of the Comic Trip app, read the blog post for more details about the feature highlights of ADK for Java 1.0, and also check the links in the documentation and template project to get you started more quickly.
+
+Thanks for watching, and I'm looking forward to seeing what agents you'll build with ADK for Java. Cheers. [MUSIC PLAYING]

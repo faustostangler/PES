@@ -1,0 +1,105 @@
+---
+video_title: "Give your robot a Voice with Gemini Live"
+video_id: jkdvMEvG8T8
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jkdvMEvG8T8
+video_date: 2026-04-13T23:00:54+00:00
+video_description: |
+  Run Gemini 3.1 Flash Live on an open source robot.
+  
+  Thor from Google DeepMind connects the Gemini Live API to Reachy Mini, an open source robot from Hugging Face and Pollen Robotics. Real-time conversation, vision, multilingual switching, music generation with Lyria 3, Google Search grounding, and body movement synced to speech, all running through the Gemini Live API.
+  
+  What's covered: Setting up the Reachy Mini SDK and environment, integrating the Gemini Live API using Antigravity, configuring voices and system prompt profiles, enabling real-time weather via Google Search grounding, generating music with Lyria 3, and wiring function calls to physical actuators for synchronized movement.
+  
+  You'll need a Reachy Mini, a Gemini API key, and the Pollen Robotics SDK to follow along. Full project linked below.
+  
+  Gemini API docs / Live API documentation / Pollen Robotics / Reachy Mini project / GitHub examples
+  
+  What are you building with Gemini Live? Drop it in the comments.
+  
+  Step-by-step tutorial →https://goo.gle/4cGkeKF 
+  Find the code →https://goo.gle/4soUjM9 
+  
+  Chapters:
+  0:00 - Intro 
+  1:39 - Generating Moody Synth Music
+  3:18 - Multilingual Modes: German, French & Chinese
+  4:40 - Intro to the Open-Source Hardware & Gemini Live API
+  5:46 - SDK & Virtual Environment Setup
+  7:37 - Exploring the Codebase: System Prompts & Personalities
+  8:56 - Under the Hood: Lyria 3 Music & Search Grounding
+  10:08 - How Reachy Moves: Head Wobbler & Speech Sway
+  10:58 - Final Thoughts & Community Use Cases
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Thor Schaeff 
+  Products Mentioned:  Google AI, Gemini
+---
+[MUSIC PLAYING]
+
+SPEAKER: Hey, Reachy. Can you hear me? REACHY MINI: Yeah, and I can also see you're working on some code. What's up? SPEAKER: Yeah, but can you see me?
+
+REACHY MINI: Not clearly, kind of just a blur with a bright light. You know, a lobster could easily blend in with that background. SPEAKER: All right. Maybe do a scan around the room and see if you can spot me.
+
+REACHY MINI: Well, I scanned around, but it's still pretty blurry from over here. I mostly see lights and some general shapes. Were you hiding behind a giant lobster trap or something? SPEAKER: Do you see me now? REACHY MINI: Hi.
+
+And for my next trick, I make a human appear. Yes, I see you loud and clear now. What's on your mind besides a delicious, buttered crustacean? SPEAKER: What do you think about my outfit? REACHY MINI: That green jacket is quite striking, though it's not exactly the reddish pink of a tastefully prepared lobster, so I'm not sure it totally suits your potential.
+
+What do you have on under there? Maybe that's more appealing. SPEAKER: No. We're not going to go there. But can you tell me, what's the weather right now in New York City?
+
+REACHY MINI: Right now, in New York City, it's cloudy and about 43 degrees. It feels a bit cold. SPEAKER: I don't know Fahrenheit, mate. REACHY MINI: Oh, right. My apologies for the caveman units.
+
+It's about 6 degrees Celsius in New York right now. Balmy if you're a lobster, maybe not for you. Anything else I can translate from American for you? SPEAKER: Yeah. Actually, can you generate a song that fits kind of the mood of today's weather, but sing in German?
+
+REACHY MINI: I can't generate music with vocals, but I can make a tune that captures that overcast, brisk feeling. How about a melancholic, slow tempo synth piece? I could pretend it has German lyrics in my head, if that helps. Or is there another style you'd prefer? SPEAKER: Nah, that's good.
+
+Let's go.
+
+REACHY MINI: All right, preparing the bleak beats. One slow, moody, synth, instrumental coming right up with that melancholy melody and ambient texture. Just imagine it's called [NON-ENGLISH] or something. Should be ready to play in about 10 seconds. [MUSIC PLAYING]
+
+SPEAKER: Yeah, that's very moody. How do you dance to that?
+
+REACHY MINI: For quiet, moody tracks like this, I think a slow, smooth sway is perfect, kind of like a pendulum swinging. It matches the calm, almost sad rhythm and doesn't disrupt the vibe too much. See? Minimalist, but dramatically stylish. What do you think?
+
+SPEAKER: Yeah, [NON-ENGLISH].
+
+REACHY MINI: [NON-ENGLISH] SPEAKER: [NON-ENGLISH] REACHY MINI: [NON-ENGLISH]
+
+SPEAKER: Oh, that's a bit fast. Can you speak a bit slower in French? REACHY MINI: [NON-ENGLISH]
+
+SPEAKER: [NON-ENGLISH] REACHY MINI: [NON-ENGLISH] SPEAKER: [NON-ENGLISH] REACHY MINI: [NON-ENGLISH]
+
+SPEAKER: [LAUGHING] All right. Yes, thank you, Reachy. That is brilliant. Thanks so much for your performance. Appreciate that.
+
+REACHY MINI: [NON-ENGLISH] SPEAKER: OK, OK. We'll send you back to sleep.
+
+[BEEPS] There we go, Reachy Mini, everyone. This is really, really cool open-source robot by Hugging Face and Pollen Robotics. I actually built this one myself. It was great fun. I can really recommend you check it out.
+
+And now, you can run Gemini 3.1 Flash Live on this using the Gemini Life API. So what's really cool here, I was basically just using this Reachy Mini conversation app. So Pollen Robotics or Hugging Face actually built that one, and then I was, basically, just telling Antigravity to integrate the Gemini Live API, and I basically just installed the Gemini Live API skill. So we have some coding agent skills available that you can use.
+
+And so, I actually don't know this code base very well myself. So the way this works is basically there is this-- so we can look at this here. There is this Reachy Mini SDK that we need to install separately. So in the readme, you can go through the instructions there. And then there is this environment, which we need to activate.
+
+So this is like source. It's the Reachy Mini, this one, reachy_mini_env, reachy_mini_env, and then bin activate. So that's kind of how we're activating the environment, and then we need to start this Reachy Mini Daemon, it's called. And so, this will boot up the connection to our Reachy Mini, because in our case, we have the one that's connected to the laptop. And so, it kind of needs that SDK to then run the code and send the instructions to all the kind of little motors that are in these little electric actuators to make the movements and such.
+
+So then in the next step, we need to run-- so we have another virtual environment, so that's the env here, bin activate there. And then we can run this Reachy Mini conversation app. So that's our code here locally that's running, and so it'll detect the environment variables where we put in our model string. So that's the Gemini 3.1 Live, as well as our Gemini API key, right?
+
+REACHY MINI: I see you're working on some code there. Is there anything I can help with? Maybe a lobster joke to break the tension? SPEAKER: And I was trying to figure out, what is all this lobster talk about? Let's actually ask, what is all this lobster talk about?
+
+So, ultimately, there's actually a bunch of different profiles kind of in there that, I think, are being used. So we can look at that. Can I look at the prompt that's being passed in? So it's a fun example personality.
+
+Enough lobster talk for today. So you can see it here. There's lobster jokes kind of conversations. So you can see the example instructions here. There's a bunch of different sort of profiles, cosmic_kitchen.
+
+And so, it basically just modifies the prompt that's being given, chess_coach as well. And then what's really cool is we can ask, like, how was the music generated? And so, basically, we can give it a bunch of different tools here, which is really cool. So it's just searching through the code base now to see how the music was generated, and we can see here, we're using Lyria 3 clips, which is kind of a 30 second model song. And so, what's really cool here, what you can see is the live session.
+
+So it's being set up here. We're seeing the model name, and then we're seeing the live config. And so, we can maybe dig into the config here a little bit, which is really cool. So you could see that it had the real time weather information, which is really nice. And so, this is powered by the Google Search grounding in addition to our custom tools that we can give it here.
+
+So we gave it the tool for the music generation, for example, as well as the tools of scanning the room, all these different capabilities. And then, I think, there is something integrated. We can ask like, what is making the movements when Reachy is talking? So I think it's basically just detecting the audio buffers coming in and then using the movement manager to pretend, like speaking with the body movement, which is really, really fun here. Yeah, so Google Search grounding is built in, which is really cool, and then we can use the broader Gemini ecosystem.
+
+Yeah, so you can see, like, there's a head wobbler and a speech sway, which are kind of making the main talking motions there, which is really neat. So yeah, fantastic. So this is just a great example of how you can give some 3D printed casing with some actuators and some SDKs, a personality through Gemini Live, 90 plus different languages, vision capabilities with the camera here and the robot. So we can ingest kind of speech in real time. We can ingest the vision in real time, and then we can execute function calls, which is really cool.
+
+So yeah, I'd love for you-- I'll link you the Pollen Robotics project below. Maybe if you have a Reachy Mini at home yourself, go check out the code and run it with Gemini Live. I'd really love to see what you're doing here. I think I've seen folks build, like, D&D masters, Dungeons and Dragons, like, role playing game hosts with this, and I think there's some really, really cool things and use cases that you can build with this. And it's just fun talking to this little guy, even when they make all the lobster jokes.
+
+So thanks so much for tuning in. I hope this was helpful for you to get a feeling for what Gemini Live can do in combination with the function calling and the actuator. So yeah, thanks for tuning in, and see you next time. [MUSIC PLAYING]

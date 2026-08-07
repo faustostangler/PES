@@ -1,0 +1,171 @@
+---
+video_title: "The Smoke Jumpers: Scaling Gemini’s serving infrastructure"
+video_id: vxZ0hZ39Eis
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vxZ0hZ39Eis
+video_date: 2026-01-26T17:42:44+00:00
+video_description: |
+  Host Logan Kilpatrick sits down with Ema Taropa, lead of the "Smokejumpers" team, to discuss the infrastructure and serving work behind Gemini. They dive into what it actually takes to serve models to billions of users, why there is no "easy button" for global scaling, and how the team manages the trade-offs between latency, capacity, and cost.
+  
+  Their conversation covers the origins of the Smokejumpers team, Google’s vertically integrated TPU strategy, and the high-intensity culture of shipping Gemini 3.0. Learn more about the technical challenges of LLM caching and the human stories behind the engineers keeping Google's AI systems running 24/7.
+  
+  Listen to this podcast: 
+  Apple Podcasts → https://goo.gle/3Bm7QzQ 
+  Spotify → https://goo.gle/3ZL3ADl 
+  
+  Chapters:
+  0:00 - Intro 
+  1:34 - Scaling distributed systems for Gemini
+  3:43 - The Smokejumpers team infrastructure
+  9:33 - Refining model launch strategies
+  10:30 - Infrastructure trade-offs and global capacity
+  13:01 - The difficulty of LLM caching
+  15:09 - Google’s TPU strategy
+  16:04 - Esprit de corps and collaborative culture
+  18:01 - Context windows and workspace embeddings
+  18:14 - The human element of engineering teams
+  23:16 - Performance and efficiency of Gemini Flash
+  24:59 - Conclusion
+  
+  
+  Watch more Release Notes → https://goo.gle/4njokfg 
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Logan Kilpatrick, Ema Taropa 
+  Products Mentioned:  Google AI, Gemini
+---
+LOGAN KILPATRICK - From an infrastructure standpoint, like at what point is, you know, your team and all the folks in Smokejumpers, etc. etc., like getting involved, what does that look like from making that scale? It's like we have the model, it's all trained and ready to go out the door, and then they just throw it to you and they're like, put this in all the data centers. EMA TAROPA - There is like an easy button.
+
+So, then, like you just hit it and magic happens. LOGAN KILPATRICK - Magic happens EMA TAROPA - It's like, ta-da, it serves and it's wonderful, and people love it and it's actually... LOGAN KILPATRICK - Yeah, we know that's not true.
+
+(upbeat music)
+
+LOGAN KILPATRICK- Welcome back to "Release Notes". My name's Logan Kilpatrick. I'm on the Google DeepMind team. Today, we're joined by Emanuel Taropa who is a Google fellow and also responsible for making Gemini accessible, all of our TPU infrastructure, serving the models, Smokejumpers, all that stuff. So, Ema, thank you for coming back on, first return guest on "Release Notes".
+
+How are things going in the world of making Gemini available to billions of people? EMA TAROPA - You know, never a dull moment. That pretty much sums it up. Still a lot of fun, bit too much fun, and not as predictable as I would like it to be, but definitely fun. Definitely something worth learning every single day, every single hour.
+
+Best fun I've had here in the past 20 years, maybe discounting the time I was an intern. LOGAN KILPATRICK - Yeah. EMA TAROPA - But yeah, so it's, it's a great time to be alive. And a great opportunity to work on this stuff. LOGAN KILPATRICK - When, when we talked last, it was, I don't remember what, it had to have been like almost a year ago when we were launching Flash, 1.5 Flash, the 8 billion parameter version.
+
+And just to like take a step back, I'm curious from your perspective and just like this story of building these massive distributed systems, serving the internet to billions of people for the whole time you've been at Google, I'm curious like how your perspective on this like story of scaling up Gemini, the goal is like, as we build new models like Pro and Flash, and others, they're everywhere. It's like every product service has these, it's sort of the connective tissue which is obviously exceptionally difficult to make happen infrastructure-wise. So, I'm curious from your perspective how you see like, how the story has changed over the last two years maybe. EMA TAROPA - I saw it November or October, 2022 when we're like, yeah, there's like clearly something happening in the field and we have to move very, very quickly, and let's figure out what we can put on and serve on it, and how we can start, you know, doing things like routing between different types of models, right. And how do we figure out how to allocate capacity and sort of like focus the effort and the energy expenditure in the system on one of them, to rolling that out to trusted testers, to rolling it out globally, to then starting the Gemini program, to figuring out where else in the company we had available capacity, to starting the first MoE program, to changing the paradigm and starting to doing really large models that are extremely fast and cheap to serve along frontier models that we use quite a bit, to where we are today.
+
+All the launches that we have in the pipeline, kind of have a common thread which is we built a lot on the base we have as a company in terms of like, how do we scale systems, the same lessons that we kind of learned in the past, how to focus effort in the system, how to make things continuously cheaper and faster, and scalable. LOGAN KILPATRICK - Yeah. EMA TAROPA - To sort of the distribution we have across the array of products and services as a company, right, which basically is what makes this place very special. And we ended up here where, you know, we are focused extremely intentional of having the best in the class models and best in the class distributed infrastructure. LOGAN KILPATRICK - I have many, many follow up questions.
+
+Maybe we can use 3.0 Pro as an example. From an infrastructure standpoint, like at what point is your team and all the Smokejumpers getting involved in the model train? Actually, I'm curious like as an example, what does that look like from a making that scale? It's like, we have the model, it's all trained and ready to go out the door, and then they just throw it to you and they're like, put this in all the data centers- EMA TAROPA - There is like an easy button.
+
+So, then like, you just hit it and magic happens. LOGAN KILPATRICK- Magic happens. EMA TAROPA - It's like, ta-da, it serves and it's wonderful, and people love it and it's actually- LOGAN KILPATRICK - Yeah, we know that's not true. It is, I think we have a great model and I think that's like the start in some cases of like a lot of other hard work that folks are doing to like actually make it happen. Training the model is the hard part, which obviously is a hard part, but actually making it available and doing all the serving work is also exceptionally difficult.
+
+So, what are some of the things that go into that that are challenging? EMA TAROPA - Yeah, it's a fair question. We don't operate as a disjoint set of individuals. Even if we end up having, maybe let's, in my case, it would be generously calling it an area of expertise. There's no such thing.
+
+But other people will be more focused on one side of the system compared to the other. But we do not sort of like make these choices and trade-offs in a vacuum. We're always like, from like pre-training side or model design side, all the way to serving, we have to figure out like, how much do we wanna invest in in training it? How much do we want to invest in in serving it? How much does it cost? How do we wanna serve it?
+
+Potential customers, adoption, traffic growth, all of this, right. It all sounds very nice when I describe it like this. It's not. We get it wrong quite a few times, right. Like even now, today, we had the surprise on like you know how costly is it, what we want to do next versus what we predicted, and where is the delta coming from?
+
+And because the traffic changes, the way it's used, right sort of like the query volume and distribution and the usage in the applications change as the model's quality sort of like goes through these stages. So, it's kind of like a wishful thinking to have it fully mapped. LOGAN KILPATRICK - Yeah. EMA TAROPA - Be that as it may, we try to keep some sort of semblance for like, hey, this is how we wanna allocate the capacity on pre-training. This is kind of what the final product should look like.
+
+We start with something, it looks really nice. Two weeks later, it's twice as fast. Three weeks later, it's four times as fast. Ton of work from a bunch of people from training, all the way to serving, to sort of dependent system side involved. From like, low balancer to sort of like figuring out better how we can make trade-offs between what we do on short context versus long context, and so on and so forth.
+
+So, then, everybody gets many more generations of cute cats and stuff like that, and everybody likes it, right. We do operate as a fairly integrated team where people focus on various tasks either for the duration of their engagement with Gemini or like at various stages in it, right. So, like spend a little bit of time on training, then work on serving, then work on post-training. Also keeps it fun. LOGAN KILPATRICK - Yeah.
+
+EMA TAROPA - Why Smokejumpers? Ben Treynor was running the SRE organization and I said, look, I feel like we have to sort of have a much more nimbler sort of like team that does these very, very important launches for LLM serving that basically understands a lot about the subtleties and finer details involved in serving these things, and also has a very strong sense of ownership in like, hey, we put so much effort in this thing that sort of like, we kind of own the end result. LOGAN KILPATRICK - Yeah. EMA TAROPA - So, then, I said, I have about 10 or 16 people in mind and they're not necessarily on the SRE job ladder. Some were like, some were on the engineering ladder, some were like one or two on the PM ladder, and sort of others on the SRE ladder, and other on sort of like like just developing the serving system or making changes to the models right, themselves.
+
+Right, so, this set of people, I said, they kind of have the type of, I guess, personality required for doing something like this and they might enjoy it. This sort of like common denominator here is you know it's a bit of a pressure cooker. It's extremely intense. And you know, it attracts very similar type of engagement and personalities, and it's always fun. And then, we also said, why Smokejumpers?
+
+It's a name that I guess, Ben Treynor suggested and I didn't know what it means and I'm like, whatever. Like finally has a name. And then, you know, Sergey is like, "Oh, that's a cool name." I'm like, tell me more. These are the firefighters that kind of like jump ahead of the flames through smoke, and then from airplanes and then they deal with it.
+
+I'm like, okay, hopefully it's not that bad. Turns out he was like, actually sort of optimistic compared to what it is. And then, we started another team that's called Fire Starters, which is kinda like the front end sort of equivalent of this thing. 'Cause like, the fire starts somewhere and it's usually with the queries that come in. And you know, we're all, we go run together.
+
+We have what I think is not a bad esprit de corps And we take care of serving, training, every now and then, we try to help there as well. Everything involved to making these models universally accessible and useful to our end users. LOGAN KILPATRICK - Yeah. EMA TAROPA - And we're happy most of the time, and you know uncomfortably excited all of the time. LOGAN KILPATRICK - I love that. What...
+
+From that initial sort of 2.5 Pro launch, I'm curious now as we've like, we've obviously learned a bunch of the hard lessons, I'm sure, with 2.5, for 3 Pro. What's been different? Like I think it feels like things are more organized and hopefully they're happening, maybe not, hopefully they're happening faster, but like I'm curious like what, what if anything feels different from the, from the Smokejumpers perspective.
+
+EMA TAROPA - Okay, so not much. Some things are better but this is also a ridiculously good model. LOGAN KILPATRICK - Yeah. EMA TAROPA - And it got used in sort of ways that we hoped it's gonna get used, in ways that we were surprised that it was used. So, yeah, not, not entirely planned but functional.
+
+It is just like, almost like seeing your kids grow kind of thing, right. Sort of like you're just happy they get this amount of usage and it's a fun problem to crack day in and day out. LOGAN KILPATRICK - We have these big inflection moments and like 2.5 Pro is a good example of this. We find new capacity, we make all these optimizations, but it sort of like sets the new floor for the baseline level of traffic, and then everything else that happens is just like builds on top of that.
+
+So, for like 3 Flash as an example, 3 Pro's incredible, but the 2.5 models are getting used a ton still, including Flash, including the, the 2.5 Pro model. So, where, where do the chips come from? How do we make it happen?
+
+EMA TAROPA - There are some degrees of freedom we have and there's some trade offs we make. We could do serving like this or we can trade off capacity here for latency there. And also look overall of the product, what it does, and figure out how to reduce latency and cost in the more traditional parts of the product, right. You need a lot of institutional memory and you need a lot of knowledge about like, how these things work in order to make these trade offs. Different points in time will have different pressure points on the system overall and sometimes you get by or squeak by with, with a few tricks, and then pray to fix it later, right.
+
+Or as newer and newer families of models come, they kind of absorb some of the pressure that gets applied. LOGAN KILPATRICK -And so, like the developers will be in the comments and they'll say, "Don't get rid of the old models." That's what they're gonna say. EMA TAROPA - Yeah, don't get rid, totally fine, and we're happy you like them and you know this is like seeing your- LOGAN KILPATRICK - It's a good problem to have EMA TAROPA - Your grandkids basically, right? LOGAN KILPATRICK - you have, yeah.
+
+EMA TAROPA - So, 'cause the kids already grew and they're served, and now they have their own kids. LOGAN KILPATRICK - It is a tough balance but hopefully, hopefully we'll find the balance that makes it so we can make people happy and make a optimized serving footprint. Which I feel like is, those two things are a difficult trade off. And I'm curious from the Smokejumpers' perspective what you think? This trade off between this like global optimization problem that we're doing at Google, versus optimizing on an individual user basis.
+
+And the example he gave was like cache hits. Like actually, this is a common thread of feedback from developers is like, "Why is my cache hit on Gemini lower than, than what I'm getting on other providers?" And I'm curious if there's an interesting like infrastructure story to answer that question of like, how we're thinking about this optimization problem relative to maybe what our competitors are doing. EMA TAROPA - We just have to be competitive, right. There's just no free lunch and you know it's just ultimately unfair to our users.
+
+Like how can we say use this thing if it costs you more or it's slower or it's not as good. LOGAN KILPATRICK - Yeah. EMA TAROPA - It's just a very difficult proposition to make. LOGAN KILPATRICK - What makes it difficult? This is the part that I, this is what I want to get at.
+
+Like I don't fully understand just the caching infrastructure in general, but like why is that a hard, like why is getting everyone globally like a higher cache hit rate more difficult? EMA TAROPA - It shouldn't be that difficult and we can sort of replicate the cluster level or the global level, and we know exactly where a key is, and so on and so forth. It does work extremely well for our more well-run mainline systems. We're adapting parts of it to also work very well with the slightly different structure that you know LLM serving requires. Like this or like cache gets computed differently.
+
+The parts that we want to cache get computed differently, right. We have something that works extremely well for things like Spanner or things like web search, or on and on. Like for the cache hits rates there and we're trying to adapt that for LLM server. The other one is, you know, how do we route the request across our servers and how do we make sure that we make best use of the resources at the single instance and pool of machines level in order to maximize the cache hit rates. In Gemini App, you're gonna have a different tool use, tool flow, different context, different ways of changing the context turn after turn compared to something that's much closer to what Antigravity does.
+
+Right? LOGAN KILPATRICK - Yeah. EMA TAROPA - So, the usage is not the same because the product is inherently different. But, you know, all in all, if we get very good cache hit rate blended, then it reduces the cost and makes it faster and it's ultimately cheaper on everyone. LOGAN KILPATRICK - How helpful has it been to have the sort of seventh generation TPU fleet, the Ironwood TPUs?
+
+Obviously, the TPU story is something people talk about a ton externally. It's part of Sundar and others like the full stack AI strategy that Google has obviously starts in some sense with the TPU story. I'm curious like on the day-to-day, like how advantageous it is from a serving perspective to have TPUs, and I'm curious to like how if you spend any time or Smokejumpers generally spends time doing this, but like we're co-developing EMA TAROPA- Mm-hmm. LOGAN KILPATRICK - sort of into the future and working with the teams to make sure that that happens. I'm curious if there's anything interesting there.
+
+EMA TAROPA- Amin runs what I consider to be one of the best chip program in the world. The only vertically integrated shop on this planet. LOGAN KILPATRICK - Yeah. EMA TAROPA- And it is nice. The same set of people, they're, they're folks in platforms that I had the immense pleasure of working on the very first, you know, Flash device in 2008.
+
+They worked on subsequent versions of the hardware and a lot of them stayed with the program and sort of have all also the institutional memory and the connective tissue to move very, very quickly and to know exactly who's on serving this time around. Like what do they need, how do we need to change the roadmap? What sort of tweaks we have to make to this, right? It's a level of insight that I don't think anyone else in the industry has. LOGAN KILPATRICK - Yeah.
+
+EMA TAROPA - And, you know, it's just, it's ours to sort of further improve. LOGAN KILPATRICK - Talked to Sundar a few weeks ago and one of the threads of this conversation was the MK and how it makes a company like Google that's obviously quite large feel actually really small. You're one of the personalities that I think brings the MK to life in a very positive way. It's an incredible vibe. People making decisions and working together and collaborating.
+
+But I'm curious to just like, have you touch on, I don't know if there's any interesting stories around this other than you, I think you talked, we talked in the last episode about bringing the espresso maker over from the old building to the new building. I think there's a new one now though. EMA TAROPA - No, no, same thing. LOGAN KILPATRICK - It's the same thing. EMA TAROPA - Yeah. It's a three-headed La Marzocco machine.
+
+Can I say that? LOGAN KILPATRICK - Yeah, yeah. EMA TAROPA - It's like from 2008. It's great. LOGAN KILPATRICK - That's crazy.
+
+EMA TAROPA - That sort of like used for the time, yeah, they will last hundreds of years. They make really good stuff. LOGAN KILPATRICK - The...I feel like the full stack AI
+
+approach, you actually see it in the MK, It's like the teams that are serving, the teams that are designing the TPUs, the teams that are making the models, there's like a bunch of interesting collaboration that I think probably comes, it's like two groups that need to make the story possible. EMA TAROPA - It's more than two groups. LOGAN KILPATRICK - Yeah, well, as an example of just like two groups talking to each other. EMA TAROPA - And we have zones like that in London as well. LOGAN KILPATRICK - Yeah.
+
+EMA TAROPA - Like we have the famous, the seventh collaboration space and we did the first of all like, hey, let's just bring everyone together and crack this problem. And I'm happy we do it now periodically and we all go into a place and we focus on a problem. And it does wonders to, again, the esprit de corps that we have in this particular program. We had a ton of fun, we all became more than coworkers. They were like very good friends and these relationships continued for like two decades.
+
+And a lot of those people are, again, in it at this point in time. LOGAN KILPATRICK - Yeah. EMA TAROPA - Right? So, I do think the concept works, but I think what we have in London, what we have in New York, what we have here, this sort of like high intensity areas with a very defined operational cadence. LOGAN KILPATRICK - One of the interesting threads, not to put you on the spot, for serving is that why don't we have 2 million context window models anymore?
+
+Ema, I think it's partially because the models are difficult to serve, which I think is like the simple, it like takes a lot of capacity to serve the 2 million context models. But I don't know if there's like an interesting story or if there's like we have a path to bring that back. EMA TAROPA - It doesn't necessarily have to be a 2 million context window. Look at the Gmail launch. You can get all of your context in one place.
+
+LOGAN KILPATRICK - Yeah. EMA TAROPA - And I mean like, let me tell you, that's certainly more than 2 million tokens it looks at. And there are also new hardware types that we're doing for this type of thing. But, you know, at some point, do we serve the best in the world by a significant margin to as many users as we can reach or we serve, you know, a fraction of that maybe indistinguishable for most cases to like a you know like 10% of that user population. Some point, we have to make these decisions and I would like most of the people to get most of the value, if not all of it.
+
+LOGAN KILPATRICK - Yeah. The Google mandate is making it accessible to like the very large audience and it very much is a trade off of like we have limited capacity and you can't serve every model in every configuration, so. EMA TAROPA - Again, the more useful we make this thing, the higher the sort of, like, utility function we provide to humanity is, right, like we save time at the end of the day and then people decide where they want to spend their time. So, for Workspace, right like I do think it matters a lot to go from like classical retrieval systems that we have, like the token-based retrieval ones, to sort of like the embedding based ones. Again, nothing new here compared to what we do for search.
+
+And basically, sort of like using the very best in the class across all the infrastructure that we have. Because we have this type of systems, would be kind of a shame not to use them. Right? LOGAN KILPATRICK - Yeah. EMA TAROPA - For embeddings, I think they have a huge potential just because kind of like, there's a different way of tackling massive, unlimited input and getting sort of like good value out of it.
+
+Right, so, imagine all your context across all the properties that can be used to tailor generative AI response for what you need, right. It's absolutely critical for us to make Workspace as successful as possible and, you know, embeddings are one of the sort of important pieces in this puzzle. So, the net win there is we can sort of deploy this for more users and make it fundamentally easier for them to derive value from our products, right? LOGAN KILPATRICK - Yeah. Because Google has such, so many interesting large-scale problems and then like product services like the whole Workspace Suite, like we're able to build a model that works really well for Workspace, and then actually developers also benefit from it.
+
+Like we put it in the API, we now have a bunch of stuff, like tons of customers using it. It's awesome. My bet is like embedding model usage just continues to go up. Like I think it's the other hand in hand with long context. EMA TAROPA - Seems useful, no?
+
+LOGAN KILPATRICK - It is, it's good. EMA TAROPA - Seems useful. Definitely fun. (chuckles) So, you know, time well-spent. LOGAN KILPATRICK - Yeah.
+
+What's the byproduct for you all sort of like as a team of doing this 24/7 work and we were talking off camera about your, your bike accident and sort of like you know the team rallying for you personally. EMA TAROPA - The biggest satisfactions I have from this thing is the friends I made LOGAN KILPATRICK - Yeah. EMA TAROPA - on a very personal level, right. And I had the bike crash because obviously, I cannot go down a hill on a road bike without crashing it. The turn is a bit too steep, right.
+
+Take that as you want, but that's basically the limit of my skill on a bike. And it is just, it was a bad crash, right. But like I had the ton of luck so I recovered pretty quickly. But be that as it may, even if I was like functional the second day, they were like, "Wow, you had this very nasty bike crash, rest." Even if I was back at work the third day, kind of like working from home, 'cause limited LCD time.
+
+Who does that? (Logan chuckles) Sorry, maybe my doctor doesn't look at this thing. And then, like back in office like you know, two weeks later people just kick me out from the on-call rotation. On-call rotation is a little calendar that basically says like between this time and this time, if it pages, it's your job to deal with it within five minutes. And then, they kick me out you know, the week that I was supposed to be in and then they kept kicking me out.
+
+Like at some point, it became awkward. Because I was at work, I was like working 24/7, (Logan laughing) well, not really, 20/7, let's say, 'cause it's like four or five hours of sleep there. And then, I said like, well, I think I'm well enough to be back in the rotation, if you want me back. I think I still qualify, right. So, then they put me back, right.
+
+That's what a friend does, right. LOGAN KILPATRICK - Yeah. EMA TAROPA - And I worked with some of them for 15 years, 20 years and it's fun and, you know, I'm just happy I'm in a collective like that. LOGAN KILPATRICK - Yeah. EMA TAROPA - Just on a very personal level.
+
+LOGAN KILPATRICK- One of the things that we worked on was 1.5 Flash, the 8 billion parameter version, where now, we've launched 3 Flash. It's a beast model. I feel like Flash is very much punches like way above its weight class as well. EMA TAROPA - Maybe a bit too much.
+
+LOGAN KILPATRICK - Maybe a bit too much in certain contexts. EMA TAROPA - Yeah. LOGAN KILPATRICK - But yeah, I'm curious like what your takeaway is from the launch. Like obviously, a great model, folks are super excited, which is great to see. EMA TAROPA - I mean, it's amazing we can offer that level of quality, that level of efficiency. LOGAN KILPATRICK - Right.
+
+Like anyone can compare them, like look at your favorite benchmark if that's what you want to do, or just like play with the thing, which is my favorite approach. Then, you decide between 1.5 8 billion parameter model and what we just launched. And you know not only that, but you can look at previous generation of frontier models and compare it with this thing, and then you'll see what it is, right? LOGAN KILPATRICK - Yeah.
+
+EMA TAROPA - Was it easy? No. Is it interesting to serve even to this day? Yes. (Logan laughing) Is it as cheap as we wanted it to be?
+
+No, but it's still an amazing model. Right? LOGAN KILPATRICK - Yeah. EMA TAROPA - So, the fact that we have this level of quality relatively this accessible is just something that makes us extremely happy. LOGAN KILPATRICK - Yeah.
+
+I feel like every time we get close to launching, at least in the last couple months, I'm like, I don't think we're gonna launch. We're not gonna have the chips, we're not gonna make it happen. And I feel like every time, we've made it happen so far. EMA TAROPA - I mean, who says we've had the chips? I mean, no. (Logan laughing)
+
+LOGAN KILPATRICK - Yeah, it's cool to see. Obviously, we're making AI models to benefit humanity and all that stuff, but there really is this like warmth of humanity among that you like feel among the people who are like actually doing this work day-to-day to make it happen. EMA TAROPA - Yeah, I mean, again, definitely up there in professional satisfaction, I would say highest professional satisfaction I have. And it's not even professional, it's just the human satisfaction. But by and large, the biggest satisfactions I have from this thing is the friends I made.
+
+LOGAN KILPATRICK - Ema, thank you for sitting down and doing this. As a token of appreciation for you and actually for all the other folks in Smokejumpers, we got some nice cool stuff made for you all. EMA TAROPA - Amazing. Thank you very much. LOGAN KILPATRICK And supposedly the thing dropping in is TPUs, I believe is what it is.
+
+So- EMA TAROPA - One would hope. LOGAN KILPATRICK - One would hope. EMA TAROPA - Yeah. I mean, one would hope, but jury's still out on that one. LOGAN KILPATRICK - Yeah.
+
+EMA TAROPA - Yeah, thank you very much. This is lovely. LOGAN KILPATRICK - Thank you for spending time. Thank you for you and all the rest of the team for all the hard work. Like it wouldn't, and Demis and Sundar and Koray and so many other folks have said this, but like, it wouldn't be possible to ship Gemini across the company if it wasn't for the hard work of you and the rest of the Smokejumpers and other teams.
+
+So, thank you for the hard work. EMA TAROPA - It's literally across the company effort. We're just a part of it. LOGAN KILPATRICK - Thank you for doing this. Thank you everyone for watching and we'll see you in the next episode.
+
+(bright music)

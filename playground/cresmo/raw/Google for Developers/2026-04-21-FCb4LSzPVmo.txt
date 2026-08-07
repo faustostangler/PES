@@ -1,0 +1,80 @@
+---
+video_title: "Add Telephony to a Gemini Live Agent"
+video_id: FCb4LSzPVmo
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FCb4LSzPVmo
+video_date: 2026-04-21T16:00:48+00:00
+video_description: |
+  Thor from Google DeepMind walks through how to set up the Gemini Live API with Twilio and deploy it to Google Cloud Run, so anyone can call your Gemini voice agent from a regular phone number. Inbound and outbound calls, real-time audio streaming, and the same agent running in the browser and on the phone from a single deployment.
+  
+  What's covered: Using the GenAI Python SDK Twilio example from GitHub, building inbound and outbound call handlers with FastAPI and WebSockets, handling audio format conversion between Gemini and Twilio, deploying to Google Cloud Run with Secret Manager, and using Antigravity coding agent skills to accelerate the build.
+  ]
+  Grab your Gemini API key at Google AI Studio and your Twilio credentials at twilio.com to get started. Full example and setup instructions linked below.
+  
+  Resources: 
+  Find the tutorial →https://goo.gle/4cokC0t 
+  Find the code→https://goo.gle/4tYFYXV  
+  
+  What are you building with Gemini Live? Drop it in the comments.
+  
+  Chapters
+  0:00 - Live Demo: Calling the Gemini Assistant on the Phone
+  0:51 - Introduction to Gemini 3.1 Flash Live & Twilio
+  1:16 - GitHub Examples & The Gen AI Python SDK
+  1:46 - Building the Integration with Coding Agents
+  2:57 - Code Walkthrough: FastAPI & WebSockets Setup
+  3:43 - Handling Twilio Inbound & Outbound Endpoints
+  5:25 - Audio Conversion (PCM to mu-law) & Partner Integrations
+  6:50 - Deployment to Google Cloud Run
+  7:35 - Web Browser Client Demo: Accents & Camera Vision
+  
+  Speaker: Thor Schaeff
+  Products Mentioned:  Google AI, Gemini
+---
+[MUSIC PLAYING] AI: Well, hello there. What can I do for you today? THOR: Well, who are you? AI: I'm just your helpful AI assistant, ready to lend a hand or chat about anything at all. What's on your mind?
+
+THOR: What's your name? AI: I don't really have a name like people do. You can just think of me as your friendly chat companion. Is there anything else I can help you with? THOR: Are you Gemini?
+
+AI: I'm actually a large language model trained by Google. That's the team that made me. Anything else you'd like to know? THOR: No, that's it. Thank you.
+
+Bye bye. AI: You're very welcome. Have a grand day at all. Goodbye. THOR: There we go.
+
+So this is our new Gemini 3.1 Flash Live model. It recently launched on the Gemini Life API. And I just wanted to show you how you can set this up with Google Cloud Run and Twilio to be able to call your Gemini Life agent on the phone. And so how we made this happen, and the easiest way for you to go about this, is in the documentation, we have these end-to-end example apps on GitHub.
+
+And so you can check on GitHub. There is the Gemini Life Gen AI Python SDK example. And this one has the Twilio Handler built-in. So I'll link you the details below. You can check it out there.
+
+So basically, the way this works is just through the WebSocket API. And so I actually literally just took the Gen AI Python example. So it uses the Google Gen AI Python SDK for the Gemini Life part. And then I just told it to implement a Twilio Handler and give me instructions of how to deploy this to Google Cloud Run and set it up with Twilio. And so Antigravity gave us all these details.
+
+And so now we can ask, how does the Twilio integration work? Now, because we haven't actually written this integration ourselves, so the coding agent has written it for us. And again, for this, what's really, really helpful is we have these coding agent skills. They are linked in the documentation as well. So here, if you're using Antigravity, or Cursor, or Claude Code, or what have you, your favorite coding agent, you can install the Gemini Life API coding skills.
+
+And that will help you a lot in building with the Life API, which is really, really cool. So you can see our setup is here in the main.py. We have a FastAPI route. It's basically just kind of setting up our server.
+
+It uses WebSockets. So it sort of proxies the WebSockets to our client and sets up our Gemini Life handler here. So you can see our Gemini Life integration is just in here. And we're sending the real-time input. So that's our audio chunks here.
+
+We're starting our session with our live config. So you can see that all happening in here. And then what's actually happening in the main handler, we have a couple things as well that sets up the handlers for Twilio as well. So you can see here we have some endpoints for Twilio. And so we have an endpoint for inbound.
+
+So if we set this up with our Twilio number, and I'll link you the instructions to set up all the details within the Twilio console, basically, it just says here connecting to Gemini Life, and then it just uses media streams within Twilio to create this WebSocket connection to the Twilio stream endpoint. Outbound, very similar as well. It's basically just initializing the call with the Twilio SDK. So our to number, our from number, so we can initiate the call using just a POST request to our web server. And then just using the Twilio client with our Twilio account ID and auth token, it then initializes the call, and again, sets up that media stream kind of with the WebSockets.
+
+So you can see we're creating this call with the Twiml. And so that's how it initiates the outbound call. And then inbound-outbound call is all handled through this here WebSocket. So you can see we're using the FastAPI server again to set up our WebSocket here with the Twilio stream. And then that is just handling our media stream with the Twilio Handler.
+
+So we can look at our Twilio Handler. So mainly what the Twilio Handler does is handle the audio cues. In this case, we don't have the video input. So this is purely audio based. But you can see we're sending the audio buffer that's kind of coming from Twilio.
+
+And then we can check. There's a bunch of things that we need to do. So Gemini sends 24 kilohertz 16-bit PCM. Twilio expects 8 kilohertz mu-law. So we do need to do some conversion there.
+
+And if that is something that you just don't want to worry about, don't want to touch yourself, I do recommend we have a bunch of really, really cool partner integrations. So Life Kit, Pipe Cat, Fish Jam, Vision agents, Voximplant, Agora. All these folks are experts in WebRTC and WebSocket connectivity, telephony. They have telephony integrations and everything. So if you don't want to worry about this yourself, do use one of these partner integrations, and you'll get up and running in no time.
+
+Now, in terms of Google Cloud Run integration, that was pretty neat as well. So we just ask Antigravity to give us the step-by-step instructions. And we just needed to enable Google Cloud Run, Cloud Build, Secret Manager for handling the API keys. Setting up our Gemini API keys, then for Twilio, Twilio account SID. So again, I'll link you all the instructions below so you can just step through with the setup in the Cloud Console.
+
+And so basically once that is deployed, then in Cloud Run, you just get your deployment URL there. And you can click on it. And so here, this is actually we're using the same server and same Gemini Life integration in the browser. And so-- AI: Top of the morning to ya. I'm a demo of the Gemini Live API.
+
+We could try out my native audio for different accents, or even see how I handle a bit of a switch between-- [NON-ENGLISH SPEECH] THOR: Yeah, I guess it can also speak Gaelic, is it? Yeah, fantastic. So what we can also do is here, we can share our camera. There we go. Can you see me?
+
+AI: I can indeed. Clear as day. Looks like you're in a podcast studio or something similar with that microphone there. How can I help you now? THOR: Yeah, that's very much it.
+
+And so you can see this is the same agent, the same persona. So we can share our code for our web application as well on Cloud Run. And so we're just kind of reusing the same handler and then just setting up this kind of thin Twilio integration handler. Yeah, so that is how you can hook up Gemini Life to your Twilio account. Pretty easy to do.
+
+I would love for you to try it out. Let me know how it goes. And happy building with Real-time Voice and Vision AI. Cheers. Thanks for tuning in, and see you next time.
+
+[MUSIC PLAYING]

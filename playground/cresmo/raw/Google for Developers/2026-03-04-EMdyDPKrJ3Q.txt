@@ -1,0 +1,55 @@
+---
+video_title: "Keras 3 Distributed Training: Scaling Models with JAX using DataParallel, and ModelParallel"
+video_id: EMdyDPKrJ3Q
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EMdyDPKrJ3Q
+video_date: 2026-03-04T17:00:31+00:00
+video_description: |
+  Training large deep learning models doesn't have to be complex. In this video, Yufeng Guo walks you through the Keras 3 Distribution API, showing you how it leverages JAX for efficient data and model parallelism. Whether you're scaling across multiple GPUs or a cluster of TPUs, Keras 3 has you covered.
+  
+  Resources:
+  Distributed training with Keras 3 → https://goo.gle/4u8nGo9 
+  Multi-device distribution → https://goo.gle/46CFOMX 
+  LayoutMap API → https://goo.gle/3NfJXjd 
+  Gemma get_layout_map → https://goo.gle/4smwNzM 
+  
+  Chapters: 
+  0:00 - Intro
+  0:17 - The Keras 3 Distribution API
+  0:51 - The Global Programming Model (SPMD Expansion)
+  1:26 - Using the JAX Backend for Scalability
+  1:55 - Creating a Device Mesh & Tensor Layout
+  2:46 - Implementing Data Parallelism
+  3:45 - Understanding Model Parallelism
+  4:27 - Sharding with LayoutMap
+  5:43 - Tuning Your Device Mesh for Performance
+  6:14 - Conclusion & Next Steps
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Yufeng Guo
+  Products Mentioned: Google AI
+---
+YUFENG GUO: Training large deep learning models efficiently requires effective distribution across multiple devices and potentially multiple hosts. This process can often be complex, and we need a high-level API to manage your sharding and parallelism. My name is Yufeng, and today, we're going to check out the Keras 3 Distribution API, focusing on how it manages distributed training using data and ModelParallelism with the JAX backend. The JAX Distribution API is designed to make distributed deep learning easy to use. This API introduces tools to enable both data and model parallelism for efficient scaling on multiple accelerators and hosts.
+
+It also features easily readable class and method names to make your code easy to understand and reason about. The key feature here is the global programming model. This allows you to compose applications as if it were operating on a single device, while the API automatically manages the distribution of tensors. This distribution uses a procedure called Single Program Multiple Data, or SPMD expansion, leveraging the underlying framework, in this case, JAX. Yes, this means you can have the same program work on a single device and on multiple devices.
+
+Currently, the distribution API only works with JAX, which has the best support for scalability and distributed training among all the backends. So we'll need to ensure that the backend environment variable is correctly configured to be JAX. If you want to use PyTorch or TensorFlow backends, you can still do distributed training. You will just need to use those libraries' built-in distribution protocols. And keras.io has detailed guides for those approaches, too.
+
+The foundation of the distributed computation API is the keras.distribution.DeviceMesh class. The mesh terminology is common in distributed computing contexts and represents a cluster of computational devices configured together, which can be made into various shapes. Complementing the mesh is the TensorLayout class, which specifies how tensors are distributed across the axes defined in your device mesh.
+
+Here we see an example defining a eight-device cluster in a 2 by 4 mesh, naming the axes data and model. In Kaggle, you could select the TPU v5e-8, which would give you access to eight TPUs. The DataParallel class is used for the data parallelism strategy. In this setting, the entire model is replicated across all devices on the device mesh, while each device processes just a unique portion of the input data. To use it, we create a DataParallel instance and then set it as the global distribution using keras.distribution.set distribution.
+
+From this point onward, all model weights, optimizer states, and metrics are replicated. The data set input to model.fit is automatically split evenly on the batch dimension and sent out to all devices. Importantly, you do not need to manually aggregate the losses because all computation happens within that global context. What's remarkable is that the model and training code then are unchanged from non-distributed code.
+
+Now let's consider the other type of parallelism, splitting up your large model across multiple devices. When model weights are just too large to fit on a single accelerator, use the ModelParallel strategy. This enables horizontal scaling by splitting weights or activation tensors across all devices on the device mesh. Earlier, in DataParallel, it was easy for Keras to evenly split up your data across devices. With ModelParallel, we get to specify to Keras how the model should be split up or sharded across our accelerators.
+
+To do this, we use LayoutMap. LayoutMap is an object where string keys are treated as regex patterns to match variable paths, allowing you to specify the TensorLayout for those variables. There's a bit of an art to splitting up your large model across devices, but for many large language models, if you're grabbing the model architecture using Keras Hub, the model comes with a get_layout_map function that gives you a solid default layout for ModelParallel that you can just use directly, which is super handy. Once you have your LayoutMap created, the rest of the workflow is very similar to what we saw in DataParallel. Create a ModelParallel instance and pass in your layout map as an argument and then set your global distribution using keras.distribution.set distribution.
+
+And that's it. You can now resume your usual Keras model training code. We can use our usual dot compile, dot fit, and dot evaluate functions just like when we aren't doing any distribution, which is really quite handy. Keeping our distribution-related code well contained is a good best practice, and the Keras Distribution API helps us do this naturally. The Keras Distribution API effectively abstracts away the complexity of parallel computation, providing a global programming model for both data and model parallelism.
+
+You can easily tune the balance between data and model parallelism simply by adjusting the shape of your DeviceMesh without changing any other code. This example shows different ways to arrange eight devices, but if you have more devices, you'll have even more options of how you want to balance data and model parallelism. So which models have you been running in a distributed environment? Share your thoughts in the comments below. And remember, Keras Hub has a library of pre-trained models that you can use with Keras Distribution API.
+
+For a complete guide and more resources, check out the links in the description below. In a future video, we'll be talking about how to perform Keras checkpointing in distributed multi-host environments, so be sure to subscribe so you don't miss it. Thanks for watching, and I'll catch you in the next one. [MUSIC PLAYING]

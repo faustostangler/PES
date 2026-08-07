@@ -1,0 +1,316 @@
+---
+video_title: "Prototype to Production with ADK"
+video_id: jDCkirAz4-E
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jDCkirAz4-E
+video_date: 2026-03-30T19:00:00+00:00
+video_description: |
+  Learn more about the Agent Development Kit → https://google.github.io/adk-docs/
+  
+  You've seen impressive AI agent demos, but what is the playbook for taking a simple proof-of-concept to an enterprise-grade agent that your business can actually rely on? In this video, we'll show you how to build, deploy, and monitor a robust, scalable, and secure multi-agent application from scratch using Google's Agent Development Kit (ADK).
+  
+  Join Sita and Ayo as they walk you through building a complete AI Code Review Assistant. You will learn how to orchestrate specialized multi-agent systems, manage shared context with session states and persistent memory, deploy your agent as a scalable service to Vertex AI Agent Engine, and debug execution using Cloud Trace.
+  
+  Chapters:
+  0:00 - Introduction
+  1:38 - Code Review Assistant Architecture
+  3:12 - ADK Concepts: Sessions, Memory, & Artifacts
+  4:56 - Agent Deployment Options
+  5:49 - Observability with Cloud Trace
+  6:29 - Chapter 1: Intro & Learning Objectives
+  6:49 - Chapter 2: Your First Agent Deployment
+  11:18 - Chapter 3: Preparing Your Workspace
+  14:26 - Chapter 4: Building Your First Agent
+  18:38 - Chapter 5: Sequential Agent Pipeline (Review)
+  28:36 - Chapter 6: Loop Agent Pipeline (Fix)
+  37:24 - Chapter 7: Deploying to Production
+  41:49 - Chapter 8: Observability
+  42:55 - Eng Talk: Community questions
+  44:46 - Outro & next steps
+  
+  Resources:
+  Codelab → https://goo.gle/adk-code-reviewer-assistant-lab
+  ADK Samples GitHub repo → https://goo.gle/4uVtmSR
+  More videos on ADK → https://goo.gle/4uUiEfp
+  
+  #AIAgents #ADK #GoogleCloud #VertexAI #MultiAgentSystems #ProductionAI #observability 
+  
+  Subscribe to Google For Developers → https://goo.gle/developers
+  
+  Products Mentioned: ADK, Agent Development Kit, Google AI
+---
+[MUSIC PLAYING] SITA SANGAMESWARAN: So you've seen impressive AI agent demos, but what separates a cool proof of concept from an enterprise-grade agent that your businesses can actually rely on? It's making the agent robust, scalable, and secure, and that's exactly what we're going to build today. In this video, we're going to build, deploy, and monitor a complete agentic application from scratch using Google's Agent Development Kit. And to guide us, we have our Developer Advocate, Ayo Adedeji. Ayo, welcome to the show.
+
+AYO ADEDEJI: Great. Thanks for having me. We're going to build something I think is really practical, a code reviewer agent. It takes a user's Python code, validates it, checks the style, tracks the progress, and even uses long-term memory to give personalized feedback. SITA SANGAMESWARAN: And that sounds incredibly useful, but also very complex at the same time.
+
+And most simple agents actually handle one task pretty well, but this sounds like it needs a whole workflow or a process, right? AYO ADEDEJI: Exactly, and that's the problem we're tackling. A real-world agent isn't just a single prompt, it's a workflow. If you try to build this as a giant monolithic agent, it becomes brittle and hard to maintain. SITA SANGAMESWARAN: And in this workshop, we're going to show you the complete playbook.
+
+You will learn how to build a functional multi-agent with custom tools to create the Python code, manage context using session state, long-term memory using Vertex AI Memory Bank, and artifacts. You'll also learn how to deploy your agent as a scalable service on the Vertex AI Agent Engine, and finally, monitor your deployed agent using Cloud Trace. AYO ADEDEJI: Let's begin. SITA SANGAMESWARAN: But before we deep dive into the code with Ayo, let's walk through the architecture we're building. And this is the big-picture map that will guide us through the concepts we're about to cover.
+
+The most important thing to grasp here is that we're not actually building a single monolithic agent, but instead, we're actually building a system of specialized agents. For the review phase, we use a sequential agent, and this actually forces a strict order like an assembly line. First, the analyzer agent parses the code structure. And second, the style checker agent reviews for PEP 8 compliance. And then third, the tester agent actually executes the code to find bugs.
+
+And finally, once all this is done, the synthesizer agent takes all those results and combines them into helpful feedback that you can then see in the chat. But what if the code has bugs? That's where the fix pipeline comes in. This relies on a loop agent, and inside this loop, the fixer agent writes new code and the test fix agent verifies it, and then the validator agent checks the results. If the test fails, the validator triggers a retry, sending the agent right back to the start of the loop again.
+
+Now once the quote passes, or if we run out of attempts, the report agent takes over to generate the final report. And directing traffic between these two pipelines is our orchestrator. So we have linear workflows and looping workflows running together, but how do they actually share information with each other? AYO ADEDEJI: Well, they use a shared context, which is basically, they share a brain. This brain has three key parts for different kinds of shared contexts.
+
+First, for the current conversation, they have session state. Think of this as their short-term notepad. It's where the code analyzer can leave a note for the style agent. We can control if that note lasts for just one turn, the whole chat, or even for every chat a specific user has. Next, for remembering a user from last week or last month, they need memory.
+
+This is their long-term memory, and it will allow the agent to truly offer personalized feedback over time, like noticing a student's improvements. And finally, what if the user submits a massive code file? We don't want to clog up the system's memory with that. For large files, they use artifacts. It's their filing cabinet for storing and retrieving big chunks of data.
+
+SITA SANGAMESWARAN: Once we've built our agent, along with the tools and the shared context we just discussed, you can run them locally to see how they work. But I wish it stopped there. But the next part is to productionize the agent. And today, we'll be looking at the bare bones of what you need to productionize an agent. So until now in development, we would use something called an in-memory session or an in-memory memory service.
+
+Like the name conveys, all the shared context is in the memory. But when we move to production, we need to switch this to a persistent service like the Vertex AI Session Service and the Vertex AI Memory Bank. Now once we've built an agent with its tools and the brain, the next step is deployment, and this is where we make our agent available to everyone else, and it brings up a crucial question, Ayo-- where should we deploy this agent? AYO ADEDEJI: Great question. Your deployment choice really depends on your use case and your architecture.
+
+If your agent is a self-contained microservice and you just need a secure API to call it, deploying directly to Agent Engine is a fantastic choice. Choose Cloud Run when you have variable traffic patterns or want serverless scaling. It's perfect for agents that need to scale to 0 during idle periods to minimize costs. And go with GKE when you need full Kubernetes power, like custom networking, GPU nodes for ML inference, or when you're orchestrating complex multi-agent systems that require stateful sets or specialized operators. SITA SANGAMESWARAN: For our use case today, because we want that managed session state and memory right out of the box, our choice is going to be Vertex AI Agent Engine.
+
+Think of this as a fully managed office building for your system. It handles the security, the scaling, and the infrastructure so you don't have to write any code. And finally, no production system is complete without a way to see what's going on inside it. Agent Engine is wired for observability using Cloud Trace. Think of these as security cameras letting us watch every step of your agent workflow to find bottlenecks and to debug issues.
+
+So there it is, a team of specialist agents orchestrated by a manager or a workflow agent using a three-part shared context, all running within a managed platform with full observability. All right. With that complete map in our heads, let's hand it over to Ayo and start writing some code. AYO ADEDEJI: Let's go.
+
+In this Codelab, you will go from being a user of vibe coding tools to a creator by building a production-grade AI code review assistant. We'll build a multi-agent system that analyzes code with deterministic tools, executes real tests, provides feedback, and deploys to Google Cloud with full observability. Let's begin with chapter 2, your first agent deployment. We'll start by properly setting up our Google Cloud environment. First, inside the Cloud Shell terminal, we need to set our active project.
+
+We'll run the command gcloud config set project using the $GOOGLE_CLOUD_PROJECT environment variable, which is automatically set for you. With the project set, we can move on to verification. Next, we'll run a quick command to confirm the project is set correctly. The output shows our active project ID, which looks right. Now let's check our authentication status with gcloud auth list.
+
+You should see your account listed with active next to it. If your account isn't active, you can simply run gcloud auth application default login to authenticate. Before we build any agents, we need to enable the essential APIs. We'll enable the AI platform and Compute Engine APIs, which are necessary for running our basic agent. This may take a minute.
+
+OK, the operation finished successfully. Our core APIs are ready. Now we'll install the Google Development Kit, or ADK, using pip install. We'll add the upgrade flag to ensure we get the latest version.
+
+To verify the installation, we'll run the command adk --version. It may take a few seconds to run right after installation.
+
+As you can see, we have version 1.15.1 or higher, which is exactly what we need. With ADK installed, we can now create our Hello World agent. The adk create command scaffolds a new project for us.
+
+We'll name it my_first_agent.
+
+We'll choose gemini-2.5-flash as the model, select Vertex AI as the backend, and accept the autodetected project ID and default region. The ADK has now created an agent directory files, a .env file for configuration, an init.py to mark it as a Python package, and the agent.py file containing
+
+our agents' definition. Let's change into my_first_agent directory and list the files to see what was generated. And there they are, just as expected. Now let's quickly check the configuration file.
+
+Running cat .env shows that the ADK correctly populated our project ID and location from the interactive prompts. If this were incorrect, you could easily edit it with Nano or any text editor, but for now, this is perfect. Let's examine the heart of our new creation, agent.py.
+
+As you can see, it's incredibly simple. It's just a single agent object with a model, a name, a description, and a simple instruction. This is the Hello World of agents.
+
+To test it, we'll navigate back to the parent directory and use the command adk run my_first_agent. This starts an interactive console session where we can chat directly with our agent. You can see the user prompt is waiting for input. Let's ask it a basic question. Hey, what can you do?
+
+And there's the response. It's a standard helpful reply based on the simple instruction we gave in agent.py.
+
+Now, let's test its limits. We'll ask for the current weather.
+
+As expected, it correctly identifies that it doesn't have access to live data. This is a crucial limitation of a basic model without tools. Let's see how it handles code. I'll give it a simple function.
+
+The review is reasonable. It identifies the function's purpose and even suggests good practices like adding docstrings and type hints, but it's just talking about the code. It can't parse its structure, run tests, or check style compliance. To do that, we need architecture. Let's exit with Control-C.
+
+This brings us to chapter 3, preparing your production Workspace. That simple agent was a good start, but a real-world system needs a robust foundation. We'll start by cleaning up our basic agent and cloning the full production scaffold from the Git repository provided with the Codelab. We'll also switch to the Codelab branch, which contains the complete project structure with placeholders for us to fill in. As you can see, this is a much more comprehensive structure.
+
+We have dedicated directories for subagents, tools, and deployment scripts. This separation of concerns is a key production principle. If we look inside tools.py, you can see the placeholders, such as module 4, step 2, add state storage where we'll be adding our code. Note, these modules are based on the Codelab sections for those following along there.
+
+Now back in the terminal, we'll create and activate a Python virtual environment. This isolates our project's dependencies from other Python projects on the system.
+
+Your prompt should now show .env at the beginning. Next, we install all the necessary production dependencies, including Google ADK, pycodestyle, and Vertex AI by running pip install with the requirements file.
+
+And then we run pip install -e. The editable mode flag is important because it allows Python to find and import our code review assistant modules from anywhere in the project, which is essential for our structured application. We'll copy the example environment file to create our own .env file, then we'll open it to edit.
+
+We just need to replace the placeholder for the $GOOGLE_CLOUD_PROJECT environment variable value with our actual project ID. The other defaults are fine for now. The other values will become relevant when we deploy our code review assistant later on.
+
+Let's make sure to update the project ID value.
+
+And then save the file. We can quickly verify the changes by running cat .env. Everything looks correct.
+
+Now we need to enable the additional APIs for our production deployments. This includes services for Cloud SQL, Cloud Run, Cloud Build, Artifact Registry, Storage, and Cloud Trace. This step ensures our $GOOGLE_CLOUD_PROJECT has all the necessary permissions. We also need a place to store our container images, so we'll create an artifact registry repository.
+
+Finally, we grant the necessary IAM roles to the Cloud Build Service Account, which is a critical security step that allows our automated deployment script to manage resources on our behalf. And with that, our production workspace is fully prepared. We have our code, our isolated environment, and our Cloud infrastructure ready to go. Let's move on to chapter 4, building your first agent. We'll start in tools.py.
+
+Here's the scaffold for our analyze_code_structure tool. The first step is to enable state storage, which allows our tool to share its findings with other agents in the pipeline. We'll replace this placeholder with these lines. We're using our state keys constants to write the original code, the detailed analysis, and the line count to the shared state. Think of this as writing on a shared whiteboard for the other agents to see.
+
+This constants pattern prevents silent bugs from typos. Let's open constants.py and take a closer look.
+
+At the top, we have our session-level keys, like code to review and style score. As we scroll down, you'll see keys grouped by purpose, such as those for the review pipeline and the fixed pipeline. This organized structure makes it immediately clear what data each part of our application produces and consumes.
+
+Next, let's make our tool non-blocking. We'll replace the async placeholder with this run_in_executor pattern. This runs the CPU-intensive ast.parse function in a separate thread, preventing it from freezing our application. And as you can see, this works hand in hand with the async def keyword at the start of our function.
+
+The async keyword alone isn't enough. It only gives the function the ability to be paused. The run_ in _executor is what actually does the work in the background during that pause, preventing our entire application from freezing. Now for the core logic, we'll replace this placeholder to call our helper function, extract_code_structure, which will also run in the thread pool, and now we'll paste in the helper functions themselves.
+
+This extract_code_structure function is where the real work happens. It walks the Abstract Syntax Tree, or AST, to deterministically extract detailed information about every function, class, and import in the code.
+
+With our tool complete, we can now wire it up to an agent. Let's open the code analyzer.py file. We'll replace this placeholder with the complete agent definition.
+
+Notice the choice of model and the detailed instruction prompt.
+
+We are being very explicit, telling the agent its exact task, and crucially, what not to do, like fixing the code. This prevents the agent from being overhelpful and corrupting our analysis pipeline. We pass our analyze_code_structure function into the tools list, and we set the output key. This tells the ADK that whatever this agent produces should be stored in the session state under the key, structure_analysis_summary, making it available to the next agent in the chain. Now let's test our work.
+
+The project includes a test script for our analyzer. This script loads our .env config, instantiates the agent, and runs it against a sample piece of code.
+
+Now navigating back to the terminal, lets execute python tests/test_code_analyzer.py.
+
+And there's our result. The tool correctly parsed the code, and the agent generated a perfect summary, identifying the two functions and one class. Our first production ready agent is working. To quickly recap what we just accomplished, we built a deterministic tool using Python's AST library, wrapped it in a non-blocking async function, and connected it to a precisely instructed agent that knows how and when to use it. This separation of deterministic work from LLM reasoning is a cornerstone of reliable AI systems.
+
+The key takeaways are, use tools for deterministic work, use agents for reasoning and orchestration, and use state with constant keys to pass data reliably between them.
+
+Now in chapter 5, we will assemble a full review pipeline. We're back in tools.py to add our second tool, the style checker. This function uses the pycodestyle library to identify PEP 8 violations. Now notice the very first thing this function does.
+
+It retrieves the code from the shared state. This is the crucial connection in our pipeline.
+
+If we scroll up, you'll see this code to review key is the exact same one that was set by our first tool, analyze_code_structure. This is how state flows from one agent to the next. After performing its analysis, the style checker then contributes its own findings back to the shared state. As you can see here, it writes the STYLE_SCORE, STYLE_ISSUES, and STYLE_ISSUE_COUNT, making them available for the agents that will run later in the pipeline.
+
+We'll also add its helper functions. These helpers perform the actual style check, add our own custom naming convention checks, and calculate a weighted score. This gives us a more nuanced view of code quality than just counting the number of errors. The main check codestyle tool orchestrates these helpers and handles writing the results, the score, the issues, and the issue count back into the shared state for the next agents to use.
+
+Now let's create the agent. In style_checker.py, we'll first paste in the dynamic instruction provider. This is another production pattern. Instead of a static string, we use a function that injects data from the session state directly into the prompt.
+
+Here, the inject session state utility will automatically replace the curly brace placeholders with the actual output from our first agent, giving the StyleChecker valuable context about the code it's about to review.
+
+Next, we define the agent itself. It's configured with the fast worker_model, it's given our new check_code_style tool, and its output is stored in the style_check_summary state key.
+
+Moving on to our third agent, the TEST_RUNNER, we'll paste in its INSTRUCTION_PROVIDER. This prompt is crucial. It tells the agent to generate 15 to 20 comprehensive tests, execute them, and most importantly, output its findings in a very specific JSON format. This strict JSON output is not for human eyes. It's a structured contract that our final synthesizer agent can reliably parse to understand exactly what bugs were found.
+
+Now we define the TEST_RUNNER agent.
+
+Notice, we're using the more powerful critic_model, because generating meaningful tests requires a higher level of reasoning. We also attach the BuiltInCodeExecutor, which gives the agent the power to actually run the Python tests it generates in a secure sandbox. This is the key that separates our system from a simple chatbot. The BuiltInCodeExecutor provides proof, not just speculation. When our agent reports a type error, it's because it actually ran the code and witnessed the crash firsthand.
+
+Now for our final and most sophisticated agent, the feedback synthesizer. It uses three different tools. The first, SEARCH_PAST_FEEDBACK, will query the ADK's memory service for past reviews for this user, enabling personalized, context-aware feedback.
+
+The adk command for searching past memories is tool_context.search_memory. If memories are found, we proceed to store them in the state keys PAST_FEEDBACK and FEEDBACK_PATTERNS.
+
+The second tool, UPDATE_GRADING_PROGRESS, is a state management workhorse. It updates temporary, session-level, and persistent user-level metrics, like calculating the score improvement since the last submission. This is how the agent tracks a developer's progress over time.
+
+The third tool, SAVE_GRADING_REPORT, gathers all the data from the entire pipeline-- the code, the analysis, the style score, the test results, and saves it as a comprehensive JSON artifact. This creates a complete audit trail for every review.
+
+Notice the dual-storage strategy. It tries to save to a persistent artifact service first, but falls back to saving in the session state if that fails. This is a great production pattern for resilience.
+
+With the tools ready, let's create the synthesizer agent.
+
+We paste in its INSTRUCTION_PROVIDER, which is the most complex yet.
+
+It reads the summaries from all previous agents, which are injected from state. It has a strict ordered list of tasks. First search memory, then update progress, then generate feedback, and finally, save the report. This explicit instruction ensures the agent performs its feedback synthesizing role reliably every time.
+
+Finally, we define the agent. We assign it the powerful critic_model, gemini 2.5-pro, because this task requires the most nuance. It has to parse structured JSON from the TEST_RUNNER, integrate historical patterns from memory, and synthesize all of this into helpful, encouraging, and actionable feedback. We provide all three tools we just created and set the output state key to final_feedback.
+
+Now we'll wire everything together. In our main agent.py file, we'll add the imports for the four specialized agents we've just configured-- the code_analyzer, the style_checker, the test_runner, and the feedback_synthesizer.
+
+We'll replace the placeholder to define our code review pipeline. This is a sequential agent, which ensures that our four subagents execute in a strict, predictable order with the state from each one flowing to the next.
+
+We then define our root agent, whose only job is to delegate user requests to this pipeline. The root agent's instructions are simple, but critical. When it sees code, it must delegate to the code review pipeline and do nothing else. This makes it a reliable router. With our pipeline fully assembled, let's test the entire system.
+
+We'll run adk web to start the ADK's development UI.
+
+In the browser, we'll open the web preview, select our agent, and paste in a depth-first search algorithm implementation that has a logical flaw for the purpose of testing and validating performance of our code review assistant.
+
+Now watch the pipeline in action. In the Events tab, you can see each agent executing in sequence. First, the code_analyzer runs. If we click on the check_code_style event, we can expand to show the details. We can inspect the raw data for any event.
+
+Here, in the request, we can see the full prompt and tools passed to the LLM. As the agents complete, the final polished response from the feedback_synthesizer is assembled.
+
+Let's take a look. We can see the code_analyzer agent results, then the style_checker agent results.
+
+Then the test_runner agent get activated and the test case is generated and the corresponding results.
+
+We can see the search_feedback tool.
+
+As well as the save_grading_report and compile_fix_report tools get called by the feedback_synthesizer.
+
+And here is the result of our four-agent pipeline. It's a complete report that includes a summary, strengths, a detailed analysis of structure, style, and the test results, correctly identifying the critical bug, and provides clear, actionable next steps. This is the power of a multi-agent pipeline. It transforms raw, technical data from deterministic tools into a helpful and educational experience. Now let's stop the server.
+
+Welcome to chapter 6. We've built a pipeline that can find problems, now we're going to build one that can fix them. Let's implement the agents starting with the code fixer.
+
+First, we'll add in the instruction provider. Like before, this uses a dynamic template that injects data from the shared state. It pulls in the original code, style score, and test results from the review pipeline. This gives the agent all the necessary context about what went wrong. Now look closely at the critical instructions.
+
+We are being extremely explicit. The agent must output only the corrected raw Python code. No explanations, no conversation, and no markdown code blocks. This is because its output will be consumed by another agent, the test_runner agent, which expects a clean, executable file, not a chatty response. Next, we'll define the agent itself.
+
+We'll give it the name code_fixer and assign it our worker model, gemini-2.5-flash, which is powerful enough for this code generation task. We're also providing the BuiltInCodeExecutor. And finally, and most importantly, we set the output key to code_fixes. This tells the ADK to take the raw Python code generated by this agent and save it to our shared state.
+
+The next agent in the loop can then access this corrected code by using that exact key.
+
+Next, in fix_test_runner.py, we define the test runner for our fix loop. It takes the newly generated code from the code_fixes state key and runs the exact same battery of tests, comparing the new results with the old ones. Its job is to report back in structured JSON whether the pass rate has improved and which tests are still failing.
+
+Now we define the agent. Like our original test_runner, we give it the powerful critic model, gemini-2.5-pro, and the BuiltInCodeExecutor to actually run the code. Its output is then stored in the fixed_test_execution_summary state key, which will be read by the next agent in our loop, the validator.
+
+Now for the validator, which needs three new tools.
+
+The first in tools.py is VALIDATE_FIXED_STYLE. It's very similar to our original style checker, but it specifically runs on the fixed code and compares the new score to the original.
+
+The second tool, COMPILE_FIX_REPORT, is the core of the validation logic. It gathers all the data from state, the original scores and test results, and the new scores and test results, and determines an overall fixed status, successful, partial, or failed.
+
+The third and most important tool is EXIT_FIX_LOOP. It contains a single critical line, tool_context.actions.escalation equals true. When the validator agent calls this tool, it signals to the loop agent that the fix was successful and that it should stop iterating.
+
+Now we create the FIX_VALIDATOR_AGENT itself. Its instructions are very clear-- use its three tools to check the style, compile a report, and then, only if the fixed status is successful, call exit_fix_loop. This conditional logic is critical. If the fix is a failure or only a partial success, the agent does nothing. This inaction is deliberate.
+
+It allows the parent loop agent to see that the success criteria weren't met and proceed to the next iteration. OK, our three loop agents, the fixer, the tester, and the validator, are defined. Now let's go to our main agent.py file to orchestrate them into a new pipeline.
+
+First, we'll add the necessary imports, including the loop agent from the ADK and the new agents we've just created for the fixed pipeline.
+
+Next, we'll define the core of our fix capability. We create a loop agent named fix_attempt_loop which will run our three agents in a cycle. We set max iterations to 3 as a safety net.
+
+Then we wrap this loop and a final synthesizer inside a sequential agent called code_fix_pipeline. This ensures the synthesizer runs only once after the loop completes.
+
+Now we need to make our root agent smart enough to use this new pipeline. We'll replace the old definition with this updated one. The key changes are adding code_fix_pipeline to its list of agents and, importantly, updating its instructions. Now after a review, if it finds significant issues, it will proactively ask the user if they'd like to attempt a fix. This makes it a truly interactive assistant.
+
+With our main orchestration complete, let's implement that final synthesizer agent.
+
+In fix.synthesizer.py, we'll add its instruction provider. This template pulls the final report, the corrected code, and the fixed status from state to create a comprehensive, user-friendly summary of the entire fix process.
+
+Now we define the agent itself. It uses the powerful critic_model to ensure the summary is high quality, and is configured to use a tool called save_fix_report. This is the last piece we need. Let's create that final tool now.
+
+Back in tools.py, we'll add the save_fix_report function. It gathers all the data from the fixed pipeline and saves it as a JSON artifact, giving us a complete audit trail for the successful fix.
+
+We'll also add it to our modules all__ list to make it importable. With all our components in place, let's test the entire system end to end.
+
+Using adk web, we'll start the web UI.
+
+And give it the same buggy DFS code. The initial review pipeline runs as before.
+
+Correctly identifying the critical bug. But notice the new addition. Based on its updated instructions, the agent now asks if we want it to fix the issues.
+
+Let's say yes. Now watch the fix pipeline. The root agent delegates to the code_fix_pipeline. The loop agent starts its first iteration.
+
+The code_fixer agent attempts a fix, but uh oh, it introduces a new syntax error. The fix_test_runner confirms this, and the fix_validator reports a failed status because the exit condition wasn't met. The loop automatically proceeds to its second attempt.
+
+On the second try, the code_fixer, now aware of the previous failure, gets it right. The fix_test_runner validates the new code and confirms all tests now pass.
+
+The fix_validator sees the 100% pass rate, declares the fix successful, and calls the exit_fix_loop tool. The loop terminates, and control passes to our final fix synthesizer agent. And here is the result-- a beautiful, clear report showing the fix was successful. The metrics improved across the board, and most importantly, it provides the complete, corrected, and now fully functional code. This is the power of a looping, self-correcting agent system.
+
+Let's stop our local server. It's time for chapter 7, deploying to production. Our deploy script is the single source of truth for deployment. It handles infrastructure provisioning like enabling APIs and setting IAM permissions, and orchestrates the deployment to our chosen target, local, cloud-run, or as we'll do now, the fully managed Agent Engine. Before deploying, we need to configure our Cloud storage buckets, which are needed for our Agent Engine deployment.
+
+We'll edit the .env file and set the staging bucket and artifact bucket variables using our unique project ID to ensure the bucket names are globally unique. The deployment script will create these for us.
+
+The Agent Engine ID will be generated and provided to us during the deployment process. We will fill this in later.
+
+Now that we've set our bucket names, let's look at the script that we'll use them. This deploy script is the single source of truth for deployment. At the top, it handles configuration, sourcing our .env file and setting sensible defaults. But the real power is in these helper functions.
+
+We have functions to ensure APIs are enabled, to ensure buckets exist, and to ensure IAM permissions are set correctly. This makes the script idempotent, meaning we can run it multiple times without breaking anything. Finally, the main logic is a simple case statement that routes to the correct set of functions based on the argument we provide, local, cloud-run, or as we'll do now, Agent Engine. This script encapsulates all the best practices for infrastructure as code, ensuring a repeatable deployment. Note we are using ADK's built in adk deploy command for deployment with a trace_to_cloud flag which enables automatic observability, which we will cover in the next chapter.
+
+Now we're ready. From the project root, we execute deploy.sh agent-engine.
+
+The script now takes over, performing all the necessary steps. It enables APIs, configures IAM roles, creates the cloud storage buckets, and finally, packages and uploads our agent code to Vertex AI where it provisions a new, fully managed Agent Engine instance. This process will take about five to 10 minutes. It's sped up here to maintain pace.
+
+And it's done. The agent is live. The script outputs the Agent Engine ID. We must save this ID in our .env file for all future interactions with our deployed agent.
+
+If we now go to the Google Cloud Console and navigate to the Vertex AI Agent Engine page, we can see our code review assistant is successfully deployed and running. The Agent Engine Console provides everything we need to manage our production agent. We can view runtime metrics, see active sessions, and inspect the agent's long-term memory. Most importantly, it gives us the query URL, which is the public API endpoint for our agent. Let's copy that ID and paste it into our .env file.
+
+Now we can test our live deployed agent. The project includes a test_agent_engine.py script.
+
+It authenticates with Google Cloud, creates a new session via the agent's public API, and then sends our buggy DFS code for review.
+
+Let's run it.
+
+If we take a look at the console, we can see that a new session was created by our test under test.user.
+
+Success. As you can see, we're receiving the full streaming response directly from our deployed instance. Our multi-agent system is live and fully functional. Now for the final critical piece of production readiness, chapter 8, observability, your agent is deployed, but how is it performing? The trace_to_cloud flag we used during deployment automatically instruments every request with trace-level observability.
+
+To see this, we'll navigate to the Cloud Trace Explorer in the Google Cloud Console.
+
+The list shows the timeline of every request made to our agent. Let's click on one to examine the waterfall view.
+
+This Gantt chart shows the complete execution timeline of a single request, breaking down every operation into a span. We can see the code review pipeline and its children. Let's inspect the Code Analyzer. Here in the attributes, we can see the exact model used, and even the token counts for this specific LLM call.
+
+If we click on the check_code_style tool execution, we can see the tool's inputs, and most importantly, the JSON output that it returned, which includes the style score of 98. SITA SANGAMESWARAN: All right, it's time for our ENG Talk section. We've searched the internet and found some community questions on productionizing agents in ADK. Let's dive in.
+
+Ayo, what are some considerations to take into account when I'm integrating my agent with a web app or a client? AYO ADEDEJI: Well, beyond the polling pattern we discussed, think about authentication. You'll want to secure your endpoint with API keys or OAuth, consider implementing rate limiting to prevent abuse, and always validate user input before passing it to your agent. Also, design your UI to handle partial responses gracefully. Agents can stream responses, so show users' progress as it happens rather than making them wait for everything to complete.
+
+SITA SANGAMESWARAN: What is the end-to-end workflow for deploying an ADK agent? What are the considerations should we be talking about in addition to the ones we've discussed today? AYO ADEDEJI: Well, the full workflow includes developing locally, writing test for your tools and agents, containerizing your application, setting up CI/CD pipelines, deploying to your chosen platform like Cloud Run or GKE, and configuring monitoring. Also setting up evaluation metrics to track agent performance over time, and implementing proper error handling and fallback responses for when things go wrong. SITA SANGAMESWARAN: And for the viewers, if you want a full video on the agent ops, check out the link in the description below.
+
+And now to the next question-- how can I safely run untrusted LLM-generated code in my agent? AYO ADEDEJI: Well, never run untrusted code directly. Use sandbox environments like containerized execution with gVisor. set strict resource limits for timeout memory and CPU to prevent infinite loops or resource exhaustion. Consider using static analysis tools to pre-screen code before execution.
+
+And always run in isolated networks without access to sensitive resources. SITA SANGAMESWARAN: That was our last question. Ayo, thank you so much for walking us through this entire journey. It is actually now clear that building a production-ready agent is so much more than just writing a prompt. AYO ADEDEJI: That's right.
+
+Today, we built a complete multi-agent system from scratch using Google's ADK. So thank you for having me, I can't wait to see how our viewers take their side projects and turn them into full-fledged production apps. SITA SANGAMESWARAN: Amazing. Share your projects, your ideas, and your questions in the comments below, and we'd love to see what you create. For other agent concepts like evaluation, A to A, MCP, et cetera, check out the workshop playlist.
+
+We have some amazing guests covering so many hot topics. And until next time, happy building. [MUSIC PLAYING]

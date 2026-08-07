@@ -1,0 +1,57 @@
+---
+video_title: "Keras Tutorial: Checkpointing distributed models with Orbax"
+video_id: DF9cvunST58
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=DF9cvunST58
+video_date: 2026-03-06T20:47:17+00:00
+video_description: |
+  Don't let device failures or power outages ruin your training runs. In this tutorial, Yufeng Guo demonstrates how to use Keras with the Orbax checkpointing library. Learn how to implement a custom checkpoint manager and Keras callbacks to ensure your model state is always safely stored.
+  
+  0:00 Introduction to Orbax & Keras Integration
+  0:39 Exploring Keras Checkpointing
+  1:11 Why Extend Keras for Multi-Host Environments?
+  1:48 What is Orbax?
+  2:29 Building Utility Classes: KerasOrbaxCheckpointManager & OrbaxCheckpointCallback
+  2:57 Deep Dive into KerasOrbaxCheckpointManager
+  3:45 Coding the Get, Save, and Restore State Functions
+  4:37 Implementing the OrbaxCheckpointCallback
+  5:12 Protecting Against Device Failures & Preemption
+  5:31 Implementation Details & Model.fit Integration
+  6:07 Checkpointing in Action: File Directory Walkthrough
+  6:56 Summary & Final Tips
+  
+  Resources:
+  Orbax checkpointing in Keras - Developer guide → https://goo.gle/40T2LI8
+  ModelCheckpoint - Keras 3 API documentation → https://goo.gle/3PkAlEq
+  
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Yufeng Guo
+  Products Mentioned: Google AI
+---
+YUFENG GUO: When training large machine learning models, especially in distributed environments, reliable serialization and state management are critical. For Keras users working with the JAX ecosystem, this might mean utilizing a dedicated library for checkpointing. Hi, there. My name is Yufeng. And today, we're going to see how to use Orbax checkpointing with Keras models, focusing on how it flexibly extends Keras to integrate with the JAX backend for robust model saving.
+
+As long-time Keras users know, Keras has a handy built-in callback for checkpointing. It's got a set of configurable options that make it suitable for a wide range of use cases and training situations. You can keep only the best checkpoint, defined by a custom metric of your choice, with a frequency, either in batches or in epochs. And we can even have an initial threshold value for those early checkpoints since we typically don't need to save the early parts of training. These features meet many different model training and checkpointing needs, but no prebuilt solution is going to work for everyone.
+
+This is where Keras's flexibility shines. You can extend Keras to implement your own checkpointing callback, run your choice of checkpointing library, and write code that uses fully custom criteria for what checkpoints to write, how often, in what format, and so on. So today, we will use a library called Orbax to do just that-- extend Keras to perform custom checkpointing in multi-host environments with a JAX backend. Orbax is the default checkpointing library recommended for users within the JAX ecosystem. It provides functionality for both checkpoint management and composable, extensible serialization.
+
+In addition to customizing your checkpoint logic, Orbax checkpointing supports multi-host training with the Keras distribution API as the default Keras checkpointing currently doesn't support multi-host. This checkpointing method is specifically intended for the JAX backend, so the first step here is to install the Orbax checkpoint library and ensure the Keras backend environment variable is set to JAX. To integrate Orbax into Keras, we will need to create two utility classes-- the KerasOrbaxCheckpointManager and the OrbaxCheckpointCallback. Broadly speaking, KerasOrbaxCheckpointManager implements the details of checkpointing with Orbax while OrbaxCheckpointCallback hooks us into the Keras callback system. Let's look at each in more detail.
+
+The Keras Orbax checkpoint manager extends Orbax's native CheckpointManager and implements _get_state, save_state, and restore_state functions using Keras functions. Essentially, we're making a custom Orbax checkpoint manager for use with Keras. In the init function, we'll configure a couple of important options like the checkpoint directory, steps per epoch, and how many checkpoints to keep. KerasOrbaxCheckpointManager will use the Keras model's internal get_state_tree and set_state_tree APIs to save and restore the model variables, including weights, optimizer state, and metrics. Let's look under the hood and see each of these functions in more detail.
+
+In _get_state, we use Keras's get_state_tree to retrieve the full model state. However, this also grabs the metrics, which Orbax saves separately for checkpointing purposes, so we'll separate out the metrics before returning the state and the metrics as a pair. save_state is quite short, literally just two lines. We use our _get_state function that we just wrote, and then we pass the state and the metrics into Orbax's save() method. In restore_state, we first call _get_state so that we can provide the model structure to self.restore,
+
+which gets us the full checkpoint state. Once the checkpoint state is obtained, we use Keras's set_state_tree to update the model to reflect the checkpointed model's weights. The OrbaxCheckpointCallback extends the standard Keras callback using the save and restore functions of our custom checkpoint_manager to automatically handle saving and restoring model states during the training process at the beginning and the end of each training epoch. There's a fair amount of boundary condition checking, but the primary functionality here is to call our checkpoint_manager's restore_state function during on_train_begin and then use save_state during on_epoch_end. This means that if there's a device failure or power outage or a VM gets preempted, you'll never lose more than one epoch's worth of work.
+
+Using Orbax checkpointing is straightforward once these utilities are prepared. And yes, you can basically copy paste these into your codebase. Now we can go ahead and pass the OrbaxCheckpointCallback instance to the callbacks argument within the model.fit method. If you want to have more than just the most recent checkpoint saved, you can increase the max_to_keep argument.
+
+During training, the callback performs two actions. First, during on_train_begin, it restores the latest checkpoint, if one exists, ensuring you resume training correctly. And second, at the end of each epoch, it explicitly saves the current model state using save_state. For instance, a simple model training for five epochs will generate a message indicating that the Orbax checkpoint is saved at the end of each epoch. And after training, the checkpoint files will be visible in the specified Orbax checkpoint directory.
+
+Here are the files that are left after training is complete. Since I asked for five epochs and the first epoch is epoch 0, the last and most recent epoch is epoch 1, 2, 3, 4, which is all that's left since we set the max_to_keep argument to be 1. Now, if we had picked, say, 3, we'd have the three most recent checkpoints, namely checkpoints 2, 3, and 4. Adjust these values to suit your needs, and you'll be checkpointing with ease in no time. Orbax checkpointing provides a reliable, high-level mechanism for state management in Keras models.
+
+By implementing the OrbaxCheckpointCallback, you'll gain the necessary robustness for complex, distributed, or multi-host training scenarios. What are the most challenging aspects of distributed training that you face? Share your thoughts in the comments below. And for the complete code example and further details, check out the guide linked in the description. Thanks for watching, and I'll catch you in the next one.
+
+[MUSIC PLAYING]

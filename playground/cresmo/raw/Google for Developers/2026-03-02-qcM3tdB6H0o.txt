@@ -1,0 +1,28 @@
+---
+video_title: "How to Use the Gemini Batch API for Processing Large Datasets"
+video_id: qcM3tdB6H0o
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qcM3tdB6H0o
+video_date: 2026-03-02T22:44:17+00:00
+video_description: |
+  Learn how to use the Gemini Batch API, a cost-effective solution for processing large-scale jobs and datasets asynchronously. For tasks that don't require an immediate response, you can save 50% compared to the standard rate. Use it for non-urgent workloads like data pre-processing or running evaluations. The target turnaround is 24 hours, but results can often be ready much faster.
+  
+  Resources: 
+  More on using the Batch API with Gemini→https://goo.gle/4l8UlWD 
+  For more details on pricing→https://goo.gle/4b2tabt 
+   
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Products Mentioned : Gemini
+---
+PAIGE BAILEY: Hey there, friends. Today I'm going to show you how you can use the batch API to process large volumes of data with all of our Gemini models. And this can be anything from Gemini 3 Flash, Gemini 3 Pro, Nano Banana, the embeddings models to whatever your favorite flavor of Gemini model might be. Batch mode is pretty special in the sense that, for jobs that don't have requirements for immediate turnaround time, you can process them on a more extended time frame, up to 50% cheaper than the standard cost. And the target turnaround time is around 24 hours.
+
+But just being very honest, pretty much every job that I've tried for a reasonably sized data set of less than a thousand examples has run under a couple of hours. So it is a great way to save money if you don't have the need for immediate results and is also relatively straightforward to get started. So today I'm going to show you a Colab notebook that I've created specifically for this purpose. I've defined my Gemini API key, just in the secrets of this Colab notebook. I'm pulling in a data set from Hugging Face, so the human eval data set, which is commonly used as a proxy for coding, but is actually just testing how well you can complete a Python function definition.
+
+It's used a lot for evals though, so it makes a pretty handy getting started example. I've converted them all to JSON lines. And then if I click this Play, you should see that the data set kind of gets downloaded, converted, and we get a handy little job state pending status for the example scene here. If I want to keep, kind of, pinging the job state, I can. So I'm going to click again, and we can still see that it's pending.
+
+But as soon as the job toggles towards succeeded, I can walk through each of the examples, so each one of the requests that I've sent to Gemini and the response that they've gotten back, and do kind of a score of the model based on those data. I've already done this. So, as I mentioned, I've run this job a couple of times. They've all come in at well under an hour in terms of completion. This is using the Gemini 2.5 Flash Light
+
+model, which you can see that I have defined here as part of creating my batch job. It's under, like, five lines of code in order to be able to do this work, which is pretty awesome. And then if we scroll down, we can see, kind of for each one of these examples, whether the model passed or whether there was a failure or what kind of failure it was, and then also see the end results for the data itself visualized in this nice sort of friendly matplotlib format. So I'll be adding this Colab notebook so you can kind of mix and match, experiment with other data sets, experiment with other models, see how well they perform. But that really is just as simple as a few cells in a notebook to get started with the batch mode in the Gemini API.
