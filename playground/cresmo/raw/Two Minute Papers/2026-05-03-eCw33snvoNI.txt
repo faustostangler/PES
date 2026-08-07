@@ -1,0 +1,67 @@
+---
+video_title: "NVIDIA's New AI Turns One Photo Into A World That Never Breaks"
+video_id: eCw33snvoNI
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eCw33snvoNI
+video_date: 2026-05-03T17:02:48+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  📝 The paper is available here:
+  https://research.nvidia.com/labs/sil/projects/lyra2/
+  
+  Our Patreon if you wish to support us: https://www.patreon.com/TwoMinutePapers
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Adam Bridges, Benji Rabhan, B Shang, Cameron Navor, Charles Ian Norman Venn, Christian Ahlin, Eric T, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Ryan Stankye, Shawn Becker, Steef, Taras Bobrovytsky, Tazaur Sagenclaw, Tybie Fitzhugh, Ueli Gallizzi
+   
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  Thumbnail design: https://felicia.hu
+  
+  #nvidia
+---
+I can’t believe that we are getting this for free. What is this? Well, hold on to your papers Fellow Scholars because you take just one image, and it creates a 3D explorable world out of it. Super cool. They call it Lyra 2.0. It sounds almost too good to be true, and it often is. I’ll tell you why.
+
+I grew up in Budapest, and now I live in southern Hungary in a different, beautiful city called Pécs. And whenever I visit Budapest, I love to walk around the parts where I grew up, it is always an incredible feeling. And I’m thinking that if we can even use research technology to deliver just a fraction of that feeling, that is fantastic. Or, if you need just one image, you can take a Street View image and it will create a video game world out of it. Drop in a robot and have it train there safely and learn how to be a good robot.
+
+A different variant of this concept is called Cosmos, it’s a bit different. It creates simulation data for training robots and self-driving cars.I recently tried a self-driving car in San Francisco, and it was incredible… even though only part of its training comes from simulated data, that part is crucial. This is a testament to how important and useful simulations are. They unlocks unexpected solutions for tough problems.
+
+But, not so fast. This isn’t so easy because unfortunately…we have a big problem. These worlds break down. Also, wait a second, DeepMind also did this earlier, didn’t they? Genie 3. An image goes in,
+
+a game comes out. It can even be a drawing, painting, whatever you wish. So how is this different? Is this the same thing? Well, no.
+
+Okay, let me try to explain. A bit more than a year ago an amazing AI appeared that claimed to have watched 1,000,000 hours of Minecraft videos and thus remade the very coarse Minecraft game for us. And the interesting thing was this. We look at something, look away, look back and…whoops! Yes, you saw it right. That just happened. When we ask,
+
+okay little AI, what was there, it says: “I dunno”. It did not have object permanence. Nearly every human toddler has object permanence. So it had very limited memory, so long-term consistency was really hard. But then, Genie 3 took one image and generated interactive worlds with multi-minute consistency. All this progress in just a bit more than a year. That is…insane.
+
+However, this is still not that practical because over a few minutes, it still forgets. What I want to see is long term coherence. So what is the solution? How do we get a world from a photo that doesn’t break down? Is that even possible? Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér.
+
+Well, most of these techniques see 2D pixels on a flat screen. No 3D geometry just a bunch of numbers for pixel colors. Here, the core generator is a diffusion transformer, kind of like OpenAI’s Sora. Not new. But wait a second… it still somehow always remembers. The worlds never break. In this one, looking away and looking back will
+
+always give you back what you saw earlier. That is possible for video games with 3D geometry made by artists. But…how is that even possible with this kind of system? Well, that is the point…almost exactly like that! You see, it is using a per-frame 3D geometry cache. Okay,
+
+so what does that mean? Well, it means that it keeps a small 3D memory of the scene. In simpler words, it doesn’t remember the whole world as is, it just remembers the scaffolding of the world. And then, it is able to recreate the rest consistently. So when you look away, and look back, it doesn’t make up something new from scratch, no. Instead, it thinks, wait, what was there a moment ago? Got it! Now,
+
+it does not store the whole scene as is, it has a depth map, something they call a downsampled point cloud, and some camera movement info. That is fantastic. But it turns out…that’s not quite fantastic enough. This depth map is not for the whole global scene. Because if you try to fuse everything into one giant 3D world, it is done in a way that errors accumulate over time. Tiny
+
+mistakes start piling up, and then over time, it gets more and more corrupted. It is kind of like doing a photocopy of something. And then, a photocopy of the photocopy, and then…you know how that goes. It just gets lower and lower quality over each step. Not good.
+
+Okay, so now, what is the solution? Well, instead, it keeps a separate little 3D snapshot for each view. Then later, when it comes back, it can ask: which earlier views saw this place best? And it uses those as memory. That is an incredible idea.
+
+So, does that really work? The ablation study reveals the answer. This is a good paper so it proposes a bunch of puzzle pieces, and it doesn’t just batch them together into one block and say look! It works! No. It tests every single new puzzle
+
+piece in isolation and tells us for each one, how much they add to the picture. Now, if you stored the whole scene globally, style consistency would worsen a bit, and camera control, oh my. That is a disaster. Can we see what that looks like? This is a good paper, so the answer is…yes! Oh goodness. If you do the global scene thing,
+
+it starts producing the wrong camera views. While the full proposed technique is much closer to what it should show. It really shows that these concepts work in practice. So this is why they propose remembering the scaffolding of the scene per frame. So much better!
+
+Love it. Note that there is so much more in the paper, we really just scratched the surface here. But, not even this technique is perfect. Limitations. One. Static scenes only. No moving stuff.
+
+Two, it inherits flaws from its training data. Namely, if you have a dataset that has photometric inconsistencies, it will inherit that. What does that mean? Well, if you feed it data with different kinds of lighting and exposure, it will also appear in its predictions. Of course it does, the training data tells it how the world works, and it thinks that lighting and exposure can change on a whim. Three, the 3D geometry that
+
+we get from it can contain artifacts and these weird little floaters. Hmm..but why? The issue is that the generated views are not perfectly consistent with each other, and when you try to reconstruct 3D from them, these small inconsistencies can turn into floaters and noise.
+
+If you ask me, these are very typical problems for a first, or in this case, second version of such a work. And it is very typical that all three of these will be ironed out just one more paper down the line. Remember, this is the First Law of Papers. Do not look at where we are, look at where we will be two more papers down the line. So, finally, we take just one photo, and get to create incredible digital worlds that don’t break down. We finally have it. That is fantastic. And we get all of this,
+
+model and code for free? Yes! What a time to be alive! A great gift for us Fellow Scholars and tinkerers. Thank you so much for this.

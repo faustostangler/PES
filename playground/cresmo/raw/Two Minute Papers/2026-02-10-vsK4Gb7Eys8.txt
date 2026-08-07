@@ -1,0 +1,70 @@
+---
+video_title: "Physics Simulation Just Crossed A Line"
+video_id: vsK4Gb7Eys8
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vsK4Gb7Eys8
+video_date: 2026-02-10T10:50:11+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  📝 The paper is available here:
+  https://sig25ddmpd.github.io/
+  
+  Our Patreon if you wish to support us: https://www.patreon.com/TwoMinutePapers
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Adam Bridges, Benji Rabhan, B Shang, Cameron Navor, Christian Ahlin, Eric T, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Ryan Stankye, Steef, Taras Bobrovytsky, Tazaur Sagenclaw, Tybie Fitzhugh, Ueli Gallizzi
+   
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+---
+Let’s throw two properly dressed armadillos down into this container. Yowch! Did you see that? Oh goodness. I hope they have good health insurance, because that looked painful.
+
+Then, a barbarian ship slides down the stairs. This guy is made of 487 thousand tetrahedra. Insane. So how on earth is it possible to compute all this? Well, this is a physics program that can compute how your cloth moves if you do crazy handstands like this. If only he knew that we are about to put him into pajamas. Then we are going to throw
+
+these tablecloths down and see these beautiful complex self-collisions and stacking behavior. This is a crazy test for these programs because it creates tons of self-collisions, but wait…this one keeps every layer distinct and realistic. Absolutely amazing. And this is not AI, this is pure human brilliance. But…how?
+
+Well, I’ll tell you the secret of this program in this video. That would be great, because this can do incredible things. Just look at this scene where two fabric strips are pulled in opposite directions to form a tight knot! The tension is incredible, and the way the fabric wrinkles and compresses without passing through itself is simply beautiful to watch. It handles these complex frictional contacts so gracefully, ensuring that the knot tightens naturally just like in real life.
+
+Now hold on to your papers Fellow Scholars, because this is not only realistic, but it is fast! So, how fast? This curtain simulation involves 6 million degrees of freedom. Degrees of freedom refers to the number of variables the computer has to solve for. Imagine solving a math problem with 6 million unknowns! Usually, this would
+
+take an eternity, but this method simulates one frame in just 6.6 seconds. Mind blown! So how much faster is this than previous techniques? Well, up to 66 times faster than C-IPC, this amazing previous technique that we talked about 455 videos ago. That’s an exact number.
+
+Then, it is 11x faster than PD-Coulomb, another CPU-based friction method. And get this - it runs on your processor. Now, you might be thinking: "But Károly, this runs on the processor. Isn't the CPU the slow turtle compared to the graphics card, the GPU for these massive parallel tasks?”. Excellent question. Well, this algorithm is so clever that it actually
+
+runs 2.6 times faster than a state-of-the-art technique that runs on the GPU. That’s like a minivan beating a Formula 1 car just because the minivan knew a shortcut! Okay, so how is all this wizardry possible? How are they doing this? GPUs are meant to be
+
+100s of times faster than CPUs. Yet, the CPU wins here. How is that even possible? Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér.
+
+To understand this, imagine you are trying to solve a 10,000-piece jigsaw puzzle. The GPU approach is like hiring 10,000 ants to solve it. Sounds good, right? Each ant holds exactly one piece. They are super fast and all work at the exact same time, in parallel. Well…this sounds perfect! But wait, because they are just ants,
+
+they can't see the big picture. They have to constantly shout at their neighbors, “Hey, does this fit? And what about this one?" over and over again. This shouting match is what scientists call iterations, and for complex cloth that stretches across the whole screen, the ants have to shout millions of times to get the edges of the puzzle to agree with the center.
+
+It works, but man, it takes a lot of yelling. It’s a bit like your corporate email thread where you accidentally press reply-all to 10,000 people. But here, everyone does that. Good times! Okay, so that’s not the way. This new paper proposes a different strategy. Step number one:
+
+fire the ants. Get out of here! Instead, let's hire 32 puzzle grandmasters - these represent your CPU cores. The algorithm takes the giant puzzle and cuts it into 32 large, separate chunks - this is called Domain Decomposition. Now, each grandmaster takes one chunk into a quiet room and solves it perfectly in a split second.
+
+So that means that these are not pajamas. These colorful pieces of clothing are the chunks for the domain decomposition. They look like a patchwork quilt made by a very mathematically inclined grandmother. Well done grandma! The problem has been cut up into many smaller problems, each of which can be solved very quickly. But the problem is of course, that they have to connect. How do we reassemble them?
+
+Well, since these are grandmasters, these people mean serious business. This means they don't guess. Nope. Instead, they first agree on the shared edges, and then instantly solve the rest of their puzzle pieces. So, once the grandmasters finish their parts, they meet and simply click the 32 big finished sections together. Because they solved the hard internal parts perfectly on the first try,
+
+they don't need to have a shouting match. They just stitch the boundaries together and go home early. This is genius. Why? Because it plays into the CPU's strength. You see,
+
+the GPU has an army of ants strategy. But instead, the CPU can do smart, heavy lifting on fewer tasks. That is exactly what we are doing here! Amazing. Okay, so here is how brilliantly they put this into mathematics.
+
+I’ll explain it in a simple way. But ,you have to promise that you won’t close the video. You gotta stay until the end! Promise? Promise. Okay.
+
+This is the original equation from the paper, but we are a child friendly show so I’ll truncate it to this one. You see, normally you have to solve for every single piece of the puzzle at once. The 10,000 ants. That’s a matrix with millions of rows. Solving these takes insanely long.
+
+But this equation says. You know what, let’s split the variables into two teams. This symbol here, Lambda, is the glue. It represents the forces holding the different chunks together. And this one, XC, represents the corner pieces—the few crucial spots where the domains touch.
+
+These terms here basically say: "Ignore the million puzzle pieces, we already know they are perfect. Let's only solve for the glue and the corners”. This is what the grandmasters do. And that is where the brilliance is. I absolutely love this. So beautiful!
+
+Mathematically, this reduces a massive, impossible problem into a tiny, easy one that solves the interactions between the domains. It effectively turns the shouting match of millions of ants into a polite, quick handshake between 32 grandmasters. The math actually makes things simpler! This is beyond amazing. This is the magic of the papers.
+
+This is what makes everything 66 times faster than a previous technique that was already amazing. What a time to be alive! And it honestly breaks my heart that almost nobody knows about this work. This brilliant paper is sitting there, solving problems 66 times faster, and the world is just scrolling past it. And this is why I devoted my life to learning and talking about these papers to you Fellow Scholars.
+
+There are so many hidden gems out there that no one knows or talks about! You know why? Because apart from very few cases, Youtube doesn’t recommend this kind of content. So you can’t make easy money off of it. That’s it. That’s the reason.
+
+But papers are amazing! John Carmack also picked up a bit of a paper habit, very proud of him. Way to go John! So save the snails, save the beavers, subscribe to Two Minute Papers!

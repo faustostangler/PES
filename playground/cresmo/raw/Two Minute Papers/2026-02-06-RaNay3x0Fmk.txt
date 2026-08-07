@@ -1,0 +1,71 @@
+---
+video_title: "NVIDIA’s New AI: Erasing Reality"
+video_id: RaNay3x0Fmk
+channel_name: "Two Minute Papers"
+channel_id: UCbfYPyITQ-7l4upoX8nvctg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=RaNay3x0Fmk
+video_date: 2026-02-06T14:05:24+00:00
+video_description: |
+  ❤️ Check out Lambda here and sign up for their GPU Cloud: https://lambda.ai/papers
+  
+  📝 The paper and the code are now available here:
+  https://dvirsamuel.github.io/omnimattezero.github.io/
+  https://github.com/dvirsamuel/OmnimatteZero
+  
+  Our Patreon if you wish to support us: https://www.patreon.com/TwoMinutePapers
+  
+  🙏 We would like to thank our generous Patreon supporters who make Two Minute Papers possible:
+  Adam Bridges, Benji Rabhan, B Shang, Cameron Navor, Christian Ahlin, Eric T, Fred R, Gordon Child, Juan Benet, Michael Tedder, Owen Skarpness, Richard Sundvall, Ryan Stankye, Steef, Taras Bobrovytsky, Tazaur Sagenclaw, Tybie Fitzhugh, Ueli Gallizzi
+   
+  My research: https://cg.tuwien.ac.at/~zsolnai/
+  
+  #nvidia
+---
+Insane paper today. This new work can delete stuff from your videos, but it does it in the right way. While many previous techniques fail at it. We have a bunch of puppies here, now let’s just have one, and remove the rest highlighted with blue. Previous technique from 2023. That is not great.
+
+This is a blurry mess, and it didn’t do the removal at all. Previous technique from 2025. Oh yes. Did it work? Yes and no. That’s a classic. True, the dogs are gone. But, are we done? Nope,
+
+because not only the dogs need to be removed, but secondary effects like shadows too. Now let’s see the new technique. Look! Now we’re talking! It removed the shadows too for all of the frames, and it has done it well in each frame. Mess up just one, and we’ll easily find it. And by
+
+the end of this video, you will understand exactly how it does it. I’ll try my best. And if you’re a cat person, can it do that too? Wait wait wait, the interesting part here is not the cat. It is the movement of the grass blades. Look. The cat has some secondary effects too,
+
+which need to be canceled out. Can it do that? Let’s see…oh my, it can. That is glorious. Okay, let’s make it even harder. The blinking colon is very easy to remove,
+
+but you wise Fellow Scholars already know what is going on. Oh baby, glossy reflections. You have to remove those too. Can it? Yup. I am pixel peeping here, and I am not finding anything. Incredible.
+
+This new technique is called Omnimatte Zero and is a collaboration between NVIDIA and other labs. So Omnimatte Zero. Why Zero? Is this the number of frames per second we get? No. I’ll tell you how slow or quick it is in a moment, it’s going to be pretty incredible.
+
+What about shadows that merge? The shadow of the bench has to remain, but the shadow of the person has to go. There is no way anyone can pull that off, right? Well, this one can do that too, that is kind of insane. However, look. You pay for this by giving up some sharpness in the results. The
+
+new one is a bit blurrier, and I think if I look closely, I can see some artifacts. Not perfect. Now here are the three incredible bombshells that almost made me fall out of the chair: one, it uses already existing diffusion models. Two, it requires no additional AI training. And now hold on to your papers Fellow Scholars for three, it runs in real time. 25 frames per second. Wow.
+
+I didn’t even think this could ever be possible. So how is all this even possible? How do you do that? Let me try to explain. Dear Fellow Scholars, this is Two Minute Papers with Dr. Károly Zsolnai-Fehér.
+
+And while we talk about how it works. I’ll put up some uses cases that are not perfect so you can accurately see when it’s good and when it’s not so good. Very important to not overstate things here. Okay, so imagine your video is a stack of jigsaw puzzles. Each frame is one full puzzle. When we
+
+remove the dog, we are essentially removing a few puzzle pieces from the middle of the board. In the past, AI tried to paint a brand new piece to fill that hole. That is slow and often looks wrong. But this method, OmnimatteZero, realizes that the video is a sequence. Since we have a stack of puzzles, you can look at the one below or above yours that has the pieces missing. That
+
+is the video from one second ago or one second later. You don’t have to guess what is missing! Just find the exact piece that is missing now, and use that. Genius. And what is even more genius is that this explains all three of the bombshells we talked about.
+
+One, because it is finding and copying existing pieces rather than painting new ones from scratch, it doesn't need to go to art school. That is the zero training part. Two, it uses a standard puzzle builder that already exists - that is a pre-trained AI model that can create videos. Just take one off the shelf and plug that in. And three, most important of all: because copying a piece is instant compared to painting one, it runs in real time. It is beautiful in its simplicity. Absolutely loving this.
+
+Okay, but I hear you asking: but then why is the output footage blurrier than the input? Let’s pull up this equation and try to see the problem through that. This is a mathematical trick called mean temporal attention. Think of this as a magnet. The empty hole in our puzzle becomes magnetic. It pulls information only from the background pieces of
+
+the other puzzles in the stack. Now I just said mean temporal attention. Mean means average. So it averages these puzzles out to ensure the colors and lines match perfectly. It forces the AI to look at the timeline, not just the single picture.
+
+So, why the blur on the bench and elsewhere? It comes back to that averaging part. Imagine the pieces the magnet pulls from the other puzzles are not perfectly aligned. Maybe the camera moved a tiny bit since then, or the compression algorithm added some noise or artifacts. This means that the pixels change a bit over time, even on the same object.
+
+When you take five puzzle pieces that are just slightly offset from each other and smash them together to create one average piece, the sharp lines get a little soft. If you average 1 and 9, you get 5. The extremes get blurred out. The fine texture also gets smoothed out. This is the price we pay for stability. We trade razor-sharp details for a video
+
+that doesn't flicker. A fair trade if you ask me. And one that is almost guaranteed to be solved two more papers down the line. That is the First Law of Papers. Now, we are still not done yet. Not even close! We talked about how it
+
+would copy in pieces of a previous bench from earlier puzzle pieces, that’s okay. But how does it know which shadow to keep and remove? Or how does it identify which blades of grass the cat has stepped on? That still sounds like witchcraft. Now there is another wonderful idea. You see, in a single photo - a single
+
+puzzle - a shadow is just a dark patch of grass. But in a stack of puzzles, in video, the shadow moves with the dog. The AI realizes these pieces are magnetically stuck together. So just remove things that move together. Love it. A really advanced paper explained in really simple words.
+
+And whatever the test metric is, it sweeps all of these previous techniques like it wasn’t even a challenge. These are the two off the shelf open systems it is built on, you can plug in anything here, and it is a real hallmark of this new technique - look, the score highlights that it does not make a huge difference. Just plug in anything and it will make it work. The scientists behind it also promise that the source code of this will also be available over time. I reached out and asked them for comment and they said most likely early February. So we all get this for free, not just the research paper,
+
+but source code too! Thank you so much! What a time to be alive! So what this can do is absolutely incredible. But I don’t see a lot of people talking about this paper. It is like treasure that no one is digging for because it doesn’t pay well.
+
+But this is super important! These are the works that push humanity forward. I feel like Indiana Jones for finding these amazing works and sharing them with you Fellow Scholars. But I am worried because if I don’t do it here, I am not sure if anyone else will. So save a paper today, subscribe, hit the bell and leave a kind comment. The algorithm will also reward you for it.
