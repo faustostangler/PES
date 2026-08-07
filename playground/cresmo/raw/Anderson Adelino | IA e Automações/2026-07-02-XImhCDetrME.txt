@@ -1,0 +1,292 @@
+---
+video_title: "Hermes Agent: o agente de IA que trabalha 24h por você numa VPS (tutorial do zero)"
+video_id: XImhCDetrME
+channel_name: "Anderson Adelino | IA e Automações"
+channel_id: UCI5WcISxqiFfoh4mse1s-HA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XImhCDetrME
+video_date: 2026-07-02T02:08:39+00:00
+video_description: |
+  🚀 Para contratar a VPS: https://www.hostgator.com.br/52675-13-3-12.html
+  👉 Meu curso de Claude Code: https://claude.zenithonacademy.com.br?src=XImhCDetrME
+  👉 Grupo GRATUITO de Claude Code: https://claude.zenithonacademy.com.br/grupo
+  
+  Links mencionados:
+  Hermes: https://hermes-agent.nousresearch.com/
+  Openrouter: https://openrouter.ai/
+  
+  Comandos do cmd:
+  ssh-keygen -t ed25519 -C "email@gmail.com"
+  
+  type %USERPROFILE%\.ssh\id_ed25519.pub
+  
+  ssh -p 22022 root@IP
+  
+  Larguei o OpenClaw. Esse agente de IA roda 24/7 no Telegram, aprende sozinho e cria automações enquanto você dorme.
+  
+  O Hermes Agent é um agente autônomo open-source da Nous Research. Instala em uma VPS, conecta no Telegram e fica melhor a cada conversa. Diferente do OpenClaw (que acumula memória infinita e fica lento), o Hermes compacta, otimiza e cria seus próprios skills automaticamente. Sem você pedir.
+  
+  Nesse vídeo: instalação do zero na Hostgator, configuração SSH, integração Telegram, OpenRouter com modelos baratos, personalização de memória e sua primeira automação de notícias diárias rodando via cron job.
+  
+  ⏱️ Timestamps
+  00:00 Introdução
+  00:34 O cérebro do Hermes
+  03:41 Loop de autoaperfeiçoamento
+  05:14 Por que migrar do Openclaw para o Hermes
+  07:50 Claude Code vs Hermes Agent
+  10:51 Hermes local vs VPS
+  12:09 Instalando o Hermes na VPS da Hostgator
+  19:42 Configurações iniciais
+  21:01 Coenctando o Hermes ao Telegram
+  22:58 Iniciando o Hermes no terminal
+  25:17 Configurando o OpenRouter
+  29:59 Entrevista inicial
+  34:36 Automações e skills
+  
+  📧 Parcerias e serviços: contato@zenithonacademy.com.br
+---
+Se o seu agente fica cada vez mais lento, quanto mais você usa, provavelmente você está culpando a Rad. O verdadeiro problema está na arquitetura de memória e quase ninguém fala sobre isso. Foi exatamente isso que me chamou a atenção no Hermes. Ele foi projetado para aprender continuamente, sem carregar um contexto gigante a cada conversa. Nesse vídeo, eu vou abrir toda essa arquitetura, explicar como ela funciona e instalar tudo do zero numa VPS. No final você vai entender porque
+
+muita gente está migrando para esse modelo de agentes. E eu quero começar mostrando para vocês alguns conceitos antes da gente já ir mergulhando pra prática, tá? Eu gosto de fazer isso em praticamente quase todos os meus vídeos que eu quero que você entenda também o que que tá acontecendo, né, e não só faça. Então, primeiro de tudo, como que funciona o cérebro do Hermes, né? Como é que ele funciona por trás, né? os seus
+
+arquivos, os arquivos que ele usa para poder fazer as ações. Então, a arquitetura principal aqui é a seguinte: arquivo soul, user, memory e skills, que também tem um arquivo chamado skill.md e é um para cada habilidade. Então, são vários arquivos em Mark e eles têm um objetivo para o Hermes, tá? Não é apenas arquivos por acaso. Então, cada arquivo
+
+desse aqui é uma parte da memória voltada para alguma coisa específica. Então, quando a gente tem aqui o o Sou.md, ele tem a ver com a personalidade e a alma do assistente. Então, esse arquivo aqui é onde vai estar a personalidade dele, a forma que ele se porta, né, o seu estilo, a forma de comunicação. É aqui nesse sub.md, MD,
+
+o user.md, já são informações sobre você, né, sobre o usuário que tá falando com Hermes. Então, por exemplo, se eu tô se eu tô conversando aqui com Hermes e eu começo a falar sobre mim, essas minhas informações, elas vão sendo armazenadas no user.m. Eu já adianto que o grande diferencial aqui, né, é você de você usar o Hermes, é porque ele consegue já fazer essa esse gerenciamento de forma automática.
+
+Então, no momento que eu peço para ele se portar de uma forma, ele automaticamente altera o sou. Quando eu começo a falar sobre mim, eu falo sobre meu nome completo, minha idade, falo sobre o meu meus objetivos, ele automaticamente já atualiza o user.md, então ele já vai fazendo de forma autônoma. Isso é muito bacana. O o memory.m
+
+já é sobre o contexto dos projetos, tá? Então ele vai guardar alguns detalhes técnicos e do ambiente que a gente tá ali trabalhando. Então são outras informações que ele também são eh são informações relevantes também para ele, mas é sobre o projeto, né, sobre o que que a gente tá trabalhando. E as skills são as habilidades. Skills aqui provavelmente já deve ter visto eh eh no no cloud code, no codex. Então skills é
+
+algo padrão e é para agentes, né? são habilidades, só que a grande sacada do Hermes é que ele, de acordo com o que eu vou pedindo para ele fazer, ele percebe que aquilo ali que eu pedi pode ser um skill e ele já cria skill, cara. Então ele mesmo já cria skill, ele já aprimora a própria skill e ele usa a própria skill. Isso é muito bacana. Então cada vez que eu tô pedindo coisas pro Hermes, ele vê que eu tô pedindo aquilo ali, ele viu que ele é uma boa oportunidade para uma skill ou então viu que eu tô pedindo a mesma coisa várias vezes, ele já cria skill e da próxima vez que eu peço, ele já usa a skill. Então ele já tem essa
+
+sacada já de forma automática. E aqui tem alguns outros arquivos também, né? Tem o ponto inventav de API, né? Os segredos. A gente tem o arquivo config, temos o SK Lite, que é o o histórico completo das conversas e sessões pra gente poder buscar as informações, enfim. Então, todos esses componentes
+
+aqui eles trabalham juntos para que o Hervis lembre, aprenda e evolua com você. E existe uma coisa, opa, existe uma coisa muito importante aqui no Hermes, muito bacana, que é o loop de aperfeiçoamento. E essa é a grande sacada, essa é o grande poder que o Hermes tem. Esse loop de autoaperfeiçoamento significa que ele aprende, registra e melhora sozinho, sem que você fique lá dizendo para ele melhorar. Ou seja, eu tô aqui conversando com o Hermes. A
+
+partir disso, ele vai executar, ou seja, ele executa a tarefa usando suas ferramentas, os skills, ele aprende com aquilo que funcionou e o que não funcionou, e ele automaticamente já vai atualizando os arquivos lá que eu mostrei para vocês. Ou seja, o resultado disso é que ele vai ficando mais inteligente, mais alinhado, né? Ele vai ficando melhor a cada vez que a gente usa. Cara, se eu uso uma semana, um mês, se eu uso um ano, ele vai ficando melhor ainda. Esse limite de melhoria não tem fim. E isso que já é uma diferença com
+
+Open Cloud. Vou falar sobre a comparação daqui a pouco, mas já é uma diferença muito grande, senão a principal diferença. Copencloud, muitos usuários relataram que a partir de um mês de uso, ele começa a ficar mais lento, começa a ter mais gargalos, começa a dar uma alucinada porque ele não dá, não lida bem com essa atualização de memórias, de user, de informações do usuário, né? Ele sempre vai acumulando de forma infinita, vai ficando muito grande e ele não compacta, ele não otimiza aquilo ali. Já o Hermes não, o foco dele é justamente isso, fazer com que cresça junto com você de uma maneira muito eficiente. E
+
+por que que as pessoas estão migrando do Open Cloud para o Hermes? Eu trouxe aqui quatro vantagens e duas desvantagens que o Hermes tem sobre o OpenCloud, tá? Então aqui do lado esquerdo são as vantagens do Hermes e aqui são as desvantagens do Hermes, certo? Então, primeira vantagem, autoaperfeiçoamento. O Hermes, ele consegue criar suas próprias skills com base na experiência, tipo aquilo que eu mostrei para vocês sobre o loop de aprendizado fechado, uma coisa que o open cloud não tem.
+
+Estabilidade e confiabilidade, ele é mais leve, mais rápido, é mais estável, estável, tá? ele funciona como um produto de fato. Então, questão de estabilidade, o Hermes, ele leva vantagem nisso aqui sobre a memória eficiente. Então, ele tem ali limites rígidos de caracteres que forçam a destilar o que realmente importa, evitando o inchaço de contexto, que é aquilo que eu falei relacionado a o crescimento, né, um crescimento saudável que o Herms tem em comparação ao OpenCloud. E proatividade existe uma coisa chamada nudges que revisam a memória a cada 10 turnos e sugerem atualizações durante a sessão. Então
+
+isso aqui são coisas que o Hermes tem como vantagem. A desvantagem do Herms em relação ao OpenCloud, eu colocaria aqui questão de menor suporte à plataformas, tá? O Opencoud ele tem muito mais suportes, ele tem muito mais integrações com ferramentas de mensagens, por exemplo, mais do que o Hermes, né? tem menos ferramentas para integrar, sendo que isso aqui pode ser uma desvantagem ou uma vantagem, tá? Essa aqui é a opção do pru hermos. Eles já deixaram claro
+
+isso, que eles querem ter menos ferramentas, só que com uma eficiência bem melhor, né? Tipo assim, é menos, porém melhor, né? Esse seria um conceito do da equipe do Hermes, mas eu deixo aqui como uma desvantagem nessa nesse questão de suporta plataformas e sobre o ecossistema ser menor, tá? Eh, OpenCloud ele já tem assim mais tempo de mercado do que o Hermes, certo? Então você vai ver a comunidade ela é maior atualmente, né? No momento tá sendo maior, então é
+
+mais fácil você ver conteúdo sobre OpenCloud, ser uma vantagem do Opencloud em relação ao Hermes. Apesar do Hermes ser mais antigo que o OpenCloud, né? Ele, na verdade, o Hermes, ele foi lançado, ele foi criado antes do lançamento de mercado do Open Cloud, isso quis dizer, só que o Hermes só veu lançar realmente depois, tá? Então já tem essa dúvida aí, tem gente que acha que o Hermes veio depois por causa do Open Cloud, pá, OpenCloud, vou criar uma ferramenta para concorrer, não, já existia, só colocar no mercado depois, certo? E existe uma migração simplificada. Então, se você já usa
+
+OpenCloud e você quer importar pro hermes, é muito simples. As memórias, chaves de API, as personalidades, as skills, elas são transferíveis de maneira muito simples, tá? Um comparativo entre Cláudio Code e Hermes, se for de forma bem resumida, assim, direta, eles não são concorrentes, tá? Não tem, ah, um é melhor do que o outro, não tem isso, né? Não coloque em competição com Cloud Code e Herm porque são propostas diferentes. Cloud Code,
+
+ele compete com Codex, com Antigraft, com cursor. O Herms compete com o Open Cloud. Certo? O Cloud Code ele é focado ali em ser algo reativo. Ou seja, eu chego no meu computador, abro o Cloud Code e trabalho conversando com ele. Eu
+
+tô lá dando as ordens para ele, pedindo para ele fazer tal coisa, que era um site para mim e ele vai obedecer e vai fazer. Ele fica esperando e eh eu dar essa ordem para ele. Esse é o foco principal, tá? questão de programação, questão de criar [roncando] essa questão de trabalho e conhecimento profundo. Isso aqui tem a ver com o cloud Code, realmente é o foco dele. Ah, Anderson,
+
+mas tem rotinas, tem rotinas. Você consegue ter criar rotinas que vão executar coisas para vocês ou você pode pedir para que ele crie um script em type script e roda no trigger dev. Você tem como fazer isso, só que não é o foco do cloud code ser autônomo, eh, proativo, né, no caso, tá? Mas também dá para ser. Então assim, ah, eu quero criar um sistema, quero criar um site, eu quero criar um um script, eu vou usar o Cloud Code, tá? É o meu setup
+
+principal. Agora, se eu quero criar tarefas que devem ser executadas de maneira proativa e que eu consiga também estar me comunicando por meu Telegram, por exemplo, a vou pro Herbs. O Herbes tem essa integração com o Telegram, então consigo estar conversando com Hermes de forma bem simples. Pego o meu celular, abro o Telegram, converso com ele. Eu não preciso ter uma interface para mexer, não. Converso pelo Telegram,
+
+ele faz as coisas para mim, eu crio automações, então ele vai executar aquelas automações. É muito mais simples criar automações usando hermes. Eu converso com ele mesmo, ele já faz tudo ali que precisa, certo? Aqui nessa imagem aqui foi colocada aqui, ó, onde roda na do VPS também tem como rodar na no computador, certo? Sendo que se for para usar o Hermit pro computador já não vejo vantagem, a ser bem sincero. Só
+
+para rodar o Hermes no computador é melhor ficar com cloud code mesmo. Eu falo isso porque eu não uso Herms para criação de sistemas de criar sites. Eu uso o cloud code, tá? Se eu vou usar o Hermes, eu quero que seja aquele agente que vai agir e para mim de qualquer lugar que eu esteja. Se eu tô no computador sentado, eu vou estar usando cloud code. Agora, se eu tiver fora de
+
+casa, se eu tiver eh em algum local que eu não tenho acesso ao meu computador, eu quero ele facilmente pegar aqui meu celular e dar um comando, fazer alguma ação, eu vou usar o Hermes para fazer isso, entendeu? Posso criar várias várias automações ali dentro, até porque se eu for rodar o Hermes no meu computador e eu precisar de automações que ficam rodando 24 horas por dia, se eu dizer o computador ele não vai funcionar. Então não faz sentido para mim, tá? Usar ele localmente. Mas é possível. Pode ser que você chegue aqui
+
+a antes, mas eu uso ele por causa disso aqui, isso aqui, isso aqui, eu tenho um motivo para isso. De boa, tô falando do meu caso. Para mim, meu uso, eu não uso ele localmente, tá? E para encerrar aqui nossa contextualização daa parte teórica, só deixando mais clara essa questão de usar hermitos localmente versus VPS, né, que eu acho que já expliquei bastante coisa ali no na imagem passada, só que é o seguinte, quando você instala o no seu computador, você tem as seguintes diferenças quando se instala em uma VPS. Disponibilidade no computador, só funciona quando seu computador está ligado, tá? Então isso
+
+aqui acaba sendo um problema já com a VPS, ela vai ficar ligada a 24 horas por dia, tá? Uso limitado. As automações vão parar quando você desligar o computador. Já quando você bota uma VPS, tu vai conseguir usar seu computador de boa enquanto tudo vai estar rodando. Segurança, isso aqui também é muito importante. O seu computador ele fica
+
+exposto e o Hermes tem acesso local. Qualquer problema que acontecer pode acontecer o risco, por mais que seja difícil acontecer, pode acontecer o risco de acabar eh mexendo em alguma coisa ali que não devia. Enfim, não é legal, tá? Já no VPS não, ele vai est ali no local separado do seu computador, então o seu herm não vai ter nenhum acesso ao computador, tá? Questão de manutenção ali do do ambiente eh é mais fácil de gerenciar no VPS, ou seja, ele é ideal para automações, cron bots, monitoramento e agentes 24 horas por dia. Se tu quer usar isso aqui, vai ter
+
+que ser VPS, não tem jeito, tá? Não vai rodar uma automação no computador. Dito isto, agora vamos de fato instalar o nosso querido Hermes, tá? Não vou instalar no computador, eu vou instalar numa VPS. E a VPS que eu recomendo instalar é na Host Gator, tá? Então vou
+
+est mostrando todo o passo a passo agora para vocês e como que vocês vão instalar. Se você já tem instalado seu Hermes, você pode pular próxima etapa, beleza? Mas se não, se você quer instalar pela primeira vez, acompanha aqui que eu vou te mostrar a forma que eu recomendo você estar instalando. Você vai acessar o link, vou estar deixando aqui na descrição e no comentário fixado, que aí você vai direto aqui pro certo, tá? para você acabar não se confundindo. Então, acessa pelo link aí.
+
+E primeira coisa, vai perceber que a Rush Gate tá com uma promoção muito boa, tá? tá com os descontos nesse momento que eu tô gravando esse vídeo. Então, aproveite, se tá aparecendo para você aqui, ó, servidor VPS com até 68% de desconto. Enfim, você pode tá selecionando aqui eh o tipo de servidor que você quer. Tem aqui a opção desempenho padrão, você vai ter aqui também auto desempenho, que é uma coisa mais parruda. O que eu recomendo é você
+
+tá usando esse NVM E4, tá? Vai ter mais folga para fazer mais automações, tals. Ah, o orçamento tá menor, quero começar. E se eu ver que o negócio é legal, eu vou fazer um upgrade. Aí tu pode estar começando com a VPSNVM2, tá? Também
+
+funciona também dá certo. Beleza? Então vamos lá. Seleciona aqui, ó, o plano que você quer. E aqui tu seleciona se quer pagar todo mês, né? Um plano mensal, 1
+
+ano, 2 anos, 3 anos. Cara, recomendo que você pegue aqui a partir de 1 ano. Tu recebe aqui, ó, 60% de desconto no ano. Se pegar de 3 anos, ganha mais desconto. Beleza? Então, no caso, ó, fica aqui por
+
+R$ 451. E aí tu pode tá eh parcelando aí fica nessa faixa aqui. Então vamos lá continuar. Aqui você consegue confirmar sobre o que que seu plano inclui aqui em aplicação você tem a opção de já instalar aqui o o Hermes, ó, tá? Você pode estar instalando aqui o Herms aqui diretamente. Tem essa opção aqui. Agora
+
+sim, eu prefiro estar instalando da seguinte maneira. Venho aqui no simples o punto e pego ele. Certo? Eu gosto de trabalhar diretamente no bto. Então eu venho aqui em confirmar servidor, manter o Brasil mesmo. Continuar. Nessa etapa
+
+aqui vai pedir para você criar sua conta, tá? Pren seus dados. Pode continuar com o Google também. Eu vou fazer isso aqui agora. Fiz o login e vou prosseguir para pagamento. E aqui ele já
+
+vem aqui pra parte de do pagamento, né? De colocar aqui a opção de pagamento. Aí aqui tu faz aqui sua opção, por exemplo, credo. Vem aqui e clica em realizar o pagamento. Aqui é o seguinte, pessoal.
+
+Tu vem aqui, clica em VPS e dedicados. Aí aqui vai aparecer a VPS de vocês, tá? Aparece o endereço IP, a VPS que vocês têm. Eu tenho essa VPS aqui. Eu tava testando usando o Hermes, instalando direto, por isso que apareceu o Hermes aqui. No caso de vocês é para aparecer
+
+só o console aqui. Se eu não me engano, aparece o símbolo do Ubunto aqui também. Aí tu clica em gerenciar e aqui aparece a sua VPS, eh, o seu, os dados gerais de VPS. Aqui no meu caso, eu vou est formatando aqui a VPS, colocando o bunto, que foi o que eu recomendei para vocês. E aí quando terminar aqui a formatação, aí eu volto. Quando você
+
+termina de contratar, né, ou então reiniciar uma VPS, você recebe esse e-mail aqui da Rostgate falando que já tá pronta e tal, passando os dados do VPS. Nesse nosso caso aqui que a gente usou aqui, o buntu, ele não passa aqui os dados em si, tá? A gente vai ter que definir uma senha. Você pode clicar aqui e quando você clicar aqui, tu vai diretamente lá paraa parte do gerenciamento lá da host gate, que foi aquela tela que eu tinha mostrado para vocês, que é essa tela aqui, certo? Aí a primeira coisa que eu vou fazer aqui é clicar aqui em alterar a senha e trocar a senha de acesso SSH. Porém, eu não uso
+
+por senha, tá? Eu utilizo usando uma chave SSH. Isso faz com que eu só configure uma única vez no terminal do meu computador e sempre quando eu rodar o o comando para acessar minha VPS, eu consigo sem ter que ficar colocando a senha a todo momento, tá? E é isso que a gente vai fazer. Então você clica aqui em gerenciar chaves SSH. Aqui não tem
+
+nenhuma chave adicionada, tu clica em adicionar chave. E aqui ele vai pedir o nome da chave e a chave pública. Como é que tu Como é que tu consegue gerar isso aqui? Você vai tá abrindo aqui o seu terminal do Windows ou do Mac. Aí você vai dar aqui, ó, CMD, no caso. Calma,
+
+acabei me apressando. Pressiona Windows R, tá? Aí vai abrir isso aqui. Aí tu digita cmd ou tu pode pesquisar ali na na pesquisa do Windows, colocar CMD ou pronto de comando, vai aparecer isso aqui no Windows, tá? E tem três comandinhos que tu precisa fazer para poder estar acessando. Isso aqui vai
+
+fazer só uma vez, beleza? Não se preocupa. Isso aqui vou deixar na descrição também, esses comandos aqui. Primeiro comando que tu vai fazer é isso aqui, ó. Isso aqui é para gerar sua chave SSH, certo? Tu vai só trocar esse
+
+nome aqui, e-mail. Tu vai colocar aqui o seu e-mail. Então eu tô colocando aqui o meu e-mail. Daí eu vou copiar essa linha aqui, dou um contrtrl C. Aí eu venho aqui no prompt, pressiono com o botão direito do mouse, tá? Aí ele vai colar.
+
+É como fosse um contrtrl V. Daí eu vou apertar enter aqui. Aperto enter novamente. Aqui ele tá falando que já existe essa chave, né? Se eu quero sobrepor ou colocar está Y enter, no caso de você não vai aparecer, né? Se
+
+for a primeira vez. Aqui eu posso apertar enter mais uma vez, enter novamente e pronto, gerou. Beleza, gerado com sucesso. Daí se eu rodar esse segundo comando aqui, colocar aqui novamente, enter. Aqui está a minha chave, tá? Então é essa chave aqui. Esse
+
+segundo comando vai rodar para poder pegar sua chave. Vou dar aqui um contrl shift C para poder copiar. Aí eu venho aqui, ó, e coloco aqui, certo? Que é justamente aqui a chave pública. Beleza?
+
+E aqui eu coloco o nome da chave e vou colocar aqui como meu notebook, só para eu saber que é o acesso aqui do meu notebook. E clica em adicionar chave. Pronto, chave adicionada com sucesso. Voltando aqui meu prompt, eu vou copiar agora o terceiro comando. Só que tá vendo que aqui tem depois de arroba o nome IP. Aqui no caso você vai colocar o
+
+seu IP, que é uma série de números. É como fosse o CPF do seu servidor. Você volta aqui. Aí aqui, ó, temos o IP, tá vendo? Tu clica aqui em copiar. Daí você
+
+volta aqui pro cmd. Ou melhor, eu troco aqui esse P, ó. Aí eu copio isso tudo aqui. Esse traço P 222022 é a porta, tá? Esse router é o usuário. Então, ó, já
+
+tem aqui, ó, porta e o usuário. Geralmente é sempre assim. Se for diferente vocês mudam. Enfim, copio aqui. Vou dar um um conttrl V aqui, né?
+
+botão direito do mouse, enter. Tinha dado um erro aqui em cima porque eu tava com um arquivo antigo salvo da VPS antes de eu fazer a formatação. Aí eu apaguei esse arquivo, rodei novamente o processo que eu mandei para vocês. Aí deu certo. Aí aquele perguntou, ó, se eu quero continuar. Está aqui y enter e pronto.
+
+Agora sim, acabei de acessar a minha VPS, certo? Então observa aqui, ó, o buntu, tudo mais. Show de bola. Só que o Herms não está instalado ainda. E para instalar o Hermes, eu acessei aqui o site do Hermes, hermsagent.com.
+
+Aqui embaixo eu posso estar instalando via terminal, tá? No nosso caso aqui, como o punto é Linux, então eu seleciono aqui, ó, e copio aqui esse comando. Aí eu venho no terminal do meu próprio Windows, coloquei enter. E agora a gente vai começar a instalar. Então, simples assim, certo? E o legal que eu vou est
+
+acessando a VPS da HostGator, gerenciando, né, administrando ela pelo meu computador, tá? Só que não se preocupe que a gente não vai ficar conversando por aqui, a gente vai conectar no Telegram, daqui a pouco vocês vão entender. Então vamos deixar aqui ele instalar. Quando ele finalizar aqui, aí eu volto. Pronto, dependências instaladas com sucesso. E essa é a
+
+primeira pergunta que você tem que responder. Como que você quer instalar o Herbs? Eu vou est selecionando aqui esse quick setup, que é a forma mais rápida de táar fazendo essa instalação. Enter. E aqui, ó, o que que ele faz? Ele pede
+
+para que eu abra esse link aqui. Eu dou um control e clico em cima. Ele vai abrir aqui o portal da própria empresa do Hermes, tá? Então, se você não tiver logado, ele vai pedir para tu fazer o login, cri sua conta, é gratuito, tá? Que eles tm um plano gratuito aqui. E aí
+
+eu venho aqui, ó, clico em conectar. Voltando pro terminal, olha só, já apareceu aqui que foi feito o login com sucesso. Aqui ele vai perguntar a forma que eu quais são os modelos que eu quero estar utilizando, tá? Existe modelos, alguns modelos que são pagos e aqui ele sugere também uma opção aqui gratuita que eu posso estar fazendo. Eu vou selecionar ele. Daqui a pouco a gente
+
+vai estar fazendo integração com outros modelos também, tá? Isso aqui é só para a forma mais rápida de estar instalando. Vou dar aqui um enter novamente. Aqui eu aperto espaço, tá? Se eu apertar, no caso aperto enter, né? Se apertar espaço
+
+aqui, eu pode desmarcar e marcar aqui as opções que eu quero utilizar. Vou apertar aqui enter para confirmar. Enter novamente. Aqui qual plataforma de mensagem eu quero fazer a conexão? Vou clicar aqui na primeira já para colocar aqui alguma. E aqui eu seleciono qual
+
+ferramenta eu quero, tá? Tudo isso aqui são opções que a gente pode estar fazendo, beleza? A que eu gosto de estar usando, a que eu recomendo que você use é o Telegram. Ele é muito simples, eh, tem burocracia, vocês vão ver como é bem tranquilo de fazer. Então, vou aptar espaço que para selecionar, vou deixar só ele selecionado mesmo. Vou apertar
+
+enter. E aqui, olha só, eu posso selecionar aqui a forma que eu quero fazer essa integração. Se eu quero fazer uma forma automática ou se eu quero estar fazendo aqui uma automação manual automática. Isso aqui é mais recente, essa opção aqui que ele já bota aqui um Qcode aqui na minha cara e eu já consigo estar conectando de forma simples. Então eu vou selecionar essa opção. Digito um,
+
+enter. Aqui no caso não apareceu o QR Code porque teria que instalar a opção QRcode, mas basta eu clicar aqui nesse link, ó, control e click, que ele vai abrir aqui esse link. Eu posso estar abrindo aqui usando o Telegram desktop. Então se você não tem o Telegram ainda baixa, tá aqui no seu computador. E aí apareceu essa tela aqui, ó. Create bot,
+
+ele sugere aqui um nome, já aparece aqui um. Só clicar aqui em create e pronto, já criei o bote. Voltando aqui ao prompt comando, ó, ele já fala que foi criado com sucesso. Aqui eu vou apertar Y enter. Aqui vou só apertar enter mesmo.
+
+E aqui eu vou apertar Y e enter também. Mais uma vez Y e enter. Aqui ele pergunta como que o getrate do Hermes deve rodar em segundo plano, tá? Se você tá usando local, tu vai marcar a primeira opção. Vps, você marca a segunda opção. Aqui ele vai perguntar
+
+qual que é o usuário e que eu quero est colocando. Eu só tenho um, né? No momento, só tenho um, que é o padrão configurado, que é o root, tá? Então eu vou colocar ele aqui, ó. Root, enter. E
+
+agora Y e enter novamente. Aqui ele vai perguntar se eu gostaria de instalar o get segundo plano, né? Vou digitar IPS novamente e enter. E pronto, tudo configurado aqui com sucesso. A ideia aqui é que momento que eu digitar Hermes, já abra aqui o chat. Então vamos
+
+colocar aqui, ó, Hermes. Enter. E olha só, apareceu. Perfeito. Já tem algumas tools aqui, habilitadas, já tem várias skills aqui já préinstaladas. Show de
+
+bola. Ele tá usando aqui um modelo gratuito. Já já a gente vai configurar essa questão de modelos, mas vou digitar aqui um enter, ó. um oi no caso e olha só refletindo e me respondeu aí que respondeu em inglês. Enfim, a gente não tem nada configurado aqui ainda, mas tá funcionando. Vamos ver se tá funcionando
+
+lá no Telegram. Vindo aqui no Telegram, vou dar aqui um start, vou mandar aqui. Opa, beleza. Vamos ver se ele vai responder. Olha só, já tá digitando lá em cima. já tá digitando. Excelente, já
+
+está me respondendo com sucesso. Do jeito que tá aqui, você já tá conseguindo rodar aqui o Hermes com modelo gratuito. Já pode estar conversando com ele. Claro que vai ter aí um certo limite, né? Um momento aí que vai acabar o seu limite gratuito.
+
+Eh, mas assim, consegue fazer o upgrade pelo próprio portal da empresa. Está algo em torno de $. Então, se você usa só o Hermes, você foca no Hermes e você quer de fato pagar por isso, cara, é uma opção interessante. Só que existe outras duas formas de você também tá utilizando modelos pagos. Uma forma que é, acredito seja a mais utilizada é usar a assinatura do Codex, porque você consegue usar a mesma assinatura que tu paga pelo GPT Plus, tu consegue colocar ali dentro do do Hermes e tu usa os limites de lá. Tu paga ali uns 100 e
+
+poucos reais ali por mês e consegue táar usando o Hermes de boa, tá? O modelo Dantrop que você não consegue porque é contra os termos de uso da Antropic, que antrop não permite que você use o plano do cloud para ferramentas externas, tipo open cloud e herms. Só permite se for API, só que a API já é mais cara, tá usando API da da Antropic para esse tipo de coisa. E uma segunda opção é você linkar com a chave API do Open Holder, que é um agregador de vários modelos. Então você pode estar modelos bem eh modelos bem baratos. Tem modelos
+
+gratuitos também, tu pode estar alternando entre gratuitos e baratos, intermediários. Tu pode testar vários modelos diferentes. É uma opção também baixa interessante. Você pode usar modelos do mínimo, pode usar de PSIC, pode usar Minimx, pode usar vários outros modelos e você vai pagar bem baratinho por isso. Vou te mostrar como é que você faz isso. Esse é o Open
+
+Holter. é um agregador, então tem vários modelos de linguagem aqui. Então, com única chave de API e com a única quantidade de créditos que eu coloco aqui dentro, eu consigo estar testando vários modelos diferentes, tá? Ao invés de eu ter que sair colocando créditos em várias plataformas diferentes. Cada plataforma tem um limite mínimo de crédito. Então, se eu fosse colocar o
+
+mínimo em cada ferramenta, eu ia gastar muitos créditos. Só que não, eu coloco uma única vez, eu consigo testando vários modelos. E ele também tem alguns modelos gratuitos que eu posso estar utilizando e também tem uma função aqui de rankings. Eu vou deixar o link do open aqui também na descrição, tá? Aí tu cria sua conta, acessa aí. Aqui, ó, em
+
+rankings eu tenho um um rank de vários modelos de acordo com eh texto, imagem, beding, rank, vídeo, várias coisas. É um rank mais de uso, tá pessoal? Isso aqui que o pessoal mais utiliza não necessariamente é de qualidade. Por exemplo, aqui, ó, de texto. Modo geral o pessoal usa mais o de psique e do que outros modelos, né? Ele realmente é um é
+
+um é um modelo bem barato, quebra muito galho. Aí aqui tem o mimo, minim, enfim, se eu descer aqui até o final, tem o rank de aplicativos, tá vendo? E olha só quem tá em primeiro lugar, o nosso querido Hermes. Se eu clicar aqui no Hermes, eu consigo visualizar quais são os modelos que o pessoal mais utiliza nele. Então a gente tem aqui esse modelo aqui do próprio Openholder. Abaixo já
+
+tem o Deepsic V4 flash. Aí vem o Minimx Step V4 Pro. Então aqui tá o nosso top. Eu posso clicar aqui em mais consigo visualizar muito mais aqui. Ele tem uma noção mais ou menos do que o pessoal mais está utilizando, né? não significa
+
+que é o melhor, mas se você vê que é o que o pessoal mais utiliza, então tu quiser ali eh seguir o que a galera tá usando, aí tu consegue ver esse rank aqui. E para conectar com o Hermes, você precisa de uma chave API, ou melhor, antes da chave API, se você for usar modelos pagos, tu vem aqui em créditos, tu tem que colocar crédito aqui dentro, certo? Você pode tá gerando chave API sem colocar crédito, você pode sim. E só que aí você fica limitado a usar modelos gratuitos, tá? Tem até um modelo que chama Open Houter, sei se é o nome do modelo, mas ele é um ele é um modelo que faz um rodío com vários modelos gratuitos. Então quando acaba o limite
+
+de um, ele já troca para outro gratuito. Então sempre tem um modelo gratuito ali, só que você não sabe qual modelo ele tá utilizando e é mais limitado, né? Então se você quiser um pouco mais de performance, sem pagar um plano do Codex, por exemplo, você coloca aqui uns créditos, coloca aqui ó de créditos, tu consegue usar aí por bastante tempo, consegue testando vários modelos diferentes, ver aí qual que faz mais tempo para você. Beleza? Tem modelos bem baratos aqui. O Deepic, por exemplo, tem
+
+modelos bem baratos e bem competitivos. Mas enfim, vindo aqui, ó, em AP Kids aqui do lado, aqui você vai estar criando uma chave PI sua. Você vem aqui em New key. Aí você vai colocar aqui o nome, por exemplo, vou colocar aqui, no meu caso aqui, vou botar Hermes traço YT, que é para eu saber que foi a chave desse vídeo para eu apagar depois. Aí eu vou aqui, ó, clica aqui em create e aqui eu copio a chave, eh, a chave API.
+
+Beleza? Se você fechar aqui, tu não consegue ver novamente, tá? teri que apagar e criar uma nova chave. Então vou copiar aqui. Agora o que eu vou estar fazendo? Eu posso passar essa chave pro
+
+hermes. Eu posso também estar configurando diretamente no terminal, ser uma forma mais segura de estar fazendo isso. Só que vou mostrar a facilidade que a gente tem aqui, né? Essa questão de autonomia que o Hermes tem. Eu vou estar passando aqui para ele o seguinte: Hermes, eu quero estar configurando o Open Houter junto com Hermes. Aqui está a minha chave API e
+
+vou est colando a chave aqui. Beleza? Vamos dar aqui um enter. E olha só que bacana, ele já decidiu carregar aqui uma skill do Hermes. E aqui ele mostra qual foi o comando que ele usou no terminal.
+
+Então ele já teve acesso ao próprio terminal lá da VPS, certo? E aqui ele tá aguardando aprovação minha. Se eu clicar aqui em sempre permitir, ele sempre vai tá, ele sempre vai tá usando o comando sem que eu permita, tá? Isso aqui dá mais autonomia a ele, só que é um pouco mais arriscado. Aqui é apenas na sessão.
+
+Então, por exemplo, nessa sessão que eu tenho aqui agora, eu posso estar utilizando ele. Então, vou clicar aqui em sessão e vamos aguardar. E pronto, ele já falou aqui que já configurou. Simples, simples assim. provedor open router modelo padrão open rootter alto já com padrão esse alto aqui e ele salvou aqui nesse diretório. Aí eu posso
+
+vir aqui, ó, dar um barra model e aqui vai aparecer os modelos que eu tenho. Se eu venho aqui em open aqui aparece os todos os modelos que eu tenho aqui que eu posso estar selecionando eles pro chat, tá? Então, por exemplo, ó, eu venho aqui no Deepsic V4 flash e vou selecionar ele e pronto, conectado com sucesso. Troquei o modelo e você pode estar criando agentes aqui dentro e cada um com modelo específico, tá? Pode estar fazendo isso. Então você tem também essa
+
+flexibilidade. Agora, antes da gente partir pra criação de automações, a gente precisa dizer para o Hermes quem nós somos. A gente precisa dar mais algum contexto para ele que não sabe de nada. Então vamos primeiramente pedir para que ele faça uma breve entrevista pra gente, por exemplo, tem uma opção que tu pode estar fazendo para dar essa esse start, né, dar esse início e você vai ver como é que funciona também essa questão dos arquivos, essa questão de memórias que ele tem. Então eu venho aqui no Telegram e eu faço o seguinte.
+
+Primeiro de tudo, eu vou só falar para ele o seguinte: Hermes, o meu nome é Anderson Adelino, tenho 26 anos, nasci no dia 10/04/2000. Ele tá digitando e ele respondeu, né? Pra gente conhecer Anderson, vou guardar essas informações da memória. Tinha esquecido de mudar a tela pro computador. Perdão por isso, mas enfim.
+
+Eu digitei aqui, ó, Hermes, o meu nome é Anelino, tenho 26 anos, nasci no dia 10/04/2000. Aí ele respondeu para conhecer. E olha só o que aconteceu. Ele atualizou a memória user e registrou essa informação. Então ele até falou aqui, ó, que gordo na memória, que meu nome é Celino, que eu tenho 26 anos e que aniversário é dia 10 de abril. Isso
+
+aqui é para ser salvo globalmente. Se eu limpar a memória, mudar de sessão, é para ele saber essa informação. E vamos ver se ele realmente sabe. Para limpar a sessão, eu venho aqui, ó, dou um barra e aí eu posso est, ó, iniciando uma nova sessão. Beleza? Eu posso clicar aqui em
+
+aprovar e pronto, a sessão foi resetada. Então, a memória que a gente conversou aqui foi excluída, tá? Eu vou até limpar aqui o histórico. Isso aqui, esse histórico aqui é só visual, isso aqui eu tô fazendo, mas internamente no cérebro dele já foi apagado, tá? Aqui é só pra gente mesmo. E vou perguntar a ele qual
+
+o meu nome. Então, se ele se lembrar do meu nome, significa que ele já realmente já está salvo na memória global. Ele sempre vai saber qual que é meu nome, quantos anos eu tenho e minha data de nascimento. E aqui ele respondeu, ó, seu nome é Anderson Adelino, tenho registrado. Então ele se lembrou, show de bola. Eu
+
+quero que você seja mais direto nas suas respostas, tá? A partir de agora eu quero que você fale como se fosse um parceiro de longa data, sem tanta formalidade e jamais utilize ifens nos textos que você escrever. E isso que eu passei aqui para ele é uma forma que eu quero que ele se porte. Ele também deve lembrar disso aqui sempre. E ele respondeu aqui, vamos dar só uma um refinamento aqui. Certo? Gostei. Só que
+
+não precisa também estar exagerando muito nas giras. Vamos ver como é que ele vai fazer agora. Pronto. Perfeito. Para que você saiba mais sobre mim e sobre o que eu faço, me faça uma breve entrevista, que é o nosso ponto de partida. E vamos agora esperar que ele
+
+faça aqui algumas perguntas para mim, beleza? Então ele perguntou aqui qual que é a minha área de atuação, o que eu faço no dia a dia, o que eu mais o que você mais usa eu para fazer. Tem algum tipo de tarefa que repete sempre seu programo, linguagens e ferramentas que eu uso, né? Tem algum projeto pessoal profissional rolando agora que eu posso ajudar? Prefere que eu responda em português sempre ou em inglês me trato também? Enfim, então você vai lá e
+
+responde se tu quiser mais detalhado, tu pede para ele fazer coisa mais detalhada aqui, como é algo mais demonstrativo aqui pro canal, então vou responder de maneira mais direta. E eu vou responder assim, de maneira bem direta, bem simples. Sou empreendedor, tenho um canal no YouTube, mandei o link do meu canal e um treinamento sobre cloud code chamado operação cloud code e aqui está o link. Se tiver interesse, vai tá aqui no comentário fixado e na descrição. Minha primeira meta é alcançar os 10.000
+
+inscritos. Então você que tá aí, já se inscreve para me ajudar nessa meta. E beleza, vou est enviando aqui para ele. Enquanto ele tá respondendo aqui, pessoal, deixe seus nos comentários aí ideias de conteúdos, né? Se tu tem ideias sobre algo que eu posso estar trazendo sobre o Hermes, tu quer algum vídeo mais avançado, né? Algo mais
+
+completo, pode deixar aí sua sugestão, tá? As melhores ideias eu vou estar trazendo aqui pro canal. A minha ideia é ficar postando aí três vídeos por semana, tá? Então já se inscreve, ativa o sininho de notificação também, tá? que o YouTube acaba eh dificilmente enviando notificação pros inscritos. Então, marca
+
+aí o sininho também, vai ajudar bastante. E ele respondeu aqui, ó, já deu para ter uma boa ideia do seu trampo. Seu canal é focado em automações com a playlist forte cloud code e o seu curso. Então, ele já fez aqui uma pesquisa. Realmente, ele já viu o conteúdo do meu canal. Só promete 10.000
+
+inscritos para ajudar com algumas coisas na prática, questão de conteúdo, questão de automações, questões de dados. Excelente. Então vamos, a partir disso aqui, vamos puxar pra parte da automação. Então eu vou pedir para que ele todo dia às 6 horas da manhã ele busque na internet sobre notícias de mundo da IA, né? Principalmente sobre cloud code, sobre codex, sobre, sobrecloud, essas ferramentas, tá? Quero
+
+que ele busque no Google, busque no Twitter e busque no Redit sobre essas informações e me traga aí um relatório aqui no Telegram sobre quais tipos de conteúdos eu posso estar transformando em um vídeo pro YouTube. Então eu vou pedir aqui para ele agora. Então eu mandei aqui o seguinte comando aqui para ele e vamos dar enter. E a ideia aqui é que ele já de forma automática já crie essa automação. Ou seja, todo dia às 3 de amanhã ele vai estar enviando esse relatório. Olha só, ele invocou aqui, ó,
+
+o comando scheduling create e ele já criou, tá? Ele já criou aqui a automação. Resumo do que criei, horário, entrega, fontes, foco, estrutura. Eu vou pedir para que ele rode agora para testar. rode agora para eu testar como ficou, porque a gente já dá o feedback aqui mesmo, né? Se ficou faltando alguma
+
+coisa, se eu tenho alguma preferência melhor. Então, olha só, ele invocou aqui a ferramenta chamada schedad run [música] e está aqui o relatório. Gigante esse relatório, mas vamos ver aqui por cima o que que ele falou. E cara, tem um grilo aqui que tá me irritando. Não sei onde ele tá. Enfim, depois eu procuro. Eh,
+
+beleza. Chrome job response, notícias diárias, relatório, notícias quentes. Claudic, codex lança um comando go. Tá, isso aqui já faz tempo, então tem que refin. Ã, protocolo open a Codex 5.5.
+
+Hermes, lança evolução autônoma da skills. OK. Faltou falar para ele aqui que eu queria da última semana, né, as notícias. Ficou faltando isso. Ideias de vídeo, ó. Interessante isso aqui.
+
+Beleza, vamos dar aqui só uma aprimorada nele, tá? Hermes, gostei, porém eu acho que você tá usando muito texto, tá? Tá gigante isso aqui. Eu acredito que seria interessante que você desse uma enxugada melhor nesse relatório. Segundo ponto, eu quero que você busque a notícia, as notícias mais recentes das últimas 24 horas, até porque essa automação vai ser rodada todos os dias. Se não tiver nada
+
+relevante, não, não tenha medo. Pode falar que não tem nada relevante, sem problema. Melhor do que ficar enchendo linguiça. E eu quero também que você dê um um espaço no texto para focar em skills. Eh, skills que do Cloud Code, por exemplo, que mais estão sendo utilizadas, que mais comentaram nas últimas 24 horas, que estão mais crescente e coisas do tipo.
+
+Pronto. E bora veris notícias. 24 horas. Agora sim. Cloud 95 lançado hoje.
+
+Excelente. Microsoft cancela licenças do Cloud Code. Cloud Code, certo? Outra coisa sobre cloud code e bônus. Cadê o bônus? Anó também lançou o cloud science
+
+e cloud tag, nova forma de trabalho em equipe. Beleza, já vou dar uma olhadinha aqui também quando acabar aqui o vídeo. Skills cloud code em alta. Então aqui tá mais algumas coisas sobre skills de cloud code. Posso dar uma refinada depois nessa questão de skills. E aqui
+
+ideias de vídeo. Cloud son 25. O fim dos modelos caros. Interessante. Microsoft gastou milhões e cancelou Cloud Code. O
+
+que significa? O que é bom mais para quando se meu canal fosse mais voltado para notícias, né? Mas também são bons conteúdos, quem sabe. E olha só o que aconteceu aqui, ó. Sozinho. A outra
+
+revisão que ele fez, ó, skill YouTube conta de research criado. Ou seja, ele criou sozinho. Não pedi para ele fazer isso, ele já criou aqui uma skill que vai fazer essa consulta. Ou seja, a rotina, né, a automação aqui que ele cria, ele automaticamente já vai invocar essa skill de forma automática. Isso é muito bacana. Eu ia até mostrar um
+
+exemplo aqui de criação de skill, mas ele acabou fazendo forma automática. Mas vamos fazer o seguinte, vou perguntar aqui para ele aqui, me mostre essa skill. Vamos ver aqui o conteúdo da skill ali, o arquivo, né, da skill. Chamou atu skill list. Ele tá lendo a skill. YouTube content research. E aqui
+
+está skill. Olha só. Estilo e pesquisa diária para cada outro conteúdo. Fluxo define o nicho. Busca em três fontes, foco nas outras 24 horas, estrutura inxuta e estilo direto. Beleza? Eu vou
+
+fazer o seguinte teste: execute essa skill mais com o tema finanças. E a ideia de é justamente isso, né? Você criar ali um modelo que pode ser reutilizado. E olha só, ele delegou essa informação para um outro agente. Mandei o robô buscar as notícias finas 24 horas. Assim que ele terminar, o
+
+relatório chega aqui mesmo nesta conversa. É para sair no mesmo formato em chuta que a gente ajustou, porque tá de acordo com a skill. E aqui tá o resultado. Veja só, ferramentas em alta. Ele substitui a parte de skill pra ferramenta e trouxe aqui alguns algumas informações interessantes também. E beleza. Então
+
+ele conseguiu sim usar a skill. Ele sugeriu também tá aqui, ó, criando um chrome job com essa skill aqui, mas não vou querer isso. E é isso, pessoal. Eu acredito que essa parte mais básica, né, eu queria introduzir para vocês é isso. Se tem algum tema específico de Hermes, alguma ideia de vídeo que vocês querem que eu grave, mais uma vez repito, pode deixar nos comentários que eu vou est vendo esses comentários. Eu leio todos
+
+os comentários, tá? Eu posso estar trazendo aí um vídeo, outros vídeos sobre o Hermes. Beleza? Fico por aqui, espero que tenha gostado do vídeo e te vejo no meus próximos vídeos. Valeu,
