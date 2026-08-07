@@ -1,0 +1,238 @@
+---
+video_title: "Build a Mobile App with Codex (Full Guide)"
+video_id: eoEsVQJruow
+channel_name: "Riley Brown"
+channel_id: UCMcoud_ZW7cfxeIugBflSBw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eoEsVQJruow
+video_date: 2026-03-24T19:42:23+00:00
+video_description: |
+  I built a Swift iOS app that builds apps.. a better, simpler alternative to Replit, built entirely without writing code. Using OpenAI's Codex desktop app, Xcode, and the Claude Agent SDK (Claude Code SDK), I created "Jerry" which is an iMessage style vibe coding app that generates and hosts web and mobile apps through natural conversation.
+  
+  In this video, I walk through the entire process: 
+  -designing the UI in Paper (a Figma alternative for AI agents), 
+  -building the Swift app with Codex, 
+  -integrating the Claude Agent SDK for AI-powered app generation, 
+  -connecting the Vibecode CLI for hosting, 
+  -and adding voice input with OpenAI Whisper
+  
+  Tools used in this build:
+  - OpenAI Codex (desktop coding app): https://openai.com/codex
+  - Claude Agent SDK (Anthropic): https://docs.anthropic.com
+  - Vibe Code CLI: https://vibecode.dev
+  - Paper (AI-native design tool)
+  - Xcode + Swift
+  - OpenAI Whisper (voice input)
+  
+  Where to find my other content:
+  https://x.com/rileybrown
+  https://www.linkedin.com/in/riley-brown-7441b1101/
+  https://www.instagram.com/realrileybrown/
+  https://www.tiktok.com/@rileybrown.ai
+  
+  TIME STAMPS
+  00:00 Intro
+  00:38 Why I'm Replacing Replit
+  01:35 The Jerry App Concept & Prompt
+  03:35 Setting Up Xcode & Codex
+  06:08 Designing the UI with Paper
+  10:54 First Build & Testing on iPhone
+  14:58 Integrating Vibe Code CLI
+  17:32 Testing Real App Generation
+  24:40 Adding Voice Input
+  26:44 Final Demo
+  
+  #vibecoding #replitalternative #codex More about me: rileybrown.xyz
+  Sponsorships: https://rileybrown.xyz/sponsorships
+---
+Você não só pode usar o Vibe para programar aplicativos mesmo sem nenhuma experiência em programação, como também pode usar o Vibe para programar um aplicativo que usa o Vibe para programar outros aplicativos. E hoje, vou fazer exatamente isso. Então, passei o fim de semana inteiro testando o Replit, e ele simplesmente não é o meu favorito. Então, em vez disso, vou criar minha própria versão do Replit sem escrever uma única linha de código. Neste vídeo, vou projetar e construir um aplicativo em Swift que usarei em vez do Replit. E vou usar o
+
+aplicativo Codex, que é meu novo aplicativo de programação favorito para computador. E também vou inserir código Claude dentro do aplicativo Swift, que será responsável pela geração do aplicativo. Portanto, não vamos perder tempo. Vamos criar um aplicativo que cria outros aplicativos. OK. Então, este aqui é o
+
+aplicativo móvel Replit. E para mim, tudo é muito pequeno. Está tudo muito desorganizado. E eu realmente não gosto da experiência com este aplicativo. Acho que a tela inicial principal é um pouco confusa e entediante. Então, neste vídeo, vamos
+
+construir um aplicativo móvel de programação com melhor qualidade de imagem . E para isso, vamos usar o Codex. Então, o Codex da OpenAI, que é um aplicativo para desktop, que tenho usado cada vez mais, e realmente me apaixonei por ele. E vamos usá-lo para construir nossa própria versão do Replit. Além do aplicativo Codex, também usaremos o Xcode. E o Xcode nos permitirá
+
+criar um aplicativo em Swift, e eu vou executá-lo no meu celular, e vamos desenvolver este aplicativo agora mesmo. Essa vai ser muito divertida. OK. Então, aqui está nossa sugestão para uma versão melhorada do aplicativo Replit para iOS. Vamos revisar rapidamente o enunciado e depois começaremos. Não vamos perder
+
+tempo. Quero que você crie um aplicativo em Swift que gere aplicativos web e aplicativos móveis. Então, eu quero criar um clone do aplicativo móvel Replit porque ele é bem ruim. E talvez eu esteja parecendo um pouco duro. Não acho que seja realmente ruim. Eu
+
+simplesmente não gosto da interface do usuário. Não é nada divertido de usar. Então, eu quero uma experiência mais simples, certo? Quero que seja simples e que se pareça com o Replit, só que muito mais com o iMessage. Então, todo o processo será muito mais simples, quase como se você estivesse mandando uma mensagem para um amigo, certo? E vai ser como
+
+mandar mensagem para um programador Vibe muito inteligente ou para um desenvolvedor muito inteligente chamado Jerry, né? O nome desse cara vai ser Jerry. E o aplicativo vai se chamar Jerry. Portanto, para isso, usaremos Swift. Vamos salvar todas as mensagens localmente no telefone e também usaremos apenas o SDK do Claude. Tecnicamente, chama-se
+
+Claude Agent SDK, que permite inserir código Claude em sua aplicação. Então, basicamente, vamos inserir o código Claude em nosso aplicativo, e esse código Claude se comunicará com a nova CLI do Vibe Code, que cuidará do isolamento em sandbox, criará o aplicativo e enviará um link de volta para o Claude Code. Então, temos essa mensagem do usuário, certo? Construa para mim um rastreador de atividades físicas . Você vai conversar com o Jerry, usando o SDK do Agente. Você pode ir e voltar,
+
+certo? Pode ser que te perguntem coisas como: "Ei, quais cores você quer para o seu aplicativo? Quais recursos você deseja?" Você fornecerá mais algumas respostas e, em seguida, o aplicativo será gerado e hospedado com a CLI do Vibe Code. Vai retornar um URL de aplicativo e dizer algo como: "Ei, aqui está o link." Então, ele vai
+
+abrir esse URL automaticamente, certo? Assim, a CLI do Vibe Code retorna links para o aplicativo e o último link em qualquer mensagem será aberto automaticamente nesta pré-visualização do navegador, sendo então exibido ao usuário. E então o usuário pode simplesmente interagir com o agente Jerry, atualizando este aplicativo. Mas, ao final deste vídeo, acho que vamos criar uma plataforma de programação Vibe realmente convincente. Então, é isso que vamos fazer. Certo, então
+
+vamos em frente e vamos usar o Codex agora mesmo. Mas, primeiro, o que eu gosto de fazer é entrar no Xcode manualmente e criar um novo projeto. Só vou dizer que vamos criar um aplicativo. Vou clicar em " próximo". Vamos chamar isso de Jerry, clicar em "Próximo" e criar este projeto aqui. E agora isso vai se abrir completamente
+
+. Portanto, quando o projeto começar, é isto que você verá. É basicamente o aplicativo iOS mais simples que você pode criar, que é uma tela branca exibindo "Olá, mundo!". Então, você tem seu código aqui à direita. Podemos
+
+ampliar um pouco a imagem. Mas como você pode ver aqui, você tem alguns arquivos. Isso é basicamente um modelo inicial para qualquer tipo de aplicação Swift. Agora que isso está aberto, vou voltar ao CodeX. E no CodeX, vou criar um novo projeto. E aqui, o que
+
+vamos fazer, chamamos a este projeto de Jerry. E queremos ter certeza de que escolheremos este aqui, que é o projeto de nível mais alto, porque existe uma subpasta em Jerry chamada Jerry. Não queremos essa. Queremos a pasta, a pasta de nível mais alto que contém o arquivo . Então vamos abrir isso. E
+
+agora temos um novo tópico. Portanto, este tópico será dedicado a essa pasta específica. E por pasta, quero dizer este diretório que contém todo o código deste projeto específico. Assim, podemos criar várias threads e executar várias tarefas em paralelo. Então, vou mostrar para vocês. Portanto, neste vídeo, não vou seguir uma ordem
+
+linear. Quando uso o CodeX, costumo fazer várias coisas em paralelo, seja pesquisa, design ou desenvolvimento do aplicativo. Eu gosto de trabalhar. E quanto melhor você se torna com essas ferramentas, mais você consegue trabalhar em paralelo. Então, se estou me movendo um pouco rápido demais, é simplesmente porque é assim que eu trabalho agora. E
+
+farei o possível para explicar meu processo ao longo do caminho. Se em algum momento eu for muito rápido, por favor, deixe um comentário abaixo. Terei o maior prazer em responder ao máximo de perguntas possível. Enfim, o que vamos fazer é criar um novo tópico no Jerry, certo? Então, estamos construindo o Jerry, e eu vou dizer: "Esta é a minha ideia de aplicativo." E eu vou acessar o
+
+Notion, e vou fazer assim . Vou copiar essa mensagem e simplesmente colar o texto aqui. Agora, vou simplesmente inserir aquela imagem que tínhamos aqui, este fluxograma. E o que vou fazer é pressionar Shift + Tab, o que ativa o modo de planejamento. Vamos elaborar um plano para isso. Então, a Codex vai
+
+elaborar um plano. Enquanto a Codex elabora um plano, eu vou criar um projeto para definirmos juntos. Então, vou abrir o Paper, que é basicamente um Figma, mas foi projetado especificamente para ser usado por agentes de IA. Então, podemos abrir este novo quadro e vou colar minha ideia novamente. Por favor, projete as quatro telas mais importantes aqui no paper.design.
+
+Utilize a ferramenta MCP para criar o projeto. Então, eu fiz um vídeo. Acho que, no momento em que você está assistindo, esse é o meu vídeo anterior, em que eu uso papel. Eu configurei o papel completamente e expliquei como usá-lo. Então, esse é apenas o meu processo. Não quero entrar em
+
+detalhes sobre como configurar o papel agora. É assim que vou projetar o aplicativo. Então, o que essa ferramenta MCP fará é visualizar meu aplicativo aberto, que é semelhante ao Figma. O Paper é semelhante ao Figma e deve criar os designs aqui mesmo. Então, estou mapeando a estrutura do aplicativo a partir do seu briefing. Eu peguei a tela de papel em branco. Estou
+
+lendo o fluxo de trabalho do Vibe Code agora. E você pode realmente controlar o Codex. Então, eu posso dizer algo como: "A propósito, concentre a maior parte da sua atenção no chat e nas páginas de pré-visualização. Mantenha tudo simples." E você pode simplesmente adicionar direção. Sabe, como você pode
+
+ver, está funcionando aqui mesmo nesta thread, e você pode realmente controlá-la. E isso é inserido no prompt enquanto ele está funcionando, e então ele simplesmente continua funcionando com o seu feedback adicionado. E você pode inserir quantas mensagens de direção quiser. Como você pode ver aqui, está escrito " aguardando resposta". Então, vamos voltar ao nosso plano e ver se...
+
+Você pode ver aqui que estamos projetando essas quatro telas agora mesmo. A caixa de entrada do Jerry, a conversa com o Jerry, a pré-visualização do Jerry e o resultado da compilação, o que é bem divertido. Então, o que vou fazer é simplesmente deixar isso aqui aberto. Podemos nos livrar desse telefone por enquanto. Então, vamos deixar os projetos em aberto enquanto trabalhamos. Onde o ambiente de execução do agente de Jerry deve ficar
+
+localizado na primeira versão? Ponte hospedada, aplicativo complementar para Mac, somente para dispositivo. Vamos começar a jogar bridge hospedado. Não sei exatamente o que isso significa. O que deve incluir o primeiro marco de entrega ? E vou acrescentar contexto.
+
+A CLI do Vibe Code trata os aplicativos móveis e os aplicativos da web da mesma forma. Ambos abrem na pré-visualização da web. Portanto, devemos fazer as duas coisas. Então, agora vamos enviar isto. Ok, isso é bem divertido. Você pode ver aqui que
+
+nosso plano completo já está finalizado. Além disso, estamos fazendo progressos nesses projetos. Então, esse é um design muito bom para o Jerry, não é? Diga-me o que você quer construir e eu construirei . Prioridade à web. Sim, envie. E agora está
+
+começando a se intensificar. Está exibindo a página de pré-visualização. Então, podemos simplesmente fazer alguns ajustes nisso. Então, no papel, o que eu gosto é que posso selecionar isso e isso e copiar esse link. E eu só vou dizer que vou colar isso aqui. Vou
+
+dizer: "Na página de pré-visualização, por favor, não mostre o link. E também, não mostre o link 'abrir automaticamente a partir da última publicação do Jerry'. E então, coloque o ícone do Safari no canto superior direito. E também o botão de voltar para o Jerry ali para minimizar o espaço. Quero que esta pré-visualização ocupe basicamente a tela inteira. Além disso, quero que a
+
+página inicial não tenha mensagens no topo. Que tenha apenas uma foto grande do Jerry à direita, que é como um J preto. E então o texto no topo deve ser apenas 'construa com o Jerry'. E nos chats deve ter apenas o nome do projeto. Então, use IA para nomear o que quer que seja o meu primeiro comando, nomeie o projeto com isso. E então, em vez de
+
+ter um J, deve ter apenas um pequeno ícone de aplicativo, como um ícone de aplicativo móvel . Assim podemos inserir isso no sistema. Ok, e outra coisa, vamos precisar de várias chaves de API. Então, vou obtê- las agora. Vou abrir meu navegador. Então, vou
+
+Preciso de uma chave da API do Claude, que posso encontrar em platform.claude.com. Acabei de criar uma chave e vou mantê- la privada. Depois, precisaremos de uma chave no vibe.dev
+
+para acessar a CLI do Vibe Code. Então, primeiro vou clicar em " Sim, enviar este plano". E, como acompanhamento, vou colar as chaves da API aqui. Certo, isso já está em andamento há cerca de 7 minutos e ainda não terminou. Mas as coisas estão mudando. Assim que terminar,
+
+vou executar no meu iPhone em vez deste pequeno simulador aqui. Não gosto de usar isso. Não é muito bom. Quero executar no meu iPhone. Então, dei uma caminhada de uns 30 minutos porque estava demorando muito e eu queria fazer uma pequena pausa, já que o prompt inicial do Codex costuma ser o mais demorado. Agora estamos de volta. Vamos
+
+ver como nosso aplicativo se comportou. Então, vamos voltar ao Xcode e clicar em " Reproduzir". Isso abrirá automaticamente no meu iPhone. E aqui estamos em um chat vazio. Podemos iniciar uma nova conversa com o Jerry. Vou clicar em "Novo chat" e
+
+dizer "Olá. Tudo bem?". Ok, os dados não puderam ser lidos porque estão faltando. Vou clicar em "OK". Se olharmos
+
+aqui nos registros, veremos um monte de coisas. Isso aparece automaticamente na parte inferior do Xcode. Vou copiar isso. Vamos ao Codex e dizer: "Recebi esta mensagem. Por favor, vamos corrigir isso". Agora vamos colar
+
+aqui. Pronto. Vamos ver o que o Codex tem a dizer sobre isso. Não entendi completamente. O que está acontecendo? Ok,
+
+acho que está pronto. Acho que preciso atualizar rapidinho. A compilação foi concluída com sucesso. Vamos ver se conseguimos nos comunicar com este agente. Preciso abrir um novo chat. Oi, sou Riley.
+
+Ok, Jerry está analisando a compilação. O que está acontecendo? Não estamos recebendo resposta. Precisamos tirar um print da tela. Vou arrastar isso para o chat. Vou dizer: "E aí, agora
+
+está funcionando". Diz que Jerry está analisando a compilação. Aliás, quero conversar com ele como qualquer outro agente. A skill Vibe Code CLI nos permite criar aplicativos quando solicitamos. Então, basicamente, estamos conversando como se fosse o Claude Code.
+
+Posso falar com ele, mas não estou vendo nenhuma resposta do agente. Isso deveria ser apenas uma resposta de chat. E eu deveria receber uma resposta quando a IA responder. E quando adicionamos a Vibe Code CLI, ela responde com um link para o nosso aplicativo. É assim que vai funcionar.
+
+Então, por favor, concentre-se em fazer com que isso seja apenas um chat com o SDK do agente Claude. Depois, começaremos a adicionar a funcionalidade do Vibe Code e testar se os aplicativos realmente abrem no telefone. Ok, agora vamos esperar mais um pouco. Vamos executar a versão mais recente . Vamos ver como funciona aqui. Vou clicar em "Novo chat". Vou
+
+dizer: "Olá". Jerry está pensando. Vamos lá. Sim. Olá, eu sou o Jerry.
+
+O que você está desenvolvendo hoje? Incrível. Você tem acesso à CLI do Vibe Code? Jerry está pensando. Não está na sua máquina. Ok. Por favor, escreva um parágrafo
+
+sobre o que você tem acesso. Ooh. Ok, então precisamos tirar uma captura de tela disso. Você pode ver aqui. Oh, uau. Uau. É, está tudo
+
+bagunçado. Vou criar um novo chat. Ah, sim. Aliás, você pode criar uma nova thread dentro do mesmo chat. E aqui, eu acabei de... Arrastei a imagem para cá.
+
+Então, temos esta imagem mostrando que a formatação está toda bagunçada. Está muito bagunçada. Podemos corrigir isso, por favor? Quero que fique parecido com o chat do iMessage, com várias linhas. Certifique-se de que tudo esteja alinhado. E, por favor,
+
+inclua os três pontos como no iMessage quando a IA estiver respondendo. Agora vamos esperar. Ok, acho que está pronto. Vamos dar uma olhada aqui. Vamos ver.
+
+Olá. Ah, os três pontos. Está ficando muito bom. E aí, tudo bem? O que vamos construir hoje? Ok, então ele
+
+não tem acesso à CLI do Vibe Code . Então, preciso que você se certifique de que este agente tenha acesso à CLI e à skill do Vibe Code, por favor. O que vamos fazer aqui é acessar vibecode.dev. E vou copiar isso. Estas
+
+são as instruções de instalação. Você já deve ter a chave da API. Certifique-se de que o SDK do agente também tenha. Vamos colar isso. Bem aqui. Esta não é uma chave real. Você tem
+
+isso. Ok, então vamos executar este último aqui. Quero dizer "Oi". Ok, só para garantir que o chat funcione. E aí? Você tem acesso à
+
+CLI do Vibe Code? Ok, então ainda não está instalado. Perguntei ao agente e ele não baixou. Precisa do SDK de agente completo. O chat deve saber que ele está instalado . Ok, então acabei de
+
+fazer um teste e estou tentando descobrir o que está acontecendo. No novo projeto que é criado, não vejo um arquivo de habilidades. Então, enviei isso para o Codex. Acho que o Codex resolveu, então vamos ver. Vou excluir o aplicativo da minha tela inicial. Agora, vamos executá-lo novamente
+
+. Ok, agora está aberto. Ok, agora vamos testá-lo. Você tem acesso à CLI do Vibe Code? Sim, tenho acesso à CLI do Vibe Code. Você pode
+
+criar uma página de destino simples para o Joe e...? Smoothies de suco? Vamos simplificar.
+
+Vamos ver. Ah, e olha só isso. Como usa a CLI do Vibe Code, meu aplicativo Vibe Code, este é o aplicativo Vibe Code e você pode criar aplicativos diretamente nele . Sou suspeito para falar, sou um dos cofundadores, mas acho que é melhor que o Replit. É muito mais fácil, né?
+
+A interface é muito mais intuitiva . Então, o projeto está sendo criado. Agora vamos esperar e devemos receber um link. O que queremos é clicar no link e permanecer dentro do aplicativo, certo? Não devemos abrir um navegador externo.
+
+Idealmente, o navegador deve abrir no aplicativo do iPhone e então testaremos diretamente no aplicativo. Pelo menos, esse é o nosso objetivo . Ok, recebemos um erro. Acho que talvez tenha ocorrido um tempo limite, mas vamos copiar isso. Ok, parece que tivemos um erro. Isso
+
+leva um tempo para executar. Vai levar uns 5 segundos. Em alguns minutos. Quero que funcione. Então, por favor, descubra o que precisa ser alterado. Ok, pronto. Vamos excluir
+
+e tentar novamente. Por favor, crie uma página inicial simples com o Vibe Code CLI. Pronto. Vamos ver o que acontece. Certo. Acho que está iniciando. E aí!
+
+Então, eu fui pegar um iogurte e voltei e foi isso que apareceu. Uma prévia do aplicativo. Então, temos este aplicativo. Podemos começar, aprender mais. Temos o aplicativo completo. Podemos
+
+fechar. Deveria abrir na prévia. Ok. Percebi que o aplicativo abria automaticamente na prévia , mas quando clico em qualquer link no aplicativo, a prévia também deveria abrir . No momento, está me levando para fora do aplicativo, para o link. Por
+
+algum motivo, tenho que excluir o aplicativo completamente toda vez e executá-lo novamente, o que significa que meu chat não estará lá. Acho que será um novo banco de dados. Então, é isso. Todas as minhas conversas não estão aqui. Então, para testar, vou dizer: "Por favor, mostre-me este link." Opa, que estranho. Precisamos
+
+mudar a cor dos links no campo de entrada para branco. Isso não é prioridade agora. Eu só quero que ele mostre o link completo aqui. Espero conseguir abri-lo na pré-visualização da web. Então, vou colar isso. Vamos ver.
+
+Ok. Abriu automaticamente. Vou dizer: "Olha isso." Então, faça isso de novo." E agora, ele abre automaticamente essa pequena pré-visualização do aplicativo, mas queremos que, se clicarmos nele, veja, ele ainda abra em um novo menu. Então, agora, sempre que houver uma
+
+mensagem com um link, ela abre automaticamente no aplicativo, certo? Ela abre no aplicativo e simplesmente aparece automaticamente, mostrando a pré-visualização. Mas quando eu clico em um dos links, isso não acontece. Então, eu quero que a pré-visualização abra. Por favor, descubra como fazer isso. E agora podemos testar
+
+novamente. Pronto. Aí está. Ok, agora eu quero ver o que acontece se criarmos um aplicativo móvel. Então, vou dizer: "Por favor, crie um aplicativo móvel que seja um aplicativo de lista de tarefas no estilo do Notion." "Deixe legal." Ok,
+
+vamos ver como fica. Enquanto isso carrega, vamos voltar ao papel. E se você se lembra, uau, está ficando bom. Eu dei uma sugestão antes. Está muito bom. Gostei bastante. Então,
+
+esta será nossa página inicial. Vou criar um novo tópico: "Por favor, redesenhe esta página aqui." Esta é a página principal. Mantenha o menu de configurações aberto. Precisamos disso, mas fora isso, faça com que fique assim, mas adicione uma página de projetos que possa ser acessada para visualizar uma página completa de projetos em algum lugar da lista. Assim como na parte inferior da
+
+lista que aparece na página principal, deveria aparecer "ver mais" na parte inferior, por favor. E também, vamos ver o que mais podemos fazer aqui. Está ficando bom. Sim, essa é basicamente a única tela que eu realmente quero usar. E também, não precisa adicionar o botão de anexar. Ok, vamos ver.
+
+Pronto. Vamos lá. Aqui está nosso aplicativo. Testando. Temos um aplicativo básico de notas. Podemos escolher
+
+nosso pequeno item. Ooh, podemos adicionar um item. Olá. Sou eu. Bem, aí está. Temos um pequeno
+
+aplicativo de notas. Temos a renderização do aplicativo iOS. Eu quero ver se consigo aumentar esta pré-visualização da web. Então, vamos ver aqui. Eu quero ver se é possível colocar a pré-visualização da web em tela cheia. Na verdade, mais em tela cheia e
+
+basicamente sem a parte branca na parte superior , certo? Se tirarmos uma captura de tela disso, arrastarmos para cá, o botão de fechar pode ser uma sobreposição e não precisamos da pré-visualização do aplicativo e poderíamos fazer a parte inferior não ocupa tanto espaço também. Ok, então meu outro agente terminou. Vamos atualizar o aplicativo e ver o que acontece. Tentamos redesenhar a página inicial. Vamos ver
+
+se... Ah, que diabos? Que droga? Eu queria que
+
+ficasse assim. Será que arrastei a captura de tela errada? Ah, desculpe. Eu não te dei uma imagem. Quero que fique como a imagem que acabei de te dar. Desculpe. Ok, então esta versão
+
+está pronta. Vamos ver se conseguimos executá-la. Agora, vamos tentar executar a versão que corrigiu a pré-visualização da web e, para testar, podemos acessar nossa lista de versões feias aqui. Podemos abrir isso. Ok, está um pouco feio. Vamos abrir um
+
+aplicativo da web. Está difícil de ver aqui. Talvez devêssemos ir para o aplicativo móvel. É, este está um pouco feio. Vamos arrastar isso para cá. Por favor, abaixe um pouco,
+
+só um pouco, e a parte inferior tem muito espaço. Espaço desperdiçado, como você pode ver. Apenas corrija isso da melhor maneira possível. Oh, meu Deus, acabei de ter uma ideia. Tenho uma ideia.
+
+Tenho uma ideia. Ok, então o Twitter abre os links assim. Estou pensando se podemos fazer o mesmo. Então, vamos fechar essa coisa X. Ok, então o que vou fazer é tirar uma captura de tela disso aqui. Vou arrastar isso para cá.
+
+Vou dizer: "Veja esta captura de tela? Você percebe que, quando eu abri no Twitter, a parte do aplicativo estava na parte inferior? Você pode adicionar um pequeno balão de bate-papo ali embaixo, onde eu digito o texto ? Basta colocar isso ali para que eu possa digitar a mensagem enquanto uso o aplicativo. E deve ter mais ou menos essa altura, então mantenha-o na vertical onde está, certo? Está muito
+
+empurrado para cima. Não tem problema. Na verdade, quero que você tenha essa pequena sobreposição, para que, ao abrir o aplicativo, o pequeno chat de entrada apareça como se eu estivesse participando da mesma conversa. E isso me permite ver que consigo digitar enquanto uso a pré-visualização do aplicativo. Isso vai ser muito legal. E coloque um pequeno botão de gravação de voz
+
+. Ah, vamos adicionar a gravação de voz mais tarde. Por enquanto, basta colocar um botão de gravação de voz semelhante a esta interface de usuário, mas é mais ou menos assim que eu quero que abra quando eu clicar em um desses links. Ok, então está feito. Vamos dar uma olhada nisso . Vamos abri-lo. Vamos ver
+
+como fica. Boom! Pronto. E tem essa parte de baixo para que eu possa digitar diretamente nela, certo? Eu posso simplesmente digitar nele. Isso torna tudo um pouco
+
+desajeitado aqui. Estou pensando se seria possível abrir isso em uma sobreposição, mas tudo bem. Acho que por enquanto está bom assim . Eu quero muito que essa coisa de voz funcione. Por favor, adicionem um botão de gravação de voz à área de entrada do chat e à pré-visualização . Isso deve aparecer quando
+
+nada for digitado. Portanto, antes de digitar qualquer coisa, deve haver um botão preto com um pequeno ícone de onda sonora. E quando pressionado, deve gerar uma animação legal quando eu falar. É algo sutil, mas deveria gravar minha voz e inseri-la no aplicativo ou na área de texto para que eu possa enviar uma mensagem ou digitar sem precisar abrir o teclado e visualizar o aplicativo que aparece na pré-visualização. Por favor, utilize o OpenAI Whisper. Eu te dou uma chave se
+
+você precisar. Ok, então acabei de fazer algumas pequenas melhorias na qualidade de vida aqui. Então, esta é basicamente a versão final do nosso aplicativo. Então, você pode criar aplicativos, obviamente. E aqui está o aplicativo Notion que criamos. Se clicarmos no link,
+
+isto deverá abrir aqui. Vemos o aplicativo para iOS. Está carregando a pré-visualização. E acabamos de adicionar esse novo recurso de voz para que eu possa dizer: "Por favor, faça com que este aplicativo tenha um modo claro. Deveria ser um cinza bem claro , quase branco, mas cinza claro, e mude completamente a fonte. E
+
+adicione um recurso que você ache que seria legal." Assim, podemos enviar comandos enquanto a pré-visualização está aberta, o que é muito legal. Portanto, agora basta fazer essa alteração. Isso deve levar apenas de 30 segundos a um minuto. Deixe-me ver aqui. E sabe de uma coisa? Essa é,
+
+na verdade, a última coisa que podemos fazer. Por favor, façam com que a formatação em [ __ ] e os marcadores, etc., sejam exibidos corretamente, porque aqui eles simplesmente não estão aparecendo da maneira correta. Mas vamos ver se essas mudanças foram feitas. Sim, essas alterações foram feitas. Preciso dizer:
+
+"Enviar link de pré-visualização". Bem, aí está . Sei que foi difícil para mim fazer isso de forma estruturada, pois é a primeira vez que construo um aplicativo assim, mas foi isso que criamos: um aplicativo Swift que nos permite construir outros aplicativos. E podemos abri-los diretamente no aplicativo, o que eu acho muito legal. E podemos até fazer mudanças com a nossa voz. E eu acho que
+
+essa é uma experiência muito divertida. Solte a imaginação , adicione umas 30 funcionalidades, faça umas coisas malucas. Certo, posso analisar o aplicativo, direcionar as alterações, enviar a solicitação, e tudo isso é visualizado nessa interface semelhante a um chat . Este é um aplicativo Swift. Podemos enviar isso para a App Store. Enfim, vocês
+
+aprenderam muito. Espero que vocês tenham aprendido um pouco sobre o Codex. Pretendo fazer um guia muito mais detalhado sobre o Codex no futuro. Mas enfim, obrigado a todos por assistirem. Paz.
