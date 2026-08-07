@@ -1,0 +1,176 @@
+---
+video_title: "Criei relatórios no Power BI usando apenas prompts (Claude Code + Desktop Bridge)"
+video_id: VtU4qwe_aA0
+channel_name: "Xperiun | Data Analytics"
+channel_id: UCOcjS2ppQSqIsbMgWGCfLew
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=VtU4qwe_aA0
+video_date: 2026-07-06T21:07:08+00:00
+video_description: |
+  Testei a nova novidade da Microsoft que muda como criamos relatórios no Power BI: o Power BI Desktop Bridge + as skills-for-fabric. Na prática, dá pra fazer "vibe coding" no Power BI Desktop — pedir em português e a IA edita o relatório, recarrega o Desktop e confere o resultado sozinha. E o melhor: a parte de criação de relatório roda 100% local, sem precisar de licença Fabric e sem enviar os valores dos seus dados pra IA.
+  
+  ➡️ Garanta sua vaga agora na nossa Imersão em Claude e IA para negócios. É gratuito! 
+  https://xperiun.com/ed/evento/ICIAN/?utm_source=youtube&utm_campaign=ev32_organico&utm_content=VtU4qwe_aA0
+  
+  Neste vídeo eu mostro o passo a passo real: o que é o Bridge, como instalar, o que são os arquivos PBIP e PBIR, o que dá pra fazer, e uma demonstração ao vivo — incluindo os erros que apareceram no caminho (porque é preview e nem tudo funciona de primeira).
+  
+  
+  Links:
+  
+  ➡️ Guia de Instalação: https://xperiun.com/ed/materiais/youtube/?ids=x_pFeIrcisuCmEEO9U_ZLYRvzBCJ523fFyJ7gm1G
+  
+  Playlist Claude Code: https://www.youtube.com/watch?v=IBz-P4coKts&list=PLHx-pNdSZlfQ
+  
+  #powerbi #claude #claudecode
+---
+Eu tenho uma verdadeira bomba para você que desenvolve relatórios no PowerBI. Eu tô falando aqui de uma novidade que a Microsoft liberou recentemente, o Power BI Desktop Bridge. É uma ponte que você [música] faz na sua máquina localmente para você conseguir e desenvolver páginas, gráficos, análises dentro do POBI Desktop, apenas utilizando promptes de comando. Quer ver como é que funciona isso na prática? Então fica comigo até o final. Bom, vamos entender como que a
+
+gente vai fazer esse teste, esse exemplo, para você entender como realmente funciona, tá? Aqui a gente vai utilizar o Cloud Code, que é o nosso queridinho, para desenvolver ali as páginas que a gente precisa, tá? Então vamos lá. Primeiro ponto, né? O que que é esse desktop bridge, né? Que a
+
+Microsoft liberou ali, ainda tá em preview, mas a gente já quer testar aqui em primeira mão junto com você. é um servidor local, tá dentro do PowerB Desktop e ele deixa scripts, agentes como Cloud Code, por exemplo, conversarem direto com o desktop, tá? Sem que você fique clicando manualmente, enfim. E aí o que que ele tem? Ele é composto de quê? Você consegue ver o
+
+estado, né? Então, se ele tá aberto. Então, é basicamente a instância, né? Então, se você abriu vários arquivos de PowerBI ali, ele vai identificar quais arquivos estão abertos, vai identificar a instância, né? verificar se se tem alterações que não foram salvas. Depois
+
+você consegue também recarregar. Então, a partir do momento que você usa, por exemplo, o Cloud Code para escrever a especificação da página que você quer, ah, eu quero uma página com faturamento ao longo do tempo, né, com filtro X, Y, Z, eh, você consegue pedir isso pro Cloud Code. Ele vai alterar os arquivinhos ali necessários e você consegue com esse mesmo arquivo aberto já ver o resultado. Você não precisa mais fechar o arquivo e abrir de novo para refletir as alterações e ainda dar aquela atualizada nos dados ali que às vezes ele pede, né? Então ele já puxa essas edições direto pro arquivo que você tá usando, que você tá com ele aberto ali. Ele também armazena um
+
+screenshot. Então para ele ter certeza que ele fez aquela alteração, ele salva um screenshot numa pastinha temporária ali também para você ver que funcionou. Mas você com o arquivo aberto você já consegue verificar as mudanças, tá? E você consegue descobrir outras coisas relacionadas ao modelo, fazer perguntas específicas ali com relação às páginas que já estão ali, né? As informações que já estão no relatório, tá? Eh, bom,
+
+vamos lá. E a gente precisa entender um pouquinho das quatro skills, eh, que a gente tem disponíveis hoje, que é Microsoft liberou, tá? Lembrando que essas três skills aqui, ó, design eh autoring e planning, não precisa de febrec, não precisa de login nem nada. Você tá utilizando somente o arquivo local da sua máquina, tá bom? A gente vai focar hoje no que realmente vocês sempre pedem, gente. Como é que a gente
+
+faz vibe coding no PowerBi? Como é que a gente diminui esforço ali na criação dos relatórios? É isso que a gente vai mostrar. Então, tem a parte de design, tem a parte de eh planejamento também, né, de levantamento de requisitos. Mas a gente vai focar hoje nesse daqui, ó, nesse Power RBI reporting, tá? Que que
+
+ele faz? Ele escreve e valida os jeisões do PBI, né, que é aquele formato que a gente salva. a gente vai lá em arquivo salvar como PEBIP e aí tem dois formatinhos ali de pastinhas que são criados, que eu vou mostrar na sequência. Então você consegue alterar páginas visuais, filtros, temas e muito mais, tá? Beleza? Vamos ver como é que
+
+funciona, tá? Vamos lá, ó. Primeira coisa que a gente precisa entender de diferença, tá? Muitos de vocês já devem estar confusos, né? Pô, PBIP, PBIX, PBIR, PBIX é aquele arquivo que a gente vai lá publicar e publica no PowerBi Service, tá? Ele é um arquivo binário, a
+
+gente não consegue fazer nada com ele, tá? Não consegue eh colocar versionamento, utilizar ele com Git, nada disso. O PBIP é o arquivo de projeto mesmo, tá? É o projeto inteiro, é como se fosse um pacote, uma pasta que contém o relatório e o modelo de dados, beleza? Eh, e tem o PBIR, que é esse PowerBi Report, que tá dentro do PBIP, tá? É um
+
+formato dos jonss dentro do relatório. Então, tem as páginas, visuais, temas. Então você vai ver vários arquivinhos ali que são responsáveis ali por esse conjunto, né? SPBI R. Então, como que é gerada? Ó, a estrutura gerada. Então,
+
+quando você vai lá em arquivo do PowerB, arquivo salvar como PEBIP, ele vai vir e o arquivo PEBIP que você salvou. E aí vai vir uma pastinha, ó, o nome do seu arquivo, né, do PB Desktop ali ponto report, né? E aí ele vai ter algumas pastinhas definition, eh, esse Jzon aqui com as configurações do tema, a definição das páginas, dos visuais, como esses visuais estão configurados ali dentro também. E também tem esse meio relatório, né, psemantic model, que é realmente o modelo de dados. Nessa parte aqui a gente não vai mexer, tá?
+
+Microsoft deixa bem explícito que a gente não entrou ainda nessa camada, mas eu sei que daqui a pouquinho a gente pode ser que entre aqui também, tá bom? Ah, e lembrando de uma coisa, a gente já tá desenvolvendo habilidades com o cloud e o Power BI, ó, antes da Microsoft liberar essas coisas pra gente. Então, a gente já tem algumas habilidades ali já criadas no cloud e que inclusive a gente vai se aprofundar nelas no nosso evento nos dias 21, 22 e 23 de julho, sempre à noite, nós iremos participar ali junto com você, que eu tenho certeza que você vai se inscrever na nossa imersão cloud mais inteligência artificial para negócios. Então esse evento ele é 100% online e gratuito, tá? Então lá você vai entender realmente como você pode utilizar o cloud e todas as suas variações no seu dia a dia, no seu trabalho, para inclusive você melhorar na sua profissão, na sua carreira, ser realmente um profissional que é incomparável, né? Eh, e um profissional
+
+que realmente vai fazer falta nas empresas, né? Você precisa hoje se posicionar como um profissional que entende de inteligência artificial, que aplica e que consegue realmente gerar resultados. E o objetivo do nosso evento é justamente esse. Então, se eu fosse você, eu não perderia esse evento, tá? Eu vou deixar aqui embaixo o link para você se inscrever 100% gratuito. E, ó,
+
+não deixa para se inscrever em cima da hora, porque a gente não vai deixar essa página aberta por muito tempo, beleza? A ideia não é lotar o evento, até porque a gente quer tirar dúvidas de vocês. Por ser um assunto novo, a gente quer ter essa interação ali no online com vocês, combinado? Beleza? Então, voltando ao assunto aqui, ó. Então aqui a gente tem
+
+a diferença desses dois, tá? Ó, aí aqui eu botei até no rodapé, ó. Esse por reporting é ele só mexe nessa pasta ponto report, tá? Que é esse PB, ele não vai mexer no modelo semântico, tá? Então não dá para criar relacionamentos, não dá para você criar medidas DAX, nada disso, tá? a gente vai eh focar
+
+especificamente nos visuais, na parte gráfica de colocar ali nas páginas, mas você já vai ter que ter o modelo semântico ali, né, criado, né, vai ter que ter as medidas Dax, porque senão e os relacionamentos, obviamente, né, senão você não vai conseguir ter muito êxito nessa parte, tá beleza? Eh, então a peça chave, qual é? Você salvar o arquivo como PBIP, tá? Como que você faz isso? Arquivo salvar com igual você salva numa pastinha, só que aí você vai mudar a extensão, o tipo, você vai botar PBIP, beleza?
+
+E aí vai ter esse ciclo automático. Então, com essa skill que a Microsoft liberou, que tá em preview, mas a gente já começou a testar, tem um ciclo, né? você edita o Jzon, então nessa pastinha que tá eh esses arquivos do PEBIP, você vai solicitar no cloud Code as mudanças que você quer. Ele mesmo vai ter um processo de validação interna para ver se tudo que ele aplicou, se deu certo, se não deu, se tem algum ponto de highlight. Eu rodei aqui uma alguns testes, né? E eu vi que ele até
+
+identifica, sabe quando você tem um tema dark e aí você coloca um filtro e às vezes o fundo desse desse filtro, quando você clica na seleção ali nas opções de valores, às vezes ele tá claro e a fonte tá clara e aí não fica legível. Até esse tipo de coisa ele validou e trouxe para mim como um problema e pediu para para eu confirmar alguma alteração ali para ajudar, né, a resolver esse problema. Então assim, eu tô achando sensacional, tá? Aí ele atualiza esse arquivo que tá aberto já, esse PBIP que já tá aberto para você e no final ele tira assim screenshot para ter certeza que deu tudo certo. E você consegue até e salvar isso no repositório, salvar numa pastinha específica e não só na pastinha temporária que ele salva, tá?
+
+Beleza? Vamos lá. Então, essa parte de instalação eu vou pular por quê? Porque eu vou deixar um documento aqui anexado, tá? Se vocês tiverem interesse, eh, para que vocês possam consultar e instalar passo a passo, tá? Eh, bom, então,
+
+falando em português, a gente pode mudar títulos, textos, rótulos de página, gráficos, né? Posicionar os os visuais, inserir os visuais, criar páginas, mudar formatação, cores, né? Enfim, é aquela parte mais gráfica ali do PowerBI, tá? E uma coisa muito importante e os seus dados, né? Aqui na Corporate a gente não usa eh o MCP ali direto para e o o cloud desktop pra gente editar o relatório de fato, né? eh, do jeito que a gente vê
+
+muitas empresas fazendo hoje. Por quê? Eh, porque eu não quero que o que o que a IA tenha acesso aos meus dados especificamente, tá? Então, nesse caso aqui, a gente tá salvando de forma segura. A gente salva o PEBIP e ele só vai ler a pasta do relatório. A pasta do
+
+relatório só vai vir e coisas específicas. Ele não vai vir modelo semântico, não vai vir dados, não vai vir fontes, né, específicas ali que dê para, sei lá, token, de nada, enfim, é 100% seguro, tá? Ó, ele não vê os valores das tabelas, eh, o modelo semântico fica fora do escopo da skill, ok? Então, ela vê a parte de layout, tá? Então, vamos ver funcionando. Eu botei
+
+aqui, ó, faça meu dashboard agora, por favor. Agora vai ser assim que a gente vai utilizar o cloud, né? Vamos lá. Vamos entender agora como que a gente pode fazer isso. Bom, eu tô aqui com o meu VS Code, tá? A gente vai utilizar o
+
+VS Code para fazer isso. Deixa eu abrir aqui, ó, uma nova sessão. E só para você entender, eu vou deixar aqui, ó, essa pastinha aqui para você enxergar o que que foi feito. Então, eu tenho uma pastinha que é onde eu vou rodar as alterações ali direto no PIBIP, tá? Então, o que que eu fiz? Eu tinha um
+
+arquivo para RBA desktop. Vim aqui em arquivo, salvar como, procurar esses dispositivos e selecionei. Ó, tava em PBIC, eu salvei em PBIP, tá? Quando eu fiz isso, ele gerou essa pastinha aqui, ó. Report semantic model. Semantic model
+
+é onde a gente não vai usar, tá? A as skills ali da Microsoft não rodam em cima dessa pastinha, rodam em cima dessa daqui, tá? Que é o PBI ali. Maravilha. Então, o que que eu fiz? Abri esse PBIP.
+
+Ele tá aqui, ó. Tá? Essa pastinha aqui, esse arquivinho aqui, ó. Eh, tá com essas página um, página dois, que é a duplicada da primeira e a página três aqui vazia, que foi, foram os testes que eu tinha feito anteriormente. Então, o que que a gente vai fazer, ó?
+
+Deixa eu botar ele bem no cantinho aqui e vou abrir o cloud code. Cloud Code tá aberto. Então, eu rodo o cloud Code no VS Code, tá? Você pode usar o editor de código que você preferir para rodar. E agora a gente vai começar o nosso processo.
+
+Então, primeira coisa que eu vou fazer, ó, é depois que eu instalei as skills do fabricadinho como é que você pode fazer isso. Eh, eu vou rodar o seguinte, o Power BI desktop status, tá? Deixa eu ver se tem Power BI, ó. Vou fazer isso daqui, ó. Vou rodar o Power BR Report aoring, que é a skill que eu tenho, só que eu vou pedir o status, tá? Vamos lá. Por que que eu tô
+
+fazendo isso? Porque às vezes você tá mexendo no Power BI ali, até mesmo no PIBP, tá navegando pela página, tá fazendo alguma coisa sem querer, fez alguma alteração, mudou a posição de um visual, pronto, ele pode não fazer a alteração que você quer no arquivo que tá aberto, tá? Então é legal você fazer isso, ó. fazendo esse status, ele vai verificar, ó, eh, reportes, ó, quais páginas que existem, né, o código, né, que é esse essa instância que tá aberta, que é essa daqui. Então, tá tudo certinho. O ideal é você fazer um
+
+arquivo de cada vez, tá? Eh, para que ele não até mesmo não se confunda ali nas alterações. Então, vamos lá. Agora sim, a gente vai conseguir trabalhar, ó. Então, vamos entrar nessa pastinha SLE 4. Eu vou copiar, ó.
+
+Copiei. E agora eu vou rodar o Autoring de novo. Aqui, ó. Ah, meu Deus. Deixa eu pausar ali, ó. Não terminei de digitar.
+
+Ó, PowerBioring. Beleza. Sobre qual pasta? Sobre essa pastinha aqui, que é onde estão meus PBIPs. Eu gosto de especificar porque senão ele vai ficar procurando qual o arquivo, né? Pode ser
+
+que você tenha mais de um arquivo aberto, enfim. Então, eu gosto de especificar certinho a pasta. Por mais que ele identifique a instância, né, é bom a gente deixar claro. Eu poderia rodar só isso daqui porque ele olhar só o arquivo aberto, mas eu prefiro especificar, tá? Beleza? Eh, tendo isso
+
+em mente, que que eu vou fazer, ó? Eu vou pedir, vamos dar uma olhadinha aqui nos filtros, nas coisas. Eu vou pedir para ele adicionar eh o fio, um filtro, um segmentador de, deixa eu ver o nome do visual, ó. Segmentação de dados. Vou pedir para ele adicionar uma segmentação de dados.
+
+com a coluna de vendedor gerente, tá? Ó, adicione uma coluna de filtro de segmentação. Coluna, não, né? Um filtro, não, um visual de segmentação de dados com o campo de vendedor. Aí vou abrir colchete gerente, tá? Deixei bem específico assim, tá?
+
+Para facilitar ele não ter dúvida também. [roncando] Adiciona o visual de segmentação em todas as páginas do relatório, tá? Botei aqui o bypass para ele direto. Fechou. Vou clicar aqui. Isso é uma
+
+alteração que é comum. Agora imagina se o seu relatório tem 10 páginas, 20 páginas. Aí o cliente pediu assim: "Ah, adiciona um filtro tal". Pô, chatão ficar colocando manualmente, né? Vamos ver o tempo que ele vai levar para fazer isso daí, ó. 8 horas aqui. Acho que ele
+
+não vai levar nenhum minuto. Vamos, vamos tentar. Vamos torcer. Ó, nã. Ele vai contando, né? Que que ele tá
+
+fazendo, ó. Verificando se existe o devendedor gerente. Ó, tá confirmando. E isso é legal, né? Porque ele, como ele tá lendo tudo que tá por trás, né? o o a
+
+parte de de das tabelas ali do do dos metadados mesmo do PowerBA, ele consegue verificar se faz sentido essa solicitação. Se não fizer, ele vai eh perguntar alguma coisa, vai pedir para você confirmar, né? Então ele é inteligente nesse nível, ó. Devendedor gerente existe, beleza? Tá verificando ali, ó, o tema.
+
+Por que que ele tá verificando o tema? Tá? Porque o você colocar um visual depende também de ficar de acordo com o tema padrão que você definiu de design, né? Então ele vai gerar um visual ali que faça sentido eh para para esse tema que a gente tá utilizando, tá? Então ele vai provavelmente colocar um filtro que vai ter fundo escuro, né? Seguindo o
+
+padrão ali dos outros visuais que a gente tem, por exemplo, dessa tabela, né? Vamos lá. Ele tá criando, ó. Já deu um minutinho. E olha que legal, né, pessoal? Tipo, às
+
+vezes a gente fica pensando, ó, eh, vamos usar a IA para nos ajudar no dia a dia, né, para realmente deixar a gente um pouco mais livre e pegar esse tempo que a gente não tá usando para fazer coisa manual, repetitiva, para realmente pensar. E a Microsoft tá indo muito nessa linha agora, criando essas habilidades, disponibilizando essas habilidades, até mesmo para quem não tem o fabric, né? Aqui agora o foco da Microsoft é o Febão, uma baita ferramenta, né? Eistema, na verdade. Eh, só que, pô, disponibilizar isso daqui de forma que ajude os desenvolvedores, né, cara, isso aqui é uma mão na roda. Ó,
+
+ele identificou algumas alguns errinhos aqui, mas tá passando. Às vezes ele pode identificar algum problema numa medida que não tá legal, né? Medida não, né? Algum visual, algum tema que não tá aplicado corretamente. E aí ele pode pedir para corrigir, tá? E
+
+eu já fiz esse teste também, ele corrige e fica redondo, tá? Ó, meu terceiro slicer. Tanã, ó, pronto, colocou, ó, acabou de piscar aqui o arquivo para mim. Ele já deve estar finalizando, ó. Agora ele tá tirando o print das páginas. Ah, um detalhe, né, naquele
+
+processo que eu mostrei para vocês, ele necessariamente faz esses prints, tá? Só que eu fiquei pensando, né, como a gente não tá utilizando, eh, a gente a gente tá priorizando não utilizar leitura de dados, né, ou seja, informações de faturamento, essas coisas que aparecem, evidentemente, nos visuais, né, principalmente tabela, né, que vem com detalhe às vezes. Eh, que que você pode fazer, que foi uma coisa que eu fiz aqui também nos testes, você pode desautorizar que ele que ele tire esse screenshot no final do processo, tá? Eh, isso para mim é essencial porque imagina que você tá utilizando uma pasta que tem várias pessoas com acesso, né? Então você não quer que eh esse print vá para essa pasta que, sei lá, pode ter acesso indevido ali, né? E até porque toda vez
+
+que você conversa com com o Cloud ali, ele roda um modelo de IA e ele leva essa informação lá para Antropic, né? Pode ser que ele não use, né? Obviamente eles não devem usar resultado de print, nada disso, mas, né? Seguro morreu de velho, a gente tem que se precaver desse tipo de coisa. Então, e você é a pessoa responsável, você que é pessoa especialista, né, em inteligência artificial, você que vai dominar essa técnica, essa essas habilidades aqui, eh, na sua empresa, você precisa ter essa consciência de, pô, será que meus dados estão sendo elevados para lá? Será
+
+que eu não tô indo muito a fundo, né? Porque eu tô vendo a galera usando ah para tirar insites, não sei quê. Só que lembra, toda vez que você manda uma chamada, manda uma mensagem para lá, o acesso que você deu de permissão de leitura dos dados é o que a troppo que tá tendo lá. Então, por isso que aqui a gente tá focando em utilizar os eh metadados, tá? E claro, eu vou explicar isso tintim por tintim lá no nosso evento, tá, pessoal? Aqui a gente
+
+trabalha não só com a gente não só tem treinamentos, mas a gente também aplica, né, eh o desenvolvimento de relatórios, o processo de BI como um todo nas empresas de forma corporativa. Então a gente consegue dar esse direcionamento para vocês de acordo com o que a gente faz em casa, né? No que a gente faz com os nossos clientes, tá beleza? Ó, os sliceres estão OK. Ó, ele resolveu aqui. Olha que legal isso
+
+daqui, gente. Ó, deixa eu ver que ele fechou aqui o Power RBI. Olha que eu não vou falar palavrão aqui, mas ele entendeu, não sei se você lembra, mas anteriormente ele tinha colocado o filtro bem em cima desse hashtag incomparáveis aqui. Pelo fato dele ter dado print, né, para verificar como é que tava e tal, ele identificou essa colisão, né, do segmentador de dados ali em cima do do textinho ali. Então, o que que ele fez? Ele eh ajustou isso daí, ó.
+
+Ó, gerentes lá eã não tão não tão mais sobrepostos ali. Então, cara, que sensacional isso aqui. Eu não imaginava que ele fosse fazer esse tipo de alteração, tá? E aí, pessoal, é verificar. Então, a skill rodou, ele demorou um pouquinho mais porque ele fez esses ajustes, tinha background e tudo mais, tá? Mas o que que você tem que
+
+verificar? Os outputs, né? Então, beleza. Quais os erros aqui que ele deu? Ó, não sou meu trabalho, nome inteiro do tema. Tararã. Beleza. Eh, a instância
+
+desktop tinha alterações não salvas. Que que são alterações não salvas? Mudou de página, mexeu alguma coisinha, né? Ó, salvo no Powerbé Desktop. E obviamente, né, você precisa verificar, poxa, será que ele colocou realmente o filtro de gerente? Ó, deixa eu abrir aqui maior
+
+para você enxergar, ó. Ger tá aqui, botou nessa página também. Tudo certinho, do jeito que a gente queria, né? Agora pensa no tanto de coisa que você pode fazer para criar o restante das outras páginas, né? E aqui eu vou fazer um teste, né? Não vou deixar
+
+rodando aqui o vídeo junto com vocês, mas vou fazer um teste que é o quê? Eu vou colocar esse prompt aqui, ó. Deixa eu copiar para vocês verem. É uma página única, tá? Mas ela tá bem [roncando] especificada.
+
+Deixa eu copiar aqui, ó. Pronto. Ó, em outra sessão, vou abrir uma outra sessão. Vou fechar essa daqui primeiro, ó. Fechei. Nessa outra sessão eu vou
+
+colocar esse prompt aqui, ó. Tá? Para mexer no mesmo arquivo, inclusive. Então, ó, vou botar a pastinha, esse sample 4 aqui, ó. Criar uma página, visão comercial sobre o modelo existente, somente autoria do relatório.
+
+Nã. Beleza? Ó, página, eh, página única, né? Título, três slicers, Ki, faturamento mensal. Então, eu especifiquei todos os gráficos que eu queria aqui, tá? E botei algumas coisas
+
+para evitar aqui de de dar problema. Beleza? Então, eu vou rodar esse prompt aqui, tá? Vou deixar, vou até fazer o seguinte, vou fechar, não vou aplicar as alterações, não vou aplicar as alterações [tosse] [limpando a garganta] e vou abrir de novo aqui, ó. tá com horário de 7:55, tá certo? Ó, só
+
+abrir o arquivo, tá? E vou colocar isso aqui para rodar e retorno com você aqui pra gente ver eh como que ficou, né? Pra gente ter essa noção do que que ele consegue criar e para vocês verem também a questão do tempo, né? Então vamos lá, ó. Vou botar aqui, ó, bypass e vou botar para rodar.
+
+Antes de botar para rodar, só um detalhezinho aqui, ó. Que que eu fiz a mais? Tá? Eu criei uma pastinha aqui de tokens porque eu quero checar quanto de tokens que a gente tá consumindo, né? Talvez na sua empresa não tem o maior plano, talvez você tenha uma capacidade limitada ali, enfim. E aí é legal a
+
+gente saber como, né, o que que tá gastando mais, porque poxa, se adicionar um filtro em todas as páginas, né, é um negócio que tá custando mais do que, sei lá, criar um outro gráfico que talvez tenha maior valor agregado, pô, vai lá, faz na mão, né? Não precisa fazer tudo tudo com prompt, né? Então tem que tomar cuidado, tem que dosar ali a preguiça, né, e os esforços cognitivos do da antropic ali do do cloud para rodar esse determinado negócio. Então, ó, eu criei eu criei esse dash aqui, ó, para identificar. Então, nessa última sessão, ó, eu rodei esse primeiro, né, ó, ele rodou aqui. Então, isso aqui é o total
+
+de tokens, né, de entrada e saída. Então, foram dois comandos aqui. O primeiro, né, para ele verificar o status, aí foi tranquilo. E o segundo que é esse daqui. E aqui, ó, ele vai colocando o cash eh criado, né, o quanto que você gastou de entrada, quanto que foi saída ali. E eu fiz isso para
+
+vários, vários testes que eu fiz aqui embaixo. E eu vou deixar esse teste rodando também para essa versão que a gente vai fazer, que é a criação da página inteira, tá? Então, vamos lá, ó. Vou colocar aqui. Cadê? Cadê? Cadê Code?
+
+Cadê você? Aqui. Pronto. Vou dar enter e daqui a pouco eu volto. [música] Até acabou o café aqui. Olha, demorou
+
+esse trem, hein? Nossa senhora. Vocês vão ver o tempo final depois. Perguntei aqui se finalizou porque demorou tanto que nossa senhora, já sabemos de uma coisa, né? Ó, oito visuais renderizados corretamente com dados reais no tema escuro. Repare que na primeira, conforme
+
+ele foi evoluindo, a primeira versão que ele gerou, ele colocou os dados no cartão e aí ficou o cartão todo branco, né? Então aqui, ó, ficou tudo branco e ele foi dando print, entendendo que aquilo não era legal, não era legal, não era. E aí ele foi ajustando até chegar nessa nessa versão aqui final. Então, repara que a gente já tem um negócio aí, ó. Tema Dark é complexo para ele trabalhar, tá? Opa,
+
+pronto, voltou. Até deu um piripque aqui, ó. Os 13 erros de validação são do arquivo tema, tá? Que era o arquivo que tá importado aqui. Então ele ele possivelmente, né, deve ter travado um pouco, demorado um pouco conta desse arquivo tema, que ele precisa. Por quê? Porque ele precisa
+
+criar os gráficos específicos ali. Então, o que que eu sugiro para uma primeira versão? ao invés de você já criar todo o tema, definir tudo, talvez seja mais fácil começar com o tema em branco e depois só mudar as cores. Depois você insere o tema padrão eh com as cores que você precisa, ao invés de você importar um tema específico ali, tá? Margem bruta ficou com duas casas, herdado na medida. Força um,
+
+prejudicarei os tailos no mesmo card, tá? Então, beleza, mantive essas alterações que ele fez aqui, vou fechar a sessão e agora tô curiosa para saber a quantidade de tokens que a gente gastou, tá? Ó, fechei a sessão. Vamos ver aqui o que que apareceu, ó. 8:28.
+
+Até que, né, em relação ao anterior, né, que a gente tinha construído aqui, eu achei que ele fosse gastar bem mais pelo tempo que a gente levou para criar. Até que não, tá? Talvez se não tivessem esses probleminhas do tema, ele rodaria mais rápido. Beleza? Mas tá aqui, ó, o dashboard criado. Não coloquei a mão
+
+para nada. Ele já deixou os títulos, os rótulos, os filtros. Ele não tirou o background aqui do filtro, mas também eu não especifiquei, né? Isso aqui provavelmente deve estar no tema ali. Beleza? Quero que vocês testem aí
+
+também, me contem como é que tá sendo essa experiência. E de novo, se quiserem um passo a passo ali para instalar as skills, né, avisa aqui ou me lembra pra gente colocar aqui na descrição também, combinado? Nos vemos numa próxima. Tchau. Ciao. [música]
