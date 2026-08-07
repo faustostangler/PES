@@ -1,0 +1,101 @@
+---
+video_title: "Emulated: The Data for Fully Autonomous Software Engineers and Companies — Joseph Wang"
+video_id: zkX03APVj0M
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zkX03APVj0M
+video_date: 2026-07-31T21:00:03+00:00
+video_description: |
+  To train an agent that can run production software, you need training data that looks like production, and that is what Joseph Wang's team at Emulated builds. Coming from network infrastructure backgrounds, they know what happens when something like a database goes down at scale, and they argue that current post training environments do not capture it. A real task is not a tidy code diff; it is fifty to a hundred turns of solving live traffic while distributed nodes fail, configs conflict, and unforeseen problems appear mid incident.
+  
+  So Emulated simulates whole companies. Imagine acting as an engineer inside a cloud provider or an infrastructure service, provisioning resources across VPCs, subnets, and security groups, meeting real bars around cost and deployment, and keeping a service alive as it grows, all inside a high fidelity environment rather than a stub. Wang's bet is that domain expertise plus faithful simulation is what lets agents learn the messy, end to end reality of infrastructure work, and he closes looking for people who have trained models or run real infrastructure to help push that fidelity further across more domains.
+  
+  Speaker info:
+  - https://emulated.so/
+  
+  Timestamps:
+  0:00 - Useful work over longer horizons
+  1:20 - Backgrounds in network infrastructure
+  2:26 - How environments shape capability
+  3:16 - Fifty to a hundred turn tasks
+  4:59 - Why real incidents are messy
+  7:11 - Real infrastructure isn't a code diff
+  7:40 - Acting as an engineer inside the cloud
+  9:37 - Deployment, cost, and scaling bars
+  13:29 - Why it's called Emulated
+  15:01 - Simulating full companies
+---
+Agradeço a apresentação. Meu nome é Joseph e este é meu sócio, Sid. Emulated é um laboratório de dados focado em aumentar a confiabilidade e a autonomia de agentes de IA. E se você é um engenheiro de IA e assistiu às palestras, viu as sessões, então provavelmente há uma conclusão que todas as palestras têm em comum. E isso significa que estamos caminhando para um futuro onde os agentes serão capazes de realizar trabalhos úteis por períodos cada vez mais longos, com pouca ou nenhuma supervisão.
+
+Então, hoje vamos responder a algumas perguntas sobre o que isso significa para as camadas de dados e de modelos. Vamos abordar alguns assuntos bem interessantes. Então, fiquem atentos a eles. Tipo, como simular uma empresa dentro de um ambiente de teste (sandbox) ou ambientes de teste para sistemas com múltiplos nós e clusters distribuídos? E se tivermos um tempinho, também vamos falar um pouco sobre o trabalho que estamos desenvolvendo com pipelines de pós-treinamento e como esses novos tipos de sandboxes estão afetando a infraestrutura de pós-treinamento.
+
+Então, eu e o Sid temos experiência em infraestrutura de rede, bancos de dados distribuídos e infraestrutura de sandbox. E essas são todas áreas onde as cargas de trabalho são essenciais para a missão. Todos nós vimos há alguns meses que, quando algo como o DynamoDB cai, o mesmo acontece com o US East 1 e metade da internet. Ao trabalhar nesses sistemas, percebemos uma lacuna na capacidade de modelagem quando se tratava de operar e construir esses sistemas em grande escala, e ao pensar nas consequências da arquitetura e do projeto do sistema ao longo dos anos. Sim, então isso levou a uma pergunta bastante natural , não é?
+
+Por que, para serviços tão críticos, meu modelo ou agente é tão eficiente no gerenciamento da camada de aplicação, mas encontra dificuldades ao lidar com as complexidades da infraestrutura? Por exemplo, coisas como MVCC em um mecanismo de banco de dados, que podem levar a problemas de corrupção, sendo essa uma das causas da falha do DynamoDB alguns meses atrás. Assim como em tudo em NML, a lacuna nos modelos geralmente é uma lacuna nos dados. Os modelos geralmente são tão bons quanto os dados disponíveis. E para realmente destacar esse ponto, certo? A capacidade do modelo nunca
+
+regrediu quando se introduzem dados de maior qualidade. Então, dito isso, qual é a lacuna de dados? Como estão os dados atualmente? E como isso está influenciando a lacuna de capacidade do modelo neste caso? Então, se você observar qualquer um dos benchmarks de ponta ou recentes, como o SweBench Pro, o Terminal Bench ou algo como o Frontier Code e o Deep Sweep, verá que as tarefas operam apenas dentro da base de código.
+
+O agente recebe uma tarefa bastante grande e, ao longo de 50 a 100 turnos, produz um relatório de desempenho ( PR) de alguns milhares de linhas. Mas não faz todo o trabalho que um ser humano faz. Não faz o que um gerente de produto faz ao conversar com os clientes, entender seus problemas, o que um engenheiro faz ao testar diferentes abordagens, realizar testes de desempenho e gerenciar a infraestrutura subjacente da base de código ao longo de não apenas meses, mas anos. E é exatamente essa lacuna que estamos preenchendo. Pegamos empresas de engenharia de software e as colocamos em ambientes conteinerizados. Isso
+
+inclui contextos organizacionais como projetos, incidentes e conversas com clientes. O agente também precisa lidar com problemas que só aparecem em grande escala, como falhas de rede entre nós distribuídos, corrupção de dados e discrepância de relógio. E, por meio de tudo isso, também queremos que os agentes raciocinem sobre a orquestração em clusters distribuídos e considerem aspectos como o raio de impacto operacional ao lidar com tráfego em tempo real. E o resultado é que a tarefa que esses agentes precisam concluir, ou que queremos que eles aprendam, é que os ambientes são muito mais complexos e de longo prazo do que uma simples comparação de código. Então, vamos adicionar uma imagem à discussão, porque isso tende a tornar as coisas mais interessantes. Aqui está um
+
+exemplo que criamos de um cluster de consenso SCD no qual um serviço de produção típico poderia confiar. Então, um ambiente antigo tendia a operar e funcionar principalmente naquele pequeno quadrado azul intitulado código-fonte SCD, no canto inferior direito. Mas, grande parte da diversão e da lacuna de capacidade do modelo que resulta disso está, na verdade, em tudo o que a rodeia. Então, você começa com os ingressos, projetos, análises pós-projeto. O que são os descarrilamentos de trem? Por que aconteceram? Qual
+
+foi a opinião dos clientes sobre eles? E muitas vezes essas informações não estão necessariamente atualizadas. O agente precisa incorporar tudo isso ao analisar a mudança real que os ambientes atuais o obrigam a fazer. Depois dessa mudança, você precisa dar um pontapé inicial nas implantações contínuas. Esses sistemas de implantação podem muitas vezes ser complicados, apresentar conflitos e até mesmo não funcionar.
+
+E durante todo esse processo, quando você finalmente migra do hardware antigo para o novo, você se depara com problemas imprevistos que o agente precisa analisar em tempo real, assim como um humano faria, certo? Você tem nós com falha. Você tem nós obsoletos. E enquanto tudo isso acontece, o serviço não pode ser interrompido, pois o impacto no tráfego ao vivo é enorme. Você precisa observar e monitorar seu serviço. Todos esses componentes dentro do
+
+sistema são, na verdade, um exemplo de uma tarefa completa de infraestrutura de ponta a ponta . Então, o que Sid está descrevendo aqui é um ambiente em um sandbox de nó único, onde estamos simulando um cluster distribuído com múltiplos nós, nós instáveis, aprendizes com atraso, tudo em um único sandbox. E você pode ir bem longe com isso, certo? Como você pode ver, há tráfego ao vivo e muitos problemas operacionais que um engenheiro de verdade teria que resolver. E você pode alcançar esse horizonte de longo prazo simplesmente realizando várias implantações em vez de apenas uma.
+
+Mas, na verdade, o que estamos vendo é que isso não é suficiente. Bem, isso se encaixa nos fluxos de trabalho padrão de pós-treinamento, no sentido de que um fluxo de trabalho padrão de pós-treinamento é meio chato. É meio homogêneo. Sabe, tudo funciona como um ambiente controlado por um porto, tudo é uma única sandbox, tudo em contêineres. Mas a infraestrutura real não funciona assim. Não é assim que
+
+empresas de verdade funcionam. E, embora seja possível usar algo como simulação determinística para simular falhas de rede, isso não representa o que você pode encontrar ao construir um serviço na escala da AWS. Então, acho que vi algumas pessoas na AWS. Alguém estava com o jogo Viceroy aberto no laptop. Que momentos divertidos. Mas vamos
+
+imaginar que todos nós somos engenheiros da AWS ou engenheiros do GCP. Azure também. Sem ofensas, né? Hum, e estamos construindo um serviço em nuvem. Bem, também pode ser algum serviço de infraestrutura como DataDog, Vercel ou Superbase.
+
+Bem, todos esses serviços enfrentam os mesmos problemas. Você começa com um software brilhante. E esse software consegue atender muito bem um único cliente. Hum, talvez esteja rodando na sua máquina. Se você trabalha para a NLB, deve ser um balanceador de carga, certo? Se você estiver trabalhando com o
+
+AWS Lambda, provavelmente será algum tipo de ambiente de execução sem servidor. Mas, na verdade, precisa funcionar em algum lugar. Portanto, se você é um engenheiro de infraestrutura, o próximo passo é começar a trabalhar com o provisionamento de recursos. Hum, e é aqui que o sandbox de nó único começa a apresentar problemas. Como provisionar recursos em um único ambiente de teste (sandbox)? Não dá para
+
+simular exatamente algo como o EC2 ou o Cloud Run, certo? Então, você começa a se envolver com o provisionamento de hosts. Ah, isso também inclui o provisionamento de outros recursos, como VPCs, sub-redes e grupos de segurança. E você precisa expor isso por meio de algum tipo de API, porque seus clientes vão querer coisas como: "Ah, me dê esse software incrível." Ou então: "Não quero mais. Custou
+
+muito caro. Estou indo à falência. Apague, por favor." Então, você vai precisar de algum tipo de API de front-end. E se você tiver clientes corporativos que realmente se importam com a qualidade, então você terá que atender a certos critérios, como limitação de taxa, autenticação e autorização. Não dá para ficar
+
+sem essas coisas, né? Bem, se você é da AWS, então isso também se aplica ao CloudTrail. Hum, e além disso, o software é vivo. As pessoas se esquecem disso o tempo todo, principalmente os investidores, não é? Eles vão dizer algo como: "Ah, você escreveu.
+
+Pronto." Bem, mas o software é dinâmico e você provavelmente também precisará de algum tipo de componente de implantação de software . Hum, algo assim: sempre que tiver uma atualização para lançar, lance-a. E, Deus me livre, se algo der errado, reverta a ação . É preciso gerenciar todas as diferentes versões e garantir que as implantações sejam graduais para limitar o impacto.
+
+E estamos apenas começando com isso. Há vários aspectos a serem considerados, como o monitoramento da integridade da rede com atenção às partições. E como você se comunica com o seu host para poder alterar as configurações em tempo real? Talvez seu cliente queira ligar para seu ponto de extremidade, então você precisa de gerenciamento de DNS e certificados. E aí, sabe, conforme seu serviço cresce bastante, você precisa monitorar todos os seus recursos, o que está acontecendo, fraudes e coisas do tipo, aí você precisa de consoles de administração, telemetria, faturamento se estiver ganhando dinheiro, enfim, todo tipo de coisa. E com tudo
+
+isso, acho que falta mais um slide para falar sobre agendamento. Sim. Bem, acho que o ponto está bastante claro neste momento. A partir de um certo limite, existe uma massa crítica a partir da qual o isolamento em um único nó só consegue ir até certo ponto. E é por isso que imaginamos o futuro caminhando para um mundo onde os ambientes realmente forneçam infraestrutura.
+
+Sim, então o que isso é é... um ambiente de testes com vários nós e acesso a infraestrutura real, recursos reais de nuvem. É como se tivéssemos colocado uma nuvem dentro de uma caixa, então "caixa de nuvem" poderia ser outro nome para isso. Bem, como vocês podem imaginar,
+
+mudar o tipo de sandbox de forma tão drástica afeta também os pipelines pós-treinamento , e acho que estamos com pouco tempo, então não vamos nos aprofundar muito nisso. Mas sim , uma coisa muito legal também é que você pode colocar um pipeline de pós-treinamento no ambiente de testes, e tem algumas coisas interessantes relacionadas ao treinamento de modelos e RSI que você pode explorar lá. Então, sabe, isso levanta uma questão: tudo isso é muito legal, Joseph. Ah, obrigado, Sid, por falar. Por que você está vazando toda essa versão alfa, né? Por que você fica contando todos os
+
+segredos da sua organização e dizendo para todo mundo: "Ah, tá, como se constrói um sistema assim?" É porque estamos realmente interessados nesses desafios. Achamos que são muito divertidos. Sabe, nós achamos que eles são muito legais. A gente acha que vocês são pessoas legais, ou talvez eu esteja mentindo, quem sabe. E queremos compartilhar esses
+
+desafios com vocês, caso também tenham interesse em trabalhar neles. Como você pode imaginar, existem muitos outros problemas diferentes que não abordamos aqui. Por exemplo, configurar toda a infraestrutura necessária para algo como o AWS Lambda leva horas. Como você integra isso a um plano de implementação pós-treinamento? Ah, e também tem a questão do custo. Como
+
+gerenciar isso de forma eficiente? Como garantir que a diferença entre a simulação e a realidade, mesmo com recursos reais, ainda exista, certo? Você ainda precisa ter tráfego de clientes reais . Você ainda terá problemas que só aparecem em uma determinada escala. Então, sabe, se você é um engenheiro de sistemas distribuídos, hum, se você conhece esse assunto, se você já treinou modelos antes, hum, se você acha isso interessante, então, sabe, adoraríamos conversar.
+
+Adoraríamos conversar, para saber suas opiniões, ouvir sobre o que você já trabalhou, talvez algo como: "Ah, Kubernetes." E vocês têm opiniões semelhantes. Bem, todo mundo tem opiniões sobre escalonamento automático, implantações contínuas e outras coisas do tipo, mas são opiniões bem específicas, né? Tipo, em CDO. Sim , adoraríamos conversar com você e ouvir o que você tem a dizer.
+
+Obrigado. Sim. Qual é o seu principal objetivo com o emulador? Sim, isso explica por que se chama "emular", certo? Bem, o mundo real é muito, muito complexo, e a forma como nós, enquanto indústria, tentamos emular o mundo real é incrivelmente artificial e de baixa fidelidade. Então, o objetivo da emulação é realmente
+
+como fazer com que esses agentes sejam donos de sistemas como este, e talvez até de sistemas inteiros, empresas inteiras, emulando o mundo real com total fidelidade. Sim, pode prosseguir. A próxima pergunta é: vocês estão focados principalmente em infraestrutura, com muitos contêineres e coisas relacionadas a hardware, ou também trabalham com ambientes de aprendizado de máquina completos, como um gêmeo digital? Sim, claro. Tipo, a questão é que, sabe, infraestrutura é muito legal.
+
+Bem, em 2026, todos nós estaremos em um retorno triunfal do infra, e isso é muito sexy. Todo mundo quer trabalhar nisso, certo? Mas também existem outros tipos de ambientes de RL. Bem, existem outros fluxos de trabalho que você realmente gostaria de capturar, que não estão necessariamente relacionados à infraestrutura. Bem, o motivo de começarmos com a infraestrutura é que, hum, existem alguns motivos. Bem, o primeiro e
+
+mais importante motivo é que ele reflete muito a nossa história. Bem, acreditamos que o conhecimento especializado na área é um fator que influencia a qualidade dos seus dados . Ah, especialmente com a natureza específica dos dados atualmente. E em segundo lugar, quando simulamos empresas inteiras, a infraestrutura é a área mais fácil de abordar. Bem, se você pensar em qualquer empresa de infraestrutura por aí, seja a Superbase ou a Modal, ou qualquer empresa de ferramentas de desenvolvimento, o problema fica bem claro.
+
+Bem, os engenheiros meio que sabem o que querem. Se você trabalha na Modal, sabe que seus usuários desejam um ambiente isolado para GPUs, latência muito baixa e custo muito baixo. Você não quer falhar no meio do seu treino. É isso que te interessa. Assim, a definição do problema torna-se muito mais fácil.
+
+Por outro lado, se você é, digamos, uma empresa da turma de verão de 2026 da Y Combinator, provavelmente ainda está tentando encontrar o encaixe perfeito entre produto e mercado, certo? Sim . Ao mesmo tempo, também se aprende que investir de forma muito vertical em um único domínio, como infraestrutura, pode se traduzir em benefícios em outros domínios horizontais. Então, também estamos explorando a possibilidade de nos aprofundarmos em um nicho específico e expandirmos dessa forma. Tudo bem. Muito
+
+obrigada mesmo. Agradeço as perguntas. Provavelmente vamos sair e tirar mais algumas fotos lá fora, só para garantir que o próximo palestrante tenha espaço. Sim . Ah, eu agradeço a todos por ouvirem.
+
+Agradeço.
+
+[música]

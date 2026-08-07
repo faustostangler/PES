@@ -1,0 +1,129 @@
+---
+video_title: "MCP Apps: Extending the Frontier — Ido Salomon & Liad Yosef"
+video_id: -jY2T2PiJBE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-jY2T2PiJBE
+video_date: 2026-08-02T23:30:06+00:00
+video_description: |
+  Chat and coding assistants still hand you walls of text when a button, a chart, or a small interactive view would say it faster. Liad Yosef, who co created MCP UI, walks through MCP Apps: a way for an MCP server to return a real interactive interface instead of a block of text, built on the MCP UI project he started and now shaped through an open working group in the MCP committee. A tool call links to a registered resource, the host renders it as a web component, and clicks flow back into the agentic loop, so the same funnel that would take a paragraph to explain becomes something you can see and act on at a glance.
+  
+  The payoff is write once, run anywhere. Because it is a standard rather than a bespoke integration, a UI a server ships shows up across every host that supports it, and Yosef points to adoption by hosts and tools already in the ecosystem. He is candid that the spec is still evolving, with live work on how the app and the chat talk to each other and how apps interoperate, and an open invitation to contribute. The bigger bet is distribution: when a host reaches hundreds of millions of weekly users, a server that speaks MCP Apps reaches all of them at once.
+  
+  Speaker info:
+  Liad Yosef
+  - https://x.com/liadyosef
+  - https://linkedin.com/in/liadyosef
+  - https://ora.ai
+  
+  Ido Salomon
+  - https://x.com/idosal1
+  - https://www.linkedin.com/in/ido-salomon/
+  
+  Timestamps:
+  0:00 - Why we need MCP Apps
+  1:52 - From walls of text to interactive views
+  2:29 - MCP UI, created and adopted
+  4:26 - An open working group in the MCP committee
+  5:04 - How a tool call becomes an interface
+  6:31 - Standardizing the flow
+  8:52 - The architecture: resources and web components
+  10:10 - Consuming apps through the browser
+  14:29 - What's still evolving in the spec
+  16:07 - Interoperability across hosts
+  17:14 - Write once, reach hundreds of millions
+---
+[música]
+
+Oi. Olá a todos. Criamos esta apresentação ontem, então pode estar desatualizada. Sou Ido Sadan, criador do MCPY e co-criador e mantenedor dos aplicativos MCP no comitê diretivo do MCP. Eu também criei o Adam Craft, caso você tenha participado da palestra de ontem.
+
+Eu sou o Adi. Eu trabalho com Ido no MCPY. Sou também co-criador e mantenedor da especificação de aplicativos MCP e recentemente co-fundei a Aura, que é um laboratório de pesquisa para a web agética. E falaremos um pouco mais sobre isso mais tarde. Portanto, os aplicativos MCP estão por toda parte. Você
+
+talvez nem perceba, mas todos os aplicativos sofisticados que você tem hoje no ChatGPT, VS Code e Slack são, na verdade, baseados no MCP e na especificação de aplicativos MCP. E se dermos um passo atrás e perguntarmos: por que precisamos de aplicativos MCP? Qual é a ideia por trás dos aplicativos MCPY ou MCP? Então, quando trabalhamos com chats, quando conversamos com clientes, costumávamos usar mensagens de texto porque essa é a interface natural, mas o texto é realmente a pior maneira de transmitir muita informação, certo? Porque não queremos paredes de texto. Na verdade, esse
+
+é o principal obstáculo que impede as empresas de construírem um servidor MCP. Eles não querem ser reduzidos a um banco de dados textual. Eles não querem perder a identidade da marca nesse processo. Eles não querem que os dados, nos quais trabalharam tanto para construir a experiência do usuário, fiquem assim . Então, em vez disso, e se os aplicativos pudessem simplesmente enviar sua interface de usuário para o chat, certo? E se todos os
+
+serviços e todas as marcas pudessem simplesmente enviar sua interface de usuário para o chat? Então, em vez de ficarmos olhando para algo assim, poderíamos simplesmente fazer com que os aplicativos enviassem sua própria identidade, seus próprios elementos de interface do usuário, para o chat, e então nós daríamos uma olhada e veríamos: "Ok, sim, eu sei que isso é o Shopify no meio. Eu sei que isso é o Hugging Face. Eu sei que isso é o Monday." E se não quisermos fazer isso apenas como uma visualização? Também queremos que seja
+
+interativo. Então, queremos que os usuários possam interagir de fato com o Hugging Face, por exemplo. E que a Hugging Face realmente faça algo com isso. Portanto, não precisamos imaginar o futuro como dissemos com o MCPUI, que eu criei em maio do ano passado, e que é essencialmente um protocolo aberto para aplicativos interativos sobre MCP. Portanto, não se trata apenas de como você transmite a interface do usuário, mas também de como essa interface, esse aplicativo, se comunica com o host.
+
+E há poucos meses, fizemos uma parceria com a Anthropic e a OpenAI para criar a extensão oficial do MCP, que chamamos de aplicativos MCP baseados no MCPUI, no SDK do MCP e em outras soluções da área. O lançamento foi muito legal, com o Claude e o VS Code dando suporte inicialmente, mas agora, obviamente, a OpenAI e outras empresas também o adotaram. Sim, e há muitos usuários pioneiros no MCPUI. 11 Labs, Shopify, Postman. Essa foi uma das primeiras empresas a dar suporte a isso, há cerca de um ano. Foram eles que
+
+acreditaram nessa especificação, nessa visão. E Goose também apoiou isso. E é uma anedota engraçada porque hoje a Block lançou sua solução de comércio agentivo baseada em aplicativos MCP. Então, há um ano, o Goose foi o primeiro cliente a oferecer suporte ao MCPUI, e agora ele faz parte do produto da Block. E hoje temos muito mais clientes que dão suporte ao MCPUI.
+
+Nós usamos o Cursor, e temos suporte para copiloto e GitHub ChatGPT em aplicativos MCP. Os aplicativos ChatGPT que você conhece são baseados em aplicativos MCP, e a Open Eye recomenda o uso de aplicativos MCP como protocolo para criar aplicativos ChatGPT. Postman e muito mais, e obviamente a Nuvem suporta aplicativos MCP. Mas também temos uma comunidade muito grande em torno disso, certo? Então, as pessoas começam a criar plugins para aplicativos MCP e integrações com diferentes agentes, além de cursos sobre como criar aplicativos MCP.
+
+Isso é feito por meio da integração com aplicativos MCP. Então, temos muita comunidade em torno disso. Existe um aplicativo chamado Repo X, que é o repositório para aplicativos MCP, onde todos podem vir e propor PRs e ideias de como estender essa especificação. Temos um grupo de trabalho no comitê MCP que se reúne a cada 3 semanas. Realizamos reuniões três vezes por semana para discutir o futuro do protocolo e como fazer com que a especificação atenda não apenas aos aplicativos maiores, mas também à comunidade. Portanto, trata-se de um grupo de trabalho aberto
+
+com a Anthropic, a Open AI e todos os parceiros no protocolo de aplicativos MCP. Certo, então vamos analisar alguns dos conceitos básicos dos aplicativos MCP. A primeira e mais óbvia questão é: como transmitir a interface do usuário via MCP? Então, se analisarmos este exemplo de nuvem, como, por exemplo, o agente, há alguns meses, ao fazer uma pergunta, na melhor das hipóteses, ele se conectaria ao meu servidor MCP e receberia uma resposta textual, o que obviamente não é o ideal. Então, digamos que eu queira conseguir algo melhor.
+
+Agora posso usar primitivas MCP existentes como um recurso e retornar HTML. E eu posso pegar esse HTML e, como a nuvem é compatível com aplicativos MCP, posso transformá-lo em um aplicativo interativo com a melhor trilha sonora do mundo. E se você quisesse ser realmente interativo, certo? Isso é ótimo porque mostra a melhor trilha sonora do mundo. E se eu quiser adicionar uma das músicas de lá aos meus favoritos? Quero interação.
+
+Desejo comunicação entre o aplicativo e o host. Assim, quando o usuário clica no botão de favoritos, os aplicativos MCP padronizam esse fluxo. Então, em vez de o aplicativo enviar uma mensagem para o backend, para o backend do Spotify , ele está enviando uma mensagem para o host dizendo: "Ei, o usuário clicou em um botão. Faça algo com isso. Recomendo que você chame uma ferramenta no servidor MCP do Spotify." E o anfitrião
+
+decide o que fazer. O host mantém esse controle do fluxo. Nesse caso, o host pode decidir chamar a ferramenta favorita. E os aplicativos MCP padronizam esse fluxo. Bem, ver para crer. Então,
+
+vejamos um exemplo de Claude. Sim
+
+. Então, digamos que eu seja um gerente de produto e preciso entender o status do meu funil de vendas. Então, eu iria até Claude e perguntaria qual é a situação. No mundo antigo, de alguns meses atrás, eu receberia uma resposta por mensagem de texto. Vamos supor que seja o PostHog.
+
+Então, o sistema contatou o servidor PostHog e recebeu a resposta textual. É factual, mas é inútil. Quer dizer, como é que eu consigo assimilar isso e entender rapidamente o que está acontecendo? Eu teria que ler, o que eu não quero fazer. Ah, e é bastante desafiador. Mas, felizmente,
+
+como tanto o servidor PostHog quanto o Claude como host suportam aplicativos MCP, eu posso simplesmente dizer: "Mostre-me". E agora, em vez de receber aquele bloco de texto, posso obter algo realmente útil, que é este widget interativo que você obteria no servidor PostHog. E quando você tem isso, consegue ver o que está acontecendo num relance. E como você pode ver, é da marca PostHog. Então, na verdade, você está tendo a experiência do PostHog dentro do ChatGPT ou Claude, etc.
+
+Mas não termina aí. Como já dissemos, os aplicativos MCP também funcionam como uma chamada de fotos interativa. Então, não só posso ver e interagir com ele, como também posso fazer coisas como pedir para ele explicar o que é um funil. Talvez eu nem saiba disso. Então, novamente, em vez de receber aquele enorme texto explicando o que é um funil, posso simplesmente obter esta resposta gerada por interface de usuário do Claude, que usa aplicativos MCP. O conteúdo é transmitido
+
+como o HTML interno, e agora posso ter essa ótima experiência interativa de aprendizado. Além de ser visualmente agradável e me ajudar a entender, também é totalmente interativo. E quando dizemos interativo, na verdade significa que clicar nele me ajudaria a me comunicar com o anfitrião. Então, digamos que eu queira entender uma etapa específica do funil. Bem, eu simplesmente clico nele e , como é um aplicativo MCP, ele pode enviar uma mensagem de volta para o modelo e dizer: "Ok, explique-me esta etapa específica ." E eu posso acelerar o fluxo.
+
+Então, este é um exemplo de como isso se parece. Então, como isso funciona na prática? Se você observar a arquitetura disso, então , começamos por meio de sugestões. Então, digitamos algo. Ah, pedimos as informações do funil. Foi feito um pedido de auxílio para o fornecimento de ferramentas
+
+. Como nosso servidor suporta aplicativos MCP, essa chamada de ferramenta está, na verdade, vinculada a um recurso. E se você olhar para o código aqui, então, sabe, é apenas um recurso com um prefixo qualquer. Nós aceitamos. É um código bastante simples. Eu poderia simplesmente adicionar o "
+
+mas ainda é o recurso com o HTML, e pronto". Esse recurso é então consumido pelo host. Na prática, geralmente é consumido antecipadamente, como se já viesse pré-carregado. Mas imagine que isso seja consumido em tempo real. Esse mesmo HTML é então passado para o host que também oferece suporte a aplicativos MCP.
+
+Basicamente, se você observar o SDK de interface do usuário do MCP , os aplicativos MCP são apenas um componente React ou um componente web que aceita esse recurso mais um retorno de chamada, que é como implementamos esse protocolo de comunicação, como mencionei anteriormente. E o renderiza em um ambiente isolado (sandbox). Então, como dissemos, não é apenas uma questão de apresentação, eu consigo clicar. Então, o que acontece quando eu clico? Então, quando clicamos nele, o evento é enviado de volta através desse callback até o nível superior. O modelo
+
+recebe esse evento e então pode enviar uma chamada de ferramenta, chamar um recurso ou qualquer outra coisa que complete o fluxo agético. E essa arquitetura traz, de fato, uma nova filosofia ou uma nova visão para a web. Então, em vez de pensarmos na web como abas ou serviços que precisamos consumir usando um navegador, agora a consumimos usando nossos próprios assistentes pessoais, certo? O que isso significa? Significa que se eu quiser realizar uma tarefa, por exemplo, planejar um aniversário. Até então, eu precisava
+
+abrir 20 abas no navegador e tentar comunicar minha intenção a cada um desses serviços. E ao dizer transmitir minha intenção, quero dizer que preciso interagir com os painéis ou as interfaces de usuário dessas empresas. Então, só para planejar um aniversário, preciso comunicar minha intenção ao Google Agenda, à Amazon, ao Booking.com, ao Booking.com novamente, à Amazon novamente e a todos os outros, e não preciso de 99% da interface que aparece ali porque essa interface não me conhece. Não tem
+
+contexto sobre mim. E se pudéssemos simplesmente pegar essas interfaces de usuário e dividi-las em átomos? E esses átomos podem ser compostos pelo meu próprio assistente pessoal, certo? Porque eu não preciso da interface do usuário. Preciso desses átomos. Então, se
+
+pudermos pegar esses átomos e fazer com que minha nuvem, ChatGPT ou OpenCloud os utilizem por meio da interface do usuário do MCP, podemos ter esse fluxo. Então, meu assistente proativo pode dizer: "Sim, eu sei. Vejo que você tem um aniversário chegando" e, em vez de apenas me mostrar dados do Google Agenda, ele pode exibir um trecho do Google Agenda. Para mim, isso é bom porque conheço o Google Agenda e confio no Google. Para o Google, é bom porque mantém sua marca e identidade, e para o provedor de hospedagem, é bom porque ele não precisa desenvolver essas funcionalidades por conta própria. E vai ainda mais longe,
+
+porque se eu estiver interagindo com a Amazon, em vez de a Amazon ser reduzida a apenas uma lista de itens ou texto, eu posso ver "Amazon". Eu posso saber que estou na Amazon e posso concluir todo o meu fluxo sem nem mesmo sair do meu assistente. E essa é a web agética. É assim que vamos consumir a web, porque meu assistente terá o contexto sobre mim. Ele saberá puxar o mapa do Booking.com. Eu não preciso saber disso,
+
+certo? Então, essa será a mudança que veremos muito em breve, onde os sites se transformarão em pequenos trechos de interface do usuário dentro de assistentes pessoais. Hum [bufa] e com isso vem uma nova mentalidade de interação porque, hum, se eu clicar em algo no aplicativo MCP da Shopify, a Shopify não controla mais minha jornada. O host controla. Hum, e nenhum aplicativo controlará mais a jornada do usuário. Então, a Amazon não
+
+poderá saber como visualizar meu fluxo. Tudo passará pelo chat para fins de auditoria. Hum, e os aplicativos MCP, na verdade, padronizam isso definindo esses três níveis de controle sobre a jornada do usuário. Assim, um aplicativo pode notificar o chat de que algo aconteceu ou pode solicitar que o chat execute um prompt, liberando toda a responsabilidade para o chat. Então, os aplicativos MCP realmente padronizam isso e esse é o novo fluxo de software, o novo fluxo de interação que veremos entre aplicativos, chats e usuários.
+
+Hum, em 2026, tivemos um ano incrível de padronização da interface do usuário do MCP e 2026 será o ano em que se tornará um padrão global para interface do usuário. Sim. Mas ainda está evoluindo. Há muita coisa acontecendo. Mesmo em Nos últimos meses, estas são algumas das coisas que já foram implementadas, contribuídas ou propostas pela comunidade. Portanto, você ainda tem muito
+
+tempo e espaço para influenciar como será esse futuro. Você pode acessar o Xapps. Esse é o SDK oficial e a especificação também está hospedada lá. Está no repositório oficial do protocolo de contexto do modelo. Haverá um código QR em breve, então você não precisa fotografá-lo. Além disso
+
+, o interessante de usar o Xapps em particular é que, como ele é mantido diretamente por nós, todas as alterações na especificação são refletidas imediatamente no SDK. Portanto, se você usar esse SDK, receberá automaticamente todas as novidades. Estes são alguns dos problemas que temos. Então, sinta-se à vontade para contribuir. E o que vem a seguir?
+
+Há muitas novidades por vir. A primeira coisa que recebemos muitas solicitações é sobre visualizações reutilizáveis. Por exemplo, empresas como a Autodesk, que têm aplicativos muito pesados, como o de renderização 3D, não querem ficar renderizando tudo repetidamente, pois isso consome tempo e é ineficiente. Essa foi a solução que encontramos para o MVP. Mas estamos trabalhando em uma maneira de passar um identificador do servidor para que o modelo continue atualizando a mesma visualização.
+
+Outra opção é usar as App Tools, que, como você deve saber, são baseadas no Web MCP, o padrão do Google para a interação de agentes com visualizações da web. No MCP, padronizamos isso com as App Tools. Até agora, vimos o fluxo em que o usuário realiza uma ação no aplicativo e o aplicativo se comunica com o host. Mas e se... O host
+
+ou o chat quer falar com o aplicativo? Se o usuário escrever algo como " preencha este formulário para mim", o chat preencherá o formulário para o usuário. Os aplicativos MCP padronizam esse fluxo, que chamamos de ferramentas de visualização. Isso já está na especificação e será lançado em breve. Estamos trabalhando nesse espectro de interfaces de usuário generativas, onde você tem interfaces de usuário predefinidas (como as dos aplicativos MCP, por exemplo, o iframe "caixa preta" que renderiza toda a interface de usuário rastreada). Mas
+
+também existem outras opções nesse espectro, como interfaces de usuário declarativas, como renderização JSON ou A2UI. Essas especificações dizem que o aplicativo apenas retorna instruções sobre como construir a interface, mas o chat a construirá de fato. E você tem interfaces de usuário totalmente generativas na outra extremidade do espectro. Se você conhece aplicativos em nuvem, os aplicativos MCP são agnósticos à forma como a interface é gerada. Imagine um recurso em que você pode simplesmente pedir à nuvem para gerar uma interface de usuário para você.
+
+Isso é exatamente o que estamos falando. baseado em aplicativos MCP. Então, este é um aplicativo MCP nos bastidores, mas suporta interfaces de usuário generativas. Estamos trabalhando na interoperabilidade com esses outros padrões. E, na verdade, há poucos dias lançamos um guia sobre como usar A2UI em comparação com um padrão de interface de usuário generativa e aplicativos MCP, que é o padrão. Como
+
+fazer interoperabilidade. Como um servidor pode escrever A2UI e enviá-lo para o Gemini, mas também encapsulá-lo como um aplicativo MCP para enviar ao ChatGPT e vice-versa. Um aplicativo MCP é compatível com todos os lugares. Portanto, ele pode ser executado em qualquer lugar. Se você o compilar uma vez, ele será executado no Libra Chat, que é um aplicativo MCP de código aberto compatível com o ChatGPT. É o
+
+mesmo aplicativo, a mesma base de código que é executada em ambos, o que é muito legal. Sim. Sim. Então, isso não é apenas uma tecnologia ou um recurso interessante. É uma maneira totalmente nova de distribuir aplicativos.
+
+Se você olhar alguns meses atrás, alguém disse que o ChatGPT, em particular, tinha 800 milhões de usuários semanais, o que representa 10% de todo o total. População mundial. Isso é insano. Então, se você pensar na web em geral, levou cerca de 13 anos para chegar a esse número de usuários. Então, se você olhar para isso e pensar que nos últimos meses tivemos um crescimento de mais de 1 bilhão, isso significa que temos cerca de 170 vezes o mercado endereçável total da App Store da Apple quando foi lançada.
+
+Então, os aplicativos MCP estão em todos os lugares. Para listar alguns, podemos citar nuvem, IA aberta, etc. Já está tudo aí. Então, como começar? Você pode cloná-los, pode acessar o repositório Xapps.
+
+Como host, você também pode acessar o Xapps ou o site do MCP. Visite o repositório oficial. [risos] O repositório Xapps para se envolver. E sim. Então, abrace a nova web. É incrível.
+
+Com os aplicativos MCP, você pode escrever uma vez e executar em qualquer lugar. E o futuro parece promissor. Não exatamente como o Travis, mas com o MCP e os aplicativos MCP, estamos perto. E volte a conversar conosco depois. Sim, obrigado.
+
+[música]

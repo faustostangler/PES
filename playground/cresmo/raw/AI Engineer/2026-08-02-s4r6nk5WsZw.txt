@@ -1,0 +1,140 @@
+---
+video_title: "MCP Tasks (async): Why Aren't Any Agents Supporting Them? — Cornelia Davis, Temporal"
+video_id: s4r6nk5WsZw
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=s4r6nk5WsZw
+video_date: 2026-08-02T20:00:06+00:00
+video_description: |
+  You invoke a tool and expect an answer, but real work takes time, and over that time connections drop, networks blip, and processes crash. Cornelia Davis, a distributed systems veteran who wrote the book on cloud native patterns, argues that this is exactly the gap the MCP tasks specification exists to close, and walks through why almost no agents support it yet. A task lets a tool run long, report progress, and pause for human input without losing its place, which means the interaction has to be durable: it survives the client disconnecting and picks up right where it left off.
+  
+  She demonstrates it with an invoice processing flow, a dashboard tracking task state, and a step that waits for a human to submit input before the backend continues, then traces how the spec evolved from V1 to V2. The design she keeps returning to is a stateless core with the harder long running behavior layered on as an extension, RPC requests replaced by the server pushing updates, and life cycle state carefully mapped so clients know what to resume. Her honest takeaway is that just because you can open a long lived stateful connection does not mean you should, and that getting durable long running tasks right is what will finally let agents handle work that does not finish in a single call.
+  
+  Speaker info:
+  - https://x.com/cdavisafc
+  - https://www.linkedin.com/in/corneliadavis/
+  
+  Timestamps:
+  0:00 - What MCP tasks are, and why they're hard
+  1:29 - A distributed systems point of view
+  2:34 - A first look at a task running
+  4:03 - What a task actually allows
+  4:43 - Why long running work breaks
+  6:02 - Durability across disconnections
+  7:04 - Demo: invoice processing dashboard
+  9:10 - Waiting for human input
+  11:18 - What changed in tasks V1
+  12:35 - The stateless core
+  16:37 - Extensions and server pushed updates
+  20:09 - V2 and what you need to implement
+---
+[música]
+
+Eu sei que está um minuto adiantado, mas essas sessões de 20 minutos são muito curtas, então vou começar. Então, o título da minha palestra, como todos vocês já viram porque estão todos aqui, é: por que diabos não há agentes dando suporte às tarefas do MCP? Se você não sabe quais são as tarefas, não se preocupe, você saberá em instantes. Mas a primeira resposta para essa pergunta é, bem, porque eles são inteligentes. As pessoas que estão conquistando esses clientes são inteligentes. O que quero dizer com isso é que a
+
+especificação de tarefas do MCP, divulgada em novembro, foi classificada como experimental. Então, bem, você pode dar de ombros e dizer: " Nossa, esses clientes e servidores estão todos dando suporte a um monte de coisas experimentais." Por que não usar tarefas MCP? Bem, novamente, você verá a resposta para isso conforme avançarmos. Bem, a próxima resposta para essa pergunta é: eles são bastante complexos. Bem,
+
+há muita complexidade aqui, e é isso que eu quero fazer nos próximos 20 minutos: ensinar um pouco dessa complexidade para vocês. Uma breve apresentação: meu nome é Cornelia Davis. Sou tecnólogo na Temporal. Bem, estamos falando de sistemas distribuídos. Tenho uma longa trajetória em sistemas distribuídos, trabalhei bastante na era dos microsserviços, incluindo Cloud Foundry, Kubernetes, GitOps, Weave Works e tudo mais, e até escrevi um livro sobre isso. É isso que eu
+
+sou. A nossa agenda para os próximos 19 minutos é a seguinte: em vez de falarmos apenas sobre coisas abstratas, vou apresentar-lhes um exemplo muito concreto. Então, vou explicar a situação com base nesse exemplo concreto. Em seguida, vou apresentar uma visão geral das tarefas do MCP. Uma pergunta rápida: quem aqui quer fazer coisas com tarefas?
+
+Ferramentas MCP assíncronas. OK. Então, vou dar a vocês uma breve visão geral. Então vamos falar sobre as tarefas MCP V1. Essa é a especificação que saiu em novembro e, atenção para o spoiler, haverá uma nova em julho. Então, aquele
+
+comentário que eu fiz sobre eles serem espertos por ainda não terem implementado isso. Bem, houve algumas mudanças bastante radicais . Então, vou mostrar a vocês o que está acontecendo com a versão 2 e, inclusive, tenho algumas demonstrações ao vivo para mostrar tudo isso funcionando. Depois, teremos algumas conclusões importantes no final. Portanto, o caso de uso que vamos abordar aqui é um caso de uso simples de pedido de compra. Então, o caso de uso é o seguinte:
+
+você receberá uma ordem de compra e ela passará por uma série de etapas. O sistema irá registrar o recebimento das mercadorias e, em seguida, realizará, simultaneamente, algumas tarefas administrativas, como atualizar o estoque, enviar notificações e, ao mesmo tempo, pagar algumas faturas. Agora, a emissão de faturas será feita por meio de uma ferramenta MCP. Bem, essa ferramenta MCP possui uma série de etapas. Então, ele vai validar em relação a um sistema ERP e, em seguida, haverá uma pequena intervenção humana para solicitar aprovação, talvez.
+
+Então, ele será reconciliado com o ERP novamente, com um pouco mais de intervenção humana no processo e assim por diante. Então, como você pode ver à direita, o servidor MCP será a ferramenta que fará o processamento das faturas para nós. É de longa duração. Não vai funcionar no estilo de solicitação-resposta, e é exatamente para isso que servem as tarefas do MCP . E o que vamos fazer hoje, e a palestra não é sobre tempo, mas sim sobre alguns trechos de código que mostrei aqui.
+
+Sim, vou compartilhar todo o código que apresentei hoje. Aqui estão alguns trechos e o ponto principal que quero que você observe é se deve rejeitar ou aprovar. Isso demonstra que existe um mecanismo para sinalizar em um processo de longa duração. E esse é realmente o ponto principal. E é isso que precisamos: que tudo isso seja assíncrono. Então, agora você entende o que
+
+são as tarefas do MCP? As tarefas MCP permitem que você tenha uma ferramenta MCP que pode ser invocada e, em seguida, executada em segundo plano por um longo período, até que você receba uma resposta. Então, vamos falar sobre a visão geral das tarefas do MCP. Este é um diagrama de sequência muito simples . É exatamente o que vocês esperariam quando eu digo que as tarefas do MCP são tarefas de longa duração.
+
+Você vai invocar uma ferramenta e, em vez de receber uma resposta, receberá um identificador. E você pode interagir com essa alça, certo? Óbvio, não é? Isso não é nenhum bicho de sete cabeças. Parece bastante fácil, não é? Bem, acontece que, se você
+
+realmente quer que isso funcione a longo prazo, a coisa complica um pouco . Então, quais são algumas dessas complicações? Bem, quanto mais tempo algo estiver em execução, maior a probabilidade de ocorrer algum tipo de problema na infraestrutura que cause uma interrupção nessa tarefa de longa duração . Então, você pode ter problemas de rede, pode ter desafios de rede, pode ter pessoas que você está esperando que entrem em um loop, e elas saem de férias como eu estou prestes a fazer , oba, depois de amanhã. Um ou os processos podem falhar. Então, seu
+
+agente pode descer. O agente que processa o pedido de compra pode ficar indisponível, ou o seu servidor MCP também pode ficar indisponível . Então, todos esses problemas que você precisa enfrentar são o que torna tudo um pouco mais difícil. Agora, além do que eu já disse sobre as tarefas MCP, que você receberá de volta um identificador com o qual poderá interagir, a especificação garante que essas tarefas MCP não possam desaparecer. Essa é uma frase da própria especificação que diz que, uma vez que você tenha bloqueado e iniciado uma tarefa, ela precisa ser durável. Isso
+
+significa que todas essas coisas que acabei de mostrar na tela anterior — clientes (pessoas saindo de férias), servidores (queda de conexão), conexões (desconexão) — a tarefa precisa sobreviver a isso e você precisa ser capaz de interagir com ela quando a infraestrutura voltar a funcionar. E vou mostrar a vocês como tudo isso é feito. Agora, existem elementos do lado do servidor que abordam como tornar o lado do servidor resiliente, e eu fiz uma palestra no MCP Dev Summit em março. Este é o código QR que o levará ao vídeo no YouTube, onde eu entro em muitos detalhes sobre o lado do servidor e o que você precisa fazer com ele . Como vocês viram, hoje darei continuidade a esse trabalho, abordando a perspectiva do cliente.
+
+Então, sem mais delongas, vamos à demonstração. Para aqueles que me conhecem, sabem que estou sempre fazendo demos. Então, o que temos aqui é um painel de controle. Bem, não estou fazendo isso por meio de um chat porque, francamente, é mais eficiente para mim clicar em alguns botões aqui para mostrar isso a vocês do que ficar digitando . Então, tenho uma interface de usuário aqui que mostra o número de pedidos de compra que foram enviados. Vou enviar um
+
+pedido de compra simples, então esse botão está apenas iniciando o processo e, em instantes, se os deuses da demo estiverem a meu favor, aparecerá a mensagem "enviado" e o pedido de compra deverá aparecer aqui. Ah, é por isso que não está funcionando: porque eu ainda não iniciei meus servidores. Então, lembre-se que eu disse que precisa funcionar mesmo quando os servidores não estiverem em execução. Eu esqueci de mostrar aqui que o que estou fazendo nessas duas janelas é que, na janela superior, estou iniciando o back-end. Este é o servidor MCP.
+
+E na janela inferior, estou iniciando o cliente MCP. E você verá quem é esse cliente daqui a pouco. Você pode ver na tela inicial que estou usando o Fast MCP no lado do cliente. Então, vamos voltar aqui e observar que, mesmo que eu tenha enviado isso, mesmo que meus servidores não estivessem funcionando, o envio foi processado. Então, isso foi capturado. Então, o que você pode ver
+
+aqui, e você não viu o processo completo, mas no canto direito, a tarefa da fatura, inicialmente mostrou que o trabalho foi enviado, depois mostrou que estava em andamento e agora está solicitando informações adicionais. Posso vir para cá. Deixe-me mostrar o que está acontecendo nos bastidores e na parte frontal do sistema. O que tenho aqui são alguns painéis que mostram esses processos em execução. Do lado direito, você tem a parte traseira. É aí que fica
+
+o processamento das faturas, e você pode ver o nome aqui. Deixe-me aumentar um pouco o tamanho da fonte ali. Então, você pode ver que está sendo executada a fatura e, no lado esquerdo, pode ver que está sendo executada a ordem de compra. Vou explicar essa coisa de rastreador de tarefas daqui a pouco. Então, se analisarmos a fatura, podemos ver que ela contém o processo que mencionamos anteriormente. A validação foi feita
+
+no sistema ERP e agora está aguardando entrada de dados humana. Está aguardando essa aprovação. Do lado do PO, também podemos ver o processo que mostrei anteriormente, ou seja, vamos voltar aqui. É isso aí, ah, sim. Então, o sistema registrou que as mercadorias foram recebidas. Em seguida, em paralelo,
+
+ele invoca a tarefa MCP do processador de faturas . E repare que existe este item aqui que diz fluxo de trabalho do rastreador de tarefas. Sim, com certeza. Essa é a minha implementação de cliente MCP. Lembra que eu disse que ninguém implementou isso no lado do cliente? Bem, eu criei minha própria
+
+implementação aqui. Mas, paralelamente ao processamento das faturas, também tínhamos essas tarefas administrativas em andamento. Então, se eu voltar aqui e clicar em "entrada necessária", posso aprovar isso. E eu clicarei em enviar. E nós viemos para cá e você verá em instantes que o sinal chegará à parte traseira. Preciso atualizar. Ah,
+
+lá se foi. A aprovação foi recebida no sistema interno e agora este está prosseguindo com o processo adicional de pagamento da fatura. E você verá vários itens listados ali. Há algumas tentativas programadas aqui, mas você pode ver que foram necessárias algumas tentativas antes que o ERP fosse concluído. O pagamento do item foi efetuado e agora você pode ver que a tarefa foi concluída. Então, tudo está concluído. Se
+
+eu voltar ao painel que você viu lá em cima, você poderá ver que todos esses processos foram concluídos. OK? Então, isso é o básico . E eu posso repetir isso, mas no exemplo que já dei, sem querer, mencionei que a infraestrutura estava fora do ar. Eu poderia ter desligado o servidor no meio da transmissão e ela teria continuado exatamente como você viu aqui. OK? Então você viu isso desde
+
+o início. Muito bem, vamos voltar aos slides. Essa foi a primeira demonstração. Então vamos falar sobre a versão um das tarefas. Assim, na primeira versão das tarefas, havia uma série de semânticas de ferramentas. E, novamente,
+
+abordo essas semânticas de ferramentas com muito mais detalhes naquela palestra do MCP Dev Summit. Mas há algo realmente interessante que eu gostaria de destacar: as tarefas vêm junto com isso. Uma das coisas que a especificação define é um ciclo de vida para as tarefas. E é isso que você vê aqui na tela. Está funcionando.
+
+Pode ser inserido em um campo de entrada obrigatório. Com base nos dados solicitados, o processo pode voltar a funcionar e, eventualmente, será concluído, cancelado ou falhará. Então, uma das coisas mais interessantes sobre a especificação da tarefa é que ela trata do ciclo de vida da tarefa. Há também uma série de outras questões semânticas relacionadas à obtenção de entradas e à entrega de resultados. E vou abordar isso rapidamente porque já mencionei que parte disso vai desaparecer.
+
+Então, essa era a semântica da ferramenta antes da semântica da tarefa. Observe que tools/call é exatamente o mesmo. Existem alguns metadados que você precisa passar quando deseja que a operação seja assíncrona. E também há a lista de tarefas para cancelar, bem como o resultado da tarefa. Assim, os quatro primeiros são do tipo solicitação-resposta. O de baixo
+
+mantém a conexão aberta. Isso mantém a conexão ativa. E o diagrama de sequência que você pode ver aqui é basicamente o básico. Agora, existem dois problemas, ou melhor, dois grandes desafios com esta versão específica do protocolo. O primeiro está bem aqui.
+
+Lista de tarefas. Este é um protocolo com estado. Então, o que isso significa é que... Lembra que
+
+eu disse que o servidor era responsável pela durabilidade? Bem, esse endpoint específico me permite acessar o servidor e perguntar: "Ei, quais tarefas você tem?" Então, se o cliente se ausentou, se o usuário demorou muito para responder, se minha rede caiu e eu precisei reconectar, posso usar essa lista de tarefas para voltar ao servidor e perguntar: "O que você tem?". E então você pode continuar com isso.
+
+Isso funciona bem se você tiver uma ou duas tarefas, ou talvez até funcione se tiver 10 tarefas, mas o que acontece se você tiver uma infinidade de agentes em execução e um milhão de tarefas no back-end? Atenção: spoiler! Não há filtro nesse endpoint. Então, você teria que passar por um milhão de tarefas para encontrar aquela que você está procurando e com a qual deseja interagir. Isso vai passar.
+
+Você verá em instantes, mas esse é um dos desafios. Só porque você pode, não significa que você deva. O outro é o resultado da tarefa, pois era ali que estávamos encaminhando a entrada necessária. Assim, no caso do resultado da tarefa, este diagrama de sequência é realmente simples. Não possui interatividade. O que temos é que, assim que
+
+você executa a tarefa e obtém a entrada necessária, a parte superior e inferior funcionam perfeitamente, mas esta seção intermediária possui um protocolo estranho em que você abre uma conexão de longa duração e, em seguida, o servidor solicita uma resposta do cliente. Isso complica bastante as coisas. E estou com pouco tempo, então não vou mostrar essa demonstração para vocês. Terei o maior prazer em lhe mostrar. Amanhã também estarei por aqui o dia todo. Então, eu ficaria feliz
+
+em mostrar isso para você, mas em vez disso, quero mostrar basicamente a arquitetura do que você precisa construir no lado do servidor. Observe que isso está usando o MCP rápido. Portanto, o Fast MCP já oferece suporte tanto para o lado do servidor quanto para algumas funcionalidades do lado do cliente. Mas, o interessante é notar aquela pequena caixa no lado esquerdo, na parte inferior, onde está escrito "MCP client protocol handler" (manipulador de protocolo do cliente MCP). Aquele manipulador de protocolo com a complexidade que acabei de mostrar, ou seja, os resultados, na verdade se parecem com isto.
+
+E eu posso mostrar isso para você em funcionamento, e tem todo tipo de complexidade envolvida. Preciso manter um relacionamento duradouro. E se a minha conexão cair no meio disso? Como faço para retomar de onde parei quando voltar? Você verá que uma grande parte do que a especificação da tarefa faz é abordar a durabilidade.
+
+Então, voltando à pergunta: por que diabos não há nenhum cliente que suporte esse protocolo? Sim . É por isso . Super envolvido. Ainda está envolvido com a versão 2, mas está melhorando.
+
+Então, deixe-me falar sobre isso. Então, em maio, Angie Jones, responsável pela experiência do desenvolvedor na Agoric AI Foundation, onde o MCP está atualmente hospedado, publicou este post no blog. E uma das coisas que me fez pular de alegria e comemorar um pouco foi que o protocolo está se tornando apátrida. Então, como alguém que trabalha no mundo dos microsserviços há muito tempo, posso afirmar que protocolos com estado são a pior coisa possível em sistemas distribuídos de grande escala . Portanto, o protocolo está se tornando sem estado. Também está fazendo várias
+
+outras coisas. Portanto, o primeiro componente é um núcleo sem estado. O segundo ponto é interessante porque eles também têm um MCP estruturado, com um núcleo e extensões. Se alguns de vocês estavam presentes nas duas palestras anteriores, elas mencionaram o MCPUI, inclusive a extensão. Bem, é isso que está acontecendo aqui no protocolo MCP V2: eles têm extensões e as tarefas se tornaram uma extensão.
+
+Então, deixe-me explicar um pouco como as tarefas mudaram da versão 1 para a versão 2 e quero mostrar mais uma demonstração. Assim, no lado esquerdo, você pode ver qual era o protocolo anterior. Essas são as requisições RPC que você estava fazendo pela rede. Do lado direito, você pode ver algumas coisas. A lista de tarefas desapareceu.
+
+Bom. De qualquer forma, não era particularmente útil, especialmente em grande escala. E em vez de exigir essa entrada ao longo de uma sessão prolongada, agora você tem um ponto de extremidade que permite que você, do lado do cliente, diga: "Aqui está uma atualização." Então, se você se lembra, há algum tempo eu mostrei aquela captura de tela que dizia que o Temporal tem essa noção de sinal. É basicamente isso. É uma
+
+forma de dar o primeiro passo nessa tarefa de longa duração . O resultado da tarefa permanece, mas muda porque não possui mais esse longo protocolo baseado em sessão. Mas coloquei a imagem do lado direito aqui para enfatizar o fato de que o gerenciamento do ciclo de vida dessas tarefas permanece inalterado. Isso é realmente um som. Bem, eu abordo isso com muito mais detalhes na palestra à qual me refiro constantemente. No
+
+lado do servidor, no processamento de faturas, tenho minha própria máquina de estados pela qual a fatura está passando. Assim, parte do que você está fazendo ao implementar essas tarefas no lado do servidor é mapear os estados do ciclo de vida da tarefa para a máquina de estados do domínio que está executando o aplicativo no servidor MCP ou na ferramenta. Então, a lista desaparece novamente. Lembra que eu disse que a especificação de tarefas do MCP tem durabilidade em todos os aspectos? Com essa mudança, visto que as listas desapareceram, agora você é obrigado, do lado do cliente, ou melhor, meio que obrigado. Há
+
+aqui um pequeno comentário entre parênteses. A especificação atual diz que os clientes devem persistir os IDs das tarefas, mas também ressalta que, se você não persistir os IDs das tarefas, não há como recuperá-los . Então, não tenho muita certeza de por que isso não tem um "deve" escrito todo em maiúsculas. Outro ponto que gostaria de destacar, e que já mencionei, é que potencialmente haverá muitos agentes processando pedidos de compra ou realizando diversas tarefas. Portanto, ter várias coisas em execução simultaneamente é realmente crucial .
+
+Então, com isso, vou passar para a segunda demonstração. E vou voltar aqui ao meu pedido de compra. Então, o que vou fazer agora é submeter uma série de coisas. E na verdade ainda estou fazendo a demonstração aqui porque me restam 13 segundos. Não vou mudar para a minha versão V2. Você
+
+verá que, visto de cima, na verdade, parece exatamente igual. Vou mostrar a vocês como o protocolo cliente-servidor se apresenta no caso da versão 1. É realmente muito feio. Mas, você vai notar aqui que eu enviei vários diferentes. Posso afirmar que, com o protocolo V1, a implementação de referência, se fosse necessária entrada em vários dispositivos, mesmo que fosse possível ver muitos deles em execução, no lado do cliente eles seriam processados ​​em ordem de chegada (FIFO).
+
+Portanto, você só poderia responder à primeira . E parte do protocolo que implementei foi para contornar essa lacuna. Então, vamos vir para cá. Podemos atualizar ambas as páginas e você verá que haverá várias ordens de compra em andamento. E agora quero mostrar a vocês o rastreador de tarefas. Então, se acessarmos o
+
+rastreador de tarefas, esse é o cliente MCP. Agora, deixe-me explicar melhor para que possamos ver isso com um pouco mais de detalhes. O que você pode ver aqui é que, lembra daquele protocolo, aquele diagrama de sequência bem longo que eu te mostrei ? Há muitos passos envolvidos nisso. E o que eu fiz aqui foi implementá-lo como um fluxo de trabalho. E você
+
+pode ver aqui que há um processamento de solicitação que está sendo realizado do lado do servidor de volta para o cliente. Então, não vou entrar em mais detalhes porque meu tempo acabou, mas quero compartilhar mais duas coisas. E isso é...
+
+então, passando da versão 1 (lembra dessa imagem feia?) para a versão 2 no protocolo cliente-servidor , muito, muito mais limpa. Muito mais fácil de implementar. Então, falando em implementação, aqui está um resumo de tudo o que você precisa fazer se quiser implementar tarefas. Ainda relativamente envolvido. Aqui está uma
+
+foto. Vou disponibilizar esses slides no repositório Git que vou mostrar a seguir. E aqui está o repositório Git que vou mostrar para vocês. Enquanto você prepara essa captura de tela, vou te contar sobre dois trabalhos que estou desenvolvendo. Em primeiro lugar, embora isso seja melhor, ainda não é escalável para milhões de pessoas.
+
+Por que? Porque se eu tiver um milhão de tarefas em execução, terei um milhão de clientes executando tarefas em cada uma delas. Isso não é escalável. Existe uma parte da especificação de tarefas do MCPC que é um protocolo de notificações, que eu ainda não explorei o suficiente, mas que se mostra promissor, e que permitirá que, em vez de ter um milhão de clientes buscando suas tarefas, haja um único ponto de acesso onde eles possam perguntar: "Algo mudou?". E se houver, me
+
+diga qual, e agora eu vou executar essa tarefa. Então, definitivamente é uma questão de escala. Outra coisa que estamos fazendo é que, em um futuro muito próximo, no próximo mês ou nos próximos dois meses, teremos uma implementação de tudo isso que será muito mais simples para você. Meu objetivo é implementá-lo de fato no MCP rápido para que [bufa] você possa usar o mesmo protocolo, a mesma estrutura que provavelmente já usa para seus servidores MCP hoje. Então, sem mais delongas, é isso.
+
+Agradeço ao próximo palestrante por me conceder alguns minutos e já volto . Se tiver alguma dúvida, posso sair. Me procure no corredor. [aplausos]
