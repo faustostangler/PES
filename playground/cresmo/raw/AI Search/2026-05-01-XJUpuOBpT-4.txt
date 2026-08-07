@@ -1,0 +1,184 @@
+---
+video_title: "The insane engineering of Deepseek V4"
+video_id: XJUpuOBpT-4
+channel_name: "AI Search"
+channel_id: UCIgnGlGkVRhd4qNFcEwLL4A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XJUpuOBpT-4
+video_date: 2026-05-01T03:30:27+00:00
+video_description: |
+  Deepseek V4 explained. #ai #aitools #ainews #llm #agi #deepseek #claude #agi 
+  
+  Thanks to our sponsor Abacus AI. Try ChatLLM & DeepAgent today: http://chatllm.abacus.ai/?token=aisearch
+  
+  Deepseek v4: https://api-docs.deepseek.com/news/news260424
+  LLMs explained: https://youtu.be/U2hZFMVNSE0
+  Residual connections: https://youtu.be/2IfAVV7ewO0
+  
+  0:00 Deepseek V4 intro
+  1:00 Deepseek V4 specs
+  2:06 The challenge of 1M context
+  4:16 Hybrid attention
+  5:11 CSA & sparse selection
+  6:50 HCA
+  8:22 Sliding window attention
+  10:44 Insane efficiency gains
+  12:02 Signal explosion
+  13:00 Residual connections
+  13:52 mHC
+  14:17 ChatLLM 
+  15:24 mHC continued
+  17:54 Muon
+  19:26 Infra challenges
+  22:31 Training challenges
+  24:09 Anticipatory routing
+  25:24 SOTA results
+  
+  Newsletter: https://aisearch.substack.com/
+  Find AI tools & jobs: https://ai-search.io/
+  Support: https://ko-fi.com/aisearch
+  
+  Here's my equipment, in case you're wondering:
+  Lenovo Thinkbook: https://amzn.to/4jWeKwH
+  Dell Precision 5690: https://www.dell.com/en-us/dt/ai-technologies/index.htm?utm_source=AISearchTools&utm_medium=youtube&utm_campaign=precisionai#tab0=0 
+  GPU: Nvidia RTX 5000 Ada https://nvda.ws/3zfqGqS
+  Mic: Shure SM7B https://amzn.to/3DErjt1
+  Audio interface: Scarlett Solo https://amzn.to/3qELMeu
+---
+O DeepSeek foi construído de forma diferente. Acabaram de lançar um novo modelo, o DeepSeek V4. Mas veja bem, ao contrário dos melhores laboratórios de IA fechados [bufa] que gastam bilhões em centros de dados com poder computacional ilimitado, o DeepSeek é incrivelmente limitado. Eles não têm nem de perto a mesma capacidade de processamento, aliás, eles nem sequer têm os chips mais avançados da Nvidia. E a equipe deles é cerca de 40 vezes menor que a da OpenAI.
+
+Eles têm recursos extremamente limitados, mas mesmo assim conseguiram construir um modelo que está no mesmo nível dos melhores modelos fechados do mercado . O mais ridículo é que eles até disponibilizaram o código-fonte e publicaram um artigo explicando como o construíram. Passei os últimos dias lendo sobre isso, e o design é absolutamente lindo e genial. Mas veja bem, se você não entende de tecnologia, tudo isso parece uma língua alienígena. Neste vídeo, vou explicar tudo em termos simples para que você possa entender o quão incrivelmente engenhoso é esse modelo e a equipe da DeepSeek.
+
+Vamos direto ao assunto. Primeiro, vamos falar das especificações. Portanto, este último modelo V4 Pro é enorme. Possui 1,6 trilhão de parâmetros. Se você não entende de termos técnicos, os parâmetros são basicamente os botões e controles dentro do " cérebro" do modelo, que armazenam todas as informações que ele possui . Em teoria, quanto mais parâmetros,
+
+mais inteligente e capaz é o modelo . E 1,6 trilhão de parâmetros está entre os melhores modelos disponíveis. Mas isso tem um porém. É muito mais difícil construir e treinar um modelo desse tamanho, sobre o qual falaremos mais adiante. Agora, essa nova versão V4 também possui um comprimento de contexto de 1 milhão de tokens.
+
+Basicamente, trata-se da memória de curto prazo do modelo, ou seja, da quantidade de informações que você pode inserir no seu comando para que ele se lembre de tudo de uma vez. Um milhão de tokens equivale a aproximadamente 750.000 palavras, o que é muita coisa. É como alimentar o computador com toda a série Harry Potter e perguntar sobre um detalhe muito específico em uma página, e ele realmente se lembrará . Ou, para agentes, significa que o modelo pode ser executado por horas em tarefas longas sem perder o controle do que está fazendo. Mas,
+
+novamente, construir corretamente uma janela de contexto com 1 milhão de tokens é extremamente difícil . Assim, a equipe da DeepSeek teve que encontrar soluções engenhosas para tudo isso. Na verdade, vamos analisar mais a fundo por que ter uma janela de contexto com 1 milhão de tokens é tão difícil. Veja bem, os modelos modernos de IA não leem textos da mesma forma que nós. Cada vez que lê uma nova palavra, ou o que tecnicamente se chama de token, pergunta: "Como esta palavra se relaciona com todas as outras palavras anteriores a ela?" Considere um
+
+exemplo simples. O gato não atravessou a rua porque estava muito cansado. Ao processar cada palavra, o sistema analisa todas as palavras anteriores para verificar quais são as mais relevantes para a palavra atual. Na verdade, essa é a parte sobre atenção, introduzida pela primeira vez no lendário artigo " Attention Is All You Need" (Atenção é tudo o que você precisa), do Google. E essa é a base de todos os grandes modelos de linguagem que conhecemos hoje.
+
+Aliás, se você tiver interesse em saber mais, assista a este vídeo para uma explicação completa. Bem, para uma frase curta como essa, está ótimo. Se você chegou à décima palavra, isso significa que são apenas 10 comparações. Sem problemas. Mas se você já chegou à palavra número 100.000, isso significa 100.000
+
+comparações. E esse é o gargalo fundamental de qualquer modelo de linguagem de grande porte . Imagine expandir isso para um milhão de tokens. Nessa escala, o número de comparações torna-se astronômico. Tão grande que até mesmo os equipamentos de ponta começam a apresentar dificuldades para acompanhar. E
+
+não é apenas o poder computacional que sofre. Para que tudo isso funcione, o modelo precisa armazenar resultados intermediários, basicamente uma memória contínua de tudo o que já observou até o momento. Isso é chamado de cache chave-valor , ou cache KV. Você pode pensar nisso como uma enorme tabela de consulta. Para cada palavra anterior, armazena informações sobre o que essa palavra significava em contexto.
+
+Agora, em pequena escala, como em um parágrafo curto, isso é bastante administrável. Mas com um milhão de tokens, torna-se absurdo. Agora você está armazenando uma enorme quantidade de dados apenas para manter o contexto de uma única conversa. São como gigabytes armazenados em uma memória GPU cara, apenas para que o modelo não se esqueça do que leu anteriormente. E se você juntar esses dois fatores , a enorme capacidade computacional necessária e esse problema crescente de memória, você chega a um impasse. Então, como a DeepSeek resolveu isso?
+
+Analisando o artigo, o interessante é que a equipe não se limitou a usar mais poder computacional bruto para resolver o problema, porque, bem, eles não tinham muitos recursos computacionais. Em vez disso, fizeram uma pergunta muito mais elegante. E se o modelo não precisasse analisar tudo em primeiro lugar? A ideia principal por trás do DeepSeek V4 é enganosamente simples. Não trate todas as informações passadas como igualmente importantes porque, na realidade, não são.
+
+Quando você está lendo um livro, você não fica relendo constantemente cada página que já viu. Você lê por cima, resume e só volta atrás quando algo é relevante. Seu cérebro é seletivo, e o DeepSeek tenta fazer o mesmo. Eles chamam isso de arquitetura de atenção híbrida , e em sua essência estão duas estratégias complementares chamadas CSA e HCA. Basicamente, comprima o passado e depois ignore a maior parte dele. Vamos começar com
+
+a compressão. Assim, em um modelo tradicional, cada token é armazenado individualmente. Uma palavra, uma entrada, sem atalhos. O que o DeepSeek fez, em vez disso, foi agrupá-los. Assim, uma parte do sistema é chamada de Atenção Esparsa Comprimida, ou CSA, para abreviar. O processo pega pequenos blocos
+
+de tokens, digamos quatro de cada vez, e mescla suas informações em uma única representação mais densa. Assim, em vez de memorizar tokens individuais, ele armazena um resumo compacto dos quatro. Assim, de imediato, você reduziu o comprimento da sequência em um fator de quatro, o que significa menos comparações e menos memória, e, portanto, menos processamento. Mas isso por si só não basta. Mesmo após a compressão, ainda restam centenas de milhares desses blocos em grande escala. Ainda são muitos para processar
+
+com eficiência. A compressão ajuda, mas não resolve o problema principal. O verdadeiro avanço virá da próxima etapa, que é a escassez. Uma vez que o passado é comprimido, o modelo deixa de considerá- lo integralmente relevante. Em vez disso, utiliza um mecanismo interno rápido, semelhante a um mecanismo de busca integrado, para selecionar apenas as partes mais úteis. Eles chamam
+
+isso de indexador relâmpago para seleção esparsa. Quando o modelo processa um novo token, ele não examina todo o histórico. Ele pontua rapidamente todos esses blocos comprimidos e seleciona apenas um pequeno subconjunto, aqueles que provavelmente são mais relevantes para o contexto atual. Todo o resto é ignorado, simplesmente descartado por completo. E essa é uma mudança sutil, mas profunda. O modelo não está tentando se
+
+lembrar de tudo perfeitamente. É tentar se lembrar das coisas certas na hora certa. E isso muda tudo completamente. Em vez de realizar cálculos massivos sobre todo o passado, ele concentra a computação apenas onde ela é realmente necessária. E isso reduz drasticamente a carga de trabalho sem perder o contexto relevante. Mas a DeepSeek não parou por aí,
+
+porque às vezes você quer uma compreensão ampla e abrangente de tudo o que veio antes, mesmo que não precise dos detalhes mais específicos. É aí que entra o segundo sistema. Ele é chamado de atenção altamente comprimida, ou HCA, na sigla em inglês. Aqui, a compressão é muito mais agressiva. Em vez de agrupar quatro tokens, agrupa algo como 128 tokens, ou um parágrafo inteiro, em uma única representação. Agora,
+
+você está reduzindo o comprimento da sequência em várias ordens de magnitude. E nesse momento, algo interessante acontece. A sequência torna-se tão curta que o modelo consegue analisar tudo de uma só vez, porque tudo agora é pequeno o suficiente para ser processado. Assim, você acaba com uma estratégia em camadas. Um dos caminhos mantém blocos moderadamente detalhados e recupera seletivamente os mais relevantes . Uma terceira versão mantém
+
+resumos extremamente compactados de todo o histórico, e ambas são usadas em conjunto, intercaladas por toda a rede. Portanto, trata-se de um equilíbrio entre precisão e eficiência, entre lembrar de tudo e lembrar apenas o suficiente. Em vez de perguntar: "Como processamos tudo isso?" Agora, a DeepSeek inverteu a pergunta para "Quão pouco podemos processar e ainda assim entender tudo?" Mas existe um problema óbvio com essa abordagem. Se você comprimir 128 tokens ou
+
+um parágrafo inteiro em uma única representação matemática, estará descartando informações. Não há como contornar isso. Você está trocando detalhes por eficiência. Mas o que acontece quando você realmente precisa de um detalhe específico de volta? E se você perguntar ao modelo sobre uma frase muito específica que está enterrada meio milhão de tokens atrás? Não a
+
+ideia geral, mas a frase exata ou um número específico. Se todo aquele parágrafo tivesse sido comprimido em um único bloco, essa informação não teria desaparecido? Portanto, esse é o problema fundamental em todos os sistemas de compressão. Quanto mais você reduz algo, maior o risco de perder o que o tornava preciso. Mas a competente equipe da DeepSeek também resolveu esse problema. Portanto, a solução deles não foi
+
+evitar a compressão, mas sim equilibrá-la. Eles introduziram uma terceira via que faz o oposto. Mantém as informações completamente sem compressão. Isso se chama atenção por janela deslizante. Enquanto o modelo comprime agressivamente o passado distante, a janela deslizante rastreia continuamente os tokens mais recentes , digamos, as últimas 128 palavras, com total fidelidade. Palavra por palavra,
+
+sem compressão. Assim, agora você tem três visualizações paralelas do mesmo documento. Uma imagem altamente comprimida, que captura os detalhes gerais de tudo o que veio antes. Uma versão moderadamente compactada, que recupera seletivamente os trechos relevantes quando necessário. E uma versão completamente sem compressão, que preserva o contexto imediato com detalhes perfeitos. Para entender como esses elementos
+
+funcionam em conjunto, é útil pensar em um estudante estudando para uma prova. Você não lê o livro didático inteiro toda vez que responde a uma pergunta, certo? Em vez disso, você opera em vários níveis simultaneamente. Você mantém as últimas páginas abertas à sua frente porque elas são imediatamente relevantes. Essa é a sua janela de correr.
+
+Você se baseia em resumos de capítulos anteriores para manter a visão geral em mente. Então, essa é a atenção extremamente comprimida . E quando você precisa de algo específico, você consulta as seções destacadas. Esse é o indexador Lightning para recuperação esparsa. O que o DeepSeek faz é transformar essa estratégia humana intuitiva em um sistema matemático preciso, intercalando essas três estratégias de atenção distintas camada por camada através da rede neural. Dessa forma, o DeepSeek V4 consegue
+
+capturar o melhor de todos os mundos possíveis. Ela proporciona uma recuperação profunda e de longo alcance, além de uma compreensão ampla e também um foco preciso e imediato. É capaz de atingir uma janela de contexto de 1 milhão de tokens, evitando o custo computacional devastador da atenção tradicional. E o ganho de eficiência que eles documentam no artigo é simplesmente incrível. Assim, eles compararam esta nova versão V4 com a versão anterior do DeepSeek, a V3.2, que, para
+
+contextualizar, já era considerada um dos modelos de linguagem de grande porte mais eficientes do setor. Mas mesmo para a versão 4, que possui um enorme número de 1,6 trilhão de parâmetros com um contexto massivo de 1 milhão de tokens, você pode ver que o DeepSeek V4 Pro requer 3,7 vezes menos operações de ponto flutuante (flops), ou você pode pensar nisso em termos de poder computacional, em comparação com a versão anterior do DeepSeek, a 3.2. A versão 4 utiliza aproximadamente 27% da capacidade computacional necessária para a versão anterior. Isso representa uma melhoria absurda em termos de eficiência. Aqui está
+
+outro gráfico maluco. Este é o cache KV. Novamente, isso se assemelha à memória de curto prazo do modelo de IA, e aqui você pode ver que o DeepSeek versão 4 Pro é quase 10 vezes menor que a versão anterior do DeepSeek. Requer apenas 10% da memória cache KV. Ou seja , eles reduziram a pegada de memória da memória de curto prazo do modelo em 90%. Só isso já
+
+altera completamente os requisitos de hardware para a implantação desses modelos enormes. Isso os torna ultraeficientes. Mas eis a questão. Resolver o problema da atenção resolve realmente o problema por completo? Nem de perto, porque o desafio não é apenas a memória, mas também a escala. Agora,
+
+mais uma vez, este novo V4 Pro possui impressionantes 1,6 trilhão de parâmetros. Novamente, esses são os mostradores e botões que compõem a inteligência do modelo. E isto é enorme. Este é um dos maiores modelos da indústria. E todos esses parâmetros significam que o modelo é enorme, com muitas, muitas camadas. Ao empilhar dezenas dessas
+
+camadas em uma escala de um trilhão de parâmetros, o sistema pode se tornar muito instável. Os sinais que fluem pela rede começam a se amplificar de forma descontrolada, e isso é apenas um efeito colateral de toda essa matemática. Imagine um microfone colocado muito perto de uma caixa de som. Sabe aquele ruído agudo de microfonia ? Esse é exatamente o mesmo ciclo de feedback em redes neurais, mas em vez de som, são números. Os
+
+valores explodem, a função de perda diverge e é muito fácil interromper um treinamento. Isso é chamado de explosão de sinal. Então, como impedir que a rede de parâmetros falhe? Bem, tradicionalmente, os desenvolvedores tentam resolver isso usando conexões residuais, que atuam como vias alternativas que permitem que o sinal ignore certas camadas e mantenha os cálculos estáveis. Aliás, se você tiver interesse em aprender mais sobre conexões residuais, eu abordo o assunto com um pouco mais de detalhes neste vídeo. Mas
+
+essas conexões residuais ainda não são suficientes para, você sabe, um trilhão de parâmetros. Assim, mais recentemente, a indústria migrou para hiperconexões, que agora expandem a largura desses fluxos residuais para dar ao sinal ainda mais caminhos para percorrer. Mas o artigo da DeepSeek menciona explicitamente que, ao escalar para mais de um trilhão de parâmetros, até mesmo as hiperconexões padrão começam a apresentar esses picos catastróficos. Essas vias de desvio tradicionais simplesmente não são suficientes nessa escala. Assim, a equipe de engenharia introduziu uma nova arquitetura chamada hiperconexões de restrição de variedade , ou MHC, para abreviar. Na
+
+verdade, eles publicaram um artigo completo sobre isso em janeiro deste ano. E é aqui que a matemática no artigo se torna verdadeiramente fascinante. A ideia central é pegar essas conexões residuais e restringi-las a algo chamado variedade de matrizes duplamente estocásticas. Mas o que diabos isso significa? Provavelmente soa como uma língua alienígena pura , então vamos analisá-la. No meu
+
+canal, apresentei tantos modelos e ferramentas de IA diferentes que pode ser bastante avassalador. E se você pudesse usar todos esses modelos em uma única plataforma? E isso nos leva ao Chat LLM da Abacus AI, patrocinadora deste vídeo. O Chat LLM é uma plataforma completa para você usar os melhores modelos de IA disponíveis. Você pode alternar facilmente entre diferentes modelos em seus chats. Além disso, você também pode
+
+usar todos os melhores geradores de imagens disponíveis, bem como os melhores modelos de vídeo , tudo em uma plataforma integrada. E eles costumam adicionar um modelo ao site muito rapidamente assim que ele é lançado. Além disso, se você estiver programando algo, eles têm um recurso de artefatos muito útil para que você possa visualizar sua geração lado a lado. Além disso, eles possuem um recurso de agente avançado, capaz de realizar tarefas realmente complexas de forma totalmente autônoma, como criar apresentações em PowerPoint, sites e relatórios de pesquisa. Isso vai turbinar sua produtividade. O
+
+melhor de tudo é que você pode acessar todos esses modelos de IA, geradores de imagem e vídeo e agentes de aprendizado profundo por apenas US$ 10 por mês. Isso é muito mais barato do que se você comprasse cada ferramenta separadamente. Vale a pena conferir o chat.llm, que vem com um agente dedicado, conforme descrito abaixo. Você pode pensar nas conexões residuais não como um simples tubo que transporta o sinal adiante, mas como uma rede de distribuição. Numa
+
+rede normal sem restrições, à medida que o sinal flui através de camada após camada, a pressão nessa grade pode aumentar acidentalmente. E quando isso acontece, ele se retroalimenta e cria um enorme ciclo de feedback, assim como um microfone perto de uma caixa de som, o que causa a explosão do sinal. Bem, aqui está a ideia principal. Em vez de tentar amortecer essa explosão depois que ela acontece, o DeepSeek impõe uma regra rígida antes mesmo que ela ocorra. Isso força os resíduos a se comportarem como o que é chamado de matriz duplamente estocástica . Em outras palavras, a soma de cada linha deve ser igual
+
+a um e a soma de cada coluna também deve ser igual a um. Em termos simples, isso significa que o sinal total é sempre conservado. Isso nunca vai se amplificar. O sinal literalmente não pode explodir devido a essas restrições, porque a matemática o impede. Mas eis o verdadeiro desafio. Definir essa regra é fácil,
+
+mas aplicá-la na escala de trilhões de parâmetros não é. Para que funcionasse, eles usaram algo chamado algoritmo de Sinkhorn. Basicamente, antes de cada camada processar o sinal, o modelo executa uma sequência rápida de normalizações de linhas e colunas, cerca de 20 iterações, até que a matriz satisfaça perfeitamente essas restrições. À primeira vista, isso soa terrível. Acabamos de dedicar todo esse tempo à otimização do poder computacional, e agora você está dizendo que precisamos inserir um loop de 20 etapas para cada camada em um modelo com 1,6 trilhão de parâmetros? Isso
+
+exigiria poder computacional excessivo e prejudicaria muito o desempenho. Mas é aqui que entra a genialidade da engenharia da DeepSeek. Eles usaram uma otimização de baixo nível muito agressiva . São como programas que controlam como a GPU executa os cálculos. Coisas realmente complexas como kernels de GPU fundidos, recálculo seletivo, etc. Isso é algo
+
+muito específico e profundo. Basicamente, pense nisso como um ajuste personalizado da GPU para otimizá-la ainda mais. Basicamente, eles conseguiram reduzir a sobrecarga de todo esse processo para apenas 6,7% do tempo de execução. Sim, adicionar um loop de 20 etapas a cada camada tem um custo, mas é apenas um aumento de 6,7% no tempo. Um preço relativamente pequeno a pagar em comparação com a possibilidade de um acidente durante um treino devido a uma explosão de sinal. Portanto, é uma
+
+apólice de seguro que vale muito a pena. Foi assim que eles conseguiram evitar que o sinal de um modelo com um trilhão de parâmetros explodisse. Mas eles não pararam por aí. Veja bem, para treinar um modelo massivo, você precisa de uma função otimizadora. Este é o algoritmo que decide como o modelo aprende com seus erros. Como devem ser alterados os mostradores e botões
+
+se a resposta estiver incorreta? Se você quiser saber mais sobre como um modelo é treinado, veja este vídeo explicativo para obter mais detalhes. Por ora, considere este algoritmo como uma forma de decidir como o modelo deve ajustar seus parâmetros e configurações caso sua resposta esteja incorreta. Durante anos, o padrão da indústria foi um algoritmo chamado AdamW, mas a DeepSeek também o substituiu por um otimizador personalizado chamado Muon. Eis como o Muon funciona em termos simples. Em vez de
+
+aplicar atualizações diretamente, você pode pensar no Muon como uma forma de remodelá-las usando um processo de duas fases. Primeiro, impulsionando agressivamente o sistema em direção à convergência e, em seguida, estabilizando-o cuidadosamente. Você pode pensar nisso como uma afinação. Primeiro, você faz grandes ajustes grosseiros para deixar as cordas próximas da afinação correta. Em seguida, você passa a fazer pequenos ajustes precisos para chegar à afinação perfeita. Comece de forma brusca e rápida, depois
+
+passe para ajustes sutis e precisos. Essa combinação permite que o modelo aprenda mais rápido e também permaneça estável. Então, neste ponto, o quadro está começando a se formar. Você tem um sistema de atenção híbrido que resolve o problema de memória, uma arquitetura matematicamente restrita que impede explosões de sinal e um algoritmo altamente otimizado que acelera o aprendizado. No papel, é lindo, mas aqui está a realidade.
+
+Existe um enorme abismo entre equações elegantes e conseguir que milhares de GPUs em um centro de dados as executem de forma eficiente. E na escala do DeepSeek V4, com 1,6 trilhão de parâmetros, o maior gargalo nem sequer é mais a computação. É comunicação. Este modelo é tão grande que não cabe em um único chip ou mesmo em um único rack. As camadas de um modelo precisam ser distribuídas por diferentes racks em um centro de dados.
+
+Agora, embora uma GPU ou mesmo um conjunto de GPUs possa processar dados muito rapidamente, o problema é que, à medida que o modelo processa os dados, esses dados precisam fluir de um rack para outro. Se as GPUs precisam esperar que os dados sejam enviados a elas, bem, cada milissegundo de espera é dinheiro desperdiçado. Idealmente, você não quer que nada no centro de dados fique ocioso. É claro que a equipe responsável pela quebra da segurança do DeepSeek também estava ciente desse problema, e aqui está como eles o resolveram. Em vez de esperar que um grande volume de dados chegasse antes de iniciar o processamento, eles basicamente orquestraram a transferência de dados. Em
+
+termos simples, eles dividiram o fenômeno em ondas sequenciais menores. Assim que os dados necessários para a primeira onda chegam, as GPUs são imediatamente ativadas e começam a processar os números. E enquanto essas GPUs estão trabalhando na primeira onda, os dados da segunda onda já estão trafegando ativamente pelos cabos de rede em segundo plano. Em seguida, onda três, onda quatro e assim por diante. Computação e comunicação se sobrepõem perfeitamente. Assim, a
+
+latência da rede praticamente desaparece. Os cabos de rede permanecem saturados de dados, os núcleos de computação permanecem ocupados processando números e todo o sistema funciona em um pipeline continuamente otimizado . Mas coreografar algo tão complexo no nível microscópico da computação em GPU é realmente difícil. Você não pode simplesmente usar linguagens de programação padrão. Assim, o artigo mencionou como eles usaram uma linguagem específica chamada Tile Lang para desenvolver o que é conhecido como kernels fundidos.
+
+Um kernel fundido consiste basicamente em pegar várias operações matemáticas separadas e combiná-las em um único comando, para que a GPU não precise ficar perdendo tempo lendo e gravando resultados intermediários de volta na sua memória principal. Isso economiza uma enorme quantidade de tempo, mas escrever kernels fundidos manualmente é notoriamente propenso a erros e exponencialmente mais difícil quando se trabalha com mais de um trilhão de partes móveis. O mais incrível é que eles até publicaram um repositório no GitHub onde explicam em código aberto exatamente como fizeram isso, mas basicamente usaram algo chamado solucionador Z3 SMT para provar com 100% de certeza que o código do kernel fundido estava correto. Lembre-se que, nessa escala, mesmo um erro em um bilhão pode ocorrer constantemente e corromper o modelo silenciosamente. Em vez de torcer para que o código funcione, eles precisam garantir matematicamente que ele funcione. E o mais
+
+notável é que eles conseguiram fazer isso usando cálculos matemáticos incrivelmente inteligentes e complexos. Muito bem, até agora já abordamos uma infinidade de assuntos. Se ampliarmos a perspectiva, temos a compressão de atenção paralela , as hiperconexões com restrição de variedade, o otimizador Muon e até mesmo o ajuste fino de como um centro de dados deve se adequar e executar o modelo. Tudo isso é apenas o projeto arquitetônico. Em seguida, também precisamos fornecer dados para treinar o modelo, para que ele se torne realmente inteligente e eficiente. Bem, aqui diz que a
+
+sonda DeepSeek V4 foi treinada com 33 trilhões de tokens. É difícil imaginar a imensidão disso, mas é basicamente mais texto do que qualquer ser humano conseguiria processar em muitas vidas de leitura. Se você simplesmente jogar todos esses dados no modelo, corre o risco de ele ficar sobrecarregado . É como se você desse a um completo leigo um livro didático muito avançado sobre física quântica; ele ficaria totalmente sobrecarregado e provavelmente não aprenderia nada. Portanto, no caso do DeepSeek, eles não despejaram todo o conjunto de dados de uma só vez. Em vez disso,
+
+eles usaram um currículo. Inicialmente, o modelo vê apenas sequências curtas, em torno de 4.000 tokens, o suficiente para aprender a estrutura local, como gramática, sintaxe e padrões básicos. Então, à medida que o treinamento se estabiliza, eles gradualmente expandem o contexto de 16 mil para 64 mil, até chegar à janela completa de 1 milhão de tokens. É como expandir gradualmente a memória de trabalho de um cérebro enquanto ele ainda está aprendendo a pensar.
+
+Mas, novamente, é aqui que as coisas se complicam. Nessa escala, com 1,6 trilhão de parâmetros e alimentando o sistema com um milhão de tokens, o treinamento pode se tornar muito instável. Uma das maiores ameaças é algo chamado pico de perdas. Em termos simples, os cálculos basicamente falham e todo o treino vai por água abaixo. A solução usual da indústria não é realmente ideal.
+
+Você simplesmente para, volta a um ponto de salvamento anterior e tenta novamente. É caro e, na verdade, não resolve nada. Bem, o DeepSeek fez algo estranho. Eles introduziram algo chamado roteamento antecipatório. Não analisa o presente, mas sim versões ligeiramente anteriores do presente, instantâneos históricos dos parâmetros do modelo, e usa esses dados para tomar decisões. E você
+
+pode estar pensando: isso parece contraintuitivo, não é? Por que usar informações desatualizadas deliberadamente ao treinar o sistema? Isso ocorre porque a instabilidade está no ruído, nas flutuações bruscas e caóticas que acontecem passo a passo. A verdadeira tendência subjacente se move lentamente. É como quando você está olhando para um gráfico de ações: os movimentos diários podem ser bastante caóticos, mas se você observar uma média móvel, poderá ver a tendência geral com mais clareza. Ao utilizar um instantâneo ligeiramente mais antigo
+
+, o sistema ignora efetivamente o ruído e concentra-se na tendência subjacente. E para tornar isso viável, eles nem sequer o deixam funcionando constantemente. O sistema monitora suas estatísticas internas e, no momento em que detecta os primeiros sinais de um pico de perda, ativa esse roteamento antecipatório para estabilizar o sinal e, em seguida, gradualmente devolve o controle ao roteamento em tempo real assim que o perigo passa. Assim, o modelo se autoestabiliza durante o treinamento e, combinado com os sistemas de restrição anteriores , eles construíram algo verdadeiramente notável. Um modelo gigantesco construído por uma equipe muito pequena, com recursos e capacidade computacional limitados.
+
+Mas, mesmo assim, consegue igualar o desempenho dos melhores modelos do mercado. É possível observar, em todos esses diferentes parâmetros de referência para conhecimento, raciocínio e capacidades de ação, que ele está praticamente no mesmo nível de alguns dos melhores modelos fechados do mercado, incluindo o Opus 4.6 Max e o Gemini 3.1 Pro. E se você observar a taxa de sucesso entre o DeepSeek e o Opus 4.6 Max, que era o
+
+melhor modelo anterior de Claude, poderá ver que a versão 4 do DeepSeek tem, em média, uma taxa de sucesso maior do que o Opus 4.6. Ele também supera o Opus 4.6 em todas essas tarefas. Eis mais uma conquista incrível.
+
+No campo da matemática de vanguarda, temos um marco chamado Putnam 2025, que é notoriamente conhecido como uma das competições de matemática para estudantes de graduação mais difíceis do mundo. Mas veja só, o DeepSeek V4 alcançou a pontuação máxima, 120 de 120. E lembre-se, trata-se de uma janela de contexto de 1 milhão de tokens. Isso é como a memória de curto prazo dele, ou a quantidade de informações que você coloca no seu prompt de uma vez para que ele se lembre. Quando levado ao limite extremo absoluto de 1 milhão de tokens, sua precisão de recuperação supera até mesmo o mais recente Gemini 3.1 Pro do Google,
+
+que também possui um milhão de tokens. E se você observar este ranking independente de análise artificial, verá que o DeepSeek V4 Pro é o segundo melhor modelo de código aberto disponível, logo abaixo do Kim e do K 2.6, e está se aproximando bastante dos melhores modelos proprietários do Google, da Anthropic e da OpenAI. E isso resume minha análise detalhada do DeepSeek V4. Resumindo, aqui está o problema de design deste modelo. Isso
+
+é incrivelmente difícil de construir porque possui um número enorme de 1,6 trilhão de parâmetros com uma janela de contexto de um milhão de tokens. Você tem um sistema de atenção intercalada resolvendo o problema de memória, uma arquitetura de restrições que impede explosões de sinal, um algoritmo altamente otimizado que acelera o aprendizado, um código de baixo nível elegante que garante sua execução eficiente em um data center e um treinamento autoestabilizador realmente inteligente, além de uma infinidade de outros detalhes técnicos que eu nem mencionei, senão o vídeo ficaria muito longo. Mas, no fim das contas, você obtém um modelo incrível, à altura dos melhores modelos fechados do mercado. E esse é realmente o tema central de todo o vídeo. Não se trata apenas de uma única descoberta inovadora, mas sim de dezenas de soluções engenhosamente projetadas, que trabalham em conjunto para tornar possível algo praticamente impossível . E lembre-se de que a
+
+equipe do DeepSeek tem recursos muito limitados. Eles não têm um grande centro de dados, nem sequer possuem as melhores GPUs da Nvidia. A equipe deles é muito menor do que a da OpenAI ou do Google, mas mesmo assim eles conseguiram otimizar tudo com tanta eficiência e ainda alcançar um desempenho de alto nível. E o mais ridículo é que, em vez de simplesmente manterem o sistema fechado e atrás de um paywall, eles disponibilizaram o modelo em código aberto. Então, já está disponível no Hugging Face, você pode baixar gratuitamente e executar offline se tiver o hardware adequado.
+
+E eles até divulgaram este artigo revelando todas as informações sobre como foi projetado e como foi treinado, incluindo esses detalhes de infraestrutura, que são ultrassecretos para os laboratórios fechados de IA. Essa é uma informação que eles nunca compartilham. Há tantas informações valiosas neste artigo que é difícil acreditar que tudo isso seja gratuito. Que equipe incrível! Enfim, isso resume minha explicação sobre o novo Deep Seek V4.
+
+Desta vez, aprofundei-me muito mais em detalhes técnicos, então espero que tenha sido fácil de entender. Deixe sua opinião nos comentários. Como sempre, estarei atento às principais notícias e ferramentas de IA para compartilhar com vocês. Então, se você gostou deste vídeo, lembre-se de curtir, compartilhar, se inscrever e ficar ligado para mais conteúdo. Além disso, há muita coisa acontecendo no mundo da IA ​​toda semana. É impossível abordar
+
+tudo no meu canal do YouTube. Para ficar por dentro de tudo o que acontece no mundo da IA, não deixe de assinar minha newsletter semanal gratuita. O link estará na descrição abaixo. Obrigado por assistir, e nos vemos no próximo vídeo.

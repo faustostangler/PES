@@ -1,0 +1,163 @@
+---
+video_title: "Deepseek drops another HUGE breakthrough"
+video_id: J0D7qV3nl7w
+channel_name: "AI Search"
+channel_id: UCIgnGlGkVRhd4qNFcEwLL4A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=J0D7qV3nl7w
+video_date: 2026-07-03T03:26:30+00:00
+video_description: |
+  DSpark by Deepseek. Huge speed and throughput unlock. #ai #ainews #llm #agi #singularity 
+  Thanks to our sponsor Higgsfield. Try Claude Fable with Higgsfield today: https://higgsfield.ai/s/mcp-theaisearch-pZHmcw
+  
+  dSpark paper: https://github.com/deepseek-ai/DeepSpec/blob/main/DSpark_paper.pdf
+  dSpark code: https://github.com/deepseek-ai/DeepSpec/
+  Deepseek with dSpark: https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-DSpark
+  Deepseek v4 explainer: https://youtu.be/XJUpuOBpT-4
+  How AI models work: https://youtu.be/U2hZFMVNSE0
+  
+  00:00 dSpark intro
+  01:05 Deepseek situation
+  02:20 Why AI models are slow
+  04:44 Speculative decoding
+  7:42 The dilemma
+  10:16 The fix
+  11:05 Higgsfield with Claude Fable
+  12:41 Markov loop
+  14:50 Infra challenges
+  16:29 Confidence heads
+  19:33 Hardware aware algo
+  21:20 Results
+  23:18 Open sourced
+  
+  
+  Newsletter: https://aisearch.substack.com/
+  Find AI tools & jobs: https://ai-search.io/
+  Support: https://ko-fi.com/aisearch
+  
+  Here's my equipment, in case you're wondering:
+  Lenovo Thinkbook: https://amzn.to/4jWeKwH
+  Dell Precision 5690: https://www.dell.com/en-us/dt/ai-technologies/index.htm?utm_source=AISearchTools&utm_medium=youtube&utm_campaign=precisionai#tab0=0 
+  GPU: Nvidia RTX 5000 Ada https://nvda.ws/3zfqGqS
+  Mic: Shure SM7B https://amzn.to/3DErjt1
+  Audio interface: Scarlett Solo https://amzn.to/3qELMeu
+---
+Se você já trabalhou com modelos de IA, especialmente com agentes que realizam tarefas realmente complexas ou demoradas, sabe que eles levam um tempo considerável para processar e gerar a resposta. Às vezes, leva um tempo extremamente longo para que o programa gere uma resposta ou conclua uma tarefa. Mas e se essa espera simplesmente desaparecesse? E se, em vez de ficar olhando para uma tela de carregamento, você recebesse a resposta quase instantaneamente? E se esse aumento de velocidade não lhe custasse nada em qualidade? Sem atalhos ou
+
+respostas simplistas. Isso parece bom demais para ser verdade, não é? Mas a equipe genial da DeepSeek conseguiu fazer isso de novo. Eles encontraram uma maneira de aumentar a capacidade de produção dos sistemas de IA em mais de seis vezes e acelerar os processos em mais de 80%, sem qualquer perda de qualidade. Isso parece impossível porque geralmente existe uma relação de compromisso entre velocidade e qualidade. Na
+
+verdade, não é possível ter as duas coisas ao mesmo tempo, mas, surpreendentemente, o DeepSeek conseguiu . Neste vídeo, vamos analisar essa inovação e a engenhosa engenharia por trás dela. Bem, este é um artigo bastante técnico, mas, como sempre, vou explicá-lo de forma simples e fácil de entender para todos. Vamos direto ao assunto. Em primeiro lugar, caso você nunca tenha ouvido falar da DeepSeek, trata-se de um pequeno laboratório chinês com recursos extremamente limitados. Eles têm cerca de 20
+
+vezes menos funcionários do que a OpenAI. Puxa, eles nem sequer têm acesso às melhores GPUs da Nvidia disponíveis no mercado. Portanto, eles são extremamente limitados em termos de capacidade computacional. Mas a equipe é simplesmente brilhante e implacável. Na verdade, eles já construíram um dos modelos de código aberto mais inteligentes e eficientes que existem, o DeepSeek V4. Eles não apenas lançaram
+
+o modelo, como também foram generosos o suficiente para revelar todos os detalhes de como ele funciona. Aliás, se você quiser saber mais sobre isso, recomendo muito este vídeo onde faço uma análise detalhada do DeepSeek V4. De qualquer forma, devido à sua situação, já que seus recursos são extremamente limitados, eles não podem simplesmente continuar construindo modelos cada vez maiores. Eles precisam estar totalmente focados em torná-los o mais eficientes possível. E é por isso que as publicações da DeepSeek são tão interessantes. Não se trata apenas de
+
+força bruta, mas de um design mais inteligente. E há alguns dias, eles lançaram um novo sistema chamado DeepSpark. Isso promete acelerar os modelos de IA e aumentar sua capacidade de produção em mais de 600%, sem qualquer perda de qualidade. Esse resultado é realmente surpreendente . Antes de abordarmos esse assunto, talvez seja útil entender como os modelos de IA atuais funcionam e qual é o gargalo. Veja bem,
+
+quando você usa o ChatGPT, o Gemini ou o DeepSeek, provavelmente precisa esperar pelo menos alguns segundos antes de obter uma resposta. Você verá um indicador de carregamento enquanto aguarda. Bem, isso acontece porque os modelos modernos de IA geram texto por meio de um processo chamado geração autorregressiva. Basicamente, a IA escreve uma palavra de cada vez. E para gerar cada palavra, o programa precisa analisar tudo o que foi escrito até o momento. Em termos mais técnicos
+
+, cada palavra precisa analisar como todas as palavras anteriores se relacionam com ela. Bem, para uma frase curta, tudo bem. Mas imagine escrever um relatório muito longo, com milhares ou até centenas de milhares de palavras. Cada palavra precisa analisar todas as palavras anteriores para entender como se relaciona consigo mesma e, em seguida, processar essa informação através dos bilhões de parâmetros do modelo de IA para gerar a próxima palavra. O número de cálculos necessários é astronômico. Atualmente, as GPUs modernas
+
+já são incrivelmente poderosas. Eles são projetados para realizar uma grande quantidade de cálculos simultaneamente e em paralelo. Assim, eles conseguem lidar facilmente com todos esses dados que fluem por meio de bilhões de parâmetros de um modelo de IA para gerar a próxima palavra. Essa etapa é, na verdade, muito fácil para a GPU. A verdadeira lentidão não está nesses cálculos feitos por meio de uma rede neural.
+
+O chip precisa buscar todos os valores salvos referentes aos relacionamentos entre cada palavra e como ela se relaciona com todas as outras palavras. Novamente, para uma frase curta, está ótimo. Mas se você estiver lidando com uma grande quantidade de texto e cada palavra tiver que consultar todas as palavras anteriores para entender o contexto , bem, essa é a parte lenta. Está buscando todos esses valores na memória para cada palavra. E depois que todos esses valores forem obtidos, esses dados poderão ser passados ​​pela rede neural para serem processados. E aqui a GPU consegue processar
+
+tudo muito rapidamente. É como um pequeno esforço para pronunciar a próxima palavra. Mas depois fica ocioso novamente, aguardando que o próximo lote de valores seja buscado na memória. E como os modelos de IA são projetados para gerar apenas uma palavra por vez, você não pode começar a calcular a próxima palavra até que a palavra anterior tenha sido gerada e confirmada. E isso, na verdade, cria uma relação direta entre o tamanho da resposta e o tempo necessário para gerá-la. Em outras palavras, quanto mais longa
+
+a resposta, mais tempo levará para ser gerada, pois precisa gerar tudo palavra por palavra e, para cada palavra, precisa analisar todas as relações com todas as palavras anteriores . Agora, é claro, a indústria está ciente dessa enorme ineficiência e existem soluções alternativas para isso. Na verdade, o padrão ouro atual para acelerar a geração é algo chamado decodificação especulativa. E a ideia aqui é surpreendentemente simples. Em vez de usar um modelo grande para gerar lentamente cada palavra uma de cada vez, você usa um modelo menor e mais rápido para adivinhar várias palavras à frente. Em seguida, o modelo principal simplesmente
+
+verifica essas estimativas. Se as estimativas forem boas, o modelo grande pode aceitar várias palavras de uma só vez, em vez de produzi-las uma de cada vez. Aqui está uma analogia simples para entender isso. Imagine que você tem um chefe sênior brilhante no trabalho. Esse cara é muito inteligente e todas as decisões finais precisam passar por ele, mas tem um problema. O tempo dele é
+
+muito valioso. Ele também é muito lento. Ele insiste em escrever cada palavra uma de cada vez. Bem, esse chefe sênior é como um modelo completo de IA. É inteligente e confiamos que produzirá uma boa resposta, mas é muito lento e caro de usar. Então, para agilizar o processo
+
+, a empresa contrata um estagiário. O estagiário é como um pequeno modelo de IA leve . Ele não é tão inteligente quanto o chefe, deixa passar detalhes e às vezes escolhe as palavras erradas, mas trabalha extremamente rápido. Eis como funciona a decodificação especulativa. Em vez de pedir ao chefe para escrever tudo, você pede ao estagiário para redigir rapidamente um pequeno trecho de texto com antecedência, talvez de cinco a dez palavras. O estagiário entrega este rascunho
+
+ao chefe, e agora o chefe não precisa verificar palavra por palavra. Ele pode simplesmente verificar todas as palavras simultaneamente em paralelo. Em termos de IA, o modelo maior pode verificar várias palavras adivinhadas pelo modelo menor simultaneamente, porque as GPUs são projetadas para trabalho paralelo. Assim, em vez de usar o modelo grande para escrever lentamente uma palavra de cada vez, usamos o modelo pequeno para adivinhar várias palavras. E então usamos o modelo grande para verificar sua resposta de uma só vez. Mas o que acontece
+
+se o estagiário cometer um erro? Bem, o sistema utiliza uma técnica chamada amostragem por rejeição. O modelo maior analisa o rascunho do estagiário da esquerda para a direita e aceita todas as palavras que estão alinhadas. Mas se o estagiário errar uma palavra, o chefe pega uma caneta vermelha e rejeita essa palavra e tudo o que vier depois dela. Então o estagiário recomeça a partir daí e redige o próximo trecho para o chefe revisar novamente. É basicamente assim que
+
+funciona a decodificação especulativa. O modelo pequeno faz uma previsão, o modelo grande verifica o rascunho e aceita as palavras corretas. Se a palavra estiver errada, tudo o que vier depois dela será rejeitado e o modelo menor começará a partir daí. E o processo se repete várias e várias vezes. O importante é que o modelo principal sempre tem a palavra final. É por isso que a
+
+decodificação especulativa pode ser sem perdas. Ter um modelo menor não significa que sua resposta seja menos inteligente. Isso não significa que estamos diminuindo a qualidade do resultado, porque, em última análise, a resposta final ainda vem da decisão do modelo geral . Estamos usando apenas um modelo pequeno para ajudar a escrever mais rápido. Mas a qualidade da saída é a mesma como se o modelo grande tivesse escrito tudo sozinho. Resumindo, trata-se
+
+de decodificação especulativa. Embora essa seja uma das maneiras mais comuns de acelerar modelos de IA, essa ideia enfrenta atualmente um grande dilema. Veja bem, o principal problema é que esses estagiários, ou os modelos menores, são profundamente falhos e falham de maneiras completamente opostas. Então, vamos analisar esse problema. Existem basicamente dois tipos de estagiários. Um
+
+é cuidadoso e lento, o outro é rápido, mas pouco confiável. Veja bem, o primeiro tipo é chamado de desenhista autorregressivo. Este funciona de maneira quase idêntica ao modelo maior. Ele prevê uma palavra de cada vez. Ele gera a palavra um, depois a palavra dois, depois a palavra três, e continua passo a passo. A vantagem aqui é que
+
+cada nova palavra sabe o que veio antes dela. Assim, é menos provável que a versão preliminar esteja errada. A qualidade da saída é maior, mas como está gerando uma palavra de cada vez, também é lenta. Quanto mais longo for o rascunho, mais tempo levará para ser gerado. Bem, o segundo tipo de estagiário é chamado de desenhista paralelo.
+
+Isso é muito mais agressivo. Em vez de exibir as palavras uma de cada vez, ele prevê um bloco inteiro de palavras de uma só vez. Por exemplo, você pode configurá-lo para exibir várias palavras em uma única passagem, o que o torna muito mais rápido. É como tentar adivinhar a primeira palavra ao mesmo tempo que tenta adivinhar a última. Isso também funciona bem porque, bem, as GPUs são feitas para trabalho paralelo. Assim, um
+
+desenhista paralelo pode usar o hardware de forma mais eficiente. Isso parece ótimo, não é? Mas, na verdade, existe uma fraqueza oculta. Como prevê todas essas palavras ao mesmo tempo, não consegue construir a frase naturalmente, passo a passo. Sofre de algo chamado decadência de sufixos. Eis um exemplo
+
+do que é isso. Imagine que o modelo está tentando chegar a um acordo com o usuário. Como existem muitas maneiras de expressar a mesma coisa em linguagem natural, poderia gerar a mensagem "Claro". Ou, também poderia dizer: "Sem problema". Ambas são válidas. Mas,
+
+para um modelo paralelo, como ele gera ambas as palavras ao mesmo tempo, em vez de sequencialmente, existe a possibilidade de que ele produza uma resposta incorreta, como "sem problema" ou "sem curso". E aqui, temos apenas um exemplo muito simples de duas palavras , mas à medida que o rascunho fica mais longo e contém mais palavras , a situação piora ainda mais. As primeiras palavras podem estar corretas, mas as palavras seguintes geralmente ficam confusas. Portanto, este é o problema da decadência dos sufixos. Resumindo, eis o dilema que enfrentamos.
+
+Atualmente não existe uma boa solução para a decodificação especulativa, porque um tipo de desenhista é muito cuidadoso, mas muito lento. Outro tipo de desenhista é muito rápido, mas comete muitos erros. E atualmente não temos nenhuma solução para isso. Bem, era exatamente isso que o DeepSeek pretendia resolver neste artigo. Então, eles propuseram um sistema chamado DeepSpark, e o projeto é genial. Funciona assim. Então, eles
+
+pegaram o estagiário paralelo e desenvolveram a partir disso. Lembre-se, esse processo paralelo consegue prever várias palavras ao mesmo tempo, então é muito rápido, mas também extremamente propenso a erros. Bem, o DeepSeek acrescentou algo além disso . Eles introduziram um loop minúsculo e incrivelmente leve que itera uma posição de cada vez. É como ter um editor extremamente ágil sentado ao lado do estagiário, apenas o orientando levemente na direção certa. Por exemplo, se
+
+digitar a palavra "de", a próxima palavra será direcionada para "curso". Ou, se digitar "não", isso vai influenciar a próxima geração a adotar uma postura problemática. Claude Fable está de volta esta semana. E se você quiser usar isso para transformar suas ideias em conteúdo pronto para produção, definitivamente confira a Higgsfield, patrocinadora deste vídeo. Claude Fable 5 já é um dos modelos mais inteligentes que existem. Ele
+
+consegue entender sua ideia, analisá-la racionalmente e apresentar uma direção criativa realmente sólida. Mas, normalmente, ainda fica preso dentro de uma caixa de bate-papo. Pode dizer-lhe o que produzir, mas não pode efetivamente criar o conteúdo. É aí que a Higgsfield entra em cena. Com o Higgsfield MCP, você pode conectar o Claude a algumas das melhores ferramentas de imagem e vídeo do mundo. Assim, em vez de apenas
+
+descrever um conceito, pode gerar os elementos visuais, criar os vídeos, editar os recursos e ajudar a construir toda a campanha. Em vez de alternar manualmente entre ferramentas e copiar e colar conteúdo, você pode trabalhar diretamente dentro do Claude. Claude pode planejar o conceito, redigir o briefing criativo, gerar os vídeos ou imagens através do Higgs Field e até mesmo colocar os arquivos finais em sua pasta. Sem alternar entre abas, sem copiar instruções de um lado para o outro, sem transferência criativa separada. E isso porque Fable 5 se lembra do contexto, dos seus personagens, ao longo de todo o projeto. E se você
+
+quiser algo ainda maior, há também o supercomputador do Campo de Higgs. Basicamente, é toda a equipe criativa de IA do Higgs Field reunida em um único chat. Você pode escolher Fable 5 como base e, em seguida, construir tudo, desde a ideia inicial até o produto final. Em vez de controlar cada pequeno passo nos mínimos detalhes, você define o objetivo e deixa a ferramenta agir mais como um diretor criativo. Seja para criar anúncios, vídeos de lançamento , vídeos para redes sociais ou qualquer outro tipo de conteúdo, o Higgs Field é um divisor de águas que vai turbinar seu fluxo de trabalho de produção. Experimente hoje mesmo usando
+
+o link na descrição abaixo. Agora, se analisarmos mais a fundo, veja como funciona em termos técnicos. Eles usaram algo chamado cabeça de Markov. Na teoria da probabilidade, um processo de Markov pressupõe que a probabilidade do próximo estado depende exclusivamente do estado atual, ignorando completamente quaisquer estados que ocorreram anteriormente. Esse fenômeno, na verdade, está presente em todos os aspectos da vida. Por
+
+exemplo, quando você está caminhando, sua posição futura depende inteiramente de sua posição atual e da direção para a qual você pisa em seguida. Tudo o que aconteceu antes disso não importava muito. Assim, a camada de Markov no D-Spark analisa apenas a palavra imediatamente anterior para ajustar as probabilidades da próxima palavra. Em outras palavras, analisa a palavra anterior para orientar qual será a próxima palavra . E descobriu-se que a adição desse mecanismo de Markov resolve o problema de deterioração dos sufixos que tínhamos antes. Muito bem,
+
+parece uma boa solução, mas você pode estar se perguntando se, ao adicionarmos esse componente extra e torná-lo sequencial, isso não tornaria o processo muito mais lento? Bem, a equipe de especialistas da Deep Seek usou uma técnica chamada fatoração de baixa classificação . É um processo muito técnico para este vídeo, mas basicamente comprime a informação e torna os cálculos extremamente rápidos e eficientes. E verifica-se que, após aplicar essa cabeça de Markov com fatoração de baixa classificação , o custo computacional torna-se bastante insignificante. Na verdade, adicionar esse pequeno editor de Markov aumentou a latência em apenas 0,2% a 1,3% da velocidade total de geração. Mas
+
+o retorno desse pequeno investimento é enorme. Com isso, o processo se torna muito menos propenso a erros e você pode aumentar o tamanho de um rascunho correto em até 30%, o que é incrível. Na verdade, para este novo modelo Deep Spark, mesmo que o reduzamos a uma camada rasa de duas camadas, ele supera um desenhista paralelo puro de cinco camadas em todos os benchmarks. É infinitamente superior, mais eficiente e de melhor qualidade, resolvendo praticamente todo o dilema do estagiário de desenho técnico. Muito bem, até agora, nós meio que resolvemos isso, pelo menos em teoria, pelo menos em código. Mas,
+
+uma vez que implantamos o Deep Spark em um servidor de dados real , isso desencadeia uma série de novos problemas de infraestrutura. Veja bem, isso funciona perfeitamente bem se tivermos apenas um GP U atendendo exatamente um usuário. Isso é bastante simples e direto. Mas em um ambiente de produção real, você tem um centro de dados com várias GPUs, além de milhares de usuários simultâneos usando o mesmo modelo ao mesmo tempo. Veja bem, o modelo completo de IA, ou seja, o modelo principal, tem uma limitação física rigorosa conhecida como capacidade de processamento em lote. Ele só pode processar um
+
+número limitado de tokens por vez, para todos os usuários simultaneamente. Assim, se o usuário A fizer uma pergunta, o sistema envia um rascunho do modelo do estagiário para o modelo do chefe para verificação. E este rascunho consome uma porcentagem do total de recursos computacionais. Se o rascunho para o usuário A for um palpite ruim e o chefe o rejeitar no meio do caminho, bem, todo esse poder computacional terá sido essencialmente desperdiçado. Se o rascunho for longo e contiver muitos erros, isso não só desperdiça a capacidade de processamento em lote do modelo principal, como também desperdiça o poder computacional do estagiário, além de adicionar latência enquanto as consultas dos outros usuários ficam na fila. Portanto, é
+
+óbvio que enviar rascunhos ruins para o modelo principal desperdiça poder de processamento e prejudica todos os outros no servidor. Você quer evitar enviar o máximo possível de rascunhos ruins . Para resolver isso, você pode estar pensando: talvez possamos simplesmente encurtar os rascunhos para não desperdiçarmos capacidade, certo? E versões mais curtas tendem a conter menos erros, especialmente perto do final. Bem, na verdade, isso seria ineficiente na direção oposta.
+
+Veja bem, o objetivo principal de criar rascunhos é fazer com que a geração funcione mais rápido. E quanto mais longo o rascunho, mais rápido ele pode gerar o resultado. Então, aqui está o truque que o DeepSeek propôs. O tamanho do rascunho deve ser determinado pelo contexto. Se o contexto for sobre conteúdo muito previsível, por exemplo, responder a um problema de matemática ou programação, o rascunho pode ser mais longo porque a resposta é muito determinística. É menos provável que o
+
+modelo de estágio resulte em erros na versão preliminar. Mas, se o contexto for aberto, por exemplo, se o pedido for para escrever uma história criativa, então é muito fácil que esse rascunho contenha uma tonelada de palavras erradas, ou seja, uma tonelada de palavras que o modelo do chefe rejeitaria porque existem muitas possibilidades de resposta. Assim, neste contexto, o comprimento do rascunho deve ser menor ou o corte deve ser feito mais cedo. Então, como fazemos isso? O sistema precisa de uma espécie de agente de trânsito dinâmico . É preciso analisar o contexto e
+
+decidir dinamicamente qual deve ser a extensão do rascunho ou quando encerrá-lo antecipadamente. Na verdade, precisamos de um mecanismo que possa interromper a redação do rascunho logo no início, caso detecte a probabilidade de um erro naquele ponto. Dessa forma, não haverá desperdício de poder computacional gerando mais coisas que o modelo principal provavelmente rejeitaria. Assim, a equipe do DeepSeek também adicionou um módulo leve especializado chamado "confidence head" (cabeçalho de confiança). Isso é anexado diretamente ao desenhista ou ao modelo do estagiário. Para cada
+
+palavra que gera, o processador também emite uma pontuação de confiança que varia de zero a um. Zero significaria que é um palpite e que não há certeza se é a palavra certa, enquanto um significaria que há 100% de certeza de que essa é a palavra certa. Essa é a palavra que o modelo chefe também escreveria. E para que isso funcionasse, eles adicionaram uma regra simples. Se a palavra estiver acima de um limite, digamos, acima de um nível de confiança de 0,6, então continue. Se alguma palavra estiver abaixo desse
+
+limite, você encerra a escrita do rascunho imediatamente e para de desperdiçar recursos de processamento. Você envia apenas essa parte do rascunho para o modelo chefe revisar. E depois de implementar e testar isso , os resultados foram impressionantes. Após a utilização desse limiar de confiança, a taxa de aceitação do modelo do chefe saltou de um desanimador 45,7% para incríveis 96%. Em outras palavras, agora as versões preliminares têm muito mais probabilidade de serem aceitas pelo modelo do chefe. Portanto, estamos desperdiçando muito menos poder
+
+computacional. Vamos analisar a lógica por trás dessa melhoria. Digamos que a IA esteja tentando escrever uma história criativa. Por ser tão aberto, o rascunho que ele escreve começa a ter pouca confiança logo no início. Digamos, por volta da quarta ou quinta palavra. Nesse ponto,
+
+com base no mecanismo atual, o sistema encerra o rascunho porque sua previsão é fraca. O estagiário não tem muita certeza se, ao continuar escrevendo o rascunho, o chefe o aceitará. E, inversamente, digamos que a IA esteja tentando resolver um problema de matemática ou de programação. Nesse caso, a resposta é muito mais determinística. E quando está redigindo o rascunho, demonstra muita confiança em todas as suas previsões. Seus valores de confiança estão
+
+quase sempre acima do limite. Assim, o mecanismo não precisa interromper o rascunho antecipadamente. Nesse caso, o rascunho pode ser mais longo e, portanto, a geração pode ser mais rápida. Portanto, este é um mecanismo que pode decidir automaticamente o quanto acelerar a geração, mantendo uma boa qualidade e evitando o desperdício de recursos computacionais. Mas isso não é tudo. Veja bem, a genialidade desse projeto
+
+reside no fato de ele também ser compatível com o hardware. Analisa todas as solicitações ativas, reúne o nível de confiança de todos esses rascunhos e, em seguida, os compara com algo chamado curva SBS. Basicamente, este gráfico mostra como a velocidade da GPU varia dependendo do tamanho do lote. Veja bem, rascunhos menores são processados ​​rapidamente e exigem menos da GPU, mas rascunhos maiores tornam a GPU mais lenta, o que pode afetar outros usuários simultâneos. Bem, o mecanismo também monitora a carga atual da GPU e decide em tempo real o tamanho dos rascunhos que aceita. Isso garante o
+
+melhor equilíbrio possível entre velocidade e desempenho do hardware. Durante os horários de menor movimento, por exemplo, quando há relativamente poucos usuários, o sistema percebe que tem capacidade ociosa na GPU, então ele relaxa, permitindo que o modelo de rascunho tente adivinhar mais palavras de uma só vez. Isso utiliza a energia extra disponível para tornar cada resposta mais rápida para os usuários. Mas, durante os horários de pico, ele percebe o esforço adicional. A capacidade da GPU fica baixa, então o número de palavras que o modelo de rascunho pode adivinhar é reduzido. As
+
+respostas individuais ficam um pouco mais lentas, mas isso protege o sistema como um todo de ficar lento ou travar sob carga. Então, reunimos as peças. Temos um estagiário híbrido ágil que está gerando rascunhos. Temos um responsável pela análise de confiança que avalia o resultado do rascunho e decide quando ele deve ser finalizado. Também temos um algoritmo que analisa a carga da GPU em tempo real para ajustar automaticamente os rascunhos que recebe. Este é um
+
+motor completamente orgânico e autorregulável. Trata-se de uma otimização primorosamente projetada para toda a pilha, do software ao hardware, como era de se esperar da equipe da Deep Seek. E se analisarmos os resultados na produção, eles são extremamente impressionantes. Se compararmos este novo método D Spark com o sistema MTP anterior do Deep Seek, que prevê apenas uma palavra ou token por vez, podemos ver que o novo D Spark oferece um aumento de 60 a 85% na velocidade de geração sem qualquer perda de qualidade. Essa é a chave aqui.
+
+Essencialmente, estamos obtendo velocidades mais rápidas sem qualquer sacrifício na qualidade. Aliás, veja só. Se os pesquisadores estabelecessem uma regra fixa dizendo que cada usuário deveria receber pelo menos 120 tokens por segundo, o antigo sistema MTP entraria em colapso rapidamente. Só conseguia atender um pequeno número de usuários antes de apresentar problemas, pois o software e o hardware não estavam otimizados. Por outro lado, o D Spark evitou isso porque é mais inteligente na utilização de recursos.
+
+Ele sabe quando usar rascunhos mais longos ou quando encerrar um rascunho antecipadamente para economizar poder da GPU. Como resultado, foi possível atingir um aumento de quase 700% na produção total do sistema, o que representa uma melhoria impressionante. E, novamente, nada disso afetou a qualidade do resultado. Na verdade, devido a esse sistema dinâmico de controle de tráfego — lembre-se, esse é o mecanismo que permite ao D Spark se ajustar automaticamente —, ele agora consegue lidar com combinações de velocidade e capacidade de usuários que não eram possíveis no mesmo hardware anteriormente. É possível observar que esse novo método D Spark consegue processar muito mais dados, mesmo com o aumento do número de solicitações simultâneas dos usuários.
+
+Resumindo, esse é o sistema D Spark da Deep Seek. Quando você não tem GPUs ilimitadas, dinheiro ilimitado ou pessoas ilimitadas, você é forçado a ser criativo. E o D Spark é um exemplo perfeito dessa engenharia inteligente. Eles resolveram um problema que a indústria considerava insolúvel. E, a partir disso, eles conseguiram aumentar significativamente a velocidade e a produção dos modelos de IA sem afetar a qualidade. E é isso que torna
+
+essas publicações da DeepSeek tão fascinantes de ler. A engenhosidade deles é simplesmente de outro mundo. E, como sempre, eles já divulgaram o código . Portanto, incluirei o link para este repositório do GitHub na descrição abaixo, que contém instruções e o código para executar o DeepSpark. Além disso, este produto é distribuído sob uma licença MIT bastante permissiva.
+
+É fantástico que a equipe da DeepSeek esteja disposta a revelar os detalhes disso, especialmente toda essa questão da infraestrutura sobre como implantá-la em um data center e executá-la de forma eficiente. Essa é uma informação incrivelmente valiosa, e geralmente é ultrassecreta para os laboratórios fechados que existem por aí. São como segredos industriais, que os laboratórios fechados definitivamente não querem que você ou qualquer concorrente saibam. Mas aqui, o DeepSeek está revelando todos esses detalhes. Além disso, o mais incrível é que esse mecanismo DeepSpark já foi implementado no modelo mais recente, o DeepSeek V4. Então, vou incluir o link para a
+
+página da Hugging Face na descrição abaixo, onde você pode baixar o modelo DeepSeek mais recente com o DeepSpark implementado. E, em teoria, isso deveria funcionar ainda mais rápido e de forma mais eficiente em comparação com a versão anterior, que, aliás, já é incrivelmente rápida e barata. Este é o modelo de fronteira mais rápido e eficiente que existe. Mas eles simplesmente tornaram tudo ainda mais rápido. Enfim, este é um dos artigos mais técnicos que já analisei no meu canal.
+
+Espero ter facilitado a sua compreensão. Na verdade, o artigo está repleto de uma infinidade de detalhes técnicos adicionais , que eu não tive tempo de abordar. Então, se você tiver interesse em se aprofundar no assunto , vou incluir o link para o artigo original na descrição abaixo . Deixe sua opinião nos comentários . Como sempre, estarei atento às principais notícias e ferramentas de IA para compartilhar com vocês. Então, se
+
+você gostou deste vídeo, lembre-se de curtir, compartilhar, se inscrever e ficar ligado para mais conteúdo. Além disso, há muita coisa acontecendo no mundo da IA ​​toda semana. É impossível abordar tudo no meu canal do YouTube. Para ficar por dentro de tudo o que acontece no mundo da IA, não deixe de assinar minha newsletter semanal gratuita. O link estará na descrição abaixo. Obrigado por
+
+assistir, e nos vemos no próximo vídeo.
