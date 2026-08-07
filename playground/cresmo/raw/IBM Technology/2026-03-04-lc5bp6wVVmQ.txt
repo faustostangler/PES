@@ -1,0 +1,299 @@
+---
+video_title: "Is your robot vacuum safe? Here’s why it matters."
+video_id: lc5bp6wVVmQ
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=lc5bp6wVVmQ
+video_date: 2026-03-04T11:01:23+00:00
+video_description: |
+  Can IAM handle AI? Find out → https://ibm.biz/BdpYPN
+  
+  A consumer just wanted to control his own personal robot vacuum with a PlayStation controller. He ended up controlling thousands of strangers’ vacuums, too. 
+  
+  This week on Security Intelligence, we cover one of the wildest IoT security stories in recent memory: How one user accidentally built an army of 6,700 robot vacuums, and what it means for cybersecurity pros.  
+  
+  Then we turn to TOAD — telephone-oriented attack delivery — a deceptively low-tech social engineering method that's quietly becoming one of attackers' favorite tools. We talk about why it works and what defenders can actually do about an attack that skips most of your defenses entirely. 
+  
+  And finally: healthcare's cybersecurity problems. This season of the hit medical drama The Pitt features a hospital-debilitating ransomware attack, which is perhaps one of the most realistic things to ever happen on a show known for its verisimilitude. We explore why ransomware is so prevalent in healthcare, why patching is rare and what it would actually take to change that. 
+  
+  00:00 -- Introduction 
+  0:58 -- Rise of the robot vacuum army 
+  10:02 -- Anthropic debuts Claude Code Security 
+  24:39 -- Thwarting distillation attacks 
+  34:23 -- Why hackers love TOADs 
+  44:14 -- Healthcare’s cybersecurity woes 
+  
+  The opinions expressed in this podcast are solely those of the participants and do not necessarily reflect the views of IBM or any other organization or entity. 
+  
+  Explore the Threat Intelligence Index 2026 → https://ibm.biz/BdpYP7
+  
+  #vibecoding #securitydebt #aicodesecurity
+---
+What's your take on Claude Code Security? Is this gonna shake things up? Yeah. That's what AI does. It's very good at disrupting things.
+
+All that and more on Security Intelligence. Hello and welcome to Security Intelligence, IBM's weekly cybersecurity podcast, where our expert panelists turn the biggest industry news stories into practical takeaways you can use. I'm your host, Matt Kosinski, and joining me today, Michelle Alvarez, Manager, X-Force Strategic Threat Analysis, Dave McGinnis, VP, Senior Partner, Global Cyber Threat Management, and Ryan Anschutz, North America Leader of X-force Incident Response. And here's what we're talking about today, folks. Anthropic debuts Claude Code Security, distillation attacks, toads and the pit.
+
+I swear it really is a cybersecurity show. But first, we're gonna talk about robot vacuum armies. While tinkering with his own vacuum, AI strategist Sami Azdufal realized that his private token gave him access to thousands of other people's vacuums too. Azdufal just wanted to hack his personal vacuum so he could control it with a PlayStation controller, which sounds pretty cool. But he quickly learned that armed with just his token, he could access servers that let him control thousands of other robots.
+
+He could drive them, use their camera feeds and their microphones and even access maps of users' homes. And he found that the data stored on the servers was in plain text. There was no encryption. He could just see it. So Ryan, I see you laughing and I wanted to throw it to you here first because I think this is just such an absurd thing to see play out here.
+
+What's your initial reaction? Do we need to be worried about robot vacuum armies, or more seriously, just IoT security in general? What's the deal here? Yeah, I think you hit the nail on the head there, you know, IOT security in general. I would argue that when one token gives you access to thousands of devices, that is not really a clever hack.
+
+That is a systemic identity failure across multiple aspects. You know, where this story is about that researcher and they're unintentionally accessing thousands of robot vacuums, that's identity architecture, right? So, an incident response, we repeatedly see, unfortunately, repeatedly see the same pattern. We have weak tenant separation, we have shared authentication and authorization logic, and over-trusted API tokens. So the issue isn't that IoT devices are connected, it's that many vendors actually treat identity, unfortunately, as an afterthought.
+
+So, when device authentication isn't, let's say, maybe tightly scoped or isolated, that single credential or token flaw can create a huge, what we call, blast radius. You know, I would say in IoT that the real risk isn't connectivity, it's inherited access. Yeah, and you know, talking about that kind of weakness in ID architectures and treating it as an afterthought, it kind of reminded me of some of the data that came out of the Threat Intelligence Index this year about how, I think it was, what is it, 56% of like the exploited vulnerabilities didn't need authentication. Does that sound right, Michelle? Do I have that right?
+
+And I was wondering if you could say a little bit about that aspect of things, this missing authentication that we see or these weak authentication or this afterthought approach to ID security. Why do you think this is still plaguing us? It seems like such a basic thing, but it's such a huge problem. Any thoughts there, Michelle? Yeah, absolutely.
+
+I'd also like to share my initial reaction, which was, robot vacuum army, yes, please. I'd like them to come over right now. [laughter] I want to know if there's a weekly subscription. Yeah, definitely, no. [laughter] But on all seriousness, and I want to thank you, yes, we just launched the Threat Intelligence Index last week.
+
+And one of the findings was, yes, you know, of the 40,000 vulnerabilities that we tracked last year, more than half or 56 percent did not require any authentication. That means, you know, no bypassing of the MFA, you know, just exploiting these vulnerabilities, as Ryan stated, that are just sort of open. And by default, because there's no authentication measures in place, attackers can, you know, execute remote code, without any guardrails that are up against that. So definitely attackers are gonna be looking for an easy way in and this is one of them. Absolutely.
+
+And Dave I want to bring you in here too because you know, Azdufal used AI tools to, to reverse engineer the vacuum, its protocol, and he didn't do it to like, you know, gain any nefarious access or anything. He just used the tools to help him understand it so we could get access to his token. And then, as we saw, he ended up with this, this, you know, this massive blast radius as Ryan put it. I'm wondering if you have thoughts on what this kind of hints to us or maybe just says outright about the state of hacking with these AI tools now, like the fact that someone could accidentally do this. Like, what happens if someone purposefully uses tools for this reason?
+
+What's your thought here? Well, I mean, I think that the story we're talking about is we've got smart devices all over our houses, right, plus poorly controlled cloud architectures, cloud controls, right? You know, so, architecturally not great, definitely not secure. I think it was the first thing Ryan said, agree, right? And then you power that by finding vulnerabilities and writing workarounds with AI, right?
+
+So now you've got exploits in a jiffy, right? So, I mean, it's, it's a win-win-win scenario if you're looking to exploit something, right? So, I'm not sure they're gonna have a subscription service, Michelle, but maybe. But, I mean, I mean, who would've thought your vacuum was gonna be, you know, a surveillance agent, right? I mean, it's kind of crazy.
+
+And then the scarier thing to think about is, well, how many other folks haven't thought about security and this architecture? They're just like, oh, we'll just control it from the cloud and people can use it on their apps, on the phone, it'll be great. And I have, I just, I did a little inventory, right? Like, so I'm just walking around my house, my thermostats, my home security camera systems. I'm not done.
+
+The garage ... [laughter] Your refrigerator. [laughter] The locks on all of my doors, right?
+
+Okay, I'll stop, I'll stop. But I mean, like, that's, there are more [laughter] but I might not be average at that point. So, but I mean, like, like the number of connected things that use this exact same architecture, right, for ease of convenience and use, and oh my goodness, your, your, your vacuum needs to change the, like we can control that from the cloud, like, great. So, it's super handy and super helpful, but if you haven't done the basics, which is kind of how, what we're talking about, like, you know, AI is only going to continue to exploit this faster. Which has been the theme, right?
+
+Like, I don't have to have a, a huge understanding of how you built your infrastructure. AI can find that for me, right? That's what happened here. That's perfect, right? It's a, it's a really like a perfect storm of things where you have these systems, like you said, that are, they're connected, and like Ryan said, they don't maybe have the best security in there, and then the AI just turbocharges that.
+
+It makes it so easy to find those entry points, those exploitations. And so I guess the question then for me becomes, you know, we've been talking about IoT security, like, forever. I feel like ever since I started in cybersecurity, it's been this thing where people are like IoT devices, they are not as secure as they should be. And yet, here we are. It's 2026, they're still not as secure as they should be.
+
+What's it gonna take? Ryan, any thoughts? Like, where do we go from here? How do we actually address this issue? Yeah, I think, you know, especially with this issue, we're still treating IoT like consumer hardware.
+
+And until we actually start taking a secure-by-design approach across all of our connected devices, it's not going to change. Absolutely. Michelle, any thoughts on your end about what you'd like to see improve in IoT security? Yeah, absolutely. To add on to what Ryan said, it's about awareness, right?
+
+Bringing awareness that these flaws exist so that vendors are held accountable and they can actually make the changes and, like Ryan said, implement secure by design. Because right now, we just have a proliferation of insecure by design for these IoT devices. And I think there's just not enough attention drawn on to it until maybe something happens, right? That's often when we take notice, and we have to react to a significant event. And that's just bringing awareness to the situation.
+
+So I'm glad we're doing that today. Abs ... Yeah, I mean, it is the silver lining, right, of the robot vacuum army, as we can at least talk about why this is an issue.
+
+Before we round out this topic, though, Dave, any final thoughts on your end about the kind of state of IoT security and what you'd like to see change? I think that it goes to the exact two points that Michelle and Ryan just made, right? Like, and I love secure by design. I mean, like, that encompasses both, right? So awareness leads to, so, you're, people are like, you know, vacuums aren't just for, you know, cats to ride on anymore.
+
+[laughter] Like, I think that's the [laughter] ... I think, I think the net here is, look, we need those things to be safe if we're gonna put our cats on them, [laughter] so let's do that. [laughter] I love that.
+
+I'm always, I'm always saying this, if we're going to put our cats on things, it has to be safe. [laughter] That's the cat test. Folks, Dave has coined it here, the cat test for your cybersecurity needs. Yes. There's your new IOT standard right there.
+
+That will be in the next Threat Intelligence Index report. [laughter] Oh! [laughter] That's funny. It better be. Let's, on that note, I can't think of a better way to wrap it up, let's move on to the next story here, folks.
+
+Some big news out of Anthropic in the past week. This is the debut of Claude Code Security. This new capability available in Claude Code currently to just a limited number of users, but it's basically like a built-in vulnerability scanner, right? It scans your code in Claude codebase using Claude to find any, you know, flaws or vulnerabilities, validate the findings and suggest the patches. Unlike a static kind of rule-based code analysis, Anthropic says, and this is a quote, Claude Code Security reasons about your code the way a human security researcher would, understanding how components interact, tracing how data moves through your application and catching complex vulnerabilities that rule-based tools might miss.
+
+Now, this all sounds really cool, but at the same time, people are already raising some concerns. And one of the concerns I've seen is that this, it could just be a case of like, the AI trying to make up for its own flaws, because as Veracode's 2026 State of Software Security Report points out, 82% of companies in the last year reported having security debt, which is higher than the 74% the prior year. And 11.3% of those vulnerabilities were ranked as severe compared to 8.3% the previous year.
+
+And Veracode attributes these increases to more generative AI coding, which means we're churning out more vibe-coded stuff that just has flaws in the first place. So, Dave, to start us off, I want to get your thoughts here. What's your take on Claude Doce Security? Is this going to shake things up? Is this just the AI making up for vibe coding shortfalls?
+
+Is it the same as it ever was? How do you think things are going to change, if at all? Yes and yes. You know, I mean, is this going to shake things up? Yeah, that's what AI does.
+
+It's very good at disrupting things, right? So like, it's, we should have named it disruptive something rather. But I mean, let's start with kind of what we're looking at, right? So we in the industry have been preaching "you need to put security in sooner" pretty much since, you know, we learned to talk, right? Like, that's our thing, right?
+
+Shift left. Get security in earlier. This could do that, right? This could definitely help do that. If AI is gonna write the code, shouldn't it write secure code?
+
+So yes, right, so both and both, right? So like, there's that. Now, the flip of it, is there more now to trust? You could argue yes, and you could also argue, not really, that things were really there to begin with. So this is just yet another tool that's finding something bad that you need to respond to and you need to trust its outcome.
+
+You know, it is, I think Check Point found it, Check Point Research found that there were problems in Claude Code itself. So I do agree that there's a bit of a reaction to say, hey, we should, if we're going to write code, we should write secure code. I think Anthropic has kind of recognized that. And hence, you know, now we've got Code Security. So generally, I'm positive on this, right?
+
+I'm going to be on the bullish side of, you're not stopping AI, right? It's not going to, you know, going to go like, unremember that that happened. That's not gonna happen, right? So, shift left is good. Like, we can't say that for 25 years then and go, but not here, right?
+
+Can't do that, right? Is there more to trust? Of course, right? The part that's just a little wishy-washy like, is okay, I've got your code and I am not a good guy, right, and I'm gonna use a very legit tool off the shelf for a minimal monthly subscription fee to find all the vaults in your thing, right? So, it's the, it's the bad actors, you know, potentially using, which, of course, I'm sure that they're already in the ...
+
+No, I shouldn't say that. There's no evidence thereof, but you can imagine that they are drooling if they can't get in. Once it's out, it would be an easy way to do this, right? And everyone wants to hack their vacuums, as we've heard in the previous story, so you need a vulnerability, so there you go. So, I mean, I mean, like, I'm bullish overall.
+
+Does it create more work? Does it change? But yeah, but AI is disrupting everything. I think ...
+
+So net-net, I think it's a good thing. Barring, yeah, bad actors are gonna use it. Yeah, and I think it's important to, you know, to point out that like, look, the bad actors might use it, but like, even, even before it came along, the AI was still being used for this kind of purpose, right? Like we just said in that previous story, that he wasn't, you know, using Claude Code Security. He wasn't even using Claude to necessarily find a flaw.
+
+He was just analyzing a codebase and a flaw happened to pop up, right? So it's like, you can't, you know, I, I'm, I, you have to always take these things in the right kind of context, I guess, right? I think there's a tendency sometimes to look at something like this and be immediately jumping to, well, what are all the negatives that can happen? And I think it's worth pointing out that these aren't brand-new negatives, right? Like, people can always misuse the tools available for good work, for not-so-good purposes.
+
+But Michelle, I wanna bring you into here now, and I wanna ask, you know, from your perspective as like a threat intelligence analyst, somebody who's researching a lot of threats, do you feel like an AI tool, like Claude Code Security, is gonna change how this sort of research is carried out or do you think it's just gonna be, you know, I don't know, amplifying what already happens? How do you think it's going to slot into the landscape? Yeah, absolutely, and I think I like your point about sort of cautioning against, right? This definitely, it's disrupting things, but, you know, leveraging an LLM for mass discovery of vulnerabilities doesn't necessarily translate into exploitability. And I'd actually like to add to that by sharing a point that my peer, Patrick Fussell, who's X-Force Lead of our Red Adversary Services, you know, he notes that these models are very good at programming-focused tasks, but not necessarily so great at some of the other offensive security-related tasks that we rely on other security vendors to do for us, so maybe like complex attack chain reasoning.
+
+So I think we really kind of need to balance like what, you know, what is maybe still hype versus what is the reality. I think we should be concerned more about like, all of the net new vulnerability reports that are going to be out there based on like, this mass scanning of different software and hardware and all the vulnerabilities that we're going to have to now triage and prioritize and figure out really like, separate like, the legitimate risk versus you know, the noise. Which is always a problem, right, but now it's gonna ...
+
+I think it's going to be amplified with AI. Michelle, it's like you're reading my mind because you kind of hinted at the two next questions that I really wanted to ask the panel. And the first I want to throw to you, Ryan, because as Michelle points out, you know, there's still a lot of things that a tool like Claude Code Security or any AI tool can't do that humans still need to do. And specifically with Claude Code security, it does not apply patches automatically. It flags them to a human and says, hey, I recommend you do this, but you need to review.
+
+You need to make the final call. And Ryan, I wanted to ask you what you thought of this decision to keep humans in the loop when it comes to patching. Like, what do you think is the motivation behind that? Do you think it's the right way to go? What's your take there?
+
+Yeah, I love this feature because I think it's absolutely necessary. And I think we can all agree that AI is compressing the time between finding and actually fixing vulnerabilities. But if we're not careful, it also can compress understanding. And I think in cyber, understanding is everything. While this really, it promotes a huge, powerful shift of what we're moving towards, where we're talking about continuous vulnerability discovery, your faster remediation cycles, reduced false positive, I think that's all great.
+
+But where I really start getting concerned is where your question comes from. I think that's where the tension is. When you automate the fix, you're actually losing the forensic why. Like, we're already seeing this in digital forensics and incident response where AI tools can triage alerts and suggest containment actions, even recommend necessary remediation steps. But if our analysts start defaulting to pressing the big easy fix button without actually understanding what they're doing, why the vulnerability existed, why the attacker chose that technique, how did that enable lateral movement, how, you know, what other business, what other other business logic was exploited, you know, during that attack.
+
+If, if we do that, we're only treating symptoms, not the strategy of those symptoms. So, I would say that AI is definitely great in accelerating remediation, but it should elevate human understanding. Definitely not replace it. If we stop asking the why, attackers will continue to keep exploiting that gap. Yeah, that you know, I really like this point about like the risk of compressing understanding, right, because it reminds me of this conversation that came up on an episode of Mixture of Experts that I got to guest host a couple of weeks ago, where we're talking about how like, AI can either be a powerful educational tool that introduces you to new things that you learn about, or it can be the thing you outsource all of your thinking to and you just press that big easy button, you know what I mean?
+
+And that is a choice that I think we have to make, everybody has to make, but especially in security. To not just outsource all your thinking to it, right? Like, it can be an incredibly powerful tool that helps you find these vulnerabilities in the first place. But like you said, Ryan, then it's up to you to make sure you understand that why, that forensic situation, so that you're not just applying a patch and not even knowing what you're doing. Like, you understand what the fix is, and you can also make the call that, I don't know, it recommends a patch.
+
+Maybe you decide, you know what, for my situation, this isn't actually the best thing to do, you know? And it's good to have that knowledge. But the second thing that you gestured towards before, Michelle, that I said, you know, it was something I wanted to ask about, was this, you know, this thought of a bunch of new, net new vulnerability reports being out there, right? And it reminded me, Dave, of the episode you were on, the last episode you're on with us, we talked about cUrl shutting down its bug bounty program because there were so many AI-generated reports of vulnerabilities that they just couldn't handle it. And so I'd like to ask you, Dave, you know, since you were there for that first conversation, do you think a tool like Claude Code Security, how do you think it, it, it intersects with that trend?
+
+Do you think is intensifies it? Do you think it's, you know, again, more the same? I don't know, what do you it gonna happen there? Two things. First, I'm going to jump off of something Ryan said, because he's touching on a huge debate that we're doing and we're having with clients, like, in any deeper discussions that we have.
+
+Like, all right, hey, I want to roll out all your AI, I'm gonna bring all these assistants in and let all this agentic stuff go crazy, right? But aren't we just really widening the gap, right? We have a gap in, of skills in security as it is, right? There are more jobs than there are people and everything else. And we think, oh, AI is gonna usher it in.
+
+This gap is, what Ryan's talking about is an experience and expertise gap. So let's split this, just fast forward for a little bit. Like, for those of you who remember, like you used to be able to push a button and actually physically go fast forward. I realize I'm the oldest on the crew here. I get it.
+
+No, I'm there with you. I'm there with you. I remember. But ...
+
+You're welcome. You're welcome. All right, thanks, Michelle, thanks. [laughter] But like, if you go far enough, if you, if you go a little bit further ahead, how are you going to train the next generation? And right now we're talking lifetime generations, we're taking about the generation of tech, so it's the next couple of years.
+
+Like, where are they gonna learn, right? Like, we all learn by staring at consoles and digging through files and traces and watching other people do it. None of that's going to exist. A lot of it doesn't exist already, right? So I think, I think that's a huge point that you've made, Ryan.
+
+And, and it's something that, that, you know, when we rush to adopt, like, you don't, you never think about, like, well, wait, who's going to run all this stuff? Right? Like, who are you going to hand this off to? Like, there's no one that's going to have your domain expertise after the fact, right? And so, you can only train so much, right?
+
+So I would argue that within 18, 24, 36, pick the number of months that you'd like. What Ryan, you're talking about is like, yeah, no one's gonna know even what you were just saying. Like, wait, why would you need to know that? Right? And it's not the like, go-apply-a-patch one that worries me at all.
+
+It's the, really goes back to our robot vacuums, right? Like, that's an architectural problem, right? That was not secure by design, right? That was, well, wait a minute, how did this little thing happen? Oh, I don't know, the code fixed itself, it's fine.
+
+No, no, no, you have a systemic problem. Right? And as Michelle said, it's not finding systemic problems, right? It's not there, maybe ever, maybe yet, right? I don't know.
+
+The jury's still out on that one, but I think that's a huge, a huge understanding of kind of like as we roll this stuff into cybersecurity. So, now if I tie that back out to bug bounties and some other sorts of things, like, okay, maybe those have gone the way, right, and, and, and that's okay. But it goes right back to like, well, who was submitting those things before AI was? It was experts and people who knew what they were looking for, right? So it really, these, these things like, intersect for me The Venn diagram has very little not overlapping, right?
+
+[laughter] There's little, a little half-moons on either side of my circles here. But to me, that's what that goes to, right, like, and I'm not going existential threat or any of those sorts of things. To me, it's like, it's just a really like, that's another problem that we need to consider right? Like this, you know, AI can replace, it can augment, it can reframe and refocus and do all these different things. But someone has to know what's going on at some point.
+
+The vacuum will know. Right? And so, [laughter] if you don't have a bug bounty and you don't have core expertise, there you go. So ...
+
+I think, yeah, I mean, I think you know, I'm gonna leave this segment kind of open-ended for our listeners because we have to move on to the next story, but I do think like that is the, that's the thing we all have to kind of be thinking about, right? Like you said, Dave, somebody has to know. Somebody has to know what's going on. And I don't know that we can trust the vacuum, Michelle, so like, I think you know, it's up to us to be those people, I guess, and, because, you know, you can't, I dunno, you can't force anybody to be the person who knows. It's like an individual choice they have to make, I think.
+
+But let's move on there to our next story talking about distillation attacks. More news from Anthropic. Last week they announced that they had fended off a series of alleged distillation attacks on their models. Now, a distillation attack, for those who don't know, is basically a way of copying an AI model without permission. It works like this: you, users strategically query the model to generate outputs that will shed light on how it operates, how it thinks.
+
+They collect enough of these input–output pairs to basically have a training dataset that they then use to train their own models to basically ape the behavior of another model. Now, beyond just the idea of like, you know, stealing intellectual property, there's also the concern about byp ... using distillation to bypass model safeguards, right?
+
+If you use a distillation attack to figure out how a model works, you can create your own version that doesn't have some of those things that prevent people from using it for some of those more nefarious purposes. So, I wanted to start off by asking us how worried do we need to be about distillation attacks. And by we, I mean, you know, people outside of the big model makers. Like, is this something that needs to concern us or is this just a problem for your Anthropics of the world? And you know what, I'll throw it to you first, sorry to put you on the spot again, Dave, but I'm gonna throw it you first.
+
+I wanna hear your take there. Well, you think distillation attacks should be a concern to all of us or just those of us who make models? Everyone's going to have a model. They don't all have to be large, right? So, yeah, no, this is concerning, they say.
+
+I'll call it a concern over AI, right? So, if Anthropic is going to face such an attack, it's only a matter of time before they realize, like, oh, I wrote one to do whatever my business is. Robot vacuum, so that seems to be the theme of the day. The optimal way to clean my living room. Fine, all good.
+
+Right, so, so, the concerning bit for here, for me, right, is, you know, it's kind of like, it is, man, I'm just going to go right back to the robots again. You have architectural oversights, right? They didn't put security into the model. It's base identity. And Ryan said it was the first thing he said, right?
+
+So, why aren't we worrying about, you know, the security for AI? We like using AI for security. We've had lots of stories today about that. And every show probably going forward will have tons about AI for security. But securing AI, this one really does.
+
+It's the reverse, right? So how do we secure that? And right now, it's, it's the hardest way to detect something, right? It's anomaly detection, behavioral analysis, the most data-intensive ...
+
+Like, I guess it's good because AI can crunch data, but now I got to trust it. You know what I mean? So, um, that's my take. My take is, yes, everyone does need to worry. And I think hopefully it's stuff like this that gets people to think like, wait, wait, wait, hold on, right?
+
+This isn't just about using AI to do stuff. We also need to secure that AI. Yeah, and you know that makes a lot of sense to me, you know this, this idea that we have to also think about, you know, securing AI, right? Security for AI, not just AI in security. And Michelle, on that note, I wanted to also ask you about, you know, how this, these kinds of attacks, these distillation attacks, might accord with what you folks see in terms of AI usage by maybe threat actors or attacks on AI systems by threat actors.
+
+What are you folks seeing out there? How is it fitting into their arsenals right now? What's your take? Yeah, so we did anticipate this happening, right? So a couple of years ago, and I think it was the 2023 Threat Intelligence Index, we anticipated threat actors.
+
+Once it reaches sort of this threshold where there was this ROI for attackers to target AI, they would begin doing so. So are we there yet? I think they're still experimenting with this. We haven't seen wide-scale exploitation, but definitely we already warned, like, get in front of it, right? Start securing your AI systems now, because we can see a trend based on historical incidents and data and other things that we've seen where we've this pattern before.
+
+It's just repeats itself, right? History is repeating itself. So we know that attackers are gonna go after AI systems. And so we need to get in front of it and be prepared. So, have we seen this on a wide-scale level?
+
+I don't think so, not yet. And maybe Ry can chime in with his perspective from, you know, incident response, but definitely we should be warned and take initiative to do what we need to do to protect our AI systems. Absolutely, and I'm glad you brought up that question of you know that this sort of ROI threshold because I do, I think that was some really enlightening research that you folks put out there that basically there's this trend of once there's a certain amount of adoption and there are a certain amount of like, major players, then we see it become worth it and for attackers to attack these sorts of things and and maybe we are approaching that point. I don't know, but as Michelle said, Ryan, I'd love to get your take on in terms of what you folks might be seeing out there from incident response or just to these distillation attacks in general. What are you thinking about?
+
+Yeah, for sure. You know, a couple of weeks ago, I was discussing our, you know, 2026 Threat Intelligence Index with a journalist, and I likened credential theft of AI platform credentials as the new kind of business email compromise. And I think this analogy holds true with distillation attacks, right? In BEC, attackers, they didn't just hack the system, they abused legitimate access and trusted workflows. Well, distillation attacks do the exact same thing with AI.
+
+They don't steal the model weights, they extract its intelligence through repeated interaction. So, I look at like, the real shift is that the model outputs are now the sensitive data. And if credentials are compromised or usage is unmonitored, you're not just leaking plain text, you're leaking your competitive advantage in the market. And I would argue that in this AI era that we are in, access to your model is the new mailbox. And we have to defend it just like one.
+
+Yeah, I think that's a really good point, you know, drawing this analogy with the BEC attacks, because, and you see this a lot with attacks on AI systems, they often look a lot like social engineering, right? Like, you know, I think about prompt injections, to me has always been like you're basically socially engineering an LLM, and this too is you're, basically, kind of socially engineering it to spit out information that it doesn't realize it's giving away that could compromise it. And so that raises this, it's always raised this question for me at least, which is that, like, okay, we're talking about a system, a technological tool that is being exploited the way that people are usually exploited, and it raises this question for me of like, so what does defense of something like that look like when it's like, blurring those distinctions between, you know, human users and a software system? What kind of steps do we start to take? Do we have any thoughts on that?
+
+And Dave, I'll start with you there. Any thoughts on what kind of step we start to take when it comes to this sort of thing? It's all still sitting there in front of us, right? You know, I think every time I'm on, I'm like, you know, the basics are the basics for a reason, right? It's because they've been tested throughout all sorts of things, like back when it was just local area networks, and then we went to WANs, and then, and like, as we have, like security's always the same, right?
+
+You gotta control what you got, who's going after it, when it, so, you know I, I mean, I highlighted that like, to detect it is exceedingly difficult because it's, you know, anomalous behavior and identity tracking, like those, that's difficult because there's a lot of it. And then how do you pick out the one bad or three bad out of 10 million, right? Like it's impossible, but you can secure models. You can secure the data lakes that they set up on. Those aren't hard concepts, right?
+
+So like, like the basics here aren't nearly as difficult. But we're such in a rush, just as an overall industry, to get our thing out, because someone else could build it first, because it's almost like I had the idea, now I have the code, right? Of course, oh, yeah, I'm sure it's secure. I'm sure it's fine. There's a firewall somewhere, right?
+
+No, not really. And then we do have something really good. And I do like, Ryan, I really like your analogy there, because it is. It's, you know, it's, it's, it's that sneaky, right? Sneaky, clever, evil, right?
+
+So, yeah, I mean, the basics here still work. AI still is a technology. It still runs on computers, right? And we know how to, and it runs on networks. We know how to secure all of those things, right, while inside the models and those sorts of things, like, that's new technology that needs to advance when you come up with those things.
+
+But the basics are gonna work, right? And overall governance is gonna work. And those are things that are tried and true and the things that didn't work, we've thrown out of those practices. So, it's not as scary to get going as it may seem. You don't have to actually understand the model.
+
+I think there's a reason that we keep saying, you know, that the basics are so important though, right? Because it's a message that bears repeating. And look, we all have Threat Intelligence Index on the brain right now because it just came out. But like, this came out in the most recent Threat Intelligence Index too, right? Like, security 101 was a source of a lot of weaknesses for stuff.
+
+So like, again, it's those, that lack of authentication, that, the, you know, those weak access controls, whatever it is. It's the basics, and so we keep hammering it home because it keeps being a pertinent message to send. But on that note, we gotta move on to our next story, all about hackers adopting toads. And I don't mean the deli...,
+
+you know, the very cute, delightful little amphibians. I mean telephone-oriented attack delivery, or TOAD, is gaining popularity with attackers. This is according to research from email security firm StrongestLayer. In an analysis of 5,000 emails that bypassed secure email gateways, 28% of them used this technique. The way it works is the victim receives a fake message claiming there's some kind of issue with an important account, it's usually something financial like PayPal or a bank account, and they need to call a number to resolve it.
+
+And that number is where the phone scam, the scam actually happens, right? So it's a phishing scam basically. They send an email, they say call this number and you get scammed right there. But of course, the issue here is this is, you know, kind of a relatively low-tech scam method. But it's getting around our defenses pretty, pretty easily actually.
+
+And so, Michelle, I wanted to get your take here on, on what you think is motivating the kind of switch to a method like this, especially at a time when we also see attackers using AI to turbocharge their own efforts. This is like, almost the opposite, right? So what do you think's going on here? Yes, well, first of all, I think you were too kind and saying cute to describe a toad, [laughter] but maybe a fr ...
+
+maybe a frog, but... Well, I find them cute, so ...
+
+[laughter] Okay. And it's funny that we do have this story among the AI stories, right? Because we do need a balance, right? It's not just the shiny new AI that attackers are leveraging to target systems. They are using old-school, tried-and-true techniques that are working.
+
+I don't know if there's a shift, but maybe some attackers are realizing that, hey, our defenses are up on all of these other things, right? And so they are recognizing that how do we get around this? Well, we don't even have to get around it; we just, you know, give them a phone number to call and we're going to do social engineering, which has worked forever, right? We get social engineering in our, you know, literally physical, at-home address, right, in our mailbox. And so we know that they're going to use that because it works and so no other tricks have to be used.
+
+They don't need anything else up their sleeves. They're gonna send an email with a phone number and someone's going to call. And yeah, you know, Ryan, I wanted to bring you in here because you had already made a reference to BEC attacks in that last segment. We're already starting to think about social engineering. So here we go.
+
+We're confronting some social engineering a little more directly. You know, I'd like to get your take on, you know, what you do about an attack that like, it seems so simple and it gets past your security, these defenses you've built up and it's like, okay, well, you know, the tech tools didn't work, now what? What's your take here? What do we do? Good question.
+
+You know, it kind of tried and true, when I say trust your gut, that is kind of where this kind of goes to. And kind of going back to where, how we moderate this is through policy and process. A lot of policy and processes, I think now matters more than what your perception is. And I'll kind of rewind like, why is this successful and how it could actually be worse is because humans trust voices more than text. So when you're moving that attack, from email to voice, it's an automatic trust flag, right?
+
+But if we say we were to layer in AI voice cloning, if, which is on the rise, if an attacker can spoof now your CFO's email, then pair it with a phone call that sounds like the CFO, you've just removed that last instinctive red flag. So I think this is where we call low-fi meeting high-tech where that delivery mechanism is very simple: hey, call this number. But the persuasion engine is increasingly AI-powered. So, the defense can't just be better filtering, right? It has to be a policy-driven verification.
+
+It has to be no financial transaction, no credential reset, no sensitive disclosure that should rely on these, you know, voice authorizations alone. Um, especially when we're in an era where voice now really can't be trusted. Um, and then also enabling our organizations, um, or our, our, our people that are put in the power of, um doing the financial transactions or credential resets, giving them the power to question. And sometimes it might be embarrassing if you have your CFO and you questioned their identity, that might be offensive. Well, we're in an age where it's okay to ask questions and our organizations need to be able to stand behind that to enable our people to ask questions and then verify independently.
+
+Yeah, I like this idea. Two things, first of all, I like that you bring up the kind of rise of phishing and of AI voice cloning too, right? Because it then becomes this low-fi, the high-tech collision course, as you said. And it reminds me of, you know, there was that story a few years ago about the Ferrari executive who got a call from another executive. It was a voice clone technology.
+
+And thinking very quickly, because he thought it was kind of a weird request, he asked the person on the other end of the line if he could remind them what book he had recommended to him like a week ago and the guy couldn't say it because obviously he didn't know the answer. Obviously you can't rely on like, book recommendations to authenticate people, but I think that Ryan, it gets to the point you were making about how like, you need a really strict process of policy around what authentication looks like and it can't be something that's simple like voice-based authentication or just assuming, hey, it's a call from the CFO, so it must be a legitimate, you know, request. There's got to be people up to be empowered. So, like you said, ask. It might feel a little embarrassing, but that's got to be there.
+
+Dave, I want to bring you in here, you know, and especially you know, drafting off of what Ryan said about the kind of rise of AI voice cloning. And look, I kind of think of you as a resonant AI guy in a lot of ways. And so I just wanted to get your take here on, you know, how you think these attacks might be combining with AI to just like turbocharge the social engineering that we're seeing out there in the landscape. What's your thoughts there? First of all, I grew up in defense, so I don't immediately think of attacks.
+
+And Ryan, you just scared the patootie out of me. You're like, I mean, my goodness, like, yeah, that's exactly what they're going to do if they're not doing it already. So, you know, this is, this not about like, hey, verify this charge on some account I don't actually have. That's going to work, right? That's absolutely gonna work, right?
+
+So people are falling for BEC today, right? They're absolutely gonna fall for the email that says, hey, this is, you know, Dave, I need you to do the thing. Give me a call real quick. Doesn't have to be nefarious in the email. You're not gonna catch that in detection, right?
+
+Right, especially if it's a spoofed email address or it feels stressful, and now you're on the phone. Like, I don't know. I don't know my VP of finance's phone number. Wow, he wants me to call him on the weekend? Sure.
+
+I mean, I really do want to get this thing through. Maybe I can help him out here and he'll get me ... You know what I mean?
+
+So yeah, no, it's absolutely gonna work. [laughter] That's, that's actually scary. You got me on that one, Ryan. Good. You know, look, it is scary, and I do think, you know, in so many ways, I think it comes back to that point that Ryan made, right, about how, like, you just, the only way to really address this head on is just to have those processes in place, to have an authentication policy in place and just, and it's got to be something that cannot be easily spoofed, cannot be easily stolen, something unique.
+
+I don't know exactly what that looks like, but it's like, the more we see these kinds of attacks happen, the kind of more creative we have to get with some of this stuff. I would argue that, just to kind of go back to Dave, this is, you know, this is happening in the wild. I have a real verified story of where air quoting an IT director of a company called the help desk to redo their credentials and reset their credentials to their account. And the helpdesk knows the IT director, physically knows him, heard his voice, reset his credentials, and he was actually voice-cloned. And then keys to the kingdom for elevated privileges right there into that organization.
+
+That is happening in real life. Yeah. I mean, and so, like, I mean what makes it scary is we're back to relying on our weakest link. Which, if I may, which if I may ...
+
+I mean, that's why the right answer was policy and governance, because we're trying to govern, you know, human user action. And embedding it in our ... Yeah, yeah, I'm not surprised.
+
+As soon as you said it, I'm like, oh my god, that is working. I'm sorry, Michelle. No, no, no. Absolutely. I just wanted to make sure I jumped in because I think this ties it all together.
+
+It's just cybersecurity awareness and embedding that specific type of incident, because I think we can all sit here as cybersecurity-aware panelists, but not everybody's in cybersecurity, and this is going to be eye-opening. And how do they obtain this information? Well, it's through their cybersecurity awareness program and being taught like this is happening and this is how it's happening. So, yeah, I just want to make sure that was out there because it's, it could be, you know, something that we are actually duped by. And so can you imagine individuals that are not even in this industry?
+
+Absolutely. I think it's a really good point to kind of round out this particular story on. We got to move on to our final segment for the, the the week: healthcare's cybersecurity woes. Now, if anybody's been watching HBO's smash hit medical drama The Pit, you'll know that it prominently features a cyberattack on a hospital this season. But that plot device reflects the real-world fact that many medical computer systems are all too susceptible to cyberthreats.
+
+Again, to reference the Threat Intelligence Index, talking about attacks in the healthcare sector this year, they found that the sole initial access vector observed in healthcare was the exploitation of public-facing applications. So a 100% of the attacks that X-Force analyzed in healthcare for the most recent Threat Intelligence Index, a 100% of them, the initial access vector was public-facing application exploitation. And other research backs this up too. Sophos' State of Ransomware in Healthcare 2025 also found that 41% of ransomware attacks in healthcare organizations were attributed to known security gaps. So not just security gaps, but security gaps that people had knowledge were there.
+
+And so, Michelle, I want to start with you. You know, the data kind of paints a rough picture for the healthcare industry. Any thoughts on why public-facing app exploits are so prevalent here specifically? Any thoughts there? Yeah, absolutely.
+
+And again, this is based on our incident response telemetry. So I would imagine that there's other healthcare systems out there where there's been other types of initial access vectors that have been quite successful and the exploitation of applications, that's been a cross-industry theme for this year's report. But specifically in healthcare, we've known for many years now that many organizations are running legacy operating systems on their devices. Certainly maybe they're outdated in terms of patching. So that you know, makes them even more susceptible to being compromised.
+
+Yeah, it was a pretty significant finding. But I'm pretty sure that many of the organizations in other industries as well face the same onslaught of exploitation of their vulnerabilities. So that's why it was such a significant finding this year. And you mentioned, you know, patching, right, and patches maybe not being applied when they should be. And this is an idea, you know, that I saw come up when kind of researching for this segment, you know.
+
+Why is healthcare susceptible to some of these attacks? And it does seem like, you know, some, according to some people, healthcare organizations are more averse to patching than even your average organization. And I'm referring here specifically to an op-ed by Apu Pavithran of Hexnode published in Healthcare Business Today. And he argued that healthcare often treats patching as riskier than not patching. And, and Ryan is the guy that I've been asking about patches this whole episode.
+
+I'm gonna ask you here again. Do you think it's true that patching tends to be very more difficult for healthcare organizations? Or do you think this is just, you know, in general organizations struggle with patching because of the calculus there? What's your take? Well, I think the statistics from the Threat Intel inj ...
+
+Index is what really tells a lot of that story because this isn't just randomness anymore, it's pure exposure discipline. You know, and we see it in IR engagements where we actually rarely see exotic entry points. It's usually just one exposed system that gave an attacker that little foothold. And that's not really where the damage really happens. The damage doesn't necessarily happen at initial access.
+
+It happens in the hours, days, I dunno, hours, days, weeks afterwards when those flat networks, those poorly segmented networks, shared credentials, overprivileged accounts allow that lateral movement. So, the conversation really shouldn't just be about patching, you know, it should really be about knowing what's exposed, who actually owns those devices, ensuring that if something is compromised that it can't cascade into patient care systems. I think that's where we have a lot of fear in the healthcare industry is, if we, if we patch a historically antiquated system, what is that going to do to our downstream patient care systems and impact patient health, which could be very severe oftentimes in the OT, you know, world of healthcare. So I would argue that in healthcare, the breach does often start at the perimeter but the crisis is actually determined by how far an attacker can move once they're in. I want to follow up on that with you, you know.
+
+Given this kind of, you know, given this take on the landscape, what do you think the sort of important first steps are for organizations to be taking then, if like you said, the damage is not done at the breach, it's done when they get in there and how they can access, what, what do you, what do you do? What's the, what's the take for organizations? Any thoughts there? So when we're talking about, and it's kind of been a theme throughout the last couple of articles about the basics, you know, I think I've said it before, maybe on this podcast, maybe somewhere else, but there's brilliance in the basics. And when you know what is externally facing, when you're putting, you know, defense in depth, when you are layering your systems of defense against everything that is externally facing that can be accessed, that is really part of step one.
+
+And that is, again, brilliance in the basics. Get the hygiene right against your externally facing architecture. That would be my first step. That makes a lot of sense, you know, get the hygiene right. And speaking of getting the hygiene, right, Dave, I wanted to ask you about, you know, what do you think about these kind of pop culture portrayals of cyberattacks?
+
+Do you think they kind of help move the needle on awareness around these things? Or is it just, it's just entertainment? Who cares? What ...
+
+any thoughts there on this is, like an awareness-raising exercise almost? I hope it does. I mean, it's, what was Firewall with Harrison Ford many, many years ago? Like that couldn't have been less real, right? So at least, we're in the reality space.
+
+Like, oh yeah, that, no, no, that could actually happen, right? Because I do believe that Harrison Ford's password was like his wife's month, daughter's day. I think that was the password. Like, because of course, it's a birthday. And wow, they really secured it that way.
+
+It's the only kind of password you can use, you know? Yeah, it's always, you know, somebody's birthday or anniversary. What am I gonna do when I have so many characters? [laughter] Anyway, no, but I mean, it is a realistic depiction, right? It's backed up by the Thread Intel report, right?
+
+We see it all the time. I know I've spent plenty of time with healthcare clients, right? And then, you know, those that do understand and know are super frustrated, right? Like, there is no alignment between, especially in healthcare, right, between the cybersecurity function and the IT IOMT folks. No, no, no.
+
+So, their, but their argument is the same. And we just talked about it. I'll just put a different lens on it, which is, if we were in a financial services company, they would say, oh, we're gonna do this because we understand the risk. Well, in healthcare, they say, I do too. They're called humans, right?
+
+I don't care about the systems, right? Until the system starts causing a problem to a human, right? And that goes to Ryan, I'll underscore what you talked about. Like, they just don't know, right? So that ...
+
+I don't patch because I don't know what it will do. So it's safer to leave it as is because uptime and availability is far more important than security right now. Like, it's completely out of whack, right? In, at least from a security practitioner's point of view, right? So, you know, if a show or series of shows or, you now, anything that stays away from an actual real-life attack that costs human lives and disruption, if that can raise awareness, I'm in.
+
+Right? I'm in, like, any ... I, I ...
+
+I hope it does, so, you know. Yeah, you know, I think I'm about to say something that I probably never ever say again in my life, which is, I wish we could keep talking about patching systems and hospitals. But we do have to end the episode for today, folks. Thank you so much to our panelists Michelle and Dave and Ryan. Thank you to the viewers and the listeners.
+
+Subscribe to Security Intelligence wherever podcasts are found. Stay safe out there and be sure to check out the latest narrative bonus episode of Security Intelligence featuring a deep dive with podcast fixture Sridhar Muppidi on the subject of adapting identity and access management for an agentic AI world, available on all the usual audio podcast platforms.
