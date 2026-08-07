@@ -1,0 +1,112 @@
+---
+video_title: "Como reduzir em 95% o custo do Openclaw (passo a passo)"
+video_id: TbI-6zc9G5w
+channel_name: "Bruno Okamoto"
+channel_id: UC6bMtPdKDxeHpASacivx5vQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=TbI-6zc9G5w
+video_date: 2026-02-22T14:40:49+00:00
+video_description: |
+  SOBRE O VÍDEO:
+  No vídeo de hoje, eu quero falar com vocês sobre a questão dos tokens no OpenClaw. A ideia é explicar como o consumo de tokens impacta diretamente seus custos e sua performance dentro da ferramenta.
+  
+  Vou compartilhar dicas práticas de como reduzir a quantidade de tokens utilizados no seu cloud, otimizar seus prompts e estruturar melhor seus fluxos para evitar desperdício. Se você quer usar o OpenClaw de forma mais estratégica, economizando recursos e mantendo a qualidade das respostas, esse vídeo vai te ajudar bastante.
+  
+  Link do doc: https://docs.google.com/document/d/1ffmZEfT7aenfAz2lkjyHsQIlYRWFpGcM/edit
+  
+  Resultado do meu agente (pré-implementação vs pós):
+  https://drive.google.com/file/d/1xKs9rBrcfn-HK72O2LI0ianjQrC_sYYB/view?usp=sharing
+  
+  🔥 Quer aprender passo a passo como instalar seu Openclaw e levar ele do 0 para multi-agente? Fiz este mini-curso de 2h com todos documentos prontos para copiar e implementar:
+  
+  https://openclaw.pixeleducacao.com.br/?utm_source=youtube&utm_medium=youtube&utm_campaign=como_reduzir_tokens_open_claw&utm_content=cta_video
+  
+  ----------------------------------------------
+  Aprenda a montar um time de IAs trabalhando por você 24/7 (mini-curso de OpenClaw): 
+  👉🏻 https://openclaw.pixeleducacao.com.br?utm_source=youtube&utm_medium=youtube&utm_campaign=como_reduzir_tokens_open_claw&utm_content=cta_video
+  
+  
+  Saiba mais como eu posso te ajudar:
+  👉🏻 https://bruno.microsaas.com.br?utm_source=youtube&utm_medium=youtube&utm_campaign=como_reduzir_tokens_open_claw&utm_content=cta_video
+---
+Este vídeo aqui é do Match Ganza e o Mat ele fez um vídeo sobre como ele reduziu os custos da EI dele em 97%. Então no vídeo de hoje eu quero fazer um vídeo dedicado sobre insightes e um brainstorm de como você pode reduzir em até 97% o custo da sua ferramenta do OpenCl. E a gente vai passar por esse documento analisando ponto a ponto. Só para dar um contexto, eu estou usando o plano de $. Então, eu nunca estouri nenhuma sessão usando a minha agente. Então, esse aqui
+
+é o headquarter da minha gente. Eu tenho várias sessões rodando em paralelo, né? Então, só hoje eu já usei uma, duas, 3, 4, 5, seis sessões em paralelo, rodando para várias coisas, né? E ela roda várias atualizações, várias coisas automaticamente. Então, eu de fato me considero um hard user, né? Eu uso
+
+bastante e eu também nunca cheguei a estourar o meu limite diário, mas de certa forma este é um caminho. O outro caminho é você usar API e os tokens. E eu quero falar sobre isso aqui no vídeo de hoje. Então se você tá aí torrando token com open esse vídeo aqui vai te dar uma boa de uma luz. E não esquece de deixar seu like para fortalecer, beleza?
+
+Parti o vídeo de hoje. Se você é novo aqui no meu canal, eu sou o Bruno Camoto e aqui no meu canal eu falo tudo sobre SAS, micro SAS, startups, empreendedorismo e agora também sobre OpenCall, porque na real é que eu sinto que o Open Claw ele é uma ferramenta que deixa os empreendedores mega poderosos. Eu me sinto um super empreendedor com essa ferramenta. Eu sinto que meus negócios, minha produtividade aumentaram em 100 vezes depois que eu comecei a usar o Open Claw. E aí você fala para mim: "Mas Bruno, isso aí é hype?" Ah, talvez seja,
+
+mas você tá aqui vendo o vídeo, não tá? Então vamos aprender uma coisa nova e a gente descobre daqui uns meses se isso é hype ou não. Mas a minha opinião sobre o assunto é que para pessoas não técnicas, porque eu sou uma pessoa não técnica, eu sou uma pessoa curiosa, eu gosto de fuçar e estudar, eu sinto que essa ferramenta ela otimizou a minha capacidade de criação em muitas vezes. Mas para fins de contextos, eu também uso muito o Cloud Code. Mas eu não sei, não sou desenvolvedor, mas eu entendo o conceito de você usar um terminal, entendo o conceito de você montar um planejamento, de você criar subgentes.
+
+Eu tenho uma noção assim. Venho brincando bastante com Cloud Code, mas eu ainda não sou um grande especialista em AI, então eu sinto que de fato o openla me deu super poderes, tá? Mas vamos parar de enrolar aqui, vamos para o que importa, que é como você economiza tokens, tá? Então, créditos pro Match, nosso grande amigo aqui, very nice video. Então, vamos pra introdução, né?
+
+Então, se você tá usando o OpenClo e você tá vendo suas contas de API explodiro, você não está sozinho. A configuração padrão dele prioriza capacidade acima de custos, significa que você provavelmente está queimando tokens nas suas rotinas diárias, né, suas tarefas diárias, né, que não precisam de modelos expensivos. Então, nesse guia aqui, ele vai passar por quatro grandes tópicos, que é as sections, né, as sessões dele, a o modelo de roteamento, o heart bit e o rate limit, né? Então, por que que isso aqui importa? porque ele diz que cada otimização é um diferente e eh guia de custo, né? Então, cada otimização vai
+
+trazer um custo diferente, né? E combinado, eles dizem que você vai sair de 1500 mês para 30, 50 meses, que é o dinheiro que você pode de fato reinvestir construindo coisas, né? Então aqui ele deu um exemplo aqui de um custo de 2 3 por dia para 10 centavos de $ por mês para 5, né? Sinistro. Então parte um é a sessão da inicialização, tá? Então
+
+ele diz aqui, né? Coloque essa regra de inalização, essa regra nos seus, é, nos seus agent system prompt, né, no promptions e diga para seu agente exatamente o que carregar e o que não carregar no início de cada sessão. Então ele diz assim: "Sessão inicializada, as regras das sessões inicializadas para cada sessão inicie, carregue apenas estes arquivos, não carrega automaticamente memória, histórico de sessões, mensagens anteriores e output, né, e resultado das eh ferramentas prévias, né? Então, quando o usuário pedir por contexto contextos anteriores, você vai usar a memory search on demand, ou seja, por demand. Então, se eu perguntar algo, você vai pesquisar, senão você não precisa carregar todos os dados. Puxa apenas os snipets
+
+relevantes, né, com memory get e não carrega o arquivo inteiro. Faça uma atualização da memória baseado em ano, mês, dia, no final de cada sessão sobre o que você trabalhou, decisões que você teve, leads que você gerou, blocker e next steps. Então, só isso aqui vai salvar 80% do seu contexto. Então, isso é muito parecido com o que eu fiz aqui na minha estrutura e realmente ajuda bastante, tá? Então, por que isso aqui funciona? Porque cada sessão vai começar
+
+com 8 KB em vez de 50 e ele só vai carregar o histórico de sessão quando for perguntado. É, notas diárias se tornam a memória dele e ele consegue trabalhar com qualquer interface, né? Então aqui ele dá um histórico, né? Antes 50 KB de contexto, 2, 3 milhões de tokens desperdiçados por sessão, 40 centavos por sessão. E aí, cara, é realmente é bastante coisa. Agora é o
+
+modelo model routing, né? Que é essa rota dos modelos, né? Então ele diz aqui que tipicamente o OpenCla ele usa o Cloud Sonet para tudo, né? Enquanto o Sonet ele é muito bom, ele é a demais, né? Ele eh faz overdelivery de tarefas, como por exemplo checar status ou rodar simples comandos ou eh rotinas de monitoramento, né? Então o Haiko faz
+
+isso aqui perfeitamente por uma fração do custo, né? Então ele diz aqui que você tem que carregar o seu arquivo Openc JSON e você atualizar e esse modelo com os seguintes pontos, né? Então, deixar o primário como o Cloud Haiko, você deixar os outros modelos como o Sonet e o Haiko aqui, né? Então ele ele deixa carregado aqui outros modelos, né? Então quando ele diz que você deixa o Haiko como modelo de, né, padrão, ele é mais rápido e mais barato e ele cria muito fácis que você pode simplesmente, né, e você pode simplesmente, na verdade, criar esses ilhas para você mudar, use o sonet, usa o haiko e você mudar modelo por demanda, né? E aí ele disse para você criar uma
+
+regra de mudança de agentes, né? Então ele falou para você por padrão sempre usar o Rikel, mas você muda pro Sonet quando você quiser criar uma decisão de arquitetura, revisar um código, fazer análise de segurança, é fazer debuging, né, ou criar múltiplos projetos. Então, se na dúvida, use o Riko sempre, né? Então, aqui ele diz que você economiza uma bolada, você sai de 50, 70 por mês para 5 a 10 por mês. Depois é o Heart Beat, né, que é essas automações que ele roda, né? Então o que ele diz é que você
+
+pode instalar o o OLAMA, né? Então, se você não tem o olama instalado, você pode pegar e rodar este código aqui e puxar esse modelo que chamado eh Oama 3.2, né? Então, por que o modelo 3.2?
+
+Porque ele diz que é um lightweight, né? São tem 2 GB, então ele é rápido e ele lida com tarefas completas, com tarefas completas, né? Então ele diz aqui como configurar o open claw. Então ele diz, ele passa aqui, ele na verdade coloca aqui e aí ele deixa o heart bit logo aqui embaixo, né? Então a cada uma hora o modelo lama fazer o section main target slack, então ele checa, né? Então
+
+o que que o Olama faz? Ele vai pegar essas informações que você salvou na sua memória, né? Então aqui em cima, lembra quando ele criou as memórias aqui sobre que que você trabalhou, decisões que você fez, blockers e próximos passos? Então ele vai ficar fazendo um ping, né, nessas informações aqui para ver se tem alguma coisa travando o agente, para ver se tem alguma oportunidade, para ver se tem algum progresso, teve alguma alguma coisa. Então ele fica pingando os agentes ali para ele e não ficar gastando tokens e tal. Então ele só aí
+
+já economiza uma grana, né? Então ele coloca aqui as configurações, né? Então intervalo, né? O provider que é o olama, o modelo que é o 3.2 e o end point aqui com local roxo, né? Então ele explica
+
+aqui, né? Então o Heartbits usava paga, depois começou a usar uma LM gratuita, né? 100 calls de APIs por dia, zero APIs calls por heart bits, né? 5 a 15 zero, né? Então uma boa de uma economia, tá?
+
+Agora limite de rate e budget control, né? controle de orçamento, né? Então vamos ver aqui. Aqui ele diz que os limites, né, os rate limits são 5 segundos entre as API calls, né? Então ele não pode ficar chamando API o tempo inteiro, tem que dar um intervalo de 5 segundos. 10 segundos entre pesquisas na
+
+internet, no máximo cinco pesquisas por turma, né, por conglomerado e depois 2 minutos de intervalo, né? Eh eh faça uma pesquisa em grupo, né? eh por eh por um trabalho parecido, então uma pesquisa por 10 leads, não por 10 pesquisas, né? Então se você eh se você encontrar um erro, tipo 429, você para, espera 5 minutos e tente de novo, né? Então ele tem aqui um daily budget de cinco, né, para avisos e um monthly budget de 200, tá? Então esse aqui eu já achei um pouco
+
+confuso, mas basicamente o que ele diz aqui é que ele criou um espaço entre AP e calls, entre pesquisas, entre pesquisas. E aí ele criou esses dois últimos aqui, que é entre trabalhos similares e budget warning, né? Então para não ter esses eventos aqui. Então aqui o que ele fala é que no final você cria aqui uma coisa controlável, você tem e previsão do uso e aí etc, né? Agora vamos pro workspace file templates, né? Então aqui ele diz que
+
+você tem que criar esses arquivos no seu workspace. Então eles criam um contexto pro seu agente sobre o que ele precisa para manter e a execução e trabalho no mínimo possível. Então ele tem esse arquivo chamado soul, né, que é a alma dele, onde tem os princípios desse agente, que a gente já passou por isso em outro vídeo. Então aqui é como você pode operar o agente. Aqui é o modelo dele. Aqui é a regra de quando ele vai
+
+mudar o Sonet, né, que é a mesma regra que ele citou anteriormente. E aqui são os limites que ele colocou aqui, né? Então você coloca esses limites aqui já no user MD, né, no template ele coloca aqui, né, então quem sou eu, meu time zone e tal e métricas de sucesso, né, então sobre o que que é sucesso para cada pessoa. Então ele falou assim: "Cara, mantenha os arquivos inxutos, né? Então, cada linha custa um token em cada pesquisa, né? Agora ele vai pro prompt
+
+coaching, né? Então, 90% de desconto em conteúdo reutilizado. Então, ele diz o seguinte, que o seu sistema de prompt, né, o seu workspace, onde tem o seu so user e tal, e os materiais de referência, eles são enviados pra PI em toda a mensagem. Então, se o seu prompt ele tem 5 K e você faz 100 API calls por semana, só que é 500 KB de textos idênticos sendo retransmitido e reprocessados toda semana. Então, com com o cloud você tá pagando preço cheio por todas as cópias. Então, a solução
+
+que ele diz é o seguinte, é esse prompt caching, né? Então, você, ele diz que os ele o prompt casing é cobra apenas 10% do cash usado, né? E 25% dos cashes escritos, né? Então, para conteúdo estático, você usa repetitivamente e você corta os custos em 90%, né? Então, como funciona o prompt caching, né?
+
+Então, o first request, né, o primeiro pedido é o preço cheio, então 0,003. Já o cloud ele salva esses dados no cash e ele marca como reutilizável. E aí é subsequência de crash, né? Então, depois que você faz esse crash, depois de 5 minutos, ele dá 90% de desconto porque ele cobra 0,003 por token. Isso diz que se um prompt de sistema custa 0,015 no primeiro uso, depois 0,0015 em cada reuso. Então, se
+
+você tem 100 calls de APIs por semana, você salva 30 por semana só com siem promptes, né? Então o que que é fica encaixe, né? Então fica em caixa aqui o system promptes, o sou, o user, materiais de referência, documentação total e templates de projetos. O que que não entra em caixa são as memórias, as recentes mensagens, né, de cada sessão e os tool outputs, né? Então o que ele diz aqui é que você tem que criar essa estrutura de caching, né? Então você vem
+
+aqui e muda essa estrutura aqui, né? Então você coloca então um uma um conteúdo dedicado, né? Então sou, user, memory, tal, blá blá bl bá e o projeto, né? Então o que que vocês vão fazer é adicionar o cashing na configuração. Então você vai colocar aqui embaixo essa palavra cash, né? Então aqui ele tem
+
+aqui o agente primário, aí ele tem o cash ifable true, né? E aí você coloca 5 minutos, prioridade high. Depois ele coloca o sonet aqui com cash true. Depois o antropicum haiko com cash false, né? Então ele diz que o cash ele muito mais efetivo com o sonet, porque ele tem uma menor e uma melhor progressão, uma melhor progressão não, uma melhor e pensamento, né, com tarefas que são completas e com prompts maiores.
+
+Então é o Haiku, ele diz que a eficiência dele faz o cash menos crítico assim, né? Então você coloca o cash enable true, né? O cash time, né? Time to live 5 minutos, cash priority, né? como high high ou low e o modelo do cash. Aí depois aqui você entra nessa
+
+parte de maximizar o cash, né? Então você coloca um bet aqui a cada 5 minutos, você coloca um system prompts estável, né? Então você não pode atualizar o seu no meio da sessão, né? Você faz uma janela de manutenção, você organiza o contexto hierarcamente, né? Então você cria aqui essa dinâmica de core system, de stable worksplace e para projetos você cria uma tabela é dinâmica, né? Então ele cria aqui esses
+
+arquivos, né? Então um exemplo real de uma campanha de outbound, então você fala: "Tá rodando 50 50, né, e-mails que você tá enviando por semana usando o Sonet, né, então que é a o raciocínio dele mais a personalização." Então sem o cashing ele vai gastar 250 KB por semana, que custa 0,75. Então você vai gastar 20, né? Que no total de um mês aqui daria $. Eu só não entendi essa
+
+conta, né? Porque se é dó por semana vai dar $ no mês. Talvez eu, enfim, sou de humanas, né? E aí eu o com o cashing aqui, aí ele dá um exemplo aqui que ele gastaria $2 por mês. Então de fato você é uma boa economia, né? Tem o resultado
+
+antes e depois. Aí ele tem um uma config aqui de configurar a performance desse cash, né? Então como você pode fazer é para configurar ela ou você pode jogar direto na API dela aqui direto, se você tiver usando também a chave da PI. E aí você também consegue combinar o cashing com outras otimizações, né? Então você consegue limitar com e o limite da sessão, o modelo do roteador dele, né?
+
+Com heartbit, com limite de rate, com prompt cash, né? Então quando não usar o cash, então quando o high tesques, né? Então quando for o haiko não vale a pena porque é muito barato. Quando você tiver é pequenos e promets recorrentes, então é não vale a pena. Quando você tiver small requests, né? Não vale a pena. E
+
+quando você tiver desenvolvendo, então se você tiver muita interação de prompt, o cash vai te dar trabalho, né? Então galera, esse aqui é o setup dele, tá? Então depois de você fazer todas as mudanças, verifica se está tudo corretamente. Então ele passa aqui a configuração do open claw shell, do section status, do contexto do modo do Heartbeat, né? E aí sinais que está funcionando. Então ele te dá esse aqui
+
+que diz que o contexto, a janela de contexto tem que ser entre 2 e 8 KB. O modelo tem que aparecer como Hiko. O Heart Beat mostra o lama como e eh a ferramenta principal. As tarefas de rotina elas acontecem sem trocar pro Sonet e os custos caem entre 10 e 50 centavos por dia. Mendo. E aqui ele tem
+
+uma checklist para ver que você completou todos os passos, né? 1 2 3 4 5. Quantos itens são? 3 6 9 10 itens, né? Então é isso, gente. Este aqui é um
+
+arquivo completão, né? Se você for preguiçoso e falar assim: "Puta, que preguiça de ler e compreender tudo isso", você vai pegar esse arquivo aqui, vai jogar no seu OpenCall e falar assim: "Crie um planejamento para nós implementarmos essas dinâmicas aqui". E aí, literalmente, ele vai criar um planejamento para te ajudar a economizar esses tokens e vai fazer todo esse passo aqui. Eu estou deixando esse arquivo aqui embaixo na descrição do vídeo. Se esse vídeo te ajudou de alguma forma, se te deu algum insite, não esquece de dar um like no canal, segue para mais vídeos como esse e bora construir nosso super poder aqui como empreendedores, que é essa maravilha do Open Cloud. Estamos
+
+junto. Te vejo no próximo vídeo.

@@ -1,0 +1,152 @@
+---
+video_title: "A IA que organiza o caos do WhatsApp: 85.000 msg viraram um dashboard (open source)"
+video_id: tXAH78b0Sms
+channel_name: "Bruno Okamoto"
+channel_id: UC6bMtPdKDxeHpASacivx5vQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=tXAH78b0Sms
+video_date: 2026-06-26T23:36:39+00:00
+video_description: |
+  Construí um sistema de IA que lê todo o meu WhatsApp — 85.000 mensagens — e me diz só o que importa. Open source, feito com n8n, Supabase e OpenAI no Replit.
+  
+  Meu WhatsApp era um caos: mais de 1.000 mensagens por semana, dezenas de grupos e zero visão do que estava acontecendo. Então criei o Sinal WhatsApp, um dashboard de IA que lê tudo, classifica com inteligência artificial e me mostra o que interessa: o que estão falando comigo, o que eu devo pra cada pessoa, os assuntos em alta e o que está bombando nos grupos.
+  
+  Neste vídeo eu mostro o tour completo: como funciona a captura (WhatsApp → n8n → Supabase → OpenAI), quanto custou de verdade pra construir, e como integrei o sistema no meu agente (Hermes) — que todo dia salva esse contexto no meu segundo cérebro.
+  
+  É um sistema de IA pro WhatsApp que não serve pra atender cliente: serve pra organizar o SEU WhatsApp e te devolver o controle. E o código é aberto, dá pra clonar o meu.
+  O que você vai ver:
+  - Como organizar o WhatsApp com IA sem virar refém de chatbot
+  - A arquitetura de automação (n8n + Supabase + OpenAI) explicada passo a passo
+  - Quanto custa rodar um agente de IA no WhatsApp de verdade
+  - Como conectar tudo a um segundo cérebro e a um agente
+  
+  ----------------------------------------------------------------
+  LINKS 👇
+  
+  Faça parte do hub para empresas que querem escalar a operação com agentes de IA: 
+  👉🏻https://pixelaihub.pixeleducacao.com.br?utm_source=&utm_medium=youtube&utm_campaign=sistema_ia_wpp_replit&utm_content=cta_video
+  
+  👉🏻Aprenda a montar um time de IAs trabalhando por você 24/7 (mini-curso de OpenClaw): http://openclaw.pixeleducacao.com.br?utm_source=&utm_medium=youtube&utm_campaign=sistema_ia_wpp_replit&utm_content=cta_video
+  
+  👉🏻Saiba mais como eu posso te ajudar: https://bruno.microsaas.com.br?utm_source=&utm_medium=youtube&utm_campaign=sistema_ia_wpp_replit&utm_content=cta_video
+  
+  ----------------------------------------------------------------
+  📂 Repositório (open source): https://github.com/okjpg/Okamoto-sinal-whatsapp
+  
+  🛠️ Meu link Replit: https://replit.com/refer/okjpg
+---
+Criei um sistema no WhatsApp para identificar tudo que acontece no meu WhatsApp, tudo que acontece em todos os grupos dentro do meu WhatsApp, tudo que tão falando comigo, o que que eu devo para as pessoas, o que eu preciso responder, o que que eu não respondi. Enfim, eu criei um sistema que organiza aquele caos e aquele ruído do WhatsApp de uma forma muito mais visual, simples. E o mais divertido de tudo é que eu integrei esse sistema não só usando um dashboard para eu ler tudo, mas eu integrei ele dentro do Hermes do meu agente, que consome da mesma fonte de dados. e me diz todos os dias tudo que tá acontecendo e salva isso no meu segundo cérebro. Então isso é muito legal e é uma fonte de informação muito valiosa que inclusive eu uso essa fonte de dados do WhatsApp para entender o que as pessoas estão falando comigo, quais são as pautas, quanto tempo eu tô gastando no WhatsApp, o que que tá rolando nos grupos, o que que tá trending. É um sistema bem legal e eu
+
+vou disponibilizar para você. Então, partiu pro vídeo de hoje. Se você é novo aqui no meu canal, antes de eu falar sobre esse sistema, meu nome é Bruno Camoto e eu sou um criador de conteúdo muito focado em a empreendedorismo, em SAS. Cara, eu gosto muito de ficar brincando na internet e uma das minhas brincadeiras foi como eu resolvo um problema para mim. Então, eu hoje não tenho muita ideia de quanto tempo e energia eu gasto no meu WhatsApp. Acontece que como criador de
+
+conteúdo e dono de múltiplos produtos e empresas, eu participo de muitas comunidades, de muitos grupos, recebo muita mensagem, muita dúvida, muitos parceiros, muitos fornecedores, a equipe manda mensagem. Então, cara, meu WhatsApp ele é um caos e provavelmente você tá vendo esse vídeo, você se identifica com isso, porque o seu também deve ser um caos. Então, eu quero mostrar para vocês como eu resolvi esse sistema usando o replet. Então, dá uma olhadinha aqui na minha tela. O replet é esse carinha aqui que tá na minha tela, né? Eu vou abrir aqui em aba anônima
+
+para vocês verem a landing page deles, né? Mas o rplit é uma ferramenta bem legal. Eu já uso eles há mais de um ano, cara. E eu gosto muito do rplit. Inclusive eu uso o RIT porque eu acho o design que ele gera muito bonito. Cara,
+
+eu já testei múltiplas ferramentas de design, uso muito cloud, uso muito tudo, mas cara, o Rit me conquista sempre assim. Então ele faz um, eu gosto bastante e eu acho relativamente barato, né, por quanto que a gente constrói, mas eu também vou te explicar quanto eu gastei para construir essa ferramenta e porque que eu vou liberar ela de graça para vocês, tá? Uma coisa que eu gosto do RTET, antes de falar, que me faz também usar essa ferramenta, que eu acho que a principal feature deles, é essa questão do agent. Então esse Agent ele permite que você use múltiplos agentes ao mesmo tempo. Então você pode usar um agente para construir sistema, um agente para fazer design, um agente para revisar, um agente para tudo. E você
+
+pode inclusive não só fazer por camban, né, que é como eu fiz esse sistema inteiro, como você pode pôr até quatro pessoas para construir o seu sistema ao mesmo tempo. Isso é fantástico. Então muitas vezes eu uso com a minha equipe pra gente construir coisas aqui dentro. Então, por exemplo, a gente tava construindo esse controle de missão pra gente eh administrar todos os nossos agentes da nossa empresa aqui. Então, é muito legal. Então, vamos falar agora
+
+sobre esse projetinho aqui que eu construí e eu vou mostrar ele para vocês. Então, eu aproveitei, né, e fiz dentro dele mesmo aqui uma apresentação usando a própria documentação e o aplicativo. Então, o que que é esse aplicativo? Vamos colocar ele aqui para vocês darem uma olhadinha. Então, esse aplicativo ele basicamente ele serve para você ter um overview de tudo que acontece. dentro do seu WhatsApp. Então
+
+você vai ter uma noção aqui de quantas mensagens você recebeu em sete dias. Isso só mensagens privadas, tá? Quantas você enviou e quantos áudios você recebeu, né? Aqui a gente deixou uma pequena listinha de tarefa. Aí eu já vou explicar como que ela funciona. Aqui a
+
+gente tem um pequeno gráfico para entender a volumetria de mensagens que a gente vem recebendo, né, numa comparação de sete dias anterior. E você pode vir aqui e mudar também o período de tempo e também fazer buscas, né? Então eu criei esse sisteminha de busca para você saber o que tal pessoa falou para você ou o que que aconteceu, o que que você tem de tarefa, quem mencionou e aí cara, um monte de funcionalidade bacana. Então eu fiz aqui também um compilado de top pautas, né? Então como ele ele carrega, né? Então o que que eu recebi de de som,
+
+né? Então o que que veio de sons ao redor do meu WhatsApp que foi repetitivo, né? Que múltiplas pessoas falaram. Então só abr no um parênteses reforçando que isso aqui é tudo mensagens do privado, tá? aqui nesse dashboard eu não pego nada do grupo.
+
+Então, por exemplo, cara, a gente recebe muito feedback positivo do nosso Pixel EI Hub, que é o nosso produto para construir agentes implementar agentes na empresa. Então, feedback positivo. Inclusive, se você quiser conhecer o produto, o produto eu vou deixar ele aqui na descrição também, que é o meu carro chefe, é onde eu ensino pessoas, empreendedores, a colocarem agentes nas empresas e automatizar tudo na sua empresa. Aí a gente tem aqui, né, o que que eu recebi de contato. Então, o que que é esse contato? Então, você pode
+
+clicar e você ver o que que é isso, né? Então, feedback positivo, você clica e você vê aqui contato, você clica e você consegue entender sobre o que que as pessoas estão falando, né? Aí, pautas em movimento, então do que que tá rolando, então que vai e vem múltiplas vezes, né? De novo, você pode vir aqui pegar pautas e tal, então comentários pessoais, ferramentas, dúvidas técnicas e tal e ideias de conteúdo. Então, se você produz conteúdo, você também pode ver o que que tá trending aqui dentro e usar isso aqui para procurar e sons e ideias de conteúdo, né? Mas, sinceramente, eu
+
+ainda acho que dá para melhorar bastante esse essa feature aqui de conteúdo, que não foi onde eu investi muita energia para construir. Nós temos aqui também os temas nos grupos, né? Então, um mar de palavras aqui para você saber o que que tá rolando e você também pode salvar pessoas VIPs. Eu vou te explicar como funciona em breve. Nós temos aqui essa funcionalidade também do campo privado.
+
+Então, aqui é onde você vê toda a inteligência do do seu privado, né? Então, volume recebido de mensagens por dia, tempo médio de respostas, né? Então, quanto tempo eu demoro para responder? E eu realmente acho que eu eh respondo rápido, né? Então aqui eu coloquei só um breakzinho ali a partir das 20 horas, né? E e fim de semana não
+
+conta, tá? Convintezinho aberto. Então, por exemplo, ah, alguém me convidou para um almoço, me convidou para um evento, para palestrar ou qualquer convite e pendências, né? Então, se eu devo algo para alguém, então se alguém chegou e falou assim: "Pô, você pode fazer isso e você falar assim, aí ele salva como uma pendência aqui, né? Aí você pode colocar aqui em cima de novo 14 dias, 7 dias, 30 dias, né? e deixar isso aqui
+
+organizadinho, tá? Aí de novo você tem aqui o mar de palavras, né? Você tem aqui as coisas que as pessoas estão te mandando e inclusive você pode clicar em salvar e salvar essas trending aqui dentro, né? Aqui estão os convites de pessoas, né? Então sobre convite aqui, sobre um convite, blá blá blá. Então às
+
+vezes ele pega assim coisas que pits de venda, às vezes são coisas, ele trata como um convite, mas tá assim, esse aqui é um grande resumo aqui, né? Então você tem aqui o convite recebidos e convites feitos por você, né? Então isso é bem legal assim. Então você pode mostrar aqui e você pode triar convites, né? Então você pode vir aqui e fazer uma triagem de todos os convites e organizar isso aqui numa forma de camban. Então eu
+
+criei esse cambanzinho aqui para você organizar as suas tarefas pendentes. Então você pode vir aqui e falar: "Pô, isso aqui é pendente, isso aqui foi resolvido, preciso resolver". Tá? Então, no meu caso, como eu tenho aqui, tipo, 1 milhão de mensagens por dia, ele acaba carregando muita coisa. Então, eu ainda acho que dá para melhorar um pouco esse filtro, mas o camban funciona muito bem para você fazer uma organização, né?
+
+Então, a gente vai para grupos agora. Aqui dentro de grupos ele mostra o que que tá rolando nos grupos que você participa. Então, quais são as pautas em alta, né, que cruza vários grupos. Então, você pode clicar de novo, você pode dar uma olhada, né, no que que tá rolando nos grupos. Isso é muito legal.
+
+Acho isso muito divertido, né? Você pode ver aqui, ele, infelizmente, a minha API que eu conectei, ele não puxou o nome dos grupos. Eu devo ter feito algo errado aqui, mas ele mostra aqui o que as pessoas estão conversando, né? Isso aqui é só uma, vamos dizer, um spoiler, né, do grupo, mas ele fica lendo todos os dias e aí ele traz aqui um grande resumão. Então ele pegou 1800 mensagens e falou: "Pô, o que que tá trending aqui é tecnologia e a inovação, que é é o que a gente já sabe, né?" Aí a gente tem
+
+aqui comunicação e interação na comunidade. Daí de novo ele puxa aqui os vários grupos, né? E ele tem um planejamento organização e produtividade, tá? Então isso é bem legal. E aqui ele traz o que que as pessoas estão discutindo agora. E ele
+
+traz um sisteminha de pontuação, né? Então ele coloca aqui, tipo, mano, isso aqui tá tá com 1200 mensagens relacionadas a essa pauta, 1200 relacionadas a essa pauta. Então é é interessante, né? Inclusive isso aqui é uma coisa que você pode cruzar com a funcionalidade, né? De produção de conteúdo. Aqui eu acho que daria para
+
+melhorar, mas eu deixo o repositório disponível para vocês. Você pode me ajudar a mexer aqui dentro, tá? Então, de novo, eu fiz isso aqui muito da minha cabeça assim e óbvio que tem uma perspectiva externa gera muito valor, acho que vale muito a pena, né? Então, a gente tem aqui trend nos grupos, o que estão discutindo agora, os grupos ativos, né? Então aqui vocês podem ver quantos são, quem são os grupos que você mais participa, os que você tá ativo, né? E você pode tirar grupos desse
+
+monitoramento. Então, por exemplo, eu tenho grupos aqui de suporte, de suporte e tal, tipo, ah, grupo de oferta, pô, eu não quero pegar as mensagens daqui. Então, você vem aqui e tira ela e ela marca como mensagem de suporte e ele não aparece nas suas métricas. Então, isso é bem legal. Nós temos aqui uma mídia para você ter uma ideia de volumetria de mídia que você recebe no seu WhatsApp.
+
+Então, áudios, imagens, docs, blá blá blá. A gente tem aqui mensões. Essa é uma das minhas fichas favoritas, né? Então ele mostra aqui as menções, tipo, ah pô, esse aqui, olha que bacana. Então esse aqui tem um grupo chamado Watch Tower do Cloud Code. E aí ele tem aqui,
+
+ó, no YouTube geral falou de obsidian, mas vi alguns vídeos do Bruno e ele disse que Git funcionava melhor. Pô, isso aqui uma pessoa que falou aqui de mim, né? Ah, outra pessoa aqui e o Bruno mandou aqui, acho que te ajuda também. Então é porque tudo do Bruno é pro open, então assim, é legal que você consegue saber. Inclusive ele põe uma tagzinha quando tem alguém elogiando aqui, tá?
+
+Então, tipo, isso é é legal assim, né? Então, assim, cara, ficou bem legal o sistema. Eu gostei, assim, dá para se salvar aqui também as coisas. E aqui tem um pequeno pequenas métricas aqui, né? E aqui ele tem recomendações de venda, mas essas recomendações, pelo jeito não tá funcionando. Então, a gente pode
+
+melhorar isso aqui, né? Ó, é como funciona essas menções? Você pode criar a palavra-chave aqui em cima, tá? Então, você pode criar menção de palavra-chave de pessoas, de produto ou de outros. Então, se você quiser monitorar alguém falando do seu produto, do seu negócio, você pode pôr aqui. Então, eu coloquei
+
+aqui Bruno Camoto e Bruno Camoto. Óbvio que se for só Bruno e tiver outros Bruno nos grupos, ele também vai pegar. Aqui no caso ele pegou um meu mesmo dentro de um grupo, mas também eu com certeza se eu scrollar aqui eu vou achar que vamos ver aqui. Pô, pior que ele pô é porque como ele tá puxando do meu WhatsApp, né, eu acho que ele consegue organizar muito pelo meu ID, mas eu não sei muito bem como que ele filtra só para para mim, né, pro Bruno aqui. Beleza. É, a parte
+
+de contatos. Esse aqui é bem legal. Eu fiz um pequeno CR, um CR CRzinho. Então você pode vir aqui, clicar nos contatos, você tem aqui todas as informações do contato, você pode marcar ele como equipe, como VIP, né? Então se você colocar ele como VIP, ele vai aparecer dentro do seu dashboard aqui no overview, né? Ele mostra as métricas,
+
+quantas mensagens essa pessoa te mandou, quantas você recebeu, quantos dias você tá conversando com essa pessoa, quando foi a primeira interação, quando foi a última, quais são as principais pautas. você pode fazer uma análise de A aqui também sobre todas as suas conversas com esse seu contato. Então, acho isso muito legal, né? Você pode ver aqui todos os links que você recebeu dessa pessoa, né? Então aqui a gente tem, né, que aconteceu principais temas são finalização e aprovação de conteúdos, toda conversa colaborativo e direto, muito Bruno puxando assunto, pendências claras em confirmação, etc. Então aqui a
+
+gente tem todos os links, né, que eu recebi e que eu enviei. Aqui nós temos tesqus. Então você pode criar uma tesque, tipo, ah, estou devendo um link de apresentação do sinal WhatsApp. Então você pode criar aqui uma tesquezinha, né, colocar inclusive uma data, né, uma dual date para essa tesk aqui. E aqui ele fica um pequeno histórico de conversa, né, para você ter de referência. E aí você pode vir aqui
+
+também e clicar aqui em com tesques abertas e ele mostra aqui todos os seus contatos que você acabou criando uma tarefa e que você tem que executar ela, tá? E aí você tem todas essas tesques abertas aqui, ó. Então, viu que ele apareceu aqui, ó? Estou devendo um link de apresentação do sinal do WhatsApp. Então, tudo que eu tô devendo para alguém, eu posso associar essa tesque para uma pessoa e ele aparece aqui no meu overview. Então você pode, por
+
+exemplo, usar esse sistema para e fazer uma gestão de tarefas que acontecem dentro do seu WhatsApp, de coisas que você tá devendo pras pessoas ou que elas estão devendo para vocês. Então, no meu caso, como eu recebo 1090 mensagens por semana, para mim é legal esse sistema para eu poder gerenciar o que que eu preciso devolver pras pessoas ou não, né? Então, você tem contatos e você tem tesques, né? Então, a Tes é o que a gente mostrou aqui. Então, você tem esse cambs por aqui. Eh, no caso, eu deixei como
+
+convites, né? Mas você pode pegar o repositório e editar isso aqui para colocar o que você quiser, mensagens, tesques, convites. Então, no meu caso, eu recebo muito convite para para dar aula, para para palestrar e aí eu acabo usando isso aqui para me organizar, né? E aí você tem os conectores. Então, você pode conectar isso aqui com o seu Google. Eu não sei se tá funcionando. Eu
+
+vou ser honesto que eu não testei, então, provavelmente não esteja. Ó, não é possível iniciar a conexão com o Google. Então, eu não fiz essa funcionalidade, mas eu vou fazer depois que eu soltar o vídeo aqui para vocês. E aqui eu deixei o botãozinho para conectar no WhatsApp e para você também conectar com a sua API e com o MCP do Cloud. Então você pode conectar. Eu
+
+ainda não terminei de desenvolver essas funcionalidades, mas eu vou deixar o repositório no GitHub e aí se você topar você pode contribuir pro repositório e a gente desenvolve isso juntos também. Mas esse projeto tá bem legal. Então, voltando aqui pra apresentação que eu pulei, então o que que eu fiz, né? Eu criei aqui esse dash aqui e processei 85.000 mensagens para testar o sistema de forma afinco assim, né, de de profundidade mesmo, né? Então aqui a
+
+gente teve um volume, né, de mensagens. Ah, o que que eu perdi no meio desse volume e a minha dor que eu não tinha visão do que estava acontecendo. Então, como ele funciona, né? ele captura as mensagens dentro do supe. Então o processo ele é bem simples. Aqui, ó, vou
+
+abrir para vocês aqui só para explicar o processo técnico de captura de mensagens, né? Então vou vou abrir aqui esse aqui mesmo, né? Então ó, como funciona, né? Então você recebe aqui o seu WhatsApp, tá? Então no meu caso, meu WhatsApp aqui. Aí eu pluguei o meu
+
+WhatsApp dentro de um bloco do N8N. Então eu pluguei o N8N usando uma API não oficial. E no meu caso eu estou usando a Wapp, tá? Então eu estou usando essa WSAP aqui. Boa. Aí o que acontece, né?
+
+Então essa WhatsApp aqui, ela fica rodando o automação que fica puxando todas as minhas mensagens automaticamente aqui e joga todas essas minhas mensagens para dentro do Supase. Então se a gente acessar aqui o Supase, eu vou mostrar para vocês como que tá a minha tabela aqui, só para vocês darem uma olhada. Então ó, esse aqui é o painel do meu Sup, né? O mais legal do Sup, gente, é que vocês podem pegar esse Supase e vocês têm integrações. Então você pode conectar ele por API, por exemplo, você pode conectar ele via MCP, enfim, você pode conectar ele dentro do seu cloud, né, ou de qualquer LLM e ele configura inteiro para você, né? Então
+
+não tem muito segredo. Então a gente só colocou essas tabelas aqui, né? Eh, tudo isso via Clou, né? Então ele criou essas tabelas aqui de login do Google dos contatos, dos grupos, das dos convites, das mídias, né? Então, tudo que a gente, eu mostrei para vocês são essas tabelas aqui, né? Isso tá na documentação do
+
+GitHub também, mas você pode pausar esse vídeo aqui se você quiser, tirar um print e jogar pro seu cloud e montar também essas tabelas para você, tá? Mas isso aqui tá bem tranquilo assim. Então, uma vez que você cria essas tabelas, o que que eu fiz aqui? Tá? Então aqui eu coloquei um agente meu, que é no caso o meu Hermes. E o meu Hermes, ele fica
+
+todos os dias rodando e tirando isso aqui e jogando pro meu segundo cérebro, né? Então eu sei exatamente tudo que estão falando comigo. Então quando eu preciso, eu posso vir aqui dentro do do meu agente aqui, né, da Amora, e eu posso ler aqui tudo que estão falando. Então, por exemplo, ó, todos os dias ele pega aqui as mensagens do meu WhatsApp, né, dia 18/06, né, hoje é dia 19, e ele processa 51 conversas, ele pega pessoas que ele já conhece, que estão dentro de people, né? Então, no caso, eu conectei esse people junto com o meu dashboard, né? Então, de novo, tá disponível para
+
+vocês. E aí ele salva as pessoas que ele conhece dentro do meu segundo cérebro. Então, tudo que estão falando aqui está caindo no meu segundo cérebro e eu sempre vou ter o contexto do que o Igor falou comigo, do que o Luciano falou comigo. E pessoas que não estão dentro do meu segundo cérebro são pessoas que não tm match. Então, essas pessoas aqui, por exemplo, não tem Mat. E, de novo,
+
+não é mensagem em grupo, é só privado, né? E aí o que que acontece? Eu tenho que vir aqui e colocar aqui, ó, quem que eu devo aprovar para entrar no segundo cérebro. Aprovar o WhatsApp. 1 2 3 blá blá blá ou aprovar nenhum ou todos.
+
+Então, no caso, eu ontem selecionei nenhum de todas as mensagens que eu recebi, né? Então, esse processo aqui me faz eu sempre ter contexto de tudo que estão falando comigo. E aqui em paralelo é onde a gente colocou aqui o nossa ferramentinha que eu apresentei para vocês do sinal WhatsApp, que no caso ele ele não salva em nenhum lugar, né? Então ele só é aqui, na verdade, um front end, né? Então ele funciona muito mais como esse front end aqui que a gente acaba vendo ele aqui. Então ele captura,
+
+classifica, né? Bom, então assim, quanto que ele gasta? Gasta pouco, gente. Eu acho que eu gastei, sei lá, tipo ó para processar essas 80.000 mensagens. 3 foi,
+
+foi muito pouco. Óbvio que eu não atribuí tudo, né? Então eu só atribuí as dos últimos dias, né? Não, não de todos os dias. Então acho que no total eu atribuí tipo 1000 mensagens das 85.000,
+
+mas é barato assim e vale a pena, né? Então ele enriquece, né? todos aqueles contatos que a gente falou ali em cima, né? Então ele enriquece os contatos, as hensos, etc. E aí ele cria esse cockpit aqui, né, onde ele coloca tudo as inteligências do sistema, né? Então a
+
+visão geral, eu já passei por ela, não vou explicar de novo. O privado, né? Então as features que tem dentro do privado, grupos, mensões, contatos, a mídia, aonde ele salva as tesques, como funciona, eh, qual a o back end que a gente usou aqui, né? Então, o que que foi de front end? O que que foi de back end? Quais são os dados? Eh, qual é a IA
+
+que a gente usa, como funciona a operação e a fundação, tá? A gente colocou aqui o resultado, né? 85.000 mensagens processadas e ele foi feito para você conectar. Então, o que que você tem que fazer do seu lado é você baixar esse repositório que eu deixei aqui para vocês, o camoto sinal WhatsApp, né? Então você pode pegar esse
+
+repositório aqui, jogar ele no seu cloud junto com a transcrição desse vídeo e falar assim: "Me ajude a montar um PRD para eu implementar este projeto no meu WhatsApp", tá? E aí o que que eu vejo que pode ser o maior desafio para você, que não é muito técnico, é essa pequena estrutura aqui, ó, de conectar o WhatsApp N8N Supase. Só que esse processo aqui, ele é um processo muito fácil, assim, eu que não sou técnico, eu fiz isso usando o Cloud e foi muito fácil. Eu principalmente conectei aqui o MCP do N8N e criei essa estrutura aqui com a API e foi tipo assim, sei lá, 20 minutos, 30 no máximo. E o Sup base ele montou também em 30 minutos. Então essa
+
+estrutura aqui eu montei em uma hora. Mas se você achar que eu devo fazer um vídeo dedicado, comenta aí, eu crio uma parte dois desse vídeo, não tem nenhum problema. Mas basicamente é isso. E aí você vai montar essa estrutura aqui, você vai plugar essa estrutura dentro aqui desse Ocamoto sinal WhatsApp, tudo usando a sua IA. E vo lá. Você tem um
+
+sistema completamente open source aqui que você pode usar, tá? Então galera, esse sistema é, eu montei ele para mim, ele tá bem simpleszinho, ele ainda não tem uma estrutura de login, não tem conta, não tem muita coisa. Se você quiser colaborar com esse repositório, fazer comit, vai ser muito massa. E eu espero que vocês curtam esse sistema. Eu também recomendo demais o RIT. Se você
+
+eh quiser construir algo, ah, falando de replet, né? Quanto que eu gastei nessa brincadeira aqui dentro, né? Acho que isso é importante vocês saberem também, né? Então vamos abrir aqui em settings. Vamos aqui em billing e eu assino o plano de 20 doleta deles, né? Vamos ver
+
+quanto eu usei para construir esse sistema. E no total usei 251. Então eu estou te dando aqui um sistema de milão praticamente, mas eu sinceramente acho que R$ 1.000 é um valor muito OK para construir um sistema que eu vou gerenciar 1000 mensagens por semana que eu recebo. Então se você é um pequeno comerciante, pequeno logista, ou você também usa seu WhatsApp, às vezes para fazer suporte, às vezes para ajudar e tal, pô, esse sistema pode ser a mão na roda para você. Eu achei 250 um preço
+
+super OK e cara, tô muito feliz com isso. Espero que vocês curtam também, tá bom? Então, se você curtiu esse vídeo, não esquece de clicar aqui embaixo, se inscrever no canal, curtir para dar aquela força e testar o replet porque essa ferramenta, ó, ele é minon, cara. Estamos junto demais, aproveita o sistema e manda seu feedback aqui nos comentários. Valeu, gente.
