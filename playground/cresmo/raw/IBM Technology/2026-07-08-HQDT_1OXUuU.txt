@@ -1,0 +1,233 @@
+---
+video_title: "Fable 5, GPT-5.6 and the high stakes of AI safeguards. Agentic ransomware, ClickFix reigns supreme"
+video_id: HQDT_1OXUuU
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=HQDT_1OXUuU
+video_date: 2026-07-08T10:00:20+00:00
+video_description: |
+  Explore the podcast → https://ibm.biz/~gP3tYd3Ta
+  
+  When it comes to Fable 5, Mythos 5, and GPT-5.6 Sol, the real story is in the safeguards.
+  
+  Last week, Anthropic and OpenAI both rolled out some powerful new models. And for perhaps the first time, the protections surrounding these models got almost as much airtime as the models’ themselves. 
+  
+  On this week’s episode of IBM Security Intelligence, Sophie Cunningham, Diego Matos Martins and Jeff Crume join host Matt Kosinski to talk about an emerging paradigm in frontier models: Safety first. What’s gained and what’s lost when security controls take center stage? And just how effective are the ones we’ve developed?
+  
+  Then, we dive into Sysdig’s report on JADEPUFFER, the first agentic ransomware. But not every security expert agrees with that conclusion. So where do we land? 
+  Plus: ClickFix is the new king of social engineering schemes—and it’s coming for your developers.
+  
+  Finally, Senior Threat Researcher Itzhak Chimino shares his technical research into UnregStealer, a credential-theft campaign targeting Latin American banks. 
+  
+  To read the full research for yourself, visit: https://ibm.biz/~MH4GhJUhb
+  
+  All that and more on Security Intelligence.
+  
+  Segments:
+  • 00:00 Intro
+  • 01:38 Fable 5 and GPT-5.6 
+  • 13:26 Agentic ransomware. Maybe. 
+  • 24:08 ClickFix: top social engineering attack
+  • 32:51 Analyzing UnregStealer
+  
+  The opinions expressed in this podcast are solely those of the participants and do not necessarily reflect the views of IBM or any other organization or entity.
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~VYurE9Gr3
+  #aisecurity #aicybersecurity #llmsecurity
+---
+Last week, Anthropic and OpenAI both released powerful new models, and they both made a pretty big deal about those models' safeguards. Panelists I want to know how you're feeling about the state of AI model security right now. One of my favorite sayings is that change is the only constant. And so the constant with AI models is they're changing. So if you like them now, well, they're going to change. If you don't, well they're going to change. It's expected for us to see some development.
+
+We obviously have to keep making safeguards. Threat actors will keep trying to break them. So never- ending cycle. But at least we're trying.
+
+Hello and welcome to Security Intelligence, IBM's weekly cybersecurity podcast, where our expert panelists turn the biggest industry news stories into practical takeaways that you can use. I'm your host, Matt Kosinski. And joining me this week, we've got Sophie Cunningham, dark web analyst, X-Force Threat Intelligence, Diego Matos Martins, Latin America X-Force incident response leader, and Jeff Crume, IBM distinguished engineer, master inventor, AI and data security. And later in the show, Itzhak Chimino will be here to tell us about his research into UnregStealer, a credential theft campaign targeting Latin American financial institutions. But before that, we've got a lot to talk about. We're going to be addressing the first agentic ransomware. Or maybe
+
+it's not agentic ransomware. We'll get into that. And ClickFix's rise to dominance. But before we go any further, we got to keep talking about this model news because Fable 5, Mythos 5 and OpenAI's Sol are here, and they're bringing the next generation of LLM safeguards.
+
+So as we mentioned up top, these new models hit the streets last week. To recap for those who might not be familiar. Fable 5 is Anthropic's model with the strongest guardrails yet. It's available to the public, while Mythos 5 is less guarded, but only available to Glasswing participants. And the day after those came out, OpenAI released GPT-5.6 Sol which it calls its
+
+most capable cyber-focused model yet, and the company claims it is comparable to Mythos Preview at one-third the token output. Now, because this is a security show, the thing I really want to talk about are the approaches to safeguarding, to mitigating the possibility that these extremely powerful models will be misused. Because for the first time, at least in my experience, it felt like these organizations were foregrounding the safeguards when they talked about these things, specifically talking about how they use things like classifiers, smaller AI systems that analyze user interactions in real time to detect and block potentially harmful asks and outputs. However, some people are worried the classifiers might be too strict. Jeff, I want to start with you.
+
+How are you feeling about the classifiers, about the safeguards in general, about what we're seeing right now in the market? Well, I think, like you said, these things just came out well, then they disappeared and then they just came out again. So this is I don't know if this is like Groundhog Day, and the Punxsutawney Phil stuck his head out, saw his shadow and ran back in. But anyway, he's back out for now. So, so welcome to the world. I think this is interesting stuff, and I think it's
+
+important stuff, and I think it's good stuff over the long haul. We're going to make a lot of stumbles as we as we've already done as an industry in this area. I think the long arc of all of these, though, is that anything we can do to identify vulnerabilities allows us to be more proactive. It allows us to identify the zero day before somebody, the bad guys do and take advantage of it. If we find it first, then we can do something to to prevent that. And that's the
+
+good news story here. Now the bad news story is of course, if if a system, AI is smart enough to be able to find these vulnerabilities, and in one case, Mythos was able to find a vulnerability in OpenBSD that had been sitting in plain sight for 27 years, and none of you saw it. None of you. So I mean, it found it in no time. But now we've got a fix. You know. So. So that's
+
+good. But the problem with these are that if we're if we don't put the guardrails in, then they can also exploit, as you just talked about, how Fable is supposed to have the the things that block that exploit. But I don't know, I feel like we're fighting a bit of a losing battle there because ultimately we can do model distillation, we can do other kinds of of recreation. As you said right off the bat, you know, Mythos and Fable came out. Almost instantly, OpenAI came out with their answer to these when Mythos came out, and then when Fable came out. And they're not the only
+
+players. So everyone out there, AI technology is available to essentially everyone. So it's going to be one of these cases where everyone is kind of leapfrogging and moving and improving. So one set of of responsible players will put in guardrails, another set won't. And we have to be aware that even if we get all of the good guys to put in the guardrails, it only takes one bad guy to not do it. And then it's that's that's what we're facing is that lowest common denominator.
+
+And they will because again, we've had WormGPT for just about as long as we've had ChatGPT. And it'll happily write all the malware you want with no safeguards in it at all. So we got to look there and we got to look for finding ways to, to do the jailbreak mitigation better, because that still is an unsolved problem. And it's not going to be an easy one. But I am encouraged to see at least people focusing on that space. Absolutely. And that dovetails kind of
+
+nicely with something that Sophie actually brought up with me before the show, which is Zhipu AI's GLM 5.2. I'm not sure if other folks have heard about this, but it's a Chinese model. It's an open weight model, and it is supposedly on par with Mythos in its performance. Now, I'm not saying that they're the bad guys without guardrails, but what is interesting to me is that this is an open source model, that is supposedly Mythos level. And so, Sophie, I want to throw it to you
+
+there thinking about GLM 5.2. How does the entrance of like an open source model with Mythos level capabilities complicate this whole safeguard question? What are your thoughts there? It definitely lowers the barrier of entry, right? Anybody can have access to it. Versus Mythos is
+
+there's only a select few that can access it. And I know for the Z.AI is that it's only matching invulnerability exploits, but only time will tell how far it goes. And we can get in a whole nother discussion of, you know, open source models versus closed source models. But I think it's important for these companies to create these standards. But like kind of Jeff alluded to,
+
+it is a bit of a whack-a-mole, and I don't think you can create all the standards you'll possibly need. We can't protect against everything that any person may ever think to leverage. So I think we also kind of need to approach this differently and figure out, look at it from a system view. And okay, what can we do to efficiently protect? Safeguards are important, but probably not the only answer either. And that leads to another aspect that's kind of
+
+interesting to me here is that, you know, you, Jeff had mentioned kind of working on jailbreak mitigation. And Sophie, you talked about trying to make standards. And Anthropic's note about its release of Fable and Mythos, they talked about how they're also partnering with Glasswing participants to develop a shared framework for assessing and responding to jailbreak techniques. The idea being that this will give us more of a common language, something that's like a standard because right now we don't really have any of them. So we might not be able to like, you know, make every standard we want, but like, we could use some of them, maybe. Diego, any thoughts on your end
+
+about this kind of attempt to make a jailbreak framework, a universal framework? What do you think there? For sure, you need to establish some partnerships with companies, well-known companies that will be able to provide and bring to the table some expertise around how to develop securely. And then with that, they will also contribute because they will bring some expertise from senior professionals. So and those partnerships, not just with companies but also the sectors of the government, it's important. But to me and to the points of
+
+what Jeff and Sophie were saying here, I think that's how we should and in my perspective, considering I'm, I, I respond to incidents. Right. I think that we should focus as well on, on seeing this in a different way and thinking that we are going to have a wave of vulnerabilities coming to our way. And this will come from AI models that will be exploited, that will be jailbreaking. And then what? What are we going to do about that? Right. So, to me it's
+
+about, okay, so if I am a company, owner of a company, then I need to be concerned about putting controls in place, the right protections so I can basically protect against the exploitation of those AI models and those AI models exploiting some technologies that I will have on my on my inside my my environment. Right. So I think that that should be also our approach and our concern as well. Because again, to me, we are going to see a wave of vulnerabilities being, you know, just emerging from all these models that are coming to and being used. Absolutely. And
+
+so I think the kind of theme that I see emerging here is that, like these guardrails we're interested in them, we think they're doing good stuff, but like it's you can't head off every single thing that's going to be a problem, right? Like they're going to be used to, you know, find vulnerabilities, to exploit vulnerabilities, whether it's these models or other ones, the bad guys are going to get their hands on them. But it is still interesting to me to see, at least for me, this feels like the first time that, like, safeguards took center stage in like a rollout conversation. And I'm wondering if you folks either agree, and if you think that that might be a positive sign for us moving forward, or is this just more marketing? Jeff, I'll start with you. What
+
+do you think? Is this a sign that we're starting to take the stuff more seriously? That we're getting it right? How are you feeling? Yeah, I think the AI companies are realizing if they don't do this, there's going to be pushback. So they're seeing this as something that's necessary for
+
+them to continue their business. I think it's we're fighting a losing battle and always will be on this front. It doesn't mean that it's that it's not worth fighting. We should still do some things, but look at it this way. Look, we came out with with guardrails for physical world, real world crime. Oh, a few millennia ago. It hasn't stopped that, you know, and this isn't going to
+
+stop AI based crime either. But that doesn't mean we don't try, and it doesn't mean we don't try to do to do the enforcement where we can. Just realize that there are these are the things that, again, will be done by the good actors. The bad actors will not follow the rules. That's why they're the bad actors. So creating a lot of rules. We have to make sure that there's not the
+
+unintended consequence, that these rules don't end up just penalizing the good guys and doing nothing to slow down the bad guys. And this has already been some of the reports that have come out is that some of these guardrails have slowed down the performance of these models and made them not as useful as they were before. And if that's the case, then we're basically tying, you know, the hands behind the back of the defenders. So yes, guardrails, but not guardrails that just make things harder for the good guys. Yeah. And I think there's a really important kind
+
+of little, little like kernel in there, which is that like it can be easy to confuse safeguards with like a solution to the problem. Right. And but as you point out, Jeff, the safeguards only apply to the good guys. They don't apply to the bad guys. And so like we can't think that that's the end. If
+
+anything, it's just the beginning. Diego, to close this out for this segment, what are your how are you feeling? Optimistic. Hopeful. A little more cynical like Sophie. Where you land here? No, I'm
+
+definitely optimistic. I think that you need to establish some some, controls in place and some safeguards. Right. You need to put some controls in place. And I think that what threat actors will do, and what they always do is look for another way. So they can basically run their
+
+exploitation or try to exploit a specific software. Right. And for that, I think that's how we should concern a lot about intellectual property and them stealing that so they can replicate and create another AI model that will try to exploit the vulnerability. So that's I think that's what's going to happen more and more. Even with the safeguards, which will just apply for the good people. They will they will always find a creative way around those safeguards. But, folks, that
+
+brings us the end of this segment. Before I wrap it up, though, and move us on, I just want to open it up to the viewers and listeners on YouTube. How are you feeling about the safeguards? How are you feeling about the rollout of Fable, Mythos, GPT Sol? Let us know. I do read, I do respond, but we got to
+
+move on today to our next story. This is JADEPUFFER. Agentic ransomware. Maybe.
+
+So last week, Sysdig published research about JADEPUFFER, which it calls the quote, first documented case of agentic ransomware. In other words, this is an LLM that drove the whole extortion operation. Sysdig observed JADEPUFFER, gaining initial access to a host by exploiting a missing authentication flaw in Langflow, and then it pivoted to an internet exposed production server. From there, JADEPUFFER encrypted data on the server and generated a ransom note. Worth noting that it also destroyed a bunch of data and didn't save its encryption key. So there was no
+
+way to reverse this anyway. But Sysdig judges this to be the work of an AI agent for two reasons. First, the self narrating code they found in the payloads and samples. And second, the speed with which it moved. But not everybody agrees with how they're framing this. Cyber researcher Kevin
+
+Beaumont, for instance, notes that what the agent did wasn't very sophisticated. It wasn't any different than what human ransomware attackers already do. It just exploited default credentials and old, unpatched vulnerabilities to get into a system, and it only compromised one server. It wasn't even like a system wide compromise, right? So I'll start there, because there's a little bit of controversy over how big of a deal JADEPUFFER actually is. And Diego, I'll throw to you first,
+
+I'll give you the controversial question first. What do you think? You look at JADEPUFFER. Are you like, wow, this is the first day agentic ransomware. Or do you feel like, yeah, maybe it's a little overblown. Where do you fall here? I'm not sure if I agree that say it's agentic, the first agentic
+
+ransomware that we see here. And also you need to you need to think about the controls in place that you had on the environment. Right. So you just said it was just one server that got compromised. And if you consider a ransomware operation, you need to basically bypass several controls in place, which is being more and more difficult for for threat actors, since you have EDRs, XDRs on the environment and several other protections in place. And then after that, you need
+
+to compromise a whole operational system or several systems, and only after that you can do the extortion. Right, which takes a lot of steps in here. And to me, if you do that with a very simple vulnerability that is easy for you to exploit on an external, server that is exposed on the internet, and then you just execute a few few things here and there and some, some operations. I'm not I'm really not sure. And I'm still considering what I think about this case, but, yeah, I'm not sure that's how we should consider this, the first case of agentic ransomware. I think it's not a clean decision. But, Jeff, I'm
+
+also going to ask you, where do you fall here? You know, looking at this big deal? Not a big deal? Agentic? Not agentic? Any thoughts? Well, so the fact that that the attack didn't look enormously
+
+sophisticated is, in fact, exactly what I would expect from the first example of agentic, you know, ransomware, because it's not going to invent something, likely, that no one's ever seen before. It's going to imitate what we've seen before and just do it at scale. In fact, it may be very primitive and do make a lot of mistakes while it's learning. So that part seems consistent. Now, whether this is or isn't, I would expect to see it replicated if it worked at all, which it seems like it did, then, you know, that would be another indicator. But then I would also think a
+
+human operator would replicate it if they were successful as well. So, the one thing I'll say is whether this is or isn't. This should come as a surprise to absolutely no one who's been paying attention. I even, and I can say this with full confidence, I did a video on this. I recorded it like last November, I think it was. It went up on the IBM channel at the end of, of
+
+last year, on predictions for cybersecurity for 2026. And this is exactly one of the things that I put in there. And it's not because I had a crystal ball or because I had some great insight into it, or for the record, because I was behind this, because I wasn't. So I didn't make this one come true. But it was to me plainly obvious that this was going to happen. In fact, a
+
+whole section of that video was just talking about how agents will be used against us. And that's what, that was maybe the main theme of predictions I had for 2026 is that we're going to see agents turned against us, weaponized against us, used as risk amplifiers and things of that sort. And I talk specifically about ransomware, where the entire kill chain, from target identification to developing the payload to, you know, the, the, the land and expand, the collection of the ransom payment, the whole nine yards. If this doesn't do it, something else will. So just stay tuned. It's going to happen. This is as sure as the sun coming up in the
+
+morning. Absolutely. And, Sophie, I want to shift gears slightly and throw this question to you because it's a little more threat intelligence specific. One of the things that Sysdig notes about the self-narrating code that LLMs default to is that it might be a good thing for for researchers, right? Since these things kind of narrate what they're up to. When you capture these
+
+samples, you might learn some more. What do you think about that take on? Like, all right. If we're dealing with, you know, LLM generated attacks, we get more information out of them. Do you feel like that's an accurate take on things? Yeah, I mean, that would be great. Make my job easier. I think
+
+eventually that won't really be a point. I think, you know, the prompt will cut it out. Also, I think the point's a little moot because if I can just plug it into my internal AI tool, you know, and then it'll give me step by step anyway. Six in one, half dozen in the other. But to me, I think what was mostly funny about JADEPUFFER is that it really failed at the core component of what ransomware is, and if you can't get that data back, nobody's going to continue to pay you. But the the point is, it makes it
+
+interesting. It lowers the barrier of entry, as I said before. And I don't think so much whether it's fully agentic really matters. I think we see the first report every day with AI, the first AI to write blindfolded. And I think it can be a little drawn out, but the capabilities is very impressive. And like I was using Claude Code over the weekend just messing
+
+around with it and it's insane what it can do. It can just create everything for you. So like Jeff said, I'm not surprised at all. It's just something else we have to prepare against. But if they make my life easier by writing in what they're doing, if they can't figure out how to write that out, then thank you for making my life job easier. This is like it doesn't understand the Fifth Amendment
+
+and they just as soon as they get arrested, they just start confessing. So great. We try to find silver linings wherever we can, folks. Diego, I want to ask you about the speed angle specifically, you know, as the kind of incident response guy here. One of the things that Sysdig really stressed was how fast this moved. For example, they noted that one of the incidents when
+
+they tried to log into a Nacos service, if the initial failed attempt. So from the initial failed attempt to the time they actually figured out how to get in took about 31 seconds. So pretty speedy, right? Do you find that concerning from from a from an incident response standpoint? How are you feeling there? Yeah, yeah. So, when we started to see threat actors automating the way that they are
+
+exploiting environments, and then we started to see now they're using AI, then, yes, this is definitely a concern because, now you see a threat actor getting domain in, for example, very quickly, which took like several days in the past. Right. So speed is definitely a concern. It's definitely a concern, not just for incident responders, but also for vendors in general. They'll have to basically generate new use cases or new ways for you to detect very quickly and alert, and then with that you can contain the whole situation. So yeah, it's definitely a concern I agree with with the whole
+
+team here. Yeah, absolutely. Jeff, to close out this segment, I want to ask you how much does it actually matter. Does it matter whether our ransomware is made by a person or an agent? Does it make any difference to how we defend against it? What are your thoughts there? Yeah, I think it
+
+makes a difference in terms of volume and velocity. That's that's the two aspects here. We've already talked about how AI models, some of these frontier models will be able to identify new vulnerabilities. Well, if it follows up with ransomware to exploit those vulnerabilities, it could do that at a much greater speed than a person would be able to. Although the 31 second that you referred to before, I mean, everybody knows from watching any hacker in a Hollywood movie that the way you break into a system is you just type really fast on the keyboard and then you say, I'm in. That's how it works. You know, that's why I'm a I'm a bad hacker. I'm not a fast
+
+enough typer. You know. A bunch of gobbledygook stuff comes across the screen while you're typing and it happens. So 31 seconds. I yeah, I could definitely believe that could be done by a person because we know hackers type fast. But but but yeah, I think I think that's going to be the thing
+
+is that as Sophie mentioned earlier, it also lowers the barrier of entry. It's a click here to hack. You know, I, I put in my prompt, it builds the agent framework for me. And it does all of this on its own. And we know from the early days when we started coming out with the term script kiddies, you know, the people who would basically use tools that they didn't even understand, they those folks could do a lot of damage because of their lack of knowledge. You
+
+know, we always think about the elite hackers that are able to, you know, precision, go right into a system and slide past defenses. But sometimes the person that doesn't know what they're doing does more damage. You know, they're just they're using a blunt instrument and they're a bull in a china shop. And that's how these things could eventually be used against us and even work against the attackers unknowingly. Absolutely. So, I mean, this thing was was a good example of that, right? Like,
+
+it didn't even save all the data it encrypted. It deleted a bunch of it. It didn't even save an encryption key. So it's like you can see how that's even more damaging than regular ransomware. But we have to move on to our final story for the week, folks. This is ClickFix is now the
+
+dominant social engineering attack. ClickFix for those who might need a refresher is basically tricking users into copying and pasting harmful commands into their system terminals. It hit the scene in about 2024, and it has already become a favored technique among attackers. A ReliaQuest analysis of threat activity between March 1st and May 31st of this year found that ClickFix dominated initial access vectors. Sophie, I want to start with you as our kind of threat intelligence person here. Any thoughts on
+
+Why ClickFix has become so darn popular? Why it's the attackers' attack of choice. It works because it's social engineering, right? It's going, it's a new method because I think we've already protected against some of the other methods. And so we have email filtering to block some of these malicious links. And so now okay, let's try something new that isn't as widely
+
+known is oh my computer is breaking. I have to put this command into terminal. And like Jeff was saying earlier, it's the bull in a china shop. If you're an uneducated user, you can do a lot of damage. So it's definitely scary. But you know, there's hope that, you know, we've been dealing
+
+with social engineering for a long time. So I think we can put some of those methods we've already put into place and just apply it to ClickFix. Yeah. And it's a good note. You know, the kind of comparison of the terminal, a user in a terminal being like a bull in a china shop because the vast majority of users are never in there. Right. Like you're never in those system
+
+commands. And so you may not catch exactly how suspicious it is that like some random website is like just just paste this and run this, you know? But but one of the other things that ReliaQuest also found was that that ClickFix users, attackers, are developing new evasive maneuvers. Right. For example, they saw them using an attack on Mac systems, specifically where they use AppleScript links, instead of, you know, just telling people to run a command because Macs were starting to warn people about copying and pasting commands. So they're evolving their methods.
+
+Right. Diego, I want to ask you, you know, again, from your incident response kind of angle, how do you feel about the ClickFix attackers getting smarter, adapting to to the landscape? What do you think is going on here? I think that some folks will have to update their awareness trainings. Because, in the past, as Sophie was saying, companies would focus on avoiding for users to go and click on links. Right. And now what we are doing, what the
+
+threat actors are doing is they're guiding the interaction. Right. And they are basically saying, hey, you know, since you are working from home, you know, which most of the people are doing. And you need to just, you know, fix this because the IT guy is probably not available for you. So, you know, just for you to, to run, to fix this problem, just go and copy and paste this command in here. And sometimes, several companies won't have the controls in place so they can avoid for
+
+a user to execute those commands. And with that, the user will basically generate some, some impacts there without knowing. Right. So, to me, it's definitely a new way that actors that is, it's a, it's a, it's a shift, a shift from "hey, just click here and I'm going to Exploit" to "hey, let me, help me on exploiting you. Please copy this.
+
+So, so you can execute and I can exploit you," like, in a polite way. Please do this so I can exploit you. So. And they're so helpful with it too. Yes. Right. So here are the steps. So please execute
+
+123 so we can proceed, you know and be successful on this whole exploitation operation here. So yeah it's definitely because you said please. Yeah. Yeah. I think it was a really good point that you bring up Diego that I hadn't considered before, that I think is probably contributing to the success of ClickFix, is that like, there is much more of like a self-help mentality in even like enterprise IT departments now where it's like, look, you know, if we empower users to kind of address some of these smaller things on their own, they won't necessarily need to submit tickets, and IT can focus on bigger things, and that's great. But you could see how
+
+that could be co-opted by like a malicious actor, right? To be like, oh, you're just trying to help yourself, you know? Here's the here's the information you need. And then that's where it gets us. Jeff, I want to ask you about another thing that ReliaQuest found about these ClickFix developments, which is that they are, like, super, super focused on developers specifically right now. They often use like, fake libraries and downloads to basically get into the software
+
+supply chain. Why do you think they're so focused on developers specifically? What's the benefit there to them? Well, I think developers have access to a lot of things. So if you can get to there, then you're you've got a lot of power that can be an amplification aspect. If I can mess up a
+
+developer system, well then now I can poison the supply chain at the source. So I think that's a big benefit. And I think the reason that that this kind of attack works is because of one of the basic laws that we have of cybersecurity. You can't make any system foolproof because they keep making better fools. So they'll always keep iterating on this fool technology And people will fall for things. I noticed, by the way, when Sophie mentioned "weakest link in humans," she looked at me.
+
+So I'm not going to draw any conclusions from that, but just noted. I think about this particular attack, the analogy would be is if I mailed you all the components for a bomb, along with the instructions telling you how to assemble it. And the last step said, and then push the red button and you say, okay. Step one, step two, step three. Okay, push the red button because this is one that is, as we've said, is purely a social engineering attack. This is
+
+this is why this can work across multiple platforms. This is why you can't put in an AV system to stop it. This is why your EDR won't stop it. This is why all the technical means will not stop it. Because this is where we have the attacker has infiltrated the mind of the person and basically infected that that mind. And we don't have an AV for a human
+
+mind. We don't have a firewall for a human mind that says when one of these patterns comes in. And we try to do that with training, but training, you know, works until it doesn't. So this is one of those things where the the instructions are coming in, the person. And by the way, who do we kind of blame for this? Look, I think those of us that are in the technical fields, we need to
+
+look in the mirror on this one. We created systems that are too hard for people to understand. So if somebody gives them a gobbledygook command and says, copy and paste this and put this into your terminal window, well, okay. It's it's a magic spell and I'm not a sorcerer, so I'll have to trust that the sorcerer knows what they're doing. And I'll put the magic spell here and hope for the best. And by the way, help desks do this all the time. You know, when they say you're trying to do a
+
+remote diagnosis of a problem on your system? I mean, I see this all the time where they'll say, here, I'm going to give you this command, pop this into your terminal window and put that in. And so, so we've trained people on this kind of behavior. So by doing so, we've also made it so that they're more likely to accept that as normal. And and so we kind of created the seeds of this within the tech community ourselves unintentionally. And now we're going to have to
+
+start untraining people on the things that we just trained them on. And so to close out of the episode today, folks, I'm going to pose the extremely unfair question to Sophie after Jeff's whole thing about how we don't have a solution to this, which is this is a solution to this. No, but more seriously, Sophie, any thoughts on your end about, you know, what organizations do now that ClickFix is like the thing to watch out for? Anything there? I think some of the things we already implement, you know, role based access control, denying access, people who don't need terminal maybe don't allow them to put in arbitrary commands. Training, of course. Now that
+
+you know, email filtering is a little bit more aware of. Make sure they know, okay, this is happening. Commands are are rampant. And I think a lot of it is in connection to with some of the, you know, social media, Reddit, YouTube is they get kind of upvote and get that popularity and they're like, oh, this is trustworthy. But you know. Education. That does it for the panel this
+
+week, folks. But stick around. Next up. Itzhak Chimino breaks down UnregStealer.
+
+Coming up right now we've got a special segment for you. Itzhak Chimino senior threat researcher is here to talk to us about UnregStealer, a new attack campaign he's been researching. Itzhak, thanks for being here. Let's start with an overview. Can you tell us what is UnregStealer? What is this thing? Okay, so UnregStealer is a browser-based credential theft
+
+campaign. Its targeting banking and real payment users, primarily across LATAM, with a strong focus on Brazilian fintech and Pix platform. What makes it stand out isn't any single novel technique, it's how deliberately the pieces are assembled against a specific target. Absolutely. And can you say a little bit more about that? You know, when you say
+
+that the pieces are assembled deliberately against the target? I know that part of that means there's like a human being watching things unfold in the background. Right. So can you walk us through a little bit about what what it looks like. So the chain starts on the Windows side with the social engineer, a fake certificate lure, something like a file called "certificado.exe." The
+
+victim is convinced to run it. That drops a batch file which quietly launches PowerShell in a minimized window so the victim sees nothing. The PowerShell reaches out to the attacker infrastructure and pulls down the next stage, and from there, a malicious Chrome extension gets installed silently through enterprise extension policy and not from the web store form. So there is no user click, no marketplace footprint. Once that extension service work is alive, it watches every page you navigate to. It checks the URL against a whitelist of targeted banking sites,
+
+and when it gets matched, it injects a stealer kit straight into the page of the victim. So I have a also example of how brazen the in-page manipulation is. One of the things that the injected code does is flip the password field from hidden to visible. So when normally when you type your password, the browser masks it as a dot, That masking is in the display setting on the field. The malware quietly changes that field from password type to a plain text type. So
+
+the value you are typing is sitting there in the clear. The kit can just read it straight off the page. The victim usually doesn't even know this because by the time it matters, they already submitted the form of the user and the password. It's a small change, but it's perfect illustration of the attacker having full control of the page you think you safely log in to. Absolutely. No. I think that's a really good point. Right. You you see this page and you think
+
+it's a normal banking page, but it's not. Something very quiet is happening in the background there. And again, I know that there's there's a part of this is that there's like somebody watching it happen and they choose whether or not to like basically steal the creds at that moment. Is that correct? Like, is it true that someone's basically watching this unfold? How is it working on the
+
+back end there? The live stealer behaves differently. The live stealer payload is gated. It only gets served conditionally from the server side and not to every host that's infected. We know this because when we sandboxed the sample, the early stage ran fine. The PowerShell stager fired and reached out
+
+to the command and control of the attacker, but the real stealer kit was never delivered back. There is effectively a kill switch deciding who is worth it. And a fully automated fire-and-forget stealer would just dump its payload to anything that's connected. This one withholds it unless the request meets the attacker criteria, and the selective delivery is what first pointed us toward the person in the loop. It matters because it comes down to three things. First,
+
+detection. If the malicious payload only appears for select real victims, automated sandboxing and Scanners usually come back clean. The second it tells us, it tells you about whoever is behind is going after value and not volume, which usually means fraud is executed fast while the victim is still on. And the last one: It changes the defensive posture. You're not up against a script you can fully characterize once. You are up against an operation that adapts. We watched them
+
+rotate infrastructure mid-campaign to a clean domain with zero detection on VirusTotal. And that reactive chain is the sign of someone minding their own OpSec. Not a tool running on autopilot. Absolutely. So it makes things a lot more complex for us as defenders, right? And before we get into
+
+those kind of final takeaways, you know, you mentioned it's targeting banking credentials in Latin America. I think you said specifically who who is at risk is just kind of anybody doing banking or are they looking at different kinds of people. What do you think? Usually the primary group at risk of the targeted is a financial and payment platform, Pix, and Brazilian fintech users were the focus. We observed tooling purpose-built against a specific payment platform rather than a generic schema hitting everyone. Organizations in the LATAM
+
+banking and payment space and the infrastructure partners around those platforms should treat this as directly relevant. Gotcha. And are there any like, you know, warning signs that like, might tip somebody off, that something is happening. Yeah. For warning signs, I separate into host sides and browser sides. On the host, any PowerShell process spawned by batch files, especially running
+
+and minimized or with encoded command, and especially one reaching out to a freshly seen low- reputation domain. That structured behavior is the choke point. On the browser and the browser side, the big one is unexpected Chrome extension that the user never installed. Because it's arrived through enterprise policy, it shows up as an install and active without any user action. And we saw it presented itself under SSL or certificate team name to look legitimate. So if you got an endpoint
+
+telemetry flag force install extension that didn't come from your own IT policy. The strongest single fingerprint is the campaign's name in a hardcoded session object the injected script creates in the page. It's app-specific. It's not something generic it would carry. So it's excellent detection. And go for the exact domain hashes and the Trojan string, I would point out to
+
+the published IoC listk, rather than reciting them on air. We can drop the indicator table into the show notes. Yes, absolutely. Yeah. We will have the link to the research in the show notes so folks can read it themselves. Absolutely. So to close this out here, then you know, what steps do you
+
+think organizations should be thinking about to either prevent or combat active infections? What should we be doing? Let's split it into prevention and remediation. On the prevention side for organizations, the single most important control is locking down browser extension installation. Use Chrome extension allow policies so the forced install through a raw enterprise policy isn't even possible. That one control breaks the most important link in the whole chain. Paired up
+
+with the PowerShell staging hardening, constrain language mode, script block and module logging and ideally application quotas so that the batch spawns encoded PowerShell running out of the user writable folder simply doesn't execute. And there is a human layer. The entire chain adapts on someone running a fake certificate or security tool in the first place, so awareness of the specific lure pattern matters. For individual users, the rule is simple. Don't run any certificate fix or banking security executable that arrives by email message or download prompt. A legitimate bank will
+
+never ask you to run standalone to fix your connection or certificate. Any and every so often, open your browser extension and check for anything you don't recognize. On the remediation side, if you suspect any active infection, the order matters. First, treat the credential and the session as already compromised because this rides an authenticated session rather than just collecting passwords. Removing the malware is not enough. You have to validate the
+
+active session and rotate credentials. So first, a session logout or token cancellation on the banking side. Then change the password from different clean device so you can remove the malicious extension and just as importantly, remove the enterprise policy that is reinstalling it. If you only delete the extension, the policy can silently put it right back. And the third hunt is the PowerShell persistence and original dropper on the host and pull the machine off the network while you do it. And that's our episode. Thank you to our panelists, Sophie, Diego and Jeff. Thank you
+
+Itzhak. Thank you to the viewers and the listeners. Thank you to our producers. Subscribe to Security Intelligence wherever podcasts are found so that you never miss an episode. Stay safe out there and head to the show notes to read Itzhak's research for yourself in full. I highly recommend it.

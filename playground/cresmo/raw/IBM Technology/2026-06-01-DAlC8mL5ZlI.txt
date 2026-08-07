@@ -1,0 +1,54 @@
+---
+video_title: "Why AI Models Pause to Think: Test Time Compute Explained"
+video_id: DAlC8mL5ZlI
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=DAlC8mL5ZlI
+video_date: 2026-06-01T11:00:01+00:00
+video_description: |
+  Learn more about AI Models here → https://ibm.biz/~NE5Wjh0tm
+  
+  Chances are when you've seen a chatbot pause and say 'thinking,' a lot more is happening beneath the surface. Martin Keen explains how test time compute, chain of thought, and reasoning models help AI solve harder problems 🤖. Learn how LLMs use deliberate thinking to boost accuracy.
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~HQSOEQ7pF
+  
+  #aimodel #llm #testtime
+---
+Chances are when you've interacted with a chat bot, you've seen it pause and say something like, thinking. Well, what's going on there? Well, we've talked a lot on this channel about how LLMs actually get trained. There's a transformer architecture and it's fed a massive corpus of data. So there's absolute ton of data going into here.
+
+Through next token prediction. It learns language, it learns reasoning, it learns facts, probably learns how to code. And all of this gets compressed into the weights of the model. And for years, the playbook for making that model smarter has been scale up. That means more parameters.
+
+That means... More training data, more flops during pre-training and the scaling laws have shown that this holds up. Now, this approach is called train time compute, and it is a cost.
+
+Fix is the fixed cost. You spend months of computing time and probably millions of dollars training a model and then those weights are frozen, from that point on, whether somebody asks the model to summarize an email or to solve a gradual level of physics problem, it does the same thing. One forwards pass through the network token by token. And every token is something of a commitment because the model picks the statistically most likely next token, it emits it, and at that point it's kind of locked in because there's no going back to reconsider. It's a forward pass which is well always moving forward.
+
+So if that first token sends the response down the wrong path, the model just keeps going with it, and that's actually one of the reasons LLMs can hallucinate so convincingly, but what if we give the model a compute budget. So this time we're going to give the model a budget and specifically This budget is not spent at training time, but instead it's spent at inference time when the model runs. And it gets to decide how to spend that budget. Well, that is test time compute. That's what that thinking message is all about.
+
+And the research coming out over the last couple of years shows this might be just as important a scaling axis as model size. So what's actually going on during that thinking time? Well, there are a few distinct mechanisms and actually they can be combined. And the most visible one of these is just chain of thought. Now anybody can invoke chain of though just by prompting it, by telling the model to think step by step.
+
+But there's a newer class of models and those models are called reasoning models. And these reasoning models have been trained through reinforcement learning to do this automatically. So the RL process bakes chain of thought into the model itself. Now, during RL training, the model learns that producing intermediate reasoning tokens, which is breaking down a problem and working through the logic step-by-step, that tends to get a higher reward. So it does it more often.
+
+Essentially, we can say that it is generating what we'll call thinking tokens as it goes through this process. Thinking tokens are generated before the actual response. Now what's special about thinking tokens? On the face of it, not much. They're still real output tokens, they cost real compute, but they change what that forward pass is being used for.
+
+So remember in a standard response the model is committing to final answer tokens from the very first word, but with thinking tokens, those kind of early commitments are really just like a scratch pack of work. The model can explore an approach. It can realize, ah, this is not working and then try a different angle. All before it commits to a single word of the actual answer that's returned to the user. So instead of going straight from a query straight to the answer that we give back to the users, we now have an intermediate step.
+
+We go from query. Reasoning that's where the thinking tokens are generated and then we go to the answer. So that's chain of thought. Now the second mechanism number two is search. So in standard inference the model does greedy or near greedy decoding and that one and done forward pass is what I'm talking about there.
+
+So it picks the most likely next token and then it just it moves on but with test time compute You can do something more like a tree search. Now the model in a tree, search starts a reasoning chain and then it branches. So it tries different branches kind of off the tree. And at some point it needs to pick one of these branches to go down. So to do that, it uses a verifier to score which branch is most promising before continuing down it.
+
+Then the third mechanism is self-consistency. This is to run the same problem n times at a really high temperature, so you get n different reasoning paths. Then you take a majority vote on the final answer so if it says let's say 7 out of 10 independent chains have landed on the same answer. You've got some pretty decent confidence. Now there's no verifier model needed in this case because it's using the statistical distribution of the model's own outputs as the signal.
+
+Now to be clear all three of these mechanisms are trading something. They are trading compute for accuracy. There are more flops per query but there's also a probability of getting a good response.
+
+Does this actually work? Well, a 2024 paper out of Google DeepMind on scaling test time compute found that test time compute follows its own scaling law. In fact, we can draw it. So if we think of the axes here being performance on reasoning benchmarks, well, the performance actually goes up slowly and smoothly and Digitably. As you increase inference compute.
+
+In fact, researchers showed that if you take a kind of a tiny parameter model, let's say a three billion parameter model and you use test time search strategies, it would outperform a much bigger model, a 70 billion model on hard math problems. So that's a model that is over 20 times smaller that's beating the big one and it's doing it just by thinking longer, but there are definitely some trade-offs here. More thinking time, well the obvious thing that means is more latency. If every single chatbot query takes 45 seconds while the model works through a search tree, well users might have a bit of a bad time. And those thinking tokens are billed as regular old output tokens.
+
+So a response that burns through 10,000 of them for a single response is more expensive to run, but it's not just latency and expense. Another problem is just basically overthinking. So forcing a reasoning model to deliberate on simple questions can actually degrade performance. The model kind of second guesses itself into the wrong answer. And if you...
+
+Ever talked yourself out of the right answer on an exam. Yeah, it's the same thing. And that is an analogy I have some firsthand experience of. Now from an economics perspective, training compute that is considered capital expense or CAPEX is paid once, regardless of the query volume or inference time, but test time compute that is OPEX is operational expense. It's paid per query and you can choose how much per query as well.
+
+With these trade-offs in mind, the best approach is actually one that is considered adaptive, so it changes based upon the request that comes in. So we can route easy queries to the fast single pass inference. And then we can rout harder queries through the full reasoning pipeline. And that's how many chat bots work today. ChatGBT, for example, uses a picker.
+
+To route queries between reasoning and non-reasoning models. So we've been scaling AI by making models bigger and bigger at training time and test time compute is the second axis. It's letting the model spend more compute on the problems that need it. AI models, they're getting bigger, they getting faster, but they're also learning when to slow down and think.

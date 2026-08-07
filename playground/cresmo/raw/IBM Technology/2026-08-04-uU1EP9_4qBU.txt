@@ -1,0 +1,67 @@
+---
+video_title: "What Are Large Database Models? AI for SQL Data"
+video_id: uU1EP9_4qBU
+channel_name: "IBM Technology"
+channel_id: UCKWaEZ-_VweaEx1j62do_vQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=uU1EP9_4qBU
+video_date: 2026-08-04T11:00:12+00:00
+video_description: |
+  Learn more about Large Database Models here → https://ibm.biz/~LdYkjFu30
+  
+  AI isn’t reaching most of your data, until now 🤯. Martin Keen introduces large database models (LDMs) and how they bring AI directly into SQL and relational databases.
+  Learn how embeddings and semantic queries unlock faster insights without moving your data.
+  
+  AI news moves fast. Sign up for a monthly newsletter for AI updates from IBM → https://ibm.biz/~KAqghpd9O
+  
+  AI was used in the creation of the transcript and metadata for this video.
+  
+  #ai #sql #data #dataengineering
+---
+Okay, let's test your AI model acronym knowledge. Let me give you a few. So LLM, it's pretty easy, right? That's Large Language Model. And if you've ever used the Extended Thinking Mode in one of those models, you might also know LRM, that's Large Reasoning Model.
+
+But how about this one? L-D-M. Now, if you said Large Data Model, that's a smart guess. It's wrong, but it's a small guess. LDM actually stands for Large Database Model.
+
+And it's different kind of model from these other ones entirely. So instead of training on books and articles and Wikipedia and what have you, an LDM can be trained on a selected number of tables or views that reside in a relational database using the columns you choose to include, which as it turns out is where most enterprise data resides. By estimate, only 1% of enterprise data ever ends up in front of an LLM, the other 99% is locked here inside these relational databases, often behind layers of encryption and access control. So if AI is going to be useful for the day-to-day work of business. Something has to reach into this 99% here and that something can be an LDM.
+
+So how does it do it? Well let me give you an example. So let's say we've got a customer here and this customer is shopping online for beauty products at a retailer and they have found something they're interested in so they pick out a product and they add it to their cart or to their wishlist or something. Now, that right there is a pretty useful data point. So now the retailer is gonna want to find other customers who behave like this one so that they can recommend products to them as well, like products like this one.
+
+Now the traditional way to do that involves a data scientist creating a customer profile. So this is a profile of other similar customers which we've kind of able to group together. And this profile is based on historical purchase patterns. Now that might result in writing a SQL query to a relational database. And that SQL query might look something like this.
+
+So select customer ID from customers where the age is between 20 and 40, the city is New York and the beauty spend is over 1,000. Now what that query gives us is a list, a list of other customers. Now these customers might be interested in this same product as well. That's wonderful. So now we can target the customers in this list, right?
+
+Well, hold on a minute because there's something about this list. This list is very much a rigid list because somebody had to guess what the right constraints were. And even setting aside whether that query here, whether it gives a good answer or not. This whole process is pretty slow because the data scientist needs to extract the records, load them into whichever analytics platform the team uses. They need to run their analysis and then report back.
+
+And it's also pretty expensive. Now, IBM has reported that customers spend something like 32% to 40% of their IT budget, just moving data around. And beyond the cost, the moment this data leaves the safety of its well-protected and regulated environment, it gets harder to secure and track. So, instead of writing a rigid SQL filter like this, what would an LDM query look like? Well, it would look something like this here.
+
+So you see here, this one looks pretty different. This says, give me the customers whose IDs are most similar... To this customer ID, which we're referring to this guy here, and to do that according to the model trained on this table.
+
+So the big difference here is that nobody's had to hand pick which fields to include with that where clause. In that rigid version, the data scientist had to second guess which columns correlate with similar customers. And out of dozens of possible fields, they picked age, they picked city, and they picked total spent. Are those the right three? Maybe, but what about gender or what about the time of day that they shop or their recent return history or a whole bunch of other things?
+
+With LDMs, the model has learned from the columns selected for an AI object across the rows in that table of view and it's learned which values tend to show up alongside which other values. So when the query asks for customers like CUST4729, the database answers based on vector representations learned from how values co-occur across selected columns and rows. There's no more guessing of fields. And to be sure, this SQL query down here could also include a where clause like the rigid example has, like to limit to only customers in let's say one country, for example. So it can do that as well.
+
+So an LDM query can effectively combine AI semantic queries with standard SQL capabilities. Perhaps that's really the best of both worlds. Now, how does a large database model actually do all of this? Well, it does it in five steps. So step number one is to pick a table in the relational database.
+
+This can be a customer list, a transaction log, anything with rows and columns. And then classify each column as categorical. That's for discrete values like state or status or numeric. So that's for continuous values like age or price. And then the key for the column that identifies the row like a customer ID.
+
+That's step one. Now, step number two is to turn every value into a token, and to me this is really the clever bit about LDMs because this all relates to a technology called embeddings. Now an embedding well it would take a word like maybe let's say cat and then it turns that word into a list of numbers or more specifically a vector so it might be something like this. Much longer than this, but you kind of get the idea. It's a vector.
+
+And words with similar meanings, let's say the word kitten for example, well they get vectors that point in a similar direction. So maybe a kitten has numbers that look something like this. So you see they're pretty similar, but numbers are much trickier. Now you might assume that the numbers 37 and the numbers 38 would be a bit like kitten and cat, in that they would naturally land close in vector space because they're close numerically, but the model doesn't really have the concept of numbers as well numbers, to it 37 and 38 are just two different tokens, possibly no closer to each other than 37 and Kitten. Now, for sure they could end up with similar vectors indirectly, if let's say that 37 year olds and 38 year olds tend to act alike across the rest of the data, but that's a pretty slow and a pretty unreliable way to learn what we already know.
+
+And continuous columns also tend to have lots of rare values. So, you know, like. 37.5 and then 37.6 as well.
+
+And they show up too rarely for the model to learn good vector representations for those values. So for any numeric column, the values get binned first, which is to say a clustering algorithm groups numerically close values together. So age 37 and age 38, they probably end up in the same bucket. They get the same ID. And then from the model's point of view, they are literally the same token.
+
+We're telling the model that these values are equivalent instead of making it figure that out from scratch. Also, every value, be it numeric or categorical gets tagged with its column names. So New York in the city column becomes a different token from New York appearing in a different column. Otherwise the model would confuse identical strings that mean different things in different columns. Right, that's the first two steps.
+
+Step number three is each row becomes a sentence and specifically t becomes an unordered sentence also known as a bag of words, and that's where every token has an equal relationship to every other token in the row regardless of column position. So a row about customer 4729, that's our customer from right at the beginning, it might look something like this, so city New York, age b7, gender f, spend b12, category beauty, and each token pairs a column name with a value so categorical fields keep their original labels like New York or beauty, and Numeric fields like age and spend show up as bucket IDs from that binning step here. So bucket seven or B7 might be for ages 35 through 39. Now step number four is the training step. So a self-supervised neural network reads through all of those row sentences and learns the vector for each unique token, and the result is every selected categorical value and every numerical cluster gets represented in the model's vocabulary.
+
+Values that appear in similar rows end up near each other. So for example cities where customers behave similarly will cluster together, and then finally in step number five, this is where those vectors are exposed through SQL. The trained model gets loaded back into the database so you can now search for things like similarity, like which customers look like our customer? Or this similarity, which is to say, which transactions look least like the normal pattern. We can also look for clustering, where a product belongs with a group of reference products.
+
+There is analogy, whether one relationship looks like another relationship. And then there's also commonality, which records show especially common or uncommon patterns. And this is all running...
+
+As standard SQL against the database itself with the data being used in place rather than being sent off to an AI model someplace else. Now I've used a retail example throughout this but LDMs are already running in production across plenty of industries. So let me give you a few examples. One of them is insurance. So they're retrieving the most similar past contracts from millions of records to predict which quotes are most likely to be successful.
+
+Then fraud detection teams are using them to flag transactions that look nothing like typical patterns. Companies that handle lots of contracts, well, they can spot agreements that stand out against the rest of a portfolio, and a fun one in food and retail. It's being used for exploring product similarity search where a database can answer, what's nutritionally similar to toffee covered almonds and it- it turns out the answer is oatmeal. So I think there are two common threads here when it comes to LDMs. The model runs where the data already lives.
+
+And then secondly, anybody who can string together a SQL statement, which is pretty much anybody, can ask these semantic questions without needing a data scientist to translate them into a pipeline first. Now, as for commercial examples when LDM, IBM launched the first database product built around an LDM back in 2022. It's called SQL Data Insights and it ships as part of DB2 for ZOS, and the follow-up shipped in March 2026 SQL Data Insights Pro which extends the same approach to unstructured text alongside structured columns, and adds incremental model refresh so the model can update against new data without redoing the whole category each time. So there you go. One more acronym has been added to your vocabulary, your AI vocabulary, and that is LDM, large database models.
