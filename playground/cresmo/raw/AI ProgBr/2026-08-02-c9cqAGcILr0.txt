@@ -1,0 +1,279 @@
+---
+video_title: "DeepSeek V4 Flash LOCAL: já dá pra CANCELAR o Claude e o GPT?"
+video_id: c9cqAGcILr0
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=c9cqAGcILr0
+video_date: 2026-08-02T23:54:03+00:00
+video_description: |
+  DeepSeek V4 Flash Q4 rodando localmente em um Mac Studio M3 Ultra. Nos meus testes ele vai de 5 para até 35 tokens por segundo usando o motor de inferência DwarfStar, também conhecido como DS4, o que torna o modelo bem utilizável.
+  
+  No vídeo eu testo geração de código no OpenCode e acompanho consumo de memória, velocidade de processamento, janela de contexto e reaproveitamento do KV cache. O modelo cria um clone de Angry Birds, um site completo para uma creche e um sintetizador musical.
+  
+  Também configuro requisições em batches para executar três subagentes simultaneamente, cada um criando uma versão diferente de Flappy Bird. No final, analiso os resultados, os bugs e quando realmente faz sentido investir em hardware para rodar modelos de IA localmente.
+  _______
+  
+  👉 Curso de IA para Devs - Aprenda a extrair o máximo de qualquer modelo de IA (inclusive os baratos que ninguém te ensinou a usar direito): https://aiprogbr.com/?sck=ytaideepv4flashlocal
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ OpenCode Go - https://opencode.ai/go?ref=AJ45M6N28N
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaCube 2: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr_50 para receber um desconto de $50.00
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⏵ ZimaBlade: https://shop.zimaspace.com/products/zimablade-single-board-server-for-cyber-native?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaideepv4flashlocal
+  
+  _______
+  
+  0:00 Introdução
+  6:05 Angry Birds
+  14:04 Site
+  18:53 Sintetizador
+  21:23 Flappy Bird (batch)
+  31:41 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ TTS Studio: https://apps.apple.com/ca/app/ai-voice-generator-tts-studio/id6761985975
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr⁩
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Essa semana fiz um vídeo aqui pro canal sobre o Deipsic V4 flash, que recebeu uma versão nova e bate de frente com modelos muito maiores, como GLM5.2 e o próprio DeepSic V4 Pro, que tem 1.6 trilhões de parâmetros. E o grande diferencial desse modelo é que essa versão flash, ela tem em volta de 280 bilhões de parâmetros. Então, de um lado, a gente tem 280 bilhões de parâmetros competindo com modelos de mais de 1 trilhão de parâmetros. E
+
+apesar de 280 bilhões de parâmetros ainda ser grande para caber na maioria dos hardwares domésticos, não é algo impossível. Então a pergunta que eu quero responder hoje é: será que a gente tem um modelo bom o suficiente que permitiria cancelar todas as assinaturas e usar ele localmente? Exatamente isso que a gente vai ver aqui. Hoje eu vou rodar o Dipsic V4 Flash aqui no meu Mac Studio, tá? Esse daqui é um Mac Studio M3 Ultra de 256 GB de memória unificada. Essa memória
+
+tem 800 GB/sundo de largura de banda. E a gente vai ver se é o suficiente pra gente conseguir rodar de forma performática o DeepSic V4 flash. O DeepSic V4 flash que a gente vai rodar aqui é uma versão Q4. Ela tem aproximadamente 160 GB, então a gente com 256 vai conseguir carregar os modelos, o KVC sem muitos problemas. Vamos lá pra tela. Então, a minha
+
+primeira tentativa de rodar esse modelo localmente foi com LM Studio. Basicamente, baixar o GGUF, rodar direto no LM Studio, verificar se a gente vai conseguir pelo menos uma velocidade aceitável. Esse é um modelo que, apesar de ter quase 300 bilhões de parâmetros, é um mixture of experts. Quer dizer que ele não ativa todos os parâmetros na hora da inferência. Ele ativa, se não me engano, 12 bilhões de parâmetros. O que
+
+eu achei que, pô, então o Mac vai, ó, tirar de letra, né? Por 12 bilhões de parâmetros é tranquilo para esse computador aqui. Para minha surpresa, a história não foi bem assim. E assim que eu carreguei ele no LM Studio, fiz a primeira pergunta e vi ele começando a responder, eu já vi que algo não estava bom. E o que a gente conseguiu aqui nesse primeiro momento foi papo de 4.8
+
+tokens por segundo. E apesar de 4.8 tokens por segundo ser alguma coisa, talvez dê até para conversar com o modelo nessa velocidade. Se a gente for pensar em criação de código ou qualquer coisa que seja maior, né, tenha uma geração grande de tokens, quatro, cinco tokens por segundo vai ser muito, muito pouco. Principalmente se a gente comparar com o uso via API, né? A grande
+
+maioria dos programadores tá acostumado a usar via API. Então, cinco tokens por segundo não vai fazer muito sentido. Mesmo que aqui ele esteja rodando de graça, eu vou explicar as aspas daqui a pouco, o seu tempo ele tem um custo também, né? Então isso tem que ser levado em consideração. Pra gente conseguir algo viável, teria que ser uma velocidade muito maior do que isso.
+
+Agora, deixa eu só falar rapidinho das aspas. Muita gente quando eu falo: "Ah, porque esse modelo ele é aberto, você roda de graça". E aí a pessoa fala: "Ah, mas e o custo do hardware? Você teve que pagar o hardware?" Normalmente quem compra hardware para inteligência artificial, ele não compra paraa inferência. Se você em algum momento se
+
+perguntou se você deveria comprar um hardware ou se vale a pena comprar um hardware para você trocar sua assinatura, deixar de pagar uma assinatura, não, não vale e provavelmente não vai valer, pelo menos por muito tempo. A gente tem alguns hardwares bons de velocidade. Por exemplo, a 5090 é um monstro de velocidade, mas ela só tem 32 GB de V RAM. Isso quer dizer que você vai conseguir carregar modelos pequenos nela. Então, por exemplo, um Quen 3.627B, que é um modelo muito muito bom,
+
+roda nela e roda muito bem, roda 100 tokens por segundo. Só que você não vai usar para todas as tarefas um Coin 27 no lugar de um modelo de 1 trilhão de parâmetros. não faz sentido. Então, normalmente, quem vai comprar esses equipamentos está mais interessado ou em aprender como as coisas funcionam e aí sim esse conhecimento ele tem um valor maior do que o custo do equipamento ou tá interessado em também aprender ou até colocar em prática treinamento de modelo, esse tipo de coisa, ou até usar modelos específicos que você não teria acesso se não fosse a comunidade open source, modelos sem censura e etc. Aí nesse caso, faz sentido quando a gente tá investir em hardware, tá? senão não
+
+faz sentido. Agora, uma vez que você já comprou o hardware, você já tem o hardware para esse motivo, qualquer inferência que você faça é de graça. Outro dia alguém deixou um comentário sobre isso aqui no canal, né, apontando o preço do hardware e eu até respondi com a seguinte pergunta: quanto é que custa cortar uma maçã? Bem, se você não tiver a faca, custa o preço da faca, mas se você já tiver a faca, não custa nada. Da mesma forma que você dificilmente vai comprar uma faca para cortar uma maçã e acabou. O custo de inferência no
+
+hardware que você já tem também é de graça. Então rodei aqui no LM Studio, consegui cinco tokens por segundo e logo eu pensei que bobeira que eu dei. Eu devia estar rodando isso com MLEX. MLX é um framework da própria Apple, usado para inteligência artificial. Então, quando a gente roda no hardware da Apple com MLX, a gente consegue uma performance um pouco melhor normalmente.
+
+Então, fui lá, rodei no MLX VLM, o nosso Deepsek V4 Flash 0731. Dei um oi para ele já na expectativa de ver uma velocidade absurda e ele me entregou 3.6 tokens por segundo. Consegui um pouquinho mais, mas ficou ali na faixa dos cinco tokens por segundo também. E aí, quando eu já tava prestes a desistir, eu descobri o Dwarf Star.
+
+também conhecido como DS4. Esse daqui é um motor de inferência feito especificamente para rodar o DeepSck. E o mais legal é que ele foi criado com o objetivo de rodar o deep Seek em hardware da Apple usando Metal. Hoje ele dá suporte tanto a placas da Nvidia quanto inclusive o DDX Park, que é uma boa opção também para rodar esse modelo. Só que para você rodar a versão Q4 no DJX Park, você precisa de dois deles. E
+
+agora tá meio difícil de conseguir, os preços aumentaram muito, mas esse é um hardware que eu não tava botando muita fé não. E pelo que eu tenho visto no Twitter, a galera compartilhando, tem me surpreendido um pouco. Depois eu quero até olhar um pouco melhor para ele. Mas bem, o DS4 tem suporte também a Rock M, ou seja, você também consegue usar nos computadores com memória unificada da AMD. E aí, a mesma coisa, né? Esses
+
+computadores têm até 128 GB RAM. Você vai precisar de dois aí para conseguir rodar o modelo pelo menos em Q4. Então, beleza, clonei aqui o DS4, compilei ele na minha máquina, botei para rodar e cruzei meus dedos. configurei ele para rodar com o meu open code, pedi para ele criar o nosso clássico Angry Birds. E quando ele começou a responder, aí eu fui pra galera porque ele começou a cuspir 30 tokens por segundo. E eu vou
+
+te falar que eu tô um pouco mal acostumado. Normalmente quando eu tô rodando o modelo local, eu tenho rodado o Quen 3.6 27B na 5090. Como eu falei lá, eu consigo em torno de 100 tokens por segundo. Então isso me deixou um pouco mal acostumado quando eu vejo 30 tokens por segundo. A princípio eu acho
+
+um pouco lento, mas já é extremamente utilizável, principalmente se a gente levar em consideração que a gente tá lidando com modelo que teoricamente bate de frente com o GPT 5.6 pequeno ou com o GLM. Então eu falei: "Tá bom, vamos ver se ele consegue criar esse jogo pra gente". E eu vou te falar, ele demorou um pouquinho, ó. Ele começou a gerar para mim aqui com seus 30 tokens por segundo por volta de 23:59, meia-noite.
+
+Ele finalizou o último token do nosso jogo, 1:40 da manhã, então levou um tempo, tá? Eu deixei ele fazendo aqui e fui dormir. Agora acordei, tô aqui gravando o vídeo para vocês. Então a gente vai ver junto esse resultado. Eu cheguei a dar uma espiadinha ali quando ele tava na metade, mas eu ainda não vi o resultado final. Vamos ver se tá igual
+
+o que eu vi ou não, ou se tem algo de novo. Angry Birds, ó. Tá legal essa tela de abertura. E o prompt foi aquele clássico que eu faço aqui com três pássaros, três fases, detalhes e etc. Vamos dar uma olhada aqui, ó. Fase um.
+
+[grito] [risadas] Nosso passarinho, coitado, foi atropelado. Olha isso. E os porquins estão ali igual aquela cena dos Chaves que ele pegou no fio na mão da Chiquinha. Tá todo mundo, cara. Tão doidão ali. Mas vamos, vamos ver se
+
+funciona, né? Assim. Tá, vamos lá. Tirando isso, tirando tudo que tá ruim, tá bom, né? Por o sol tá maneiro aqui, ó, desfocado do sol. As nuvenzinhas estão legais,
+
+estão se mexendo aqui. Aqui temos até uma tentativa de sombra meio estranho, mas tudo bem. O estiling aqui tá bom, apesar do nosso boneco tá no chão, né? Não sei porquê, mas vamos lá. Tá. Olha
+
+lá, pô. Tem até o tem até o negocinho do Stiling. Tá legal para caramba. Não, isso tá bom, tá bom. Vamos lá.
+
+Uh, [grito] cara, funciona, funciona, né? Porque eles estão ali, ó. Ele também agora ele pegou no fio ali. Tá ali também. Outra coisa que eu tô vendo é que o bonequinho não some, né? Vou ter que reiniciar
+
+aqui. Vamos ver se eu acertar alguém, se ele some. Acertei alguém, mas ainda assim não sumiu. Será que não tá sumindo? De jeito nenhum.
+
+Ah, sumiu agora. Eu não sei o que que aconteceu, mas sumiu. Uh, agora vai, agora vai. Esse aqui dá. Ah, vitória.
+
+É, tá vendo? Tá funcionando, cara. Jogar de novo. Não, jogar de novo não. Próxima fase.
+
+E aqui, ó. Ah, eu tô achando que ele só some se ele encostar no chão. Se ele cair no chão, se ele ficar aqui em cima, ele não some não. Vamos pra fase dois.
+
+É, provavelmente não era o que eu pensei, então, porque agora ele tá no chão e não sumiu. Eu acho que tá com algum bug, cara. Esse passarinho aqui atropelado é muito bizarro, mas é legal também. Porquinhos estão bonezinhos, hein? Tá, tá legal aqui, cara. Que doideira. Vamos
+
+dar uma olhadinha aqui agora na geração em tempo real. Tô aqui no meu open aberto. Aqui embaixo a gente consegue ver a memória do meu Mac, tá? Isso daqui é bem legal porque ele não mantém a memória cheia o tempo todo, não, com os pesas do modelo, só na hora da inferência. Eu não sei exatamente como que esse motor de inferência funciona, mas isso aqui é diferente do normal.
+
+Normalmente o MLX, o próprio LM Studios mantém o modelo ali na memória. Aqui pelo visto não. Então se eu der um oi aqui, ó, pro nosso pencode, a gente vai começar a ver aqui, ó, ele decodificar o prompt, né? E normalmente esse primeiro contato ele é um pouco mais lento, porque ele ainda tá preparando ali, tá processando o KVCh e aí as próximas interações elas acabam sendo mais rápidas porque a gente tem um cash hit. Quem é aluno lá do meu curso sabe a diferença de um cash hit para um cash miss, que a gente explicou numa aula lá, mostrei para eles. Então, basicamente,
+
+cada mensagem que você manda pro modelo, ele vai criando KVCash daquilo, ele vai guardando. Porque, na verdade, quando você manda uma mensagem pro modelo, você manda o histórico completo da conversa e ele consegue identificar, opa, isso aqui eu já processei, eu não preciso processar de novo, só essa última mensagem, essa nova mensagem eu preciso processar. Isso é um cash hit, quer dizer que ele vai reaproveitar todo aquele cash, tudo aquilo que ele já processou anteriormente e a sua resposta vai ser muito mais rápida. Sem isso, seria basicamente impossível usar o modelo e seria impossível usar o modelo local, porque você teria que ficar reprocessando o histórico todo a todo momento. A propósito, quando a gente tá falando de API, esse conceito do cash é mais importante ainda, por quando você manda um histórico, por exemplo, que tem já ali, digamos, 100.000 tokens, tá? e
+
+você tá mandando uma mensagem com cinco tokens ali, se ele tivesse que processar esses 100.000 tokens novamente, ele ia te cobrar o preço de input, tá? Aqui, no caso, 100.000 tokens custaria ó, no caso aqui do Opus 5, tá? Agora, esses 100.000
+
+tokens quando ele bate lá no cash, ou seja, ele já foi processado e o modelo consegue reaproveitar aquilo que ele já processou, aí eles te cobram só esse valor aqui, que no nosso caso para 100.000 tokens, isso aqui daria 10 centavos, ou seja, 10 vezes menos. Por que que é importante ter esse conhecimento? Porque, como alguns alunos lá do curso sabem, tem algumas coisas que você pode fazer que você acaba modificando esse histórico. E se você modifica esse histórico, tudo que vem depois dessa modificação não se encaixa com o cash que tem lá. E aí precisa ser
+
+processado de novo. Se você mudar, por exemplo, a primeira mensagem do histórico, você vai ter que reprocessar tua conversa inteira. Não importa se essa conversa tem 10.000 tokens ou 500.000. 1000 tokens. Quer dizer,
+
+importa, porque se modificar o início da conversa numa conversa de 500.000 1 tokens vai sair caro. Às vezes simplesmente você tá com token muito cheio, 11,59 pode ser um problema, porque muda para meia-noite. Alguns dos agentes de código vão trocar lá as primeiras mensagens, as mensagens de sistema e vão gerar um cash miss, ou seja, vão descartar completamente o teu cash, ter que processar tudo de novo. Se você tiver com contexto cheio, você vai pagar por isso. A propósito, é aqui
+
+começa a se pagar o aprendizado que você consegue quando você tá usando o hardware local, né? Quando você faz um investimento no hardware local para rodar modelos locais, você acaba se envolvendo ali, entendendo mais por baixo dos panos como as coisas funcionam. E isso reflete diretamente em como você usa LLM mesmo quando você tá usando via API. Obviamente tem um outro jeito de aprender também que é se inscrevendo lá no meu curso. O link vai tá aqui na descrição. E a propósito,
+
+esse é o grande diferencial, pegar tudo que eu venho aprendendo, colocando em prática com todos os hardwares que eu tenho aqui e trazendo pros alunos do curso para eles entenderem mais sobre como as coisas funcionam e poderem criar a melhor forma de usar IA, mesmo que seja via API, mesmo que seja via assinatura. Mas beleza? Então ele mandou aqui pra gente, ó, a gente teve aqui uma média de 29 tokens por segundo, tá? E o pré-processamento, ó, ficou em torno de 400 tokens por segundo. O que normalmente quando a gente compara com o hardware da Nvidia, esse número é baixo, tá? 400 não é muita coisa. Se a gente
+
+tivesse rodando esse modelo em duas RTX 6000, só, pô, teria que ter duas RTX 6000 também, né? Mas se a gente tivesse rodando em duas RTX 6000, esse número aqui provavelmente seria 1500, 2000 tokens por segundo, muito mais rápido. É algo que a Apple vem melhorando, tá? O M5 já é melhor do que esse M3 Ultra que eu tenho aqui. Quando sair a próxima geração do Ultra, isso daqui vai est muito, muito melhor. Mas esse é o número
+
+que a gente tem hoje aqui. E eu vou fazer o seguinte, eu vou pedir para ele criar uma página web pra gente, pra gente ver em tempo real a velocidade dele criando e ver também um pouco do resultado que ele vai trazer. Cria um site para uma creche, você deve fazer tudo, inclusive criar cópia. Busque também fotos na internet e mantenha as cores neutras. Tom pastel com design moderno, porém infantil. Infantil não
+
+gostei muito não. De acordo com o tema. Porém, de acordo com o tema. É isso aqui. Tá bom. Eu quero um design
+
+moderno, mas eu não quero que seja tipo design de uma revista de moda, né? Ou de uma loja de joias, por exemplo. Vamos lá, ó. Na hora que eu aperto o enter aqui, a gente vai ver a memória subindo, ó. Já dá aquele pico ali. A gente tá
+
+atingindo aqui, ó, 200 GB. E a gente viu, quando eu apertei o enter, ele já começou a responder quase que instantaneamente, né? Não teve muito tempo de processamento, exatamente porque ele reaproveitou o cash, né? E basicamente tá processando somente a resposta. Aqui a gente tá conseguindo uma taxa média de 30 tokens por segundo.
+
+Essa não é a melhor média, eu já consegui 35, mas tem variado aqui entre 30 e 35 de fato. Ó, agora ele tá buscando aqui na internet algumas fotos relacionadas a creches, o que demonstra que ele tá conseguindo tranquilamente usar os tools, né? Tool de busca. É, criou aqui o nosso todo list, que é uma toolzinha que ele usa também. tá fazendo aqui a leitura das imagens, a a gravação das imagens no HD e agora ele vai começar a se preparar para criar o nosso HTML. Tudo isso, ó, 30 tokens por
+
+segundo, mantendo uma taxa estável. A taxa aqui de processamento de prompt, ela varia um pouco. Depende muito do prompt também. Se o prompt é pequeno, normalmente essa taxa tá sendo menor. Para prompts maiores, ele tá conseguindo uma taxa maior. Consumo de memória
+
+também estável aqui em 200 GB. Ó, já criou aqui o HTML pra gente. Show de bola. Agora ele vai pro CSS. Ó, aqui a gente tá vendo uma pequena queda na média, tá para 29.99,
+
+mas ainda tá muito próximo ali aos 30 tokens por segundo. Obviamente dependendo do contexto, se o contexto for muito maior, né, for crescer demais, a gente pode ver isso diminuir ainda mais, chegar ali em torno dos 25, mas para pequenas respostas ali a gente consegue entre 30 e 35. Para grandes contextos, eu diria que entre 23, 25 e 35. Ah, uma coisa importante aqui, eu tô rodando com uma janela de contexto de 200.000 tokens. Esse modelo aceita até 1
+
+milhão de tokens, tá? Normalmente, quando eu tô rodando o local, eu prefiro, mesmo que modelo permita mais, me manter ali em torno dos 200, 250.000 tokens. Eu separo minhas atividades em pequenas tarefas para que eu consiga manter dentro desse contexto, até para não gerar esse gargalo aqui, porque quanto maior o contexto, mais lento é a velocidade de decodificação, mais lento é a inferência de fato. Então, com contextos menores, eu consigo atingir um ponto ótimo ali. E como já faz parte do
+
+meu processo fazer essa divisão de fato, trabalhar tarefa a tarefa, para mim acaba não tendo muita diferença. E na verdade eu faço isso com modelos na nuvem também, tá? Não só modelos locais. Ó, fez aqui o nosso HTML, nosso CSS, já fez JavaScript também. Pronto. Esse aqui
+
+é o nosso site, ó, Pequenos Passos é o nome. Não gostei muito desse contraste aqui, tá um pouco difícil de ver, mas ele usou o que a gente falou, né? Cores tom pastel ali e tal. Creche educação infantil, onde cada pequeno passa é um grande começo. Espaço seguro, afetuoso e cheio de descobertas para seu filho crescer feliz com acompanhamento pedagógico do bersário ao ensino infantil. Legal, cara. Esse site tá
+
+muito legalzinho, tá? Tá muito legalzinho. Ele tá bem clean, exatamente como a gente pediu. Ó, temos aqui algumas imagens, tá? Uma segunda casa, um primeiro mundo legal, cópia legal. Na
+
+pequeno espaço acreditamos que a primeira infância é a fase mais importante da vida. Por isso, unimos cuidado, afeto e educação em um ambiente pensado nos mínimos detalhes para que os pequenos se sintam em casa. Cara, muito legal, muito legal, muito legal. Ó, tô gostando do design, tô gostando das cores, tô gostando de tudo aqui. As imagens, pegou as imagens, todas as imagens funcionam muito bem. Essa daqui
+
+não tem nada a ver, né? Mas tudo bem. Todas as outras estão excelentes. Essa daqui podia ser diferente porque ela se trata de bersário e aqui não tá representando um bersário. Mas de forma geral a gente ainda tá dentro do tema aqui, ó. Aqui a gente tem, deixa eu clicar
+
+aqui, ó. E aí abre. Se eu botar pro lado passa. Não, não é um carrossel, mas abre cada uma das imagens, tá? Aqui não, né?
+
+Aqui se eu clicar não faz nada, só tem o rover mesmo. Aqui embaixo a gente tem os depoimentos. Cara, esse design tá bem legalzinho. Agendita. Olha só, tem toda uma coerência, né, de design, não tem nada muito louco. Muito bom, excelente
+
+resultado. Se a gente olhar o código aqui, ele separou, né, em HTML, JS, CSS. E aqui a gente tem a pasta assets com todas as imagens. Então, todas as imagens têm algo a ver de fato, menos essa daqui, né? Só que deu um 404, um erro aqui, mas fora essa, todas as outras têm tudo a ver com o nosso site.
+
+Achei um resultado excelente. E eu vou pedir mais um prompt aqui para ele que vai ser o seguinte: crie um web app de um sintetizador musical. Bem, vamos tentar algo diferente. Vamos ver o que que ele vai trazer pra gente. Esse prompt aí tá bem aberto, não tá sendo específico. E é exatamente isso que eu
+
+quero ver aqui, como que ele vai lidar, né, de forma criativa com esse pedido. Nesse primeiro prompt aqui, ó, a gente pode ver que o modelo ele demora um pouquinho a responder, porque ele precisa processar tudo que o Open Code joga para ele no início das conversas, que a gente tá falando aqui do system prompt, se a gente tivesse seria o agents MD e etc. Então, depois desse primeiro prompt, o resto fica bem mais rápido. Ó, ele falou que ele vai criar aqui, então, o nosso sintetizador no único HTML. Ele vai criar com oscilador, filtro, envelope, keyboard e etc. Ó, a
+
+gente tá conseguindo aqui uma média de 30 a 31 tokens por segundo e ele tá mantendo relativamente estável aqui nessa velocidade. Inclusive, que eu tava falando do processamento do primeiro prompt, a gente consegue ver aqui que a gente já tem 10.000 tokens na nossa janela de contexto, né? Exatamente. Por conta disso. A gente não tá vendo 10.000
+
+1000 tokens aqui, mas é porque ele processou prompt de sistema e etc. Aqui a gente consegue ver o tamanho do contexto agora, né? Então tá com 14.000 tokens. Então a diferença aqui 4.000
+
+tokens quer dizer que ele já gerou uns 4.000 tokens aqui pra gente da nossa página. Tá indo muito bem. Terminou de escrever aqui 19.000 tokens, né? Opa,
+
+pera aí, deixa eu voltar aqui para falar um pouquinho disso aqui, ó. E ele manteve uma média de 30 tokens por segundo até o final, ó. Agora vamos dar uma olhada aqui, ó. Que que é isso aqui? Isso aqui ficou muito para cá, né? Devia
+
+ter acabado aqui. Tudo bem para Como é que eu para? Acho que não era para ser assim, não. [música]
+
+É, todos fazem o mesmo som. [música] Ah, não. Como é ruim? [música]
+
+Tá mudando isso. Tá, tá mudando, [música]
+
+cara. Legal, legal. Mas tá, todos estão tocando o mesmo som, infelizmente. Mas ó, o design legal, né? É um ponto de partida. É um ponto de
+
+partida. interessante. Acredito que com mais um ou dois prompts a gente conseguiria ter um resultado legal. Eu quero fazer mais um teste para esse teste. Eu vou reiniciar o nosso DS4 server aqui, o servidor aqui do Dwarf Star, e eu vou passar uma nova flag para ele, que é uma flag que vai permitir que a gente consiga mandar requisições em bet, mandar várias requisições para serem processadas ao mesmo tempo. Então,
+
+para isso, eu vou passar aqui, ó, batched session e eu vou passar quatro. Eu quero que a gente possa processar até quatro requisições ao mesmo tempo. Só que quatro requisições ao mesmo tempo significa 4 KV cashs. Eu vou diminuir o tamanho aqui para 50.000 do nosso contexto, porque assim a gente consegue processar tudo e eu também não vou fazer nada que vai exigir muito mais de 50.000
+
+tokens, acredito eu. Vamos reiniciar aqui. Então, o modelo leva um tempinho para carregar aqui na memória, tá? A memória aqui, ó, a gente consegue ver ela sendo alocada. E assim que terminar, ele vai mudar, vai mostrar um log aqui pra gente, dizendo que já tá tudo pronto pra gente poder fazer as nossas chamadas. Beleza? Tudo pronto aqui, ó.
+
+Agora é só eu mandar o meu prompt para ele. E o meu prompt vai ser o seguinte. Eu quero que você crie três subagentes, tá? Flap 1, flap 2 e flap 3. Cada um desses agentes vai criar um clone do jogo Flapbird. O Flap 1 vai simular uma
+
+estética retro pixel art. O Flap 2 vai fazer uma versão 3D usando 3JS. O Flap 3 vai simular um como se a gente tivesse vendo com aquele estilo de Matrix. Vamos lá. Qual que é a ideia aqui? Eu quero
+
+disparar três suagentes ao mesmo tempo. Eles vão trabalhar ao mesmo tempo nas suas próprias versões de Flapbird. Só que cada um vai entregar um resultado totalmente diferente do outro. Isso daqui é bem interessante se você quiser fazer um teste front end, por exemplo, você pode pedir pro modelo te dar três propostas diferentes e de cada uma você vai extrair, né, algo que seja interessante. Depois você descarta o resto e aí agora com uma ideia mais elaborada, você vai montar um prompto, mais direto, para ele fazer exatamente o que você quer. Faltou só uma coisa aqui,
+
+ó. Todos eles devem ser feitos em HTML. Cada um vai ser salvo numa pasta com seu próprio nome. Flap 1, flap 2, flap 3. Beleza? Vamos mandar esse prompt aqui.
+
+Vamos ver o que que acontece. Ó, o nosso servidor ele já recebeu lá o nosso prompt aqui, ó, prompt start, né? E ele vai começar a processar. Então, primeiro passo aí, tá processando aqui o prompt system do próprio Open Code. Só que nesse Mac tá levando em torno de 30 segundos mais ou menos. Agora tá até um
+
+pouco mais lento, né? Porque a gente tá com bet size maior. Então, até então a gente estava conseguindo 400 tokens por segundo. Dessa vez a gente tá conseguindo 141, né? Vai ser um pouquinho mais lento para processar.
+
+Então, só que provavelmente é devido agora a gente tá com bet size igual a 4. O que eu quero ver aqui também é qual que vai ser a velocidade de cada bet, qual que vai ser a velocidade agregada, né, somando todas juntos. Ó, vou criar três pastas e lançar três subagentes em paralelo, cada um com estética. Show de bola. Então, aqui ele já tá processando com o nosso primeiro flap um. Já tá, ó,
+
+processando o system prompt aqui. Mas aqui ele tá parado, tá começando a gerar agora, né? E ele ainda não lançou o segundo aqui. Pelo visto a gente não tá conseguindo fazer em paralelo. Nesse momento, ele tá fazendo só, ó, agora começou o segundo aqui, né? E ele tá
+
+fazendo o processamento de prompt nosso segundo. Vamos olhar lá o primeiro, como é que tá. Primeiro tá se preparando para escrever, mas eu não tô vendo aqui nenhum decod processando em paralelo. Vamos ver quando todo mundo foi iniciado aqui se isso aqui vai mudar. Ó, nesse momento a gente já tem tarefas em paralelo, porque a gente tá vendo aqui, ó, tá vendo?
+
+Contextos diferentes, tá? Então, já tá processando de fato em paralelo aqui. Agora ele tá criando a terceira tarefa aqui, ó. Agora ele tá fazendo prefio dessa terceira tarefa. E a gente consegue ver aqui em do lado de CTX, ó, de 0 a 85.521, que é exatamente o valor
+
+aqui que ele tá fazendo. Perfil, tá? Terminou de fazer aqui o prompt dele, tá começando a processar e a gente consegue ver aqui, ó, valores diferentes. Então, aqui a gente consegue ver que ele tá gerando para cada uma das sessões separadamente. Aqui a gente consegue ver que a média de geração tá em 10 tokens por segundo, mas se a gente considerar que tá sendo gerado três frentes diferentes, queria até conseguir ver ali, a gente teria ali aproximadamente 30 tokens por segundo, né, no agregado.
+
+Então não diminuiu muito não. Na verdade tá mais ou menos na mesma média. Nesse caso aqui a gente não vai ter um grande ganho real porque pelos dados que a gente tá vendo aqui, basicamente foi uma divisão perfeita ali de 30 tokens por segundo por três sessões. Não é sempre que isso acontece. Em alguns casos, você vai ter uma queda na sessão individual, mas um ganho no grupo. Por exemplo,
+
+digamos que você tenha um modelo que gera 50 tokens por segundo e você vai gerar alguma coisa que tem mais ou menos 500 tokens. Então você vai levar 10 segundos para gerar aquele arquivo ali, digamos, tá? Se você tem três arquivos de 500 tokens que você precisa gerar, você vai levar 10 segundos primeiro, 10 segundos no segundo, 10 segundos no terceiro. Então, nesse caso, você levou 30 segundos para fazer esses 100 tokens. Se você dispara em bet e esse bet cai de 50 para, digamos, 30 na sessão individual, em cada sessão você teve uma queda, você vai demorar mais para fazer aquele arquivo ali. Mas como você tá
+
+fazendo três ao mesmo tempo, a 30 tokens por segundo, você vai levar menos de 20 segundos para gerar 500 tokens. Só que, na verdade, você tá gerando 30 por sessão, então você vai levar menos 20 segundos para acabar todos os arquivos. Na prática, é como se você tivesse gerando 90 tokens por segundo. É o somatório dos três. Ó, esse aqui já acabou. Os outros também já tão para
+
+acabar. Eles vão acabar muito próximo um dos outros. Ó, esse aqui acabou também. Esse aqui levou 6 minutos 59. Esse daqui levou 8 minutos 56. Ó, esse aqui levou
+
+10 minutos 57. Então, basicamente em 10 minutos 57 a gente fez os três arquivos. Como eu falei, nesse caso aqui, talvez a gente não tenha tido um grande ganho, porque a velocidade acabou sendo dividida muito igualmente pelos três. E normalmente não é isso que acontece. Se a gente tivesse conseguido uma velocidade média aqui, em vez de 30 tokens por segundo, em 20 tokens por segundo por sessão, o que às vezes dá para conseguir, a gente teria tido um bom ganho real. Mas agora vamos
+
+experimentar, vamos ver se ele fez aqui, se funcionou, se deu certo e se tem diferença de um arquivo pro outro. Esse daqui é o Flap 1, tá? A versão que eu pedi para ser retrô pixel art. Tá, tá mais ou menos mesmo. Pô, esses canos eles estão muito separados, então tá tá bem fácil, tá? Ou
+
+o nosso pássaro também tá muito pequeno aqui. De qualquer forma tá bem fácil esse jogo aqui. Mas aqui a gente tem o nosso flap pixel. Vamos agora ver a nossa versão dois. Que que aconteceu aqui?
+
+Deixa eu tentar diminuir aqui, ó. Aqui a gente tem o nosso Flap Bird 3D feito com 3JS, né? Já veio com game over aqui, então tem um bugzinho, mas de forma geral, ó, tá aqui, ó. E o Canon ficou maluco. [risadas] Não ficou um bom resultado de forma geral, mas ele fez o que a gente pediu.
+
+Ele fez um flapd, tá? A versão 3 é um flap matrix. Pô, que que tem isso aqui? Por que que tá para cá? Não tá bom isso não, ó.
+
+Eita, fer [risadas] que que tá acontecendo aqui? Tá. Ah, ó, tá beleza. Tava com um zoom muito maluco. Vamos começar de novo. Ué, ainda
+
+tá com esse zoom doido, hein? Deixa eu tentar diminuir aqui. Opa, agora sim. Ó lá o nosso Flap Matrix. Uou. Pô, esse aqui, esse aqui tá mais
+
+difícil, hein? Ah, esse aqui foi o que eu mais gostei, hein? Vamos tentar de novo. Todos eles vieram relativ Ah, batido de primeira já. Todos eles vieram relativamente funcionais, né? Com alguns
+
+bugs. Mas, ó, esse aqui agora se o outro tava muito fácil, esse aqui tá muito difícil porque o espaço ali é muito pequeno. Eu não vou conseguir fazer aquele segundo ali de jeito nenhum. Mesmo se eu conseguisse esse primeiro aqui, eu não ia conseguir o segundo. Pera aí, pera aí, pera aí.
+
+Agora sim, hein? Agora dá. Mas muito grande aquele. Ah, não, não. Pera aí, eu tenho que começar aqui. É, é o bug aqui, né? Que
+
+eu tenho que macetar o bug. Ó, agora vai, porque senão não dá, pô. A bola tava muito grande. Ah, muito difícil. E olha só que legal, quanta coisa que a gente viu aqui. Aqui
+
+a gente viu o servidor, né, sendo configurado para funcionar em bet, ou seja, permitir mais de uma chamada ao modelo ao mesmo tempo. E aqui a gente viu a criação de subagentes. E subaggente é uma parada muito legal, porque um dos usos é esse, a gente poder criar versões diferentes da mesma coisa, principalmente pra gente experimentar, né, tentar extrair ali alguma sacada, alguma coisa diferente. Mas sub gente vai ser uma coisa muito importante quando você tá desenvolvendo e principalmente quando você tá usando em API, aí o custo é basicamente zero entre aspas em termos de performance porque na API você não vai ver essa divisão de tokens por segundo que a gente vê quando a gente tá rodando localmente. Então se a gente tivesse usando um servidor que tivesse servindo a gente a 30 tokens por segundo, se eu abrir três subagentes, cada suagente vai est mais ou menos 30 tokens por segundo também. Então, a
+
+gente vai ter um ganho absurdo. E quando que você pode usar isso? Você pode usar isso inclusive quando você vai criar duas funcionalidades que uma não depende da outra. Então você pode criar as duas ao mesmo tempo, né? Obviamente para você fazer isso, você precisa organizar o seu código, ter uma boa especificação, né?
+
+Saber exatamente o que que você quer fazer, como dar esse prompt. Mas você pode fazer isso criando suagentes e gerando ao mesmo tempo várias peças do seu software, se uma não depende da outra. Se tiver algumas partes que dependem, você vai juntar aquelas ali, vai fazer um suagente e as outras que não dependem, você vai fazer em paralelo. Inclusive, muito em breve eu vou gravar algumas aulas lá pro nosso curso, mostrando isso na prática. Mas é isso aí. Esse daqui é o Deep Seek V4
+
+Flash, versão de 31 de julho, basicamente versão final do modelo. Modelo deu uma boa melhorada. Aqui no caso a gente rodou uma versão Q4, tá? Então não é versão com full precision. Ele é um pouquinho pior, mas quase nada, tá? Lembrando que esse daqui é um modelo
+
+de menos 300 bilhões de parâmetros. Então, se você for comparar com modelos de 2.8 trilhões como química 3, você vai precisar dar um prompt, dois prompts a mais, né? Vai precisar ter um trabalhinho a mais ali. Mas é um modelo muito muito muito mais barato. Acho que
+
+é menos de 20 centavos 1 milhão de tokens de output. Então é absurdamente barato. Modelos como Opus, por exemplo, custam $5. Acho que o Kim K3 tá saindo a 1 milhão de tokens de output. Esse modelo aqui custa menos de 20 centavos de dólar, 1 milhão de tokens de output.
+
+Absurdo. Se você quiser ver o vídeo que a gente fez sobre o Dipsic V4 rodando na nuvem, dá uma olhada nesse vídeo aqui, ó. Agora, se você quiser ver o que que dá para fazer de verdade com o modelo local, se você quiser extrair o máximo dele, dá uma olhada nesse vídeo aqui, ó. Quen 3.6, 27 bilhões de parâmetros. A
+
+gente rodou aqui localmente na 5090. Eu fiz um app do zero até o cliente, até satisfação do cliente ali em usar esse app maravilhoso. E se você quiser aprender mais sobre a se inscreve aqui no meu curso, vou deixar um Qcode aqui. O link tá aqui também. Dá uma olhada lá, vê tudo que você vai aprender lá. E se
+
+fizer sentido para você, aproveita o preço especial que a gente tá fazendo agora. É isso aí. Vou ficando por aqui, até o próximo vídeo.

@@ -1,0 +1,133 @@
+---
+video_title: "Como usar Múltiplos modelos ao mesmo tempo e dar superpoderes ao Opencode"
+video_id: o65mCkBNspY
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=o65mCkBNspY
+video_date: 2026-06-26T05:02:50+00:00
+video_description: |
+  Tutorial de como adicionar capacidade de visão ao GLM-5.2 no OpenCode usando um agente auxiliar.
+  
+  O GLM-5.2 é um dos melhores modelos open source disponíveis hoje, comparável ao Claude Opus 4.8 em tarefas de código. Mas ele não tem suporte nativo a imagens, e isso impede muita gente de usar ele no dia a dia. Neste vídeo você vê como resolver isso criando um agente auxiliar no OpenCode para ler e descrever imagens antes de passar o contexto para o GLM-5.2 atuar.
+  
+  A configuração é simples, leva poucos minutos e funciona com qualquer modelo que não tenha visão. Também funciona com modelos locais, o que torna o fluxo gratuito se você tiver hardware para rodar modelos com essa capacidade.
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaCube 2: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr_50 para receber um desconto de $50.00
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⏵ ZimaBlade: https://shop.zimaspace.com/products/zimablade-single-board-server-for-cyber-native?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  👉 Aqui está o texto que eu usei no arquivo image-analyzer.md:
+  
+  ---
+  description: Analyzes images using a vision-capable model. Use this agent when the user needs to understand image content, extract information from screenshots, diagrams, UI mockups, or any visual content.
+  Invoke with @image-analyzer followed by the image path and your question.
+  mode: subagent
+  model: openrouter/qwen/qwen3.7-plus
+  tools:
+    write: false
+    edit: false
+  ---
+  
+  You have vision capabilities. Analyze the provided image and return a clear, structured description focused on what the user is asking about.
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiglmqwensub
+  
+  _______
+  
+  0:00 Intro
+  1:09 Configuração
+  3:34 Demonstração
+  6:10 Conclusão
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ TTS Studio: https://apps.apple.com/ca/app/ai-voice-generator-tts-studio/id6761985975
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Na última semana eu vi muita gente dando uma chance pros modelos open source por conta do GLM5.2, tá? Algumas pessoas estão compando ao Opus 4.8, o que é incrível. Eu já vi muita gente trocando, dizendo que vai trocar a assinatura do Clud pela do GLM e eu acredito que isso vai ser mais comum daqui pra frente. Só
+
+tem um problema, uma grande barreira, um motivo pelo qual algumas pessoas não deram esse passo, mesmo tendo experimentado e gostado bastante do resultado do GLM 5.2. E o problema é que o GLM 5.2 não tem capacidade de visão. E para muita gente no dia a dia, tirar um print da tela, mandar para ele e pedir para que ele faça algo em cima disso faz parte do processo de trabalho e é extremamente importante. Então, por
+
+conta disso, para dar aquele empurrão, hoje a gente vai ter um vídeo diferente aqui, vai ser um tutorial. Eu vou te mostrar como configurar o Open Code para você poder usar o GLM5.2, dois, mas não perder a capacidade de visão. E a gente vai fazer isso através de um agente que usa um modelo auxiliar, esse sim, com capacidade de visão, que vai ler as telas ou vai ler as imagens pro GLM poder atuar em cima disso. É mais fácil do que parece. Vamos lá pra tela. Vamos
+
+lá. Tô aqui na terminal e a gente vai usar o open code para essa demonstração. Acredito que você consegue fazer com outros agentes de uma forma semelhante, mas para esse caso aqui a gente vai demonstrar com Open Code. Eu vou partir do princípio que você já tem o Open Code instalado, já tem ele configurado e já tá tudo certo, tá? Suas chaves de API, etc, já estão todas configuradas. Se
+
+você precisar, você pode abrir o Open Code, usar um dos modelos gratuitos que ele tem lá para te ajudar a configurar. No nosso caso, eu já tenho a chave do meu plano do Z.Ii AI configurada e eu também tenho a chave do Open Router, que é onde tá o modelo auxiliar que eu vou utilizar. Primeira coisa que eu vou fazer é vir aqui pra minha raiz, né, garantir que eu já tô aqui na minha pasta raiz e vou abrir a pasta escondida chamada ponto opencode. Dentro dessa pasta, se eu listar os itens, a gente vê que a gente tem algumas coisas ali. Eu
+
+preciso criar mais uma pasta aqui dentro. Eu tô usando aqui no Mac, no Linux vão ser os mesmos comandos. Você vai ter que adaptar aí pro Windows, mas eu vou dar aqui um MKIR e vou criar uma pasta chamada agents. Agora eu vou entrar nessa pasta e eu vou criar um arquivo novo. Você pode criar essa pasta e esse arquivo da forma que você quiser.
+
+Eu tô usando terminal aqui, mas você não precisa usar. O arquivo que eu vou criar aqui, eu vou chamar de image traçoanalyzer.mmd. Esse daqui vai ser um agente. Basicamente eu preciso dizer para ele o que que ele tem que fazer. Então eu vou
+
+abrir esse arquivo e eu vou colar o seguinte texto. É basicamente a instrução do que que o meu agente faz. Esse agente ele simplesmente analisa imagens. Então preciso ter aqui a descrição, preciso passar o molde dele, né, o modo dele que é subent, preciso passar qual modelo que eu vou utilizar, que a gente pode passar o modelo que a gente quiser, desde que esse modelo tenha capacidade de visão, tá? Senão não vai funcionar. Mas poderia ser inclusive
+
+um modelo local. Se você tiver uma máquina que você consegue rodar um modelo local, modelo bom, com capacidade de visão, você poderia usar. No nosso caso aqui, eu tô usando Open Routro com o Quen 3.7 Plus, que é um modelo que eu gosto bastante. E nem precisava ser um modelo tão grande quanto esse, porque basicamente você só quer que ele seja capaz de pegar uma imagem e fazer uma boa descrição. Mesmo modelos menores
+
+conseguem fazer isso hoje em dia. Então aqui eu falo que ele não pode nem escrever, nem editar, nem nada. e dou uma pequena instrução aqui para ele. Eu vou deixar todo esse texto aqui aqui embaixo na descrição. Inclusive, como tava aberto no X code, ele já renderiza, mas ele é nesse formato aqui, tá? Uma
+
+coisa importante, o meu open router já tá todo configurado no meu open code. O servidor do modelo que você for usar aí já tem que tá configurado também. Uma vez que você fez isso, agora é só correr para braço, só utilizar o agente toda vez que você quiser ler uma imagem. Ó, eu tô aqui na pasta teste que eu tenho já uma imagem aqui dentro. Eu vou abrir meu open aqui. Eu já tô com GLM5.2
+
+selecionado aqui. Basicamente o que eu vou fazer é o seguinte, ó. Use o @ aí já vai aparecer aqui para mim, ó, imager, que é o agente que a gente acabou de criar para ler a imagem. E aí eu passo aqui a imagem. No caso, essa imagem que eu tô passando é essa daqui. Então,
+
+poderia perguntar alguma coisa do por que tá dando esse erro, etc e tal. Mas aqui, só para exemplo, eu vou pedir pro GLM meio que reproduzir essa tela aqui e reproduza a tela com HTML. Beleza? Ó, ele vai ler a imagem lá pra gente. Ele vai disparar o sub agent. Ó, já tá
+
+analisando aqui e a gente vê que aqui já tá rodando Quen, tá vendo? Ele tá rodando Quen aqui, mas se a gente voltar aqui, tá rodando GLM, tá? Vamos voltar lá, vamos ver o Quen em ação. O Quen já conseguiu ver a imagem, já identificou, já tá, ó, criando todo um esquema, né, que ele vai passar pro GLM. E aí a gente pode voltar aqui só esperar o GLM receber isso e continuar o nosso trabalho. Mas vamos continuar vendo aqui
+
+o trabalho do Quen, ó. Então, olha o nível de detalhe que ele tá trazendo. Tudo isso daqui vai funcionar como contexto, ó. Olha isso aqui, ó. Vai funcionar como contexto pro nosso GLM.
+
+Nosso GLM não precisa ter capacidade de visão, porque o Quen tá enxergando para ele. Inclusive o Quen tá decidindo aqui, ó, algumas coisas de CSS. Pronto, agora ele mandou lá pro GLM e o GLM, ó, vai pegar a partir daqui, né, baseado naquilo que ele recebeu e ele vai gerar agora a página HTML. Ó, ele acabou de gerar aqui pra gente. Vamos dar uma olhada nessa página. E olha só,
+
+esse daqui é o HTML que o GLM fez. Olha o resultado disso aqui. OK, essa câmera ficou meio esquisita, mas pera aí, eu vou te falar. Eu tô de bobeira aqui. Eu não tinha feito esse teste antes de gravar o vídeo e eu tô de bobeira. Essa
+
+aqui é a imagem original e esse daqui é o resultado que o GLM conseguiu reproduzir a partir da descrição do Quen. Então, olha só como isso é poderoso. Ele mudou um pouquinho aqui, tudo bem, né? Mas, cara, ficou muito muito muito semelhante. Se a gente só quisesse demonstrar um erro, alguma coisa que não tá de acordo com o que a gente queria, muito fácil, muito fácil, tranquilamente funcionaria. Então, se o
+
+que tava te impedindo de trocar o modelo fechado por um modelo aberto era capacidade de visão, seus problemas acabaram. Se você fizer isso aqui, pronto, você pode usar o GLM 5.2 com um modelo auxiliar, até um modelo pequeno, até um modelo que roda localmente e assim você tem a capacidade de um dos melhores modelos que a gente tem open source hoje, sem a limitação dele não conseguir enxergar. Sensacional, tá? Eu tô gostando muito de ver a galera animada com modelo open source com o GLM 5.2. Eu acredito que é a primeira vez
+
+que muita gente tá tentando esse modelo, tá? Se eles tivessem tentado modelos anteriores, eles já estariam animados há mais tempo, assim como eu sou super empolgado com modelos open source. Até os menorzinhos de 200, 300 bilhões de parâmetros, eu acho incríveis também para rodar localmente, fazer outras tarefas, os de 30 estão dando show de bola. A propósito, daria para usar um modelo de 30 milhões de parâmetros, talvez até menor do que isso, para ser os olhos do GLM 5.2, seria extremamente fácil. É só trocar lá o modelo se você
+
+tiver uma máquina que você consegue rodar. Aqui em casa, por exemplo, eu tenho a 5090, rodando ali o Quen 27B. Seria um bom candidato para isso. Aqui no Mac eu poderia rodar o Quen de 35B, que ele é bem rápido também no Mac, então também seria um bom candidato para isso e inclusive me faria economizar alguns tokenzinhos, né, porque eu estaria rodando o local. propósito, esse é um excelente uso de um modelo local, de um modelo menor, rápido, que você não tem preocupação com custo. A propósito,
+
+eu tô pensando em criar um curso exatamente com esse tipo de foco aqui, muito mais aprofundado, obviamente, mas com a ideia de permitir que as pessoas consigam trocar os modelos fechados pelos modelos abertos, né? Muita gente acaba preso aos modelos fechados, que se a gente pensar no Opus 4.8 é o melhor modelo do mundo e te traz várias facilidades, mas às vezes você não precisa de um modelo tão bom assim. Você poderia estar usando o modelo muito mais barato. O que falta é você entender como usar esse modelo. E eu acho que os
+
+modelos open source hoje já são muito bons, mas muitas vezes as pessoas se apegam a alguma limitação, como esse caso aqui, e sempre tem um jeito, né, de fazer funcionar. Então, tô bolando aqui um curso que vai permitir que as pessoas possam migrar dos modelos fechados pros modelos abertos sem perder qualidade. Se você tiver interesse nesse tipo de conteúdo, deixa aqui nos comentários, porque aí eu vejo se faz sentido ou não eu continuar com essa ideia. E é isso aí. Se você quiser ver um vídeo do GLM 5.2, a gente fez aqui no canal, é só
+
+clicar nesse card aqui, ó. E a propósito, essa técnica funcionaria para qualquer modelo que não tem capacidade de visão, como é o caso, por exemplo, do Quen 3.7 Max, que a gente também fez um vídeo aqui no canal, vou deixar o card aqui. O Quen 3.7 Max não tem capacidade de visão, mas como a gente viu, o Quentin 3.7 Plus tem, então dá para você
+
+juntar os dois e usar o melhor do Max, que é o modelo maior, né, com mais parâmetros e a capacidade de visão de um modelo menor, assim como a gente fez com GLM. É só adaptar ali na hora de criar o seu agente. Deixa eu reforçar aqui. O modelo que você for usar, já tem que est configurado no seu Opencode, tá? Pr ele poder ter acesso. Aqui eu tô falando de
+
+já ter configurado a chave de API, tudo que for necessário, não esquece. Beleza? A propósito, se esse conteúdo foi útil para você, deixa aquele hype porque ajuda a mostrar para outras pessoas e ajuda o canal. Ajudando o canal, eu continuo criando esse tipo de conteúdo, beleza? É isso aí. Vou ficando por aqui,
+
+até o próximo vídeo.

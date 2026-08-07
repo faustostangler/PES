@@ -1,0 +1,279 @@
+---
+video_title: "Criei um app REAL com Qwen-3.6 27B LOCAL sem gastar NADA com tokens"
+video_id: y3UBMLaGU2U
+channel_name: "AI ProgBr"
+channel_id: UCVttJS9LLVAN6cdApvXJnZQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=y3UBMLaGU2U
+video_date: 2026-07-28T23:00:16+00:00
+video_description: |
+  Neste vídeo, uso IA local para programar um aplicativo iOS completo com o Qwen3.6-27B rodando em uma RTX 5090. Primeiro, testo o modelo criando um Doom jogável com um único prompt e depois parto para um projeto real.
+  
+  O aplicativo permite que uma criança fale uma ideia, transforma o áudio em texto com os frameworks nativos da Apple, melhora o prompt com Foundation Models e gera um desenho para colorir usando o FLUX.2 [klein] 4B no ComfyUI. Tudo funciona dentro da rede local, sem enviar os dados para serviços externos.
+  
+  Também mostro meu processo para desenvolver com modelos locais: planejamento, documentação, divisão do projeto em fases, sessões curtas, validação do código e ajustes progressivos até chegar ao resultado que eu quero.
+  
+  _______
+  
+  👉 Curso de IA para Devs - Aprenda a extrair o máximo de qualquer modelo de IA (inclusive os baratos que ninguém te ensinou a usar direito): https://aiprogbr.com/?sck=ytaiapplocalqwen27
+  
+  _______
+  
+  ⚡ Ferramentas de Código:
+  ⏵ OpenCode Go - https://opencode.ai/go?ref=AJ45M6N28N
+  ⏵ GLM - https://z.ai/subscribe?ic=1CUTHGZM5X
+  ⏵ AI Coding Plan - https://www.alibabacloud.com/en/campaign/ai-scene-coding?_p_lc=1&referral_code=A92VJA
+  ⏵ Alibaba Cloud - https://www.alibabacloud.com/en/campaign/qwen-ai-landing-page?_p_lc=1&referral_code=A92VJA
+  
+  ⚡ TTS
+  ⏵ ElevenLabs - Text-to-Speech: https://try.elevenlabs.io/aiprogbr-tts
+  ⏵ ElevenLabs - Clone de Voz: https://try.elevenlabs.io/aiprogbr-voiceclone
+  
+  ⚡ Hardware
+  ⏵ ZimaCube 2: https://shop.zimaspace.com/products/zimacube-2-personal-cloud-nas?variant=52317031825700&sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr_50 para receber um desconto de $50.00
+  ⏵ ZimaBoard 2: https://shop.zimaspace.com/products/zimaboard2-single-board-server?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⚠️ Use o cupom: AIProgBr15 para receber um desconto de $15.00
+  ⏵ Dock para conectar a Placa de Vídeo no ZimaBoard 2: https://shop.zimaspace.com/products/gpu-docking-station?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  ⏵ ZimaBlade: https://shop.zimaspace.com/products/zimablade-single-board-server-for-cyber-native?sca_ref=10970253.BIxWZi08Fr&sca_source=ytAi&utm_source=igor-oliveira&utm_medium=affiliate&utm_campaign=zimaspace_affiliate&utm_content=Igor-Oliveira
+  
+  _______
+  
+  🔹 Quer aprender a criar apps do zero até a publicação comigo? Então dá uma olhada no meu curso: https://programadorbr.com/flutter?src=ytaiapplocalqwen27
+  
+  _______
+  
+  0:00 Intro
+  1:02 Doom
+  5:32 Ideia do app
+  6:31 Arquitetura do app
+  8:36 API ComfyUI
+  10:55 Documentação
+  12:21 Planejamento
+  14:45 Fase 1
+  20:06 Fases 2 e 3
+  23:41 Fase 4
+  28:00 Interface ajustada
+  29:02 Conclusão
+  32:45 Teste final
+  
+  _______
+  
+  👀 Se tiver curiosidade, dá uma olhada em alguns dos meus apps publicados:
+  ⏵ TTS Studio: https://apps.apple.com/ca/app/ai-voice-generator-tts-studio/id6761985975
+  ⏵ Teleprompter: https://apps.apple.com/app/apple-store/id6479963418
+  ⏵ Pomodoro: https://apps.apple.com/app/apple-store/id6738101614
+  ⏵ Jogo da Velha Infinito iOS: https://apps.apple.com/app/apple-store/id6504455490
+  ⏵ Reverse Play iOS: https://apps.apple.com/ca/app/reverse-play-voice-changer/id6753998448
+  
+  _______
+  
+  ✴️ Segue também meus outros canais:
+  ⏵ Canal sobre o universo Apple: https://www.youtube.com/@iProgbr 
+  ⏵ Canal de programação: https://www.youtube.com/@Programadorbr
+  ⏵ Perfil no Instagram: https://www.instagram.com/progbr
+  ⏵ Perfil no Substack: https://progbr.substack.com/
+  
+  Alguns dos links desta descrição podem ser links de afiliado, isto significa que eles podem gerar comissão para o canal sem custo extra para você.
+---
+Hoje eu vou começar um desafio aqui, onde eu vou criar uma aplicação do zero só usando o modelo local. Deitou, podia botar aquela música, né? Vou desafiar você. Para esse desafio eu resolvi rodar aqui no meu Mac, o Minim Max 2.5.
+
+>> Mas porque você não usa o Quen? >> Pera aí, tá falando comigo. >> Pronto, tu tá vendo outra pessoa aqui? >> É, ó. Bom ponto.
+
+>> Tu não é embaixador do Quen, Alibaba MVP do sei lá o quê. >> É verdade, mas eu ainda não falei pro pessoal isso. >> Não importa. Tá falado. Então, por que tu vai usar mini max?
+
+>> Não, na verdade tô pensando em rodar o mini max porque ele cabe aqui no meu Mac, né? Inclusive vou rodar versão 2.5 que tem melhor licença e é menor do que o M3. >> Aquilo ali não é uma 5090. Me coloca lá que eu faço um estrago.
+
+>> Meio mandão esse quen, hein? >> Beleza, quero ver. Então, tá aí, ó. Vamos embora. Então, tá decidido. Vamos
+
+ao Quen. 27 bilhões de parâmetros, rodando numa 5090. E essa é a melhor combinação que a gente tem. hoje para rodar um modelo localmente extremamente capaz. E para não perder o costume, vamos começar com um pequeno joguinho, mas depois a gente vai fazer um app pra minha filha. Eu tenho várias ideias de
+
+apps que eu queria construir pra minha filha, mas ao mesmo tempo, como não é um app que vai trazer retorno necessariamente, eu não posso gastar muitos tokens com eles, porque senão vai ficar muito caro. Então a ideia é realmente criar isso usando somente modelos locais. E alguns desses apps eu vou trazendo aqui pro canal. Hoje a gente vai fazer um app para gerar desenhos para ela pintar. Então tô aqui no nosso PIN Code, ele já tá configurado para usar o nosso Quen 3.6 27 bilhões de
+
+parâmetros que tá rodando no lhama CPP ali na 5090. E a gente vai começar trazendo um prompt clássico que a gente faz aqui. Eu não quero trabalhar muito em cima desse prompt, não. É só pra gente ter uma ideia do que que o Quen é capaz e do que que ele vai entregar pra gente com o nosso Doom. Então vamos lá.
+
+Crie um clone doom usando 3JS. Crie três tipos de inimigos e pelo menos quatro tipos de armas. Pro app. A gente vai fazer diferente, a gente vai planejar mais, tá? Mas vamos tentar aqui o nosso Doom pra gente saber como que o Quentin 3.6 entrega pra gente. Ó, primeira
+
+coisa, ele decidiu criar em um único HTML. A gente não deu instrução referente a isso. Num projeto real, a gente iria querer ter controle exatamente do que que ele vai criar e de como que ele vai criar. Nesse caso aqui, tá tudo bem. Uma coisa interessante é que mesmo a gente sem ter sido explícito aqui que a gente queria tudo de forma procedural, ele entendeu que esse era o nosso objetivo. Não tá usando nenhum
+
+asset externo aqui. Aqui a gente tem o to dele, né? Então ele vai implementar engine core, o sistema de mapas, o as quatro armas, inimigos e a interface de usuário, tá? Vai colocar sons também. Exatamente isso que a gente quer. Aqui
+
+no nosso prompt inicial a gente tem de cara aproximadamente 10.000 1 tokens dentro da janela de contexto. Esses 10.000 tokens são system prompt do próprio pencode e etc. No final a gente vai poder inclusive ver quantos tokens levaram. Lembrando que o Quent. 27
+
+milhões de parâmetros tem 260.000 1 tokens de janela de contexto. Nos dias de hoje é bem comum a gente ver modelos nativamente com 1 milhão de tokens, mas 260 é muito mais do que suficiente, principalmente se você souber o que tá fazendo. Pronto, ele já criou tudo aqui. Nesse caso aqui, ele não fez nenhuma verificação. Ele tá se garantindo aqui
+
+que tá tudo funcionando. Vamos testar. Vamos lá, ó. Doom, click to play. Ó isso. Eita, já tem um aqui na minha
+
+frente. Eu morri. Quantos tiros que eu tenho que dar nesse bicho, cara? Vamos de novo. Sai, sai.
+
+Tomando tiro dos dois lados. Agora sim.
+
+Tá meio travadinho. Eu tô sem munição agora. Ih, morri. Então, pera aí, ó. Se eu der um tiro aqui, apertar o E, era para ele recarregar. Ou reload R. Achei que era o
+
+E. Beleza, agora sim. OK.
+
+Ih, [risadas] virei de um monte de inimigo. Pô, será que tem outra arma? Ih, e acho que deu algum erro aqui, hein? Acho que eu fui para uma arma indefinida e me ferrei. Vou tentar andar por aqui para explorar um pouco a fase, mesmo que eu vá morrendo.
+
+Peguei ali um, tem vários inimigos. E a fase tá muito louca. Tem o mapa? Não, não tem mapa. Última vez.
+
+OK. [música]
+
+E aquele ali atira também, pô. O tiro dele é rapidão. Nossa. Ah, [grito] então para começar acho que tá bom. Modelo local rodando 100% numa 5090. fez
+
+um Doom completamente jogável com um único prompt, atendendo exatamente aquilo que a gente pediu, com tela de abertura, interface, né, com munição, recarregamento de arma, elementos para pegar durante a fase. Então, um jogo completinho, não é o melhor Doom que a gente viu aqui. A gente viu modelos muito maiores criando do melhores, né? Mas levando em consideração o tamanho desse modelo, esse Dom aqui tá melhor do que eu podia imaginar. Agora vamos pro que interessa, que é ver se dá para programar algo utilizável, algo real mesmo, algo pro dia a dia. Vamos lá,
+
+vamos dar uma olhadinha no que que vai ser esse app e como eu quero que ele funcione. Primeira coisa de tudo, eu quero que ele funcione 100%, sem depender de nenhum serviço na nuvem, principalmente como é um app para minha filha usar, eu não quero que nada saia da nossa rede aqui, nada saia aqui de casa. Então, muitas das coisas eu quero fazer localmente no próprio aparelho, que no caso vai ser um iPad. O que não der para fazer no aparelho ou não for muito performático fazer no aparelho, eu vou executar no meu computador ou no Mac ou na 5090 ou na Arc B70. O que mais tem aqui a placa para rodar inteligência artificial. Basicamente esse app vai ser
+
+o seguinte: minha filha, ela vai poder apertar um botão, falar alguma coisa e o app vai gerar uma imagem referente àquilo que ela falou. Com essa imagem ela vai poder imprimir para depois colorir. Então a ideia é criar um desenho de colorir baseado no que ela falou. O processo disso vai ser o seguinte: primeiro, toque no microfone, vai falar, vai capturar o áudio, vai transcrever esse áudio. Tudo isso aqui vai acontecer no iPad, a gente vai usar frameworks nativos da Apple para fazer isso. Inclusive, pouca gente sabe, mas a
+
+Apple tem vários frameworks de inteligência artificial, não necessariamente LLMs, mas para transcrição de áudio, identificação de imagem e várias outras coisas que dá para rodar direto no device, tá? Eles têm a LLM também, que a gente também vai usar. Então, depois de transcrever esse texto, a gente vai, isso daqui ficou errado, era para tá aqui em cima, a gente vai usar o foundation models da Apple, eu vou usar o modelo local mesmo para enriquecer esse prompt, tá? Então, por exemplo, se ela falar, ah, uma menina brincando com ursinho, o Foundation Models vai pegar esse prompt Simplore e vai transformar em algo mais enriquecido, dando referência de como seria o background, quais outros elementos teriam na cena, para que a gente tenha uma imagem um pouco mais detalhada, um pouco mais legal. Como eu falei, tudo isso aqui era para est aqui em cima, porque existe o foundation models, né, o modelo da Apple, onde a gente pode usar a nuvem, é o modelo mais poderoso, mas eu acredito que nesse caso a gente não precise disso, tá? Inclusive
+
+esse modelo da nuvem da Apple é o private cloud computing. Então, como o nome diz, ele é privado também, então estaria OK usar ele, mas eu vou preferir usar o modelo local, local mesmo, tá? Já que o nosso aparelho consegue rodar, eu vou usar ele direto no iPad e aí a gente não teria essa parte da nuvem, ela estaria junto aqui com o app iOS. Com esse prompt gerado, a gente vai mandar isso pro Confi. Conf vai ser o software que eu vou estar rodando ou no Mac ou em outra placa que vai ser o responsável por de fato pegar esse prompt e gerar essa imagem. Inclusive isso daqui é algo
+
+que eu nunca fiz. Eu não sei exatamente como que se faz essa comunicação, mas a gente vai descobrir aqui para esse projeto. Depois que ele gerar isso daqui, a imagem volta pro app de iOS e aí ela exibe pro usuário. Ele pode compartilhar ou imprimir. Eventualmente eu quero evoluir esse app para que ela possa pintar direto no iPad, mas a princípio eu só quero gerar a imagem para poder imprimir essa imagem e aí ela poder pintar. Então essa é a ideia, tá?
+
+Vamos começar com a parte mais complicada, no meu ver, que é essa comunicação do servidor do Confiar um Jason para lá para que ele gere e retorne pra gente. Então, vou usar o próprio Quen de 27B para ajudar a gente a desvendar esse mistério aqui e ver como é que isso funciona. Eu já vim aqui no confi e eu fiz um teste aqui com prompt bem simples, tá? para gerar esse desenho. Então, esse modelo aqui para mim tá OK, ele vai conseguir gerar os desenhos do estilo que eu quero. E a
+
+gente tá usando então Flux 2 Kim de 4 bilhões de parâmetros, um modelo totalmente open source, inclusive acho 2.0. Eu poderia até usar o irmão maior dele de 9 bilhões de parâmetros, já que não é um projeto com fins lucrativos, mas a princípio eu vou usar o de 4 bilhões mesmo. E basicamente eu acredito que eu venho aqui, exporto a API, tá? Então vou exportar isso aqui, OK? E
+
+aquilo lá me trouxe isso daqui. Pelo visto tem aquele prompt lá, tem alguns dos boxes que a gente vê lá. Eu não sei exatamente como que isso daqui vira a imagem de fato, mas eu vou tentar testar isso agora, ó. Eu vou dar um ls aqui pra gente ver os arquivos dessa pasta. Então, nessa pasta que eu criei aqui, que era para ser conf, eu escrevi errado, come comi o F. AP e teste. Eu
+
+quero testar isso daqui. Então, vou falar para ele o seguinte, eu vou mandar aqui, ó. Eu tenho o arquivo image flux cliente. Jason. Eu quero trocar o prompt dele, né? Porque ele tem o prompt lá de
+
+gerar uma imagem de um cachorro e um gato. Quero trocar o prompt dele para um urso no lugar de um gato, um leão no lugar de cachorro e quero enviar pro Confi que tá rodando. E aí eu tenho que ver aqui onde é que Confi tá rodando. Ó, o Confi tá rodando aqui. Esse daqui é o front end, né? Eu não sei se seria isso
+
+aqui. Bem, vou tentar com isso daqui. E aí vou botar Gui aqui, tá? Botar salve. a imagem retornada como image de traço time stamp, tá? Colocar entre aspas aqui
+
+para indicar melhor. OK. Vamos ver se ele vai conseguir fazer isso aqui que eu tô pedindo e aí a gente vai testar para ver se o lance da API tá funcionando ou não. Ele trocou lá, então pra Berry Lion, OK? E ele tá fazendo aqui um post.
+
+Vamos ver se vai funcionar. Eu consigo ver aqui no confi se alguma coisa tá acontecendo. Opa, tá acontecendo, tá rodando. Beleza. OK. Agora eu vou abrir
+
+aqui, ó. Então, tá perfeito, tá? gerirou aqui pra gente. Show de bola. Então, foi mais fácil do que eu imaginei. Agora eu
+
+vou fazer o seguinte, eu vou aproveitar e vou documentar isso aqui, tá? Se eu sei que tá funcionando assim, eu não vou deixar mais pra sorte, porque nem toda vez que a gente roda o modelo, ele traz o mesmo resultado. Se eu sei que isso aqui tá funcionando, eu vou pegar isso e vou usar mais na frente, passando para ele via contexto, ó. É assim que se faz, tá pronto. Ele criou um guia aqui para mim. Inclusive, trabalhar na
+
+documentação para quando você for executar de fato o modelo não ter nenhuma dúvida de como se faz uma tarefa. é uma das técnicas que eu vou ensinar lá no meu curso pros nossos alunos do curso A para Dev. E é exatamente isso que faz com que você consiga aumentar a taxa de sucesso, principalmente quando você tá usando modelos menores. A propósito, deixa eu falar aqui, a gente ainda tá gravando o curso, mas o meu compromisso é subir o máximo possível de conteúdo no menor tempo possível, tentando manter pelo menos um novo conjunto de aulas por semana, tá? Então, toda semana vai ter novas aulas lá no curso até ele tá completo. E, provavelmente, quando ele
+
+tiver completo, eu ainda vou regravar algumas partes, adicionar mais algumas coisas, porque as coisas mudam e apesar do nosso intuito de ser focar em conhecimentos core que não vão mudar tão facilmente assim, ainda assim algumas coisas é legal a gente adicionar. O link pra página do curso vai est aqui na descrição e lá você vai poder tirar mais dúvidas, entender mais o que que é esse projeto e se for interessante para você se inscrever, aproveitando ainda essa promoção de lançamento que tá rolando, porque é exatamente esse tempo que eu tô usando ali para gravar um bom número de aulas iniciais. Mas é isso aí, link aqui embaixo. E ele já criou aqui um guia pra gente. Vou salvar isso aqui e vou começar a planejar o resto do projeto.
+
+Já volto. Três coisas muito importante quando você tá desenvolvendo com IA é saber onde você quer chegar, saber como você quer chegar lá e verificar se você tá indo na direção certa a cada fase. Então por isso que é muito importante, principalmente quando você tá rodando com LLMs mais fracas ou com LLM local, você não tentar fazer muitas tarefas ao mesmo tempo, muita coisa ao mesmo tempo, não. Mas para isso, você vai precisar separar o teu projeto em diversas etapas e trabalhar em cada etapa, sempre verificando se aquilo ali que você queria que acontecesse acontecer exatamente do jeito que você precisava. E exatamente aí que programadores levam bastante vantagem em relação a quem é Vibe Coder, né? Primeiro que o Vibe
+
+Coder ele tende a pedir algo gigantesco e ele não consegue avaliar se ele tá chegando mais próximo ou não daquilo ali, principalmente se você precisar de uma avaliação técnica. Por exemplo, aqui a gente separou o nosso projeto em seis etapas no total, tá? E nessa segunda etapa aqui, eu preciso fazer uma transcrição do speitch, né, da fala. Para isso, eu vou usar speitch transcriber com speit analyzer. Esse daqui é um framework nativo da Apple e eu quero usar esse aqui especificamente porque a Apple tem um framework um pouco mais antigo que é o SF Speit Recognizer.
+
+Eu não quero usar esse mais antigo, eu quero usar esse aqui que é mais novo, porque ele é melhor. E cá entre nós, para esse projeto aqui, o speech Recogizer também funcionaria. Mas em alguns casos, esse daqui é um bom exemplo de um teste que se você fizer e você colocar ali para falar, você vai ter uma transcrição, né? E em um teste a transcrição vai ser muito simples, provavelmente você vai falar: "Ah, tá funcionando, vai continuar". Mas quando você for usar no mundo real, porque você usou o framework errado, o resultado acaba sendo muito pior do que deveria ou do que poderia ser, só por conta dessa escolha aqui. Então, isso é o que eu
+
+falei, você precisa saber onde você quer chegar, mas também é importante saber como você pode chegar lá. Mas beleza, aqui é um resumão do meu plano das fases, tá? E eu tenho para cada fase dessas uma documentação um pouco maior, um pouco de código, explicando pro modelo tudo que ele tem que fazer. Toda essa documentação eu gerei junto com o próprio modelo, com o Quente. 27 bilhões de parâmetros, rodando ali na 5090.
+
+Então, não usei o modelo maior, não precisei de nada do tipo. Só que nessa fase eu já vou avaliando ali se o que ele tá me sugerindo é o que eu quero e eu vou corrigindo, né? Vou ajustando, pedindo para ele verificar se tem em algum lugar, alguma outra referência, né, daquilo que eu modifiquei. E dessa forma eu preparo uma boa documentação para começar a implementação. E é aqui que a gente tá. Agora vou começar
+
+implementando só essa fase um aqui, que ela é bem simples. Vai ter um seletor de línguas, né, inglês e português. Vai ter aqui um lugar pra gente poder configurar onde tá a porta do confi nosso caso aqui, eu vou est rodando no meu Mac. Então para teste não tem problema, poderia usar local host, mas quando eu tiver no iPad o IP já vai ser diferente. Eu vou ter que colocar um IP, né? E aí
+
+eu vou colocar o IP do Mac. Isso vai permitir também que se amanhã eu quiser rodar esse confio a em outra máquina, eu só preciso mudar o IP ali e vai tá tudo certo. Então vamos começar por aqui. E uma outra vantagem da gente ter separado por fases também é porque eu posso ter uma sessão para cada fase e manter sessões curtas pode ser bastante interessante para não gastar tokens à toa também e para garantir que o modelo não se perca ali, né, que ele não faça besteira. a gente consegue isolar bastante e trabalhando sessão a sessão.
+
+Inclusive, principalmente se a gente tiver usando modelos mais fracos, modelos que tenham uma janela de contexto menor, não vão ter um problema também. Então, por exemplo, a gente consegue fazer tranquilamente cada fase em 256.000 tokens. Se a gente tentasse fazer tudo de uma vez, a gente começaria a trabalhar com compactação. Então, quando a gente passa do tamanho máximo do modelo ali da janela de contexto do modelo, existe um resumo da sessão, uma compactação e assim alguns dados acabam sendo perdidos, né? Então, a gente não
+
+quer chegar nessa fase de compactação se não for estritamente necessário. Por isso, essa divisão em fases vai ser importante. A propósito, isso aqui tá virando basicamente uma aula lá do meu curso, né? Só que lá eu vou mostrar exatamente como que a gente pode separar em fases e depois o que fazer para rodar cada fase de uma forma que a gente consiga avaliar. Deixa eu aumentar aqui, ó. Vamos começar aqui. Ah, tem uma
+
+vantagem aqui também. Olha só. Se você olhar aqui embaixo, tem um MCP ativo, é o MCP do Xcode. Eu tô com o meu Xcode aqui aberto. O meu Xcode não tem basicamente nada, tá? Tem uma content
+
+view aqui, só que ele tá conectado no meu open MCP, quer dizer que o nosso modelo consegue controlar o nosso Xode. E uma das grandes vantagens disso é fazer o uso ou ler diretamente a documentação. O Excode tem uma excelente documentação de Swift que inclui frameworks assim que eles saem também. Então, eu tô usando Xcode beta lá, a gente já conseguiria usar até o próprio private cloud compute, que é algo novo que saiu agora no WWDC 2026. Ou seja, bem depois da finalização de treinamento desse modelo, esse modelo não teria como saber como usar o private cloud compute, né? E aí ele faz através do MCP uma
+
+consulta, um rag no Xcode e consegue saber exatamente como implementar. Esse é um ponto legal para quem desenvolve para iOS. Hoje eu criei um comando aqui, Work Task, que permite que eu carregue cada uma das fases. Então vou carregar a fase um aqui agora, ó. E assim eu coloco aqui na janela de contexto exatamente o que que ele precisa fazer, tá? Então eu
+
+peguei basicamente aquele nosso arquivo de implementação e separei aqui só a fase um, né, pra gente trabalhar em cima dela. Aí eu vou começar então o desenvolvimento dessa primeira fase. Quando ele terminar de implementar, eu vou verificar o código que ele criou. Vou identificar se tá tudo funcionando ou não, se fez do jeito que eu queria, usando a estrutura que eu queria e etc. E aí sigo em frente ou peço para ele ajustar alguma coisa se precisar, indicando ali o que que eu quero que ele ajuste. Ó, ele tá usando skills aqui que
+
+eu mandei ele usar. São skills da própria Apple, que a Apple disponibilizou com novidades do WWDC 2026, ou seja, sobre o iOS 27, né? e também uma skill de especialista em Swift, que a gente vai usar para escrever o código aqui, ó. Aqui, por exemplo, ele consegue tentar fazer um build no projeto, né, através do MCP, direto pelo Excoder, e quando falha, ele consegue ler os erros e atuar em cima desses erros. Então ele tá tentando fazer o build, encontrando ali problemas, ajustando, né, fazendo modificações e tentando de novo. Beleza,
+
+agora ele conseguiu buildar e ele vai marcar lá tudo como completo. Ele marcou lá o nosso arquivo, ele tentou marcar e não conseguiu. A chamada do MCP deu errado, mas agora ele conseguiu, tá? Então marcou aqui como concluída a nossa tarefa atual, OK? Primeira coisa aqui, eu não gostei do jeito que ele organizou esses arquivos, mas eu vou dar uma olhada aqui. Eu vou pedir para ele
+
+organizar melhor isso aqui, ó. Aqui a gente tem o Appshell que vai mostrar o Home View ou Settings View. Fazer o seguinte, vou criar um preview aqui desse Appshell pra gente conseguir enxergar ali. Olha aqui, ó, como é que tá a nossa tela, ó. Temos aqui os settings, onde a gente pode botar inglês ou português e o nosso confi server aqui. Beleza. Deixa eu ver o seguinte.
+
+Esse esse teste conexão, será que tá funcionando? Deixa eu testar aqui, ó. Ó, se eu botasse 8189, ó, tá funcionando o teste de conexão, já tá show de bola. Perfeito. A gente já tem a fase um do nosso applementada. Se
+
+eu apertar aqui, nada acontece porque ele só criou a casca de fato. E a gente consegue fechar, né? Mas tá excelente. Eu pedi para ele fazer cores claras assim. eventualmente no final posso mudar um pouco esse estilo, mas eu não tô me importando tanto com o estilo da aplicação nesse momento, não. Eu quero
+
+que ela funcione. Beleza, com tudo pronto, eu executo aqui o meu comando falando que tá done. Ele adiciona aqui no histórico o que que ele fez e tá fazendo um git. Pronto, agora já tá um pouco mais organizado. É só eu prosseguir. Vou agora pra próxima fase e
+
+seguindo desse jeito, de fase a fase até chegar no final. E aí eu mostro aqui para vocês onde que a gente conseguiu chegar, se é que conseguiu. Vamos ver. Show de bola. Acabei de terminar aqui a fase dois e a fase três. A fase dois é
+
+responsável por pegar o que a gente fala e transcrever. E a fase três é responsável por pegar esse texto transcrito e fazer o enhancement prompt, ou seja, melhorar esse prompt para transformar num prompt que vai gerar um desenho legal pra gente. Então a gente já consegue testar se a gente tá indo no caminho certo, se vai funcionar o nosso plano ou não. Deixa eu te mostrar aqui um cachorro piloto de Fórmula 1. Então ele reconheceu aqui o que eu falei, né? E aí eu vou fazer o
+
+enriquecimento de prompt. Aqui eu tô fazendo em duas etapas, mas daqui a pouco eu vou modificar para isso aqui funcionar numa única etapa. Então, ó, tá enriquecendo ali, tá usando o modelo local da própria Apple. E vamos ver o resultado que ele vai trazer pra gente aqui, ó. Trouxe aqui pra gente. Então,
+
+todo o conteúdo em inglês, beleza? É, seria um cachorro, né, vestido com uma roupa de corrida, sentado confiantemente num cockpit de um pequeno carro de corrida, né, a cena, uma pista de asfalto, tem uma linha de chegada quadriculada pintada com linhas grossas. Aqui ele fala um pouco sobre o desenho, né? No colors, white background, ou seja, sem cores, fundo branco, né? Aqui ele fala de uma faixa que teria speed champion. Vamos ver se ele vai conseguir
+
+fazer isso aqui. Eu vou fazer o seguinte, eu vou copiar esse texto aqui e aí eu vou passar aqui pro nosso confi porque esse vai ser um dos próximos passos de fato, né? Então vou gerar esse prompt aqui e a gente vai ver se a gente vai ter um resultado que é interessante pro que a gente quer, né? Se tá indo na linha do que a gente espera. Opa, olha só. É, aqui ficou certo Speed Champion.
+
+Aqui embaixo ficou um pouco errado. Ele trouxe um cone vermelho que eu não gostaria que ele trouxesse. Lá atrás tem balões, mas tudo bem, né? De forma geral funcionou muito, muito bem. Mesmo se tivesse esse vermelho aqui, tava OK pro nosso desenho, mas o ideal seria que não tivesse. Deixa eu ver se eu não vi aqui
+
+e tá isso no prompt. Aqui não devia ter, ó, colorful balloons, né? Não gosto muito disso. Aqui ele fala, ó, red traffic con. Então eu preciso ajustar o meu promptionado nenhuma cor de forma alguma. Eu vou
+
+pedir pro modelo fazer isso direto, né? Pronto. Então eu tô pedindo aqui para ele trocar lá ou ajustar o prompt para tirar qualquer referência de cores, né? Para ou melhor para reforçar que não pode ter nenhuma referência de cor. Então, beleza. O que ele modificou aqui
+
+foi, ele criou uma regra explícita lá no prompt, né, para não colocar nenhum tipo de cor no resultado. E também ele fez um pós-processamento varrendo programaticamente, né, o texto gerado para se ele encontrar alguma cor, ele tira. E ele colocou mais de 40 cores aqui que ele vai verificar. Show de bola. Vamos testar novamente. E aqui eu
+
+vou pedir de novo um cachorro piloto de Fórmula 1. Tá enriquecendo já o nosso prompt aqui. Em alguns segundos a gente tem o resultado, ó. Dessa vez eu não tô vendo nenhuma cor aqui. Vou copiar e a gente vai experimentar esse novo prompt.
+
+E show de bola. O cachorro veio com mais pata do que devia. Veio, mas tá um bom cenário aqui. Deixa eu rodar novamente para ver se a gente tem um resultado ligeiramente diferente. [risadas] É diferente, diferenciado esse aqui. Mas
+
+pro que a gente quer, eu acho que funciona. Acho que tá bom. Aqui já tem mais a ver também com que o modelo entende esse prompt, né, do que com prompt em si. Se bem que aqui a gente tá falando de um race do speeding through a winding track. Ele não tá falando, né, que ele tá no carro de corrida. Então, a
+
+forma como o nosso prompt acabou gerado impacta um pouco, mas tá tudo bem. Eu acho que tá satisfatório esse resultado. Por enquanto eu posso passar pra próxima fase. Show de bola. Tô aqui finalizando a nossa fase quatro. E depois da fase
+
+quatro é basicamente polimento. Vamos testar aqui. Se tudo tiver funcionando, acho que já dá para encerrar o vídeo, que acho que a gente já conseguiu provar o ponto que dá para programar com modelos locais. Vamos lá pro teste. Ó, já entrei aqui com o meu prompt, um esquilo saltando de paraquedas. A gente
+
+vai enriquecer ele mais uma vez. A gente tá usando aqui o Foundations Model, que é o modelo local da Apple. Então, tudo isso tá rodando dentro do celular. A propósito, muita gente acha que a Apple tá para trás na corrida da IA, mas na verdade ela tá no lugar certo dela. Ela vai vender muito computador, muito hardware daqui paraa frente. Afinal de
+
+contas, ela é uma empresa de software, mas ela também é uma empresa de hardware. Basicamente hoje todo o Mac, todos os iPads e todos os iPhones mais recentes são uma máquina de A portátil. Se eu fizesse algumas melhorias, daria para inclusive rodar um modelo de imagem aqui dentro do iPad. Eu tô escolhendo usar fora, usar no Confi no caso aqui eu tô rodando Confi no meu Mac, poderia estar rodando na Nvidia, na Arc B70, só para me dar um pouco mais dessa liberdade. E assim eu poderia até usar modelos maiores para rodar dentro do iPad, eu teria que ficar ali em modelos de 3, 4 bilhões de parâmetros e aí é um pouco mais difícil você extrair, né, uma boa qualidade. Apesar de que esse modelo
+
+que a gente tá rodando aqui é um modelo de 4 bilhões de parâmetros, com esses ajustezinhos, talvez usando o Core AI a gente conseguisse rodar aqui no iPad. Tranquilo, mas vamos lá. Já enriqueci aqui meu prompt, ó. Então ele definiu aqui para mim um prompt melhorado. A gente vai gerar a imagem agora. E
+
+basicamente ele já tá se comunicando com o nosso confi aqui no confi a gente consegue ver ele gerando. Eu já testei aqui com outras imagens. E aí quando ele termina de gerar o confi manda para cá de volta a imagem. Ó, tá terminando, carregou. E aqui tá o resultado, nosso esquilo de para-quedas, né? Ficou um
+
+pouquinho estranho. Ficou um esquilo descendo de guarda-chuva praticamente. Parece que esse é um esquilo bruxo, né? Porque ele tá aqui quase que numa vassoura. Só faltou a piaçava da vassoura aqui. Se a gente não gostar
+
+muito, eu posso vir aqui, ó, regerar a imagem, pedir para gerar novamente e a gente vai gerar uma mesma versão com esse prompt. Uma outra coisa que eu posso colocar aqui também é para regerar esse prompt e tal, mas na verdade o meu intuito é os próximos passos eu vou modificar completamente essa interface para ela ficar mais kid friendly, né? Porque essa interface ela é boa pra gente testar, mas ela não é muito boa para crianças não, tá? Agora achei que ficou melhor, hein? O nosso esquilinho aqui, ó, descendo de para-quedas. Ficou
+
+um desenho muito legal, né, pra criançada brincar, ó. Vamos fazer o seguinte. Lá embaixo eu tenho um botão para resetar e a gente pode fazer mais um teste. O que eu queria testar mesmo era um cachorro e um gato jogando futebol. Quando eu tô aqui no device hub, por algum motivo, meu iPad não pega o meu áudio. Por isso que eu vou para
+
+aquela outra tela, depois eu volto aqui. Então, já peguei aqui cachorro e um gato jogando futebol. Vou enriquecer esse prompt aqui, ó. Coloring Book Page of Lively Dog Lip Energy. Aqui ele tá dando todo o esquema, né, do que que tá acontecendo. Então o cachorro ele tá no
+
+ar pegando a bola, o gato ele tá olhando ali de perto, né? Mas ele tá fora da do do da ação. De fato. Aqui, ó, a gente tem, então, eles estão num campo com grama, né? A gente consegue ver os pedaços de grama. Tem lá atrás uma rede,
+
+né? A rede do Gol. Nuvensinhas no céu, butterflies, né? Borboletas. Legal.
+
+Vamos lá. Vamos gerar essa imagem. Pronto. Aqui, ó. Pô, esse cachorro tem uma pata mais, né? [risadas] De vez em
+
+quando a gente tem esses erros, por isso que eu botei aqui um botãozinho pra gente regerar. Eu acho que isso daria pra gente ajustar. Não sei se nesse workflow do Confiu E tenho a possibilidade de colocar prompts negativos, mas é o caso da gente pedir pro modelo tomar cuidado. Ó, aqui ficou muito melhor. Aqui tá ótimo. Esse
+
+desenho aqui tá ótimo, ótimo, ótimo. Os próximos passos seriam eu colocar aqui para compartilhar ou imprimir o desenho direto, né? Ele botou uma bola de vôlei em vez de uma bola de futebol, mas tá valendo, tá tudo certo. E cara, esse desenho aqui ficou muito legal. tentar virar de lado aqui pra gente conseguir ver melhor. Ficou muito legal isso aqui.
+
+Eu tô de volta aqui porque eu pensei em finalizar o app do jeito que tava, mas achei que ia ficar um pouco complexo, muitos passos, né, para uma criança. Então resolvi que era melhor eu dar um passo a mais e tornar a interface um pouco mais simples. Deixa eu te mostrar o resultado. Ah, tudo isso obviamente usando quentes. 27 bilhões de parâmetros. Essa daqui era a tela antiga
+
+e aí eu resolvi criar uma tela específica para kids, onde basicamente a gente só tem um botão, né? E aqui eu vou falar um ursinho de pelúcia jogando videogame. Agora, em vez de ter todas aquelas etapas, ele basicamente vai fazendo tudo sozinho aqui, ó. Tá agora enriquecendo a ideia. Próximo passo é gerar a imagem, né? Quando ele muda de uma etapa para
+
+outra, a gente muda a frase que tá aparecendo aqui também. Então, tem que só esperar alguns segundos. Aquele loading ali, tá meio torto, depois eu vou ajustar ele. Mas basicamente essa daqui já é a versão semifinal, né? E aí, pronto. Aqui a gente tem o nosso ursinho
+
+de pelúcia jogando videogame. E agora tem aqui o botão para gerar nova imagem, compartilhar ou imprimir. Se a gente apertar aqui para imprimir, ele vem para cá e a gente poderia imprimir esse desenho aqui. E aí, terminada, a gente pode gerar uma nova imagem se quiser. E aqui tá o nosso Tad Bear jogando videogame. Então, resposta final, dá
+
+para programar usando modelos locais? Com certeza dá, tá? Mas você tem que tomar alguns cuidados. Você tem que dividir o teu projeto em pequenas etapas, trabalhar etapa por etapa. Cada etapa você só tem que sair de cima quando ela tiver exatamente ali do jeito que você quer. E às vezes a gente vai
+
+ter algum erro, seja por conta da LLM, seja por algum caso que você não previu. Então você tem que às vezes ficar ajustando ali com um ou mais promptes até ficar tudo certinho. Aí você dá OK naquela fase ali, parte pra próxima. Eu particularmente uso um workflow. Eu tenho uma estratégia para fazer ali fase a fase, como que eu divido, como que eu carrego uma nova fase, como que eu dou o OK para ela, guardo ali num histórico o que que foi feito, faço ali o versionamento também fase a fase para ficar tudo certinho. E a ideia é
+
+exatamente passar todos esses conceitos pros nossos alunos, não só um framework pronto, mas algo adaptável e cento nós, eu quero que o aluno ele entenda o conceito de fato para ele se inspirando naquilo que ele vê no curso, conseguir também criar a própria forma de trabalhar. E ele vai ser totalmente capaz de fazer isso porque ele vai entender cada conceito do que que a gente está fazendo, o que que é e por usar uma skill, MCP, agentes, suagentes. Então tudo isso vai estar disponível muito em breve lá no nosso curso. Então se você é novo no desenvolvimento com a, se você ainda não tem uma metodologia, se você não entende muito bem a diferença de skill, agente, esse tipo de coisa, esse curso com certeza é para você. Se você é vibe coder, eu acredito que ao fazer esse curso, você vai se tornar um vibe coder melhor. Mas esse
+
+curso é focado em desenvolvedores. Primeiro porque a gente fala de forma técnica. Então, desde o primeiro módulo já tem alguns conceitos que eu mostro com código. Dá para você entender o conceito se você não souber código, tá? Mas é muito mais legal sabendo, porque você consegue ver ali as coisas acontecendo. E segundo porque eu
+
+acredito que se você sabe o que você tá fazendo, se você domina a sua stack de desenvolvimento, aquela stack que você tá utilizando ali junto com o assistente de ar, você tem mais capacidade para direcionar ele, principalmente para avaliar se ele tá indo pelo caminho certo ou se ele tá indo pelo caminho errado. Durante esse processo aqui, por exemplo, mesmo eu pedindo pr ele usar um framework específico, às vezes ele tentou usar outro, mas eu na hora falei: "Não, esse aí não, né?" Mesmo que às vezes o resultado não dê para ver de cara assim. Então é aí que eu acredito que os desenvolvedores ainda têm mais vantagem, tá? Ou seja, se você é desenvolvedor, o curso é para você, com toda certeza. Se você não é
+
+desenvolvedor, o curso é para você, talvez. Eu não sou aquele desenvolvedor que acha que você tem que saber exatamente tudo que a Iausp, mas você tem que ser capaz de ter uma ideia do que que tá acontecendo, seja vendo o código, sabendo ler o código ou testando bastante ali para pegar os erros. Mas é isso aí. Se você gostou desse tipo de vídeo, deixa aqui embaixo nos comentários para eu trazer mais. Eu não acho que esse vídeo vai bem, tá? Não
+
+acho que esse é um tipo de conteúdo que vai muito bem no YouTube e ele é um tipo de conteúdo que dá muito, muito, muito mais trabalho de fazer do que os vídeos que eu normalmente faço aqui, tá? Então, não sei, não sei se eu vou trazer esse tipo de conteúdo de novo, por isso que eu preciso do seu feedback para eu saber se vale a pena ou não. E é isso aí, se você quiser ver um modelão criando um joguinho e um único prompt, dá uma olhada aqui, ó. Química 3, talvez um dos melhores modelos que a gente tem atualmente, tá? E um outro modelo que eu tô louco para ver as versões menores dele é esse aqui, ó. 3.8 que tá nesse
+
+momento ainda em preview, tá? Essa daqui é a versão max dele, 2.4 trilhões de parâmetros, negócio absurdo, não dá para rodar de jeito nenhum. Eu quero pequenininho de 27, que a gente roda aqui localzinho e a gente viu que dá para fazer muita coisa legal. Ah, vou deixar um QR code aqui pra página do meu curso também. Dá uma olhada lá, vê se é
+
+para você. Se for, se inscreve, tá na promoção. Aproveita o preço especial de lançamento que já já a gente vai precisar aumentar. Vou ficando por aqui, até o próximo vídeo. Valeu.
+
+>> Eu quero um pato. Ele vai fazer o pato. Vamos ver.
+
+Iso.
