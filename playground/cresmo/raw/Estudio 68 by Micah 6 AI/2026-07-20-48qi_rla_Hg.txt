@@ -1,0 +1,126 @@
+---
+video_title: "Causal Discovery: quando a IA descobre as causas sozinha | Machine Learning para Gestores | Aula 8"
+video_id: 48qi_rla_Hg
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=48qi_rla_Hg
+video_date: 2026-07-20T20:01:41+00:00
+video_description: |
+  Você sempre definiu as setas do diagrama causal. A máquina estimava o tamanho das setas.  Mas e quando você não sabe a direção?  
+  
+  Causal Discovery é a fronteira da pesquisa que tenta fazer a máquina descobrir as setas sozinha, o conjunto de métodos que tenta inferir a estrutura causal diretamente dos dados. 
+  
+  Hoje você entende o que é, quando faz sentido investir, e as perguntas para saber se o resultado é confiável quando alguém apresentar esse resultado para você.  
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   
+  O QUE VOCÊ VAI APRENDER 
+  • A diferença entre Causal Inference e Causal Discovery 
+  • Como dois tipos de algoritmo (PC Algorithm e LiNGAM) funcionam, sem código 
+  • Quando vale pedir Causal Discovery e quando é desperdício 
+  • As perguntas certas para avaliar resultados de Causal Discovery: Como checar se o resultado é confiável com 5 perguntas 
+  • A limitação: Causal Discovery produz hipóteses, não verdade
+  
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  PERGUNTAS FREQUENTES  
+  
+  P: O que é Causal Discovery? R: Causal Discovery é o conjunto de métodos que tenta inferir a estrutura causal (quem causa quem) diretamente dos dados observacionais, sem que um humano precise definir o diagrama previamente. É a fronteira entre estatística, machine learning e filosofia da ciência.  
+  
+  P: O que é causalidade de Granger? R: X Granger-causa Y se valores passados de X ajudam a prever Y além do que o próprio histórico de Y prevê. É causalidade preditiva, não causalidade física. Um proxy útil mas que pode ser enganado por variáveis ocultas.  
+  
+  P: O que é Out-of-Distribution Generalization? R: É a capacidade de um modelo de manter performance quando encontra dados de uma distribuição diferente da que foi treinado. Modelos baseados em causas tendem a generalizar melhor do que modelos baseados só em correlações porque causas são mais invariantes a mudanças de ambiente.  
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  Apresentado por Maria Alice Maia, cientista de dados pela UC Berkeley, doutoranda e pesquisadora com foco em comportamento de uso de IA na FGV EBAPE, fundadora do Estúdio 68 (https://www.seisoito.com) e da Micah 6 AI (https://www.micah6ai.com)
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  Chapters:
+  00:00:00 — O problema do ovo e da galinha: quando preço e vendas causam um ao outro
+  00:01:57 — Causal Discovery (Descoberta Causal) vs. Causal Inference (Inferência Causal)
+  00:05:05 — Como a máquina descobre a direção da causa pelos padrões dos dados
+  00:07:40 — Tipo 1 de algoritmo: Algoritmo PC (por eliminação de conexões)
+  00:10:50 — Tipo 2 de algoritmo: LiNGAM (assimetria em dados sem distribuição normal)
+  00:14:04 — Quando usar o Causal Discovery (muitas variáveis e muito volume de dados)
+  00:16:48 — Quando NÃO usar o Causal Discovery
+  00:18:40 — Os 5 pontos para checar se o resultado é confiável
+  00:21:40 — A resposta honesta: gerador de hipóteses, não a verdade absoluta
+---
+Toda vez que a gente usa machine learning paraa ciência de dados, alguém toma uma decisão completamente arbitrária. Preço impacta vendas. Será? Quando a gente dá desconto, a gente pode dizer que as vendas aumentaram, pode ser, mas quando as vendas baixam, a gente acaba também dando desconto. Nesse caso é o contrário. As vendas impactaram
+
+o preço. Nesses problemas, o ovo e a galinha, a gente vai usar uma solução que eu amo do machine learning, porque nem sempre a gente sabe para que sentido a seta tá, mas a gente precisa ter uma solução para esses casos em que a gente não sabe a direção. De repente uma cadeia de suprimentos, um planejamento de produção que tem 400 variáveis interagindo ao mesmo tempo. Um sistema de saúde que tem 40 anos de de dados, de repente o mercado financeiro, onde tudo causa tudo ao mesmo tempo, porque as coisas se movimentam muito rápido. Bom, existe uma área da ciência de dados que tenta fazer a máquina descobrir a direção sozinha. sem que a gente precise
+
+dar uma carterada, uma canetada em o que causa o quê, o que é o ovo e o que é galinha. Essa área chama causal discovery, descoberta causal. E hoje a gente vai entender o que ela é, quando faz sentido pedir para usar essa esse método e como saber se o resultado é confiável, sem código, sem fórmula, sem matemática. Eu sou Maria Alice Maia, sou cientista de dados pela University of Califórnia Berkley, sou doutoranda em comportamento de uso e de inteligência artificial na FGV. Sou fundadora do estúdio 68 e da Mica 6. E agora a gente
+
+vai entender o problema que o Causal Discovery resolve. Imagina que você tem dados de vendas e dados de preço ao longo do tempo. Você vê que os dois estão sempre variando juntos, mas qual causa? Qual? Porque uma opção é que o preço alto cause queda nas vendas. faz bastante
+
+sentido econômico, mas uma opção secundária é que as vendas altam altas permitam que a empresa mantenha o preço alto. E de repente tem um terceiro fator que também faz sentido, que é de repente a sazonalidade afeta tanto o preço quanto a quantidade de vendas ou a concorrência acaba impactando tanto o preço quanto o volume de vendas. Com alguns dados observados, a gente não consegue resolver isso só olhando correlação, por exemplo. A gente precisaria ter um experimento. Olha, vou mudar o preço mantendo, de repente todo o resto igual, né? Mudar
+
+o preço de forma controlada, né? ou eh a gente precisaria de muita experiência naquele mercado, anos, décadas de experiência naquele mercado. Então isso tudo demanda muito. Então vamos pra nossa lousa pra gente entender o que a gente vai ver agora. A gente vai trabalhar com algo chamado causal discovery, que é a descoberta causal.
+
+Até agora a gente viu o que a gente chama de causal inference, que é a inferência causal. Na inferência causal, a gente define uma relação. Então, a gente vai dizer: "Olha aqui, o preço causa alterações no volume de vendas." E aí o papel da máquina é dizer uma coisa simples. Ele vai dizer qual o tamanho dessa seta. Olha, o preço ele afeta a
+
+venda em x%. Para cada aumento de X de 1% no preço, as vendas caem 50%. Enfim, né? Tudo isso eh é definido pela inferência causal. Agora, na descoberta calosal, você não define absolutamente nada.
+
+A máquina vai perguntar: "Olha, será que o preço ele será que o preço ele causa vendas? Ou será que as vendas estão causando preço? Ou será que nenhum dos dois, de repente é uma possibilidade? Então ele deixa, a máquina tem isso em aberto, né? E ela vai trabalhar com todas as opções e ela vai analisar isso de um jeito que eu acho muito elegante. Esse é
+
+provavelmente um uma das ferramentas preferidas para mim em machine learning, porque o causal discovery, né, essa descoberta causal, ela usa padrões matemáticos nos dados para inferir qual é a estrutura causal, né, ovo ou galinha, que teria gerado aqueles dados. Então ela vai olhar pros dados e vai falar: "Olha, com base nesses dados faz mais sentido que o ovo venha antes da galinha, que o preço impacte as vendas e não o contrário." E a lógica básica vai ser: "Olha, se A causa B, então a relação que eles têm vai ter uma como se fosse uma digital estatística, uma assinatura, uma identificação estatística diferente do que esse B causasse A. Um exemplo um pouco mais intuitivo e prático. Se você jogar uma pedra na água e tentar medir as ondas, você vai ver que as ondas se afastam do ponto de impacto da pedra. Você consegue inferir
+
+de onde veio a pedra, olhando pra direção da das ondas, mesmo sem ter olhado exatamente quando a pedra caiu. O causal discovery faz algo que é parecido com isso. Ele infere a origem do impacto olhando pros padrões nos dados. Então pensa numa situação aí na sua empresa, no seu contexto, no seu trabalho, onde vocês frequentemente discutem a direção, que o que é causa e o que é efeito, sabe? O que causa o quê?
+
+Eh, como que você conseguiria descobrir isso? De repente, olha, eh, a queda de qualidade no produto faz o faz as vendas caírem ou porque as vendas caírem caíram, a gente teve que diminuir a qualidade do produto, né? Então isso pode variar porque nem sempre isso é óbvio, mas a gente vai trazer aqui uma intuição de dois tipos de algoritmo que são usados nos no causal discovery. Obviamente a gente vai trazer o raciocínio primeiro. Então vamos voltar pra nossa lousa.
+
+Aqui a gente vai ter tipo um. Esse tipo um, ele vai ele vai remover tudo o que não pode ser causa. Então ele vai começar com todas as variáveis conectadas e aí ele vai começar a testar alguns pares. Então ele vai testar, olha, será que preço, por exemplo, preço e vendas são completamente independentes se você controlar pro mês, né? Eles não se relacionam se você controlar pro mês. Então ele vai testar
+
+esse tipo de de hipótese. E aí se você perceber que olha, sim, preço e venda, que a gente pode colocar, olha, preço e venda são independentes quando você controla o per são independentes, significa que não tem nenhuma correlação, né? eh a de forma simplificada aqui, né? Então aí se sim, ele vai dizer então que aqui, ó, se sim, ele vai dizer que preço não tem conexão com venda. É isso o que esse tipo um faz.
+
+E ele vai fazer isso para todos os pares. Ele vai testar diversos pares e vai fazer isso para esses para todos esses pares que ele testa. O que sobrar, né, de conexão é uma potencial relação causa efeito verdadeira, né? aquele candidata aqui é é uma possível causa e efeito verdadeiro. Agora a gente pode fazer uma analogia.
+
+Pensa, um escultor, o escultor ele vai tirando daquela da argila, enfim, né, da cerâmica, o que não vai fazer parte do objeto que ele tá criando. É mais ou menos isso, tá? Eh, o algoritmo ele vai remover todas as conexões que os dados não justificam, que é o esse exemplo aqui. O nome técnico desse tipo é o que a gente chama de PC
+
+algorithm ou algoritmo PC.
+
+Mas o que importa não é o nome, é a lógica, porque ele vai chegar na estrutura causal por eliminação, tá? ele vai eliminando todas as possíveis relações e a gente vai ter, esse é o tipo um de algoritmo que é usado para causa ou discover. E a gente vai ter o tipo dois, que é quando ele usa assimetria de distribuição. E aí aqui de fato, aí aqui de fato a gente começa a falar de uma forma diferente. Então aqui ele vai dizer o seguinte: "Olha, se preço causa venda, então quando a gente analisa preço e venda, o que for desvio, a de forma simplificada aqui, tá? O que o que for desvio, o que
+
+a gente chama de resíduo na estatística, vai ter uma determinada forma. Agora, se venda causa preço, aí esse desvio vai ter uma outra forma diferente, né? Então você testa os dois sentidos e aí você vê qual desses dois sentidos vai se encaixar melhor no dado que você tem, né? Esse aqui é um pouco por tentativa e erro dessa vez do da da própria relação de causa e efeito. E isso, esse modelo aqui, ele vai funcionar quando os dados não têm distribuição normal. Quando você vai
+
+olhar ali os dados, então tem muita gente num determinado grupo que não tá ali no meio, né? Eh, então quando os dados não têm quando não tem distribuição normal. Então, por exemplo, em dados de negócio, eh quando a gente fala de vendas, preços, reclamações, normalmente acontece muito, a, o, a distribuição não é normal, tá? Então não existe uma frequência equilibrada, né, que é o o a distribuição normal é aquela distribuição de sino. Então quando não tem quando você olha a frequência, ela não tá distribuída assim, então, né, eh esse método acaba sendo o melhor método para ser usado. E esse
+
+método aqui, ele vai ter o nome de lingan. Opa.
+
+Aqui o nome de novo não é importante. O que a gente precisa lembrar é que a direção da causa ela deixa a impressão digital na forma da distribuição, tá? Então você vai usar essa impressão digital para a para inferir qual é a causa e qual é o efeito. E esses dois tipos, eles têm suposições completamente diferentes e eles vão funcionar melhor em contextos diferentes. Então o que importa para você não é saber implementar. De novo, esse não é o
+
+objetivo desse curso. O objetivo desse curso é saber perguntar pra equipe qual algoritmo vocês usaram e por quê. né? Por que que esse algoritmo faz tanto sentido pros dados que a gente tem? Então agora a gente vai entender quando pedir e quando não pedir cada método, porque o causal discovery não é para ser usado em todo problema. Tem casos em que
+
+não faz sentido investir, porque é desperdício, né? A gente em machine learning, a gente discute o tempo todo sobre usar o método apropriado, nem mais nem menos, mas o método perfeito, mais adequado para aquele caso. Nem sempre vai ser perfeito, mas a gente tenta o mais adequado. Então, eh, tem casos onde vai fazer muito sentido investir em causal discovery. Então, vamos discutir agora quando vale a pena investir em causal discovery. Primeiro, quando o sistema
+
+tem muitas variáveis e as relações de causa e efeito, elas são realmente desconhecidas, não é só que elas são complicadas, mas são desconhecidas. Aqui a gente pode falar, por exemplo, planejamento e controle de produção. Quem já trabalhou com compra de insumo, logística, né, enfim, produção, fábrica, sabe o caos que é isso, né? a gente não sabe o que causa o quê, o que causa o atraso, a gente não sabe absolutamente nada assim, né? A gente tenta inferir.
+
+Então, nesses casos, né, se você não tem uma hipótese razoável sobre o que causa o quê, o aqui o o causal discovery é o ideal. Se você tem as hipóteses, olha, não, eu tenho motivo suficiente para acreditar que é aqui o preço que tá causando a venda ou que é o mês que causa a variação nas vendas. Então você pode usar a causal inference, que é o método que a gente usa normalmente. Primeiro, primeiro ponto, então, quando você tem muitas variáveis e realmente não tem a menor ideia do que é causa e do que é resultado. Segundo, quando você tem o muito volume de dados, porque o causal discovery ele é muito instável, com poucos dados. Então você
+
+precisa, ele exige milhares de observações, né, preferencialmente dezenas de milhares de observações por variável. Então se você tá olhando volume hora a hora, né, aí você precisa ter dezenas de milhares de linhas por cada variável para você conseguir ter resultados confiáveis, tá? com milhares você já vai conseguir, mas o ideal é é sempre uma um um uma amostra maior. Então, terceiro, o quando o resultado ele vai ser usado para gerar uma hipótese e não para decisão. Então, o causal discovery ele não dá certeza, mas ele produz, ele elenca quem são os candidatos.
+
+Então você usa ele para priorizar o que você vai investigar num experimento, por exemplo, ou numa análise futura. Então vamos para uma colinha para vocês conseguirem tirar um print do que é o cenário onde a gente usa o causal discovery. Então quando pedir causal discovery, tá aqui por outro lado, né? quando não pedir, é exatamente o cenário contrário, né? Então, quando você já sabe a estrutura causal ou você já acredita que tem eh uma estrutura causal determinada, eh, né, você já não tem por achar que não é aquela estrutura que vocês estão pensando. To todo usando aquela
+
+estrutura funciona. Então, não tem porquê, porque vai ser um desperdício de recurso. É, obviamente, né, em contraponto, quando você não tem muito volume de dados ou tem volume de dados muito sujo, né? Porque e quando você vai usar para tomar decisão imediatamente? Porque o causo discovery ele é para elencar hipóteses. Ele não é
+
+feito para você validar aquilo como cause efeito. Ele tá nomeando hipótese. Olha, eu acredito que pode ser que isso ou aquilo seja a causa que gera esse efeito, certo? Então, esses são os casos onde você não usa causal discovery. Então, agora a gente vai avançar para entender como checar se o resultado é confiável. E são cinco pontos que a
+
+gente precisa checar. Vamos lá. Primeiro, é consistente com domínio? Olha, quando eu falo com especialistas do negócio, eles falam: "Faz total sentido realmente, olha, pelo que eu já vivi, parece que é isso mesmo. Eu diria que tá tudo certo." Então, isso faz
+
+sentido. Se eles ficarem incomodados, opa, pode ter um problema aí, certo? Porque às vezes os dados eles fazem a gente pensar, né? Quando a gente coloca no modelo, faz o modelo, fazem o modelo pensar que tem uma relação onde não tem. é o que a gente chama de artefato estatístico, né? Você cria uma relação
+
+estatística ali onde não tem. Segundo estabilidade. Toda vez que você testa uma um período diferente ou uma região diferente, parece que a relação causal muda. Então, olha, se tá frágil, se tá instável, a gente não pode usar isso para tomar decisão nenhuma. Então esse modelo não vai funcionar.
+
+Terceiro, variáveis ocultas. Olha, vocês deixaram de lado uma variável importantíssima. vocês estão analisando perfil de cliente e e tentando ver o que causa aumento nas compras, né, no ticket médio, por exemplo, e ou no lifetime value do cliente, né, o valor que ele gera ao longo da relação. E vocês deixaram de fora renda porque vocês não conseguiram perguntar pro cliente qual é a renda dele ou não conseguiram enriquecer os dados de vocês. Então aí, né, fica impossível porque às vezes você vai gerar ali um efeito, mas poxa, renda muito provavelmente tem um impacto muito grande nisso e ela nem foi considerada pelo modelo. Então esse modelo tá como
+
+se fosse manco, capenga, né? Ele tá ali cego de um olho. Então a gente tem aqui três, né? Então consistência com domínio, estabilidade e variáveis ocultas não medidas. E a gente vai ter mais dois, validação por intervenção. É possível testar, né, nos
+
+dados que a gente já tem, avaliar para ver se pelo menos uma das hipóteses é realmente uma causa ou será que a gente consegue fazer um experimento para validar? Então isso dá credibilidade pro que o modelo gera. E por último, quais são as suposições que o algoritmo que o seu time escolheu faz? Então o Lingam, por exemplo, é um algoritmo que faz a suposição de que não existe um feedback loop, um loop de feedback, que é, olha, quando as vendas estão baixas, eu ajusto o preço e na hora que eu ajusto o preço, as vendas sobem, né? Isso é um feedback loop. Então, se você acredita que tem um
+
+feedback loop no seu sistema, esse algoritmo, por exemplo, não deve ser usado. Então, de forma muito simples, a resposta mais honesta que a gente pode ter sobre onde cabe o causal discovery é quando a gente precisa gerar hipóteses em sistemas muito complexos e a gente tem dados muito ricos. H, smart series, por exemplo, ou no caso de fábrica, indústria, logística, tudo isso cabe, cabe o causal discovery. Ele não é uma caixa onde você vai colocar os dados e vai ter a verdade cuspida para você. A saída dele é um conjunto de candidatos, de possíveis causas que ainda precisam ser validadas com quem tem conhecimento de domínio e sempre que possível com métodos de inferência causal, inclusive com experimento. Então, se você gostou
+
+desse conteúdo, segue, salva esse vídeo e compartilha com pessoas que t algum problema, que pode ser complexo demais para ser usado só em inferência causal. Um abraço e até o próximo vídeo.

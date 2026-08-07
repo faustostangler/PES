@@ -1,0 +1,105 @@
+---
+video_title: "Por que meu algoritmo de ML piorou meu resultado? | Machine Learning para Gestores | Aula 1"
+video_id: QmizKqJQfT0
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=QmizKqJQfT0
+video_date: 2026-06-22T19:56:27+00:00
+video_description: |
+  Fiz um modelo de churn que previa certo, e o resultado piorou. Como isso é possível?  Nessa aula você vai entender a diferença entre um problema de previsão (ŷ) e um problema de intervenção (β), e por que confundir os dois pode ser mais perigoso do que não ter modelo nenhum. 
+  
+  O que você vai aprender:
+  • O que é regressão e por que ela é o ponto de partida de tudo
+  • A diferença entre ŷ (previsão) e β (efeito causal)
+  • O Paradoxo de Mullainathan, formalizado por um economista de Harvard
+  • Por que algoritmos de ML são ótimos em previsão e péssimos em intervenção
+  • 3 perguntas para fazer antes de usar qualquer modelo pra tomar ação  
+  
+  Fonte: Kleinberg, Jon, Jens Ludwig, Sendhil Mullainathan, and Ziad Obermeyer. 2015. "Prediction Policy Problems." American Economic Review 105 (5): 491–95
+  https://www.aeaweb.org/articles?id=10.1257/aer.p20151023 
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  Apresentado por Maria Alice Maia, professora em Inteligência Artificial e Ciência de Dados. Cientista de dados pela UC Berkeley, pesquisadora de doutorado em comportamento de uso e governança de IA na FGV, fundadora do Estúdio 68 e da Micah 6 AI.
+  https://www.micah6ai.com
+  https://www.seisoito.com
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  PERGUNTAS FREQUENTES  
+  P: O que é o Paradoxo de Mullainathan? R: É a observação do economista Sendil Mullainathan de que a maioria dos problemas de negócio são problemas de intervenção (β), mas a maioria dos modelos de ML são modelos de previsão (ŷ). Usar um modelo de previsão para tomar decisões de intervenção pode produzir resultados opostos ao desejado.  
+  
+  P: Qual a diferença entre ŷ e β em machine learning? R: ŷ (y-chapéu) é a previsão do que vai acontecer dado o que você observa. β (beta) é o efeito causal de uma ação — quanto uma intervenção específica muda o resultado. Um modelo de ML padrão estima ŷ, não β.  
+  
+  P: Por que um algoritmo de churn pode aumentar o churn? R: Porque o algoritmo identifica quem vai cancelar (ŷ), mas não sabe o efeito de ligar para essa pessoa (β). Em parte dos clientes, a ligação pode irritar e acelerar o cancelamento — o β da intervenção é negativo para esse grupo.
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  Chapters do Vídeo
+  [00:00] O caso do churn que piorou
+  [01:23] Apresentação
+  [01:37] Regressão: o vocabulário básico
+  [04:23] Sendil Mullainathan: quem é e o que descobriu
+  [05:06] ŷ vs β — previsão vs intervenção
+  [08:15] O que o algoritmo estava respondendo
+  [08:53] O que aconteceu de verdade no churn
+  [10:11] Por que o β era negativo
+  [13:16] A generalização: quando isso acontece no seu trabalho
+  [14:05] Próximos passos
+---
+Essa semana um conhecido meu me ligou falando que ele tinha notado que nos últimos três meses a taxa de cancelamento tinha aumentado muito e era exatamente esse período que ele tinha assumido a diretoria. Então ele tava muito preocupado e ele decidiu contratar um algoritmo para prever quem ia cancelar o serviço e aí mandar uma promoção, falar pro vendedor entrar em contato, né, enfim, fazer alguma ação. Ele me ligou e perguntou qual quem é o fornecedor que você recomenda para isso? Eu respondi para ele em alto e bom som. nenhum. Poxa, mas como assim? E aí eu
+
+contei para ele o que eu já vi acontecer. Uma empresa que fez exatamente o que ele tava pensando em fazer. Uma empresa que eu trabalhei, eles tinham um algoritmo de turn que era maravilhoso, machine learning avançado, previa com 85% de acerto. E eles fizeram a mesma coisa. Pegaram as pessoas com alto risco de cancelamento, ofereceram desconto, atendimento especial, pacote premium de graça e o turn aumentou. Mas
+
+como assim? me chamaram para resolver isso e quando eu fui ver o que tinha acontecido, eu entendi um negócio que mudou a forma como eu penso machine learning para sempre. Previsão e intervenção são duas perguntas completamente diferentes e a maioria dos algoritmos que a gente usa no dia a dia só sabe responder uma delas. E hoje você vai entender qual é qual e por confundir as duas é mais perigoso do que não ter modelo nenhum. Eu sou Maria Alice Maia, sou cientista de dados pela Universidade de Califórnia Berkley, pesquisadora de doutorado em inteligência artificial na FGV e fundadora do estúdio 68.
+
+Bem-vindos ao curso de Machine and Learning. E antes da gente começar a discutir isso, eu queria garantir que a gente tem um conhecimento básico, rápido, prometo. Regressão é a ferramenta mais velha e mais honesta do kit de análise de dados. E a ideia da regressão, ela é simples, tá? dado um monte de informação sobre o passado, qual é o valor que eu consigo prever pro futuro, tá? É mais ou menos isso. Então,
+
+vamos lá. É como se a gente tivesse numa regressão, a gente tem aqui um gráficozinho, né? um gráfico simples aqui. E aí esse gráfico ele tá dizendo, por exemplo, olha aqui a gente tem horas de estudo e aqui a gente vai ter notas na prova. E aí a gente vai ter aqui no meio, né, uma seta, mas imagina que é uma reta, né? A gente vai ter uma reta, tá? que
+
+é a previsão.
+
+Então essa linha aqui do meio, tá? Imaginem que é uma linha, não uma não uma seta. Essa linha aqui do meio, ela é a regressão. Ela não acerta sempre, mas ela minimiza o erro médio. Imagina que a gente tem diferentes pontos aqui e que esses pontos vão estar ao redor dessa linha aqui. ela não vai estar
+
+exatamente em cima dos pontos, mas com alguma margem de erro, ela vai passar bem próximo deles e vai, né, eh, trazer de alguma forma a tendência que a gente vê nesses pontos, certo? é a melhor aposta, considerando tudo que a gente sabe. Ela minimiza o erro médio quando a gente vai chutar algum valor. Então, o que a regressão produz, né, é uma previsão do Y. A gente chama de Y chapéu, tá? Aqui é como se fosse a
+
+previsão, tá? Não é o y real. E agora a gente vai entender que machine learning faz exatamente a mesma coisa, mas com muito mais variáveis, curvas mais complexas, algoritmos que se ajustam sozinhos, tá? E o produto final, ele é continua sendo uma previsão, tá? é uma previsão mais sofisticada do que a regressão. E aqui começa o problema,
+
+porque previsão não é intervenção. E a maioria das pessoas usam uma para fazer a outra sem perceber, né, que estão fazendo isso. Então vamos falar sério. Agora a gente tem Sendil Mulinatan, que é um economista de Harvard, ele ele ganhou um certo chamado Nobel Júnior de Economia e ele fez uma contribuição que parece óbvia quando você ouve, mas que derruba muita coisa que a gente assume ser verdade sobre machine learning. O que ele fala é exatamente isso. Existem dois
+
+tipos de pergunta completamente diferentes na análise de dados. E os algoritmos de machine learning que a gente usa normalmente, redes neurais, eh, gradient boosting, random forest, só sabem responder um tipo de pergunta, não respondem os dois. Então vamos voltar pra nossa lousa aqui. Vamos dividir essa lousa em dois de novo. Imaginem que aqui é uma reta, não uma seta.
+
+Então aqui do lado esquerdo, imaginem que a gente tá falando de previsão e do lado direito a gente tá falando de intervenção.
+
+OK? Então, a pergunta do lado esquerdo é uma pergunta de dado o que eu sei sobre o mundo agora, o que vai acontecer ou o que eu acredito que tem alta probabilidade de acontecer, certo? E aqui o exemplo clássico é vai chover amanhã. Você olha a pressão atmosférica, a umidade, a temperatura, o histórico dos últimos x anos e faz uma previsão. O algoritmo ele é ótimo nisso, certo?
+
+Então aqui a gente tá falando de, por exemplo, vai chover. E aí aqui a gente vai olhar dados do passado para ter uma previsão, certo? Então no lado direito a gente tá falando de perguntas de intervenção. E pergunta de intervenção é: se eu fizer alguma coisa, isso vai mudar o resultado, certo? Então o exemplo é de repente se eu fizer alguma coisa, isso muda o resultado.
+
+A gente tem um exemplo aqui clássico, né? Eh, se eu abrir o guarda-chuva, isso muda a chance de chover? Não, né? Então isso não é uma pergunta sobre o que provavelmente vai acontecer aqui. É uma pergunta sobre o efeito de uma ação.
+
+Então aqui a gente diz: "Olha, eh, o guarda-chuva ele causa a seca, por exemplo, que aí a gente coloca um ponto de interrogação. Então, o que os economistas chamam de efeito causal não é a previsão do que vai acontecer, é o quanto uma causa específica muda o resultado, certo? Então, por exemplo, aqui a gente poderia colocar, olha, o Elninho, o Laninha, eu todos esses esses eventos climáticos, eles causam chuva, certo? Então, o problema que a gente precisa entender é que algoritmos de machine learning eles são extraordinariamente bons emar uma previsão. A previsão, mas eles não foram feitos paraimar o efeito causal de uma intervenção. Há algumas exceções, a
+
+gente vai falar isso logo na próxima aula, mas saibam que o, se você fala machine learning, a gente tá falando de previsão. Por exemplo, quanto eu devo vender no trimestre? Então, voltando pro meu caso do chne, qual era a pergunta que o algoritmo tava respondendo e qual era a pergunta que a empresa precisava responder? O algoritmo tava respondendo: "Quais clientes têm mais chance de cancelar?" Isso é previsão.
+
+A empresa precisava saber, se eu ligar para esse cliente e oferecer desconto, isso vai diminuir a chance dele cancelar? Isso é intervenção, é pergunta causal. São duas perguntas completamente diferentes e o algoritmo não tinha a menor ideia de como responder a segunda. Então, deixa eu te explicar o que tava acontecendo naquele caso do Cherne. O algoritmo ele aprendeu a reconhecer um padrão no passado. Os clientes que
+
+estavam prestes a cancelar, eles tinham um certo comportamento. Eles usavam menos o produto, abriam menos os e-mails, eles tinham menos engajamento nas últimas semanas. Tudo isso é verdade. É um sinal real do cancelamento prestes a acontecer. O modelo tava certo, certíssimo. Mas tem uma coisa que
+
+o modelo não sabia. Alguns desses clientes já tinham decidido cancelar e eram exatamente os que estavam mais inacessíveis emocionalmente para qualquer intervenção. Então, ligar para eles e oferecer o desconto era irritante, não útil. Inclusive fazia eles lembrarem que eles tinham pensado em ligar para cancelar e tinham esquecido. Então, quando eles recebiam a ligação, na verdade, aquilo acelerava uma decisão que eles já tinham tomado. O
+
+modelo previa bem quem ia cancelar, mas a ação de ligar mudava a probabilidade de cancelar para cima em alguns perfis, não para baixo. O fato de ligar e mandar e-mail e fazer o cliente lembrar daquela assinatura fazia ele aumentar a probabilidade de aumentava a probabilidade dele cancelar. Então o efeito causal da intervenção era negativo por parte em boa parte da população. Quanto mais se intervia, se fazia alguma ação, mais aumentava a chance daquela população cancelar. E o modelo não conseguia ver isso porque ele foi treinado para prever, não para medir efeito causal.
+
+Poxa, mas e se esse modelo tivesse, por exemplo, considerando a a quantidade de ligações de um vendedor ou e-mails da empresa no último mês? Isso é assunto pra gente falar na próxima aula, certo? Então vamos voltar paraa nossa lousa. Então aqui a gente começa, vamos pensar em dois tipos de cliente. A gente tem o cliente do grupo A, ele vai cancelar mais eh receptivo a negociar.
+
+E a gente tem o cliente do grupo B, ele vai cancelar e o contato é a chance para ele fazer isso. O algoritmo ele não sabia diferenciar esses dois casos. Ele aqui via os dois como um caso único, certo? Então ele ele via os dois aqui como se fossem um mesmo grupo, o grupo cliente com alta probabilidade de cancelamento, certo? Então no problema é no grupo B o contato piorava as coisas, virava uma ocasião pro cliente falar com a empresa, né?
+
+Então o resultado era aumento do cancelamento. A solução não era jogar o modelo fora, era entender que previsão e intervenção precisam de abordagens completamente diferentes e que antes de usar um modelo para tomar uma ação, você precisa perguntar: modelo foi feito para prever ou para medir efeito causal? Então vamos voltar ao que o Mulenata falou. E o que parece óbvio, quando a gente lê, né, mas derruba projetos de dados o tempo todo. Eu já cansei de ver.
+
+A maioria dos problemas de negócio são problemas de intervenção, não de previsão. Mas a maioria dos modelos que a gente treina quando a gente fala de machine learning e inteligência artificial, inclusive são modelos de previsão e a gente usa modelos de previsão para tomar decisões de intervenção. Esse é o paradoxo. Então pensa em quantas situações, você já viu isso? Algoritmo de risco de turnover. O
+
+RH identifica quem vai sair e faz uma ação. E aí de repente algoritmo de risco de inadimplência, o banco manda uma mensagem paraos clientes que t mais chance de não pagar uma dívida. Algoritmo de evasão escolar. A prefeitura intervém nos alunos que têm mais chance de abandonar a escola. Em todos esses casos, o modelo foi treinado para responder quem tem altas chances de cancelar, de sair, de romper o relacionamento.
+
+Mas a ação que a gente implementa é de intervenção, fazer algo para mudar o resultado. E o modelo pode não saber o que acontece quando você intervém. Por isso, o efeito causal é o que importa quando você quer tomar uma ação. E por isso, nas próximas aulas, a gente vai ver como estimar o efeito causal de verdade, não só fazer uma intervenção bonita. Então, se esse vídeo te fez pensar em algum modelo que você usa no trabalho ou que você já viu sendo usado e você quer saber se é um problema de previsão ou de intervenção, comenta aqui embaixo que eu vou te responder. E se
+
+você conhece alguém em dados, em gestão, em RH ou em qualquer área onde o algoritmo influencia a decisão, recomenda esse vídeo. Esse é o tipo de coisa que muda a forma como as pessoas pensam e usam dados no próprio trabalho. E se você gostou do vídeo, segue o nosso canal.

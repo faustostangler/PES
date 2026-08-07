@@ -1,0 +1,174 @@
+---
+video_title: "Quando escolher entre Machine Learning para análise de texto - 5 erros que custam decisões erradas"
+video_id: farjkNqgIN0
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=farjkNqgIN0
+video_date: 2026-07-02T15:45:04+00:00
+video_description: |
+  Seu time apresentou um modelo de análise de sentimento com 94% de acurácia. Você aprovou. E o número estava errado desde a base.
+  
+  O problema não era o modelo, era que ninguém tinha perguntado: essa ferramenta é a certa para esse texto?
+  
+  Nesta aula:
+  → O mapa de decisão ML vs LLM: quando usar cada um e por quê
+  → Para que serve NLP com ML: sentimento, classificação, NER, emerging topics
+  → Ferramentas open source para texto em português (sem pagar licença)
+  → Os 5 erros mais comuns e as perguntas que os evitam
+  → Framework de 3 perguntas para aprovar qualquer projeto de NLP
+  
+  _____________________________________
+  
+  Apresentado por Maria Alice Maia, cientista de dados pela UC Berkeley, professora, doutoranda pesquisadora de comportamento de uso e governança de IA na FGV, fundadora do Estúdio 68 e da Micah 6 AI. Ex-Ambev, Itau, Stone, Alun/FIAP.
+  
+  _____________________________________
+  
+  ❓ PERGUNTAS FREQUENTES
+  
+  P: Quando usar ML clássico em vez de ChatGPT para análise de texto?
+  R: ML clássico é a escolha certa quando você tem categorias definidas, precisa de escala e custo controlado, precisão auditável, ou estabilidade de resultado. LLM é melhor quando o texto tem nuance, ironia ou ambiguidade que depende de contexto para ser interpretado. A pergunta que guia a decisão: esse texto precisa ser compreendido ou classificado?
+  
+  P: O que é análise de sentimento com ML e como funciona?
+  R: Análise de sentimento com ML classifica texto como positivo, negativo ou neutro usando algoritmos treinados em exemplos rotulados. Diferente de LLMs, o modelo ML aplica regras aprendidas de forma consistente e auditável, mas precisa de definição operacional precisa das categorias para não gerar erros de padrão.
+  
+  P: O que é naive classifier e por que acurácia alta pode enganar?
+  R: Naive classifier é um modelo que aprende a sempre prever a classe mais frequente nos dados de treinamento. Se 90% dos seus dados são de uma categoria, o modelo acerta 90% das vezes sem aprender nada. Por isso acurácia sozinha não é suficiente, você precisa de F1, precision e recall por classe para entender se o modelo realmente está funcionando.
+  
+  P: Quais ferramentas open source usar para NLP em português?
+  R: BERTimbau para análise de sentimento e classificação com contexto em português brasileiro (disponível no Hugging Face). spaCy para NER e processamento em escala. scikit-learn para classificação supervisionada. Gensim com LDA para descoberta de temas sem categorias predefinidas. Todas são open source e gratuitas.
+  
+  P: O que é overfitting em modelos de NLP?
+  R: Overfitting acontece quando o modelo aprende os dados de treinamento tão bem que perde a capacidade de generalizar para dados novos. O modelo 'decora' os exemplos em vez de aprender o padrão. A solução padrão é five-fold cross-validation, avaliar o modelo em cinco subconjuntos diferentes dos dados para garantir que a performance é consistente.
+  
+  ─────────────────────────────────────
+  
+  Treinamento para equipes ou revisão independente do seu sistema de IA: micah6ai.com
+  
+  #NLP #MachineLearning #DataScience #IA #AnalíseDeSentimento #Estudio68 #GestãoDeIA #textmining 
+  
+  ─────────────────────────────────────
+  
+  Chapters
+  00:00:00 — A falha do aplicativo financeiro: ironia e falsos negativos
+  00:02:30 — Quando usar LLM vs Machine Learning Clássico
+  00:05:03 — Escala, Explicabilidade e Estabilidade no Machine Learning
+  00:08:47 — Casos de uso: Sentimento, Classificação, Entidades e Emerging Topics
+  00:12:43 — Ferramentas Open Source (SpaCy, Scikit-Learn, Gensim, BERTimbau)
+  00:18:10 — Erro 1: Olhar apenas para a acurácia (Classificador Ingênuo)
+  00:22:41 — Erro 2: Overfitting e a falta de generalização
+  00:25:07 — Erro 3: Usar modelos treinados em inglês para textos em português
+  00:27:35 — Erros 4 e 5: Ferramentas incorretas e "Tiro de Canhão"
+  00:30:43 — O Framework Final de perguntas para tomada de decisão
+---
+Há um tempo atrás, um time de produto me procurou porque eles tinham feito uma análise de sentimento em rede social e o algoritmo tinha dado que era 80% negativa. Eles acharam muito estranho porque o cliente deles ficava, não tinha por ter essa percepção tão negativa nas redes sociais. E aí eles foram entender o que aconteceu. Quando a gente foi auditar, a gente percebeu que o algoritmo estava classificando os comentários positivos repetidamente como negativos. era um aplicativo financeiro e ele prometia reduzir as taxas de transação. E aí comentários como:
+
+"Finalmente reduziu minha taxa, não acredito que eu demorei tanto para mudar". Tavam sendo classificados como negativos. O modelo que eles tinham contratado era um modelo de fora que tinha prendido no treinamento, que reduziu, não acredito, costumam aparecer em contextos negativos. e sem fazer nenhum ajuste, ele aplicou esse padrão nos comentários que a empresa tava recebendo nas redes sociais, sem entender o que o cliente deles estava querendo realmente dizer nesse caso específico. E os melhores feedbacks sobre produto acabaram entrando na caixa do negativo, exatamente porque eles comunicavam o diferencial, né, que era baixar, reduzir. E o problema não era
+
+nem o modelo em si. O problema desse caso é que ele representa o que eu vejo muitas vezes ninguém se perguntou se a ferramenta que eles estavam usando era a certa pro tipo de texto. E é isso que a gente vai resolver hoje. E antes de falar sobre isso, a gente vai responder aquela pergunta que eu escuto muito, que é: se o chat GPT, Cloud, Eminai, todos esses existem e conseguem ler texto e interpretar, por que que a gente usaria outra ferramenta? E a pergunta é ótima.
+
+E a resposta não é que machine learning é melhor, a resposta é que depende do que você tá tentando fazer. E eu vou falar sobre isso agora. Eu sou Maria Alice Maia. Eu sou cientista de dados pela University of California em Berkley. Sou doutoranda em comportamento de uso de IA na FGV e fundadora do estúdio 68 e da MICA 6. Se você chegou
+
+aqui agora, o canal é gratuito. Você pode se inscrever ali embaixo, tem os cursos gravados e toda semana tem conteúdo novo com análise de inteligência artificial e dados do jeito que a maioria dos cursos não ensina, sem jargão, sem matemática desnecessária, sem esconder o que importa, a informação necessária para você tomar decisão do que você realmente vai implementar, perguntar ou questionar no seu dia a dia. Então vamos lá pra nossa lousa. Primeiro ponto, né, quando a gente usa LLM, né, o chat EPT e similares, esses a gente vai usar quando a gente precisa interpretar texto. Então, olha, rede social é muito comum para isso, porque em rede social a gente tem ali a mesma palavra mudando de significado, dependendo do contexto, né? E então aqui
+
+tem ironia, tem nuance, tem interpretabilidade, né? Precisa de um contexto. Então isso aqui é muito comum. às vezes notícia também vai precisar de um contexto, eh, ou, né, a gente usa também quando, eh, a gente tem ali a necessidade de, de criar uma um resumo, uma resposta, uma análise qualitativa. Isso é normalmente o mais comum para elel. Um quarto cenário é privacidade,
+
+né? A não ser que você tenha aqui, né? Aqui aqui é quando você não precisa de privacidade, né? Eh, por a não ser que você tenha de que você tenha um LM local, o que não é ainda, infelizmente, né, realidade para muitas empresas, a gente acaba usando o LM em rede, então a privacidade pode ficar comprometida. E aí, quando a gente vai usar machine learning clássico, né? Primeiro, eh, a
+
+gente vai usar quando a gente tem uma classificação conhecida. Então aqui eh muitas vezes a gente tem ali, né, eu já sei eh as categorias que eu quero. Existe uma uma categoria de machine learning que a gente usa classifica que a gente usa classificação desconhecida, que é merging topics, né? Mas isso a gente vai discutir um pouco mais paraa frente, mas quando você já sabe as as categorias que você quer normalmente, tá? Eh, ela l pode ser eh mais adequada, mas o principal e os principais diferenciários aqui, diferenciais aqui são escala. Então você precisa de um
+
+alto volume de análise, eh, 50.000 tickets de clientes por semana. Eh, e você precisa de um custo que não vou nem dizer mais baixo, mas previsível. E então assim, o o machine learning ele ele como o token, ele tem um custo escalável por causa, né? Enfim, muitas vezes a gente vai vai aumentar, né, em proporções que não são eh proporções aritméticas. Eh, então eh ou a gente
+
+prefere ficar com o machine learning. E eh um segundo motivo é explicabilidade e auditabilidade. Como a gente tá ali vendo o algoritmo ou mesmo algoritmos que a gente chama de caixa preta, né, que não contam pra gente exatamente como eles chegaram naquela conclusão, a gente consegue explicar a lógica do algoritmo, a gente consegue explicar a matemática por trás até chegar naquela conclusão. Então, se você precisa editar, explicar, por exemplo, na União Europeia, é obrigatório que se explique eh o racional por trás de uma decisão algoritma para alguns algoritmos que considerados sistemas de risco, né, que podem excluir, podem, né, eh causar viés, enfim. Então, esses algoritmos e ele é obrigatório que a empresa saiba explicar. Então, muitas empresas acabam
+
+usando machine learning por conta disso. E por fim, estabilidade. Qualquer hora em que você colocar o mesmo input ou o machine learning tende a dar o mesmo output, né? Se você mantém os mesmos eh os mesmos parâmetros, vamos dizer assim. Eh, então ele é muito mais estável do que o Lelm, né? é muito mais difícil
+
+você eh você você garantir a mesma saída do LM quando a gente quando a gente coloca o a mesma entrada. Então, de forma simples, imagina que você precisa ler e interpretar uma carta de um cliente importante que não é brasileiro, mas escreveu em português, por exemplo. Você vai chamar alguém que fala a língua dele ou que é do país dele para entender, por exemplo, se ele foi irônico, para entender se teve alguma mudança no tom de voz, se teve entrelinhas, né, para captar o que não tá escrito. Isso é o Elal. E se você tem, por exemplo, olha, eu tô precisando classificar 50.000 tickets de
+
+suporte que estão chegando por semana. Eu preciso olhar cada um na fila certa, técnico, financeiro, cancelamento, pro time certo receber o ticket certo na hora certa. É, é só isso, não é nada demais. Você já sabe as categorias, né? Você não precisa de nenhuma interpretação do ticket. Ah, se o ticket
+
+foi irônico, se o ticket foi grosseiro, se tá muito atretado, é só colocar ali pra área certa. você só precisa de velocidade. Isso é o machine learning clássico. E a pergunta que resolve 90% dos casos é muito simples. Esse texto ele precisa ser compreendido ou precisa ser classificado? Então, no caso do LLM,
+
+a gente tá falando de compreensão. E no caso do machine learning, a gente tá falando de classificação. Ah, mas o LMA ele pode classificar também? pode, mas é um outro cenário. A gente inclusive se usa bastante em pesquisa acadêmica, por exemplo. Eh, e a
+
+gente fala disso no vídeo sobre eh processamento de linguagem natural com elen. Então, vamos lá. O, é, o machine learning clássico ainda é muito usado no mercado, tá? E não é por falta de alternativa. Por exemplo, pensa num processo que você conhece e que usa análise de texto na sua área, né? um
+
+relatório de avaliação de cliente, triagem de saque, análise de mídia. Qual dessas duas colunas faria mais sentido, né? A gente tá falando de compreensão ou tá falando de classificação? Então agora, né, a gente entendeu quando cada um dos dois faz mais sentido. Então a gente vai falar agora o que dá para fazer com processamento de linguagem natural do e do machine learning clássico e depois a gente vai falar quais são as ferramentas que a gente usa para cada coisa. Então, primeiro, né,
+
+eh, a gente vai falar de análise de sentimento, que é o que apareceu ali, né, no caso que a gente apresentou no começo, a gente vai pegar o texto, o comentário, avaliação, resposta aberta da pesquisa e vai classificar como positivo, negativo ou neutro. Parece simples na teoria, mas tem bastante armadilha, bastante nuance na prática e a gente vai ver os alertas daqui a pouco. O segundo é classificação de texto. Então é mais é mais geral do que avaliar o sentimento. Você classifica o texto em qualquer categoria que que você definir. Reclamação,
+
+assunto de ticket, tema de notícia. Diferença para sentimento é que as categorias são suas. Não é positivo, negativo e neutro. Terceiro, named entity recognition. A gente vai escrever esse nomezinho ali em inglês, né? Mas eh
+
+reconhecimento de de entidade nomeada, né? Mas eh eh é basicamente extração de entidade. Em português a gente chama muito por esse nome. Você vai passar um texto e o modelo vai identificar. Isso aqui é um nome próprio, um nome de pessoa, um nome de lugar, é um produto, isso é uma marca, é um valor monetário.
+
+Isso é muito usado para, por exemplo, processar contrato, né? Porque o contrato tem o nome das partes, tem aí uma parte é empresa, outra parte é outra parte é pessoa física, pode ser, né? E aí vai ter o a a narração dos fatos, que pode ser local, data e aí pode ter o pedido, né? aqui, aí seria valor monetário ou algum algum tipo de ação. Então, tudo isso é explicado eh pelo NR, né, N.
+
+Então, nota fiscal também é muito usado para isso, né, porque ele puxa a informação do produto, do preço, etc. O quarto uso é a descoberta de temas. Então a gente vai descobrir, por exemplo, a chama emerging topics, né, temas emergentes. E aqui a gente não define as categorias com antecedência, mas você vai passar 1000 comentários de clientes e vai pedir pro modelo encontrar os temas que aparecem. E aí ele vai agrupar os textos por similaridades e você descobre o que as pessoas estão falando sem ter partido de uma hipótese prévia, sem precisar ter um viés seu, sem encaixar na sua caixa.
+
+Isso é muito útil quando você não sabe o que vai encontrar, né, e quer quer entender muito bem como seus, por exemplo, seus clientes, né, ou esse esse texto que você tá analisando, esse corpus que a gente chama, como isso se agrupa, né, como se fosse quase que uma clusterização ali, uma uma forma de agrupar naturalmente. Então vamos de novo pra nossa lousa. Então vamos falar dos objetivos. Então aqui a gente vai ter, como eu falei, sentimento, classificação, namedy recognition, que é para extrair as entidades, e descoberta de temas, emerging topics. OK? Então, esses são os quatro usos
+
+principais que a gente tem para machine learning. E a minha dica seria antes de escolher perguntar: "As categorias já existem ou eu tô tentando descobrir o que existe?" Isso, né? Se se a gente se as categorias já existem, então eh a gente já consegue saber eh que a gente tá falando aqui de um desses três aqui ou desses dois modelos. É uma pergunta mais simples, mas a gente vai usar outras perguntas ali no final desse texto. A gente vai agrupar todas essas
+
+perguntas que são importantes serem feitas quando a gente implementa. Então, seguindo, a gente viu então quando é melhor usar machine learning versus eh LLM, os chatbotes da de inteligência artificial, a gente viu os principais objetivos e agora a gente vai ver as ferramentas, porque todas as ferramentas que eu vou mencionar aqui são open source. E eu acho importante entender quais são as principais ferramentas para entender o que o time tá fazendo, entender o que a gente pode pedir, pedir do jeito certo, né? E aqui eu gosto de mencionar ferramentas open source porque não precisa pagar licença, você não fica preso a nenhum fornecedor, né? Então, eh, não limita você também. E
+
+você tem acesso ao código, que ajuda muito na hora de explicar o que o modelo tá fazendo. Primeira e mais, é, bom, eu acho que uma das mais usadas dela é a Space. É uma biblioteca Python muito boa para para named, extração de entidades, que é aquele, né, e para também processamento de texto em geral. é uma biblioteca rápida, uma biblioteca eficiente, é uma biblioteca que tem modelos prontos para várias línguas. Isso é importante, né? Então,
+
+ela consegue extrair entidades daqueles textos com bom volume e é normalmente uma das melhores escolhas. Tem a biblioteca básica, essa sim, com certeza é a mais usada, é que é a psyched learning. Eh, a Cycle Learn, ela, eu vou escrever todos esses nomes, tá gente? Eh, ela é a biblioteca padrão para machine learning clássico em Python e eh ela é normalmente usada para classificação de texto supervisionada quando se você já tem categorias definidas e então você vai provavelmente usar cyc learning em algum momento do processo. É, ela vai ter algoritmos de classificação mais mais comumente usados, que são regressão logística, random forest, SVM, enfim, todos esse essas palavras você já são um pouco mais técnicas, a gente não precisa mergulhar tão tanto nelas, mas o importante aqui é entender que e ela é para, em geral quando as categorias já são conhecidas, já são dadas.
+
+Terceira, Jensen, que é um algoritmo de LDA, que é a locação latente. É uma ferramenta para descoberta de temas, né? Latente é aquilo que tá de certa forma oculto. Então, é uma ferramenta padrão para você descobrir os temas, né? Você passa os textos, ela encontra os tópicos que estão ocultos. é o que você usa quando
+
+você quer saber o que as pessoas estão falando, mas você não sabe o que elas estão falando. E a quarta é uma ferramenta brasileira, é o Burting Bow. Eu não vou citar o Bird, que que é a referência global dela, né? Porque a brasileira que é o Bertimbal, ela é uma dessa, uma uma ferramenta dessa família de modelos de linguagem, mas eh ela é treinada para entender o texto com contexto no corpus, né, no no na base, né, de de de textos brasileiros, textos comem português do Brasil, com expressões brasileiras, nosso vocabulário, nossa forma de escrever. Então, para análise de sentimento ou classificação de texto em português, usar um modelo treinado em inglês pode ser um um erro que vai aparecer nos resultados. Então, o Bertimbal ele
+
+existe para evitar isso. Ele é open sourcer e tá disponível, né, para qualquer um usar. Então, de novo para lousa, pra gente olhar aqui as ferramentas. Então, aqui a gente falou do space. A gente tem o cycet learn, que é uma das provavelmente mais comuns mesmo, que é isso para quando a gente tem categoria definida.
+
+O Jens com LDA, que é aqui, aqui é o latent dri. Bom, vou correr o risco de vou correr o risco de de talvez de de talvez cometer um um erro ortográfico aqui. Lent delete allocation. Deixa eu dar uma um Google aqui.
+
+É aqui vai ser drit de de slet. L diset allocation é basicamente aqui você olhar o que tá latente, que é o que tá oculto. É aqui o bertimbal, que é sentimento, classificação em português. É, e aí vai ter uma uma orientação prática pro gestor, que é quando a sua equipe apresenta um modelo de processamento de linguagem natural, primeira pergunta não é, olha, qual é a curácia, qual é o resultado? É, qual é a ferramenta usada e por escolheram essa para esse texto em específico. Então, se não souberem o
+
+porquê, sinal de alerta. Se explicarem o porquê, pensa-se, por exemplo, uma ferramenta com como a Berttimbau, que é para texto português, não seria melhor? É sempre uma pergunta que eu gosto de fazer. E aí a gente vai pra parte que eu acho mais importante desse vídeo, que é os erros mais comuns que eu já vi quando a gente usa machine learning para processamento de linguagem natural, não para assustar, mas para prevenir, porque eu já cometi vários desses. Acho que muita gente que trabalha com um processamento de linguagem natural com machine learning vai se reconhecer aqui.
+
+Primeiro, olhar a curácia sem olhar a distribuição de classe. Esse é o mais comum. Eh, o que eu acho também que é o mais perigoso, porque o número parece bom. Então, a gente vê muitas vezes, né, e uma vez até aconteceu durante um treinamento, né, o gestor me mostrou e falou: "Olha, a gente tem aqui um modelo com 94% de acurácia". E o time tava super orgulhoso. E aí quando a gente
+
+olha as distribuições de classes, olha, era para, nesse caso, era para triagem de saque. E quando a gente olha a distribuição de saque, então quantas reclamações existem em cada tipo de dado de treinamento, aí a gente percebe que uma uma das categorias tinha mais de 80% das ocorrências. Então o modelo ele tinha aprendido a mandar quase tudo para essa categoria majoritária, inclusive reclamações de clientes que tavam dizendo que achavam que a empresa devia fazer isso ou aquilo para resolver o problema. Nesse caso, a categoria majoritária era sugestão e tava tudo sendo classificado como sugestão. E aí o SAC acabava priorizando a fila de reclamação e a fila das outras categorias, como sugestões, etc., andava
+
+mais devagar. boa parte do que era locado lá, que era reclamação, ficava represado, os clientes ficavam sem respostas, mas era uma herança de um modelo mal classificado por causa dos dados de treinamento. Ninguém tinha percebido. Então isso tem um um nome simples que é classificador ingênuo e é o primeiro teste que normalmente a gente deve fazer antes de comemorar uma alta acurácia. É uma pergunta simples, é qual a distribuição das classes no dado que tanto no dado de treino quanto no dado de avaliação? Então se se tem uma
+
+classe, né, uma classificação que tá dominando, ali a gente teria quatro classificações e tá esquisito que poxa, né, uma tem muito mais participação do que a outra. Então ali a gente pode dizer que que existe algum que alguma inconsistência. a gente precisa olhar também outras medidas. Então, se usa muito e aí vamos pra lousa, se usa muito aqui a medida de acurácia, é, mas a gente a gente gosta também de olhar outras medidas eh que são aqui, por exemplo, F1, que é a a grosso médio, a grosso modo aqui, tá? eh, falsos positivos, falsos falsos negativos, verdadeiros positivos, verdadeiros negativos. Então, uma combinação de
+
+tudo. Eh, a gente gosta muito de olhar também eh aqui precision, recall, então, enfim, métricas que avaliam o o desempenho de cada classe de uma forma separada. A gente vai ver isso em detalhes no vídeo que eu vou fazer a seguir, então a gente não precisa mergulhar no detalhe agora, mas essas são algumas das métricas. Eh, e o que eu comentei ali, que é bom fazer o teste, é o classificador ingênuo, que é nave classifier, que é, de repente é muito estranho, por exemplo, que 80% dos dados de treinamento sejam de sugestão, porque isso não representa, né? Enfim, então é olhar o percentual de de cada classificação, tanto no dado de treinamento quanto na saída depois. Isso porque sempre pode
+
+ter, principalmente algoritmos que são atualizados, sempre pode ter eh um a gente chama de drift, né? um desalinhamento. Então, em cada categoria, o objetivo não é ter proporções iguais por cada categoria, mas é ter proporções coerentes com o que acontece na realidade. Erro dois, overfitting. Overfitting é o erro mais comum para quem trabalha com machine learning. Qualquer técnica que
+
+você for usar em machine learning, overfitting é um risco que é super ajuste. É quando o modelo ele aprende tão bem os dados do treinamento que ele perde a capacidade de generalizar. Então ele perde a capacidade de ler os dados novos. Eh, mais ou menos estudar, é igual estudar prova de concurso e muito bem nos simulados das provas de concurso que tem as questões que a gente estudou, mas chega na prova de verdade e a gente trava porque são outras questões. A gente decora as respostas daquelas questões específicas, a gente não aprendeu o conteúdo ou a teoria. É por
+
+aí. O modelo que tá com overfeitting, ele faz a mesma coisa. Ele decorou os dados de treinamento, ele não decorou o padrão, não decorou o conteúdo por trás. Na prática, isso aparece quando o modelo acaba tendo uma performance excelente quando a gente faz avaliação, mas acaba tendo uma performance muito fraca quando ele entra em produção com os dados de verdade. E a solução mais comum para isso é cross validation, validação cruzada. Eh, e mais comum, né, fazer
+
+five folds. Então, você divide seus dados em cinco partes, treina o modelo cinco vezes usando quatro partes, testando na quinta e aí você avalia a performance média. Se o modelo performa bem nas cinco rodadas, aí sim você tem muito mais confiança que ele aprendeu o padrão, não que ele decorou os dados. Ahã. Bom, a pergunta que resolve o overfeitting é: o modelo foi avaliado com dados que ele nunca viu durante o treinamento?
+
+Então, acho que isso ajuda muito a diminuir, né? Não tô dizendo nem só os mesmos dados, mas dados de um contexto, né? Um contexto lateral ali, né? Então, eh ele foi avaliado com dados, por exemplo, de de outra época, né? uma época um pouco mais distante para entender se ele tá muito preso a algo que é típico daquele conjunto em que ele foi treinado. Erro três. Parece óbvio
+
+quando a gente fala em voz alta, mas acontece muito mais do que deveria, que é o que eu mencionei ali em cima, usar ferramenta treinada em inglês para texto em português. Então, as mais usadas são Vader, Text Blob, eh, e elas são totalmente treinadas em texto em inglês. E quando você aplica para textos em português do Brasil, o modelo não vai reconhecer as expressões, então acaba não entendendo ironia, estilo e pode acabar eh sacrificando o resultado. E aí, como eu mencionei lá em cima, tem ferramentas em português, eu gosto de citar o Burting Bow, mas tem outras que são treinadas para resolver para para avaliar textos em português do Brasil, artigo de jornal, Wikipedia, enfim. E ele entende completamente o contexto da língua que a gente usa, né? Então, a pergunta que
+
+resolve é: em qual idioma, qual e qual tipo de texto o modelo foi treinado? Se a resposta não te deixar confortável, então você pode imaginar que o resultado vai ter ruído. Quarto erro, e a gente vai passar por todos eles aqui no final. Quarto erro é bem mais sutil, é mais difícil perceber, é o caso que a gente que a gente que a gente olha mais assim, é quando a equipe acaba usando um modelo de classificação supervisionada que precisa de categorias definidas, etc., para tentar descobrir temas não definidos.
+
+Eh, então ele acaba, né, mal definindo esses temas ou eh, enfim, ele acaba usando uma ferramenta errada pro tipo de pergunta. Então, é como se fosse pedir para um sistema de triagem de tickets, criar as categorias de triagem. Ele não foi feito para isso, ele foi feito para alocar em categorias. Eh, e aí para descobrir as categorias sem ter sem ter elas definidas, você precisa de um sistema que trabalhe com temas latentes, como a gente falou lá em cima. Então você vai passar o texto, o algoritmo ele vai encontrar os o os as categorias, os grupamentos por conta própria. E aqui a pergunta que a gente
+
+deve fazer sempre é: eu já sei o que eu tô procurando ou tô tentando descobrir o que existe? Se você não sabe o que vai encontrar, aí você precisa de um algoritmo que te ajude nessa nessa descoberta. Erro cinco também muito comum para qualquer coisa que a gente faça com machine learning, tiro de canhão. E isso é o que eu tento conter o máximo possível, que é um erro muito comum em empresas que querem investir muito, né? Elas estão sempre o tempo falando, olha, o tempo todo falando, não, não tem problema, tem orçamento, ah, cara, quero colocar o melhor e e por aí vai. E a intenção é
+
+boa, mas a gente usar uma ferramenta muito poderosa e passar a usar ela para tudo eh acaba sendo de um custo computacional que muitas vezes, a depender do volume que tá sendo tratado, é desnecessário. Então, por exemplo, o birt, né, que é o o modelo que eu mencionei sem um um birth ajustado, que a gente chama fine tuned, né? Ele é um modelo robusto, ele é versátil, ele vai ter um um custo muito alto. Então, para alguns problemas, ele pode ser a ferramenta certa, para outros ele pode ser, por exemplo, classificar ticket. Ele pode ser um modelo que não que não precisa ser usado, né?
+
+assim, ah, bom, classificar ticket de cliente, que normalmente tem é um texto curto, eh, as categorias estão super bem definidas ali, um modelo que a gente chama de TFDF, né, que ele calcula a frequência de palavras, ele poderia resolver com a mesma performance. Então, nem sempre o melhor, o mais caro ou mais avançado é a melhor solução. Talvez, inclusive, o modelo mais simples resolva com uma performance melhor. E bom, em geral, acho que as perguntas que a gente precisa ter, e aqui eu vou trazer, né, em resumo, são, né, em primeiro lugar, ah, a gente tá olhando, né, a gente tá olhando para a curácia e tá ou tá olhando paraa distribuição de classe e para outros resultados que a gente precisaria olhar. É, a gente tá correndo risco de ter feito overfitting, de ter super ajustado o modelo para ele decorar os dados de treinamento sem aprender de fato o que os dados estão querendo dizer.
+
+A ferramenta, ela foi treinada em inglês ou português? Nesse caso, faz sentido usar uma ferramenta treinada em inglês? é um problema que a gente precisa de muita nuance e muito contexto sobre palavras em português para para boa parte dos casos vai funcionar, tá gente? Assim, mas em casos, por exemplo, rede rede social, é o caso que a gente contou ali no começo do vídeo. Quarto, a ferramenta errada pro tipo de pergunta. Então, a gente tá usando uma
+
+ferramenta certa, a gente tá usando uma ferramenta para classificação quando a gente precisa de classificação ou uma ferramenta para compreensão quando a gente precisa de compreensão. E quinto, a gente tá usando um modelo muito pesado para um para um problema simples. Essas são as cinco ferramentas aqui. E antes de fechar, eu queria dar um um um framework aqui que resume boa parte do que a gente falou aqui agora, né, nesse nesse nesse vídeo. Vamos lá. Vamos fazer
+
+três perguntas. Primeiro, esse texto ele precisa ser compreendido ou precisa ser classificado? Então aqui é para definir, a gente tá falando de LLM ou machine learning, certo? E isso a gente já falou ali no começo. Segundo, as categorias já existem ou a gente tá tentando descobrir quais categorias são?
+
+E aí, terceiro, qual a distribuição das classes no meu dado? Então tem uma classe, uma uma das classificações que tá dominando, então a gente precisa pedir outros resultados. É aqui eu não vou explicar esses temas porque eu vou explicar no próximo vídeo, viu, gente? esse aqui, porque senão o vídeo ficaria muito longo. Mas eh a gente tem outras métricas de resultado que são importantes. E no caso de
+
+escolher ferramenta, entender se o tema precisa de interpretação, aí vale perguntar se eh vale a pena usar, por exemplo, o burting ball. OK? E aí eu traria também umas três perguntas aqui que a gente falou nesse finalzinho que são a gente tá aqui, né? É um problema simples, com categorias bem claras. a gente pode usar o modelo super simples, que é o o TFDF, que é de frequência de palavras, eh, e se a complexidade é justificada ou se a gente realmente precisa usar, pode usar uma ferramenta simples. Aí no próximo vídeo
+
+a gente vai entrar nas métricas de validação, né, essas F1 e precision, recall, esse esse essa forma de validação que eu mencionei. Então, tudo isso a gente vai falar no próximo vídeo para ver como a gente faz auditoria dos resultados para confirmar se os modelos estão entregando realmente o que eles prometem que que vão entregar, porque esse essa parte aqui, essas perguntas elas são o início, não são o fim, porque machine learning precisa ser muito bem pensado. E se esse vídeo foi útil, especialmente se você vai usar isso em alguma reunião ou se você conhece alguém que tá trabalhando com machine learning e precisa saber disso, recomenda, porque o canal é gratuito e ele cresce com a sua indicação. Então, se você tem uma equipe de dados e quer entender se as ferramentas que eles estão usando fazem sentido pros problemas de vocês ou se você quer saber pedir melhor eh para eles o que usar, pode dar uma olhada e eh acessar os outros vídeos do canal. Se você quer também conversar comigo pessoalmente, você pode falar com a Mica 6, o link da minha empresa tá ali no perfil do canal e você pode acessar a qualquer momento, mandar um e-mail pra gente. Se você ficou com alguma dúvida
+
+ou já viveu qualquer um desses cinco erros aqui, porque eu já fiz muito, principalmente o de usar ferramenta muito robusta para algo simples, comenta aqui embaixo, conta da sua experiência, porque a gente lê e responde. Um abraço e até a próxima. M.

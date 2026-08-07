@@ -1,0 +1,173 @@
+---
+video_title: "O Segredo da Netflix: Como prever o que o cliente quer mesmo sem dados | Aula 8 Matrix Completion"
+video_id: FD5q9_519JE
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FD5q9_519JE
+video_date: 2026-06-02T15:06:16+00:00
+video_description: |
+  Você já teve a sensação de que a Netflix, a Amazon ou o Spotify estão ouvindo as suas conversas? Eles te sugerem exatamente o que você quer consumir. Não é mágica, nem espionagem. É pura lógica matemática.
+  
+  Nesta aula do Estúdio 68, vamos dominar a Completude de Matrizes (Matrix Completion), sem usar uma única fórmula. Vamos entender a forma de pensar que permite que empresas adivinhem o que você quer, antes mesmo de você saber.
+  
+  O que você vai descobrir nesta aula:
+  O Paradoxo do Vazio: Como lidar com bancos de dados onde 99% das informações estão faltando porque o usuário tem "preguiça" de avaliar os produtos.
+  A Regra do "Low Rank" e o Fator Latente: Descubra por que o gosto humano não é aleatório e como o algoritmo quebra filmes e pessoas em "ingredientes invisíveis" para achar o seu clone perfeito.
+  O Problema do Arranque a Frio (Cold Start): O calcanhar de Aquiles do algoritmo. Como recomendar produtos para um usuário "fantasma" que acabou de criar a conta usando a "Fricção Intencional" e os Metadados.
+  Muito Além do Cinema: Como essa exata mesma lógica salva milhões de dólares consertando sensores quebrados em plataformas de petróleo e mapeando lacunas no DNA humano.
+  
+  ⏸️ Atenção: Quando o vídeo pedir para "Pausar e Pensar", faça isso. O algoritmo fará sentido dentro da sua cabeça antes de eu escrever o resultado na lousa.
+  
+  O que é o Estúdio 68?
+  
+  Uma iniciativa da Micah 6 IA para democratizar a ciência de dados avançada. Ensinamos lógica de negócios e arquitetura de evidências para profissionais do terceiro setor, saúde, educação e governo, substituindo o "tecniquês" por visão estratégica.
+  
+  🔗 Conheça a nossa iniciativa: https://www.seisoito.com
+  
+  00:00 A Mágica das Recomendações e o Problema da Matriz Vazia
+  02:16 Na Prática: Como a Nossa Intuição Roda o "Matrix Completion"
+  06:10 A Premissa do Algoritmo: Baixa Complexidade (Low Rank) e as Tribos de Usuários
+  00:11:52 - Fatores Latentes: Os ingredientes invisíveis
+  00:15:34 - Cruzando a "receita" do filme com o perfil do utilizador
+  00:18:40 - A falha do modelo (Cold Start) e a Fricção Intencional
+  00:22:18 - Resolvendo o Cold Start com Dados Auxiliares (Metadados)
+  00:25:24 - Aplicação real 1: Sensores em plataformas de petróleo
+  00:30:59 - Aplicação real 2: Mapeamento de DNA na medicina e Conclusão
+  32:00 Engenharia de Evidências: Por que a Lógica Importa Mais que a Matemática
+  
+  #Algoritmos #MatrixCompletion #DataScience #Netflix #Lideranca #Estudio68 #Micah6IA #CompletudedeMatrizes #AlgoritmodeRecomendação #NetflixAlgorithm #FatoresLatentes #ColdStart #CiênciadeDados
+---
+Olá, bem-vindos a mais uma aula e a gente vai falar hoje de Matrix Completion ou em outras palavras como as empresas leem a nossa mente. Então, para começo de conversa, pensa na última vez que você abriu a Netflix, a Amazon, Spotify e o aplicativo te sugeriu exatamente o que você tava com vontade de consumir. Parece mágica, mas não é. Tá, até parece que eles estão ouvindo as as nossas conversas. Em alguns casos até pode ser, mas é pura lógica. Na maior
+
+parte dos casos, a gente não vai decorar fórmulas. Como vocês já sabem, esse curso não é para isso. Esse curso é para entender a lógica. E a gente vai entender a forma de pensar que permite que as empresas de tecnologia adivinhem o que você quer antes mesmo de você saber. A gente vai falar de completude de matrizes, como eu já falei, Matrix Completion. E o nome parece complexo,
+
+vem lá da matemática, né? Quando a gente fala matriz, opa, aquela aula que eu odiei, mas o problema que esse nome resolve é um problema humano, que é o vazio, tá? Então imagina que você é cientista de dados num serviço de streaming, tá? Um concorrente da Netflix. E aí você tem milhões de usuários e 50.000 filmes no catálogo. Se
+
+você fosse cruzar todos os usuários com todos os filmes, você teria uma tabela gigante, uma matriz, né? Não é atriz, porque você tem rótulos ali nas linhas, né, que são os usuários, e você tem rótulos nas colunas, que são os filmes. Mas o problema do ser humano é que a gente é preguiçoso, né? O usuário médio vai assistir uma pequena parte do catálogo e vai avaliar menos ainda, né? Na vida real, se você olhar pra base de dados de uma Netflix, 99% dela vai estar vazio. É um buraco negro de dados que
+
+não existem, pontuado por, cara, uma nota ou outra que alguém teve a boa vontade de dar. O seu trabalho, pro algoritmo de recomendação funcionar é adivinhar os números que estão faltando. Mas como é que a gente vai fazer isso? Como é que a gente preenche esse vazio? Para entender como a máquina faz isso, a gente precisa entender como o seu cérebro faz isso. E aí eu vou desenhar
+
+uma matriz pra gente tangibilizar como isso acontece. Então aqui a gente tem uma matriz muito simples, certo? A gente tem aqui, né, os filmes, como eu falei, né, os rótulos da das colunas são os filmes, os rótulos das linhas são os usuários, certo? E aqui a gente tem a nota que cada usuário deu para um determinado filme, tá? Então pensa nessa matriz aqui como se fosse um sudoco, tá?
+
+A gente tem ali a Ana, o Bruno e o Carlos e a gente tem os três filmes, O Diabo Veste Prada, Velozes e Furiosos e Um Amor para Recordar. A Ana é uma usuária super engajada, ela avalia todos os filmes que ela vê, né? E ela avaliou esses três filmes aqui, né? dando cinco para o diabo e vest prada, quatro para velozes e furiosos e um para um amor a recordar. E o Bruno, né, ele achou o diabo vestiprada muito chato, né, ele deu dois para Velozes e Furiosos e deu cinco para um amor a recordar, né?
+
+Eh, o Bruno, ele é o completo oposto da Ana, tá? Agora vamos olhar o Carlos. O Carlos é um usuário novo, ele só avaliou dois filmes até agora. né? E ele assistiu, o diabo vai chi Prada e adorou, deu cinco estrelas e também assistiu um um amor para recordar e odiou, deu uma estrela. Então, nesse
+
+exato momento, o Carlos vai entrar no aplicativo e aí o seu algoritmo vai perguntar: "Eu devo recomendar Velozes e Furiosos pro Carlos?" Essa é a nossa primeira questão de hoje. Então, eu quero que você pause esse vídeo, olha pra matriz e me diz que nota você acha que o Carlos daria para Velózes e Furiosas. Eu tenho certeza absoluta que você pensou no número quatro. Agora, por que que você colocou um quatro aqui?
+
+Você não usou algora linear, você não calculou vetores, você não usou matemática, você usou intuição e lógica. O seu cérebro bateu o olho na tabela e fez o seguinte raciocínio: "Opa, pera aí. O Carlos gosta de explosão e odeia romance. A Ana também gosta de Ai, desculpa, o Carlos gosta de moda e odeia romance. Ana também gosta de moda e e odeia romance. Então o Carlos é quase
+
+que um clone da Ana, né? Se a Ana deu cinco para velos deu quatro para Veloses e Furiosas, o Carlos com certeza vai dar quatro também. Parabéns, seu cérebro acabou de rodar um algoritmo de Matrix Completion. Aqui tá o roteiro detalhado, palavra por palavra, tá? para você entender como rodar esse algoritmo.
+
+Então vocês, né, olhando para essa tabela com esse buraco, tá? Usaram a intuição e adivinharam que o Carlos daria essa nota quatro pro filme Velozes e Furiosos. Vocês acertaram. Mas a pergunta de 1 milhão de dólares, né, a pergunta que vale o salário de um cientista de dado sênor, não é qual é a nota que o Carlos daria para Velozes e Furiosos? É por tão fácil adivinhar.
+
+Pensa assim, Carlos é um ser humano complexo. A mente do Carlos é um universo como a sua, como a minha, como a de todo mundo que a gente conhece. Como é que você, olhando só para dois filmes que o Carlos viu, previu o comportamento dele com tanta certeza? Você conseguiu fazer isso porque secretamente você assumiu uma premissa sobre a humanidade. Você assumiu que o gosto humano não é 100% aleatório, né? Você
+
+assumiu que existem padrões, né? E é exatamente essa premissa que faz o algoritmo de Matrix Completion funcionar na vida real. com milhões de pessoas. Então eu vou pedir para vocês esquecerem agora a nossa tabelinha de três pessoas, tá? Eu vou tentar desenhar a matriz real da Netflix aqui.
+
+Então vamos lá. Aqui a gente vai ter 10 milhões de linhas, que são os usuários e 50.000 1000 colunas, que são os filmes. E como a gente viu, essa matriz vai est 99% vazia. Se cada um desses 10 milhões de usuários tivesse um gosto completamente único, talvez, né, caótico e totalmente diferente do resto do mundo, a gente nunca teria conseguido preencher aqueles vazios, né? Seria como tentar adivinhar
+
+a senha do Wi-Fi de cada um deles, assim, é impossível. Mas não é assim que o mundo funciona, né? Então vamos lá. Aqui quando a gente vai analisar essa matriz, né, a gente diz que essa matriz gigante, ela tem um posto baixo, tá? Ou um low rank.
+
+Então vamos lá. em eh quando, né, em português, claro, a gente vai falar dessa matriz, a gente diz que ela é gigante, mas a complexidade dela é minúscula, tá? É isso que significa low rank, tá? Então, significa baixa complexidade.
+
+E aí agora eu vou explicar porquê. Então, presta muita atenção. O algoritmo, ele não vai acreditar que existem 10 milhões de personalidades diferentes, tá? Ele vai entender que no fundo existem aí umas 50 ou 100 tribos, né? Então ele vai dizer aqui, opa, né? A gente tem aqui
+
+alguns perfis, né? E aí ele vai começar a segmentar dentro desses desses perfis, né? Alguns usuários. Então, colocar os usuários aqui, as personas.
+
+OK. Então vamos lá. A gente tem essa persona aqui que é fã de adrenalina. É a pessoa que gostou do Velozes e Furiosos, tá? E aí aqui é o grupo das pessoas que são fãs de adrenalina.
+
+Então aqui a gente vai ter esse grupo fange adrenalina, certo? Aqui tá o considera que nessa primeira coluna tá o nome de cada usuário. Nessa nesse segundo grupo, né, que aqui já é, por exemplo, um pouco, vamos colocar um pouco maior, a gente vai ter o a segunda persona, que é, por exemplo, deixa eu colocar aqui outra cor. que é, por exemplo, o romântico, a romântica, tá? Então, os românticos incuráveis, tá? Então, vamos colocar
+
+essa persona aqui, tá? E aí a gente vai ter um terceiro grupo que, por exemplo, pode ser ainda maior, que são, opa, quem adivinha aqui? Esse grupo aqui, não sei se é maior, mas faz bastante barulho. Isso aqui são os nerds de sci-fi, de ficção científica, né? Então aqui a gente vai colocar uma ter um terceiro grupo, né? E o que o algoritmo
+
+faz é exatamente isso. Ele comprime, tá? Ele olha pros poucos filmes que cada pessoa avaliou e ele não tenta ficar te comparando com os outros 10 milhões de usuários um por um. Ele tenta descobrir qual desses perfis, né? E aqui a gente vai desenhar perfis a matriz inteira, né? Então, considera que essa matriz ela
+
+ela é grande assim, né? Então, ela vai subindo, né? E aí o algoritmo ele exatamente tenta identificar de a qual dos perfis você pertence, qual das tribos você pertence, tá? Agora, como ele faz isso se ele não sabe, por exemplo, o que é um filme de ação ou um filme de romance, né? Ele não assiste os filmes.
+
+Então, é aqui que entra o conceito mais brilhante. dessa aula, tá? Que é o fator latente. Se você assistiu as aulas de PCA e de EFA, você já tá um pouco mais familiarizado com isso. Mas latente é uma palavra chique para escondido ou invisível, tá? A gente não precisa
+
+complicar muito isso. É o jeito matemático de falar que algo tá escondido ou tá invisível, tá? O algoritmo ele descobre que existem características invisíveis conectando as coisas, né? Então, por exemplo, vamos voltar pros desenhos. Vamos lá.
+
+Se a gente tiver o filme Matrix, já que a gente tá falando de matrizes, né, pro algoritmo de completude, né, de matrizes, o título não importa, tá? Ele não vai ler a Matrix é aquele filme que tem o Keano Reeves, não. Ele vai transformar esse filme numa receita de bolo, tá? Que vão ter alguns fatores latentes, os ingredientes invisíveis. E aí o que ele vai fazer?
+
+OK, né? Então ele vai puxar de matrix quais são alguns dos fatores. Vamos lá. Como que a gente vai fazer isso agora? Então, o algoritmo vai perceber pela matemática de quem assistiu que esse filme tem, por exemplo, olha, tiros e explosões, porque quem gosta de outros filmes de tiros e explosões, né, tá lá, ele para o algoritmo, isso aqui é fator latente.
+
+Ele não tá querendo saber o que que é. Mas assim, quando a gente olha esse fator latente, a gente vê todos os filmes que estão aqui, são todos os filmes que tem tiros e explosões, tá? Eh, ele vai olhar aqui dentro e vai falar assim: "Olha, também tem o fator latente B, que tem vários outros filmes aqui dentro. Aí quando a gente olha o fator latente B, né, aí a gente vê, opa, esse fator latente tem um monte de filme de ficção científica. Então nós humanos, a gente consegue entender o algoritmo vai classificar como na prática, na prática não é nem a b, né? Ele vai classificar
+
+como 1, 2, né? Então o algoritmo ele vai tá lá classificando e rankeando, tá? E aí ele vai dizer assim: "Olha aqui, tá? Ele pertence 80% a esse fator latente 1, pertence 90% a esse fator latente 2. E aí ele tem 0%, né? Não tem nada de
+
+parecido com o flator latente 3, que é, por exemplo, ã, comédia romântica. Quando a gente olha que é aqueleonde estão aqueles filmes do Adam Sandler, por exemplo. [roncando] Então o algoritmo ele faz a mesma coisa com Carlos, tá? Olhando as poucas notas do Carlos, ele percebe que a receita da alma do Carlos é mais ou menos essa. Olha, então ele vai olhar aqui e vai dizer, olha o Carlos aqui, ele
+
+ele vai ter, por exemplo, né, 80% de moda e comédia, que é o fator latente 4, né? Ele vai ter 0% do fator latente 5, que é romance, né? Comédia. É, é, é romance que eu coloquei ali em cima. Bom, ele vai ter ele vai ter ali 0% do fator relat romance porque ele deu, né, eh, 0%, deu uma nota um para um amor para recordar, né, e, né, ele vai arriscar que o Carlos vai ter ali, por exemplo, um, vamos colocar um 40% de um fator latente seis, né, que seria o, enfim, tiros e explosões, por exemplo, do Velozes e Furiosas, tá? Então, se a
+
+receita do quando a receita do filme bate, né, ela é semelhante à receita do usuário, né, aí sim o algoritmo preenche aquela célula vazia com cinco estrelas e aí joga o filme na capa do aplicativo do usuário, né, e recomenda o filme pro usuário. Então, vamos resumir, tá? A lógica do negócio, né, de matrix completion, ela é pegar uma matriz gigante, vazia, assumir que a complexidade dessa matriz é baixa. Então, olha, ela pode ter milhões de linhas, mas eu acho que dentro desses milhões de linhas eu consigo ter 50 padrões de perfis, né? E a gente precisa assumir que essa complexidade é baixa, porque a gente precisa quebrar os filmes e as pessoas em pequenos ingredientes invisíveis, que são os fatores latentes.
+
+E ao invés de cruzar milhões de pessoas com milhares de filmes, a gente precisa cruzar só esses ingredientes, né, esses fatores latentes, tá? E aí se demete, se der compatibilidade, né, e se der semelhança nos ingredientes do filme com a pessoa, aí sim o algoritmo prevê a nota. É como se fosse um sudoco de perfil psicológico. Tá fazendo sentido? Porque até agora eu espero que esteja, porque eu vou trazer uma péssima notícia para vocês, tá? Porque tudo isso que eu
+
+acabei de ensinar quebra, falha em um cenário muito específico, tá? Imagina que a gente tem um quarto usuário, a Diana, tá? A Diana acabou de baixar o aplicativo hoje, ela nunca deu nota para nada, a linha dela tá 100% vazia, tá? E aí, como o algoritmo vai descobrir os fatores latentes de alguém que não tem nada, nenhuma dica? E é aí que tem o problema que a gente chama de cold start, tá? Ou aquele
+
+arranque frio, sabe? O arranque frio do carro álcool. E é exatamente como a gente resolve esse pepino que a gente vai ver a partir de agora. Então vamos lá. A gente tinha a Ana, o Bruno e o Carlos e todos eles já tinham assistido pelo menos um ou dois filmes e eles nos deram algumas pistas do que eles gostam, do que eles não gostam, tá? Mas essa nova
+
+usuária, a Diana, acabou de baixar o aplicativo e aí a gente precisa prever o que a gente vai recomendar pra Diana. Como a gente faz isso? Vou ajustar aqui a matriz. Então, a linha da Diana aqui na matriz tá 100% vazia, certo? Ela só abriu aí a tela inicial do aplicativo.
+
+E aí a gente tem aqui uma sequência, opa, uma sequência de pontos de interrogação. O aplicativo ele precisa carregar a tela inicial da Diana em milissegundos. Eh, ela vai abrir e ele precisa recomendar alguma coisa. Qual é a receita da Diana? É ação, romance, terror? A gente não
+
+sabe. O algoritmo vai tentar multiplicar a receita do filme pelo histórico da Diana, mas o histórico dela é zero e qualquer coisa multiplicada por zero é zero, certo? Então o matrix completion vai falhar, ele vai quebrar, ele não funciona com fantasmas. Mas e agora? Se você fosse cientista de dados da Netflix, do Spotify, como que você ia resolver esse problema do arranque a frio, né? Como que você
+
+descobre o gosto de alguém que nunca interagiu com nada na sua plataforma? Pausa o seu vídeo agora e pensa como você, os aplicativos que você usa lidam com você no seu primeiro dia. A primeira vez que você abriu o Spotify, a primeira vez que você abriu a Netflix, a primeira vez que você abriu o Global Play. Pensa nisso. A verdade é que se você lembrou de como você criou sua conta no Spotify ou na Netflix, você já sabe a primeira solução, né, que é o que a gente chama de fricção intencional, né? Então vamos
+
+lá. Aqui
+
+as empresas elas não deixam você simplesmente entrar no aplicativo. Elas colocam uma tela na sua frente e dizem: "Ecolha três filmes que você ama ou escolha cinco, cinco artistas que você escuta", né? Como cientista de dados, a gente cria um pedágio, tá? Você não passa dali sem me dar pelo menos mais um dado sobre você. No momento em que a Diana clica em três filmes, a linha dela deixa de ser zero, tá? O Matrix
+
+Completion ressuscita e começa a rodar pro perfil dela. O motor liga, tá? A segunda solução, tá? São os dados auxiliares ou metadados. Mas e se for um e-commerce que não pode colocar essa tela de pedágio para não perder a venda, né? Isso a gente vê
+
+muito, os mega e-commerces, né? Eles apelam pros dados auxiliares. A gente não sabe nada sobre os filmes que a Diana gosta, mas a gente sabe que ela baixou o aplicativo em São Paulo. A gente sabe que o celular dela é um iPhone de última geração. A gente sabe que ela tá conectada num Wi-Fi e não no 3G ou no 5G. A gente sabe que o iPhone
+
+dela tá com o último software instalado. A gente sabe que ela tá usando Safari e não o Chrome, ou então Chrome e não o Safari, tá? A gente sabe que ela tem 25 anos, sabe que ela clicou num anúncio do Instagram que tinha uma foto de uma explosão ou que tinha um carro de luxo. Então o que que o algoritmo faz? Ele vai procurar na matriz os outros usuários de São Paulo de 25 anos, com iPhonia, tá?
+
+Tudo isso o seu browser passa para pro e-commerce, tá? Eh, a maior parte dos aplicativos que a gente acessa hoje online, eles, né, capturam só o browser, não só o sistema operacional, não só o dispositivo, mas idioma do dispositivo, né? Então, poxa, é uma pessoa que tá em São Paulo, eh, mas tá com dispositivo em inglês ou em espanhol ou francês, né? Enfim, ele captura tudo, né? E aí ele vai buscar pessoas com o mesmo perfil, né? Então,
+
+pessoas que têm esse mesmo contexto, poxa, tem o mesmo dispositivo, a mesma idade, a mesma localização, né? E aí ele vai entender o que essas pessoas, né, consomem, né? Então vai assumir que você tem fatores latentes parecidos, né? E vai usar a média dessa dessa turma para dar a primeira recomendação pra Diana, tá? É como se fosse um chute educado, né? Eh,
+
+e aí, né? a gente tem um um aprendizado bom, né, que é uma lição gigantesca para quem trabalha com dados, tá? Você nunca pode confiar em uma só ferramenta, tá? Porque o Matrix Completion é um motor Ferrari, tá? Mas ele precisa de combustível, ele precisa de interações prévias. Quando falta combustível, você
+
+precisa de um motor reserva, que são essas regras de negócios e dados de contexto. Agora que você entendeu o, enfim, o brilho e a falha desse modelo em filme, música, aí sim você pode dar o próximo passo, tá? Essa técnica é na verdade uma das ferramentas de recuperação de informação mais poderosas que existem, tá? E ela é usada para salvar milhões de dólares e até vidas. a gente vai ver hoje em situações onde a perda de dados não é por preguiça do usuário, mas muitas vezes por falha física ou limitação tecnológica. Então,
+
+para provar isso, tá? A gente vai sair do Hollywood ano Netflix, tá? E a gente vai pro meio do oceano. Então, vamos lá. Eu quero que vocês imaginem uma plataforma de extração de petróleo em Altoar, tá? Essa plataforma tem
+
+milhares de sensores espalhados pelos canos, máquinas, e esses sensores eles estão medindo pressão, temperatura, vibração, tá? Então é um cenário, opa, achar uma parte em branco aqui. É um cenário aqui onde a gente tem uma linha do tempo que tá o tempo todo aqui constantemente, tá? aqui coletando dados por meio de sensores, né? E aí a gente vai ter aqui diversos sensores, né? Sensor um, sensor dois, sensor três
+
+e a gente vai ter diversas horas. Então, a gente vai ter aqui meia-noite, 1 da manhã. Deixa eu Aí a gente vai ter 2 da manhã, 3 da manhã, 4 da manhã e por aí vai, certo? Então, e é aí, tá? E aí a gente não vai ter mais Ana, Bruno, Carlos, tá? a gente
+
+vai ter sensor um, sensor dois e sensor três. Então esse aqui tá medindo, por exemplo, tá a temperatura. Esse aqui tá medindo a vibração. E esse aqui tá medindo o consumo seja de energia, combustível, né? Enfim, cada sensor tá medindo uma coisa, né? São milhares de
+
+sensores aqui. E aí as nossas colunas, elas não são filmes, né? Elas são as horas do dia. E aí essa plataforma de petróleo, ela gera terabytes de dados por minuto, né? A gente fala os dados hiperfrequentes, né? E aí no meio de uma
+
+tempestade, o cabo de comunicação do sensor dois, ele teve uma interferência. Então aqui a gente teve um problema no sensor do dois numa tempestade que aconteceu às 3 da manhã, tá?
+
+E aí o sensor dois ficou mudo e ele passou mudo, passou a ficar mudo a partir de então, até que a tempestade passou e o engenheiro conseguiu consertar. Mas a gente vai ter um buraco negro nos dados, né? E o engenheiro ele precisa saber, poxa, a pressão subiu perigosamente naquela hora ou tava tudo bem, né? A temperatura no caso, né? Eh, a gente não pode mandar alguém lá fora no meio da tempestade para checar. E o
+
+que que a gente faz? A gente usa o mesmo algoritmo da Netflix, o Matrix Completion, né? Então você para e pensa quem são os fatores latentes aqui, tá? O que que vai ser nesse caso? né? A gente
+
+tá falando de algo diferente do da Netflix e do Spotify. O que que é a tribo ou perfil quando a gente tá falando de sensores em uma plataforma de petróleo, aqui as coisas estão conectadas, né? Então a gente tá tratando sensores que estão medindo questões físicas, né? Questões geográficas, né? Geológicas.
+
+Então a pressão ela conversa com a temperatura, né? E se a pressão altera, [limpando a garganta] a temperatura também altera. Se a temperatura sobe ou desce, o consumo pode aumentar ou diminuir, né? Então existe uma certa tribo de sensores que operam juntos, tá? O algoritmo ele vai olhar pro passado do sensor dois e vai perceber que ele é um clone, por exemplo, né? Ou o contrário,
+
+né? Ele vai perceber que o sensor três, que é o consumo, é um clone do sensor dois. que é a temperatura. Toda vez que a temperatura altera, o consumo de energia também altera. E aí eles vão compartilhar um fator latente, né? Seja,
+
+poxa, né? Eles medem ali, né? O consumo de energia, ele é ele ele é aumentado por precisar de resfriamento, por exemplo, né? Então os dois, né, conversam com o processo resfriamento. Então a mesma coisa poderia acontecer se, por exemplo, dois sensores estivessem no mesmo compartimento, né, por aí vai. Então se no às 3 da manhã,
+
+né, o sensor de consumo aumentou, a gente pode entender que o sensor de temperatura também teria aumentado, por exemplo, tá? E aí o Matrix Completion acaba de consertar um hardware quebrado usando apenas software e lógica. Óbvio, né, que aqui isso significa muito tempo e muitos dados e muito estudo de engenharia, mas a ideia tá coberta, tá? Então agora a gente pode ir um pouco mais longe, tá? Vamos pra medicina, por exemplo, tá? Ao invés de usuários de
+
+filmes, eu quero que vocês imaginem pacientes nas linhas e genes na nas colunas, tá? Então vamos colocar aqui. Então aqui a gente tá falando de genes e aqui a gente tá fazendo paciente um, paciente dois e paciente três. Se a gente tentar mapear o DNA inteiro de uma pessoa, a gente vai gastar uma fortuna. Então o que os laboratórios muitas vezes mapeiam, tá, é apenas um ou outro pedaço.
+
+A matriz do genoma humano, ela fica cheia de buracos, tá? Os genes, eles não sofrem uma mutação de forma 100% aleatória. Eles têm fatores latentes, alguns traços evolutivos que andam juntos uns com os outros, tá? Então, os cientistas eles usam o Matrix Completion para inferir, para prever e para preencher com alta precisão os genes que não foram testados. E eles olham pro padrão global dos outros pacientes e entendem qual, né, qual é o gene que os demais pacientes poderiam ter ou não.
+
+E é por isso que eu bato tanto na tecla de que vocês não devem decorar a matemática antes de entender a lógica, tá? Quando você decora uma fórmula, tá? Você aprende a apertar um botão no Python. Então, quando você entende a lógica, que é, né, a gente encontrando gêmeos invisíveis, né, no fim das contas você tá se libertando, você tá conseguindo aplicar uma mesma ferramenta para recomendar um tênis, para consertar um sensor, para otimizar um estoque ou para ler um DNA. O mundo real, ele é uma matriz caótica, cheia de dados faltando. E a partir de
+
+hoje, tá, o seu trabalho não é mais olhar paraas células preenchidas, mas é olhar pro vazio, tá? para entender que a complexidade por trás do vazio é baixa. E aí você precisa aprender a usar os padrões ao redor para enxergar o que ninguém mais tá vendo. Esse é o verdadeiro trabalho do engenheiro de evidências, tá? Porque o engenheiro de evidências consegue trabalhar quando não há dados. Eu agradeço a atenção de
+
+vocês. Espero que vocês tenham se divertido nessa aula e revejam os desenhos, tentem explicar as matrizes eh para algum colega de vocês amanhã, tá? Se você ainda não seguiu, siga aqui para ver os próximos vídeos, para ficar sabendo dos nossos próximos cursos e a gente se vê na próxima aula. Um abraço.

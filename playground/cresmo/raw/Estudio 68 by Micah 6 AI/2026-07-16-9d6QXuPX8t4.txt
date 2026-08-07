@@ -1,0 +1,146 @@
+---
+video_title: "A IA vai ficar mais barata: 4 papers dessa semana provam isso. O que muda para quem decide?"
+video_id: 9d6QXuPX8t4
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9d6QXuPX8t4
+video_date: 2026-07-16T11:42:36+00:00
+video_description: |
+  Todo mundo fala do preço dos chips de IA. Quase ninguém reparou que quatro laboratórios (Google, DeepSeek, NVIDIA e Tencent) publicaram no mesmo mês papers que apontam para a mesma direção: fazer a mesma inteligência artificial custar uma fração, extraindo mais de cada chip em vez de empilhar mais GPU.
+  
+  Neste vídeo eu explico, sem exigir que você saiba programar, o que é compute, o que é token, e por que a fronteira da IA deixou de ser "quem tem o modelo maior" e virou "quem entrega a mesma capacidade com menos compute".
+  
+  O QUE VOCÊ VAI ENTENDER
+  • O que é um token: a unidade básica que um modelo de linguagem processa, cerca de 3/4 de uma palavra.
+  • O que é compute: a quantidade de cálculo necessária para gerar uma resposta.
+  • Mixture of Experts (Gemma 4, Google DeepMind): ativar só uma fração do modelo por token.
+  • Speculative decoding (DSpark, DeepSeek): um modelo pequeno adivinha, o grande confere — 60 a 85% mais rápido.
+  • Modelos de difusão (Nemotron-Labs-Diffusion, NVIDIA): gerar texto em paralelo em vez de palavra por palavra.
+  • Contexto longo (HiLS-Attention, Tencent): ler documentos inteiros sem a conta explodir.
+  • As 3 perguntas de decisão para levar à próxima reunião de tecnologia.
+  
+  Apresentado por Maria Alice Maia: cientista de dados pela UC Berkeley, doutoranda e pesquisadora em comportamento de uso de IA na FGV EBAPE, fundadora do Estúdio 68 e da Micah 6 AI. micah6ai.com
+  
+  FONTES:
+  Gemma 4 Technical Report (Google DeepMind, arXiv:2607.02770); DSpark (DeepSeek, arXiv:2607.05147); Nemotron-Labs-Diffusion (NVIDIA, arXiv:2607.05722); HiLS-Attention (Tencent, arXiv:2607.02980). Julho de 2026.
+  Gemma Team, Google DeepMind. "Gemma 4 Technical Report." arXiv preprint arXiv:2607.02770, July 2, 2026.
+  Cheng, Xin, Xingkai Yu, Chenze Shao, et al. "DSpark: Confidence-Scheduled Speculative Decoding with Semi-Autoregressive Generation." arXiv preprint arXiv:2607.05147, July 6, 2026.
+  NVIDIA. "Nemotron-Labs-Diffusion: A Tri-Mode Language Model Unifying Autoregressive, Diffusion, and Self-Speculation Decoding." arXiv preprint arXiv:2607.05722, July 8, 2026.
+  Hu, Xiang, Xinyu Wei, Hao Gu, et al. "HiLS-Attention" (long-context extrapolation). Tencent HY Team. arXiv preprint arXiv:2607.02980, July 2026.
+  
+  PERGUNTAS FREQUENTES
+  P: A IA vai ficar mais barata? R: A tendência aponta para queda no custo por token, porque a indústria passou a otimizar compute por token em vez de só aumentar o tamanho do modelo.
+  P: Isso significa menos chips? R: Não necessariamente. Os avanços extraem mais de cada chip; a demanda total pode até subir (paradoxo de Jevons).
+  P: O que é compute por token? R: É a quantidade de cálculo gasta para processar cada token; reduzi-lo barateia a IA sem trocar o modelo.
+  
+  Chapters:
+  00:00:00 — A convergência dos quatro laboratórios e o open loop
+  00:01:21 — Apresentação e convite
+  00:02:10 — O que é token e o que é compute (a barreira real)
+  00:05:27 — Gemma 4 e Mixture of Experts: mais IA por chip
+  00:08:48 — DSpark e Speculative Decoding: mais rápido no mesmo chip
+  00:12:40 — Nemotron Diffusion e a difusão: o item de vanguarda
+  00:17:49 — Hierarchical Sparse Attention e contexto longo
+  00:20:00 — A convergência e as 3 coisas que mudam para quem decide
+  00:23:10 — As 3 perguntas de decisão de orçamento e fechamento
+---
+Todo mundo fala de chip quando fala de inteligência artificial. A Nvidia vale trilhões, tem briga por GPU, país falando que quer ser diada ira center. Enquanto isso, quatro laboratórios diferentes lançaram essa semana e na anterior uns papers que vão numa direção um pouquinho diferente. Google, Deepsic, Nvidia e Tcent. Todos eles apontaram para essa direção e quase ninguém conectou esses quatro papers. Cada um
+
+resolveu um pedaço do mesmo problema, como fazer a inteligência artificial custar menos do que custa hoje, não com um chip mais caro, mas com menos esforço de processamento por resposta. Então, se os quatro papers estiverem certos e, né, muito provavelmente tão, porque são tecnologias que vêm sido discutidas teoricamente há muito tempo, é a barreira que hoje, né, segura a inteligência artificial vai deixar de ser quem tem o maior modelo e vai passar a ser outra coisa completamente diferente. E isso muda três decisões que você provavelmente vai tomar nos próximos 12 meses. E as três perguntas que você precisa fazer vão ficar no fim do vídeo. Então, se você decide o orçamento de inteligência artificial, essas perguntas valem mais do que o vídeo inteiro, tá? Mas para você
+
+enxergar esses quatro papers, a gente precisa começar explicando do que eles falam. Eu sou Maria Alice Maia, eu sou cientista de dados pela Ils Berkley em Califórnia. Eu sou doutoranda em inteligência artificial, comportamento de uso de inteligência artificial, governança de inteligência artificial na FGV. Eh, e sou fundadora do estúdio 68 e da Mica 6, inteligência artificial. Aqui o canal é gratuito, se você já tá familiarizado, sabe que tem conteúdo novo toda semana, muitas vezes mais de um conteúdo, normalmente sobre inteligência artificial e dados. E a
+
+gente tira o hype, a gente tira a matemática, a gente tira o alarmismo e a gente traz o que realmente importa, tá? Então, se você ainda não segue a gente, se inscreve ali embaixo e se você conhece alguém que tá aprovando o orçamento de inteligência artificial, compartilha esse vídeo porque pode ser muito útil, tá? Faz isso agora, antes de você esquecer. E agora dois termos. Se você já segue o canal, você já tá familiarizado com isso, mas se você já sabe eles, aguenta 30 segundos, porque a gente precisa ligar os dois para quem não tá. Então, quando você escreve para
+
+humear, ela não lê palavra a palavra, mas ela quebra o texto em pedaços. A palavra inteligência, por exemplo, pode virar três pedaços. Cada pedaços desses é o que a gente chama de token. E então o token é aquela unidade básica, né, que um modelo de linguagem processa, né? A gente tem metro, a gente tem mililitro, né? Então, a gente tem o token para ir
+
+mais ou menos em português, três 3/4 de uma palavra, tá? Isso pode variar. Eh, em inglês pode ser eh em e é os modelos são treinados, né, para fazer a divisão de tokens em inglês, na maioria dos casos. Então agora cada token desse que entra, né, e cada token que sai, ele precisa de uma conta, de uma previsão matemática, né, para ser analisada. E os modelos que a gente conhece hoje, eles analisam os tokens não só isolados, mas os tokens juntos, né? Então, o exemplo clássico é, se a
+
+gente fala banco de areia, é diferente de falar banco central, né? Então, toda essa multiplicação, toda essa conta que é feita para entender o que que aquele tokens, né, significa, vamos falar assim, né, isso é repetido milhares de vezes para cada token. E esse trabalho de fazer essa conta, né, esse processamento, a gente normalmente chama de compute, tá bom? Então, compute é essa quantidade de processamento de cálculo necessária para gerar uma resposta, tá bom? é o trabalho que a GPU, né, a unidade de processamento gráfico, ela executa. E aí
+
+a gente junta os dois, tá? Então, cada resposta custa um tanto de compute por token. Modelo maior, cada token custa mais comput. Foi assim que a indústria cresceu, né? Então, [roncando] é muito comum a gente falar: "Poxa, o Cloud ele gasta muito mais tokens do que eh outros modelos, por exemplo, né? Porque são
+
+modelos maiores, etc. Eh, então modelo maior, mais compute, mais chiper e, óbvio, um custo maior. E aqui é o que a gente vai trazer de contradição para esse vídeo, porque a indústria, né, ao longo dos últimos anos assumiu que ficar melhor era a mesma coisa que ficar maior. Então, um modelo maior sempre significou um modelo mais caro. E o que esses quatro papers eles fazem é atacar exatamente essa premissa.
+
+Eles não perguntam como fazer um modelo maior, mas eles perguntam como eu faço a mesma resposta gastando menos compute por token. E é por aí, tá bom? Então, a fronteira da ela deixa de ser o tamanho da do modelo e passa a ser eficiência de comput, a mesma capacidade com menos cálculo. Tá bom? Então, antes de continuar, vamos lá. Você sabe quanto
+
+custa em compute uma única resposta do assistente de inteligência artificial que você usa? Então, segura essa pergunta porque isso é importante. Então, primeiro caminho, vamos lá, são quatro caminhos para resolver o mesmo problema. Primeiro caminho, a gente vai ter o Google Deep Mind, tá? Aqui com o Gema. Aí eles usam um modelo que já
+
+existe há bastante tempo, tá? que é mixture of experts. Eh, e eles usam isso para viabilizar um modelo que rode em celulares, tá bom? Eh, então imagina que para responder qualquer coisa você tem que acordar o cérebro inteiro. Você abriu os olhos, aí você tem que ativar a parte do seu cérebro que faz conta matemática, que toca instrumento musical, tudo, tá? Isso é a IA
+
+tradicional. Agora imagina que você, né, você fazendo isso estaria desesperado, provavelmente com exausto antes de sair da cama e porque é um desperdício de energia. E é mais ou menos isso que o modelo tradicional faz. Mas o mixture of experts, né, ele ele é como se ele ativasse para cada token só as especialidades que interessam. Então, uma pergunta de matemática, corda o pedaço de matemática, tá? O que muda
+
+aqui, tá? é que, né, a a Google mostra que usando o mixture of experts, eles conseguem gerar um modelo, né, com muito menos capacidade necessária. Então eles colocam isso na prática, eles estão provando que esse modelo funciona ali, né, e conseguem de fato eh fazer isso isso funcionar. Esse mixture of expert já é usado em outros modelos, principalmente numa técnica que a gente chama ra, que é para ler PDF, né? Mas aqui ele tá ali, né? A gente tá falando
+
+que essa esses modelos eles são estão sendo essas tecnologias entre aspas, estão saindo do teórico e indo pro prático e em volume e velocidade muito rápido, né? A gente tá falando quatro empresas falando todas de vamos processar mais com menos, tá bom? Então, mixture of experts é o que você precisa saber. né? É essa arquitetura em que de só ativa aquele especialista naquela tarefa, certo? E aí você consegue
+
+reduzir compute sem reduzir a capacidade do modelo. Então, na prática, esse modelo ele tem 26 bilhões de parâmetros, o Gema 4, mas ele só ativa 4 bilhões por vez, tá? >> [roncando] >> Então, é isso o que eles falam aqui, tá bom? [roncando] Eh, então você tem a competência do modelo grande, mas você paga, né, muito mais, você compil, né, muito mais próximo do custo de um pequeno, tá bom? O, e esse mesmo paper, ele ainda fala que dá para cortar em mais de 1/3 a memória que o modelo precisa guardar durante a conversa, que também é um problema, né? Então, para
+
+quem usa o clouds, por exemplo, sabe que ele fica o tempo todo compactando a memória, né? [roncando] Então, quando você quando ele fala isso, ele mostra que a gente consegue fazer mais conversas rodarem no mesmo chip. Então, traduzindo, pro que importa, mais inteligência artificial por chip. E pensa, presta bem atenção que eu não tô dizendo que a gente vai precisar de menos chip, eu tô dizendo que é mais inteligência artificial por chip. Essa diferença ela é importante, tá bom?
+
+>> [roncando] >> Então, esse foi o primeiro caminho, que é mexer na arquitetura do modelo. E aí o segundo caminho, ele não mexe no modelo, ele mexe no jeito do modelo falar. E é um pouco contrainttuitivo, mas é um paper da Deepsek, eh, é chamado de Spark, deixa eu trazer aqui. E ele ele assim, ele basicamente fala do jeito que a IA escreve, né? Então, a inteligência artificial escreve como se fosse catando milho, o famoso catando milho no teclado. É palavra a palavra. É como,
+
+né, como se você tivesse digitando só com com um dedo. Então você tem que esperar a palavra anterior ficar pronta para falar da próxima para escrever a próxima palavra. E aí o dia spark, ele tem um truque rápido que aí ele pega um modelo pequeno para eh prever qual é a próxima palavra que o modelo grande vai usar. E aí o modelo pequeno já deixa as palavras prontas e o modelo grande só tem que olhar e aceitar. Então ele não é como se ele não tivesse que digitar, tá gente?
+
+Aqui é tudo analogia, pelo amor de Deus. Quem é muito técnico não me mata com essas analogias, mas é para simplificar o conceito mesmo, tá? Eh, então é como se o modelo grande só precisasse, né, olhar, aceitar ou rejeitar a palavra que foi prevista pelo modelo pequeno. Então, quando o chute tá certo e na maior parte das vezes vai tá, ele aceita várias palavras de uma vez e aí não precisa fazer a conta. E modelo grande, como a gente sabe, gasta mais comput, o pequeno gasta menos. Então, é como se fosse um
+
+modelo pequeno que fica chutando rápido e um grande que é, ao invés de você falar para ele prever a próxima palavra, você só tá falando confere, né? O que faz, o que é muito mais simples. [roncando] Então aqui, né, o que a gente chama de speculative decoding, eh, isso já existe, né? A gente tem vídeo aqui no canal, inclusive falando de esse modelo especulativo. É uma forma de fazer também, né? Eh, é, é uma forma de fazer
+
+também com a gente faz com com R, né? Então, de novo, né? A gente traz ali, eh, a gente traz ali modelo pequeno que lê um arquivo em PDF e aí o grande só só confere o que o que os pequenos fizeram lendo todos os grandes arquivos, né? Então, quando você tem muita fonte para ser usada, então essa tecnologia já existia. O que ela tá fazendo aqui, né?
+
+E o grande avanço é que ela tá sendo usada para melhorar a forma, né, e a velocidade e a quantidade de computa, tá bom? Eh, então o, em resumo, o speculative decoding ele acelera a geração, né, de palavras usando o modelo pequeno para propor os tokens e o modelo grande ele só verifica aceitando várias de, né, de uma só vez e aí reduzindo eh o custo de computer. E aqui vale, né, [limpando a garganta] a gente lembrar que essa ideia de novo, não é de agora, tá? É uma ideia de, se eu não me engano, deve ter uns 2, 3 anos, 2000 e provavelmente 2023. E e o que ele faz aqui é fazer isso funcionar em produção com muita gente ao mesmo tempo, tá?
+
+Então a gente tá falando de ideias que estão saindo do teórico, saindo do experimental e indo pra prática, tá? E aqui o o importante desse paper é ele fazer cada assim para cada usuário, ele tá acelerando entre 60 e 85% a resposta. Então é quase que reduzir pela metade, tá? 60 a 85% mais rápido no mesmo hardware e sem trocar de modelo. Então a conta ela cai e o usuário, né, para ele isso é invisível, tá bom? E aí,
+
+esse é o pedaço do vídeo que eu acho ainda mais bacana de mostrar, porque esses dois modelos que a gente mostrou, né, eles otimizam o jeito atual de fazer, mas o terceiro ele troca o jeito que é feito, tá? E eu acho que esse terceiro paper, ele é o mais próximo de mudar o jogo de verdade. Deixa eu abrir aqui, tá? É um paper da Nvidia. Ele lança um modelo chamado Nemotron Labs Diffusion, né? Então, deixa eu
+
+trazer a palavrinha aqui, né? As palavrinhas para vocês. E o que ele fala, né? Pensa, sabe aquela imagem que eu falei, né? De ficar catando milho ali no teclado. Então, todo modelo que você
+
+conhece, chattem, enfim, ele vai escrever da direita, da esquerda pra direita, um token de cada vez, né? E é o que a gente chama de autorregressiva, significa que cada palavra depende da anterior em uma ordem específica, tá bom? Então aqui, né, agora a Nvidia ela traz um novo jeito, né, e ele fala, imagina um jeito diferente de de de escrever, digamos assim, né? ao invés de ser palavra a palavra, ele começa com uma frase embaçada, borrada, e aí ele vai desembaçando essa frase. É mais ou menos da forma como a gente pensa, né? A gente
+
+não pensa palavra a palavra, a gente pensa o que a gente quer dizer. Então, olha, eu queria falar pra pessoa que ela tá eh, enfim, que que ela tá atrasada, né? Então, eu penso nisso e aí eu vou lá e construo a frase depois. Olha, se eu falar se ela tá atrasada, ela vai talvez reagir dessa forma. Tem que, ah, poxa, aconteceu alguma coisa, então talvez é melhor começar com uma pergunta. Então,
+
+é meio que como se fosse isso, né? A gente pensa no que a gente, na nossa intenção e depois é, né, que de novo a gente aqui é analogia, tá? E aí depois a gente vai traduzindo isso em palavras específicas, tá bom? Como se fosse uma foto revelando, tá? Tem ali o negativo, né? Para quem é da época de negativo,
+
+como eu, tá ali o negativo. E aí a foto aparece aos poucos, né? Ela não aparece da esquerda pra direita, mas ela vai desembaçando ali para cair no papel fotográfico, tá bom? Esse jeito ele chama difusão, eh, né, aqui, né, que traz aqui difusão e é a o mesmo jeito que os geradores de imagem fazem, tá bom? E é a primeira vez, né, ou se não é a primeira, mas é a primeira vez que um modelo prático, né, implementado, saindo do experimental, traz esse jeito paraa geração de texto, tá bom?
+
+Então aqui o que a gente precisa entender é que o modelo de difusão ele gera texto refinando uma frase inteira, né? Uma sequência inteira, vamos falar assim, não necessariamente uma frase, mas uma sequência de tokens em paralelo. Então, ao invés, né? Então, ao invés de ser sequencial, é paralelo. Então, tudo isso acelera, né? Isso é gigantesco, porque quando a
+
+gente pensa em escrever em paralelo é muito mais rápido do que escrever palavra por palavra sequencial, tá bom? Então esse paper da Nvidia, ele mostra que esse modelo ele gera seis vezes mais token por passada do que o modelo autorregressiva, que é o que a gente usa hoje, tá bom? Então não é só Nvidia apostando hoje, tá? Então eu falei, é a primeira vez que isso é visto em escala de uma forma prática tão clara e com benefício tão claro ali, pragmático e prático, mas o Google já mostrou, né, o Gemini Fusion tem a Inception que lançou Mercury Byte Dance. Então assim, todos esses, né, passaram de 1000 tokens por segundo, que é muito, tá bom? Eh, então quando a
+
+gente vê quatro, cinco laboratórios grandes assim correndo para colocar, né, eh correndo para colocar mais compil, né, eh, para colocar menos compil, desculpem, menos processamento, né, por atividade. Então, a gente entende que aquilo não é experimento, a gente entende que isso não é isolado e a gente entende que aqui é um movimento da indústria, né? Ao invés de querer eh modelos maiores, a gente quer modelos mais leves, digamos assim, que processem mais com menos, tá bom? Que processem eh mais inteligência artificial, digamos assim, com menos eh com menos chip, tá bom? Então, [roncando] para ser bem justa, tá? Eh, difusão, que
+
+é esse paper da Nvidia, tá? ele ainda pede um pouco para, principalmente em tarefas de raciocínio. Eh, esse paper ele é muito transparente para isso, né? Então, o autor regressivo ainda tem vantagens. Eh, mas é um uma direção clara, né? a gente tá vendo a velocidade
+
+com que isso tá mudando. Então, e aqui, eh, para finalizar, acho que tem um caminho também, um quarto caminho aqui, né, que é o datcent, eh, que eu vou passar bem rápido, mas é o hierarchical esparsy attention, atenção esparsa hierárquica, tá bom? Então você já deve ter visto que quando a gente joga um documento muito grande na inteligência artificial, ela lê o começo e aí ela esquece o resto, né? Isso é o que a gente chama de custo de contexto, tá? E a gente fala que é o ela fica perdida no meio, lost in the middle, eh porque, né, quanto mais texto de uma única vez, mais caro, mais difícil pro modelo, tá? E o que a Tenent
+
+fala, né, é que tem um jeito de treinar o modelo com textos curtos e mesmo assim ele performar melhor em textos longos, tá bom? Diferente do que ele viu no treino e isso sem custo explodir. Então o hierarchical sparse attention, ele faz com que esse modelo processe contextos mais longos, tá? Do que ele viu no treinamento, tá? sem sem precisar a eh de um alto custo de computos.
+
+Então, na prática, uma inteligência artificial consegue ler contrato inteiro, consegue ler processo inteiro, né? Aquelas 400, 500, 100 e 200, 8.000 folhas de processos, base de conhecimento, né? Tudo isso sem um custo proibitivo como a gente tá familiarizado. Então agora vamos, o importante, né, do vídeo, juntar os quatro, tá? a gente tem arquitetura, que
+
+são os primeiros dois modelos, né? Eles mexem com a arquitetura ali, né? Para ligar só o a parte que precisa, né? Para conseguir eh para para conseguir ter deixar modelos menores fazerem uma coisa, enquanto o maior faz a tarefa faz uma tarefa mais simples, né? Então a gente tá mexendo com arquitetura. Do
+
+outro lado, a gente mexe, né, com decodificação, né? eh, né? A gente trabalha com geração em paralelo ao invés de sequencial, né? E a gente tem o contexto longo que, né, não explode a conta do computer. Então, o que a gente precisa saber é julho de 2026, a gente tá falando de quatro grandes laboratórios na mesma semana, atacando o mesmo objetivo, tá bom? Que é
+
+o compute por token, tá? reduzir a necessidade de processamento por token e cada um deles fazendo por caminhos diferentes e o que significa que a tendência é o objetivo, não é a tecnologia, tá? [roncando] Então nenhum desses papers sozinhos é um grande achado, né? Um grande a gente fala breakthrough, né? Um um um um uma grande ruptura com o que acontece hoje, mas a convergência de todos esses mostra uma grande virada na inteligência artificial, tá bom?
+
+quatro laboratórios, mesmo mês, mesmo objetivo e com caminhos completamente diferentes. Então isso é um grande indicativo de que o próximo passo da inteligência artificial não é mais quem tem o modelo maior, mas é quem entrega a mesma capacidade com menos compute, tá bom? Menos processamento. E aí as três coisas que vão mudar para quem decide. Primeiro, custo. Então, se o compil por
+
+token cai, o preço da inteligência artificial cai. Então, o que hoje é caro demais para rodar vai ficar viável ano que vem, por exemplo, tá? Então aquele, poxa, a gente não tem como pagar, ele tem prazo de validade, tá? Eh, dois, onde a inteligência artificial roda, porque um modelo eficiente ele cabe num servidor próprio, não é só na nuvem de um fornecedor específico lá fora, não. Para quem tem dado sensível, você consegue colocar num servidor próprio, tá? Se você é banco, saúde, jurídico,
+
+né, isso muda a conversa de de governança inteira. Então, para planejamento a longo prazo, isso é importante. E aí três, o que fica viável, né? A gente sabe que a gente de inteligência artificial, né, tá super hypado, todo mundo tá desenvolvendo seus agentes próprios e hoje o agente é caro demais para deixar rodando o dia inteiro, tá bom? Mas a tendência é ficar cada vez mais barato. E aí, né, quem viu
+
+aquele vídeo sobre o custo de inteligência artificial que eu trago aqui, né, da Uber, da Amazon, né, então aquele, acho que o nome, a conta chegou, então a gente sabe que as empresas, né, que estavam fazendo token maxing, então incentivando os colaboradores a gastarem mais tokens, né, então e aí elas fecharam a torneira. Então, ao longo prazo, né, a longo prazo, esse custo pode cair, então dando um alívio para quem ainda não conseguiu controlar o custo de a. Não tô dizendo para esperar sentado, não, tá, gente? É imprescindível eh aplicar finops, até porque a gente quer modelos cada vez mais capazes. Então, se de um lado o custo, né, por token cai, por outro lado a gente cada vez vai ter usos mais complexos, né? Então, a gente precisa eh
+
+a gente precisa também trabalhar com fins, tá? Então agora para fechar com as três perguntas que eu falei lá no começo para você levar pro próximo planejamento de tecnologia, primeira, então se o custo de inferência ele consegue cair cinco vezes, né, em 12 meses, vamos dizer assim, e é, eu diria que é uma previsão razoável, tá? Eh, então a sua decisão de rodar na nuvem ou rodar internamente, né, num servidor próprio, né, pode mudar, principalmente pros seus dados sensíveis, né? E aí se muda, então você tem que pensar por e o que você tá decidindo agora, tá? Eh, então o que vale a pena decidir agora, o que vale a pena deixar para para deixar como uma decisão provisória para hoje, né, considerando o curso de hoje?
+
+Eh, porque, né, você ganha em governança, ganha em privacidade, ganha em segurança de dados, a depender da sua estrutura, lógico. Tá bom? Segunda pergunta, o seu contrato com o fornecedor de inteligência artificial, ele tá te prendendo a um modelo caro, né? Então, a maior parte dos contratos hoje é uma taxa fixa por mês, né? Eh, a gente tem contratos ali, né? Uma taxa
+
+fixa por mês por token, né? Mas eh, enfim, quando a gente fala de das grandes, né, das BigTechs, né, a gente não tem é um contrato praticamente contrato de adesão, né, a gente não tem um sei. Eh, mas quando a gente fala, né, de fornecedores de IA menores, né, a gente tem que pensar, ele tá me cobrando um preço por mês fixo porque o custo dele provavelmente vai cair no médio e longo prazo de uma forma ainda, né, muito grande, tá? Eh, e aí a terceira, né, é para você pensar quando for saia, né, se você tá planejando orçar com custo de hoje, se você tá planejando a sua capacidade de Iar com o curso de custo de hoje ou se você também tá considerando, né, uma uma curva de de custo, eh, pensando nesses avanços tecnológicos, tá? Então, vale pensar sobre essas três perguntas, tá? E
+
+essa é a conversa para ter com o time, para entender qual é o o principal, né? Quais são os principais modelos que vocês usam hoje, quais são eh o que quais são as arquiteturas desses modelos, tá bom? E a gente tá falando aqui, não é para discutir GPU, né, que a process a não é para discutir quantidade de chip, né, de GPU que a gente precisa, unidade de processamento gráfico, tá? é sobre não deixar a curva de custo fixa na sua empresa quando no mercado ela pode começar a cair. É essa a preocupação principal, tá bom? Então, se
+
+esse vídeo te fez entender uma coisa que parecia complicada e que, né, tava ainda distante para você, faz duas coisas agora. Inscreve aqui no canal porque semana que vem vai ter mais conteúdo, ou quem sabe essa semana. e manda esse vídeo paraa pessoa que aprova orçamento de inteligência artificial, achando que o preço de hoje é o preço de sempre, tá? Porque a negociação com o fornecedor vai mudar e muito. Então essa pessoa precisa ver esse vídeo antes da próxima renovação de contrato. Eu sou Maria
+
+Alice e a gente se vê no próximo vídeo.

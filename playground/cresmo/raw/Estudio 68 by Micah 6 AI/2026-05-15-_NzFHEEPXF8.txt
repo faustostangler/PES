@@ -1,0 +1,101 @@
+---
+video_title: "Entenda Diff-in-Diff e Matching na Vida Real | Test-Drive Aulas 4 e 5"
+video_id: _NzFHEEPXF8
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_NzFHEEPXF8
+video_date: 2026-05-15T14:51:49+00:00
+video_description: |
+  Esqueça os softwares complexos. Neste segundo "Test-Drive" de 20 minutos, vamos usar apenas um quadro branco, uma caneta preta e um apagador para dominar os conceitos mais avançados da ciência de dados corporativa.
+  
+  O que vamos resolver juntos hoje:
+  
+  A Semana de 4 Dias (Diff-in-Diff): A sua empresa reduziu a jornada de trabalho e a produtividade subiu 10%. Mas a economia também estava em alta. Aprenda a subtrair os 4% de crescimento natural da concorrência para descobrir o seu mérito real.
+  
+  Implementação Gradual ou Espontânea (Local Projections): A sua mudança não foi de um dia pro outro, mas gradual ou descordenada. Veja como traçar uma linha direta do choque para mapear o "efeito cascata" no Mês 1, Mês 5 e Mês 10 de forma independente.
+  
+  A Fraude do Cartão VIP (Matching e PSM): Os seus clientes VIP gastam mais porque ganharam o cartão ou porque já eram os melhores clientes?. Acompanhe visualmente por que apagar estudantes e professores da lousa e deixar apenas os advogados corporativos cria a "Correspondência Exata" perfeita. E descubra como o PSM (Propensity Score) resume 50 variáveis em uma única nota de 0 a 100%.
+  
+  ⏸️ Atenção: Prepare-se para a dinâmica "Pausar e Pensar". A sua intuição de negócios será testada antes da resposta.
+  
+  Sobre o Estúdio 68:
+  Uma iniciativa da Micah 6 IA para democratizar a arquitetura de evidências.
+  🔗 Inscreva-se no curso completo 100% gratuito aqui no canal!
+  
+  00:00 Introdução
+  00:41 O Caso Prático: A Escala 5x2 vs. 6x1
+  02:23 A Lógica do Diferenças em Diferenças (Diff-in-Diff)
+  05:32 A Complicação: Implementação Gradual e o Efeito Cascata
+  07:05 Projeção Local de Diferenças em Diferenças (Local Projections)
+  08:29 Entendendo o Matching (Correspondência)
+  09:51 O Viés de Seleção no Programa VIP
+  11:25 Encontrando Gêmeos Estatísticos
+  14:43 Descartando Dados Não Comparáveis
+  16:21 Matching por Pontuação de Propensão (Propensity Score Matching)
+  
+  #AnaliseDeDados #DiffInDiff #Matching #Estudio68 #Micah6IA #Lideranca
+---
+Olá, sejam bem-vindos a mais um teste drive do nosso curso de engenharia de evidências, né? Vocês já sabem que esse curso é para quem não quer aprender a matemática da ciência de dados ainda. E a gente já tá no nosso segundo curso. O primeiro, né, foi com introdução à análise de dados e agora a gente tá eh aprendendo a ciência de dados em métodos quase experimentais. quando a gente não consegue fazer um experimento, tá? Então
+
+esse teste drive é para você saber se as nossas próximas duas aulas são ou não para você. E a gente vai discutir dois métodos nesse primeiro teste drive, mas como vocês sabem, eu só falo dos métodos no final e a gente começa falando sobre uns casos. Então o primeiro caso que eu quero que vocês pensem é que vocês assumiram como diretores de análise de recursos humanos em uma empresa de tecnologia. No dia primeiro de janeiro, a empresa mudou do da escala 6 por1 paraa escala 5 por1. Eles estão tentando testar uma nova escala de trabalho, né, que tá em discussão e para saber como o time vai se comportar. O seu maior
+
+concorrente, que também é uma empresa do mesmo porte, na mesma cidade, né, e tem aquela tradicional semana 6 por1. e você monitora os índices de produtividade ali, né, da sua empresa pelos próximos 6 meses. E no final desses 6 meses, você fala: "Opa, a produtividade aumentou em 10%." E aí seu CEO ficou muito entusiasmado, falou: "Poxa, essa escala 5 por 5x2 realmente aumenta, né, a nossa produtividade, as pessoas ficam mais motivadas, né?" Então você fala, mas esa aí, né? Você tá acompanhando o nosso
+
+curso e você já entendeu e falou: "Pera aí, mas será que foi a escala 5x2 mesmo que aumentou a produtividade? Porque eu sei que a economia também melhorou. Eh, e eu sei que as pessoas passaram a usar ferramentas de IA, eu sei que a gente começou a instalar um software novo. Será que a gente consegue realmente provar que esses 10% se deram por conta da escala 5x2? Bom, então aqui é que entra o nosso método.
+
+Eu quero que vocês pausem o vídeo e pensem no concorrente de vocês, tá? Uma empresa que manteve a semana 6 por1. E vamos dizer que a produtividade do concorrente de vocês aumentou 2%, exatamente nesse mesmo período de 6 meses. E se o seu concorrente, né, teve um aumento de 2% sem fazer absolutamente nada, o que teria acontecido com a sua empresa se você nunca tivesse mudado a escala de 6 por1 para 5x2? Parem e pensem. Podem pausar o vídeo.
+
+Você provavelmente, intuitivamente já sabe a resposta, né? Então, se vocês fossem empresas idênticas do mesmo porte, no mesmo mercado, e a produtividade de vocês duas, né, normalmente anda juntas, né, e depende da economia igual, né, e vocês são afetados da pela economia de forma igual. Então, se você não tivesse implementado a escala, provavelmente a sua produtividade teria aumentado 2% por conta da boa situação econômica. Então, 2% é a sua base, né? Eh, se, então, vamos dizer, a sua semana de trabalho, né, de 5x2, ela não gerou um aumento de 10%, ela gerou um aumento de 8, porque 2% é o que o seu concorrente, sem fazer nada teve de aumento.
+
+Isso, né, é diferenças em diferenças. O que vocês acabaram de fazer é uma análise de diferenças em diferenças, né, que é um método que a gente vai aprender na próxima aula. Você pega a diferença na sua empresa ao longo do tempo e subtrai a diferença na empresa concorrente ao longo do tempo, né? Poderia aqui ser um grupo controle, a gente poderia táar falando, né? A gente vai falar de filiais na aula, então a gente vai trazer outros casos, né? Mas
+
+sempre que você tem duas do dois eh objetos de estudo, né? Seja filial, seja cidade, seja, né? eh que se comportam da mesma forma, você consegue usar um como controle do outro, mesmo não tendo feito um experimento, tá? Então, eh você subtrai essa diferença ao longo do tempo. E aí, ao observar esse grupo controle que, né, que e como ele se comportou, né, eh, antes e depois da mudança, você mapeia uma linha do tempo invisível, né? É como se você tivesse um
+
+cenário hipotético, olha como a minha empresa teria teria teria vivido, né, se eu não tivesse feito nada, que foi o que o outro não fez, né? Foi o que o outro fez, não fez nada. Então, a diferença entre a sua linha do tempo, que aconteceu com você e o que aconteceu com aquele que se comportava igual a você, mas não fez nada, é o seu verdadeiro efeito, certo? Então isso é diferenças em diferenças. E aí a gente tem que analisar um problema diferente, tá?
+
+Também porque existe um outro caso de diferenças e diferenças. Então imagina que ao invés de uma política planejada, né, aconteceu um choque repentino, né, de repente a sua empresa começou, né, os próprios gestores das lojas começaram a implementar ali, um implementou 5 por 2, aí outro implementou e foi tudo ali, eh, de forma um pouco, né, descoordenada, não foi de um dia pro outro, não foi de um ponto pro outro, né? Então, acaba acontecendo ali, né, eh, e acontecendo ali eh algo eh de forma gradual, né, que a gente pode dizer, às vezes o gradual é planejado, às vezes não, né, e espontâneo, né? Então você precisa saber, por exemplo, né? Poxa, mas como que eu vou medir? Sendo que tem loja que
+
+tem loja que teve melhora no dia um, tem loja que já tá no dia 5. Como que eu vou garantir que eu vou medir a melhora no dia um, a melhor a melhora no mês um da implementação da nova da do da nova carga horária ou a melhora no mês dois da implementação da nova carga horária, né? Eh, ou a melhora no mês três, né? Já que cada um implementou em algum momento, né? Então, os métodos antigos, né, eles e que é o próprio Diferenças Indiferenças, ele previa o dia um, usava o dia um para prever o dia dois e usava o dia dois para prever o dia três, mas se a previsão do dia um tiver um pouco errada, né, esse erro se acumula, né?
+
+Então a gente tem um método, né, que é a projeção local de diferenças em diferenças, tá? que resolve isso traçando uma linha direta e uma uma linha direta e independente do choque, né? independente do da intervenção para cada dia específico. Então ela vai olhar, olha como essa como cada filial ficou teve resultado, como foi o resultado de cada filial durante o primeiro mês, como foi o resultado de cada filial durante o segundo mês, como foi o resultado de cada filial durante o terceiro mês. E aí ela vai mapear essa efeita casc esse efeito cascata e olhar pro efeito geral paraa sua empresa, tá?
+
+E aí sem deixar, né, que a implementação gradual, né, afete, tá? Então, para resumo, você usa o diferenças em Diferenças quando você tiver avaliando uma mudança única, né, e tiver um grupo controle gêmeo para comparação. E a projeção local você usa quando você tiver uma mudança gradual, né, faseada e você precisa mapear, né, seu o esse efeito cascata ao longo do tempo, né, para saber quanto, qual foi o efeito real. Fechamos diferenças em diferenças. Agora você já consegue saber, será que esse método é para mim? Então agora a
+
+gente vai aprender matching, tá? Então a gente tem ali uma, a gente vai aprender um outro método aqui, tá? Eh, então antes de tudo, tá? Eu queria que vocês tivessem uma visualização aqui, tá? Vamos imaginar que a gente tem dois círculos. Opa,
+
+aqui a gente tem dois círculos, né? Então o círculo da esquerda é o programa VIP, o círculo da direita são os clientes regulares dentro do círculo VIP, tá? Vamos imaginar que a gente tem aqui, vamos imaginar que a gente tem aqui, eh, alguns, né, clientes aqui, né? E esses clientes, tá aqui, vou colocar aqui 500 e vocês já vão entender. E a gente tem outros clientes regulares aqui e a gente vai colocar 100.
+
+Então vocês, né, são cientistas de dados, né, em uma marca de varejo. O departamento de marketing acabou de lançar um programa de fidelidade VIP. Eles olham e falam assim: "Olha, nossos clientes VIP gastam R$ 500 por mês e os clientes regulares gastam 100". O cartão VIP tá fazendo com que essas pessoas gastem R$ 400 a mais. né? Essas aqui elas têm um
+
+cartão, né? Então olha, porque elas participam daqui, elas estão gastando R$ 500 a mais. Mas poxa, você como engenheiro de evidências, né, você sabe que isso é perigosamente errado, né? Se você assistiu o curso um, então você já entendeu, porque, né, você não tá dando cartão VIP para pessoas aleatórias, você tá selecionando pessoas que já amam a sua loja, que já compram com frequência e tá falando: "Você agora vai participar do meu programa VIP e você vai ganhar um cartão VIP". Então, você já tem a uma maior propensão, né, para que essas pessoas gastem mais. é o que a gente
+
+aprende no nosso curso um, né, eh, como viejo de seleção. Então, como que a gente pode provar que o programa VIP realmente fez alguma coisa e teve algum efeito? É aqui que a aprendizagem, né, de fato acontece, tá? Eu quero que vocês pensem aqui, né? Então, esse programa aqui, vamos colocar eh uma outra pessoa. Então, a gente vai
+
+trazer uma loja de esporte, né, gente? Porque eu só tô desenhando figurinhas de esporte. Esse aqui é um VIP. Ele é um advogado, advogado corporativo, né? Ele é aqui um advogado, vamos colocar, de uma empresa, de um de um escritório.
+
+E ele faz aí R$ 200.000 por ano. Ele tem essa essa renda de R$ 200.000 por ano. Agora a gente vai olhar para cá.
+
+A gente tem aqui nessas outros clientes regulares, a gente vai ter um estudante universitário, a gente vai ter um professor aposentado, a gente vai ter aqui um outro advogado corporativo, advogado de escritório aqui. que faz, né, fazem, vamos supor que todo aqui a profissão, todo mundo na mesma profissão faz a mesma renda. Então, se eu quiser saber como o cartão VIP afetou o nosso advogado, quem é a única pessoa do grupo regular com quem eu posso comparar esse advogado, né? Aqui a gente tá simplificando, tá gente? Mas não é exatamente só pela profissão que a gente faz, né? a gente coloca diversas
+
+diversas características, mas eu só poderia comparar e um com o outro, né? Vamos supor que esse aqui, né, é o gêmeo estatístico. Então, pausem e pensem, isso faz sentido para você, né? Aqui a gente vai colocar também é um advogado de escritório que ganha também R$ 200.000, né? E a gente vai colocar aqui, a gente
+
+considera, mas poxa, mas só a profissão, só a renda, não. A gente normalmente considera, né, aqui, né, dependendo do que é, a gente considera comportamento, a gente considera, né, situação familiar, a gente considera escolaridade, a gente considera região, a gente considera idade. Então, a gente considera aqui diferentes características, né, muitas vezes histórico também, tá? Então, olha, a pessoa que tem um histórico aqui de comprar mais, então a gente traz tudo isso, tá? Que são características que a gente compara também, tá? A profissão
+
+aqui eu tô trazendo para simplificar, mas a gente vai falar das características mais no vídeo de no vídeo onde a gente detalha esse método, né? Então não dá para comparar, né, o advogado com o estudante universitário, né? Eh, no fim das contas, tá? a gente estaria fazendo uma comparação injusta. Então, entendam que a gente aqui acaba construindo quase que gêmeos estatísticos, né? Então, a gente
+
+a gente não pode, por exemplo, né? Então imagina, eu não tenho, eu tenho aqui, se eu tivesse aqui, né, um administrador empresário aqui. Empresário, eu tenho aqui um engenheiro civil e eu tenho aqui um médico. Eu não consigo comparar essas três pessoas com nenhuma dessas três, certo? Então o que que a gente faz aqui, né?
+
+Essas aqui não são comparáveis. Então a gente exclui essas pessoas, né, da nossa comparação, tá? Então eu falo: "Olha, essas aqui eu não vou comparar". Normalmente a gente precisa de mais pares, né? Então isso, vamos supor que a gente excluiu, mas a gente tem outros pares ali para comparar, tudo bem? Eh,
+
+então vamos entender que a gente tá trabalhando ali com mais pares, certo? Mas quem não tem um par não conta para esse método. A gente descarta os dados de quem não tem o par. Então agora, né, os seus cérebros entenderam aí o que é, né, encontrar gêmeo e descartar o resto. Então o que a gente acaba de fazer é a correspondência exata. A gente encontra
+
+duas pessoas idênticas em idade, renda, carreira, né, como eu falei, todas essas variáveis aqui, né, e a gente compara essas pessoas. E aí a gente fala: "Poxa, uma participa do VIP, outra não participa." Mas na vida real a gente pode ter 50 variáveis. A gente pode encontrar um gêmeo exato, né? Para com base em 50 características diferentes, tá? E aí
+
+isso muitas vezes, né, é impossível. Então, como a gente vai falar disso, né? Pensem em uma escala de 0 a 100. Como encontrar gêmeos idênticos, né, em 50 variáveis é muito difícil. A gente usa um truque. A
+
+gente pega todas as 50 características de uma pessoa, a gente insere essas características no algoritmo. E o algoritmo ele vai gerar, ao invés de gerar similaridade pessoas, né, ele vai falar assim: "Olha, a probabilidade dessa pessoa se tornar um VIP é 30%. A probabilidade dessa outra pessoa se tornar um VIP é 30%. Uma delas se tornou, a outra não. E aí ele compara pessoas com a mesma probabilidade de se tornar VIP, certo?
+
+Então, por algum motivo, né, elas teriam a mesma chance, né, de se tornar VIP, mas por algum motivo uma se tornou e a outra não. E aí entra naquilo, a gente assume que esse motivo é aleatório, porque elas tinham a mesma chance pelo por todas as características que a gente tem, a gente sabe que elas as duas tinham 30% de chance de se tornar VIP, mas uma se tornou e a outra não. Então, a gente consegue também comparar essas duas. Isso é o que a gente chama de propensão. É o meting por pontuação de propensão, certo?
+
+Então, tá, se não for possível executar um teste AB, né, e aleatoriar grupo, você pode e você tem uma grande quantidade de dados, de históricos, de participantes sobre os seus usuários, né? Então você consegue emparelhar artificialmente esses gêmeos entre tratados e não tratados, sejam aqueles gêmeos idênticos, né, ou sejam gêmeos por pontuação de propensão, né? Então, entendam o que a gente o o que a gente de fato tá fazendo aqui, tanto em meting quanto em diferenças e diferenças. Pensem se as próximas aulas são para vocês e sigam com a próxima aula. Eu espero muito ver vocês ao longo desse curso e a gente se encontra daqui a pouco.

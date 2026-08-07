@@ -1,0 +1,194 @@
+---
+video_title: "Como validar NLP com ML em 6 perguntas: Acurácia alta não é o suficiente | Aula 6"
+video_id: hMgRG-bIHsI
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hMgRG-bIHsI
+video_date: 2026-07-11T11:57:55+00:00
+video_description: |
+  O modelo tinha 94% de acurácia. Foi aprovado, entrou em produção. Meses depois, alguém auditou vinte casos manualmente e encontrou o problema em vinte minutos.
+  
+  Acurácia alta não significa modelo correto. E nenhuma métrica substitui saber o que perguntar.
+  
+  Nesta aula:
+  → Por que acurácia sozinha falha, e o que pedir no lugar (F1, precision, recall)
+  → Five-fold cross-validation: o que é e por que importa
+  → Robustness test: como testar se o modelo aguenta dados que nunca viu
+  → Auditoria humana: como estruturar e o que ela encontra que métricas não encontram
+  → Lag temporal: o erro que faz equipes concluírem que não há efeito quando há
+  → Checklist de 6 perguntas para aprovar qualquer resultado de NLP
+  
+  Esta é a Aula 2 desse tema. A Aula 1 cobre ML vs LLM, ferramentas open source e os 5 erros mais comuns: https://youtu.be/farjkNqgIN0
+  
+  _____________________________________
+  
+  Apresentado por Maria Alice Maia, cientista de dados pela UC Berkeley, professora, doutoranda pesquisadora de comportamento de uso e governança de IA na FGV, fundadora do Estúdio 68 e da Micah 6 AI. Ex-Ambev, Itau, Stone, Alun/FIAP.
+  
+  ─────────────────────────────────────
+  
+  ❓ PERGUNTAS FREQUENTES
+  
+  P: O que é F1 score e quando usar em vez de acurácia?
+  R: F1 é a média equilibrada entre precision e recall, as duas dimensões de erro que acurácia não captura separadamente. Usar F1 em vez de acurácia é especialmente importante quando os dados estão desbalanceados: quando uma categoria aparece muito mais do que as outras, um modelo que ignora as categorias menores ainda pode ter acurácia alta. F1 revela esse problema.
+  
+  P: O que é five-fold cross-validation e por que é melhor do que dividir dados em treino e teste?
+  R: Five-fold cross-validation divide os dados em cinco partes e treina o modelo cinco vezes, cada vez testando numa parte diferente. Isso garante que o desempenho medido não depende de uma divisão específica de dados. Se o modelo vai bem nas cinco rodadas, há muito mais confiança de que ele aprendeu o padrão real. Uma divisão simples treino/teste pode ser favorável ou desfavorável por acaso.
+  
+  P: O que é robustness test em machine learning?
+  R: Robustness test avalia se o modelo mantém a performance quando exposto a dados diferentes dos usados no treinamento: dados de períodos diferentes, regiões diferentes, canais diferentes, ou com variações no texto. Um modelo treinado em 2020 pode falhar em dados de 2026 porque o vocabulário mudou. O robustness test temporal identifica essa degradação antes que ela cause decisões erradas.
+  
+  P: Como estruturar auditoria humana de modelos de NLP?
+  R: Selecionar uma amostra de 10–15% dos casos classificados. Um analista humano classifica cada caso sem ver o resultado do modelo primeiro. Depois compara as duas classificações. Taxa de concordância abaixo de 85% indica problema a investigar. O foco principal são os casos de discordância, porque eles revelam padrões de erro que métricas agregadas não capturam.
+  
+  P: O que é lag temporal em análise causal com NLP?
+  R: Lag temporal é o intervalo entre a causa e o efeito. Uma notícia negativa publicada hoje não afeta o comportamento do consumidor imediatamente. O efeito se propaga nos dias seguintes. Cruzar cobertura de mídia com KPIs de busca ou venda no mesmo dia produz correlação próxima de zero mesmo quando o efeito real existe. Testar com lag de 24h, 48h e 7 dias frequentemente revela a relação que o cruzamento no mesmo dia escondia.
+  
+  ─────────────────────────────────────
+  
+  Treinamento para equipes ou revisão independente do seu sistema de IA: micah6ai.com
+  
+  #MachineLearning #NLP #DataScience #IA #ValidaçãoDeModelos #Estudio68 #GestãoDeIA #AcuráciaNãoÉTudo
+  
+  ─────────────────────────────────────
+  
+  Chapters:
+  00:00:00 — O modelo aprovado que estava errado há meses
+  00:01:46 — Por que acurácia não basta e as 3 métricas essenciais
+  00:10:47 — Five-fold cross-validation e generalização
+  00:15:28 — Robustness test: o modelo aguenta o tempo e mudanças reais?
+  00:23:06 — Auditoria humana: o passo que as empresas pulam
+  00:28:27 — Lag na causalidade: entendendo causa e efeito no tempo
+  00:30:36 — Checklist de 6 perguntas para aprovação
+---
+Uma coisa que acontece com boa frequência nas vezes que eu vejo uma empresa usar machine learning para análise de texto pela primeira vez, é que elas acabam confiando na curácia do modelo, desenvolvem um modelo com uma curácia acima de 90% e saem implementando e aprovando o modelo a partir daí. Mas uma coisa que eu sempre defendo é a gente precisa fazer uma auditoria manual antes de implementar qualquer modelo em produção. Então sempre tirem ali 1%, 2%, 5%, depende do volume de casos que você tem, e faça uma auditoria manual, tá? coisa de 20 minutos, não é nada sério, mas isso previne que o modelo tenha vícios, por exemplo, classificar uma categoria inteira com a classificação errada, por exemplo. Então, isso é extremamente importante, porque o modelo validado internamente não é um modelo pronto pro mundo real. E hoje a gente vai ver
+
+exatamente o que valida um modelo de verdade e o que que a gente deve perguntar antes de provar qualquer resultado de processamento de linguagem natural. Eu sou Maria Alice Mais, sou cientista de dados pela University of California Berkley. Sou doutoranda e pesquisadora em comportamento de uso de inteligência artificial e governança de inteligência artificial pela FGV e sou fundadora da MICA 6, a consultoria que incentiva e investe no estúdio 68, que é esse canal aqui, que também tem aulas modelo síncrono, online também, mas síncrono. Então, se você tá interessado em participar dessas aulas, acessa o nosso site e descobre como se inscrever. É um projeto proono para grupos minorizados. Então, se você tá aqui pela
+
+primeira vez, o canal é gratuito, pode se inscrever clicando ali no sininho para não perder as próximas aulas. E se você conhece alguém que vai se interessar por esse tipo de conteúdo, é só compartilhar. Então, a gente vai começar com um problema que aparece muito frequentemente, que é o que eu falei ali no começo. Quando o modelo de classificação de texto é avaliado, a primeira métrica que a gente olha é quase sempre a curácia. E a curácia é uma coisa intuitiva, a porcentagem de vezes que o modelo acertou. O problema é
+
+que a curácia sozinha, ela pode acabar escondendo algum erro, especialmente quando os dados não são balanceados. Que que significa isso? Significa que eu tenho 30% de uma categoria, [roncando] 30% de outra, 20 de outra, 5 de outra e 1% de uma categoria minoritária ali, né? e 4% de outra que também ali é minoritária. Então, essas categorias que são pouco representadas, elas tendem a gerar um viés nos dados.
+
+Eu eu vou te explicar a ali na prática o que que isso significa, sem você precisar entender eh essa soma de percentuais que que eu trouxe. Então, imagina que você tem um modelo para classificar a reclamação de cliente, por exemplo, e aí no seu banco de dados, 90% das mensagens ou são dúvidas ou são elogios. E aí só 15% são reclamações de verdade. Num cenário bom, né? Eu eu eu gostaria de de ter só ali uma minoria de reclamações em tudo que eu faço, não é a verdade pra maior parte dos dos bens de consumo, mas vamos trabalhar com esse exemplo. Então, se o modelo ele aprende
+
+a classificar tudo como não é reclamação, poxa, 90% do que há nos dados não é reclamação. Então ele vai entender que reclamação é ali na menor parte das vezes. Então, se ele se ele colocar, né, se ele chutar, vamos dizer assim, sempre, isso não é reclamação, ou é sugestão, ou é dúvida ou é elogio. Se ele fizer isso, no fim das contas, ele vai acertar 90% das vezes. E a gente vai falar: "Opa, a acurácia tá altíssima 90%."
+
+Mas ele vai errar 100% das vezes em que ele tiver classificando reclamação e que é exatamente o que você precisaria encontrar nesse momento, né? Porque é o que a gente tá interessada. Então isso é o que a gente chama de dado desbalanceado e é onde a curácia falha se a gente usa ela como métrica principal. E aí para isso tem três métricas complementares que a gente usa muito em machine learning e que às vezes quando a gente implementa ali pela primeira vez a gente esquece dessas métricas. Então vamos lá pra nossa lousa. Se você já é de casa aqui no
+
+canal, você já vai est familiarizado. Então deixa eu trazer aqui a primeira métrica que a gente vai ter precision, tá? Então precision é de tudo que o modelo classificou como reclamação, quantas eram reclamações de verdade. E aqui é interessante a gente tentar medir eh a gente tentar medir isso por categoria, né? Essas três métricas sempre tentar medir por categoria. Se a gente consegue medir
+
+elas por categoria, a gente consegue romper esse viés da, a gente rompe esse viés da do dado desbalanceado, tá? Então aqui o precision ele tá e medindo o alarme falso, tá? Aqui é o que ele classificou como sim e era não. OK? Classificação é sim.
+
+realidade é não. Então classificou como reclamação, mas não era reclamação. É a segunda métrica, recall. OK. E bom, de todas as reclamações reais, quantas o modelo encontrou? Então
+
+aqui o o recall é de fato a capacidade de detecção. Então a classificação é sim, né? ele, eu eu quero saber quantos casos em que ele classificou como sim, quando na realidade era sim. Então, a capacidade dele de detectar algo real, de não deixar, nesse caso, as reclamações passarem batida. A terceira métrica, F1. E aí a F1 ela é como se fosse uma,
+
+eu vou colocar aqui, uma média, média ponderada daqui, né? Eu vou colocar entre aspas aqui para pro pessoal técnico não me matar nos comentários. Eh, que eu tenho simplificado aqui, quem tá familiarizado com o canal, o canal é para simplificar ciência e engenharia de dados, tá gente? Então assim, muitos conceitos aqui vão estar simplificados, tá? Eh, então, poxa, às vezes a gente usa um termo que é um pouco mais simplificado, a gente, né, tenta colocar uma generalização ali para levar ciência, engenharia de dados, engenharia de IA para todo mundo. Então,
+
+o F1 ele é essa média ponderada entre as duas primeiras, o precision e o recall. Então é o esse F1, quando que você olha ali como métrica final, se você quer capturar os dois lados, né, tanto o acerto acerto quanto, né, o o quanto o alarme falso, tá? Eh, aqui, só para deixar claro, tá? Isso aqui é do percentual, né, do percentual de no o recall é do percentual total, né, do total que a gente tem, qual percentual ele classificou como como correto, tá? Então a regra prática para quem tá avaliando o modelo é sempre pedir essas métricas por classe, tá? Não só o geral
+
+e principalmente o F1. começa pelo F1 e vai desdobrando. Poxa, o F1 foi esquisito. Então, a gente a gente a gente começa a olhar ali o precision e o recall para entender onde tá o problema. Ele tá ele tá classificando sempre como sim, né?
+
+Então, em classes que são que são dominantes, né? aquelas classes que têm muita representatividade, o a classe que representa os 50, 60% dos seus dados, provavelmente o o problema vai tá no no vai tá no no alarme falso, nas outras provavelmente vai tá no recall. Então, tem uma analogia que ajuda a a a diferenciar o precision e recall, que é o detector de incêndio. Precision é o detector que toca toda vez que alguém acendeu uma vela, tá? Acendeu um cigarro, não sei. O
+
+recall é o detector que quando o prédio tá perdendo, pegando fogo, ele não tocou. Tá bom? Então, eh, essa e aí usar os dois, né? é decisão de negócio, não. Então aqui e aí poxa, eu prefiro ter mais precision, eu prefiro ter mais recall, isso depende, né? Se é uma decisão muito importante,
+
+você prefere ter alarme falso, né? Uma decisão de fraude, né? Muita gente prefere ter alarme falso em fraude do que correr o risco de perder dinheiro, né? Com um cliente fraudador, né? [roncando] Em outros casos, ah, são é uma decisão simples, né? Então, tudo bem, pode tudo
+
+bem deixar um um alarme que às vezes não dispara num caso positivo, tá bom? Então, no contexto aqui, a decisão de eu vou priorizar um ou outro é basicamente o custo de perder a informação real, né? O custo de perder o incêndio real sem agir, né? Por exemplo, um cliente insatisfeito, um risco de regulação, né? você prioriza versus o custo de você, né, ter um alarme falso. Então você compara os dois, né?
+
+Por exemplo, ah, um alarme falso é o time receber muito, por exemplo, o time que lida com reclamações, receber muitas eh, muitos tickets, que não vão ser reclamações e vai ter que redirecionar. Esse trabalho é muito custoso, o seu time é muito caro, né? Então você vai priorizar. Aí você vai decidir se você prioriza recall ou precision, mas o ponto central é você não consegue ter essa conversa e não consegue definir os o algoritmo melhor pro seu negócio se você só tá medindo a curácia. Então, antes da gente continuar, pensa no último relatório de modelo que você aprovou ou que você viu ser ser apresentado ou a última vez que você viu um modelo de análise de texto ali de machine learning, né? Eh, a curácia
+
+provavelmente foi o primeiro número apresentado, mas tinha F1, né? Tinha F1 por classe. Se não tinha, né, o que que por que que acha que por que você acha que não trouxeram? Então, agora a gente vai mudar pra segunda parte desse vídeo, que é como testar se o modelo aguenta o mundo real. Então, porque mesmo que o modelo ele tenha esse F1 alto em todas as classes, ainda vai ter aquela pergunta que é esse desempenho ele vai se manter quando o modelo encontrar um dado que ele nunca viu, né? Então essa questão da eh é essa
+
+questão ela é a generalização. Então e aí a gente tem dois testes aqui que a gente faz para avaliar a generalização. O primeiro é a validação cruzada, que é o que a gente chama de cross validation. Então vamos só pra lousa, que eu gosto de escrever esses conceitinhos em inglês aqui pra gente eh não se perder. Então aqui é o cross validation, que é a validação cruzada.
+
+E aí fiquem com isso, tá? O cross validation ele a a lógica dele é a seguinte: eh em vez de treinar o modelo uma vez e testar nos mesmos dados ou numa divisão fixa, você vai dividir os dados em cinco partes, né? Eh, eu tô falando aqui do cross validation versão five folds, tá? Deixa eu colocar aqui. Aqui a gente vai falar do five fold, que são cinco partes.
+
+Então, você vai dividir os dados em cinco partes e aí você vai treinar o modelo cinco vezes. Cada vez você vai usar quatro partes para treinar e uma para testar. E aí você vai, né, você vai alternando em qual parte treina e qual parte testa. Então você vai ter no final disso cinco avaliações independentes, né? Treinando com a primeira parte, avaliando com essas outras quartas, treinando com a segunda, avaliando com essas outras quatro e por aí vai. E aí no final você
+
+vai ter cinco avaliações independentes e você vai calcular a média dessas avaliações. E isso é importante porque se o modelo vai bem nas cinco rodadas, então você tem confiança de que não foi que ele aprendeu o não foi que ele decorou os dados de uma parte específica, foi que ele aprendeu qual é o padrão. Agora, se o desempenho varia, poxa, quando eu pego essa parte aqui para ter pr para validar e essas outras para testar, eh, ele tem um desempenho muito bom. Quando eu pego essa parte aqui para validar e essas outras para testar, o desempenho cai. Então, se ele se ele varia, né, significa que o modelo é instável e aí significa que você pode precisar de mais dados. E aí eu não tô
+
+falando nem só de volume de dados. Às vezes você precisa de inclusive mais variáveis, porque pode ser um problema mais complexo do que parece, né? Então você precisa mudar inclusive o seu método, sua abordagem, né? Então isso pode eh variar aqui. Então vamos lá.
+
+Como que a gente faz a validação five folds para ter na lousa para vocês tirarem aquele print maroto? Vamos lá. Primeiro vocês vão dividir em cinco partes. Tô me sentindo passando uma receita de bolo, gente. Vocês vão treinar cinco vezes cada com cada uma da das partes, né? E vocês vão ter vocês
+
+vão fazer a validação também cinco vezes, alternando as partes que não foram treinadas. E aí você vai ter o resultado que são cinco avaliações, você vai ver a média e a variância. Importante é isso, não é só olhar a média, né, mas olhar a variância do resultado também. Então o que você quer nisso aqui é você é consistência, tá? O objetivo desse teste é consistência.
+
+Então é ele performar consistência, né? Consistência performando bem, né? Consistência performando mal, não, por favor. Então ele performar bem em todos os cinco testes. Então o que pode, né, aqui é seu principal sinal de alerta, a gente olha, óbvio, o desempenho, mas olha também a variação, né? Variou muito entre as
+
+diferentes rodadas. Então esse é o o principal a principal forma de validar o algoritmo. E aí tem um segundo teste que é o robustness test, né? O teste de robusteza. Opa, vou voltar pra lousa para escrever esse conceito aqui, tá?
+
+Então, robustness test.
+
+OK. Então o teste de robustez, ele vai além da variação cruzada e ele eh só voltar para tela cheia e ele vai testar uma coisa diferente, tá? O cross validation, né? A validação cruzada, ele vai ver se o modelo generaliza dentro dos dados que você tem, né? Se é um modelo que aplica para diferentes conjuntos de dados. E o teste de
+
+robustez, ele vai ver se o modelo funciona quando o mundo muda. Então, vou tentar te explicar um caso, um caso, exemplo aqui, tá? Então, uma empresa de bens de consumo, eh, eles treinaram modelo de análise de sentimento em 2020. Os dados eram comentários de 2020, né? E o modelo performou super bem, o F1 era alto, o cross validation foi foi aprovada, né? Modelo tava em produção,
+
+só que em 2026 modelo ainda tá rodando, só que o vocabulário mudou muito, né? Hoje as pessoas vão falar se o produto é bom, dizendo que elas que o produto farma aura. Eh, né? E e por aí vai. Não vou tentar me arriscar muito nessas gías porque, né, já sou da outra geração. Mas
+
+[risadas] em 2020 dizer: "Ah, isso é raiz, isso é Nutella, né?" Tinha uma conotação. Então, eh, hoje, né, a gente tem outras palavras, dizer, por exemplo, ser louco, né? É um entusiasmo positivo que não tava quando, eh, a gente treinou o modelo lá em 2020. Então o modelo ele nunca viu essas expressões. Então quando
+
+elas aparecerem nos comentários de 2026 ou ele vai ignorar ou ele vai classificar errado automaticamente, né? Então ninguém vai perceber porque a a curácia geral vai continuar parecendo razoável, né? Mas no fim das contas, o modelo as só acerta o suficiente para não disparar o alarme, mas tá errando exatamente ali na mudança de vocabulário. Então teste de robustez temporal, ele pegaria isso, tá? E a ideia é exatamente pegar o modelo treinado ali em 2020, nesse nesse exemplo e testar ele nos dados de 2023, nos dados de 2024, nos dados de 2025 e checar se a performance vai cair ano a ano. Então aí você vai ter evidência de
+
+que o modelo tá envelhecendo e precisa ser retreinado com dados mais recentes. Então esse é o tipo de teste de robustez que a gente costuma fazer quando a gente fala de a gente fala de eh desvio de alinhamento, né? Alignem drift eh em eh algoritmos. A gente pensa muito na inteligência artificial, mas o machine learning tem isso também, principalmente análise de texto e principalmente quando a gente tá falando de linguagem de de consumidor, né, pessoa física, que muda muito. Então tem outras variações de de teste de robusteza. Eu falei de análise
+
+temporal, mas, por exemplo, você pode fazer um teste de robustez só com dados de uma região, porque, por exemplo, eh, né, eu sou mineira, em Minas, às vezes, quando eu falo determinadas palavras, né, a que não se usam, palavras do dicionário que não se usam em outras regiões, por exemplo, né, escalafobético, cafobira, enfim, e outras palavras também. O pessoal fica assim, hã, então, e giras também, né, lombeira. Então, eh, é muito mais difícil você acertar em regiões diferentes. Então, às vezes, uma região é muito, né, representada, que é o caso que a gente falou, por exemplo, Rio São Paulo são muitos muito representados. E aí essas regiões que são menos representadas podem valer um teste de robustez. Então
+
+você precisa testar seu modelo em regiões diferentes, inclusive em canais diferentes. Então o público de um canal pode ser um público com um repertório cultural diferente, com vocabulário diferente, por exemplo. E até o canal pode induzir eles a fazerem comentários diferentes. Então, quem envia um e-mail, envia um e-mail com texto mais longo. Quem tá fazendo um comentário de review, né, de aplicativo, de avaliação de aplicativo no na loja de aplicativo, por exemplo, faz um comentário super curto.
+
+Então essas variações acontecem. Então vale testar nesses casos extremos. Poxa, eu vou testar por canal, vou testar por região. Isso é teste de robustez, rodar o modelo com outros dados além do grande conjunto de dados. E o princípio vai ser sempre o mesmo aqui, expor o modelo para condições que ele não teve diretamente e com grande massa no treinamento e ver se ele se sustenta.
+
+Então vamos voltar pra lousa pra gente falar de teste de robustez. A gente vai ter o teste de robustez temporal. temporal, eh, que é isso de testar em períodos diferentes. E aí vale sim fazer, poxa, final do ano ou meio de ano, fazer diferentes períodos, teste de robustez geográfico ou regional, né, que é testar em regiões diferentes que tenham vocabulários diferentes. O teste cross channel, que é testar em canais diferentes.
+
+E a gente vai ter alguns testes que são bem interessantes, que aí eu não vou entrar em detalhe aqui, mas teste de perturbação, por exemplo. Perturbação, isso, perturbar, isso, perturbação, ele introduz, né, eh, essas variações no texto para ver se a classificação muda. Então, ele é um teste onde a gente provoca variações ali no texto. O que a gente quer ver aqui com esses testes de novo, o objetivo é estabilidade, então é performance estável, é aquela consistência que a gente falou também no no outro. O e o alerta, óbvio, é queda em qualquer condição.
+
+Aqui de novo é decisão de negócio. Poxa, eu prefiro um algoritmo que cubra toda a minha base de clientes, eu prefiro fazer algoritmos regionalizáveis. Então tudo bem se esse algoritmo aqui não cobrir aqui, não cobrir essa base, não cobrir esse canal ou poxa, eu não não ligo muito para esse canal. a minha menor base de clientes usa ele. Então, tudo bem se nesse canal aqui ele tiver performando um pouco melhor, menor, um pouco pior. Então aqui é a decisão de
+
+negócio completamente. Então aqui a pergunta é, quando você receber um algoritmo na sua mesa ou uma proposta de fazer um algoritmo, você tem que perguntar: "Esse modelo foi testado com dados diferentes, com dados regionais? Foi testado com dados de um determinado canal?" Qual assim, algum dado diferente do dado? que foi usado para treinar. Se a resposta
+
+for não ou não sei, aí você tem um ponto de atenção. E aí, pra gente seguir aqui pra penúltima parte da nossa aula, a vamos falar de auditoria humana. Então, mensagem aqui é simples, porque depois de todas essas métricas, do teste de robustez, depois de depois de tudo isso, a gente tem uma etapa que, como eu falei no início do vídeo, a maior parte das empresas pula, que é a auditoria humana. E a ideia é simples, é pegar uma amostra dos casos classificados entre 10 e 15% dos casos, assim, a depender do volume de novo, né? A ideia é gastar, poxa, um dia, né? É, depender da criticidade do
+
+algoritmo. Se for um algoritmo crítico, gastar um dia com isso. É, se for um algoritmo pouco crítico, gastar uma hora. Então, a ideia é pegar uma amostra dos casos e um analista humano olha caso a caso, comparando a classificação do modelo com o que esse analista acharia correto. E gente, não é para mostrar o avaliação e perguntar se o analista concordou, é para perguntar pro analista como ele classificaria isso e aí ver se a classificação dele concorda com a modelo. é trabalhoso, mas é o único
+
+método que encontra esses erros que nenhuma métrica vai conseguir capturar, ok? Porque as métricas elas vão avaliar padrões, a auditoria humana vai encontrar os casos específicos que vão tá se errados repetidamente, OK? Eh, então a gente pode, né, citar diversos casos aqui, mas o principal é lembrem-se de que nem todos os erros são erros que a gente consegue prever. Então, só um uma pessoa humana analisando ali consegue ver, por exemplo, os erros que a gente não considerou. Poxa, por exemplo, eh, talvez muita gente não pensaria em testar diferentes canais antes de ver esse vídeo, OK? Então, esses, inclusive
+
+esses, esses desvios podem ser eh ideias para o teste de perturbação. Então, lembrem-se disso, tá bom? Eh, [roncando] então, pra gente estruturar auditoria humana, pontos principais, tamanho da amostra, 10 a 15%, né? Pensar, poxa, um dia a 1 hora. O método é olhar a classificação do analista humano primeiro e aí comparar com o resultado do modelo, de preferência dois analistas classificando, tá? Também porque vale às
+
+vezes um uma pessoa tem uma um olhar diferente de outra. E aí a gente avalia a métrica que é taxa de concordância. Se a concordância for menor que aí é da regra de cada um, mas para mim normalmente eu aplico 85%, né? Se a concordância for menor que 85% aí tem um problema. Então sempre que tiver um padrão de discordância aí isso é importante. Tem que olhar se tem
+
+padrão no erro. Deixa eu colocar aqui na lousa. A gente vai olhar então. Poxa, auditoria humana. Então teve discordância. Então a gente
+
+vai perguntar, tem padrão no erro? O que tá errado é sempre daquela região, por exemplo, né? Ou é sempre algum comentário com gíria. E aí se tiver padrão, a gente coloca para retreinar nos casos com padrão. Retreinar nos casos que, né, com mais exemplos desses casos.
+
+Se não padrão, se não tiver padrão, então isso pode ser só um ruído dos dados, né? Pode ser ambiguidade. Então é só definir melhor as categorias. O que eu gosto de fazer? A auditoria humana não é só para quando a gente vai fazer o deploy do algoritmo pela primeira vez, quando a gente vai implementar o algoritmo pela primeira vez. Eu gosto de colocar auditoria
+
+humana para cada novo ciclo de dados ou cada novo ciclo de treinamento. O que que significa um novo ciclo de dados? Uma mudança de ano, por exemplo. E aí a cultura muda, as giras mudam, etc. Tá bom? Ou ah, poxa, uma mudança no perfil
+
+de cliente, uma um novo produto que tá atraindo um determinado comportamento diferente, é por aí, tá bom? >> [roncando] >> Então, cada mudança relevante no contexto. Aí, uma coisa que eu gosto de dizer, é que as pessoas, né, se confundem muito, mas auditoria humana não é sinal de que a gente desconfia da equipe de dados, é parte do processo. A gente faz isso em qualquer sistema que toma decisões, né? Os médicos, eles auditam os diagnósticos de outros médicos, um advogado revisa o o contrato que outro advogado fez. Então, analistas
+
+de créditos, eles revisam quando a gente faz eh quando os algoritmos fazem aprovação automática, tudo isso é revisão humana, né? Então, a gente tem que normalizar que isso é parte do processo de trabalhar com algoritmo e não parte de uma desconfiança ou algo do tipo, tá bom? [roncando] Então pense agora se o seu time faz auditoria humana dos resultados de processamento de linguagem de texto, né, linguagem natural que ele apresenta. E se não faz, talvez seja a hora de implementar ou perguntar porque que não faz, tá bom? E aí a gente vai falar do último ponto. Vamos lá.
+
+O último ponto, ele é específico para quando você usa o resultado de processamento de linguagem natural para entender causa e efeito. Por exemplo, ah, cobertura da mídia, uma notícia negativa, afeta a compra do produto. Então aqui a gente tem que lembrar de uma coisa simples, legging, atraso. Então a gente não pode, na maior parte dos casos, cruzar duas séries no mesmo dia. Então, uma quando uma notícia negativa sai, né, isso vai afetar o comportamento do seu consumidor quando ele for comprar o seu produto. Tem
+
+produto, por exemplo, alimento e bebida, que é comprado semanalmente, por exemplo, mas tem produto, eh, produto de beleza, né, skincare, que é comprado mensalmente. Então, isso vai demorar para fazer efeito, né? Vai afetar nos próximos dias. Então, às vezes, né, vai depender, vai ser 48 horas, às vezes vai ser uma semana. Então o efeito ele demora para ser propagado. Então eu já
+
+vi equipes concluírem que, ah, poxa, quando sai mídia negativa não tem impacto aqui no produto, mas muitas vezes é porque, né, o a análise de vendas tá sendo feita no mesmo dia. Então, vale adicionar algumas legs e fazer intervalos diferentes. Vamos fazer com o intervalo de 48 horas, vamos fazer com o intervalo do dia seguinte, vamos fazer com o intervalo eh de um mês, né? Então, analisar o impacto, né, em diferentes atrasos temporais, tá? Isso é importante para qualquer análise que seja causal.
+
+Então, a pergunta pro pro seu time é quando vocês cruzaram o o resultado da análise de texto com, né, a métrica que a gente tá medindo, seja venda, seja, enfim, seja busca pelo produto. Quando vocês usaram isso, vocês aplicaram algum lag? Qual foi o lag? Aplicaram diferentes lags? Se não aplicaram, então pode ser que o resultado ou esteja escondido ou esteja subestimado, tá bom?
+
+E aí, pra gente fechar, eu queria passar o checklist completo, que seis perguntas para você ali fazer antes de aprovar qualquer resultado de eh de análise de processamento de texto. E para você usar isso na próxima reunião, OK? Eh, vamos lá. Primeiro, a curácia, ela veio acompanhada de F1, veio acompanhada de precision, de recall, se tinha acurácia, pede F1, precision, recall separados por classificação, por categoria. Dois, qual a distribuição das classes nos dados de treinamento? Se tem uma classe com mais
+
+de 70% dos dados, a curácia realmente não diz nada e você precisa entender, né, e testar o algoritmo naqueles outros, naquelas outras categorias que são pouco representadas nos seus dados, tá? E isso vale para tudo, tá gente? Isso vale, inclusive a gente fala de viés de algoritmo, vale, por exemplo, para testar numa classe de cliente que é pouco representada, né? né? Então, grupos minorizados em geral, mulheres, pessoas pretas, pardas, pessoas de baixa renda, né? São grupos que normalmente
+
+são eh minorizados, OK? E muitos outros aí. Então, e aí, terceira pergunta, o modelo foi avaliado com dados que ele não viu durante o treinamento, que tá bom? E aí são os testes aqui, né, de eh robustez, por exemplo. Então, se não se, né, então precisa pedir o fivefold cross validation e pedir precisa pedir o robustness check. Quarta pergunta, qual
+
+foi a última vez que o modelo foi testado com dados de um período ou de um contexto diferente, né, o contexto regional, etc. Então, façam aqui o pedido do robustness Check, caso não tenha sido feito. E por fim, auditoria humana. Perguntem qual foi a taxa de concordância da auditoria humana, se a resposta foi não teve auditoria humana, esse é o primeiro passo antes de usar qualquer modelo, tá bom? E se a teve, mas a taxa de concordância foi abaixo do nível aceitável, vamos lá. Eh, e vamos
+
+refazer e entender por entender qual é o padrão dos erros, tá bom? Eh, pergunta chave ali para quem vai trabalhar a causalidade, teve análise com leg temporal ou a gente analisou no mesmo dia? Então, essas são seis perguntas, elas complementam o trabalho técnico da equipe e vão te dar segurança como gestor ou gestora para assinar embaixo de um algoritmo. E aí, se você vai ter uma reunião de resultado de modelo essa semana, pode mandar esse checklist já pro seu time, para quem vai apresentar. Eu vi um, eu vi uma dica que eu achei ótima. Me falaram que pedem para
+
+transcrever meu texto e mandar paraa equipe eh como eh infográfico para para como guia. Falaram também que mandam o meu texto e pedem para pro Cloue, né, pro Clud, pro Geminai, para todas essas IA resumirem também. Então podem transcrever o vídeo aqui no YouTube e mandarem para usar de recurso. Acho que isso foi uma sugestão muito boa que fizeram aqui eh para mim. Bom, então esse canal é gratuito, ele cresce para quem, né, porque vocês compartilham, porque vocês se inscrevem. Então, se
+
+você conhece alguém que trabalha com dados ou que aprova, né, algoritmos de modelos de de modelos de dados, então manda essa aula para eles. E se você quiser entender que modelos a sua organização usa e se eles estão sendo validados da forma certa, você pode falar com a Mica seis. O link tá aqui embaixo na descrição, só comentar aqui embaixo. Se você viveu alguma dessas situações, conta pra gente que a gente vai ler e responder. Até o próximo vídeo e se divirtam trabalhando com dados.
+
+Yeah.

@@ -1,0 +1,98 @@
+---
+video_title: "Double Machine Learning: como medir o efeito real de uma decisão | Aula 3"
+video_id: uHDuf9Qo0e8
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uHDuf9Qo0e8
+video_date: 2026-06-25T20:23:10+00:00
+video_description: |
+  Como você sabe se um desconto realmente aumentou as vendas — ou se as vendas subiriam de qualquer jeito?  
+  
+  Double Machine Learning é a resposta. E a intuição é simples: você usa ML como álcool pra limpar o ruído de centenas de variáveis de confusão. E depois usa econometria como um bisturi pra extrair a causa pura.  
+  
+  O que você vai aprender: 
+  • O problema das variáveis de confusão: por que regressão simples não basta 
+  • Como DML usa dois modelos de ML pra limpar o terreno 
+  • Como a regressão dos resíduos extrai o β causal 
+  • Onde usar DML no mundo real (preço, campanha, treinamento, turnover) 
+  • Framework passo a passo pra estruturar um problema DML  
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  Apresentado por Maria Alice Maia, cientista de dados pela UC Berkeley, professora, doutoranda pesquisadora de comportamento de uso e governança de IA na FGV, fundadora do Estúdio 68 e da Micah 6 AI. Ex-Ambev, Itau, Stone, Alun/FIAP.
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  PERGUNTAS FREQUENTES  
+  P: O que é Double Machine Learning (DML)? R: É um método que combina machine learning e econometria para estimar efeitos causais. ML é usado para remover a influência de variáveis de confusão (o trator). A econometria é usada na etapa final para estimar o efeito causal limpo (o bisturi). Formalizado por Chernozhukov et al. (2018).  
+  
+  P: Qual a diferença entre DML e regressão com controles? R: Regressão com controles assume relações lineares entre as variáveis de confusão e as variáveis de interesse. ML captura relações não lineares, o que é mais realista em dados complexos. DML usa a força do ML para a limpeza, preservando as propriedades estatísticas corretas para estimação causal.  
+  
+  P: Quando usar DML em vez de regressão simples? R: Quando sua pergunta é de intervenção (β) e você tem muitas variáveis de confusão que interagem de forma complexa. Se você tem poucas confusões lineares, regressão simples é suficiente. Se você tem centenas de variáveis e relações não lineares, DML é mais adequado.  
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  
+  Chapters do Vídeo
+  [00:00] O problema que o DML resolve
+  [01:10] Apresentação
+  [01:27] Variáveis de confusão — por que a regressão simples não basta
+  [04:25] O Trator: ML limpa o ruído em dois modelos
+  [07:53] O que são resíduos e por que eles importam
+  [10:23] O Bisturi: regressão dos resíduos extrai o β causal
+  [11:51] Por que funciona, e por que ML puro não resolve
+  [12:59] Onde usar no mundo real
+  [14:20] O nome formal e a referência
+  [14:44] Próximos passos pra você
+---
+Se você chegou até aqui, deve estar pensando, tá, mas então como que eu posso usar a machine learning de verdade para tomar decisões? E essa aula é para isso. Existem soluções. A principal delas se chama Double Machine Learning. E quando eu entendi como ela funciona, eu achei genuinamente elegante. É um
+
+daqueles casos em que a resposta parece óbvia depois que a gente vê, mas que demorou décadas para alguém formalizar direito. A ideia é a seguinte: você não usa machine learning para responder a pergunta toda. Você usa machine learning para limpar o ruído e aí sim você usa um método estatístico mais preciso para extrair a causa que interessa. É como usar um álcool para esterilizar a área a ser operada, né? Preparar o terreno e um bisturi para de fato fazer o corte. Isso
+
+não é uma metáfora, é literalmente o que o método faz. E hoje você vai entender por isso funciona e o que é esse método sem nenhuma fórmula. Eu sou Maria Alice Maia, eu sou cientista de dados pela Universidade de Califórnia em Berkley, sou pesquisadora em comportamento de uso e governança de IA. Sejam bem-vindos ao Stúdio 68. Para entender o Double Machine Learning ou DML, eu preciso primeiro te mostrar o problema que ele resolve. Então vamos
+
+pra nossa lousa. O problema que ele resolve é o problema das variáveis de confusão, certa? A gente aprendeu nos nossos outros cursos, né, o que são as variáveis de confusão ou cofounding.
+
+Então vamos entender aqui para tangibilizar para quem ainda não tá familiarizado com esse termo. A gente tem aqui preço do produto, vendas, certo? E a gente tem aqui de fora o mês. E aí quando a gente considera o mês, a gente sabe, a gente sabe que o preço do produto ele afeta as vendas. E quando a gente olha, por exemplo, mês, a gente sabe que ele afeta tanto o preço do produto quanto as vendas. Então imagina que você quer
+
+saber se eu aumentar o preço do produto, quanto as minhas vendas vão cair. Parece simples, mas você vai olhar o que o preço e as vendas, vai calcular a relação e aí você vai lembrar que no Natal todo mundo vende mais e que também o preço aumenta. E aí você vai vendar, lembrar que também de repente no inverno as pessoas compram menos e as empresas às vezes baixam o preço para estimular as vendas. Então, se você só olhar o preço e as vendas, né, que é essa caixa aqui de baixo, sem considerar a época do ano, por exemplo, você vai ter uma correlação que não vai refletir o efeito causal, o efeito mesmo, o impacto que o preço faz nas vendas. você vai tá estimando o efeito errado. A variável de
+
+confusão, ela é exatamente o mês, ela é exatamente a época do ano, que ela afeta tanto o preço quanto as vendas ao mesmo tempo. E para estimar o efeito real do preço, você vai precisar limpar essa influência, tá? você vai precisar, de certa forma controlar para isso. Então, em algumas situações simples, com poucas variáveis de confusão conhecidas, a gente resolve isso com o que a gente chama de regressão múltipla. A gente coloca todas as variáveis de confusão como controle, mas em situações reais a gente tem centenas de variáveis de confusão possíveis, algumas que a gente nem sabe que existem. Então, a regressão
+
+sozinha não dá conta desse cenário. E é aí que entra o double machine learning. Então, vamos voltar aqui pro nosso exemplo. O double machine learning ele divide o problema em duas etapas. De novo, considerem que aqui é uma linha, não uma seta.
+
+Aqui de um lado a gente tem aqui, vamos lá, muitas, deixa eu desenhar aqui. A gente vai ter muitas variáveis.
+
+A gente vai ter muitas variáveis. considera que cada um desses é uma variável, certo? E aí, por exemplo, a gente pode ter a gente pode ter aqui uma variável que é tempo de estudo, uma variável que é que é bairro onde a pessoa mora, outra variável que é idade, uma variável que é o quanto a pessoa é ligada no determinado produto que, né, de repente você vende produto de tecnologia, o quanto essa pessoa é uma afeccionada por tecnologia. Tudo isso aqui você tem várias variáveis que tão aqui espalhadas, certo? E aí a gente vai considerar que o machine learning ele é como se fosse um,
+
+ele é como se fosse um vidro de álcool que você passa aqui e ele o double machine learning, né? E ele vai sanitizar e deixar esse terreno limpo. Que que significa deixar esse terreno limpo? Ele vai organizar essas variáveis, vai falar assim: "Olha, é só isso que a gente tem organizado dessa forma. Então, a gente tem centenas de variáveis de confusão, sazonalidade, categoria de produto, comportamento de concorrente, condições macroeconômicas, todas as variáveis socioeconômicas que eu falei, mil coisas". Machine Learning,
+
+ele vai processar tudo isso ao mesmo tempo, vai estimar qual seria o preço esperado, dado tudo o que você sabe e o que seriam as vendas esperadas. Dado tudo que você sabe, você vai treinar dois modelos de machine learning diferentes. O primeiro, prevê o preço baseado em todas as variáveis de confusão. Então aqui ele vai primeiro prever o preço baseado em todas as variáveis, certo? O segundo, ele prevê as vendas baseada em todas as variáveis.
+
+Então são dois modelos de previsão. Então lembra que aqui ele queria ele queria, né, a gente queria saber o preço do produto, o quanto ele afeta as vendas. Então ele vai fazer o seguinte, ele ao invés de tentar controlar por essa variável de confusão, ele vai falar assim: "Olha, então vamos primeiro prever o preço baseado em tudo e depois a gente prevê as vendas baseado em tudo, certo? Então aqui a gente tem os dois modelos, certo? E aí a gente vai ter o que a gente chama de resíduo.
+
+A gente vai ter o resíduo preço e a gente vai ter o resíduo vendas. Então, depois que você calcula a diferença entre o que aconteceu de verdade e o que os modelos previram, que é o resíduo, certo? Então, a gente prevê o preço e aí a gente vai fazer o cálculo, olha o que o os modelos de fato previram menos, né, o que é o preço real, né? Eh, e a gente vai falar, olha, e o que é a venda real o previsto? Então, a gente vai calcular o que a gente chama de resíduo, que é quase como se fosse o erro de cada uma das previsões, certo?
+
+E aí é o esse esse resíduo, tá? que é esse erro que a gente vai usar, a gente vai limpar o terreno. Então, olha, a gente prevê um, prevê outro e a gente fala assim: "Olha, tá aqui o erro, entre aspas, tá? Que é esse resíduo, a diferença entre o que aconteceu de verdade e o que os modelos previram. O resíduo do preço, ele é a parte do preço que não foi explicada pelas variáveis que a gente usou. É a variação do preço pura.
+
+Entendeu? Aquilo é é a variação do preço sem considerar as variáveis que a gente usou, porque é é o que as variáveis não explicam. E o resíduo das vendas é a parte das vendas que não foi explicada por essas variáveis também. Então é a variação de vendas pura, certo? Então isso aqui a gente limpou o terreno, foi aqui que exatamente o modelo um e o modelo dois fazem, transformam esse aqui nisso aqui.
+
+A gente tem aqui o preço e as vendas puros, certo? Sem o o impacto de qualquer variável, como por exemplo o mês de vendas. Certo? Então a gente vai ter aqui preço e vendas puros. É isso que acontece quando a gente usa o double machine learning para sanitizar os nossos dados.
+
+Então agora é que entra, né, o bisturi. Então a gente pegou os dois resíduos, certo? o tanto o resíduo do preço, o quanto o resíduo das vendas. Então, a gente pegou o preço puro e as vendas puras, a variação pura deles. E aí a gente vai fazer uma regressão simples de um no outro. Poxa, mas por que regressão
+
+simples, né? Porque agora que a gente removeu a influência das de outras variáveis, o que sobrou é exatamente a variação que não foi explicada pelo contexto. Então é a variação de verdade que o preço causa nas vendas, porque a gente excluiu o efeito de todas as outras variáveis nas vendas. a inclinação dessa regressão, né, que é o efeito causal do preço sobre as vendas, certo? Então aqui é o que a gente chama de double machine learning, dois modelos de machine learning fazendo o trabalho pesado de limpeza. E aí a gente faz uma
+
+regressão simples para fazer a estimativa causal final. Agora a gente vai dizer: "Poxa, mas por que isso funciona melhor do que regressão múltipla com controle, por exemplo?" Olha, porque o machine learning ele consegue capturar as relações não lineares entre as variáveis de confusão e as variáveis de interesse, no nosso caso, o preço e a venda, coisa que uma regressão não consegue. É como se, né, o álcool tivesse mais força do que simplesmente lavar com sabão, tá? E por que a gente não usa machine learning para estimar o efeito diretamente sem uma etapa, né, de fazer uma regressão no final? Porque o machine
+
+learning padrão, né, ele é uma previsão, ele é uma, ele é otimizado para minimizar o erro de previsão, não para estimar um efeito causal. o bisturi, né? A regressão de fato, ela sim tem as propriedades estatísticas certas para estimar o efeito causal do preço nas vendas. Então, onde é gente que usa isso no mundo real? A resposta é: em qualquer situação onde você quer saber o efeito causal de uma ação. Ah, mas tem muitas
+
+variáveis de confusão. É exatamente aí que a gente usa. Poxa, conseguir pegar uma base do governo, conseguir pegar eh uma base de dados históricas, tenho variável até falar chega. Excelente. É aí que a gente vai usar a machine learning. A gente vai usar a machine
+
+machine learning para pegar exatamente o que, né, o ali no nosso caso, o preço, pegar a venda e excluído o efeito de todas as outras variáveis e a gente saber no final fazer qual o efeito do preço nas vendas, certo? Então, de repente, a gente pode usar para calcular o efeito de um desconto nas vendas e controlando paraa sazonalidade, categoria, comportamento do concorrente ou efeito de um programa de treinamento na performance do funcionário, controlando por senioridade, área, gestor, tempo de empresa ou de repente efeito de uma campanha de marketing no engajamento, controlando por persona, canal, conteúdo anterior, tudo isso. Em todos esses casos, a pergunta é uma pergunta de intervenção, mas o machine learning, o double machine learning é a ferramenta certa. O nome formal é double machine learning, tá? Formalizado pelos economistas que criaram ele lá em 2018. E essa é
+
+provavelmente uma das contribuições mais importantes da economia moderna paraa ciência de dados aplicada, tá? Que a gente faz aqui no ambiente de negócios. Mas a intuição, né, é tudo que você precisa para entender quando usar. E se você quiser entender isso de verdade, tenta responder: "Olha, no caso do turn na aula um, como você aplicaria o double machine learning? Qual seria o tratamento? Quais seriam as variáveis de
+
+confusão? O que você usaria como desfecho? Pensa nisso e comenta aqui embaixo. E se esse conteúdo tá abrindo algo importante para você, segue o canal. Na próxima aula a gente vai ver como transformar texto em dado causal usando os LLMs. E é muito mais prático
+
+do que parece. M.

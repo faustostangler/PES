@@ -1,0 +1,143 @@
+---
+video_title: "Por que o ban do Fable 5 mostrou que toda empresa precisa de um AI Gateway?"
+video_id: W0k6AsfonqQ
+channel_name: "Estudio 68 by Micah 6 AI"
+channel_id: UC0AZ0W8Vw5k67M6lWm6pUZA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=W0k6AsfonqQ
+video_date: 2026-06-16T17:36:49+00:00
+video_description: |
+  AI Gateway: como garantir que a sua organização não pare quando a IA sai do ar
+  
+  O Fable 5 foi banido em 72 horas. Organizações sem AI Gateway ficaram sem operação. Hoje você aprende o que é um AI Gateway, como funciona o roteamento e o fallback automático, e as 3 perguntas para saber se sua organização está protegida para o próximo incidente.
+  
+  O que você vai aprender:
+  • O que é Concentração de Dependência em IA, e por que o ban do Fable 5 expôs esse risco
+  • O que é um AI Gateway e como funciona como guarda de trânsito entre sua aplicação e os modelos
+  • Por que nunca chamar APIs de IA diretamente do frontend • Roteamento estático vs semântico, como o sistema decide qual modelo usar 
+  • Fallback automático: o plano B que você não percebe que está sendo executado 
+  • A dimensão geopolítica: o que o Financial Times disse sobre modelos chineses após o ban 
+  • As 3 perguntas para fazer ao seu time de tecnologia amanhã  Ferramentas mencionadas: LiteLLM (open source) · Portkey · Helicone · Cloudflare AI Gateway  
+  
+  Fonte: Financial Times — 'Cutting access to Anthropic's Mythos is a gift to China' (Junho 2026)  
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+  
+  Apresentado por Maria Alice Maia, MSc, PhD Fellow — pesquisadora de doutorado em comportamento de uso e governança de IA na FGV, fundadora da Micah 6 AI (consultoria de governança de IA) e do Estúdio 68 (formação gratuita em dados e IA).
+  
+  https://micah6ai.com · https://micah6ai.com/estudio68 · https://linkedin.com/in/alice-maia
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  
+  PERGUNTAS FREQUENTES
+  P: O que é um AI Gateway?
+  R: É uma camada intermediária entre sua aplicação e os modelos de IA que você usa. Funciona como guarda de trânsito: decide qual modelo usar para cada tarefa, faz fallback automático se um modelo ficar indisponível, registra custos por funcionalidade, e centraliza as chaves de API com segurança.  
+  
+  P: Como o AI Gateway teria protegido do ban do Fable 5? 
+  R: Com fallback configurado, quando o gateway tentasse o Fable 5 e recebesse erro de indisponibilidade, automaticamente desviaria para outro modelo na lista (Claude Sonnet, GPT-4o, Gemini Flash) sem que a aplicação parasse. O usuário não perceberia a troca.
+  
+  P: O que é roteamento semântico em AI Gateway?
+  R: É quando um modelo de IA minúsculo classifica a intenção do pedido do usuário e direciona para o modelo mais adequado automaticamente. Tarefas simples vão para modelos baratos. Tarefas complexas vão para modelos mais poderosos. Tudo transparente para o usuário final.
+  
+  P: Por que não chamar a API de IA diretamente do frontend?
+  R: A chave de API fica exposta no código que roda no navegador de qualquer usuário. Qualquer pessoa que inspeciona o código pode roubar a chave e usar em nome da sua conta. A arquitetura correta é: Frontend → Backend (seu) → AI Gateway → APIs dos modelos.
+  
+  P: O que é Concentração de Dependência em IA?
+  R: É quando uma organização depende de um único modelo ou vendor de IA para processos críticos, sem alternativa designada e sem plano de contingência. O ban do Fable 5 foi o primeiro caso global de exposição em escala desse risco.
+  
+  P: Quais são as ferramentas de AI Gateway mais usadas?
+  R: LiteLLM (código aberto, gratuito, mais popular), Portkey e Helicone (plataformas SaaS com dashboard de custos e observabilidade), e Cloudflare AI Gateway (com caching nativo que elimina custo em perguntas repetidas).
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  
+  Chapters (Capítulos do Vídeo)
+  [00:00] O ban do Fable 5 — e o que isso revela
+  [00:51] O que você vai aprender
+  [01:06] Concentração de Dependência — o nome do problema
+  [03:31] O que é um AI Gateway
+  [07:06] Por que nunca chamar a API do frontend — o erro mais comum
+  [07:39] A arquitetura correta: Frontend → Backend → Gateway → Modelos
+  [08:29] As ferramentas: LiteLLM, Portkey, Helicone, Cloudflare
+  [11:06] Roteamento estático — baseado em tarefa
+  [11:59] Roteamento semântico — o sistema decide sozinho
+  [14:30] Fallback automático — o plano B invisível
+  [16:31] A dimensão geopolítica — o que o Financial Times disse
+  [18:42] As 3 perguntas para fazer ao seu time amanhã
+---
+O modelo mais avançado da An Shop, que é a dona do Cloud, o chamado Fable 5, foi banido menos de 72 horas depois de ter ido ao ar, tá? E provavelmente se você migrou, você chegou a ficar ali algumas horas, né, sem acesso ao modelo até entender o que aconteceu. Agora, se você não chegou a migrar, por sorte ou por infraestrutura, tá, esse vídeo é para garantir que você não fique fora do ar na próxima vez, tá? Porque vai ter uma próxima vez, não necessariamente por banimento governamental, como foi o caso do dos Estados Unidos banindo a exportação, né, de tecnologia, mas pode ser de repente uma instabilidade da API, pode ser uma mudança de preço que inviabiliza o seu modelo de negócio de uma hora para outra, pode ser uma descontinuação com um pouco aviso prévio, tá? A questão não é se é quando, mas existe uma arquitetura específica para esse tipo de problema. tem nome,
+
+tem ferramentas prontas e dá para configurar, tá? Se chama gateway de inteligência artificial, AI gateway. E hoje você vai entender o que é, como funciona e como saber se a sua organização tem ou precisa ter. Então vamos lá. Antes de falar de solução, eu preciso nomear o problema, porque sem nome é difícil consertar. A maioria das
+
+organizações que chegou a usar o Fable 5 tinha o que eu chamo de concentração de dependência, um único modelo, tá? de um único fornecedor, sem alternativas designadas, tá? E sem plano de contingência documentado, sem critério de corte definido para caso esse modelo saísse do ar ou tivesse alguma inconsistência ou instabilidade. Então vamos pra nossa lousa. Então vamos lá. Imagina uma empresa que tava
+
+usando o Fable 5, então eles tinham aqui o Fable 5 aqui na frente, né? E o Fable 5 saiu do ar. Eles não tinham desenhado para onde ir. A ponta de uma vez que eu o sistema bateu no Fable 5 e o Fable 5 não tava disponível, o que fazer, né? A empresa fica isolada.
+
+Simples. Então pensa assim, é como ter toda a operação de uma empresa conectada a uma única tomada elétrica. Enquanto a tomada funciona, tudo bem. Mas se essa tomada queimar ou tiver um pico de tensão ou sair do ar por qualquer razão, tudo para. Empresas que levam a sério a continuidade do negócio, tem geradores, tem links de internet redundante, tem fornecedores alternativos de insumos críticos. Isso não é exagero, é gestão
+
+de risco básica. Com inteligência artificial, esse risco foi ignorado por anos porque os modelos eram estáveis. O Fable 5 foi a primeira vez que deixou claro, né, em escala global, de forma visível, que acesso a um modelo de inteligência artificial pode ser cortado em horas por razões externas da sua organização, tá? Sem aviso suficiente para reagir. Quando eu digo que foi a primeira vez, não tô me referindo à instabilidade, né? A instabilidade, a
+
+gente já teve algumas instabilidades ali de 24 horas, 12 horas, né, do Geminai, do Cloue, do próprio chat PT, mas tô dizendo aqui por uma questão, nesse caso, geopolítica. Então, antes de continuar, tá, pensa na sua intuição. Como você resolveria esse problema? Se você tivesse que garantir que a sua operação não para quando o modelo sai do ar, o que que você faria? Pensa aí.
+
+Se você pensou em ter mais de um modelo com uma, de repente, forma automática de trocar entre eles, né, de checar sempre, se um tá no ar, você acabou de descrever o gateway de inteligência artificial, tá? Tá? Então aqui a gente vai colocar gateway de IA, tá? Ou AI gateway, certo? Então aqui é uma outro um outro modelo de funcionamento, tá? Então aqui
+
+a gente vai para um outro modelo, mas vamos lá. Um AI gateway, tá? é a camada intermediária entre a sua aplicação e os modelos que você usa. Então é um guarda de trânsito, né? Então aqui, né? Se
+
+antes a gente tinha ali a sua organização batendo direto no Fable 5, aqui a gente vai ter, né, eh, a sua aplicação, né, vamos colocar a sua organização, né, a sua empresa aqui, que aí é uma aplicação que você usa, né, um sistema, alguma coisa assim, né? Ela pode bater no Fable 5, pode bater no GPT, eh, GPT4, né, que é o do chat. Pode bater no Gemini Flash. né? E pode bater em vários outros, né?
+
+No, por exemplo, da Cloue, né? A gente tem o o Clud Son, né? Então, ela pode bater em vários outros. Então, imagina que aqui a gente tem uma pessoa que é como se fosse um guarda de trânsito, né? Então aqui a gente tem um guarda de trânsito agindo aqui no meio.
+
+Deixa eu ver se eu acho alguém com que pareça um pouco mais um guarda de trânsito por aqui. Colocar bom essa pessoa aqui. A gente tem uma pessoa que tá aqui gerenciando o trânsito, tá? para cada chamado que sai da sua aplicação ou da sua organização, ele diz: "Poxa, esse chamado aqui vai pro chatt, eh, porque é muito simples e eu consigo tratar por ali." Esse chamado aqui, ele vai para, eh, esses dois aqui vão pro Fable 5, e por aí vai, tá? De forma simplificada,
+
+isso é o que um gateway faz, tá? Inclusive, e aí um tema para um próximo vídeo, ele pode fazer você ir para um modelo local, tá? Ou modelo próprio aqui que a gente vai deixar, né, que vou colocar aqui e pra gente discutir no próximo vídeo com fine tuning próprio. Então, e é isso, né, o que ele vai fazer. Sem gatway, a sua aplicação vai direto para um único modelo, tá? ou a
+
+sua empresa, por exemplo, tem o acesso Enterprise do Cloud, você acessa o site do Cloud e você vai, né, fazer aquele aquele uso daquele modelo, né? Se o cloud sai do ar, a sua organização fica sem inteligência artificial, né? Agora, com gateway, a sua aplicação fala com gateway. Então, o gateway decide qual modelo usar, baseado em disponibilidade, custo, tipo de tarefa e aí faz a chamada. Se o modelo primário cai, o gateway automaticamente desvia pro secundário. Sua aplicação não percebe o
+
+que aconteceu, tá? Pro usuário é praticamente transparente, invisível. E tem uma coisa importante que eu preciso explicar antes de continuar, porque é um erro que muitas empresas acabam cometendo, tá? Nunca chamem as APIs do modelo de IA diretamente no seu frontend, tá? na sua aplicação.
+
+Então, se você vai mandar, né, como que a gente faz isso normalmente a gente usa chaves API, né, que são como senhas, a grosso modo, tá? Você vai usar uma chave API para cada um desses modelos, né? E é como se fosse a senha da sua conta no serviço de inteligência artificial, né? E aí você vai transitar isso no seu backend, tá? na parte e num sistema ali, digamos assim, de codado, né? Aquelas aquele script mais difícil
+
+de ler, tá? Então, porque se você faz isso pela própria aplicação no frontend, a API fica visível no código que roda no navegador e aí qualquer um vai poder saber a sua API. Qual que é o problema com a sua senha? qualquer um pode usar e pode acessar seus dados de uso, pode alterar seus dados de uso, pode usar por você aumentando seu custo, entre outras consequências, tá? Então é quase como que deixar a chave do cofre na vitrine, tá? Então na hora de fazer uma
+
+configuração de gateway, eu sempre gosto de fazer esse alerta porque algumas organizações deixam isso passar, tá? E aí então, né, as ferramentas de gateway mais usadas hoje são light sell, que é código aberto, é gratuita, não demanda custo, tá? Além do custo dos tokens, das chamadas, que é o custo normal de utilização, tá? Eh, tem a Port Key, tem a Helicon e, enfim, tem algumas eh que são algumas plataformas que t dashboard de custos, observabilidade. Eu gosto bastante de usar Cloudfir, tá? que ele adiciona
+
+cashing, que é uma forma de a gente vai falar, fazer um vídeo sobre fins também, tá? Mas eh o Cloudfare e ele faz o casing, que é, por exemplo, se 10 usuários, né, fizerem a mesma pergunta, o gateway responde a partir da segunda vez, sem precisar chamar o modelo, tá? Então ele economiza 100% do custo das chamadas seguintes. Então imagina que tem um tema em tópico, um tema em alta na sua organização. Por exemplo, agora Copa do Mundo, né? E a gente sabe que as
+
+pessoas utilizam às vezes os sistemas para para temas pessoais e elas vão perguntar horários de jogos. Na segunda vez que a pessoa perguntar horário de jogos, na segunda pessoa que perguntar ou na segunda vez ela já vai pegar o que foi salvo no caixo, tá? O que foi salvo ali como resposta para outro usuário, tá? Então isso é um tema que a gente vai falar depois, né, que se chama finops, que é como você gerencia o curso de IA. Muita gente deixa de desenvolver porque tem medo de ser caro, né? Mas aí
+
+voltando, o gateway ele não é só resiliência, não é só, né? Vocês viram agora gestão de finanças, mas tem também disponibilidade. Ele não é só cuidar de estar disponível o tempo todo, né? Então tem a gestão de finanças com inteligência artificial. você consegue ver exatamente quanto cada usuário, cada funcionalidade, cada tipo de pergunta tá custando para você, né? Você consegue
+
+inclusive fazer de repente, né, a locação de centro de custos por área ou até por tema. Então, olha, né, ou por cargo, por exemplo, então você consegue trabalhar ali, né? Olha, esse determinado tema é um tema, é um projeto que eu tô priorizando. Então, se fizerem chamadas aqui sobre esse tema, vem eh acesso a um centro de custos eh com mais com mais recursos, né? É um tema complexo que realmente precisa de um de um modelo complexo. Então, sempre que
+
+fizerem chamadas por aqui, vão acessar o modelo mais moderno e por aí vai, tá? Então agora, tá, eh, é um o momento que eu preciso que você fique comigo, porque dentro do gateway existe uma lógica de roteamento que decide para qual modelo cada pedido vai. E existem dois tipos principais, tá? O primeiro é o roteamento estático, que é baseado na tarefa. Você programa algumas regras fixas. Então, por exemplo, se o usuário
+
+clicar em resumir documento, poxa, resumir documento qualquer um faz, então você vai mandar para aquele modelo mais rápido e mais barato, que muitas vezes, né, é aquilo que a gente falou, modelo local, né, um finin que a gente desenvolve com base em um modelo aberto, né, que tem um custo baixo porque tá rodando locamente e serve para esse tipo de demanda, né, mas se, né, você de repente faz uma chamada para analisar um contrato complexo, ou desenvolver, né, ou checar um algoritmo muito complexo, com diversas camadas, aí sim manda pro modelo mais poderoso e mais caro, simples, previsível e funciona muito bem quando as tarefas são bem definidas, né? E aí a gente tem o segundo roteamento, tá? que é o roteamento, né, semântico, que é o sistema decide sozinho. Um modelo de inteligência artificial minúsculo e ultra rápido, lê o pedido do usuário, classifica a intenção e direciona pro modelo mais adequado. Se ele detecta raciocínio matemático complexo, ele manda para modelo mais poderoso. Se for uma conversa casual,
+
+ele manda para modelo menor e mais barato, tá? Tudo isso é transparente para o usuário. Então, pra gente ilustrar, vamos lá. Vai ter aqui, né? Aqui saiu da sua aplicação, foi pro gateway.
+
+E aí ele pode trabalhar de duas formas, né? Ele pode trabalhar do semântico ou pode trabalhar por tarefa, né? O semântico, você tem uma IA, muitas vezes, né, local, né, que ela ela mesma classifica automaticamente o que que vai para cada modelo. Por tarefa é uma regra fixa, tá? Pode ser uma tarefa, pode ser por tarefa, pode ser por departamento, pode ser por cargo, né? Às vezes a gente já pediu,
+
+por exemplo, e até em com criação de contexto, já pediram pra gente criar por cargo para determinados cargos terem acesso a determinadas informações confidenciais, né? Então o por tarefa, ele vai trabalhar, né, aqui eh com ali alguma, alguma especificação, né? E esse aqui é o que a gente chama de, opa, estático, tá? ele vai trabalhar com uma especificação definida. Você não muda, né? É sempre muito previsível. Sempre
+
+que a área de marketing, RH, chama, eles vão para cá ou para lá, ou sempre que pedirem para essa tarefa ou para aquela, vão para cá ou para lá, né? Então esse aqui não muda. Então tudo isso é o que é o o que dá para configurar num em um gateway, tá bom? E aí a gente tem aqui nesse semântico que eu expliquei um classificador, né? né? Alguém que tá ali classificando e
+
+checando o que é que tá sendo feito, né, para direcionar, dependendo do conteúdo. E tem também o que a gente chama que de funcionalidade no gatin, né, que é o fall que é o plano Bomático, que é exatamente o que protege as organizações em caso de algum dos modelos sair do ar ou ser banido, como agora, né, a gente tá discutindo sobre o Fable 5. Então, se o modelo primário demora demais para responder ou retorna um erro, né, ou o gateway ele vai tentar o próximo modelo da lista. Então, sem precisar pedir pro usuário, sem quebrar a aplicação, né, isso e isso acaba protegendo as organizações, né, no em casos como o caso do Fable 5, tudo bem? Então, no caso do Fable 5, sem para quem não tinha gateway, né, a o a aplicação tentava acessar o Fable 5, recebia o erro e saía do ar, não entregava nada ou entregava uma mensagem de erro. No caso, com o
+
+Gateway, ela tentaria acessar o Fable 5, receberia o erro e automaticamente desviaria para outro modelo, por exemplo, Son ou Chatpt, né, ou o Gemini, tá? Isso em questão de milissegundos. Quando a gente descreve isso aqui, né, parece parece algo algo muito complexo, né? Mas então é em questão de 5 segund milissegundos aqui, tá? Então aqui a gente coloca app gateway, aí a gente coloca modelo e aí se o modelo não é atingido, né, a gente tem o fall, certo?
+
+Então isso aqui é o, né, que aí é o modelo como se fosse o plano B, tá? Então é assim que a gente constrói, né, uma arquitetura de inteligência artificial. Aqui a gente tá falando de arquitetura, né? Então aqui, ó, o plano B. Aqui a gente já começa a falar de arquitetura.
+
+Então vamos lá pra nossa discussão, tá? Porque tem uma camada que vai além de tecnologia. O Financial Times, ele publicou uma análise que resume bem o que o banimento do Fable 5 revelou em escala maior. O Washington acabou de fazer muito mais pelo apelo e marketing, né, dos modelos de inteligência artificial chineses do que a própria China conseguiria fazer sozinha, tá? Deepsic, Quemen, Kim, são modelos que custam 60 vezes menos do que o Fable 5, que rodam em servidores próprios e que nenhum governo americano pode desligar numa sexta à tarde, né? Então, a China
+
+passou anos construindo um argumento de que a tecnologia deles nunca seria cortadas por razões políticas. E essa semana esse argumento ficou muito mais forte. Isso não significa que você deve substituir todos os seus modelos por modelos chineses. Muito pelo contrário, tá? Aqui é decidir uma por uma diversidade de fornecedores, tá? Porque
+
+a decisão de qual fornecedor usar passou de uma decisão tecnológica e de negócios para uma decisão inclusive geopolítica que não existia há uma semana atrás. E aí as organizações, né, que não apeiaram essa dependência não vão conseguir nem avaliar o risco que elas têm com os modelos que elas estão usando, tá? Então um gateway de inteligência artificial te dá flexibilidade para usar o melhor modelo para cada tarefa, independente da origem, e trocar quando as condições mudarem, seja por preço, por disponibilidade, por política internacional. Essa flexibilidade tem um nome técnico que é independência do fornecedor e começa com a arquitetura certa, tá? E aí, né, o que e o que a gente aprende com isso? Ter um fall, né,
+
+ter um plano B com um modelo local não parece uma ideia tão ruim. Então a vale a gente também pensar em trazer modelos locais. Não significa desenvolver um Gemini do zero, tá gente? Significa adaptar um modelo open source, tá? um modelo de código aberto para para para ter algo rodando no próprio servidor da empresa. Então agora a gente vai falar
+
+sobre o que isso implica na prática, tá? São três perguntas para fazer pro seu time de tecnologia amanhã de manhã, tá? Você vai chamar seu arquiteto chefe de inteligência artificial. Se você não tiver um, você vai chamar seu fornecedor, que é arquit que deve ter um arquiteto de inteligência artificial. E você vai perguntar: "Olha, a nossa aplicação de inteligência artificial chama os modelos diretamente ou tá passando por um gateway?" Se a resposta
+
+for diretamente, você tem dois problemas, tá? Segurança de chave de API e ausência de fall, tá? Segunda, se o modelo que a gente deve, que a gente usa, ficar indisponível agora, hoje, o que que acontece? Quanto tempo leva para voltar a operar? Existe um processo documentado ou alguém que vai resolver na hora?
+
+E terceira pergunta, a gente sabe quanto cada funcionalidade de inteligência artificial tá custando por usuário? A gente sabe quais áreas usam mais? A gente sabe quais têm sido os usos? Se a resposta for não, então vocês não têm visibilidade para tomar decisão de fins e inteligência artificial, tá? E o gateway resolve isso também. Então, se o
+
+seu time responder essas três perguntas com confiança e com dados, você tem a arquitetura certa. Se eles em qualquer uma dessas perguntas, então esse vídeo foi feito para você. Você pode chamar o seu time agora e ter uma conversa séria.
