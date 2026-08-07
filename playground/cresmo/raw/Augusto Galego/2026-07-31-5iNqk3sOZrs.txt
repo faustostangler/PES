@@ -1,0 +1,105 @@
+---
+video_title: "Pare de Configurar Infraestrutura Pelo Console da AWS"
+video_id: 5iNqk3sOZrs
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5iNqk3sOZrs
+video_date: 2026-07-31T13:00:01+00:00
+video_description: |
+  💸 Aproveite o Pix com taxa zero na Appmax para novos usuários: https://appmax.com.br/desenvolvedores/?utm_source=augusto-galego&utm_medium=social&utm_campaign=influencer-tech
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Escolher infraestrutura de pagamentos para o seu projeto é crucial. Você vai viver com ela por anos. Amax foi construída utilizando performance e tecnologia de pagamentos, ideal para quem integra via PI. Eles têm antifraude, recorrência nativa, split de pagamentos, recuperação de carrinho com IA e uma documentação completa. Para quem vem aqui do canal, clica no link na descrição para ter taxa zero no Pix integrando pela PI. Isso aqui é o
+
+console da WS. E geralmente se você seguir algum tutorial, o tutorial vai te demonstrar como que você abre aqui o console da WS. Tipo assim, eu vou abrir aqui o lambda, abrir o lambda da WS, vou sair clicando aqui em create function, vou criar, rodar, subir minhas funções, subir meus projetos para cá. Isso tem um problema muito grande, que é quando a gente entra no console da WS e a gente manipula o console da WS manualmente, a gente vai tá fazendo algo que talvez não seja facilmente reproduzível e com certeza não vai tá bem documentado. Então o vídeo de hoje é uma aula pra gente aprender IAC, infrastructure as code. Infrastructure Code é tratar
+
+infraestrutura da mesma maneira que a gente trata o código como um cidadão de mesma categoria, com controle diversionamento, documentação clara e de maneira reproduzível e revisável. Por que que eu comecei mostrando o console da WS? Não precisa ser da WS em específico, mas a primeira forma com que as pessoas geralmente fazem as coisas, configuram a sua infraestrutura é manualmente. E tá certo? para você aprender a lidar com qualquer um que seja o provedor, seja AWS, Google Cloud, Azure, eu recomendo inclusive você começar manualmente. Entra aqui, segue,
+
+claro, alguma documentação, algum curso, algum tutorial. A própria AWS tem documentações extensivas e tutoriais extensivos de como fazer as coisas. Claro, sobe aqui um S3 manualmente, sobe aqui um lambda manualmente, toma muito cuidado para você não gastar uma grana aqui, né? Mas vai chegar num ponto que as empresas maduras, e eu vou argumentar que toda empresa madura deveria ter infraestrutura como código ou algo similar, a gente vai querer isso aqui para nos dar aqueles benefícios que eu falei: diversionamento, revisão, auditabilidade, replicabilidade e automação. Se a infraestrutura, ela é sempre gerada manualmente. Aqui a gente
+
+não tem nenhum desses benefícios e a gente tá fazendo as coisas de uma maneira que eu julgo ser não profissional. Claro, para uma startup nova às vezes não tem problema, mas para um projeto verdadeiramente robusto a gente quer caminhar para isso aqui. Por que que essa existe, né? Acho que você já entendeu, mas eu quero ressaltar aqui, por exemplo, imagina que você tem toda a sua infraestrutura que você criou aqui no console da WS clicando nos botões aqui da WS, criando coisinhas e aí do nada eu decido, por exemplo, ah, eu quero alterar alguma configuração do meu banco de dados. Eu vou aqui, né, Aurora e RDS, altero manualmente alguma configuração do meu RDS e isso não fica claro para ninguém, não tá bem documentado, não tá visível. Pode ser
+
+que eu faça isso em stag e esqueça de fazer em produção, ou eu faça em dev e esqueça de fazer em produção. Então, ia ser no resumo do resumo é você [limpando a garganta] pegar toda a configuração possível de uma infraestrutura e transformar isso em código. Esse código pode se dar diversas maneiras, tá? Eles podem ser arquivos. Que geralmente muitas das configurações estão em y emo ou eles podem ser TypeScript ou de diversas outras linguagens. Existem diversas ferramentas
+
+aqui. Eu vou mostrar uma ferramenta que eu tenho uma relação de amor e ódio com ela, que é o CDK da WS. E o CDK eu gosto de usar ele com TypeScript, tá? Mas eu acredito que o mais comum seja emo. Dessas ferramentas a gente tem que a mais popular provavelmente é o Terraform. E o Terraform acredito que
+
+por um tempo ou por muito tempo era open source. Depois eles fecharam e virou algo mais caro. Então surgiu o Open Tofu, que é um forque gratuito do Terraform. A Amazon tem o Cloud Formation, que é o a forma nativa de gerar uma configuração de cloud e ter isso em um arquivo. Então você consegue aqui no próprio dashboard WS, eu acho aqui, ó, clouds formation. A partir aqui
+
+do do cloud formation, você pode criar aqui uma stack, que é um conjunto de serviços da WS. E depois do cloud formation, a WS surgiu com uma ferramenta chamada CDK. CDK a gente escreve código em Typescript e ele gera o cloud formation depois. Essas são as que eu mais conheço, mas eu vou citar outras também. Plume, Enble, Bicep e de certa forma Cubernets. A gente pode
+
+considerar Cubernets como IAC também, infrastructur code. Então a ideia aqui é que, por exemplo, a minha aplicação, o meu serviço, vou imaginar que isto aqui é a minha stack. Utilizando bem a terminologia da WS, eu tenho uma stack. Essa stack vai ser composta de diferentes componentes. Por exemplo, você não precisa entender o que que são esses componentes, tá? A gente vai ter,
+
+vamos supor, um API gateway. Esse API gateway vai conectar em alguns lambdas. Então temos aqui λ1 λ2. Baseado em determinadas rotas, o API gateway direciona o tráfego para um lambda ou para outro. Então vamos supor, barra user barra products, né? Essas
+
+diferentes rotas direcionam para diferentes lambdas. Dentro desses lambdas, a gente vai ter TypeScript rodando e ambos esses lambdas vão se conectar aqui com o nosso banco de dados, que é um PGress, OK? Tudo isso daqui tá dentro da minha stack. Toda essa parte aqui da direita não tem acesso à internet, o usuário só tem acesso ao API gateway. Tudo isso que eu descrevi para você agora pode ser transformado numa especificação formal que é o nosso cloud formation. Eu
+
+consigo descrever tudo isso daqui que eu coloquei aqui como um arquivo de cloud formation. Esse arquivo de cloud formation eu vou comitar ele no GitHub e ele vai tá lá disponível para todo mundo olhar, ver, modificar, sugerir modificações. Vamos supor que eu precise de alguma alteração, que o meu lambda agora ele precisa bater numa API externa. Como ele precisa bater numa API externa, ele precisa de acesso à internet. Então eu preciso fazer essa modificação. Preciso que esse lambda e
+
+só esse Lambda tenha acesso à internet. Existem algumas maneiras de fazer isso, tá? Mas você vai precisar na WS conectar com, eu acho que é o net internet gateway, algo nesse sentido. Não sei, a WS é uma complicar as coisas, mas essa alteração, tá? Eu vou poder fazer no meu código. Então tudo isso que a gente tem
+
+descrito aqui vai ser um arquivo ou um conjunto de arquivos de texto mesmo, que geralmente vai ser em, né? Mas como eu tô, eu vou mostrar para você hoje o CDK, tudo isso daqui vai ser descrito em Typeescript. Você vai ter que me perdoar por não fazer exatamente essa stack aqui, que viraria já um curso de CDK. E eu não quero ir para esse caminho. Eu quero mais mostrar o poder de Já sei e como que funciona e mostrar uma maneira bem simples. Então a gente vai fazer
+
+algo muito mais simples do que isso, mas eu quero te mostrar algo nesse sentido, tá? Pois bem, o que que você precisa fazer? Você vai ter que configurar a CLI da WS. Eu não vou conseguir mostrar aqui porque senão eu vou vazar muita informação, mas aqui no cantinho superior direito, em cima de onde tá meu mouse, vai ter algo chamado security credentials. E aí você consegue pegar as credenciais, as chaves de API e tal para conseguir rodar isso no seu PC, tá?
+
+Dentro do CDK. Agora eu vou te mostrar uma stack super simples que consiste em um S3, né? Um bucket S3 da WS e um lambda. Então aqui eu tô no meu editor de texto e você pode ver que isso aqui é puramente Typescript. Você tem aqui um package.jonjon em que eu tô importando
+
+aqui o CDK e baseado nisso, eu posso usar CDK aqui no meu TypeScript. Lógico, CDK é uma das diversas formas de infrastructur code. Não quero dizer nem que é a principal porque não é, nem que é a melhor porque talvez não seja. É só o que eu tô usando para apresentar aqui hoje. Aqui no CDK a gente cria o nosso app. Estão então estamos criando um app
+
+vazio dentro, né? Esse app aqui ele tem um projeto que tem um determinado nome, ele tem um environment. Aqui a gente poderia dinamicamente alterar esse environment de dev ou prod baseado nas variáveis de ambiente. Então, olha só que interessante, o mesmo código pode funcionar para dev e para prod e eu posso dinamicamente fazer alterações. Isso aqui é typescript, gente. Eu posso,
+
+por exemplo, if environment igual igual coisa aqui, né? Dev, eu faço alguma coisa. El faço outra coisa. Na empresa que eu trabalhei no passado, a gente tinha muito disso. Tinha, por exemplo, que o nosso banco de dados de produção tinha muito mais backups e backups muito mais resilientes do que o nosso banco de dados deve. O nosso banco de dados deve,
+
+eu acho que simplesmente nem tinha backup. Então, a gente consegue configurar dinamicamente, com o próprio código questões de infraestrutura. Eu vou conseguir provisionar dinamicamente minha infraestrutura baseada no código. Aqui a gente consegue a loucura é TypeScript. Você vai provisionar o código através de regras aqui dentro do próprio TypeScript. Então aqui a gente
+
+tem a nossa stack e você não vai entender esse código se você não entende CDK, mas isso não é um problema, tá? Aqui é é só mesmo para mostrar, para dar uma noção de como as coisas são feitas, porque o código do CDK ele é bem específico, na verdade de todas essas ferramentas é bem específico. Então não se cobra de tentar entender isso, porque ninguém bate o olho nisso e entende isso e normalmente, tá? Nossa, eu demorei assim, ó, mais de um mês para tá confortável com CDK. Olha só que interessante. Esse Const Bucket é o
+
+responsável por criar o nosso bucket. Na WS a gente tem um S3 bucket e nota novamente Typescript. Esse S3 bucket que tá sendo criado aqui dentro da nossa stack, eu posso fazer com que dinamicamente ele seja criado a partir da regra que eu quiser. Se eu quiser aqui dentro do meu TypeScript gerar um número aleatório e dar o nome desse bucket de um número aleatório, eu consigo. Se eu quiser bater numa PI externa, validar um dado e criar o meu bucket ou não, baseado nesse dado que eu validei de uma PI externa, eu consigo.
+
+Não faça isso. Tenta fazer as coisas da maneira mais reproduzível possível, mas se você quiser, você consegue. E esse é o poder disso daqui, tá? Agora, um detalhe muito legal que eu queria mostrar aqui. Bom, esse bucket aqui tanto faz, não é muito interessante, né?
+
+Um bucket qualquer, mas é isso daqui, ó. A gente tem uma con hello function, uma função que vai instanciar um lambda. Esse lambda, lambda são, né? Eles executam código. Esse lambda vai puxar código daqui? Do handler, do
+
+index.hhandler. Então eu tenho um arquivo chamado index.js. Dentro desse index.js, eu exporto o meu handler. E
+
+isso daqui é puramente código JavaScript. Ele retorna nada de nada demais, né? Ele só retorna aqui um status code e tal, mas é puro código JavaScript. Eu posso ter o que eu quiser aqui dentro e ele vai ser deploiado no meu lambda a partir dessa função aqui. Olha só que interessante. Então, toda
+
+vez que eu altero esse código aqui e eu rodo o meu CDK de novo, ele vai atualizando o código que tá lá no CDK, lá na WS. E a gente consegue também lidar com as permissões aqui, né? Então, por exemplo, o meu bucket, eu posso dar a permissão de escrita para hello function. Então, a minha, o meu lambda, através dessa linha de código aqui, ele pode escrever no meu bucket. Olha que interessante. Aqui você tem umas coisas
+
+também que vão e criar outputs, né? fazer como se fossem prints do que que tá acontecendo. Mas essa aqui é a nossa stack, esse aqui é o nosso aplicativo. E com isso daqui a gente consegue deploar isso daqui. Eu não lembro se eu configurei tudo certinho ou não, mas é um NPX CDK deploy e vamos ver o que que vai acontecer. Ó, sintetizou. Parece que
+
+tá criando aqui corretamente, tá? Vou esperar terminar aqui. Nota ele dá a lista de mudanças que vão acontecer caso eu aceite. Então ele me diz tudo que vai acontecer aqui, né? São coisas relacionadas com o bucket que que a gente cria, né, o S3 ali, coisas relacionadas com o nosso lambda também, tá? OK. Eu posso aceitar isso daqui e
+
+isso daqui vai deploiar a minha stack na minha WS. Como eu configurei com a minha conta, com as minhas credenciais, vai subir lá pra WS. De fato, ele vai criar todas essas coisas aqui e se eu quiser destruí-las depois, eu dou um NPX CCK destroy e aí vai destruir tudo isso. Tem um detalhe interessante que, como eu falei, o CDK pega todo esse Typecript que a gente tem escrito e transforma isso daqui em cloud formation, tá? Ele é que uma ferramenta que interpreta ali, roda ali o Typeescript e usa isso para gerar um cloud formation. que vai ser
+
+aplicado é o cloud formation, que é um arquivo tipo assim, um arquivo e absolutamente tenebroso. Então agora dentro da minha aws, eu posso vir aqui, eu posso clicar em lambidda, por exemplo, eu só preciso ver que a WS tem essa questão aqui, né? Tá, eu tô na iOS East One. Eu acredito que o lambda foi depolado para cá. Vamos ver o meu dashboard. É sério que não foi para iOS
+
+East One? É, por isso que é bom você prestar atenção em como você configura as coisas, né? Eu achei que eu tinha configurado o padrão para ser iOS East One, talvez seja West. Então, já aconteceu muitas vezes comigo isso, tá? muitas vezes de não ser a US East One, onde eu não tá olhando pra US East One e ser outra. Pode crer. Aqui no output tem
+
+é EU, na verdade, né? Aqui está em Ireland, né? Na Irlanda, a minha função. Eu posso clicar aqui, tô abrindo minha função aqui. Eu acredito que eu vou conseguir ver o código, tá? Como ele é
+
+um código JavaScript simples, eu acredito que o código na íntegra é exatamente esse código aqui eu vou conseguir ver. Olha, momento de tensão porque a internet tá lenta. E temos aqui dentro do console da WS, eu consigo ver o meu exato código aqui. E eu consigo também aqui dentro da WS na binha test, clicar aqui em test e ver essa função, tipo, o output que ela dá quando ela é executada. E ela dá aqui o output, né, que ela foi executada. Eu também vou
+
+conseguir achar meu S3 aqui. Se eu abrir aqui, ó, S3 na barrinha de busca. Temos aqui alguns S3 utilizados nessa conta. Nossa, vou ter que deletar tudo isso, eu acho, senão pode dar algum problema. Mas isso é CDK, isso é infrastructure S code, 100% reproduzível. Sempre que eu
+
+rodar NPX, CDK, deploy, eu vou estar deployando a exata mesma stack com exato mesmo código. Todo esse código aqui, né? Isso daqui eu vou estar comitando no meu GitHub. Eu vou est logicamente rodando isso através de uma pipeline. Eu não vou geralmente rodar do meu próprio PC, embora eu possa fazer isso como eu fiz aqui. E agora todo mundo consegue
+
+revisar, todo mundo consegue olhar para essa infraestrutura, todo mundo consegue debugar essa infraestrutura, criar pull request, testar localmente, baixar o código, rodar localmente, olhar o cloud formation que é gerado e debugar. Isso daqui traz maturidade e eu não tô querendo fazer uma puble nem nada para CDK, mas eu tô querendo te mostrar. e achei que ia elucidar mais as coisas aqui. Eu mostrar isso para você na prática mesmo, tá? Mostrar, te dar um gostinho de como quer rodar essas coisas. Eu sei que não é um vídeo super
+
+tutorial, não era intenção também, é mais para explicar o racional por trás e te dar um pouquinho de motivação para ir atrás e fazer essas coisas aqui por conta própria. Se você ficou um pouquinho perdido nessa parte aqui, na parte da stack, na parte do desenho do sistema, do system design, eu tenho um curso de system design, onde eu te ensino todos esses conceitos, né? A gente fala sobre API Gateway, a gente fala sobre lambida, a gente fala sobre network, a gente fala sobre banco de dados. O link vai estar na descrição, é o curso mais extenso que eu já produzi. E se você comprar e não gostar por qualquer motivo, dentro do primeiro mês, a gente reembolça integralmente, sem nenhum tipo de questionamento, sem nenhuma pergunta. Vai ter só uma
+
+caixinha ali para você dar o seu feedback e você vai ser sempre aprovado automaticamente, tá? Caso você não goste, claro, a gente faz isso porque a maioria das pessoas realmente gosta do curso, acha muito bom e não pede o dinheiro de volta. Por isso que eu tô bem confortável em dar um prazo bem estendido. Se você quiser aprender mais desses conteúdos comigo, o link pro nosso curso de sistema design vai est aqui na descrição. Infrastructur code não é o futuro, é o presente. E se sua
+
+empresa não faz isso, ela tá presa no passado.

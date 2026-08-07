@@ -1,0 +1,103 @@
+---
+video_title: "Upload de arquivos NÃO é só POST"
+video_id: Bs9UqjJesl0
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Bs9UqjJesl0
+video_date: 2026-07-06T13:00:09+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Videozinho bem legal aqui. Vamos falar sobre File Uploads. Cara, tô animado porque é o seguinte, a gente vai conversar sobre uma feature muito comum, que é a feature de fazer uploads de arquivos, né? Quando você tá subindo um vídeo pro YouTube, isso é um upload de arquivo. Quando você tá subindo uma foto de perfil pro seu perfil de uma rede social, isso é um upload de arquivo. E
+
+essa é uma feature que esconde muita complexidade por debaixo dela. É importante que a gente aprenda como que se faz isso da maneira correta. E aqui esse é um dos exemplos que eu mais gosto, porque tem vários pontos de tomada de decisão aqui que vão resultar numa feature muito melhor ou muito pior da perspectiva do usuário e também da perspectiva do seu bolso, do seu custo, quanto você vai gastar com infraestrutura, com armazenamento, esse tipo de coisa, tá bom? Fica aí. O vídeo vai ser super legal. Estamos há cinco
+
+dias sem falar sobre a, mas eu vou ter que te falar da abacai agora, que é a patrocinadora do vídeo de hoje, porque a abausi é o ferramental mais completo de A que existe. Eles te dão acesso aqui a todos os modelos de a no mesmo chat, na mesma subscription de apenas 10. Eles te dão acesso também ao agent sessions aqui, que são sessões de agentes inteligentes que fazem muitas coisas. E tem uma feature nova que vou te mostrar um videozinho, uma demozinho agora, que é o seguinte. Você pode utilizar o Agent Swarm para usar vários agentes em paralelo. Então a Abacos tem por dentro
+
+dela agora um ferramental em que ela consegue utilizar múltiplos agentes em paralelo. Você tá vendo aqui na na sua tela, né? Aqui a gente tem milhões de agentes em paralelo. Milhões é exagero, mas enfim, você tem muitos agentes em paralelo fazendo, por exemplo, o review de uma codebase inteira, a refatoração de uma codebase inteira. Vários revisando o porquest. revisando a
+
+revisão do P request. E aqui esse Agent Swarm tem uma capacidade computacional muito grande com o custo bastante atrativo. Abacos tem também, cara. Tem muita coisa nesse ferramental, tá? Eles tem geração de vídeo, tem geração de imagem, tem geração de apps. Você
+
+consegue fazer MVPs de maneira muito simplificada aqui, hospedar eles também. Aqui, aqui em cima, ó, nesse botãozinho, você tem super computer, você tem o Herm, você tem o o claw, né? Open claw, tudo fermental no link aqui na descrição, tá? Vale muito a pena usar a abacos. Com esse título, vamos para Five Uploads. A perspectiva do usuário, ela é
+
+uma perspectiva muito simples. Você vê uma caixinha aqui, você vê aqui um drag to upload e aí você pega ali o seu arquivo, né? Você arrasta ali o arquivozinho do seu computador, né? Aqui para cá. Aparentemente o browser faz um upload ali e magicamente o negócio funciona. Parece que é feature mais
+
+simples do mundo. É um negócio assim meio meio Steve Jobs, né? A a mágica que parece que da perspectiva do desenvolvimento também seria super simples, mas não é. É uma fiture muito complexa de se fazer. No momento em que a gente tem um local que usuários, digamos assim, do mundo inteiro, usuários aleatórios conseguem interagir com esse sistema e fazer o upload de arquivos que você não confia necessariamente nesses usuários, que eles podem estar utilizando diversos dispositivos diferentes. A gente começa
+
+a ter uma série de coisas aqui por trás dessa feature que trazem uma complexidade muito grande. Algumas dessas coisas eu vou falar, vou explicar aqui, algumas a gente vai só abordar meio tangencialmente assim, né? Você tem a questão da rede, né? questão de usuários com dados móveis ou redes pouco confiáveis, internet lenta e tal, você tem que validar ali a integridade dos arquivos, você tem que cuidar do armazenamento, você tem que escanear para ma que o arquivo pode ser pode te conter um vírus ali. E você tem que fazer tudo isso e dar pro usuário uma experiência que pareça mágica, que seja ele arrasta a foto para cá e a foto faz o upload. A forma com que a gente vai
+
+implementar essa feature de primeiro assim, né? Primeira maneira que a gente pensa em implementar essa feature é a coisa mais simples do mundo. Você vai ter uma foto, você vai ter o seu servidor de backend, você vai ter o seu banco de dados. Forma mais simples de se implementar. O usuário faz um post request aqui, ó. Post no endpo/foto.
+
+Envia foto. Servidor recebe essa foto. A foto, claro, é um é um arquivo de bits e bytes, né? Em essência, ela pode ser. Ela é, na verdade, não é um binário.
+
+Você armazena esse binário no seu banco de dados. Fim de papo, acabou a conversa. Agora imagina o seguinte, quanto de conexão o nosso servidor aguenta se a gente tiver muitos usuários subindo, digamos nem fotos, né, vídeos em paralelo. Se o vídeo for um vídeo de 4 GB e a internet do usuário cair na metade e se o usuário conseguir subir 90% do vídeo, em algum momento ele para, ele quer retomar essa essa entrega, esse upload do vídeo. E o nosso banco de dados aqui, né? Isso aqui vai encher,
+
+isso aqui vai encher muito rápido. Então vamos separar esse problema aqui em algumas etapas. Primeira parte do problema que eu quero falar sobre aqui é se a gente tem um vídeo de 5 GB, né? É um vídeo perfeitamente normal. Os meus vídeos aqui no canal, alguns são até bem maiores do que isso. E eu quero subir
+
+esse vídeo para ele tá disponível aqui no meu servidor, né? Porque eu sou o YouTube. O problema é que arquivos muito grandes não se comportam exatamente como arquivos pequenos, né? A gente não tem assim uma conexão ininterrupta de internet que vai durar ali para sempre ter uma uma transmissão confiável. Então, geralmente o que é feito é que a gente vai transformar esse vídeo aqui de 100 GB em de repente 50 chunks. E aí
+
+você precisa fazer uma divisãozinha ali, né? Mas vai dar mais ou menos 50 chunks de mais ou menos aproximadamente 100 MB. Como a gente tem 50 chunks agora na parte do usuário, o cliente do usuário consegue enviar os chunks separadamente. Então a gente conseguiria aqui fazer 50 envios de modo que se um desses envios falha, a gente ainda tem o vídeo na nossa máquina, né? a gente tem o mesmo vídeo, a gente sabe qual pedaço do vídeo clipar para subir ele pro servidor, qual o pedaço do do arquivo, né? Não vídeo
+
+porque, enfim, você não consegue clipar um vídeo assim, mas você entendeu. E bom, aí o seu vídeo, ele também vai ter um check sum, né? Que que é o check sum? O vídeo é um binário. Um binário são números, logicamente. Tem como você
+
+fazer uma operação em cima desses números que vai resultar uma espécie de chave. Então, Check Sum nada mais é que uma chave calculada em cima do binário inteiro de um vídeo e vai dar tipo assim como se fosse um ID entre aspas desse vídeo. Então esse checkam é interessante que eu consigo também transmitir o check pro servidor e o servidor também consegue checar o binário e calcular o check e o mesmo cálculo no mesmo binário vai resultar no mesmo check e ver se esses números aqui batem. Se esses números baterem, né, quer dizer que foi sucesso, que o mesmo arquivo que eu tenho é o mesmo arquivo que você tem. Checkam são muito utilizados na computação, né? Aqui também é importante
+
+porque a gente consegue determinar, né, se o nosso vídeo, por exemplo, eu tô fazendo upload de um vídeo e eu tenho ali o nome de um arquivo meuvídeo. Mov, só que depois quando eu vou retomar esse upload, sei lá, no dia seguinte, que eu fiz upload no dia de metade do vídeo, dia seguinte eu retomo esse upload, eu poderia simplesmente pegar um vídeo com outro nome, quer dizer, um vídeo diferente, mudar o nome dele para meu vídeo pon e tentar continuar o upload de um arquivo diferente. Mas como eu posso checar o checkam, né, eu consigo garantir que é de fato o mesmo vídeo que tá sendo enviado. Então, se a gente for por essa por essa ótica aqui, por esse lado, a gente vai ter alguns end points, né? Tipo um get em barra uploads, aí o upload 1 2 3. E esse get aqui pode nos
+
+retornar uma lista de de chunks aqui, né? Só dando um exemplo, tipo upload the chunks 1 2 3 4 7 8, missing chunks 5 e 6. E aí a gente consegue determinar o que que falta fazer upload, né? E através de algum outro end point aqui, o endpost barra, sei lá, uploads/1 2 3 chunk 5, a gente consegue fazer o upload daquele chunk em específico. Então essas partes aqui com até a utilização dos checks e dos chunks, inclusive cada chunk pode ter um check dentro dele, a gente consegue fazer o upload do vídeo com sucesso. Resolvemos um dos
+
+problemas. Ainda existe o enorme problema que é o problema de armazenar os binários no nosso banco de dados. Esses binários são muito grandes. Quando a gente for tentar entregar ele pros usuários, vai dar problema. Vai ter um gargalo no nosso banco de dados. A gente
+
+vai encher o banco, ele vai ficar lento, a aplicação vai ficar inutilizável com assim pouco tráfego, tá? Se você tiver, não sei, 1000 usuários fazendo upload de vídeo todo dia, cara, seu PG vai morrer rapidinho. Então essa pecinha aqui, um banco de dados, não é a ferramenta adequada para se armazenar um binário. Esquece isso daqui, tá? A gente ainda vai ter um banco de dados para quase tudo aqui da nossa aplicação. Essa
+
+comunicação continua sendo importante, mas os binários vão para um locar, um locar, [risadas][limpando a garganta] um local mais adequado. Seria interessante se existisse algo, uma ferramenta que permitisse que a gente armazenasse grandes binários, né? Então se a gente tivesse algo binary, né? Binário, large binário, espaço grande, um objeto de binário grande, storage, né? armazenamento de objeto binário, largo, grande storage. Também conhecido como
+
+uma Blob Store. Blob Store é isso, binary large object storage, armazenamento de grandes arquivos binários. Dos mais conhecidos, a gente tem aqui o S3 da WS ou o R2 da Cloud Flare. Eu acho que o Google tem um negócio chamado bucket, algo nesse sentido. A nossa blog story, então, vai ser onde a gente vai armazenar esses binários. Só que você pode pensar, né,
+
+pô, galego, tem tem um problema aqui, né? algumas das informações. Por exemplo, quando o usuário faz um upload no vídeo, eu quero ter esse vídeo do usuário. Então, a gente vai ter aqui, né, vídeo linkado a um usuário do meu banco de dados. Como é que a gente faz isso se eles estão em bancos diferentes?
+
+E é uma pergunta inteligente, realmente inteligente. O que que a gente pode ter? A gente pode ter que dados transacionais e metadados podem sim ser armazenados nos bancos de dados aqui no nosso PostGress normalmente, sem problema nenhum. Aqui a gente pode armazenar, por exemplo, vídeo ID, user ID, tipo de vídeo, se o vídeo tá tá privado, tá público, tá deletado, tá soft deleted. Podemos armazenar todos os metadados e dados transacionais que a gente quer. E
+
+dentro dessa tabela que a gente tá armazenando o vídeo, a gente vai armazenar, por exemplo, um S3 ID ou um S3 URL, porque afinal de contas, o ID vai acabar sendo ali uma determinada URL e essa URL aponta para cá e isso resolve o nosso problema de armazenamento. Ainda existem alguns problemas aqui, porque um desses problemas, né, é que ainda é muito dado, ainda é muito vídeo, ainda as coisas são muito massivas. Se eu tiver que todos os meus vídeos passam sempre pelo meu servidor para chegar no usuário, pro usuário assistir, cara, acabou, esse servidor não vai fazer nada, ele vai só est transmitindo vídeo de um lado pro outro. Então, às vezes eu consigo que o próprio usuário tenha acesso a essa URL aqui, né? O meu servidor envia pro usuário qual qual qual qual que é a URL para ele baixar o vídeo e o usuário assiste ou streama o vídeo direto da URL aqui do S3. Lógico,
+
+ele precisa de tem algumas questões aqui de permissionamento, né? Eu posso entregar para ele uma URL que dentro da URL tem, digamos assim, um password já embutido. Eu posso entregar para ele uma presigned URL em que o usuário que detém esse essa URL com, digamos assim, o password já embutido na URL, né? Você pode imaginar uma RL que tem ali os square parameters dentro desses square parameters, tipo, depois do ponto de interrogação, pode ter um ID ali que é tipo uma senha, digamos assim, entre aspas, né? E com essa senha o usuário conseguiria acessar esse vídeo aí.
+
+Claro, se a gente quiser melhorar ainda mais a performance, é interessante que o usuário nem precise chegar no S3 e que ele assista esse vídeo direto de uma CDN, que aí sim, claro, né? vai ficar muito mais próximo do usuário, vai ser muito mais rápido a entrega desse conteúdo pro usuário. Então, resolvemos também um pouco dessa parte da entrega aqui. Mas eu ainda não tô feliz com uma coisa. Se a gente tem, tipo, 1000 usuários simultaneamente fazendo upload de arquivo e o nosso servidor precisa receber esse arquivo e subir esse arquivo pro S3, ele vai ficar gargalado também. Mas lembra que eu te falei dessa
+
+presign, dessa URL aqui já pré-assinada? Quando o usuário pede para fazer o upload de um vídeo, a gente consegue falar para ele: "Cara, usuário, você não vai fazer o upload pro meu servidor, você vai fazer o upload direto paraa presign URL." Então, o usuário consegue ter essa URL e quando ele for fazer o upload do vídeo, ele não faz o upload pro nosso servidor, ele faz o upload aqui para presign ORL direto pro S3. E aqui a gente remove mais um dos gargalos do nosso sistema, do nosso servidor. E o usuário consegue, a gente consegue escalar muito melhor. É só a gente jogar
+
+mais S3 aqui, que a gente vai escalar de maneira muito mais eficiente do que fazer tudo isso passar por dentro de um servidor. Claro, podem existir etapas adicionais aqui, tá? Porque um vídeo, eu, por exemplo, faço o upload do meu vídeo em 1080 pixels em 60 fps, mas vezes a pessoa vai assistir em 480 e 30 fps. Então o vídeo precisa ser comprimido para tamanhos diferentes, né? Então, geralmente uma empresa como o Google, o YouTube vão ter lugares para receber os arquivos RAW, os arquivos CRUs e depois eles vão rodar jobs em cima disso que vão ter eh workers aqui, né, que vão fazer o background job de tá comprimindo esse vídeo, transformando em vários arquivos de tamanhos diferentes e depois subindo isso para um S3 ou no caso do Google, um bucket ali de arquivos já processados, né? Então você
+
+tem o primeiro para fazer o upload de arquivos não processados, o segundo de arquivos já processados, que é dali que vem o download de fato. Enfim, estamos complicando aqui, mas é um é um detalhe adicional. Nem toda a empresa vai fazer isso o tempo todo, tá? Só no caso do YouTube mesmo. Às vezes, dependendo se for uma rede social e você tiver fazendo upload de uma foto, não é impossível comprimir a foto direto no cliente, direto na máquina do usuário antes de fazer upload, tá? É fazível também. E
+
+nisso daqui você vai fazer isso daqui, vão ter diversos outros problemas que vão surgir aqui. Alguns usuários vão abandonar o vídeo no meio do caminho e nunca vão retomar esse então você tem que ter job de jobs para fazer o clean up, né, para limpar os arquivos que ficaram presos ali. Percebe que eu não falei mais sobre malware, que a gente fez o upload pro S3, né? Você como assim como eu falei do job de compressão, você pode ter um job também que checa pelo MA. Você tem que est sempre sincronizando, né? Tem que ser, não
+
+sempre vai, mas você vai fazer pelo menos uma vez de fazer essa alteração do status no no banco de dados, dos metadados aqui pro status do vídeo, né? Ah, qualquer status tá sendo uploadado, tá sendo processado, tá sendo comprimido, ele tá pronto, ele tá apto. Tem que atualizar esse status. E a atualização de status, lógico, não é automática. Você vai provavelmente ter algo que emite um evento e, enfim, acabamos tendo mais complexidades aqui.
+
+E como é que fica a experiência do usuário? É, o usuário, ele precisa, ele vai querer saber como é que tá o status do vídeo, né? Quando eu tô fazendo upload para um vídeo no YouTube, o vídeo aparece lá uploading, depois aparece checking, depois aparece processing up to HD. Eu consigo ver passo a passo todas as etapas do meu upload do vídeo. Tudo isso são microfeatures, são pequenas features que são desenvolvidas que o meu cliente, o meu browser aqui, o meu Google Chrome tá recebendo de volta do YouTube através de get requests que estão buscando no nosso banco de dados que estão refletindo a informação do estado atual no meu S3. Que que a gente
+
+aprendeu aqui? Bom, você não vai confiar no usuário, você vai fazer chunking, você vai ter os checks, você vai fazer o mínimo de coisas possível passar pelo seu servidor, você quer que essas coisas passem por outros lugares, se possível, para te desonerar um pouco e que essa feature aqui é bem, mas bem complexa se você quiser fazer um serviço da escala do YouTube. Se você gostou desse conteúdo, a gente tem um curso de sistema design que a gente fala bastante sobre isso. Falamos aqui, né, sobre BlobS store, logicamente. No curso tem vários módulos, são mais de 15 módulos.
+
+Se eu clicar aqui, por exemplo, né, banco de dados SQL, você vai ter várias várias aulas explicando várias coisas sobre bancos de dados, tá bom? A gente passou mais de um ano produzindo esse curso, eu passei mais de um ano gravando essas aulas. Você vê, né? Tem diversas etapas do do meu cabelo aqui. Eu fiz com bastante calma, porque eu queria garantir que tivesse bastante bom.
+
+Enfim, acabamos de lançar o curso, o link para ele vai est aqui na descrição. Já estamos recebendo feedbacks muito bons. Já tive até um colega que ele assistia um pouco aqui, auxilio, e ele passou na entrevista do sistema design de uma empresa, posso falar? de uma empresa de streaming de música, vai, você sabe qual é. Enfim, se você comprar esse curso, você vai ter um mês aqui para assistir as aulas e decidir se você gostou ou não gostou. Dentro desse um
+
+mês, né, não é só os s dias que eu sou obrigado por Leiade Rainbows. Eu te dou um mês inteiro para você assistir o quanto você quiser disso daqui, tá? A gente tá, claro, adicionando algumas últimas aulas ainda, tirando algumas dúvidas dos dos usuários, né, do do pessoal que tá assistindo para garantir que ficou bem completo e que não deixamos passar nada aqui. Então, vão surgir algumas aulas novas ainda, tá? Mas tá tudo aqui, não tem aquele negócio de as aulas vão sendo desbloqueadas com com o passar do tempo e tal, tá tudo aqui, você pode comprar, assistir tudo.
+
+Se você não gostar por qualquer motivo, dentro desse primeiro mês, você pode pedir reembolso, você vai receber o reembolso sem problema nenhum, tá bom? Trabalho que eu fiz aqui é um dos melhores trabalhos que eu já fiz, então eu tô bem confiante em te oferecer essa garantia de reembolso gigantesca, que eu confio que a maioria das pessoas vai gostar. E é isso. O link pro curso vai táar aqui na descrição. Se você tá querendo passar numa grande empresa que trabalha com de repente eh aplicativos de de motorista de carro, de entrega de comida, de banco digital, de streaming de música verde, empresas Feng, tá? Esse
+
+aqui é o conteúdo para

@@ -1,0 +1,63 @@
+---
+video_title: "SQL Injection em 9 minutos"
+video_id: 0MxWYhHnCKE
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0MxWYhHnCKE
+video_date: 2026-07-14T13:00:00+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? Tudor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e mexe respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. Cansei
+
+de falar de a nosso canal tá voltando um pouco à origens. Hoje a gente vai abordar o tópico de SQL Injection, que é um tema que você precisa dominar se você for um desenvolvedor profissional que trabalha profissionalmente em empresas. Sare Injection é uma, digamos assim, um tipo de vulnerabilidade muito comum encontrado em vários tipos de aplicação e existem várias soluções para ela. A gente vai explorar o que que é essa vulnerabilidade, como construir aplicações que estão imunes a essa vulnerabilidade, né? Diferentes tipos de solução aqui. SQL Injection é uma
+
+injeção de SQL. No limite, ela significa o seguinte: um usuário malicioso vai tentar passar pro seu servidor um código que vai injetar algo via SQL no seu banco de dados e o seu servidor, caso ele não esteja preparado para isso, ele vai repassar essa instrução para o banco de dados. Vamos supor o seguinte, lá no seu frontend, existe um campozinho aqui pro usuário digitar o e-mail dele. Então o usuário vai lá e digita o e-mail dele, né? Augusto@mail.com.
+
+Vamos supor que no seu servidor exista um código que se pareça com isso daqui, que você tá dentro do seu código fazendo uma substituição. Aqui você tem um SQL pré-programado e dentro desse SQL pré-programado, você vai substituir a string do e-mail, tá bom? O que que um usuário malicioso pode fazer? Ele pode pensar que você pode táar fazendo isso daqui. E ele pode fazer o seguinte, ele pode enviar o e-mail dele como fecha aspas aqui dois pontos, drop table users. Se ele enviar isso daqui como
+
+e-mail, que que vai acontecer? A sua query, ela vai passar a ser algo tipo assim, sei lá, select, asterisco, from users, where, e-mail, igual, abre aspas aqui, fecha aspas ponto e vírgula e uma segunda query adicional, drop table users. Ou seja, eu encerrei a consulta anterior no banco de dados e eu executei um segundo comando que foi injetado. Eu injetei o comando drop table users. E não precisa ser esse comando em específico, tá? Pode ser qualquer outro
+
+comando. Eu posso tentar dar um select em todas as tabelas. Eu posso tentar alterar meu saldo, eu posso tentar alterar meu meus tokens ali, eu ganho um controle sobre o SQL do eu como invasor, né, como usuário invadindo o seu sistema, ganha um controle sobre seu banco de dados. Então isso é a versão vulnerável. É assim que SKL Injection é exploited, né? Assim que é a
+
+vulnerabilidade é utilizada para me dar um determinado poder que eu não deveria ter sobre o seu banco de dados. Agora, existem vários e vários e vários níveis de fixas aqui, de coisas que vão ajudar isso a não acontecer. Um fix possível e o mais nave de todos, o mais inocente de todos é utilizar de uma query parametrizada no banco de dados. Query parametrizada. Uma query parametrizada é o seguinte: o seu banco, ele vai receber a querer em si separado do campo. Então
+
+o campo e-mail vem separado da query. Dessa maneira, o e-mail do usuário seria de fato essa string aqui, drop table users. Esse é o primeiro nível de solução. Eu não diria nem que é o mais utilizado, mas ele já consegue prevenir esse bug aqui, a não ser que exista um work around que eu não conheço. O segundo nível é parecido com isso é o tal de prepared statements. Bancos de
+
+dados, como por exemplo o postgress, que é o que eu tenho mais experiência, eu trabalho há trabalhei muitos anos com postc mais de 5 anos usando a ferramenta. Um prepared statement ele vai te dar essa mesma lógica de separar o que que é o statement, o que que é a consulta em si e o que que é o campo. você vai ter essa separação entre consulta e campo, como muito parecido com uma cor parametrizada. A nível de banco de dados, essas são duas das soluções, porém é interessante você notar o seguinte: o Drop Table Users não deveria ser possível a nossa aplicação executar esse comando. Então essa conexão aqui entre o servidor e o banco de dados deve ter o menor privilégio possível para fazer aquilo que é preciso ser feito. O seu banco de dados pode ter
+
+múltiplos usuários. Um desses usuários, por exemplo, pode ser, olha, esse usuário vai ser o servidor e vai ser especificamente a aplicação de e-mails. E a aplicação de e-mails tem permissão apenas de fazer select, insert e delete em algumas tabelas específicas. Isso, claro, não vai prevenir um SQL injection, vai, mas vai minimizar a superfície de ataque. Existe também como utilizar um storage procedure também a nível de banco de dados, mas acho que vocês pegaram a ideia, né? no mesmo, vai
+
+na mesma linha de que uma cor parametrizada ou um prepared statement, tá bom? Então, a nível de banco e acesso de banco, essas são as soluções. Mas nota, ainda tem bastante coisa aqui, né? Ainda tem bastante superfície que a gente pode trabalhar e quanto mais a gente trabalhar, melhor. Dentro do seu servidor, você vai estar rodando algum código no seu backend. O seu backend,
+
+ele vai est escrito em node ou em Rust ou em, sei lá, Jungle, Ruby. E todas essas ferramentas aqui vão ter algum tipo de solução nativa para prevenir a scelling action, tá? Aqui eu não consigo ir uma por uma porque cada uma tem uma solução, mas olha a solução nativa do seu backend. E existe também a possibilidade de você tá utilizando alguma ORM, uma ORM, como por exemplo um Drizzle, um Prisma, é o o jungle em si tem uma ORM própria, né? O jungle vem incluso nele uma ORM. A sua ORM ou ela
+
+vai prevenir a SK injection por padrão ou ela vai ter uma solução para prevenir a Scal injection. Então se você tá utilizando uma ORM, olha dentro da ORM. O mesmo vale para um querer builder, supondo que você não utilize uma ORM, pode ser que você utilize um querer builder. Naquele query builder em específico que você tá utilizando para acessar o banco de dados, pesquisa como que se coíbe SQL Injection. Todas essas soluções vão estar aqui a nível de código dentro do seu servidor. Então,
+
+nota, a gente já tem dois lugares que a gente pode parar isso, a nível mais de banco de dados e a nível mais de servidor de de código em si. Existe outro lugar aqui que não é o ideal, mas você pode tentar ter uma camada aqui para fazer validação de input. Por exemplo, se você utilizar um Zod, você pode garantir que um e-mail é um e-mail de fato utilizando ZOD ou algum tipo de validador de input que internamente pode ser que ele use uma reje ou uma máquina de estado para validar que o input é aquilo que você acha que é. Essa maneira de SCOBS car injection eu pessoalmente acho fraca. Não é em todos os casos que vai pegar tudo, até porque você não sabe qual rejects que o Zod tá utilizando.
+
+Você não sabe como que ele valida internamente que algo é válido. E até tem e-mails que são válidos, que são bem estranhos, tá? Eu fiz um vídeo falando sobre validação de e-mail e existem muitos e-mails bizarros que são e-mails válidos. Então, toma um pouco de cuidado se você utilizar só essa solução, porque eu pessoalmente não acredito que ela é o suficiente. Até porque muitas das vezes você vai validar, tipo, ah, um usuário vai enviar descrição de um produto. Pô,
+
+valida que essa descrição ela é um texto. Cara, você pode ter um scaring injection dentro desse texto, saca? Então, validação de input não é necessariamente o caminho. Por último, antes do seu servidor, existe algo que eu tenho recomendado bastante quase todas as pessoas utilizarem, na verdade, todos os projetos reais que tem usuários que podem estar expostos à internet de alguma maneira, a gente tem recomendado o quê? A utilização de um web application firewall. Web application
+
+firewall, dentre outras várias coisas, pode coibir requests suspeitos. Nota, pode de maneira alguma. Eu digo que o AF vai prevenir 100% das Scale injections, não é o objetivo de um AF, porém o AF é um firewall. E como o firewall é bom para proteção em geral da sua aplicação, de quebra, ele acaba pegando SKL injection aqui e ali no corpo de alguns requests. Então você olhou sua aplicação, você percebeu, pô, eu tenho um SC injection aqui. Galego, o que que
+
+você acha que eu devo fazer? De imediato, o mais simples, mais fácil para você fazer, olha como você tá acessando esse seu banco de dados a nível de código. Então ali no seu backend, no seu node, no seu rub, no seu jungle, no seu Python, procura a solução que vai dentro do seu backend, tá? Essa costuma funcionar 100%, já corto mal pela raiz. Adicional a isso, eu também cuidaria dos privilégios aqui do uso servidor, porque isso vai te prevenir outros problemas para além do SKL injection. Por exemplo, caso alguém
+
+consiga tomar um controle ali do seu servidor, consiga fazer um SSH pra sua máquina, consiga executar algum tipo de código que vai, né, colocar o usuário malicioso aqui para dentro e conseguir fazer requests desse servidor, é bom que esse servidor tenha poucos privilégios para com o banco de dados. Fechou, galera? Dá uma forcinha aqui, dá um like, dá um subscribe, me ajuda com essa série nova que eu quero ensinar computação. Caso você queira aprender mais comigo, temos diversos cursos aqui do canal, os links vão estar na descrição. A gente tem um curso completo de estrutura de dados e algoritmos mais lit code para te preparar para entrevistas de emprego. Temos também o
+
+curso map pro seu próximo emprego, que eu também te preparo para entrevistas, te ajuda a ter um bom currículo, ter um bom LinkedIn, ser encontrado por recrutadores. E eu preciso atualizar meu site, que a gente tem também um curso de system que já foi lançado, passei mais de um ano trabalhando nisso. É o curso mais extenso que a gente tem, é o curso mais trabalhoso que eu fiz. Ele já foi lançado e se você comprar qualquer curso meu, você vai ter um mês de acesso em que você pode pedir reembolso e a gente devolve integralmente o seu dinheiro sem precisar de nenhuma justificativa. Porque eu confio que o trabalho aqui é muito bom, que o produto que a gente oferece é muito bom e eu só quero o seu dinheiro se valer a pena para você também. Fechou? Beijão.

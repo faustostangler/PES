@@ -1,0 +1,69 @@
+---
+video_title: "Horário do Servidor vs Horário do Usuário"
+video_id: bWZndc9ycII
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bWZndc9ycII
+video_date: 2026-07-09T13:00:29+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? T dor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e mexe respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. Esses
+
+dias eu tava fazendo um aplicativo Vibado e é óbvio que esse aplicativo Vibado apresentou problemas com time zones. Vamos conversar time zone hoje. Qual que é o problema de time zone que todo desenvolvedor que é pelo menos pleno já esbarrou? Muito simples, seu servidor armazenou um horário, digamos assim, 12 horas do dia 26 de junho de 2026. Acontece que no mundo real existem, se eu não me engano, são 23 zones. Então pode ser aqui meio-dia em
+
+23 diferentes lugares. Pode ser meio-dia da China, meio China, meio-dia do Brasil, meio-dia da Austrália. E essas time zones vão gerar bugs em diversos tipos de coisa. Por exemplo, eu já publiquei um vídeo no YouTube às 10 da manhã. 10 da manhã para mim, que tô na Dinamarca agora, 5: da manhã pro Brasil.
+
+Quem é que acordou 5: da manhã para ver o vídeo? Ninguém. Quando você quer receber um e-mail, uma notificação, quando você tem uma meet agendada, né, uma reunião online em determinado horário, podem surgir bugs. Como que esses bugs surgem e como que esse bug surgiu na minha aplicação? Eu tinha feito com os meus amigos um aplicativo de bolão online pra Copa do Mundo, sem valer dinheiro nem nada, só pela zoeira.
+
+E era pro usuário conseguir botar ali o placar antes do jogo começar. acontece que os jogos são nos Estados Unidos e o servidor tava considerando o horário do jogo em UTC. Então, deu problema, o horário não batia, não fechava. Um jogo de futebol, nesse caso, né, tinha sido criado mais ou menos assim. Você tem aqui uma data de um evento que é um determinado dia e um determinado horário. Só que as partidas de futebol
+
+acontecem em algum lugar. No caso era, não sei, Nova York, Filadélphia, Los Angeles, Ciado do México. Isso daqui não vai funcionar direito. A gente não sabe quando que esse evento de fato tá acontecendo. Então, a gente precisa que o evento seja pelo menos assim, que ele tenha a time zone. E a gente ainda
+
+guarda, né, aqui o horário em UTC. UTC é, digamos assim, universal, né? Até o em UTC significa universal, eu acho. E a Time Zone na qual isto aqui tá, até porque isto aqui é importante quando tem horário de verão, quando o fuso vai ou volta uma hora, que alguns países escolhem datas diferentes pro fuso ir ou voltar e alguns não optam pelo horário de verão. Então essa é a primeira regra.
+
+em campos para o qual isso daqui é importante, você vai criar a sua tabela no banco de dados, considerando isso, time stamp, esse Z, o Z aqui no final, na verdade, o TZ aqui no final, né? É de time zone. Agora, isso não vai solucionar o problema. Por que que não vai solucionar o problema? Se você tiver o seu eventozinho aqui, né? Eu tenho um
+
+eventozinho, eu armazenei esse evento corretamente no horário que ele começa, na time zone que ele tá e tal, mas eu esqueço de fazer isso ao mostrar pro usuário. Se eu vou, se eu esqueço de, né, considerar a Time Zone que o usuário está acessando esse evento, isso causa um problema também. Então, né, para fazer o próprio display também desses horários, nota o que que precisa ser feito. Uma partida de futebol tá acontecendo em Los Angeles, nos Estados Unidos. Eu armazenei essa partida de futebol no horário do meu servidor, que tá usando horário UTC. Um usuário tá
+
+querendo ver qual o horário dessa partida no horário local dele, Brasil, São Paulo. São três horários diferentes que estão sendo triangulados aqui. Você precisa ter uma lógica. E, lógico, esses problemas existem desde que a computação existe. É óbvio que esses problemas já estão resolvidos, só que você precisa primeiro saber que problema existe, segundo aplicar uma solução. Enfim, o
+
+que que vai ser feito? Você vai calcular o horário de onde o usuário tá, né? E vai dar a DIF. Ele, a solução já tá pronta. Na verdade, você vai utilizar essa solução pronta para mostrar pro usuário o horário correto. E aí o
+
+usuário vai ver algo mais ou menos assim. Tô vendo aqui meu 26 de junho, às 9 da manhã, que é como isso daqui vai ser renderizado para mim. O approach mais comum para renderizar isso para o usuário é que é o seguinte: o seu servidor vai retornar a timeamp a time stamp em UTC. Então o seu servidor vai retornar algo tipo assim em UTC. Não importa o horário que é o jogo é lá nos Estados Unidos, importa o horário que é em UTC, porque é isso que a gente tá armazenando no banco de dados adicionalmente, né? Eh, além da Time
+
+Zone. E quando isso chega no meu browser, muito comumente, o nosso JavaScript vai estar utilizando isso daqui, date to locate o string, que vai utilizar o horário da configuração do seu computador para determinar que horas é isso daqui no seu horário local. Então, saca? O servidor aqui de um lado envia para o seu browser o horário em UTC e o seu browser converte no horário de São Paulo e te mostra em horário de São Paulo. Lógico, o seu browser se foi assim que o programador codou a aplicação, seu browser tá rodando JavaScript que foi codado para alguém.
+
+Explicado, entendido o problema de Time Zoner. Último ponto que eu quero levantar aqui, toma cuidado com datas, data de aniversário, né? Como isso tá aqui? Pode haver uma confusão aqui, porque claro, pessoa nasceu aqui dia 26 de junho, só que às vezes eu vou, essa data vai ser salva no meu servidor como TC e se eu for renderizar essa data lá na China, vai renderizar como 25 de junho. Não fica legal, né? Não faz menor
+
+sentido, não. Não é o dia de não é o aniversário da pessoa de verdade. Então, às vezes, cara, eu não devia mostrar isso, mas tá. Às vezes aniversário pode ser uma string. Você nunca vai converter, nunca vai trabalhar nada em cima desse desse dado aqui. Talvez uma
+
+string sirva. Senão, se você quiser realmente utilizar uma data, fica aí, esteja avisado de que precisa existir uma cautela para com essa data. Para você saber que quando você vai mostrar o aniversário de uma pessoa, é para mostrar em UTC, assim como tá armazenado no banco de dados. Mas quando você vai calcular a idade da pessoa, é para calcular baseado na time zone onde ela tá. Porque se na China eu ainda tô no dia 25, né, eu ainda não fiz aniversário no local onde eu tô, saca? Entende como
+
+isso é complicadinho. Pontos adicionais, logs, informação de log. Tô logando uma informação no meu servidor, tô logando um bug. Geralmente o TC, geralmente você loga em UTC tudo da da aplicação no mesmo nível de horário, né, que é UTC. Se você logar tudo em UTC, não vai existir problema de servidores estarem em geolocalizações diferentes e cuspindo logs em horários que não batem. Lógico,
+
+ainda existe um problema de os relógios dos servidores não são necessariamente sincronizados, mas se você logar tudo em UTC, você vai ter uma noção boa de que as coisas que estão acontecendo no mesmo horário estão acontecendo no mesmo horário. Última questão. Já viu isso daqui, ó? 09 asterisco. Asterisco, asterisco. Sabe o que que é isso daqui?
+
+É o, digamos assim, o textinho, o codigozinho para fazer o schedule, para fazer o agendamento de uma Chrome job. Uma Chrome job roda num horário determinado ou num intervalo determinado dentro de um servidor. Essa aqui roda todo dia às 9 da manhã. Meu querido, deixa te perguntar, 9 da manhã no horário de quem? Com isso aqui a gente se despede. Gostou desse vídeo? Dá um
+
+like, dá um subscribe. Quiser aprender mais comigo, temos diversos cursos aqui no canal. Te ensino estruturas de dados e algoritmos Elite Code, se você quiser. Te ensino a se preparar para procurar um emprego novo, montando um bom currículo, um bom LinkedIn e se preparando para entrevistas. Te ensino o System Design com o curso mais complexo que eu já fiz na vida. Passei mais de um ano gravando
+
+isso. Todos os cursos aqui no canal. O link vai estar na descrição. Qualquer curso que você comprar, você vai ter um mês que você pode assistir quantas aulas você quiser. Se quiser, pode assistir todas as aulas e você pode pedir o reembolso dentro desse primeiro mês. Não
+
+é só uma semana de garantia que eu sou obrigado por lei a te dar. Eu te dou um mês porque eu confio na qualidade do produto. Eu confio que você vai gostar e eu quero te dar o tempo adequado para você de fato entrar ali com calma, ver as aulas, ver se faz sentido, ver se você gosta da minha didática, vê se você se adapta à minha didática. E apenas se você gostar e se adaptar e quiser manter o curso, você fica com ele. Se você não quiser, pede seu dinheiro de volta, a gente devolve o seu dinheiro sem nenhum problema, sem nenhuma justificativa. Não
+
+vamos ficar te enchendo o saco, tá bom? Abraço para vocês. Para mim hoje é uma sexta-feira, final de tarde, em Copenhagen. Vou lá tomar uma cervejinha. Valeu,

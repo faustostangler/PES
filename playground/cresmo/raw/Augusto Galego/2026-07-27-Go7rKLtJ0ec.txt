@@ -1,0 +1,115 @@
+---
+video_title: "Como Fazer Migrações de Banco de Dados do Jeito Certo"
+video_id: Go7rKLtJ0ec
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Go7rKLtJ0ec
+video_date: 2026-07-27T13:00:11+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos falar hoje e ver na prática um pouco sobre migrações de bancos de dados. Eu vou falar sobre as diferentes maneiras de se fazer isso. Claro, existem várias. Eu vou abordar algumas das mais comuns. A gente vai ver também um pouco de código de como que isso daqui funciona. Eu vou te mostrar como
+
+fazer isso tanto usando o próprio PG de maneira crua com scripts e utilizando uma ORM, que no caso vai ser o Drizzel. E o vídeo de hoje tá bem legal. Antes disso, vou te falar do patrocínio de hoje que é ausai. Abacus, claro, é um dos ferramentais mais completos de A que existe, iniciando por apenas por mês, né? Ou seja, R pouquinhos reais. Você
+
+não consegue isso em nenhum outro lugar. Abacos vai te dar aqui acesso a todas as IAS, certo? Você vai ter todos os modelos mais atualizados aqui. Então, a gente tem o Cláudio Opus 4.8, a gente tem o GPT 5.5, nana 2. A gente pode
+
+utilizar esses modelos para gerar imagem, vídeo, né? Aqui em cima, ó, imagem, vídeo, voz, fazer pesquisas. A gente pode criar aplicativos aqui. A gente pode criar e hospedar aplicativos do zero utilizando os agents aqui, agent sessions aqui da Abacus. Então você tem, por exemplo, vídeos demo aqui na própria Abacos, em que isso daqui é feito dentro do agents. E você consegue também copiar
+
+o próprio prompt que foi utilizado para gerar isso daqui e ter um aplicativo seu dentro da Abacus, hospedado dentro da própria Abacus, tá? É um ferramental muito completo, tem muitas coisas aqui dentro, tá? Você consegue além disso usar a IDE deles também, como se fosse o cursor. Enfim, muita coisa. Recomendo bastante. O link para aba vai tá aqui na
+
+descrição. Qual que é o ponto sobre database migrations? No risco de ser um pouco polêmico, eu vou falar qual que é a maneira errada de se fazer isso aqui. A maneira errada de se fazer isso aqui é você dar um SSH lá pra sua cloud e você começar a executar comandos na mão para fazer as migrações. Comandos como criar tabelas, criar colunas, mudar o tipo de colunas, adicionar uma fory, adicionar alguma coisa. Isso eu acho errado.
+
+Simples assim. Eu acho simplesmente errado. Eu não faria isso em hipótese alguma, porque isso daqui, esses comandos, se a gente tiver rodando na mão e eles viverem dentro da minha máquina, supondo que eu seja um DBA, tá? Eu seja a pessoa que está administrando o banco de dados, tudo que vive na minha máquina não é revisável, auditável, reproduzível, automatizável. Se não é nada disso, na minha opinião, não é robusto o suficiente, não é profissional o suficiente. E nota, eu não tô falando
+
+que em nenhum momento você deve criar um arquivo de migrations manual. Não é isso que eu tô dizendo. O que eu tô dizendo é que no dia de hoje a minha recomendação é que caso você tenha arquivos ou até scripts de migrações de bancos de dados, que eles estejam sujeitos aos mesmos processos que a gente passa pelo código, que a gente lide com eles da mesma seriedade que a gente lida com código, ou seja, com requests, com reviews e estando dentro de um versionamento de controle, quer dizer, controle de versionamento, algo como git, por exemplo, é só isso que eu tô pedindo. Se você é muito novo na área, você não sabe o que que é uma migração. Uma migração é tipo o seguinte, imagina que eu tenho uma tabela usuário, dentro dessa tabela usuário, ela tem o ID, ela tem o nome, ela tem o e-mail, tá? Essa tabela já
+
+está existindo, já está em produção, certo? Já tenho aqui 300 usuários com ID, nome, e-mail. E eu percebo que eu preciso de um campo novo no usuário. Eu preciso de uma data de nascimento. Para eu adicionar essa coluna nova na minha tabela usuário, eu preciso fazer uma migração. Eu posso fazer essa migração
+
+executando SQL manualmente, fazendo na mão mesmo. Vou lá na máquina do SQL, digito alter, table, users, ad, column, aí sei lá, nascimento. E eu não sei o que que você vai querer que essa, qual tipo que você vai querer que a coluna nascimento seja, né? se vai ser data ou time stamp ou uma string até o que quer que seja, enfim, não faz diferença. O problema de eu executar isso daqui na mão é que eu vou executar na mão localmente. Eu vou ter que executar na
+
+mão no ambiente de stage, no ambiente de desenvolvimento, no ambiente de produção. Isso não vai ser reproduzível. Se a gente precisar voltar atrás em algum momento e depois fazer o update de novo, a gente perde essa informação, né? A gente perde informação do que que foi executado, de como foi feito. Não acho bom executar isso aqui na mão.
+
+Geralmente quando a gente pensa numa migração, a gente pensa no migrate e o migrate down. Por qu caso eu precisa fazer um rollback pra situação antiga, né? Caso eu pense, essa migração de adicionar a data de nascimento não deu certo e eu quero deletar isso daqui, a gente precisa do migrate Down. Então o migrate Up, nesse exemplo, adicionar o nascimento e o migrate Down ele vai remover o nascimento. Todas as vezes que a gente executa uma migração, essa migração vai ter um determinado número.
+
+Isso se eu fizer, se você fizer da maneira que eu tô sugerindo, né? Se a gente fizer que cada um vai executando as migrações que quiser no banco de dados, você não vai ter número, você não vai ter versão, você não vai ter nada disso, tá? Agora, supondo que a gente faça as coisas de uma maneira mais reproduzível, eu vou ter que, por exemplo, a migration um, né? A primeira migration é essa aqui, e ela vai ter o migrate up e o migrate down. A segunda também vai ter o migrate up e o migrate down. E assim a gente consegue subir uma
+
+versão ou descer uma versão. E o nosso próprio banco de dados internamente vai armazenar a versão dele. Então vamos supor, estou na versão 003. né? Quer dizer, eu ao bater o olho nessa versão, eu sei on em que estado o meu banco quadado está e eu consigo migrar para cima ou migrar para baixo. Vamos ver um
+
+pouquinho na prática como isso aqui funciona. Eu vou abrir aqui o VS Code. Eu tenho dois projetos separados, um do Drizzel e um do Postgres. Primeiro eu vou olhar com vocês o projeto do Postgres. O meu Postgres é o seguinte, ele tem um arquivo de Docker Compose que vai levantar o Postgres aqui. Então se
+
+eu der o comando docker compose up, eu vou ter o meu Postgres rodando aqui no Docker na minha máquina, tá? Então ele vai puxar a imagem do Postgress lá do Docker Hub, vai começar a rodar na minha máquina e eu vou ter aí um Postgress zerado dentro da minha máquina com os determinados parâmetros aqui, né, que o meu user é demo, o meu password é demo e tal. Olha só, aqui no meu no meu Docker desktop, eu posso ver que o meu Postgress está rodando aqui, ele tá ativo, certo? Criei um postgas aqui vazio, rodando com essa imagenzinha aqui, né? Post 16 alpine. E aí eu tenho
+
+aqui na minha esquerda uma série de arquivos de migrations, migrate up e migration down. Como eu falei, arquivo um, arquivo dois, arquivo 3, né? Migration 1, 2, 3. Na migration 1, a gente tá fazendo o seguinte, a gente tá criando uma tabela usuários, adicionando ID e e-mail e inserindo dois usuários dentro dessa tabela. Mas tem também great, né, caso eu queira descer uma versão aqui. E o Myrate Down é um drop
+
+table users, né? Como a primeira migração cria a tabela, a migração que reverte essa criação é um drop na tabela. Vamos ver a segunda. Na minha segunda, eu adiciono uma coluna username. Esse é o migrate up, é indo pra versão dois. E o migrate down, o
+
+voltando da versão dois pra versão um, eu estou dropando a coluna username. Eu a coluna que eu adicionei, né? Então, lembra, sempre revertendo aquilo que a gente fez. No Migration 3, eu tô setando o username dos usuários e alterando a coluna para que o username seja único. Eu quero transformar os usernames em usernames únicos. E o migrate down,
+
+claramente, ele dropa esse constraint, ele dropa essa restrição de que cada username precisa ser único e ele nulifica todos, ele dropa todos os usernames que ele criou. Geralmente dentro da empresa você vai ter algum script, como por exemplo esse script migrate aqui. A função desse script migrate é identificar em qual versão o Postgre está e aplicar todas as migrations até aquela versão. Você poderia muito bem ignorar isso daqui. Se você souber em qual versão que tá, você manualmente migra de uma a uma, tá? Mas
+
+não tem por a gente fazer isso. A gente quer caminhar para algo reproduzível. Então você pode fazer um script assim, uma inteligência artificial não tem o menor problema em fazer um script assim também. E aí você testa localmente para ver se ele funciona, né? Testa diferentes cenários, tenta dar um myrate up, um myrate down, ver como é que tá a tabela, ver como é que funciona. Aqui
+
+para título de exemplo, eu tenho esses scriptinhos que eu fiz com IA, certo? Um é para fazer um migrate, um é para fazer uma query, para fazer uma busca no banco de dados. Então vamos rodar primeiro o migrate, ou melhor, vamos rodar primeiro a busca para ver um erro. Eu vou rodar a busca, que é esse script aqui, ó. Select the email from users e order by id. E a
+
+gente vai ter um erro, a gente vai ter que a relação, né, a tabela users não existe. É claro, eu não criei ela. Então vamos primeiro executar o comando aqui migrate. O migrate, olha só, ele deu um apply na migração 001, ele deu um apply na migração 002, ele deu um apply na migração 003 e teoricamente ele aplicou aquelas três migrations que eu te mostrei. E agora a gente consegue rodar o script query. E com o script query a
+
+gente consegue observar que sim, nós temos aqui um ID, um e-mail e um username que foram populados através daqueles três scripts de migração. Se eu quiser dar um holdback, a IA também me ajudou com scriptinho aqui, tá? Só pra gente mostrar isso aqui funcionando, tá? Eu vou dar um rollback. A gente deu um hold back aqui na nas migrações. Hock de
+
+novo, rollback de novo, porque cada holdback volta uma migração, né? Eu dei rollback em três migrações. Se eu der um querer agora, a gente volta para aquele mesmo erro. Ou então, por exemplo, né, eu posso dar um migrate, aplicar as três aqui, dar rollback em um, depois da migrate e ele vai aplicar só a última. Deveria em teoria, tá? Ah, ele fez, ele
+
+fez sim, ele pulou a primeira, ele pulou a segunda e aplicou a terceira porque ele viu em qual migração que ele tava. Enfim, você entendeu essa lógica? Agora a gente vai adicionar uma etapa aqui em cima. As migrações elas vão ser elas são operações. Você pode imaginar as migrações como sendo 1 2 3 4 5 e a resultante de todas essas migrações vai terminar num determinado estado, o estado do banco de dados, né? Caso a
+
+gente aplique todas essas migrações em sequência, eu vou ter um estado final do meu banco de dados, que vai ser uma tabela users. Nessa tabela users, eu vou ter um ID, eu vou ter um name, eu vou ter um e-mail, etc, etc. Muito provavelmente no seu trabalho, a maioria das empresas não trabalha com migrações cruas. A maioria das empresas vai estar trabalhando com uma ORM. ORM é uma ferramenta que nos dá algumas funcionalidades para lidar com o banco de dados, tá? Faz um WAP ali em volta do
+
+banco de dados e a gente consegue lidar diretamente no código. Ao invés de ter que pensar em SQL, a gente começa a pensar em Typeescript ou Python ou algo nesse sentido. Então essa mesma migração que eu consigo fazer com arquivos de SQL, certo? Com esses arquivos aqui de migrations, eu consigo fazer também com a minha ORM. Mas por que que eu te contei essa história aqui do estado?
+
+Porque na ORM a gente geralmente trabalha no caminho inverso. Eu geralmente vou pegar um estado final, certo? Eu vou informar o ORM: "Olha, eu quero que o meu banco de dados seja assim, eu quero que o meu banco de dados tenha um ID, um nome, um e-mail. E a partir disso daqui, a partir dessa descrição, a ORM vai criar os arquivos de migrations. Então, geralmente, se tudo der certo numa ORM, você não vai precisar criar manualmente os arquivos de migrations. Às vezes uma coisa ou
+
+outra não sai como o planejado e a gente precisa manualmente ir lá e alterar os arquivos de migrations. Deixa eu te mostrar como isso aqui funciona. Nesse meu projetinho aqui, eu estou utilizando o Drizzel. Então você pode ver aqui, eu tenho a dependência Drizzel ORM e eu tenho dependência Drizzel Kit. O drizzle permite que eu faça o seguinte e a maioria das ORMs permite que você faça essa mesma coisa, que é eu vou definir um esquema utilizando TypeScript mesmo ou qualquer que seja a sua linguagem, né? No jungle você vai descrever o
+
+esquema em Python. No Rubian Rail você vai descrever o esquema em Ruby. No Laravel você vai descrever em PHP. Enfim, eu estou descrevendo o meu banco de dados aqui em JavaScript. TypeScript, no caso, existe uma certa pequena curva de aprendizado aqui, certo? Mas isso
+
+daqui é uma tabela no banco de dados. É uma post gris table cujo nome da tabela é user, em que eu vou ter um ID que é serial e é chave primária. Eu vou ter um e-mail que é texto não nulo e único. E eu vou ter um username que é texto não nulo e único também. A partir desse esquema aqui, eu posso rodar o comando drizzel kit generator. E quase todas as
+
+ORMs tem uma funcionalidade que faz isso daqui, que vão pegar esse seu esquema aqui que você definiu no próprio código e vão transformar esse esquema em arquivos de migrations. Então, né? Aqui o meu script generate. Se eu der um npm run generate, eu dou um enter aqui, ele vai gerar um arquivo de migrations. Eu tinha que ter deletado o teste que eu fiz antes, então você finge que você não viu isso. Deleta, deleta, deleta. Agora
+
+estamos zerados. Muito bem, rodei de novo. É porque eu queria mostrar ele gerando a migration zero, tá? Isso que eu queria mostrar. Se você não tiver nenhuma migração, não tiver o journal tiver aqui, é vazio, e você não tiver esses snapshots, ele vai gerar uma migração, a migração de número zero, tá?
+
+Temos aqui a migração de número zero. A migração de número zero, ela cria uma tabela users, né, com aqueles constraints que a gente falou. Então, nota, o que eu tenho é esse esquema aqui. E a partir desse esquema, o Drizzle gerou uma migração. Quando eu pedi para ele gerar essa migração, é claro, eu posso também aplicar essa migração utilizando aqui o Drizzel Kit migrate ou o meu scripzinho migrate, né?
+
+Então, se eu der um npm run migrate, vai dar um belíssimo erro que eu preciso consertar. Não, não, não é um erro. Isso tá tá tudo certo. Ele tá, ele só tá dizendo que ele tá usando default, é porque eu não li mesmo. Não, definitivamente não é um erro. E aí a
+
+gente fez um C aqui no banco, tá? A gente pode utilizar as próprias funcionalidades aqui do nosso Drizzel para fazer uma conexão com o banco de dados e fazer queries. Então, as suas quereries no banco de dados elas vão, claro, vai variar de ORM para ORM, né? Como que isso aqui vai se parecer? Algumas ORMs, inclusive, t diversas formas diferentes de se fazer uma query, mas a gente consegue rodar issoqui e obter o nosso resultado aqui. O que que
+
+é interessante de uma ORM, que eu acho muito valioso? Eu, pessoalmente não sou um expert em banco de dados, tá? Eu pessoalmente não sou nem muito bom nisso. Supondo que eu queira adicionar um campo novo na tabela usuários, eu venho aqui, ó, campo novo, dois pontos. O que eu quero que esse campo aqui seja?
+
+Um decimal, vai, mas eu tenho que importado aqui, né? Decimal. O nome vai ser novo aqui. E tá bom. Um campo decimal novo. Tá bom. Tá bom. A partir
+
+disso, eu posso vir aqui, ó, utilizar o meu npm run generate e o Drizzel vai criar essa nova migração para mim. Eu disse para ele como que eu queria que o meu banco de dados tivesse. E ele criou uma nova migração em que ele adicionou um campo novo. Pode, por exemplo, pensar: "Pô, eu não quero mais nada disso aqui. Eu quero deletar esses campos aqui. Eu isso aqui, salvo, eu dou
+
+um npm run generate e ele vai criar ainda uma nova migração dizendo: "Olha, a gente vai dropar esses constraints e dropar essas colunas, tá?" Então esse é o poder de uma ORM. Um uma das vantagens de uma ORM é que você pode definir o estado final do banco de dados. A partir desse estado aqui definido, ele vai olhar dentro dos arquivos internos dele, que são os journals, os snapshots e as migrations. E ele vai derivar qual migration ele precisa escrever para levar o seu banco de dados para ter aquele resultado que você quer que tenha. Claro, existem mais problemas
+
+aqui, tá? Eventualmente você vai esbarrar em algumas dificuldades com migrations, em que um migrate up vai dar problema, um migrate down vai dar problema, você pode estar tentando alterar. É, isso aqui é um problema que eu já fiz numa, já fiz em produção esse problema, tá? Eu quis alterar a tabela users e eu não lembro exatamente o que que eu fiz, mas tipo assim, a tabela users tinha, sei lá, 100.000 usuários e eu fiz uma migration que deu um lock, travou essa tabela por tipo 5 minutos, porque eu queria adicionar um campo novo que era derivado de outro campo, algo nesse sentido, ou criar uma chave, não lembro direito. Então, algumas migrações
+
+ainda são difíceis, tá? Isso aqui não é uma aula extensa sobre como fazer migrações. É só mostrando o básico de migrações em bancos de dados. Quando você trabalha num sistema de produção de verdade, ainda vai ser muito importante você entender sobre várias questões de banco de dados para você não cometer esses erros. Tip, pô, ah, eu quero que os meus usuários aqui, eu vou alterar o meu esquema aqui, eu quero que o meu usuário tenha um e-mail único. Se você
+
+tiver muitos usuários, pode ser que isso dê um problema. Então você tem que saber ainda o que que vai estar executando o seu banco de dados, como que isso vai est sendo executado. É bom você fazer um teste em staging com os dados similares à produção, tá? Não é porque a ORM gerou uma migration que essa migration está correta ou ela não vai quebrar tudo. Enfim, tome muito cuidado com migrations, leva elas a sério. E é por
+
+isso que eu recomendo o versionamento aqui de migrations. Eu recomendo que elas estejam escritas dentro da codebase, sujeitas a P request e versionamento e que elas sejam executadas através de scripts reproduzíveis que também estão dentro da Code Base, tá? Se você tiver fazendo isso, os outros problemas você há de corrigir, né? Eles vão existir, mas você vai conseguir mais facilmente identificar da onde que veio o problema e qual que é a solução. Se a gente pegar e sair executando scripts no nosso banco de dados, a torte à direita ou é a torte à esquerda, o o ditado, não lembro, vai dar ruim, tá? Level migrations a sério.
+
+Gostou desse vídeo, quer aprender mais comigo? Temos vários cursos aqui do canal de estrutura de dados, algoritmos Elite Code, de arrumar seu currículo LinkedIn e conseguir vagas de emprego, de system design, combo com todos os cursos.

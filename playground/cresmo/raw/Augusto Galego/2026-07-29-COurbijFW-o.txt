@@ -1,0 +1,77 @@
+---
+video_title: "Database Indexes em 8 minutos"
+video_id: COurbijFW-o
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=COurbijFW-o
+video_date: 2026-07-29T13:00:14+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? Tudor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e mexe respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. Série
+
+nova no canal. Vamos falar sobre conceitos importantes da programação em pouco tempo. Conceito de hoje é o índice do banco de dados. Quando você cria uma tabela no seu banco de dados, geralmente é criado um índice na sua chave primária. No caso do Postges, isso sempre vai acontecer. Sua chave primária
+
+geralmente é um ID. Então, já existe um índice que é criado no ID no seu banco de dados. Você não precisa criar um índice para isso. Mas fica a pergunta: o que que é um índice? Para que que ele serve? Por que que a gente cria ele? Um
+
+índice é uma estrutura de dados subjacente no seu banco de dados que vai ajudar a acessar esses dados de maneira mais rápida. SQL é tradicionalmente estruturado e orientado a linhas e colunas. Então, imaginando uma tabela que você tem ID, nome, e-mail, de repente create jet, o seu banco de dados vai armazenar estes dados internamente. Ele vai armazenar o ID1, o nome Augusto, o e-mail aqui e a time stamp do Creator Jet. Para além disso, para além dessa estrutura, digamos assim, de base, um índice vai criar uma estrutura adicional. Por quê? Vamos supor que você
+
+queira encontrar o ID 300. Caso não existisse um índice, o banco de dados precisaria checar todas as linhas, linha por linha, uma atrás da outra, até encontrar o ID300. Se, por exemplo, você tá buscando pelo nome Fernando e não existe um índice na tabela nome, o seu banco de dados precisa escanear a tabela inteira e olhar linha por linha até achar o nome Fernando. Como você pode estar imaginando, isso é custoso e lento. Então, a gente cria um índice. O
+
+índice faz com que essa busca seja muito mais rápida. Como que o índice é criado? Vamos explicar aqui. Existem diferentes estruturas de dados que o seu banco de dados pode criar para serem utilizadas como índice. Então imagina aqui, ó, esses dados aqui estão armazenados, tá?
+
+Eles estão aqui, tá salvo isso. Mas o índice padrão do PGres é um índice de bite. É um dos índices mais comuns. Eu vou te mostrar aqui nesse exemplo o que que é uma B3. Vamos adicionar alguns números de ID aqui. Imaginando um número
+
+de ID sequencial, ele acontece dessa maneira. Vamos inserir o ID1, inserir o ID2, inserir o três, o quatro. Nota essas inserções estão alterando a estrutura da minha bite. O cinco aqui, tá bom? Aqui temos a nossa bite. Essa
+
+estrutura de dados adicional, deixa eu tirar um print aqui, vai ser armazenada em conjunto com os nossos dados. Então a gente tá tomando mais espaço. Como você viu ali na criação, essa bitri ela vai se reordenando. Essa reordenação também tem um custo computacional. Então o que que a gente pode inferir daqui? Os
+
+índices vão tornar as suas tabelas no banco de dados necessariamente mais pesadas e as suas inserções, as criações de novos usuários, as criações de novos IDs mais lentas. Porém, a busca vai ser muito mais rápida. Por antes, se eu quisesse buscar o ID7, né, eu teria que percorrer 1 2 3 4 5 6 7 até encontrar o sete. Agora, se eu quero buscar o ID7, eu vou vir aqui na minha bit, nessa estrutura de dados, e eu vou olhar, olha, o S é maior ou menor do que 4? é maior do que quatro, vou para cá, vou pra direita, né? O seis é maior ou
+
+menor, perdão, o sete é maior ou menor do que seis? É maior do que seis. Então vou para cá e encontrei o meu set. Eu encontrei ele em três etapas, escaneando apenas três coisas, ao invés de ter que escanear sete linhas aqui na minha tabela. Por isso, um índice torna a busca mais rápida. Como ele torna a
+
+escrita mais lenta e a busca mais rápida, a gente só vai querer criar um índice quando fizer sentido. Isso responde a pergunta comum dê. Por que não criamos índices em tudo? Bom, é porque se a gente não executar muitas buscas em cima daquele índice, não vale a pena criar um índice naquilo. Uma das vantagens do índice de B3 é que ele é muito bom para fazer range. Range. O que
+
+que é range? Ah, encontra para mim todos os IDs entre 1 e três. Nota que aqui na nossa imagenzinha eles ficaram juntinhos, ó. Todos os IDs entre um e três estão juntinhos por causa de como uma B3 funciona. Isso vai funcionar para Create J também. Se a gente criar um
+
+índice no created, a gente vai conseguir encontrar com facilidade todas aquelas linhas que foram criadas entre determinado momento no tempo e determinado momento no tempo. Então, para buscas em range, Bitree é um tipo de índice muito bom. Agora, não é o único. Ele é o padrão, ele é o mais comum, mas ele não é o único. Existe também o índice hash. Que que é o índice
+
+hash? Se você já estudou o que que é um hash map ou um dicionário ou key value, é a mesma coisa. Você vai ter uma chave, uma aqui, que vai ser um hash e ela vai apontar para um valor. O nome Augusto, se eu passar por uma função hash, vai cuspir sempre o mesmo hash. Então vai existir uma tabelinha aqui onde eu tenho a chave e o valor. E essa tabelinha aqui
+
+vai ter todos os restos de chave e valor, tá? Existe a possibilidade de conflito de hash, mas eu não vou falar sobre isso agora. Ele não funciona para range, ele não funciona para ordenação, ele não funciona para prefixo. O resto ele só funciona com mat exato. Então ele não vai ser bom caso eu queira procurar por nomes que começam com Augus. Não
+
+funciona. Tem que ser mat exato. Tem que ser exatamente igual. Dito isso, se for para exatamente igual, o R ele tem uma vantagem muito boa de velocidade. A velocidade dele é muito boa porque a complexidade média de busca num hash ela é O de um. Claro, existe conflito e tal,
+
+mas vamos ignorar isso. Hash é bom para esse caso de uso. Um índice muito comum também é o composit composto, um índice composto de duas diferentes colunas. Então, de repente, eu vou criar um índice composto em cima de name e e-mail. Agora, o índice composto por padrão vai também ser um índice de bite.
+
+Ele vai também utilizar uma bite. Tá bom? São conceitos que não entram em conflito. O índice composto diz respeito apenas àquilo que vai ser indexado, né? a gente vai juntar essas duas colunas aqui, mas a estrutura de dado subjacente vai continuar sendo uma bite. Ainda
+
+falando sobre índices, você pode criar índices que são únicos ou índices que não são únicos. Novamente, isso não entra em conflito com o fato de ser composto ou não, de ser uma bitrie ou não. O índice único diz respeito apenas a se aquele campo vai ser único ou não para prevenir valores duplicados. Por exemplo, o ID por padrão, ele é um ID único, né? um identificador único que senão não tem propósito. Porém, se eu
+
+criar um índice no nome, eu posso muito bem criar um índice no nome que não é único, né? Muitas pessoas podem ter o nome a gusto. Existe também a possibilidade de criar um índice parcial, partial ou filtered, né, ou filtrado, em que a gente vai criar um índice apenas em parte da tabela, onde vai existir uma condição cujos elementos que preenchem essa condição vão entrar no índice, os elementos que não preenchem não vão entrar nesse índice. É bom quando a gente quer acessar um subset de dados que é muito comumente acessado. Temos também aqui entra um pouco mais complexo, full text index.
+
+Isso aqui vai trazer um índice invertido paraa gente poder fazer buscas dentro de um texto completo. Funciona muito bem em documentos. O armazenamento dele acaba sendo muito pesado porque ele vai mapear tokens ou palavras individuais. Ele vai fazer um mapa de qual palavra aparece em qual texto. Então é um caso de uso bastante específico, mas se você tem esse caso de uso bastante específico, um full text index é muito bom. Temos o
+
+spatial index espacial. Espacial é pra geolocalização, coordenadas. Funciona muito bem se você tem esse caso de uso. Por exemplo, quero encontrar restaurantes que estão a 2 km dessa posição geográfica. Se você não tem esse caso de uso, ele é perfeitamente inútil.
+
+Existem outros tipos também aqui, a gente poderia ficar citando muitos, né? E a loucura aqui fala sobre covering index, clustered index, mas ser um vídeo um pouco mais simples. A ideia aqui é trazer para você o que que é um index, como ele funciona, como ele é armazenado de fato dentro do seu banco de dados e quais os tradeoffs. Eu espero que você tenha entendido isso e eu espero que você utilize dessa informação para entender quando que vale a pena criar um índice e quando que não vale a pena criar um índice. Regra de ouro aqui, o índice que você vai criar, ele vai ser editado pelo padrão de acesso, tá? Com
+
+que frequência você acessa esses dados e como que essas buscas são feitas. Por exemplo, numa rede social, eu frequentemente busco por usernames, eu frequentemente busco por @augusto, por exemplo. Como isso é uma busca muito frequente, é muito mais frequente a busca pelo username do que a inserção de um username novo, do que a inserção, a criação de um usuário novo. É muito interessante eu criar um índice em cima desse username aqui. Agora depende, né?
+
+Eu quero que a minha feature seja boa em dar match parcial. Se eu quiser, Bit vai ser interessante. Se eu não quiser, se eu quiser apenas matches, exato. Hash pode ser uma opção legal. Então, índice é sempre criado baseado no padrão de acesso e da necessidade da sua aplicação. Curtiu esse vídeo? Estamos a
+
+cinco dias sem falar sobre a Deixa um like, dá um subscribe você quiser aprender sobre computação de verdade, de uma maneira simples, sem firula, eu espero que didática. Se você quiser aprender mais comigo, temos cursos aqui na descrição. A gente tem um curso de system design, que eu falo bastante sobre índices em bancos de dados também e sobre diversas coisas para te preparar para uma entrevista de system design. E beijão [limpando a garganta] por hoje. É isso.

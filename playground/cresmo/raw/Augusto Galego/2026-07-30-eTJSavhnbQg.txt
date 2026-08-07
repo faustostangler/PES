@@ -1,0 +1,75 @@
+---
+video_title: "Request Autenticado ≠ Request Legítimo"
+video_id: eTJSavhnbQg
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eTJSavhnbQg
+video_date: 2026-07-30T13:00:26+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? Tudor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e mexe respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. Cross
+
+site request forgery. Hoje é esse o tema. Que que vai acontecer? Supõe que o usuário fez login no seu site e o seu site usa cookies para autenticação. Estes cookies estão armazenados no seu browser. O browser vai automaticamente
+
+incluir os cookies nos requests. E vamos supor que você, como usuário, acesse um site malicioso. Nesse site malicioso vai existir aqui um HTML. Esse HTML pode tentar executar um request malicioso. Vamos supor que você entrou no site golpe.com e o site golpe.com tem um
+
+forme. Ele possui um form aqui. E ao clicar nesse form, ele vai tentar fazer um request pro seu banco, como se ele fosse o front endo, utilizando os cooks que estão no seu browser. O seu banco então vai ouvir esse request aqui, né? vai ver que o usuário tá autenticado corretamente, tá com o login tudo certo e vai aceitar o request e responder ali o que o usuário perguntou, fazer o que o usuário pediu. Esse é um exemplo
+
+clássico de crosssite request forgery, mas isso não acontece tão frequentemente porque hoje em dia a maioria dos aplicativos já conseguem coibir isso. Você provavelmente já fez uma aplicação web e mesmo se você não pensou nisso, é possível que alguém tenha pensado nisso por você e alguém tenha prevenido isso, provavelmente no framework que você usa. Então vamos entender um pouco mais a fundo qual que é o problema aqui. Aqui, olha só, tô num site do de banco fake, tá? Vou fazer um login nesse banco fake.
+
+Isso aqui é uma demo criado justamente para essa aula aqui. Eu vou clicar aqui em login e fiz o login no meu banco fake, tá? Consegue ver aqui que eu tenho os dados do meu banco fake aqui, né? todos esses dados aqui. Agora eu vou para outro site que não tem absolutamente nada a ver com o banco.
+
+Aqui do lado eu vou puxar a aba de network, certo? É um site de prêmios aqui. Eu vou clicar aqui para ganhar um prêmio. Cliquei aqui para ganhar um prêmio. O que que vai acontecer? O site
+
+do meu banco, nesse exemplo, é localhost.2.3000. O site malicioso aqui é local host 2.4.000. Quando eu cliquei ali em claim,
+
+foi feito um request para local 2.3.000, 1, ou seja, o site do banco para deletar a minha conta. E esse request aqui passou porque eu tinha aqui, ó, meus dentro dos meus cookies a session, a sessão de login daquele site do banco. Por isso o request foi foi bem sucedido, deu 200 aqui, funcionou. Esse exemplo
+
+foi codado da seguinte maneira, em que no meu aplicativo de banco existe essa rota aqui. A rota é barra account/delite. Essa rota vai causar uma deleção da minha conta aqui no banco de dados. E é uma rota super simples, tá? E o meu site malicioso aqui, ao clicar ali no formel, até automaticamente, às vezes ele pode fazer isso, ele tenta acessar essa mesma rota aqui, né, o account/delite. O meu browser vai
+
+enviar, né, o post/account/delite e vai enviar o meu cook ali, como a gente viu o session edit. Agora você deve estar pensando, pô, galego, isso nunca aconteceu comigo? Realmente, provavelmente nunca aconteceu com você. Talvez tenha acontecido no passado, né, lá nos primórdios da internet. Hoje em dia existem diversas soluções que coíbem isso, inclusive o famig gerado course que nos dá dor de cabeça, né? Vamos
+
+paraas soluções das soluções adotadas pela indústria. Uma das primeiras é Same site. Dentro dos cookies você vai incluir ali o Same Site ou LAX ou Strict, tá? Isso daqui, informar isso daqui nos cookies, vai informar pro seu browser, não enviar esses cookies em cross site requests, em requests que vão de um site para outro site. Então o nosso site fake não conseguiria incluir esses cookies para fazer um request. Na
+
+verdade, o browser, né, não incluiria os cookies para fazer um request do site fake, né, do site do golpe pro nosso banco. O strict é um pouquinho mais estrito ainda. Se você clicar num link e navegar para esse outro site, mesmo assim os cooks não vão ser enviados, tá? Só a partir do primeiro request. E essa seria assim uma uma linha de frente um pouco simples. Agora, algo que também é
+
+utilizado é isso daqui, ó. Pra cada sessão de usuário, o aplicativo vai criar um CR CSRF token, um token aleatório, imprevisível, 32 bytes. Então é muito difícil você adivinhar isso aqui na sorte, que quando eu acessar o site do meu banco, o site do meu banco vai ter esse token ali, o site do meu banco dentro do formulário dele, né? Quando eu tentar enviar um formulário via HTML, o site do meu banco vai saber qual que é esse token. Porém, o site fake, o site do atacante, não consegue ler o HTML de outro site no mesmo browser. Isso não
+
+acontece. Então ele não tem como adivinhar qual que é o token verdadeiro. O token verdadeiro só vai tá ali no formulário do HTML do site do meu banco. Então esse token aqui também pode ser utilizado paraa prevenção disso. Uma terceira maneira é um custom header aqui, um header customizado que é o X CSRF token. O site do seu atacante, o
+
+HTML puro, não consegue incluir esse header aqui no formulário. Seria possível incluir esse header no formulário com JavaScript, mas aí o Corse vai bloquear por causa desse header customizado. O browser vai executar ali, né, o CSE preflight, que é um request, né, do tipo options que vai ali pra nossa API, vai ali pro barra user, né, users, vai informar a origin. na ordem vai ter ali, né, origem desse request é o site golpe.com e ele vai ter ali o access control requests, não sei quê, e vai ter aqui o x cs token e o corp flight provavelmente barraria esse request aqui feito pelo JavaScript, tá? Existem outras soluções
+
+utilizadas. Você tem uma solução que é o double submit cookie, em que o front end vai ler o token e mandar de volta como um header e o servidor vai checar. Agora tem alguns tipos de bypass nisso daqui. A solução mais forte é um token assinado, amarrado com a própria sessão, tá? E aqui para não entrar muito em tecnicalidade, a gente tem outra solução que é para coisas sensíveis a gente pode checar a origem, a gente pode checar a origem daquele request no nosso próprio servidor e também, claro, para algumas ações sensíveis. E isso vale não só pro
+
+crosssite, isso vale para diversos tipos de coisa. Se você vai fazer uma ação muito sensível em algum sistema, eh, muito provavelmente ele vai te pedir por algum tipo a mais de segurança, algum tipo a mais de autenticação, né? Por exemplo, quando eu vou fazer um um Pix [limpando a garganta] ali no meu banco do meu celular, ele requer o Face ID. Quando eu vou fazer alguma operação online que envolva dinheiro, geralmente tem um multifactor authentication, né? Uma autenticação de dois fatores ou mais, uma confirmação por e-mail, um código que é enviado pro meu e-mail, por SMS. Então esse tipo de coisa vai acabar
+
+também prevenindo esse erro, esse erro, né, essa vulnerabilidade, esse ataque. Essas autenticações de mais de um fator pegam alguns tipos diferentes de ataque, né? E um deles é o crosssite reference. Meu Deus, crosssite request fory. Agora, um dos erros pra gente não cometer aqui, lembra quando eu falei do CSR RF token?
+
+Jamais bota esse token numa URL, porque URLs, por padrão, elas não são, não é tido como algo seguro, é sensível. O seu browser não interpreta como algo sensível. Nenhum sistema interpreta uma URL em si como algo muito sensível. Então isso pode vazar em logs, em analytics, em headers, no histórico do browser. Esse token não pertence à URL, tá? A gente tem que lembrar também que
+
+existe outro problema chamado XSS, cross scripting. Crossside scripting é um problema diferente. Vamos supor que o seu browser renderiza comentários de usuários aqui, né? Comentários. Isso era muito comum na web antigamente. Hoje em
+
+dia não é mais. Você tinha lá no MySpace e tal esse tipo de problema volta e meia. Mas dentro aqui dos comentários, algum usuário conseguiu escapar o o HTML ali e inserir JavaScript. Aqui inseri um código JavaScript que vai executar ações no seu browser, né? Então um usuário conseguiu através de um comentário num HTML que você renderizou no seu browser, ele conseguiu executar JavaScript na sua máquina, tá? Você tem que se lembrar que
+
+as soluções de agora que eu apresentei aqui não são para esse problema. Bom, compiladão de dicas, então, same site, é importante não desabilitar o corse também. Os tokens de CSRF em formulários são importantes, né? Podem ajudar. A ideia aqui é não usar apenas uma dessas, é compor com mais de uma a solução. Muito provavelmente o seu
+
+framework já faz algumas dessas coisas. Recomendação então é você ler a documentação do seu framework e ver o que que tem dentro do framework que já tá disponível, que já tá prevenindo isso ou não, para você entender como é que a solução tá funcionando e para você eventualmente não cometer um erro em cima disso, né? Ainda mais em frameworks que te dão muita liberdade para fazer muitas coisas. Pode ser que o a forma padrão do framework seja segura, mas você implemente uma gambiarra em cima que torne perigoso. Por isso é importante conhecer isso daqui. Em
+
+algumas coisas você pode checar war. Em algumas ações é interessante utilizar a autenticação de mais fatores e essas são as formas mais, digamos assim, mais simples, mais efetivas, que vão, vão te custar menos para tentar coibir esse problema, né? Por hoje era isso. Se você quiser aprender mais comigo, temos diversos cursos aqui no canal sobre estudos de dados e algoritmos Elite Code. Curso de currículo LinkedIn encontra vagas no Brasil e na gringa.
+
+Curso de system design. O link para todos eles vai estar na descrição. Como sempre todos os cursos aqui do canal tem um mês de reembolso e se você não gostar, você pode pedir por qualquer motivo, tá bom? Valeu,

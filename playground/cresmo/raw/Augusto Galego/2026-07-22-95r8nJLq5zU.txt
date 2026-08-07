@@ -1,0 +1,109 @@
+---
+video_title: "CI/CD na Prática: Do Commit ao Deploy"
+video_id: 95r8nJLq5zU
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=95r8nJLq5zU
+video_date: 2026-07-22T13:00:35+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Na aula de hoje, eu quero te explicar a diferença entre C, CD e CD. Como assim? Eh, são dois CDs, um é o CD home e o outro é continuous delivery. Vamos lá. Vamos aprender hoje sobre continuous integration, que é integração contínua, continuous delivery, que é entrega contínua, e continuous deploy, que é deploy contínuo. Existe uma diferença
+
+aqui entre delivery e deploy, que é tecnicamente diferente, é diferente quase por tecnicalidade, mas eu quero nessa aula também salientar a diferença entre deploy e release, tá? É muito importante a gente entender isso. Na aula de hoje, eu vou também mostrar na prática aqui com exemplozinho, né? um exemplozinho aqui de deploy para uma VPS, mostrar um pouquinho de código em que a gente vai est aplicando aqui o continuous deploy. Primeiro eu quero te falar que essas coisas não são assim regras escritas em pedra que existe um manualzinho a ser seguido, são mais conceitos meio que abstratos e cada empresa pode aplicar isso de uma maneira um pouquinho diferente de outra empresa.
+
+Continuous integration, ela é a integração contínua de código para dentro da code base. Isso se traduz em geralmente uma empresa vai provar que o código funciona sempre que ela mergeia. Então criei uma feature nova, vou integrar minha feiture nova ali na main. Isso vai se dar de forma com que essa feature nova aqui vai passar por algum tipo de pipeline. Essa pipeline pode ter processos manuais ou não, em que geralmente vai ser feito um build, vai ser feito um link e vai ser feito algum teste ou vários tipos de teste. Build é
+
+para ver que o código builda corretamente, que ele meio que compila corretamente. Lint é para ver que ele segue as regras, segue os padrões ali de códigos definidos na ferramenta Linter. Hoje em dia, né, a maioria das pessoas tá simplesmente utilizando um prtiere ou algo do tipo e tá tudo bem. Às vezes você tem ali um Yes Lint ou então um RF no Python e testes, né, aí vão ser testes unitários de integração, to end, etc. Geralmente as pessoas vão colocar isso para rodar numa pipeline no seu GitHub. Não, um dos mais populares aqui
+
+é o GitHub Actions, que é o que eu vou estar utilizando hoje, mas também as pessoas podem utilizar outros outras ferramentas para fazer essa pipeline na Jenkins. Já foi muito popular. Acredito que hoje o Git Heb actions é a mais popular de todas, tá? Mas enfim, Jenings é uma alternativa aí que existe também. Continuous delivery significa que o código vai estar pronto para ser lançado automaticamente. Quando eu em mergear
+
+para mim, o código vai ficar pronto para ser lançado. E continuous deploy. Quando eu mergar ali o meu código, significa que ele vai automaticamente ser deploiado pra minha cloud ou pro meu servidor, né? Qual que é a diferença técnica aqui? Deploy e release não são a mesma coisa. Eu posso subir uma feature
+
+e ter o meu código pronto dentro do meu servidor, sem lançar esse código. Eu posso subir, por exemplo, uma feature atrás de uma feature flag, ou eu posso subir, subir, buildar, testar todo o meu código sem que o público consiga utilizar isso e lançar isso através de uma release em algum determinado período de tempo. Você tem esse artigo muito famoso da meta aqui em que eles falam sobre rapid release at massive scale, em que a meta explica como que eles fazem ou pelo menos faziam em 2017, que é a data desse artigo, continuous delivery em escala gigantesca. E se você olhar, olha só que interessante, nesse gráficozinho aqui, você consegue ver que o código vai indo continuamente ali para mim, mas cada release vai ficar disponível primeiro pros funcionários, depois para 2% da produção e depois para 100% da produção. O que a MEA tá fazendo aqui é desacoplando um deploy de uma release para todo mundo. Eles fazem esse
+
+rollout mais gradativo. Hoje em dia, o padrão das empresas é fazer isso daqui através de pipelines, né? Você vai transformar tudo isso daqui numa pipeline para rodar automaticamente. Isso que é importantíssimo, é imprescindível pra gente conseguir corrigir erros humanos. Se você tiver fazendo principalmente a parte do deploy manualmente, tá errado. Tudo que você
+
+consegue fazer através de um script manual, você consegue fazer através de um script codado e dentro da Codebase e sujeito aos mesmos padrões e reviews da Code base. Então, é recomendado que você mova o máximo possível de tudo isso daqui para dentro da Code Base e trate isso como um cidadão de primeira classe. E claro, vai ser possível você testar essas coisas localmente, né? Pensando aqui a nível de integração, né? Eu, antes de eu comitar um código, eu posso ter acesso tranquilamente a scripts no meu packag.jonjon. Nesses scripts eu
+
+posso ter o npm run link, npm run test, npm run build para ver se o teste funciona, se o lint funciona, se a build funciona. E você provavelmente vai ter isso também na sua pipeline. Eu vou mostrar o GitHub Actions porque eu sendo bem sincero, eu gosto mais do GitHubs do que das alternativas. Então é o que eu acabo usando aqui. Sim, você pode ter o que, enfim, GitHubs é de graça pra maioria do dos usos, né? A não ser que
+
+você use bastante coisa aí começa a pagar ali. E sim, infelizmente a gente vendeu nossa alma pra Microsoft e desde que eles compraram GitHub, o GitHub tá é complicadinho, mas vai. Aqui na esquerda, dentro do meu repositório, no dentro do próprio código, eu tenho uma pasta que é o pgithub/wworkflows. Aqui vão ser os workflows que vão rodar no GitHub Actions. Eu posso ter alguns diferentes jobs. Primeiro job é o job de
+
+C. E nesse job de C a gente faz aquilo que eu falei, npm run test, npm run build. esse job. Todas as vezes que eu puxar esse código para main, você vai ver aqui, ó, repositóiozinho. Aqui a gente tem os jobs que rodaram, a gente tem o job de test e build. Eu posso ver
+
+os detalhes aqui desse job. Enfim, ele vai ter aqui, né? Esse job é bem rapidinho porque essa code base também é é minúscula, tá? Super rapidinha. Continuous delivery, ele vai até o ponto que eu provo que a minha aplicação tá pronta para ser entregue pros usuários.
+
+Isso aqui vai variar muito de empresa para empresa em como a gente vai fazer isso. Mas geralmente isso significa que a aplicação ou vai est direto entregue pros usuários ou eu vou deixar ela num estado em que eu consiga fazer um deploy e uma entrega com através de um clique ou depois que o Qway passar ali. Deixa de ser 100% contínuo quando você tem ali uma interação humana, né? Ele passa a ser um pouquinho mais travado. Mas geralmente é isso que a gente tá se referindo no mundo real. Cara, eu vou
+
+ser bem sincero contigo, que essa distinção que a gente fez aqui no no vídeo que eu fiz para explicar para você a diferença entre deploy e release, na prática, toda a empresa, não toda vai, mas a maioria das empresas, com exceção de repente da meta aqui, empresas gigantescas, vão considerar C e CD, a parte do CD sendo delivery e deploy, porque a maioria das empresas, empresas médias, né, principalmente, raramente fazem distinção entre delivery e deploy. Pra maioria das empresas isso acaba sendo a mesma coisa. O deploy contínuo, ele se dá da seguinte forma. A partir do momento que o meu código geralmente ele é mergeado para main ou para ou para alguma branchir, né? Se você pensar na linha do tempo do seu código, provavelmente maioria das empresas tá usando uma branch main. Antigamente essa
+
+branch se chamava master, então você ainda consegue ver umas code bases antigas com esse nome. Provavelmente a maioria das empresas tá utilizando algumas feature branches, né? Então você tem uma branch aqui que é uma feature e aí você consegue setar uma pipeline que todas as vezes que você mergiar de uma outra branch para main, né, que você faz essa união aqui do código, esse merge no GitHub, acontece automaticamente um deploy e um delivery. Esse código vai pra produção e ele vai estar disponível pro cliente. Aí você pode estar pensando, galego, mas eu não gosto disso. Isso não dá tempo para eu testar
+
+isso. Exatamente, não dá tempo para você testar isso. Por isso que a maioria das empresas faz aqui antes da feature ir pra main, ela vai pra outra branch branch aqui que as pessoas vão chamar de dev ou de staging ou às vezes as empresas vão ter essas duas branches, enfim, e aí as empresas geralmente em merergeiam de dev para m. Então você tem um uma feature que ela começa na branch feature, depois ela vai pra dev staging, depois ela vai para main e aí enquanto ela tá em dev stagionar aqui os seus keyways para testar. você mesmo consegue testar seu feature ali. Que muitas
+
+empresas fazem também é que você vai ter um banco de dados em produção, né? As empresas vão geralmente clonar esse banco de dados de produção paraa dev stage e anonimizar aquilo que precisa ser anonimizado, né? Então, por exemplo, você não vai clonar e passwords de usuários, nome de pessoa, compras que uma pessoa fez, pagamento, esse tipo de coisa, você não vai clonar isso aí. Você vai botar tudo randomizado, mas você vai clonar, digamos assim, a estrutura do banco de dados e mais ou menos a estrutura e dispersão dos dados. E aí você consegue testar num ambiente muito parecido com produção. E esse é o
+
+continuous deploy. Como que isso é feito na prática na maioria dos lugares? No mesmo workflow ou então num arquivo diferente, tanto faz aqui, você vai ter a parte de deploy. E a parte de deploy, ela varia muito da infraestrutura que você tá usando em como você quer fazer esse deploy. A Versel tem uma maneira de fazer, a WS tem infinitas maneiras de fazer. A maneira com que eu tô fazendo
+
+aqui para esse propósito de demo é simplesmente dando um SSH paraa minha VPS, instalando o que eu preciso dentro dessa VPS e botando para rodar. O VPS que eu tô utilizando é da patrocinadora do canal e patrocinadora desse vídeo que é a Host Gator. Então você me dá um segundinho para eu falar deles. Eles tm tudo que você precisa para criar seu site, para hospedar seu site, enfim, se você quiser. Eles têm servidoras de N8N que você consegue hospedar de maneira muito fácil, muito simples para trabalhar ali com fluxos de agentes de A. Eles t também uma solução com Opencla
+
+pré-instalado, se você quiser, que é muito mais fácil do que utilizar o OpenCla dentro do seu próprio computador. Também um pouco mais versátil, né? Porque você não precisa manter o seu computador sempre ligado. Você pode ter só o open aqui, você consegue mandar mensagem do seu telefone independente de onde você tá. Acaba sendo uma vantagem muito boa, tá? Caso
+
+você queira OpenCla, eu recomendo essa solução. Acho que faz muito mais sentido rodar numa VPS dedicada do que no seu próprio PC. Mas o que eu vou utilizar hoje é aqui um servidor de VPS. Eu paguei um servidor de VPS da HostGator. Eu peguei inclusive o plano mais barato deles, tá? Eles têm planos a partir de
+
+R$ 21,70 por mês. Se você vier do canal, clica no link na descrição, vai ter um uma oferta especial para você. Você pode olhar as diferentes VPS que eles têm, tá? Você pode começar na mais baixa e ir crescendo conforme for a sua necessidade. E é claro, VPS deles localizada ali no Brasil, em São Paulo, vai ter uma latência muito boa, porque os seus clientes ou usuários provavelmente vão estar ali também, né?
+
+Vão estar no Brasil. Velocidade de conexão excelente, poder de processamento excelente, enfim. Tudo que você precisa tá aqui. Existem diversas, é, diversos tipos aqui de VPS que você pode rodar. Uma só com o Bunto, uma com o A Linux, uma com Rocky Linux. Ou então
+
+se você preferir com painéis já pré-instalados, tipo C Panel, você pode utilizar. Se você preferir uma VPS que é um pouco mais fácil de você rodar N8N ou Node, por exemplo, WordPress ou Docker, eu já até mostrei de Docker aqui no canal, tá? É bem legal. Hermes também, enfim, você tem todas essas possibilidades e você também pode alterar depois, tá? dentro da sua própria VPS ali, tem como fazer alterações e reiniciar ela com a a outra o outro sistema operacional aqui escolhido. Enfim, eu aqui dentro da
+
+minha VPS peguei ali as credenciais que eu preciso. Um negócio muito importante para você notar é que essa parte de continuous delivery, continuous deploy, necessariamente isso vai requerer que você lide com credenciais. Você não consegue fazer um deploy na sua cloud sem ter as credenciais dessa cloud. não existe essas credenciais. É muito importante, mas muito importante mesmo que elas não estejam no código, tá?
+
+Localmente na sua máquina, elas vão estar num ponto que você não vai comitar de jeito nenhum. Se você comitar, você vai ter que, cara, limpar tudo e dar um certo trabalhinho, tá? Limpar completamente do git ali. Não é só deletar, porque, né, a gente pode voltar e ver o histórico. Mas o que que eu fiz?
+
+Eu peguei isso aqui. Como eu tô utilizando o GitHub Actions, né, como eu uso meu GitHub Actions aqui, você clica aqui em settings e aqui, ó, aqui embaixo na esquerda, você vai ter secrets e variables. Então eu venho aqui secrets e variables do gitubloy. E aqui, olha só, eu adicionei, né, o secret da minha VPS, que é o que eu considerei, que é o maior segredo aqui. E se eu clicar, inclusive, ele tá tão secreto, ele tá tão armazenado aqui, que mesmo que eu clique para editar aqui, você não consegue ver o valor que tá atualmente.
+
+É, é impossível eu ler esse valor. Eu consigo fazer um update nesse valor, mas eu não consigo ler ele aqui. Para você ver o quão sério é esse negócio, né? Esse tipo de credencial precisa ser lidada com o máximo grau de seriedade possível, mas a recomendação aqui, pelo menos a minha, se você tiver utilizando algo como GitHub Actions, é usar o próprio Secrets aqui do GitHub Actions. A WS tem soluções próprias, tá? Existem
+
+outras soluções aqui, mas eu gosto muito aqui do Secrets. E o Secrets eu vou buscar aqui, né, dentro do meu deploy para eu buscar esse password. Eu busco aqui com o cifrãozinho secrets.vvps password e isso vai buscar o password da minha da minha VPS. Ou se for uma credencial de AWS, você pode buscar a credencial aqui, né? Enfim, o que quer
+
+que você tenha salvo aqui no Secrets, você consegue acessar aqui. E com isso, claro, a parte do deploy em específico depende de como você tá fazendo deploy, né? Ah, galego, tô fazendo um deploy com o NextJS, então provavelmente você vai dar um next start, né, que é o que você usa para botar o next ali para rodar. Você vai dar um npm, alguma coisa, você vai dar um ruby, alguma coisa, você vai botar um script para rodar algo nesse sentido. E aqui o resultado final disso, deixa eu voltar aqui para mostrar, né? O
+
+resultado final é que o meu GitHub actions vai rodar esse aqui, ó, esse job aqui de deploy para VPS. Eu posso olhar os detalhes aqui, né? Tem alguns detalhes de como ele faz as coisas e tal. novamente, isso varia de projeto para projeto, então não faz sentido entrar no mínimo detalhe aqui. Essa parte, cara, essa parte de ela é tão chata, mas tão chata de se fazer, que a maioria das pessoas nem aprendeu a fazer issoqui muito bem. Inclusive, nem eu
+
+aprendi a fazer isso daqui tão bem. E eu dou assim, ó, graças a Deus que a consegue fazer isso hoje em dia. Claro, você ainda, essa é uma das partes mais cruciais de você revisar, né? Porque não é legal cometer um erro aqui. É terrível cometer um erro aqui, mas graças a Deus, cara. Enfim, vou te mostrar que o meu
+
+continuous delivery tá funcionando. Estou na Branchman, tô na minha code base aqui. Olha aqui as cores do meu site, né? Meu site tá cheio de cores. Tem um vermelho aqui. Vamos mudar essas
+
+cores e vamos dar um dar um deploy aqui, ó. Mudar para umas cores bem estranha. Mudar para esse roxo azul aqui. Mudar a tinta aqui para um verde meio estranho. Mudar isso aqui para cá. Paper, sei lá
+
+que cores são essas. Eu tô mudando um monte de cor aleatória. Vamos ver o que que vai acontecer com o site. Ele vai ficar feião, né? Provavelmente.
+
+Gradiente linear. Não, você vai mudar isso aqui para cá. E esse aqui você vai mudar para É, pode ser. Vai ficar diferente. Vai ficar diferente.
+
+Terminalzinho aqui. Git de ponto git commit traço o M sem mensagem, né? Só um pontinho ali. Git push, manda bala. Bora. Puxou pro meu GitHub. Essas
+
+alterações que vão mudar várias cores aqui. A gente pode, se eu der um F5 aqui, né? Se eu atualizar aqui, ver os dois jobs rodando. A gente tem primeiro o job de teste e build [limpando a garganta] rodando. Você pode clicar em detalhes e ver ali os detalhes, né? Ó, já foi, já rodou, é
+
+rapidinho. E agora o job de deploy para VPS aqui. A gente vai esperar um pouquinho e ver isso daqui rodar também. Cara, eu falei mal antes nesse vídeo, né, da compra da Microsoft do GitHub, mas tá com, cara, tá com muita instabilidade. Hoje para fazer essa demo, eu passei, tipo, passei o dia inteiro brigando aqui com o GitHub Actions porque tava com problema para fazer o deploy, né? Eu falei tão bem do
+
+Gitubrito Mas não sei, cara. O GitHub tá com muita instabilidade, tá insalubre esse negócio. É, olha só, tá com problema mesmo no GitHubs. Tá com uma degradação e com delays. Bom, foi, rodou agora. E
+
+se rodou a gente deve vir aqui, né? Eu devo dar um F5 aqui e vamos ver qual que vai ser o resultado. Meu pai do céu, com certeza funcionou. Que horror. Mas é isso, gente. Deploy foi feito
+
+continuamente. Se a CD CD. Espero que você tenha aprendido alguma coisa. Se você não aprendeu nada, pelo menos você revisou os conceitos,

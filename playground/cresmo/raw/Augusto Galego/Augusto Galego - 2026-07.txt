@@ -1,0 +1,904 @@
+---
+video_title: "Como 1.000 Requests Usam 20 Conexões | Connection Pooling"
+video_id: aqmt_3UWItA
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=aqmt_3UWItA
+video_date: 2026-07-13T13:00:12+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? Tudor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e mexe respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. É um
+
+fato muito triste que para nós programadores as palavras em inglês pull e pull são muito parecidas. Por favor, não confunda essas palavras nesse contexto. Uma poll é tipo uma, digamos assim, pesquisa. Quando você tá fazendo polling, eu tô, por exemplo, tentando o mesmo recurso algumas vezes para ver quanto que ele tá disponível. E uma pool, uma piscina, né? É, é uma pool,
+
+né? É um grupo grande. Hoje a gente vai falar de connection pooling, um grupo grande de conexões, uma pool de conexões. Perdão ser pedante pelo inglês, eu odeio fazer isso, mas é necessário caso a gente queira ser corretamente interpretado, corretamente compreendido. Bom, questão de hoje super simples. Quando você tem um servidor, o
+
+seu servidor está necessariamente rodando código se for para ele fazer alguma coisa e ele provavelmente está se conectando com algum banco de dados. Essa conexão aqui com o banco de dados tem um detalhezinho, porque pensa comigo o seguinte, se cada cliente que faz um request para você, você abre uma nova conexão com o banco de dados, certo? Se eu tiver 50 clientes, eu vou ter 50 conexões. Existe um limite físico aqui do quantas conexões a gente consegue manter. Então, existe uma estratégia aqui que vai existir um pool de conexões, uma, digamos assim, uma piscina de 20 conexões entre o servidor e o banco de dados. e aquelas que
+
+estiverem disponíveis vão ser utilizadas. A solução que isso vem para resolver é a gente conseguir utilizar eficientemente os nossos recursos e aumentar a quantidade de clientes que eu consigo servir. Porque se eu preciso de uma conexão por cliente, o número máximo de clientes que eu vou conseguir servir é um número máximo de conexões que o banco de dados aceita. Assim, a gente pode ter 1000 clientes fazendo requisições e esses 1000 clientes estão compartilhando 20 conexões com o banco de dados. Galego, isso causa algum problema de conflito? Algum cliente
+
+consegue acessar o dado de outro cliente? Não, não causa problema de conflito, tá? Tá tudo devidamente abstraído e devidamente isolado. Criar uma conexão é um pouco caro a nível computacional, porque envolve alguns passos. Você pode estar pensando, né, pô, mas eu posso criar uma conexão para cada usuário, né? Não, não vai ser tão
+
+custoso assim. Você tem o handshake da network, você tem autenticação, você tem processos de ambos lados, tanto do banco de dados quanto do servidor, você tem o TLS, se isso tiver habilitado, é todo um overhead aqui adicional, né? A solução aqui, ela é relativamente simples para um problema relativamente simples que existe muito frequentemente nas empresas. Imagina o seguinte problema, tá? Você tem aqui uma rota no seu backend, vamos supor que isso aqui é um Express ou algo do tipo, Rono, qualquer que seja o seu framework de backend.
+
+Essa rota aqui, esse código vai ser, né? Toda essa parte aqui do código vai ser invocada uma vez por requisição, por request do seu usuário. Ou seja, a cada usuário que acessar essa rota aqui do get users, a gente vai fazer um client. Que é na prática instanciar uma conexão nova, e a gente vai fazer um client. Que é na prática encerrar essa conexão. Esse
+
+é o jeito errado, né? É o jeito que seria uma conexão por usuário. Vai funcionar até certo ponto, tá? Não tô dizendo que isso aqui não vai funcionar, isso aqui vai funcionar. Vai funcionar perfeitamente bem até o momento que você tiver, tipo assim, 20, 30 usuários simultâneos, aí vai começar a falhar um pouco. 20, 30 usuários simultâneos é
+
+bastante coisa até, tá? Então, possivelmente não é impossível que na empresa que você trabalha, em algumas partes da aplicação, isso aqui tá acontecendo e nunca existiu nenhum problema, tá? É perfeitamente possível. Agora, qual que é a maneira de você fazer isso de um jeito melhor? usando uma pool, uma pool no próprio na própria lib, a própria libress te fornece uma pool e aí você consegue usar essa pool, setar um número máximo de conexões. Você
+
+consegue até combinar isso com o seu banco de dados, né? O seu banco provavelmente tem um número de conexões máximo que ele aceita. Ou então supondo que um banco aceite 250 conexões, mas essa parte específica da aplicação, eu quero que tenha apenas 10, entendeu? Para eu reservar outras partes para outra outras partes da aplicação, outros servidores ou o que quer que seja, tá? Essa pool aqui, como ela está instanciada fora da rota e claro, isso aqui é no JS, né? Depende do seu
+
+contexto, depende da sua linguagem. Você precisa entender como é que a sua linguagem lida com essas coisas, mas no Node js todo o arquivo aqui na prática ele é um singleton. Então essa p aqui essa pool é iniciada instanciada uma única vez, porque eu como alguém que trabalha com Node sei que esse arquivo é um singleton, tá? Você tem que saber isso na sua linguagem também. Essa rota aqui embaixo, ela pode ser chamada quantas vezes ela quiser, por quantos usuários ela quiser, porque como a Pool não tá sendo instanciada aqui dentro, não existe um problema. Essa PL tá sendo
+
+reutilizada por diversos clientes que fazem diversos requests, tá bom? Essa é a solução dentro de um ambiente de servidor, você reutilizar uma pool. Existe um problema também que eu quero te chamar a atenção, que é o seguinte problema. Eu já vi isso algumas vezes e vai ser muito óbvio se você tiver esse problema, porque rapidamente vai estourar a sua aplicação, que é que cada request inicia, né, cria uma conexão aqui, dá um pull aqui, pone, mas ele esquece de dar o release. Ao esquecer de dar o release, a gente não larga essa conexão, a gente não libera essa conexão, né? Uma pool que tinha 10
+
+conexões, agora tem nove. No próximo request vai ter oito, no próximo sete, no próximo seis, vai dar problema alguma hora. Então, né, se você tiver utilizando dessa maneira aqui, lembrar de dar o client.release e lembrar de sempre dar o client.release. Por isso
+
+existe o finally aqui. Mesmo caso haja um erro, mesmo se houver um erro, a gente sempre quer executar a linha de código do client.rrelease para sempre liberar isso aqui, tá? Mesmo se houverem erros. Se você não tiver o finally ou algo similar na sua linguagem, pode ser que isso daqui, essa linha aqui, dê um erro e esse erro faça com que o fluxo da aplicação vá de uma maneira diferente a não executar esse release e não libera as conexões, tá? Já vi isso aqui
+
+acontecendo em produção. Pois bem, existe a última questão aqui a ser compreendida, que ela é uma questão bem complexa. Como ela é uma questão bem complexa, eu não vou conseguir abordar com tanta profundidade no vídeo, que é a seguinte questão: quando você tá lidando com o ambiente serviless, esse ambiente serviless não tem, eu não consigo criar uma pool necessariamente dentro do meu negócio, porque toda vez que uma requisição chegar, eu vou estar instanciando um novo lambda. Se 20 requests forem feitos, eu vou estar instanciando 20 lâdas. Qual que é o problema? Num servidor eu consigo ter
+
+uma P aqui e essa p aqui vai tá na memória compartilhada, tá? Ela vai est na memória ali do meu programa. Lambdas não tem memória compartilhada por padrão. Cada lambda é autossuficiente. Ele instancia quando a requisição chega, ele morre quando a requisição sai. Isso
+
+cria um problema. a gente não consegue da maneira normal como as coisas são feitas ter uma pool aqui, ter uma connection pool que vai lidar com isso daqui. Ou seja, pra servessa, pra servess e essa solução vai depender exatamente de como você tá criando esse servless, tá? Como eu falei de lambda, a gente vai estar aqui uma das soluções da WS. Uma das soluções da WS é o RDS proxy. Esse RDS proxy serve como um
+
+proxy, né? como se fosse um servidor intermediário que consegue manter estado, consegue manter dentro dele uma pool. Então esse servidor intermediário tem uma pool com o nosso banco de dados e cada lambda aí faz um request pro servidor intermediário, que é onde fica a pool. Se você tiver num ambiente servess dentro da WS, essa é uma das soluções mais utilizadas, tá? Ninguém te fala isso quando você vai migrar para serv, mas enfim, é a gambiarra que você precisa fazer. Agora, por exemplo, se
+
+você tiver numa plataforma, pô, mais e é no code, não, não sei, não, mentira, sei lá, se você estiver na Versel, que a Versel é difícil de explicar, mas se você está na Versel, você vai entender, é que a Versel tenta fazer tudo de maneira automática, né? Então a Versel, por exemplo, tem na documentação dela a especificação de utilizar isso aqui, ó, attach database pool. E o attach database pool vem aqui da Versel Functions. Isso aqui você tem que ler a documentação da Versel para conseguir utilizar isso aqui, porque a Versel ama fazer um lockin. É, na verdade todas as plataformas amam te botar num lockin.
+
+Enfim, esse aqui é o lockin da Versel. Essa aqui é a solução da Versel para esse problema, tá? Mas você tá entendendo que se você tiver no ambiente de servess, essa solução vai ser altamente dependente de qual ambiente você tá e de como esse ambiente tá configurado, tá? Então eu não consigo te dar a solução exata aqui. Agora outros pontos a se levantar. A sua ORM
+
+provavelmente vai ter algo parecido com aquilo que eu te mostrei, tá? Eu te mostrei o código direto do PGES para atingir isso daqui, mas você provavelmente nem tá importando as libs do PG, você tá utilizando o PGES via uma ORM. Então, a ORM também tem isso nativamente, muitas vezes pesquisa na sua própria ORM, eu não consigo mostrar todas aqui, mas a ORM geralmente tem uma solução própria para isso. E a recomendação aí na documentação da ORM para ver como isso funciona. Outra solução aqui, você pode utilizar também em servess.
+
+Eu só tô falando isso daqui, eu só dei ênfase nisso daqui pro final, porque isso aqui apareceu na pesquisa para esse vídeo, mas é algo que eu nunca utilizei. Então eu preciso citar, eu preciso citar o disclaimer que eu nunca vi isso aqui sendo utilizado, mas o PG Bouncer aparentemente tá, também funciona como um proxy aqui em que a sua aplicação pode fazer os requests para o PG Bouncer e o PG Bouncer pode fazer o PL. O PL, meu Deus, eu tô só porque eu falei as duas palavras, eu tô trocando elas o dia inteiro. Pull, a piscina de conexões com o banco de dados. Bom, citei por último e dei o disclaimer que eu nunca utilizei isso, tá? Então, uso com cautela. Tudo o
+
+resto eu já vi na prática de uma maneira ou de outra. Por hoje era isso. Lembra-se da palavra pullina. Poul é pesquisa polling, né? Quando você tá fazendo polling, você tá fazendo muitos requests um atrás do outro para ver se o serviço tá disponível. Então, pesquisa,
+
+ah, você tá fazendo trabalho de um um batedor, um cartógrafo, sei lá. A gente quer que é isso aqui, ó. A gente quer uma piscina de conexões. Piscina. Pisina.
+
+---
+video_title: "E se o Trump nacionalizar a OpenAI?"
+video_id: op7CsjFFZ6s
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=op7CsjFFZ6s
+video_date: 2026-07-10T13:00:31+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Cara, esse é o vídeo mais doido que eu já fiz. E é sério, é é um vídeo mais ou menos sério. Não é super sério, mas é mais ou menos. É meio doido, é meio viagem. Surgiu de uma conversa de bar de um amigo meu que eu vou explicar a teoria por trás da ideia de que talvez o governo Trump tenha grandes interesses em nacionalizar as empresas de a, principalmente a Open AI e a Entropic. E
+
+a gente tem assim, não são evidências, mas são indícios de que isso pode ou poderia estar acontecendo. Vamos falar sobre isso. Antes disso, vou te falar do patrocínio de hoje, que é a HostGator. A HostGator é uma solução muito boa, tá? Que eu tenho utilizado bastante. Na
+
+verdade, eles têm várias soluções dentro deles. Tem hospedagens, domínios, esse tipo de coisa. As que eu mais gosto são as seguintes. Eles têm um bom servidor de VPS. Então, se você quiser hospedar seu site, seu portfólio pessoal, seu SAS, uma VPS que vai te cobrar em reais custuma ser uma excelente opção, porque você vai ter um custo em reais. Ela vai
+
+estar hospedada no Brasil, em São Paulo, ou seja, vai ter uma latência boa para com os seus clientes e você consegue fazer o que você quiser, estando dentro dela sem ficar refém de alguma outra plataforma, tá? Eles também tm uma VPS que hospeda N8N, se você quiser. Já mostrei aqui no canal como é que funciona N8N. Então, uma VPS que dá para automatizar várias coisas aqui. Se você olhar, as métricas dele são muito boas, te dá uma flexibilidade muito boa. Eu
+
+pessoalmente uso. Ela tem um uptime excelente, uma latência baixíssima, você pode começar na mais barata de todas. Se você clicar no link e vier aqui do canal, você vai conseguir um desconto muito bom ainda, uma condição especial. E claro, existem outras soluções na HostGator também. Tem uma com Open Claw já pré-instalado que eu já utilizei.
+
+Recomendo a Rushgator. O link vai est aqui na descrição, cara. Então, eu tava com esse meu amigo literalmente numa mesa de bar em Copenhagen e a gente estava sentado e ele vem aqui e fala: "Cara, galego, sente só, eu acho que o Trump vai nacionalizar a open AI." E aí eu ri, ele riu. Eh, eu eu não achei que ele tava falando sério, mas ele começou a me explicar e ele tava de fato falando sério. E, cara, de fato, faz algum
+
+sentido. Vamos narrar os fatos um depois do outro e você vai ver que essa teoria maluca talvez não seja tão maluca assim, tá? Existe algum sentido aqui. Primeiro eu quero pautar essa conversa mostrando o artificial analisis. Dentro do artificial analisis, a gente consegue ver quais são os melhores modelos de A.
+
+Embora existam muitos modelos bons na China, tá? O GLM é um bom modelo chinês, Dipsic é um bom modelo chinês, o Kim é um bom modelo chinês. Já até mostrei o Kim aqui no canal para codar, já utilizei Kim algumas vezes, mas o fato é que os modelos da Entropic e da Open AI continuam na frente. Isso confere uma vantagem competitiva para quem tem acesso a esses modelos. Uma movimentação que foi um pouco estranha foi no na metade de junho, dia 12 de junho, os Estados Unidos, o governo dos Estados Unidos suspendeu o acesso ao quer dizer, falaram que o Fable 5 e o Mitos só poderiam ser utilizados por cidadãos dos Estados Unidos, né, por americanos. Qual
+
+que é o problema disso? Que inclusive pessoas que desenvolveram esse modelo não são americanos. Pessoas dentro da Antropic, né? Antropic contrata desenvolvedores que também não são americanos. Então, era uma diretriz impossível de ser cumprida pela empresa.
+
+O governo dos Estados Unidos falou que foi por questões de segurança nacional, mas bom, você realmente acredita que isso impediria que atores externos conseguissem utilizar esses modelos? É, é claro que não. Então, tem alguma coisa estranha rolando aqui. E a tese do meu amigo foi a seguinte tese. Se a gente tem um mundo em que apenas americanos dentro dos Estados Unidos conseguem utilizar o Fable e o Fable confere uma vantagem competitiva, que é verdade, o Fable confere uma vantagem competitiva.
+
+Existe um universo onde alguns dos empregos de tecnologia param de ser exportados dos Estados Unidos, porque cidadões estrangeiros fora dos Estados Unidos não tm acesso ao Fable. E eu sei, gente, eu tô entrando no teor da conspiração. Esse é o vídeo, você vai ter que aceitar que é um vídeo meio viajado. Então isso traria de volta empregos de qualidade para dentro dos Estados Unidos, que é claro, um dos objetivos que o governo Trump gostaria de atingir, não sei se eles têm conseguido, mas eles demonstram esse interesse, trazer empregos de qualidade de volta para o país, ao ponto de que sempre parece que o governo tá muito em cima da Entropic. E assim, a Entropic tem só um produto, o único produto que a Entropic tem é venda de IA. Não me
+
+absurdo um governo impedir uma empresa de comercializar o único produto que eles têm? A gente vai voltar nisso, tá? A tese do meu amigo que virou esse vídeo, muito obrigado, Leonardo, começa no seguinte: você tem que a Openai propõe ceder a administração do governo Trump uma participação de 5% na empresa. Você pode me chamar de alguém meio conspiratório, mas por que que uma empresa por livre e espontânea vontade cederia uma participação pro governo na empresa? Claro, suponho que na cabeça do Semutman isso necessariamente seja algum tipo de venda, certo? O interesse da
+
+Open AI nisso daqui é que a Open AI vai abrir um IPO e se você tiver um governo comprando parte da ação no valation do IPO, isso obviamente é bom para Open AI. Faz sentido. Você pode pensar, galego, mas isso é algo totalmente sem precedentes? E não, não é algo totalmente sem precedentes. Na verdade, a gente tem um precedente recente desse mesmo governo participando em 10% da Entel. Claro, os números de 5% e 10% não
+
+são a mesma coisa que nacionalizar uma empresa, né, mas demonstram determinado e e grande interesse em acreditar que essas empresas são importantes para talvez estabilidades, segurança nacional, competição internacional, o que quer que seja. Não seria nem um pouco estranho. Nota o governo já comprou 433 milhões de ações ordinárias da Intel. Não seria nem um pouco estranho se eles participassem ou do IPO da Openi ou eles abocanhassem um pedaço antes do IPO com algum propósito. Esse propósito, claro, se você for alguém menos cético, você pode imaginar que o propósito é conferir mais segurança nacional pros Estados Unidos. Se você
+
+for alguém mais cético, você pode imaginar que o propósito tem a ver com e eh oligarquias, manutenção de poder algum tipo de uma mão lava a outra, saca? Ambas coisas podem ser verdade. E você tem também um acordo aqui do governo americano com a Nvidia e a AMD para conceder ao governo 15% da receita proveniente da venda de alguns chips avançados na China. Bom, que que a gente tá vendo com isso? Interesse na Intel, interesse na Nvidia e na AMD, interesse na Open AI. É óbvio que eles estão
+
+enxergando isso como uma questão competitiva entre países. Existe também uma ordem executiva que os principais desenvolvedores de precisam submeter os modelos mais avançados a testes de segurança do governo antes de liberar eles pro público. Nesse mesmo ano, o governo também comprou participações de 2 bilhões de dólares em nove empresas de computação quântica. Você tem uma declaração do próprio Trump falando que eles estão tentando fechar acordos nos quais o povo americano possa se beneficiar do sucesso da IA. foi levantado, né, o termo de um fundo de riqueza pública. Uma das coisas
+
+interessantes é que o senador de esquerda, que já quase concorreu à presidência, mais ou menos, o Bernie Sanders, ele já propôs um imposto único de 50% nas IAS, né, na Open AI e na Antropic, que esse imposto seria que o governo obteria 50% das ações, né, se tornando assim o sócio majoritário. E você tem inclusive uma própria declaração aqui do Trump falando que ele não pensa tão diferente do Burn Sanders. Vamos ouvir aqui um segundinho. [limpando a garganta] >> Botei para traduzir. Vai. O senador
+
+Bernanders propôs essa parceria pública-privada com 50% de gestão. >> Bem, tem falado sobre isso ano passado, >> mas é estre que na mesma sintonia com o senador Sanders. >> Então na verdade é quando o Bernie Sanders foi enganado por Hillary Clinton e perdeu. >> Tá velho, tá tá muito ruim essa tradução, foi mal. Mas enfim, eles estão na mesma página. Tanto que o Sanders
+
+apresentou um projeto de criar um fundo soberano de 7 trilhões de dólares de inteligência artificial, que é eh 7 trilhões é é uma graninha boa, uma graninha bem boa, mas né fundo soberano de um lado, do outro lado fundo de riqueza pública, eh duas pessoas que são de fato oponentes políticos. Falando nisso, nesse mesmo ano a gente teve também que a Openii teve aquele acordo que a Entropic não fechou com o Pentágono, mas a Openii fechou. Então foi um acordo que foi firmado, né, entre a Open AI para implementar as tecnologias de inteligência artificial e elas serem utilizadas no Pentágono, na assim indústria de guerra dos Estados Unidos. um contrato de aparentemente 200 milhões de dólares que fez a própria Open AI alterar a política interna da companhia sobre utilizar IA em projetos militares que antes a diretriz da companhia aqui, né, não seria utilizado para isso. E aí um contratinho de 200 milhões fez eles mudarem de ideia. E
+
+tudo isso, todas essas evidências, algumas das quais o meu amigo me apresentou nessa mesa de bar e algumas que eu pesquisei posteriormente, levam a crer pra seguinte possibilidade: o mundo tá polarizado. Existe aí uma relativa queda na abertura que se tinha nos anos 2000 e 2010. A gente tem um mundo que tá um pouco mais fechado. A gente tem líderes falando que apenas parceiros confiáveis devem conseguir utilizar os modelos de a de ponta. A gente tem a Antropic, que já fez isso na prática mesmo, certo? Algumas empresas podem
+
+utilizar os melhores modelos da Entropic, mas os meros mortais não. E mesmo que não haja uma nacionalização dessas empresas, eu queria te perguntar o que que você pensa. Você acha que eles vão tentar bocanhar parte dessas empresas? Você acha que eles vão querer que essas empresas comercializem os modelos apenas internamente para fomentar um desenvolvimento interno de maneira mais rápida? Você acha que a vantagem competitiva que o Cloud e o GPT oferecem contra esses outros modelos que inclusive também são bons, tá? Eu já
+
+utilizei vários desses modelos chineses, eles funcionam muito bem, eles só tão de fato um pouco atrás. Isso é verdade. Você acha que essa vantagem numérica aqui pode se traduzir numa vantagem a nível, ao ponto que os Estados Unidos querem que só eles tenham acesso a esses modelos e tentar de certa forma, né, ter um pouco menos de offshore, que no caso é a gente, honestamente sou eu. Eu eu trabalho como, na verdade, todo mundo que trabalha pra gringa trabalha sendo offshore, né? Todo mundo que trabalha do Brasil para os Estados Unidos tá, entre aspas, roubando um emprego dos Estados Unidos. É claro, não é exatamente assim
+
+que acontece, porque não existe uma certeza de que esses empregos de fato existiriam, certo? Quando você tem um custo mais baixo, pode ser que a empresa não fosse contratar ninguém nos Estados Unidos porque é muito caro, mas ela contrata alguém no Brasil porque como é mais barato faz sentido e se fosse mais caro não faria sentido. Então você não tá roubando emprego de ninguém. Enfim, você acha que isso que tudo isso que eu coloquei aqui que se por acaso eles conseguirem dar uma certa cerceada ou uma certa fechada e que e que os melhores chips, os melhores modelos de A, só quem tem acesso sejam às empresas americanas e americanos que trabalham dentro delas, que esse é o plano, isso faz sentido? Bom, eu acredito que para mim, para você que tá assistindo esse vídeo, é do nosso interesse, eu acredito que isso não aconteça. É óbvio que eu
+
+quero ter acesso a todos os modelos de ponta. É óbvio que eu quero que brasileiros continuem sendo contratados, né, para trabalhar pra gringa. Mas o que que você pensa? Faz sentido ou isso é apenas um deliro de barra? Deixa nos comentários o que que você pensou do vídeo mais estranho que eu já fiz nesse canal, né? Acho que a gente não vai ter
+
+muitos vídeos assim.
+
+---
+video_title: "O Bug de Timezone que Todo Dev Enfrenta"
+video_id: bWZndc9ycII
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bWZndc9ycII
+video_date: 2026-07-09T13:00:29+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? T dor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e mexe respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. Esses
+
+dias eu tava fazendo um aplicativo Vibado e é óbvio que esse aplicativo Vibado apresentou problemas com time zones. Vamos conversar time zone hoje. Qual que é o problema de time zone que todo desenvolvedor que é pelo menos pleno já esbarrou? Muito simples, seu servidor armazenou um horário, digamos assim, 12 horas do dia 26 de junho de 2026. Acontece que no mundo real existem, se eu não me engano, são 23 zones. Então pode ser aqui meio-dia em
+
+23 diferentes lugares. Pode ser meio-dia da China, meio China, meio-dia do Brasil, meio-dia da Austrália. E essas time zones vão gerar bugs em diversos tipos de coisa. Por exemplo, eu já publiquei um vídeo no YouTube às 10 da manhã. 10 da manhã para mim, que tô na Dinamarca agora, 5: da manhã pro Brasil.
+
+Quem é que acordou 5: da manhã para ver o vídeo? Ninguém. Quando você quer receber um e-mail, uma notificação, quando você tem uma meet agendada, né, uma reunião online em determinado horário, podem surgir bugs. Como que esses bugs surgem e como que esse bug surgiu na minha aplicação? Eu tinha feito com os meus amigos um aplicativo de bolão online pra Copa do Mundo, sem valer dinheiro nem nada, só pela zoeira.
+
+E era pro usuário conseguir botar ali o placar antes do jogo começar. acontece que os jogos são nos Estados Unidos e o servidor tava considerando o horário do jogo em UTC. Então, deu problema, o horário não batia, não fechava. Um jogo de futebol, nesse caso, né, tinha sido criado mais ou menos assim. Você tem aqui uma data de um evento que é um determinado dia e um determinado horário. Só que as partidas de futebol
+
+acontecem em algum lugar. No caso era, não sei, Nova York, Filadélphia, Los Angeles, Ciado do México. Isso daqui não vai funcionar direito. A gente não sabe quando que esse evento de fato tá acontecendo. Então, a gente precisa que o evento seja pelo menos assim, que ele tenha a time zone. E a gente ainda
+
+guarda, né, aqui o horário em UTC. UTC é, digamos assim, universal, né? Até o em UTC significa universal, eu acho. E a Time Zone na qual isto aqui tá, até porque isto aqui é importante quando tem horário de verão, quando o fuso vai ou volta uma hora, que alguns países escolhem datas diferentes pro fuso ir ou voltar e alguns não optam pelo horário de verão. Então essa é a primeira regra.
+
+em campos para o qual isso daqui é importante, você vai criar a sua tabela no banco de dados, considerando isso, time stamp, esse Z, o Z aqui no final, na verdade, o TZ aqui no final, né? É de time zone. Agora, isso não vai solucionar o problema. Por que que não vai solucionar o problema? Se você tiver o seu eventozinho aqui, né? Eu tenho um
+
+eventozinho, eu armazenei esse evento corretamente no horário que ele começa, na time zone que ele tá e tal, mas eu esqueço de fazer isso ao mostrar pro usuário. Se eu vou, se eu esqueço de, né, considerar a Time Zone que o usuário está acessando esse evento, isso causa um problema também. Então, né, para fazer o próprio display também desses horários, nota o que que precisa ser feito. Uma partida de futebol tá acontecendo em Los Angeles, nos Estados Unidos. Eu armazenei essa partida de futebol no horário do meu servidor, que tá usando horário UTC. Um usuário tá
+
+querendo ver qual o horário dessa partida no horário local dele, Brasil, São Paulo. São três horários diferentes que estão sendo triangulados aqui. Você precisa ter uma lógica. E, lógico, esses problemas existem desde que a computação existe. É óbvio que esses problemas já estão resolvidos, só que você precisa primeiro saber que problema existe, segundo aplicar uma solução. Enfim, o
+
+que que vai ser feito? Você vai calcular o horário de onde o usuário tá, né? E vai dar a DIF. Ele, a solução já tá pronta. Na verdade, você vai utilizar essa solução pronta para mostrar pro usuário o horário correto. E aí o
+
+usuário vai ver algo mais ou menos assim. Tô vendo aqui meu 26 de junho, às 9 da manhã, que é como isso daqui vai ser renderizado para mim. O approach mais comum para renderizar isso para o usuário é que é o seguinte: o seu servidor vai retornar a timeamp a time stamp em UTC. Então o seu servidor vai retornar algo tipo assim em UTC. Não importa o horário que é o jogo é lá nos Estados Unidos, importa o horário que é em UTC, porque é isso que a gente tá armazenando no banco de dados adicionalmente, né? Eh, além da Time
+
+Zone. E quando isso chega no meu browser, muito comumente, o nosso JavaScript vai estar utilizando isso daqui, date to locate o string, que vai utilizar o horário da configuração do seu computador para determinar que horas é isso daqui no seu horário local. Então, saca? O servidor aqui de um lado envia para o seu browser o horário em UTC e o seu browser converte no horário de São Paulo e te mostra em horário de São Paulo. Lógico, o seu browser se foi assim que o programador codou a aplicação, seu browser tá rodando JavaScript que foi codado para alguém.
+
+Explicado, entendido o problema de Time Zoner. Último ponto que eu quero levantar aqui, toma cuidado com datas, data de aniversário, né? Como isso tá aqui? Pode haver uma confusão aqui, porque claro, pessoa nasceu aqui dia 26 de junho, só que às vezes eu vou, essa data vai ser salva no meu servidor como TC e se eu for renderizar essa data lá na China, vai renderizar como 25 de junho. Não fica legal, né? Não faz menor
+
+sentido, não. Não é o dia de não é o aniversário da pessoa de verdade. Então, às vezes, cara, eu não devia mostrar isso, mas tá. Às vezes aniversário pode ser uma string. Você nunca vai converter, nunca vai trabalhar nada em cima desse desse dado aqui. Talvez uma
+
+string sirva. Senão, se você quiser realmente utilizar uma data, fica aí, esteja avisado de que precisa existir uma cautela para com essa data. Para você saber que quando você vai mostrar o aniversário de uma pessoa, é para mostrar em UTC, assim como tá armazenado no banco de dados. Mas quando você vai calcular a idade da pessoa, é para calcular baseado na time zone onde ela tá. Porque se na China eu ainda tô no dia 25, né, eu ainda não fiz aniversário no local onde eu tô, saca? Entende como
+
+isso é complicadinho. Pontos adicionais, logs, informação de log. Tô logando uma informação no meu servidor, tô logando um bug. Geralmente o TC, geralmente você loga em UTC tudo da da aplicação no mesmo nível de horário, né, que é UTC. Se você logar tudo em UTC, não vai existir problema de servidores estarem em geolocalizações diferentes e cuspindo logs em horários que não batem. Lógico,
+
+ainda existe um problema de os relógios dos servidores não são necessariamente sincronizados, mas se você logar tudo em UTC, você vai ter uma noção boa de que as coisas que estão acontecendo no mesmo horário estão acontecendo no mesmo horário. Última questão. Já viu isso daqui, ó? 09 asterisco. Asterisco, asterisco. Sabe o que que é isso daqui?
+
+É o, digamos assim, o textinho, o codigozinho para fazer o schedule, para fazer o agendamento de uma Chrome job. Uma Chrome job roda num horário determinado ou num intervalo determinado dentro de um servidor. Essa aqui roda todo dia às 9 da manhã. Meu querido, deixa te perguntar, 9 da manhã no horário de quem? Com isso aqui a gente se despede. Gostou desse vídeo? Dá um
+
+like, dá um subscribe. Quiser aprender mais comigo, temos diversos cursos aqui no canal. Te ensino estruturas de dados e algoritmos Elite Code, se você quiser. Te ensino a se preparar para procurar um emprego novo, montando um bom currículo, um bom LinkedIn e se preparando para entrevistas. Te ensino o System Design com o curso mais complexo que eu já fiz na vida. Passei mais de um ano gravando
+
+isso. Todos os cursos aqui no canal. O link vai estar na descrição. Qualquer curso que você comprar, você vai ter um mês que você pode assistir quantas aulas você quiser. Se quiser, pode assistir todas as aulas e você pode pedir o reembolso dentro desse primeiro mês. Não
+
+é só uma semana de garantia que eu sou obrigado por lei a te dar. Eu te dou um mês porque eu confio na qualidade do produto. Eu confio que você vai gostar e eu quero te dar o tempo adequado para você de fato entrar ali com calma, ver as aulas, ver se faz sentido, ver se você gosta da minha didática, vê se você se adapta à minha didática. E apenas se você gostar e se adaptar e quiser manter o curso, você fica com ele. Se você não quiser, pede seu dinheiro de volta, a gente devolve o seu dinheiro sem nenhum problema, sem nenhuma justificativa. Não
+
+vamos ficar te enchendo o saco, tá bom? Abraço para vocês. Para mim hoje é uma sexta-feira, final de tarde, em Copenhagen. Vou lá tomar uma cervejinha. Valeu,
+
+---
+video_title: "System Design começa por esses Building Blocks"
+video_id: ycaLfuBsfd4
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ycaLfuBsfd4
+video_date: 2026-07-08T13:00:35+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Se você tá querendo hospedar o seu site ou seu SAS numa VPS ou hospedar um N8N ou OpenCla, eu tô recomendando a HostGator, que é patrocinadora aqui do canal. Hoje a gente vai passar por alguns building blocks de System Design, algumas coisas muito importantes pra gente entender antes de fazer uma entrevista de system. Essas entrevistas são muito, muito comuns em empresas grandes e muito mais comuns ainda na gringa. Eu fiz já mais de 20 entrevistas para diversas empresas de diversos países. Em cinco delas eu passei. Dessas
+
+cinco, quatro cobravam system design. E da maioria das entrevistas que eu fiz também cobravam system design. Sistem Design nada mais é do que você fazer o design de um sistema por completo. Agora, é claro, numa entrevista não vai ser esperado de você desenhar um sistema super complexo como desenhe o Spotify inteiro. Isso não acontece, isso não é possível. Nem o próprio Spotify consegue
+
+desenhar o Spotify em uma entrevista de uma hora. Ao invés disso, numa entrevista, a gente vai utilizar vários conceitos que a gente conhece para construir uma solução que seja adequada para resolver aquele problema pequeno que vai ser passado numa entrevista. Um exemplo de um problema pequeno que vai ser passado numa entrevista é fazer o design do sistema de um encurtador de URL. Um encurtador de URL, é claro, algo muito simples que você consegue resolver com um ou dois arquivos de node, se você quiser. Porém, numa entrevista de system design, vai ser esperado que esse encurtador URL funcione para 1 milhão ou diferentes milhões de usuários. Agora,
+
+antes de você começar essa entrevista, tem uma certa bagagem que é imprescindível você trazer com você para se performar bem numa entrevista de sistema designer. E a primeira das primeiras coisas é aqui, ó, nosso database, nosso banco de dados. Porque numa entrevista, quando você está desenhando um sistema, esse seu sistema quase com certeza vai ser vai ter um banco de dados. E se você não compreende bem bancos de dados, não tem como você fazer uma decisão acertada sobre qual banco de dados utilizar ou quais características esse banco vai ter para resolver o problema que é passado na entrevista. Então, o nosso primeiro building block aqui é o banco de dados.
+
+Para você se preparar muito bem para uma entrevista, você precisa saber, digamos assim, de dois grandes tipos de banco de dados, os relacionais ou SQL e os não relacionais ou no SQL. Você vai precisar conhecer os diferentes tipos de bancos de dados. No caso de SQL, geralmente saber que Postg existe, saber que MySQL existe. Não precisa saber muitas diferenças entre eles, porque na prática eles acabam oferecendo soluções muito parecidas. E no SQL você vai ter que conhecer alguns exemplos aqui, não todos, tá? Mas citando alguns aqui,
+
+Mongo Database, Dynamo Database. E existem outros tipos de bancos de dados no SQL que são mais especializados assim, né? Esses seriam os, tipo, o Mongo é um exemplo de uma document que armazena documentos e o Dynamo é o exemplo de uma key value store que é muito parecido com o Mongo também. Agora, a gente tem databases orientados a colunas, como Cassandra, por exemplo. A gente tem vector databases, eh, bancos de dados baseado em vetores, bancos de dados baseados em grafos. Se munir desse
+
+conhecimento pode ser interessante porque algum desses bancos de dados pode ser uma solução para um problema específico. Por exemplo, vector databases podem ser uma solução para utilizar hag. Porém, se você conhecer bem o Postgress, também existe como armazenar vetores aqui de uma maneira bem eficiente no Postgress. Então, cabe a gente ter o conhecimento dessas ferramentas para conseguir argumentar o qual que faz mais sentido. Além disso, a gente precisa saber quando usar qual. Os
+
+bancos de dados SQL tradicionalmente a gente diz que eles garantem pra gente, né? Já falei sobre ID bastante aqui no canal, mas as garantias SID aqui vão nos dar uma robustez, uma atomicidade, uma durabilidade a mais. Enquanto no SK tradicionalmente a gente fala que garantem o base, né? O oposto de ácido é uma base. E a base aqui nos diz que, bom, em resumo, para não ter que explicar de novo, vai est basicamente disponível e eventualmente consistente.
+
+Então, se a gente quiser fazer um resumão do resumão, o no Scale acaba sendo mais específico para alguns tipos de problemas e ele preza mais pela velocidade e escalabilidade, enquanto o SQL garante uma estrutura mais robusta e uma consistência interna mais forte. Cara, esse é o resumo do resumo. Eu precisaria de uma hora ou mais. A gente tem um curso de system design e eu falo sobre banco de dados em uma hora ou mais para explicar isso. Mas esse vídeo não é isso. Esse vídeo aqui é um guia de
+
+estudos de building blocks para se se preparar para entrevista de system design para você saber se, pô, tô bem aqui no meu conhecimento ou de repente preciso aprender mais, de repente não entendi muito bem isso daqui, preciso ir atrás, pode usar esse vídeo com uma boa referência. Compreendido isso daqui? É muito, muito, muito importante você entender sobre particionamento de banco de dados, em que um banco de dados ele vai ter diferentes partitions, às vezes a gente se refere a elas como partições lógicas e diferentes charreds. Tem um pequeno nuance aqui entre a diferença entre uma partition e charge, porque no mercado a maioria das empresas vai se referir como se fosse a mesma coisa. Agora, é possível você ter uma instância de um banco que é particionada, mas não tá em diferentes charts. Mas qual que é
+
+a ideia por trás disso daqui? O partiamento de banco de dados. Conforme você vai escalando aqui e uma entrevista do sistema design muito, muito sobre escala, conforme você vai escalando seu banco, vai chegar um momento que o su banco tá muito grande, que uma única máquina não consegue dar conta de tudo. Então, a gente precisa de mais máquinas. Ao adicionar mais máquinas, é muito comum a técnica de adicionar diferentes réplicas. às vezes uma réplica para
+
+escrita, várias réplicas para leitura, mas chega algum momento que mesmo as réplicas não dão contas, não dão conta. E muitas empresas grandes, como as bigteags que você vai estar entrevistando, vão querer que você entenda sobre os tradeoffs de particionamento ou de chards. É possível a gente fazer um particionamento vertical, é possível a gente fazer um particionamento horizontal. O vertical é orientado a colunas, né, na na vertical, o horizontal é orientado a linhas. Existem tradeoffs entre esses ambos, mas esses tradeoffs dependem muito de como seus dados são acessados. Então, é
+
+preciso um conhecimento muito bom da regra de negócios pra gente conseguir definir um chard interessante aqui. E existem, claro, vários problemas adicionais quando a gente cria um chard, que é qual lógica que a gente vai utilizar para distribuir os nossos dados entre diferentes partições desse banco de dados. Por exemplo, a lógica mais simples é se eu tenho duas diferentes partições, esse banco aqui vai ficar com os números ímpares, né? O ID1, o três, o 5. Esse outro chard aqui vai ficar com os IDs pares, o dois, o 4, o se eu tiver três bancos, você vai indo 1 2 3 4 5 6 7 8 9, etc, etc. Essa é a forma mais
+
+simples, não quer dizer que ela é a melhor para todos os casos. Existem diferentes maneiras de você fazer isso. Isso aqui, né, a gente vai fazer um baseado no módulo, né, do dos números, dos IDs. Existem vários tradeoffs aqui. A gente poderia também atribuir uma range de modo que, ah, esse banco aqui fica com os números do um a 1 milhão, o outro fica com 1 milhão a 2 milhões, etc. Existe também um consistent hashing
+
+e aqui vai embora. Como eu falei, eu precisaria de horas para explicar isso. Não tenho horas aqui. Usa isso como um guia de estudo. Se você não conhece isso, é bom conhecer. Principalmente se
+
+você tá entrevistando para uma BigTech. Para uma empresa não tão grande. As empresas não tão grandes raramente vão utilizar de charges ou de particionamento. E se elas souberem que elas estão entrevistando para uma vaga que não vai precisar disso, talvez isso não seja cobrado em específico na entrevista. Enfim, compreendido tudo isso daqui, o nome aqui do do negócio é escala. é você
+
+saber escalar a sua solução. E geralmente para escalar uma solução, aqui é o hackzinho para você pegar num sistema em que alguns tipos de dados são melhores armazenados em SQL e alguns tipos de dados são melhores armazenados em no SQL, a gente pode usar um misto dos dois e isso pode nos dar uma escala muito maior. Pegou umas coisinhas aqui já para estudar mais a banco de dados, você pegou, podemos ir pro próximo, filas. Ou então em inglês kills. Quem joga League of Legends entende muito bem o que que é uma solo kill. Filas ou
+
+kills são conceitos simples de se entender, mas elas precisam de um contexto. Qual que é geralmente o contexto? Uma fila é muito utilizada para entregar algo de maneira assíncrona. é muito utilizado nos tais background jobs, por exemplo, envio de e-mail, processamento de imagem, processamento de vídeo, upload de sei lá o quê, comunicação entre serviços que não precisam responder o usuário instantaneamente, certos tipos de Chrome jobs que vão rodando ali. Quando você tem algo, você tem algum produtor, vou dar um exemplo, um web crawler que vai navegando toda a web e você depois tem um processamento desses dessas páginas que foram buscadas pelo web crawler, você teria aqui um consumidor. Pode ser
+
+que a produção e o consumo não tenham a exata mesma velocidade. Na verdade é quase uma certeza absoluta disso. E nesse meio do caminho, pr dar uma azeitada aqui no no fluxo de dados, a gente geralmente joga uma fila. Ter essa compreensão da fila e de quando utilizar ela vai nos ajudar muito, porque vai nos ajudar a dar vazão pro nosso sistema, vai nos ajudar a dar escala, vai fazer com que a gente consiga lidar com um maior número de dados economizando recursos. Existem tradeoffs também na fila. Você tem que entender que uma fila
+
+geralmente não torna o seu sistema mais rápido, ela torna o seu sistema mais barato e mais resiliente. Uma fila quase sempre vai fazer com que o processo de uma requisição seja um pouco mais lento. Por isso que a gente fala muito de filas quando o processamento é assíncrono. Se precisar de algo necessariamente síncrono e rápido, cara, às vezes não dá tempo do seu servidor fazer algo, jogar numa fila, depois buscar o resultado dessa fila, né? Não, não fica muito legal. Filas possuem diferentes maneiras
+
+de entregar as coisas, né? Dentro dessa fila, você vai ter aqui diversos jobzinhos, diversos eventozinhos, diversas coisas dentro dessa fila. A fila pode te fornecer algumas garantias. Ela pode, por exemplo, te garantir que você entregou exatamente uma vez ou pelo menos uma vez ou no máximo uma vez, né? Em inglês a gente chama isso de ter que escrever aqui, né? Porque é pronúncia
+
+dificilzinho. Exactly once, at once e at least once. Entender a diferença entre esses aqui vai te ajudar a escolher qual que é melhor a depender da sua regra de negócio. Para que que você tá usando essa fila? Ah, eu quero fazer uma transação financeira. Bom, vai ter que
+
+ser ou exactly ones ou at most, né? Perdão, ou at least ones, né? Tem que ser exatamente um ou mais de um. E se for mais de um, a gente vai necessariamente ter que ter um end point idem potente no consumidor, né? senão a sua transação vai processar duas vezes.
+
+Enviar um e-mail, você só quer enviar um e-mail uma vez, mas de repente, né, o consumidor que envia o e-mail também pode ser nem potente, mas a gente precisa que o e-mail seja enviado de fato. Armazenar logs de alguma coisa. Se você não precisar de todos os logs, de repente atmost ones, tá OK? Tá, você pode estar pensando, pô, galego, mas o Exactly Once é sempre melhor, né? Talvez, mas ele com certeza é sempre o mais difícil de implementar e geralmente o mais caro. Então, por isso que existem
+
+as outras opções também. Bom, tem muito mais sobre fila. Existe particionamento de fila, existe aqui diferentes contextos que a gente pode utilizar filas. Novamente, isso daqui não é um curso completo, a gente tem um curso completo. Isso daqui é um guia, um mapa para você ver como é que tá o seu conhecimento do dos building blocks aqui, né? O próximo que a gente vai
+
+falar é o load balancer. Você precisa saber o que que um load balancer é próprio nome já te diz, né? Load, carga, balancer e balanceador. Balanceador de carga, o que que é geralmente a carga? uma requisição. Então você tem aqui
+
+milhões de usuários enviando requisições. O Load Balancer geralmente vai distribuir essa requisição para diferentes lugares. Esses lugares podem ser diferentes servidores. Então você pode ter um load balancer que distribui para diferentes, tanto data centers, na verdade, quanto servidores diferentes ou então lambidas diferentes, coisas diferentes. Ele distribui e balanceia a carga. E para fazer essa distribuição e
+
+esse balanceamento, existem alguns algoritmos, né? Você pode pensar, pô, como é que eu vou distribuir? Cara, manda um request pra esquerda, um pra direita, um pra esquerda, um pra direita, né? Tô fazendo aqui uma distribuição, um para cá, um para lá, um para cá, um para lá. Isso se chama round robing. É um dos algoritmos aqui. Outro
+
+algoritmo é você ver qual o servidor que tá respondendo mais rápido e você envia mais requests para esse que tá mais rápido. Outra maneira é você ver o servidor que tem menos conexões ativas e você envia mais requisições para este servidor que tem menos conexões ativas. Certo? Existem diferentes algoritmos aqui, diferentes maneiras de se utilizar um load balancer. Você precisa entender que ele existe. Você precisa entender
+
+também que, cara, dicazinha aqui de system design, você vai botar um load balancer em quase toda a entrevista só porque sim, porque faz sentido geralmente, tá? Ninguém vai fazer requisição para um servidor cru assim e tá bom. Eh, uma entrevista do system geralmente é para escalar para milhões de usuários. E para escalar para milhões de usuários, uma peça quase que imprescindível é um load balancer. precisa entender, precisa saber os algoritmos, precisa saber como utilizar, precisa saber, não, aqui não precisa, vai, não vou mentir para você, mas é interessante saber os diferentes tipos de load balancer, né, o da camada de aplicação e da camada de rede. Mas aqui
+
+já estamos entrando demais nas nuances, né? Existem características desses diferentes que os tornam mais interessantes para um tipo de aplicação ou para outro tipo de aplicação. Fora o Load Balancer, tem um carinha que, pô, é parecido, mas não é tão parecido assim, que é o tal do API Gateway. O IPA gateway gateway da sua API, a porta da sua API. Geralmente, na maioria dos casos, ele vai ter uma função que é observar um request e baseado nos parâmetros desse request enviar ele para um lado ou pro outro. Como a gente tá falando de uma
+
+API, geralmente vai ser algo na UR. Não, não necessariamente precisa ser, mas geralmente você vai pensar, pô, essa URI aqui é para barra users, vai para esse servidor aqui que lida com os users. Essa aqui é pra barra sei lá o qu, barra produtos. vai de repente para esse diferente lambda aqui que lida com produtos. Preciso saber o que que é lambda, galego? Definitivamente você
+
+precisa saber o que que é lambda. Lambda nesse contexto, não no contexto de função lambda que é algo diferente, você não pode confundir as duas coisas, não é uma função lambida, tipo, no Python lambda no contexto de system geralmente se refere ao lambda da AWS. AWS popularizou esse tipo de computação, que é uma computação on demand, né, por demanda, que cada requisição vai instanciar um lambda. Esse lambda vai executar ali o código e retornar a aquisição e acabou. O lambda vai morrer.
+
+Existe um certo code start, um tempo que demora para ele ligar, entre aspas, mas depois da primeira requisição ele vai ficar ligado por tipo 15 minutos ou meia hora ou 1 hora e depois ele vai, entre aspas, desligar se não receber mais nenhuma requisição. Lambda é um tipo de processamento serverless. E aqui a gente precisa entender duas coisas também em system, que é quando utilizar serverless e quando não utilizar serverless, que é o contrário, que é server, de repente servidor, né? Servidor ou sem servidor. Diferentes tradeoffs aqui. Servess ele é
+
+muito bom em lidar com diferentes spikes, né? Então quando o tráfego é muito instável, ele escala muito fácil. É ele o o custo dele é por uso. Então se você não tiver requisição, tipo, você não vai pagar nada, né? Se você tem zero usuários, o seu custo de servo. O
+
+servidor ele é mais constante, ele tá sempre, ele está alugando a máquina, a máquina é sua, você faz o que você quiser com ela. Você pode rodar background jobs e tal. Então, se você tem um tráfego muito constante, uma demanda muito intensiva de CPU, servidores costumam ser o caminho. Tô simplificando bastante aqui, tá gente? Não é preciso um vídeo super complexo, novamente, só um panorama. Não, não me
+
+critica, porque se for fazer um vídeo de 300 horas, faço um curso. Além de serverless e server, muito bom você não confundir esses conceitos com a ideia de microsserviços e monolitos. Você precisa conhecer os tradeoffs entre isso aqui, né? Entre microsserviços e monolitos. E, cara, isso daqui gera uma confusão danada, porque é possível, escuta o que eu tô falando, é possível você rodar 20 microsserviços dentro do mesmo único servidor. É, sim, eu sei, eu sei. É
+
+possível. Se você já trabalhou numa empresa que para rodar o serviço local tinha que subir tipo 20 imagens do Docker, você provavelmente tá num num sistema em que você tava rodando microsserviços dentro da sua máquina. Então microsserviços e monolitos não necessariamente tem a ver com rodar isso em vários servidores ou em um servidor, porém geralmente tem a ver, tá? Geralmente no mundo real você vai ver que cada serviço vai rodar numa máquina independente ou pelo menos num lambda independente, tá? Porque é uma das forças de microsserviços, uma das forças deles é que você consegue escalar cada serviço com a sua devida proporção. Uma
+
+das forças de microsserviços é que você consegue delegar um único serviço para uma equipe. Essa equipe consegue lidar com os deploys, você consegue fazer deploys independentes, você consegue usar linguagens diferentes. Essas são algumas das vantagens de microsserviços, é claro, eles vêm com complexidades gigantescas, de modo que quase toda empresa pequena e até média vai preferir monolitos pela simplicidade, facilidade de montar ali de setup e tal. E quase toda a empresa grande vai ser forçada a migrar para microsserviços para dar mais escala. Você precisa entender esses dois. Independente de se você vai
+
+escolher microsserviços ou monolitos, hackzinho de system designer, aprende essa palavrinha aqui, ó, Waf. Linda, linda palavra. Que que WAF significa? Web application firewall. Que que você pode falar sobre o AF? Cara, galego, não
+
+sei nada sobre o AF cair aqui numa entrevista de system design. Que que eu falo? Ah, fala que você vai colocar um AF na frente do seu sistema. Pronto. Se você tiver na na Cloud Flare, a Cloud Flare tem um AF, a WS tem um AF, todos os outros provedores tm o AF também, até Versel tem um AF deles, mas dizem que não é tão bom assim. O AF é o firewall,
+
+web application firewall. Ele consegue fazer várias coisas, dentre elas, é claro, a principal é tentar coibir ali um certo número de requests maliciosos, tentar coibir ali pessoas que estão tentando exploitar suas vulnerabilidades, tá? O AF é uma boa medida de segurança, tem uma medida que não é tão de segurança assim, mas acaba [limpando a garganta] sendo uma técnica às vezes utilizada para isso, que é o rate limiting. Rate limiting vai limitar o número de requisições que alguém pode fazer ou que alguma coisa pode fazer ou que podem ser executadas. Você pode fazer diversos tipos de rate limiting.
+
+Existem diversos algoritmos de rate limiting, diversas formas de você fazer rate limiting, mas na margem, rate limiting é sobre limitar acesso a um recurso. Como assim? Um usuário tá na minha plataforma, que é o YouTube e tá querendo assistir um vídeo. Ele pode assistir um vídeo? É óbvio que ele pode.
+
+Esse mesmo usuário tá querendo assistir 10.000 vídeos em paralelo, ele pode fazer isso? É claro que não. Não faz sentido. Então a gente vai limitar o uso para algo que seja perfeitamente razoável. Rate limiting é isso. É
+
+importante entender esse conceito para você conseguir utilizar melhor dos seus recursos, porque senão vão ter usuários maliciosos, vão ter alguns usuários que vão utilizar muito mais do que é razoável ou muito mais do que eles deveriam poder. Outro conceito que é interessante, você aprender sobre arquitetura orientada a eventos. A gente tocou um pouco sobre isso daqui quando a gente falou de filas. Filas e eventos não são a mesma coisa, um pouco diferente. Evento tá mais sobre alguém publicar um evento e as outras coisas subscreverem para esse evento. Evento tá
+
+mais ligado com cáfica ou com algo nesse sentido. Mas é importante entender arquitetura orientada a eventos, porque alguns sistemas lidam muito bem com evento, são muito bem traduzidos para problemas de eventos. Por exemplo, a ideia de um evento é que alguém vai publicar um evento, certo? Então eu tô publicando aqui o meu evento. Meu evento é esse losangozinho aqui. E aí nenhum ou
+
+de repente várias outras pessoas ou coisas ou servidores podem estar ouvindo por esse evento. Tipo assim, você pediu uma corrida no Uber, vários motoristas, então você pode emitir um evento, né? Emitir um evento, quer pedir uma corrida, vários motoristas podem ouvir por esse evento e algum deles pode aceitar a corrida. Uber é um caso interessante que pode ser solucionado com uma arquitetura orientada a eventos. tópico gigantesco também, estuda um pouco de arquitetura orientada a eventos, porque de repente o problema que vai cair para você na entrevista do sistema designmente resolvido com isso daqui. Você vai
+
+possivelmente usar aí um padrão saga, usar um CQRS, diferentes padrões aqui para eventos. Outra coisa que é importante, DNS, domain name system. Aqui é mais conhecimento geral, né? Saber como que os domínios são resolvidos. Tem vídeo aqui no canal sobre DNS. Em resumo, quando você vai
+
+ali no na tabzinha do seu navegador, você digita facebook.com, DNS é aquilo que vai resolver, aquilo que vai fazer o lookup e te endereçar, te dar o IP da máquina real onde você vai ter que fazer requisição, né? Porque Facebook.com pode estar em qualquer máquina, em qualquer lugar do mundo, e a DNS vai te dizer qual que é a máquina que é para você direcionar a sua requisição. Muito importante, a gente falou sobre banco de dados. Existe algo que é a Blob Store
+
+que não é um banco de dados, mas é um binary large object storage. Blobstore armazena objetos grandes binários. O que que é um objeto grande binário? Uma música, um filme e uma foto. Você quer armazenar uma música, um filme e uma foto? Não é no PG, geralmente não é num
+
+ser num mongo, mas às vezes pode ser. Dá, dá para armazenar no PG? Dá. O posto gres tem suporte para binário, mas se você quiser algo eficiente que vai escalar, as suas fotos vão ser armazenadas numa Blobstore que vai ter uma URL e isso vai facilitar muito sua vida. Seus filmes da Netflix vão ser armazenados numa Blob Store, né? A
+
+Blobstore vai armazenar aqui seus filmes. Mas para isso ser entregue rápido pro seu usuário mesmo, se seu usuário quiser assistir, streamar um filme, cara, esse filme hoje em dia ele vai estar numa CDN, tá? Você vai buscar esse filme numa CDN. Então você tem a Blobstore como uma fonte da verdade, CDN que é aquilo que vai entregar. Content dely network, rede de entrega de conteúdo. CDN também imprescindível você
+
+conhecer porque resolve muito problema. Estamos falando de de filme aqui, estamos falando de arquivos estáticos que não mudam muito, coisas grandes. CDN vai ser uma mão na roda para você escalar o seu sistema. Precisa conhecer, precisa entender bem isso daqui. Preciso saber também que CDN tem um problema grande com invalidation, né? Como é que
+
+você invalida uma CDN, como é que algo inspira numa CDN. Esse problema acontece também com cash. Dicazinha, quase todo o problema de system design, você vai utilizar uma cash. Você vai mencionar que cash invalidation é difícil. Provavelmente você vai nomear uma cash.
+
+Quer, quer um nome aí, fala aí. Headges, tem também cash, mas provavelmente você vai falar heads. Todo mundo fala heads. Para que que você vai usar o seu headzinho? Para buscar as consultas mais frequentes, para dar uma aceleradinha.
+
+Cash é muito bom para manter aquilo que é acessado mais frequentemente, mais próximo da sua aplicação, para que ela seja acessada de uma maneira mais rápida. A Cash não é a fonte da verdade, mas ela é tipo uma duplicação de alguns dados com acesso rápido, galego. Então é só botar todos os dados em cash, tá? Dá para fazer isso, mas sua cash vai ficar mais cara e mais lenta. Então meio que derrota o propósito, né? É interessante
+
+você manter em cash, só aquilo que precisa estar em cash naquele determinado momento. E para isso existem algumas decisões aqui, alguns algoritmos de escolher o que que vai est na cash, como que essa cash vai funcionar, se é uma cash aside ou então se ela é uma read through cash ou uma right through cash ou right around cash, né? diferentes tipos de de algoritmos aqui de cash. Super super super importante você entender isso daqui, tá? Eu acho que esses são os blocos mais imprescindíveis para você entender, para mandar bem numa entrevista de sistema design. Se você quiser, utiliza esse
+
+vídeo como um guia de estudos para se aprofundar mais, a gente, é claro, temos um curso de system, onde eu vou te ensinar tudo isso daqui, tá? Eu vou te ensinar banco de dados, eu vou te ensinar no scale, vou te ensinar que os load balancers, API, gateway, networking, autenticação, DNS, Sequencer, Blobstore, Cash do CDN, tudo que a gente falou aqui, eu vou ensinar com obviamente muito, muito, muito mais profundidade no curso. Caso você tenha interesse, esse curso tá na descrição. Ele é mais voltado para você passar entrevistas mesmo, tá? Também é bom para você aprender a discutir melhor tradeoffs e arquitetura dos sistemas que você trabalha. Se você é junior, pleno
+
+ou snior, esse curso pode ser para você. Se você ainda não trabalha profissionalmente na área, eu não recomendo, tá? Não vale a pena. É mais para quem já trabalha profissionalmente, quer dar o próximo passo na carreira. Se você quiser, o curso vai estar aqui na descrição. A gente te dá mais de um mês
+
+aqui de garantia. Você tem um mês inteiro que você pode olhar o curso, assistir as aulas, ver se era isso que você esperava ou não. Você pode pedir reembolso nesse um mês. Não é só os s dias que por lei eu sou obrigado a te dar, né? Porque eu quero realmente que você olha, veja se faz sentido com calma, que você gosta do conteúdo, que você entende minhas explicações, que você tá no nível adequado para entender o curso, tá? Eu acredito que se você já
+
+é júnior, você já tem o nível adequado para entender. E se não for para você, não tem problema. Você pede reembolso ali na plataforma, o dinheiro volta para você, tá? Não tem problema nenhum. Pode comprar, não tem pressão, não fico chateado, tá? Eu super entendo. Eu
+
+entendo que não é para todo mundo. Eu só quero que você mantenha o curso se ele for para você. Galego, não quero fazer curso, quero pegar sua olhinha aí que você me deu e estudar por conta própria. Meu querido, você tá com a faca e o queijo na mão. Eu espero que essa aula tenha servido para você aprender alguma coisa e para te dar um norte de como estudar esses conteúdos também, tá bom?
+
+Você gostou? Dá um likezinho.
+
+---
+video_title: "Fundamentos de git em 8 minutos"
+video_id: QaeOP4lsZho
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=QaeOP4lsZho
+video_date: 2026-07-07T13:00:01+00:00
+video_description: |
+  🪑 Cadeira é Elements, e o desconto pra vocês tá liberado. Acesse e garanta a sua: https://loja.elements.com.br/?utm_source=youtube&utm_medium=legenda&utm_campaign=galego
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você já ficou sentado horas numa cadeira horrível? Tudor nas costas, pescoço emperrado? Trabalhar muito tempo na cadeira correta é completamente diferente disso. A Sfia elementos requina até 150º, tem apoio no lombar ajustável, braço 3D e meche respirável. Clica no link na descrição, usa o cupom galego e vem sentir a diferença. Série
+
+nova no canal, conceitos básicos explicados. E hoje vamos falar sobre o básico de Git, sem enrolação. Git é diferente de GitHub. Git é um sistema de versionamento de controle, mas o GitHub é a aplicação mais popular que vai armazenar as versões do seu repositório. Seu repositório aqui, sua Code base é o seu código, uma série de pastas e arquivos e Git vai cuidar do controle diversão dessas pastas e arquivos V1, V2, V3. Para você entender Git, você
+
+precisa aprender o seguinte. Existe o repositório remoto, que é o que tá no GitHub, ou seja, na cloud, na internet, que a gente pode baixar, o repositório local, a área de stagos seus arquivos locais. Quando a gente dá um Git Clone, a gente vai puxar o repositório lá do GitHub ou do Git Lab ou de algum outro lugar e trazer pro nosso repositório local. Eu vou criar um novo arquivo no meu computador chamado Gitest, uma nova pasta. Eu vou dar um CD, entrar nesse Git test e agora eu vou inicializar um repositório com Git init. Então esse é o
+
+nosso primeiro comando aqui. Eu inicializei um repositório vazio do Git dentro da minha pasta. Dentro dessa pasta a gente pode imaginar que tem arquivos de código aqui. Deixa eu criar um arquivo vazio. Código.txt. E o meu
+
+git criou uma pasta pgit. vão ser os arquivos internos que ele vai utilizar para ver o que que tá acontecendo dentro do meu repositório. Quando eu dou um git status, eu vejo o status atual do meu repositório. Eu consigo ver a branch que eu tô, os commits e os arquivos que não estão trackados. Como assim? Estou aqui
+
+trabalhando no meu diretório local, no meu computador. Eu criei um novo arquivo. Por padrão, eu vou estar na branchin. Branch são, digamos assim, ramos de uma árvore que vão ter históricos de alterações dos arquivos. Então, olha só, por padrão estou na branch main. Eu poderia criar uma branch
+
+diferente, um ramo diferente, uma bifurcação diferente nas minhas versões. Então você pode imaginar o seguinte, né? A gente tem aqui a nossa branchin, eu poderia criar uma branch diferente, um ramo diferente, uma um caminho diferente do código para eu trabalhar numa feature específica. Vamos criar branch, então, feature a e o meu colega de trabalho, para não atrapalhar o meu trabalho, pode trabalhar numa branch diferente. Então ele vai criar ali para ele a branch feature B. Como que a gente faz isso?
+
+Git checkout BR Feature A. Mudei para uma nova branch que eu acabei de criar, que é essa feature A. E agora dentro dessa branch, eu tô aqui fazendo alterações dentro dos meus arquivos locais, os arquivos no meu computador. Supondo que eu trabalhei, fiz o meu trabalho e eu quero mandar esse trabalho pro Git remoto, pro GitHub, para que os meus colegas de trabalho possam puxar esse trabalho pra máquina deles, possam ver para que a gente consiga subir isso aqui pro servidor. Primeira coisa é que eu preciso fazer um staging, que é essa setinha aqui, ó. Eu preciso fazer,
+
+digamos assim, um pré-commit, na verdade, um stage desses arquivos para preparar para fazer um commit. O que que é um commit? Commit é uma foto, é um snapshot de como a Code Base estava naquele determinado momento. Imagina que você pega todos aqueles seus arquivos, você tira uma foto de como tava cada arquivo naquele exato momento que você deu o commit e essa é uma versão. Esse commit vai ter um hash um identificador único. E todas as vezes que eu quiser
+
+ver como a Code Base estava naquele determinado momento de tempo, eu consigo ir para esse hash e buscar essa informação. Então, para adicionar um arquivo pra stage, para eventualmente criar um commit em cima disso, eu posso dar um git nome do arquivo, que seria aqui código.txt, ou se eu quiser adicionar todos os arquivos, eu posso dar um git ponto. As minhas alterações nesse momento agora estão em staging, ou seja, elas estão preparadas para tirar aquela foto. Qual que é o detalhe aqui?
+
+Se eu criar um arquivo novo e eu não colocar esse arquivo novo em staging, ele não vai entrar no commit. Quer ver? Vamos dar aqui touch arquivo.txt. Deixa eu dar um git status para ver o status atual. E olha só, mudanças para serem
+
+comitadas. Eu tenho o meu código ptxt que tá ali preparado pra gente tirar essa foto. E eu tenho o arquivo ptxt que está untracked. Ele não tá trackado, ele não tá preparado para entrar nessa foto, para entrar nessa versão, para entrar nesse comit. E eu posso pensar, bom, é isso que eu quero, essas são as alterações que eu quero, eu quero tirar essa foto? Supondo que sim, quero tirar.
+
+Dou aqui um git commit. Nesse git commit vai uma mensagem. Então, traço M de mensagem e eu vou escrever o que que esse comit faz. Geralmente, por padrão, as empresas vão escrever algo como fit dois pontos ou fix dois pontos ou char dois pontos. Fit é uma feature. Fix é um
+
+é um fix, é um consertar algo quebrado. Chore é algo que não necessariamente afeta a funcionalidade em si. Então vamos de fit adicionar código que faz coisa. Commit criado com sucesso. Temos um hash desseit aqui, um identificador único dessa foto. Um arquivo foi criado
+
+e é isso. Agora está pronto para receber um Git push, que a gente enviaria isso pro repositório no GitHub. Como eu iniciei localmente, eu ainda não coloquei um trackamento para nenhum repositório no GitHub. Para isso, você vai lá no site do GitHub, você cria um repositóriozinho, lá vão ter as instruções, ou então você vai utilizar isso daqui, Git Remote Ad origin, para adicionar uma origem, adicionar um repositório origem. E depois disso, você vai dar um git push para enviar esse código pro GitHub, para que os seus colaboradores consigam puxar esse código pra máquina deles e trabalhar na máquina deles em cima desse mesmo código. Agora,
+
+eles não vão interferir no seu código porque todas as alterações vão precisar passar por um comit. Então, a sua foto tá lá intacta e eles vão criar outras fotos que vão derivar dessa história aqui, né? Se você imaginar que existe uma certa história aqui, eles podem continuar a feature, mas a história vai continuar a partir daquilo, né? não vai sobrescrever aquilo que você fez. Gitush vai enviar pro repositório remoto. Git
+
+pool vai puxar as atualizações lá do GitHub que de repente os seus amigos fizeram aqui pra sua máquina de volta. Agora existe um pequeno último detalhe que é o seguinte: quando a sua feature A estiver pronta, a gente vai querer, digamos assim, incorporar essa feature na codebase principal, na versão principal da Codebase, na branch principal, na branch main. Existem algumas maneiras de fazer isso. A gente pode fazer um rebase ou um merge, mas comumente você vai criar um pull request ou então no GitLab um merge request, que é um pedido para mergear. Alguém vai revisar esse pedido e ao ser aprovado, você vai fazer um merge. Mas dependendo
+
+das configurações seu repositório, não precisa de um PR, não precisa de uma aprovação. A gente consegue inclusive fazer isso localmente sem nada disso. Eu posso simplesmente Git checkout Main. Git checkout Main deu um erro porque a branch main nunca foi criada, né? Ela não tinha nada, eu não iniciei com nada, infelizmente. Então, vou criar uma nova
+
+branch. Git checkout. Ifen B para criar a branch nova, né? Branch main. Mudei para branch main. Agora a gente vai ter
+
+que fazer isso aqui. Git checkout B. Feature B. Vou criar uma nova feature B aqui. Touch código B.txtan, né?
+
+Simulando aqui a criação de um arquivo novo. Git de ponto para adicionar tudo. Git commit traço M Fit. Adicionar fit B. Vamos dar um git checkout main. Deixa eu
+
+listar o que que a gente tem aqui na main. A gente tem apenas o código. TXT. Não temos os outros dois arquivos que foram adicionados na feature B. Então, deixa eu abrir isso aqui no código para você ver o que que tá acontecendo. Aqui,
+
+olha só, no nosso VS Code temos apenas o código pon txt. Quando eu dou um git merge feature B, agora a nossa feature, a nossa branch main puxou os códigos que estavam na feature B. Esse é o básico de git. O que que é importante você saber aqui? Essa diferença entre arquivos locais, arquivos que estão em staging, arquivos que estão no repositório local e o repositório remoto. Essa
+
+visualização aqui é o que muitos desenvolvedores não tm. Muito provavelmente você sabe esses comandos que eu já te mostrei, mas é interessante você saber isso daqui, esse fluxozinho aqui que eu tô te mostrando, para você não atropelar uma coisa em cima da outra, porque muito provavelmente a IA vai estar escrevendo boa parte do seu código e é muito fácil você cometer um erro. Então, tenha essa visibilidade de o que que está nos meus arquivos locais, quais alterações eu fiz nos meus arquivos locais, o que que eu levei pra stage, o que que eu empurrei pro repositório local e o que que eu empurrei pro repositório remoto. E se você sempre tiver essa visibilidade, vai ficar tudo muito mais fácil. Partir daqui, tem dois vídeos no canal, uns sobre Git de maneira mais completa, se você quiser ver e eu lembrar o link vai est na descrição, ou então você procura Augusto Galego Git no YouTube. E tem um
+
+sobre work trees, que é muito importante agora que a IA tá fazendo muita coisa. Era isso. Gostou dessa série?
+
+---
+video_title: "Upload de arquivos NÃO é só POST"
+video_id: Bs9UqjJesl0
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Bs9UqjJesl0
+video_date: 2026-07-06T13:00:09+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Videozinho bem legal aqui, vamos falar sobre file uploads, cara, estou animado, porque é o seguinte, a gente vai conversar sobre uma feature muito comum, que é a feature de fazer uploads de arquivos, né? Quando você está subindo um vídeo para o YouTube, isso é um upload de arquivo. Quando você está subindo uma foto de perfil para o seu perfil de uma rede social, isso é um upload de arquivo. E essa é uma feature que esconde muita complexidade por debaixo dela, é importante que a gente aprenda como é que se faz isso da maneira correta. E aqui, esse é um dos exemplos que eu mais gosto, porque tem vários pontos de tomadas de decisão aqui que vão resultar numa feature muito melhor ou muito pior na perspectiva do usuário e também da perspectiva do seu bolso, do seu custo, quanto você vai gastar com infraestrutura, com armazenamento, esse tipo de coisa, tá bom? Fica aí, o vídeo vai ser super
+
+legal. Estamos há cinco dias sem falar sobre, ah, mas eu vou ter que te falar da Abacus AI agora, que é a patrocinadora do vídeo de hoje, porque a Abacus AI é a ferramenta mais completa de IA que existe. Eles te dão acesso aqui a todos os modelos de IA no mesmo chat, na mesma subscription de apenas 10 dólares. Eles te dão acesso também ao Agent Sessions aqui, que são sessões de agentes inteligentes que fazem muitas coisas. E tem uma feature nova que eu vou te mostrar um videozinho, uma demozinha agora, que é o seguinte, você pode utilizar o Agent Swarm para usar vários agentes em paralelo. Então a
+
+Abacus tem, por dentro dela agora, um ferramental em que ela consegue utilizar múltiplos agentes em paralelo, você está vendo aqui na na sua tela, né? Aqui a gente tem milhões de agentes em paralelo, milhões é exagero, mas enfim, tem muitos agentes em paralelo fazendo, por exemplo, o review de uma code base inteira, a refatoração de uma code base inteira, vários revisando o pull request, revisando a revisão do pull request. E aqui, esse Agent Swarm tem uma capacidade computacional muito grande, com um custo bastante atrativo. A Abacus tem também, cara, tem muita coisa nesse ferramental, tá? Eles tem geração de vídeo, tem geração de imagem, tem geração de apps, você consegue fazer MVPs de maneira muito simplificada aqui e hospedar eles também aqui. Aqui em
+
+cima, ó, nesse botãozinho, você tem supercomputers, você tem o Hermes, você tem o Clora, né, Open Clora, tudo isso no ferramental, no link aqui na descrição, tá? Vale muito a pena usar Abacus. Com isso dito, vamos para file uploads. A perspectiva do usuário, ela é uma perspectiva muito simples. Você vê uma caixinha aqui, você vê aqui um drag to upload e aí você pega ali o seu arquivo, né? Você arrasta ali o
+
+arquivinho do seu computador, né? Aqui para cá. Aparentemente o browser faz o upload ali e magicamente o negócio funciona. Parece que é a feature mais simples do mundo. É um negócio assim, meio meio Steve Jobs, né? A a mágica que
+
+parece que que da perspectiva do desenvolvimento também seria super simples, mas não é. É uma feature muito complexa de se fazer. No momento em que a gente tem um local que usuários, digamos assim, do mundo inteiro, usuários aleatórios, conseguem interagir com esse sistema e fazer o upload de arquivos, que você não confia necessariamente nesses usuários, que eles podem estar utilizando diversos dispositivos diferentes, a gente começa a ter uma série de coisas aqui por trás dessa feature que trazem uma complexidade muito grande. Algumas dessas coisas eu vou falar, vou explicar aqui, algumas a gente vai só abordar meio tangencialmente assim, né? Você tem a questão da rede, né? A questão de
+
+usuários com dados móveis ou redes pouco confiáveis entre net lenta e tal. Você tem que validar ali a integridade dos arquivos, você tem que cuidar do armazenamento, você tem que escanear para malware, que o arquivo pode ser pode conter um vírus ali. E você tem que fazer tudo isso e dar para o usuário uma experiência que pareça mágica, que seja ele arrasta a foto para cá e a foto faz o upload. A forma com que a gente vai implementar essa feature de primeiro assim, né? A primeira maneira que a gente pensa em implementar essa feature é a coisa mais simples do mundo. Você
+
+vai ter uma foto, você vai ter o seu servidor de backend, você vai ter o seu banco de dados. Forma mais simples de se implementar, usuário faz um post request aqui, ó. Post no endpoint {barra} foto. Envia a foto, o servidor recebe essa foto. A foto, claro, é um é um arquivo de bits e bytes, né? Em essência, ela
+
+pode ser ela é, na verdade, um binário. Você armazena esse binário no seu banco de dados. Fim de papo, acabou a conversa. Agora, imagina o seguinte, quanto de conexão o nosso servidor aguenta se a gente tiver muitos usuários subindo, digamos nem fotos, né? Vídeos em paralelo. Se o vídeo for um vídeo de
+
+4 GB e a internet do usuário cair na metade, e se o o usuário conseguir subir 90% do vídeo e em algum momento ele para, ele quer retomar essa essa entrega, esse upload do vídeo. E o nosso banco de dados aqui, né? Isso aqui vai encher, isso aqui vai encher muito rápido. Então, vamos separar esse problema aqui em algumas etapas. Primeira parte do problema que eu quero falar sobre aqui, é se a gente tem um vídeo de 5 GB, né? É um vídeo
+
+perfeitamente normal, os meus vídeos aqui no canal, alguns são até bem maiores do que isso. E eu quero subir esse vídeo para ele estar disponível aqui no meu servidor, né? Porque eu sou o YouTube. Problema é que arquivos muito grandes não se comportam exatamente como arquivos pequenos, né? A gente não tem assim uma conexão ininterrupta de internet que vai durar ali para sempre ter uma uma transmissão confiável.
+
+Então, geralmente o que é feito é que a gente vai transformar esse vídeo aqui de 100 GB em de repente 50 chunks. Aí você precisa fazer uma divisãozinha ali, né? Mas vai dar mais ou menos 50 chunks de mais ou menos aproximadamente 100 MB. Como a gente tem 50 chunks, agora, na parte do usuário, o client do usuário consegue enviar os chunks separadamente. Então, a gente conseguiria aqui fazer 50 envios, de modo que se um desses envios falha, a gente ainda tem o o vídeo na nossa máquina, né? A gente tem o mesmo
+
+vídeo. A gente sabe qual pedaço do vídeo clipar para subir ele para o servidor, qual pedaço do do arquivo, né? Não um vídeo, porque, enfim, você não consegue clipar um vídeo assim, mas você entendeu. E bom, aí o seu vídeo, ele também vai ter um checksum, né? Que que é o checksum? O vídeo é um binário. Um
+
+binário são números, logicamente. Tem como você fazer uma operação em cima desses números que vai resultar uma espécie de chave. Então, o checksum nada mais é que uma chave calculada em cima do binário inteiro de um vídeo. E vai dar, tipo assim, como se fosse um ID, entre aspas, desse vídeo. Então, esse checksum é interessante que eu consigo também transmitir o checksum para o servidor e o servidor também consegue checar o binário e calcular o checksum.
+
+E o mesmo cálculo no mesmo binário vai resultar no mesmo checksum e ver se esses números aqui batem. Se esses números baterem, né, quer dizer que foi sucesso e que o mesmo arquivo que eu tenho é o mesmo arquivo que você tem. Checksums são muito utilizados na computação, né? Aqui também é importante porque a gente consegue determinar, né, se o nosso vídeo, por exemplo, se eu tô fazendo upload de um vídeo e eu tenho ali o nome de arquivo meu vídeo.mov, só que depois quando eu vou retomar esse upload, sei lá, no dia seguinte, que eu fiz o upload de de metade do vídeo, no dia seguinte eu retomo esse upload, eu poderia simplesmente pegar um vídeo com outro nome, quer dizer, um vídeo diferente, mudar o nome dele para meu vídeo.mov e tentar continuar o upload de
+
+um arquivo diferente, mas como eu posso checar o checksum, né, eu consigo garantir que é de fato o mesmo vídeo que tá sendo enviado. Então, se a gente for por essa, por essa ótica aqui, por esse lado, a gente vai ter alguns endpoints, né, tipo um get em {barra}uploads, aí o upload 1 2 3 e esse get aqui pode nos retornar uma lista de de chunks aqui, né, só dando um exemplo, tipo upload the chunks 1 2 3 4 7 8, missing chunks 5 e 6, aí a gente consegue determinar o que que falta fazer o upload, né, e através de algum outro endpoint aqui, o endpoint post {barra}, sei lá, uploads {barra}1 2 3 chunk 5, a gente consegue fazer o upload daquele chunk específico. Então, essas partes aqui, com a utilização dos checksums e dos chunks, inclusive cada chunk pode ter um checksum dentro dele, a gente consegue fazer o upload do vídeo com sucesso, resolvemos um dos problemas. Ainda existe o enorme problema, que é o problema de armazenar os binários no nosso banco de dados. Esses binários são muito grandes, quando a gente for tentar entregar ele para os usuários, vai dar problema, vai ter um gargalo no nosso banco de dados, a gente vai encher o banco, ele vai ficar lento, a aplicação vai ficar inutilizável com, assim, pouco tráfego, tá? Se você tiver,
+
+não sei, 1000 usuários fazendo upload de vídeo todo dia, cara, esse upload de vocês vai morrer rapidinho. Então, essa pecinha aqui, um banco de dados, não é a ferramenta adequada para se armazenar um binário. Esquece isso daqui, tá? A gente ainda vai ter um banco de dados para quase tudo aqui da nossa aplicação, essa comunicação continua sendo importante, mas os binários vão para um locar, um locar, um [risadas][limpando a garganta] local mais adequado. Seria interessante se existisse algo, uma ferramenta que permitisse que a gente armazenasse grandes binários, né? Então, se a gente
+
+tivesse algo binary, né? Binário, large, binário, espaço grande, um objeto de binário grande, storage, né? Armazenamento de objeto binário largo, grande, storage. Também conhecido como uma blob store. Blob store é isso, binary large object storage, armazenamento de grandes arquivos binários. Dos mais
+
+conhecidos, a gente tem aqui o S3 da AWS ou o R2 da da Cloudflare. Eu acho que o Google tem um negócio chamado bucket, algo nesse sentido. A nossa blob store, então, vai ser onde a gente vai armazenar esses binários. Só que você pode pensar, né? Pô, Galego, tem tem um problema aqui, né? Eh, algumas das
+
+informações, por exemplo, quando o usuário faz um upload no vídeo, eu quero ter esse vídeo do usuário, então a gente vai ter aqui, né? Vídeo linkado a um usuário do meu banco de dados. Como é que a gente faz isso se eles tão em bancos diferentes? E é uma pergunta inteligente, realmente inteligente. Que que a gente pode ter? A gente pode ter
+
+que dados transacionais e metadados podem sim ser armazenados nos bancos de dados aqui, no nosso Postgres, normalmente, sem problema nenhum. Aqui, a gente pode armazenar, por exemplo, vídeo ID, user ID, tipo de vídeo, se o vídeo tá tá privado, tá público, tá deletado, tá soft deleted. Podemos armazenar todos os metadados e dados transacionais que a gente quer. E dentro dessa tabela que a gente tá armazenando o vídeo, a gente vai armazenar, por exemplo, um S3 ID ou um S3 URL, porque afinal de contas o ID vai acabar sendo ali uma determinada URL. E essa URL aponta pra cá. E isso resolve o nosso
+
+problema de armazenamento. Ainda existem alguns problemas aqui, porque um desses problemas, né, é que ainda é é muito dado, ainda é muito vídeo, ainda as coisas são muito massivas. Se eu tiver que todos os meus vídeos passam sempre pelo meu servidor pra chegar no usuário, pro usuário assistir, cara, acabou, esse servidor não vai fazer nada, ele vai só tá transmitindo vídeo de um lado pro outro. Então, às vezes, eu consigo que o próprio usuário tenha acesso a essa URL aqui, né? O meu servidor envia para o usuário qual qual é qual que é a URL para ele baixar o vídeo e o usuário assiste ou streama o vídeo direto da URL aqui do S3. Lógico que ele precisa de
+
+tem algumas questões aqui de permissionamento, né? Eu posso entregar para ele uma URL que dentro da URL tem, digamos assim, um password já embutido. Eu posso entregar para ele uma pre-signed URL em que o usuário que detém esse essa URL com, digamos assim, o password já embutido na URL, né? Você pode imaginar uma URL que tem ali os query parameters dentro desses query parameters, tipo depois do ponto de interrogação pode ter um ID ali que é, tipo, uma senha, digamos assim, entre aspas, né? E com essa senha o usuário conseguiria acessar esse vídeo aí.
+
+Claro, se a gente quiser melhorar ainda mais a performance, é interessante que o usuário nem precise chegar no S3 e que ele assista esse vídeo direto de uma CDN que aí sim, claro, né? Vai ficar muito mais próximo do usuário, vai ser muito mais rápida a entrega desse conteúdo para o usuário. Então resolvemos também um pouco dessa parte da entrega aqui. Mas eu ainda não tô feliz com uma coisa. Se a gente tem, tipo, 1.000 usuários
+
+simultaneamente fazendo upload de arquivo e o nosso servidor precisa receber esse arquivo e subir esse arquivo para o S3, ele vai ficar gargalado também. Mas lembra que eu te falei dessa pre-signed URL, dessa URL que já pré-assinada? Quando o usuário pede para fazer o upload de um vídeo, a gente consegue falar para ele: "Cara, usuário, você não vai fazer o upload para o meu servidor, você vai fazer o upload direto para pre-signed URL". Então o usuário consegue ter essa URL e quando ele for fazer o upload do vídeo, ele não faz o upload para o nosso servidor, ele faz o upload aqui para pre-signed URL, direto para o S3. E aqui a gente remove mais um dos gargalos do nosso sistema, do nosso servidor e o usuário consegue, a gente consegue escalar muito melhor, é só a gente jogar mais S3 aqui que a gente vai escalar de maneira muito mais eficiente do que fazer tudo isso passar por dentro de um servidor. Claro, podem existir etapas
+
+adicionais aqui, tá? Porque um vídeo, eu, por exemplo, faço o upload do meu vídeo em 1080p pixels, 60 fps, mas às vezes a pessoa vai assistir em 480 e 30 fps. Então o vídeo precisa ser comprimido para tamanhos diferentes, né? Então geralmente uma empresa como o Google, o YouTube vão ter lugares para receber os arquivos raw, os arquivos crus, e depois eles vão rodar jobs em cima disso, que vão ter eh workers aqui, né, que vão fazer o background job de tá comprimindo esse vídeo e transformando em vários arquivos de tamanhos diferentes e depois subindo isso para um S3 ou, no caso do Google, um bucket ali de arquivos já processados, né? Então você tem o primeiro para fazer o upload de arquivos não processados, o segundo de arquivos já processados, que é dali que vem o download de fato, enfim.
+
+Estamos complicando aqui, mas é um é um detalhe adicional. Nem toda empresa vai fazer isso o tempo todo, tá? Só no caso do YouTube mesmo. Às vezes, dependendo, se for uma rede social e você estiver fazendo o upload de uma foto, não é impossível comprimir a foto direto no no cliente, direto na máquina do do usuário antes de fazer o upload, tá? É é fazível também. E nisso daqui, você vai fazer
+
+isso daqui, vão ter diversos outros problemas que vão surgir aqui. Alguns usuários vão abandonar o vídeo no meio do caminho e nunca vão retomar esse upload. Então você tem que ter jobs para fazer o clean up, né, para limpar os arquivos que ficaram presos ali. Percebe que eu não falei mais sobre malware, que a gente fez o upload para o S3, né? Você como assim como eu falei do job de compressão, você pode ter um job também que checa pelo malware. Você tem que tá
+
+sempre sincronizando, né? Tem que ser Não sempre vai, mas você vai fazer pelo menos uma vez de fazer essa alteração do status no no banco de dados, dos metadados aqui, para o status do vídeo, né? Ah, qualquer status, tá sendo uploadado, tá sendo processado, tá sendo comprimido, ele tá pronto, ele tá apto? Tem que atualizar esse status e a atualização de status, lógico, não é automática. Você vai provavelmente ter algo que emite um evento e, enfim, acabamos tendo mais complexidades aqui.
+
+E como é que fica a experiência do usuário? O usuário, ele precisa ele vai querer saber como é que tá o status do vídeo, né? Quando eu tô fazendo o upload para o vídeo no YouTube, o vídeo aparece lá uploading, depois aparece checking, depois aparece processing up to HD. Eu consigo ver passo a passo todas as etapas do meu upload do vídeo. Tudo isso são micro features, são pequenas features que são desenvolvidas, que o meu cliente, o meu browser aqui, o meu Google Chrome, está recebendo de volta do YouTube através de get requests que estão buscando no nosso banco de dados, que estão refletindo a informação do estado atual no meu S3. Que que a gente
+
+aprendeu aqui? Bom, você não vai confiar no usuário, você vai fazer chunking, você vai ter os checksums, você vai fazer o mínimo de coisas possível passar pelo seu servidor, você quer que essas coisas passem por outros lugares, se possível, para te desonerar um pouco. E que essa feature aqui é bem, mas bem complexa se você quiser fazer um serviço da escala do YouTube. Se você gostou desse conteúdo, a gente tem um curso de system design que a gente fala bastante sobre isso. Falamos aqui, né, sobre blob storage, logicamente. No curso tem
+
+vários módulos, são mais de 15 módulos. Se eu clicar aqui em, por exemplo, né, banco de dados SQL, você vai ter várias, várias aulas explicando várias coisas sobre banco de dados, tá bom? A gente passou mais de um ano produzindo esse curso. Eu passei mais de um ano gravando essas aulas. Você vai vendo, tem diversas etapas do, do meu cabelo aqui.
+
+Eu fiz com bastante calma porque eu queria garantir que tivesse bastante bom. Enfim, acabamos de lançar o curso. O link para ele vai estar aqui na descrição. Já estamos recebendo feedbacks muito bons. Já tivemos até um colega que ele assistiu um pouco aqui, ouviu esse vídeo um pouco, e ele passou na entrevista de system design de uma empresa, posso falar? De uma empresa de
+
+streaming de música, vai. Você sabe qual é. Enfim, se você comprar esse curso, você vai ter um mês aqui para assistir as aulas e decidir se você gostou ou não gostou. Dentro desse um mês, né, não é só os 7 dias que eu sou obrigado por lei a atividade de reembolso. Eu te dou um mês inteiro para você assistir o quanto você quiser disso daqui, tá? A gente
+
+está, claro, adicionando algumas últimas aulas ainda, tirando algumas dúvidas dos, dos usuários, né, do, do pessoal que está assistindo, para garantir que ficou bem completo e que não, não deixamos passar nada aqui. Então, vão surgir algumas aulas novas ainda, tá? Mas está tudo aqui. Não tem aquele negócio de as aulas vão sendo desbloqueadas com, com o passar do tempo e tal. Está tudo aqui, você pode comprar, assistir tudo. Se você não
+
+gostar por qualquer motivo dentro desse primeiro mês, você pode pedir reembolso, você vai receber o reembolso sem problema nenhum, tá bom? O trabalho que eu fiz aqui é um dos melhores trabalhos que eu já fiz, então eu estou bem confiante em te oferecer essa garantia de reembolso gigantesca, que eu confio que a maioria das pessoas vai gostar. E é isso, o link pro curso vai tá aqui na descrição. Se você tá querendo passar numa grande empresa que trabalha com, de repente, eh, aplicativos de, de motorista de carro, de entrega de comida, de banco digital, de streaming de música verde, empresas FAANG, tá? Esse aqui é o conteúdo pra você.
+
+---
+video_title: "System Design não é desenhar caixinhas"
+video_id: VUULdfBhlaQ
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VUULdfBhlaQ
+video_date: 2026-07-03T13:00:05+00:00
+video_description: |
+  🟢 Vem pra AUVP, a melhor escola de investimentos do Brasil: https://sard.ink/AUVPGalego62
+  
+  🎁 Quando se matricular, fala que veio do meu canal pra garantir seu presente personalizado em casa!
+  -----------------------------------------------
+  
+  💼 Curso de System Design (com desconto): https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você que é dev e ganha acima de R$ 4.500 por mês, tá na hora de começar a investir, vem fazer parte da UVP, a maior e melhor escola de investimentos do Brasil. Link na descrição. Eu sei, eu sei. A gente tá meio monotemático sobre sistema design. Eu prometo que a gente
+
+vai voltar à programação normal, mas você precisa entender que isso foi o meu hiperfoco do ano passado e que nos últimos anos eu fiz mais ou menos 20 entrevistas de system design. Dessas 20, eu fui contratado para cinco empresas que cobraram entrevistas de system design. Como que essas entrevistas se dão? As empresas têm seguido muito um padrão BigTech. Porque que é um padrão bigtech, você vai começar ali com uma entrevista do RH, depois você vai passar por algum tipo de entrevista técnica. Às
+
+vezes essa entrevista técnica é mais um questionário, são mais perguntas que podem envolver sistema design ou não. Muito provavelmente vai ter algum teste leitad code ou algum teste take home ou algum outro desafio de código. Depois você tem a entrevista de system design e uma vez passando pela entrevista de system, você tá com o pé na porta. Geralmente tem algum tipo de última reunião, última meeting ali, última entrevista, último level. que é para você ver ali o fit com engineering manager, com a equipe e tal. Vamos focar
+
+hoje nessa etapa aqui, a etapa de system design. E vamos focar hoje, vamos ter um approach, uma pegada bem bigtech. Por que uma pegada bigtech? Bom, as bigtechs começaram isso daqui, as outras empresas seguiram esse padrão e as bigtechs costumam ser as mais difíceis, as que cobram entrevistas de system design mais completas. Então, se a gente tiver preparado pras entrevistas de Bigc, a gente tá preparado para todas. Como que
+
+essa entrevista se dá? O entrevistador vai te dar um desafio. Existem alguns padrões de desafios que a gente mapeou. Disclaimer, eu tenho um curso de system. A gente ensina várias dessas dessas coisas, tá? a gente fala sobre esses
+
+padrões, mas o que você precisa saber é que existem alguns padrões mapeados aqui. Dos mais comuns, você tem, por exemplo, o incutador de URL, é um padrão clássico, streaming de vídeos, é algo muito clássico, sistemas de recomendação, aplicativos como Uber, iFood, que você pede algo, alguns motoristas podem estar disponíveis para ouvir aquela mensagem de você pedindo algo e algum deles pode aceitar. Dropbox ou serviços como Dropbox, então vai cair um desafio assim para você. Caindo esse desafio, você vai fazer algumas coisas. Tem algumas etapas. As etapas que são
+
+esperadas que você faça são, primeiro é levantar requisitos, né? Na verdade, a primeira primeira é entender o problema. Ah, como um recurador GRL vai funcionar de que maneira? Quem é o público alvo? Todo mundo vai poder usar. Usar vai
+
+fazer login com alguma coisa? A gente vai trackar alguma coisa? Vamos trackar algumas métricas. Quais são as features? Nesse entender o problema, a gente vai levantar os requisitos, geralmente primeiro os funcionais, depois os não funcionais. A gente precisa saber
+
+quantos usuários vão utilizar, quais são as features que esses usuários vão utilizar, quais as limitações, o que que tá dentro do escopo, o que que tá fora do escopo. E esse vídeo aqui de hoje não é uma aula magna pra gente te fazer passar numa entrevista, até porque isso é muito difícil. Nesse vídeo de hoje, eu quero te explicar o que que o que que o entrevistador tá pescando, o que que ele está buscando que você apresente para você passar na entrevista e o por que isso é importante. Então, a primeira coisa que ele vai estar buscando aqui nessas partes de entender o problema, levantar os requisitos, é o seu entendimento. Eu consigo pegar um problema vago e ir pontuando coisas nesse problema vago até eu ter uma boa compreensão do problema para então eu começar uma solução decente? Muito mais
+
+importante do que você sair desenhando caixinha e botar uma fila aqui, um banco de dados aqui, um load balancer lá, um API gateway lá, é a gente ter um entendimento cristalino do que que é esse problema. Tem aquele ditado garbage in, garbage out. O que que é o in, né? O que que é o input aqui? O input é o nosso entendimento do problema. A nossa
+
+solução só pode ser tão boa quanto a nossa capacidade de compreensão desse problema. Esse entendimento também vai mostrar uma maturidade grande, vai mostrar que você já viu coisas, já trabalhou com coisas, que você sabe pensar em problemas que podem surgir. Quando eu falo pro entrevistador, né, por exemplo, vou levantar algo aqui, a gente vai estar desenhando isso para ser um app nativo web, mobile ou os dois? A gente precisa de notificações em real time, a gente precisa de analytics, porque se a gente precisar de analytics, né, se a gente precisar de, não sei quantos usuários clicaram num link, é interessante eu já começar o entendimento da minha solução com esse pré-requisito. Isso altera como o meu sistema vai funcionar, tá OK? Dentro de
+
+requisitos funcionais, é claro, a gente vai estar levantando como que o negócio funciona, qual o tamanho máximo de uma ORL que o usuário pode enviar. O usuário ele pode escolher a URL pequeno, né? Caso você não saiba, o importador de URL é tipo assim, você envia uma urlolonga.com. BR/ sei lá o qu e essa URL muito longa vai virar aqui um short.com/123,
+
+né? Ele vira uma ORL muito mais curta. Isso é que o incutador de R ele faz. Hoje em dia, alguns deles estão embutidos com analytics e outras coisas pra gente conseguir trackar quem clicou, da onde clicou e etc, né? Esse é o problema. Então o usuário pode escolher
+
+qual é essa URL curta. usuário vai traquear ali as analytics. Esse tipo de coisa é importante, tão importante quanto isso são os requisitos não funcionais. Quais os requisitos de latência? Porque é muito diferente eu criar um sistema que vai encurtar um URL em poucos milissegundos ou então se eu puder demorar 1 minuto para retornar esse URL pro usuário, fica mais fácil?
+
+Qual a disponibilidade? Qual a duração, né? Quanto tempo esses links vão ficar armazenados? Qual o tamanho no no nível de quantidade de usuários, quantidade de URLs, quantidade de tráfego? Isso é importante. As BigTechs estão muito
+
+interessadas nisso porque é muito, muito, muito diferente eu fazer uma solução dessa no meu computador que eu consigo fazer em um único arquivo de Node e vai funcionar para mim. Mas uma bigtecch não tá interessada nisso. Uma bigtech tá interessada em servir milhões de clientes. Então a minha solução que funciona na minha máquina para mim não vai funcionar para milhões de clientes distribuídos ao longo do mundo inteiro. É imprescindível a gente conseguir levantar essas dificuldades aqui, né? a
+
+gente mostrar essa maturidade de não, a gente não tá desenhando um projeto pessoal que vai rodar na minha máquina, né? A gente tá desenhando um negócio de verdade. Depois desses requisitos, é muito comum prática que a gente chama de B O E back of envelope, traduzido pro bom português, né? Cálculo de padeiro, cálculo de guardanapo, é o back of envelop estimations. São estimativas.
+
+Essas estimativas precisam ser precisas, é claro que não. É uma estimativa, né? Mas elas precisam ser razoáveis. Então, o que que o entrevistador tá buscando aqui? Ele tá buscando uma certa noção da área. Por quê? Se eu faço um encurtador
+
+de URL para 1000 usuários, é bem razoável eu falar pro meu entrevistador: "Olha, a gente vai jogar isso daqui numa VPS de R$ 20 e vai funcionar". E realmente vai. Realmente vai. Para 1000 usuários vai. Agora, quando a gente lida com milhões de usuários, a gente começa a ter que pensar o seguinte: quantos requests por segundo a gente tá servindo, né? O meu servidor tem
+
+capacidade de entregar isso? Se não tiver, qual solução que a gente vai utilizar aqui? Quanto de dado a gente tá armazenando? Porque assim, 500 MB eu armazeno no meu PC novamente. 20 TB começa a complicar e essa quantidade enorme de dados vai causar uma certa lentidão. Então a gente precisa começar
+
+a pensar também em cash, pensar em outras soluções para acelerar o acesso a essa quantidade muito grande de dados. Quanto de banda larga a gente precisa, né? Depois disso, depois dessas estimativas, a gente já tem uma noção razoável do que que a gente vai desenhar e qual o tamanho, qual o escopo daquilo que a gente vai desenhar. A gente costuma partir pro quinto, que é o design da API. E agora esses próximos, esses próximos passos geralmente não são seguidos um atrás do outro, não são seguidos a risca, tá? São coisas que
+
+você pode fazer numa entrevista para demonstrar um certo conhecimento. O design de uma API, ele demonstra também que você conhece o problema, que você conhece como que o usuário vai acessar essa sua solução e como que as partes dessa sua solução vão funcionar. Por exemplo, eu entendi o problema. Eu entendi que um usuário vai querer enviar uma URL longa e ele vai querer que retorne uma ORL curta. Então, na minha API, a gente vai ter um post aqui barra URLs com um bar, um corpo de Jason. E
+
+nesse corpo de Jason vai uma long URL, né, uma ORL longa. E na resposta eu devo receber uma ORL curta, né? Na response aqui você recebe uma ORL curta. Claro, isso aqui é um exemplo bem simples, né? Até porque para um encurtador de URL a API costuma ser bem simples, mas o bom design da API vai demonstrar que você tem uma noção de como fazer esse sistema de verdade. Pegando um exemplo mais
+
+complexo aqui, como que você faz upload de vídeos longos? Não é simplesmente um post no barra vídeo e aqui no bar vai o binário do vídeo, né? Isso aqui não funciona. Você tem que fazer um upload com multipart. Você tem que ter ali alguma autenticação. Geralmente vai ter
+
+uma presign URL, uma URL assinada. A gente tá no incurtador de URL, que é o exemplo mais simples de todos, né? Um dos mais simples. Mas numa entrevista que pode cobrar coisa de vídeo, complicou bastante. Também é comum a gente desenhar os esquemas, os esquemas dos bancos de dados. E aqui o negócio
+
+fica interessante porque é muito comum solução de múltiplos tipos de bancos de dados. É muito comum numa entrevista do System Design, porque na verdade a maioria dos grandes sistemas impressionantes vão utilizar tanto SQL quanto no SQL. Eles vão utilizar a melhor ferramenta para determinada parte do problema. Então, as partes mais transacionais que requerem consistência mais forte vão est sobre um banco SQL e as partes que requerem mais truput dados menos estruturados vão estar num banco no SQL. E às vezes existem links entre esses bancos em que um campo do SQL, uma coluna aqui do SQL pode apontar para um endereço no SQL. Supondo que você
+
+utilize um no SQL do tipo KV store, né, K Value Store, um dos exemplos é o dynamo database. Você pode então ter aqui um algo que aponte para aqui, né, por exemplo, dynamo Q ou que aponta para o URL do S3. Aí você consegue fazer um misto de diferentes bancos de dados. Isso vai mostrar uma grande compreensão de como utilizar diferentes ferramentas, o seu domínio sobre diferentes ferramentas e que você consegue desenhar ali os esquemas de diferentes bancos de dados para melhor solucionar aquele problema. Então, nota, a entrevista sobre de system, né, ela vai muito além de você simplesmente decorar padrõezinhos e caixinhas e tal, onde o mais importante aqui é sempre, eu quero que fique bem claro isso aqui para você, tá? O mais importante que você quer
+
+demonstrar numa entrevista de sistema design a compreensão do problema, tá? é a sua capacidade de compreender muito bem um problema, de propor uma solução e que você saberia mais ou menos como estruturar essa solução. Não tem nada a ver com caixinhas e setinhas. Por isso que a entrevista do System Designer, ela não é uma entrevista que tem a ver com código. O código é o detalhe de implementação quase. Aqui a gente tá
+
+muito mais preocupado com arquitetura, a gente tá muito mais preocupado com a infraestrutura, a gente tá muito mais preocupado com os fluxos de dados, com os os flows, né, da aplicação, com as requisições, com o que que o cliente vê, o que que o cliente não vê. as relações entre as coisas é uma visão do todo, mais completa. E se você demonstrar isso, você pode, você nem precisa seguir as regrinhas que eu tô colocando aqui. Tipicamente com o esquema feito, aí a gente parte pr pra parte e que as pessoas enxergam que é uma entrevista de system design, tá? As pessoas geralmente começam a estudar system e acham que a entrevista é só isso daqui. E é claro,
+
+não vou negar, isso aqui é uma parte muito importante, mas entrevista não é só isso. E é daqui que vem a piada que o arquiteto de software, ele fica ali desenhando caixinha e setinha. Esse é o emprego dele. E é uma piada justamente por isso, que é o desenho da arquitetura de alto nível. Alto com L e não com U, né? Alto nível. Essa é a parte que você
+
+vai mostrar o seu vocabulário. Eu gravei um vídeo, eu espero que já tenha saído, que eu falei sobre building blocks em system. Naquele vídeo era era isso que eu queria te munir. Eu queria te dar munição para você conseguir entender quais são as partes que vão, as caixinhas que você vai desenhar numa arquitetura de alto nível. Essas caixinhas são o cliente aí na frente do cliente, um load balancer, um F. Eu não
+
+vou explicar tudo isso daqui aqui, tá? Tem outros vídeos no canal que eu falo sobre essas coisas. Um API gateway, databases, cash, CDN, Q. os workers, a Blobstore, tá? Nessa é a parte que você vai demonstrar o seu conhecimento dos nomezinhos e das caixinhas do vocabulário. E honestamente também nessa
+
+parte talvez, tá? Talvez o entrevistador tente pescar se você só decorou essas coisas ou se você entende essas coisas ou se você já utilizou essas coisas, tá? Então, às vezes pode ser interessante você largar, tipo, ah, aqui eu vou colocar um heads, né? Eu já utilizei heads no passado, eu sei que funciona para solucionar esse problema. como exemplo de cach aqui. Aqui o o web
+
+application firewall a gente usou da Cloud Flare e é possível usar um o da Cloud Flare mesmo utilizando outra outra cloud. Enfim, a arquitetura de alto nível também tem a ver com a sua compreensão do problema e ela tá intrinsecamente ligada ao fato de que você sabe o que que você quer entregar pro seu cliente e o que que você quer que o sistema produza como um todo. Depois dessa arquitetura de alto nível desenhada, vai tá quase acabando seu tempo. A sua entrevista de sistema design, ela geralmente dura 1 hora, 1 hora e meia, no máximo, do máximo 2 horas. E aqui vai est acabando o tempo.
+
+É aqui que o entrevistador vai botar uma certa pressão e vai falar: "Olha, como é que você melhora isso daqui? Vamos supor que seu banco de dados caiu. Como é que você soluciona? Vamos supor que os usuários estão tendo um gargalo aqui, como é que você faz para melhorar? E essa pressão vai te levar a conversar sobre os tradeoffs e a conversar sobre escala. Toda escolha que a gente faz na
+
+computação, ela vem com um determinado custo, né? Se não existisseem tradeoffs, ia ser a mesma solução para todos os problemas. Então, um determinado problema requer um determinado tipo de solução que vai ser mais adequada, nota não perfeita, mais adequada para aquele tipo de problema. Eu falei que SQL é mais adequado para dados mais estruturados. Existem tradeoffs em SQL.
+
+Notoriamente, um dos tradeoffs de SQL é que ele pode tornar a a escala a nível de escrita difícil. Por isso que os sistemas com truput muito alto utilizam no SQL. Às vezes eles até preferem utilizar no SQL por causa do Truput mais alto e eles abrem mão das garantias ad. Então sempre existem tradeoffs aqui, tá? E dentro desses tradeoffs a gente vai estar sempre conversando sobre um versus o outro, né? Um monolito versus um
+
+microsserviço. Processos assíncronos versus síncronos. Teorema de CAP, né? Consistência versus availability versus disponibilidade e partition tolerance, né? Eh, tolerância a particionamento de rede. Vamos estar sempre tentando
+
+identificar possíveis bottle next, palavra bonitinha inglês, para gargá-los. Eu sempre tenho que trazer os termos em inglês e português, porque eh a nossa área ela é nativa do inglês e vamos ser sincero, a maioria das pessoas que tá estudando system em muitos dos casos está estudando para uma entrevista na gringa. Então eu faria um disserviço para vocês em não passar esses termos em inglês também, tá? Então às vezes as pessoas me me criticam por utilizar muito termo em inglês ou anglicanismo, mas eu faço isso porque eu quero que você chegue numa entrevista de sistema design e não dê um branco quando você pensa: "Putz, como é que eu falo gargalo em inglês?" Gargalo em inglês é botck, por isso que eu trago os termos em inglês. Como é que eu falo vazão a nível
+
+de banco de dados em inglês? Trueut, que eu sempre falo truput. Quando você tá numa entrevista de system design em inglês, existem termos e terminologias que são interessantes também você entender, tá? Por exemplo, problemas conhecidos, né? O problema do N plus one, o celebrity problem, questões sobre fenes você saber essas coisas. Voltando aqui,
+
+sempre vai existir um tradeoff entre consistência e corretude, né? Nem tudo precisa est consistente em todos os determinados momentos. Se a gente abrir mão da consistência, às vezes a gente consegue ganhar em escala e vazão. Agora, tem coisas que não dá para abrir mão de consistência. Transações bancárias não dá para abrir mão de consistência. Agora, likes num vídeo de
+
+YouTube, você pode deixar o like, dá pra gente abrir mão de consistência, né? Tipo, quantos likes tem nesse vídeo? 100 likes, 200 likes, 300 likes. Se o número verdadeiro de likes for 301, só que para você aparece o número 302, tem alguma diferença? Não tem. Na prática não tem
+
+nenhuma diferença. Então, a compreensão do problema, do que que é importante nesse problema nos leva a saber o que que precisa ser preciso e consistente e correto e o que que não precisa, o que que dá para ser meio mais ou menos, né? O que que dá pra gente aceitar uma garantia base ao invés de uma garantia. Bom, posto tudo isso daqui, uma entrevista de system é sobre, acima de tudo, como todas as entrevistas, comunicação, a sua capacidade de expor um raciocínio claro. É importante que você tenha um raciocínio claro, só que se você tiver o raciocínio, ele tiver na sua cabeça e você não conseguir expor, a outra pessoa não sabe que você tem esse raciocínio claro. Então, numa
+
+entrevista, o que eu recomendo é que você esteja sempre expondo aquilo que você tá pensando, expondo o seu raciocínio, expondo sua linha de raciocínio, fazendo perguntas. Faz sentido isso? Não faz sentido isso. Olha, eu tô pensando em ir por esse caminho. Eu entendi corretamente isso daqui. Se você se comunica bem, é meio
+
+caminho andado. A gente tem vários vídeos aqui no canal gratuito sobre system design. Existem vários recursos na internet também gratuitos sobre system. Se você gostou desse conteúdo e você quer especificamente aprender mais sobre system design comigo, eu tenho um curso de system design onde eu vou te ensinar todos aqui os building blocks, né? Banco de dados, SQL, no SKL, KS load balances, ZPI, gateway, networking, enfim, um monte de coisa. até a
+
+preparação para entrevista e algumas entrevistas na prática. Ainda tem aulas que estão saindo, tá? Eu notei que precisava gravar algumas aulas a mais, então tô gravando algumas aulas novas e adicionando aqui. Todo mundo vai receber essas aulas, quem comprou antes ou não, enfim, todo mundo vai receber todas as aulas aqui. Se você quiser aprender mais sobre system design numa preparação para entrevistas tanto no Brasil quanto pra gringa, isso daqui é para você, claro, contando que você goste da minha didática, né, que você queira aprender comigo, de fato, existem diversas pessoas que ensinam isso na internet. Eu
+
+trabalhei por mais de um ano em cima desse curso, tá? A gente produziu com bastante cuidado. Por isso, se você comprar esse curso, você vai ter um mês para assistir aqui as aulas desse dia se você gostou e não gostou. Dentro desse um mês, você pode pedir reembolso, você recebe todo o seu dinheiro de volta. A gente sempre faz isso em todos os cursos aqui, porque eu só quero que você fique com o curso se fizer sentido, né? Senão
+
+eu não quero seu dinheiro, tá bom? Se você quiser aprender comigo de uma maneira estruturada, com curso completo, que vai te colocar numa boa posição para ser entrevistado para system, para te ajudar de repente a conseguir uma vaga para gringa ou uma vaga difícil no Brasil, em grandes empresas, em BigTech, o link pro curso vai estar na descrição. Te dou um mês de reembolso. Se você não quiser, também não tem problema. A gente continua aqui seguindo com o nosso compromisso de criar bom conteúdo gratuito. Tudo que eu te ensinei aqui
+
+ainda é válido. Você pode utilizar também tudo que eu te ensinei como um mapa. Você pode pesquisar por outros vídeos aqui do canal. você não me conhece, que é o de para-quedas nesse vídeo, dá um subscribe aí, dá um follow e vai me acompanhando, vê se o que eu falo faz sentido, vê se você acha que eu tenho capacidade para ensinar isso que eu tô ensinando, né? Espero que você tenha um bom senso crítico aí e te vejo na próxima.
+
+---
+video_title: "O que que faz diferença na hora de aplicar pra gringa?"
+video_id: qY2BcT0BBUg
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qY2BcT0BBUg
+video_date: 2026-07-02T13:00:32+00:00
+video_description: |
+  Contratando a Passaporte Tech agora, você ganha uma simulação de entrevista GRATUITA com uma recrutadora internacional - válido somente até 09/07!
+  
+  Aqui tem todos os detalhes da consultoria:
+  👉 https://passaporte.tech/
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos falar sobre aplicar para gringa. O vídeo de hoje é muito simples, tá? Tem muita gente que me pergunta muitas coisas que fazem diferença ao aplicar para gringa. Eles querem saber se tal coisa faz diferença, se tal coisa não faz diferença, porque criou-se meio que um mito na nossa área, uma ideia, talvez, de que as pessoas que aplicam pra gringa, que trabalham pra gringa, são diferentes de alguma maneira ou tem algum conhecimento específico de alguma maneira ou então tem algo em específico que tá te impedindo de ir pra gringa. E eu conheci tanta gente, mas tanta gente que trabalha pra fora do Brasil, que eu percebi que essas coisas não fazem muito sentido. Então esse vai ser um vídeo pra
+
+tirar algumas dúvidas de vocês, né, sobre o que que faz diferença, o que que não faz diferença, o que que é imprescindível, o que que é importante, o que que ajuda, o que que não ajuda. Vamos começar. A primeira coisa e é a única que é imprescindível, a única, tá? Várias das coisas vão te ajudar em muitos cenários, várias das coisas são importantes, podem ajudar, podem te destacar numa entrevista. A única coisa que é imprescindível para você aplicar para gringa é falar o inglês ou a língua do país, tá? Senão não tem como. É, é
+
+impossível sem ter um inglês decente ali. Eu não precisa ser muito bom, tá? Eu não quero criar ideia em você que você tem que falar igual um nativo de de igual para igual. Não é isso. Se você tiver o inglês ali B2 para B1, é aquilo que a gente chama de working proficiency, né? Você consegue trabalhar
+
+mais ou menos ali na língua, você consegue se comunicar, você consegue entender e se fazer entendido é o suficiente. Eu falei inglês aqui barra língua porque alguns países precisa da língua do país. Por exemplo, se você vai trabalhar na Itália, você vai ter que falar o italiano, muito provavelmente, mas você não vai ter que falar o inglês. Em alguns países, como a Alemanha, que é o país que eu tô agora, algumas vagas você consegue falando apenas inglês. Algumas vagas você precisa falar o alemão. Isso vale mais pra vaga
+
+presencial no local. As vagas remota, né, remotas, né, que você pode trabalhar de qualquer lugar do mundo. Geralmente essas vagas são em inglês, independente do país, tá bom? Existem empresas, por exemplo, na Alemanha, que contratam pessoas de qualquer lugar do mundo, que você vai ter que falar inglês, não vai ter que falar o alemão, tá? E essa é a única regra de ouro. Tudo que eu vou
+
+falar a partir daqui ajuda, mas não é essencial. Até a segunda coisa, e alguns de vocês vão se surpreender ao ouvir isso daqui, que é faculdade. Eu falei essencial é só inglês, porque eu conheço assim vários vários, vários desenvolvedores que trabalharam pra gringa remoto, que não tem faculdade, que não iniciaram faculdade ou então que não completaram faculdade. Eu conheço pessoas conseguiram emigrar, sair do Brasil e ir para outro país. A gente foi pra Inglaterra sem ter concluído a faculdade. Muita gente vai te contar
+
+online que faculdade é assim é é obrigatório, senão você nunca vai conseguir um um emprego na gringa. Isso é mentira. Agora, eu preciso ser justo aqui também e falar que faculdade é um diferencial extremamente importante e ainda além de ser um diferencial extremamente importante, às vezes é um requisito para alguns tipos de visto. Claro, se você vai trabalhar remoto para os Estados Unidos, você não precisa de visto de trabalho, certo? Eu trabalho assim, eu trabalho remoto para os Estados Unidos. Eu não tenho visto de
+
+trabalho, eu sou um contractor, é uma PJ minha contra uma PJ dos Estados Unidos, né? E aí no meio tem um contrato. Agora, se você quiser emigrar pra Holanda, pra Alemanha, pra Espanha, para Portugal, você precisa de um visto de trabalho. E alguns países, alguns tipos de visto de alguns países são muito facilitados caso você tenha uma faculdade. Nota, não são todos os países, não é o tempo todo.
+
+Então, faculdade não é um requisito obrigatório, mas, cara, vai facilitar muito a sua vida se você tiver. É isso que eu quero dizer. Ah, sobre o inglês também eu esqueci de comentar. O inglês, além de obrigatório, ele também é um diferencial, porque é óbvio, né? Lógico, você vai entrevistar em inglês. Quanto
+
+melhor você conseguir se comunicar em inglês, melhor você vai na entrevista. É, é extremamente óbvio isso. Quando você tem uma fluência na língua, as pessoas daquela língua acreditam que você é mais inteligente, porque você consegue comunicar ideias complexas de maneira melhor. Então, né, ter um inglês bom é bem recomendado. Terceiro ponto é experiência. Aqui a gente vê online a
+
+maior cagação de regra da história do planeta Terra, que as pessoas dizem que só dá para aplicar para gringa a partir de X anos e isso é plenamente mentira. Mas o que que é verdade? É provável que você só consiga uma vaga pra gringa. Provável que você só consiga tanto conseguir vagas presenciais em outros países, né, para fazer o trâmite do visto para você, quanto conseguir um trabalho remoto global, caso você tenha mais de 3 anos de experiência. Hoje em dia, a gente tem falado em mais de cinco, talvez, porque é um mercado muito desafiador para quem não tem senioridade alta. Mas isso daqui eu quero deixar bem
+
+claro, não é uma regra. Sempre tem pessoas sendo contratadas com menos de 5 anos de experiência pro pra gringa, tá? Isso não é um impeditivo, não é uma regra, mas é algo que vai facilitar muito na sua jornada. Se você tem só um ano de experiência e tá aplicando para trabalhar para fora do Brasil, eu não vou mentir para você, vai ser bem bem bem difícil. Mas novamente, não é regra.
+
+Se você quiser, é assim, inglês e um sonho, é isso que você realmente precisa, mas vai ser muito, muito difícil, né? Pouco provável, muito improvável. Quarta dica, aqui é uma dica bônus, é quem tá patrocinando o vídeo de hoje. A gente já vai continuar com mais dicas, tá? Mas o patrocinador do vídeo de hoje é a passaportec que dá uma consultoria especializada em internacionalizar sua carreira. Como é
+
+que funciona, né? Tem minha fotinha aqui no site, eles não estão me pagando para usar essa foto, tá? É, eu participei da consultoria deles também. Existem alguns planos aqui, mas o plano que eu quero falar sobre é o consultoria pea, que vai te dar três sessões individuais de duas horas com diagnóstico, uma estratégia para você conseguir de fato aplicar para gringa. Eles vão te dar um plano de ação personalizado depois de cada entrevista, tá? Então a gente você vai receber ali
+
+PDFs bem extensos, personalizados para quem você é. Você vai ter acesso a um grupo com para tirar dúvidas com eles direto ali no WhatsApp e acesso a comunidade. Se você ver do canal, eles vão te dar uma uma sessão extra aqui, certo? Então você vai ter quatro sessões e não três. E essa sessão extra vai ser uma prática pra entrevista pra gringa.
+
+Então nota, por que você tá vindo aqui do canal a partir, quer dizer, nos próximos s dias, tá? Nos s dias seguintes ao lançamento desse vídeo, você vai ter uma condição especial que é que você vai ganhar uma sessão individual a mais. Eles vão te ajudar em diversas coisas. Primeiro, em entender a sua história, seus planos e entender qual o país que pode fazer sentido para você, quais opções de visto que existem. Caso você queira otimizar seus impostos, se faz sentido uma mudança de uma residência fiscal, se faz sentido levar sua empresa pros Estados Unidos, paraa Inglaterra, por exemplo, caso você esteja buscando emprego, vão te ajudar a otimizar o LinkedIn e currículo com um foco global e vão te ajudar em todas as questões para internacionalizar sua carreira, tá? Se você não sabe
+
+exatamente se faz sentido ou não para você, vem aqui no site da Passaportec, clica aqui em cima na direita em agente uma avaliação gratuita e você vai ver se faz sentido ou não para você no seu momento de vida, tá bom? Se você quiser internacionalizar sua carreira, a passaporte dá uma das, cara, pelos relatos, e lógico que eu também participei dessa consultoria, eu sei do que eu tô falando, uma das melhores consultorias para internacionalizar sua carreira, se não a melhor do Brasil, tá bom? Eu não conheço ninguém que faz um trabalho com tanta atenção quanto eles fazem, tá? Eu acho que vale bastante a pena. O link vai est na descrição. Se
+
+você ver do canal, você vai ter a sua condição especial. Continuando aqui, o quarto ponto, é claro, um currículo que você consegue demonstrar a sua experiência real. A gente tem vários vídeos aqui do canal que eu falo sobre currículo, tá? Que eu falo: "Ah, não é recomendado você ter foto, é recomendado você ter um header, é recomendado você fazer tal coisa, você descrever as suas experiências de tal e tal maneira. Se você pesquisar aí a gusto Galio o currículo, vai ter, pô, um monte de vídeo. Não vou repetir tudo que eu falei
+
+nesses, mas enfim, um bom currículo em inglês pesa muito, isso é é óbvio, né? E agora a gente vai para algumas coisas que são mais circunstanciais, tá? Eu diria que essas quatro aqui, se você tem essas quatro, você tá bem posicionado, são as principais. Mas as pessoas elas sempre querem ter uma pequena vantagem, elas sempre querem alguém que vai dar uma diferençazinha e elas sempre têm dúvida se algo vai dar a diferença ou não. Então vamos explicar aqui as dúvidas principais das pessoas. A
+
+questão de visto ou passaporte para emigrar para outro país. A questão de visto ou passaporte pode ser um diferencial bastante grande. Pros Estados Unidos, com certeza um diferencial gigantesco, já que, honestamente o Trump fez uma loucura lá com os vistos de H1B. E vai fazer muita diferença, porque em vários países a empresa fica responsável por um tipo um trâmite do visto. Então existe uma certa burocraciazinha ali associada, existe um certo custo paraa empresa para te oferecer esse visto. Alguns países isso
+
+é mais fácil, alguns é mais difícil. Então, em alguns países a empresa vai estar mais disposta a te contratar com o tal do visponsor e algumas alguns países menos disposta. De modo que você já tendo um visto, você já tendo um passaporte, sempre vai te ajudar pelo menos um pouco. Em alguns casos vai ajudar muito. No caso da Europa, se você tiver algum passaporte europeu, isso vai te permitir morar e trabalhar em qualquer país do da União Europeia, né, da não é nem da União Europeia, da área economicamente comum da Europa, algo nesse sentido, porque isso facilita muito, por exemplo, você trabalhar na Suíça também que não tá na União Europeia. Então, sim, visto e passaporte
+
+sempre vão te ajudar, logicamente não são imprescindíveis. Afinal de contas, existe visto para procurar trabalho. Por exemplo, países como Alemanha, acredito que Portugal tem visto para buscar trabalho, tem visto de nôm digital. Então você pode estar num visto desse, esse em algum momento você encontrar um trabalho, dependendo do lugar, tem como fazer essa mudança. Visto de trabalho, enfim, tem várias opções aqui. Questão
+
+do mestrado, doutorado, muita gente quer saber. E a minha visão é a seguinte, mestrado e doutorado são mais valorizados em bigtex, até porque essas empresas estão trabalhando muitas vezes com coisas que são na fronteira do conhecimento, né? Como por exemplo, inteligência artificial. Então o computer vision, né? Então o mestrado, doutorado numa área tipo inteligência artificial, tipo computer vision, vai sim ser um diferencial grande para algumas vagas específicas de algumas empresas. Agora, via de regra, é uma
+
+diferença, é uma diferença positiva, observável, mas ela não é gritante. Ela é mais acentuada nessas empresas grandes, empresas pequenas, startups ligam muito menos para mestrado do doutorado. Mas claro, é melhor ter do que não ter. Agora, eu não fiz mestrado, não fiz doutorado, não planejo fazer, nunca tive nenhum problema em encontrar, trabalhar para vagas internacionais, né? Já trabalhei agora para empresas na Austrália, Estados Unidos, Itália, Espanha e Alemanha. Então, trabalhei em
+
+cinco empresas internacionais. Nunca foi um impeditivo, mas enfim, para algumas vagas, em algumas situações, faz bastante diferença, vale bastante a pena. O seu portfólio, GitHub, vai fazer uma diferença principalmente para vagas mais júnior. Então, qual que é a questão aqui, né? para uma vaga mais júnior vai ser quase vai ser muito difícil você conseguir trabalhar para fora do país, tanto remoto quanto indo pro país.
+
+Então, acaba que não faz tanta diferença, porque muito provavelmente o momento que você vai conseguir esse emprego vai ser quando você for pleno para sênor e aí o portfólio e o GitHub já não pesam mais tanto, eles pesam muito mais no início da carreira. E no início da carreira você provavelmente não vai conseguir essa vaga, tá? Não é impossível, mas é difícil. sua capacidade de comunicação, né, que vai junto com o inglês, mas enfim, comunicação boa por escrita, se portar bem na entrevista e tal, lógico que é importante. Localização e fuso horário é um ponto que pouca gente pensa sobre, mas, por exemplo, o Brasil ele tá num fuso muito parecido com vários locais dos Estados Unidos. Então, existem vagas
+
+que só contratam pessoas da América Latina, né? Uma empresa dos Estados Unidos só contrata gente da América Latina porque ele quer que essas pessoas trabalhem no mesmo horário que os Estados Unidos. Eu já ou vi isso acontecer bastante. Eu já vi gente que foi escolhida num processo eletivo por estar no mesmo fuso horário que a vaga. Então isso até confere uma vantagem pros brasileiros, quer dizer, pro pessoal da América Latina inteira contra outros países, como por exemplo a Índia, ao aplicar para vagas nos Estados Unidos por causa da da questão do fuso. Então
+
+pode ser interessante no seu currículo você, né, botaronde você mora por causa da questão do fuso e também você pode incluir ali o fuso, né, GMT-3, que é o caso do Brasil. Um décimo ponto, e aqui a gente tá indo para coisas mais genéricas, né, que não tem necessariamente a ver com trabalhar para gringa, só com trabalhar em geral, que inteligência artificial tá muito em alta. Então você evidencia isso no seu currículo, você mostra que você sabe trabalhar com a ela é uma ferramenta que é todas as empresas hoje em dia esperam que você tenha um domínio sobre a que você saiba utilizar IA, que você consiga conversar sobre uma harness, um cloud code e tal. Até por isso eu trago mais esses assuntos aqui no canal. Questão de certificações, elas são úteis quando conectadas a uma vaga. Então, por
+
+exemplo, se eu vou ser um um DevOps, tem umas coisas ali de AWS que podem ser úteis, GCP que podem ser úteis. Se eu sou um desenvolvedor de JavaScript, cara, certificação não vai fazer muita diferença, tá? Elas são boas em alguns determinados, algumas determinadas áreas em específico. Webdev geralmente não tem muito valor certificação. Tem pouco valor, claro, é melhor do que nada, mas tem pouco valor. Claro, networking, se
+
+possível, ajuda em todos os tipos de vaga, seja ela pro do Brasil, da gringan, na sua cidade, em outro país. Networking sempre vai ajudar. E por último, mas não menos importante, a questão de entrevistas. Numa entrevista pra gringa, é muito mais comum do que no Brasil as partes de entrevistas de elite Code e de system design. Até por isso, né, eu criei um canal em torno disso. Eu
+
+falo bastante Elit Code, eu falo bastante de system design. Tem inclusive curso de elite Code, curso de system design, se você tiver interesse, aqui na descrição tem esses dois cursos, porque são partes da entrevista que não são tão comuns no Brasil, mas são muito comuns fora do Brasil. Então, pode ser muito importante você aprender isso. Não é toda entrevista que você vai fazer que vai cobrar isso, mas no meu caso, ao longo da minha carreira, mais que 50% cobraram um dos dois ou os dois. Então, se você tiver interesse, temos links aqui embaixo pro curso de lit code e system design. Trabalho que a gente faz
+
+aqui é excelente. Então você vai ter um mês para pedir reembolso caso você compre e não goste, né? Não é apenas a uma semana que o governo me obriga, né? Que a lei me obriga a te dar o reembolso. Te dou um mês para você assistir o curso e ver se você quer pedir reembolso, porque eu acredito na qualidade do produto. É realmente muito
+
+bom. Enfim, o link para os cursos vai est aqui na descrição, tá bom? Valeu,
+
+---
+video_title: "20 Conceitos que Separam Devs Júnior de Sênior"
+video_id: 7lH36O1Pudg
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7lH36O1Pudg
+video_date: 2026-07-01T13:00:00+00:00
+video_description: |
+  🟢 Vem pra AUVP, a melhor escola de investimentos do Brasil: https://sard.ink/AUVPGalego61
+  
+  🎁 Quando se matricular, fala que veio do meu canal pra garantir seu presente personalizado em casa!
+  -----------------------------------------------
+  
+  💼 Curso de System Design (com desconto): https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você que é dev e ganha acima de R$ 4.500 por mês, tá na hora de começar a investir, vem fazer parte da UVP, a maior e melhor escola de investimentos do Brasil. Link na descrição. Hoje vamos passar um overview, um roadmap de 20 conceitos que diferenciam o Devis Juniors de Devis Seniors. 20 conceitos que Dev Seniors costumam conhecer e Devis Juniors costumam não conhecer. Tá
+
+bom? Dentre esses conceitos, a gente vai falar sobre, por exemplo, em potência, né? Conceito favorito aqui do canal. A gente vai falar sobre back pressure, a gente vai falar sobre teorema de CAP. Esse vídeo ele é um vídeo mais expositivo, mais apresentativo e menos menos denso. Se eu for explicar a fundo
+
+cada um desses 20 conceitos, eu vou precisar de meia hora para cada conceito, vou precisar de 10 horas. Você tá vendo aqui embaixo que esse vídeo não tem 10 horas? Então, use esse vídeo mais como um guia de coisas que você pode estudar, porque a parte difícil é você saber aquilo que você não sabe, né? Se você já sabe que você não sabe, é só você sentar e estudar. Se você não sabe que você não sabe, é aí onde o problema grande mora. E eu quero te mostrar
+
+aquilo que você possivelmente não sabe para caso você queira você estudar mais ou aqui no canal ou em outros conteúdos. Primeiro conceito, idem potência. O que que é idem potência? A gente já explicou várias vezes aqui no canal. Idem potência é o seguinte: quando você faz um Pix pro seu amigo agora, você tenta fazer um Pix 5 segundos depois, essa transação não vai passar. Por que que
+
+essa transação não vai passar, né? Por que que a segunda não vai passar? Porque o serviço muito provavelmente criou uma chave de potência baseada em alguns dos atributos dessa requisição, como por exemplo o seu nome, o nome do seu amigo, as contas bancárias, o valor das contas e ele criou uma chave de DM potência que é um hash de tudo isso daqui. Baseado nesses atributos, ele criou um hash e como o hash na primeira requisição e na segunda requisição é duplicado, é o mesmo. Essa transção foi bloqueada. O
+
+sistema provavelmente armazenou esse hash numa cash ou em algo nesse sentido. Provavelmente deu um TTL ali, né, um time to leave de talvez 10 minutos, talvez 5 minutos, algo nesse sentido. Se você não entendeu nada do que eu falei, tem um vídeo da impotência aqui no canal, tá? Recomendo que você assista. Segundo conceito, transações distribuídas. Por que que esse conceito
+
+é tão difícil? Porque imagina o seguinte, né? Você tem um serviço que tem outros três serviços que podem depender dele de alguma maneira ou enfim, vamos explicar de uma maneira melhor, tá? Eu quero fechar um pacote de viagem com você. pacote viagem, eu o meu meu serviço, né? Vou te vender esse
+
+pacote de viagem. Você é o cliente aqui. Quando você compra um pacote, quando você bota os dados, seu cartão de crédito e clica comprar, que que você tá esperando que aconteça? Você tá esperando que você consiga ter uma passagem de avião. Então, de repente, eu tô integrando aqui com o sistema da Latan, um hotel, então de repente tô integrando aqui com o sistema do booking e, sei lá, um carro, então de repente tô integrando com a Herz. Herz ainda tá
+
+viva ou faliu, não lembro mais. Uma transação distribuída precisa que, bom, no momento que você faz esse pagamento aqui, momento que você pagou ali o cartão de crédito, eu preciso ter que aquele preço que ela também formou da passagem esteja disponível e que eu consiga comprar. A mesma coisa vale pro booking, a mesma coisa vale para herz, né? Eu não consigo mostrar um preço pro cliente. Na hora que ele comprou, o voo dele esgotou. Então você precisa de uma
+
+solução para isso daqui. Existem duas soluçõezinhas. Nesse caso, vai ser bem difícil, né? Que você não controla Latan, você não controla booking, você não controla hert, mas enfim. Independente você controlar esses serviços ou não, duas ideias aqui podem te ajudar. Uma é o Tru Face Commit, uma
+
+ideia um pouco mais antiga, um pouco mais fora de moda, mas que pode funcionar perfeitamente bem em algum dos casos. E o padrão saga Sega Patterno aqui no canal, recomendo que você assista. Próximo conceito é de consistência eventual. Consistência eventual. Que que isso daqui significa?
+
+É muito simples, né? Eu vou falar já de três conceitos juntamente da mesma na mesma pegada aqui pra gente já matar eles de uma vez. Consistência eventual. Imagina que você tem aqui, ó, um banco de dados, dois bancos de dados, três bancos de dados. Você escolheu um banco de dados para ser o seu banco de dados de readid, não, perdão, para ser o seu banco de dados de write. Esse aqui vai
+
+ser o banco de dados de write. Como a maioria das aplicações t leituras do que escritas, por exemplo, você escreve um post no LinkedIn e 100 pessoas leem, 20 pessoas leem, né? Existem mais leituras do que escritas. Você pode ter apenas um banco de dados pra escrita e alguns bancos de dados para leitura. Então você vai ter aquilo que a gente chama de read réplicas, réplicas de leitura. É o caso
+
+desses outros bancos aqui, ó. Ess aqui são os bancos de read. Então, outro conceito que a gente já tá matando aqui são as tais readid réplicas. Consistência eventual diz o seguinte: como que vai ser o comportamento de eu fazer um write, uma escrita no meu banco de dados, né? Eu vou retornar pro meu usuário um OK antes e depois eu vou sincronizar com os outros bancos. Ou
+
+então eu vou primeiro esperar para sincronizar com os outros bancos e caso eu consiga sincronizar tudo, eu vou dar o OK depois, né? Como que isso funciona globalmente? Como que, tipo assim, eu tô assistindo um vídeo do YouTube aqui da minha casa na na Alemanha, você tá assistindo aí do Brasil, alguém tá assistindo lá na China. O número de views no vídeo do YouTube não vai est sincronizado perfeitamente. Eventualmente ele tende a ser consistente, né? Eu tendo a ver um
+
+número parecido com o número que você vê e o que o carinha na China vê também. A grande questão é que eles não estão sempre consistentes, eles estão eventualmente consistentes, né? Eles convergem para uma consistência, mas não existe a garantia de que eles estão consistentes em nenhum momento. Isso aqui diz respeito também, né, ao teorema de CAP, que é outro conceito que eu quero que você entenda. Teorema de CAP é C, consistência, A, availability ou disponibilidade, P de Partition tolerance ou network partition tolerance. Acontece que num sistema
+
+distribuído deveria ser chamado teorema de K, porque o P eu vou te obrigar a ter. Eu vou te obrigar a ter a tolerância particionamento, né? Diz respeito a quando seu sistema é tolerante a partições de rede ou a coisas caindo, né? Se ele não for tolerante, ele não é um sistema distribuído. Então você pode escolher bem dizer C, que é consistência ou A, que é availability. Qual que é a decisão
+
+aqui? Se esse servidor, se esse, perdão, se esse banco de dados aqui cair, que que a gente vai fazer? A gente vai negar as escritas ou a gente vai aceitar as escritas e sincronizar depois? Basicamente essa decisão que você tem que tomar. Claro, tô simplificando muito aqui, mas enfim. Esse vídeo é aqui para
+
+isso, né? Se você quiser um vídeo de 20 minutos sobre teorema de cap, você consegue encontrar. Você quer que eu te mostre o que você não sabe. E a próxima coisa que você talvez não saiba, exactly ones. Já ouviu falar disso aqui? Ou
+
+então at least ones. Já ouviu falar disso? Ou at mostes. Isso diz respeito a sistemas de mensageria. Então, troca de mensagens, que para muita gente é sinônimo de Kafkaa, tá? Eh, eu só tô
+
+falando Kafca para você entender do o universo que a gente tá pisando aqui, tá? O sistema de de troca de mensagens de assim pub, eventos, esse tipo de coisa em que existe uma decisão que você tem que tomar se o seu sistema vai enviar, tipo, garantir que a mensagem ela passa exatamente uma vez ou no máximo uma vez, perdão, listo uma vez ou então no máximo uma vez, né? E você deve estar pensando, cara, mas exatamente uma vez é a única maneira correta de se fazer, né? uma mensagem, ela precisa ser transmitida só uma única vez. Pensamento interessante, como você com certeza sabe que tudo na vida é tem tradeoffs, você provavelmente deve estar sacando agora que o Exactly Once é o mais difícil e o mais custoso de se garantir, né? Os
+
+outros são mais fáceis de se garantir num sistema distribuído. Dá uma pesquisadinha nesses termos aqui, tá? Próximo legal, back pressure. Tem um exemplo aqui de back pressure, que é o seguinte, a gente pode estar falando de pub sub ou publisher subscriber. Eu vou usar a terminologia mais correta para esse exato caso que é de produtor consumidor. Então, de um lado você vai
+
+ter o produtor de algo, do outro lado você vai ter o consumidor de algo. Você mesmo pode ser o dono de ambos esses sistemas, tá? Eu vou dar o exemplo aqui de um sistema que é um webscraper que tá varrendo imagens na internet. Então, imagina que o seu produtor ele varre 20 imagens por segundo. Essas imagens vão depois ser processadas por algum outro sistema, né? Seu sistema vai, de
+
+repente, comprimir elas e armazenar num banco de dados. Seu produtor está produzindo 20 por segundo, o seu consumidor está consumindo 5 por segundo. Ele consegue processar. O que que vai acontecer? Esse produtor vai enviando imagens pro consumidor, vai enchendo a memória. Depende de como você
+
+fez o sistema, né? Se é uma memória que tá enchendo, um banco de dados que tá enchendo, ou uma fila que tá enchendo. Uma hora esse negócio estoura. Back pressure é isso. É a pressão nas costas.
+
+Ai, que horror. [risadas] Tá. É, o seu consumidor precisa, precisa existir algum mecanismo no seu sistema que permita que essa mensagem se propague para trás, que permita que o seu consumidor informe o seu produtor que ele está cheio, que é para produzir de uma maneira mais devagar, tá bom? Senão o negócio vai vai estourar, não vai dar bom. Back pressure, então é sobre essa comunicação aqui, né? Ele é resolvido
+
+através disso. Pode utilizar ali uma umas filas, umas coisinhas inteligentes, mas enfim, em algum momento a mensagem precisa precisa chegar no produtor para ele pausar ali por um tempo. Outro problema de pressão que a gente lida, problema de carga é um aqui, ó. Tá difícil escrever thundering problem. Qual que é o exemplo clássico desse problema? Ele é um problema que acontece
+
+quando muitos clientes tentam dar um retry simultaneamente, tentam acessar um recurso, simultaneamente falha esse acesso e ele retenta de novo. O exemplo mais comum disso e tá bem ligado ao nosso próximo exemplo aqui é uma inspiração de cash. Então imagina que tá todo mundo lá vendo um, sei lá, um tweet do Cest muito absurdo. E o tweet que tava cacheado inspirou e todo mundo tá clicando nesse twitch. Esse request que antes estava sendo servido pela Cash, agora vai direto lá pro seu banco de dados e vai causar um problema. Às vezes
+
+o seu banco de dados ele vai estar particionado, né? Você vai ter um charge ou uma partition. E esse charge ou a partition pode ser o charge que a sua celebridade cai e aí você vai cair no celebrity problem, que é o seguinte, né? Imagina que a gente tem o nosso sistema distribuído em algumas partições, alguns algumas máquinas diferentes, né? E aí você tem a máquina aqui de cima, ó, que tá servindo aqui os vídeos do Augusto Galego. A outra máquina aqui de baixo
+
+que tá servindo os vídeos do Renato Augusto. Essas máquinas, OK? Inclusive Renato Augusto Bração, cara, você é muito bom, seu conteúdo é fantástico, vale a pena seguir. Então, eu caí numa charge, o Renato Augusto caiu numa charge, mas infelizmente o Mano Davin caiu em outra charge e o mano Davin é muito grande. Esse cara malha muito.
+
+Mano Davin, sendo a nossa celebridade vai ter um problema, né, que são muitas pessoas vendo os vídeos dele. Ele cria um problema de celebridade, né? Nossa celebridade aqui da Boletecou o problema do hot shard, né? Se o mano Davin caiu numa charge, essa charge é necessariamente uma hot chardge e a gente precisa aprender a solucionar esse problema. Precisamos dar um jeito de fazer o nosso sistema escalar, mesmo quando tem o Mano Davin nele e mesmo quando os requests estão indo todos para achar de que o Mano Davin caiu. Vamos
+
+falar então sobre o padrão do Circuit Breaker. Isso aqui é o padrão para você parar de tomar uma ação. Você tá repetidamente tentando um request aqui que tá falhando. Vamos supor que você dependa de um serviço que não está te respondendo. Existe um padrão arquitetural estrutural chamado de Circuit Breaker, que vai quebrar esse circuito e vai falar: "Deus, chega". A
+
+gente tava dependendo desse serviço que claramente tá indisponível. Quebramos aqui e tomamos outro caminho. Falando em outro caminho, vamos falar sobre feature flags. Feature flags são coisas, são, pô, literalmente uma bandeira que sinaliza que um usuário ou um determinado grupo de usuários tem acesso ou não a uma feature. Então, uma feature flag, ela vai se parecer como algo assim, tipo has beta checkout. Vamos
+
+supor que eu tô criando um checkout novo e eu selecionei umas empresas para usarem meu novo checkout. H beta checkout é uma flag que vai poder ser igual a true ou vai poder ser igual a false, dependendo de qual dos meus clientes topou esse beta, né? Qual dos clientes quer participar desse beta? Então eu posso ter que alguns clientes vão ver um código e outros clientes vão ver outro código. É exatamente isso que é uma feature flag. Pode ser utilizada
+
+para diversas coisas, pode ser utilizada para testes, para rollouts graduais, pode ser utilizado para um certo controle de acesso à determinadas features, tá? Só toma muito cuidado que se você utilizar muitas fiture flags e esquecer de ir matando as feature flags que caíram em desuso, seu código vai ficar uma gambiarra grotesca e incompreensível. Vamos falar sobre esquema evolution, então, que diz respeito a evoluir um esquema, um banco de dados, um evento, qualquer tipo de esquema, de maneira que dá uma retrocompatibilidade boa, né? Qual que é um exemplo disso? Legal. Suponha que
+
+você tem um sistema que emite eventos. Um algo parecido com o CQRS. Você tem um sistema que tá emitindo o evento, cliente comprou X. Esse evento que está sendo emitido está sendo ouvido por diversas outras partes do seu sistema, né? Porque você tenha um sistema aqui de analytics e também um sistema de big data barra, sei lá, tô só inventando nomes aqui. Seu sistema de big data
+
+barrea, pensa, quer dizer, você como produtor desse desse evento aqui pensa: "Cara, eu quero não apenas emitir que o cliente comprou algo, eu quero emitir também que o cliente comprou algo e que ele usou o desconto X, usou o desconto Y. Meu evento mudou, eu evoluí o meu evento. Como eu tenho pessoas ouvindo esse evento, ou então se for uma API acessando essa API, eu preciso garantir um certo versionamento, né? Qual que é a versão disso aqui, qual que é a versão dessa API, qual que é a versão desse evento, a versão dessa mensagem e eu preciso garantir que eu não quebrei issoqui para ninguém sem dar dar um período ali para eles, né, ou dar uma forma de acessar os dados antigos. Um dos problemas de evoluir evoluindo seu sistema e migrando as coisas, a gente vai falar sobre duas maneiras, eh, alguns problemas que eu vejo com migration, tá? Um problema que eu vi,
+
+surpreendentemente muitas empresas, inclusive a primeira vez que eu resolvi esse problema, eu derrubei a produção do nosso sistema por 7 minutos. É, isso realmente aconteceu e eu lembro até hoje, eu deixei o nosso sistema inutilizável por 7 minutos, porque eu cometi um erro grotesco numa migration. O erro é o seguinte, a gente tem um server dentro do nosso server, roda código. Dentro desse código, ele manda requisições, ele manda um bar aqui, né, para criar coisas no nosso banco de dados, que é o nosso banco de dados. Dentro do meu bar, vamos supor que eu tenha um o nosso corpo aqui normal, né?
+
+E eu quero criar um novo campo no meu banco de dados que seja obrigatório. Campo obrigatório. Que que eu faço? Eu vou lá no meu GitHub, eu crio um arquivo de migration, né? Migration file. Se
+
+você tiver utilizando, né? É migrations dessa maneira que é isso, é hoje em dia a maneira mais comum de você fazer migrations, né? Você tem uma migration file e um sistema que vai rodar essa migração no seu banco de dados, tá bom? Então você cria sua migration file, você faz um deploy dessa migration file junto com uma alteração no código, adicionando o campo obrigatório ao bar da sua requisição que vai pro servidor, pro banco de dados, perdão. Sendo assim, no mesmo momento que eu adicionei o campo obrigatório, eu também alterei o código para que, exatamente quando o deploy aconteça, esse campo que agora é obrigatório, passe a ser enviado pelo servidor, correto? Vai funcionar isso
+
+daqui? Você pode estar pensando que sim. E se você tiver me respondido que sim, foi exatamente esse o erro que eu cometi, que fez a nossa produção cair por exatos 7 minutos. Esse campo obrigatório, ele precisa ser preenchido e retroativamente. É óbvio, um campo obrigatório que antes não existia, eu criei ele. Enquanto o banco de dados
+
+estiver migrando, você não vai conseguir fazer esses requests aqui, muito provavelmente, tá? Talvez você trave o banco de dados por 7 minutos e foi isso que aconteceu. Foi assim que eu travei o nosso sistema, porque eu causei um lock na porcaria do banco de dados inteiro. Qual que é a maneira que você vai fazer isso aqui? Então você vai ser mais esperto do que eu, tá? Maneira que você
+
+vai fazer isso é a seguinte. Você vai primeiro criar o campo não obrigatório. Criou o banco não obrigatório, você faz o backfel, fez o backfield, preencheu o banco de dados com esse campo não obrigatório. Lembra que você criou uma migration? Nessa migration, você criou o campo não obrigatório. Depois que você
+
+fez isso, você passa a enviar no servidor o campo que no futuro vai ser obrigatório. Quando seu servidor já tá enviando esse campo e já tá tudo backfield no no banco de dados, já tá tudo backfield na tabela, você vai ter que fazer uma segunda migração, uma migração em duas etapas e aí você vai conseguir consertar esse problema. Esse é o tipo de problema mais sênor que você esbarra quando você tá lidando com migration. Então eu queria citar esse problema e eu vou citar também outras três coisas para você ser, né? Backfield foi uma das que eu citei. Você quer
+
+estudar também dual rights, você quer estudar também shadow tables, principalmente para fazer migrações em escala. Um amigo meu passou, quando tava em São Paulo, ele passou o final de semana fazendo uma migração gigantesca de uma empresa bem impressionante. Enfim, é, meu querido, parabéns pelo dia 9 de abril, tá? Todo sucesso para vocês dois. Eh, vamos pra próxima, né? Estudou
+
+Backfiel, estudou dus, estudou shadow tables? Dificilmente você vai precisar aplicar isso, mas cara, é bom que você saiba o que você existe para você não derrubar produ, né? Five v ainda aprendendo. Eu derrubei prod para você assistir esse vídeo e você não derrubar. Olha que lindo. Aprendo com os meus
+
+erros. Rate limit. Existem quantos? Quantos que existem? É fix window. Tô
+
+fazendo de cabeça isso aqui, tá? Eu não eu não escrevi essa parte script. Slide window. Tipo, eu só eu só meus scripts não tem muito texto, tá? Eu só planejei quais eram os 20 tópicos que eu ia falar e eu confiei na minha habilidade de falar sobre eles ao vivo em prompto. E é
+
+isso que a gente tá fazendo. Eh, Token Bucket e Licky Bucket. Esses são os quatro que eu lembro de cabeça. Se tiver outro, você vai ter que pesquisar e me avisar. Então, dever de caso para você pesquisar se tem outro algoritmo. Eu tô
+
+sentindo que eu tô esquecendo um, tá? Tô sentindo que eu tô esquecendo um, mas vamos explicar esses quatro aqui da maneira mais rápida possível, porque esse vídeo já tá meio longo. Fix window é o seguinte, é o duolingo, né? Então, imagino que aqui é o dia 30 de fevereiro, um dia que existe, aqui é o dia 31 de fevereiro, ô meu Deus. Outro dia que também existe, você tá jogando seu duoolingo. Se você fizer o seu
+
+duoolingo à meia-noite do dia 30 ou então ou 11:59 do dia 30 e fizer o seu duingo de novo no dia 31, vai funcionar, vai dar tudo certo. Tem uma janela fixa onde esse rate limitar de novo. Se você ao invés de uma janela fixa, quiser fazer falar o seguinte: "Olha, a cada uma hora você pode fazer essa ação três vezes, né? Conforme o tempo vai passando, o tempo passou, o tempo passou e olha só, ele saiu da janela de uma hora. Você pode fazer essa ação de novo e o tempo vai passando, passando, passando. Ó, esse outro request aqui
+
+saiu dessa janela, pode fazer de novo. Isso seria uma slide window. Então falamos de fix, falamos de slideing window, token, bucket, você imagina um balde, imagina um baldezinho, dentro desse balde vão caindo aqui o os seus tokens para realizar uma ação. E o balde vai enchendo. Uma hora esse balde vai encher. O balde encheu, você pode pegar
+
+e pode fazer: "Ah, quero fazer uma ação, quero fazer de novo, quero fazer de novo". E você tem que imaginar que tá chovendo, tá? Então o balde vai enchendo de novo. Você pode em qualquer momento pensar e falar: "Não, eu quero fazer tudo isso. Fiz todas as ações". E aí
+
+você tem que esperar o balde começar a encher de novo para usar os tokens de novo. Fez sentido? Esse é o token bucket. O lick bucket ele é exatamente igual, mas quando o balde tiver vazio, você ainda pode fazer request, só que numa velocidade reduzida. Tá bom? Outro
+
+probleminha difícil para você resolver, cash em validation. Eu vou apenas falar isso. Isso aqui cabe um vídeo. Eu vou gravar esse vídeo, inclusive. Bom, bem lembrado. Muito obrigado por me lembrar.
+
+Vou gravar o vídeo. Vou gravar. Cash validation é legal. É bem difícil, é legal, vale um vídeo pro tentar fazer isso aqui na prática. Problemas de code start, se você não tiver conseguindo encontrar, né, eh, procura por lambda code start, tá? Eh, é um problema que
+
+não existe apenas em lambda, ele existe em diversos tipos de infraestrutura e serviços, mas enfim, problema de cod, probleminha legal para você pesquisar. Olha, é isso, foram 20. Muito do que eu falei tem a ver com o system. Se você estiver vendo esse vídeo, a gente vai estar exatamente na época do lançamento desse vídeo lançando um curso de system. Se ele ainda não tiver lançado, vai ter um link pra lista de espera aqui embaixo. Se você já tava na lista de
+
+espera, dá uma checada no seu e-mail, que você pode ter recebido e-mail com uma oferta muito especial, tá? Quem tiver na lista de espera vai conseguir acesso antecipado a esse curso, vai conseguir um preço mais especial, que eu tô querendo beneficiar quem tá aqui comigo, né? Quem tá, enfim, ativo, esperando por esse produto, prestando atenção, que tem tá dando um volta de confiança. Quem tiver na lista de espera vai receber o melhor preço de todos. Depois a gente deve aumentar esse preço naturalmente, tá bom? nos cursos de
+
+system design, como todos os cursos aqui do canal, você vai ter pelo menos um mês de garantia e eu vou te ensinar basicamente tudo que você precisa para sair do zero. E para alguém que entende de system design, tanto para fazer os seus sistemas quanto para passar entrevistas de system design e entrar para empresas impressionantes como Google, Amazon, Microsoft, esse tipo de empresa, tá bom? O link pro curso de system design e todos os cursos aqui do canal vão estar aqui na descrição. E system design é um tópico que eu acho dos mais importantes hoje em dia. Eh, se eu não achasse, eu não teria feito esse curso. Que levou, cara, juro, eu tô há
+
+quase um ano gravando isso. E enfim, enquanto eu tô gravando esse vídeo, eu tô gravando esse curso também, tá? Eu tô gravando, cara, umas 3, 4 horas de curso toda semana. É muita coisa. Enfim, se você estiver assistindo, garanto que esse curso vai est excelente, tá? O link
+
+vai est aqui na descrição. Vai ter mais detalhes sobre o que que inclui também aqui em algum lugar.
