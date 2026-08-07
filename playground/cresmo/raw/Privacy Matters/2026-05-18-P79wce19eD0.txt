@@ -1,0 +1,127 @@
+---
+video_title: "How Hackers Crack ANY Software"
+video_id: P79wce19eD0
+channel_name: "Privacy Matters"
+channel_id: UCVrrEzxFvIDjM0w5a8LKYwg
+channel_category: "Howto & Style"
+url: https://www.youtube.com/watch?v=P79wce19eD0
+video_date: 2026-05-18T23:14:29+00:00
+video_description: |
+  How does software cracking actually work in 2026? A 19-year-old in Bulgaria broke a 25,000-dollar-a-month anti-piracy system in 72 hours. He didn't crack the encryption — he walked around it. In this video, I explain the 6 core reverse engineering techniques hackers use to crack software, the 40-year history of software cracking, and what actually protects code today.
+  
+  JOIN THE HACKER ACADEMY
+  Get The Pro Hacker Starter Guide, Pro Cheatsheets for, custom files for the AI Hacking Agent that helps when you're stuck on a binary, malware analysis walkthroughs, and access to an active community of people learning reverse engineering seriously.
+  https://bit.ly/The-Hacker-Academy
+  
+  THE 6 SOFTWARE CRACKING METHODS
+  How Hackers Crack Software
+  Method 1: Binary Patching
+  Method 2: Keygenning and Reverse Engineering Algorithms
+  Method 3: Dongle Emulation
+  Method 4: Server Emulation
+  Method 5: Anti-Tamper Protection and Denuvo
+  Method 6: Hypervisor Bypass
+  How To Protect Software From Cracking
+  
+  FAMOUS SOFTWARE CRACKING CASES
+  Razor 1911 (1985-Present) — DOJ-recognized oldest active software cracking group
+  3DM vs. Denuvo (2014) — First crack of FIFA 15's anti-tamper system
+  Voksi vs. Denuvo (2016) — 19-year-old bypassed Denuvo via demo authorization
+  Assassin's Creed Origins (2017) — 99 days uncracked, the modern Denuvo record
+  Empress vs. Monster Hunter Rise (2022-2023) — Over a year of solo reverse engineering
+  2K Games (2026) — 14-day online check-ins added after Denuvo reportedly broken
+  
+  WHAT PROTECTS SOFTWARE FROM CRACKING IN 2026
+  Move the value to the server. Cloud-side processing means there's nothing meaningful to crack locally. This is why most modern SaaS has no piracy problem.
+  
+  Use real anti-tamper. Denuvo, VMProtect, and Themida slow crackers down enough that most sales happen before the crack ships. Denuvo claims 59% of game revenue comes in the first 14 days.
+  
+  Watermark your builds. Modern protection embeds unique identifiers in distributed copies. When a crack appears, you can trace it to the leaker.
+  
+  REVERSE ENGINEERING TOOLS MENTIONED
+  Ghidra (free NSA-built disassembler for reverse engineering): https://ghidra-sre.org
+  IDA Free (industry standard disassembler, free tier): https://hex-rays.com
+  x64dbg (modern Windows debugger for reverse engineering): https://x64dbg.com
+  Detect It Easy (identifies compiler and protection on binaries)
+  crackmes.one (legal practice platform for learning software cracking)
+  
+  DISCLAIMER
+  This video is for educational and informational purposes only. The reverse engineering methods discussed are commonly used in legitimate security research, malware analysis, and software protection development. Do not apply these techniques to software you don't legally own. Software piracy is illegal in most countries.
+  
+  #SoftwareCracking #ReverseEngineering #Denuvo #HowToHack #Cybersecurity #EthicalHacking #MalwareAnalysis #BinaryAnalysis #Hacking #InfoSec #DRM #Ghidra
+---
+Existem seis métodos principais que os hackers usam para invadir softwares. Algumas têm 40 anos, outras foram inventadas no ano passado. Vou mostrar todos eles para vocês. Se você desenvolve software, este vídeo é para você. Se você já se perguntou como funciona o software pirata, este texto é para você. Se você só quer entender o
+
+jogo de gato e rato mais antigo da computação, fique. Breve aviso. Este vídeo tem fins exclusivamente educativos e informativos. Vamos começar pelo mais antigo. Método um, aplicando um patch no binário. Todo software é um
+
+arquivo. Dentro desse arquivo está o código de máquina, instruções que o computador segue em ordem. Em algum lugar desse código de máquina existe uma verificação. O usuário pagou por isso? Eles apresentaram uma licença válida? O
+
+período de teste terminou? A verificação geralmente consiste em uma instrução específica, como comparar um valor. Se houver correspondência, continue. Caso contrário, saia. Um patch encontra essa instrução e a altera. O hacker abre o arquivo binário
+
+em um desassemblador, procura pela comparação, encontra o salto condicional e, em seguida, reescreve dois bytes de código de máquina. O link que dizia "Sair se a licença for inválida" agora diz "Continuar mesmo assim". A rachadura inteira tem dois bytes, às vezes apenas um. Assim funcionava o craquelamento na década de 1980. É assim que ainda funciona hoje em dia para softwares independentes, versões antigas do Photoshop e do Office, muitos plugins VST e a maioria dos utilitários de desktop. As versões mais recentes
+
+ativadas pela nuvem precisam das técnicas que abordaremos mais adiante. Habilidade não é escrever o patch. A habilidade consiste em encontrar os dois bytes corretos em um arquivo binário que pode ter centenas de megabytes de comprimento. As ferramentas para isso, IDA Pro, Ghidra, depuração x64, são todas de domínio público e usadas diariamente por analistas de malware e pesquisadores de segurança; são as mesmas ferramentas. Método dois, geradores de chaves.
+
+Aplicar patches altera o programa, gerar chaves não. Um gerador de chaves cria chaves de licença válidas sem modificar nada. Eis como. Quando um programa verifica uma chave de licença, ele a executa através de um algoritmo. Se o algoritmo produzir um resultado válido, a chave é aceita. O
+
+hacker faz a engenharia reversa do algoritmo, estuda como o programa valida uma chave e, em seguida, escreve seu próprio programa que gera chaves que o software original aceita. O resultado é idêntico a uma licença real. O cracker tornou-se, na prática, uma autoridade licenciadora do software. Por que os geradores de chaves são importantes. O software original não é modificado, portanto o programa ainda recebe atualizações, ainda funciona com serviços online e ainda passa nas verificações de integridade. Os keygens foram o padrão ouro
+
+em cracking de 1990 até aproximadamente 2005. Eles exigiam o máximo de habilidade. Os fabricantes de biscoitos eram os que tinham mais prestígio. Os lendários grupos da cena, Razor 1911 Core e Fairlight, construíram suas reputações com geradores de chaves. A Razor 1911, fundada na Noruega em 1985, ainda está em atividade hoje. O Departamento de Justiça dos Estados Unidos
+
+os considera o grupo de crackers de software mais antigo em atividade na internet. Eles vêm quebrando códigos de software há 40 anos. Uma pergunta rápida. Você já usou o Photoshop ou o Office em um pen drive com a chave quebrada? Você não estava pirateando de um hacker qualquer. Você estava executando um código escrito por
+
+um grupo de cena mais antigo que a maioria dos YouTubers. Método três: remover a chave de hardware. Alguns softwares exigem um dispositivo físico para funcionar, como um dongle, uma chave USB ou um token de hardware. O software verifica se o dongle está presente. Se sim, ele funciona. Caso contrário, ele se recusa.
+
+O software industrial ainda utiliza isso. AutoCAD, algumas ferramentas de produção musical, software de engenharia especializado. O dispositivo é a fechadura, o software é o que está bloqueado. Os crackers burlam os dongles de duas maneiras. A maneira mais simples é encontrar a verificação no binário e removê-la. Mesma técnica do
+
+método um. O software para de perguntar se o dongle está presente. O software para de perguntar se o dongle está presente. O método mais difícil é emular o dongle por software. A chave física se transforma em um código. O software original
+
+pensa que o dongle ainda está conectado. Não está, nunca esteve. Alguns dongles são simples, outros são sofisticados. Os modelos mais complexos contêm chips criptográficos que tornam isso praticamente impossível. Os mais simples podem ser imitados em uma tarde. Este método combina os métodos um e dois
+
+com hardware. Já abordamos metade de três métodos, faltam três. Deixe um número nos comentários, de um a três. Qual método te surpreendeu? Eu li todos os comentários. Agora, o método quatro, aquele
+
+que mudou tudo. Método quatro: servidores de ativação online. No início dos anos 2000, as empresas de software se cansaram de hackers modificando seus códigos binários, então fizeram algo diferente. Eles fizeram com que o software se recusasse a funcionar a menos que pudesse se conectar a um servidor remoto. A Adobe fez isso, a Microsoft fez isso, e depois as empresas de jogos fizeram isso. O software inicia,
+
+verifica a internet, consulta um servidor e pergunta: " Esta licença é válida?" Já foi ativado antes? Respostas do servidor. O software é executado ou rejeitado com base no que o servidor indica. Aplicar um patch no binário não funciona, mesmo se você ignorar a verificação local. O
+
+software ainda deseja se comunicar com o servidor. O servidor tem a resposta correta. Então, os crackers criaram algo novo: emuladores de servidor. Em vez de ignorar a verificação, eles a redirecionam. O software crackeado ainda tenta contatar o servidor de ativação. A solicitação é enviada para um
+
+servidor falso executado na própria máquina do usuário . O servidor falso responde exatamente da mesma forma que o verdadeiro. Licença válida, ativação bem-sucedida, executar. O software não sabe. Do seu ponto de vista, contatou o servidor, e o servidor respondeu que sim. É assim que o Photoshop pirata
+
+funciona há 15 anos. O programa de cracking não está burlando a ativação da Adobe , ele está emulando-a. A Adobe adicionou mais verificações, revalidação periódica, comunicação criptografada e verificação de assinatura do servidor. Os biscoitos adicionavam mais sofisticação. Eles estudaram a criptografia, falsificaram as assinaturas e construíram emuladores mais elaborados. A
+
+corrida armamentista nunca parou, apenas subiu na hierarquia. Método cinco: ataques de depuração e ofuscação . Em 2014, as empresas de software já contavam com uma nova ferramenta: a proteção contra adulteração. O nome mais importante é Denuvo, fundada na Áustria, adquirida pela Irdeto e agora usada pela Ubisoft, Square Enix, Capcom e pela maioria das principais editoras de jogos. A Denuvo não se limita a verificar uma licença. O Denuvo criptografa
+
+partes do código do jogo enquanto ele está em execução. Ele criptografa cada parte somente quando necessário e, em seguida, a criptografa novamente centenas de vezes por segundo em milhares de locais na memória. [música] Um hacker não consegue simplesmente encontrar a verificação da licença. Não existe uma única verificação de licença. A validação está presente em todo o programa. Remover isso quebraria
+
+o jogo. O primeiro jogo a utilizar a Denuvo foi o FIFA 15, em 2014. Cerca de dois meses depois, um grupo chinês chamado 3DM reivindicou a primeira quebra de segurança. A corrida armamentista começou imediatamente. Em 2017, Assassin's Creed Origins permaneceu sem crackear por 99 dias.
+
+Esse é o maior tempo que um jogo importante resistiu a apresentar problemas na era moderna. US $ 25.000 por mês, esse é o custo de licenciamento do Denuvo para as editoras, mais 50 centavos por jogo vendido. Uma desenvolvedora independente chamada Empress passou mais de um ano crackeando Monster Hunter Rise, um único jogo, mais de um ano de trabalho. Ela construiu toda a sua reputação decifrando códigos Denuvo em jogos. Ela se
+
+aposentou no final de 2025. A técnica para burlar o Denuvo não envolve patches, nem geração de chaves, mas sim engenharia reversa da própria proteção. Identificar padrões na criptografia, criar ferramentas que burlem a versão específica da proteção e, em seguida, observar a Denuvo corrigir essa vulnerabilidade em questão de dias. Observe o que está acontecendo. O primeiro método necessitava de dois bytes, o quinto método requer uma equipe de pesquisa e 12 meses. Método seis, o
+
+bypass do hipervisor. Foi isso que o jovem de 19 anos na Bulgária descobriu. O nome dele é Voksi. Ele não derrotou o Denuvo quebrando a criptografia. Ele não desativou o dispositivo anti-adulteração, ele o contornou.
+
+Funciona assim. O Denuvo se integra ao hardware do seu computador. Ao instalar um jogo protegido pelo Denuvo, o Denuvo gera uma impressão digital única com base na sua CPU, na sua placa-mãe e no seu sistema operacional. Ao transferir a instalação para outro computador, a impressão digital não corresponde e o Denuvo se recusa a funcionar. Voksi percebeu algo: alguns jogos lançaram demos gratuitas. Essas demos não
+
+tinham Denuvo, mas a demo e o jogo completo compartilhavam o mesmo código. Ele usou a demonstração para gerar uma autorização Denuvo legítima e, em seguida, escreveu um carregador. O programa de carregamento substituiu a autorização legítima pela do jogo completo pirateado . Os servidores da Denuvo verificaram, detectaram uma autorização válida e aprovaram a execução. Voksi não conseguiu quebrar a criptografia. Ele não desativou o dispositivo
+
+anti-adulteração. Ele convenceu os servidores da Denuvo de que uma cópia roubada era legítima. 3 dias, 650.000 cópias piratas. Doom, Rise of the Tomb Raider e outros jogos protegidos pelo Denuvo. A Denuvo
+
+corrigiu o problema, mas o princípio permaneceu. Os cracks modernos usam métodos para contornar o hipervisor, operando abaixo do próprio sistema operacional . A falha reside em um nível de privilégio inferior ao que a Denuvo consegue enxergar. A Denuvo fez perguntas ao processador. O hipervisor intercepta as perguntas, retorna respostas falsas e o Denuvo as aceita. O crack não está rodando dentro do
+
+jogo, ele está rodando por baixo do sistema operacional, observando o Denuvo de dentro, enganando-o perfeitamente. Em 2026, a 2K Games começou a obrigar os jogadores a verificarem suas licenças online a cada 14 dias. NBA 2K25, NBA 2K26, Marvel's Midnight Suns. Por que? Porque, segundo relatos, a proteção do Denuvo foi quebrada novamente. O jogo de gato e rato nunca
+
+termina. Olha, se este vídeo te fez querer realmente aprender a hackear, e não apenas assisti-lo, eu criei um lugar para isso. Bem-vindo à Academia de Hackers. Aqui estão alguns dos recursos aos quais você terá acesso instantâneo. O Manual de Campo OSINT ensina como encontrar qualquer pessoa online a partir de uma única foto, nome de usuário ou e-mail. O
+
+curso completo sobre como hackear sites e redes Wi-Fi . Aprenda a construir seu próprio agente de IA para hacking que funciona no seu computador 24 horas por dia, 7 dias por semana. O guia completo de hacking, do iniciante ao profissional . E as listas de dicas de hacking profissional que eu pessoalmente uso todos os dias. Por 9 dólares por mês, você obtém acesso vitalício, com esse preço fixo. Você
+
+pode conferir através do link na descrição. Eu prometi a vocês a parte do desenvolvedor. Eis o que realmente protege o software em 2026. Três coisas que funcionam. Primeiro, transfira o valor para o servidor. Se o seu software depende de
+
+processamento na nuvem, não há nada de relevante para explorar. É por isso que a maioria dos softwares SaaS modernos não tem problemas de pirataria. O produto não está instalado no computador do usuário. Eles não conseguem decifrar o que não têm. Em segundo lugar, use proteção contra adulteração, proteção anti-adulteração de verdade, Denuvo, VMProtect, Themida.
+
+Isso não torna o rachamento impossível. Eles fazem isso lentamente, tão lentamente que a maioria das vendas acontece antes do crack ser enviado. A Denuvo afirma que 59% da receita dos jogos é gerada nas primeiras duas semanas. Se você conseguir sobreviver por duas semanas, a rachadura não terá impacto financeiro. Terceiro, adicione uma marca d'água às suas criações. Os sistemas de proteção modernos incorporam
+
+identificadores únicos em cada cópia distribuída. Quando uma falha de segurança aparece, o desenvolvedor pode rastreá-la até a fonte, o responsável pelo vazamento, o revisor, o testador do acesso antecipado. Isso não impede que as rachaduras apareçam. Isso desencoraja as pessoas que fornecem os binários. O que não funciona?
+
+Verificações de licença simples, DRM personalizado, qualquer coisa desenvolvida internamente por uma pequena equipe. Os crackers fazem isso há 40 anos. Seu sprint de 2 semanas não vai detê-los.
