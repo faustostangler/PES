@@ -1,0 +1,512 @@
+---
+video_title: "TypeScript in Express – TypeScript Tutorial"
+video_id: bYgphDEWwvs
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=bYgphDEWwvs
+video_date: 2026-07-24T14:05:02+00:00
+video_description: |
+  Learn to build a fully typed Express server with TypeScript, covering routes, middleware, data handling, and more.
+  
+  ✏️ Study this course interactively on Scrimba: 
+  https://scrimba.com/learn-typescript-c03c?via=scrimbafcc 
+  
+  Code is available on the Scrimba course page for each lesson.
+  
+  TypeScript makes Express servers safer, more scalable, and easier to maintain. In this hands-on module, you'll go from setting up a TypeScript-powered Express environment to structuring routes, controllers, and middleware with full type safety. By the end of the video, you'll have the skills to build production-ready Express APIs with confidence.
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  ⭐️ Contents ⭐️
+  - 0:00:00 Intro to Express & TypeScript 
+  - 0:02:08 Setting up a Express and TypeScript Environment 
+  - 0:05:14 Set up your environment 
+  - 0:07:12 Setting up an Express & TypeScript project 
+  - 0:10:15 Running an Express & TypeScript project 
+  - 0:13:17 Typing Express data 
+  - 0:15:34 Restarting the Express server 
+  - 0:19:22 Typing the real data 
+  - 0:23:40 Request and Response types 
+  - 0:26:29 cors and TypeScript 
+  - 0:29:13 Typing the 404 catch-all 
+  - 0:31:19 Automating the server restart 
+  - 0:32:56 A more specific Response 
+  - 0:35:25 A more specific Request 
+  - 0:39:03 Non-existent IDs 
+  - 0:41:31 String query params 
+  - 0:44:43 An even more specific Request 
+  - 0:47:27 Boolean query params 
+  - 0:51:00 Number query params 
+  - 0:54:05 Separating concerns with Router 
+  - 0:59:15 Separating concerns with controllers 
+  - 1:03:13 Adding and typing middleware 
+  - 1:08:53 Your own middleware 
+  - 1:13:30 Congratulations!
+  
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+O Typescript torna os servidores Express mais seguros, mais escaláveis ​​e mais fáceis de manter. Neste tutorial prático, você aprenderá desde a configuração de um ambiente Express com TypeScript até a estruturação de rotas, controladores e middleware com total segurança de tipos. Ao final do curso, você terá as habilidades necessárias para criar APIs Express prontas para produção com confiança. Olá. Olá e bem-vindo(a) a este curso sobre Express com TypeScript. Vamos
+
+pegar o Express, um dos frameworks de back-end mais populares para Node.js, e combiná-lo com o TypeScript. Assim, conseguimos a velocidade de criação de APIs com a segurança da tipagem forte. Quando aprendi a usar o Express pela primeira vez, adorei a rapidez com que conseguia criar algo. Mas também passei muito tempo tentando adivinhar tipos e corrigindo erros bobos. Então, hoje quero
+
+mostrar a vocês como obter o melhor dos dois mundos. Expressa a velocidade aliada à confiabilidade do Typescript. Ao longo deste curso, você criará uma API simples, somente leitura, mas totalmente tipada, para abrigos de animais de estimação. Esta API pode retornar uma lista de animais de estimação, uma lista filtrada de animais de estimação ou um único animal de estimação com base no ID. Ao longo do curso, você aprenderá como configurar o ambiente, tipar seus aplicativos com conceitos específicos do Express, trabalhar com tipos personalizados para modelar dados reais, adicionar mais especificidade a solicitações e respostas, filtrar resultados com parâmetros de consulta de diferentes tipos e até mesmo adicionar seu próprio middleware totalmente tipado com TypeScript. Além disso, como sempre, muitos
+
+desafios ao longo do caminho para te manter alerta . Ao final deste curso, você não apenas terá uma API funcional, mas também um sólido modelo mental de como o Typescript e o Express trabalham juntos. Agora, uma observação rápida. Este curso pressupõe que você já conheça os conceitos básicos de Express e TypeScript. Se você é iniciante em qualquer uma dessas áreas , recomendo que primeiro dê uma olhada nos cursos do Scriber. Incluí os links para
+
+ambos aqui no slide, para que você possa acessá-los, dar uma olhada e depois voltar quando estiver pronto para se aprofundar. Meu nome é Rachel e serei sua professora neste curso sobre Express e TypeScript. Espero que você esteja tão interessado quanto eu em aprender algo novo. Vamos começar. Vamos instalar o Express e o TypeScript, bem como suas dependências de desenvolvimento. Isso começa exatamente como
+
+qualquer outro projeto Node, com `mpm init-y`. E agora temos um arquivo package.json bem familiar, vazio e pronto para usar. Vamos instalar algumas dependências. Estamos trabalhando com a Express, então é claro que essa será a nossa primeira parceria. Então, vamos instalar o
+
+Express. Após a instalação do Express, a pasta node_modules será exibida e o Express será listado como uma dependência no arquivo package.json. Isso é tudo o que precisamos para nos prepararmos para o transporte expresso. Mas agora, é hora de adicionar nosso TypeScript. Agora, o TypeScript é uma
+
+dependência de desenvolvimento, o que significa que só é necessário durante o desenvolvimento, não depois que o projeto é compilado e implantado. Então, vamos garantir que ele seja instalado com o script do tipo flag D. Outra dependência de desenvolvimento que precisaremos é uma biblioteca de tipos do Express. O Express em si é escrito em JavaScript puro. Portanto, o TypeScript não reconhece automaticamente aspectos específicos do Express, como requisição ou resposta. Então, também instalaremos o
+
+TypeScript Express como uma dependência de desenvolvimento. Agora, este pacote adiciona as definições de tipo para o Express, para que o TypeScript possa entender nosso código e nos fornecer o IntelliSense adequado. Agora que instalamos essas duas dependências de desenvolvimento relacionadas ao TypeScript, precisamos configurar o próprio TypeScript. E fazemos isso criando um arquivo tsconfig.json. Aqui na árvore de arquivos, vamos
+
+criar um novo arquivo e chamá-lo de tsconfig.json. Agora, em vez de escrevermos um arquivo de configuração enorme , podemos estender um já pronto. Existe um pacote mpm chamado tsconfig que vem com configurações padrão adequadas. Então, vamos instalá-lo como uma dependência de desenvolvimento. Mais uma vez,
+
+estou procurando o arquivo de configuração do TypeScript para o Node 20. Estou usando o Node 20 porque o editor Scriber usa a versão 20 no momento, e podemos verificar isso digitando ` node -v`. Na sua função de desenvolvedor, você precisará instalar o arquivo tsconfig que corresponde à sua versão do Node.js. Então, em nosso arquivo tsconfig.json,
+
+podemos usar esse novo pacote assim. Estende e especificaremos o nome. Portanto, o nó tsconfig é o 20 e o nome do arquivo é tsconfig.json. JSON. Agora que definimos nossas
+
+configurações padrão sensatas, também forneceremos mais algumas instruções próprias. E esses valores serão inseridos em um objeto de opções do compilador . A primeira opção é root dur ou diretório raiz, que vou definir como origem. Esta linha informa ao TypeScript que todos os nossos arquivos de código-fonte TypeScript ficarão dentro desta pasta de origem. Em seguida, temos o diretório externo, que definirei como dist.
+
+É aqui que o Typescript irá colocar os arquivos JavaScript compilados. Então a ideia é a seguinte. Escrevemos arquivos TypeScript dentro da pasta de origem e, quando compilados, eles são colocados na pasta "disc" como JavaScript, prontos para serem executados pelo Node. E é isso. Nosso ambiente está pronto para começar. Mas espero que vocês tenham
+
+assistido e prestado atenção, porque vocês vão configurar seu próprio ambiente Express e TypeScript no próximo Scrim. Te vejo lá. Bem-vindos de volta e vamos direto ao assunto. Neste exercício prático, você vai configurar seu próprio ambiente Express e TypeScript . Aqui no arquivo challenge.md, eu
+
+descrevi os passos para o seu desafio, que é configurar um ambiente Express e TypeScript. Primeiro você precisará inicializar o projeto Node. Em seguida, você precisará instalar o Express como uma dependência. Em seguida, instale o TypeScript e o Types Express como dependências de desenvolvimento. E, por fim, você precisará criar e configurar seu arquivo tsconfig.json.
+
+Se quiser relembrar, você sempre pode voltar ao treino anterior e assistir à configuração novamente. Caso contrário, mergulhe de cabeça e nos vemos do outro lado. Bem vindo de volta. Vamos percorrer o processo juntos. Primeiro, vamos inicializar o projeto Node com o comando `npm init-y`.
+
+Em seguida, instalaremos o Express como uma dependência padrão com o comando `npm install express`. Em seguida, temos nossas dependências de desenvolvimento, que são o TypeScript e o TypeScript Express. Depois disso, teremos que criar nosso arquivo tsconfig.json, o que farei aqui mesmo no terminal usando o comando touch tsconfig.json.
+
+E para não termos que escrever nosso próprio arquivo de configuração, vou instalar também a dependência de desenvolvimento `tsconfig node 20`. Agora que terminei de digitar no terminal , vou abrir o arquivo `tsconfig.json` e começar a digitar. Primeiro, vou estender o arquivo pré-fabricado, que é o tsconfig node 20 tsconfig.json.
+
+E então vou definir as opções do nosso compilador com o objeto de opções do compilador. E o primeiro é o nosso diretório raiz, que definirei como "source". E o segundo é o nosso diretório de saída, que vou definir como dist. E pronto. Uma base sólida é extremamente importante para qualquer projeto. Afinal, não podemos escrever nenhum
+
+código TypeScript em um projeto Express se não o tivermos configurado. No próximo script, vamos começar a escrever conteúdo Express de verdade e a inserir código TypeScript ao longo do texto. Te vejo lá e vamos criar isso juntos. Vamos acessar os arquivos e criar uma nova pasta. E vamos chamá-la de fonte. Dentro
+
+da pasta de origem, finalmente criaremos nosso primeiro arquivo express. Vamos criar um novo arquivo e chamá-lo de index.ts. Note que é TS, e não JS, porque estamos trabalhando com TypeScript. Agora, temos algumas coisas bem típicas do Express a caminho . Vamos ver se você se
+
+lembra de como criar um aplicativo Express bem simples. Eis o seu desafio. É possível criar um aplicativo Express básico usando JavaScript puro? Você precisará importar o Express e criar uma instância do aplicativo. Você precisa configurar a porta 8000 para escutar. Quando o servidor iniciar, você
+
+pode usar o console para exibir a mensagem "escutando na porta 8000". Não é necessário criar nenhum endpoint ou rota por enquanto. Experimente e nos vemos do outro lado. Bem vindo de volta. Quantas palavras-chave do Express você consegue se lembrar de cabeça? Isto
+
+é o que eu teria feito para criar um esqueleto de aplicativo Express super básico. Então, primeiro vou importar o Express do Express, é claro. Em seguida, vou criar a instância do aplicativo e configurá-la para ser uma instância do Express. Então, usando essa instância do aplicativo, vou escutar a porta 8000. E quando estiver em execução, vou registrar no console que está escutando na porta 8000.
+
+Agora, é claro, você pode querer separar essa porta 8000 em sua própria variável para poder controlá-la melhor. Então, você pode ter feito algo parecido com isso. A porta constante é igual a 8.000. Em vez de codificar 8.000 diretamente aqui, usaríamos a
+
+porta. E o mesmo acontece aqui embaixo. Em vez de codificar isso diretamente, você deve especificar a porta aqui. Mas a decisão é totalmente sua. E aqui está o nosso primeiro código de servidor Express, pronto para usar. Agora
+
+vamos adicionar um pouco de TypeScript. O que vamos fazer agora não é estritamente necessário, mas este é um curso de TypeScript e quanto mais você praticar digitando, mais natural isso se tornará. Aqui em cima, depois de importar o Express, vou importar um tipo chamado express do Express. Agora, onde você acha que poderíamos usar esse tipo express? E já que estamos falando de tipos, existe algum outro lugar neste arquivo onde poderíamos adicionar um tipo de retorno do tipo void? Eis um pequeno
+
+desafio. Adicione alguns tipos. Use o tipo express onde fizer sentido e adicione um tipo de retorno void onde também fizer sentido. Dê uma olhada por aí e nos vemos do outro lado. Bem vindo de volta. Vamos digitar o
+
+tipo do Express que acabamos de importar. Podemos usar isso para definir o tipo da variável `app` que contém nossa instância do Express. E quanto à segunda tarefa, essa função de retorno de chamada em app.listen tecnicamente não retorna nada. Assim, podemos digitar o valor de retorno com dois pontos e a opção `void`.
+
+Como eu disse antes, esses tipos não são estritamente necessários. Na verdade, eles já são tipados implicitamente pelo TypeScript . Mas quanto mais praticamos, mais natural se torna pensar em Typescript. É esse hábito que estamos construindo aqui. No próximo teste prático, vamos executar nosso projeto Express e TypeScript e vê-lo em ação.
+
+Nosso aplicativo Express foi escrito em TypeScript. Mas eis o problema. O Express não sabe o que fazer com arquivos TypeScript. Vamos ver o que acontece se tentarmos executá-lo diretamente com o comando `node source index.typescript`.
+
+E, como era de se esperar, recebemos um erro. Uma extensão de arquivo conhecida como TypeScript, o que faz sentido. O Node não entende TypeScript por padrão. Isso significa que precisamos compilar nosso TypeScript em JavaScript antes de podermos executá-lo. E, felizmente para nós, o TypeScript já vem com um compilador integrado. Para usá-lo, basta
+
+usar o npxtsc. Agora, isso executará o compilador. Ele analisa o arquivo tsconfig.json, realiza algumas compilações e gera arquivos JavaScript nesta pasta dist que acabou de aparecer. Lembre-se que, no nosso arquivo tsconfig, definimos o diretório de saída como dist. Agora, se tentarmos abrir a
+
+pasta dist, não veremos nada. Isso acontece porque o editor Scriber oculta os arquivos ali, assim como faz com os módulos do Node.js. Mas podemos verificar os arquivos no terminal. Aqui embaixo, no terminal, vamos digitar ls dist. E, com
+
+certeza, existe um arquivo index.js. Vamos dar uma olhada por dentro com o comando `cat dist index.js`. Bem, parece um pouco diferente do que escrevemos, mas não se preocupe.
+
+É exatamente assim que o JavaScript compilado se parece. Vai funcionar exatamente da mesma forma. Agora que temos esse arquivo JS, podemos executá-lo normalmente com o comando `node dist index.js`. E lá está ele, lá embaixo, no terminal.
+
+A mensagem indica que nosso servidor está escutando na porta 8000. Agora, se enviarmos uma requisição agora mesmo na aba de rede aqui em cima para HTTP localhost porta 8000, receberemos apenas uma mensagem de erro 404, informando que não foi possível obter a página HTML. Isso ocorre porque ainda não adicionamos nenhum ponto de extremidade. Então, vamos corrigir isso com um pequeno desafio aqui no arquivo index.ts.
+
+Eis o seu desafio. Envie uma resposta. Primeiro, adicione uma rota GET para o caminho raiz que responda com um objeto JSON vazio. Em seguida, compile o aplicativo com npx tsc. E, finalmente, execute o JavaScript compilado com o comando `node dist index.js`.
+
+Explore esse conhecimento específico e experimente . Bem vindo de volta. Eis como proceder. Vamos acessar a instância do aplicativo e criar uma rota GET. E este será o caminho raiz. E então, para o manipulador,
+
+temos o objeto `wreck`, o objeto `res`, e dentro dele, responderemos com JSON, um objeto vazio. Agora que escrevemos o código, podemos compilá-lo em TypeScript para JavaScript com o comando `npx tsc`. E depois disso, vamos executar a compilação do JavaScript com o comando ` node dist index.js`. Agora, na aba de rede, se enviarmos essa solicitação GET para o mesmo endpoint, obteremos exatamente o que esperamos: um objeto vazio. Muito
+
+bem, temos nossa estrutura Express funcionando, tudo conectado corretamente e com o bônus do TypeScript. No próximo teste simulado, vamos gerar alguns dados simples para nosso aplicativo, adicionar anotações de tipo e retorná-los da nossa API. Um objeto vazio não tem graça. Vamos modificar nosso aplicativo para que ele realmente retorne alguns dados para o cliente. Hora de colocar os dedos para trabalhar novamente com um desafio. E
+
+desta vez, vamos começar a incorporar um pouco de TypeScript. Seu desafio é responder com alguns dados. Crie um objeto chamado pet antes da rota raiz que inclua as seguintes propriedades. Nome, espécie, adotado e idade. Em seguida, digite o nome do seu novo objeto de estimação. Você pode fazer isso
+
+em linha ou usando um tipo personalizado. Em seguida , atualize sua rota raiz existente para retornar o objeto do animal de estimação. Você precisará adquirir conhecimentos básicos de JavaScript e TypeScript para superar este desafio. Não tenha pressa e não hesite em pesquisar se precisar. Bem vindo de volta. Vamos começar a coletar esses dados.
+
+Primeiro, vou criar uma variável para o animal de estimação, que será um objeto, e terá um nome, Rubik, uma espécie, que é gato, foi adotado, que é verdadeiro, e a idade, que é um número. Agora, precisamos digitar esse objeto de estimação. Existem duas maneiras de fazer isso. Podemos fazer isso em linha ou usando um tipo personalizado, mas vou mostrar primeiro como fazer em linha. Vamos adicionar dois pontos depois de "pet" e então abrir um novo objeto. Então, temos um nome, que é uma
+
+sequência de caracteres. Temos espécies, que também é uma sequência. Foi adotado, que é um valor booleano. E a idade, que é apenas um número. Isso funciona. Ou podemos aproveitar os
+
+tipos personalizados do TypeScript. Antes de criarmos a variável `pet`, vamos criar um tipo chamado ` pet`. E então vamos pegar todo esse objeto e colocá-lo aqui. E no lugar desses dois pontos, vamos simplesmente nos referir ao tipo de animal de estimação. Agora que temos isso, vamos responder à chamada da API com nosso novo objeto de animal de estimação tipado. Em vez
+
+desse objeto vazio, vamos nos livrar dele e, em seu lugar, usaremos " pet". Ok, agora que fizemos isso, vamos testar. Primeiro, vamos compilar o TypeScript em JavaScript executável com o npxtsc. Em seguida, executaremos o JavaScript compilado com o comando `node dist index.js`.
+
+E agora, se enviarmos a solicitação novamente, receberemos o objeto do animal de estimação completo de volta. Agora, você provavelmente está se perguntando: isso significa parar, compilar e reiniciar muitas vezes cada vez que fazemos uma alteração. No próximo Grim, aprenderemos sobre uma maneira que lida com esse processo um pouco melhor para nós. Bem vindo de volta. Depois daquele último treino, você provavelmente está se perguntando: será que eu realmente preciso digitar `npxtsc` e `node dist index.js` toda vez que eu fizer
+
+uma alteração? Bem, não. Nós, programadores, somos preguiçosos, e existem algumas maneiras de facilitar a vida. Uma dessas maneiras é aproveitar os scripts npm aqui no package.json. Agora, não precisaremos desse
+
+script de teste padrão para este curso, pois não faremos nenhum teste. Então, vou removê-lo e, em vez disso, adicionarei um script de compilação que compila TypeScript para JavaScript, que, como já sabemos, é o npxtsc. Agora, sempre que eu quiser compilar TypeScript para JavaScript, tudo o que preciso digitar é mpm run build. Mas provavelmente acabei digitando mais do que deveria. O comando nvx TSC tem apenas sete caracteres, comparado ao comando npm run build. Na realidade, na maioria das
+
+vezes, queremos compilar e executar o aplicativo de uma só vez. Em vez de digitar dois comandos, podemos encadeá-los em um único script. E esse é o seu desafio para este treino. E como o JSON não aceita comentários, vou adicionar o texto do seu desafio assim. Seu desafio é criar um script de inicialização que execute o compilador TypeScript e, em seguida, execute o aplicativo compilado em dist index.js. Experimente
+
+. Bem vindo de volta. Vamos adicionar um script de inicialização. Vamos começar com o nome do roteiro, que é "start". Agora, a primeira coisa que queremos que nosso script faça é compilar com o mpxtsc.
+
+E então temos o nosso duplo amperando, que aguardará a conclusão da execução do primeiro comando. e então comece o próximo. E o próximo comando é, claro, node dist index.js. Agora, vamos nos livrar desse texto de desafio antes que o Node pense que ele realmente significa alguma coisa. Agora, antes de tentarmos
+
+executar o script, vamos fazer uma pequena alteração para que possamos vê-lo funcionando. De volta ao arquivo index.ts, é hora de exercitar esse músculo express mais uma vez. Seu desafio é responder com mais dados. Primeiro, renomeie `pet` para `pets` e, em seguida, altere ` pets` para ser uma matriz com dois ou mais objetos `pet`. Depois disso, você precisará ajustar
+
+o tipo de `pets`, que atualmente é um único objeto `pet`. E, por fim, altere o arquivo res.json para enviar de volta nossa nova variável de animais de estimação. Experimente e nos vemos do outro lado. Muito bem , vamos lá. Primeiro,
+
+vamos mudar "pet" para "pets", para que a variável descreva com precisão o conteúdo que ela está prestes a apresentar. Em seguida, vamos envolver o objeto pet existente em colchetes, o que o transformará em uma matriz de objetos. E eu só vou dar uma limpada aqui. E agora vou adicionar mais um animal de estimação com o nome de Pickle, da raça cachorro, com o valor booleano "adotado" definido como falso e com cinco anos de idade. E, claro, o TypeScript agora está muito insatisfeito porque não se trata mais de um único tipo de animal de estimação. Para remediar isso,
+
+basta adicionar alguns colchetes após o tipo do nosso animal de estimação para indicar que agora se trata de uma matriz de animais de estimação. E, finalmente, aqui embaixo, vamos alterar o arquivo res.json para pets. Legal. Agora podemos testar nosso novo script com o comando `npm run start`. Você verá
+
+os comandos encadeados sendo executados. Primeiro, o código será compilado e, em seguida, o Node.js será usado para executar o arquivo JavaScript compilado. Obtemos a escuta na porta 8000. E se enviarmos essa solicitação na aba de rede, obteremos nossa lista de animais de estimação. Muito
+
+melhor. Isso já economiza várias teclas digitadas e mantém nossa rotina consistente com outros projetos Node.js. Ok, já começamos com alguns exemplos de animais de estimação. No próximo teste simulado, carregaremos o conjunto de dados reais para este projeto. E é
+
+melhor você preparar seus dedos, porque vem bastante coisa para digitar pela frente. Antes de nos aprofundarmos no Express e no TypeScript, vamos organizar um pouco o nosso projeto . Neste momento, o arquivo index.ts está fazendo tudo. Está configurando o aplicativo.
+
+Está definindo o tipo. Está armazenando os dados. E está gerenciando as rotas, mesmo que tenhamos apenas uma no momento. Mas isso vai se complicar muito rapidamente. Então, vamos reorganizar um pouco as coisas. Especificamente, os dados. Isso lhe
+
+parecerá bastante familiar se você fez o curso expresso aqui no Scriber. Vamos colocar nossos dados em um diretório e arquivo próprios. Dentro da raiz do projeto, que é a pasta "source", vamos criar uma nova pasta e chamá-la de "data". E dentro dessa pasta de dados, vamos criar um novo arquivo chamado pets.ts.
+
+De volta ao arquivo index.ts, vamos recortar tudo, desde o tipo de animal de estimação até o final do array de animais de estimação. E vamos colocá-lo aqui em pets.ts. Agora, ainda precisamos acessar esse array de animais de estimação de volta no arquivo index.ts. ts. Então vamos garantir que
+
+exportemos daqui. Então, de volta ao arquivo index.ts, podemos importá-lo assim. Importe animais de estimação da Dada Pets. Agora vamos recompilar e reiniciar o servidor apenas para verificar com o comando `mpm run start`. Tudo
+
+parece bem por aqui. Vamos tentar enviar uma solicitação. E por aqui também está tudo bem. Agora vamos voltar ao pets.ts. É
+
+aqui que vou colar os dados reais que usaremos neste projeto. Agora temos uma variedade de objetos de animais de estimação com muito mais propriedades. Algumas das novas propriedades são identificação, raça, data de entrada, prontuário médico, que em si já é um objeto, e foto. Como você pode ver, o nosso tipo de animal de estimação original já não se encaixa. E você já pode ver uma série de erros do TypeScript. Então, aqui está o seu
+
+desafio: corrigir o tipo de animal de estimação. Observe os objetos de estimação e anote suas propriedades. Em seguida, atualize o tipo de animal de estimação para que corresponda e decida quais campos devem ser opcionais. Para isso, você precisará comparar o animal de estimação número um com o animal de estimação número dois e verificar quais características eles possuem. Você perceberá que os erros do TypeScript o acompanharão ao longo do processo, e poderá usá-los como guia. Dedique um
+
+tempo a isso e certifique-se de que o tipo de animal de estimação que você alterou se encaixa corretamente no conteúdo que temos aqui. Bem vindo de volta. Vamos analisar cada um deles individualmente, usando o ID do animal de estimação 1 como referência. Então, temos a primeira identificação. Agora o ID é um número. Em seguida, temos o nome e a
+
+espécie, seguidos da raça. Agora, raça também é um fator importante. O próximo dado a ser analisado é a idade. Então, vou aproveitar esta oportunidade para aumentar a idade aqui. E então temos o booleano adotado. E depois disso temos a
+
+data de admissão, que é uma data. Descendo um pouco a página, encontramos o prontuário médico, que em si já é um objeto. Então faremos isso aqui. Dentro do objeto temos "vacinações", que é uma matriz de strings. Em seguida, temos o peso em quilos, que é um número, e o ID do microchip, que, se observarmos o ID 1, é nulo. Então vamos colocar isso aqui
+
+por enquanto. Após o prontuário médico, temos a foto, que é uma sequência de caracteres. Então, aqui está a sequência de fotos e, para que possamos comparar, vou remover o texto do desafio agora. Ok, isso funciona para o animal de estimação com ID um, mas não funciona para o animal de estimação com ID dois, e há dois motivos para isso. Milo tem uma data de adoção e o ID do seu microchip é, na verdade, uma sequência de caracteres. Então vamos adicionar ambos
+
+ao nosso tipo de animal de estimação. Após a data de admissão, adicionaremos a data de adoção, que é uma data. Mas, como você pode ver imediatamente, nosso animal de estimação com ID um está muito infeliz porque não possui uma data de adoção registrada. Então, em nosso tipo de animal de estimação personalizado, vamos garantir que a data de adoção seja opcional, adicionando um ponto de interrogação. Em seguida, chegaremos ao ID do microchip e, após o valor nulo, adicionaremos uma união. E também diremos
+
+que poderia ser uma sequência de caracteres. E agora nosso animal de estimação corresponde exatamente aos dados com os quais estamos trabalhando. Vamos garantir que não quebramos nada executando o comando ` mpm run start`, acessando a aba de rede e enviando nossa solicitação GET usual . E agora estamos preparando nossos dados reais de abrigos para animais de estimação. No próximo treino, vamos nos concentrar em algo novo. Digitando nossos objetos de requisição e
+
+resposta Express. Te vejo lá. Agora que temos um aplicativo simples em execução e facilitamos a recompilação e execução, vamos finalmente começar a digitar algumas coisas específicas do Express. Você talvez se lembre de uma simulação anterior em que digitamos o próprio aplicativo Express usando o próprio Express. Isso foi apenas o começo.
+
+Você provavelmente já percebeu que o TypeScript está sinalizando alguns erros em `w` e `res` para o nosso manipulador de rotas aqui embaixo. E se você passar o cursor sobre eles, perceberá que o TypeScript atribuiu a eles o tipo "any". Isso acontece porque, no momento, o TypeScript não sabe o que são esses objetos. Ele simplesmente os vê como parâmetros sem tipo definido. E sabemos que o Typescript não é fã de nenhum, porque isso basicamente descarta todo o propósito de se ter um sistema de tipos. Então vamos resolver isso.
+
+Aqui no início do arquivo, onde já importamos o tipo `express`, vamos também importar os tipos `request` e ` response`. Solicitação e resposta. E agora é a sua vez. Seu desafio é usar os tipos de solicitação e resposta recém-importados para definir os parâmetros rack e res . Bem, ainda não falamos explicitamente sobre isso, mas você pode descobrir observando como digitamos o aplicativo Express anteriormente. É a mesma ideia.
+
+Basta aplicar os tipos diretamente aos parâmetros w e res. Vá em frente. Bem vindo de volta. A solução aqui é bastante simples. Já importamos os tipos de que precisamos. Agora
+
+é só uma questão de usá-los. Para o primeiro parâmetro w, adicionaremos o tipo de solicitação. E para o segundo parâmetro de res, adicionaremos o tipo de resposta. E é isso. Não é nada muito extravagante. Mas agora o TypeScript
+
+entende exatamente o que esses objetos são. Isso significa que, se tentarmos usar uma propriedade que não existe em `w` ou `res`, o TypeScript detectará isso imediatamente. Se você já trabalhou com TypeScript, deve saber que podemos ser ainda mais específicos com esses tipos de requisição e resposta . E isso porque são tipos genéricos. Nem todas as requisições têm os mesmos parâmetros ou corpo, e nem todas as respostas enviam o mesmo tipo de dados. Chegaremos lá em breve, em alguns
+
+treinos. Mas já que estamos aqui, vamos adicionar também um tipo de retorno. Embora essa função envie uma resposta JSON, o próprio retorno de chamada não está retornando nada. Então, vamos digitá-lo explicitamente com dois pontos vazio. Agora vamos apenas garantir que nada esteja quebrado. Vamos salvar e
+
+executar com npm run start. E enviaremos uma solicitação GET. E tudo está bem. E esse é o nosso destroço e a nossa reconstrução. Pode parecer um pequeno passo, mas é uma grande vitória. O
+
+TypeScript agora entende exatamente o que esses objetos são. E preparamos o terreno para uma digitação mais explícita posteriormente. Na próxima versão do Grim, tornaremos nossa API um pouco mais realista adicionando núcleos. E, claro, também veremos como integrar o TypeScript a isso . Bem vindo de volta. Vamos tornar nosso aplicativo um
+
+pouco mais realista adicionando corores, que significa compartilhamento de recursos de origem cruzada. Você talvez já saiba disso do curso Express. É um pacote que ajuda nosso servidor a lidar com solicitações provenientes de outro domínio. Usar `cause` é quase idêntico a como faríamos no Express padrão, mas com TypeScript, há apenas uma etapa extra. Primeiro, vamos instalar as chamadas. Então, o
+
+comando npm install é executado. E então vamos importá- lo para o nosso arquivo index.ts. Importar chamadas do curso. E assim como você provavelmente já viu em muitos projetos Express padrão, nós o usaremos com o aplicativo, é claro. Mas se tentarmos executar o servidor
+
+agora, receberemos um erro do TypeScript. Portanto, o comando `npm run start` não conseguiu encontrar um arquivo de declaração para o módulo `course`. Isso ocorre porque Coors é um pacote JavaScript simples e o TypeScript não sabe quais tipos ele deve ter. Então, o que podemos fazer? Vou parar por aqui e deixar vocês refletirem sobre isso como desenvolvedores. Se você se deparasse com
+
+esse erro em uma situação real, quais medidas você tomaria? Talvez você possa fazer uma busca rápida no Google . Ou talvez você prefira perguntar ao seu assistente de IA favorito. Ou você pode simplesmente ler a mensagem de erro inteira com um pouco mais de atenção. De qualquer forma, aqui está o seu desafio.
+
+Descubra por que o Corors está causando um erro e corrija-o. Certo, vamos resolver isso. A solução aqui é, na verdade, instalar um pacote de tipos para o Cause, assim como fizemos com o Express no início deste curso. Se você observar a mensagem de erro com mais atenção, ela nos dá uma pista. Queremos instalar tipos de causa. Então, vamos instalá-
+
+lo como uma dependência de desenvolvimento. cursos de tipos. Agora, vamos tentar executar o aplicativo novamente com o comando `mpm run start` e não deve haver erros. E se enviarmos uma solicitação GET rápida, nada muda e tudo continua bem. Este é um ótimo exemplo de como o Typescript às vezes adiciona uma etapa extra a um código Express que, de outra forma, seria simples . Muitos pacotes JavaScript
+
+não incluem tipos por padrão. Então, utilizamos versões mantidas pela comunidade. As que vimos até agora no curso, Types Express e Typesc, são ambas do repositório definitely typed . Incluí o link para esta imagem no slide para que você possa conferir o GitHub deles, caso queira dar uma olhada. Pode parecer um passo extra no início, mas é parte do que torna o Typescript tão poderoso. Isso incentiva a consistência
+
+e ajuda a detectar problemas precocemente. A boa notícia é que o Typescript geralmente indica a direção certa em suas mensagens de erro. E se não funcionar, a internet é sua amiga. No próximo treino, vamos configurar um mecanismo de redirecionamento 404 para que nossa API possa lidar com rotas desconhecidas de forma adequada. E, claro, também vamos digitar isso.
+
+Outra coisa que toda API do mundo real precisa é de uma rota 404 genérica. Essa rota é executada sempre que a solicitação do cliente não corresponde a nenhum dos nossos endpoints e deve retornar um erro 404. Vamos lançar você direto a um desafio: criar uma exceção 404 que recupere todos os dados após a rota raiz. Não se esqueça de digitar e anotar tudo. E existem três lugares para fazer isso. Se
+
+você precisar de uma pequena ajuda para entender como geralmente se parece uma rota genérica de erro 404, confira o hint.md. Experimente e nos vemos do outro lado. Bem vindo de volta. Esta é a aparência da solução . Estamos usando um aplicativo para
+
+capturar a cena. Dentro dele, primeiro criaremos nosso manipulador. O primeiro parâmetro de retorno de chamada é w, que vamos digitar como request. E o segundo é res, que digitaremos como resposta. Também vamos adicionar o tipo de retorno `void` à própria função, já que ela não retorna nada diretamente. Ele simplesmente envia
+
+uma resposta. E quanto à resposta, começaremos com res. E vamos definir o status como 404 porque não conseguimos encontrar uma rota correspondente. E também enviaremos de volta um JSON, que é uma mensagem informando que nenhuma rota foi encontrada. E agora podemos testá-lo. Vamos executar o comando:
+
+mpm run start. Não há erros aqui. Então, aqui na aba de rede, vamos tentar acessar uma rota completamente inexistente. Vamos fazer 1, 2, 3. E sim, recebemos o status 404 com a mensagem de que nenhuma rota foi encontrada.
+
+Exatamente como esperado. Com a nossa correção do erro 404 implementada, nossa API agora possui uma rede de segurança adequada. Cada solicitação é tratada por uma de nossas rotas ou pelo código de exceção 404. Agora, estamos quase na metade do percurso, e você provavelmente já está se irritando com alguma coisa. Temos que parar, recompilar e reiniciar o servidor sempre que fazemos uma alteração. Claro,
+
+agora é mais fácil com o comando `mpm run start`, mas tenho certeza de que está se tornando repetitivo. Dentro do Scriber, porém, temos um pouco de magia à nossa espera. No próximo treino, vamos ativar essa função para que o servidor reinicie automaticamente sempre que salvarmos o jogo. Olá novamente. Tenho certeza de que você já está um pouco cansado de reiniciar o servidor manualmente toda vez que fazemos uma alteração, mesmo que tenhamos escrito um script mais curto para isso. Então, vamos facilitar ainda mais a nossa vida
+
+com este pequeno scrim aqui no Scribba. Aqui embaixo, ao lado do terminal e do console, temos algo chamado " runner". Configurei clicando neste ícone de engrenagem no canto direito. Você também pode clicar para ver como eu configurei. Mas como essa caixa de diálogo que aparece não é gravada no Scriber, adicionei um slide para mostrar como ela aparece. Eis como eu configurei
+
+. Sempre que o scrim é carregado, ele executa o comando " mpm install" e, em seguida, executa o comando "mpm run start". E sempre que salvarmos um arquivo, o comando ` mpm run start` será executado automaticamente novamente, que é exatamente o que queremos. Esperei até agora para ligar isso porque queria muito que você entendesse o que está acontecendo nos bastidores. O processo de compilar TypeScript e executar o código JavaScript resultante. Se alterarmos nossa
+
+mensagem de erro 404 para algo diferente, digamos, "nenhum ponto de extremidade encontrado", e salvarmos, você verá que o executor já está fazendo seu trabalho e podemos ir diretamente para a guia de rede, enviar uma solicitação e veremos a mensagem atualizada "nenhum ponto de extremidade encontrado". Isso é algo específico do editor Scriber, então você não precisa configurar manualmente. A partir deste treino, o modo de corrida estará habilitado. Você precisará usar esta aba do runner para verificar coisas que normalmente veria no terminal, como informações que você registrou no console. De resto, tudo funciona exatamente da mesma maneira. Você simplesmente não precisa
+
+mais reiniciar o servidor manualmente. Muito bem, por hoje é só. Vamos voltar a construir nosso aplicativo. Bem-vindos à segunda parte do curso. Agora vamos falar de coisas super diretas. Mencionei, há uns quatro
+
+treinos atrás, que podemos ser um pouco mais específicos quanto ao tipo de resposta. E agora é hora de analisar mais a fundo. O tipo de resposta é, na verdade, genérico. E aqui está a descrição de como isso realmente se parece . Parece muita coisa, mas o principal que nos interessa é este primeiro parâmetro genérico, res body igual a any.
+
+Esta é a opção que nos permite especificar o tipo do corpo da resposta. Ao configurá- lo, podemos dizer ao Typescript exatamente qual deve ser o formato do nosso JSON e sermos extremamente específicos em nossas respostas. Então, vou mostrar para vocês com este código 404 genérico aqui embaixo. Após a resposta, vou abrir alguns suportes angulares. E lá dentro, vou especificar o tipo do corpo da resposta. Nesse caso, trata-se
+
+apenas de um objeto JSON com uma string de mensagem. Portanto, dentro dos colchetes angulares, abriremos a mensagem do objeto JSON. E o tipo de mensagem é string. E isso dirá ao Typescript exatamente o que devemos enviar de volta com a resposta JSON. Agora tente o mesmo com este ponto final do caminho raiz. Torne o
+
+tipo de resposta mais específico para esta rota raiz. Experimente e já te falo . Bem vindo de volta. Se pensarmos no que nossa rota raiz está retornando, são todos os animais de estimação dos nossos dados, que é uma matriz de animais de estimação. Isso significa que nosso tipo de resposta deve ser uma matriz do tipo de animal de estimação personalizado que atualmente reside neste arquivo de dados pets.ts. Primeiro, precisamos
+
+garantir que nosso animal de estimação seja exportado deste arquivo para que possamos usá-lo novamente no índice. Então, exporte o tipo de animal de estimação. E agora, de volta ao índice, vamos importá-lo no início do arquivo. Faremos isso depois dos animais de estimação. Importar tipo de animal de estimação dos dados de animais de estimação. E agora
+
+podemos usá-lo aqui embaixo na resposta. Então, vou abrir alguns colchetes angulares e o tipo que estamos enviando de volta é uma matriz do tipo animal de estimação. Moleza. O corredor não cometeu nenhum erro. Então, vamos tentar enviar uma solicitação para essa rota raiz. E tudo está bem. Agora, a
+
+resposta deste endpoint está tipada. O pedido não é muito interessante. Como você pode ver aqui, não está chegando nada. Portanto, o tipo de solicitação genérico resolverá o problema. Mas no próximo treino, vamos criar uma nova rota com uma solicitação um pouco mais interessante e veremos como digitá-la corretamente.
+
+No momento, temos apenas um endpoint que retorna a lista completa de animais de estimação, que é um dos endpoints de API mais comuns . Outra prática muito comum é retornar um registro pelo seu ID. E é isso que vamos construir a seguir, com o TypeScript integrado em toda a sua estrutura. Vou começar criando a estrutura do manipulador de rotas após a rota do caminho raiz. E aqui está. Você deve se lembrar do
+
+Express que esses dois pontos significam que tudo o que vier depois deles, como este ID, é um parâmetro dinâmico. Estamos esperando uma solicitação semelhante a esta: localhost 8000 e, em seguida, um ID como "um", onde "um" se torna o valor desse ID que especificamos na rota. E o seu desafio é completar o percurso de identificação. Você terá que digitar wreck res e o valor de retorno da função de retorno. Precisaremos extrair o ID dos parâmetros do caminho. Encontre
+
+o animal de estimação que corresponde a esse ID e envie-o de volta com o JSON de resposta. Não se preocupe com IDs inexistentes ou outros detalhes do TypeScript que eu ainda não tenha mencionado. Agora, após a primeira etapa, que se concentra principalmente em TypeScript, este desafio exigirá seu conhecimento de Express e JavaScript. Não se apresse, nos vemos do outro lado. Bem vindo de volta. Como foi sua experiência com o
+
+desafio? É assim que podemos proceder . Primeiro, vamos digitar wreck e res. Então, solicitação para w e resposta para res. E também vamos digitar o valor de retorno da função de retorno, que é void. Dentro
+
+da função, vou extrair o parâmetro ID da requisição por meio de uma desestruturação. Portanto, const id é igual a wc params. Em seguida, utilizo um pouco de JavaScript puro para encontrar o animal de estimação com o ID correspondente. Para isso, utilizo o método find. Portanto, const pet, que idealmente conterá um objeto pet. Vamos examinar
+
+a lista de animais de estimação e vamos encontrar algo. Para cada objeto na matriz pets, vou chamá-lo de pet. E para cada animal de estimação, vamos comparar seu ID, que será convertido em uma string, e tentar verificar se é o mesmo que o ID proveniente dos parâmetros. Isso retornará o objeto de animal de estimação correspondente ou algo indefinido, mas lidaremos com o valor indefinido mais tarde. E, finalmente, enviaremos o objeto do animal de estimação encontrado de volta com a resposta usando o comando `res JSON pet`. Vamos
+
+testar isso rapidamente enviando uma solicitação para o animal de estimação com o ID um. E isso deve devolver Bella, a cadela, e nada mais. Certo, já entendemos. Agora, vamos começar a digitar. No momento, o TypeScript ainda está tratando esse ID dos parâmetros de destruição de forma um tanto imprecisa. Podemos ser um
+
+pouco mais explícitos no pedido. Assim como a resposta, a solicitação é um tipo genérico. E aqui está o formato que você verá na documentação. Parece bastante movimentado, mais movimentado do que o esperado. Mas, para esta rota, na verdade, só nos interessa o primeiro parâmetro, P, que é o dicionário de parâmetros principais . Podemos informar ao Typescript que
+
+nosso objeto de parâmetros possui uma única chave, ID, que é uma string. A pedido, abriremos os suportes angulares. Vamos especificar nosso objeto de parâmetros, que possui um ID, e esse ID é uma string. Agora, esse ID está tipado com segurança como uma string. Vitória fácil.
+
+Vamos enviar uma solicitação à API apenas para garantir que nada esteja quebrado. Vamos pegar o animal de estimação com identificação número três desta vez. E ficamos com o coelho Thumper, que não foi adotado. Criamos, então, uma nova rota de ID e tornamos nosso tipo de solicitação mais específico, descrevendo seus parâmetros de caminho. No próximo treino, vamos finalizar essa rota corretamente. Vamos lidar com
+
+IDs inválidos e aprimorar mais alguns detalhes do TypeScript. Bem vindo de volta. Da última vez, adicionamos uma rota de ID e trabalhamos com a solicitação genérica. Ainda há alguns detalhes a serem ajustados aqui. Estamos usando a função `find` para procurar um animal de estimação pelo ID, o que significa que devemos digitar tudo no callback, digitar a variável `pet` corretamente e lidar com o caso em que nenhum animal de estimação for encontrado.
+
+Aqui está um desafio para você que combina seu conhecimento de JavaScript puro, Express e TypeScript. Digite e complete todo o percurso de identificação. Você terá que digitar tudo na função de retorno de chamada de busca. Digite a variável do animal de estimação. Defina o que acontece se não encontrarmos um animal de estimação com o ID fornecido e, por fim, digite a resposta genérica.
+
+Este é certamente um desafio mais complexo, mas dê o seu melhor e lembre-se de que você pode levar o tempo que precisar. Te vejo daqui a pouco. Bem vindo de volta. Foi isso que eu fiz. Primeiro, vamos digitar tudo na função de retorno de chamada `find`. Este animal de estimação aqui é um objeto de estimação.
+
+Então, vamos colocá-lo entre colchetes e digitá-lo com o nosso tipo de animal de estimação personalizado. Agora, o valor retornado por esta função é um valor booleano. Então, dois pontos booleanos. Em seguida, voltaremos aqui e digitaremos a variável do animal de estimação. Mencionei no último scrim que esta função de busca retornará o objeto do animal de estimação ou algo indefinido. Então, aqui adicionaremos a
+
+anotação de tipo "pet", seguida de uma união e, por fim, "undefined" para abranger ambos os casos. Em seguida, vamos lidar com os dois casos de `pet`: quando ele está segurando um objeto `pet` e quando ele não está definido. Portanto, se `pet` estiver definido, ele estará contendo um objeto `pet`. Assim podemos mover o arquivo res.json para cá. Caso contrário,
+
+não encontramos nenhum animal de estimação para responder. Então, o status da resposta é 404 porque não encontramos nada, e há um JSON que é uma mensagem dizendo que não existe nenhum animal de estimação com esse ID. E finalmente agora sabemos o que estamos enviando de volta. Podemos lidar com a resposta de forma genérica. Após a resposta, abriremos alguns colchetes angulares. Sabemos que
+
+ou vamos enviar um animal de estimação de volta ou vamos enviar uma mensagem que é uma sequência de caracteres. Ok, tudo bem. Vamos testar na nossa aba de rede. Então, três ainda nos enviarão o coelho Tambor. Mas desta vez vamos tentar algo sem sentido. E desta
+
+vez não vamos receber nenhum animal de estimação com essa identificação. Isso confere à nossa rota de identificação um comportamento do mundo real . Parâmetros específicos, uma pesquisa digitada corretamente e um caminho 404 claro. Em seguida , vamos nos concentrar na parte de requisições e adicionar filtragem usando parâmetros de consulta. Olá novamente. Vamos voltar à
+
+nossa primeira rota, aquela que captura e responde com a lista completa de animais de estimação, que você pode ver aqui. Mas e se um usuário quiser ver apenas gatos ou apenas cachorros? Esse é um caso de uso muito comum em uma API do mundo real. Atualmente, as APIs geralmente permitem que os usuários filtrem dados usando parâmetros de consulta. Eis como ficaria . Temos o mesmo
+
+endpoint da API que vínhamos usando, localhost 8000, e então vamos adicionar um ponto de interrogação para iniciar a consulta. Em seguida, vem o nome de um parâmetro, como " espécie", seguido de um sinal de igual e, depois, o valor pelo qual estamos filtrando. Por exemplo, gato. Vamos então configurar nossa rota para lidar com os parâmetros de consulta, filtrar os resultados e enviar a lista filtrada de volta . E esse será o seu desafio. Filtre os animais de estimação por
+
+espécie de entrada e responda com a lista filtrada. Você precisa obter o parâmetro de consulta da espécie , criar uma variável para armazenar os animais de estimação filtrados, filtrar os animais de estimação por esse parâmetro e enviar os dados filtrados de volta via res.json. Se você já fez o curso expresso, saberá exatamente o que fazer aqui. Caso contrário, você pode conferir o curso expresso ou fazer uma busca rápida no Google. Vai em
+
+frente, mas não tenha pressa e a gente se vê do outro lado. Bem vindo de volta. [Limpa a garganta] É assim que eu faria, baseado no curso Express do Scribbler. Primeiro, vamos extrair a consulta de espécies e o valor da consulta recre. E faremos isso desestruturando a consulta `species equals wreck`. Usaremos isso daqui a
+
+pouco. Em seguida, vamos criar uma nova variável chamada "pets filtrados" que terá o tipo de array "pets". Isso armazenará o valor inicial de todos os animais de estimação a partir de nossos dados. Agora os usuários não precisam mais fornecer o parâmetro de espécie. Portanto, devemos verificar se a espécie existe ou não com o comando `if species`. Agora, se a
+
+espécie existir, filtraremos essa nova lista de animais de estimação filtrados usando o prático método de filtro. Vamos começar escrevendo a sintaxe. Então, "pets filtrados" é igual a " pets filtrados filtro" e depois a função dentro dele. Aqui estamos filtrando cada animal de estimação dentro da matriz de animais de estimação filtrados, que é do tipo de animal de estimação. E essa função de retorno de chamada retornará um valor booleano. E quanto à
+
+lógica de filtragem em si, queremos verificar se a espécie de animal de estimação a ser filtrada corresponde à espécie da consulta também filtrada. E, finalmente, em vez de responder com todos os animais de estimação, vamos substituir isso pela nossa matriz de animais de estimação filtrada. Bem, isso é bastante simples, exceto por esse erro que apareceu no executor. O que escrevemos aqui normalmente funcionaria com o Vanilla Express. Mas como estamos usando TypeScript, recebemos este erro: a propriedade para converter para minúsculas não existe no tipo. E isso se refere ao
+
+valor da espécie que obtivemos da consulta. Para nós, isso é claramente uma string, mas para o Typescript, pode ser uma série de tipos diferentes, como podemos ver aqui no erro. Portanto, mais uma vez, é hora de sermos mais específicos com o tipo de solicitação que fazemos. E é exatamente isso que vamos abordar no próximo treino. No último scrim, configuramos um código Express padrão para filtrar nossos animais de estimação por um parâmetro de consulta como "espécie igual a gato".
+
+Mas ficamos com este erro do TypeScript. A propriedade para converter para minúsculas não existe no tipo. Vamos corrigir isso sendo um pouco mais específicos com a solicitação genérica aqui em cima. Eis como a solicitação genérica se parece novamente, mas desta vez precisamos observar apenas os quatro primeiros elementos. P para parâmetros, com os quais já trabalhamos, corpo da resposta, corpo da mensagem e consulta de destruição. Vamos analisá-los
+
+um por um de volta no editor. Vamos abrir esses colchetes angulares e começar a preencher os parâmetros para a solicitação genérica. O primeiro é o parâmetro, e já tivemos experiência com ele. Os parâmetros são para variáveis ​​de caminho, como o ID com o qual trabalhamos anteriormente. Nossa rota de caminho raiz não possui nenhuma, então usaremos um objeto vazio.
+
+O segundo slot é res body, que significa response body (corpo de resposta), o que pode parecer um pouco estranho aqui. Por que alguém que faz uma solicitação precisaria saber sobre a resposta? É principalmente para middleware avançado para nós. Vamos ignorar esse parâmetro fornecendo a palavra-chave "unknown". Basicamente, diz que não estamos usando o slot, mas também não devemos presumir nada. Outro que
+
+podemos ignorar por enquanto é o próximo, w body ou request body. Isso se aplica a solicitações POST, [ __ ] ou PATCH, quando o cliente envia dados para o servidor. Como estamos trabalhando apenas com rotas GET no momento, vamos pular essa parte também. E podemos fazer isso fornecendo um objeto vazio. E isso nos deixa com o último espaço, a consulta w. Agora, esta é a que nos interessa
+
+. Isso nos permite digitar os parâmetros da string de consulta, como "espécie igual a gato". Bem, este também é um objeto, mas desta vez teremos algum conteúdo. Aceitaremos uma chave de espécie opcional digitada como uma string. E quando salvamos e executamos o programa, ele faz o seu trabalho e podemos ver que não há erros. E se formos à
+
+aba de rede e enviarmos nossa solicitação com a espécie definida como gato, podemos ver isso em ação, com apenas gatos sendo retornados. Tem o Milo, que é um gato, a Luna, que é uma gata, a Willow, que é uma gata, e por aí vai. Vamos experimentar com "espécie" igual a "cachorro". E nós só temos cachorros. Agora, nossos comandos genéricos de requisição e resposta podem começar a ficar um pouco volumosos e a sair da página. Assim, podemos separá-los em
+
+suas próprias linhas. E isso tornará o texto um pouco mais legível. E faremos o mesmo com nossa rota de identificação aqui embaixo. Wreck em sua própria linha, res em sua própria linha e fechando-a. Então, agora temos nosso primeiro parâmetro de consulta tipado corretamente e funcionando como esperado. No
+
+próximo Grim, adicionaremos um parâmetro de consulta booleano e aprenderemos como digitá-lo. Configuramos nosso primeiro parâmetro de consulta, species, como uma string. Agora, vamos tentar um tipo diferente, um booleano. Vamos adicionar a opção "adotado" aos nossos resultados de busca para que os usuários possam filtrar animais de estimação que já foram adotados ou que ainda estão procurando um lar. Vou começar por organizar o nosso tipo de pedido aqui. Está ficando um
+
+pouco longo. Então, vou transformar o parâmetro de consulta em um tipo próprio. Isso só vai ficar cada vez mais longo à medida que adicionarmos mais consultas. Então, aqui em cima , vou criar um novo tipo chamado "parâmetros de consulta do pet" e remover tudo da seção de parâmetros de consulta aqui. Portanto, "espécie" é uma string e é opcional. E em vez de estar aqui,
+
+vou usar os parâmetros de consulta do pet que acabamos de criar aqui em cima. E agora podemos adicionar mais consultas sem tornar a linha ilegível. E por falar em adicionar mais consultas, eis que surge um desafio. Permitir que os usuários filtrem pela propriedade adotada. Primeiro, você precisará atualizar os parâmetros de consulta do pet e, em seguida, obter o parâmetro adotado da consulta wc, assim como fizemos aqui, e filtrar a matriz filter pets com base em seu valor.
+
+Lembre-se que as strings de consulta são strings, mas o valor adotado é booleano. Então, o que podemos fazer? Experimente e use nosso filtro de espécies existente como guia. Você verá que é muito semelhante, com apenas algumas pequenas alterações. Bem vindo de volta. Eis o que podemos fazer.
+
+Primeiro, vou atualizar os parâmetros de consulta de animais de estimação para incluir a propriedade opcional "adotado" . Embora isso seja comparado a um valor booleano mais tarde, precisamos lembrar que as strings de consulta são strings. Isso funcionaria, mas você pode ir além. Sim, a string de consulta adotada será uma string, mas ela só poderá ser uma de duas strings: verdadeira ou falsa. Então, podemos dar esse passo extra e usar tanto tipos literais quanto um tipo de união para dizer verdadeiro ou falso. Em seguida,
+
+vamos pegar o valor adotado de w.query aqui embaixo. E vou acrescentar isso depois de "espécies adotadas". Em seguida, precisaremos escrever um novo bloco "if" semelhante ao que já fizemos para as espécies. Na verdade, vou pegar uma cópia do bloco de espécies e simplesmente substituir as informações . Primeiro, queremos verificar se a opção "adotado"
+
+existe. A estrutura do método de filtro não muda, mas alteraremos a lógica de filtragem. Queremos comparar os animais de estimação adotados a partir dos nossos dados originais com os animais adotados a partir da nossa consulta de solicitação. Agora, o valor "animal de estimação adotado" é booleano e queremos que a string de consulta, "verdadeiro" ou "falso", também seja booleana para que possam ser comparadas. Para fazer isso, basta pausá-lo usando o parâmetro JSON.
+
+E é isso. Agora deve estar tudo bem . Acabei de salvar. Então, vamos dar uma olhada na aba de rede. Agora, se `adopted` for igual a `false`, isso deverá retornar todos os animais de estimação que ainda não foram adotados. Podemos
+
+ver que Bella adotou o falso, Thumper adotou o falso, Luna adotou o falso, e vamos tentar o oposto. Adotado é igual a verdadeiro. E temos o Oscar, que foi adotado, o Rocky, que também foi adotado, etc. E, devido à forma como escrevemos nossa filtragem, podemos, na verdade, adicionar várias consultas. Se eu quiser filtrar apenas os gatos que precisam ser adotados, posso usar `adopted = false` e ​​`species = cat`. E nos devolvem as
+
+opções de Luna ou Willow, ambas gatas que ainda não foram adotadas. Ótimo trabalho. Em seguida, vamos adicionar mais um parâmetro de consulta com um tipo diferente, apenas para que você possa ver como esse padrão se comporta em larga escala. Te vejo lá . Já experimentamos parâmetros de consulta do tipo string, como "species", e parâmetros booleanos, como "adopted". Agora vamos brincar com os
+
+números. Vamos permitir que os usuários filtrem os animais de estimação por idade. Mas, em um contexto real, perguntar a idade exata não é muito útil . Em vez disso, as pessoas geralmente procuram um animal de estimação que tenha menos de uma certa idade ou mais de uma certa idade. Então, vamos adicionar dois parâmetros de consulta, min.
+
+Agora, a idade máxima, como por exemplo, idade máxima igual a 10, deve retornar animais de estimação com 10 anos ou menos. E minage, assim como minage é igual a 2, deve responder com animais de estimação que tenham 2 anos ou mais. E se usarmos ambos, tipo [bufa] idade máxima igual a 10 e idade mínima igual a 2, devemos obter animais de estimação que estejam entre 2 e 10 inclusive. Agora, este desafio é muito semelhante ao anterior . Então, vou apresentar o desafio inteiro aqui, sem nenhuma explicação passo a passo.
+
+Agora tudo depende de você. Portanto, seu desafio é permitir que os usuários pesquisem por idade mínima e idade máxima. E deixei algumas para você testar . Veja como adicionamos o filtro adotado no último treino. O que você precisa fazer aqui é muito semelhante. Não se apresse e nos vemos
+
+do outro lado. Bem vindo de volta. Como foi? Vamos analisar isso juntos. Primeiro, vamos subir aqui e atualizar os parâmetros de consulta do animal de estimação . Vamos adicionar a idade mínima,
+
+que é uma string, e a idade máxima, que também é uma string. E observe que ambas são opcionais. E então desceremos aqui e desestruturaremos a idade mínima e máxima, juntamente com as espécies e os adotados. Idade mínima e idade máxima. Em seguida, vamos descer ainda mais e adicionar os dois filtros. Vamos
+
+pegar uma cópia do bloco adotado e fazer algumas alterações. Vamos substituir " adopted" por "minage". E, descendo um pouco, vamos trocar "animal de estimação adotado" por " idade do animal de estimação", porque estamos analisando a idade. E em vez de analisar "adopted", vamos passar a idade mínima de uma string para um número. Em vez de procurar uma comparação direta de igualdade, vamos verificar se a idade do animal de estimação é maior ou igual à idade mínima pausada. E quanto à idade máxima, podemos
+
+pegar uma cópia do bloco de idade mínima que acabamos de escrever. Vamos mudar a idade mínima para idade máxima. E aqui também. E vamos inverter a comparação. Em vez de " maior ou igual a", agora é "menor ou igual a". Vamos economizar e
+
+deixar o programa fazer o seu trabalho. E então vamos dar uma olhada aqui na rede. Vamos usar os dois testes que eu coloquei aqui. Portanto, este primeiro deveria retornar apenas Willow, o que de fato acontece. E o segundo deveria retornar apenas Rocky, o que de fato acontece. Perfeito. Já
+
+abordamos os parâmetros de consulta dos três tipos principais: strings, booleanos e números. E o TypeScript esteve presente em cada etapa desse processo. Mas o nosso arquivo index.ts está começando a ficar um pouco pesado. Então, no próximo treino, vamos mudar um pouco o foco e separar nossas preocupações com o Express Router para ver como o Typescript se encaixa nisso .
+
+Bem vindo de volta. Nosso aplicativo está funcionando bem agora, mas você provavelmente pode imaginar que, à medida que continuarmos adicionando mais recursos, o arquivo index.ts ficará bastante confuso rapidamente. Então, antes de prosseguirmos, vamos dedicar um tempo para refatorar nosso código em uma estrutura mais modular . Isso é uma prática bastante comum em serviços expressos. Vamos separar nossas
+
+rotas e controladores e depois conectar tudo com o roteador Express. E, mais importante ainda, vamos garantir que toda a tipagem TypeScript que fizemos até agora seja mantida . Então, primeiro, na pasta de origem, vou criar nossa pasta de rotas e vou chamá-la de rotas. Dentro disso, criaremos nosso arquivo de rotas. Vamos chamar isso de rotas de animais de estimação. E
+
+agora é só uma questão de refatoração. Agora, como primeiro passo, vamos começar movendo tudo para o arquivo de rotas . Após verificar se tudo ainda funciona, vamos extrair os manipuladores de rotas para o arquivo de controladores no próximo treino. Então, de volta ao arquivo index.ts, vou extrair tudo, desde o tipo de parâmetro de consulta do animal de estimação até o final da nossa rota de ID. E vou colocar
+
+aqui em pets routes.ts. E, claro, há muitos erros. Então, vamos lidar com eles. Primeiro, vou abordar esse erro no aplicativo.
+
+Antes, "app" se referia a uma instância do Express, mas aqui usaremos um roteador. Para começar , vou importar o Express. Importar expresso de expresso. E então vou criar um roteador e chamá-lo de roteador de estimação, que é igual a roteador expresso. E neste ponto, podemos digitar este roteador apenas para garantir que entendemos o TypeScript. Vou
+
+importar o tipo de roteador do Express. Então, importo o tipo de roteador do Express e depois posso usá-lo para digitar nosso roteador de estimação. Então, depois do roteador para animais de estimação, fazemos o roteador de cólon. Agora que temos nosso roteador para animais de estimação, vamos substituir o aplicativo pelo roteador para animais de estimação aqui em cima, assim como nossa segunda rota aqui embaixo. OK. Agora estamos enfrentando alguns erros bastante desagradáveis
+
+relacionados aos tipos de requisição e resposta. E já que estão relacionados ao TypeScript, vamos pedir que você os corrija . Aqui está o seu mini desafio. Importe e utilize os tipos de solicitação e resposta para corrigir os erros relevantes. Fizemos isso há uns 10 treinos simulados. Veja como
+
+você se sai. Te vejo daqui a pouco. Bem vindo de volta. Faremos isso importando os tipos de requisição e resposta . E para isso, podemos adicioná-lo depois de importarmos o tipo de roteador.
+
+Então, pedido e resposta. E os erros desapareceram. Mas ainda temos alguns erros. Isso ocorre porque o tipo de animal de estimação e os dados sobre animais de estimação estão ausentes deste arquivo. E seu próximo desafio é lidar com todos os erros relacionados a animais de estimação, importando e exportando os dados ou tipos relevantes. Experimente e já te
+
+vejo. Bem vindo de volta. Para corrigir esses erros, precisamos importar o tipo de animal de estimação e o objeto de dados do animal de estimação do arquivo pets.ts na pasta data. Você verá que ambos já estão sendo exportados. Então, vamos começar a
+
+importação. De volta ao arquivo pets.ts, vamos importar o tipo de animal de estimação e o objeto de dados pets. Importar tipo de animal de estimação dos dados de animais de estimação. E importe animais de estimação dos dados de animais de estimação. Ok,
+
+nosso arquivo parece estar livre de erros. Agora, vamos conectá-lo ao index.ts e dar uma olhada. Mas primeiro, vamos garantir que exportamos nosso roteador para animais de estimação para que possamos importá-lo e usá-lo. Exporte nosso roteador para animais de estimação.
+
+Agora, vamos voltar ao nosso arquivo index.ts. Primeiro, vamos nos livrar de todas as importações não utilizadas . E então importaremos o roteador de animais de estimação de routes pets [bufa] ratos. E depois vamos usá-lo com o aplicativo . Aqui embaixo, depois dos núcleos, vamos trabalhar com o
+
+uso de aplicativos. Vamos usar "pets" como prefixo do caminho e faremos referência ao roteador de animais de estimação . Agora, usar o caminho "pets" pode não significar muito neste momento, já que o aplicativo é bastante pequeno, mas é sempre bom usar um caminho que descreva com precisão os dados com os quais ele está trabalhando. Vamos dar uma olhada . Na aba de rede, se enviarmos uma solicitação para o endpoint que estávamos usando antes, receberemos uma mensagem de erro "endpoint não encontrado" do nosso tratamento de exceção 404. Isso porque, com o nosso
+
+roteador para animais de estimação, adicionamos o caminho específico para os pets. Portanto, teremos que garantir que adicionemos o novo prefixo "pets" às nossas chamadas de API. Por exemplo, a seção de animais de estimação deveria nos fornecer a lista completa e sem filtros dos animais. Vamos tentar outra. Vamos falar de animais de estimação. E vamos
+
+iniciar uma consulta. Adotado é igual a falso e espécie é igual a coelho. E vamos acolher todos os coelhos que estiverem prontos para um novo lar. Ok, agora separamos nossas rotas do arquivo index.ts do PowerShell e as colocamos em um roteador dedicado. Isso já torna as coisas mais
+
+modulares e fáceis de gerenciar. Mas ainda falta um passo. Neste momento, os próprios manipuladores de rotas ainda estão no arquivo de rotas. No próximo treino, vamos mover esses elementos para controladores separados para terminar de organizar nossa estrutura. No último treino, separamos nossas rotas em um roteador dedicado. Esse foi
+
+um grande passo para manter nosso projeto modular. Mas ainda não terminamos. Neste momento, todos os manipuladores raiz, a lógica propriamente dita para cada endpoint, ainda estão no arquivo de rotas. À medida que nosso aplicativo cresce, isso vai ficar complicado muito rapidamente. Então, neste scrim, vamos dar o próximo passo, que é mover nossos manipuladores para um arquivo de controladores. E
+
+como este é um curso de TypeScript, também garantiremos que todos os tipos que já configuramos sejam utilizados. Vamos criar um novo diretório em source chamado controllers. E dentro dele, criaremos um novo arquivo chamado petscontrollers.ts. E este arquivo conterá os manipuladores raiz ou os controladores. Agora, cada
+
+controlador deve ter um nome claro e descritivo. Nosso primeiro manipulador retorna a lista completa ou uma lista filtrada, caso parâmetros de consulta tenham sido fornecidos. Então, vou chamar isso de "adotar animais de estimação". E agora só precisamos copiar todo o manipulador de rotas dos pets. A partir daqui até o fim.
+
+E vamos encaixar ali mesmo. E muitos erros. Não se preocupe, tudo isso se deve a importações em falta. Então, vou passar a responsabilidade para você corrigir esses erros. Você vai precisar reorganizar um pouco o código e importar alguns tipos e dados para que possamos voltar a funcionar.
+
+Portanto, seu desafio é corrigir todos os erros. Vai em frente e nos vemos daqui a pouco . Bem vindo de volta. Vamos corrigir esses erros. Primeiro, vamos importar os tipos de que precisamos, que são solicitação, resposta e animal de estimação.
+
+Então, importe os tipos `request` e `response` do Express e também o tipo `pet` do pacote ` data pets`. [risos] Então vamos resolver esse erro de parâmetros de consulta do pet movendo-o das rotas. Vamos chegar aqui e pegar todos os exemplares. O arquivo de rotas nunca precisará disso, então vamos colocá-lo aqui. E, finalmente, vamos importar os dados dos animais de estimação do nosso arquivo de animais de estimação na pasta de dados. Importar animais de estimação da pasta de dados de animais de estimação. E
+
+este controlador está pronto para uso. Já que estamos aqui, vamos lidar também com o outro controlador. Agora, esta função retorna um animal de estimação ou nenhum, com base no ID. Então podemos chamar isso de "obter animal de estimação por ID". E, mais uma vez , vamos pegar tudo das rotas de pets.routes daqui
+
+até o final. E vamos colocá-lo aqui. E desta vez não devemos ter nenhum [limpa a garganta] erro. E assim, de repente, temos nossos dois manipuladores de rotas como controladores. Agora precisamos que essas informações estejam acessíveis a partir de pets.outes. Então vamos garantir que os exportemos
+
+. Então, exporte a lista de animais de estimação obtidos por ID e, em seguida, exporte também a lista de animais de estimação obtidos. E depois, em pets.routes, rotas. Primeiramente, vamos nos livrar de quaisquer importações não utilizadas, graças ao fato de agora as colocarmos em controladores . Então, esses são os dois animais de estimação e
+
+também podemos nos livrar da solicitação e resposta. Em seguida, importaremos nossos dois controladores. Então, importe também os controladores de animais de estimação e obtenha animais de estimação por ID. E então podemos incluí-los em nossas rotas. Então, a primeira opção é obter animais de estimação e a segunda é obter animais de estimação por ID. E
+
+parece que escrevi "controladores" errado aqui em cima. Então, vamos resolver isso. Pronto . Não há mais erros no programa de execução. Vamos garantir que tudo ainda funcione enviando uma solicitação por aqui. E tudo
+
+bem. Agora, este scrim e o anterior abordaram um pouco menos os novos conceitos do TypeScript, mas houve bastante refatoração do TypeScript . Precisávamos garantir que todos os nossos tipos, como pet, pet query, params, request e response, fossem mantidos ao dividirmos tudo em um roteador e controladores. A grande vantagem aqui é que nosso aplicativo agora está limpo, modular e ainda totalmente tipado, pronto para crescer à medida que continuamos a desenvolvê-lo. Olá novamente. Estamos quase no fim. Até
+
+agora, nossos trajetos têm sido bastante diretos. Você pede algo, o servidor envia de volta. Mas em APIs reais, muitas vezes precisamos de uma etapa intermediária para verificar ou modificar as solicitações antes que elas cheguem ao manipulador de rotas. E é aí que entra o middleware. O middleware é simplesmente uma função que fica entre a requisição e a resposta. Você deve saber pelo
+
+curso Learn Express aqui que existem alguns tipos de middleware. Existem as opções integradas fornecidas pelo Express, como o Express static. E depois temos middleware de terceiros, como a função `cause` que instalamos e usamos com o aplicativo. E, por fim, temos middleware personalizado. E esse é o middleware que escrevemos, específico para o nosso caso de uso. No Express, ele recebe
+
+três parâmetros: `w`, `res` e um parâmetro especial chamado `next`. Assim como o Typescript nos permite usar anotações de tipo em `w` e ` res` com os tipos de requisição e resposta, ele também tem uma para `next`. É chamado de próximo tipo de função. Vamos escrever alguns trechos de middleware personalizados, digitando-os à medida que avançamos, e depois associá- los a esta rota de ID aqui em nosso arquivo de rotas. Então, vamos criar uma nova pasta chamada middleware dentro da pasta source.
+
+E dentro dele, criaremos um arquivo chamado pets middleware.ts. E agora estamos prontos para escrever algum código. Vou escrever um middleware que verifica o parâmetro de caminho do ID e garante que seja um número. Se não for um número, responderemos com um erro 400 e uma mensagem. Mas, se for esse o caso, vamos
+
+chamar a próxima função e deixar a solicitação prosseguir para o manipulador de rotas. Vou chamar isso de "validar ID numérico" e primeiro vamos configurar o manipulador. Por ser um componente intermediário, ele terá três parâmetros: `res` e `next`. Já sabemos como digitar os dois primeiros. Então, vamos importar os tipos de requisição e resposta do Express. Então, importe o tipo de
+
+requisição/resposta do Express. Agora, esta última tem seu próprio tipo, que é a próxima função. Então vamos importar isso também. Próxima função. E agora podemos usá-los diretamente no manipulador. E vou
+
+separar preventivamente esses parâmetros em suas respectivas linhas, como já fiz antes, para facilitar a visualização. Portanto, o rack possui o tipo de solicitação. `Res` tem o tipo de resposta e `next` tem o tipo de próxima função. Agora, podemos ser um pouco mais específicos com nossa solicitação e resposta, mas deixaremos isso para mais tarde, quando tivermos nossa lógica definida. O corpo do manipulador agora é todo em JavaScript padrão. Então, vou passar por
+
+isso rapidamente, mas explicarei tudo conforme for falando. Primeiro, vamos desestruturar o ID a partir dos parâmetros w. Em seguida, vamos testar para ver se o ID é um número. Então, primeiro vou configurar este bloco if/else. O teste que usei para isso foi o Reax, mas saiba que você poderia ter feito de outras maneiras. Portanto, a expressão regular
+
+aqui é essa e vamos testar o ID. Agora quero testar para ver se isso não é um número. Então vou colocar o ponto de exclamação ali. Se isso não for um número, responderei com o status 400 e um JSON contendo a mensagem "o ID deve ser um número". Mas se for um número, chamaremos a próxima função para dizer ao Express para simplesmente continuar. Agora
+
+temos essa lógica. Podemos ser mais específicos com nossos tipos genéricos de solicitação e resposta aqui em cima . E para isso, vou passar a palavra para vocês como um desafio. Seja específico com os genéricos de solicitação e resposta. Pense nos parâmetros que podemos receber na solicitação e considere com o que podemos responder. Não
+
+fizemos isso explicitamente antes, mas a lógica e o layout de um manipulador de middleware são muito semelhantes aos de um manipulador de rota comum. Então, experimente . Bem vindo de volta. Vamos ser mais específicos em relação à solicitação e à resposta. Começando com o pedido. Como esse middleware
+
+será associado à rota de ID, sabemos que esperaremos um parâmetro de ID. Portanto, podemos especificar isso no tipo de solicitação. Só precisamos nos preocupar com o primeiro parâmetro, que são os parâmetros do caminho. Estamos procurando um parâmetro de ID, e ele será uma string. E quanto à resposta, sabemos que existe apenas um tipo de resposta que pode sair do manipulador, que é a mensagem de erro aqui embaixo. Portanto,
+
+será simplesmente uma mensagem, que é uma string. E agora só precisamos exportá- lo com o comando export. E então vamos importá-lo para o arquivo de rotas dos animais de estimação. Importar e validar ID numérico do middleware pets . E então vamos vinculá-lo à rota de ID, adicionando-o logo antes do manipulador da rota "obter animal de estimação por ID".
+
+Então, valide o ID numérico. Agora vamos testar aqui na aba de rede. Vamos primeiro testar um ID comum como o de animais de estimação 4. Sim, funciona. Agora vamos tentar um ID que não seja um número para que possamos ver esse middleware em ação.
+
+E recebemos a mensagem de que o ID do animal de estimação deve ser um número. E só para mostrar que o middleware está fazendo seu trabalho, vamos tentar com um ID inexistente que seja um número como este. E, com essa identificação, não podemos ter nenhum animal de estimação . E isso vem do manipulador de rotas "obter animal de estimação por ID". Viva o middleware! No próximo treino simulado,
+
+você terá a oportunidade de construir seu próprio middleware do zero. Garantindo que estamos integrando TypeScript em todo o código. Te vejo lá . No último scrim, adicionamos um middleware para validar os IDs dos animais de estimação. E agora é a sua vez de construir seu próprio middleware. Vamos construir um componente
+
+intermediário chamado "please or off". A ideia é simples. Antes que alguém possa acessar a rota de ID, precisa fornecer um parâmetro de consulta chamado senha, como este. E deve ser igual a " por favor". Caso contrário, receberão um erro 401 (não autorizado). E aqui está o seu
+
+desafio final para este curso. Crie o middleware ou o arquivo de configuração. Escreva uma função independente chamada "por favor" ou. Deveria levar recre res e próximo. Se a senha da consulta for igual a "please", então chame a próxima opção.
+
+Caso contrário, envie um código 401 com uma mensagem em JSON. Em seguida, digite rec res e next e associe este middleware à rota ID. E também deixei alguns testes para vocês experimentarem. Agora, esta última é muito importante e combina tudo o que você aprendeu de novo com alguns conceitos expressos. Não tenha pressa, faça uma pesquisa se precisar e nos vemos do outro lado.
+
+Bem vindo de volta. Como você lidou com esse grande desafio? Vamos analisar isso juntos. Primeiro, vamos definir a função e chamá-la, por favor, ou, e isso recebe um wreck, um res e um next. Precisamos extrair o possível parâmetro de senha da consulta. Então, teremos que
+
+desestruturar isso a partir da consulta wc. Então, a senha constante da consulta w. Agora podemos passar diretamente para a condicional. Então, se a senha existir e for "por favor", então chamaremos o próximo. Caso contrário, responderemos com um código de status 401 para não autorizado e um JSON contendo a mensagem "não autorizado". Você
+
+deve dizer "por favor". Agora que sabemos o que estamos solicitando e respondendo, vamos aqui digitar nosso res wreck e next. O próximo passo é fácil. Então, vamos fazer essa primeiro. É apenas a próxima função. Vamos começar pelo fim. Se estamos
+
+respondendo daqui, é porque estamos enviando a mensagem de erro em formato JSON. Portanto, a resposta genérica aqui é simplesmente " message", que é uma string. E, por fim, o pedido. Estamos procurando uma consulta opcional com o nome de senha. Agora, o parâmetro de consulta é o quarto parâmetro no genérico da requisição.
+
+Então teremos que passar por todos os outros para chegar lá. Primeiro, temos os parâmetros de caminho, que não temos nenhum. E então, para os dois corpos, é desconhecido e também um objeto vazio. E finalmente chegamos aos parâmetros de consulta. E aqui estamos procurando por uma senha, que é opcional e consiste em uma string. OK. Agora vamos
+
+exportá-lo para que possamos usá-lo em nosso arquivo de rotas. De volta às rotas de animais de estimação. Vamos importá-lo juntamente com nossos outros middlewares. Então, depois de validar o ID numérico, adicionaremos "please off" e, em seguida, simplesmente o anexaremos aqui, logo antes de " validar o ID numérico". Por favor, saia.
+
+Essa rota possui dois middlewares: ` please` e ​​`validate` (ou `validate`) para o ID numérico que a requisição precisa passar antes de chegar ao manipulador da rota `get pet by ID`. Vamos analisar os dois casos de teste na aba de rede. Então, a primeira foi apenas uma ligação para animais de estimação e depois a identificação. Agora isso retornará um erro 401 e o texto do erro, que é exatamente o que queremos. Na verdade, qualquer coisa que colocarmos aqui como ID resultará no erro 401. E isso
+
+porque colocamos o "please" ou middleware em primeiro lugar. Mesmo um ID não numérico como este retornará o erro 401 antes mesmo de ser validado. Agora vamos tentar com a senha. Então, por favor, digite a senha correta. Agora estamos recebendo a mensagem de que o ID do animal de estimação deve ser um número, e isso vem da validação de ID numérico, pois já superamos essa primeira etapa intermediária. E, finalmente,
+
+vamos obter alguns dados. Vamos solicitar o animal de estimação com o ID 14. E também incluiremos a solicitação de senha, por favor. E isso deve nos dar o que queremos, que é a coelhinha Daisy. E pronto, aqui está nosso próprio middleware personalizado, totalmente tipado com TypeScript.
+
+e trabalhando em conjunto com nossas outras verificações. Com o `please or` e o validador de ID numérico implementados, nosso projeto está definitivamente começando a se parecer com uma API do mundo real. E isso conclui a última funcionalidade deste curso. No treino final, farei um breve resumo, compartilharei algumas considerações finais e indicarei o que você pode fazer a seguir. E assim concluímos o projeto Express com TypeScript. Bom trabalho. Você ficou comigo
+
+até o fim. Você começou do zero, com um projeto vazio, e ao longo do processo configurou o Express com TypeScript. Você criou rotas e as digitou de ponta a ponta. Você trabalhou com dados e parâmetros de consulta do mundo real. Você tornou seu projeto modular com rotas e controladores. E você até escreveu seu
+
+próprio middleware, tudo isso levando em consideração o TypeScript. Agora você tem uma API inicial totalmente tipada para um abrigo de animais e, mais importante, as habilidades para continuar desenvolvendo. Então, para onde podemos ir a partir daqui? Você pode conectar sua API a um banco de dados real, explorar padrões avançados como controladores assíncronos e manipuladores de erros ou criar uma interface que consuma sua API tipada. Acima de tudo, continue praticando. Quanto mais você pensar e
+
+digitar em Typescript, mais natural se tornará. Muito obrigada por me acompanharem desta vez e até a próxima!

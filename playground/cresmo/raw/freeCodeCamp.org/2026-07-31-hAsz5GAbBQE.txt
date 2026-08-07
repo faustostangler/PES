@@ -1,0 +1,575 @@
+---
+video_title: "Kubernetes Operator Best Practices – Kubebuilder Deep Dive"
+video_id: hAsz5GAbBQE
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=hAsz5GAbBQE
+video_date: 2026-07-31T15:59:06+00:00
+video_description: |
+  Learn the best practices for building robust and scalable Kubernetes operators using Kubebuilder. This course covers critical techniques, including managing multiple controllers for parallelism, implementing efficient retry logic, and resolving custom resource update conflicts. You will also discover how to leverage predicate filters to prevent infinite reconciliation loops and optimize your cluster's resource usage.
+  
+  Course from @kubesimplify 
+  
+  ⭐️ Contents ⭐️
+  – 00:00:00 Understanding Resource Versions and Generations
+  – 00:03:48 System Architecture and Conflict Scenarios
+  – 00:26:57 Handling Conflict Errors and Retry Strategies
+  – 01:11:48 Implementing Parallel Processing with Concurrent Workers
+  – 01:41:59 Preventing Infinite Reconciliation Loops with Predicate Filters
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Aprenda as melhores práticas para escrever operadores Kubernetes usando o Cube Builder. Isso inclui estratégias para gerenciar múltiplos controladores para paralelismo, resolver conflitos para atualizações de recursos personalizados , implementar novas tentativas eficientes e evitar loops de reconciliação infinitos . Esses recursos fornecem orientações sobre como dimensionar as operações para suportar um número significativamente maior de usuários de forma eficaz. Normalmente, em meus vídeos, começo apresentando um problema, mas desta vez quero fazer algo diferente. Vamos primeiro aprender um conceito e depois passaremos para o enunciado do problema e então veremos o que precisamos fazer. Então, deixe-me mostrar
+
+algo muito rapidamente. Bem, eu tenho um cluster aqui e tenho minha instância EC2 com uma determinada especificação, como esta. Então, isso é algo que vimos no vídeo onde falamos sobre como implementar a atualização de status, como trabalhar com uma geração, como trabalhar com a especificação. É apenas uma continuação disso. Vou colocar o link do vídeo na descrição. O que acontece, e eu
+
+queria mostrar para vocês, é que toda vez que vocês fazem alterações em um recurso, a geração muda. Se você fez alterações na especificação e cada recurso no Kubernetes possui algo chamado versão do recurso. Esta versão do recurso é como o CD fica sabendo sobre o seu objeto. É assim que isso se reflete no HCD, e isso vai mudar independentemente de você ter atualizado sua especificação, seu rótulo, suas anotações ou qualquer outra alteração em seu objeto, seja na especificação ou em qualquer outro lugar. A geração só será alterada quando você atualizar a especificação do seu operador ou do seu recurso. Então vamos fazer
+
+algumas mudanças aqui. Vou dizer, hum, testes, e hum, isto é uma mudança. Agora, se eu salvar e sair, você vê o que aconteceu? Passamos da quarta para a quinta geração e havia um número diferente para a versão do recurso. Agora, para mostrar algo que realmente não importa, é qual mudança ocorreu no objeto. Se eu simplesmente criar um novo
+
+rótulo e disser, por exemplo, "nuvem GCP". Isso serve para mostrar que não estamos fazendo nenhuma alteração na especificação, mas sim uma alteração nos metadados. Mesmo assim, se eu salvar e sair, você verá que a versão do recurso mudou. A geração não mudou porque não fizemos alterações na especificação do nosso objeto, mas a versão do recurso foi alterada. Só para te mostrar rapidinho mais uma coisa . Ambiente e, eu
+
+diria, produção. Neste momento, a versão do recurso é 42331, mas se eu salvar e continuar, ela mudará para 42345. E isso é algo que eu queria mostrar para vocês. Não importa onde você faça a alteração no seu objeto. Se algo mudou, vai receber uma nova versão, sabe, a mudança será confirmada no HCD e cada confirmação terá uma nova versão do recurso.
+
+Agora que isso está esclarecido, vamos ao problema que eu estava enfrentando e que me motivou a gravar este vídeo. Agora imagine que isso fosse o que você estivesse fazendo e isso fosse algo que eu fiz. Eu senti o problema e imagino que você também esteja fazendo isso. Então você tem uma necessidade. Vamos começar agora mesmo . Você tem uma necessidade em que
+
+deseja criar um operador, certo? Você quer criar um operador que funcione e que, eventualmente, permita executar uma máquina virtual em algum lugar. Pode ser você na Amazon, ou pode ser no GCP. Na verdade, não importa. O que essa VM fará é, eventualmente, ser adicionada ao seu cluster como um nó de trabalho. Então
+
+pense nisso como se estivesse criando um escalador. Você está criando seu próprio dimensionador automático personalizado. E foi exatamente isso que senti quando estava trabalhando em um projeto semelhante. Ao escrever um operador, você sabe que precisará criar alguns recursos personalizados e, para isso, precisará de algumas definições de recursos personalizados . Então, quando eu estava trabalhando nisso, decidi que a definição do meu recurso personalizado seria, de forma bem simples, assim. Então, o
+
+tipo era um pool de nós, e isso definiria o número de nós que eu posso ter. Então, um recurso de pool de nós definiria, no máximo, quantos nós eu posso ter? Qual é o meu nó alvo? Qual o nome do meu pool de nós? E também uma configuração muito simples, como o tamanho que o nó deve ter, quanto disco eu preciso e quanta memória eu vou precisar nesse pool de nós específico . Você pode pensar nisso. Este
+
+pool de nós vai criar um nó para mim, que ficará hospedado em algum provedor de nuvem e será então registrado no meu cluster. A questão é que um pool de nós pode ser criado manualmente quando eu crio esse recurso personalizado. Digamos que eu tenha criado meu operador, você sabe, meu operador tem algum conhecimento sobre como criar uma máquina virtual. Meu operador tem o conhecimento necessário para registrar isso no meu cluster. Agora, se você realmente quiser começar a usá- lo, ao criar esse recurso personalizado, poderá fazer alterações nesses nós de destino. Você poderia dizer de zero a
+
+um, e seu operador estaria reagindo a essa mudança. Então, o que ele vê é que, neste momento, eu tenho tipo zero. Deixa eu mudar para uma cor diferente. Neste momento, não tenho nenhum nó com essa configuração. O usuário me pediu para criar um nó. Um nó e eu vou lá
+
+e darei a eles um nó. Este é o resultado de um operador muito simples que você escreveu. Você não só tem essa especificação aqui, como também decidiu atribuir um status, sabe, para alguém que está analisando seu conjunto de nós. Portanto, esse status possui uma chave chamada "operação de escala" e geralmente está inativo se o operador não estiver fazendo nada, o que significa que, se o operador não estiver ocupado criando um nó ou registrando-o no cluster, o status não muda de inativo. No entanto, essa operação de escala muda. Essa
+
+operação de escala muda quando você está criando ativamente uma VM em um provedor de nuvem, passando de inativa para ativa. E foi para isso que você criou um operador . Isso é algo semelhante ao que fizemos no meu vídeo sobre Kubernetes, onde mostramos como criar seu próprio operador para gerenciar instâncias EC2. semelhante ao projeto em que eu estava trabalhando na minha empresa. A questão é que você conseguiu criar esses recursos manualmente, que são nós, porque você tem um operador que você implanta ou cria esse recurso personalizado com base no recurso personalizado que seu operador executa, e ele cria um nó para você, e tudo funciona perfeitamente.
+
+No entanto, você decidiu levar isso um passo adiante. Você disse que em vez de eu implantar o recurso personalizado e então, uh, eu deveria fazer o comando cube ctl edit node pool e então eu iria de um para dois, salvar e sair, e eventualmente outro nó seria adicionado. Ah, este era o nó número um. Este era o nó número dois. Eu não quero fazer isso. Isto é um escalador. Este não é um
+
+agendador automático. Então, o que você decidiu foi que esse comando `cubectl edit node pool`, ou seja, o incremento para esse nó de destino, deveria ocorrer em um determinado evento, e você decidiu que esse evento seria um pod estar em estado pendente devido à falta de CPU ou memória. Agora você já sabe que um pod pode estar em estado pendente por diversos motivos. O pod pode estar em estado pendente porque não há nenhum segredo ao qual o pod esteja fazendo referência ou porque um volume persistente necessário para o pod não está disponível. A questão é que você tem a lógica que lista todos os pods pendentes. Você encontra
+
+aquelas que estão realmente pendentes devido ao uso da CPU ou da memória. Veja, você sabe, se a memória que o pod está solicitando, digamos, se o pod estiver solicitando memória, que é em torno de 28 GB, e então você tem a lógica de que, sim, porque o pod está solicitando menos memória do que esses 96 GB, se eu criar um nó, o nó será suficiente para o meu pod ser implantado. Você queria que esse gatilho fosse acionado, então você tem isso como um autoscaler. Agora, o que você faz com tudo isso? Deixa eu ir rapidinho e apagar isso, porque não precisamos disso. Você decidiu que eu vou
+
+escrever outro... você sabe, controlador. Portanto, existem dois controladores em funcionamento no seu operador neste momento.
+
+Acho que faz mais sentido. Deixe-me dizer rapidamente que você pode ter um único operador que pode ter vários recursos personalizados, ou melhor, várias definições de recursos personalizados, e também vários controladores. Então você disse que agora eu tenho uma definição de recurso personalizada chamada pool de nós e há um operador que reage a isso, que será o operador do pool de nós, que eventualmente criará uma máquina virtual ou uma VM em algum lugar na nuvem. Então você decidiu, porque queria transformar isso em um dimensionador automático, e disse: " Vou criar uma nova definição de recurso personalizada, que se chama... bem, você sabe... isso se
+
+chama dimensionador automático". Digamos que você crie uma nova definição de recurso personalizado e a nomeie como autoscaler um e, em seguida, haja um autoscaler um config um autoscaler operator. Este recurso personalizado de escalonamento automático é muito simples. Apenas indica quantos ou quanto tempo esperar antes de verificar se há pods pendentes. Vamos chamar de frequência. Por exemplo, você pode dizer
+
+que meu operador de escalonamento automático deve procurar por pods a cada cinco minutos. Você sabe que essa é a frequência que você está configurando na sua definição de recurso personalizado . Então, isso pode ser algo como... deixa eu só
+
+escrever rapidinho um arquivo YAML para isso. Isso faria mais sentido. Então, o seu tipo será o autocalador, versão um. Então temos os metadados... peraí, será que estou
+
+fazendo algo errado aqui? Deixa eu só pegar rapidinho a versão da API, o tipo e os metadados. Então era isso que me faltava, porque todo recurso precisa disso. Então, eu tenho minha versão da API como compute.ample.com example.com vi1, o tipo
+
+é autoscaler e então temos os metadados, o nome do meu autoscaler e então você poderia ter uma especificação, essencialmente, quando você está trabalhando com o Cube Builder, você cria a especificação, você define a especificação do seu recurso personalizado, neste caso eu teria a lista de namespaces para direcionar, sabe, estes são meus namespaces de produção . Então eu tenho meu namespace de busca e depois tenho meu... meu namespace que realmente gera dinheiro . Esses são os espaços de nomes nos
+
+quais quero atuar. Se houver um pod pendente nesses namespaces, aí sim eu quero dimensionar, porque pode haver pessoas criando projetos de desenvolvimento e eu não quero me preocupar se há um pod pendente por causa de CPU ou memória no projeto de desenvolvimento. Mas se esses projetos estiverem pendentes em algum conselho, e quisermos criar ou reagir a esse evento, então você poderia dizer "frequência", e poderia dizer 5 minutos. Assim, a cada 5 minutos, seu controlador de escalonamento automático verificará as portas pendentes na lista de namespaces de destino e reagirá de acordo . Isso é simples. Então você decidiu que
+
+eu vou escrever esses dois recursos personalizados e esses dois operadores diferentes. Este operador cria a máquina virtual. Este segundo operador apenas localiza o pod pendente. Você sabe que ele apenas encontra os pods pendentes. Agora, o que você faria se encontrasse um pod pendente? Você
+
+gostaria de criar uma máquina virtual, certo? Como há um pod pendente, você precisa de poder computacional e, portanto, precisará criar uma máquina virtual. O importante aqui é observar que muitas vezes você pode se encontrar em uma situação em que possui recursos personalizados, vários operadores que se comunicam entre si por meio de recursos personalizados, e não apenas com os seus próprios, mas também com os recursos uns dos outros. Nesse caso, por exemplo, o operador de escalonamento automático, depois de encontrar alguns pods, em vez de criar uma máquina virtual, atualiza o recurso personalizado chamado pool de nós. Basicamente, pense nisso como um pool de nós de edição de cubo, e então você atualiza o número de nós de destino. Digamos que, seja
+
+qual for o número, você o altere para três e, como você atualizou o recurso personalizado chamado ` node poolool`, o controlador `node poolool` verá essa alteração e, eventualmente, criará uma VM para você, que então será registrada como um nó de trabalho. O que é preciso entender aqui é que um operador diferente, que é o nosso operador de escalonamento automático, está usando um recurso personalizado diferente. Isso não acontece apenas com a definição de recurso personalizada do dispositivo, e você verá que isso ocorre com frequência, e é aí que as coisas ficam interessantes. Vamos então traçar uma linha do tempo do que realmente aconteceu. Então você começa do zero, imagine um cluster onde você tem seu operador e seus recursos, todos em execução. Agora,
+
+o que você faz é instalar ou criar um arquivo YAML para o pool de nós, que é essencialmente algo como isto que já temos aqui. Então, vou copiar isso e colar aqui . Oh, tudo bem. Isso foi algo que eu não esperava. Deixe-me esclarecer isso.
+
+Então, isso torna um pouco mais fácil de trabalhar. Ah, devia ter copiado isso para algum lugar. Ok . Então, deixe-me copiar isso rapidamente e guardar uma cópia atualizada caso precise no futuro. Então veja o que aconteceu. Você criou um pool de nós.
+
+Você criou um recurso poolool de nós aqui. e você define os nós de destino como nó zero, mas você define o nó de destino como um, ou digamos que seja zero para começar, é zero, certo? Então você não está fazendo nada, você apenas diz: "Eu quero que o recurso esteja lá no meu cluster, eu não quero que ele faça nada, mas vamos deixá-lo lá", e deixe- me [limpa a garganta] rapidamente pegar isso aqui. Acho que podemos obter as informações em carbon.now.sh
+
+aqui. Este é o meu YAML. Vou copiar esta imagem e aqui está a minha definição de recurso personalizado, ou melhor, o recurso personalizado para o dimensionador automático. Então, esses são dois CRs que você criou. Espero que isso esteja deixando tudo claro.
+
+Então, eventualmente, os recursos personalizados funcionam, porque você tem dois recursos personalizados e também dois operadores, mas os operadores não estão fazendo nada. Então, o motivo pelo qual eles não estão fazendo nada neste caso é porque o operador de pool de nós e o operador de escalonamento automático não estão fazendo nada. Primeiro, o nó de destino é zero, então nada precisa ser feito. Segundo, porque não há nenhum pod pendente nesses namespaces, então nada está sendo feito. Agora, digamos que você tenha criado manualmente um novo nó usando o operador de pool de nós. O que você faz, a primeira coisa que
+
+você faz é executar o comando `cubectl create` e depois `cubectl edit`, que é a abreviação de `np`, e você altera o valor de `target node` de 0 para 1. Tudo certo. Este operador inicia o trabalho. Está funcionando e, como você fez uma alteração na especificação, haverá uma nova versão. Para o mesmo objeto, a geração mudará de 1 para 2 e isso também será atualizado para um número x, y, z. Tudo certo.
+
+Isso seria atualizado agora, coincidentemente, enquanto este operador está fazendo seu trabalho. Você encontrou um pod que estava pendente no espaço de nomes amplo. Veja o que acontece. Você encontrou um pod que estava pendente no namespace amplo e configurou seu operador de escalonamento automático para que, se um pod pendente for encontrado, ele
+
+atualize o recurso personalizado, que neste caso é o pool de nós. Então, se você encontrar um pod pendente, você atualiza o recurso personalizado e faz exatamente o que está fazendo. Uh cubo ctl editar node poolool um sim cubect node poolool. Lembre-se de que tudo isso aconteceu enquanto seu operador estava trabalhando. Enquanto seu operador estava trabalhando.
+
+Agora, você precisa editar o conjunto de nós. Agora, isso vai passar de um para dois porque, de 0 para um, você fez essa edição manual do pool de nós cúbicos e de 1 para dois foi feita por este operador específico enquanto isso estava em execução. Certo, enquanto isso estava rodando, o que vai acontecer agora? Não apenas o nó de destino é alterado, mas também a geração muda três vezes. E isso vai de XY Z para A B C.
+
+Ok. Bem, e isto está tudo feito. Está feito. Está funcionando. Assim que este operador terminar, você pode querer atualizar este recurso personalizado novamente, porque quando você começa a trabalhar, você sabe, você o altera de inativo para ativo porque seu operador estava em execução. E quando o operador terminar de
+
+criar uma máquina virtual e registrá- la no seu cluster, talvez seja necessário atualizar o objeto de ativo para inativo, pois tecnicamente ele não está fazendo nada. E é aí que você vai ter um problema. É aí que você vai ter um problema. Veja quando o operador do seu pool de nós foi iniciado a cada vez, e é assim que tudo fará mais sentido. Digamos que você tenha um recurso personalizado. A
+
+versão do recurso é um e você inicia um operador com base nesse recurso personalizado com a versão de recurso um. Sempre que o operador detecta uma alteração no meu recurso personalizado, a primeira coisa que ele faz é baixar ou armazenar o objeto em cache. Portanto, se o seu recurso personalizado também tiver a versão 1 no HCD, o operador saberá que a versão mais recente é a 1 e começará a executar seu trabalho, seja ele qual for. Agora, alguém, seja você, outro operador ou outro controlador, atualiza esse recurso personalizado específico, e o valor muda de 1 para 2. Seu operador ainda acha que a versão mais recente é a correta porque não foi ao HCD para obter a cópia mais recente.
+
+Não sabia que a versão do operador havia mudado. Ainda nem sequer tem ideia disso, porque ainda está em execução. Então, embora seu operador tenha uma versão mais antiga do recurso, você atualizou esse recurso personalizado no HCD. Agora, a versão do recurso é duas. Agora, quando o operador terminar, e normalmente você pode querer atualizar o objeto, imagine que este seja um recurso personalizado para a instância EC2, o caso de uso sobre o qual estávamos falando. Agora você tem a
+
+especificação de que a versão do recurso era uma. Você cria a máquina virtual. Você obteve o endereço IP público. Talvez você queira adicionar o IP público ao status desse objeto, porque todo objeto tem uma especificação (spec) e depois um status. Você deseja atualizar o endereço IP público no status. Você está tentando atualizar um
+
+objeto cuja versão do recurso ainda era uma. E é aí que o problema acontece, porque quando você tenta atualizar o objeto, você essencialmente quer confirmar a alteração no HCD (High-Confirmation Delivery). Então você está dizendo ao HCD que quer que ele atualize um objeto cujo nome é tal. A HCD não se importa com o nome. Leva em consideração a versão do recurso. Então você está
+
+dizendo para atualizar o objeto com uma versão de recurso 1. O NH3D afirma que não existe nenhum objeto cuja versão de recurso seja um. Tenho alguns cuja versão de recurso é dois. Portanto, parece que você tem uma versão antiga do objeto ou está fazendo algo errado. E é isso que você precisa corrigir. E esse é
+
+o problema que ocorre quando você está trabalhando com mais de um controlador, onde cada controlador está, você sabe, acessando um recurso personalizado diferente, e isso é chamado de conflito. Você pode ter visto esse erro em algum lugar, sabe? Em algum lugar, você pode ter visto que o objeto que você está tentando acessar é antigo. Obtenha a cópia mais recente desse objeto. Então, basicamente, se você realmente quiser atualizar este objeto, o que você faria é, antes de gravar no HCD, porque a atualização do seu objeto falhou, obter a cópia mais recente do HCD. Agora, a
+
+versão do seu recurso é dois e você tentará atualizar o objeto novamente. Desta vez, como você está fazendo uma alteração no HCD para esse objeto, a versão do recurso mudará de dois para três. Veja bem, sempre que alguém faz alguma alteração, você terá uma nova versão de recurso quando criar o recurso pela primeira vez. Digamos que a versão do recurso fosse a um e que fosse essa a versão inicial usada pelo seu operador. Esse cara fez algumas alterações no recurso. A
+
+versão de recursos passou a ser duas. Então, ao tentar atualizar para uma versão mais antiga em uma cidade onde já havia uma versão mais recente, a atualização falhou. Você busca a nova cópia e tenta atualizar, mas como a última versão do recurso era dois e você está fazendo uma atualização, ela muda para três. E essa é toda a história de como tentei explicar e lidar com essa situação. Espero que isso tenha feito algum sentido. Caso contrário,
+
+a seção de comentários está aberta. Você sempre pode fazer essas perguntas. Mas esse problema pode acontecer com você, e isso ocorre porque você está tentando atualizar uma versão mais antiga do objeto, onde o objeto já foi atualizado por alguém externo, mas seu operador não sabia disso. Para resolver isso, existem duas maneiras diferentes de solucionar esse problema. A primeira maneira é um jeito simples, ou como eu gosto de chamar, um jeito preguiçoso de fazer isso, e a segunda é um jeito profissional de fazer isso. Agora, não faz sentido eu
+
+falar sobre métodos simples, preguiçosos ou avançados, mas sim analisar o código e ver quais são as diferentes maneiras de tornar seu operador inteligente. Por exemplo, se o objeto que estou tentando criar foi atualizado por outra pessoa em algum lugar, vou obter uma nova cópia e tentar aplicar minhas alterações a ela. Então, vamos ao código e ver como isso funciona. Tudo bem. Então, se você olhar para o código aqui, deixe-me explicar rapidamente como estamos construindo nossa API.
+
+Neste caso, tenho uma API muito simples , um tipo de recurso personalizado chamado instância EC2. Isso é algo que sempre uso em todos os meus exemplos. Portanto, se você está trabalhando nesta série de melhores práticas, já deve estar bastante familiarizado com a forma de construir um operador. Hum, e existe um curso inteiro no Cube Simplify sobre como construir isso do zero. Provavelmente colocaremos o link na descrição aqui. E, bem,
+
+aqui vocês podem ver que eu tenho um recurso personalizado muito simples chamado fu e bar. Possui uma especificação que é simplesmente fu e bar. E esta é apenas uma sequência muito simples. Observe o operador. Bem, essa função reconciliada é a função principal que é executada sempre que você faz alterações em seus recursos personalizados. Este é o
+
+que lhe diz o que fazer. Bem, aqui está um texto impresso um pouco mais sofisticado. Assim, podemos ver nos registros quando a reconciliação foi iniciada, desde o princípio. E obtemos o objeto que está sendo processado em uma variável do tipo instância EC2. Agora, cada objeto que você tem possui uma especificação, um status, que é algo que você pode definir aqui. No
+
+meu caso, a especificação contém apenas "fu" e " bar", que é outra chave do meu objeto. Bem, no entanto, cada objeto recebe alguns metadados. Assim, cada objeto teria um UID, cada objeto teria alguns rótulos que você não define inicialmente. Isso é algo que vem do servidor da API do Kubernetes. De forma semelhante , cada objeto possui uma geração e uma versão de recurso. Então,
+
+enquanto a versão do recurso, pense nisso como a versão do objeto no HCD e a geração do objeto é o recurso, hum, é uma versão de implantação do objeto. Assim, quando você cria o objeto pela primeira vez, sua geração será um. Qualquer alteração que você fizer nas especificações incrementa a geração, e é assim que você pode saber qual é a versão antiga e qual é a versão mais recente em que está sendo desenvolvido. Agora, nesta função, que é uma função de reconciliação, é bastante simples. Estou apenas tentando simular uma tarefa demorada que precisaria ser realizada.
+
+Normalmente, o operador, que neste caso é o operador EC2, deve criar uma instância EC2 na Amazon. Normalmente, isso seria feito para a AWS realizar chamadas de API usando o SDK escrito em Golang para a AWS. Será feita a autenticação na Amazon. Isso fornecerá as informações de que desejo criar uma instância EC2 com esse nome para o grupo de segurança. Bem, deve ter essas etiquetas, esses rótulos, este é o ID AMI, todas essas informações e eventualmente você receberá uma resposta da Amazon. Isso é algo que já
+
+discutimos no curso de criação de sistemas operacionais do zero. Mas não vou fazer tudo isso aqui dentro. Estou apenas contando de 1 a 10 e estou imprimindo, estou fazendo uma tarefa e o número da tarefa e estou dormindo, uh, hora de dormir. Agora, é aqui que a parte divertida começa. enquanto você estiver trabalhando no seu operador UM enquanto a função de reconciliação estiver em execução. Então veja, o que acontece é o seguinte: existe
+
+um objeto, certo? Digamos que você acabou de criar esse objeto; sua geração seria um, porque ele acabou de ser criado, e sua versão de recurso seria um número aleatório fornecido pelo servidor da API do cubo. Agora que o objeto foi criado, o operador o busca e o armazena no cache de objetos, e é isso que está sendo feito aqui. Esta é a parte que armazena o objeto no cache do reconciliador. Certo? Você
+
+começa e faz algumas mudanças. Agora o operador está em execução e continua fazendo as alterações. No entanto, o que discutimos é que pode haver vários operadores tentando escrever no mesmo recurso. Então, pode haver outro operador ou um humano que execute o comando `cubectl edit` em uma instância EC2 e, provavelmente, altere alguns aspectos do recurso personalizado. Agora, quando você salva e sai, sabe, quando você salva e sai, a versão e a geração vão mudar de 1 para 2. Aqui está o objeto antigo com
+
+geração um e é XY Z e este será A B C e hum o antigo uh o objeto antigo é geração um XY Z versão de recurso. Esta é a versão de segunda geração e recurso ABC. E agora, o que acontece? Seu operador fará uma alteração. Talvez vá atualizar as especificações ou talvez vá atualizar o status. Vamos colocar desta forma. Sabe, quando
+
+você faz uma chamada para a AWS para criar uma instância, isso lhe fornece um endereço IP público. Talvez você queira adicionar esse IP público ao status do objeto. Mas é aqui que o seu operador vai reclamar quando você diz "atualizar", quando você executa a função de atualização ou faz a chamada de atualização. O que você está dizendo ao Kubernetes é: " Quero aplicar esta atualização a um objeto cuja versão do recurso é XY Z e cuja geração é um", porque é isso que você sabe. Seu operador não sabe que uma alteração foi feita fora de seu escopo. Não sabe disso. E
+
+quando você tenta fazer uma atualização aqui, ocorre um erro. A mensagem indica que o objeto sobre o qual você está tentando falar não existe mais. Não possuo nenhum objeto com esta versão de recurso ou esta geração. Existe um objeto mais recente. Há uma mudança nesse objeto da qual você não tem conhecimento . E é aqui que... bem, a coisa fica
+
+interessante. Então veja o que está acontecendo aqui. Tentamos executar algumas etapas no operador, tentando executar algumas etapas, e eu tenho uma varredura muito simples, então posso esperar... isso vai ser executado
+
+e me permitir fazer minhas alterações fora do operador com o comando `cubectl edit`. Isso seria semelhante ao que qualquer outro operador faria para alterar o mesmo objeto, e até que eu pressione Enter, isso me dá um pequeno intervalo de tempo; até que eu pressione Enter, o processo não avançará. Então, quando eu digito, o que vai acontecer é que estou atualizando meu ` spec.bar` para uma nova string ou para uma string diferente, e quando tento atualizar, é aí que vai falhar, porque eu já fiz alterações no meu objeto fora do contexto em que a versão foi alterada. A versão que o operador conhece neste momento é a antiga, e é aí que reside o problema. Se ocorrer algum erro
+
+no seu operador, geralmente é recomendável tentar novamente. Geralmente, você vai querer tentar novamente. É aqui que a função de retorno entra em cena. A função `reconcile` possui dois tipos de retorno, ou seja, retorna dois valores. Um deles é o resultado.
+
+Outro fator que nos preocupa bastante, e que representa a maneira preguiçosa de fazer as coisas, é o erro. Então, quando você tem um reconciliador, veja como ele funciona: quando você tem uma função de reconciliação, se ela retornar um erro, ou seja, se o erro retornado não for nulo, o Kubernetes vai entender que o reconciliador queria fazer algo, mas não conseguiu, e é por isso que retornou um erro. Eu tentaria executar esse reconciliador no objeto novamente, e esse é o mecanismo de autorrecuperação do Kubernetes. Talvez você não tenha conseguido criar a instância da Amazon porque houve um problema de rede, e quando o reconciliador é encerrado, ele informa que o trabalho não foi concluído. O Kubernetes tentará novamente e, desta vez, as chamadas de rede serão bem-sucedidas, ou talvez você tenha tido alguns problemas de permissão e, ao corrigi-los, o Kubernetes poderá se autorrecuperar.
+
+No nosso caso, se não conseguirmos atualizar o status do recurso personalizado, ocorrerá um erro. E esse é o jeito mais fácil. O motivo é que, se não houver erro, nada deve ser retornado. O trabalho já foi feito. Não fazemos devoluções. Se
+
+nada for retornado, o reconciliador não será executado novamente. Ele simplesmente aguarda uma nova alteração em um objeto pelo qual é responsável. Mas veja o que aconteceria, pois não conseguiríamos atualizar. Ocorreu um erro. O conciliador será executado novamente desde o início e percorrerá todas essas 10 tarefas. O processo irá
+
+imprimir o objeto e a versão do recurso. Mas desta vez ele vai obter a versão mais recente porque é esta função `get` que obtém o objeto mais recente em que se está trabalhando. E desta vez será a versão dois, que é uma alteração feita fora do operador. E desta vez, ele vai pegar o objeto, imprimir a versão, que é nova desta vez, e executar todas as etapas do seu operador, o que não deveria estar fazendo. Não há motivo para fazer isso. Mas como você retornou um
+
+erro, o sistema informa que vai executar todas as verificações no reconciliador. E é por isso que tenho dito que seu conciliador precisa ser um tempotent. Se não forem necessárias alterações, você sabe que nenhuma alteração deve ser feita pelo conciliador. Desta vez tudo correrá bem, pois, como se trata da mesma versão, da mesma geração e da mesma versão de recursos, ao obter a versão mais recente disponível, você poderá atualizar as especificações. Você seria capaz de atualizar a especificação e, sem erros, retornaria um valor nulo. Essa é
+
+a maneira preguiçosa, porque você executa o loop do reconciliador novamente apenas para obter a nova versão, gastando ciclos de computação e muito tempo. Você está executando o reconciliador, desperdiçando capacidade computacional sem motivo. Em vez de gerenciar o erro diretamente, você o retorna, deixa o Kubernetes executar o reconciliador, obtém a nova versão e, eventualmente, prossegue com a atualização. É isso que eu quero mostrar a vocês. Antes de mostrar para vocês, quero falar sobre a mudança no meu ambiente de desenvolvimento. Antes eu
+
+usava o Kind, mas agora estou usando o Wind, ou Wind como alguns chamam, que é um vCluster em Docker, e essa será a base de todos os operadores UM que eu construir, de todos os ambientes de desenvolvimento UM que eu precisar. O Bind é realmente muito legal e oferece muitas funcionalidades. Tenho certeza de que existem outros vídeos sobre o Cube Simplify que você pode conferir, mas para um exemplo bem simples, você pode usar o comando ` vcluster create` e ele criará um vcluster no Docker, substituindo diretamente o `kind`. Eu tenho meu arquivo `vcluster.yml`, que, se eu puder mostrar, se parece com algo assim.
+
+Vou obter meus nós de trabalho como contêineres Docker. O VIN também me dá a flexibilidade de criar uma instância do Amazon EC2 e conectá-la ao meu cluster VIN local . Bem, vou implantar o Flannel Celium padrão, o Flannel CNI, e a versão do Kubernetes que estou usando é a 1.3.4 core. Você pode usar o comando `vcluster
+
+create`, nomear o cluster (no meu caso, é `zry`) e usar o driver `docker`. Isso funciona muito bem no Mac com o Obsidian Stack, caso você esteja usando. Eu já tenho esse cluster rodando no Windows e você pode ver que tenho esses contêineres. É aqui que meu cluster Kubernetes está rodando. Então, temos um cluster Kubernetes funcionando. Também precisamos que nossas
+
+definições de recursos personalizadas estejam instaladas no cluster. E como estamos usando o Cube Builder e este é um arquivo make, ele possui alguns alvos make: make manifest, make generate e make install. O que isso vai fazer é criar o CRD (Registro de Requisitos de Configuração). Ele vai aplicá- los no meu cluster e eu poderei obter instâncias EC2 porque esta era a minha definição de recurso personalizada, ou melhor, a minha explicação de instâncias EC2, e aqui você pode ver que ele reconhece esse recurso específico, e se eu executar o comando `spec`, você verá os exemplos de `fu` e ` bar` aqui, e esta é a especificação que eu queria executar. Agora, deixe- me mostrar rapidamente isso em demonstração e executar meu...
+
+deixe-me ver... devo estar vazio, ok, ótimo...
+
+estou [limpa a garganta] executando meu comando principal e este está executando o operador no vclustluster... no Docker. Agora veja o que acontece assim que eu crio um objeto do tipo instância EC2. Deixe-me
+
+mostrar rapidamente como fica... então seria algo como " exemplos de configuração" ou "amostras de configuração de computação". Esta é a minha instância EC2 que estou criando agora . Então vamos fazer isso.
+
+Se eu criar algo, o que vai acontecer é que a reconciliação será iniciada no lado esquerdo. Você pode ver que o objeto tem geração um porque é a primeira vez que ele foi criado e a versão do recurso é diferente aqui. Certo? A versão do recurso é algo diferente por aqui. Hum, no entanto, parece que deveria parar. Hum, provavelmente. Oh sim. Então,
+
+o que aconteceu? Isso deveria parar aqui para que eu pudesse prosseguir e fazer as alterações por conta própria. Mas como eu apertei Enter, hum, isso foi interpretado como uma entrada e nada, ah, esperou por mim. Simplesmente seguiu em frente. Mas deixe-me excluir rapidamente. Então
+
+, vamos repetir isso. Dessa vez, vou garantir que não darei nenhum comando de entrada. Quero que isso espere para que eu possa fazer alterações no objeto por conta própria, de fora do operador. Então, se eu criar uma instância EC2 agora, veja o que acontece se eu executar `k get ec2 instances hyphen o yaml`. Esta é a geração, e é a mesma geração que meu operador conhece. Isso é bom, é perfeito, e
+
+a versão de recursos também é o que ele conhece. Então, neste momento, ambos estão conhecendo o mesmo objeto. Mas o que vou fazer é editar minha instância EC2 e dizer que essa alteração foi feita enquanto o operador estava trabalhando no recurso, algo assim. Agora está editado e, se você olhar novamente, a geração foi incrementada em um e a versão do recurso também foi alterada. Isso indica que o Kubernetes, o servidor de API ou o HCD enxergam esse objeto de forma diferente da que meu operador está segurando aqui neste momento. Agora, quando
+
+eu pressionar Enter, o que vai acontecer é o seguinte: neste ponto, quando eu pressionar Enter, ele tentará atualizar minha barra. Ele vai alterar a string que está lá agora para a barra, que é " testing", e a substituirá por esta string que vem do operador. E quando essa tentativa de atualização falhar, ela ocorrerá. Então, vamos pressionar Enter e agora veremos. Agora veja o que acontece. Esse é o
+
+problema. A mensagem indica que a operação não pode ser concluída em instâncias EC2. E2 indica que o objeto foi modificado. Aplique as alterações à versão mais recente e tente novamente. Tente novamente. A forma como você
+
+está tentando novamente agora é o rastreamento da pilha de erros. A maneira de tentar novamente agora é simplesmente dizer "panic". Estou retornando um erro. E o funcionamento do reconciliador é o seguinte: se você retornar o erro, todo o processo, todo o loop, será executado novamente. E é isto que você vê aqui. O
+
+conciliador foi iniciado. Desta vez, recebeu a nova versão, que é a versão dois. Certo? Obteve a versão do recurso, que é a versão do recurso aqui. Ele executou todas essas tarefas. O processo executou todas as
+
+três tarefas e, finalmente, agora sabe qual é a versão mais recente disponível . E aqui você pode ver que, quando eu pressiono Enter, o objeto é atualizado, ou seja, a atualização foi concluída porque ninguém mais atualizou o objeto enquanto o controlador estava em execução. A versão não foi alterada. Desta vez, quando você fez uma atualização, uma nova geração foi alterada, ou melhor, uma nova geração foi incrementada. Como você pode ver aqui, qualquer alteração nas especificações atualiza a geração. Então, quando você
+
+cria o objeto pela primeira vez, essa foi a geração que eu criei, a geração um. Fiz algumas alterações manualmente que incrementaram a geração dois e, desta vez, ele foi para a geração três porque eu consegui atualizar meu objeto usando o controlador que estamos escrevendo agora. Essa é uma maneira preguiçosa de fazer as coisas. No entanto, existe uma maneira melhor de lidar com erros, para que você não precise simplesmente dizer: "Ei, ocorreu um erro". Você não faz isso. Em vez disso, o
+
+Kubernetes fornece um pacote chamado errors. Então, se eu mostrar a vocês o pacote `go` e o pacote `kubernetes` com os erros, e aqui está o pacote de erros, é aqui que o Kubernetes definiu, ou melhor, o Kubernetes definiu todos os erros que você pode obter. Muitas vezes você pode se deparar com problemas como "não autorizado", talvez você diga que é proibido, é um novo conflito, você tem este objeto já existe, então não posso criá-lo. Todos esses já estão definidos no pacote, na API, chamados de erros, e isso é algo que podemos usar para descobrir que tipo de erro foi e o que fazer a respeito. Vamos analisar esses erros e ver como podemos tornar nosso operador mais inteligente. Então,
+
+em vez de desistir e recomeçar do início, ele baixa a versão mais recente diretamente daqui. Quando a atualização falha, aparece a mensagem "OK, parece que o operador externo está errado, parece que o objeto externo foi alterado". Deixe-me ir rapidinho buscar a versão mais recente aqui, em vez de executar o reconciliador novamente. Então vamos dar uma olhada e ver como isso é feito. Tudo bem. Então,
+
+o que estamos tentando fazer aqui é atualizar nosso objeto caso tenha ocorrido um erro. Você sabe que queremos tentar novamente se houver um erro ao tentar atualizar nosso recurso personalizado porque a versão foi atualizada ou modificada em algum lugar externo ao nosso operador. A primeira coisa que precisamos saber é como podemos descobrir qual foi o erro. Portanto, essa função de atualização retorna um erro, mas cabe a você controlar esse erro. Cabe a você definir como ou qual foi esse erro. É possível que o objeto
+
+não esteja mais disponível. Pode ser que você não tivesse problemas com permissões ou que não tivesse permissão. Pode ser que tenha ocorrido um erro 500. Como você classifica esses erros que estão aparecendo quando você tenta atualizar o recurso? É para isso que falamos sobre o pacote de erros.
+
+Se o erro for um erro de conflito, você pode fazer algo como isto: se eu receber um erro, você sabe que estou usando o pacote de erros e, se for um conflito, este tipo de erro já está definido pelo Kubernetes no pacote de erros. Então, se eu mostrar aqui os erros do pacote Go, você poderá ver que este pacote implementa a funcionalidade para classificar o erro. Bem, este não é o certo, é para o Kubernetes, este aqui . Isso define cenários já existentes nos quais você pode se deparar e provavelmente receber um erro. Por exemplo, você tenta criar um objeto que já existe com esse nome.
+
+Sabe, quando você tenta executar o comando `cubectl create` em um recurso e tenta novamente, é isso que você obtém como retorno. E é exatamente esse o erro: ele já está disponível. Outra função que estamos analisando é a função de conflito. Verifica se o erro que você recebeu ao tentar atualizar seu objeto foi realmente um problema de conflito. Sabe, então você imprime que o erro de conflito estava lá. Talvez
+
+você queira enviar um e-mail para a equipe dizendo: "Ei, tentei executar meu operador e tentei executar o controlador e, quando tentei atualizar meu objeto, ocorreu um erro" ou talvez vocês queiram tratar isso aqui, certo? Você também pode ter outros erros. Portanto, essa não é a única razão pela qual você não conseguiu atualizar o objeto. Hum, pode ser devido a conflito. Pode muito bem ser que o objeto com o qual você está tentando trabalhar tenha sido excluído do próprio Kubernetes. Portanto, ao
+
+tentar atualizar um objeto que não existe mais, você receberá um erro. E aqui podemos ver novamente se não foram encontrados erros, algo assim. E aqui [bufa] está como você pode fazer você sabe, hum, aqui está como você pode tornar seu, hum, operador mais inteligente em termos de como lidar com erros, como gerenciar erros. No nosso caso, se houver um conflito, queremos tentar novamente. Não queremos desistir do conciliador. Não
+
+queremos fazer isso. Queremos parar por aqui e tentar novamente, em vez de sair do reconciliador retornando um erro. E o Kubernetes verá, ei, este operador não funcionou corretamente. Está me retornando um erro. Então, vou executar todos os passos novamente apenas para poder atualizar a função. Essencialmente,
+
+nesta fase, quando ocorre um erro de conflito, você deseja obter a nova versão do objeto e armazená-la no cache. E então você atualiza o objeto com a nova versão, certo? É isso que você quer fazer. Para isso, existe uma função bastante simples, e na verdade o Kubernetes fornece um pacote para implementar essa repetição. Mesmo sem ele, você poderia fazer de forma muito simples. Será o mesmo código
+
+que eu uso para tentar obter meu objeto caso ocorra um erro. Vamos repetir isso e atualizar. E isso seria muito, muito simples. É assim que você pode implementar uma funcionalidade de conflito de erros . No entanto, o problema é que você pode receber um erro novamente ao tentar atualizar seu objeto. Não é como se você tivesse recebido um
+
+erro uma vez e, na próxima vez, tudo fosse funcionar perfeitamente. Sabe, você ainda pode receber um erro. Você ainda pode receber um erro aqui. E no final, você acaba fazendo a mesma coisa. Você está tentando simplesmente sair do reconciliador porque está retornando um erro, pois ocorreu uma falha durante a tentativa de atualização. E é como se
+
+você estivesse entrando em um ciclo vicioso . Então, o Kubernetes tem um pacote de repetição que provavelmente posso te mostrar. Pacote de repetição do Kubernetes go. É por aqui, em algum lugar . Está no cliente. E você pode usar essas duas
+
+funções disponíveis. Portanto, um deles está com erro. A outra opção é tentar novamente em caso de conflito, que é algo que queremos tentar apenas se houver um conflito. A primeira opção é bastante genérica para qualquer erro que você queira tentar novamente. Este nós queremos testar em caso de conflito e ele tem certas opções para controlar como queremos tentar novamente. Então, isso é
+
+algo que podemos usar. Eu diria que ocorre um erro de nova tentativa e vou usar a função `retry.return` em caso de conflito. Como você pode ver, eu já tenho a função de autocompletar com a tecla Tab e não tenho certeza de qual função ou modelo estou usando, mas este é o cursor... e deixe-me
+
+fazer rapidamente esta nova tentativa de erro... e aqui vamos nós. Então, essa parte torna a sua tentativa muito mais...
+
+inteligente do que simplesmente obtê-la manualmente, porque ainda estamos fazendo a mesma coisa: estamos obtendo o novo objeto do servidor da API do Cube. Tentamos atualizá-lo, e isso é exatamente o que faríamos mesmo sem essa função. Mas o que ela oferece? Uma coisa que eu realmente gosto no pacote `retry`, e especialmente no `retry on conflict`, é que ele fornece duas entradas para essa função. A primeira é uma espécie de recuo padrão, ou seja, um conjunto de configurações que informa ao Kubernetes ou ao seu reconciliador quantas tentativas você deseja fazer antes de falhar. Portanto,
+
+se você observar o recuo padrão, verá que ele possui quatro etapas. Dito isso, ele tentará novamente quatro vezes antes de desistir e informar ao Kubernetes: "Ei, eu tentei, mas não consegui atualizar". Então, isso é como uma nova tentativa dentro da função de nova tentativa em caso de conflito. É isso que o jogo te dá: quantas vezes você quer tentar novamente? A duração é o tempo inicial que a sua função de repetição aguardará para tentar pela primeira vez e, em seguida, nas tentativas subsequentes. Por exemplo,
+
+são 10 milissegundos. Então, para mim, vai começar em 0 a 10 milissegundos para tentar novamente. Se falhar novamente, aguarde mais 10 milissegundos, depois mais 10 e mais 10. Portanto, será algo como 10, 20, 30 e 40 milissegundos. Esse fator controla a duração da sua tentativa ou a eficácia com que você poderá tentar novamente. Nesse caso, a
+
+duração e o fator funcionam como um multiplicador. Então, se eu tiver uma duração de 10 segundos e o fator for cinco, na primeira vez que meu operador iniciar, ele tentará no 10º milissegundo, depois no 50º milissegundo, depois no 250º milissegundo e, após 1,25 segundos, tentará novamente? Então, ele multiplica a duração pelo fator, como se estivesse lhe dando várias tentativas dentro de um recuo exponencial . A cada tentativa, você vai parar um pouco mais e tentar novamente. E essa variação é de 0,1 até um. Esse é
+
+o valor máximo. Isso lhe dá a aleatoriedade entre o momento em que você vai, eh, tentar novamente sua, eh, instrução de atualização. Isso é especialmente útil quando você tem mais de um controlador. Todos eles têm a mesma duração. Todos começam ao mesmo tempo com o mesmo fator. Todos eles tentarão escrever o
+
+objeto ao mesmo tempo. E isso é algo que não queremos. Então, na verdade, a variação (jitter) vai alterar o tempo efetivo. Então, se você observar a duração e o fator, seria algo como: se a sua duração for 10 e o seu fator for, digamos, cinco, seria algo como: " Vai levar 10 milissegundos, depois 50 milissegundos e, depois de 250 milissegundos, você multiplica isso pelo fator." Mas quando você tem jitter, que seria 0,1 ou 10%, essa é a aleatoriedade envolvida. Então, seria 10% de 10
+
+milissegundos dentro do qual começaria, certo? Portanto, não serão exatamente 10 milésimos de segundo, mas provavelmente serão entre 8 e 9 milissegundos. Então, para 50, seriam 47 ou 48 segundos. Um elemento de aleatoriedade é adicionado. Portanto, não é exatamente neste momento específico que você está tentando novamente. Isso ajuda quando você tem
+
+mais de um controlador funcionando ao mesmo tempo, e todos eles têm o mesmo fator e a mesma duração. Eles tentam acessar o servidor da API do seu cubo ao mesmo tempo para obter atualizações, e essa aleatoriedade permitiria que eles não fizessem isso de uma só vez. Portanto, essa função de conflito de repetição recebe duas entradas. Uma delas é a configuração do seu backoff, que é a etapa sobre a qual conversamos. A outra é uma função sem nenhuma entrada e, portanto, retorna um erro.
+
+Essencialmente, a função de retorno em caso de conflito retorna um erro. Você pode ver aqui na definição da função que este é o erro que ela está retornando, e esse erro vem desta função que essencialmente não faz nada além de tentar obter o objeto corretamente. Ele obtém o objeto e então tenta atualizar seu operador ou seu recurso personalizado novamente. Você não precisa dessa linha porque é a mesma atualização que você deseja, a partir da especificação que você alterou e, em seguida, tenta fazer uma atualização. Você retorna o erro se houver algum, porque a função de atualização também retorna um erro.
+
+Basicamente, estamos tentando obter e atualizar o recurso e, se houver algum erro, retornamos para a variável de erro de nova tentativa. É aqui que podemos ver que essa parte entra em um loop pelo número de etapas definido. Aguarda pela aleatoriedade, ou melhor, aguarda pela duração. Em seguida, o cálculo é feito considerando todos os fatores e adicionando a aleatoriedade. Define o tempo para quatro etapas ou quatro tentativas. Isso é
+
+algo que você também pode configurar muito bem . Você pode definir sua própria configuração. Talvez você queira tentar oito vezes antes de dizer "ok, desisto". Ocorreu um erro e, apesar de todas essas tentativas, os passos que você tem, como no nosso caso, são quatro. Se ainda não for zero, você sabe que só pode tentar novamente.
+
+Não há garantia de que a atualização será concluída, mas você está tentando novamente. Você tentou novamente. Você tentou novamente. Talvez você tenha tentado umas 10 vezes. E aqui você pode dizer um print ln. Hum, eu tentei,
+
+tentei quatro vezes. Há algo errado com o cluster Cubernetes ou com o servidor da API, pois é a ele que você está tentando acessar com a função r.update, certo? E então você pode simplesmente dizer "hum, você quer?". Se retornar um
+
+erro, o reconciliador será executado novamente. Geralmente é isso que você pode fazer. Depende de como você deseja construir seu operador. Se eu já tentei várias vezes, ocorre um erro. Hum, provavelmente vou simplesmente dizer "nil", que não quero que meu reconciliador seja encerrado e tente novamente, porque acabei de tentar. Eu prefiro enviar algo por
+
+e-mail, porque é algo mais substancial. Sabe, você tenta de novo, de novo e de novo, e não consegue atualizar. Talvez o servidor da API não esteja mais respondendo. Hum, alguém precisa dar uma olhada nisso. Bem , aqui você pode ver o que está sendo feito. Vamos nos livrar do
+
+objeto não encontrado. E aqui está enviando um e-mail porque algo é maior. Então, se você pudesse tentar novamente, nós simplesmente ignoraríamos isso. Não queremos fazer nada porque se você pudesse tentar novamente este controle automático. Ah, tudo bem. Então, aqui você
+
+não conseguiu atualizar o objeto e enviou um e-mail. No entanto, se tudo correr bem, você pode dizer que o objeto foi atualizado com sucesso após o conflito. E como você alterou o objeto, veja, isso é muito importante. Sempre que você fizer alterações em seu objeto, o reconciliador se lembrará delas . E quando esse loop, essa função reconciliadora, for encerrada. O sistema detecta que
+
+o objeto foi atualizado e executará o comando novamente. E é isso que estamos dizendo, porque a atualização, uh, porque a atualização foi feita no objeto, um novo reconciliador será acionado e sairemos normalmente, sem erros, executando o reconciliador novamente porque o operador, uh, o objeto foi atualizado corretamente. Hum, se tudo estivesse bem. Então, esta é a condição caso o erro fosse outro, porque você poderia ter qualquer outro problema. Aqui você também pode controlar isso, hum, que uh fmt.print ln houve um erro
+
+além do conflito. Vou retornar o erro. Bem, você poderia lidar com casos diferentes. Um dos casos era o seguinte: se houvesse um conflito, você poderia lidar com outros casos, como, por exemplo, se o objeto não fosse encontrado, talvez ele fosse excluído. Essa poderia ser outra razão pela qual você talvez queira simplesmente não gerar um erro. Então você poderia dizer se
+
+erros não forem encontrados. Se não for encontrado, não quero fazer nada. Sabe, se não for encontrado, não posso fazer nada. Então, estou apenas retornando de forma elegante. Não estamos reclamando.
+
+Não estamos enviando nenhum erro do reconciliador. Não estamos dizendo ao Kubernetes para tentar novamente porque o objeto não existe. Não há nada para tentar. Se não tivermos o objeto, tentamos atualizá-lo e falhamos. O que podemos fazer?
+
+Podemos simplesmente ignorar a falha. Sabe, isso não está sob o controle do nosso operador . Portanto, você pode ter mais de uma condição "um". E aqui também você pode ter uma espécie de "caixa de captura" para erros gerais. E aqui você pode dizer que houve um erro diferente do conflito ou que o arquivo não foi encontrado e, nesse caso, você realmente quer retornar um erro e tentar novamente todo o loop do reconciliador, porque você já cobriu dois casos. Uma delas era:
+
+se não fosse encontrado, você não faria nada. Nada precisa ser feito. Se houver conflito, tentamos novamente. E se não conseguíssemos tentar novamente da maneira correta, também enviaríamos um e-mail. Nós não costumamos reprisar isso. Mas se pudéssemos atualizar
+
+nosso objeto, simplesmente diríamos: "Sim, a atualização foi concluída. Quando tentamos novamente, tudo está bem. Não precisamos executar o reconciliador novamente porque o objeto já foi atualizado." E no final, se não houver nenhum erro, você pode ver aqui que simplesmente encerramos o programa normalmente. Portanto, existem muitos motivos ou muitos lugares onde você se encontrará. Deseja retornar um
+
+erro? Deseja retornar de forma elegante? O que você quer fazer? Cada lugar tem seu próprio valor. Neste caso, tentamos atualizar e, se não houver erro, simplesmente retornamos, pois não houve erro. Nada precisa ser feito. Caso
+
+ocorra algum erro, isso acontece quando você retorna em locais diferentes e trata esse erro de maneira diferente. Mas se não houve erro na primeira vez, nada precisa ser feito. Podemos simplesmente sair do reconider e aguardar que o Kubernetes detecte uma nova alteração de objeto . Então, se eu mostrar isso em ação agora, vou apenas dar uns retoques . Não quero investigar erros de "não encontrado", então vamos simplesmente executar um "go run main go". Não tenho nenhum objeto no momento
+
+que esse operador esteja analisando. Então, vou esperar e depois criarei algo. Como você pode ver, assim que o objeto é criado, a versão é... a geração do objeto é
+
+um e a versão do recurso é 80.748. Vai esperar porque pedimos que espere. O que vou fazer é simular que meu objeto foi alterado externamente. Então eu diria que isso mudou e você pode ver que a versão ou geração é a dois. A versão também é
+
+diferente. Se eu tentar novamente, você verá o que aconteceu. Descobriu-se que, ao tentar atualizar o objeto, ocorreu um erro de conflito e, por isso, o processo de reconciliação não foi encerrado. O que você está vendo aqui é uma nova execução, pois você atualizou o objeto. A mensagem exibida é que houve um erro de conflito e a tentativa de atualização do objeto foi bem-sucedida.
+
+Após a tentativa de reconciliação devido ao conflito, como a atualização foi feita no objeto em questão, um novo processo de reconciliação será acionado. E isso faz sentido, porque você atualizou o objeto e aqui você pode ver que obteve a versão mais recente e tudo funcionou como esperado. Então, isso é algo que você realmente faria, e é assim que você pode tornar seu operador mais inteligente, não apenas em termos de novas tentativas, mas também em como lidar com erros, porque podem ocorrer erros quando seu operador ou seu reconciliador estiver em execução. Então, acho que este vídeo é um pouco mais longo, mas eu realmente queria dar a vocês uma ideia de por que alguém faria algo, especialmente quando se tem várias coisas acontecendo ao mesmo tempo, como malabarismos com o mesmo objeto . Bem, no caso de você ter mais de um operador tentando trabalhar no objeto ao mesmo tempo, é sempre uma boa ideia, ao atualizar um objeto (seja ele uma especificação ou um status), realizar uma nova tentativa quando você suspeitar que o objeto possa ter sido modificado por outro controlador. Se o
+
+seu operador for o proprietário do objeto e nenhum outro processo estiver alterando-o, é importante verificar se ele está sendo modificado por outro operador. Nenhum outro controlador está atualizando esse objeto específico. Você não precisa fazer isso. Não há necessidade de lidar com isso. Mas, especialmente em sistemas onde há múltiplos atores executando no mesmo objeto, é uma ótima ideia implementar essa repetição como fizemos. Portanto,
+
+mesmo assim, é uma boa ideia lidar com os erros em vez de simplesmente entrar em pânico e dizer ao Kubernetes para tentar novamente. Quer dizer, em vez de simplesmente retornar um erro e deixar o Kubernetes lidar com isso, é uma boa ideia que você mesmo possa fazer isso , certo? Ao tentar atualizar, se ocorrer um erro, você o trata. Se houver um conflito, tente novamente. Olá a todos, sejam bem-vindos a este vídeo da série sobre as melhores práticas para operadores de sistemas UM.
+
+E hoje vamos falar sobre como você pode fazer seu operador trabalhar muito mais rápido em comparação com o que você vinha fazendo antes. E para isso, vamos falar um pouco sobre o que quero dizer quando falo em fazer o operador trabalhar mais rápido. Em vez de dizer que queremos fazer nosso operador trabalhar mais rápido, deveríamos dizer que queremos fazer nosso operador trabalhar em paralelo. Esta boa prática não aborda o tempo que o operador leva para realizar uma operação. A esta altura, se você tem acompanhado os códigos e as boas práticas, já deve saber que sempre falamos sobre um recurso personalizado chamado instância EC2, certo? Então, estamos falando de
+
+um recurso personalizado que criamos no curso, que era uma instância EC2, e nosso operador, que estava sendo executado neste cluster Kubernetes, era responsável por reconciliar esse objeto específico. Vai para a AWS. Isso cria a instância. Ele fornece informações sobre essa instância, como o IP privado, o nome da instância e o IP público atribuído à máquina virtual. Basicamente, ele devolve essas informações para você, que as atualiza no status do seu recurso personalizado e tudo funciona corretamente.
+
+Quando falo em otimizar o processo para tornar seu operador mais rápido, não estou me referindo ao processo de entrega da máquina virtual aos seus clientes, ou qualquer tempo que você leve para executar a tarefa que seu operador deveria realizar. No meu caso, se o tempo que minha operadora leva para falar com a Amazon for, digamos, de 10 milissegundos, ela faz uma chamada para a Amazon. Então a Amazon faz sua mágica e me dá uma máquina virtual em 10 segundos. Digamos que minha máquina virtual leve 10 segundos para estar realmente em execução e pronta, e que eu receba minha resposta em cerca de 10 milissegundos. Este não é o momento para reduzirmos isso. Isso é algo que
+
+é muito... programático. Não é assim que se relaciona com um operador. Isso
+
+está relacionado aos seus próprios paradigmas de codificação. Talvez você esteja usando uma chamada ineficiente para a Amazon, o que faz com que ela demore mais. Talvez você esteja usando long polling. Bem, isso não altera o tempo necessário para que a operação funcione. Mas existem maneiras de fazer com que suas operações levem menos tempo, mas esse não é o foco deste vídeo. O que
+
+queremos discutir é que, ao desenvolver um operador, geralmente o fazemos porque há pessoas que desejam usar o produto. Imagine que você trabalha em uma empresa e conhece algumas pessoas, um cara e outro, que vêm até você e dizem: " Ei, Shbam, você pode me dar uma instância EC2?". Penso que talvez esses caras se beneficiassem mais se eu lhes desse um portal de autoatendimento. É nesse portal que, neste cluster Kubernetes, eu crio um recurso personalizado para eles, chamado instância EC2. Forneço apenas os
+
+dados necessários para que eles preencham o recurso personalizado com o nome, a conta de serviço que desejam usar, a função de IM que desejam que a instância EC2 tenha, a chave privada que desejam adicionar à instância para que possam acessar a máquina via SSH. E então, meu operador pega esse objeto... Este é o operador, certo? Este é o operador. Ele
+
+pegará esse objeto e criará uma máquina virtual na Amazon para mim, que então será devolvida ao usuário que a solicitou, e tudo funcionará perfeitamente. O problema começa quando você está aumentando o uso do seu objeto. O que eu quero dizer com isso? Quando apenas uma pessoa solicita a instância, você é um operador. Você tem um operador e ele está funcionando, o que é ótimo. O que acontece
+
+quando várias pessoas de equipes diferentes vêm até você e dizem: "Ei, sabe de uma coisa? Nós também precisamos de uma instância." Então imagine que há 10 pessoas. Imagine que 10 pessoas enviam uma solicitação para um objeto chamado instância EC2 e, em seguida, você tem um operador que reage a isso. Basicamente, o que acontece é que você tem uma fila de espera em funcionamento. Então, você adiciona 10
+
+objetos do tipo instância EC2 e, em seguida, seu operador reage a isso e cria a máquina virtual (VM). Isso devolve a informação e atualiza o estado deste objeto. Depois de processar um desses 10, isso é interessante. Você tem 10 recursos para criar. Você tem um operador e cada operador tem algo chamado trabalhador, e esse trabalhador é o responsável por verificar a fila e ver quantos objetos eu tenho. Se eu tiver um, ótimo,
+
+eu aceito. Vou processar isso e depois seguirei em frente . Se eu tiver 10, acontece a mesma coisa. Ele verifica a fila de objetos que estão sendo atualizados. Basta um. Não leva
+
+em consideração quantos possui. Ele recebe um, processa-o e, em seguida, passa para o segundo objeto operador e, depois, para o terceiro objeto operador. Porque funciona enquanto houver objetos nessa fila. hum, vai acontecer isso. Mas isso acontece sequencialmente.
+
+Imagine se houvesse um contador aqui. Imagine se houvesse um contador aqui. Onde estão esses objetos, sabe, e também há outro contador. Você precisa mover este objeto daqui para este lugar. Mas você só tem uma pessoa trabalhando. E esse
+
+cara, mesmo havendo vários objetos disponíveis no balcão da esquerda, só pode pegar um, depois volta e o coloca no balcão da direita. Certo? É isto que o seu operador está fazendo. Ele fica de olho, observa essa laje em particular e vê, ah, há objetos em cima dela, mas eu só posso carregar um de cada vez. E a razão pela qual isso acontece é que, quando seu operador é criado, ele possui apenas um trabalhador.
+
+Certo? Então, se de alguma forma você puder dizer ao Kubernetes que sabe que, presumo, meu objeto será muito usado. Presumo que haverá muitas pessoas tentando fazer alterações no meu objeto, tentando excluí-lo, tentando criá-lo. Não quero apenas uma pessoa responsável por levantar peso. Talvez eu precise de vários. E é aí que
+
+você pode informar aos operadores do Kubernetes que estamos usando o Cube Builder como framework. Você pode dizer ao construtor de cubos: " Por favor, crie para mim... talvez dois trabalhadores, ou três trabalhadores, ou quatro trabalhadores."
+
+Essencialmente, não há limite para o número de trabalhadores que você pode criar. Quer dizer, sempre há um limite, porque cada trabalhador consome poder computacional e memória. Então você não quer que seu operador esteja usando gigabytes de memória e núcleos de CPU. Você não quer mais funcionários do que o necessário, porque não faz sentido. Não é uma otimização correta.
+
+Mas, bem, isso aumentaria o número de trabalhadores, certo? E isso é algo que você pode fazer no próprio operador, no reconciliador onde executa o gerenciador de operadores. Isso é algo que podemos configurar. Mas vejamos isso na prática. Como fica quando tenho 10 instâncias e apenas um worker? Quanto tempo
+
+leva para que meu operador esteja funcionando? Então, este é o código que você tem visto em todos os vídeos e com o qual você já deve estar muito familiarizado. Esta é a nossa função de reconciliação. Se eu lhe mostrar rapidamente a API que criamos, ela usa instâncias EC2 e aqui você pode ver que cada objeto possui metadados. Possui os metadados do objeto, os metadados do tipo, a especificação e também o status. É bastante simples. Não há nada de
+
+mágico nisso. Só temos duas chaves. Um deles é fu. O outro é um bar. Não temos nada em nosso status porque não é algo que estejamos abordando neste vídeo.
+
+O controlador aqui também é muito simples. Esta é a função de reconciliação, e é ela que é executada sempre que um objeto é atualizado ou criado. O objeto em questão é a instância EC2 ou um recurso personalizado com o qual estamos trabalhando. Então, o que fazemos é registrar a hora em que meu operador começou e simplesmente imprimi-la. Então temos um pouco mais de detalhes, como o horário em que começou, que foi exatamente agora. Então, este é o
+
+horário de início da operação. o horário de início do operador. Vamos considerar não o operador, mas o conciliador. Faz mais sentido. A reconciliação e, bem, então imprimimos que iniciamos nossa reconciliação neste momento e registramos a instância. Isso não é novidade. Vocês já
+
+me veem fazendo isso há muito tempo, se têm acompanhado os vídeos. Para os operadores, criamos uma variável do tipo instância EC2, que, como você pode ver, possui apenas uma especificação e um status. A especificação só tem duas coisas: fu e bar. Obtemos o objeto da solicitação do reconciliador porque, sempre que seu objeto é atualizado, uma solicitação é enviada ao seu reconciliador. Então, usamos o reconciliador e a função get para obter o objeto que é do tipo uh e que vem da solicitação. Obtemos o
+
+nome do namespace. Essencialmente, obtemos duas coisas com isso. Obtemos o nome e o objeto, ou melhor, o espaço de nomes e o nome do objeto. A partir da solicitação, armazenamos essa informação em nossa instância EC2. E aqui é onde você vai simular uma tarefa que leva 5 segundos, por exemplo, para ser concluída. Pense nisso
+
+como criar uma instância EC2 na Amazon. Certo? Então, estou usando o cursor, que é muito bom em termos de... ajudar no
+
+desenvolvimento. Mas imagine que cada objeto com o qual seus funcionários trabalham e que seus clientes usam leva cerca de cinco segundos para ser concluído, exatamente cerca de 5 segundos. Não estou dizendo exatamente cinco, mas, para simplificar no vídeo, digamos que sempre que alguém cria um objeto do tipo instância EC2, uma máquina da Amazon é criada e essa operação específica leva 5 segundos. Agora, vamos tentar fazer isso, vamos executar o programa. Em seguida, simplesmente imprimimos o tempo total gasto pela reconciliação. Obtemos
+
+o tempo desde o início (`time.since`) e acho que faz sentido armazená-lo como uma variável, pois queremos armazenar o tempo em vez de calculá-lo aqui, porque seria zero, já que o tempo desde o início é zero. Então, vamos usar o tempo de início (`start time`). Essencialmente, era isso que queríamos fazer: simplesmente imprimimos o tempo decorrido desde o início do nosso reconciliador e retornamos, pois não estamos fazendo nenhuma alteração. Estamos apenas vendo como [limpa a garganta] a função de reconciliação, como o operador funciona se alterarmos algum objeto, e aqui está uma configuração semelhante com o gerenciador, porque temos um gerenciador de operadores e configuramos nosso reconciliador com esse gerenciador.
+
+Isso é algo bastante comum. E se eu lhe mostrar o objeto com o qual vamos trabalhar, seria algo na configuração de exemplo. E aqui está. Como você pode ver, é mais ou menos assim que estou simulando várias pessoas tentando interagir com meu recurso. Portanto, essa pessoa poderia ser da equipe A e fornecer o objeto para o qual eu desejo criar uma instância EC2. Isso pode ser
+
+da equipe B, da equipe C, da equipe D ou da equipe E. Podem ser vários arquivos ou o mesmo arquivo. O importante é que estou enviando todos esses objetos para o meu cluster Kubernetes ao mesmo tempo, porque é assim que as pessoas usariam o seu objeto. Pode haver duas , três ou quatro pessoas em uma equipe tentando falar com seu operador ao mesmo tempo. Não, a única diferença é que os nomes não estão em conflito, pois não queremos que isso aconteça, já que este não é um recurso de namespace de pontuação de nomes. Se
+
+eu tiver uma instância e tentar criá- la novamente, vou encontrar um problema: estou tentando criar um recurso que já existe. Não queremos isso. Kubernetes 101. E aqui você pode ver a instância dois. E aqui você pode ver três, e os mesmos quatro, e são cinco.
+
+Eles têm nomes diferentes. Eles possuem dados diferentes. Os dados podem ser qualquer coisa. Pode ser a mesma coisa. Na verdade, não importa. Mas o nome
+
+deve ser único porque não é um objeto com escopo de namespace. O que estou tentando fazer aqui é apenas tentar ver ou tentar dizer a vocês que seria possível imaginar que isso está sendo feito por pessoas diferentes, certo? Então vamos executar nosso operador. Primeiro vou verificar se tenho alguma instância EC2 no meu cluster. Eu tenho um. Vou apagar
+
+isso. Vou excluir isso e instalar minha definição de recurso personalizada novamente. Bem, eu estava trabalhando em várias versões do operador, mas esta é a que eu quero usar, e estou usando a plataforma Cluster para executar meu ambiente de desenvolvimento local. Então eu poderia dizer, tipo, vá executar main.go. Então,
+
+este é o nosso operador em execução e é aí que você verá esta linha, que é muito importante. O controlador está sendo iniciado. Em seguida, o seu worker é iniciado e você tem apenas um worker para cada instância EC2 do tipo controlador. Isso significa que se alguém criar uma instância EC2, mesmo que forneça 10 instâncias, que é o que estou fazendo neste exemplo, apenas uma instância será criada por vez. E é exatamente isso que você quer. Veja bem, a questão é que você
+
+não quer mais de uma pessoa. Então imagine que existe um indivíduo chamado A e este outro chamado B. Se A já estiver trabalhando neste objeto, se A já estiver tentando movê-lo para o destino, você não quer que B interaja com ele. Certo? É a mesma coisa que acontece no críquete quando você tem uma bola e duas pessoas tentam pegá-la, mas acabam se chocando e a bola cai, certo? Você não quer isso.
+
+O ideal seria que, se houvesse duas bolas — o que não é um bom exemplo no críquete —, cada jogador estivesse olhando apenas para a sua bola por vez, pois não se quer que nenhuma das duas caia no chão. É isso que queremos. Queremos tornar nosso operador mais rápido, não em termos de quanto tempo leva para criar o WM, mas sim em termos de quanto tempo o operador leva para reagir a esses 10 objetos disponíveis. Então, como você pode ver, temos apenas um trabalhador, e eu vou criar todas essas cinco instâncias para que você possa ver como isso se comporta. Então, se eu criar, você pode ver aqui que o horário de início da reconciliação é este, e você vê que eu criei cinco instâncias, mas o que está acontecendo é que está sendo feito uma por uma, e o operador é inteligente, os trabalhadores são inteligentes, eles sabem que houve cinco instâncias que foram alteradas, eu preciso trabalhar em cinco instâncias, mas só posso pegar uma de cada vez, não posso pegar várias ao mesmo tempo, e você também não quer voltar.
+
+Como você pode ver, o que acontece é que toda vez que o conciliador é iniciado, ele calcula e imprime o tempo gasto nessa conciliação. Cada vez que o reconciliador é executado, isso ocorre porque um objeto foi atualizado. O erro ocorre porque um objeto foi alterado. Você ficaria surpreso se pensasse que, a cada vez que visse "Estou levando cinco segundos para uma instância, e tenho cinco instâncias", meu reconciliador levaria 25 segundos para todas as cinco. Não é assim que funciona.
+
+Sim, para o meu loop rodar, se você contar, cinco, cinco, cinco sinais, levou essencialmente 25 segundos. Mas um trabalhador leva 5 segundos, e cinco vezes esse tempo é somado a 25. Isso não altera o tempo gasto por conciliação. Ainda leva 5 segundos para processar um único objeto. Agora, o que você pode fazer neste caso é imaginar se o tempo gasto fosse maior, sabe, se o seu operador levasse mais tempo, digamos, 2 minutos, o que não é tão ruim, mas também não é ótimo, nem terrível, citando shernobbile aqui. No entanto,
+
+vamos elevar as coisas um pouco e eu diria que, sabe, ele não dorme por 1 segundo, ele dorme por 10 segundos toda vez que você for criar cinco instâncias. Então, estou tentando simular isso agora, leva 10 segundos para cada objeto e eu tenho cinco. Então, estou imprimindo cinco vezes. Então, na verdade, vai durar 50 segundos, o que não é o que queremos. Quero dois em 10. Então,
+
+cinco vezes isso vai levar 2 segundos. Portanto, o tempo total de espera é de 10 segundos . Se você interromper o processo e eu executá-lo novamente, você verá a mesma coisa. Veja, agora, para cada instância, nenhuma das outras instâncias foi iniciada ainda. É apenas a primeira instância que está sendo usada . Em seguida, passa para o
+
+segundo exemplo. Este é um trabalho em série do seu operador sobre seus recursos, pois você tem apenas um trabalhador. O trabalhador está ocupado aqui com o exemplo um. Em seguida, passa para o segundo exemplo e depois para o terceiro. As pessoas que criaram seus objetos antes dos outros terão prioridade.
+
+Na verdade, isso não faz sentido porque, bem, não é exatamente 1 2 3 4. Não é pelo registro de data e hora de criação. Mas o problema é que seu trabalhador está usando um objeto por vez, e isso não é o que se chama de uso eficiente da estrutura de operadores. Pode-se dizer que na minha empresa vejo um uso muito maior. Então, se eu tiver uns 10 objetos, faz sentido criar três ou quatro trabalhadores, porque assim eles podem executar tarefas em paralelo.
+
+Eles continuarão completamente separados um do outro. Se eu fornecer 10 instâncias EC2, serão criadas 10 instâncias diferentes, completamente separadas, porque elas não funcionam em conjunto. Tudo o que fazem é pegar um objeto e executar a tarefa que lhes foi designada, individualmente, sem interagir com outros processos de trabalho. E essa simples coisa pode realmente te ajudar a trabalhar com seus operadores de forma muito mais eficiente. E isso pode ser feito na configuração com a função de gerenciador. O que você
+
+pode fazer é dizer que, para a instância EC2, é nisso que meu operador deve reagir. Quero que ele reaja de acordo com as opções e que você tenha opções dentro do seu controlador. E aqui você pode ver que existem opções, e uma delas é o número máximo de reconciliadores recorrentes. " Reconcilia" significa que é essencialmente uma palavra sofisticada para número de trabalhadores. Quantas instâncias máximas do reconciliador podem ser executadas, visto que sabemos que um ou mais trabalhadores executam um reconciliador por vez? Se você
+
+tiver 10, então haverá 10 trabalhadores. Eles podem reconciliar 10 vezes ou podem executar essa função 10 vezes de uma só vez . E essa parte vai fazer uma enorme diferença para você. Deixa eu colocar de volta onde estava por um segundo, tá bom? Porque queríamos que durasse 1 segundo. E agora você pode ver como isso funciona
+
+como uma diferença. Que diferença fará se executarmos isso novamente? Agora você pode ver que executei meu operador e, como agora tenho 10 trabalhadores, você pode ver que ele já está executando tarefas em paralelo. Começaremos com um tempo de reconciliação e você pode ver que esta é a instância 2, 3, 2, 5. Cada uma delas levou 5 segundos porque não estamos reduzindo o tempo individualmente, mas os outros objetos que estavam lá não estão esperando para serem selecionados por um operador, porque o operador tem vários funcionários ocupados e eles irão selecionar o objeto quando ele estiver disponível.
+
+Não queremos isso. Considere essa prática como algo que você faz quando precisa muito do seu "um" para o seu recurso personalizado. Por exemplo, cápsulas. Se eu criasse 100 pods e apenas um pudesse ser criado por vez, você ficaria esperando até que seu pod fosse agendado em um nó, antes mesmo de ser selecionado pelo operador. Com o aumento do número de trabalhadores, a operação se torna muito mais paralela.
+
+Isso ajuda você a selecionar esses objetos muito mais rapidamente e, essencialmente, seja qual for o tempo que isso leve, levará, porque não podemos impedir esse processo. Como eu disse, se eles vão levar 5 segundos em cada iteração para cada objeto, eles farão isso. Esse não é o objetivo do vídeo. Você poderia fazer isso dizendo: " Ok, se eu quisesse reduzir o tempo que cada reconciliador leva para cada trabalhador, eu poderia usar milissegundos. Isso torna meu programa mais eficiente e agora eles levarão um milissegundo." Mas a questão é: se você
+
+tem muitas operações, muitos objetos com os quais está trabalhando, e não quer esperar que eles sejam pelo menos selecionados e iniciados, imagine... Imagine, neste caso, digamos que em um eixo do tempo, aqui o tempo sendo zero e aqui o tempo sendo infinito, se a criação de uma instância leva 10 minutos (estou dando apenas um exemplo muito simples), se isso leva 10 minutos, é ruim. Novamente, depende do que você está tentando criar e onde está tentando criar. Mas
+
+digamos que esta seja às 13h. Então, são 13h e depois provavelmente serão umas 23h. Se eu iniciasse a criação do meu operador às 13h, eu receberia minha instância às 13h10, porque leva 10 minutos para a instância ser criada. No entanto, e se houver uma avalanche de objetos, certo? Se você der, digamos, 10 objetos e cada um levar 10 minutos para ser concluído. Então, sua
+
+instância, que provavelmente foi a última a ser usada, começaria em 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos, 10 minutos,
+
+1 hora e meia depois, sua solicitação de instância seria atendida. Então seria por volta das 14h, ou melhor, por volta das 14h30, 90 minutos ou 100 minutos, então 14h40 seria quando sua instância seria atendida, mas você fez a solicitação às 13h. Você solicitou e sua solicitação foi iniciada para ser processada às 14h40, e você sabe que era às PMs (14h30 no horário local), e então você receberia sua instância em 10 minutos, porque todos receberam suas instâncias em 10 minutos, mas você teve que esperar porque havia apenas um servidor disponível. Se você tiver apenas 10 trabalhadores e 10 objetos, todos esses objetos serão coletados ao mesmo tempo. Eles seriam trabalhados por um único funcionário e você receberia seu objeto. Todos vocês que solicitaram
+
+o objeto o receberão em cerca de 10 minutos, pois leva 10 minutos para criar uma instância. A ideia principal é que sim, existem maneiras de tornar seu reconciliador eficiente, que é o que eu fiz, de segundos a milissegundos, isso é sempre possível, sabe? Novamente, depende de como você programou, mas o principal objetivo deste vídeo é fazer com que seu operador se comporte em paralelismo, para que você, como usuário, não precise esperar que alguém fique livre para atender sua solicitação e começar a trabalhar nela. E isso poderia ser feito com as opções do controlador, usando as reconciliações atuais máximas. Isso significa quantas instâncias simultâneas dessa função de reconciliação podem estar em execução. E como um trabalhador
+
+só trabalha em um objeto por vez, se você tiver 10, poderá atribuir 10 a eles. Não há limite para o número de trabalhadores que você pode ter. Claro, também é um projeto ruim. Se você tiver, digamos, 100 trabalhadores, mas apenas cinco ou dez requisições, ou seja, dez alterações ou criações de objetos em seu recurso personalizado por vez, isso também é uma má decisão. Ninguém te impede de fazer isso. Mas você não
+
+construiria 100 quartos para, sabe, no máximo 10 pessoas por vez. Portanto, decisões como essas ajudariam você a tornar seus operadores muito mais rápidos em termos de paralelismo, certo? E esse é o objetivo deste vídeo. Se eu executasse isso novamente agora, você poderia ver que é eficiente em termos de tempo necessário para a criação da instância. São cerca de 5 milissegundos, mas mesmo assim todas as suas instâncias foram processadas em paralelo porque agora você tem 10 workers.
+
+Pequenos detalhes como esse podem fazer uma grande diferença quando você está usando seu objeto e seu operador em larga escala. Tudo bem. Então, para ilustrar essa boa prática, antes de falar sobre o que vamos fazer aqui, eu prefiro... fazer um
+
+desenho. Então, se você acompanhou meu curso anterior sobre como construir seu próprio operador Kubernetes do zero, você deve ter me ouvido dizer isso muitas e muitas vezes: cada vez que você atualiza um objeto, você aciona um loop de reconciliação. E eu expliquei isso bastante no vídeo: você executa o loop de reconciliação novamente, e é por isso que você precisa identificar as coisas, para que, se o estado externo que seu objeto ou operador está gerenciando corresponder ao estado desejado que o usuário solicitou, você simplesmente não faça nada. Pense em algo como um arquivo .enable.
+
+Nesse caso, você escreve um playbook que instala um servidor, ou melhor, um servidor de aplicativos EngineExt, em uma máquina Linux. Isso inicia o serviço e você o executa novamente. Não reinstala o EngineX. Não reinicia o serviço. Simplesmente diz que as coisas estão exatamente como você quer que eu faça e que não farei nenhuma alteração. O
+
+mesmo acontece no seu conciliador. Então, qualquer atualização que você fizer, seja por meio de uma ferramenta de IA, seja com o Cube C, seja com o KitOps, que fará as alterações por qualquer motivo, resulta em uma atualização do seu objeto. Um objeto possui dois campos: especificação e status. Qualquer atualização de um deles aciona um novo loop de reconciliação. É por isso que seu reconciliador deve ser capaz de não fazer nada se nenhuma alteração for necessária . Já falei bastante sobre isso no
+
+vídeo do YouTube em que explicamos como criar um operador do zero, e vou colocar o link na descrição. Agora, deixe-me... deixe-me desenhar uma figura.
+
+Criamos um operador EC2 que cria uma instância para você. Então, nesse operador tínhamos um objeto e uma especificação simples, sabe, coisas que você precisa quando está criando uma instância, que é... com... na Amazon.
+
+Então, você tinha coisas básicas como o nome da instância que você queria. O ID AMI que você queria usar. Ah, você também tinha o grupo de segurança naquela época. Então você falou sobre o armazenamento que deseja usar. E você pode ser tão descritivo quanto quiser, ou dar quantas opções quiser, mas vou manter isso simples. Isso era uma
+
+especificação e o painel de status. Alguns campos como o IP público, qual é o IP público da minha instância e poderia ser, hum, o carimbo de data/hora de criação. Agora, você obterá esses recursos ou os utilizará para criar uma instância da Amazon. E aqui está sua instância EC2. Agora imagine que você quisesse tornar esse operador um pouco mais confiável ou um pouco mais...
+
+inteligente. O que você pensou foi: "Eu tenho o endereço IP público e o registro de data e hora da criação." Gostaria de verificar periodicamente se minha instância está presente ou não, para realizar algum tipo de detecção de desvio. E você queria que o usuário soubesse quando a última verificação foi feita. Então você introduz um novo campo no status. Veja, você não está
+
+alterando a instância. Você não está alterando o nome da instância. Você não está alterando o ID da AMI. Você não está alterando absolutamente nada na instância. Nada está sendo alterado. As especificações são
+
+exatamente as mesmas. O que você está alterando, ou melhor, introduzindo um novo campo chamado "última verificação", é que tudo o que você fez no seu operador é ir até a Amazon com o nome da instância, verificar se a instância existe e, se existir, não fazer nada; apenas atualizar o seu reconciliador. Não faz nada se a instância estiver presente e em execução, porque é isso que você deseja, esse é o estado desejado. Se não estiver em execução, você pode iniciá-lo. Se for excluído, talvez você consiga enviar um e-mail do seu conciliador.
+
+É tudo o que você pode fazer quando não está lá. Mas se estiver lá, tudo o que você quer é que atualize o status do último aplicativo verificado. E isso poderia ser, sabe, às 17h. às 17h 10 minutos e 20 segundos. Foi nesse momento que você fez a alteração e deve repeti-la periodicamente a cada 2 minutos. Digamos que você
+
+queira verificar na Amazon se a instância está lá. A cada 2 minutos, o seu reconciliador é executado sem fazer nada na especificação, porque você não quer alterar nada na especificação, mas ele verifica a sua instância e, a cada 2 minutos, atualiza esta especificação aqui, que é a última verificação. O problema é que você está atualizando o status de um recurso que já está nesse estado. O que está acontecendo é o que eu disse: quando você atualiza um objeto, isso aciona um loop de reconciliação. Já falamos sobre isso e, se você fizer alterações no seu objeto no loop de reconciliação, ele será executado novamente.
+
+Você pode atualizar o objeto, o loop de reconciliação é executado, não importa se o objeto foi atualizado externamente por alguém que está usando o cubectl manualmente ou se foi atualizado no próprio loop de reconciliação dentro do reconciliador. A única coisa que o Kubernetes considera importante é que o objeto foi alterado. Vou executar novamente o loop de reconciliação, que então você terá os passos para criar a instância. Então você tem que, sabe, talvez enviar um e-mail para a equipe com o endereço IP da instância e todas as etapas necessárias para criar uma instância EC2. O problema é que essas etapas só devem ser executadas quando você realmente deseja fazer uma alteração, seja criando uma nova instância (que, neste caso, é criada apenas porque você atualizou seu objeto, ou melhor, apenas porque você atualizou o status da instância) ou simplesmente porque você não precisa executar todo o loop de reconciliação. Você
+
+deve executar o loop de reconciliação novamente se eu alterar o ID da AMI. Nesse caso, seu operador deve excluir a instância e recriá-la. É necessário fazer algumas alterações no ambiente. Mas se eu simplesmente verificar se a instância existe e ela estiver lá, e eu quiser apenas atualizar os metadados, sem alterar o nome da instância, o ID da AMI ou os grupos de segurança, o processo não funcionará . Eu não aumentei o armazenamento de 50 para 100 gigabytes. Nada está
+
+mudando. Então, por que você está executando seu loop reconciliado e desperdiçando seus preciosos ciclos de CPU? É aqui que você fica preso em um ciclo, atualizando o status que deveria ser o metadado. O processo de reconciliação é executado novamente e esse ciclo continua indefinidamente. Então, era isso que eu queria mostrar para vocês. Você sabe, quando você está criando
+
+a instância, você tem uma especificação aqui e depois tem o status, que é onde temos a última verificação que seu operador faz na Amazon para ver se a instância existe. Se existir, não fazemos alterações na especificação, mas fazemos alterações no status, onde o atualizamos com a última verificação e a hora. O que acontece é que, como você atualizou seu objeto, houve um evento de observação, que seu operador sempre monitora...
+
+seu controlador sempre monitora o operador. O que estou dizendo? Seu controlador está sempre monitorando o objeto que foi alterado e você executa o comando novamente, mesmo que não quisesse realmente fazer nenhuma alteração. Sua lógica de reconciliação deveria simplesmente ter ignorado isso. Ei, pessoal, o usuário não me pediu para fazer nenhuma alteração no WM. Por que estou
+
+executando isso? Ok, eu sei que preciso ser incompetente, então, se eu executar, não devo fazer nenhuma alteração, mas por que executar em primeiro lugar se eu não estava alterando a especificação? Se o usuário não alterou a especificação, não há motivo para eu executar. A alteração foi apenas no nível de status, ou seja, apenas nos metadados. E esse é o problema com o reconciliador, ou melhor, com a forma como os reconciliadores são criados. Porque o
+
+Kubernetes não diferencia se a alteração foi na especificação, que é o que mais importa, ou no status, que é o que importa menos. Para executar novamente o reconciliador, ele apenas informa que o objeto foi atualizado. Execute novamente o loop de reconciliação e pronto. Então, espero que você tenha entendido o problema: você está atualizando o status do objeto e isso aciona uma atualização. Hum, e isso aciona um processo de reconciliação, e dentro desse processo você atualizou o status. Em seguida, você recebeu um evento de atualização. O
+
+reconciliador funciona novamente. Você atualiza o status novamente. Então o Kubernetes avisa: "Ei, há uma atualização disponível." O conciliador está em execução e isso vai tornar a vida do seu operador um inferno. Sim. Quer dizer, veja bem, você poderia
+
+dizer, hum, Shubhham, não é um problema, mesmo que minha operação, mesmo que meu reconciliador execute, você me disse para torná-lo importante. Portanto, mesmo que seja executado, nada será alterado na minha instância da Amazon. E isso está correto. Mas essa é a diferença entre você e um engenheiro de equipe ou um engenheiro principal, que o impediria de executar esse operador desde o início, porque você estará usando a CPU do seu cluster e, se não projetar as coisas corretamente, poderá acabar desperdiçando seus recursos. Então, é isso que temos feito. Assim,
+
+o usuário faz uma alteração no servidor da API. Hum, existe um componente no seu operador chamado refletor, e esse refletor é responsável por observar o seu operador, o seu objeto. Não vamos entrar em detalhes sobre o que são e como os refletores são implementados. Pense nisso como o defletor, que é o responsável por monitorar seu objeto no servidor da API e capturar esses eventos. É aquele que atualiza o informante.
+
+Então você atualiza o cache com o objeto mais recente que foi atualizado pelo usuário e, em seguida, o manipulador de eventos é o responsável por adicioná-lo à fila de trabalho, onde você adiciona qual objeto foi alterado, e o processo de reconciliação obtém o objeto desse cache. Portanto, não acessa o servidor da API para obtê-lo. E o que ele faz é atualizar o status. Por fim, é aqui que o loop é criado, que foi o que acabei de mostrar acima. Esse é o loop que você está criando. Vamos entrar em mais
+
+detalhes aqui. Assim, sempre que você faz uma alteração no objeto, o refletor a capta . O refletor detectou que houve uma mudança. O refletor comunica-se com o informador, que obtém o objeto e o armazena na memória cache ou no cache do operador. Então o manipulador de eventos é, você sabe, informado de que "este objeto foi alterado, por favor, adicione-o à fila de trabalho". E os
+
+funcionários responsáveis ​​pela reconciliação estão verificando a fila de trabalho e constatando que um novo objeto foi alterado. Foi adicionado à fila de trabalho. Preciso iniciar e executar meu reconciliador. Então, no conciliador, você atualiza o status e toda essa história... você sabe,
+
+a história toda continua. Acho que faz mais sentido se eu mostrar isso para você em uma demonstração. Então, deixe-me ir até meu fiel cursor e mostrar como ele fica . Este é um construtor de cubos padrão . Tenho certeza de que você já assistiu ao vídeo e, portanto, está familiarizado com a estrutura do construtor de cubos.
+
+O mais importante que eu queria mostrar para vocês é a minha API, e foi isso que eu criei. Então, eu tenho um recurso personalizado muito simples chamado instância EC2. Tem duas coisas. Possui uma especificação do tipo " EC2 instance spec" e um status do tipo "EC2 instance status". Agora, a especificação é muito simples. É
+
+só diversão e bar. São apenas as duas teclas, fu e bar, que eu quero usar. Neste vídeo, não estamos criando um operador totalmente funcional . Já fizemos isso em um curso anterior. Este curso é uma continuação daquele . O que
+
+mais nos interessa é o status . E aqui temos a última atualização, que é um tipo de tempo metav.micro. Este é um atalho que permite adicionar um tempo de até microssegundos. Falaremos sobre isso. E este é o meu
+
+recurso personalizado de instância EC2 simples. Possui apenas uma especificação de barra e um status que foi atualizado pela última vez em. E agora, como está meu conciliador? Então, se eu for ao meu conciliador aqui, você pode ver que há algumas coisas de que não preciso. Hum, espera, eu não preciso da biblioteca de matemática também. Então, aqui está a minha solução.
+
+Veja, este reconciliador faz algo muito, muito simples. Faz algo muito simples. Ele cria uma variável do tipo instância EC2. Portanto, é aqui que armazenaremos o objeto que recebemos do Kubernetes, nesta linha aqui. Este curso aborda esse código, algo que eu já expliquei detalhadamente no nosso vídeo sobre operadores de Kubernetes.
+
+Então, vou explicar isso muito rapidamente e mostrar basicamente o que está acontecendo. Criamos uma variável do tipo instância EC2, que é a nossa estrutura (strct), que por sua vez é o nosso recurso personalizado. Obtemos o objeto da solicitação feita ao meu reconciliador. Você sabe que o servidor da API disse: " Olá, este objeto foi atualizado." Eu entendi o objeto. Armazenei isso em uma
+
+variável e estou lendo essa variável da seguinte forma. Portanto, o valor de f é instance.spec.fu dois e o valor de bar é instance.spec.bar. Como
+
+você pode ver, até agora eu apenas obtive o objeto e iterei sobre seus valores. É aqui que a coisa fica interessante, é aqui que as coisas ficam interessantes. O que eu queria fazer era uma atualização. Veja, eu tenho este recurso personalizado de instância EC2. Possui dois campos: especificação e status. Estou apenas
+
+lendo as especificações. Não fiz nenhuma alteração nas especificações. O que estou alterando é o status e o campo chamado "última atualização em". Então, eu quero definir o campo "última atualização" para o horário atual até os microssegundos do horário atual. E é aqui que obtemos a hora em UTC.
+
+E então convertemos isso, ou melhor, formatamos em um tempo, que é de microssegundos. Acho que mostra microssegundos e depois estou usando a função status.date. O que esta linha faz é atualizar o seu objeto. Basicamente, o que acontece é que você inicia o seu reconciliador e obtém o objeto.
+
+OK. Ah, foi aqui que você encontrou o objeto. Aqui você tem a hora e aqui é onde você lê "hum", ou eles poderiam ser trocados, mas não é algo com que precisamos nos preocupar. O que está acontecendo aqui, essencialmente, é que você atualiza o status e, como você atualizou o status com a função R.status.update.
+
+Você vai colocar isso de volta na fila de trabalho. Pense nessa fila de trabalho como um local onde, depois que o reconciliador terminar, ele verifica se há algo e confirma que você adicionou a chave do objeto, o nome do objeto que foi atualizado aqui. E agora, o que vai acontecer? Você atualiza o status e então imprimimos a última atualização dessa função, sabe, você imprime algo como "última atualização concluída", blá blá blá, e então retorna. Assim que você fizer uma devolução, o operador verificará a fila de trabalho.
+
+Ele vai ler do cubo e isso vai escrever no cubo o nome do objeto que foi atualizado. Você lê, executa todo o processo de reconciliação desde o início e, aqui está, você o atualiza novamente. Você escreve, termina, volta para a fila de trabalho, recomeça do início, lê e escreve novamente. Este é o loop de que eu estava falando . E deixe-me mostrar isso na prática.
+
+Então, aqui você pode ver que temos... bem, não há instâncias EC2 no momento. Eu já instalei isso no meu cluster usando o Cube Builder e você pode simplesmente usar os comandos `make generate`, `make manifest` e `make install`. Acabei de
+
+fazer uma instalação limpa. Então, estou sempre usando desinstalar e instalar porque estava fazendo alterações nas minhas especificações, mas o status está como instalado. Então você pode executar o comando `cubectl explain EC2 instance status` e verá que o campo `status` contém `last updated app` e o campo `spec` contém ` bar` e `fu`, que é exatamente a especificação que estamos criando. Todos os meus terminais estão conectados ao mesmo cluster onde instalamos essas definições de recursos personalizadas. Se eu quisesse mostrar o que estamos criando, você pode ver aqui que é uma instância EC2 muito simples. Possui apenas uma barra
+
+para testes. Possui dois para teste. Nada de extravagante. Então, vou executar meu operador e, como não há nenhum recurso EC2, não há nenhuma instância EC2 com recurso personalizado, ele está apenas monitorando. A mensagem simplesmente indica que estou aguardando quaisquer alterações no operador ou no recurso personalizado, seja por meio de uma atualização ou criação. Agora vou
+
+criar isso no meu cluster e vocês verão algo interessante que tenho tentado mostrar. Vamos criar isso e você verá o que acontece. Veja, minha operadora está ficando louca. Está rodando sem parar e aqui você pode ver que a atualização de status está acontecendo, que era o que eu queria, mas meu operador continua executando. Meu conciliador enlouqueceu. Entrou em um loop onde
+
+executa, atualiza o status e então se registra na fila de trabalho. O processo é encerrado, verifica a fila de tarefas, executa- o novamente, atualiza o status, coloca-o em uma fila de tarefas, encerra-se e verifica a fila de tarefas. E é toda essa confusão que vem acontecendo. E isso é algo que você definitivamente não quer. Você não vai querer executar a reconciliação novamente só porque fez uma alteração nos metadados, que é o status.
+
+Por que você faria isso? Agora, algo que eu também quero colocar aqui é algo chamado geração. Veja, conforme seu operador faz alterações em seus recursos, você atualiza a última ação de atualização, pois é isso que você deseja fazer, mas o Kubernetes também atualiza algo chamado versão do recurso. Esta é a versão do recurso que estava presente no HCD. Então você sempre tem uma versão de recurso que indica a versão mais recente que seu operador possui no HCD. Existe também
+
+algo chamado geração. Agora você pode ver que meu operador está em execução há muito tempo e que eu tenho várias alterações de versão de recursos. No entanto, eu só tenho uma geração. Agora, deixe-me mostrar algo realmente interessante. Se eu interromper meu operador e executar um `cubectl edit EC2 instances`, eu farei uma barra e direi "novos dados de teste". Eu salvo
+
+e saio. Veja o que acontece. A mudança de geração, desta vez, não se limita à versão dos recursos. A versão do recurso muda sempre que você altera um objeto. Mas a geração só muda quando você atualiza a especificação do Kubernetes do seu objeto, não o status, porque mantivemos nosso operador em execução por muito tempo, como você pode ver novamente aqui: meu status está mudando, a versão do meu recurso muda, mas a geração nunca muda.
+
+No entanto, assim que faço uma alteração, neste caso, um teste, você pode ver que minha geração é incrementada em um. Assim, cada vez que você atualiza seu status, a geração não muda, mas cada vez que você atualiza sua especificação, a geração é incrementada. E isso é algo que você pode usar ao escrever seus operadores para evitar entrar nesse loop infinito onde você atualiza o objeto, depois lê, atualiza o status, executa novamente e acaba desperdiçando preciosos ciclos de CPU. E aqui está o que vai acontecer. Veja, quando você está trabalhando com atualizações de status, você apenas vê que houve uma alteração, não importa se a alteração foi no status, na especificação ou no Kubernetes. O Kubernetes não faz isso, seu
+
+operador não se importa com isso agora. No entanto, no Cube Builder, no tempo de execução do controlador, existe uma opção onde você pode dizer: "Pessoal, eu só quero acionar uma nova execução do meu reconciliador se a geração tiver sido alterada." Isso significa que, se a especificação foi alterada, você sempre deve executar o teste novamente caso a especificação tenha sido alterada. Porque quando você altera a especificação, geralmente é para refletir o estado que você deseja aqui. Se eu, digamos, você sabe, pense nisso: se eu tiver uma implantação e isso me criar, ela terá um modelo de especificação ( template.spec) e réplicas. Se eu tiver
+
+cinco réplicas, vou obter cinco cápsulas. Se eu alterar isso para 10, preciso realizar uma ação que incremente para mais cinco pods. Então preciso fazer algo externamente. Neste caso, não me refiro a algo externo ao Kubernetes, mas você quer fazer algumas alterações. Caso você queira adicionar uma nova variável de ambiente, será necessário executar seus pods novamente, pois a variável de ambiente já foi adicionada ou você alterou o valor da variável de ambiente. Os pods
+
+precisam ser recriados. Alguma mudança precisa acontecer, seja recriando os pods, seja recriando o mapa de configuração, seja o que for, você precisa reagir a essa mudança. Mas se você atualizar o status, não precisa reagir. Muitas vezes você não precisa reagir a essas atualizações de status, e é exatamente aí que você se encontrará em um problema. A solução para isso é gerenciar melhor suas atualizações de status. Assim, o mesmo
+
+fluxo continua. Quando alguém faz alterações, seja um usuário ou seu próprio operador, através do servidor da API, essas alterações são armazenadas no HCD. Bem, a partir daí o refletor observa esse evento, obtém os dados, os envia para o informante e você os armazena em seu cache. Agora que o operador foi atualizado, seu reconciliador precisa ser executado. O que acontece agora é que você passa isso para o manipulador de eventos, que, por sua vez, foi responsável por adicionar esse objeto à fila. Mas agora
+
+você tem um filtro de predicado. Você está tornando seu operador um pouco mais inteligente. O que você diz, ei evento, uh, ei manipulador de eventos, eu quero que você adicione isso à fila de trabalho somente se houver uma alteração na especificação, não se houver uma alteração no status. Então, quero que você ignore o ruído ou simplesmente pule a execução do reconciliador, ou melhor, indo um passo além, não quero que você coloque esse objeto na fila de trabalho, porque assim que ele entrar na fila de trabalho, o reconciliador o processará e executará. Então, com esse predicado, você está simplesmente dizendo que, pessoal, só me importo com as mudanças na especificação.
+
+Não me importo com as mudanças de status. Isso significa que, se a geração foi alterada, faça o que você tem que fazer. Se a geração não mudou, não execute o processo novamente. E existem também outros predicados. O predicado a que estamos nos referindo é o predicado de mudança de geração . Simplesmente verifica se, você
+
+sabe, se a geração mudou. Isso significa que a especificação mudou. Isso significa que eu quero executá-lo. Mas se a geração não mudou, isso significa que a especificação não mudou. Provavelmente foi apenas uma atualização de status e não fez nada. E
+
+essa linha, essa única configuração, vai impedir que você desperdice seus preciosos ciclos, seus ciclos de CPU, porque você não quer simplesmente escrever um operador como engenheiro júnior. Você quer escrever um operador pensando que ele não está apenas sendo executado, mas que está sendo executado de forma eficiente. Porque, se você realmente se aprofundar em operadores, vai querer mantê-los o mais eficientes possível. Caso contrário, seu cluster terá seus recursos desperdiçados com os próprios operadores, em vez de com os dados que eles gerenciam. Então você precisa ser...
+
+não apenas cuidadoso, mas inteligente desta vez. Por isso é chamada de melhor prática. Então, como você trabalha com isso? E é aqui que a mágica acontece. Ao configurar seu controlador com seu gerenciador, acho que devo falar rapidamente sobre isso.
+
+Você tem um gerenciador e, dentro de um gerenciador, você pode ter várias APIs. Normalmente você tem uma API e, para ela, um controlador. A mesma coisa acontece aqui. Deixa eu copiar isso aqui e deixa eu copiar isso aqui. Assim, você pode criar várias APIs com o construtor de cubos no mesmo projeto. Por
+
+exemplo, eu poderia ter o domínio do meu construtor de cubos como cloud.com e as APIs como instância EC2 instance.cloud.com. Bem, eu posso ter um objeto que é uma instância EC2. Posso ter, então esta será
+
+minha API número um aqui. Então, um controlador que gerencia a instância EC2 para mim. Hum, o outro gerencia baldes. Então, buckets docloud.com.
+
+A outra opção poderia ser storage u ou poderia ser, você sabe, uh ebs.sto.cloud.com e então você poderia ter uh esfs.sto.cloud.com.
+
+Você pode fazer vários. O problema é que todos esses controladores precisam ser registrados junto ao gerenciador. Este gerenciador é responsável por executar várias threads de trabalho e rotinas para seus controladores. Portanto, é este que está realizando o trabalho pesado. Conectamos nosso controlador ao gerenciador usando esta função de configuração com o gerenciador.
+
+Definimos qual gerenciador queremos usar. E basicamente estamos dizendo que para este objeto, sabe, para este objeto, eu quero que você o anexe ao meu gerenciador, eu quero que você faça isso com um filtro de eventos, e aqui está aquele que vai facilitar muito a sua vida . Então, o que você está dizendo é que eu quero filtrar por alguns eventos anteriores. Antes você apenas atualizava, seja atualizando minha fila de trabalho, mesmo que fosse uma alteração de especificação ou uma alteração de status. Mas desta vez eu não quero que você faça isso. Quero que
+
+você verifique se isso foi uma alteração nas especificações. Quero que você veja se a geração mudou. Então, adicione isso à minha fila de tarefas. Se nada mudou, então não faça isso. Não adicione à fila de trabalho. Não permita que meu reconciliador seja executado novamente,
+
+mesmo que seja idêntico.
+
+Seu plano de ação é excelente. Ah, é ident. Mas por que você executaria isso se não houvesse necessidade? Se não há necessidade, não execute. Se executar, não muda nada. Ok, esse é um
+
+bom argumento, mas o melhor argumento é: se não for necessário, não execute. Porque mesmo que você execute, mesmo que nenhuma mudança seja feita, você estará desperdiçando poder computacional, e é isso que queremos evitar. Então, com esse filtro de eventos, temos alguns predicados disponíveis, e esse predicado de mudança de geração simplesmente diz: se a sua geração não mudou, não faça nada. Então, aqui está o que você pode ver. Agora, se eu executar meu controlador pela primeira vez, ele atualizará o status porque eu quero que meu status seja atualizado. Na próxima vez,
+
+porque havia um loop que você viu antes. Na próxima vez que estivermos, nosso controlador verá que a geração não mudou; a mudança foi apenas no status. Portanto, não vou executar novamente, apenas esperarei. Vamos fazer isso agora. Espero que funcione como desejamos. Veja,
+
+atualizamos nossa última atualização, mas só isso. Nosso operador está ativo, em execução, mas não está fazendo nada por causa desse predicado, pois minha geração não mudou. Se eu quiser mostrar isso novamente, veja, agora mesmo, nossos microssegundos são 108. Só para mostrar que as mudanças estão realmente sendo feitas. Isto é o que temos atualmente. E se eu
+
+executar meu operador novamente, isso será atualizado. Então, como você pode ver aqui, o horário mudou, o status foi atualizado, mas veja o que aconteceu, está aqui. Então veja o que aconteceu... você
+
+atualizou seu objeto. Ok, você atualizou seu objeto e adicionou isso ao cache. Você armazenou isso no cache. Então, o manipulador de eventos, antes de adicionar isso de volta à fila de trabalho, percebeu que a geração na verdade não havia mudado e, por isso, não a adicionou de volta à fila de trabalho, e o reconciliador não foi executado. Embora o conciliador tenha atualizado o status, ele não fez absolutamente nada além disso. E era isso que queríamos fazer.
+
+Nosso objetivo era capacitar nossos operadores para que se preocupassem com as especificações, mas não se importassem muito com as mudanças de status. Isso lhe dá total liberdade para adicionar qualquer tipo de metadado ao seu status. Você quer que seja mais descritivo. Você deseja adicionar mais campos ao status para torná-lo o mais descritivo possível. Mas você estava preocupado ou tentando descobrir como evitar executar novamente a reconciliação ao fazer uma alteração de status. Tenho que ter muito
+
+cuidado. Mas este único predicado resolve tudo . Diz que se não houver nenhuma mudança na geração que eu pretendo fazer, não vou executar isso novamente. Funcionou na primeira tentativa. Como você pode ver, nós lemos a respeito do valor disso. Nós lemos sobre o valor disso
+
+. E aqui está a minha atualização. Então, era isso que eu queria mostrar para vocês: como funciona a geração, como funciona a versão do recurso e, principalmente, como a geração foi alterada quando você atualizou a especificação no Kubernetes. A geração não muda quando você altera o status do seu operador no Kubernetes. Espero que isso tenha sido realmente útil e que ajude você a criar operadores de forma mais eficiente — não exatamente criar operadores, pois esse é o foco do curso —, mas sim a escrever operadores pensando do ponto de vista de um engenheiro de plataforma, não apenas um júnior, mas um engenheiro sênior ou um engenheiro principal. Esses detalhes são
+
+realmente importantes ao escrever operadores, e é assim que você deve escrevê-los de uma maneira melhor. Espero que isso tenha sido útil.
